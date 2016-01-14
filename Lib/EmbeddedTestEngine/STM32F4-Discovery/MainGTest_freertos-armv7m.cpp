@@ -36,19 +36,19 @@
 #include "stm32f4_discovery.h"
 #include "stm32f4xx_hal.h"
 #include "UARTConfig.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
-//#include "BareMetal/L0Types/BasicTypeGTest.cpp"
+#define TEST_SCHEDULER
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-TestInfo TestFunctions[2048] = { 0 };
-int FailedTestFunctions[64] = { 0 };
-
+//TestInfo TestFunctions[MAX_NUMBER_TESTS] = { 0 };
+TestInfo *TestFunctions = NULL;
+int FailedTestFunctions[MAX_NUMBER_FAIL_TESTS] = { 0 };
 volatile int numberOfTests = 0;
+bool TestResult = true;
 
 static void SystemClock_Config(void) {
     RCC_ClkInitTypeDef RCC_ClkInitStruct;
@@ -152,48 +152,60 @@ private:
 
 UARTConsole console;
 
-class prova {
-public:
-    prova() {
-        x = 1;
-    }
+void printMessage(const char* message) {
+    char buffer[32] = { 0 };
+    unsigned int sizec = 0u;
+    sprintf(buffer, "\n\r%s", message);
+    sizec = strlen(buffer) + 1u;
+    console.Write(buffer, sizec);
+}
 
-    int x;
-};
+void printInt(int integer) {
+    char buffer[32] = { 0 };
+    unsigned int sizec = 0u;
+    sprintf(buffer, "\n\r%d", integer);
+    sizec = strlen(buffer) + 1u;
+    console.Write(buffer, sizec);
+}
 
-int main() {
 
-    HAL_Init();
-    BSP_LED_Init (LED6);
-    BSP_LED_Init (LED5);
-    BSP_LED_Init (LED4);
+void printFloat(float floatn) {
+    char buffer[32] = { 0 };
+    unsigned int sizec = 0u;
+    sprintf(buffer, "\n\r%f", floatn);
+    sizec = strlen(buffer) + 1u;
+    console.Write(buffer, sizec);
+}
 
-    SystemClock_Config();
-    unsigned int nFailedTests = 0u;
-
-    console.Open();
+void TestLauncher(void* args) {
     char buffer[128] = { 0 };
     unsigned int sizec = 0u;
+    unsigned int nFailedTests = 0u;
 
     for (int i = 0; i < numberOfTests; i++) {
         HAL_Delay(1);
         sprintf(buffer, "\n\r[ RUN      ] %s.%s [%u]", TestFunctions[i].className, TestFunctions[i].functionName, HAL_GetTick());
         sizec = strlen(buffer) + 1u;
         console.Write(buffer, sizec);
-        if (TestFunctions[i].function()) {
+        TestFunctions[i].function();
+        if (TestResult) {
             sprintf(buffer, "\n\r[       OK ] %s.%s", TestFunctions[i].className, TestFunctions[i].functionName);
             sizec = strlen(buffer) + 1;
             console.Write(buffer, sizec);
-            BSP_LED_Toggle(LED6);
+            BSP_LED_Toggle (LED6);
         }
         else {
-            FailedTestFunctions[nFailedTests] = i;
-            nFailedTests++;
+            if (nFailedTests < MAX_NUMBER_FAIL_TESTS) {
+                FailedTestFunctions[nFailedTests] = i;
+                nFailedTests++;
+            }
             sprintf(buffer, "\n\r[   FAILED ] %s.%s", TestFunctions[i].className, TestFunctions[i].functionName);
             sizec = strlen(buffer) + 1;
             console.Write(buffer, sizec);
-            BSP_LED_On(LED5);
+            BSP_LED_On (LED5);
         }
+        // ready for the new test
+        TestResult = true;
     }
 
     sprintf(buffer, "\n\r[==========] %d tests ran", numberOfTests);
@@ -213,7 +225,31 @@ int main() {
         console.Write(buffer, sizec);
     }
 
-    BSP_LED_On(LED6);
+    BSP_LED_On (LED4);
+
+}
+
+int main() {
+
+    HAL_Init();
+    BSP_LED_Init (LED6);
+    BSP_LED_Init (LED5);
+    BSP_LED_Init (LED4);
+
+    SystemClock_Config();
+
+    console.Open();
+
+#ifdef TEST_SCHEDULER
+// launch the scheduler if needed
+    TaskHandle_t threadId = 0;
+    xTaskCreate(TestLauncher, "TestLauncher", configMINIMAL_STACK_SIZE * 16, NULL, tskIDLE_PRIORITY | portPRIVILEGE_BIT, &threadId);
+    vTaskStartScheduler();
+    for (;;)
+        ;
+#else
+    TestLauncher(NULL);
+#endif
 
     return 0;
 }

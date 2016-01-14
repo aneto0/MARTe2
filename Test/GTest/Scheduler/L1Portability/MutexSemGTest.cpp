@@ -89,12 +89,12 @@ TEST(MutexSemGTest,TestUnLockWithFiniteTimeout) {
 
 TEST(MutexSemGTest,TestLockWithSmallFiniteTimeoutToFail) {
     MutexSemTest mutextest;
-    ASSERT_FALSE(mutextest.TestLock(500, 1));
+    ASSERT_FALSE(mutextest.TestLock(50, 1));
 }
 
 TEST(MutexSemGTest,TestUnLockWithSmallFiniteTimeoutToFail) {
     MutexSemTest mutextest;
-    ASSERT_FALSE(mutextest.TestUnLock(500, 1));
+    ASSERT_FALSE(mutextest.TestUnLock(50, 1));
 }
 
 TEST(MutexSemGTest,TestLockErrorCode) {

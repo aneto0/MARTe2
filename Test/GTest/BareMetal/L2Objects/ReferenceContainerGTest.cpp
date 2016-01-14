@@ -276,6 +276,13 @@ TEST(ReferenceContainerGTest,TestFindRelativePathObjectNameFilter) {
 /***********************
  * TestFindPerformance *
  ***********************/
+
+
+#define Linux 1
+#define Windows 2
+#define FreeRTOS 3
+#if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
+
 TEST(ReferenceContainerGTest,TestFindPerformanceReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceT<ReferenceContainer> largeTree = referenceContainerTest.GenerateTestTreeLarge(5000);
@@ -294,6 +301,7 @@ TEST(ReferenceContainerGTest,TestFindPerformanceObjectNameFilter) {
     ASSERT_TRUE(totalTime < 1.0);
 }
 
+#endif
 /*********************************
  * TestFindRemoveFirstOccurrence *
  *********************************/

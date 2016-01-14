@@ -41,14 +41,15 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+
 TEST(ThreadsGTest,TestBeginThread) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestBeginThread("hello", 16384, 100));
+    ASSERT_TRUE(myUnitTest.TestBeginThread("hello", THREADS_DEFAULT_STACKSIZE, 32));
 }
 
 TEST(ThreadsGTest,TestBeginThreadStacksize0) {
     ThreadsTest myUnitTest;
-    ASSERT_FALSE(myUnitTest.TestBeginThread("hello", 0, 1));
+    ASSERT_FALSE(myUnitTest.TestBeginThread("hello", 0, 32));
 }
 
 TEST(ThreadsGTest,TestBeginThreadNullFunction) {
@@ -58,12 +59,12 @@ TEST(ThreadsGTest,TestBeginThreadNullFunction) {
 
 TEST(ThreadsGTest,TestIsAlive) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestIsAlive(100));
+    ASSERT_TRUE(myUnitTest.TestIsAlive(32));
 }
 
 TEST(ThreadsGTest,TestIsAliveAfterkill) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestIsAlive(100));
+    ASSERT_TRUE(myUnitTest.TestIsAlive(32));
 }
 
 TEST(ThreadsGTest,TestKillInvalidID) {
@@ -73,9 +74,10 @@ TEST(ThreadsGTest,TestKillInvalidID) {
 
 TEST(ThreadsGTest,TestKill) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestKill(100));
+    ASSERT_TRUE(myUnitTest.TestKill(32));
 }
 
+// Failure where the thread state is supported!
 TEST(ThreadsGTest,TestGetState) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestGetState());
@@ -83,7 +85,7 @@ TEST(ThreadsGTest,TestGetState) {
 
 TEST(ThreadsGTest,TestId) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestId(10));
+    ASSERT_TRUE(myUnitTest.TestId(32));
 }
 
 TEST(ThreadsGTest,TestGetCPUs) {
@@ -103,17 +105,17 @@ TEST(ThreadsGTest,TestNameNull) {
 
 TEST(ThreadsGTest,TestNumberOfThreads) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestNumberOfThreads(100));
+    ASSERT_TRUE(myUnitTest.TestNumberOfThreads(32));
 }
 
 TEST(ThreadsGTest,TestFindByIndex) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestFindByIndex(100));
+    ASSERT_TRUE(myUnitTest.TestFindByIndex(32));
 }
 
 TEST(ThreadsGTest,TestGetThreadInfoCopy) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestGetThreadInfoCopy(100, "Hello"));
+    ASSERT_TRUE(myUnitTest.TestGetThreadInfoCopy(32, "Hello"));
 }
 
 TEST(ThreadsGTest,TestGetThreadInfoCopyInvalidID) {
@@ -123,10 +125,11 @@ TEST(ThreadsGTest,TestGetThreadInfoCopyInvalidID) {
 
 TEST(ThreadsGTest,TestFindByName) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestFindByName(100, "Hello", 22));
+    ASSERT_TRUE(myUnitTest.TestFindByName(10, "Hello", 2));
 }
 
 TEST(ThreadsGTest,TestPriority) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestPriority());
 }
+

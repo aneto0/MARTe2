@@ -33,7 +33,6 @@
 #include "ReferenceT.h"
 #include "ObjectTestHelper.h"
 #include "StringHelper.h"
-#include "TypeInfo.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

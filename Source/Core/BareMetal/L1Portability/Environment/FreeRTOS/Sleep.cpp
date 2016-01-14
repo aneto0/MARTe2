@@ -51,7 +51,7 @@ namespace Sleep {
 void AtLeast(float64 sec) {
 #ifdef USE_FREERTOS
     if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
-        vTaskDelay((msec * configTICK_RATE_HZ) / 1000L);
+        vTaskDelay(sec * configTICK_RATE_HZ);
     }
 #else
     HAL_Delay(sec * 1000);
@@ -65,7 +65,7 @@ void NoMore(float64 sec) {
     if (sec > 0.) {
 #ifdef USE_FREERTOS
         if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
-            vTaskDelay(sec * 1000 / portTICK_PERIOD_MS);
+            vTaskDelay(sec * configTICK_RATE_HZ);
         }
 #else
         HAL_Delay(sec * 1000);

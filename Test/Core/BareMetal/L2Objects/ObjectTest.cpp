@@ -61,9 +61,9 @@ bool ObjectTest::TestGetIntrospectionCopy() {
 
 bool ObjectTest::TestInitialise() {
     /*Object myObject;
-    StructuredDataI data;
-    //returns false
-    return !myObject.Initialise(data);*/
+     StructuredDataI data;
+     //returns false
+     return !myObject.Initialise(data);*/
     //TODO
     return true;
 }
@@ -159,8 +159,7 @@ bool ObjectTest::TestGetUniqueName(const char8* name,
             return true;
         }
         //create the test char
-        char test;
-        character < 10 ? (test = character + '0') : (test = (character - 10) + 'A');
+        char8 test = (character < 10) ? (character + '0') : ((character - 10) + 'A');
         if (buffer[n] != test) {
             return false;
         }

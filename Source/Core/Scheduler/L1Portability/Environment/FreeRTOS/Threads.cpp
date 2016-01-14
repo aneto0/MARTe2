@@ -30,14 +30,16 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "Threads.h"
-#include "ThreadInformation.h"
-#include "ErrorType.h"
+#include "ThreadsDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 namespace Threads {
+
+
+
 /**
  * @brief The function called when a thread is created.
  * @details Adds the thread in the database and calls the thread callback function.
@@ -53,20 +55,22 @@ static void SystemThreadFunction(ThreadInformation * const threadInfo) {
             threadInfo->SetThreadIdentifier(Threads::Id());
 
             ok = ThreadsDatabase::NewEntry(threadInfo);
+
             ThreadsDatabase::UnLock();
         }
         if (ok) {
             threadInfo->SetPriorityLevel(0u);
             Threads::SetPriority(Threads::Id(), Threads::NormalPriorityClass, 0u);
             //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
-            ErrorType err = threadInfo->ThreadWait();
+            ErrorManagement::ErrorType err = threadInfo->ThreadWait();
             //Start the user thread
-            if (err == NoError) {
+            if (err == ErrorManagement::NoError) {
                 threadInfo->UserThreadFunction();
 
                 ok = ThreadsDatabase::Lock();
                 if (ok) {
                     ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Threads::Id());
+
                     if (threadInfo != threadInfo2) {
                         //CStaticAssertErrorCondition(FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
                     }
@@ -78,7 +82,6 @@ static void SystemThreadFunction(ThreadInformation * const threadInfo) {
             vTaskDelete(NULL);
         }
     }
-    return static_cast<void *>(NULL);
 }
 #endif
 /**
@@ -89,7 +92,9 @@ static void SystemThreadFunction(ThreadInformation * const threadInfo) {
  * @return the ThreadInformation structure.
  */
 /*lint -e{9141} namespaces are not currently used.*/
-static ThreadInformation * threadInitialisationInterfaceConstructor(const ThreadFunctionType userThreadFunction, const void * const userData, const char8 * const threadName) {
+static ThreadInformation * threadInitialisationInterfaceConstructor(const ThreadFunctionType userThreadFunction,
+                                                                    const void * const userData,
+                                                                    const char8 * const threadName) {
 
     return new ThreadInformation(userThreadFunction, userData, threadName);
 }
@@ -101,25 +106,27 @@ static ThreadInformation * threadInitialisationInterfaceConstructor(const Thread
 /*lint -e{715} Not implemented in Linux.*/
 ThreadStateType GetState(const ThreadIdentifier &threadId) {
 #if INCLUDE_eTaskGetState
-    eTaskState state = eTaskGetState(threadId);
-    if(state == eReady) {
-        return ReadyState;
+    if(threadId!=InvalidThreadIdentifier) {
+        eTaskState state = eTaskGetState(threadId);
+        if(state == eReady) {
+            return ReadyState;
+        }
+        else if(state == eRunning) {
+            return RunningState;
+        }
+        else if(state == eBlocked) {
+            return BlockedState;
+        }
+        else if(state == eSuspended) {
+            return SuspendedState;
+        }
+        else if(state == eDeleted) {
+            return DeadState;
+        }
     }
-    else if(state == eRunning) {
-        return RunningState;
-    }
-    else if(state == eBlocked) {
-        return BlockedState;
-    }
-    else if(state == eSuspended) {
-        return SuspendedState;
-    }
-    else if(state == eDeleted) {
-        return DeadState;
-    }
-#else
-    return UnknownThreadStateType;
 #endif
+    return UnknownThreadStateType;
+
 }
 
 uint32 GetCPUs(const ThreadIdentifier &threadId) {
@@ -136,7 +143,9 @@ ThreadIdentifier Id() {
  * and priorityLevel = 15. This is then translated into a number
  * between 0 and configMAX_PRIORITIES (see FreeRTOSConfig.h)
  */
-void SetPriority(const ThreadIdentifier &threadId, const PriorityClassType &priorityClass, const uint8 &priorityLevel) {
+void SetPriority(const ThreadIdentifier &threadId,
+                 const PriorityClassType &priorityClass,
+                 const uint8 &priorityLevel) {
     uint8 prioLevel = priorityLevel;
     if (prioLevel > 15u) {
         prioLevel = 15u;
@@ -160,9 +169,14 @@ void SetPriority(const ThreadIdentifier &threadId, const PriorityClassType &prio
     uint32 priorityLevelToAssign = 28u * priorityClassNumber;
     priorityLevelToAssign += (static_cast<uint32>(prioLevel));
 
-    unsigned portBASE_TYPE
-    priorityToSet = priorityLevelToAssign * configMAX_PRIORITIES / priorityLevelToAssign;
+    UBaseType_t priorityToSet = (priorityLevelToAssign * (configMAX_PRIORITIES - 1)) / priorityLevelToAssign;
     vTaskPrioritySet(threadId, priorityToSet);
+
+#if USE_THREADS_DATABASE
+    ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
+    threadInfo->SetPriorityLevel(prioLevel);
+    threadInfo->SetPriorityClass(priorityClass);
+#endif
 }
 
 uint8 GetPriorityLevel(const ThreadIdentifier &threadId) {
@@ -201,48 +215,82 @@ bool IsAlive(const ThreadIdentifier &threadId) {
 }
 
 bool Kill(const ThreadIdentifier &threadId) {
-    bool ok = true;
-    if (IsAlive(threadId)) {
+    bool ok = IsAlive(threadId);
+    if (ok) {
+#if USE_THREADS_DATABASE
+        ok = ThreadsDatabase::Lock();
+        if (ok) {
+            ThreadInformation *threadInfo = ThreadsDatabase::RemoveEntry(threadId);
+            if (threadInfo == NULL) {
+                ok = false;
+            }
+            else {
+                delete threadInfo;
+            }
+        }
+        ThreadsDatabase::UnLock();
+
+#endif
         vTaskDelete(threadId);
     }
     return ok;
 }
 
 /*lint -e{715} the exceptionHandlerBehaviour implementation has not been agreed yet.*/
-#if USE_THREADS_DATABASE
-ThreadIdentifier BeginThread(const ThreadFunctionType function, const void * const parameters, const uint32 &stacksize, const char8 * const name, const uint32 exceptionHandlerBehaviour, ProcessorType runOnCPUs) {
+ThreadIdentifier BeginThread(const ThreadFunctionType function,
+                             const void * const parameters,
+                             const uint32 &stacksize,
+                             const char8 * const name,
+                             const uint32 exceptionHandlerBehaviour,
+                             ProcessorType runOnCPUs) {
     ThreadIdentifier threadId = InvalidThreadIdentifier;
-    ThreadInformation *threadInfo = threadInitialisationInterfaceConstructor(function, parameters, name);
-    if (threadInfo != static_cast<ThreadInformation *>(NULL)) {
-        portBASE_TYPE ret = xTaskCreate(reinterpret_cast<void (*)(void *)>(SystemThreadFunction), reinterpret_cast<const char8 *>(name), stacksize, static_cast<void *>(threadInfo), tskIDLE_PRIORITY | portPRIVILEGE_BIT, &threadId);
-        bool ok = (ret == pdPASS);
-        if (ok) {
-            ok = threadInfo->ThreadPost();
+    if (function != NULL ) {
+
+#if USE_THREADS_DATABASE
+        ThreadInformation *threadInfo = threadInitialisationInterfaceConstructor(function, parameters, name);
+        if (threadInfo != static_cast<ThreadInformation *>(NULL)) {
+            portBASE_TYPE ret = xTaskCreate(reinterpret_cast<void (*)(void *)>(SystemThreadFunction), (name==NULL)?("Unknown"):(name), (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), static_cast<void *>(threadInfo), tskIDLE_PRIORITY | portPRIVILEGE_BIT, &threadId);
+            bool ok = (ret == pdPASS);
+            if (ok) {
+                ok = threadInfo->ThreadPost();
+            }
+            else {
+                threadId = InvalidThreadIdentifier;
+            }
         }
-        else {
+#else
+        portBASE_TYPE ret = xTaskCreate(reinterpret_cast<void (*)(void *)>(function), (name==NULL)?("Unknown"):(name), (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), const_cast<void *>(parameters), tskIDLE_PRIORITY | portPRIVILEGE_BIT, &threadId);
+        bool ok = (ret == pdPASS);
+        if (!ok) {
             threadId = InvalidThreadIdentifier;
         }
-    }
-
-    return threadId;
-}
-#else
-ThreadIdentifier BeginThread(const ThreadFunctionType function, const void * const parameters, const uint32 &stacksize, const char8 * const name, const uint32 exceptionHandlerBehaviour, ProcessorType runOnCPUs) {
-    ThreadIdentifier threadId = InvalidThreadIdentifier;
-    portBASE_TYPE ret = xTaskCreate(reinterpret_cast<void (*)(void *)>(function), reinterpret_cast<const char8 *>(name), stacksize, const_cast<void *>(parameters), tskIDLE_PRIORITY | portPRIVILEGE_BIT, &threadId);
-    bool ok = (ret == pdPASS);
-    if (!ok) {
-        threadId = InvalidThreadIdentifier;
-    }
-    return threadId;
-}
 #endif
+    }
+    return threadId;
+}
+
+void EndThread() {
+#if USE_THREADS_DATABASE
+    bool ok = ThreadsDatabase::Lock();
+    if (ok) {
+        ThreadInformation *threadInfo = ThreadsDatabase::RemoveEntry(Id());
+
+        if(threadInfo!=NULL) {
+            delete threadInfo;
+        }
+    }
+    ThreadsDatabase::UnLock();
+
+#endif
+    vTaskDelete(NULL);
+}
 
 const char8 *Name(const ThreadIdentifier &threadId) {
-#if INCLUDE_pcTaskGetTaskName
-    return pcTaskGetTaskName(threadId);
-#elif USE_THREADS_DATABASE
     const char8 *name = static_cast<const char8 *>(NULL);
+
+#if INCLUDE_pcTaskGetTaskName
+    name= pcTaskGetTaskName(threadId);
+#elif USE_THREADS_DATABASE
     bool ok = ThreadsDatabase::Lock();
     if (ok) {
         ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
@@ -254,9 +302,9 @@ const char8 *Name(const ThreadIdentifier &threadId) {
     else {
         ThreadsDatabase::UnLock();
     }
-#else
-    return NULL;
 #endif
+    return name;
+
 }
 
 ThreadIdentifier FindByIndex(const uint32 &n) {
@@ -268,10 +316,15 @@ ThreadIdentifier FindByIndex(const uint32 &n) {
 }
 
 uint32 NumberOfThreads() {
+#if USE_THREADS_DATABASE
+    return ThreadsDatabase::NumberOfThreads();
+#else
     return uxTaskGetNumberOfTasks();
+#endif
 }
 
-bool GetThreadInfoCopy(ThreadInformation &copy, const uint32 &n) {
+bool GetThreadInfoCopy(ThreadInformation &copy,
+                       const uint32 &n) {
 #if USE_THREADS_DATABASE
     return ThreadsDatabase::GetInfoIndex(copy, n);
 #else
@@ -279,7 +332,8 @@ bool GetThreadInfoCopy(ThreadInformation &copy, const uint32 &n) {
 #endif
 }
 
-bool GetThreadInfoCopy(ThreadInformation &copy, const ThreadIdentifier &threadId) {
+bool GetThreadInfoCopy(ThreadInformation &copy,
+                       const ThreadIdentifier &threadId) {
 #if USE_THREADS_DATABASE
     return ThreadsDatabase::GetInfo(copy, threadId);
 #else

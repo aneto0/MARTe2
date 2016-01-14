@@ -53,12 +53,7 @@ struct MutexSemProperties {
     /**
      * The number of handle references pointing at this structure.
      */
-    uint32 references;
-
-    /**
-     * To protect the reference handling
-     */
-    int32 referencesMux;
+    int32 references;
 
     /**
      * Is the semaphore closed?
@@ -84,29 +79,23 @@ MutexSem::MutexSem() {
     handle->closed = true;
     handle->recursive = false;
     handle->references = 1u;
-    handle->referencesMux = 0;
 }
 
 MutexSem::MutexSem(MutexSem &source) {
     handle = source.GetProperties();
-    while (!Atomic::TestAndSet(&handle->referencesMux)) {
-    }
     //Capture the case that it got the handle while the source semaphore
     //was already being destructed...
     if (handle == static_cast<MutexSemProperties *>(NULL)) {
         MutexSem();
     }
     else {
-        handle->references++;
-        handle->referencesMux = 0;
+        Atomic::Increment(&handle->references);
     }
 }
 
 /*lint -e{1551} only C calls are performed. No exception can be raised*/
 MutexSem::~MutexSem() {
     if (handle != static_cast<MutexSemProperties *>(NULL)) {
-        while (!Atomic::TestAndSet(&handle->referencesMux)) {
-        }
         if (handle->references == 1u) {
             if (!handle->closed) {
                 /*lint -e{534} possible closure failure is not handled in the destructor.*/
@@ -117,8 +106,7 @@ MutexSem::~MutexSem() {
             handle = static_cast<MutexSemProperties *>(NULL);
         }
         else {
-            handle->references--;
-            handle->referencesMux = 0;
+            Atomic::Decrement(&handle->references);
         }
     }
 }
@@ -126,8 +114,6 @@ MutexSem::~MutexSem() {
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to handle*/
 bool MutexSem::Create(const bool &recursive) {
-    while (!Atomic::TestAndSet(&handle->referencesMux)) {
-    }
     handle->closed = false;
     if (recursive) {
         handle->mutexHandle = xSemaphoreCreateMutex();
@@ -135,7 +121,6 @@ bool MutexSem::Create(const bool &recursive) {
     else {
         handle->mutexHandle = xSemaphoreCreateRecursiveMutex();
     }
-    handle->referencesMux = 0;
     return (handle->mutexHandle != NULL);
 }
 

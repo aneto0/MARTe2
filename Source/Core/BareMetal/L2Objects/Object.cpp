@@ -130,7 +130,7 @@ void Object::GetUniqueName(char8 * const destination,
     uint32 i;
     for (i = 0u; i < nOfPtrChars; i++) {
         //First character in destination is the MSB
-        shiftBits = nOfPtrChars * 8u;
+        shiftBits = nOfPtrChars * 4u;
         shiftBits -= 4u * (i + 1u);
         uint32 hexValue = static_cast<uint32>(ptrHex >> shiftBits);
         hexValue &= 0xFu;
@@ -146,7 +146,7 @@ void Object::GetUniqueName(char8 * const destination,
     }
     for (i = 1u; (i < size) && (i < ((nOfPtrChars - nLeadingOfZeros) + 1u)); i++) {
         //First character in destination is the MSB
-        shiftBits = nOfPtrChars * 8u;
+        shiftBits = nOfPtrChars * 4u;
         shiftBits -= 4u * (i + nLeadingOfZeros); //Notice that i already starts at 1
         uint32 hexValue = static_cast<uint32>(ptrHex >> shiftBits);
         hexValue &= 0xFu;

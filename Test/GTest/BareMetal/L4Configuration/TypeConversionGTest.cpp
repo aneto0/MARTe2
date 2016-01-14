@@ -46,6 +46,10 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+#define Linux 1
+#define Windows 2
+#define FreeRTOS 3
+
 
 TEST(TypeConversionGTest,TestCCStringToInt8) {
     TypeConversionTest myTypeConversionTest;
@@ -717,6 +721,7 @@ TEST(TypeConversionGTest,TestInt8ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+#if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
 
 TEST(TypeConversionGTest,TestInt8ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -745,6 +750,7 @@ TEST(TypeConversionGTest,TestInt8ToUInt64) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+#endif
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -821,6 +827,7 @@ TEST(TypeConversionGTest,TestUInt8ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+#if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
 
 TEST(TypeConversionGTest,TestUInt8ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -845,6 +852,7 @@ TEST(TypeConversionGTest,TestUInt8ToUInt64) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+#endif
 //////////////////////////////////////////////////////////////
 
 
@@ -930,15 +938,16 @@ TEST(TypeConversionGTest,TestInt16ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+#if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
 
 TEST(TypeConversionGTest,TestInt16ToInt64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<int16,int64> table[]={
-            {1,1, true, true},
-            {-1,-1,true, true},
-            {32767,32767,true, true},
-            {-32768, -32768, true, true},
-            {0,0,0}
+            {1,1ll, true, true},
+            {-1,-1ll,true, true},
+            {32767,32767ll,true, true},
+            {-32768, -32768ll, true, true},
+            {0,0ll,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
@@ -956,6 +965,7 @@ TEST(TypeConversionGTest,TestInt16ToUInt64) {
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -1032,6 +1042,7 @@ TEST(TypeConversionGTest,TestUInt16ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+#if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
 
 TEST(TypeConversionGTest,TestUInt16ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -1055,7 +1066,7 @@ TEST(TypeConversionGTest,TestUInt16ToUInt64) {
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
-
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1143,6 +1154,7 @@ TEST(TypeConversionGTest,TestInt32ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+#if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
 
 TEST(TypeConversionGTest,TestInt32ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -1169,6 +1181,8 @@ TEST(TypeConversionGTest,TestInt32ToUInt64) {
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
+
+#endif
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -1248,6 +1262,7 @@ TEST(TypeConversionGTest,TestUInt32ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+#if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
 
 TEST(TypeConversionGTest,TestUInt32ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -1494,7 +1509,7 @@ TEST(TypeConversionGTest,TestUInt64ToUInt64) {
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
-
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -2366,9 +2381,9 @@ TEST(TypeConversionGTest,TestUInt64ToCCString) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,const char8*> table[]={
             {123ULL,"123", true,true},
+            {(uint64)9223372036854775808ULL,"9223372036854775808", true,true},
             {18446744073709551615ULL,"18446744073709551615", true,true},
             {0ULL,"0", true,true},
-            {9223372036854775808ULL,"9223372036854775808", true,true},
             {-1ULL,"18446744073709551615",true,true},
             {0,0,0}
     };

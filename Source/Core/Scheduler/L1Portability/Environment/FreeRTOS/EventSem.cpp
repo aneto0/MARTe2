@@ -53,12 +53,7 @@ struct EventSemProperties {
     /**
      * The number of handle references pointing at this structure.
      */
-    uint32 references;
-
-    /**
-     * To protect the reference handling
-     */
-    int32 referencesMux;
+    int32 references;
 
     /**
      * Is the semaphore closed?
@@ -78,29 +73,23 @@ EventSem::EventSem() {
     handle = new EventSemProperties();
     handle->closed = true;
     handle->references = 1u;
-    handle->referencesMux = 0;
 }
 
 EventSem::EventSem(EventSem &source) {
     handle = source.GetProperties();
-    while (!Atomic::TestAndSet(&handle->referencesMux)) {
-    }
     //Capture the case that it got the handle reference while the source semaphore
     //was already being destructed...
     if (handle == static_cast<EventSemProperties *>(NULL)) {
         EventSem();
     }
     else {
-        handle->references++;
-        handle->referencesMux = 0;
+        Atomic::Increment(&handle->references);
     }
 }
 
 /*lint -e{1551} only C calls are performed. No exception can be raised*/
 EventSem::~EventSem() {
     if (handle != static_cast<EventSemProperties *>(NULL)) {
-        while (!Atomic::TestAndSet(&handle->referencesMux)) {
-        }
         if (handle->references == 1u) {
             if (!handle->closed) {
                 /*lint -e{534} possible closure failure is not handled in the destructor.*/
@@ -111,8 +100,7 @@ EventSem::~EventSem() {
             handle = static_cast<EventSemProperties *>(NULL);
         }
         else {
-            handle->references--;
-            handle->referencesMux = 0;
+            Atomic::Decrement(&handle->references);
         }
     }
 }
@@ -120,11 +108,8 @@ EventSem::~EventSem() {
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to handle*/
 bool EventSem::Create() {
-    while (!Atomic::TestAndSet(&handle->referencesMux)) {
-    }
     handle->closed = false;
     handle->semHandle = xSemaphoreCreateMutex();
-    ;
     return (handle->semHandle != NULL);
 }
 
@@ -163,22 +148,23 @@ ErrorManagement::ErrorType EventSem::Wait() {
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to handle*/
 ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
-    bool ok = !handle->closed;
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
     if (timeout == TTInfiniteWait) {
         err = Wait();
     }
-    if (ok) {
-        portBASE_TYPE ret = xSemaphoreTake(handle->semHandle, (timeout.GetTimeoutMSec() * configTICK_RATE_HZ) / 1000L);
-        if (ret == pdTRUE) {
-            xSemaphoreGive(handle->semHandle);
+    else {
+        if (!handle->closed) {
+            portBASE_TYPE ret = xSemaphoreTake(handle->semHandle, timeout.GetTimeoutMSec() /** configTICK_RATE_HZ) / 1000L*/);
+            if (ret == pdTRUE) {
+                xSemaphoreGive(handle->semHandle);
+            }
+            else {
+                err = ErrorManagement::Timeout;
+            }
         }
         else {
-            err = ErrorManagement::Timeout;
+            err = ErrorManagement::OSError;
         }
-    }
-    else {
-        err = ErrorManagement::OSError;
     }
     return err;
 }

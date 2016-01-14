@@ -40,7 +40,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 TEST(EventSemGTest,TestConstructor) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestConstructor());
@@ -100,7 +99,7 @@ TEST(EventSemGTest,TestWaitTimeout) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWait(500));
 }
-
+/*
 TEST(EventSemGTest,TestWaitTimeoutNoTimeout) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWaitTimeoutNoTimeout(32));
@@ -120,3 +119,4 @@ TEST(EventSemGTest,TestWaitTimeoutFailureFollowedBySuccess) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWaitTimeoutFailureFollowedBySuccess(32));
 }
+*/
