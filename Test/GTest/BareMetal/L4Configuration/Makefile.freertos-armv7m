@@ -27,7 +27,9 @@
 TARGET=freertos-armv7m
 
 
-OBJSX=  AnyObjectGTest.x \
+OBJSX=	TypeConversionGTest.x
+  
+#AnyObjectGTest.x \
 		AnyTypeCreatorGTest.x \
 		ConfigurationDatabaseGTest.x \
 		JsonParserGTest.x \

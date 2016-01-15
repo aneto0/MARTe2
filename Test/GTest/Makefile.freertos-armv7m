@@ -28,8 +28,8 @@ TARGET=freertos-armv7m
 
 
 OBJSX=
-SPB =  Scheduler.x 
-#  BareMetal.x
+SPB =  BareMetal.x 
+#  Scheduler.x
 PACKAGE=
 ROOT_DIR=../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
@@ -53,7 +53,7 @@ LIBRARIES_STATIC   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreBTest$(LIBEX
 LIBRARIES_STATIC   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT) 
 LIBRARIES_STATIC   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreSTest$(LIBEXT)
 LIBRARIES_STATIC   += ../../Build/$(TARGET)/GTest/BareMetal/MARTeBGTest$(LIBEXT)
-LIBRARIES_STATIC   += ../../Build/$(TARGET)/GTest/Scheduler/MARTeSGTest$(LIBEXT)
+#LIBRARIES_STATIC   += ../../Build/$(TARGET)/GTest/Scheduler/MARTeSGTest$(LIBEXT)
 
 
 

@@ -34,7 +34,9 @@ OBJSX=  AtomicGTest.x \
 		GlobalObjectsDatabaseGTest.x \
 		HeapManagerGTest.x \
 		HighResolutionTimerGTest.x \
-		MemoryGTest.x \
+		MemoryCheckGTest.x\
+		MemoryOperationsHelperGTest.x\
+		ProcessorTypeGTest.x \
 		SleepGTest.x \
 		StandardHeap_GenericGTest.x \
 		StaticListGTest.x \
