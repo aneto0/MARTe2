@@ -91,7 +91,7 @@ TEST(ObjectGTest,TestGetUniqueName) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestGetUniqueName("Hello", 128));
 }
-/*
+
 TEST(ObjectGTest,TestGetUniqueNameClipPointer) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestGetUniqueName("Hello", 2));
@@ -101,7 +101,7 @@ TEST(ObjectGTest,TestGetUniqueNameClipName) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestGetUniqueName("Hello0000000000000000000000000000000000", 20));
 }
-*/
+
 TEST(ObjectGTest,TestGetUniqueName2) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestGetUniqueName2());

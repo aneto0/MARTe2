@@ -672,7 +672,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
     bool ok = true;
 
     // 0x800000....
-    if (number == (static_cast<T>(static_cast<T>(1) << (sizeof(T) * 8u - 1u)))) {
+    if ((number == Shift::LogicalLeftSafeShift(static_cast<T>(1), static_cast<uint8>(sizeof(T) * 8u - 1u))) && (number < static_cast<T>(0))) {
         if ((sizeof(T) == 8u) && (maximumSize >= 20u)) {
             if (!PutS(ioBuffer, "-9223372036854775808")) {
                 REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");

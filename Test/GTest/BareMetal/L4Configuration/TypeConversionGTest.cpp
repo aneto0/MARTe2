@@ -721,7 +721,6 @@ TEST(TypeConversionGTest,TestInt8ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-#if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
 
 TEST(TypeConversionGTest,TestInt8ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -750,7 +749,6 @@ TEST(TypeConversionGTest,TestInt8ToUInt64) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-#endif
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -827,7 +825,6 @@ TEST(TypeConversionGTest,TestUInt8ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-#if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
 
 TEST(TypeConversionGTest,TestUInt8ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -852,7 +849,6 @@ TEST(TypeConversionGTest,TestUInt8ToUInt64) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-#endif
 //////////////////////////////////////////////////////////////
 
 
@@ -938,7 +934,6 @@ TEST(TypeConversionGTest,TestInt16ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-#if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
 
 TEST(TypeConversionGTest,TestInt16ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -965,7 +960,6 @@ TEST(TypeConversionGTest,TestInt16ToUInt64) {
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
-#endif
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -1042,7 +1036,6 @@ TEST(TypeConversionGTest,TestUInt16ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-#if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
 
 TEST(TypeConversionGTest,TestUInt16ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -1066,7 +1059,6 @@ TEST(TypeConversionGTest,TestUInt16ToUInt64) {
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1154,7 +1146,6 @@ TEST(TypeConversionGTest,TestInt32ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-#if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
 
 TEST(TypeConversionGTest,TestInt32ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -1182,7 +1173,6 @@ TEST(TypeConversionGTest,TestInt32ToUInt64) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-#endif
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -1262,7 +1252,6 @@ TEST(TypeConversionGTest,TestUInt32ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-#if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
 
 TEST(TypeConversionGTest,TestUInt32ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -1509,7 +1498,6 @@ TEST(TypeConversionGTest,TestUInt64ToUInt64) {
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
