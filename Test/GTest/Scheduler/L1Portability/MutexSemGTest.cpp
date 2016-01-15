@@ -69,7 +69,7 @@ TEST(MutexSemGTest,TestCloseRecursive) {
 
 TEST(MutexSemGTest,TestLock) {
     MutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestLock(50, TTInfiniteWait));
+    ASSERT_TRUE(mutextest.TestLock(16, TTInfiniteWait));
 }
 
 TEST(MutexSemGTest,TestLockWithFiniteTimeout) {

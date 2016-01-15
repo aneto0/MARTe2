@@ -26,6 +26,7 @@
 OBJSX=  EventSemGTest.x\
 		MutexSemGTest.x\
 		ProcessorGTest.x\
+		SleepGTest.x \
 		ThreadsGTest.x
 		
 

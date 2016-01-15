@@ -29,6 +29,7 @@ TARGET=freertos-armv7m
 OBJSX=  EventSemGTest.x\
 		MutexSemGTest.x\
 		ProcessorGTest.x\
+		SleepGTest.x \
 		ThreadsGTest.x
 		
 
