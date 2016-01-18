@@ -22,7 +22,6 @@
 #
 #############################################################
 
-
 SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x 
 
 PACKAGE=GTest
@@ -43,8 +42,6 @@ LIBRARIES_STATIC+= $(BUILD_DIR)/L4Configuration/L4ConfigurationBGTest$(LIBEXT)
 all: $(OBJS)  $(SUBPROJ)  \
         $(BUILD_DIR)/MARTeBGTest$(LIBEXT) 
 	echo  $(OBJS)
-
-include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

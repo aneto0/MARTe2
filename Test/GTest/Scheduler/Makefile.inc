@@ -22,7 +22,6 @@
 #
 #############################################################
 
-
 SPB = L1Portability.x
 
 PACKAGE=GTest
@@ -38,8 +37,6 @@ LIBRARIES_STATIC=$(BUILD_DIR)/L1Portability/L1PortabilitySGTest$(LIBEXT)
 all: $(OBJS)  $(SUBPROJ)  \
         $(BUILD_DIR)/MARTeSGTest$(LIBEXT) 
 	echo  $(OBJS)
-
-include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 
