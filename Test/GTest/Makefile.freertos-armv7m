@@ -1,0 +1,68 @@
+#############################################################
+#
+# Copyright 2015 F4E | European Joint Undertaking for ITER 
+#  and the Development of Fusion Energy ('Fusion for Energy')
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http://ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
+#
+#############################################################
+
+TARGET=freertos-armv7m
+
+
+OBJSX=
+SPB =  BareMetal.x 
+#  Scheduler.x
+PACKAGE=
+ROOT_DIR=../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+INCLUDES += -I../../Lib/EmbeddedTestEngine
+EXT_PACKAGE=/home/pc/STM32Cube_FW_F4_V1.5.0
+
+CFLAGS+= -DSTM32F407xx
+INCLUDES+= -I../../Lib/EmbeddedTestEngine/STM32F4-Discovery/Inc
+INCLUDES+= -I$(EXT_PACKAGE)/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+INCLUDES+= -I$(EXT_PACKAGE)/Drivers/STM32F4xx_HAL_Driver/Inc/
+INCLUDES+= -I$(EXT_PACKAGE)/Drivers/BSP/STM32F4-Discovery/
+INCLUDES+= -I$(EXT_PACKAGE)/Drivers/CMSIS/Include/
+INCLUDES+= -I$(EXT_PACKAGE)/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/
+INCLUDES+= -I$(EXT_PACKAGE)/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/
+
+LIBRARIES_STATIC   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT) 
+LIBRARIES_STATIC   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreBTest$(LIBEXT) 
+LIBRARIES_STATIC   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT) 
+LIBRARIES_STATIC   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreSTest$(LIBEXT)
+LIBRARIES_STATIC   += ../../Build/$(TARGET)/GTest/BareMetal/MARTeBGTest$(LIBEXT)
+#LIBRARIES_STATIC   += ../../Build/$(TARGET)/GTest/Scheduler/MARTeSGTest$(LIBEXT)
+
+
+
+all: $(OBJS) $(SUBPROJ)   \
+        $(BUILD_DIR)/MainGTest_$(TARGET)$(LIBEXT) 
+	echo  $(OBJS)
+
+include depends.$(TARGET)
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+
+

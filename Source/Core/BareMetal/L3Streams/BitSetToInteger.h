@@ -97,10 +97,16 @@ static inline void BSToBS(T * const & destination,
     destinationSignMask = Shift::LogicalLeftSafeShift(destinationSignMask, (destinationBitSize - 1u));
 
     // here we put the number while processing it
-    T sourceCopy;
+    T sourceCopy = static_cast<T>(0);
+    uint32 sourceByteSize = ((static_cast<uint32>(sourceBitSize) + static_cast<uint32>(sourceBitShift)) + 7u) / 8u;
+
 
     // copy
-    sourceCopy = *source;
+    if (!MemoryOperationsHelper::Copy(&sourceCopy, source, sourceByteSize)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
+    }
+
+
     // shift number so LSB at bit 0
     // removes lower bits
     sourceCopy = Shift::LogicalRightSafeShift(sourceCopy, sourceBitShift);
@@ -157,21 +163,33 @@ static inline void BSToBS(T * const & destination,
             sourceCopy = maxPositiveValue;
         }
     }
+
     // move the bits into output position
     sourceCopy = Shift::LogicalLeftSafeShift(sourceCopy, destinationBitShift);
     // shift mask as well
     destinationMask = Shift::LogicalLeftSafeShift(destinationMask, destinationBitShift);
     // complementary mask- to erase all bits in destination range
     destinationMask = ~destinationMask;
+
     // use destinationMask to hold the current value at destination after masking
-    destinationMask &= *destination;
-    // merge into sourceCopy
-    sourceCopy |= destinationMask;
+    T destinationCopy=static_cast<T>(0);
     // copy only the correct size
-    uint32 copySize = ((static_cast<uint32>(destinationBitSize) + static_cast<uint32>(destinationBitShift)) + 7u) / 8u;
-    if (!MemoryOperationsHelper::Copy(destination, &sourceCopy, copySize)) {
+    uint32 destinationByteSize = ((static_cast<uint32>(destinationBitSize) + static_cast<uint32>(destinationBitShift)) + 7u) / 8u;
+
+
+    // copy
+    if (!MemoryOperationsHelper::Copy(&destinationCopy, destination, destinationByteSize)) {
         REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
     }
+    destinationMask &= destinationCopy;
+
+    // merge into sourceCopy
+    sourceCopy |= destinationMask;
+
+    if (!MemoryOperationsHelper::Copy(destination, &sourceCopy, destinationByteSize)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
+    }
+
 }
 
 /**
@@ -274,6 +292,7 @@ static inline bool BitSetToBitSet(T *& destination,
         uint64 *source64 = reinterpret_cast<uint64 *>(source);
 
         BSToBS(destination64, destinationBitShift, destinationBitSize, destinationIsSigned, source64, sourceBitShift, sourceBitSize, sourceIsSigned);
+
     }
 
     else if ((sourceBitEnd <= 128u) && (destinationBitEnd <= 128u) && (granularity <= 128u)) {

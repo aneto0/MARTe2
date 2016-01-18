@@ -287,7 +287,7 @@ bool DirectoryTest::TestCreate(const char8 *pathin,
     Directory dir(path);
 #if ENVIRONMENT == Windows
     if ((!dir.Exists()) && (pathin != NULL && (StringHelper::Compare(pathin, "") != 0))) {
-#else if ENVIRONMENT == Linux
+#elif ENVIRONMENT == Linux
         if (((!dir.Exists() || isFile)) && (pathin != NULL && (StringHelper::Compare(pathin, "") != 0))) {
 #endif
         return dir.Create(isFile);

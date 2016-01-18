@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AuxHeap.h"
+#include "StringHelper.h"
+#include "GlobalObjectsDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -57,7 +59,6 @@ AuxHeap::~AuxHeap() {
     firstAddress = 0U;
 }
 
-
 /**
  * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
  * @return a pointer to the allocated memory or NULL if the allocation fails.
@@ -70,7 +71,7 @@ void *AuxHeap::Malloc(const uint32 size) {
     void* pointer = NULL_PTR(void*);
 
     if (size != 0u) {
-        pointer = malloc(static_cast<osulong>(size));
+        pointer = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(static_cast<osulong>(size));
     }
 
     if (pointer != NULL) {
@@ -102,7 +103,7 @@ void *AuxHeap::Malloc(const uint32 size) {
 /*lint -e{586} use of free function (deprecated) */
 void AuxHeap::Free(void *&data) {
     if (data != NULL) {
-        free(data);
+        GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(data);
     }
 //    delete[] (reinterpret_cast<char8 *>(data));
     data = NULL_PTR(void *);
@@ -111,7 +112,7 @@ void AuxHeap::Free(void *&data) {
 
 /*lint -e{586} use of realloc function (deprecated) */
 void *AuxHeap::Realloc(void *&data,
-                            const uint32 newSize) {
+                       const uint32 newSize) {
 
     if (data == NULL) {
         data = AuxHeap::Malloc(newSize);
@@ -121,7 +122,7 @@ void *AuxHeap::Realloc(void *&data,
             AuxHeap::Free(data);
         }
         else {
-            data = realloc(data, static_cast<osulong>(newSize));
+            data = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Realloc(data, static_cast<osulong>(newSize));
             if (data != NULL) {
                 /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
                  * in order to be able to update the range of addresses provided by this heap
@@ -146,37 +147,29 @@ void *AuxHeap::Realloc(void *&data,
 
 /*lint -e{925} cast pointer to pointer required */
 void *AuxHeap::Duplicate(const void * const data,
-                              uint32 size) {
+                         uint32 size) {
 
     void *duplicate = NULL_PTR(void *);
 
     // check if 0 zerminated copy to be done
     if (size == 0U) {
         const char8* inputData = static_cast<const char8 *>(data);
-        size = strlen(inputData);
-        if (data != NULL) {
-            duplicate = strdup(inputData);
-        }
-        if (duplicate == NULL) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: strdup()");
-        }
+        size = StringHelper::Length(inputData) + 1u;
     }
-    else { // strdup style
-        duplicate = AuxHeap::Malloc(size);
-        if (duplicate != NULL) {
-            const char8 *source = static_cast<const char8 *>(data);
-            char8 *destination = static_cast<char8 *>(duplicate);
-            uint32 i;
-            for (i = 0u; i < size; i++) {
-                *destination = *source;
-                destination++;
-                source++;
-            } //copy loop
-        } //check Malloc success
-        else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()");
-        }
-    } // copy bound by size
+    duplicate = AuxHeap::Malloc(size);
+    if (duplicate != NULL) {
+        const char8 *source = static_cast<const char8 *>(data);
+        char8 *destination = static_cast<char8 *>(duplicate);
+        uint32 i;
+        for (i = 0u; i < size; i++) {
+            *destination = *source;
+            destination++;
+            source++;
+        } //copy loop
+    } //check Malloc success
+    else {
+        REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()");
+    }
 
     if (duplicate != NULL) {
         /*lint -e{9091} -e{923} the casting from pointer type to integer type is required

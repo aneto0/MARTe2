@@ -66,6 +66,25 @@ public:
                          uint32 nOfThreads);
 
     /**
+     * @brief Tests the Threads::EndThread function.
+     * @details nOfThreads are lunched by the test function.
+     * Each thread increments a variable and polls on a shared variable
+     * which is managed by the test function. When the test function changes the shared variable
+     * the thread exits incrementing a exit condition and allowing for a new thread to be started.
+     * Notice that never two threads are never executed in parallel. The next thread is launched after the previous
+     * thread ends.
+     * The test function has a timeout, if the thread is not correctly lunched, after expiration of the time out
+     * the test function will return false;
+     * @param[in] name is the desired thread name.
+     * @param[in] stackSize is the desired stack size.
+     * @param[in] nOfThreads is the number of threads to launch.
+     * @return true if all the threads can be successfully launched.
+     */
+    bool TestEndThread(const char8 *name,
+                       uint32 stackSize,
+                       uint32 nOfThreads);
+
+    /**
      * @brief Tests the Threads::BeginThread function.
      * @details Launches a thread with a NULL function.
      * @param[in] name is the desired thread name.
@@ -198,9 +217,9 @@ public:
      * @param[in] position the index of the thread with the specified name.
      * @return true if can find a thread with "name" and another with "known" as a name, false otherwise.
      */
-    bool TestFindByName(uint32 nOfThreads,
+    bool TestFindByName(int32 nOfThreads,
                         const char8 *name,
-                        uint32 position);
+                        int32 position);
 
     /**
      * A shared variable used for synchronization.

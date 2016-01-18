@@ -42,7 +42,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
+//extern uint32 nOfEntries=0;
 ThreadsTest::ThreadsTest() {
     exitCondition = 0;
     tidTest = 0;
@@ -57,6 +57,7 @@ static void DummyFunction(ThreadsTest &tt) {
         Sleep::Sec(1e-3);
     }
     Atomic::Increment(&tt.exitCondition);
+    Threads::EndThread();
 }
 
 bool ThreadsTest::TestBeginThread(const char8 *name,
@@ -71,8 +72,6 @@ bool ThreadsTest::TestBeginThread(const char8 *name,
         //Note: in windows if the stack size is zero, the thread is initialized with the default stack size.
         ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, stackSize, name);
         int32 j = 0;
-
-
 
         //Waits for the thread to begin
         while (exitCondition < 1) {
@@ -100,15 +99,23 @@ bool ThreadsTest::TestBeginThread(const char8 *name,
     return true;
 }
 
+bool ThreadsTest::TestEndThread(const char8 *name,
+                                uint32 stackSize,
+                                uint32 nOfThreads) {
+    return TestBeginThread(name, stackSize, nOfThreads);
+
+}
+
 bool ThreadsTest::TestBeginThreadNullFunction(const char8 *name) {
-    //try to launch a thread with null function. The thread is created
-    //but the function is not launched because is null (see ThreadInformation::UserThreadFunction)
+//try to launch a thread with null function. The thread is created
+//but the function is not launched because is null (see ThreadInformation::UserThreadFunction)
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) NULL, this, THREADS_DEFAULT_STACKSIZE, name);
 
     return tid != (ThreadIdentifier) 0;
 }
 
 bool ThreadsTest::TestIsAlive(uint32 nOfThreads) {
+
     for (uint32 i = 0; i < nOfThreads; i++) {
         exitCondition = 0;
         //Calls the thread callback.
@@ -184,7 +191,7 @@ bool ThreadsTest::TestIsAliveAfterkill(uint32 nOfThreads) {
 
 bool ThreadsTest::TestKillInvalidID() {
     //try to kill an invalid thread
-    return !(Threads::Kill((ThreadIdentifier) 0));
+    return !(Threads::Kill(InvalidThreadIdentifier));
 }
 
 bool ThreadsTest::TestKill(uint32 nOfThreads) {
@@ -204,7 +211,7 @@ bool ThreadsTest::TestKill(uint32 nOfThreads) {
         if (!Threads::Kill(tid)) {
             return false;
         }
-        Sleep::Sec(1e-3);
+        //Sleep::Sec(1e-3);
         //try to kill again the same thread
         if (Threads::Kill(tid)) {
             return false;
@@ -245,6 +252,7 @@ bool PriorityTestFunction(ThreadsTest &t) {
                 }
                 Sleep::Sec(10e-3);
             }
+
             //set priority level and class
             Threads::SetPriority(tid, allPrioClassTypes[i], prio);
 
@@ -310,13 +318,15 @@ bool ThreadsTest::TestGetState() {
 }
 
 static void TestIdFunction(ThreadsTest &tt) {
-    while(tt.tidTest == 0){
+    while (tt.tidTest == 0) {
         Sleep::Sec(0.001);
     }
     if (Threads::Id() != tt.tidTest) {
         tt.retValue = false;
     }
     tt.exitCondition++;
+    Threads::EndThread();
+
 }
 
 bool ThreadsTest::TestId(uint32 nOfThreads) {
@@ -429,7 +439,7 @@ bool ThreadsTest::TestNameNull() {
     //try to put a null name
     exitCondition = 0;
     uint32 j = 0;
-    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, THREADS_DEFAULT_STACKSIZE, NULL);
+    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, THREADS_DEFAULT_STACKSIZE, NULL );
     while (exitCondition < 1) {
         if (j++ > 100) {
             Threads::Kill(tidTest);
@@ -459,8 +469,9 @@ static void WaitFunction(ThreadsTest &tt) {
         Sleep::Sec(1e-3);
     }
     Atomic::Decrement(&(tt.exitCondition));
-}
+    Threads::EndThread();
 
+}
 bool ThreadsTest::TestNumberOfThreads(uint32 nOfThreads) {
     if (Threads::NumberOfThreads() != 0) {
         return false;
@@ -718,10 +729,10 @@ bool ThreadsTest::TestGetThreadInfoCopyInvalidID() {
     return !Threads::GetThreadInfoCopy(ti, (ThreadIdentifier) 0);
 }
 
-bool ThreadsTest::TestFindByName(uint32 nOfThreads,
+bool ThreadsTest::TestFindByName(int32 nOfThreads,
                                  const char8 *name,
-                                 uint32 position) {
-    uint32 i = 0;
+                                 int32 position) {
+    int32 i = 0;
     if (position > nOfThreads) {
         position = nOfThreads;
     }
@@ -740,8 +751,8 @@ bool ThreadsTest::TestFindByName(uint32 nOfThreads,
             }
         }
         //waits that the thread begins
-        uint32 j = 0;
-        while ((uint32) exitCondition < (i + 1)) {
+        int32 j = 0;
+        while (exitCondition < (i + 1)) {
             if (j++ > 10 * nOfThreads) {
                 exitCondition = -1;
                 Sleep::Sec(1.0);
@@ -758,15 +769,15 @@ bool ThreadsTest::TestFindByName(uint32 nOfThreads,
     }
     exitCondition = -1;
     //let exit the threads
-    uint32 j = 0;
-    while ((uint32) exitCondition > (-i - 1)) {
+    int32 j = 0;
+    while (exitCondition > (-i - 1)) {
         if (j++ > 10 * nOfThreads) {
             return false;
         }
         Sleep::Sec(10e-3);
     }
 
-    return retValue && Threads::FindByName(NULL) == (ThreadIdentifier) 0;
+    return retValue && Threads::FindByName(NULL) == InvalidThreadIdentifier;
 
 }
 

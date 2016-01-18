@@ -24,8 +24,7 @@
 #
 #############################################################
 
-OBJSX=	AnyTypeTest.x \
-		BitSetToIntegerTest.x \
+OBJSX=	BitSetToIntegerTest.x \
 		BufferedStreamIOBufferTest.x \
 		BufferedStreamITest.x \
 		CharBufferTest.x \

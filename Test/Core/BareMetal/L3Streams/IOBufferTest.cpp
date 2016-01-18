@@ -1191,7 +1191,7 @@ bool IOBufferTest::TestPrintFormatted(uint32 allocationGranularity,
         Clear(ioBuffer);
 
         ioBuffer.PrintFormatted(testTable[i].format, testTable[i].inputs);
-        if (StringHelper::CompareN(testTable[i].expectedResult, ioBuffer.Buffer(), allocationGranularity) != 0) {
+        if (StringHelper::CompareN(testTable[i].expectedResult, ioBuffer.Buffer(), ioBuffer.MaxUsableAmount()) != 0) {
             printf("\n|%s| |%s|\n",testTable[i].expectedResult, ioBuffer.Buffer());
             return false;
         }

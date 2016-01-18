@@ -316,6 +316,10 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
     return (ThreadIdentifier) threadId;
 }
 
+
+void EndThread() {
+}
+
 const char8 *Name(const ThreadIdentifier &threadId) {
     ThreadsDatabase::Lock();
     ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);

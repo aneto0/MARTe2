@@ -38,7 +38,6 @@
 #include "GeneralDefinitions.h"
 #include "HighResolutionTimer.h"
 #include "TimeoutType.h"
-#include "Sleep.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -141,8 +140,6 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msec
                 break;
             }
         }
-        // yield CPU
-        Sleep::MSec(1);
     }
     return err;
 }

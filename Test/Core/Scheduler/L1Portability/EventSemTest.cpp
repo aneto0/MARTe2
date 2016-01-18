@@ -120,6 +120,7 @@ void ThreadLocked(EventSemTest &tt) {
     tt.sharedVariable1++;
     tt.eventSem.Wait(time);
     tt.sharedVariable1--;
+    Threads::EndThread();
 }
 
 bool EventSemTest::TestCopyConstructor2Sem() {
@@ -147,8 +148,9 @@ bool EventSemTest::TestCopyConstructor2Sem() {
 bool EventSemTest::TestWait(TimeoutType timeoutTime) {
 
     EventSem newSem(eventSem);
+    eventSem.Reset();
     ErrorManagement::ErrorType err = eventSem.Wait(timeoutTime);
-    if (err == ErrorManagement::Timeout) {
+    if (err == ErrorManagement::NoError) {
         err = newSem.ResetWait(timeoutTime);
     }
     return (err == ErrorManagement::Timeout);
@@ -185,6 +187,8 @@ void PosterThreadCallback(EventSemTest &eventSemTest) {
             break;
         }
     }
+
+    Threads::EndThread();
 
 }
 
@@ -249,6 +253,7 @@ void MultiThreadedTestWaitCallback(EventSemTest &eventSemTest) {
     eventSemTest.mutexSem.Lock();
     eventSemTest.sharedVariable++;
     eventSemTest.mutexSem.UnLock();
+    Threads::EndThread();
 
 }
 

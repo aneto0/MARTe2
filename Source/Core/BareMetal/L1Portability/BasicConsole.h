@@ -130,7 +130,7 @@ public:
      * @return true if the console is opened correctly or false if there is any operating
      * system related problem while performing the operation.
      */
-    bool Close();
+    virtual bool Close();
 
     /**
      * @brief Update the console size.
