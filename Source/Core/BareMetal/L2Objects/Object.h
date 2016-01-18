@@ -34,7 +34,6 @@
 #include "HeapI.h"
 #include "HeapManager.h"
 #include "GeneralDefinitions.h"
-#include "Introspection.h"
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
 #include "StructuredDataI.h"
@@ -213,11 +212,6 @@ public:
      */
     virtual bool Initialise(const StructuredDataI &data);
 
-    /**
-     * @brief Returns a copy to the object introspection properties.
-     * @param[out] destination Copies the object introspection properties to the \a destination.
-     */
-    void GetIntrospectionCopy(Introspection &destination) const;
 
     /**
      * @brief Returns the number of references.
@@ -282,11 +276,6 @@ private:
      * @param[in] size the size of the object.
      */
     static void *operator new(osulong size) throw ();
-
-    /**
-     * Object introspection properties.
-     */
-    Introspection introspection;
 
     /**
      * The number of references to this object.

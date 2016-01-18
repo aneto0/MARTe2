@@ -36,6 +36,7 @@
 #include "LoadableLibrary.h"
 #include "ClassProperties.h"
 #include "FractionalInteger.h"
+#include "Introspection.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -70,7 +71,15 @@ public:
      * represented by this ClassRegistryItem instance.
      */
     ClassRegistryItem(const ClassProperties &clProperties,
-                      const ObjectBuildFn * const objBuildFn);
+            const ObjectBuildFn * const objBuildFn);
+
+    /**
+     * @brief Assigns the input variables to the class members.
+     * @param[in] clProperties the class properties associated with the class that is being registered.
+     * @param[in] introspectionIn is the Introspection structure containing the class metadata.
+     * represented by this ClassRegistryItem instance.
+     */
+    ClassRegistryItem(const classProperties &clProperties, const Introspection &introspectionIn);
 
     /**
      * Destructor.
@@ -155,6 +164,8 @@ private:
      * The object instantiation function.
      */
     const ObjectBuildFn *objectBuildFn;
+
+    Introspection *introspection;
 
     /**
      * @brief Default constructor

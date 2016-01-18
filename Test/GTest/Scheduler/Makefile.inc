@@ -22,6 +22,7 @@
 #
 #############################################################
 
+OBJSX=
 
 SPB = L1Portability.x
 
@@ -39,7 +40,6 @@ all: $(OBJS)  $(SUBPROJ)  \
         $(BUILD_DIR)/MARTeSGTest$(LIBEXT) 
 	echo  $(OBJS)
 
-include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 
