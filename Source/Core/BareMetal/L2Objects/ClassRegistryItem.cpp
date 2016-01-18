@@ -51,7 +51,9 @@ ClassRegistryItem::ClassRegistryItem() :
     numberOfInstances = 0u;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
+    introspection=NULL_PTR(Introspection *);
 }
+
 //LCOV_EXCL_STOP
 
 ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
@@ -60,8 +62,21 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
     classProperties = clProperties;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = objBuildFn;
+    introspection=NULL_PTR(Introspection *);
     ClassRegistryDatabase::Instance()->Add(this);
 }
+
+
+
+ClassRegistryItem(const classProperties &clProperties, const Introspection &introspectionIn){
+    numberOfInstances = 0u;
+    classProperties = clProperties;
+    loadableLibrary = NULL_PTR(LoadableLibrary *);
+    objectBuildFn = NULL_PTR(ObjectBuildFn *);
+    introspection=&introspectionIn;
+    ClassRegistryDatabase::Instance()->Add(this);
+}
+
 
 /*lint -e{1551} no exception should be thrown as loadableLibrary is properly initialised and
  * before deleting it is verified if the pointer is NULL*/

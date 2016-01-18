@@ -108,10 +108,6 @@ void *Object::operator new(const osulong size) throw () {
 }
 //LCOV_EXCL_STOP
 
-void Object::GetIntrospectionCopy(Introspection &destination) const {
-    destination = introspection;
-}
-
 const char8 * const Object::GetName() const {
     return name;
 }
