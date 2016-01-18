@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "IntrospectionEntry.h"
+#include "ZeroTerminatedArray.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -52,7 +53,7 @@ namespace MARTe {
      * of an application or loading of a loadable library.                                                             \
      * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
      */                                                                                                                \
-    static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver);                 \
+    static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver);          \
     /*                                                                                                                 \
      * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
      * of an application or loading of a loadable library. It will automatically add the class type to the             \
@@ -71,7 +72,9 @@ class  Introspection {
 
 public:
 
-    Introspection(IntrospectionEntry **);
+    Introspection(const IntrospectionEntry **introspectionListIn);
+
+    const IntrospectionEntry operator[](uint32 index);
 
 private:
 
@@ -79,7 +82,7 @@ private:
      * An array of pointer to the class member's descriptors.
      * The array must be zero-terminated.
      */
-    IntrospectionEntry ** fields;
+    ZeroTerminatedArray<const IntrospectionEntry *> fields;
 
 };
 
@@ -90,21 +93,22 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#define DECLARE_CLASS_MEMBER(className, memberName, memberByteOffset, member, modifierString ) \
-    static const ClassStructureItem className ## _ ## memberName ## _classStructureItem =      \
+#define introspectionMemberIndex(className, memberName) \
+    (intptr)&(((className *)0)->memberName)
+
+
+#define introspectionMemberSize(className, memberName) \
+    sizeof(((className *)0)->memberName)
+
+
+#define DECLARE_CLASS_MEMBER(className, memberName, isConstant, type, modifierString ) \
+    static const IntrospectionEntry className ## _ ## memberName ## _introspectionEntry =      \
     {                                                                                          \
         #memberName,                                                                           \
-        className.member,                                                                      \
-        memberByteOffset,                                                                      \
-        modifierString                                                                         \
-    };
-
-#define introspectionMemberIndex(className, fieldName) \
-    &(((className *)0)->fieldName)
-
-
-#define introspectionMemberSize(className, fieldName) \
-    sizeof(((className *)0)->fieldName)
+        TypeDescriptor(isConstant, type, introspectionMemberSize(className, memberName)*8u),   \
+        modifierString,                                                                        \
+        introspectionMemberIndex(className, memberName)                                        \
+    }
 
 
 #endif /* INTROSPECTION_H_ */

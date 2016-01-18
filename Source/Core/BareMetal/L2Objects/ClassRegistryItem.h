@@ -79,7 +79,7 @@ public:
      * @param[in] introspectionIn is the Introspection structure containing the class metadata.
      * represented by this ClassRegistryItem instance.
      */
-    ClassRegistryItem(const classProperties &clProperties, const Introspection &introspectionIn);
+    ClassRegistryItem(const ClassProperties &clProperties, Introspection &introspectionIn);
 
     /**
      * Destructor.

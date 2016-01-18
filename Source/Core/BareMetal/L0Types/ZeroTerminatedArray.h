@@ -50,7 +50,7 @@ public:
      * @pre
      *   arrayIn is zero terminated.
      */
-    ZeroTerminatedArray(const T *arrayIn);
+    ZeroTerminatedArray(T *arrayIn);
 
     /**
      * @brief Returns the element in the specified position.
@@ -69,7 +69,7 @@ public:
      * @brief Returns the pointer to the beginning of the array.
      * @return the pointer to the beginning of the array.
      */
-    const T * GetList();
+    T * GetList();
 private:
 
     /**
@@ -90,7 +90,7 @@ private:
 /*---------------------------------------------------------------------------*/
 
 template<typename T>
-ZeroTerminatedArray<T>::ZeroTerminatedArray(const T *arrayIn) :
+ZeroTerminatedArray<T>::ZeroTerminatedArray(T *arrayIn) :
         array(arrayIn) {
 }
 
@@ -116,7 +116,7 @@ uint32 ZeroTerminatedArray<T>::GetSize() const {
 }
 
 template<typename T>
-const T * ZeroTerminatedArray<T>::GetList() {
+T * ZeroTerminatedArray<T>::GetList() {
     return array;
 }
 
