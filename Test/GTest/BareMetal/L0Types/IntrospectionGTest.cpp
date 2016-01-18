@@ -1,8 +1,8 @@
 /**
- * @file Introspection.cpp
- * @brief Source file for class Introspection
- * @date 18/gen/2016
- * @author pc
+ * @file IntrospectionGTest.cpp
+ * @brief Source file for class IntrospectionGTest
+ * @date 18/01/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class Introspection (public, protected, and private). Be aware that some 
+ * the class IntrospectionGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,24 +25,26 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <limits.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "Introspection.h"
+#include "gtest/gtest.h"
+#include "IntrospectionTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
 
-Introspection::Introspection(IntrospectionEntry **) {
-    fields = IntrospectionEntry;
-}
-
+TEST(IntrospectionGTest,TestConstructor) {
+    IntrospectionTest IntrospectionTest;
+    ASSERT_TRUE(IntrospectionTest.TestConstructor());
 }
