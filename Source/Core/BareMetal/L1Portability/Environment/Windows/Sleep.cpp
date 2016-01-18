@@ -1,8 +1,8 @@
 /**
- * @file LoadableLibrary.cpp
- * @brief Source file for class LoadableLibrary
- * @date 26/08/2015
- * @author Giuseppe Ferrò
+ * @file Sleep.cpp
+ * @brief Source file for module Sleep
+ * @date 20/06/2015
+ * @author Giuseppe Ferr�
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,48 +17,81 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class LoadableLibrary (public, protected, and private). Be aware that some
+ * the module Sleep (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
+
+
+#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <time.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "LoadableLibrary.h"
+#include "Sleep.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace Sleep {
 
-HANDLE LoadableLibrary::GetModule() {
-    return NULL;
+static const uint32 winSleepFreq = 1000;
+
+void AtLeast(float64 sec) {
+    int32 ticks = (int32) (winSleepFreq * sec + 0.9999);
+    if (ticks < 0) {
+        return;
+    }
+
+    ::Sleep(ticks);
 }
 
-void LoadableLibrary::SetModule(HANDLE const m) {
-
+void NoMore(float64 sec) {
+    int ticks = (int) (winSleepFreq * sec);
+    if (ticks < 0){
+        return;
+    }
+    ::Sleep(ticks);
 }
 
-void LoadableLibrary::Close() {
+void Sec(float64 sec) {
+    if (sec < 0){
+        return;
+    }
 
+    ::Sleep((unsigned long) (sec * 1000.0 + 0.5));
 }
 
-bool LoadableLibrary::Open(char8 const * const dllName) {
-    return false;
-
+void MSec(int32 msec) {
+    if (msec < 0){
+        return;
+    }
+    ::Sleep(msec);
 }
 
-void *LoadableLibrary::Function(char8 const * const name) {
-    return NULL;
+void SemiBusy(float64 totalSleepSec,
+              float64 nonBusySleepSec) {
+    NoMore(totalSleepSec);
+}
+
+int32 GetDateSeconds() {
+    return (int32) time((time_t *) NULL);
+}
+
 }
 
 }

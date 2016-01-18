@@ -39,7 +39,7 @@
 #include "FractionalInteger.h"
 #include "BitRange.h"
 #include "Matrix.h"
-#include "TypeInfo.h"
+#include <typeinfo>
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
