@@ -48,3 +48,18 @@ TEST(IntrospectionGTest,TestConstructor) {
     IntrospectionTest IntrospectionTest;
     ASSERT_TRUE(IntrospectionTest.TestConstructor());
 }
+
+TEST(IntrospectionGTest,TestPositionOperator) {
+    IntrospectionTest IntrospectionTest;
+    ASSERT_TRUE(IntrospectionTest.TestPositionOperator());
+}
+
+TEST(IntrospectionGTest,TestMacroToAddBasicInClassRegistryDatabase) {
+    IntrospectionTest IntrospectionTest;
+    ASSERT_TRUE(IntrospectionTest.TestMacroToAddBasicInClassRegistryDatabase());
+}
+
+TEST(IntrospectionGTest,TestMacroToAddStructuredInClassRegistryDatabase) {
+    IntrospectionTest IntrospectionTest;
+    ASSERT_TRUE(IntrospectionTest.TestMacroToAddStructuredInClassRegistryDatabase());
+}

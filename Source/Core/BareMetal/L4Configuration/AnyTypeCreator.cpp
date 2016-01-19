@@ -45,12 +45,26 @@ namespace MARTe {
 struct TypeCastInfo {
     TypeDescriptor typeDes;
     const char8 *castName;
+    const char8 *typeDesName;
 };
 
-static const TypeCastInfo castTypes[] = { { CharString, "string" }, { SignedInteger8Bit, "int8" }, { SignedInteger16Bit, "int16" }, { SignedInteger32Bit,
-        "int32" }, { SignedInteger64Bit, "int64" }, { UnsignedInteger8Bit, "uint8" }, { UnsignedInteger16Bit, "uint16" }, { UnsignedInteger32Bit, "uint32" }, {
-        UnsignedInteger64Bit, "uint64" }, { Float32Bit, "float32" }, { Float64Bit, "float64" }, { CharString, static_cast<const char8*>(NULL)}};
+static const TypeCastInfo castTypes[] = {
+        { CharString, "string",  "CharString"},
+        { SignedInteger8Bit, "int8" ,"SignedInteger8Bit"},
+        { SignedInteger16Bit, "int16", "SignedInteger16Bit" },
+        { SignedInteger32Bit,"int32", "SignedInteger32Bit" },
+        { SignedInteger64Bit, "int64", "SignedInteger64Bit" },
+        { UnsignedInteger8Bit, "uint8", "UnsignedInteger8Bit" },
+        { UnsignedInteger16Bit, "uint16", "UnsignedInteger16Bit" },
+        { UnsignedInteger32Bit, "uint32", "UnsignedInteger32Bit" },
+        { UnsignedInteger64Bit, "uint64", "UnsignedInteger64Bit" },
+        { Float32Bit, "float32", "Float32Bit" },
+        { Float64Bit, "float64", "Float64Bit" },
+        { Character8Bit, "char" ,"Character8Bit"},
+        { CharString, static_cast<const char8*>(NULL), static_cast<const char8*>(NULL)}
+};
 }
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -263,6 +277,25 @@ bool AnyTypeCreator::Add(const char8 * const type,
     }
 
     return ret;
+}
+
+TypeDescriptor AnyTypeCreator::GetTypeCastDescriptor(const char8 * const type,
+                                                     char8* const typeDesName) {
+    uint32 index = 0u;
+    while (castTypes[index].castName != NULL) {
+        if (StringHelper::Compare(type, castTypes[index].castName) == 0) {
+            break;
+        }
+        else {
+            index++;
+        }
+    }
+    if (typeDesName != NULL) {
+        if(!StringHelper::Copy(typeDesName,castTypes[index].typeDesName)) {
+            REPORT_ERROR(ErrorManagement::FatalError, "GetTypeCastDescriptor: Failed return of the TypeDescriptor name!");
+        }
+    }
+    return (castTypes[index].castName == NULL)?(VoidType):(castTypes[index].typeDes);
 }
 
 uint32 AnyTypeCreator::GetSize() const {

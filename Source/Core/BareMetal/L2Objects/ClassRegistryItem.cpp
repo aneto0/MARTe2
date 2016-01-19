@@ -92,6 +92,12 @@ const ClassProperties *ClassRegistryItem::GetClassProperties() const {
 return &classProperties;
 }
 
+Introspection * ClassRegistryItem::GetIntrospection() const{
+    return introspection;
+}
+
+
+
 void ClassRegistryItem::IncrementNumberOfInstances() {
 if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
     numberOfInstances++;

@@ -62,7 +62,7 @@ bool AnyTypeTest::TestAnyType_Void() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == 0);
+    retVal &= (td.type == SignedInteger);
     retVal &= (td.numberOfBits == 0);
 
     return retVal;
@@ -77,7 +77,7 @@ bool AnyTypeTest::TestAnyType_AnyTypeVoid() {
     td = anytype1.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == 0);
+    retVal &= (td.type == SignedInteger);
     retVal &= (td.numberOfBits == 0);
 
     return retVal;
@@ -124,7 +124,7 @@ bool AnyTypeTest::TestAnyType_Int8() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == 0);
+    retVal &= (td.type == SignedInteger);
     retVal &= (td.numberOfBits == 8);
 
     return retVal;
@@ -139,7 +139,7 @@ bool AnyTypeTest::TestAnyType_UInt8() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == 1);
+    retVal &= (td.type == UnsignedInteger);
     retVal &= (td.numberOfBits == 8);
 
     return retVal;
@@ -154,7 +154,7 @@ bool AnyTypeTest::TestAnyType_ConstInt8() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == 0);
+    retVal &= (td.type == SignedInteger);
     retVal &= (td.numberOfBits == 8);
 
     return retVal;
@@ -169,7 +169,7 @@ bool AnyTypeTest::TestAnyType_ConstUInt8() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == 1);
+    retVal &= (td.type == UnsignedInteger);
     retVal &= (td.numberOfBits == 8);
 
     return retVal;
@@ -184,7 +184,7 @@ bool AnyTypeTest::TestAnyType_Int16() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == 0);
+    retVal &= (td.type == SignedInteger);
     retVal &= (td.numberOfBits == 16);
 
     return retVal;
@@ -199,7 +199,7 @@ bool AnyTypeTest::TestAnyType_UInt16() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == 1);
+    retVal &= (td.type == UnsignedInteger);
     retVal &= (td.numberOfBits == 16);
 
     return retVal;
@@ -214,7 +214,7 @@ bool AnyTypeTest::TestAnyType_ConstInt16() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == 0);
+    retVal &= (td.type == SignedInteger);
     retVal &= (td.numberOfBits == 16);
 
     return retVal;
@@ -229,7 +229,7 @@ bool AnyTypeTest::TestAnyType_ConstUInt16() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == 1);
+    retVal &= (td.type == UnsignedInteger);
     retVal &= (td.numberOfBits == 16);
 
     return retVal;
@@ -244,7 +244,7 @@ bool AnyTypeTest::TestAnyType_Int32() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == 0);
+    retVal &= (td.type == SignedInteger);
     retVal &= (td.numberOfBits == 32);
 
     return retVal;
@@ -259,7 +259,7 @@ bool AnyTypeTest::TestAnyType_UInt32() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == 1);
+    retVal &= (td.type == UnsignedInteger);
     retVal &= (td.numberOfBits == 32);
 
     return retVal;
@@ -274,7 +274,7 @@ bool AnyTypeTest::TestAnyType_ConstInt32() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == 0);
+    retVal &= (td.type == SignedInteger);
     retVal &= (td.numberOfBits == 32);
 
     return retVal;
@@ -289,7 +289,7 @@ bool AnyTypeTest::TestAnyType_ConstUInt32() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == 1);
+    retVal &= (td.type == UnsignedInteger);
     retVal &= (td.numberOfBits == 32);
 
     return retVal;
@@ -304,7 +304,7 @@ bool AnyTypeTest::TestAnyType_Int64() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == 0);
+    retVal &= (td.type == SignedInteger);
     retVal &= (td.numberOfBits == 64);
 
     return retVal;
@@ -319,7 +319,7 @@ bool AnyTypeTest::TestAnyType_UInt64() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == 1);
+    retVal &= (td.type == UnsignedInteger);
     retVal &= (td.numberOfBits == 64);
 
     return retVal;
@@ -334,7 +334,7 @@ bool AnyTypeTest::TestAnyType_ConstInt64() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == 0);
+    retVal &= (td.type == SignedInteger);
     retVal &= (td.numberOfBits == 64);
 
     return retVal;
@@ -349,7 +349,7 @@ bool AnyTypeTest::TestAnyType_ConstUInt64() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == 1);
+    retVal &= (td.type == UnsignedInteger);
     retVal &= (td.numberOfBits == 64);
 
     return retVal;
@@ -364,7 +364,7 @@ bool AnyTypeTest::TestAnyType_Float32() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == 2);
+    retVal &= (td.type == Float);
     retVal &= (td.numberOfBits == 32);
 
     return retVal;
@@ -379,7 +379,7 @@ bool AnyTypeTest::TestAnyType_ConstFloat32() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == 2);
+    retVal &= (td.type == Float);
     retVal &= (td.numberOfBits == 32);
 
     return retVal;
@@ -394,7 +394,7 @@ bool AnyTypeTest::TestAnyType_Float64() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == 2);
+    retVal &= (td.type == Float);
     retVal &= (td.numberOfBits == 64);
 
     return retVal;
@@ -409,7 +409,7 @@ bool AnyTypeTest::TestAnyType_ConstFloat64() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == 2);
+    retVal &= (td.type == Float);
     retVal &= (td.numberOfBits == 64);
 
     return retVal;
@@ -423,7 +423,7 @@ bool AnyTypeTest::TestAnyType_ConstPointerToConts() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == 3);
+    retVal &= (td.type == Pointer);
     retVal &= (td.numberOfBits == sizeof(void *) * 8u);
 
     return retVal;
@@ -437,7 +437,7 @@ bool AnyTypeTest::TestAnyType_ConstPointer() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == 3);
+    retVal &= (td.type == Pointer);
     retVal &= (td.numberOfBits == sizeof(void *) * 8u);
 
     return retVal;
@@ -452,7 +452,7 @@ bool AnyTypeTest::TestAnyType_ConstCharPointerToConst() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == 8);
+    retVal &= (td.type == CCString);
     retVal &= (td.numberOfBits == sizeof(const char *) * 8u);
 
     return retVal;
