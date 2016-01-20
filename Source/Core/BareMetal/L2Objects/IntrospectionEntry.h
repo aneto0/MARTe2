@@ -55,6 +55,12 @@ public:
      * @param[in] modifiersIn specifies the member attributes.
      * @param[in] sizeIn is the size of the member.
      * @param[in] byteOffsetIn is the address of the member respect to the class begin pointer.
+     * @post
+     *   GetMemberName() == memberNameIn &&
+     *   GetMemberModifiers() == modifiersIn &&
+     *   GetMemberSize() == sizeIn &&
+     *   GetMemberByteOffset() == byteOffsetIn &&
+     *   IsConstant() == isConstantIn
      */
     IntrospectionEntry(const char8 * const memberNameIn,
                        const char8 * const typeNameIn,
@@ -129,7 +135,7 @@ private:
     bool isConstant;
 
     /**
-     * Modifiers:
+     * The member modifiers.
      *   space separated only necessary to separate numbers
      *   '*' pointer
      *   'nnnn' vector of

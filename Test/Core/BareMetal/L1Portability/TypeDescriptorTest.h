@@ -101,6 +101,27 @@ public:
      * bit size, the attribute value in TypeDescriptor is saturated. False otherwise.
      */
     bool TestFieldSaturation();
+
+    /**
+     * @brief Checks if the function returns the TypeDescriptor associated to the type name input correctly
+     */
+    bool TestGetTypeDescriptorFromTypeName();
+
+    /**
+     * @brief Checks if the function returns the type name associated to the TypeDescriptor input correctly
+     */
+    bool TestGetTypeNameFromTypeDescriptor();
+
+    /**
+     * @brief Checks if the function returns the TypeDescriptors saved in the lookup table correctly.
+     */
+    bool TestGetTypeDescriptorFromStaticTable();
+
+    /**
+     * @brief Checks if the function returns the type names saved in the lookup table correctly.
+     */
+    bool TestGetTypeNameFromStaticTable();
+
 };
 
 /*---------------------------------------------------------------------------*/

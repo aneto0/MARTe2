@@ -1,7 +1,7 @@
 /**
- * @file IntrospectionTest.h
- * @brief Header file for class IntrospectionTest
- * @date 18/01/2016
+ * @file IntrospectionEntryTest.h
+ * @brief Header file for class IntrospectionEntryTest
+ * @date 20/01/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class IntrospectionTest
+ * @details This header file contains the declaration of the class IntrospectionEntryTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef INTROSPECTIONTEST_H_
-#define INTROSPECTIONTEST_H_
+#ifndef INTROSPECTIONENTRYTEST_H_
+#define INTROSPECTIONENTRYTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,46 +32,60 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "Introspection.h"
+#include "IntrospectionEntry.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-using namespace MARTe;
 
+using namespace MARTe;
 
 /**
  * @brief Tests all the IntrospectionEntry functions.
  */
-class IntrospectionTest {
-
+class IntrospectionEntryTest {
 public:
-    /**
-     * @brief Tests if the constructor initializes correctly the class member.
-     */
-    bool TestConstructor();
 
     /**
-     * @brief Checks if the [] operator returns the IntrospectionEntry in the specified index.
+     * @brief Tests if the class members are initialized correctly.
      */
-    bool TestPositionOperator();
+    bool TestConstructor(const char8* memberName, const char8 *type, bool isConstant, const char8 *modifiers, uint32 size, uint23 index);
 
     /**
-     * @brief Checks if the ClassRegistryDatabase saves correctly the introspection of a basic type member after the registration
-     * of the class using defined macros.
+     * @brief Checks if the function returns the member name set by constructor.
      */
-    bool TestMacroToAddBasicInClassRegistryDatabase();
+    bool TestGetMemberName(const char8* memberName);
 
     /**
-     * @brief Checks if the ClassRegistryDatabase saves correctly the introspection of a structured type member after the registration
-     * of the class using defined macros.
+     * @brief Checks if the function returns the modifiers string set by constructor.
      */
-    bool TestMacroToAddStructuredInClassRegistryDatabase();
+    bool TestGetMemberModifiers(const char8* modifiers);
+
+    /**
+     * @brief Checks if the function returns the member size set by constructor.
+     */
+    bool TestGetMemberSize(uint32 size);
+
+    /**
+     * @brief Checks if the function returns the member index set by constructor.
+     */
+    bool TestGetMemberByteOffset(uint32 byteOffset);
+
+    /**
+     * @brief Checks if the function returns the TypeDescriptor related to the type name set by constructor.
+     */
+    bool TestGetMemberTypeDescriptor();
+
+    /**
+     * @brief Checks if the function returns true if the member type is constant and false otherwise.
+     */
+    bool TestIsConstant();
+
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* INTROSPECTIONTEST_H_ */
+#endif /* INTROSPECTIONENTRYTEST_H_ */
 

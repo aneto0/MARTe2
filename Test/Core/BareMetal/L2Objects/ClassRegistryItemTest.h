@@ -52,6 +52,12 @@ public:
     bool TestConstructor();
 
     /**
+     * @brief Tests the constructor with the Introspection input.
+     * @return true if all the class attributes are initialised correctly.
+     */
+    bool TestIntrospectionCostructor();
+
+    /**
      * @brief Tests destructor.
      * @return true if the class is deleted from the database.
      */
@@ -114,6 +120,12 @@ public:
      * @return true if the test explained in details section has success, false otherwise.
      */
     bool TestGetObjectBuildFunction();
+
+
+    /**
+     * @brief Checks if the function returns the pointer to the Introspection set by constructor.
+     */
+    bool TestGetIntrospection();
 
     /**
      * @brief Tests the ClassRegistryItem::SetUniqueIdentifier function.

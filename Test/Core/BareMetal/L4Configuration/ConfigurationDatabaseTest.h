@@ -154,6 +154,16 @@ public:
     bool TestGetType_Invalid();
 
     /**
+     * @brief Tests the GetChildName function.
+     */
+    bool TestGetChildName();
+
+    /**
+     * @brief Tests the TestGetNumberOfChildren function.
+     */
+    bool TestGetNumberOfChildren();
+
+    /**
      * @brief Tests the Copy function
      */
     bool TestCopy();
