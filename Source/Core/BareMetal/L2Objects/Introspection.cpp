@@ -41,12 +41,12 @@
 
 namespace MARTe {
 
-Introspection::Introspection(const IntrospectionEntry **introspectionListIn) :
+Introspection::Introspection(const IntrospectionEntry ** const introspectionListIn) :
         fields(introspectionListIn) {
 }
 
 
-const IntrospectionEntry Introspection::operator[](uint32 index){
+const IntrospectionEntry Introspection::operator[](const uint32 index) const {
     return *fields[index];
 }
 

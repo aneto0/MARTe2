@@ -66,73 +66,73 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
     ClassRegistryDatabase::Instance()->Add(this);
 }
 
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties, Introspection &introspectionIn){
+ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
+                                     Introspection &introspectionIn) {
     numberOfInstances = 0u;
     classProperties = clProperties;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
-    introspection=&introspectionIn;
+    introspection = &introspectionIn;
     ClassRegistryDatabase::Instance()->Add(this);
 }
 
 /*lint -e{1551} no exception should be thrown as loadableLibrary is properly initialised and
  * before deleting it is verified if the pointer is NULL*/
 ClassRegistryItem::~ClassRegistryItem() {
-if (loadableLibrary != NULL_PTR(LoadableLibrary *)) {
-    delete loadableLibrary;
-}
-loadableLibrary = NULL_PTR(LoadableLibrary *);
+    if (loadableLibrary != NULL_PTR(LoadableLibrary *)) {
+        delete loadableLibrary;
+    }
+    loadableLibrary = NULL_PTR(LoadableLibrary *);
+    introspection = NULL_PTR(Introspection *);
 }
 
 void ClassRegistryItem::GetClassPropertiesCopy(ClassProperties &destination) const {
-destination = classProperties;
+    destination = classProperties;
 }
 
 const ClassProperties *ClassRegistryItem::GetClassProperties() const {
-return &classProperties;
+    return &classProperties;
 }
 
-Introspection * ClassRegistryItem::GetIntrospection() const{
+const Introspection * ClassRegistryItem::GetIntrospection() const {
     return introspection;
 }
 
-
-
 void ClassRegistryItem::IncrementNumberOfInstances() {
-if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
-    numberOfInstances++;
-}
-classRegistryItemMuxSem.FastUnLock();
+    if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
+        numberOfInstances++;
+    }
+    classRegistryItemMuxSem.FastUnLock();
 }
 
 void ClassRegistryItem::DecrementNumberOfInstances() {
-if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
-    numberOfInstances--;
-}
-else {
-    REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryItem: Failed FastLock()");
-}
-classRegistryItemMuxSem.FastUnLock();
+    if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
+        numberOfInstances--;
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryItem: Failed FastLock()");
+    }
+    classRegistryItemMuxSem.FastUnLock();
 }
 
 uint32 ClassRegistryItem::GetNumberOfInstances() const {
-return numberOfInstances;
+    return numberOfInstances;
 }
 
 const LoadableLibrary *ClassRegistryItem::GetLoadableLibrary() const {
-return loadableLibrary;
+    return loadableLibrary;
 }
 
 void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const loadLibrary) {
-this->loadableLibrary = loadLibrary;
+    this->loadableLibrary = loadLibrary;
 }
 
 const ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
-return objectBuildFn;
+    return objectBuildFn;
 }
 
 void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {
-classProperties.SetUniqueIdentifier(uid);
+    classProperties.SetUniqueIdentifier(uid);
 }
 
 }

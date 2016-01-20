@@ -41,7 +41,6 @@ namespace MARTe {
 struct TypeCastInfo {
     TypeDescriptor typeDes;
     const char8 *castName;
-    const char8 *typeDesName;
 };
 
 static const TypeCastInfo basicTypeInfo[] = {
@@ -81,7 +80,7 @@ TypeDescriptor::TypeDescriptor(const bool isConstantIn,
 }
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,
-                               const ClassUID structuredDataIdCodeIn) {
+                               const ClassUID &structuredDataIdCodeIn) {
     isStructuredData = true;
     isConstant = isConstantIn;
     structuredDataIdCode = structuredDataIdCodeIn;

@@ -123,7 +123,7 @@ public:
      * @param[in] structuredDataIdCodeIn is the 14 bit code associated to the object type.
      */
     TypeDescriptor(const bool isConstantIn,
-                          const ClassUID structuredDataIdCodeIn);
+                          const ClassUID &structuredDataIdCodeIn);
 
     /**
      * @brief Equality operator used to compare types.

@@ -122,7 +122,7 @@ public:
      * @brief Returns a pointer to the class introspection.
      * @return a pointer to the class introspection.
      */
-    Introspection * GetIntrospection() const;
+    const Introspection * GetIntrospection() const;
 
     /**
      * @brief Returns a pointer to the library (dll).

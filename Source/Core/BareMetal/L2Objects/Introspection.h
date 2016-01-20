@@ -50,9 +50,9 @@ class  Introspection {
 
 public:
 
-    Introspection(const IntrospectionEntry **introspectionListIn);
+    Introspection(const IntrospectionEntry ** const introspectionListIn);
 
-    const IntrospectionEntry operator[](uint32 index);
+    const IntrospectionEntry operator[](const uint32 index) const;
 
 private:
 
