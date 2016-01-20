@@ -43,52 +43,57 @@ namespace MARTe {
 typedef uint4 BasicType;
 
 /**
+ * The type is a character
+ */
+const BasicType Character = 0u;
+
+/**
  * The type is a signed integer.
  */
-const BasicType SignedInteger = 0u;
+const BasicType SignedInteger = 1u;
 
 /**
  * The type is an unsigned integer.
  */
-const BasicType UnsignedInteger = 1u;
+const BasicType UnsignedInteger = 2u;
 
 /**
  * The type is a float number.
  */
-const BasicType Float = 2u;
+const BasicType Float = 3u;
 
 /**
  * The type is a pointer.
  */
-const BasicType Pointer = 3u;
+const BasicType Pointer = 4u;
 
 /**
  * The type is a C string
  * (const char *)
  */
-const BasicType CCString = 8u;
+const BasicType CCString = 5u;
 
 /**
  * The type is a pointer to a C string allocated on heap.
  * (char **)
  */
-const BasicType PCString = 9u;
+const BasicType PCString = 6u;
 
 /**
  * The type is an array of bytes with the size
  * specified in the size field.
  */
-const BasicType CArray = 10u;
+const BasicType CArray = 7u;
 
 /**
  * The type is a StreamString class.
  */
-const BasicType SString = 11u;
+const BasicType SString = 8u;
 
 /**
  * The type is a StreamInterface class.
  */
-const BasicType Stream = 12u;
+const BasicType Stream = 9u;
 
 }
 

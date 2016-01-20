@@ -30,6 +30,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
+
 all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/MainGTest$(EXEEXT) 
 	echo  $(OBJS)

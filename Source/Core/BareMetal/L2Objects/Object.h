@@ -164,6 +164,28 @@
         }                                                                                                              \
         className ## ClassRegistryItem_.DecrementNumberOfInstances();                                                  \
     }
+
+/**
+ * This macro has to be inserted in every unit file due to add an introspection class to the ClassRegistryDatabase.
+ * The definition of the  _## className ## ClassRegistryItem variable will
+ * instantiate a new ClassRegistryItem for every unit file compiled in the application.
+ * Upon instantiation each ClassRegistryItem will automatically add itself to the ClassRegistryDatabase.
+ */
+#define INTROSPECTION_CLASS_REGISTER(className,ver,introspection)                                                      \
+         /*                                                                                                                 \
+          * Class properties of this class type. One instance per class type automatically instantiated at the start        \
+          * of an application or loading of a loadable library.                                                             \
+          * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
+          */                                                                                                                \
+         static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver);          \
+         /*                                                                                                                 \
+          * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
+          * of an application or loading of a loadable library. It will automatically add the class type to the             \
+          * ClassRegistryDatabase.                                                                                          \
+          * e.g. static ClassRegistryItem MyClassTypeClassRegistryItem_( MyClassTypeClassProperties_, &MyClassTypeBuildFn_);\
+          */                                                                                                                \
+         static MARTe::ClassRegistryItem className ## ClassRegistryItem_( className ## ClassProperties_, introspection);
+
 /*lint -restore */
 
 /*---------------------------------------------------------------------------*/
@@ -212,7 +234,6 @@ public:
      */
     virtual bool Initialise(const StructuredDataI &data);
 
-
     /**
      * @brief Returns the number of references.
      * @return the number of references pointing to this object.
@@ -238,7 +259,7 @@ public:
      * @param[in] size the size of the \a destination input string.
      */
     void GetUniqueName(char8 * const destination,
-                       const uint32 &size) const;
+            const uint32 &size) const;
 
     /**
      * @brief Sets the object name.

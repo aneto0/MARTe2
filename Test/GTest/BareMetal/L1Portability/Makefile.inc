@@ -43,7 +43,9 @@ OBJSX=  AtomicGTest.x \
 		StringHelperGTest.x \
 		StringPortableGTest.x \
 		TimeStampGTest.x \
-		TimeoutTypeGTest.x 
+		TimeoutTypeGTest.x \
+		TypeDescriptorGTest.x 
+		
 
 
 PACKAGE=GTest/BareMetal

@@ -34,7 +34,6 @@ OBJSX=  BasicTypeTest.x \
 		MatrixTest.x \
 		ShiftTest.x \
 		TypeCharacteristicsTest.x \
-		TypeDescriptorTest.x \
 		VectorTest.x
 		
 PACKAGE=Core/BareMetal

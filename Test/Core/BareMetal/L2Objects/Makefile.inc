@@ -28,6 +28,7 @@ OBJSX=  AnyTypeTest.x\
 		ClassPropertiesTest.x \
 		ClassRegistryDatabaseTest.x \
 		ClassRegistryItemTest.x \
+		IntrospectionTest.x \
 		ObjectTest.x \
 		ObjectTestHelper.x \
 		ReferenceContainerFilterObjectNameTest.x \

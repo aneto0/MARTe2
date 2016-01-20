@@ -131,6 +131,11 @@ public:
      */
     virtual bool Delete(const char8 * const name);
 
+
+    virtual const char8 *GetChildName(const uint32 index);
+
+
+    virtual uint32 GetNumberOfChildren();
     /**
      * @brief Locks the shared semaphore.
      * @param[in] timeout maximum time to wait for the semaphore to be unlocked.

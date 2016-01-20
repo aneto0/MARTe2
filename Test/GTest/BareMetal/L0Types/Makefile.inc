@@ -33,7 +33,6 @@ OBJSX=  BasicTypeGTest.x \
 		MatrixGTest.x \
 		ShiftGTest.x \
 		TypeCharacteristicsGTest.x \
-		TypeDescriptorGTest.x \
 		VectorGTest.x
 
 

@@ -117,6 +117,13 @@ public:
      */
     const ClassProperties *GetClassProperties() const;
 
+
+    /**
+     * @brief Returns a pointer to the class introspection.
+     * @return a pointer to the class introspection.
+     */
+    Introspection * GetIntrospection() const;
+
     /**
      * @brief Returns a pointer to the library (dll).
      * @return a pointer to the library (dll) of the class type represented by this registry item.
@@ -165,6 +172,9 @@ private:
      */
     const ObjectBuildFn *objectBuildFn;
 
+    /**
+     * The introspection associated to the class.
+     */
     Introspection *introspection;
 
     /**

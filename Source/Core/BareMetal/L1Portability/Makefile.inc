@@ -37,7 +37,8 @@ OBJSX=  FastMath.x \
 		ProcessorType.x \
 		StaticList.x \
 		StaticListHolder.x \
-		StringHelper.x
+		StringHelper.x \
+		TypeDescriptor.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
