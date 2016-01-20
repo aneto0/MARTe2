@@ -27,10 +27,10 @@ TARGET=cov
 
 include Makefile.inc
 
-BUILD_DIR=../$(TARGET)
+#BUILD_DIR=../$(TARGET)
 
-LIBRARIES_STATIC=../cov/L0TypesBGTest$(LIBEXT)
-LIBRARIES_STATIC+= ../cov/L1PortabilityBGTest$(LIBEXT)
-LIBRARIES_STATIC+= ../cov/L2ObjectsBGTest$(LIBEXT)
-LIBRARIES_STATIC+= ../cov/L3StreamsBGTest$(LIBEXT)
-LIBRARIES_STATIC+= ../cov/L4ConfigurationBGTest$(LIBEXT)
+LIBRARIES_STATIC=L0Types/cov/L0TypesBGTest$(LIBEXT)
+LIBRARIES_STATIC+= L1Portability/cov/L1PortabilityBGTest$(LIBEXT)
+LIBRARIES_STATIC+= L2Objects/cov/L2ObjectsBGTest$(LIBEXT)
+LIBRARIES_STATIC+= L3Streams/cov/L3StreamsBGTest$(LIBEXT)
+LIBRARIES_STATIC+= L4Configuration/cov/L4ConfigurationBGTest$(LIBEXT)
