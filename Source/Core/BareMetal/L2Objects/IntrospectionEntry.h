@@ -41,42 +41,91 @@
 namespace MARTe {
 
 /**
- * Describes one member of a class/structure
+ * @brief Describes one member of a class or structure
  */
 class IntrospectionEntry {
 
 public:
 
+    /**
+     * @brief Constructor.
+     * @param[in] memberNameIn is the member name.
+     * @param[in] typeNameIn is the member type name.
+     * @param[in] isConstantIn specifies if the member type is constant or not.
+     * @param[in] modifiersIn specifies the member attributes.
+     * @param[in] sizeIn is the size of the member.
+     * @param[in] byteOffsetIn is the address of the member respect to the class begin pointer.
+     */
     IntrospectionEntry(const char8 * const memberNameIn,
-                              const char8* const typeNameIn,
-                              const bool isConstantIn,
-                              const char8* const modifiersIn,
-                              const uint32 sizeIn,
-                              const uint32 byteOffsetIn);
+                       const char8 * const typeNameIn,
+                       const bool isConstantIn,
+                       const char8* const modifiersIn,
+                       const uint32 sizeIn,
+                       const uint32 byteOffsetIn);
 
+    /**
+     * @brief Retrieves the member name.
+     * @return the member name.
+     */
     const char8* GetMemberName() const;
 
+    /**
+     * @brief Retrieves the TypeDescriptor associated to the member type.
+     * @return the TypeDescriptor associated to the member type.
+     */
     TypeDescriptor GetMemberTypeDescriptor() const;
 
+    /**
+     * @brief Retrieves the member modifiers.
+     * @details the string \a modifiers is a list of symbols:
+     *   '*'   = pointer;
+     *   'C'   = constant;
+     *   '[n]' = array of n elements;
+     * The string must be a combination of '*' and 'C' with at the end the specification for the array if needed.
+     * Assuming that the type \a int and the variable is called \a x, some examples follow:
+     *   "**"     --->   double pointer ( int ** x );
+     *   "**C"    --->   constant double pointer ( int ** const x );
+     *   "*C*C"   --->   constant pointer to constant pointer ( int * const * const x );
+     *   "*C*"    --->   pointer to constant pointer ( int * const * x );
+     *   "[2]"    --->   array ( int x[2] );
+     *   "*[2]"   --->   array of pointers ( int *x[2] );
+     *   "[2][2]" --->   double array (int x[2][2] );
+     */
     const char8 * GetMemberModifiers() const;
 
+    /**
+     * @brief Retrieves the member size.
+     * @return the member size in byte.
+     */
     uint32 GetMemberSize() const;
 
+    /**
+     * @brief Retrieves the offset from the member and its class pointers.
+     * @return the offset from the member and its class pointers in byte.
+     */
     uint32 GetMemberByteOffset() const;
 
+    /**
+     * @brief Specifies if the member type is constant.
+     * @return true if the member type is contant, false otherwise.
+     */
     bool IsConstant() const;
 
 private:
+
     /**
-     * The name of the class member
+     * The name of the class member.
      */
     const char8 *memberName;
 
     /**
-     * The type of the class member
+     * The type of the class member.
      */
     const char8* typeName;
 
+    /**
+     * A flag to specify if the type is constant.
+     */
     bool isConstant;
 
     /**

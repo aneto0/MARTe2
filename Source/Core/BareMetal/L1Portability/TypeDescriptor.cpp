@@ -1,7 +1,7 @@
 /**
  * @file TypeDescriptor.cpp
  * @brief Source file for class TypeDescriptor
- * @date 20/12/2016
+ * @date 20/01/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

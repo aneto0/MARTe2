@@ -131,11 +131,19 @@ public:
      */
     virtual bool Delete(const char8 * const name);
 
-
+    /**
+     * @brief Retrieves the name of the child in the specified index.
+     * @param[in] index is the index of the current node child.
+     * @return the name of the child in the specified index.
+     */
     virtual const char8 *GetChildName(const uint32 index);
 
-
+    /**
+     * @brief Retrieves the number of children of the current node.
+     * @return the number of children of the current node.
+     */
     virtual uint32 GetNumberOfChildren();
+
     /**
      * @brief Locks the shared semaphore.
      * @param[in] timeout maximum time to wait for the semaphore to be unlocked.

@@ -44,14 +44,25 @@ namespace MARTe {
 
 
 /**
- * @brief Describes the class
+ * @brief Collects the informations about each member of the class or structure.
  */
 class  Introspection {
 
 public:
 
+    /**
+     * @brief Constructor.
+     * @pre
+     *   introspectionListIn must be a zero-terminated array.
+     */
     Introspection(const IntrospectionEntry ** const introspectionListIn);
 
+    /**
+     * @brief Retrieves the informations about a specific member.
+     * @param[in] index is the member number.
+     * @return a pointer to the IntrospectionEntry structure containing all the
+     * informations about the \a index-th class member.
+     */
     const IntrospectionEntry operator[](const uint32 index) const;
 
 private:
@@ -71,14 +82,21 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * This macro retrieves the member address respect to the class begin.
+ */
 #define introspectionMemberIndex(className, memberName) \
     (intptr)&(((className *)0)->memberName)
 
-
+/**
+ * This macro retrieves the member size.
+ */
 #define introspectionMemberSize(className, memberName) \
     sizeof(((className *)0)->memberName)
 
-
+/**
+ * This macro creates a static instance of IntrospectionEntry with the provided inputs.
+ */
 #define DECLARE_CLASS_MEMBER(className, memberName, type, isConstant, modifierString ) \
     static const IntrospectionEntry className ## _ ## memberName ## _introspectionEntry =      \
     IntrospectionEntry(                                                                        \

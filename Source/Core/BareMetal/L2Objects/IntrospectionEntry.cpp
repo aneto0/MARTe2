@@ -1,8 +1,8 @@
 /**
  * @file IntrospectionEntry.cpp
  * @brief Source file for class IntrospectionEntry
- * @date 20/gen/2016
- * @author pc
+ * @date 20/01/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -72,11 +72,11 @@ TypeDescriptor IntrospectionEntry::GetMemberTypeDescriptor() const {
                 typeDes.isConstant=isConstant;
             }
             else {
-                // TODO
+                REPORT_ERROR(ErrorManagement::FatalError, "GetMemberTypeDescriptor: No ClassProperties associated to the specified structured object");
             }
         }
         else {
-            // TODO
+            REPORT_ERROR(ErrorManagement::FatalError, "GetMemberTypeDescriptor: No structured object with the specified type found inside the ClassRegistryDatabase");
         }
     }
     else {

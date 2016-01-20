@@ -143,13 +143,34 @@ public:
     /*lint -e(1739) , operation basic_type != TypeDescriptor will not be supported*/
     bool operator!=(const TypeDescriptor &typeDescriptor) const;
 
-
+    /**
+     * @brief Retrieves the TypeDescriptor associated to the type name provided in input.
+     * @param[in] typeName is the type name input.
+     * @return the TypeDescriptor associated to \a typeName. If \a typeName is not matched returns InvalidType.
+     */
     static TypeDescriptor GetTypeDescriptorFromTypeName(const char8 * const typeName);
 
+    /**
+     * @brief Retrieves the type name associated to the TypeDescriptor provided in input.
+     * @param[in] typeDescriptor is the TypeDescriptor input.
+     * @return the type name associated to \a typeDescriptor. If \a typeDescriptor is not matched returns NULL.
+     */
     static const char8 *GetTypeNameFromTypeDescriptor(const TypeDescriptor &typeDescriptor);
 
+    /**
+     * @brief Provides the access to the type { name - TypeDescriptor } lookup table defined in TypeDescriptor.cpp
+     * returning the TypeDescriptor in the specified position.
+     * @param[in] index is the position inside the lookup table
+     * @return the TypeDescriptor in the \a index position inside the lookup table.
+     */
     static TypeDescriptor GetTypeDescriptorFromStaticTable(const uint32 index);
 
+    /**
+     * @brief Provides the access to the type { name - TypeDescriptor } lookup table defined in TypeDescriptor.cpp
+     * returning the type name in the specified position.
+     * @param[in] index is the position inside the lookup table
+     * @return the type name in the \a index position inside the lookup table.
+     */
     static const char8 *GetTypeNameFromStaticTable(const uint32 index);
 
 };
@@ -230,7 +251,9 @@ static const TypeDescriptor ConstCharString(true, CCString, sizeof(const char8*)
  */
 static const TypeDescriptor CharString(false, CCString, sizeof(char8*) * 8u);
 
-
+/**
+ * Invalid type descriptor
+ */
 static const TypeDescriptor InvalidType(0u);
 }
 /*---------------------------------------------------------------------------*/
