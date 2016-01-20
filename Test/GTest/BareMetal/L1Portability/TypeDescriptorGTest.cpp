@@ -72,3 +72,27 @@ TEST(TypeDescriptorGTest,TestFieldSaturation) {
     TypeDescriptorTest typeDescriptorTest;
     ASSERT_TRUE(typeDescriptorTest.TestFieldSaturation());
 }
+
+TEST(TypeDescriptorGTest,TestGetTypeDescriptorFromTypeName) {
+    TypeDescriptorTest typeDescriptorTest;
+    ASSERT_TRUE(typeDescriptorTest.TestGetTypeDescriptorFromTypeName());
+}
+
+TEST(TypeDescriptorGTest,TestGetTypeNameFromTypeDescriptor) {
+    TypeDescriptorTest typeDescriptorTest;
+    ASSERT_TRUE(typeDescriptorTest.TestGetTypeNameFromTypeDescriptor());
+}
+
+
+TEST(TypeDescriptorGTest,TestGetTypeDescriptorFromStaticTable) {
+    TypeDescriptorTest typeDescriptorTest;
+    ASSERT_TRUE(typeDescriptorTest.TestGetTypeDescriptorFromStaticTable());
+}
+
+TEST(TypeDescriptorGTest,TestGetTypeNameFromStaticTable) {
+    TypeDescriptorTest typeDescriptorTest;
+    ASSERT_TRUE(typeDescriptorTest.TestGetTypeNameFromStaticTable());
+}
+
+
+

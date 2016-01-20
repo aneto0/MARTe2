@@ -55,7 +55,7 @@ static const TypeCastInfo basicTypeInfo[] = {
         { UnsignedInteger64Bit, "uint64" },
         { Float32Bit, "float32" },
         { Float64Bit, "float64" },
-        { Character8Bit, "char" },
+        { Character8Bit, "char8" },
         { VoidType, "void"},
         { InvalidType, static_cast<const char8*>(NULL)}
 };
@@ -114,7 +114,7 @@ TypeDescriptor TypeDescriptor::GetTypeDescriptorFromTypeName(const char8 * const
 const char8 *TypeDescriptor::GetTypeNameFromTypeDescriptor(const TypeDescriptor &typeDescriptor){
     uint32 typeIndex = 0u;
     while (basicTypeInfo[typeIndex].typeDes != InvalidType) {
-        if (basicTypeInfo[typeIndex].typeDes != typeDescriptor) {
+        if (basicTypeInfo[typeIndex].typeDes == typeDescriptor) {
             break;
         }
         else {

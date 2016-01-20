@@ -338,6 +338,55 @@ bool ConfigurationDatabaseTest::TestWrite_Invalid() {
     return ok;
 }
 
+bool ConfigurationDatabaseTest::TestGetNumberOfChildren() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.GetNumberOfChildren() == 0;
+    ok &= cdb.CreateAbsolute("A.B.C");
+    ok &= cdb.CreateAbsolute("A.D");
+    ok &= cdb.CreateAbsolute("A.B.E");
+    ok &= cdb.CreateAbsolute("A.B.F");
+    cdb.MoveToRoot();
+    ok &= cdb.GetNumberOfChildren() == 1;
+    cdb.MoveAbsolute("A");
+    ok &= cdb.GetNumberOfChildren() == 2;
+    cdb.MoveAbsolute("A.B");
+    ok &= cdb.GetNumberOfChildren() == 3;
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestGetChildName() {
+    const char8 *childNames[] ={ "A", "B", "C", "D", 0 };
+    const char8 *nephewNames[] ={ "E", "F", "G", "H", 0 };
+    ConfigurationDatabase cdb;
+    bool ok = true;
+    uint32 i = 0u;
+    while (childNames[i] != NULL) {
+        ok &= cdb.CreateAbsolute(childNames[i]);
+        i++;
+    }
+    ok &= cdb.MoveAbsolute(childNames[0]);
+    i = 0u;
+    while (nephewNames[i] != NULL) {
+        ok &= cdb.CreateRelative(nephewNames[i]);
+        ok &= cdb.MoveToAncestor(1);
+        i++;
+    }
+    ok &=cdb.MoveToRoot();
+    i=0u;
+    while (childNames[i] != NULL) {
+        ok &= StringHelper::Compare(childNames[i],cdb.GetChildName(i))==0;
+        i++;
+    }
+    ok &= cdb.MoveAbsolute(childNames[0]);
+    i = 0u;
+    while (nephewNames[i] != NULL) {
+        ok &= StringHelper::Compare(nephewNames[i],cdb.GetChildName(i))==0;
+        i++;
+    }
+    ok &= cdb.GetChildName(i)==NULL;
+    return ok;
+}
+
 bool ConfigurationDatabaseTest::TestGetType_Invalid() {
     ConfigurationDatabase cdb;
     AnyType t = cdb.GetType("");

@@ -45,6 +45,11 @@ TEST(ClassRegistryItemGTest,TestConstructor) {
     ASSERT_TRUE(myClassRegistryItemTest.TestConstructor());
 }
 
+TEST(ClassRegistryItemGTest,TestIntrospectionCostructor) {
+    ClassRegistryItemTest myClassRegistryItemTest;
+    ASSERT_TRUE(myClassRegistryItemTest.TestIntrospectionCostructor());
+}
+
 TEST(ClassRegistryItemGTest,TestDestructor) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestDestructor());
@@ -94,6 +99,11 @@ TEST(ClassRegistryItemGTest,TestSetGetLoadableLibrary) {
 TEST(ClassRegistryItemGTest,TestGetObjectBuildFunction) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestGetObjectBuildFunction());
+}
+
+TEST(ClassRegistryItemGTest,TestGetIntrospection) {
+    ClassRegistryItemTest myClassRegistryItemTest;
+    ASSERT_TRUE(myClassRegistryItemTest.TestGetIntrospection());
 }
 
 TEST(ClassRegistryItemGTest,TestSetUniqueIdentifier) {

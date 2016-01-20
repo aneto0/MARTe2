@@ -284,6 +284,16 @@ TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Float64) {
     ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::float64(7)));
 }
 
+TEST(ConfigurationDatabaseGTest,TestGetChildName) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetChildName());
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetNumberOfChildren) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetNumberOfChildren());
+}
+
 TEST(ConfigurationDatabaseGTest,TestCopy) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestCopy());

@@ -30,9 +30,15 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TypeDescriptorTest.h"
+#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+static const TypeDescriptor typeDes[] = { CharString, SignedInteger8Bit, SignedInteger16Bit, SignedInteger32Bit, SignedInteger64Bit, UnsignedInteger8Bit,
+        UnsignedInteger16Bit, UnsignedInteger32Bit, UnsignedInteger64Bit, Float32Bit, Float64Bit, Character8Bit, VoidType, InvalidType };
+static const char8* typeNames[] = { "string", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "float32", "float64", "char8", "void",
+        static_cast<const char8*>(NULL)};
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -167,4 +173,51 @@ bool TypeDescriptorTest::TestFieldSaturation() {
     uint16 code = (size << 4) | (type);
     TypeDescriptor testTD3(isConst, code);
     return testTD3.all != 0xfffe;
+}
+
+bool TypeDescriptorTest::TestGetTypeDescriptorFromTypeName() {
+
+    uint32 i = 0u;
+    while (typeNames[i] != NULL) {
+        if(TypeDescriptor::GetTypeDescriptorFromTypeName(typeNames[i])!=typeDes[i]) {
+            return false;
+        }
+        i++;
+    }
+    return true;
+}
+
+bool TypeDescriptorTest::TestGetTypeNameFromTypeDescriptor() {
+    uint32 i = 0u;
+    while (typeNames[i] != NULL) {
+        if(StringHelper::Compare(TypeDescriptor::GetTypeNameFromTypeDescriptor(typeDes[i]),typeNames[i])!=0) {
+            return false;
+        }
+        i++;
+    }
+    return true;
+}
+
+bool TypeDescriptorTest::TestGetTypeDescriptorFromStaticTable() {
+    uint32 i = 0u;
+    while (typeDes[i] != InvalidType) {
+        if (TypeDescriptor::GetTypeDescriptorFromStaticTable(i) != typeDes[i]) {
+            return false;
+        }
+        i++;
+    }
+
+    return true;
+}
+
+bool TypeDescriptorTest::TestGetTypeNameFromStaticTable() {
+    uint32 i = 0u;
+    while (typeDes[i] != InvalidType) {
+        if (StringHelper::Compare(TypeDescriptor::GetTypeNameFromStaticTable(i), typeNames[i]) != 0) {
+            return false;
+        }
+        i++;
+    }
+
+    return true;
 }
