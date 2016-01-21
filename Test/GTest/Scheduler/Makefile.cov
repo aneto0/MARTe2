@@ -27,6 +27,5 @@ TARGET=cov
 
 include Makefile.inc
 
-#BUILD_DIR=../$(TARGET)
 
 LIBRARIES_STATIC= L1Portability/cov/L1PortabilitySGTest$(LIBEXT)
