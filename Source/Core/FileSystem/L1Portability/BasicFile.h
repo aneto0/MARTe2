@@ -322,7 +322,7 @@ namespace MARTe {
          *   this'old->Position() + deltaPos > Size() => Position() == Size();
          * @return True if the pointer is is moved to the new position.
          */
-        virtual bool RelativeSeek(const int32 deltaPos);
+        virtual bool RelativeSeek(const int64 deltaPos);
 
         /**
          * @brief Queries the actual position.

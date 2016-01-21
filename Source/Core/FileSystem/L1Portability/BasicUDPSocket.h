@@ -154,7 +154,7 @@ public:
      * @brief Unsupported feature.
      * @return false.
      */
-    virtual bool RelativeSeek(const int32 deltaPos);
+    virtual bool RelativeSeek(const int64 deltaPos);
 
     /**
      * @brief Unsupported feature.

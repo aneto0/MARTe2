@@ -150,7 +150,7 @@ public:
     /**
      * @see OperatingSystemCallbacksI::RelativeSeek
      */
-    virtual bool RelativeSeek(int32 deltaPos);
+    virtual bool RelativeSeek(const int64 deltaPos);
 
     /**
      * @see OperatingSystemCallbacksI::Position

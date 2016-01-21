@@ -85,7 +85,7 @@ protected:
      * @param[in] deltaPos is the distance from the current position.
      * @return true if the stream is successfully moved to \a deltaPos.
      */
-    virtual bool OSRelativeSeek(int32 deltaPos)=0;
+    virtual bool OSRelativeSeek(int64 deltaPos)=0;
 
     /**
      * @brief Gets the current position in the low-level, unbuffered, stream.

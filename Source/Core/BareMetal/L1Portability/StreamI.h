@@ -231,11 +231,8 @@ public:
      * @warning (1) The deltaPos is a signed integer, so it will always have a
      * half addressable space with respect to its unsigned counterpart, i.e.
      * the Seek() method.
-     * @warning (2) Moreover, the deltaPos is a 32 bits integer, less than the
-     * 64 bits integer used in Seek(), so it will have a shorter addressable
-     * space, anyway.
      */
-    virtual bool RelativeSeek(const int32 deltaPos) = 0;
+    virtual bool RelativeSeek(const int64 deltaPos) = 0;
 
     /**
      * @brief Gets the current position.

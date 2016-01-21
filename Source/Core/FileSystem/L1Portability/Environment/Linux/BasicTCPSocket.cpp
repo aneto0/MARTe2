@@ -489,7 +489,7 @@ uint64 BasicTCPSocket::Size() {
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: sockets cannot seek. */
-bool BasicTCPSocket::RelativeSeek(const int32 deltaPos) {
+bool BasicTCPSocket::RelativeSeek(const int64 deltaPos) {
     return false;
 }
 

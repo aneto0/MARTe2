@@ -130,7 +130,7 @@ public:
      * @brief Wraps bufferedStream::RelativeSeek(*).
      * BufferedStreamI::RelativeSeek(*).
      */
-    virtual bool RelativeSeek(const int32 deltaPos);
+    virtual bool RelativeSeek(const int64 deltaPos);
 
     /**
      * @brief Wraps bufferedStream::Position(*).
@@ -177,7 +177,7 @@ protected:
     /**
      * @brief Wraps the basicStream::RelativeSeek(*)
      */
-    virtual bool OSRelativeSeek(int32 deltaPos);
+    virtual bool OSRelativeSeek(int64 deltaPos);
 
     /**
      * @brief Wraps the basicStream::Position(*)
@@ -263,7 +263,7 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::Seek(uint64 pos) {
 }
 
 template<class bufferedStream, class basicStream>
-bool BufferedStreamGenerator<bufferedStream, basicStream>::RelativeSeek(const int32 deltaPos) {
+bool BufferedStreamGenerator<bufferedStream, basicStream>::RelativeSeek(const int64 deltaPos) {
     return bufferedStream::RelativeSeek(deltaPos);
 }
 
@@ -303,7 +303,7 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::OSSeek(uint64 pos) {
 }
 
 template<class bufferedStream, class basicStream>
-bool BufferedStreamGenerator<bufferedStream, basicStream>::OSRelativeSeek(int32 deltaPos) {
+bool BufferedStreamGenerator<bufferedStream, basicStream>::OSRelativeSeek(int64 deltaPos) {
     return basicStream::RelativeSeek(deltaPos);
 }
 

@@ -460,7 +460,7 @@ uint64 BasicTCPSocket::Size() {
     return 0xffffffffffffffffu;
 }
 
-bool BasicTCPSocket::RelativeSeek(const int32 deltaPos) {
+bool BasicTCPSocket::RelativeSeek(const int64 deltaPos) {
     return false;
 }
 

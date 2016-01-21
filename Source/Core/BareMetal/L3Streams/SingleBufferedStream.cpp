@@ -280,6 +280,7 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
     if (ok && mutexWriteMode) {
         if (internalBuffer.UsedSize() > 0u) {
             if (!internalBuffer.Flush()) {
+                ok = false;
                 ubSeek = false;
             }
         }
@@ -311,9 +312,13 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
     return ok;
 }
 
-bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
+bool SingleBufferedStream::RelativeSeek(const int64 deltaPos) {
     bool ubSeek = false;
     bool ok = CanSeek() && bufferSizeSet;
+
+    bool moveBack = (deltaPos < 0);
+    /*lint -e{9125} [MISRA C++ Rule 5-0-9]. Justification: The sign will not change because before the variable is negative for sure. */
+    uint64 absDelta = (moveBack) ? static_cast<uint64>(-deltaPos) : static_cast<uint64>(deltaPos);
 
     if (ok && (deltaPos != 0)) {
 
@@ -323,43 +328,57 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
             if (internalBuffer.UsedSize() > 0u) {
                 // this will move the stream pointer ahead to the correct position
                 if (!internalBuffer.Flush()) {
+                    ok = false;
                     ubSeek = false;
                 }
             }
         }
+
         if (mutexReadMode) {
+            // IOBuffer uses int32
+            if ((deltaPos <= MAX_INT32) && (deltaPos >= MIN_INT32)) {
 
-            //save the current position because in case of out of range
-            //the position becomes one of the buffer bounds.
-            uint64 currentPos = internalBuffer.Position();
+                //save the current position because in case of out of range
+                //the position becomes one of the buffer bounds.
+                uint32 currentPos = internalBuffer.Position();
 
-            // on success it means we are in range
-            if (internalBuffer.RelativeSeek(deltaPos)) {
-                // no need to move stream pointer
-                ubSeek = false;
-            }
-            if (ubSeek) {
-                // out of buffer range
-                // adjust stream seek position to account for actual read buffer usage
-
-                /*lint -e{9125} [MISRA C++ Rule 5-0-9]. Justification: If the number is not in the signed range a warning will be generated*/
-                int32 gap = static_cast<int32>(internalBuffer.UsedSize() - currentPos);
-
-                // if gap is not in the signed range generate a warning
-                if (gap < 0) {
+                // on success it means we are in range
+                if (internalBuffer.RelativeSeek(static_cast<int32>(deltaPos))) {
+                    // no need to move stream pointer
                     ubSeek = false;
                 }
-                deltaPos -= gap;
-                // empty buffer
-                internalBuffer.Empty();
-            }
+                if (ubSeek) {
+                    // out of buffer range
+                    // adjust stream seek position to account for actual read buffer usage
 
+                    uint32 gap = internalBuffer.UsedSize() - currentPos;
+
+                    // if relative seek of IOBuffer fails then absDelta-gap is positive
+                    (moveBack) ? (absDelta -= gap) : (absDelta += gap);
+                    //deltaPos -= gap;
+                    // empty read buffer
+                    internalBuffer.Empty();
+                }
+
+            }
+            else {
+                if (!internalBuffer.Resync()) {
+                    ok = false;
+                }
+            }
         }
     }
 
     if (ok && ubSeek) {
-        /*lint -e{9117} -e{737} [MISRA C++ Rule 5-0-4]. The input value is always positive so the signed does not change. */
-        ok = OSSeek(static_cast<uint64>(OSPosition() + deltaPos));
+        if ((absDelta > OSPosition()) && (moveBack)) {
+            REPORT_ERROR(ErrorManagement::FatalError, "RelativeSeek: Desired position negative: moved to the begin");
+            ok = false;
+        }
+        else {
+            // if the final position is greater than OSSize should be managed by OSSeek
+            /*lint -e{9117} -e{737} [MISRA C++ Rule 5-0-4]. The input value is always positive so the signed does not change. */
+            ok = (moveBack) ? (OSSeek(OSPosition() - absDelta)) : (OSSeek(OSPosition() + absDelta));
+        }
     }
     return ok;
 }
@@ -367,7 +386,7 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
 uint64 SingleBufferedStream::Position() {
 
     uint64 ret = 0u;
-    // if write mode on then just flush out data
+// if write mode on then just flush out data
     if (mutexWriteMode) {
         ret = OSPosition() + internalBuffer.Position();
     }
@@ -380,7 +399,7 @@ uint64 SingleBufferedStream::Position() {
 
 bool SingleBufferedStream::SetSize(const uint64 size) {
     bool ret = true;
-    // commit all changes
+// commit all changes
     if (!FlushAndResync()) {
         ret = false;
     }

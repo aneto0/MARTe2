@@ -467,7 +467,7 @@ bool BasicConsole::Seek(const uint64 pos) {
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: console cannot seek. */
-bool BasicConsole::RelativeSeek(const int32 deltaPos) {
+bool BasicConsole::RelativeSeek(const int64 deltaPos) {
     return false;
 }
 

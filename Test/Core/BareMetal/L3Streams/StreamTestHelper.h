@@ -114,7 +114,7 @@ public:
         return true;
     }
 
-    bool RelativeSeek(int32 delta) {
+    bool RelativeSeek(int64 delta) {
         position += delta;
         return true;
     }
@@ -217,7 +217,7 @@ public:
 
     char8 *buffer;
 
-    uint32 position;
+    uint64 position;
 
     uint32 size;
 
@@ -260,7 +260,7 @@ public:
         return DummyOSStream::Seek(seek);
     }
 
-    bool OSRelativeSeek(int32 delta) {
+    bool OSRelativeSeek(int64 delta) {
         return DummyOSStream::RelativeSeek(delta);
     }
 
@@ -313,7 +313,7 @@ public:
         return SingleBufferedStream::Seek(pos);
     }
 
-    bool RelativeSeek(const int32 deltaPos) {
+    bool RelativeSeek(const int64 deltaPos) {
         return SingleBufferedStream::RelativeSeek(deltaPos);
     }
 
@@ -376,7 +376,7 @@ public:
         return DummyOSStream::Seek(seek);
     }
 
-    bool OSRelativeSeek(int32 delta) {
+    bool OSRelativeSeek(int64 delta) {
         return DummyOSStream::RelativeSeek(delta);
     }
 
@@ -429,7 +429,7 @@ public:
         return DoubleBufferedStream::Seek(pos);
     }
 
-    bool RelativeSeek(const int32 deltaPos) {
+    bool RelativeSeek(const int64 deltaPos) {
         return DoubleBufferedStream::RelativeSeek(deltaPos);
     }
 

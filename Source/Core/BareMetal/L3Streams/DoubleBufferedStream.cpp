@@ -251,7 +251,7 @@ bool DoubleBufferedStream::Seek(const uint64 pos) {
     return OSSeek(pos);
 }
 
-bool DoubleBufferedStream::RelativeSeek(const int32 deltaPos) {
+bool DoubleBufferedStream::RelativeSeek(const int64 deltaPos) {
     return OSRelativeSeek(deltaPos);
 }
 

@@ -111,18 +111,26 @@ bool StreamMemoryReference::Seek(const uint64 pos) {
     uint32 usedSize = buffer.UsedSize();
     bool ret = true;
     if (pos > usedSize) {
-//REPORT_ERROR_PARAMETERS(ParametersError,"pos=%i out of range=[0-%i] , moving to end of stream",pos,usedSize)
         if (!buffer.Seek(usedSize)) {
             REPORT_ERROR(ErrorManagement::FatalError, "StreamMemoryReference: Failed IOBuffer::Seek");
         }
         ret = false;
+        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Desired Position greater than current size: moved to end");
     }
 
     return (ret) ? (buffer.Seek(static_cast<uint32>(pos))) : (false);
 }
 
-bool StreamMemoryReference::RelativeSeek(const int32 deltaPos) {
-    return buffer.RelativeSeek(deltaPos);
+bool StreamMemoryReference::RelativeSeek(const int64 deltaPos) {
+    bool ret = true;
+    if ((deltaPos > MAX_INT32) || (deltaPos < MIN_INT32)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "RelativeSeek: The seek offset should be in the int32 range");
+        ret = false;
+    }
+    else {
+        ret = buffer.RelativeSeek(static_cast<int32>(deltaPos));
+    }
+    return ret;
 }
 
 uint64 StreamMemoryReference::Position() {
@@ -133,20 +141,19 @@ bool StreamMemoryReference::CanSeek() const {
     return true;
 }
 
-
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
  * used by other buffered streams. */
 bool StreamMemoryReference::Read(char8 * const output,
-                                   uint32 & size,
-                                   const TimeoutType &timeout) {
+                                 uint32 & size,
+                                 const TimeoutType &timeout) {
     return Read(output, size);
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
  * used by other buffered streams. */
 bool StreamMemoryReference::Write(const char8 * const input,
-                                    uint32 & size,
-                                    const TimeoutType &timeout) {
+                                  uint32 & size,
+                                  const TimeoutType &timeout) {
     return Write(input, size);
 }
 

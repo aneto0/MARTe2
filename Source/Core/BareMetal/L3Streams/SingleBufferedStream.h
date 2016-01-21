@@ -140,7 +140,7 @@ public:
     /**
      * @see StreamI::RelativeSeek
      */
-    virtual bool RelativeSeek(int32 deltaPos);
+    virtual bool RelativeSeek(const int64 deltaPos);
 
     /**
      * @see StreamI::Position
