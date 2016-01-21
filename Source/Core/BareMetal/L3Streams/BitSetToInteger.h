@@ -41,9 +41,11 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-/*lint -save -e774 -e740 -e826 -e927 -e928
+/*lint -save -e774 -e740 -e826 -e927 -e928 -e669
  * 774 [MISRA C++ Rule 0-1-1] [MISRA C++ Rule 0-1-2] [MISRA C++ Rule 0-1-9]. Justification: Return value depends on template type.
  * 740, 826, 927, 928 [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by this implementation.
+ * 669 . Justification: BSToBS(*) should be used only truth BitSetToBitSet(*). The BitSetToBitSet(*) function controls the template type assuring
+ * that it has enough size such that the memory copy will be done without overrun.
  * */
 
 /**

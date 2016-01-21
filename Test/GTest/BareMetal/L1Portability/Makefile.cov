@@ -28,5 +28,4 @@ TARGET=cov
 
 include Makefile.inc
 
-BUILD_DIR=../../$(TARGET)
 INCLUDES += -I../../../../Lib/gtest-1.7.0/include
