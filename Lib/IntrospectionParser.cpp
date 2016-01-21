@@ -1,8 +1,8 @@
 /**
  * @file IntrospectionParser.cpp
  * @brief Source file for class IntrospectionParser
- * @date 19/gen/2016
- * @author pc
+ * @date 19/01/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -30,9 +30,12 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StandardParser.h"
+#include "XMLParser.h"
+#include "JsonParser.h"
 #include "BasicFile.h"
 #include "ConfigurationDatabase.h"
 #include "AnyTypeCreator.h"
+#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -182,6 +185,9 @@ static void GenerateOutputFiles(ConfigurationDatabase &database,
 int main(int argc,
          char** argv) {
 
+    // the parser
+    ParserI *myParser = NULL;
+
     // the database created by the parser
     ConfigurationDatabase database;
 
@@ -198,51 +204,76 @@ int main(int argc,
     char8 outputFileName[32];
     StringHelper::Concatenate(argv[2], ".h", outputFileName);
 
+    bool canReturn = false;
+
     // open the .h output file
     if (!headerOutputFile.Open(outputFileName,
                                BasicFile::FLAG_APPEND | BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
-        printf("\nUnable to open the output file");
-        return 0;
+        printf("\nUnable to open the output header file");
+        canReturn = true;
     }
 
-    StringHelper::Concatenate(argv[2], ".cpp", outputFileName);
+    if (!canReturn) {
+        StringHelper::Concatenate(argv[2], ".cpp", outputFileName);
 
-    // open the .cpp output file
-    if (!sourceOutputFile.Open(outputFileName,
-                               BasicFile::FLAG_APPEND | BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
-        printf("\nUnable to open the output file");
-        return 0;
+        // open the .cpp output file
+        if (!sourceOutputFile.Open(
+                outputFileName, BasicFile::FLAG_APPEND | BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
+            printf("\nUnable to open the output source file");
+            canReturn = true;
+        }
+    }
+    if (!canReturn) {
+
+        // open the input file
+        if (!configFile.Open((const char*) argv[1], BasicFile::ACCESS_MODE_R)) {
+            printf("\nUnable to open the input configuration file");
+            canReturn = true;
+        }
     }
 
-    // open the input file
-    if (!configFile.Open((const char*) argv[1], BasicFile::ACCESS_MODE_R)) {
-        printf("\nUnable to open the input file");
-        return 0;
+    if (!canReturn) {
+        configFile.Seek(0);
+        if (argc > 3) {
+            if ((argv[3])[0] == '1') {
+                myParser = new StandardParser(configFile, database, &errors);
+            }
+            if ((argv[3])[0] == '2') {
+                myParser = new XMLParser(configFile, database, &errors);
+            }
+            if ((argv[3])[0] == '3') {
+                myParser = new JsonParser(configFile, database, &errors);
+            }
+        }
+        // standard parser by default
+        else {
+            myParser = new StandardParser(configFile, database, &errors);
+        }
+
+        // parse the cfg
+        if (!myParser->Parse()) {
+            printf("\nError Parse(*) %s", errors.Buffer());
+            canReturn = true;
+        }
     }
 
-    configFile.Seek(0);
-    StandardParser myParser(configFile, database, &errors);
+    if (!canReturn) {
+        // print the header in the header file
+        PrintOnFile(headerOutputFile, "#include \"GeneralDefinitions.h\"\n\n");
+        PrintOnFile(headerOutputFile, "using namespace MARTe; \n\n");
 
-    // parse the cfg
-    if (!myParser.Parse()) {
-        printf("\nError Parse(*) %s", errors.Buffer());
-        return 0;
+        // print the header in the source file
+        PrintOnFile(sourceOutputFile, "#include \"Object.h\"\n#include \"ClassRegistryDatabase.h\"\n");
+        PrintOnFile(sourceOutputFile, "#include \"Introspection.h\"\n#include \"");
+        PrintOnFile(sourceOutputFile, argv[2]);
+        PrintOnFile(sourceOutputFile, ".h\"\n\n");
+        PrintOnFile(sourceOutputFile, "using namespace MARTe; \n\n");
+
+        GenerateOutputFiles(database, headerOutputFile, sourceOutputFile);
     }
-
-    // print the header in the header file
-    PrintOnFile(headerOutputFile, "#include \"GeneralDefinitions.h\"\n\n");
-    PrintOnFile(headerOutputFile, "using namespace MARTe; \n\n");
-
-    // print the header in the source file
-    PrintOnFile(sourceOutputFile,"#include \"Object.h\"\n#include \"ClassRegistryDatabase.h\"\n");
-    PrintOnFile(sourceOutputFile, "#include \"Introspection.h\"\n#include \"");
-    PrintOnFile(sourceOutputFile, argv[2]);
-    PrintOnFile(sourceOutputFile, ".h\"\n\n");
-    PrintOnFile(sourceOutputFile, "using namespace MARTe; \n\n");
-
-
-    GenerateOutputFiles(database, headerOutputFile, sourceOutputFile);
-
+    if (myParser != NULL) {
+        delete myParser;
+    }
     return 0;
 
 }
