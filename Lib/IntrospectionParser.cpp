@@ -100,19 +100,30 @@ static void GenerateOutputFiles(ConfigurationDatabase &database,
             char8 type[32] = { 0 };
             char8 modifiers[32] = { 0 };
             char8 attributes[32] = { 0 };
-
+            bool isConstantMember = false;
             PrintOnFile(headerFile, "    ");
-            database.Read("isConstant", data);
-            bool isConstantMember = (StringHelper::Compare(data, "true") == 0);
-            if (isConstantMember) {
-                PrintOnFile(headerFile, "const ");
+            if (!database.Read("isConstant", data)) {
+                printf("\n[isConstant] attribute lacks: the member type is considered not constant");
+            }
+            else {
+                isConstantMember = (StringHelper::Compare(data, "true") == 0);
+                if (isConstantMember) {
+                    PrintOnFile(headerFile, "const ");
+                }
             }
 
-            database.Read("type", type);
-            PrintOnFile(headerFile, type);
-            PrintOnFile(headerFile, " ");
-
-            database.Read("modifiers", modifiers);
+            if (!database.Read("type", type)) {
+                printf("\n[type] attribute lacks: the member type is considered void");
+                StringHelper::Copy(type, "void");
+            }
+            else {
+                PrintOnFile(headerFile, type);
+                PrintOnFile(headerFile, " ");
+            }
+            if (!database.Read("modifiers", modifiers)) {
+                printf("\n[modifiers] attribute lacks: the modifiers is considered as an empty string");
+                StringHelper::Copy(modifiers, "");
+            }
 
             uint32 nextIndex = GetModifierString(modifiers, attributes);
             PrintOnFile(headerFile, attributes);
@@ -238,11 +249,14 @@ int main(int argc,
             if ((argv[3])[0] == '1') {
                 myParser = new StandardParser(configFile, database, &errors);
             }
-            if ((argv[3])[0] == '2') {
+            else if ((argv[3])[0] == '2') {
                 myParser = new XMLParser(configFile, database, &errors);
             }
-            if ((argv[3])[0] == '3') {
+            else if ((argv[3])[0] == '3') {
                 myParser = new JsonParser(configFile, database, &errors);
+            }
+            else {
+                myParser = new StandardParser(configFile, database, &errors);
             }
         }
         // standard parser by default

@@ -84,17 +84,20 @@ public:
     /**
      * @brief Retrieves the member modifiers.
      * @details the string \a modifiers is a list of symbols:
-     *   '*'   = pointer;
-     *   'C'   = constant;
+     *
+     *   '*'   = pointer;\n
+     *   'C'   = constant;\n
      *   '[n]' = array of n elements;
+     *
      * The string must be a combination of '*' and 'C' with at the end the specification for the array if needed.
      * Assuming that the type \a int and the variable is called \a x, some examples follow:
-     *   "**"     --->   double pointer ( int ** x );
-     *   "**C"    --->   constant double pointer ( int ** const x );
-     *   "*C*C"   --->   constant pointer to constant pointer ( int * const * const x );
-     *   "*C*"    --->   pointer to constant pointer ( int * const * x );
-     *   "[2]"    --->   array ( int x[2] );
-     *   "*[2]"   --->   array of pointers ( int *x[2] );
+     *
+     *   "**"     --->   double pointer ( int ** x );\n
+     *   "**C"    --->   constant double pointer ( int ** const x );\n
+     *   "*C*C"   --->   constant pointer to constant pointer ( int * const * const x );\n
+     *   "*C*"    --->   pointer to constant pointer ( int * const * x );\n
+     *   "[2]"    --->   array ( int x[2] );\n
+     *   "*[2]"   --->   array of pointers ( int *x[2] );\n
      *   "[2][2]" --->   double array (int x[2][2] );
      */
     const char8 * GetMemberModifiers() const;
@@ -136,28 +139,6 @@ private:
 
     /**
      * The member modifiers.
-     *   space separated only necessary to separate numbers
-     *   '*' pointer
-     *   'nnnn' vector of
-     *   Z zero terminated vector of
-     *   C constant
-     * Examples
-     *   int            --> ""
-     *   int *          --> "*"
-     *   int[3]         --> "3"
-     *   int *a[3]      --> "3*"
-     *   int **         --> "**"
-     *   int [3] *a     --> "3*"  // if C supported it!!!
-     *   const int      --> ""    // const is in the typeDescriptor
-     *   const int *    --> "*"
-     *   int * const    --> "C*"
-     *   const int * *  --> "**"
-     *   int* const *   --> "*C*"
-     *   int* * const   --> "**C"
-     *   int* const * const   --> "*C*C"
-     *   int[3][4]      --> "4 3"
-     *   CString        --> "Z"  (char as type)
-     *   const CString  --> "Z"  (const char as type)
      */
     const char8 *modifiers;
 
