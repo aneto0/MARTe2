@@ -40,6 +40,14 @@
 
 namespace MARTe {
 
+
+/**
+ * @brief Describes a zero-terminated array.
+ *
+ * @warning This class is only a wrapper of a pointer. The implementation assumes that the pointer
+ * in input is a zero-terminated array and does not check if it is not zero-terminated or NULL.
+ * If this pre-condition is not accomplished, a segmentation fault in runtime could happen.
+ */
 template<typename T>
 class ZeroTerminatedArray {
 public:
@@ -57,7 +65,7 @@ public:
      * @param[in] index is the element position in the array.
      * @return the element in the \a index position.
      */
-    inline T &operator[](uint32 index) const;
+    inline T &operator[](const uint32 index) const;
 
     /**
      * @brief Retrieves the size of the array.
@@ -94,11 +102,9 @@ ZeroTerminatedArray<T>::ZeroTerminatedArray(T *arrayIn) :
         array(arrayIn) {
 }
 
-/**
- * Does not control limit
- * */
+
 template<typename T>
-inline T &ZeroTerminatedArray<T>::operator[](uint32 index) const {
+inline T &ZeroTerminatedArray<T>::operator[](const uint32 index) const {
     return array[index];
 }
 

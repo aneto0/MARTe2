@@ -130,3 +130,4 @@ TypeDescriptor.h
 TypeDescriptor.cpp
 Vector.h
 XMLParser.cpp
+ZeroTerminatedArray.h

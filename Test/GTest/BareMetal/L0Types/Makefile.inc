@@ -33,7 +33,8 @@ OBJSX=  BasicTypeGTest.x \
 		MatrixGTest.x \
 		ShiftGTest.x \
 		TypeCharacteristicsGTest.x \
-		VectorGTest.x
+		VectorGTest.x \
+		ZeroTerminatedArrayGTest.x 
 
 
 PACKAGE=GTest/BareMetal
