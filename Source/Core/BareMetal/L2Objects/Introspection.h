@@ -34,6 +34,7 @@
 
 #include "IntrospectionEntry.h"
 #include "ZeroTerminatedArray.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -64,6 +65,9 @@ public:
      * informations about the \a index-th class member.
      */
     const IntrospectionEntry operator[](const uint32 index) const;
+
+
+    uint32 GetSize() const;
 
 private:
 

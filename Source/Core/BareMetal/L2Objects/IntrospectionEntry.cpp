@@ -54,6 +54,33 @@ IntrospectionEntry::IntrospectionEntry(const char8 * const memberNameIn,
     byteOffset = byteOffsetIn;
     typeName = typeNameIn;
     isConstant = isConstantIn;
+
+    dimensionSize[0] = 1u;
+    dimensionSize[1] = 1u;
+    dimensionSize[2] = 1u;
+
+    if (modifiers != NULL) {
+        int32 i=StringHelper::Length(modifiers);
+        uint32 nDim=0u;
+        while(modifiers[i]!='\0' && (nDim<3u)) {
+            if(modifiers[i]=='[') {
+                for(uint32 k=0u; k<nDim; k++) {
+                    uint32 prev=(nDim-k)-1u;
+                    dimensionSize[0]=0u;
+                    dimensionSize[nDim-k]=dimensionSize[prev];
+                }
+                i++;
+                while(modifiers[i]==']') {
+                    dimensionSize[0]*=10u;
+                    dimensionSize[0]=modifiers[i]-'0';
+                    i++;
+                }
+                nDim++;
+            }
+            i++;
+        }
+        numberOfDimensions=nDim;
+    }
 }
 
 const char8* IntrospectionEntry::GetMemberName() const {
@@ -99,19 +126,21 @@ uint32 IntrospectionEntry::GetMemberByteOffset() const {
 
 bool IntrospectionEntry::IsConstant(const uint32 ptrLevel) const {
     bool ret = isConstant;
-    if (ptrLevel > 0u) {
-        uint32 i = 0u;
-        uint32 ptrCnt = 0u;
-        while (modifiers[i] != '\0') {
-            if (modifiers[i] == '*') {
-                ptrCnt++;
-            }
-            if (ptrCnt == ptrLevel) {
+    if (modifiers != NULL) {
+        if (ptrLevel > 0u) {
+            uint32 i = 0u;
+            uint32 ptrCnt = 0u;
+            while (modifiers[i] != '\0') {
+                if (modifiers[i] == '*') {
+                    ptrCnt++;
+                }
+                if (ptrCnt == ptrLevel) {
+                    i++;
+                    ret = (modifiers[i] == 'C');
+                    break;
+                }
                 i++;
-                ret = (modifiers[i] == 'C');
-                break;
             }
-            i++;
         }
     }
     return ret;
@@ -120,14 +149,25 @@ bool IntrospectionEntry::IsConstant(const uint32 ptrLevel) const {
 uint32 IntrospectionEntry::GetMemberPointerLevel() const {
     uint32 ptrLevel = 0u;
     uint32 i = 0u;
-    while (modifiers[i] != '\0') {
-        if (modifiers[i] == '*') {
-            ptrLevel++;
+    if (modifiers != NULL) {
+        while (modifiers[i] != '\0') {
+            if (modifiers[i] == '*') {
+                ptrLevel++;
+            }
+            i++;
         }
-        i++;
     }
     return ptrLevel;
 }
+
+uint32 IntrospectionEntry::GetNumberOfElements(const uint32 dimension) const{
+    return (dimension < 3u) ? dimensionSize[dimension] : 0u;
+}
+
+uint32 IntrospectionEntry::GetNumberOfDimensions() const{
+    return numberOfDimensions;
+}
+
 
 }
 

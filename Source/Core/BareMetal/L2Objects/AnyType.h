@@ -446,6 +446,7 @@ public:
      */
     AnyType(const Object &obj);
 
+
     /**
      * @brief Copy constructor from another AnyType.
      * @return a copy of this AnyType.
@@ -678,7 +679,7 @@ public:
 
     /**
      * @brief Gets the number of dimensions associated to this AnyType.
-     * @detail GetNumberOfDimensions() == 0 => scalar, GetNumberOfDimensions() == 1 => vector
+     * @details GetNumberOfDimensions() == 0 => scalar, GetNumberOfDimensions() == 1 => vector
      * GetNumberOfDimensions() == 2 => matrix
      * @return the number of dimensions associated to this AnyType.
      */
@@ -687,7 +688,7 @@ public:
     /**
      * @brief Sets the number of dimensions associated to this AnyType.
      * @param[in] nOfDimensions the new number of dimensions represented by this AnyType.
-     * @detail nOfDimensions == 0 => scalar, nOfDimensions == 1 => vector
+     * @details nOfDimensions == 0 => scalar, nOfDimensions == 1 => vector
      * nOfDimensions == 2 => matrix
      */
     inline void SetNumberOfDimensions(const uint8 nOfDimensions);

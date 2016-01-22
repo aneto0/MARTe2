@@ -69,5 +69,8 @@ AnyType::AnyType(const Object &obj) {
         dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
     }
 }
+
+
+
 }
 

@@ -47,8 +47,11 @@ Introspection::Introspection(const IntrospectionEntry ** const introspectionList
 
 
 const IntrospectionEntry Introspection::operator[](const uint32 index) const {
-    return *fields[index];
+    return (fields[index]==NULL)?(InvalidIntrospectionEntry):(*fields[index]);
 }
 
 
+uint32 Introspection::GetSize() const{
+    return fields.GetSize();
+}
 }

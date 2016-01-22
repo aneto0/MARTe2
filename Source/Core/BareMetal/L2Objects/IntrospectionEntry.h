@@ -135,6 +135,11 @@ public:
      */
     uint32 GetMemberPointerLevel() const;
 
+
+    uint32 GetNumberOfDimensions() const;
+
+    uint32 GetNumberOfElements(const uint32 dimension) const;
+
 private:
 
     /**
@@ -167,7 +172,15 @@ private:
      */
     uint32 byteOffset;
 
+
+    uint32 numberOfDimensions;
+
+    uint32 dimensionSize[3];
+
 };
+
+static const IntrospectionEntry InvalidIntrospectionEntry(static_cast<const char8*>(NULL), static_cast<const char8*>(NULL), false, static_cast<const char8*>(NULL), 0u, 0u);
+
 }
 
 /*---------------------------------------------------------------------------*/

@@ -291,9 +291,13 @@ bool ConfigurationDatabase::AddToCurrentNode(Reference node) {
     return ok;
 }
 
+
+const char8 *ConfigurationDatabase::GetName(){
+    return (currentNode.IsValid()) ? (currentNode->GetName()) : (NULL_PTR(const char8*));
+}
+
 const char8 *ConfigurationDatabase::GetChildName(const uint32 index) {
     Reference foundReference = currentNode->Get(index);
-
     return (foundReference.IsValid()) ? (foundReference->GetName()) : (NULL_PTR(const char8*));
 }
 

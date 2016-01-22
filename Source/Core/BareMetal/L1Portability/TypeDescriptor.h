@@ -252,9 +252,15 @@ static const TypeDescriptor ConstCharString(true, CCString, sizeof(const char8*)
 static const TypeDescriptor CharString(false, CCString, sizeof(char8*) * 8u);
 
 /**
+ * ConfigurationDatabase node
+ */
+static const TypeDescriptor StructuredDataInterfaceType(false, StructuredDataNode, 0u);
+
+/**
  * Invalid type descriptor
  */
 static const TypeDescriptor InvalidType(0u);
+
 }
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

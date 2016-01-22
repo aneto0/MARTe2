@@ -131,6 +131,8 @@ public:
      */
     virtual bool Delete(const char8 * const name);
 
+    virtual const char8 *GetName();
+
     /**
      * @brief Retrieves the name of the child in the specified index.
      * @param[in] index is the index of the current node child.
