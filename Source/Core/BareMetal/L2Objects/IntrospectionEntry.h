@@ -116,9 +116,24 @@ public:
 
     /**
      * @brief Specifies if the member type is constant.
-     * @return true if the member type is contant, false otherwise.
+     * @param[in] ptrLevel specifies the pointer level to be checked in case the member is a n-th pointer.
+     *
+     * Example for "const int ** const x":
+     *
+     *   ptrLevel == 0 --> true (the final type is constant) \n
+     *   ptrLevel == 1 --> false (the first pointer is not constant)\n
+     *   ptrLevel == 2 --> true (the second pointer is constant) \n
+     *
+     * If ptrLevel > GetMemberPointerLevel() returns the same result as IsConstant(0) (i.e the final type will be checked).
+     * @return true if the member type is constant, false otherwise.
      */
-    bool IsConstant() const;
+    bool IsConstant(const uint32 ptrLevel = 0u) const;
+
+    /**
+     * @brief Retrieves the pointer level of the member (i.e for "int **x" the pointer level is 2).
+     * @return the pointer level of the member
+     */
+    uint32 GetMemberPointerLevel() const;
 
 private:
 

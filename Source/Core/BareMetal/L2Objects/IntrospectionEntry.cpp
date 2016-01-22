@@ -97,8 +97,37 @@ uint32 IntrospectionEntry::GetMemberByteOffset() const {
     return byteOffset;
 }
 
-bool IntrospectionEntry::IsConstant() const {
-    return isConstant;
+bool IntrospectionEntry::IsConstant(const uint32 ptrLevel) const {
+    bool ret = isConstant;
+    if (ptrLevel > 0u) {
+        uint32 i = 0u;
+        uint32 ptrCnt = 0u;
+        while (modifiers[i] != '\0') {
+            if (modifiers[i] == '*') {
+                ptrCnt++;
+            }
+            if (ptrCnt == ptrLevel) {
+                i++;
+                ret = (modifiers[i] == 'C');
+                break;
+            }
+            i++;
+        }
+    }
+    return ret;
 }
+
+uint32 IntrospectionEntry::GetMemberPointerLevel() const {
+    uint32 ptrLevel = 0u;
+    uint32 i = 0u;
+    while (modifiers[i] != '\0') {
+        if (modifiers[i] == '*') {
+            ptrLevel++;
+        }
+        i++;
+    }
+    return ptrLevel;
+}
+
 }
 

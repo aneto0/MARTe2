@@ -74,8 +74,40 @@ TEST(IntrospectionEntryGTest,TestGetMemberTypeDescriptor) {
     ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberTypeDescriptor());
 }
 
+
 TEST(IntrospectionEntryGTest,TestIsConstant) {
     IntrospectionEntryTest IntrospectionEntryTest;
-    ASSERT_TRUE(IntrospectionEntryTest.TestIsConstant());
+    static const IntrospectionEntryTestTable table[]{
+            {true, "", 0, true},
+            {false, "", 0, false},
+            {true, "*", 1, false},
+            {false, "*C", 1, true},
+            {true, "**C", 1, false},
+            {false, "**C", 2, true},
+            {false, "*C*C", 1, true},
+            {false, "*C*C", 2, true},
+            {true, "**", 0, true},
+            {true, "**", 1, false},
+            {true, "**", 2, false},
+            {true, "**", 3, true},
+            {false, "**", 3, false},
+            {0,0,0,0}
+    };
+    ASSERT_TRUE(IntrospectionEntryTest.TestIsConstant(table));
+}
+
+
+TEST(IntrospectionEntryGTest,TestGetMemberPointerLevel) {
+    IntrospectionEntryTest IntrospectionEntryTest;
+    static const IntrospectionEntryTestTable table[]{
+            {true, "", 0, true},
+            {true, "*", 1, false},
+            {false, "*C", 1, true},
+            {true, "**C", 2, false},
+            {false, "*C*C", 2, true},
+            {true, "**", 2, true},
+            {0,0,0,0}
+    };
+    ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberPointerLevel(table));
 }
 

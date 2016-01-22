@@ -109,8 +109,30 @@ bool IntrospectionEntryTest::TestGetMemberTypeDescriptor(){
 }
 
 
-bool IntrospectionEntryTest::TestIsConstant(){
-    IntrospectionEntry memberInfoConstant("", "", true, "", 0, 0);
-    IntrospectionEntry memberInfoNoConstant("", "", false, "", 0, 0);
-    return (memberInfoConstant.IsConstant()) && !(memberInfoNoConstant.IsConstant());
+bool IntrospectionEntryTest::TestIsConstant(const IntrospectionEntryTestTable *table){
+
+    uint32 i=0u;
+    while(table[i].modifiers!=NULL){
+        IntrospectionEntry memberInfoConstant("","",table[i].isConstant, table[i].modifiers, 0,0);
+        if(memberInfoConstant.IsConstant(table[i].level)!=table[i].expected){
+            return false;
+        }
+        i++;
+    }
+
+    return true;
+}
+
+
+bool IntrospectionEntryTest::TestGetMemberPointerLevel(const IntrospectionEntryTestTable *table){
+    uint32 i=0u;
+    while(table[i].modifiers!=NULL){
+        IntrospectionEntry memberInfoConstant("","",table[i].isConstant, table[i].modifiers, 0,0);
+        if(memberInfoConstant.GetMemberPointerLevel()!=table[i].level){
+            return false;
+        }
+        i++;
+    }
+
+    return true;
 }

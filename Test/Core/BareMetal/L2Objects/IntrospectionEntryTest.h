@@ -40,6 +40,15 @@
 
 using namespace MARTe;
 
+
+struct IntrospectionEntryTestTable{
+    bool isConstant;
+    const char8* modifiers;
+    uint32 level;
+    bool expected;
+};
+
+
 /**
  * @brief Tests all the IntrospectionEntry functions.
  */
@@ -79,7 +88,12 @@ public:
     /**
      * @brief Checks if the function returns true if the member type is constant and false otherwise.
      */
-    bool TestIsConstant();
+    bool TestIsConstant(const IntrospectionEntryTestTable *table);
+
+    /**
+     * @brief Checks if the function returns correctly the member pointer level.
+     */
+    bool TestGetMemberPointerLevel(const IntrospectionEntryTestTable *table);
 
 };
 
