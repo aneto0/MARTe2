@@ -42,7 +42,6 @@ using namespace MARTe;
 
 
 struct IntrospectionEntryTestTable{
-    bool isConstant;
     const char8* modifiers;
     uint32 level;
     bool expected;
@@ -58,7 +57,7 @@ public:
     /**
      * @brief Tests if the class members are initialized correctly.
      */
-    bool TestConstructor(const char8* memberName, const char8 *type, bool isConstant, const char8 *modifiers, uint32 size, uint23 index);
+    bool TestConstructor(const char8* memberName, const char8 *type, const char8 *modifiers, const char8 *attributes, uint32 size, uint23 index);
 
     /**
      * @brief Checks if the function returns the member name set by constructor.

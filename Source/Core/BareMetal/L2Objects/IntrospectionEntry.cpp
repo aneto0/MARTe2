@@ -31,6 +31,7 @@
 
 #include "IntrospectionEntry.h"
 #include "ClassRegistryDatabase.h"
+#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,47 +41,50 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+#include "stdio.h"
+
 namespace MARTe {
 
 IntrospectionEntry::IntrospectionEntry(const char8 * const memberNameIn,
                                        const char8* const typeNameIn,
-                                       const bool isConstantIn,
                                        const char8* const modifiersIn,
+                                       const char8* const attributesIn,
                                        const uint32 sizeIn,
                                        const uint32 byteOffsetIn) {
     memberName = memberNameIn;
     modifiers = modifiersIn;
+    attributes = attributesIn,
     size = sizeIn;
     byteOffset = byteOffsetIn;
     typeName = typeNameIn;
-    isConstant = isConstantIn;
 
     dimensionSize[0] = 1u;
     dimensionSize[1] = 1u;
     dimensionSize[2] = 1u;
 
     if (modifiers != NULL) {
-        int32 i=StringHelper::Length(modifiers);
-        uint32 nDim=0u;
-        while(modifiers[i]!='\0' && (nDim<3u)) {
-            if(modifiers[i]=='[') {
-                for(uint32 k=0u; k<nDim; k++) {
-                    uint32 prev=(nDim-k)-1u;
-                    dimensionSize[0]=0u;
-                    dimensionSize[nDim-k]=dimensionSize[prev];
+        uint32 i = 0u;
+        uint32 nDim = 0u;
+        while (modifiers[i] != '\0' && (nDim < 3u)) {
+            if (modifiers[i] == '[') {
+                for (uint32 k = 0u; k < nDim; k++) {
+                    uint32 prev = (nDim - k) - 1u;
+                    dimensionSize[nDim - k] = dimensionSize[prev];
                 }
+                dimensionSize[0] = 0u;
                 i++;
-                while(modifiers[i]==']') {
-                    dimensionSize[0]*=10u;
-                    dimensionSize[0]=modifiers[i]-'0';
+                while ((modifiers[i] != ']') && (modifiers[i] != '\0')) {
+                    dimensionSize[0] *= 10u;
+                    dimensionSize[0] += modifiers[i] - '0';
                     i++;
                 }
                 nDim++;
             }
             i++;
         }
-        numberOfDimensions=nDim;
+        numberOfDimensions = nDim;
     }
+
 }
 
 const char8* IntrospectionEntry::GetMemberName() const {
@@ -89,25 +93,32 @@ const char8* IntrospectionEntry::GetMemberName() const {
 
 TypeDescriptor IntrospectionEntry::GetMemberTypeDescriptor() const {
     TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(typeName);
+    bool isConstant=(modifiers[0] == 'C');
     // Not a basic type !
     if (typeDes == InvalidType) {
         const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(typeName);
         if (item != NULL) {
-            const ClassProperties *properties=item->GetClassProperties();
-            if(properties!=NULL) {
-                typeDes=TypeDescriptor(isConstant,properties->GetUniqueIdentifier());
-                typeDes.isConstant=isConstant;
+            const ClassProperties *properties = item->GetClassProperties();
+            if (properties != NULL) {
+                typeDes = TypeDescriptor(isConstant, properties->GetUniqueIdentifier());
+                typeDes.isConstant = isConstant;
             }
             else {
                 REPORT_ERROR(ErrorManagement::FatalError, "GetMemberTypeDescriptor: No ClassProperties associated to the specified structured object");
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "GetMemberTypeDescriptor: No structured object with the specified type found inside the ClassRegistryDatabase");
+            REPORT_ERROR(ErrorManagement::FatalError,
+                         "GetMemberTypeDescriptor: No structured object with the specified type found inside the ClassRegistryDatabase");
         }
     }
     else {
-        typeDes.isConstant=isConstant;
+        typeDes.isConstant = isConstant;
+    }
+
+    // special case of char array
+    if (StringHelper::Compare(typeName, "char8") == 0) {
+        typeDes.numberOfBits = dimensionSize[0] * 8u;
     }
     return typeDes;
 }
@@ -120,12 +131,16 @@ const char8 * IntrospectionEntry::GetMemberModifiers() const {
     return modifiers;
 }
 
+const char8 * IntrospectionEntry::GetMemberAttributes() const{
+    return attributes;
+}
+
 uint32 IntrospectionEntry::GetMemberByteOffset() const {
     return byteOffset;
 }
 
 bool IntrospectionEntry::IsConstant(const uint32 ptrLevel) const {
-    bool ret = isConstant;
+    bool ret = (modifiers[0] == 'C');
     if (modifiers != NULL) {
         if (ptrLevel > 0u) {
             uint32 i = 0u;
@@ -160,14 +175,25 @@ uint32 IntrospectionEntry::GetMemberPointerLevel() const {
     return ptrLevel;
 }
 
-uint32 IntrospectionEntry::GetNumberOfElements(const uint32 dimension) const{
-    return (dimension < 3u) ? dimensionSize[dimension] : 0u;
+uint32 IntrospectionEntry::GetNumberOfElements(const uint32 dimension) const {
+
+    uint32 dimensionNumber = dimension;
+    // special case of char array
+    if (StringHelper::Compare(typeName, "char8") == 0) {
+        dimensionNumber++;
+    }
+    return (dimensionNumber < 3u) ? dimensionSize[dimensionNumber] : dimensionSize[2];
 }
 
-uint32 IntrospectionEntry::GetNumberOfDimensions() const{
-    return numberOfDimensions;
+uint32 IntrospectionEntry::GetNumberOfDimensions() const {
+    uint32 ret = numberOfDimensions;
+    if (StringHelper::Compare(typeName, "char8") == 0) {
+        if (ret > 0u) {
+            ret--;
+        }
+    }
+    return ret;
 }
-
 
 }
 

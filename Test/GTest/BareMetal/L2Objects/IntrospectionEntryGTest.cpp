@@ -46,7 +46,7 @@
 
 TEST(IntrospectionEntryGTest,TestConstructor) {
     IntrospectionEntryTest IntrospectionEntryTest;
-    ASSERT_TRUE(IntrospectionEntryTest.TestConstructor("memberx", "char8", true, "*C", sizeof(char8*), 4));
+    ASSERT_TRUE(IntrospectionEntryTest.TestConstructor("memberx", "char8",  "*C", "max=2", sizeof(char8*), 4));
 }
 
 TEST(IntrospectionEntryGTest,TestGetMemberName) {
@@ -78,20 +78,20 @@ TEST(IntrospectionEntryGTest,TestGetMemberTypeDescriptor) {
 TEST(IntrospectionEntryGTest,TestIsConstant) {
     IntrospectionEntryTest IntrospectionEntryTest;
     static const IntrospectionEntryTestTable table[]{
-            {true, "", 0, true},
-            {false, "", 0, false},
-            {true, "*", 1, false},
-            {false, "*C", 1, true},
-            {true, "**C", 1, false},
-            {false, "**C", 2, true},
-            {false, "*C*C", 1, true},
-            {false, "*C*C", 2, true},
-            {true, "**", 0, true},
-            {true, "**", 1, false},
-            {true, "**", 2, false},
-            {true, "**", 3, true},
-            {false, "**", 3, false},
-            {0,0,0,0}
+            {"C", 0, true},
+            {"", 0, false},
+            {"C*", 1, false},
+            {"*C", 1, true},
+            {"C**C", 1, false},
+            {"**C", 2, true},
+            {"*C*C", 1, true},
+            {"*C*C", 2, true},
+            {"C**", 0, true},
+            {"C**", 1, false},
+            {"C**", 2, false},
+            {"C**", 3, true},
+            {"**", 3, false},
+            {0,0,0}
     };
     ASSERT_TRUE(IntrospectionEntryTest.TestIsConstant(table));
 }
@@ -100,13 +100,13 @@ TEST(IntrospectionEntryGTest,TestIsConstant) {
 TEST(IntrospectionEntryGTest,TestGetMemberPointerLevel) {
     IntrospectionEntryTest IntrospectionEntryTest;
     static const IntrospectionEntryTestTable table[]{
-            {true, "", 0, true},
-            {true, "*", 1, false},
-            {false, "*C", 1, true},
-            {true, "**C", 2, false},
-            {false, "*C*C", 2, true},
-            {true, "**", 2, true},
-            {0,0,0,0}
+            {"C", 0, true},
+            {"C*", 1, true},
+            {"*C", 1, true},
+            {"C**C", 2, true},
+            {"*C*C", 2, true},
+            {"C**", 2, true},
+            {0,0,0}
     };
     ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberPointerLevel(table));
 }

@@ -42,17 +42,21 @@ using namespace MARTe;
 
 bool IntrospectionEntryTest::TestConstructor(const char8* memberName,
                                              const char8 *type,
-                                             bool isConstant,
                                              const char8 *modifiers,
+                                             const char8 *attributes,
                                              uint32 size,
                                              uint23 index) {
 
-    IntrospectionEntry memberInfo(memberName, type, isConstant, modifiers, size, index);
+    IntrospectionEntry memberInfo(memberName, type, modifiers,attributes, size, index);
 
     if (StringHelper::Compare(memberInfo.GetMemberName(), memberName) != 0) {
         return false;
     }
     if (StringHelper::Compare(memberInfo.GetMemberModifiers(), modifiers) != 0) {
+        return false;
+    }
+
+    if (StringHelper::Compare(memberInfo.GetMemberAttributes(), attributes) != 0) {
         return false;
     }
 
@@ -63,28 +67,28 @@ bool IntrospectionEntryTest::TestConstructor(const char8* memberName,
         return false;
     }
 
-    return memberInfo.IsConstant() == isConstant;
+    return true;
 }
 
 bool IntrospectionEntryTest::TestGetMemberName(const char8* memberName) {
-    IntrospectionEntry memberInfo(memberName, "", 0, "", 0, 0);
+    IntrospectionEntry memberInfo(memberName, "",  "", "", 0, 0);
     return (memberName == NULL)?(memberInfo.GetMemberName()==NULL):(StringHelper::Compare(memberInfo.GetMemberName(), memberName) == 0);
 }
 
 bool IntrospectionEntryTest::TestGetMemberModifiers(const char8* modifiers) {
-    IntrospectionEntry memberInfo("", "", 0, modifiers, 0, 0);
+    IntrospectionEntry memberInfo("", "", modifiers,"", 0, 0);
     return (modifiers == NULL)?(memberInfo.GetMemberModifiers()==NULL):(StringHelper::Compare(memberInfo.GetMemberModifiers(), modifiers) == 0);
 }
 
 
 bool IntrospectionEntryTest::TestGetMemberSize(uint32 size){
-    IntrospectionEntry memberInfo("", "", 0, "", size, 0);
+    IntrospectionEntry memberInfo("", "",  "", "",size, 0);
     return memberInfo.GetMemberSize()==size;
 }
 
 
 bool IntrospectionEntryTest::TestGetMemberByteOffset(uint32 byteOffset){
-    IntrospectionEntry memberInfo("", "", 0, "", 0, byteOffset);
+    IntrospectionEntry memberInfo("", "",  "", "",0, byteOffset);
     return memberInfo.GetMemberByteOffset()==byteOffset;
 }
 
@@ -98,13 +102,13 @@ bool IntrospectionEntryTest::TestGetMemberTypeDescriptor(){
 
     uint32 i=0u;
     while (typeNames[i]!=NULL){
-        IntrospectionEntry memberInfo("", typeNames[i], 0, "", 0, 0);
+        IntrospectionEntry memberInfo("", typeNames[i],  "", "",0, 0);
         if(memberInfo.GetMemberTypeDescriptor()!=typeDes[i]){
             return false;
         }
         i++;
     }
-    IntrospectionEntry memberInfo("", "Object", 0, "", 0, 0);
+    IntrospectionEntry memberInfo("", "Object",  "","", 0, 0);
     return memberInfo.GetMemberTypeDescriptor().isStructuredData;
 }
 
@@ -113,7 +117,7 @@ bool IntrospectionEntryTest::TestIsConstant(const IntrospectionEntryTestTable *t
 
     uint32 i=0u;
     while(table[i].modifiers!=NULL){
-        IntrospectionEntry memberInfoConstant("","",table[i].isConstant, table[i].modifiers, 0,0);
+        IntrospectionEntry memberInfoConstant("","", table[i].modifiers,"", 0,0);
         if(memberInfoConstant.IsConstant(table[i].level)!=table[i].expected){
             return false;
         }
@@ -127,8 +131,9 @@ bool IntrospectionEntryTest::TestIsConstant(const IntrospectionEntryTestTable *t
 bool IntrospectionEntryTest::TestGetMemberPointerLevel(const IntrospectionEntryTestTable *table){
     uint32 i=0u;
     while(table[i].modifiers!=NULL){
-        IntrospectionEntry memberInfoConstant("","",table[i].isConstant, table[i].modifiers, 0,0);
+        IntrospectionEntry memberInfoConstant("","", table[i].modifiers,"", 0,0);
         if(memberInfoConstant.GetMemberPointerLevel()!=table[i].level){
+            printf("\n%d %d %s\n", i, memberInfoConstant.GetMemberPointerLevel(), table[i].modifiers);
             return false;
         }
         i++;

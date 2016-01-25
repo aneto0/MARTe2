@@ -50,7 +50,7 @@
 #define Windows 2
 #define FreeRTOS 3
 
-
+/*
 TEST(TypeConversionGTest,TestCCStringToInt8) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<const char8*,int8> table[]={
@@ -4835,3 +4835,32 @@ TEST(TypeConversionGTest,TestFloatToCArrayScalar_Trunc) {
     ASSERT_TRUE(myTypeConversionTest.TestFloatToCArrayScalar_Trunc());
 }
 #endif
+
+*/
+TEST(TypeConversionGTest,TestObjectToObject) {
+    TypeConversionTest myTypeConversionTest;
+
+    ASSERT_TRUE(myTypeConversionTest.TestObjectToObject());
+}
+
+
+TEST(TypeConversionGTest,TestStructuredDataToObject) {
+    TypeConversionTest myTypeConversionTest;
+
+    ASSERT_TRUE(myTypeConversionTest.TestStructuredDataToObject());
+}
+
+
+TEST(TypeConversionGTest,TestObjectToStructuredData) {
+    TypeConversionTest myTypeConversionTest;
+
+    ASSERT_TRUE(myTypeConversionTest.TestObjectToStructuredData());
+}
+
+TEST(TypeConversionGTest,TestStructuredDataToStructuredData) {
+    TypeConversionTest myTypeConversionTest;
+
+    ASSERT_TRUE(myTypeConversionTest.TestStructuredDataToStructuredData());
+}
+
+

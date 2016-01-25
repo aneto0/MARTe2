@@ -101,13 +101,13 @@ private:
 /**
  * This macro creates a static instance of IntrospectionEntry with the provided inputs.
  */
-#define DECLARE_CLASS_MEMBER(className, memberName, type, isConstant, modifierString ) \
+#define DECLARE_CLASS_MEMBER(className, memberName, type, modifierString, attributeString ) \
     static const IntrospectionEntry className ## _ ## memberName ## _introspectionEntry =      \
     IntrospectionEntry(                                                                        \
         #memberName,                                                                           \
         #type,                                                                                 \
-        isConstant,                                                                            \
         modifierString,                                                                        \
+        attributeString,                                                                       \
         introspectionMemberSize(className, memberName),                                        \
         introspectionMemberIndex(className, memberName)                                        \
     )

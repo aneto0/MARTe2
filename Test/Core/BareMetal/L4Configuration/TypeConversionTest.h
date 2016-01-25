@@ -268,6 +268,16 @@ public:
      */
     bool TestCCStringToCArrayMatrix_Trunc();
 
+
+    bool TestObjectToObject();
+
+
+    bool TestStructuredDataToObject();
+
+    bool TestObjectToStructuredData();
+
+    bool TestStructuredDataToStructuredData();
+
 };
 
 /*---------------------------------------------------------------------------*/

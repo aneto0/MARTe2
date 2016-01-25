@@ -110,7 +110,7 @@ bool ClassRegistryItemTest::TestConstructor() {
 bool ClassRegistryItemTest::TestIntrospectionCostructor() {
     ClassProperties testClassProperties("TestIntrospectionCRI", "TestIntrospectionCRI", "1.1");
 
-    IntrospectionEntry member1Field("member1", "uint32", false, "", 4, 0);
+    IntrospectionEntry member1Field("member1", "uint32",  "", "", 4, 0);
 
     const IntrospectionEntry* fields[] = { &member1Field, 0 };
     Introspection introspectionTest(fields);
@@ -321,7 +321,7 @@ bool ClassRegistryItemTest::TestGetObjectBuildFunction() {
 bool ClassRegistryItemTest::TestGetIntrospection() {
     ClassProperties testClassProperties("TestIntrospectionCRI", "TestIntrospectionCRI", "1.1");
 
-    IntrospectionEntry member1Field("member1", "uint32", false, "", 32, 0);
+    IntrospectionEntry member1Field("member1", "uint32", "",  "", 32, 0);
 
     const IntrospectionEntry* fields[] = { &member1Field, 0 };
     Introspection introspectionTest(fields);

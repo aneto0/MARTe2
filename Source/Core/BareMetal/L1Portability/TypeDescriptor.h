@@ -114,8 +114,8 @@ public:
      * @param[in] numberOfBitsIn the number of bits associated to the type.
      */
     TypeDescriptor(const bool isConstantIn,
-                          const uint16 typeIn,
-                          const uint16 numberOfBitsIn);
+                   const uint16 typeIn,
+                   const uint16 numberOfBitsIn);
 
     /**
      * @brief Structured objects constructor.
@@ -123,7 +123,7 @@ public:
      * @param[in] structuredDataIdCodeIn is the 14 bit code associated to the object type.
      */
     TypeDescriptor(const bool isConstantIn,
-                          const ClassUID &structuredDataIdCodeIn);
+                   const ClassUID &structuredDataIdCodeIn);
 
     /**
      * @brief Equality operator used to compare types.
@@ -175,11 +175,10 @@ public:
 
 };
 
-
 /**
  * 8 bit Character.
  */
-static const TypeDescriptor Character8Bit(false, Character, 8u);
+static const TypeDescriptor Character8Bit(false, CArray, 8u);
 
 /**
  * 32 bit float descriptor.
@@ -256,6 +255,8 @@ static const TypeDescriptor CharString(false, CCString, sizeof(char8*) * 8u);
  */
 static const TypeDescriptor StructuredDataInterfaceType(false, StructuredDataNode, 0u);
 
+static const TypeDescriptor PointerType(false, Pointer, sizeof(void*) * 8u);
+
 /**
  * Invalid type descriptor
  */
@@ -265,6 +266,5 @@ static const TypeDescriptor InvalidType(0u);
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
 
 #endif /* TYPEDESCRIPTOR_H_ */

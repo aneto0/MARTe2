@@ -54,23 +54,23 @@ struct TestIntrospectionStructure {
 
 static Introspection &Init() {
 
-    DECLARE_CLASS_MEMBER(TestIntrospectionNestedStructure, nestedMember1, uint32, false, "");
+    DECLARE_CLASS_MEMBER(TestIntrospectionNestedStructure, nestedMember1, uint32, "","");
 
     static const IntrospectionEntry* nestedFields[] = { &TestIntrospectionNestedStructure_nestedMember1_introspectionEntry, 0 };
 
     static Introspection nestedIntrospection(nestedFields);
     INTROSPECTION_CLASS_REGISTER(TestIntrospectionNestedStructure, "1.0", nestedIntrospection)
 
-    static IntrospectionEntry member1Field("member1", "uint32", false, "", introspectionMemberSize(TestIntrospectionStructure, member1),
+    static IntrospectionEntry member1Field("member1", "uint32",  "", "",introspectionMemberSize(TestIntrospectionStructure, member1),
                                            introspectionMemberIndex(TestIntrospectionStructure, member1));
 
-    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member2, float32, false, "*");
+    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member2, float32, "*","");
 
-    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member3, float64, false, "32");
+    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member3, float64, "32","");
 
-    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member4, string, true, "C");
+    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member4, string, "C","");
 
-    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member5, TestIntrospectionNestedStructure, false, "");
+    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member5, TestIntrospectionNestedStructure, "","");
 
     static const IntrospectionEntry* fields[] = { &member1Field, &TestIntrospectionStructure_member2_introspectionEntry,
             &TestIntrospectionStructure_member3_introspectionEntry, &TestIntrospectionStructure_member4_introspectionEntry,

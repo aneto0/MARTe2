@@ -51,7 +51,6 @@ public:
      * @brief Constructor.
      * @param[in] memberNameIn is the member name.
      * @param[in] typeNameIn is the member type name.
-     * @param[in] isConstantIn specifies if the member type is constant or not.
      * @param[in] modifiersIn specifies the member attributes.
      * @param[in] sizeIn is the size of the member.
      * @param[in] byteOffsetIn is the address of the member respect to the class begin pointer.
@@ -60,12 +59,11 @@ public:
      *   GetMemberModifiers() == modifiersIn &&
      *   GetMemberSize() == sizeIn &&
      *   GetMemberByteOffset() == byteOffsetIn &&
-     *   IsConstant() == isConstantIn
      */
     IntrospectionEntry(const char8 * const memberNameIn,
                        const char8 * const typeNameIn,
-                       const bool isConstantIn,
                        const char8* const modifiersIn,
+                       const char8* const attributesIn,
                        const uint32 sizeIn,
                        const uint32 byteOffsetIn);
 
@@ -94,6 +92,7 @@ public:
      *
      *   "**"     --->   double pointer ( int ** x );\n
      *   "**C"    --->   constant double pointer ( int ** const x );\n
+     *   "C*C*C"  --->   constant pointer to constant pointer to contant integer ( int const * const * const x );\n
      *   "*C*C"   --->   constant pointer to constant pointer ( int * const * const x );\n
      *   "*C*"    --->   pointer to constant pointer ( int * const * x );\n
      *   "[2]"    --->   array ( int x[2] );\n
@@ -101,6 +100,8 @@ public:
      *   "[2][2]" --->   double array (int x[2][2] );
      */
     const char8 * GetMemberModifiers() const;
+
+    const char8 * GetMemberAttributes() const;
 
     /**
      * @brief Retrieves the member size.
@@ -135,7 +136,6 @@ public:
      */
     uint32 GetMemberPointerLevel() const;
 
-
     uint32 GetNumberOfDimensions() const;
 
     uint32 GetNumberOfElements(const uint32 dimension) const;
@@ -153,14 +153,11 @@ private:
     const char8* typeName;
 
     /**
-     * A flag to specify if the type is constant.
-     */
-    bool isConstant;
-
-    /**
      * The member modifiers.
      */
     const char8 *modifiers;
+
+    const char8 *attributes;
 
     /**
      * The size of the field
@@ -172,14 +169,13 @@ private:
      */
     uint32 byteOffset;
 
-
     uint32 numberOfDimensions;
 
     uint32 dimensionSize[3];
 
 };
 
-static const IntrospectionEntry InvalidIntrospectionEntry(static_cast<const char8*>(NULL), static_cast<const char8*>(NULL), false, static_cast<const char8*>(NULL), 0u, 0u);
+static const IntrospectionEntry InvalidIntrospectionEntry(static_cast<const char8*>(NULL), static_cast<const char8*>(NULL), static_cast<const char8*>(NULL),static_cast<const char8*>(NULL), 0u, 0u);
 
 }
 
