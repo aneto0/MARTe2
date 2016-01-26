@@ -570,7 +570,7 @@ bool BasicConsoleTest::TestRelativeSeek() {
 
 bool BasicConsoleTest::TestPosition() {
     BasicConsole console;
-    return console.Size() == 0xffffffffffffffff;
+    return console.Position() == 0xffffffffffffffff;
 }
 
 bool BasicConsoleTest::TestSetSize() {
