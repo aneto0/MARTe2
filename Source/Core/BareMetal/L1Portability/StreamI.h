@@ -228,7 +228,7 @@ public:
      *   pos + deltaPos <= Size() =>
      *   Position() == this'old->Position() + deltaPos &&
      *   pos + deltaPos > Size() => Position() == Size()
-     * @warning (1) The deltaPos is a signed integer, so it will always have a
+     * @warning The deltaPos is a signed integer, so it will always have a
      * half addressable space with respect to its unsigned counterpart, i.e.
      * the Seek() method.
      */

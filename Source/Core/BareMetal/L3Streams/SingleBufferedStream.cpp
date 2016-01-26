@@ -386,7 +386,7 @@ bool SingleBufferedStream::RelativeSeek(const int64 deltaPos) {
 uint64 SingleBufferedStream::Position() {
 
     uint64 ret = 0u;
-// if write mode on then just flush out data
+    // if write mode on then just flush out data
     if (mutexWriteMode) {
         ret = OSPosition() + internalBuffer.Position();
     }
@@ -399,7 +399,7 @@ uint64 SingleBufferedStream::Position() {
 
 bool SingleBufferedStream::SetSize(const uint64 size) {
     bool ret = true;
-// commit all changes
+    // commit all changes
     if (!FlushAndResync()) {
         ret = false;
     }
