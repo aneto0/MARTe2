@@ -462,7 +462,7 @@ public:
     /**
      * @brief Constructor by BitBoolean.
      * @tparam baseType the standard type which is used as a base for bitBool's type
-     * @tparam bitOffset TODO define bitOffset
+     * @tparam bitOffset the actual bit offset of the bitBool's type
      * @param[in] bitBool is the BitBoolean object input.
      */
     template<typename baseType, uint8 bitOffset>
@@ -471,8 +471,8 @@ public:
     /**
      * @brief Constructor by BitRange.
      * @tparam baseType the standard type which is used as a base for bitRange's type
-     * @tparam bitSize the actual size of the bitRange's type
-     * @tparam bitOffset TODO Define bitOffset
+     * @tparam bitSize the actual bit size of the bitRange's type
+     * @tparam bitOffset the actual bit offset of the bitRange's type
      * @param[in] bitRange is the BitRange object input.
      */
     template<typename baseType, uint8 bitSize, uint8 bitOffset>
@@ -481,7 +481,7 @@ public:
     /**
      * @brief Constructor by FractionalInteger.
      * @tparam baseType the standard type which is used as a base for fractionalInt's type
-     * @tparam bitSize the actual size of the fractionalInt's type
+     * @tparam bitSize the actual bit size of the fractionalInt's type
      * @param[in] fractionalInt is the FractionalInteger object input.
      */
     template<typename baseType, uint8 bitSize>
@@ -490,7 +490,7 @@ public:
     /**
      * @brief Constructor by constant FractionalInteger.
      * @tparam baseType the standard type which is used as a base for fractionalInt's type
-     * @tparam bitSize the actual size of the fractionalInt's type
+     * @tparam bitSize the actual bit size of the fractionalInt's type
      * @param[in] fractionalInt is the constant FractionalInteger object input.
      */
     template<typename baseType, uint8 bitSize>
@@ -498,7 +498,7 @@ public:
 
     /**
      * @brief Constructor from a statically declared array [].
-     * @tparam T TODO Define T
+     * @tparam T the type of the elements in the array
      * @tparam nOfElementsStatic number of elements in the array, automatically computed by the compiler.
      * @param[in] source address of the statically declared array.
      * @post
@@ -545,7 +545,7 @@ public:
 
     /**
      * @brief Constructor from a statically declared table [][].
-     * @tparam T TODO Define T
+     * @tparam T the type of the elements in the array
      * @tparam nOfRowsStatic number of rows in the table, automatically computed by the compiler.
      * @tparam nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
      * @param[in] source address of the statically declared table.
@@ -579,7 +579,7 @@ public:
      * @brief Constructor from a statically declared table of characters [][][].
      * @tparam nOfRowsStatic number of rows in the table, automatically computed by the compiler.
      * @tparam nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
-     * @tparam nOfChars TODO Define nOfChars
+     * @tparam nOfChars number of chars in each cell of the table, automatically computed by the compiler.
      * @param[in] source address of the statically declared table.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -593,7 +593,7 @@ public:
 
     /**
      * @brief Constructor from an existent Matrix.
-     * @tparam T TODO Define T
+     * @tparam T the type of the elements in the matrix
      * @param[in] mat the matrix from whose this AnyType will be constructed.
      * @post
      *   GetNumberOfDimensions() == 2 &&
@@ -620,7 +620,7 @@ public:
 
     /**
      * @brief Constructor from an existent Vector.
-     * @tparam T TODO Define T
+     * @tparam T the type of the elements in the vector
      * @param[in] vec the vector from whose this AnyType will be constructed.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -672,7 +672,7 @@ public:
 
     /**
      * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
-     * @tparam baseType TODO Define baseType
+     * @tparam baseType the type of the source object
      * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegisteredDatabase).
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.
@@ -683,7 +683,7 @@ public:
 
     /**
      * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
-     * @tparam baseType TODO Define baseType
+     * @tparam baseType the type of the source object
      * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegistryDatabase).
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.

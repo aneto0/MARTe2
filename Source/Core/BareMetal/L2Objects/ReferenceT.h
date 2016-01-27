@@ -40,7 +40,7 @@ namespace MARTe {
 
 /**
  * @brief Template version of the shared pointer implementation (see Reference).
- * @tparam T TODO Define T
+ * @tparam T the base type of the objects referenced by instances of this class
  */
 template<typename T>
 class ReferenceT: public Reference {

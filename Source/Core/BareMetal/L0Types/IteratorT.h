@@ -40,7 +40,7 @@ namespace MARTe {
 
 /**
  * @brief Template implementation of the Iterator interface.
- * @tparam T TODO Define T
+ * @tparam T The type of the object to be passed to the callback function
  */
 template<typename T>
 class IteratorT {

@@ -109,6 +109,7 @@ public:
      * @brief Opens and display the console.
      * @details Opens and displays the console.
      * @param[in] mode the desired opening mode, which changes some behaviours of the console.
+     * The only values accepted are those defined in MARTe::BasicConsoleMode.
      * @return true if the console is opened correctly or false if there is any operating
      * system related problem while performing the operation.
      * @pre Even if the behaviour will be operating system dependent, it is advisable to call

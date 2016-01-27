@@ -44,7 +44,7 @@ namespace MARTe {
  * @brief Fixed size matrix of values.
  * @details The Matrix can allocate and manage its own memory or it can be associated
  * to an existent memory table.
- * @tparam T TODO Define T
+ * @tparam T the scalar type for the cells of the matrix
  */
 template<typename T>
 class Matrix {

@@ -42,9 +42,9 @@ namespace MARTe {
 
 /**
  * @brief Fixed size array of values.
- * @tparam T TODO Define T
  * @details The Vector can allocate and manage its own memory or it can be
  * associated to an existent memory array.
+ * @tparam T the scalar type for the cells of the matrix
  */
 template<typename T>
 class Vector {
