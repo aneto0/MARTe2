@@ -38,6 +38,20 @@
 
 namespace MARTe {
 
+/**
+ * @brief Checks the \a value in input looking to the specified \a attributes.
+ * @details
+ * The string attributes must be written in the standard MARTe configuration language and provides a series
+ * of attributes to be associated to a basic type member. Most common attributes are:
+ *
+ *   min        = ...    ---> the minimum value
+ *   max        = ...    ---> the maximum value
+ *   values     = {...}  ---> the list of possible values
+ *   min_size   = ...    ---> the minimum size
+ *   max_size   = ...    ---> the maximum size
+ *
+ * @return true if \a value respects the constraints specified by the \a attributes, false otherwise.
+ */
 bool ValidateBasicType(const AnyType &value,
                        const char8* const attributes);
 

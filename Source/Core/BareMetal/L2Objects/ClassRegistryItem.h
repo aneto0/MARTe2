@@ -82,6 +82,17 @@ public:
     ClassRegistryItem(const ClassProperties &clProperties, Introspection &introspectionIn);
 
     /**
+     * @brief Assigns the input variables to the class members.
+     * @param[in] clProperties the class properties associated with the class that is being registered.
+     * @param[in] objBuildFn the function that allows to instantiate a new object from the class
+     * @param[in] introspectionIn is the Introspection structure containing the class metadata.
+     * represented by this ClassRegistryItem instance.
+     */
+    ClassRegistryItem(const ClassProperties &clProperties,
+            const ObjectBuildFn * const objBuildFn, Introspection &introspectionIn);
+
+
+    /**
      * Destructor.
      * Responsible for destroying the assigned loadable library.
      */

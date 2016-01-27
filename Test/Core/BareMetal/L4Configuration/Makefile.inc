@@ -28,12 +28,14 @@
 OBJSX=	AnyObjectTest.x \
 	AnyTypeCreatorTest.x \
 	ConfigurationDatabaseTest.x \
+	IntrospectionTestHelper.x \
 	JsonParserTest.x \
 	LexicalAnalyzerTest.x \
 	StandardParserTest.x \
 	TypeConversionTest.x \
 	TokenInfoTest.x \
 	TokenTest.x \
+	ValidateBasicTypeTest.x\
 	XMLParserTest.x
 					
 PACKAGE=Core/BareMetal

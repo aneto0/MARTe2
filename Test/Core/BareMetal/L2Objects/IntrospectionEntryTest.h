@@ -85,6 +85,11 @@ public:
     bool TestGetMemberTypeDescriptor();
 
     /**
+     * @brief Checks if the function returns the member attributes.
+     */
+    bool TestGetMemberAttributes(const char8 * attributes);
+
+    /**
      * @brief Checks if the function returns true if the member type is constant and false otherwise.
      */
     bool TestIsConstant(const IntrospectionEntryTestTable *table);

@@ -131,18 +131,18 @@ public:
      */
     virtual bool Delete(const char8 * const name);
 
+    /**
+     * @brief StructuredDataI::GetName
+     */
     virtual const char8 *GetName();
 
     /**
-     * @brief Retrieves the name of the child in the specified index.
-     * @param[in] index is the index of the current node child.
-     * @return the name of the child in the specified index.
+     * @brief StructuredDataI::GetChildName
      */
     virtual const char8 *GetChildName(const uint32 index);
 
     /**
-     * @brief Retrieves the number of children of the current node.
-     * @return the number of children of the current node.
+     * @brief StructuredDataI::GetNumberOfChildren
      */
     virtual uint32 GetNumberOfChildren();
 

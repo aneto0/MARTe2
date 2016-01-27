@@ -90,6 +90,9 @@ const BasicType SString = 7u;
  */
 const BasicType Stream = 8u;
 
+/**
+ * The StructuredDataI type
+ */
 const BasicType StructuredDataNode = 9u;
 
 }

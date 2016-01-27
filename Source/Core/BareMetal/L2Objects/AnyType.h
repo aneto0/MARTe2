@@ -127,6 +127,10 @@ public:
      */
     inline bool IsVoid() const;
 
+    inline AnyType(char8 &i);
+
+    inline AnyType(const char8 &i);
+
     /**
      * @brief Constructor from signed 8 bit integer.
      * @param[in] i is the signed 8 bit integer input.
@@ -445,7 +449,6 @@ public:
      *   GetNumberOfElements(0:2) == 0
      */
     AnyType(const Object &obj);
-
 
     /**
      * @brief Copy constructor from another AnyType.
@@ -823,6 +826,23 @@ AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,
 
 bool AnyType::IsVoid() const {
     return (dataDescriptor == VoidType);
+}
+
+/*---------------------------------------------------------------------------*/
+
+AnyType::AnyType(char8 &i) {
+    Init();
+    dataPointer = static_cast<void *>(&i);
+    bitAddress = 0u;
+    dataDescriptor = Character8Bit;
+}
+
+AnyType::AnyType(const char8 &i) {
+    Init();
+    dataPointer = static_cast<void *>(const_cast<char8*>(&i));
+    bitAddress = 0u;
+    dataDescriptor = Character8Bit;
+    dataDescriptor.isConstant = true;
 }
 
 /*---------------------------------------------------------------------------*/

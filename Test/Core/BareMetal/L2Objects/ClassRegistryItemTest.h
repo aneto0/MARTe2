@@ -58,6 +58,12 @@ public:
     bool TestIntrospectionCostructor();
 
     /**
+     * @brief Tests the full constructor.
+     * @return true if all the class attributes are initialised correctly.
+     */
+    bool TestFullCostructor();
+
+    /**
      * @brief Tests destructor.
      * @return true if the class is deleted from the database.
      */

@@ -111,6 +111,12 @@ public:
     template <typename T>
     bool TestRead_Valid(T value);
 
+
+    bool TestRead_StructuredData();
+
+
+    bool TestRead_Object();
+
     /**
      * @brief Tests the Read function with an invalid name
      */
@@ -141,6 +147,10 @@ public:
      * @brief Tests the Write function with an invalid name
      */
     bool TestWrite_Invalid();
+
+    bool TestWrite_StructuredData();
+
+    bool TestWrite_Object();
 
     /**
      * @brief Tests the GetType function with a valid name

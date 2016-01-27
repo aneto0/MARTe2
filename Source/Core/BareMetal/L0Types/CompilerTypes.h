@@ -91,7 +91,10 @@ namespace MARTe {
     static const uint8 MAX_UINT8 = 0xFF;
     static const int8 MIN_INT8 = 0x80;
     static const uint8 MIN_UINT8 = 0;
-
+    static const uint32 MIN_FLOAT32 = 0xFF7FFFFFu;
+    static const uint32 MAX_FLOAT32 = 0x7F7FFFFFu;
+    static const uint32 EPSILON_FLOAT32 = 0x34000000u;
+    static const uint64 EPSILON_FLOAT64 = 0x3CB0000000000000ull;
 }
 
 #endif /* COMPILERTYPES */

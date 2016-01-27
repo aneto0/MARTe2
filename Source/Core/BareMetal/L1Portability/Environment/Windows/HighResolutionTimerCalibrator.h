@@ -28,8 +28,7 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <Windows.h>
-#include <time.h>
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -90,9 +89,14 @@ private:
     float64 period;
 
     /**
-     * Stores the time (counting from the epoch) at which a framework instance was executed.
+     * Stores the seconds (counting from the epoch) at which a framework instance was executed.
      */
-    struct timeval initialTime;
+    oslong initialSecs;
+
+    /**
+     * Stores the microseconds (counting from the epoch) at which a framework instance was executed.
+     */
+    oslong initialUSecs;
 
     /**
      * Number of elapsed ticks at the time at which a framework instance was executed.

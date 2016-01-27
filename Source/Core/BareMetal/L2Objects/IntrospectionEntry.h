@@ -51,7 +51,8 @@ public:
      * @brief Constructor.
      * @param[in] memberNameIn is the member name.
      * @param[in] typeNameIn is the member type name.
-     * @param[in] modifiersIn specifies the member attributes.
+     * @param[in] modifiersIn specifies the member modifiers.
+     * @param[in] attributesIn specifies the member attributes.
      * @param[in] sizeIn is the size of the member.
      * @param[in] byteOffsetIn is the address of the member respect to the class begin pointer.
      * @post
@@ -74,6 +75,13 @@ public:
     const char8* GetMemberName() const;
 
     /**
+     * @brief Retrieves the member type name.
+     * @return the member type name.
+     */
+    const char8 *GetMemberTypeName() const;
+
+
+    /**
      * @brief Retrieves the TypeDescriptor associated to the member type.
      * @return the TypeDescriptor associated to the member type.
      */
@@ -81,7 +89,7 @@ public:
 
     /**
      * @brief Retrieves the member modifiers.
-     * @details the string \a modifiers is a list of symbols:
+     * @details The string \a modifiers is a list of symbols:
      *
      *   '*'   = pointer;\n
      *   'C'   = constant;\n
@@ -98,9 +106,28 @@ public:
      *   "[2]"    --->   array ( int x[2] );\n
      *   "*[2]"   --->   array of pointers ( int *x[2] );\n
      *   "[2][2]" --->   double array (int x[2][2] );
+     *
+     *   @return the member modifiers.
      */
     const char8 * GetMemberModifiers() const;
 
+
+    /**
+     * @brief Retrieves the member attributes.
+     * @details The string attributes must be written in the standard MARTe configuration language and provides a series
+     * of attributes to be associated to a basic type member. Most common attributes are:
+     *
+     *   min        = ...    ---> the minimum value
+     *   max        = ...    ---> the maximum value
+     *   values     = {...}  ---> the list of possible values
+     *   min_size   = ...    ---> the minimum size
+     *   max_size   = ...    ---> the maximum size
+     *
+     * The function ValidateBasicType will take as input this attributes to check if the value to associate to the class
+     * member respects the constraints.
+     *
+     * @return the member attributes.
+     */
     const char8 * GetMemberAttributes() const;
 
     /**
@@ -136,8 +163,24 @@ public:
      */
     uint32 GetMemberPointerLevel() const;
 
-    uint32 GetNumberOfDimensions() const;
+    /**
+     * @brief Retrieves the number of dimensions related to the member.
+     * @details
+     *
+     *   GetNumberOfDimensions() == 0 --> scalar
+     *   GetNumberOfDimensions() == 1 --> array
+     *   GetNumberOfDimensions() == 2 --> matrix
+     *   GetNumberOfDimensions() == 2 --> mesh
+     *
+     * @return Retrieves the number of dimensions related to the member.
+     */
+    uint8 GetNumberOfDimensions() const;
 
+    /**
+     * @brief Retrieves the number of elements in a given dimension.
+     * @param[in] dimension is the dimension number.
+     * @return the number of elements for the dimension specified in input.
+     */
     uint32 GetNumberOfElements(const uint32 dimension) const;
 
 private:
@@ -157,24 +200,36 @@ private:
      */
     const char8 *modifiers;
 
+    /**
+     * The member attributes.
+     */
     const char8 *attributes;
 
     /**
-     * The size of the field
+     * The size of the field.
      */
     uint32 size;
 
     /**
-     * offset from the start of the class of the member as bytes
+     * The offset from the start of the class of the member as bytes.
      */
     uint32 byteOffset;
 
-    uint32 numberOfDimensions;
+    /**
+     * The number of dimensions.
+     */
+    uint8 numberOfDimensions;
 
+    /**
+     * The number of elements for each dimension.
+     */
     uint32 dimensionSize[3];
 
 };
 
+/**
+ * @brief The invalid IntrospectionEntry.
+ */
 static const IntrospectionEntry InvalidIntrospectionEntry(static_cast<const char8*>(NULL), static_cast<const char8*>(NULL), static_cast<const char8*>(NULL),static_cast<const char8*>(NULL), 0u, 0u);
 
 }

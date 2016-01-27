@@ -123,6 +123,9 @@ public:
     bool TestUndoLevel(uint32 undoLevel);
 
 
+    /**
+     * @brief Tests the CanWrite() function
+     */
     bool TestCanWrite();
 
     /**
@@ -330,7 +333,18 @@ public:
      */
     bool TestSkipToken(const SkipTokensTestTableRow *table);
 
+    bool TestPrintFormattedIntrospection();
 
+
+    /**
+     * @brief Tests the print of a structured object.
+     */
+    bool TestPrintFormattedObject();
+
+    /**
+     * @brief Tests the print of a StrucuredDataI.
+     */
+    bool TestPrintStructuredDataInterface();
 };
 
 /*---------------------------------------------------------------------------*/

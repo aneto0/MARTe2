@@ -269,14 +269,58 @@ public:
     bool TestCCStringToCArrayMatrix_Trunc();
 
 
+    /**
+     * @brief Tests the conversion between two structured objects.
+     */
     bool TestObjectToObject();
 
+    /**
+     * @brief Tests if the conversion fails if the source class does not provide its introspection.
+     */
+    bool TestObjectToObject_ErrorNoSourceIntrospection();
 
-    bool TestStructuredDataToObject();
+    /**
+     * @brief Tests if the conversion fails if the destination class does not provide its introspection.
+     */
+    bool TestObjectToObject_ErrorNoDestIntrospection();
 
+    /**
+     * @brief Tests if the conversion fails if the classes are not compatible.
+     */
+    bool TestObjectToObject_NoCompatibility();
+
+    /**
+     * @brief Tests the read of a structured object from a ConfigurationDatabase.
+     */
+    bool TestStructuredDataToObject_SourceIntrospection();
+
+    /**
+     * @brief Tests the read of a structured object from a ConfigurationDatabase.
+     */
+    bool TestStructuredDataToObject_NoSourceIntrospection();
+
+    /**
+     * @brief Tests if the conversion fails if the destination class does not provide its introspection.
+     */
+    bool TestStructuredDataToObject_ErrorNoDestIntrospection();
+
+    /**
+     * @brief Tests if the conversion fails if the classes are not compatible.
+     */
+    bool TestStructuredDataToObject_NoCompatibility();
+
+    /**
+     * @brief Tests the write of a structured object on a ConfigurationDatabase.
+     */
     bool TestObjectToStructuredData();
 
+
+    /**
+     * @brief Tests the if the functions clones the source ConfigurationDatabase into the destination ConfigurationDatabase.
+     */
     bool TestStructuredDataToStructuredData();
+
+
 
 };
 

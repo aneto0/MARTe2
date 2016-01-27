@@ -67,6 +67,10 @@ public:
     const IntrospectionEntry operator[](const uint32 index) const;
 
 
+    /**
+     * @brief Retrieved the number of IntrospectionEntries in the internal array.
+     * @return the number of IntrospectionEntries in the internal array.
+     */
     uint32 GetSize() const;
 
 private:
@@ -89,13 +93,13 @@ private:
 /**
  * This macro retrieves the member address respect to the class begin.
  */
-#define introspectionMemberIndex(className, memberName) \
+#define INTROSPECTION_MEMBER_INDEX(className, memberName) \
     (intptr)&(((className *)0)->memberName)
 
 /**
  * This macro retrieves the member size.
  */
-#define introspectionMemberSize(className, memberName) \
+#define INTROSPECTION_MEMBER_SIZE(className, memberName) \
     sizeof(((className *)0)->memberName)
 
 /**
@@ -108,8 +112,8 @@ private:
         #type,                                                                                 \
         modifierString,                                                                        \
         attributeString,                                                                       \
-        introspectionMemberSize(className, memberName),                                        \
-        introspectionMemberIndex(className, memberName)                                        \
+        INTROSPECTION_MEMBER_SIZE(className, memberName),                                        \
+        INTROSPECTION_MEMBER_INDEX(className, memberName)                                        \
     )
 
 #endif /* INTROSPECTION_H_ */
