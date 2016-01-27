@@ -47,29 +47,45 @@
 
 namespace MARTe {
 
+static const uint32 defaultBufferSize = 64u;
+
+/**
+ * @brief Checks the validity of a string.
+ * @param[in] stringValue is the value to be checked.
+ * @param[in] cdb contains the attributes.
+ */
 static bool PrivateValidate(const char8 * const stringValue,
                             ConfigurationDatabase &cdb) {
 
     bool ret = true;
 
-    char8 max[32];
+    char8 max[defaultBufferSize];
     if (cdb.Read("max", max)) {
-        if ((StringHelper::Compare(max, stringValue) == 1) && (ret)) {
+        if (StringHelper::Compare(&max[0], stringValue) == 1) {
             ret = false;
         }
     }
     if (ret) {
-        char8 min[32];
+        char8 min[defaultBufferSize];
         if (cdb.Read("min", min)) {
-            if (StringHelper::Compare(min, stringValue) == 2) {
+            if (StringHelper::Compare(&min[0], stringValue) == 2) {
                 ret = false;
             }
         }
     }
     if (ret) {
         uint32 size;
-        if (cdb.Read("size", size)) {
-            if ((StringHelper::Length(stringValue) < size) && (ret)) {
+        if (cdb.Read("min_size", size)) {
+            if (StringHelper::Length(stringValue) < size) {
+                ret = false;
+            }
+        }
+    }
+
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("max_size", size)) {
+            if (StringHelper::Length(stringValue) > size) {
                 ret = false;
             }
         }
@@ -80,10 +96,13 @@ static bool PrivateValidate(const char8 * const stringValue,
 
         if (values.GetDataPointer() != NULL) {
             uint32 numberOfValues = values.GetNumberOfElements(0u);
-            char8** elements = static_cast<char8**>(values.GetDataPointer());
-
-            for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
-                ret = (StringHelper::Compare(elements[i], stringValue) == 0);
+            Matrix<char8> elements(numberOfValues, defaultBufferSize);
+            if(cdb.Read("values", elements)) {
+                ret=false;
+                for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
+                    Vector<char8> temp=elements[i];
+                    ret = (StringHelper::Compare(&(temp[0u]), stringValue) == 0);
+                }
             }
         }
     }
@@ -92,6 +111,11 @@ static bool PrivateValidate(const char8 * const stringValue,
 
 }
 
+/**
+ * @brief Checks the validity of a 8 bit signed integer.
+ * @param[in] intValue is the value to be checked.
+ * @param[in] cdb contains the attributes.
+ */
 static bool PrivateValidate(const int8 intValue,
                             ConfigurationDatabase &cdb) {
     bool ret = true;
@@ -106,9 +130,31 @@ static bool PrivateValidate(const int8 intValue,
     if (ret) {
         int8 min;
         if (cdb.Read("min", min)) {
-
             if (intValue < min) {
                 ret = false;
+            }
+        }
+    }
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("min_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, intValue)) {
+                if (StringHelper::Length(&buffer[0]) < size) {
+                    ret = false;
+                }
+            }
+        }
+    }
+
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("max_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, intValue)) {
+                if (StringHelper::Length(&buffer[0]) > size) {
+                    ret = false;
+                }
             }
         }
     }
@@ -118,19 +164,27 @@ static bool PrivateValidate(const int8 intValue,
 
         if (values.GetDataPointer() != NULL) {
             uint32 numberOfValues = values.GetNumberOfElements(0u);
-            int8* elements = static_cast<int8*>(values.GetDataPointer());
+            Vector<int8> elements(numberOfValues);
+            if(cdb.Read("values", elements)) {
 
-            ret = false;
+                ret = false;
 
-            for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
-                ret = (intValue == elements[i]);
+                for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
+                    ret = (intValue == elements[i]);
+                }
             }
         }
     }
+
     return ret;
 
 }
 
+/**
+ * @brief Checks the validity of a 16 bit signed integer.
+ * @param[in] intValue is the value to be checked.
+ * @param[in] cdb contains the attributes.
+ */
 static bool PrivateValidate(const int16 intValue,
                             ConfigurationDatabase &cdb) {
 
@@ -152,18 +206,43 @@ static bool PrivateValidate(const int16 intValue,
             }
         }
     }
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("min_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, intValue)) {
+                if (StringHelper::Length(&buffer[0]) < size) {
+                    ret = false;
+                }
+            }
+        }
+    }
+
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("max_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, intValue)) {
+                if (StringHelper::Length(&buffer[0]) > size) {
+                    ret = false;
+                }
+            }
+        }
+    }
 
     if (ret) {
         AnyType values = cdb.GetType("values");
 
         if (values.GetDataPointer() != NULL) {
             uint32 numberOfValues = values.GetNumberOfElements(0u);
-            int16* elements = static_cast<int16*>(values.GetDataPointer());
+            Vector<int16> elements(numberOfValues);
+            if(cdb.Read("values", elements)) {
 
-            ret = false;
+                ret = false;
 
-            for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
-                ret = (intValue == elements[i]);
+                for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
+                    ret = (intValue == elements[i]);
+                }
             }
         }
     }
@@ -171,6 +250,11 @@ static bool PrivateValidate(const int16 intValue,
 
 }
 
+/**
+ * @brief Checks the validity of a 32 bit signed integer.
+ * @param[in] intValue is the value to be checked.
+ * @param[in] cdb contains the attributes.
+ */
 static bool PrivateValidate(const int32 intValue,
                             ConfigurationDatabase &cdb) {
 
@@ -194,16 +278,41 @@ static bool PrivateValidate(const int32 intValue,
     }
 
     if (ret) {
+        uint32 size;
+        if (cdb.Read("min_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, intValue)) {
+                if (StringHelper::Length(&buffer[0]) < size) {
+                    ret = false;
+                }
+            }
+        }
+    }
+
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("max_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, intValue)) {
+                if (StringHelper::Length(&buffer[0]) > size) {
+                    ret = false;
+                }
+            }
+        }
+    }
+    if (ret) {
         AnyType values = cdb.GetType("values");
 
         if (values.GetDataPointer() != NULL) {
             uint32 numberOfValues = values.GetNumberOfElements(0u);
-            int32* elements = static_cast<int32*>(values.GetDataPointer());
+            Vector<int32> elements(numberOfValues);
+            if(cdb.Read("values", elements)) {
 
-            ret = false;
+                ret = false;
 
-            for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
-                ret = (intValue == elements[i]);
+                for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
+                    ret = (intValue == elements[i]);
+                }
             }
         }
     }
@@ -211,6 +320,11 @@ static bool PrivateValidate(const int32 intValue,
 
 }
 
+/**
+ * @brief Checks the validity of a 64 bit signed integer.
+ * @param[in] intValue is the value to be checked.
+ * @param[in] cdb contains the attributes.
+ */
 static bool PrivateValidate(const int64 intValue,
                             ConfigurationDatabase &cdb) {
     bool ret = true;
@@ -231,24 +345,54 @@ static bool PrivateValidate(const int64 intValue,
             }
         }
     }
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("min_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, intValue)) {
+                if (StringHelper::Length(&buffer[0]) < size) {
+                    ret = false;
+                }
+            }
+        }
+    }
+
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("max_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, intValue)) {
+                if (StringHelper::Length(&buffer[0]) > size) {
+                    ret = false;
+                }
+            }
+        }
+    }
 
     if (ret) {
         AnyType values = cdb.GetType("values");
 
         if (values.GetDataPointer() != NULL) {
             uint32 numberOfValues = values.GetNumberOfElements(0u);
-            int64* elements = static_cast<int64*>(values.GetDataPointer());
+            Vector<int64> elements(numberOfValues);
+            if(cdb.Read("values", elements)) {
 
-            ret = false;
+                ret = false;
 
-            for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
-                ret = (intValue == elements[i]);
+                for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
+                    ret = (intValue == elements[i]);
+                }
             }
         }
     }
     return ret;
 }
 
+/**
+ * @brief Checks the validity of a 8 bit unsigned integer.
+ * @param[in] uintValue is the value to be checked.
+ * @param[in] cdb contains the attributes.
+ */
 static bool PrivateValidate(const uint8 uintValue,
                             ConfigurationDatabase &cdb) {
 
@@ -272,22 +416,52 @@ static bool PrivateValidate(const uint8 uintValue,
     }
 
     if (ret) {
+        uint32 size;
+        if (cdb.Read("min_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, uintValue)) {
+                if (StringHelper::Length(&buffer[0]) < size) {
+                    ret = false;
+                }
+            }
+        }
+    }
+
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("max_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, uintValue)) {
+                if (StringHelper::Length(&buffer[0]) > size) {
+                    ret = false;
+                }
+            }
+        }
+    }
+    if (ret) {
         AnyType values = cdb.GetType("values");
 
         if (values.GetDataPointer() != NULL) {
             uint32 numberOfValues = values.GetNumberOfElements(0u);
-            uint8* elements = static_cast<uint8*>(values.GetDataPointer());
+            Vector<uint8> elements(numberOfValues);
+            if(cdb.Read("values", elements)) {
 
-            ret = false;
+                ret = false;
 
-            for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
-                ret = (uintValue == elements[i]);
+                for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
+                    ret = (uintValue == elements[i]);
+                }
             }
         }
     }
     return ret;
 }
 
+/**
+ * @brief Checks the validity of a 16 bit unsigned integer.
+ * @param[in] uintValue is the value to be checked.
+ * @param[in] cdb contains the attributes.
+ */
 static bool PrivateValidate(const uint16 uintValue,
                             ConfigurationDatabase &cdb) {
 
@@ -309,24 +483,53 @@ static bool PrivateValidate(const uint16 uintValue,
             }
         }
     }
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("min_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, uintValue)) {
+                if (StringHelper::Length(&buffer[0]) < size) {
+                    ret = false;
+                }
+            }
+        }
+    }
 
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("max_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, uintValue)) {
+                if (StringHelper::Length(&buffer[0]) > size) {
+                    ret = false;
+                }
+            }
+        }
+    }
     if (ret) {
         AnyType values = cdb.GetType("values");
 
         if (values.GetDataPointer() != NULL) {
             uint32 numberOfValues = values.GetNumberOfElements(0u);
-            uint16* elements = static_cast<uint16*>(values.GetDataPointer());
+            Vector<uint16> elements(numberOfValues);
+            if(cdb.Read("values", elements)) {
 
-            ret = false;
+                ret = false;
 
-            for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
-                ret = (uintValue == elements[i]);
+                for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
+                    ret = (uintValue == elements[i]);
+                }
             }
         }
     }
     return ret;
 }
 
+/**
+ * @brief Checks the validity of a 32 bit unsigned integer.
+ * @param[in] uintValue is the value to be checked.
+ * @param[in] cdb contains the attributes.
+ */
 static bool PrivateValidate(const uint32 uintValue,
                             ConfigurationDatabase &cdb) {
 
@@ -348,18 +551,42 @@ static bool PrivateValidate(const uint32 uintValue,
             }
         }
     }
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("min_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, uintValue)) {
+                if (StringHelper::Length(&buffer[0]) < size) {
+                    ret = false;
+                }
+            }
+        }
+    }
 
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("max_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, uintValue)) {
+                if (StringHelper::Length(&buffer[0]) > size) {
+                    ret = false;
+                }
+            }
+        }
+    }
     if (ret) {
         AnyType values = cdb.GetType("values");
 
         if (values.GetDataPointer() != NULL) {
             uint32 numberOfValues = values.GetNumberOfElements(0u);
-            uint32* elements = static_cast<uint32*>(values.GetDataPointer());
+            Vector<uint32> elements(numberOfValues);
+            if(cdb.Read("values", elements)) {
 
-            ret = false;
+                ret = false;
 
-            for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
-                ret = (uintValue == elements[i]);
+                for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
+                    ret = (uintValue == elements[i]);
+                }
             }
         }
     }
@@ -367,6 +594,11 @@ static bool PrivateValidate(const uint32 uintValue,
 
 }
 
+/**
+ * @brief Checks the validity of a 64 bit unsigned integer.
+ * @param[in] uintValue is the value to be checked.
+ * @param[in] cdb contains the attributes.
+ */
 static bool PrivateValidate(const uint64 uintValue,
                             ConfigurationDatabase &cdb) {
 
@@ -388,18 +620,42 @@ static bool PrivateValidate(const uint64 uintValue,
             }
         }
     }
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("min_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, uintValue)) {
+                if (StringHelper::Length(&buffer[0]) < size) {
+                    ret = false;
+                }
+            }
+        }
+    }
 
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("max_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, uintValue)) {
+                if (StringHelper::Length(&buffer[0]) > size) {
+                    ret = false;
+                }
+            }
+        }
+    }
     if (ret) {
         AnyType values = cdb.GetType("values");
 
         if (values.GetDataPointer() != NULL) {
             uint32 numberOfValues = values.GetNumberOfElements(0u);
-            uint64* elements = static_cast<uint64*>(values.GetDataPointer());
+            Vector<uint64> elements(numberOfValues);
+            if(cdb.Read("values", elements)) {
 
-            ret = false;
+                ret = false;
 
-            for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
-                ret = (uintValue == elements[i]);
+                for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
+                    ret = (uintValue == elements[i]);
+                }
             }
         }
     }
@@ -407,9 +663,13 @@ static bool PrivateValidate(const uint64 uintValue,
 
 }
 
+/**
+ * @brief Checks the validity of a 32 bit float.
+ * @param[in] floatValue is the value to be checked.
+ * @param[in] cdb contains the attributes.
+ */
 static bool PrivateValidate(const float32 floatValue,
                             ConfigurationDatabase &cdb) {
-
     bool ret = true;
 
     float32 max;
@@ -428,18 +688,42 @@ static bool PrivateValidate(const float32 floatValue,
             }
         }
     }
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("min_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, floatValue)) {
+                if (StringHelper::Length(&buffer[0]) < size) {
+                    ret = false;
+                }
+            }
+        }
+    }
 
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("max_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, floatValue)) {
+                if (StringHelper::Length(&buffer[0]) > size) {
+                    ret = false;
+                }
+            }
+        }
+    }
     if (ret) {
         AnyType values = cdb.GetType("values");
 
         if (values.GetDataPointer() != NULL) {
             uint32 numberOfValues = values.GetNumberOfElements(0u);
-            float32* elements = static_cast<float32*>(values.GetDataPointer());
+            Vector<float32> elements(numberOfValues);
+            if(cdb.Read("values", elements)) {
 
-            ret = false;
+                ret = false;
 
-            for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
-                ret = (floatValue == elements[i]);
+                for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
+                    ret = isEqual(floatValue, elements[i]);
+                }
             }
         }
     }
@@ -447,6 +731,11 @@ static bool PrivateValidate(const float32 floatValue,
 
 }
 
+/**
+ * @brief Checks the validity of a 64 bit float.
+ * @param[in] floatValue is the value to be checked.
+ * @param[in] cdb contains the attributes.
+ */
 static bool PrivateValidate(const float64 floatValue,
                             ConfigurationDatabase &cdb) {
 
@@ -468,33 +757,61 @@ static bool PrivateValidate(const float64 floatValue,
             }
         }
     }
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("min_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, floatValue)) {
+                if (StringHelper::Length(&buffer[0]) < size) {
+                    ret = false;
+                }
+            }
+        }
+    }
 
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("max_size", size)) {
+            char8 buffer[defaultBufferSize];
+            if (TypeConvert(buffer, floatValue)) {
+                if (StringHelper::Length(&buffer[0]) > size) {
+                    ret = false;
+                }
+            }
+        }
+    }
     if (ret) {
         AnyType values = cdb.GetType("values");
 
         if (values.GetDataPointer() != NULL) {
             uint32 numberOfValues = values.GetNumberOfElements(0u);
-            float64* elements = static_cast<float64*>(values.GetDataPointer());
+            Vector<float64> elements(numberOfValues);
+            if(cdb.Read("values", elements)) {
 
-            ret = false;
+                ret = false;
 
-            for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
-                ret = (floatValue == elements[i]);
+                for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
+                    ret = isEqual(floatValue, elements[i]);
+                }
             }
         }
     }
     return ret;
 }
 
+/**
+ * @brief Checks the validity of a char.
+ * @param[in] charValue is the value to be checked.
+ * @param[in] cdb contains the attributes.
+ */
 static bool PrivateValidate(const char8 charValue,
                             ConfigurationDatabase &cdb) {
-
 
     bool ret = true;
 
     char8 max;
     if (cdb.Read("max", max)) {
-        if (charValue > max) {
+        if (static_cast<int8>(charValue) > static_cast<int8>(max)) {
             ret = false;
         }
     }
@@ -503,22 +820,39 @@ static bool PrivateValidate(const char8 charValue,
         char8 min;
         if (cdb.Read("min", min)) {
 
-            if (charValue < min) {
+            if (static_cast<int8>(charValue) < static_cast<int8>(min)) {
+                ret = false;
+            }
+        }
+    }
+    if (ret) {
+        uint32 size;
+        if (cdb.Read("min_size", size)) {
+            if (size > 1u) {
                 ret = false;
             }
         }
     }
 
     if (ret) {
-        AnyType values = cdb.GetType("values");
+        uint32 size;
+        if (cdb.Read("max_size", size)) {
+            if (size == 0u) {
+                ret = false;
+            }
+        }
+    }
+    if (ret) {
 
-        if (values.GetDataPointer() != NULL) {
-            uint32 numberOfValues = values.GetNumberOfElements(0u);
-            char8* elements = static_cast<char8*>(values.GetDataPointer());
+        char8 elements[defaultBufferSize];
+        if (cdb.Read("values", elements)) {
+            uint32 lastIndex = defaultBufferSize - 1u;
+            elements[lastIndex] = '\0';
+            uint32 size = StringHelper::Length(&elements[0]);
 
             ret = false;
 
-            for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
+            for (uint32 i = 0u; (i < size) && (!ret); i++) {
                 ret = (charValue == elements[i]);
             }
         }
@@ -533,62 +867,66 @@ bool ValidateBasicType(const AnyType &value,
     ConfigurationDatabase cdb;
 
     StreamString configString = attributes;
-    StandardParser parser(configString, cdb);
-    if (parser.Parse()) {
+    if (configString.Seek(0ULL)) {
 
-        cdb.MoveToRoot();
+        StandardParser parser(configString, cdb);
+        if (parser.Parse()) {
 
-        TypeDescriptor descriptor = value.GetTypeDescriptor();
-        if (descriptor == CharString) {
-            const char8 * stringValue = static_cast<const char8*>(value.GetDataPointer());
-            ret = PrivateValidate(stringValue, cdb);
-        }
-        else if (descriptor == SignedInteger8Bit) {
-            int8 int8Value = *static_cast<int8*>(value.GetDataPointer());
-            ret = PrivateValidate(int8Value, cdb);
-        }
-        else if (descriptor == SignedInteger16Bit) {
-            int16 int16Value = *static_cast<int16*>(value.GetDataPointer());
-            ret = PrivateValidate(int16Value, cdb);
-        }
-        else if (descriptor == SignedInteger32Bit) {
-            int32 int32Value = *static_cast<int32*>(value.GetDataPointer());
-            ret = PrivateValidate(int32Value, cdb);
-        }
-        else if (descriptor == SignedInteger64Bit) {
-            int64 int64Value = *static_cast<int64*>(value.GetDataPointer());
-            ret = PrivateValidate(int64Value, cdb);
-        }
-        else if (descriptor == UnsignedInteger8Bit) {
-            uint8 uint8Value = *static_cast<uint8*>(value.GetDataPointer());
-            ret = PrivateValidate(uint8Value, cdb);
-        }
-        else if (descriptor == UnsignedInteger16Bit) {
-            uint16 uint16Value = *static_cast<uint16*>(value.GetDataPointer());
-            ret = PrivateValidate(uint16Value, cdb);
-        }
-        else if (descriptor == UnsignedInteger32Bit) {
-            uint32 uint32Value = *static_cast<uint32*>(value.GetDataPointer());
-            ret = PrivateValidate(uint32Value, cdb);
-        }
-        else if (descriptor == UnsignedInteger64Bit) {
-            uint64 uint64Value = *static_cast<uint64*>(value.GetDataPointer());
-            ret = PrivateValidate(uint64Value, cdb);
-        }
-        else if (descriptor == Float32Bit) {
-            float32 float32Value = *static_cast<float32*>(value.GetDataPointer());
-            ret = PrivateValidate(float32Value, cdb);
-        }
-        else if (descriptor == Float64Bit) {
-            float64 float64Value = *static_cast<float64*>(value.GetDataPointer());
-            ret = PrivateValidate(float64Value, cdb);
-        }
-        else if (descriptor == Character8Bit) {
-            char8 char8Value = *static_cast<char8*>(value.GetDataPointer());
-            ret = PrivateValidate(char8Value, cdb);
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::Warning,"ValidateBasicType: Basic Type not matched");
+            if (cdb.MoveToRoot()) {
+
+                TypeDescriptor descriptor = value.GetTypeDescriptor();
+                if (descriptor == CharString) {
+                    const char8 * stringValue = static_cast<const char8*>(value.GetDataPointer());
+                    ret = PrivateValidate(stringValue, cdb);
+                }
+                else if (descriptor == SignedInteger8Bit) {
+                    int8 int8Value = *static_cast<int8*>(value.GetDataPointer());
+                    ret = PrivateValidate(int8Value, cdb);
+                }
+                else if (descriptor == SignedInteger16Bit) {
+                    int16 int16Value = *static_cast<int16*>(value.GetDataPointer());
+                    ret = PrivateValidate(int16Value, cdb);
+                }
+                else if (descriptor == SignedInteger32Bit) {
+                    int32 int32Value = *static_cast<int32*>(value.GetDataPointer());
+                    ret = PrivateValidate(int32Value, cdb);
+                }
+                else if (descriptor == SignedInteger64Bit) {
+                    int64 int64Value = *static_cast<int64*>(value.GetDataPointer());
+                    ret = PrivateValidate(int64Value, cdb);
+                }
+                else if (descriptor == UnsignedInteger8Bit) {
+                    uint8 uint8Value = *static_cast<uint8*>(value.GetDataPointer());
+                    ret = PrivateValidate(uint8Value, cdb);
+                }
+                else if (descriptor == UnsignedInteger16Bit) {
+                    uint16 uint16Value = *static_cast<uint16*>(value.GetDataPointer());
+                    ret = PrivateValidate(uint16Value, cdb);
+                }
+                else if (descriptor == UnsignedInteger32Bit) {
+                    uint32 uint32Value = *static_cast<uint32*>(value.GetDataPointer());
+                    ret = PrivateValidate(uint32Value, cdb);
+                }
+                else if (descriptor == UnsignedInteger64Bit) {
+                    uint64 uint64Value = *static_cast<uint64*>(value.GetDataPointer());
+                    ret = PrivateValidate(uint64Value, cdb);
+                }
+                else if (descriptor == Float32Bit) {
+                    float32 float32Value = *static_cast<float32*>(value.GetDataPointer());
+                    ret = PrivateValidate(float32Value, cdb);
+                }
+                else if (descriptor == Float64Bit) {
+                    float64 float64Value = *static_cast<float64*>(value.GetDataPointer());
+                    ret = PrivateValidate(float64Value, cdb);
+                }
+                else if (descriptor == Character8Bit) {
+                    char8 char8Value = *static_cast<char8*>(value.GetDataPointer());
+                    ret = PrivateValidate(char8Value, cdb);
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::Warning, "ValidateBasicType: Basic Type not matched");
+                }
+            }
         }
     }
 

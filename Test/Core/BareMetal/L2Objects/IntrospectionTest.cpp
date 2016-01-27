@@ -59,14 +59,14 @@ static Introspection &Init() {
     static const IntrospectionEntry* nestedFields[] = { &TestIntrospectionNestedStructure_nestedMember1_introspectionEntry, 0 };
 
     static Introspection nestedIntrospection(nestedFields);
-    INTROSPECTION_CLASS_REGISTER(TestIntrospectionNestedStructure, "1.0", nestedIntrospection)
+    INTROSPECTION_REGISTER(TestIntrospectionNestedStructure, "1.0", nestedIntrospection)
 
-    static IntrospectionEntry member1Field("member1", "uint32",  "", "",introspectionMemberSize(TestIntrospectionStructure, member1),
-                                           introspectionMemberIndex(TestIntrospectionStructure, member1));
+    static IntrospectionEntry member1Field("member1", "uint32",  "", "",INTROSPECTION_MEMBER_SIZE(TestIntrospectionStructure, member1),
+                                           INTROSPECTION_MEMBER_INDEX(TestIntrospectionStructure, member1));
 
     DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member2, float32, "*","");
 
-    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member3, float64, "32","");
+    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member3, float64, "[32]","");
 
     DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member4, string, "C","");
 
@@ -77,7 +77,7 @@ static Introspection &Init() {
             &TestIntrospectionStructure_member5_introspectionEntry, 0 };
 
     static Introspection testIntrospection(fields);
-    INTROSPECTION_CLASS_REGISTER(TestIntrospectionStructure, "1.0", testIntrospection)
+    INTROSPECTION_REGISTER(TestIntrospectionStructure, "1.0", testIntrospection)
 
     return testIntrospection;
 }
@@ -132,38 +132,31 @@ bool IntrospectionTest::TestConstructor() {
 
     const IntrospectionEntry member2Copy = Init()[1];
     if (StringHelper::Compare(member2Copy.GetMemberName(), "member2") != 0) {
-        printf("\n1\n");
         return false;
     }
 
     if (member2Copy.IsConstant()) {
-        printf("\n2\n");
         return false;
     }
 
     if (member2Copy.GetMemberTypeDescriptor().type != Float) {
-        printf("\n3\n");
         return false;
     }
 
     if (member2Copy.GetMemberTypeDescriptor().numberOfBits != 32) {
-        printf("\n4\n");
         return false;
     }
 
     if (StringHelper::Compare(member2Copy.GetMemberModifiers(), "*") != 0) {
-        printf("\n5\n");
         return false;
     }
 
     if (member2Copy.GetMemberSize() != sizeof(float32*)) {
-        printf("\n5a\n");
         return false;
     }
 
     // the members are aligned !
     if (member2Copy.GetMemberByteOffset() != sizeof(float32*)) {
-        printf("\n6 %d\n", member2Copy.GetMemberByteOffset());
         return false;
     }
     return true;
@@ -174,38 +167,31 @@ bool IntrospectionTest::TestPositionOperator() {
     //////// check member3
     const IntrospectionEntry member3Copy = Init()[2];
     if (StringHelper::Compare(member3Copy.GetMemberName(), "member3") != 0) {
-        printf("\n1\n");
         return false;
     }
 
     if (member3Copy.IsConstant()) {
-        printf("\n2\n");
         return false;
     }
 
     if (member3Copy.GetMemberTypeDescriptor().type != Float) {
-        printf("\n3\n");
         return false;
     }
 
     if (member3Copy.GetMemberTypeDescriptor().numberOfBits != 64) {
-        printf("\n4\n");
         return false;
     }
 
     if (StringHelper::Compare(member3Copy.GetMemberModifiers(), "32") != 0) {
-        printf("\n5\n");
         return false;
     }
 
     if (member3Copy.GetMemberSize() != sizeof(float64) * 32) {
-        printf("\n5a\n");
         return false;
     }
 
     // the members are aligned !
     if (member3Copy.GetMemberByteOffset() != 2 * sizeof(float32*)) {
-        printf("\n6 %d\n", member3Copy.GetMemberByteOffset());
         return false;
     }
     return true;
@@ -220,38 +206,31 @@ bool IntrospectionTest::TestMacroToAddBasicInClassRegistryDatabase() {
 
     IntrospectionEntry member4Copy = (*introInfo->GetIntrospection())[3];
     if (StringHelper::Compare(member4Copy.GetMemberName(), "member4") != 0) {
-        printf("\n1\n");
         return false;
     }
 
     if (!member4Copy.IsConstant()) {
-        printf("\n2\n");
         return false;
     }
 
     if (member4Copy.GetMemberTypeDescriptor().type != CCString) {
-        printf("\n3\n");
         return false;
     }
 
     if (member4Copy.GetMemberTypeDescriptor().numberOfBits != sizeof(const char8*) * 8) {
-        printf("\n4\n");
         return false;
     }
 
     if (StringHelper::Compare(member4Copy.GetMemberModifiers(), "C") != 0) {
-        printf("\n5\n");
         return false;
     }
 
     if (member4Copy.GetMemberSize() != sizeof(const char8*)) {
-        printf("\n5a\n");
         return false;
     }
 
     // the members are aligned !
     if (member4Copy.GetMemberByteOffset() != 2 * sizeof(float32*) + 32 * sizeof(float64)) {
-        printf("\n6 %d\n", member4Copy.GetMemberByteOffset());
         return false;
     }
     return true;
@@ -268,33 +247,27 @@ bool IntrospectionTest::TestMacroToAddStructuredInClassRegistryDatabase() {
 
     IntrospectionEntry member4Copy = (*introInfo->GetIntrospection())[4];
     if (StringHelper::Compare(member4Copy.GetMemberName(), "member5") != 0) {
-        printf("\n1\n");
         return false;
     }
 
     if (member4Copy.IsConstant()) {
-        printf("\n2\n");
         return false;
     }
 
     if (!member4Copy.GetMemberTypeDescriptor().isStructuredData) {
-        printf("\n3\n");
         return false;
     }
 
     if (StringHelper::Compare(member4Copy.GetMemberModifiers(), "") != 0) {
-        printf("\n5\n");
         return false;
     }
 
     if (member4Copy.GetMemberSize() != sizeof(TestIntrospectionNestedStructure)) {
-        printf("\n5a\n");
         return false;
     }
 
     // the members are aligned !
     if (member4Copy.GetMemberByteOffset() != 2 * sizeof(float32*) + 32 * sizeof(float64) + sizeof(const char8*)) {
-        printf("\n6 %d\n", member4Copy.GetMemberByteOffset());
         return false;
     }
     return true;

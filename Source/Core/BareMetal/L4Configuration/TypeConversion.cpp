@@ -36,6 +36,7 @@
 #include "StreamString.h"
 #include "ClassRegistryDatabase.h"
 #include "StructuredDataI.h"
+#include "ValidateBasicType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -71,28 +72,26 @@ extern bool FloatToIntegerGeneric(const float32 * const source,
 /**
  * @brief Saturate the number in input to the maximum or minimum 32-bit float number.
  * @param[in] isPositive specifies if the number must be set to the maximum 32-bit float (true) or to the minimum (false).
- * @param[in] numberOfBits specifies the bit-size of the number in input.
  * @param[in, out] number is the float number to be set.
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename FloatType>
 static bool MinMaxFloat(const bool isPositive,
-                        const uint8 numberOfBits,
                         FloatType &number) {
 
     bool ret = false;
     if (isPositive) {
-        if (numberOfBits == 4u) {
+        if (sizeof(FloatType) == 4u) {
             REPORT_ERROR(ErrorManagement::Warning, "FloatToFloat: Saturation to maximum float");
             uint32 maxFloat32Mask = 0x7f7fffffu;
             ret = MemoryOperationsHelper::Copy(&number, &maxFloat32Mask, 4u);
         }
     }
     else {
-        if (numberOfBits == 4u) {
+        if (sizeof(FloatType) == 4u) {
             REPORT_ERROR(ErrorManagement::Warning, "FloatToFloat: Saturation to minimum float");
-            uint32 maxFloat32Mask = 0xff7fffffu;
-            ret = MemoryOperationsHelper::Copy(&number, &maxFloat32Mask, 4u);
+            uint32 minFloat32Mask = 0xff7fffffu;
+            ret = MemoryOperationsHelper::Copy(&number, &minFloat32Mask, 4u);
         }
     }
     return ret;
@@ -125,7 +124,7 @@ static bool FloatToFloat(const FloatType1 source,
         bool isTestInf = isInf(test);
         if ((isTestNan) || (isTestInf)) {
             if (sizeof(FloatType2) < sizeof(FloatType1)) {
-                ret = MinMaxFloat((source > static_cast<FloatType2>(0.0)), static_cast<uint8>(sizeof(FloatType2)), destination);
+                ret = MinMaxFloat((source > static_cast<FloatType2>(0.0)), destination);
             }
             else {
                 ret = false;
@@ -182,8 +181,10 @@ static bool IntegerToType(const AnyType &destination,
                 if (stringLength >= arraySize) {
                     REPORT_ERROR(ErrorManagement::Warning, "IntegerToType: The input is too long for the output buffer.");
                     ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
-                    uint32 lastCharIndex = arraySize - 1u;
-                    reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
+                    if (arraySize > 1u) {
+                        uint32 lastCharIndex = arraySize - 1u;
+                        reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
+                    }
                 }
                 else {
                     ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
@@ -297,8 +298,10 @@ static bool FloatToType(const AnyType &destination,
                 if (stringLength >= arraySize) {
                     REPORT_ERROR(ErrorManagement::Warning, "FloatToType: The input is too long for the output buffer.");
                     ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
-                    uint32 lastCharIndex = arraySize - 1u;
-                    reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
+                    if (arraySize > 1u) {
+                        uint32 lastCharIndex = arraySize - 1u;
+                        reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
+                    }
                 }
                 else {
                     ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
@@ -389,11 +392,14 @@ static bool StringToType(const AnyType &destination,
         }
         if (destinationDescriptor.type == CArray) {
             uint32 arraySize = destination.GetByteSize();
+            // case char
             if (tokenLength >= arraySize) {
                 REPORT_ERROR(ErrorManagement::Warning, "StringToType: The input is too long for the output buffer.");
                 ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), token, arraySize);
-                uint32 lastCharIndex = arraySize - 1u;
-                reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
+                if(arraySize>1u) {
+                    uint32 lastCharIndex = arraySize - 1u;
+                    reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
+                }
             }
             else {
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
@@ -424,29 +430,6 @@ static bool StringToType(const AnyType &destination,
     return ret;
 }
 
-struct TestIntrospectionNestedStructureFrom {
-    uint32 nestedMember1_from;
-};
-
-struct TestIntrospectionNestedStructureTo {
-    uint8 nestedMember1_to;
-};
-
-struct TestIntrospectionObjectFrom {
-    uint32 member1_from;
-    float32 *member2_from;
-    float64 member3_from[32];
-    const char8 * member4_from;
-    TestIntrospectionNestedStructureFrom member5_from;
-};
-
-struct TestIntrospectionObjectTo {
-    char8 member1_to[32];
-    uint64 member2_to;
-    float32 member3_to[32];
-    uint32 member4_to;
-    TestIntrospectionNestedStructureTo member5_to;
-};
 static bool ObjectToObject(const AnyType &destination,
                            const AnyType &source) {
 
@@ -458,7 +441,7 @@ static bool ObjectToObject(const AnyType &destination,
     if ((sourceItem != NULL) && (destinationItem != NULL)) {
         const Introspection *sourceIntrospection=sourceItem->GetIntrospection();
         const Introspection *destinationIntrospection=destinationItem->GetIntrospection();
-        if ((sourceIntrospection != NULL) || (destinationIntrospection != NULL)) {
+        if ((sourceIntrospection != NULL) && (destinationIntrospection != NULL)) {
             if(sourceIntrospection->GetSize()==destinationIntrospection->GetSize()) {
                 uint32 numberOfMembers=sourceIntrospection->GetSize();
                 // check ret
@@ -472,13 +455,13 @@ static bool ObjectToObject(const AnyType &destination,
                     TypeDescriptor newSourceDescriptor=sourceMemberDescriptor;
                     // source is a pointer!
                     if(sourceMemberIntrospection.GetMemberPointerLevel()>0u) {
-                        newSourceDescriptor=TypeDescriptor(false, UnsignedInteger, sizeof(void*)*8u);
+                        newSourceDescriptor=TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*))*8u);
                     }
 
                     TypeDescriptor newDestinationDescriptor=destinationMemberDescriptor;
                     // destination is a pointer!
                     if(destinationMemberIntrospection.GetMemberPointerLevel()>0u) {
-                        newDestinationDescriptor=TypeDescriptor(false, UnsignedInteger, sizeof(void*)*8u);
+                        newDestinationDescriptor=TypeDescriptor(false, UnsignedInteger,static_cast<uint8>(sizeof(void*))*8u);
                     }
 
                     char8* sourceMemberDataPointer=&(static_cast<char8*>(source.GetDataPointer())[sourceMemberIntrospection.GetMemberByteOffset()]);
@@ -486,7 +469,9 @@ static bool ObjectToObject(const AnyType &destination,
                     AnyType newSource;
                     // special case char* string because is a pointer
                     if(newSourceDescriptor==CharString) {
-                        newSource=AnyType(*reinterpret_cast<char8**>(sourceMemberDataPointer));
+                        if(sourceMemberIntrospection.GetNumberOfDimensions()==0u) {
+                            newSource=AnyType(*reinterpret_cast<char8**>(sourceMemberDataPointer));
+                        }
                     }
                     else {
                         newSource=AnyType(newSourceDescriptor, 0u, sourceMemberDataPointer);
@@ -497,10 +482,9 @@ static bool ObjectToObject(const AnyType &destination,
 
                     // special case char* string because is a pointer
                     if(newDestinationDescriptor==CharString) {
-                        newDestination=AnyType(*reinterpret_cast<char8**>(destinationMemberDataPointer));
-                    }
-                    else {
-                        newDestination=AnyType(newDestinationDescriptor, 0u, destinationMemberDataPointer);
+                        if(destinationMemberIntrospection.GetNumberOfDimensions()==0u) {
+                            newDestination=AnyType(*reinterpret_cast<char8**>(destinationMemberDataPointer));
+                        }
                     }
 
                     for(uint32 j=0u; j<3u; j++) {
@@ -511,6 +495,10 @@ static bool ObjectToObject(const AnyType &destination,
                     newDestination.SetNumberOfDimensions(destinationMemberIntrospection.GetNumberOfDimensions());
                     // call the conversion recursively !
                     ret= TypeConvert(newDestination, newSource);
+                    if(ret) {
+                        // validate the output
+                        ret=ValidateBasicType(newDestination, destinationMemberIntrospection.GetMemberAttributes());
+                    }
                 }
             }
             else {
@@ -536,76 +524,109 @@ static bool StructuredDataToObject(const AnyType &destination,
     StructuredDataI* sourcePointer = reinterpret_cast<StructuredDataI*>(source.GetDataPointer());
     const TypeDescriptor destinationDescriptor = destination.GetTypeDescriptor();
     StreamString sourceStructName;
-    if (sourcePointer->Read("Class", sourceStructName)) {
-        const ClassRegistryItem *sourceItem = ClassRegistryDatabase::Instance()->Find(sourceStructName.Buffer());
-        const ClassRegistryItem *destinationItem = ClassRegistryDatabase::Instance()->Peek(destinationDescriptor.structuredDataIdCode);
+    bool isSourceIntrospection = true;
+    uint32 numberOfMembers = sourcePointer->GetNumberOfChildren();
+    const ClassRegistryItem *sourceItem = NULL_PTR(const ClassRegistryItem *);
+    // if the Class field does not exists, the introspection for the source does not exists
+    if (!sourcePointer->Read("Class", sourceStructName)) {
+        isSourceIntrospection = false;
+    }
+    else {
+        numberOfMembers--;
+        sourceItem = ClassRegistryDatabase::Instance()->Find(sourceStructName.Buffer());
+        isSourceIntrospection = (sourceItem != NULL);
+    }
+    const ClassRegistryItem *destinationItem = ClassRegistryDatabase::Instance()->Peek(destinationDescriptor.structuredDataIdCode);
 
-        if ((sourceItem != NULL) && (destinationItem != NULL)) {
-            const Introspection *sourceIntrospection=sourceItem->GetIntrospection();
-            const Introspection *destinationIntrospection=destinationItem->GetIntrospection();
-            if ((sourceIntrospection != NULL) || (destinationIntrospection != NULL)) {
-                if(sourceIntrospection->GetSize()==destinationIntrospection->GetSize()) {
-                    uint32 numberOfMembers=sourceIntrospection->GetSize();
-                    for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
+    if (destinationItem != NULL) {
+        const Introspection *sourceIntrospection=NULL_PTR(const Introspection *);
+        if(isSourceIntrospection) {
+            sourceIntrospection=sourceItem->GetIntrospection();
+            isSourceIntrospection=(sourceIntrospection != NULL);
+        }
+        const Introspection *destinationIntrospection=destinationItem->GetIntrospection();
+        if (destinationIntrospection != NULL) {
+            if(isSourceIntrospection) {
+                // if there is the introspection get the number of members
+                numberOfMembers=sourceIntrospection->GetSize();
+            }
+            if(numberOfMembers==destinationIntrospection->GetSize()) {
+                for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
+                    IntrospectionEntry destinationMemberIntrospection=(*destinationIntrospection)[i];
+
+                    TypeDescriptor destinationMemberDescriptor=destinationMemberIntrospection.GetMemberTypeDescriptor();
+
+                    TypeDescriptor newDestinationDescriptor=destinationMemberDescriptor;
+                    // destination is a pointer!
+                    if(destinationMemberIntrospection.GetMemberPointerLevel()>0u) {
+                        newDestinationDescriptor=TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*))*8u);
+                    }
+
+                    char8* destinationMemberDataPointer=&(static_cast<char8*>(destination.GetDataPointer())[destinationMemberIntrospection.GetMemberByteOffset()]);
+                    AnyType newDestination(newDestinationDescriptor, 0u, destinationMemberDataPointer);
+
+                    // special case char* string because is a pointer
+                    if(newDestinationDescriptor==CharString) {
+                        if(destinationMemberIntrospection.GetNumberOfDimensions()==0u) {
+                            newDestination=AnyType(*reinterpret_cast<char8**>(destinationMemberDataPointer));
+                        }
+                    }
+
+                    for(uint32 j=0u; j<3u; j++) {
+                        newDestination.SetNumberOfElements(j, destinationMemberIntrospection.GetNumberOfElements(j));
+                    }
+                    newDestination.SetNumberOfDimensions(destinationMemberIntrospection.GetNumberOfDimensions());
+
+                    AnyType newSource;
+                    const char8* childName=NULL_PTR(const char8*);
+                    // get the member AnyType from the database if the member is a basic type!
+                    if(isSourceIntrospection) {
+                        // if the introspection for the source class exists find the member name
                         IntrospectionEntry sourceMemberIntrospection=(*sourceIntrospection)[i];
-                        IntrospectionEntry destinationMemberIntrospection=(*destinationIntrospection)[i];
+                        childName=sourceMemberIntrospection.GetMemberName();
+                        newSource=sourcePointer->GetType(childName);
+                    }
+                    else {
+                        childName=sourcePointer->GetChildName(i);
+                        newSource=sourcePointer->GetType(childName);
+                    }
 
-                        TypeDescriptor destinationMemberDescriptor=destinationMemberIntrospection.GetMemberTypeDescriptor();
-
-                        TypeDescriptor newDestinationDescriptor=destinationMemberDescriptor;
-                        // destination is a pointer!
-                        if(destinationMemberIntrospection.GetMemberPointerLevel()>0u) {
-                            newDestinationDescriptor=TypeDescriptor(false, UnsignedInteger, sizeof(void*)*8u);
-                        }
-
-                        char8* destinationMemberDataPointer=&(static_cast<char8*>(destination.GetDataPointer())[destinationMemberIntrospection.GetMemberByteOffset()]);
-                        AnyType newDestination(newDestinationDescriptor, 0u, destinationMemberDataPointer);
-
-                        for(uint32 j=0u; j<3u; j++) {
-                            newDestination.SetNumberOfElements(j, destinationMemberIntrospection.GetNumberOfElements(j));
-                        }
-                        newDestination.SetNumberOfDimensions(destinationMemberIntrospection.GetNumberOfDimensions());
-
-                        // get the member AnyType from the database if the member is a basic type!
-                        AnyType newSource=sourcePointer->GetType(sourceMemberIntrospection.GetMemberName());
-
-                        if(newSource.GetDataPointer()==NULL) {
-                            // could be a structured node!
-                            if(sourcePointer->MoveRelative(sourceMemberIntrospection.GetMemberName())) {
-                                // call the conversion recursively !
-                                ret= TypeConvert(newDestination, source);
-                                if(!sourcePointer->MoveToAncestor(1u)) {
-                                    ret=false;
-                                }
-                            }
-                            else {
+                    if(newSource.GetDataPointer()==NULL) {
+                        // could be a structured node!
+                        if(sourcePointer->MoveRelative(childName)) {
+                            // call the conversion recursively !
+                            ret= TypeConvert(newDestination, source);
+                            if(!sourcePointer->MoveToAncestor(1u)) {
                                 ret=false;
                             }
                         }
-                        // could be a leaf!
                         else {
-                            // call the conversion recursively !
-                            ret= TypeConvert(newDestination, newSource);
+                            ret=false;
+                        }
+                    }
+                    // could be a leaf!
+                    else {
+                        // call the conversion recursively !
+                        ret= TypeConvert(newDestination, newSource);
+                        if(ret) {
+                            // validate the output
+                            ret=ValidateBasicType(newDestination, destinationMemberIntrospection.GetMemberAttributes());
                         }
                     }
                 }
-                else {
-                    REPORT_ERROR(ErrorManagement::FatalError,"StructuredDataToObject: The classes does not have the same number of members");
-                    ret=false;
-                }
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError,"StructuredDataToObject: Introspection not found for the specified classes");
+                REPORT_ERROR(ErrorManagement::FatalError,"StructuredDataToObject: The classes does not have the same number of members");
                 ret=false;
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"StructuredDataToObject: Class not registered");
+            REPORT_ERROR(ErrorManagement::FatalError,"StructuredDataToObject: Introspection not found for the specified classes");
             ret=false;
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"StructuredDataToObject: \"Class\" node not found");
+        REPORT_ERROR(ErrorManagement::FatalError,"StructuredDataToObject: Class not registered");
         ret=false;
     }
 
@@ -634,24 +655,24 @@ static bool ObjectToStructuredData(const AnyType &destination,
                     TypeDescriptor newSourceDescriptor=sourceMemberDescriptor;
                     // source is a pointer!
                     if(sourceMemberIntrospection.GetMemberPointerLevel()>0u) {
-                        newSourceDescriptor=TypeDescriptor(false, UnsignedInteger, sizeof(void*)*8u);
+                        newSourceDescriptor=TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*))*8u);
                     }
 
                     char8* sourceMemberDataPointer=&(static_cast<char8*>(source.GetDataPointer())[sourceMemberIntrospection.GetMemberByteOffset()]);
-                    AnyType newSource;
+                    AnyType newSource(newSourceDescriptor, 0u, sourceMemberDataPointer);
                     // special case char* string because is a pointer
                     if(newSourceDescriptor==CharString) {
-                        newSource=AnyType(*reinterpret_cast<char8**>(sourceMemberDataPointer));
-                    }
-                    else {
-                        newSource=AnyType(newSourceDescriptor, 0u, sourceMemberDataPointer);
+                        if(sourceMemberIntrospection.GetNumberOfDimensions()==0u) {
+                            newSource=AnyType(*reinterpret_cast<char8**>(sourceMemberDataPointer));
+                        }
                     }
                     for(uint32 j=0u; j<3u; j++) {
                         newSource.SetNumberOfElements(j, sourceMemberIntrospection.GetNumberOfElements(j));
                     }
                     newSource.SetNumberOfDimensions(sourceMemberIntrospection.GetNumberOfDimensions());
 
-                    if(newSourceDescriptor.isStructuredData) {
+                    bool isNewSourceStructured=newSourceDescriptor.isStructuredData;
+                    if(isNewSourceStructured) {
                         // structured data again! Create a node and go recursively
                         if(destinationPointer->CreateRelative(sourceMemberIntrospection.GetMemberName())) {
                             ret=TypeConvert(destination, newSource);
@@ -713,36 +734,41 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
 
     bool ret = false;
 
+    bool isSourceStructured = sourceDescriptor.isStructuredData;
+    bool isDestinationStructured = destinationDescriptor.isStructuredData;
+
     // case source is a StructuredDataNode
     if (sourceDescriptor == StructuredDataInterfaceType) {
-        if (destinationDescriptor.isStructuredData) {
+
+        if (isDestinationStructured) {
             ret = StructuredDataToObject(destination, source);
         }
         else if (destinationDescriptor == StructuredDataInterfaceType) {
             ret = StructuredDataToStructuredData(destination, source);
         }
         else {
-            //TODO Conversion from structured to basic not possible
+            REPORT_ERROR(ErrorManagement::FatalError,
+                         "ScalarBasicTypeConvert: No known conversion StructuredDataI to basic type. Use StructuredDataI::Read(*)");
         }
     }
 
     // case source is a StructuredDataNode
     else if (destinationDescriptor == StructuredDataInterfaceType) {
-        if (sourceDescriptor.isStructuredData) {
+
+        if (isSourceStructured) {
             ret = ObjectToStructuredData(destination, source);
         }
         else {
-            //TODO Conversion from structured to basic not possible
+            REPORT_ERROR(ErrorManagement::FatalError,
+                         "ScalarBasicTypeConvert: No known conversion from basic type to StructuredDataI. Use StructuredDataI::Write(*)");
         }
     }
-    else if ((sourceDescriptor.isStructuredData) && (destinationDescriptor.isStructuredData)) {
+    else if ((isSourceStructured) && (isDestinationStructured)) {
 
         ret = ObjectToObject(destination, source);
     }
     // source and descriptor are not StructuredDataNode
-    else if (!sourceDescriptor.isStructuredData && !destinationDescriptor.isStructuredData) {
-
-        //TODO source and descriptor structured (we need to do something? If they are different do not convert!)
+    else if ((!isSourceStructured) && (!isDestinationStructured)) {
 
         if (sourceDescriptor == destinationDescriptor) {
             if (sourceDescriptor.type == SString) {
@@ -781,7 +807,7 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
         }
     }
     else {
-        //TODO Unknown
+        REPORT_ERROR(ErrorManagement::FatalError, "ScalarBasicTypeConvert: No known conversion from the input types");
     }
 
     return ret;

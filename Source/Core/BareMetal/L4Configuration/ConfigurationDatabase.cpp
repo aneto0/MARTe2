@@ -37,7 +37,6 @@
 #include "ReferenceContainerFilterReferences.h"
 #include "StreamString.h"
 #include "TypeConversion.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -60,26 +59,31 @@ ConfigurationDatabase::~ConfigurationDatabase() {
 
 bool ConfigurationDatabase::Write(const char8 * const name,
                                   const AnyType &value) {
-    AnyType existentType = GetType(name);
-    bool ok = (name != NULL_PTR(const char8 *));
-    if (ok) {
-        ok = (StringHelper::Length(name) > 0u);
-    }
-    if (ok) {
-        if (existentType.GetTypeDescriptor().type != VoidType.type) {
-            ok = Delete(name);
+
+    bool ok = false;
+    // call conversion Object-StructuredDataI or StructuredDataI-StructuredDataI
+    bool isRegisteredObject = (value.GetTypeDescriptor().isStructuredData);
+    bool isStructuredDataI = (value.GetTypeDescriptor() == StructuredDataInterfaceType);
+    if ((isRegisteredObject) || (isStructuredDataI)) {
+        ReferenceT<ReferenceContainer> storeCurrentNode = currentNode;
+        if (CreateRelative(name)) {
+            ok = TypeConvert(*this, value);
         }
+        currentNode = storeCurrentNode;
     }
-    if (ok) {
-        // call conversion Object-StructuredDataI or StructuredDataI-StructuredDataI
-        if ((value.GetTypeDescriptor().isStructuredData) || (value.GetTypeDescriptor() == StructuredDataInterfaceType)) {
-            ReferenceT<ReferenceContainer> storeCurrentNode = currentNode;
-            if (!TypeConvert(*this, value)) {
-                //TODO
+    else {
+        ok = (name != NULL_PTR(const char8 *));
+        AnyType existentType = GetType(name);
+        if (ok) {
+            ok = (StringHelper::Length(name) > 0u);
+        }
+        if (ok) {
+            if (existentType.GetTypeDescriptor().type != VoidType.type) {
+                ok = Delete(name);
             }
-            currentNode = storeCurrentNode;
         }
-        else {
+        if (ok) {
+
             ReferenceT<AnyObject> objToWrite(GlobalObjectsDatabase::Instance()->GetStandardHeap());
             ok = objToWrite.IsValid();
             if (ok) {
@@ -163,26 +167,31 @@ bool ConfigurationDatabase::MoveToRoot() {
 bool ConfigurationDatabase::Read(const char8 * const name,
                                  const AnyType &value) {
 
-    //Could have used the ReferenceContainerFilterObjectName but this way is faster given that no complex paths are involved
-    bool found = false;
-    Reference foundReference;
-    uint32 i;
-    for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
-        foundReference = currentNode->Get(i);
-        found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
-    }
-
-    bool ok = found;
-    if (ok) {
-        // call conversion Object-StructuredDataI or StructuredDataI-StructuredDataI
-        if ((value.GetTypeDescriptor().isStructuredData) || (value.GetTypeDescriptor() == StructuredDataInterfaceType)) {
-            ReferenceT<ReferenceContainer> storeCurrentNode = currentNode;
-            if (!TypeConvert(value, *this)) {
-                //TODO
-            }
-            currentNode = storeCurrentNode;
+    bool ok = false;
+    // call conversion Object-StructuredDataI or StructuredDataI-StructuredDataI
+    bool isRegisteredObject = (value.GetTypeDescriptor().isStructuredData);
+    bool isStructuredDataI = (value.GetTypeDescriptor() == StructuredDataInterfaceType);
+    if ((isRegisteredObject) || (isStructuredDataI)) {
+        ReferenceT<ReferenceContainer> storeCurrentNode = currentNode;
+        if (MoveRelative(name)) {
+            ok = TypeConvert(value, *this);
         }
-        else {
+        currentNode = storeCurrentNode;
+    }
+    else {
+
+        //Could have used the ReferenceContainerFilterObjectName but this way is faster given that no complex paths are involved
+        bool found = false;
+        Reference foundReference;
+        uint32 i;
+        for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
+            foundReference = currentNode->Get(i);
+            found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
+        }
+
+        ok = found;
+        if (ok) {
+
             ReferenceT<AnyObject> objToRead = foundReference;
             ok = objToRead.IsValid();
             if (ok) {

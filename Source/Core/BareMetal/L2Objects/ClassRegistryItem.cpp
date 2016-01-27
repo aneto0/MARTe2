@@ -76,6 +76,17 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
     ClassRegistryDatabase::Instance()->Add(this);
 }
 
+ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
+                                     const ObjectBuildFn * const objBuildFn,
+                                     Introspection &introspectionIn) {
+    numberOfInstances = 0u;
+    classProperties = clProperties;
+    loadableLibrary = NULL_PTR(LoadableLibrary *);
+    objectBuildFn = objBuildFn;
+    introspection = &introspectionIn;
+    ClassRegistryDatabase::Instance()->Add(this);
+}
+
 /*lint -e{1551} no exception should be thrown as loadableLibrary is properly initialised and
  * before deleting it is verified if the pointer is NULL*/
 ClassRegistryItem::~ClassRegistryItem() {

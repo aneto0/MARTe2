@@ -75,6 +75,12 @@ TEST(IntrospectionEntryGTest,TestGetMemberTypeDescriptor) {
 }
 
 
+TEST(IntrospectionEntryGTest,TestGetMemberAttributes) {
+    IntrospectionEntryTest IntrospectionEntryTest;
+    ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberAttributes("memberx"));
+}
+
+
 TEST(IntrospectionEntryGTest,TestIsConstant) {
     IntrospectionEntryTest IntrospectionEntryTest;
     static const IntrospectionEntryTestTable table[]{

@@ -32,6 +32,7 @@
 #include "TypeConversionTest.h"
 #include "Object.h"
 #include "ConfigurationDatabase.h"
+#include "IntrospectionTestHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,80 +43,6 @@
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
-
-struct TestIntrospectionNestedStructureFrom {
-    uint32 nestedMember1_from;
-};
-
-struct TestIntrospectionNestedStructureTo {
-    uint8 nestedMember1_to;
-};
-
-struct TestIntrospectionObjectFrom {
-    uint32 member1_from;
-    float32 *member2_from;
-    float64 member3_from[32];
-    const char8 * member4_from;
-    TestIntrospectionNestedStructureFrom member5_from;
-};
-
-struct TestIntrospectionObjectTo {
-    char8 member1_to[32];
-    uint64 member2_to;
-    float32 member3_to[32];
-    uint32 member4_to;
-    TestIntrospectionNestedStructureTo member5_to;
-};
-
-// the from introspection
-DECLARE_CLASS_MEMBER(TestIntrospectionNestedStructureFrom, nestedMember1_from, uint32,  "","");
-
-static const IntrospectionEntry* nestedFields[] = { &TestIntrospectionNestedStructureFrom_nestedMember1_from_introspectionEntry, 0 };
-
-static Introspection nestedIntrospectionFrom(nestedFields);
-INTROSPECTION_CLASS_REGISTER(TestIntrospectionNestedStructureFrom, "1.0", nestedIntrospectionFrom)
-
-DECLARE_CLASS_MEMBER(TestIntrospectionObjectFrom, member1_from, uint32, "","");
-
-DECLARE_CLASS_MEMBER(TestIntrospectionObjectFrom, member2_from, float32, "*","");
-
-DECLARE_CLASS_MEMBER(TestIntrospectionObjectFrom, member3_from, float64, "[32]","");
-
-DECLARE_CLASS_MEMBER(TestIntrospectionObjectFrom, member4_from, string, "","");
-
-DECLARE_CLASS_MEMBER(TestIntrospectionObjectFrom, member5_from, TestIntrospectionNestedStructureFrom,  "","");
-
-static const IntrospectionEntry* fieldsFrom[] = { &TestIntrospectionObjectFrom_member1_from_introspectionEntry,
-        &TestIntrospectionObjectFrom_member2_from_introspectionEntry, &TestIntrospectionObjectFrom_member3_from_introspectionEntry,
-        &TestIntrospectionObjectFrom_member4_from_introspectionEntry, &TestIntrospectionObjectFrom_member5_from_introspectionEntry, 0 };
-
-static Introspection testIntrospectionFrom(fieldsFrom);
-INTROSPECTION_CLASS_REGISTER(TestIntrospectionObjectFrom, "1.0", testIntrospectionFrom)
-
-//the to introspection
-DECLARE_CLASS_MEMBER(TestIntrospectionNestedStructureTo, nestedMember1_to, uint8,  "","");
-
-static const IntrospectionEntry* nestedFieldsTo[] = { &TestIntrospectionNestedStructureTo_nestedMember1_to_introspectionEntry, 0 };
-
-static Introspection nestedIntrospectionTo(nestedFieldsTo);
-INTROSPECTION_CLASS_REGISTER(TestIntrospectionNestedStructureTo, "1.0", nestedIntrospectionTo)
-
-DECLARE_CLASS_MEMBER(TestIntrospectionObjectTo, member1_to, char8,  "[32]","");
-
-DECLARE_CLASS_MEMBER(TestIntrospectionObjectTo, member2_to, uint64, "","");
-
-DECLARE_CLASS_MEMBER(TestIntrospectionObjectTo, member3_to, float32, "[32]","");
-
-DECLARE_CLASS_MEMBER(TestIntrospectionObjectTo, member4_to, uint32, "","");
-
-DECLARE_CLASS_MEMBER(TestIntrospectionObjectTo, member5_to, TestIntrospectionNestedStructureTo,  "","");
-
-static const IntrospectionEntry* fieldsTo[] = { &TestIntrospectionObjectTo_member1_to_introspectionEntry,
-        &TestIntrospectionObjectTo_member2_to_introspectionEntry, &TestIntrospectionObjectTo_member3_to_introspectionEntry,
-        &TestIntrospectionObjectTo_member4_to_introspectionEntry, &TestIntrospectionObjectTo_member5_to_introspectionEntry, 0 };
-
-static Introspection testIntrospectionTo(fieldsTo);
-INTROSPECTION_CLASS_REGISTER(TestIntrospectionObjectTo, "1.0", testIntrospectionTo)
 
 bool TypeConversionTest::TestCArrayToCCStringScalar() {
 
@@ -352,23 +279,100 @@ bool TypeConversionTest::TestObjectToObject() {
     AnyType destination(destinationDes, 0u, &testDestination);
 
     if (!TypeConvert(destination, source)) {
-        printf("\nError in type convert\n");
+        return false;
     }
 
-    printf("\n1) %s\n", testDestination.member1_to);
+    if (StringHelper::Compare(testDestination.member1_to, "1") != 0) {
+        return false;
+    }
+    if (testDestination.member2_to != (uintp) testSource.member2_from) {
+        return false;
+    }
+    for (uint32 i = 0u; i < 32; i++) {
+        if (testDestination.member3_to[i] != i) {
+            return false;
+        }
+    }
+    if (testDestination.member4_to != 4) {
+        return false;
+    }
 
-    printf("\n2) %llx %llx\n", testDestination.member2_to, (uintp) testSource.member2_from);
-
-    printf("\n3) %f\n", testDestination.member3_to[31]);
-
-    printf("\n4) %d\n", testDestination.member4_to);
-
-    printf("\n5) %d\n", testDestination.member5_to.nestedMember1_to);
-
-    return true;
+    return testDestination.member5_to.nestedMember1_to == 5;
 }
 
-bool TypeConversionTest::TestStructuredDataToObject() {
+bool TypeConversionTest::TestObjectToObject_ErrorNoSourceIntrospection() {
+
+    TestNoIntrospectionObject testSource;
+    testSource.member1_from = 1u;
+    float32 sourceMember2 = 2.0;
+    testSource.member2_from = &sourceMember2;
+    for (uint32 i = 0u; i < 32; i++) {
+        testSource.member3_from[i] = i;
+    }
+    testSource.member4_from = "4";
+
+    testSource.member5_from.nestedMember1_from = 5;
+
+    TestIntrospectionObjectTo testDestination;
+    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestNoIntrospectionObject")->GetClassProperties()->GetUniqueIdentifier());
+    AnyType source(sourceDes, 0u, &testSource);
+
+    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+    AnyType destination(destinationDes, 0u, &testDestination);
+
+    return (!TypeConvert(destination, source));
+
+}
+
+bool TypeConversionTest::TestObjectToObject_ErrorNoDestIntrospection() {
+
+    TestIntrospectionObjectFrom testSource;
+    testSource.member1_from = 1u;
+    float32 sourceMember2 = 2.0;
+    testSource.member2_from = &sourceMember2;
+    for (uint32 i = 0u; i < 32; i++) {
+        testSource.member3_from[i] = i;
+    }
+    testSource.member4_from = "4";
+
+    testSource.member5_from.nestedMember1_from = 5;
+
+    TestNoIntrospectionObject testDestination;
+
+    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+    AnyType source(sourceDes, 0u, &testSource);
+
+    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestNoIntrospectionObject")->GetClassProperties()->GetUniqueIdentifier());
+    AnyType destination(destinationDes, 0u, &testDestination);
+
+    return (!TypeConvert(destination, source));
+
+}
+
+bool TypeConversionTest::TestObjectToObject_NoCompatibility() {
+    TestIntrospectionObjectFrom testSource;
+    testSource.member1_from = 1u;
+    float32 sourceMember2 = 2.0;
+    testSource.member2_from = &sourceMember2;
+    for (uint32 i = 0u; i < 32; i++) {
+        testSource.member3_from[i] = i;
+    }
+    testSource.member4_from = "4";
+
+    testSource.member5_from.nestedMember1_from = 5;
+
+    TestIntrospectionObjectNoCompatibility testDestination;
+    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+    AnyType source(sourceDes, 0u, &testSource);
+
+    TypeDescriptor destinationDes(
+            false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectNoCompatibility")->GetClassProperties()->GetUniqueIdentifier());
+    AnyType destination(destinationDes, 0u, &testDestination);
+
+    return (!TypeConvert(destination, source));
+}
+
+bool TypeConversionTest::TestStructuredDataToObject_SourceIntrospection() {
 
     TestIntrospectionObjectFrom testSource;
     testSource.member1_from = 1u;
@@ -387,8 +391,10 @@ bool TypeConversionTest::TestStructuredDataToObject() {
     cdb.CreateAbsolute("testSource");
     cdb.Write("Class", "TestIntrospectionObjectFrom");
     cdb.Write("member1_from", testSource.member1_from);
-    cdb.Write("member2_from", reinterpret_cast<uintp>(testSource.member2_from));
+    // invert the order!
     cdb.Write("member3_from", testSource.member3_from);
+    cdb.Write("member2_from", reinterpret_cast<uintp>(testSource.member2_from));
+
     cdb.Write("member4_from", testSource.member4_from);
     cdb.CreateRelative("member5_from");
     cdb.Write("nestedMember1_from", testSource.member5_from.nestedMember1_from);
@@ -399,20 +405,141 @@ bool TypeConversionTest::TestStructuredDataToObject() {
     AnyType destination(destinationDes, 0u, &testDestination);
 
     if (!TypeConvert(destination, cdb)) {
-        printf("\nError in type convert\n");
+        return false;
     }
 
-    printf("\n1) %s\n", testDestination.member1_to);
+    if (StringHelper::Compare(testDestination.member1_to, "1") != 0) {
+        return false;
+    }
+    if (testDestination.member2_to != (uintp) testSource.member2_from) {
+        return false;
+    }
+    for (uint32 i = 0u; i < 32; i++) {
+        if (testDestination.member3_to[i] != i) {
+            return false;
+        }
+    }
+    if (testDestination.member4_to != 4) {
+        return false;
+    }
 
-    printf("\n2) %llx %llx\n", testDestination.member2_to, (uintp) testSource.member2_from);
+    return testDestination.member5_to.nestedMember1_to == 5;
+}
 
-    printf("\n3) %f\n", testDestination.member3_to[31]);
+bool TypeConversionTest::TestStructuredDataToObject_NoSourceIntrospection() {
 
-    printf("\n4) %d\n", testDestination.member4_to);
+    TestIntrospectionObjectFrom testSource;
+    testSource.member1_from = 1u;
+    float32 sourceMember2 = 2.0;
+    testSource.member2_from = &sourceMember2;
+    for (uint32 i = 0u; i < 32; i++) {
+        testSource.member3_from[i] = i;
+    }
+    testSource.member4_from = "4";
 
-    printf("\n5) %d\n", testDestination.member5_to.nestedMember1_to);
+    testSource.member5_from.nestedMember1_from = 5;
 
-    return true;
+    TestIntrospectionObjectTo testDestination;
+
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("testSource");
+    cdb.Write("member1", testSource.member1_from);
+    cdb.Write("member2", reinterpret_cast<uintp>(testSource.member2_from));
+    cdb.Write("member3", testSource.member3_from);
+    cdb.Write("member4", testSource.member4_from);
+    cdb.CreateRelative("member5");
+    cdb.Write("nestedMember1", testSource.member5_from.nestedMember1_from);
+    cdb.MoveAbsolute("testSource");
+
+    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+    AnyType destination(destinationDes, 0u, &testDestination);
+
+    if (!TypeConvert(destination, cdb)) {
+        return false;
+    }
+
+    if (StringHelper::Compare(testDestination.member1_to, "1") != 0) {
+        return false;
+    }
+    if (testDestination.member2_to != (uintp) testSource.member2_from) {
+        return false;
+    }
+    for (uint32 i = 0u; i < 32; i++) {
+        if (testDestination.member3_to[i] != i) {
+            return false;
+        }
+    }
+    if (testDestination.member4_to != 4) {
+        return false;
+    }
+
+    return testDestination.member5_to.nestedMember1_to == 5;
+}
+
+bool TypeConversionTest::TestStructuredDataToObject_ErrorNoDestIntrospection() {
+
+    TestIntrospectionObjectFrom testSource;
+    testSource.member1_from = 1u;
+    float32 sourceMember2 = 2.0;
+    testSource.member2_from = &sourceMember2;
+    for (uint32 i = 0u; i < 32; i++) {
+        testSource.member3_from[i] = i;
+    }
+    testSource.member4_from = "4";
+
+    testSource.member5_from.nestedMember1_from = 5;
+
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("testSource");
+    cdb.Write("member1", testSource.member1_from);
+    cdb.Write("member2", reinterpret_cast<uintp>(testSource.member2_from));
+    cdb.Write("member3", testSource.member3_from);
+    cdb.Write("member4", testSource.member4_from);
+    cdb.CreateRelative("member5");
+    cdb.Write("nestedMember1", testSource.member5_from.nestedMember1_from);
+    cdb.MoveAbsolute("testSource");
+
+
+    TestNoIntrospectionObject testDestination;
+
+    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+    AnyType source(sourceDes, 0u, &testSource);
+
+    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestNoIntrospectionObject")->GetClassProperties()->GetUniqueIdentifier());
+    AnyType destination(destinationDes, 0u, &testDestination);
+    return (!TypeConvert(destination, cdb));
+}
+
+bool TypeConversionTest::TestStructuredDataToObject_NoCompatibility() {
+    TestIntrospectionObjectFrom testSource;
+    testSource.member1_from = 1u;
+    float32 sourceMember2 = 2.0;
+    testSource.member2_from = &sourceMember2;
+    for (uint32 i = 0u; i < 32; i++) {
+        testSource.member3_from[i] = i;
+    }
+    testSource.member4_from = "4";
+
+    testSource.member5_from.nestedMember1_from = 5;
+
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("testSource");
+    cdb.Write("member1", testSource.member1_from);
+    cdb.Write("member2", reinterpret_cast<uintp>(testSource.member2_from));
+    cdb.Write("member3", testSource.member3_from);
+    cdb.Write("member4", testSource.member4_from);
+    cdb.CreateRelative("member5");
+    cdb.Write("nestedMember1", testSource.member5_from.nestedMember1_from);
+    cdb.MoveAbsolute("testSource");
+
+    TestIntrospectionObjectNoCompatibility testDestination;
+
+    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+    AnyType source(sourceDes, 0u, &testSource);
+
+    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectNoCompatibility")->GetClassProperties()->GetUniqueIdentifier());
+    AnyType destination(destinationDes, 0u, &testDestination);
+    return (!TypeConvert(destination, cdb));
 }
 
 bool TypeConversionTest::TestObjectToStructuredData() {
@@ -437,30 +564,47 @@ bool TypeConversionTest::TestObjectToStructuredData() {
     }
 
     char8 destMember1[32];
+    char8 className[32];
+    char8 nestedClassName[64];
     uintp destMember2;
     float32 destMember3[32];
     uint32 destMember4;
     uint8 destMember5;
 
     cdb.MoveAbsolute("testSource");
+    cdb.Read("Class", className);
     cdb.Read("member1_from", destMember1);
     cdb.Read("member2_from", destMember2);
     cdb.Read("member3_from", destMember3);
     cdb.Read("member4_from", destMember4);
     cdb.MoveRelative("member5_from");
+    cdb.Read("Class", nestedClassName);
     cdb.Read("nestedMember1_from", destMember5);
 
-    printf("\n1) %s\n", destMember1);
+    if (StringHelper::Compare(className, "TestIntrospectionObjectFrom") != 0) {
+        return false;
+    }
 
-    printf("\n2) %llx %llx\n", destMember2, (uintp) testSource.member2_from);
+    if (StringHelper::Compare(nestedClassName, "TestIntrospectionNestedStructureFrom") != 0) {
+        return false;
+    }
 
-    printf("\n3) %f\n", destMember3[31]);
+    if (StringHelper::Compare(destMember1, "1") != 0) {
+        return false;
+    }
+    if (destMember2 != (uintp) testSource.member2_from) {
+        return false;
+    }
+    for (uint32 i = 0; i < 32; i++) {
+        if (destMember3[i] != i) {
+            return false;
+        }
+    }
+    if (destMember4 != 4) {
+        return false;
+    }
 
-    printf("\n4) %d\n", destMember4);
-
-    printf("\n5) %d\n", destMember5);
-
-    return true;
+    return destMember5 == 5;
 }
 
 bool TypeConversionTest::TestStructuredDataToStructuredData() {
@@ -505,15 +649,20 @@ bool TypeConversionTest::TestStructuredDataToStructuredData() {
     destinationCDB.MoveRelative("member5_from");
     destinationCDB.Read("nestedMember1_from", destMember5);
 
-    printf("\n1) %s\n", destMember1);
+    if (StringHelper::Compare(destMember1, "Hello World") != 0) {
+        return false;
+    }
+    if (destMember2 != sourceMember2) {
+        return false;
+    }
+    for (uint32 i = 0; i < 32; i++) {
+        if (destMember3[i] != i) {
+            return false;
+        }
+    }
+    if (destMember4 != 4) {
+        return false;
+    }
 
-    printf("\n2) %llx\n", destMember2);
-
-    printf("\n3) %f\n", destMember3[31]);
-
-    printf("\n4) %d\n", destMember4);
-
-    printf("\n5) %d\n", destMember5);
-
-    return true;
+    return destMember5 == 5;
 }

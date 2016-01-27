@@ -159,6 +159,16 @@ TEST(ConfigurationDatabaseGTest,TestRead_Invalid) {
     ASSERT_TRUE(cdbTest.TestRead_Invalid());
 }
 
+TEST(ConfigurationDatabaseGTest,TestRead_StructuredData) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_StructuredData());
+}
+
+TEST(ConfigurationDatabaseGTest,TestRead_Object) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_Object());
+}
+
 TEST(ConfigurationDatabaseGTest,TestAddToCurrentNode) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestAddToCurrentNode());
@@ -227,6 +237,16 @@ TEST(ConfigurationDatabaseGTest,TestWrite_Overwrite) {
 TEST(ConfigurationDatabaseGTest,TestWrite_Invalid) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Invalid());
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_StructuredData) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_StructuredData());
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Object) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Object());
 }
 
 TEST(ConfigurationDatabaseGTest,TestGetType_Invalid) {

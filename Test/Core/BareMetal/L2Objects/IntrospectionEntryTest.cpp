@@ -47,7 +47,7 @@ bool IntrospectionEntryTest::TestConstructor(const char8* memberName,
                                              uint32 size,
                                              uint23 index) {
 
-    IntrospectionEntry memberInfo(memberName, type, modifiers,attributes, size, index);
+    IntrospectionEntry memberInfo(memberName, type, modifiers, attributes, size, index);
 
     if (StringHelper::Compare(memberInfo.GetMemberName(), memberName) != 0) {
         return false;
@@ -71,28 +71,26 @@ bool IntrospectionEntryTest::TestConstructor(const char8* memberName,
 }
 
 bool IntrospectionEntryTest::TestGetMemberName(const char8* memberName) {
-    IntrospectionEntry memberInfo(memberName, "",  "", "", 0, 0);
+    IntrospectionEntry memberInfo(memberName, "", "", "", 0, 0);
     return (memberName == NULL)?(memberInfo.GetMemberName()==NULL):(StringHelper::Compare(memberInfo.GetMemberName(), memberName) == 0);
 }
 
 bool IntrospectionEntryTest::TestGetMemberModifiers(const char8* modifiers) {
-    IntrospectionEntry memberInfo("", "", modifiers,"", 0, 0);
+    IntrospectionEntry memberInfo("", "", modifiers, "", 0, 0);
     return (modifiers == NULL)?(memberInfo.GetMemberModifiers()==NULL):(StringHelper::Compare(memberInfo.GetMemberModifiers(), modifiers) == 0);
 }
 
-
-bool IntrospectionEntryTest::TestGetMemberSize(uint32 size){
-    IntrospectionEntry memberInfo("", "",  "", "",size, 0);
-    return memberInfo.GetMemberSize()==size;
+bool IntrospectionEntryTest::TestGetMemberSize(uint32 size) {
+    IntrospectionEntry memberInfo("", "", "", "", size, 0);
+    return memberInfo.GetMemberSize() == size;
 }
 
-
-bool IntrospectionEntryTest::TestGetMemberByteOffset(uint32 byteOffset){
-    IntrospectionEntry memberInfo("", "",  "", "",0, byteOffset);
-    return memberInfo.GetMemberByteOffset()==byteOffset;
+bool IntrospectionEntryTest::TestGetMemberByteOffset(uint32 byteOffset) {
+    IntrospectionEntry memberInfo("", "", "", "", 0, byteOffset);
+    return memberInfo.GetMemberByteOffset() == byteOffset;
 }
 
-bool IntrospectionEntryTest::TestGetMemberTypeDescriptor(){
+bool IntrospectionEntryTest::TestGetMemberTypeDescriptor() {
 
     const TypeDescriptor typeDes[] = { CharString, SignedInteger8Bit, SignedInteger16Bit, SignedInteger32Bit, SignedInteger64Bit, UnsignedInteger8Bit,
             UnsignedInteger16Bit, UnsignedInteger32Bit, UnsignedInteger64Bit, Float32Bit, Float64Bit, Character8Bit, VoidType, InvalidType };
@@ -100,25 +98,30 @@ bool IntrospectionEntryTest::TestGetMemberTypeDescriptor(){
     const char8* typeNames[] = { "string", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "float32", "float64", "char8", "void",
             static_cast<const char8*>(NULL)};
 
-    uint32 i=0u;
-    while (typeNames[i]!=NULL){
-        IntrospectionEntry memberInfo("", typeNames[i],  "", "",0, 0);
-        if(memberInfo.GetMemberTypeDescriptor()!=typeDes[i]){
+    uint32 i = 0u;
+    while (typeNames[i] != NULL) {
+        IntrospectionEntry memberInfo("", typeNames[i], "", "",0, 0);
+        if(memberInfo.GetMemberTypeDescriptor()!=typeDes[i]) {
             return false;
         }
         i++;
     }
-    IntrospectionEntry memberInfo("", "Object",  "","", 0, 0);
+    IntrospectionEntry memberInfo("", "Object", "", "", 0, 0);
     return memberInfo.GetMemberTypeDescriptor().isStructuredData;
 }
 
+bool IntrospectionEntryTest::TestGetMemberAttributes(const char8 * attributes) {
+    IntrospectionEntry memberInfo("", "", "", attributes, 0, 0);
+    return (attributes == NULL)?(memberInfo.GetMemberModifiers()==NULL):(StringHelper::Compare(memberInfo.GetMemberAttributes(), attributes) == 0);
 
-bool IntrospectionEntryTest::TestIsConstant(const IntrospectionEntryTestTable *table){
+}
 
-    uint32 i=0u;
-    while(table[i].modifiers!=NULL){
+bool IntrospectionEntryTest::TestIsConstant(const IntrospectionEntryTestTable *table) {
+
+    uint32 i = 0u;
+    while (table[i].modifiers != NULL) {
         IntrospectionEntry memberInfoConstant("","", table[i].modifiers,"", 0,0);
-        if(memberInfoConstant.IsConstant(table[i].level)!=table[i].expected){
+        if(memberInfoConstant.IsConstant(table[i].level)!=table[i].expected) {
             return false;
         }
         i++;
@@ -127,13 +130,11 @@ bool IntrospectionEntryTest::TestIsConstant(const IntrospectionEntryTestTable *t
     return true;
 }
 
-
-bool IntrospectionEntryTest::TestGetMemberPointerLevel(const IntrospectionEntryTestTable *table){
-    uint32 i=0u;
-    while(table[i].modifiers!=NULL){
+bool IntrospectionEntryTest::TestGetMemberPointerLevel(const IntrospectionEntryTestTable *table) {
+    uint32 i = 0u;
+    while (table[i].modifiers != NULL) {
         IntrospectionEntry memberInfoConstant("","", table[i].modifiers,"", 0,0);
-        if(memberInfoConstant.GetMemberPointerLevel()!=table[i].level){
-            printf("\n%d %d %s\n", i, memberInfoConstant.GetMemberPointerLevel(), table[i].modifiers);
+        if(memberInfoConstant.GetMemberPointerLevel()!=table[i].level) {
             return false;
         }
         i++;

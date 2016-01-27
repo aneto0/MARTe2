@@ -516,8 +516,15 @@ TEST(IOBufferGTest, TestSkipToken) {
     ASSERT_TRUE(myIOBufferTest.TestSkipToken(&SkipTokensTestTable[0]));
 }
 
+TEST(IOBufferGTest, TestPrintFormattedObject) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedObject());
+}
 
-
+TEST(IOBufferGTest, TestPrintStructuredDataInterface) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintStructuredDataInterface());
+}
 
 
 

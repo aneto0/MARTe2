@@ -50,7 +50,7 @@
 #define Windows 2
 #define FreeRTOS 3
 
-/*
+
 TEST(TypeConversionGTest,TestCCStringToInt8) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<const char8*,int8> table[]={
@@ -4836,21 +4836,55 @@ TEST(TypeConversionGTest,TestFloatToCArrayScalar_Trunc) {
 }
 #endif
 
-*/
+
 TEST(TypeConversionGTest,TestObjectToObject) {
     TypeConversionTest myTypeConversionTest;
 
     ASSERT_TRUE(myTypeConversionTest.TestObjectToObject());
 }
 
-
-TEST(TypeConversionGTest,TestStructuredDataToObject) {
+TEST(TypeConversionGTest,TestObjectToObject_ErrorNoSourceIntrospection) {
     TypeConversionTest myTypeConversionTest;
 
-    ASSERT_TRUE(myTypeConversionTest.TestStructuredDataToObject());
+    ASSERT_TRUE(myTypeConversionTest.TestObjectToObject_ErrorNoSourceIntrospection());
+}
+
+TEST(TypeConversionGTest,TestObjectToObject_ErrorNoDestIntrospection) {
+    TypeConversionTest myTypeConversionTest;
+
+    ASSERT_TRUE(myTypeConversionTest.TestObjectToObject_ErrorNoDestIntrospection());
+}
+
+TEST(TypeConversionGTest,TestObjectToObject_NoCompatibility) {
+    TypeConversionTest myTypeConversionTest;
+
+    ASSERT_TRUE(myTypeConversionTest.TestObjectToObject_NoCompatibility());
 }
 
 
+TEST(TypeConversionGTest,TestStructuredDataToObject_SourceIntrospection) {
+    TypeConversionTest myTypeConversionTest;
+
+    ASSERT_TRUE(myTypeConversionTest.TestStructuredDataToObject_SourceIntrospection());
+}
+
+TEST(TypeConversionGTest,TestStructuredDataToObject_NoSourceIntrospection) {
+    TypeConversionTest myTypeConversionTest;
+
+    ASSERT_TRUE(myTypeConversionTest.TestStructuredDataToObject_NoSourceIntrospection());
+}
+
+TEST(TypeConversionGTest,TestStructuredDataToObject_ErrorNoDestIntrospection) {
+    TypeConversionTest myTypeConversionTest;
+
+    ASSERT_TRUE(myTypeConversionTest.TestStructuredDataToObject_ErrorNoDestIntrospection());
+}
+
+TEST(TypeConversionGTest,TestStructuredDataToObject_NoCompatibility) {
+    TypeConversionTest myTypeConversionTest;
+
+    ASSERT_TRUE(myTypeConversionTest.TestStructuredDataToObject_NoCompatibility());
+}
 TEST(TypeConversionGTest,TestObjectToStructuredData) {
     TypeConversionTest myTypeConversionTest;
 

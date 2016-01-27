@@ -153,6 +153,53 @@ bool ClassRegistryItemTest::TestIntrospectionCostructor() {
     return true;
 }
 
+
+bool ClassRegistryItemTest::TestFullCostructor() {
+    ClassProperties testClassProperties("TestIntrospectionCRI", "TestIntrospectionCRI", "1.1");
+
+    IntrospectionEntry member1Field("member1", "uint32",  "", "", 4, 0);
+
+    const IntrospectionEntry* fields[] = { &member1Field, 0 };
+    Introspection introspectionTest(fields);
+
+    ClassRegistryItem myItem(testClassProperties, dummyBuildFcn, introspectionTest);
+    // checks the attributes.
+    if (myItem.GetNumberOfInstances() != 0) {
+        return false;
+    }
+
+    if (myItem.GetLoadableLibrary() != NULL) {
+        return false;
+    }
+
+    if (myItem.GetIntrospection() != &introspectionTest) {
+        return false;
+    }
+
+    if (StringHelper::Compare((myItem.GetClassProperties())->GetName(), "TestIntrospectionCRI") != 0) {
+        return false;
+    }
+
+    if (StringHelper::Compare((myItem.GetClassProperties())->GetTypeIdName(), "TestIntrospectionCRI") != 0) {
+        return false;
+    }
+
+    if (StringHelper::Compare((myItem.GetClassProperties())->GetVersion(), "1.1") != 0) {
+        return false;
+    }
+
+    if (myItem.GetObjectBuildFunction() != dummyBuildFcn) {
+        return false;
+    }
+    //checks if the class is in the database
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+
+    if (db->Find("TestIntrospectionCRI") == NULL) {
+        return false;
+    }
+    return true;
+}
+
 bool ClassRegistryItemTest::TestDestructor() {
     ClassProperties testClassProperties("Hello", "", "World");
 
