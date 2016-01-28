@@ -40,7 +40,10 @@ namespace MARTe {
 
 /**
  * @brief Template version of the SearchFilter interface.
- * @tparam T TODO Define T
+ * @details This interface is the template version of the interface functor
+ * SearchFilter, parameterising the type of the object that the Test method
+ * will check for compliance, with respect to a given searching criteria.
+ * @tparam T the type of the object which will be checked by the Test method.
  */
 template<typename T>
 class SearchFilterT {

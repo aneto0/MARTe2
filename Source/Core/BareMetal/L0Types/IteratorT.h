@@ -39,8 +39,12 @@
 namespace MARTe {
 
 /**
- * @brief Template implementation of the Iterator interface.
- * @tparam T The type of the object to be passed to the callback function
+ * @brief Template version of the Iterator interface.
+ * @details This interface is the template version of the interface functor
+ * Iterator, parameterising the type of the object on which the Do method
+ * will apply an specific action.
+ * @tparam T the type of the object on which an action will be applied by
+ * the Do method.
  */
 template<typename T>
 class IteratorT {

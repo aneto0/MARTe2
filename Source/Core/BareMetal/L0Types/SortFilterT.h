@@ -39,8 +39,11 @@
 namespace MARTe {
 
 /**
- * @brief Template implementation of the the SortFilter interface.
- * @tparam T TODO Define T
+ * @brief Template version of the SortFilter interface.
+ * @details This interface is the template version of the interface functor
+ * SortFilter, parameterising the type of the objects that the Compare method
+ * will check for order direction, with respect to a given sorting criteria.
+ * @tparam T the type of the objects which will be checked by Compare method.
  */
 template<typename T>
 class SortFilterT {
