@@ -248,6 +248,14 @@ static bool PrintStream(IOBuffer & iobuff,
     return ret;
 }
 
+/**
+ * @brief Prints the introspection related to the object in input.
+ * @param[out] iobuff is the output stream buffer.
+ * @param[in] parIn is the input.
+ * @return true if the object is registered and introspectable, false otherwise.
+ * @pre
+ *   The object represented by \a parIn must be introspectable
+ */
 static bool PrintObjectIntrospection(IOBuffer & iobuff,
                                      const AnyType & parIn) {
 
@@ -262,73 +270,86 @@ static bool PrintObjectIntrospection(IOBuffer & iobuff,
         // print the class name
         if(properties!=NULL) {
             data=properties->GetName();
-            AnyType printClassName[]= {data, "= { ", voidAnyType};
-            if(iobuff.PrintFormatted("\n%s %s\n", printClassName)) {
+            AnyType printClassName[]= {data, "= {", voidAnyType};
+            if(iobuff.PrintFormatted("\n%s %s\n", &printClassName[0])) {
                 const Introspection *introspection=item->GetIntrospection();
                 if(introspection!=NULL) {
                     ret=true;
-                    uint32 numberOfMembers=introspection->GetSize();
+                    uint32 numberOfMembers=introspection->GetNumberOfMembers();
                     for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
                         IntrospectionEntry memberIntrospection=(*introspection)[i];
                         data=memberIntrospection.GetMemberName();
-                        AnyType printMemberName[]= {data,"= { ", voidAnyType};
-                        if(!iobuff.PrintFormatted("    %s %s\n", printMemberName)) {
+                        AnyType printMemberName[]= {data,"= {", voidAnyType};
+                        if(!iobuff.PrintFormatted("    %s %s\n", &printMemberName[0])) {
                             ret=false;
                         }
                         if(ret) {
                             data=memberIntrospection.GetMemberTypeName();
                             AnyType printType[]= {"type =", data, voidAnyType};
-                            if(!iobuff.PrintFormatted("        %s %s\n", printType)) {
+                            if(!iobuff.PrintFormatted("        %s %s\n", &printType[0])) {
                                 ret=false;
                             }
-                            if(ret) {
-                                data=memberIntrospection.GetMemberModifiers();
-                                AnyType printModifiers[]= {"modifiers =", data, voidAnyType};
-                                if(!iobuff.PrintFormatted("        %s \"%s\" \n", printModifiers)) {
-                                    ret=false;
-                                }
+                        }
+                        if(ret) {
+                            data=memberIntrospection.GetMemberModifiers();
+                            AnyType printModifiers[]= {"modifiers =", data, voidAnyType};
+                            if(!iobuff.PrintFormatted("        %s \"%s\"\n", &printModifiers[0])) {
+                                ret=false;
                             }
-                            if(ret) {
-                                data=memberIntrospection.GetMemberAttributes();
-                                AnyType printAttributes[]= {"attributes =", data, voidAnyType};
-                                if(!iobuff.PrintFormatted("        %s \"%s\" \n    }\n", printAttributes)) {
-                                    ret=false;
-                                }
+                        }
+                        if(ret) {
+                            data=memberIntrospection.GetMemberAttributes();
+                            AnyType printAttributes[]= {"attributes =", data, voidAnyType};
+                            if(!iobuff.PrintFormatted("        %s \"%s\"\n    }\n", &printAttributes[0])) {
+                                ret=false;
                             }
                         }
                     }
                     AnyType printClose[]= {"}", voidAnyType};
-                    if(!iobuff.PrintFormatted("%s\n", printClose)) {
+                    if(!iobuff.PrintFormatted("%s\n", &printClose[0])) {
                         ret=false;
                     }
                 }
+                REPORT_ERROR(ErrorManagement::FatalError, "PrintObjectIntrospection: The object is not introspectable");
             }
         }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "PrintObjectIntrospection: The object is not registered");
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "PrintObjectIntrospection: The object is not registered");
     }
     return ret;
 }
 
+/**
+ * @brief Prints a StructuredDataInterface.
+ * @param[out] iobuff is the output stream buffer.
+ * @param[in] structuredData is the input.
+ * @return false in case of error in the StructuredDataI functions, true otherwise.
+ */
 bool PrintStructuredDataInterface(IOBuffer &iobuff,
-                                  StructuredDataI *structuredData) {
+                                  StructuredDataI * const structuredData) {
 
     bool ret = true;
     uint32 numberOfChildren = structuredData->GetNumberOfChildren();
     for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
         const char8 * childName = structuredData->GetChildName(i);
         AnyType printChildName[] = { childName, "= ", voidAnyType };
-        if (!iobuff.PrintFormatted("%s %s", printChildName)) {
+        if (!iobuff.PrintFormatted("%s %s", &printChildName[0])) {
             ret = false;
         }
         char8 buffer[64];
         if (structuredData->Read(childName, buffer)) {
-            AnyType printLeaf[] = { buffer, voidAnyType };
-            if (!iobuff.PrintFormatted("%s\n", printLeaf)) {
+            AnyType printLeaf[] = { &buffer[0], voidAnyType };
+            if (!iobuff.PrintFormatted("%s\n", &printLeaf[0])) {
                 ret = false;
             }
         }
         else {
             AnyType printOpen[] = { "{", voidAnyType };
-            if (!iobuff.PrintFormatted("%s\n", printOpen)) {
+            if (!iobuff.PrintFormatted("%s\n", &printOpen[0])) {
                 ret = false;
             }
             if (ret) {
@@ -338,7 +359,7 @@ bool PrintStructuredDataInterface(IOBuffer &iobuff,
                         ret = false;
                     }
                     AnyType printClose[] = { "}", voidAnyType };
-                    if (!iobuff.PrintFormatted("%s\n", printClose)) {
+                    if (!iobuff.PrintFormatted("%s\n", &printClose[0])) {
                         ret = false;
                     }
                 }
@@ -352,6 +373,14 @@ bool PrintStructuredDataInterface(IOBuffer &iobuff,
     return ret;
 }
 
+/**
+ * @brief Prints an object.
+ * @param[out] iobuff is the output stream buffer.
+ * @param[in] is the input.
+ * @return false if the object is not introspectable, true otherwise.
+ * @pre
+ *   The object represented by parIn must be introspectable.
+ */
 static bool PrintObject(IOBuffer & iobuff,
                         const AnyType & parIn) {
 
@@ -368,18 +397,18 @@ static bool PrintObject(IOBuffer & iobuff,
         if(properties!=NULL) {
             data=properties->GetName();
             AnyType printClassName[]= {"Class =", data, voidAnyType};
-            if(iobuff.PrintFormatted("\n%s %s\n", printClassName)) {
+            if(iobuff.PrintFormatted("\n%s %s\n", &printClassName[0])) {
                 const Introspection *introspection=item->GetIntrospection();
                 if(introspection!=NULL) {
                     ret=true;
-                    uint32 numberOfMembers=introspection->GetSize();
+                    uint32 numberOfMembers=introspection->GetNumberOfMembers();
                     for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
                         IntrospectionEntry memberIntrospection=(*introspection)[i];
                         // the member name
                         data=memberIntrospection.GetMemberName();
 
                         AnyType printMemberName[]= {data,"= ", voidAnyType};
-                        if(!iobuff.PrintFormatted("%s %s", printMemberName)) {
+                        if(!iobuff.PrintFormatted("%s %s", &printMemberName[0])) {
                             ret=false;
                         }
                         if(ret) {
@@ -388,7 +417,7 @@ static bool PrintObject(IOBuffer & iobuff,
                             bool isMemberStructured=memberDescriptor.isStructuredData;
                             if(isMemberStructured) {
                                 AnyType printOpen[]= {"{", voidAnyType};
-                                if(!iobuff.PrintFormatted("%s\n", printOpen)) {
+                                if(!iobuff.PrintFormatted("%s\n", &printOpen[0])) {
                                     ret=false;
                                 }
                             }
@@ -396,13 +425,18 @@ static bool PrintObject(IOBuffer & iobuff,
                                 // create the member type
                                 char8* memberPointer=&dataPointer[byteOffset];
                                 AnyType member(memberDescriptor, 0u, memberPointer);
+
+                                if(memberIntrospection.GetMemberPointerLevel()>0u) {
+                                    member=AnyType(*reinterpret_cast<void**>(memberPointer));
+                                }
+
                                 if(memberDescriptor==CharString) {
                                     if(memberIntrospection.GetNumberOfDimensions()==0u) {
                                         member=AnyType(*reinterpret_cast<char8**>(memberPointer));
                                     }
                                 }
 
-                                for(uint32 j=0u; j<3; j++) {
+                                for(uint32 j=0u; j<3u; j++) {
                                     member.SetNumberOfElements(j, memberIntrospection.GetNumberOfElements(j));
                                 }
                                 member.SetNumberOfDimensions(memberIntrospection.GetNumberOfDimensions());
@@ -410,21 +444,30 @@ static bool PrintObject(IOBuffer & iobuff,
                             }
                             if(isMemberStructured) {
                                 AnyType printClose[]= {"}", voidAnyType};
-                                if(!iobuff.PrintFormatted("%s\n", printClose)) {
+                                if(!iobuff.PrintFormatted("%s\n", &printClose[0])) {
                                     ret=false;
                                 }
                             }
                         }
                     }
                 }
+                else {
+                    REPORT_ERROR(ErrorManagement::FatalError, "PrintObjectIntrospection: The object is not introspectable");
+                }
             }
         }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "PrintObjectIntrospection: The object is not registered");
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "PrintObjectIntrospection: The object is not registered");
     }
     return ret;
 }
 
 /**
- * @brief Prints a generic AnyType object on a buffer.
+ * @brief Prints a generic scalar AnyType object on a buffer.
  * @param[out] iobuff is the stream buffer output.
  * @param[in] parIn is the generic object to be printed.
  * @param[in] fd specifies the desired printing format.
@@ -632,7 +675,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
             //print the value of the pointer.
             if (((par.GetTypeDescriptor()).type) == CCString) {
                 if (fd.desiredAction == PrintInfo) {
-                    const char8* infoName = "CC String";
+                    const char8* infoName = "Char String";
                     AnyType info = infoName;
                     FormatDescriptor newFD = fd;
                     newFD.desiredAction = PrintString;
@@ -659,7 +702,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
 
             if (((par.GetTypeDescriptor()).type) == CArray) {
                 if (fd.desiredAction == PrintInfo) {
-                    const char8* infoName = "C Array";
+                    const char8* infoName = "Char Array";
                     AnyType info = infoName;
                     FormatDescriptor newFD = fd;
                     newFD.desiredAction = PrintString;
@@ -709,6 +752,13 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
     return ret;
 }
 
+/**
+ * @Prints a vector.
+ * @param[out] iobuff is the buffer output.
+ * @param[in] parIn is the input.
+ * @param[in] fd specifies the print format.
+ * @return true if the print of all elements succeeds, false otherwise.
+ */
 static bool PrintToStreamVector(IOBuffer & iobuff,
                                 const AnyType & parIn,
                                 const FormatDescriptor &fd) {
@@ -721,22 +771,47 @@ static bool PrintToStreamVector(IOBuffer & iobuff,
     bool ret = PrintCCString(iobuff, "{ ", newFD);
 
     for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
-        char8* scalarPointer = &dataPointer[i * elementSize];
+        uint32 index = i * elementSize;
+        char8* scalarPointer = &dataPointer[index];
         AnyType scalar(descriptor, parIn.GetBitAddress(), scalarPointer);
+
+        // Consider the special case of c string
         if (descriptor == CharString) {
             scalar = AnyType(*reinterpret_cast<char8**>(scalarPointer));
         }
+
+        if (descriptor.type == Pointer) {
+            void *pointerValue = *reinterpret_cast<void**>(scalarPointer);
+            scalar = AnyType(PointerType, parIn.GetBitAddress(), pointerValue);
+        }
+
+        bool isSourceCArray = (descriptor.type == CArray);
+        bool isSourceStaticDeclared = parIn.IsStaticDeclared();
+
+        // Consider the special case of matrix of characters (seen as a vector)
+        if ((isSourceCArray) && (!isSourceStaticDeclared)) {
+            scalarPointer = reinterpret_cast<char8 **>(dataPointer)[i];
+            scalar.SetDataPointer(scalarPointer);
+        }
+
         ret = PrintToStreamScalar(iobuff, scalar, fd);
         if (ret) {
             ret = PrintCCString(iobuff, " ", newFD);
         }
     }
 
-    ret = PrintCCString(iobuff, "}", newFD);
+    ret = PrintCCString(iobuff, "} ", newFD);
 
     return ret;
 }
 
+/**
+ * @Prints a matrix.
+ * @param[out] iobuff is the buffer output.
+ * @param[in] parIn is the input.
+ * @param[in] fd specifies the print format.
+ * @return true if the print of all elements succeeds, false otherwise.
+ */
 static bool PrintToStreamMatrix(IOBuffer & iobuff,
                                 const AnyType & parIn,
                                 const FormatDescriptor &fd) {
@@ -754,7 +829,8 @@ static bool PrintToStreamMatrix(IOBuffer & iobuff,
         if (ret) {
             char8* vectorPointer = NULL_PTR(char8*);
             if (isStaticDeclared) {
-                vectorPointer = &dataPointer[(i * numberOfColumns) * elementSize];
+                uint32 index = (i * numberOfColumns) * elementSize;
+                vectorPointer = &dataPointer[index];
             }
             else {
                 vectorPointer = reinterpret_cast<char8**>(dataPointer)[i];
@@ -763,15 +839,22 @@ static bool PrintToStreamMatrix(IOBuffer & iobuff,
                 AnyType vector(descriptor, parIn.GetBitAddress(), vectorPointer);
                 vector.SetNumberOfDimensions(1u);
                 vector.SetNumberOfElements(0u,numberOfColumns);
+                vector.SetStaticDeclared(parIn.IsStaticDeclared());
                 ret=PrintToStreamVector(iobuff, vector, fd);
             }
         }
 
     }
-    ret = PrintCCString(iobuff, " }", newFD);
+    ret = PrintCCString(iobuff, "} ", newFD);
     return ret;
 }
 
+/**
+ * @brief Prints a generic scalar AnyType object on a buffer.
+ * @param[out] iobuff is the stream buffer output.
+ * @param[in] parIn is the generic object to be printed.
+ * @param[in] fd specifies the desired printing format.
+ */
 static bool PrintToStream(IOBuffer & iobuff,
                           const AnyType & parIn,
                           const FormatDescriptor &fd) {
@@ -788,6 +871,9 @@ static bool PrintToStream(IOBuffer & iobuff,
         }
         else if(parIn.GetNumberOfDimensions()==0u) {
             ret=PrintToStreamScalar(iobuff, parIn, fd);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "PrintToStream: Print of type with dimension > 2 not supported");
         }
     }
     return ret;

@@ -127,8 +127,28 @@ public:
      */
     inline bool IsVoid() const;
 
+    /**
+     * @brief Constructor from 8 bit character.
+     * @param[in] i is the 8 bit character input.
+     * @post
+     *   GetDataPointer() == &i &&
+     *   IsStaticDeclared == true &&
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetTypeDescriptor() == Character8Bit &&
+     *   GetNumberOfElements(0:2) == 0
+     */
     inline AnyType(char8 &i);
 
+    /**
+     * @brief Constructor from 8 bit character.
+     * @param[in] i is the 8 bit character input.
+     * @post
+     *   GetDataPointer() == &i &&
+     *   IsStaticDeclared == true &&
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetTypeDescriptor() == Character8Bit &&
+     *   GetNumberOfElements(0:2) == 0
+     */
     inline AnyType(const char8 &i);
 
     /**
@@ -740,6 +760,15 @@ public:
      */
     inline uint32 GetBitSize() const;
 
+
+    /**
+     * @brief Retrieves the element in the specified position.
+     * @param[in] position is the position of the required element.
+     * @return voidAnyType if this AnyType is scalar or in case of errors, a scalar AnyType if this
+     * AnyType is a vector, a vector AnyType if this AnyType is a scalar.
+     */
+    AnyType operator[](const uint32 position) const;
+
 private:
 
     /**
@@ -1332,6 +1361,9 @@ uint32 AnyType::GetByteSize() const {
 uint32 AnyType::GetBitSize() const {
     return (dataDescriptor.numberOfBits + bitAddress);
 }
+
+
+
 
 /**
  * Definition of the void AnyType (empty constructor).

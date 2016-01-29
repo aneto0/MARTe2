@@ -376,6 +376,7 @@ public:
             uint32 outputBufferSize,
             char8 &saveTerminator,
             const char8 * skipCharacters);
+
     /**
      * @brief Reads a token from the buffer and writes it on an output buffer.
      * @details Extracts a token from the buffer into a string data until a

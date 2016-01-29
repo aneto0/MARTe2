@@ -53,10 +53,12 @@ public:
 
     /**
      * @brief Constructor.
+     * @param[in] introspectionListIn contains a list of IntrospectionEntry pointers, one for each class member.
+     * @param[in] classSizeIn is the class size.
      * @pre
      *   introspectionListIn must be a zero-terminated array.
      */
-    Introspection(const IntrospectionEntry ** const introspectionListIn);
+    Introspection(const IntrospectionEntry ** const introspectionListIn, const uint32 classSizeIn);
 
     /**
      * @brief Retrieves the informations about a specific member.
@@ -68,10 +70,17 @@ public:
 
 
     /**
-     * @brief Retrieved the number of IntrospectionEntries in the internal array.
+     * @brief Retrieves the number of IntrospectionEntries in the internal array.
      * @return the number of IntrospectionEntries in the internal array.
      */
-    uint32 GetSize() const;
+    uint32 GetNumberOfMembers() const;
+
+
+    /**
+     * @brief Retrieves the class Size.
+     * @return the class size.
+     */
+    uint32 GetClassSize() const;
 
 private:
 
@@ -80,6 +89,11 @@ private:
      * The array must be zero-terminated.
      */
     ZeroTerminatedArray<const IntrospectionEntry *> fields;
+
+    /**
+     * The class size.
+     */
+    uint32 classSize;
 
 };
 
@@ -115,6 +129,10 @@ private:
         INTROSPECTION_MEMBER_SIZE(className, memberName),                                        \
         INTROSPECTION_MEMBER_INDEX(className, memberName)                                        \
     )
+
+
+#define DECLARE_CLASS_INTROSPECTION(className, introEntryArray) \
+    static Introspection className ## _ ## introspection(introEntryArray, sizeof(className))
 
 #endif /* INTROSPECTION_H_ */
 

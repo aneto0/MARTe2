@@ -111,14 +111,18 @@ public:
     template <typename T>
     bool TestRead_Valid(T value);
 
-
+    /**
+     * @brief Tests the Read passing a StructuredDataI.
+     */
     bool TestRead_StructuredData();
 
-
+    /**
+     * @brief Tests the Read passing a structured object.
+     */
     bool TestRead_Object();
 
     /**
-     * @brief Tests the Read function with an invalid name
+     * @brief Tests the Read function with an invalid name.
      */
     bool TestRead_Invalid();
 
@@ -148,8 +152,14 @@ public:
      */
     bool TestWrite_Invalid();
 
+    /**
+     * @brief Tests the Write on a StructuredDataI
+     */
     bool TestWrite_StructuredData();
 
+    /**
+     * @brief Tests the Write on a structured object
+     */
     bool TestWrite_Object();
 
     /**

@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "IOBuffer.h"
 #include "StreamTestHelper.h"
+#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -121,7 +122,6 @@ public:
      * @brief Tests if the function returns the undoLevel attribute specified in the constructor (or 0 by default).
      */
     bool TestUndoLevel(uint32 undoLevel);
-
 
     /**
      * @brief Tests the CanWrite() function
@@ -276,7 +276,8 @@ public:
     /**
      * @brief Tests the PrintFormatted against any of the tables defined in StreamTestHelper.
      */
-    bool TestPrintFormatted(uint32 allocationGranularity, const PrintfNode table[]);
+    bool TestPrintFormatted(uint32 allocationGranularity,
+                            const PrintfNode table[]);
 
     /**
      * @brief Tests the print of a C string.
@@ -333,8 +334,54 @@ public:
      */
     bool TestSkipToken(const SkipTokensTestTableRow *table);
 
+    /**
+     * @brief Tests the PrintFormatted passing a vector AnyType
+     */
+    template<typename T, uint32 ndims>
+    bool TestPrintVector(const TestPrintFormattedTableVector<T, ndims> *table);
+
+    /**
+     * @brief Tests the PrintFormatted passing a matrix AnyType
+     */
+    template<typename T, uint32 nRows, uint32 nCols>
+    bool TestPrintMatrix(const TestPrintFormattedTableMatrix<T, nRows, nCols> *table);
+
+    /**
+     * @brief Tests the PrintFormatted passing a vector CArray
+     */
+    template<uint32 ndims>
+    bool TestPrintCArrayVector(const TestPrintFormattedTableVector<const char8 *, ndims> *table);
+
+    /**
+     * @brief Tests the PrintFormatted passing a matrix CArray
+     */
+    template<uint32 nRows, uint32 nCols>
+    bool TestPrintCArrayMatrix(const TestPrintFormattedTableMatrix<const char8 *, nRows, nCols> *table);
+
+    /**
+     * @brief Tests the PrintFormatted passing an array of pointers.
+     */
+    bool TestPrintPointerVector();
+
+    /**
+     * @brief Tests the PrintFormatted passing a matrix of pointers.
+     */
+    bool TestPrintPointerMatrix();
+
+    /**
+     * @brief Tests if the print fails passing an AnyType with 3 dimensions
+     */
+    bool TestPrintTooMuchDimensions();
+
+    /**
+     * @brief Tests if the function prints the class introspection.
+     */
     bool TestPrintFormattedIntrospection();
 
+    /**
+     * @brief Tests if the function returns false if te object is not introspectable
+     */
+    bool TestPrintFormattedIntrospection_NotIntrospectable();
 
     /**
      * @brief Tests the print of a structured object.
@@ -342,14 +389,163 @@ public:
     bool TestPrintFormattedObject();
 
     /**
+     * @brief Tests if the function returns false if te object is not introspectable
+     */
+    bool TestPrintFormattedObject_NotIntrospectable();
+
+    /**
      * @brief Tests the print of a StrucuredDataI.
      */
     bool TestPrintStructuredDataInterface();
+
+private:
+
+    /**
+     * @brief Cleans the buffer.
+     */
+    void Clear(IOBuffer &ioBuffer);
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+template<typename T, uint32 ndims>
+bool IOBufferTest::TestPrintVector(const TestPrintFormattedTableVector<T, ndims> *table) {
+
+    uint32 i = 0u;
+    IOBuffer ioBuffer;
+    uint32 allocSize = 128u;
+    ioBuffer.SetBufferHeapMemory(allocSize, 0);
+
+    while (table[i].expected != NULL) {
+        Clear(ioBuffer);
+        AnyType at(table[i].vectorInput);
+        ioBuffer.PrintFormatted(table[i].format, &at);
+        if (StringHelper::Compare(table[i].expected, ioBuffer.Buffer()) != 0) {
+            printf("\n%s %s\n", table[i].expected, ioBuffer.Buffer());
+            return false;
+        }
+        i++;
+    }
+
+    return true;
+}
+
+template<typename T, uint32 nRows, uint32 nCols>
+bool IOBufferTest::TestPrintMatrix(const TestPrintFormattedTableMatrix<T, nRows, nCols> *table) {
+    uint32 i = 0u;
+    IOBuffer ioBuffer;
+    uint32 allocSize = 128u;
+    ioBuffer.SetBufferHeapMemory(allocSize, 0);
+
+    while (table[i].expected != NULL) {
+        Clear(ioBuffer);
+        AnyType at(table[i].matrixInput);
+        ioBuffer.PrintFormatted(table[i].format, &at);
+        if (StringHelper::Compare(table[i].expected, ioBuffer.Buffer()) != 0) {
+            printf("\n%s %s\n", table[i].expected, ioBuffer.Buffer());
+            return false;
+        }
+        i++;
+    }
+
+    i = 0u;
+    Matrix<T> bufferHeap(nRows, nCols);
+    while (table[i].expected != NULL) {
+        Clear(ioBuffer);
+        for (uint32 j = 0u; j < nRows; j++) {
+            for (uint32 k = 0u; k < nCols; k++) {
+                bufferHeap[j][k] = table[i].matrixInput[j][k];
+            }
+        }
+
+        AnyType at(bufferHeap);
+        ioBuffer.PrintFormatted(table[i].format, &at);
+        if (StringHelper::Compare(table[i].expected, ioBuffer.Buffer()) != 0) {
+            printf("\n%s %s\n", table[i].expected, ioBuffer.Buffer());
+            return false;
+        }
+        i++;
+    }
+
+    return true;
+}
+
+template<uint32 ndims>
+bool IOBufferTest::TestPrintCArrayVector(const TestPrintFormattedTableVector<const char8 *, ndims> *table) {
+
+    uint32 i = 0u;
+    IOBuffer ioBuffer;
+    uint32 allocSize = 128u;
+    ioBuffer.SetBufferHeapMemory(allocSize, 0);
+
+    char8 buffer[ndims][64];
+
+    while (table[i].expected != NULL) {
+        Clear(ioBuffer);
+        for (uint32 j = 0u; j < ndims; j++) {
+            StringHelper::Copy(&buffer[j][0], table[i].vectorInput[j]);
+        }
+        AnyType at(buffer);
+
+        ioBuffer.PrintFormatted(table[i].format, &at);
+        if (StringHelper::Compare(table[i].expected, ioBuffer.Buffer()) != 0) {
+            printf("\n%s %s\n", table[i].expected, ioBuffer.Buffer());
+            return false;
+        }
+        i++;
+    }
+
+    i = 0u;
+    Matrix<char8> bufferHeap(ndims, 64);
+
+    while (table[i].expected != NULL) {
+        Clear(ioBuffer);
+        for (uint32 j = 0u; j < ndims; j++) {
+            StringHelper::Copy(&bufferHeap[j][0], table[i].vectorInput[j]);
+        }
+        AnyType at(bufferHeap);
+
+        ioBuffer.PrintFormatted(table[i].format, &at);
+        if (StringHelper::Compare(table[i].expected, ioBuffer.Buffer()) != 0) {
+            printf("\n%s %s\n", table[i].expected, ioBuffer.Buffer());
+            return false;
+        }
+        i++;
+    }
+
+    Clear(ioBuffer);
+    AnyType at= table[0].vectorInput;
+    ioBuffer.PrintFormatted("%?", &at);
+    return StringHelper::Compare(ioBuffer.Buffer(), "Char Array");
+}
+
+template<uint32 nRows, uint32 nCols>
+bool IOBufferTest::TestPrintCArrayMatrix(const TestPrintFormattedTableMatrix<const char8 *, nRows, nCols> *table) {
+    uint32 i = 0u;
+    IOBuffer ioBuffer;
+    uint32 allocSize = 128u;
+    ioBuffer.SetBufferHeapMemory(allocSize, 0);
+    char8 buffer[nRows][nCols][64];
+    while (table[i].expected != NULL) {
+        Clear(ioBuffer);
+        for (uint32 j = 0u; j < nRows; j++) {
+            for (uint32 k = 0u; k < nCols; k++) {
+                StringHelper::Copy(&buffer[j][k][0], table[i].matrixInput[j][k]);
+            }
+        }
+        AnyType at(buffer);
+        ioBuffer.PrintFormatted(table[i].format, &at);
+        if (StringHelper::Compare(table[i].expected, ioBuffer.Buffer()) != 0) {
+            printf("\n%s %s\n", table[i].expected, ioBuffer.Buffer());
+            return false;
+        }
+        i++;
+    }
+
+    return true;
+}
 
 #endif /* IOBUFFERTEST_H_ */
 

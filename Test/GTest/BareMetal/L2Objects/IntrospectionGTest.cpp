@@ -63,3 +63,14 @@ TEST(IntrospectionGTest,TestMacroToAddStructuredInClassRegistryDatabase) {
     IntrospectionTest IntrospectionTest;
     ASSERT_TRUE(IntrospectionTest.TestMacroToAddStructuredInClassRegistryDatabase());
 }
+
+TEST(IntrospectionGTest,TestGetNumberOfMembers) {
+    IntrospectionTest IntrospectionTest;
+    ASSERT_TRUE(IntrospectionTest.TestGetNumberOfMembers());
+}
+
+TEST(IntrospectionGTest,TestGetClassSize) {
+    IntrospectionTest IntrospectionTest;
+    ASSERT_TRUE(IntrospectionTest.TestGetClassSize());
+}
+

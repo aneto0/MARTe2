@@ -50,7 +50,6 @@
 #define Windows 2
 #define FreeRTOS 3
 
-
 TEST(TypeConversionGTest,TestCCStringToInt8) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<const char8*,int8> table[]={
@@ -4843,6 +4842,12 @@ TEST(TypeConversionGTest,TestObjectToObject) {
     ASSERT_TRUE(myTypeConversionTest.TestObjectToObject());
 }
 
+TEST(TypeConversionGTest,TestObjectToObject_Reverse) {
+    TypeConversionTest myTypeConversionTest;
+
+    ASSERT_TRUE(myTypeConversionTest.TestObjectToObject_Reverse());
+}
+
 TEST(TypeConversionGTest,TestObjectToObject_ErrorNoSourceIntrospection) {
     TypeConversionTest myTypeConversionTest;
 
@@ -4898,3 +4903,120 @@ TEST(TypeConversionGTest,TestStructuredDataToStructuredData) {
 }
 
 
+
+
+TEST(TypeConversionGTest,TestTypeConvertPointer_CString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,uint32> table[]={
+            {"123",123, true, true},
+            {"123s1",123, true, false},
+            {"a123s5",0, true, false},
+            {"0xFFFFFFFF",4294967295, true, true},
+            {"0xFFFFFFFF1",4294967295, true, false},
+            {"0x7FFFFFFF",2147483647, true, true},
+            {"0o37777777777",4294967295, true, true},
+            {"0o17777777777",2147483647, true, true},
+            {"0o47777777777",671088639, true, false},
+            {"0b11111111111111111111111111111111",4294967295, true, true},
+            {"0b111111111111111111111111111111111",4294967295, true, false},
+            {"4294967295",4294967295, true, true},
+            {"4294967296",429496729, true, false},
+            {"10000000000",1000000000, true, false},
+            {"-1",0, true, false},
+            {0,0, 0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertPointer(table));
+}
+
+TEST(TypeConversionGTest,TestTypeConvertPointer_Int32) {
+        TypeConversionTest myTypeConversionTest;
+        const TypeToTypeTableTest<int32,uint32> table[]={
+                {1,1, true, true},
+                {2147483647,2147483647,true, true},
+                {-1, 0, true, true},
+                {0,0,0}
+        };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertPointer(table));
+}
+
+TEST(TypeConversionGTest,TestTypeConvertPointer_Float32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,int64> table[]={
+            {1.9,2, true,true},
+            {99223372036854775809.0f, 9223372036854775807, true, true},
+            {99223372036854775807.0f, 9223372036854775807, true, true},
+            // precision lost!!
+            {9223372036854775807.0f, 9223372036854775807, true, true},
+            // precision lost!!
+            {9223372036854775806.5f, 9223372036854775807, true, true},
+            {-1.0, -1, true,true},
+            // precision lost!!
+            {-9223372036854775807.0,-9223372036854775808ul,true, true},
+            // precision lost!!
+            {-9223372036854775807.5,-9223372036854775808ul, true, true},
+            {-9223372036854775808.0, -9223372036854775808ul, true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertPointer(table));
+}
+
+TEST(TypeConversionGTest,TestTypeConvertPointerVector_CString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<const char8 *,int32,3> table[]={
+            {{"1","0","2147483647"},{1,0,2147483647}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertPointerVector(table));
+}
+
+TEST(TypeConversionGTest,TestTypeConvertPointerVector_Int32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<uint32,int32,3> table[]={
+            {{2147483647,0,2147483648},{2147483647,0,2147483647}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertPointerVector(table));
+}
+
+TEST(TypeConversionGTest,TestTypeConvertPointerVector_Float32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<float32,uint32,3> table[]={
+            {{123.45,-1.2,123.5},{123,0,124}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertPointerVector(table));
+}
+
+
+TEST(TypeConversionGTest,TestTypeConvertPointerMatrix_CString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<const char8 *,float32,2,2> table[]={
+            {{{"-0.02E-2","1234.5E+5"},{"0.00001","1E-20"}},{{-0.02E-2,1234.5E+5},{1E-5,1E-20}}, true},
+            {{{0},{0}},{{0,0}},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertPointerMatrix(table));
+}
+
+TEST(TypeConversionGTest,TestTypeConvertPointerMatrix_Int32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<uint32,float32,2,2> table[]={
+            {{{4294967295,0},{1235,1}},{{4294967295.0,0.0},{1235.0,1.0}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertPointerMatrix(table));
+}
+
+TEST(TypeConversionGTest,TestTypeConvertPointerMatrix_Float32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<float32,int32,2,2> table[]={
+            {{{2147483647.5,-1234.47},{1234.67,0.01}},{{2147483647,-1234},{1235,0}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertPointerMatrix(table));
+}

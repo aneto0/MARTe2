@@ -329,20 +329,32 @@ bool ConfigurationDatabaseTest::TestRead_Object() {
     uint32 member1 = 1;
     source.Write("member1_from", member1);
     float32 member2_x = 1;
-    float32 *member2 = &member2_x;
-    source.Write("member2_from", (uintp) member2);
+    source.Write("member2_from",  &member2_x);
     float64 member3[32];
     for (uint32 i = 0u; i < 32; i++) {
         member3[i] = i;
     }
     source.Write("member3_from", member3);
-    const char8* member4 = "12345";
+    const char8* member4[2][2];
+    member4[0][0] =(char8*) "1";
+    member4[0][1] =(char8*) "2";
+    member4[1][0] =(char8*) "3";
+    member4[1][1] =(char8*) "4";
+
     source.Write("member4_from", member4);
-    uint32 member5 = 5;
+    uint32 member5Ref = 5;
+    uint32 *member5 = &member5Ref;
     source.CreateRelative("member5_from");
     source.Write("Class", "TestIntrospectionNestedStructureFrom");
     source.Write("nestedMember1_from", member5);
+    uint32 member6 = 12345;
+    source.Write("nestedMember2_from", member6);
+
     TestIntrospectionObjectTo testDestination;
+    // set the buffer to the pointer!
+    char8 outBuff[64];
+    testDestination.member5_to.nestedMember2_to = outBuff;
+
     TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
     AnyType destination(destinationDes, 0u, &testDestination);
 
@@ -353,7 +365,7 @@ bool ConfigurationDatabaseTest::TestRead_Object() {
     if (StringHelper::Compare(testDestination.member1_to, "1") != 0) {
         return false;
     }
-    if (testDestination.member2_to != (uintp) member2) {
+    if (testDestination.member2_to != (uintp) &member2_x) {
         return false;
     }
     for (uint32 i = 0; i < 32; i++) {
@@ -361,12 +373,19 @@ bool ConfigurationDatabaseTest::TestRead_Object() {
             return false;
         }
     }
+    bool ok = (testDestination.member4_to[0][0] == 1);
+    ok &= (testDestination.member4_to[0][1] == 2);
+    ok &= (testDestination.member4_to[1][0] == 3);
+    ok &= (testDestination.member4_to[1][1] == 4);
 
-    if (testDestination.member4_to != 12345) {
+    if (!ok) {
+        return false;
+    }
+    if (*testDestination.member5_to.nestedMember1_to != 5) {
         return false;
     }
 
-    return testDestination.member5_to.nestedMember1_to == 5;
+    return StringHelper::Compare(testDestination.member5_to.nestedMember2_to, "12345") == 0;
 }
 
 bool ConfigurationDatabaseTest::TestAddToCurrentNode() {
@@ -431,8 +450,15 @@ bool ConfigurationDatabaseTest::TestWrite_Object() {
     for (uint32 i = 0; i < 32; i++) {
         sourceTest.member3_from[i] = i;
     }
-    sourceTest.member4_from = "12345";
-    sourceTest.member5_from.nestedMember1_from = 5;
+    sourceTest.member4_from[0][0] = (char8*) "1";
+    sourceTest.member4_from[0][1] = (char8*)"2";
+    sourceTest.member4_from[1][0] = (char8*)"3";
+    sourceTest.member4_from[1][1] = (char8*) "4";
+
+    uint32 member5Ref = 5;
+    sourceTest.member5_from.nestedMember1_from = &member5Ref;
+    sourceTest.member5_from.nestedMember2_from = 12345;
+
     TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
     AnyType source(sourceDes, 0u, &sourceTest);
 
@@ -463,16 +489,22 @@ bool ConfigurationDatabaseTest::TestWrite_Object() {
         }
     }
 
-    uint32 member4;
+    uint32 member4[2][2];
     destination.Read("member4_from", member4);
-    if (member4 != 12345) {
-        return false;
-    }
+
+    bool ok = (member4[0][0] == 1);
+    ok &= (member4[0][1] == 2);
+    ok &= (member4[1][0] == 3);
+    ok &= (member4[1][1] == 4);
 
     destination.MoveRelative("member5_from");
-    uint8 member5;
+    uint32 *member5 = NULL;
     destination.Read("nestedMember1_from", member5);
-    return member5 == 5;
+
+    char8 member6[32];
+    destination.Read("nestedMember2_from", member6);
+
+    return StringHelper::Compare(member6, "12345") == 0;
 }
 
 bool ConfigurationDatabaseTest::TestGetNumberOfChildren() {

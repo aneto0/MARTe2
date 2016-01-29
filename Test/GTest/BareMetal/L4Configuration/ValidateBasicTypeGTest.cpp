@@ -40,7 +40,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ValidateBasicTypeGTest,TestConstructor_int8) {
+TEST(ValidateBasicTypeGTest,TestValidate_int8) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<int8> table[]={
@@ -65,7 +65,7 @@ TEST(ValidateBasicTypeGTest,TestConstructor_int8) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestConstructor_int16) {
+TEST(ValidateBasicTypeGTest,TestValidate_int16) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<int16> table[]={
@@ -87,7 +87,7 @@ TEST(ValidateBasicTypeGTest,TestConstructor_int16) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestConstructor_int32) {
+TEST(ValidateBasicTypeGTest,TestValidate_int32) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<int32> table[]={
@@ -109,7 +109,7 @@ TEST(ValidateBasicTypeGTest,TestConstructor_int32) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestConstructor_int64) {
+TEST(ValidateBasicTypeGTest,TestValidate_int64) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<int64> table[]={
@@ -132,7 +132,7 @@ TEST(ValidateBasicTypeGTest,TestConstructor_int64) {
 
 
 
-TEST(ValidateBasicTypeGTest,TestConstructor_uint8) {
+TEST(ValidateBasicTypeGTest,TestValidate_uint8) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<uint8> table[]={
@@ -154,7 +154,7 @@ TEST(ValidateBasicTypeGTest,TestConstructor_uint8) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestConstructor_uint16) {
+TEST(ValidateBasicTypeGTest,TestValidate_uint16) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<uint16> table[]={
@@ -176,7 +176,7 @@ TEST(ValidateBasicTypeGTest,TestConstructor_uint16) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestConstructor_uint32) {
+TEST(ValidateBasicTypeGTest,TestValidate_uint32) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<uint32> table[]={
@@ -198,7 +198,7 @@ TEST(ValidateBasicTypeGTest,TestConstructor_uint32) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestConstructor_uint64) {
+TEST(ValidateBasicTypeGTest,TestValidate_uint64) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<uint64> table[]={
@@ -220,7 +220,7 @@ TEST(ValidateBasicTypeGTest,TestConstructor_uint64) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestConstructor_float32) {
+TEST(ValidateBasicTypeGTest,TestValidate_float32) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<float32> table[]={
@@ -245,7 +245,7 @@ TEST(ValidateBasicTypeGTest,TestConstructor_float32) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestConstructor_float64) {
+TEST(ValidateBasicTypeGTest,TestValidate_float64) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<float64> table[]={
@@ -270,7 +270,7 @@ TEST(ValidateBasicTypeGTest,TestConstructor_float64) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestConstructor_char8) {
+TEST(ValidateBasicTypeGTest,TestValidate_char8) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<char8> table[]={
@@ -293,7 +293,7 @@ TEST(ValidateBasicTypeGTest,TestConstructor_char8) {
 
 
 
-TEST(ValidateBasicTypeGTest,TestConstructor_string) {
+TEST(ValidateBasicTypeGTest,TestValidate_string) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<const char8 *> table[]={
@@ -312,6 +312,89 @@ TEST(ValidateBasicTypeGTest,TestConstructor_string) {
 
     ASSERT_TRUE(validateTest.TestValidateBasicType(table));
 }
+
+
+
+TEST(ValidateBasicTypeGTest,TestValidateVector_int32) {
+    ValidateBasicTypeTest validateTest;
+
+    const ValidateBasicTypeTestTableVector<int32, 3> table[]={
+            {"min=2\n max=120 \n", {2, 50, 100 }, true},
+            {"min=2\n max=120 \n", {2, 50, 120}, true},
+            {"min=2\n max=120 \n", {1, 50, 100}, false},
+            {0,{ 0}, 0}
+    };
+
+    ASSERT_TRUE(validateTest.TestValidateBasicTypeVector(table));
+}
+
+TEST(ValidateBasicTypeGTest,TestValidateVector_float32) {
+    ValidateBasicTypeTest validateTest;
+
+    const ValidateBasicTypeTestTableVector<float32, 3> table[]={
+            {"min=2\n max=120 \n", {2.5, 50.1, 100.25 }, true},
+            {"min=2\n max=120 \n", {2.3, 50.3, 119.9}, true},
+            {"min=2\n max=120 \n", {1.5, 50.5, 100.25}, false},
+            {0,{ 0}, 0}
+    };
+
+    ASSERT_TRUE(validateTest.TestValidateBasicTypeVector(table));
+}
+
+
+TEST(ValidateBasicTypeGTest,TestValidateVector_string) {
+    ValidateBasicTypeTest validateTest;
+
+    const ValidateBasicTypeTestTableVector<const char8 *, 3> table[]={
+            {"min=bau\n max=miao \n", {"ciao", "miao", "bau"}, true},
+            {"min=bau\n max=miao \n", {"ziao", "miao", "bau"}, false},
+            {0, {0}, 0}
+    };
+
+    ASSERT_TRUE(validateTest.TestValidateBasicTypeVector(table));
+}
+
+
+
+TEST(ValidateBasicTypeGTest,TestValidateMatrix_int32) {
+    ValidateBasicTypeTest validateTest;
+
+    const ValidateBasicTypeTestTableMatrix<int32, 2,2> table[]={
+            {"min=2\n max=120 \n", {{2, 50} ,{70, 100 }}, true},
+            {"min=2\n max=120 \n", {{2, 50},{3, 120}}, true},
+            {"min=2\n max=120 \n", {{1, 50}, {70, 100}}, false},
+            {0,{ 0}, 0}
+    };
+
+    ASSERT_TRUE(validateTest.TestValidateBasicTypeMatrix(table));
+}
+
+TEST(ValidateBasicTypeGTest,TestValidateMatrix_float32) {
+    ValidateBasicTypeTest validateTest;
+
+    const ValidateBasicTypeTestTableMatrix<float32, 2,2> table[]={
+            {"min=2\n max=120 \n", {{2.5, 50.1}, {3.9, 100.25 }}, true},
+            {"min=2\n max=120 \n", {{2.3, 50.3}, {75.2, 119.9}}, true},
+            {"min=2\n max=120 \n", {{1.5, 50.5}, {100.25, -3.5}}, false},
+            {0,{ 0}, 0}
+    };
+
+    ASSERT_TRUE(validateTest.TestValidateBasicTypeMatrix(table));
+}
+
+
+TEST(ValidateBasicTypeGTest,TestValidateMatrix_string) {
+    ValidateBasicTypeTest validateTest;
+
+    const ValidateBasicTypeTestTableMatrix<const char8 *, 2,2> table[]={
+            {"min=bau\n max=miao \n", {{"ciao", "miao"},{"beee", "bau"}}, true},
+            {"min=bau\n max=miao \n", {{"ziao", "miao"}, {"beee","bau"}}, false},
+            {0, {0}, 0}
+    };
+
+    ASSERT_TRUE(validateTest.TestValidateBasicTypeMatrix(table));
+}
+
 
 
 

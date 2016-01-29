@@ -864,6 +864,7 @@ bool ValidateBasicType(const AnyType &value,
                        const char8* const attributes) {
 
     bool ret = true;
+    bool recognized = true;
     ConfigurationDatabase cdb;
 
     StreamString configString = attributes;
@@ -874,57 +875,85 @@ bool ValidateBasicType(const AnyType &value,
 
             if (cdb.MoveToRoot()) {
 
-                TypeDescriptor descriptor = value.GetTypeDescriptor();
-                if (descriptor == CharString) {
-                    const char8 * stringValue = static_cast<const char8*>(value.GetDataPointer());
-                    ret = PrivateValidate(stringValue, cdb);
-                }
-                else if (descriptor == SignedInteger8Bit) {
-                    int8 int8Value = *static_cast<int8*>(value.GetDataPointer());
-                    ret = PrivateValidate(int8Value, cdb);
-                }
-                else if (descriptor == SignedInteger16Bit) {
-                    int16 int16Value = *static_cast<int16*>(value.GetDataPointer());
-                    ret = PrivateValidate(int16Value, cdb);
-                }
-                else if (descriptor == SignedInteger32Bit) {
-                    int32 int32Value = *static_cast<int32*>(value.GetDataPointer());
-                    ret = PrivateValidate(int32Value, cdb);
-                }
-                else if (descriptor == SignedInteger64Bit) {
-                    int64 int64Value = *static_cast<int64*>(value.GetDataPointer());
-                    ret = PrivateValidate(int64Value, cdb);
-                }
-                else if (descriptor == UnsignedInteger8Bit) {
-                    uint8 uint8Value = *static_cast<uint8*>(value.GetDataPointer());
-                    ret = PrivateValidate(uint8Value, cdb);
-                }
-                else if (descriptor == UnsignedInteger16Bit) {
-                    uint16 uint16Value = *static_cast<uint16*>(value.GetDataPointer());
-                    ret = PrivateValidate(uint16Value, cdb);
-                }
-                else if (descriptor == UnsignedInteger32Bit) {
-                    uint32 uint32Value = *static_cast<uint32*>(value.GetDataPointer());
-                    ret = PrivateValidate(uint32Value, cdb);
-                }
-                else if (descriptor == UnsignedInteger64Bit) {
-                    uint64 uint64Value = *static_cast<uint64*>(value.GetDataPointer());
-                    ret = PrivateValidate(uint64Value, cdb);
-                }
-                else if (descriptor == Float32Bit) {
-                    float32 float32Value = *static_cast<float32*>(value.GetDataPointer());
-                    ret = PrivateValidate(float32Value, cdb);
-                }
-                else if (descriptor == Float64Bit) {
-                    float64 float64Value = *static_cast<float64*>(value.GetDataPointer());
-                    ret = PrivateValidate(float64Value, cdb);
-                }
-                else if (descriptor == Character8Bit) {
-                    char8 char8Value = *static_cast<char8*>(value.GetDataPointer());
-                    ret = PrivateValidate(char8Value, cdb);
-                }
-                else {
-                    REPORT_ERROR(ErrorManagement::Warning, "ValidateBasicType: Basic Type not matched");
+                uint32 indexCols = (value.GetNumberOfDimensions() > 0u) ? (static_cast<uint32>(value.GetNumberOfDimensions()) - 1u) : (0u);
+                uint32 indexRows = (indexCols > 0u) ? (indexCols - 1u) : (0u);
+
+                uint32 nCols = value.GetNumberOfElements(indexCols);
+                uint32 nRows = value.GetNumberOfElements(indexRows);
+
+                for (uint32 i = 0u; (i < nRows) && (ret) && (recognized); i++) {
+                    for (uint32 j = 0u; (j < nCols) && (ret) && (recognized); j++) {
+
+                        AnyType at;
+                        if (value.GetNumberOfDimensions() == 0u) {
+                            at = value;
+                        }
+                        else if (value.GetNumberOfDimensions() == 1u) {
+                            at = value[j];
+                        }
+                        else if (value.GetNumberOfDimensions() == 2u) {
+                            at = value[i][j];
+                        }
+                        else {
+
+                        }
+
+                        if (at.GetDataPointer() != NULL) {
+                            TypeDescriptor descriptor = at.GetTypeDescriptor();
+                            if (descriptor == CharString) {
+                                const char8 * stringValue = static_cast<const char8*>(at.GetDataPointer());
+                                ret = PrivateValidate(stringValue, cdb);
+                            }
+                            else if (descriptor == SignedInteger8Bit) {
+                                int8 int8Value = *static_cast<int8*>(at.GetDataPointer());
+                                ret = PrivateValidate(int8Value, cdb);
+                            }
+                            else if (descriptor == SignedInteger16Bit) {
+                                int16 int16Value = *static_cast<int16*>(at.GetDataPointer());
+                                ret = PrivateValidate(int16Value, cdb);
+                            }
+                            else if (descriptor == SignedInteger32Bit) {
+                                int32 int32Value = *static_cast<int32*>(at.GetDataPointer());
+                                ret = PrivateValidate(int32Value, cdb);
+                            }
+                            else if (descriptor == SignedInteger64Bit) {
+                                int64 int64Value = *static_cast<int64*>(at.GetDataPointer());
+                                ret = PrivateValidate(int64Value, cdb);
+                            }
+                            else if (descriptor == UnsignedInteger8Bit) {
+                                uint8 uint8Value = *static_cast<uint8*>(at.GetDataPointer());
+                                ret = PrivateValidate(uint8Value, cdb);
+                            }
+                            else if (descriptor == UnsignedInteger16Bit) {
+                                uint16 uint16Value = *static_cast<uint16*>(at.GetDataPointer());
+                                ret = PrivateValidate(uint16Value, cdb);
+                            }
+                            else if (descriptor == UnsignedInteger32Bit) {
+                                uint32 uint32Value = *static_cast<uint32*>(value.GetDataPointer());
+                                ret = PrivateValidate(uint32Value, cdb);
+                            }
+                            else if (descriptor == UnsignedInteger64Bit) {
+                                uint64 uint64Value = *static_cast<uint64*>(at.GetDataPointer());
+                                ret = PrivateValidate(uint64Value, cdb);
+                            }
+                            else if (descriptor == Float32Bit) {
+                                float32 float32Value = *static_cast<float32*>(at.GetDataPointer());
+                                ret = PrivateValidate(float32Value, cdb);
+                            }
+                            else if (descriptor == Float64Bit) {
+                                float64 float64Value = *static_cast<float64*>(at.GetDataPointer());
+                                ret = PrivateValidate(float64Value, cdb);
+                            }
+                            else if (descriptor == Character8Bit) {
+                                char8 char8Value = *static_cast<char8*>(at.GetDataPointer());
+                                ret = PrivateValidate(char8Value, cdb);
+                            }
+                            else {
+                                recognized=false;
+                                REPORT_ERROR(ErrorManagement::Warning, "ValidateBasicType: Basic Type not matched");
+                            }
+                        }
+                    }
                 }
             }
         }

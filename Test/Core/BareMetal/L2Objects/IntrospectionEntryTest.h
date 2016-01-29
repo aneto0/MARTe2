@@ -40,7 +40,9 @@
 
 using namespace MARTe;
 
-
+/**
+ * @brief Utility struct for IntrospectionEntry tests.
+ */
 struct IntrospectionEntryTestTable{
     const char8* modifiers;
     uint32 level;
@@ -68,6 +70,11 @@ public:
      * @brief Checks if the function returns the modifiers string set by constructor.
      */
     bool TestGetMemberModifiers(const char8* modifiers);
+
+    /**
+     * @brief Checks if the function returns the type name set by constructor.
+     */
+    bool TestGetMemberTypeName(const char8* typeName);
 
     /**
      * @brief Checks if the function returns the member size set by constructor.

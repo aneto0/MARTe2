@@ -52,44 +52,30 @@ struct TestIntrospectionStructure {
     TestIntrospectionNestedStructure member5;
 };
 
-static Introspection &Init() {
+DECLARE_CLASS_MEMBER(TestIntrospectionNestedStructure, nestedMember1, uint32, "", "");
 
-    DECLARE_CLASS_MEMBER(TestIntrospectionNestedStructure, nestedMember1, uint32, "","");
+static const IntrospectionEntry* nestedFields[] = { &TestIntrospectionNestedStructure_nestedMember1_introspectionEntry, 0 };
 
-    static const IntrospectionEntry* nestedFields[] = { &TestIntrospectionNestedStructure_nestedMember1_introspectionEntry, 0 };
+DECLARE_CLASS_INTROSPECTION(TestIntrospectionNestedStructure , nestedFields);
+INTROSPECTION_REGISTER(TestIntrospectionNestedStructure, "1.0", TestIntrospectionNestedStructure_introspection)
 
-    static Introspection nestedIntrospection(nestedFields);
-    INTROSPECTION_REGISTER(TestIntrospectionNestedStructure, "1.0", nestedIntrospection)
+static IntrospectionEntry member1Field("member1", "uint32", "", "", INTROSPECTION_MEMBER_SIZE(TestIntrospectionStructure, member1),
+                                       INTROSPECTION_MEMBER_INDEX(TestIntrospectionStructure, member1));
 
-    static IntrospectionEntry member1Field("member1", "uint32",  "", "",INTROSPECTION_MEMBER_SIZE(TestIntrospectionStructure, member1),
-                                           INTROSPECTION_MEMBER_INDEX(TestIntrospectionStructure, member1));
+DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member2, float32, "*", "");
 
-    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member2, float32, "*","");
+DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member3, float64, "[32]", "");
 
-    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member3, float64, "[32]","");
+DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member4, string, "C", "");
 
-    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member4, string, "C","");
+DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member5, TestIntrospectionNestedStructure, "", "");
 
-    DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member5, TestIntrospectionNestedStructure, "","");
+static const IntrospectionEntry* fields[] = { &member1Field, &TestIntrospectionStructure_member2_introspectionEntry,
+        &TestIntrospectionStructure_member3_introspectionEntry, &TestIntrospectionStructure_member4_introspectionEntry,
+        &TestIntrospectionStructure_member5_introspectionEntry, 0 };
 
-    static const IntrospectionEntry* fields[] = { &member1Field, &TestIntrospectionStructure_member2_introspectionEntry,
-            &TestIntrospectionStructure_member3_introspectionEntry, &TestIntrospectionStructure_member4_introspectionEntry,
-            &TestIntrospectionStructure_member5_introspectionEntry, 0 };
-
-    static Introspection testIntrospection(fields);
-    INTROSPECTION_REGISTER(TestIntrospectionStructure, "1.0", testIntrospection)
-
-    return testIntrospection;
-}
-
-class Initializer {
-public:
-    Initializer() {
-        Init();
-    }
-};
-
-static Initializer initializer;
+DECLARE_CLASS_INTROSPECTION(TestIntrospectionStructure , fields);
+INTROSPECTION_REGISTER(TestIntrospectionStructure, "1.0", TestIntrospectionStructure_introspection)
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -99,7 +85,7 @@ bool IntrospectionTest::TestConstructor() {
 
     ////// check member 1
 
-    const IntrospectionEntry member1Copy = Init()[0];
+    const IntrospectionEntry member1Copy = TestIntrospectionStructure_introspection[0];
     if (StringHelper::Compare(member1Copy.GetMemberName(), "member1") != 0) {
         return false;
     }
@@ -130,7 +116,7 @@ bool IntrospectionTest::TestConstructor() {
 
     //////// check member2
 
-    const IntrospectionEntry member2Copy = Init()[1];
+    const IntrospectionEntry member2Copy = TestIntrospectionStructure_introspection[1];
     if (StringHelper::Compare(member2Copy.GetMemberName(), "member2") != 0) {
         return false;
     }
@@ -165,7 +151,7 @@ bool IntrospectionTest::TestConstructor() {
 bool IntrospectionTest::TestPositionOperator() {
 
     //////// check member3
-    const IntrospectionEntry member3Copy = Init()[2];
+    const IntrospectionEntry member3Copy = TestIntrospectionStructure_introspection[2];
     if (StringHelper::Compare(member3Copy.GetMemberName(), "member3") != 0) {
         return false;
     }
@@ -182,7 +168,7 @@ bool IntrospectionTest::TestPositionOperator() {
         return false;
     }
 
-    if (StringHelper::Compare(member3Copy.GetMemberModifiers(), "32") != 0) {
+    if (StringHelper::Compare(member3Copy.GetMemberModifiers(), "[32]") != 0) {
         return false;
     }
 
@@ -272,4 +258,29 @@ bool IntrospectionTest::TestMacroToAddStructuredInClassRegistryDatabase() {
     }
     return true;
 
+}
+
+
+bool IntrospectionTest::TestGetNumberOfMembers(){
+
+    ClassRegistryDatabase *instance = ClassRegistryDatabase::Instance();
+    const ClassRegistryItem *item = instance->Find("TestIntrospectionStructure");
+    if (item == NULL) {
+        return false;
+    }
+
+    const Introspection *classIntro = item->GetIntrospection();
+    return classIntro->GetNumberOfMembers()==5u;
+}
+
+
+bool IntrospectionTest::TestGetClassSize(){
+    ClassRegistryDatabase *instance = ClassRegistryDatabase::Instance();
+    const ClassRegistryItem *item = instance->Find("TestIntrospectionStructure");
+    if (item == NULL) {
+        return false;
+    }
+
+    const Introspection *classIntro = item->GetIntrospection();
+    return classIntro->GetClassSize()==sizeof(TestIntrospectionStructure);
 }

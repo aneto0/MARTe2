@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "IOBufferTest.h"
-#include "StringHelper.h"
 #include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -44,48 +43,46 @@ struct TestIOBufferIntrospectionStructure {
     uint32 member1;
     float32 *member2;
     float64 member3[32];
-    const char8 * member4[3];
+    const char8 * member4[2][2];
     TestIOBufferIntrospectionNestedStructure member5;
 };
 
-static Introspection &Init() {
+DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionNestedStructure, nestedMember1, uint32, "", "");
 
-    DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionNestedStructure, nestedMember1, uint32, "", "");
+static const IntrospectionEntry* nestedFields[] = { &TestIOBufferIntrospectionNestedStructure_nestedMember1_introspectionEntry, 0 };
 
-    static const IntrospectionEntry* nestedFields[] = { &TestIOBufferIntrospectionNestedStructure_nestedMember1_introspectionEntry, 0 };
+DECLARE_CLASS_INTROSPECTION(TestIOBufferIntrospectionNestedStructure , nestedFields);
+INTROSPECTION_REGISTER(TestIOBufferIntrospectionNestedStructure, "1.0", TestIOBufferIntrospectionNestedStructure_introspection)
 
-    static Introspection nestedIntrospection(nestedFields);
-    INTROSPECTION_REGISTER(TestIOBufferIntrospectionNestedStructure, "1.0", nestedIntrospection)
+static IntrospectionEntry member1Field("member1", "uint32", "", "", INTROSPECTION_MEMBER_SIZE(TestIOBufferIntrospectionStructure, member1),
+                                       INTROSPECTION_MEMBER_INDEX(TestIOBufferIntrospectionStructure, member1));
 
-    static IntrospectionEntry member1Field("member1", "uint32", "", "", INTROSPECTION_MEMBER_SIZE(TestIOBufferIntrospectionStructure, member1),
-                                           INTROSPECTION_MEMBER_INDEX(TestIOBufferIntrospectionStructure, member1));
+DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionStructure, member2, float32, "*", "");
 
-    DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionStructure, member2, float32, "*", "");
+DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionStructure, member3, float64, "[32]", "");
 
-    DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionStructure, member3, float64, "[32]", "");
+DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionStructure, member4, string, "[2][2]", "");
 
-    DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionStructure, member4, string, "[3]", "");
+DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionStructure, member5, TestIntrospectionNestedStructure, "", "");
 
-    DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionStructure, member5, TestIntrospectionNestedStructure, "", "");
+static const IntrospectionEntry* fields[] = { &member1Field, &TestIOBufferIntrospectionStructure_member2_introspectionEntry,
+        &TestIOBufferIntrospectionStructure_member3_introspectionEntry, &TestIOBufferIntrospectionStructure_member4_introspectionEntry,
+        &TestIOBufferIntrospectionStructure_member5_introspectionEntry, 0 };
 
-    static const IntrospectionEntry* fields[] = { &member1Field, &TestIOBufferIntrospectionStructure_member2_introspectionEntry,
-            &TestIOBufferIntrospectionStructure_member3_introspectionEntry, &TestIOBufferIntrospectionStructure_member4_introspectionEntry,
-            &TestIOBufferIntrospectionStructure_member5_introspectionEntry, 0 };
 
-    static Introspection testIntrospection(fields);
-    INTROSPECTION_REGISTER(TestIOBufferIntrospectionStructure, "1.0", testIntrospection)
+DECLARE_CLASS_INTROSPECTION(TestIOBufferIntrospectionStructure , fields);
+INTROSPECTION_REGISTER(TestIOBufferIntrospectionStructure, "1.0", TestIOBufferIntrospectionStructure_introspection)
 
-    return testIntrospection;
-}
-
-class Initializer {
-public:
-    Initializer() {
-        Init();
-    }
+struct TestIOBufferNotIntrospectable {
+    uint32 member1;
+    float32 *member2;
+    float64 member3[32];
+    const char8 * member4[2][2];
 };
 
-static Initializer initializer;
+static ClassProperties TestIOBufferNotIntrospectable_prop("TestIOBufferNotIntrospectable", "TestIOBufferNotIntrospectable", "1.0");
+static ClassRegistryItem TestIOBufferNotIntrospectable_item(TestIOBufferNotIntrospectable_prop, (ObjectBuildFn*)NULL);
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -1222,7 +1219,7 @@ bool IOBufferTest::TestEmpty() {
 
 }
 
-void Clear(IOBuffer &ioBuffer) {
+void IOBufferTest::Clear(IOBuffer &ioBuffer) {
     ioBuffer.Seek(0);
     for (uint32 i = 0; i < ioBuffer.MaxUsableAmount(); i++) {
         ioBuffer.PutC(0);
@@ -1670,73 +1667,97 @@ bool IOBufferTest::TestSkipToken(const SkipTokensTestTableRow *table) {
 
 }
 
+bool IOBufferTest::TestPrintTooMuchDimensions() {
+
+    int32 x[1][1][1] = { { { 1 } } };
+    AnyType at(SignedInteger32Bit, 0u, &x);
+
+    at.SetNumberOfDimensions(3);
+    IOBuffer ioBuffer;
+    uint32 allocationSize = 32;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+    Clear(ioBuffer);
+
+    return !ioBuffer.PrintFormatted("%d", &at);
+}
+
 bool IOBufferTest::TestPrintFormattedIntrospection() {
-    Init();
     TestIOBufferIntrospectionStructure myStruct;
     TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetUniqueIdentifier());
     AnyType at(myType, 0, (void*) &myStruct);
     IOBuffer ioBuffer;
-    uint32 allocationSize = 1024;
+    uint32 allocationSize = 600;
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
     Clear(ioBuffer);
     ioBuffer.PrintFormatted("%?", &at);
-    const char8* test = "TestIOBufferIntrospectionStructure = {\n"
-            "member1 = {\n"
-            "type = uint32\n"
-            "modifiers = \"\"\n"
-            "attributes = \"\"\n"
-            "}\n"
-            "member2 = {\n"
-            "type = float32\n"
-            "modifiers = \"*\"\n"
-            "attributes = \"\"\n"
-            "}\n"
-            "member3 = {\n"
-            "type = float64\n"
-            "modifiers = \"32\"\n"
-            "attributes = \"\"\n"
-            "}\n"
-            "member4 = {\n"
-            "type = string\n"
-            "modifiers = \"[3]\"\n"
-            "attributes = \"\"\n"
-            "}\n"
-            "member5 = {\n"
-            "type = TestIntrospectionNestedStructure\n"
-            "modifiers = \"\"\n"
-            "attributes = \"\"\n"
-            "}\n"
+    const char8* test = "\nTestIOBufferIntrospectionStructure = {\n"
+            "    member1 = {\n"
+            "        type = uint32\n"
+            "        modifiers = \"\"\n"
+            "        attributes = \"\"\n"
+            "    }\n"
+            "    member2 = {\n"
+            "        type = float32\n"
+            "        modifiers = \"*\"\n"
+            "        attributes = \"\"\n"
+            "    }\n"
+            "    member3 = {\n"
+            "        type = float64\n"
+            "        modifiers = \"[32]\"\n"
+            "        attributes = \"\"\n"
+            "    }\n"
+            "    member4 = {\n"
+            "        type = string\n"
+            "        modifiers = \"[2][2]\"\n"
+            "        attributes = \"\"\n"
+            "    }\n"
+            "    member5 = {\n"
+            "        type = TestIntrospectionNestedStructure\n"
+            "        modifiers = \"\"\n"
+            "        attributes = \"\"\n"
+            "    }\n"
             "}\n";
 
-    printf("\n%s %s\n", ioBuffer.Buffer(), test);
-    return true;
+    return StringHelper::Compare(ioBuffer.Buffer(), test) == 0;
 }
 
 bool IOBufferTest::TestPrintFormattedObject() {
-    Init();
     TestIOBufferIntrospectionStructure myStruct;
-    myStruct.member1=1;
-    float32 x=2.0;
-    myStruct.member2=&x;
-    for(uint32 i=0; i<32; i++){
-        myStruct.member3[i]=i;
+    myStruct.member1 = 1;
+    float32 x = 2.0;
+    myStruct.member2 = &x;
+    for (uint32 i = 0; i < 32; i++) {
+        myStruct.member3[i] = i;
     }
-    myStruct.member4[0]="4";
-    myStruct.member4[1]="5";
-    myStruct.member4[2]="6";
-    myStruct.member5.nestedMember1=5;
+    myStruct.member4[0][0] = "4";
+    myStruct.member4[0][1] = "5";
+    myStruct.member4[1][0] = "6";
+    myStruct.member4[1][1] = "7";
+    myStruct.member5.nestedMember1 = 5;
     TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetUniqueIdentifier());
     AnyType at(myType, 0, (void*) &myStruct);
     IOBuffer ioBuffer;
-    uint32 allocationSize = 1024;
+    uint32 allocationSize = 600;
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
     Clear(ioBuffer);
     ioBuffer.PrintFormatted("%@", &at);
 
-    printf("\n%s\n", ioBuffer.Buffer());
-    return true;
-}
+    StreamString test = "\nClass = TestIOBufferIntrospectionStructure\n"
+            "member1 = 1\n"
+            "member2 = ";
+    test.Printf("%x\n", ((void*) myStruct.member2));
+    test +=
+            "member3 = { 0 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000 7.000000 8.000000 9.000000 10.000000 11.000000 12.000000 13.000000 14.000000 15.000000 16.000000 17.000000 18.000000 19.000000 20.000000 21.000000 22.000000 23.000000 24.000000 25.000000 26.000000 27.000000 28.000000 29.000000 30.000000 31.000000 } \n"
+                    "member4 = { { 4 5 } { 6 7 } } \n"
+                    "member5 = {\n\n"
 
+                    "Class = TestIntrospectionNestedStructure\n"
+                    "nestedMember1 = 5\n\n"
+
+                    "}\n";
+
+    return StringHelper::Compare(ioBuffer.Buffer(), test.Buffer()) == 0;
+}
 
 bool IOBufferTest::TestPrintStructuredDataInterface() {
     ConfigurationDatabase cdb;
@@ -1764,5 +1785,87 @@ bool IOBufferTest::TestPrintStructuredDataInterface() {
             "}\n";
 
     return StringHelper::Compare(test, ioBuffer.Buffer()) == 0;
+}
+
+
+bool IOBufferTest::TestPrintFormattedIntrospection_NotIntrospectable() {
+    TestIOBufferNotIntrospectable x;
+    TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferNotIntrospectable")->GetClassProperties()->GetUniqueIdentifier());
+
+    AnyType at(myType, 0, &x);
+    IOBuffer ioBuffer;
+    uint32 allocationSize = 32;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+    Clear(ioBuffer);
+
+    return !ioBuffer.PrintFormatted("%?", &at);
+}
+
+
+bool IOBufferTest::TestPrintFormattedObject_NotIntrospectable() {
+    TestIOBufferNotIntrospectable x;
+    TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferNotIntrospectable")->GetClassProperties()->GetUniqueIdentifier());
+
+    AnyType at(myType, 0, &x);
+    IOBuffer ioBuffer;
+    uint32 allocationSize = 32;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+    Clear(ioBuffer);
+
+    return !ioBuffer.PrintFormatted("%?", &at);
+}
+
+
+bool IOBufferTest::TestPrintPointerVector(){
+    IOBuffer ioBuffer;
+    uint32 allocSize = 128u;
+    ioBuffer.SetBufferHeapMemory(allocSize, 0);
+    IOBuffer ioBuffer2;
+    ioBuffer2.SetBufferHeapMemory(allocSize, 0);
+
+    const char8 * one="One";
+    int32 two=2;
+    float32 three=3.0;
+
+    void *test[]={ &one, &two, &three };
+    uintp test2[]={ (uintp)&one, (uintp)&two,(uintp)&three };
+
+    Clear(ioBuffer);
+    Clear(ioBuffer2);
+
+    AnyType toPrint(test);
+    ioBuffer.PrintFormatted("%p", &toPrint);
+    AnyType toPrint2(test2);
+    ioBuffer2.PrintFormatted("%p", &toPrint2);
+
+
+    return StringHelper::Compare(ioBuffer.Buffer(), ioBuffer2.Buffer())==0;
+}
+
+bool IOBufferTest::TestPrintPointerMatrix(){
+
+    IOBuffer ioBuffer;
+    uint32 allocSize = 128u;
+    ioBuffer.SetBufferHeapMemory(allocSize, 0);
+    IOBuffer ioBuffer2;
+    ioBuffer2.SetBufferHeapMemory(allocSize, 0);
+
+    const char8 * one="One";
+    int32 two=2;
+    float32 three=3.0;
+    uint32 four=4;
+
+    void *test[][2]={ {&one, &two},{ &three, &four} };
+    uintp test2[][2]={ {(uintp)&one, (uintp)&two},{(uintp)&three,(uintp)&four} };
+
+    Clear(ioBuffer);
+    Clear(ioBuffer2);
+
+    AnyType toPrint(test);
+    ioBuffer.PrintFormatted("%p", &toPrint);
+    AnyType toPrint2(test2);
+    ioBuffer2.PrintFormatted("%p", &toPrint2);
+
+    return StringHelper::Compare(ioBuffer.Buffer(), ioBuffer2.Buffer())==0;
 }
 

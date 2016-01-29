@@ -49,19 +49,35 @@ namespace MARTe {
 
 /**
  * @brief Converts between two types.
- * @details The allowed basic type conversions are between the following types:
- *   (u)int{8,16,32,64} | float{32,64} | StreamString | char8[1:127] | char8 * (char array created on heap) | Vector<char8>;
- * It is possible converting vectors of these types between them if the number of elements in the two vectors is the same:
- *   (u)int{8,16,32,64}[] | float{32,64}[] | StreamString[] | char8[1:127][1:127] | char8 ** (memory created on heap) | Matrix<char8>;
- * It is possible converting matrices of these types between them if the numbers of rows and columns in the two matrices are the same:
- *   (u)int{8,16,32,64}[][] | float{32,64}[][] | StreamString[][] | char8[1:127][1:127][1:127] | char8 *** (memory created on heap);
+ *
+ * @details The allowed basic type conversions are between the following types:\n
+ *   (u)int{8,16,32,64} | float{32,64} | StreamString | char8[1:127] | char8 * (char array created on heap) | Vector<char8>;\n
+ * It is possible converting vectors of these types between them if the number of elements in the two vectors is the same:\n
+ *   (u)int{8,16,32,64}[] | float{32,64}[] | StreamString[] | char8[1:127][1:127] | char8 ** (memory created on heap) | Matrix<char8>;\n
+ * It is possible converting matrices of these types between them if the numbers of rows and columns in the two matrices are the same:\n
+ *   (u)int{8,16,32,64}[][] | float{32,64}[][] | StreamString[][] | char8[1:127][1:127][1:127] | char8 *** (memory created on heap);\n
+ *
+ * @details It is possible converting one class or structure to another. The classes must be introspectable and registered into the
+ * ClassRegistryDatabase. The conversion between two objects will return true if they have the same number of members and if each member
+ * of the source is convertible to the respective member of the destination.
+ *
+ * @details It is possible converting a StructuredDataI (i.e a ConfigurationDatabase) to a class or structure. The destination class must be
+ * introspectable and registered into the ClassRegistryDatabase. If the StructuredDataI source represents a class introspectable and registered into
+ * the ClassRegistryDatabase the members will be converted respecting the order in the class declaration, otherwise the members will be
+ * converted respecting the order of the elements in the StructuredDataI source.
+ *
+ * @details It is possible converting a class or structure into a StructuredDataI (i.e ConfigurationDatabase). The source class must be
+ * introspectable and registered into the ClassRegistryDatabase.
+ *
+ * @details It is possible the conversion between two StructuredDataI. See StructuredDataI::Copy().
+ *
  * @param[out] destination the converted type.
  * @param[in] source the type to be converted.
- * @return true if the types have the same dimension and the same number of elements
+ * @return true if the conversion succeeds, false otherwise.
  * on each dimension is the same. Finally, for each element, the conversion from the source
  * type to the destination must be supported and successful.
  * @pre
- *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
+ *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);\n
  *   In case of source or destination representing a char8 array or table, the size must be minor than 127 characters for each dimension.
  * @post
  *   destination holds the converted type of source

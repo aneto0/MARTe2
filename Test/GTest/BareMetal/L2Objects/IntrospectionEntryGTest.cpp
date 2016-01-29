@@ -59,6 +59,11 @@ TEST(IntrospectionEntryGTest,TestGetMemberModifiers) {
     ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberModifiers("memberx"));
 }
 
+TEST(IntrospectionEntryGTest,TestGetMemberTypeName) {
+    IntrospectionEntryTest IntrospectionEntryTest;
+    ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberTypeName("memberx"));
+}
+
 TEST(IntrospectionEntryGTest,TestGetMemberSize) {
     IntrospectionEntryTest IntrospectionEntryTest;
     ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberSize(10));

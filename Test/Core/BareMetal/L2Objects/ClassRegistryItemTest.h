@@ -97,9 +97,7 @@ public:
      * @param[in] version is the desired class version.
      * @return true if the ClassProperties copy has the same attributes values of the properties passed by constructor, false otherwise.
      */
-    bool TestGetClassPropertiesCopy(const char8* name,
-                                    const char8* typeidName,
-                                    const char8* version);
+    bool TestGetClassPropertiesCopy();
 
     /**
      * @brief Tests the ClassRegistryItem::GetClassProperties.
@@ -108,9 +106,7 @@ public:
      * @param[in] version is the desired class version.
      * @return true if the ClassProperties returned has the same attributes values of the properties passed by constructor, false otherwise.
      */
-    bool TestGetClassProperties(const char8* name,
-                                const char8* typeidName,
-                                const char8* version);
+    bool TestGetClassProperties();
 
     /**
      * @brief Tests the ClassRegistryItem::SetLoadableLibrary and ClassRegistryItem::GetLoadableLibrary.

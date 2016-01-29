@@ -90,6 +90,11 @@ bool IntrospectionEntryTest::TestGetMemberByteOffset(uint32 byteOffset) {
     return memberInfo.GetMemberByteOffset() == byteOffset;
 }
 
+bool IntrospectionEntryTest::TestGetMemberTypeName(const char8* typeName) {
+    IntrospectionEntry memberInfo("", typeName, "", "", 0, 0);
+    return (typeName == NULL)?(memberInfo.GetMemberTypeName()==NULL):(StringHelper::Compare(memberInfo.GetMemberTypeName(), typeName) == 0);
+}
+
 bool IntrospectionEntryTest::TestGetMemberTypeDescriptor() {
 
     const TypeDescriptor typeDes[] = { CharString, SignedInteger8Bit, SignedInteger16Bit, SignedInteger32Bit, SignedInteger64Bit, UnsignedInteger8Bit,

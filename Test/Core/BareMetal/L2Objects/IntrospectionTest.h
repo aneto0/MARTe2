@@ -67,6 +67,17 @@ public:
      * of the class using defined macros.
      */
     bool TestMacroToAddStructuredInClassRegistryDatabase();
+
+
+    /**
+     * @brief Tests if the function returns correctly the number of members.
+     */
+    bool TestGetNumberOfMembers();
+
+    /**
+     * @brief Tests if the function returns correctly the class size.
+     */
+    bool TestGetClassSize();
 };
 
 /*---------------------------------------------------------------------------*/

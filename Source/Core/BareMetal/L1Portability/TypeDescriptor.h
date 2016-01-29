@@ -255,6 +255,9 @@ static const TypeDescriptor CharString(false, CCString, sizeof(char8*) * 8u);
  */
 static const TypeDescriptor StructuredDataInterfaceType(false, StructuredDataNode, 0u);
 
+/**
+ * Pointer descriptor
+ */
 static const TypeDescriptor PointerType(false, Pointer, sizeof(void*) * 8u);
 
 /**
