@@ -117,11 +117,11 @@ public:
      * @details The string attributes must be written in the standard MARTe configuration language and provides a series
      * of attributes to be associated to a basic type member. Most common attributes are:
      *
-     *   min        = ...    ---> the minimum value
-     *   max        = ...    ---> the maximum value
-     *   values     = {...}  ---> the list of possible values
-     *   min_size   = ...    ---> the minimum size
-     *   max_size   = ...    ---> the maximum size
+     *   min        = ...    ---> the minimum value\n
+     *   max        = ...    ---> the maximum value\n
+     *   values     = {...}  ---> the list of possible values\n
+     *   min_size   = ...    ---> the minimum size\n
+     *   max_size   = ...    ---> the maximum size\n
      *
      * The function ValidateBasicType will take as input this attributes to check if the value to associate to the class
      * member respects the constraints.
