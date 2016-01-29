@@ -121,7 +121,7 @@ public:
      *   max        = ...    ---> the maximum value\n
      *   values     = {...}  ---> the list of possible values\n
      *   min_size   = ...    ---> the minimum size\n
-     *   max_size   = ...    ---> the maximum size\n
+     *   max_size   = ...    ---> the maximum size
      *
      * The function ValidateBasicType will take as input this attributes to check if the value to associate to the class
      * member respects the constraints.
@@ -167,9 +167,9 @@ public:
      * @brief Retrieves the number of dimensions related to the member.
      * @details
      *
-     *   GetNumberOfDimensions() == 0 --> scalar
-     *   GetNumberOfDimensions() == 1 --> array
-     *   GetNumberOfDimensions() == 2 --> matrix
+     *   GetNumberOfDimensions() == 0 --> scalar\n
+     *   GetNumberOfDimensions() == 1 --> array\n
+     *   GetNumberOfDimensions() == 2 --> matrix\n
      *   GetNumberOfDimensions() == 2 --> mesh
      *
      * @return Retrieves the number of dimensions related to the member.
