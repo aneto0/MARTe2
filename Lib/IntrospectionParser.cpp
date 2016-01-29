@@ -35,6 +35,7 @@
 #include "BasicFile.h"
 #include "ConfigurationDatabase.h"
 #include "AnyTypeCreator.h"
+#include "StreamString.h"
 #include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
@@ -60,15 +61,15 @@ static void PrintOnFile(BasicFile &fileIn,
 }
 
 static uint32 GetModifierString(char8* data,
-                                char8* modifiers) {
+                                StreamString &modifiers) {
     uint32 dataSize = StringHelper::Length(data);
     uint32 i;
-    for (i = (data[0] == 'Z'); i < dataSize; i++) {
+    for (i = 0u; i < dataSize; i++) {
         if (data[i] == '*') {
-            StringHelper::Concatenate(modifiers, "* ");
+            modifiers += "* ";
         }
         else if (data[i] == 'C') {
-            StringHelper::Concatenate(modifiers, "const ");
+            modifiers += "const ";
         }
         else {
             break;
@@ -96,37 +97,56 @@ static void GenerateOutputFiles(ConfigurationDatabase &database,
             const char8 *memberName = database.GetChildName(j);
             database.MoveRelative(memberName);
 
-            char8 data[32] = { 0 };
-            char8 type[32] = { 0 };
-            char8 modifiers[32] = { 0 };
-            char8 attributes[32] = { 0 };
-            bool isConstantMember = false;
+            StreamString modifiers;
+            StreamString modifiersString;
+            StreamString type;
+            StreamString attributes;
+            StreamString comments;
+
+            // print the attributes as comment before the member on the header file
+            if (!database.Read("attributes", attributes)) {
+                printf("\n[%s.%s][attributes] lacks: the attributes is considered as an empty string", structName, memberName);
+                attributes = "";
+            }
+            else{
+                PrintOnFile(headerFile, "/** ");
+                PrintOnFile(headerFile, attributes.Buffer());
+                PrintOnFile(headerFile, " */\n");
+            }
+
+            // print the comments before the member on the header file
+            if (!database.Read("comments", comments)) {
+                printf("\n[%s.%s][comments] lacks: the comments is considered as an empty string", structName, memberName);
+                comments = "";
+            }
+            else {
+                PrintOnFile(headerFile, "    ");
+                PrintOnFile(headerFile, "/** ");
+                PrintOnFile(headerFile, comments.Buffer());
+                PrintOnFile(headerFile, " */\n");
+            }
+
+            // print the type
             PrintOnFile(headerFile, "    ");
-            if (!database.Read("isConstant", data)) {
-                printf("\n[isConstant] attribute lacks: the member type is considered not constant");
-            }
-            else {
-                isConstantMember = (StringHelper::Compare(data, "true") == 0);
-                if (isConstantMember) {
-                    PrintOnFile(headerFile, "const ");
-                }
-            }
-
             if (!database.Read("type", type)) {
-                printf("\n[type] attribute lacks: the member type is considered void");
-                StringHelper::Copy(type, "void");
-            }
-            else {
-                PrintOnFile(headerFile, type);
-                PrintOnFile(headerFile, " ");
-            }
-            if (!database.Read("modifiers", modifiers)) {
-                printf("\n[modifiers] attribute lacks: the modifiers is considered as an empty string");
-                StringHelper::Copy(modifiers, "");
+                printf("\n[%s.%s][type] lacks: the member type is considered void", structName, memberName);
+                type = "void";
             }
 
-            uint32 nextIndex = GetModifierString(modifiers, attributes);
-            PrintOnFile(headerFile, attributes);
+            PrintOnFile(headerFile, type.Buffer());
+            PrintOnFile(headerFile, " ");
+
+            if (!database.Read("modifiers", modifiers)) {
+                printf("\n[%s.%s][modifiers] lacks: the modifiers is considered as an empty string", structName, memberName);
+                modifiers = "";
+            }
+
+
+            uint32 nextIndex = GetModifierString(modifiers.BufferReference(), modifiersString);
+            // print the modifiers
+            PrintOnFile(headerFile, modifiersString.Buffer());
+
+            // print the member name
             PrintOnFile(headerFile, memberName);
             while (modifiers[nextIndex] != '\0') {
                 PrintOnFile(headerFile, modifiers[nextIndex]);
@@ -135,19 +155,22 @@ static void GenerateOutputFiles(ConfigurationDatabase &database,
             PrintOnFile(headerFile, ";\n");
 
             // SOURCE FILE MANAGEMENT
-            // a basic type !!!
+            // declare the member introspection
             PrintOnFile(sourceFile, "DECLARE_CLASS_MEMBER(");
             PrintOnFile(sourceFile, structName);
-            PrintOnFile(sourceFile, ",");
+            PrintOnFile(sourceFile, ", ");
             PrintOnFile(sourceFile, memberName);
-            PrintOnFile(sourceFile, ",");
-            PrintOnFile(sourceFile, type);
-            PrintOnFile(sourceFile, ",");
-            (isConstantMember) ? (PrintOnFile(sourceFile, "true")) : (PrintOnFile(sourceFile, "false"));
-            PrintOnFile(sourceFile, ",");
+            PrintOnFile(sourceFile, ", ");
+            PrintOnFile(sourceFile, type.Buffer());
+            PrintOnFile(sourceFile, ", ");
             PrintOnFile(sourceFile, "\"");
-            PrintOnFile(sourceFile, modifiers);
+            PrintOnFile(sourceFile, modifiers.Buffer());
             PrintOnFile(sourceFile, "\"");
+            PrintOnFile(sourceFile, ", ");
+            PrintOnFile(sourceFile, "\"");
+            PrintOnFile(sourceFile, attributes.Buffer());
+            PrintOnFile(sourceFile, "\"");
+
             PrintOnFile(sourceFile, ");\n");
 
             database.MoveToAncestor(1);
@@ -160,7 +183,7 @@ static void GenerateOutputFiles(ConfigurationDatabase &database,
     // SOURCE FILE MANAGEMENT
     database.MoveToRoot();
     for (uint32 i = 0u; i < database.GetNumberOfChildren(); i++) {
-
+        // create the array of introspection entries for each member
         const char8* structName = database.GetChildName(i);
         PrintOnFile(sourceFile, "static const IntrospectionEntry * ");
         PrintOnFile(sourceFile, structName);
@@ -178,17 +201,19 @@ static void GenerateOutputFiles(ConfigurationDatabase &database,
             database.MoveToAncestor(1);
         }
         PrintOnFile(sourceFile, "0 };\n\n");
-        PrintOnFile(sourceFile, "static Introspection ");
+
+        // declare the class introspection
+        PrintOnFile(sourceFile, "DECLARE_CLASS_INTROSPECTION(");
         PrintOnFile(sourceFile, structName);
-        PrintOnFile(sourceFile, "_introspection(");
+        PrintOnFile(sourceFile, ", ");
         PrintOnFile(sourceFile, structName);
         PrintOnFile(sourceFile, "_array);\n");
         PrintOnFile(sourceFile, "INTROSPECTION_CLASS_REGISTER(");
         PrintOnFile(sourceFile, structName);
-        PrintOnFile(sourceFile, ",");
-        PrintOnFile(sourceFile, "\"1.0\",");
+        PrintOnFile(sourceFile, ", ");
+        PrintOnFile(sourceFile, "\"1.0\", ");
         PrintOnFile(sourceFile, structName);
-        PrintOnFile(sourceFile, "_introspection);\n\n");
+        PrintOnFile(sourceFile, "_introspection)\n\n");
         database.MoveToAncestor(1);
     }
 }
@@ -274,20 +299,27 @@ int main(int argc,
     if (!canReturn) {
         // print the header in the header file
         PrintOnFile(headerOutputFile, "#include \"GeneralDefinitions.h\"\n\n");
-        PrintOnFile(headerOutputFile, "using namespace MARTe; \n\n");
+        PrintOnFile(headerOutputFile, "namespace MARTe{ \n\n");
 
         // print the header in the source file
         PrintOnFile(sourceOutputFile, "#include \"Object.h\"\n#include \"ClassRegistryDatabase.h\"\n");
         PrintOnFile(sourceOutputFile, "#include \"Introspection.h\"\n#include \"");
         PrintOnFile(sourceOutputFile, argv[2]);
         PrintOnFile(sourceOutputFile, ".h\"\n\n");
-        PrintOnFile(sourceOutputFile, "using namespace MARTe; \n\n");
+        PrintOnFile(sourceOutputFile, "namespace MARTe{ \n\n");
+
 
         GenerateOutputFiles(database, headerOutputFile, sourceOutputFile);
+
+        PrintOnFile(headerOutputFile, "\n}");
+        PrintOnFile(sourceOutputFile, "\n}");
+
     }
     if (myParser != NULL) {
         delete myParser;
     }
+
+    printf("\n");
     return 0;
 
 }
