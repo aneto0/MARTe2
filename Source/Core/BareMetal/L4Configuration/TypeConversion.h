@@ -57,28 +57,27 @@ namespace MARTe {
  * It is possible converting matrices of these types between them if the numbers of rows and columns in the two matrices are the same:\n
  *   (u)int{8,16,32,64}[][] | float{32,64}[][] | StreamString[][] | char8[1:127][1:127][1:127] | char8 *** (memory created on heap);\n
  *
- * @details It is possible converting one class or structure to another. The classes must be introspectable and registered into the
+ * @details It is possible to convert one class or structure to another. The classes must be introspectable and registered into the
  * ClassRegistryDatabase. The conversion between two objects will return true if they have the same number of members and if each member
  * of the source is convertible to the respective member of the destination.
  *
- * @details It is possible converting a StructuredDataI (i.e a ConfigurationDatabase) to a class or structure. The destination class must be
+ * @details It is possible to convert  a StructuredDataI (i.e a ConfigurationDatabase) to a class or structure. The destination class must be
  * introspectable and registered into the ClassRegistryDatabase. If the StructuredDataI source represents a class introspectable and registered into
  * the ClassRegistryDatabase the members will be converted respecting the order in the class declaration, otherwise the members will be
  * converted respecting the order of the elements in the StructuredDataI source.
  *
- * @details It is possible converting a class or structure into a StructuredDataI (i.e ConfigurationDatabase). The source class must be
+ * @details It is possible to convert  a class or structure into a StructuredDataI (i.e ConfigurationDatabase). The source class must be
  * introspectable and registered into the ClassRegistryDatabase.
  *
- * @details It is possible the conversion between two StructuredDataI. See StructuredDataI::Copy().
+ * @details It is possible to convert between two StructuredDataI. See StructuredDataI::Copy().
  *
  * @param[out] destination the converted type.
  * @param[in] source the type to be converted.
  * @return true if the conversion succeeds, false otherwise.
- * on each dimension is the same. Finally, for each element, the conversion from the source
- * type to the destination must be supported and successful.
+ * Note that the conversion must be supported and successful for each dimension.
  * @pre
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);\n
- *   In case of source or destination representing a char8 array or table, the size must be minor than 127 characters for each dimension.
+ *   In case of source or destination representing a char8 array or table, the size must be less than 127 characters for each dimension.
  * @post
  *   destination holds the converted type of source
  */

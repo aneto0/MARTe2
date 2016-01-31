@@ -44,10 +44,6 @@ AnyType::AnyType(Object &obj) {
     Init();
     dataPointer = static_cast<void *>(&obj);
     bitAddress = 0u;
-    /*
-     ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
-     const char8 *className = obj.GetClassProperties()->GetName();
-     const ClassRegistryItem *classItem = classDatabase->Find(className);*/
 
     ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
     const ClassRegistryItem *classItem = classDatabase->FindTypeIdName(typeid(obj).name());
@@ -63,10 +59,6 @@ AnyType::AnyType(const Object &obj) {
     Init();
     dataPointer = static_cast<void *>(const_cast<Object *>(&obj));
     bitAddress = 0u;
-    /*
-     ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
-     const char8 *className = obj.GetClassProperties()->GetName();
-     const ClassRegistryItem *classItem = classDatabase->Find(className);*/
 
     ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
     const ClassRegistryItem *classItem = classDatabase->FindTypeIdName(typeid(obj).name());

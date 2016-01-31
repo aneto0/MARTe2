@@ -81,9 +81,9 @@ public:
 private:
 
     /**
-     * @brief Checks if the input is the array terminal.
+     * @brief Checks if the input \a data is the array terminal character.
      * @details This function must be specialized for each new template type. The default
-     * terminal is static_cast<T>(0)
+     * terminal is (as the name of the class implies) static_cast<T>(0)
      * @param[in] data is the element to be checked.
      * @return true if \a data is the array terminal, false otherwise.
      */

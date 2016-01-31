@@ -226,16 +226,16 @@ public:
      * @brief Printf implementation.
      * @see FormatDescriptor::InitialiseFromString
      *
-     * @details It is possible printing multi-dimensional AnyType. The \a format
+     * @details When \a pars wraps a multi-dimensional array of AnyTypes the \a format
      * will be applied to each scalar element. The output will be
      *
      * - scalar : "element";\n
      * - vector : "{ element_1 element_2 ... } ";\n
      * - matrix : "{ { element_1_1 element_1_2 ... } { element_2_1 element_2_2 ... } } ";\n
      *
-     * @details It is possible printing classes or structures. The object to be printed
+     * @details When \a pars wraps classes or structures inputs, the object to be printed
      * must be introspectable and registered into the ClassRegistryDatabase. The output
-     * respects the MARTe standard language. An example is:
+     * is the one from the MARTe standard language. An example is:
      *
      * Class = "the class name"\n
      * member_1 = 'the member value'\n
@@ -246,8 +246,8 @@ public:
      *    ...\n
      * }\n
      *
-     * @details It is possible printing the Introspection informations about a class or structure ( \a format = %? ).
-     * The output respects the MARTe standard language. The grammar is compatible with the parser used
+     * @details When \a pars wraps introspection information about a class or structure ( \a format = %? ),
+     * the output will respect the MARTe standard language and the grammar will be compatible with the parser used
      * to create the C code to automatically declare and register a class with its Introspection from
      * a configuration stream. An Example is:
      *
@@ -263,13 +263,12 @@ public:
      *      ...\n
      *  }
      *
-     * @details It is possible printing a StructuredDataI (i.e ConfigurationDatabase).
-     * The output respects the MARTe standard language and the grammar is compatible
-     * with the StandardParse used to generate a StructuredDataI from a configuration
+     * @details When \a pars describes a StructuredDataI (i.e ConfigurationDatabase), the
+     * output will respect the MARTe standard language and the grammar will be compatible
+     * with the StandardParser used to generate a StructuredDataI from a configuration
      * stream.
      *
-     * @param[in] format printf format as specified
-     * in FormatDescriptor::InitialiseFromString.
+     * @param[in] format printf format as specified in FormatDescriptor::InitialiseFromString.
      * @param[in] pars the list of elements that are to be replaced in the
      * \a format string. It must be terminated by a voidAnyType element
      * (i.e. pars[length(pars)-1] == voidAnyType).

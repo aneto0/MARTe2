@@ -38,14 +38,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-
-
 namespace MARTe {
 
-
 /**
- * @brief Collects the informations about each member of the class or structure.
+ * @brief Groups the information about each member of a class or a structure.
  */
 class  Introspection {
 
@@ -61,20 +57,18 @@ public:
     Introspection(const IntrospectionEntry ** const introspectionListIn, const uint32 classSizeIn);
 
     /**
-     * @brief Retrieves the informations about a specific member.
+     * @brief Retrieves the information about a specific member.
      * @param[in] index is the member number.
      * @return a pointer to the IntrospectionEntry structure containing all the
-     * informations about the \a index-th class member.
+     * information about the \a index-th class member.
      */
     const IntrospectionEntry operator[](const uint32 index) const;
-
 
     /**
      * @brief Retrieves the number of IntrospectionEntries in the internal array.
      * @return the number of IntrospectionEntries in the internal array.
      */
     uint32 GetNumberOfMembers() const;
-
 
     /**
      * @brief Retrieves the class Size.
@@ -105,7 +99,7 @@ private:
 /*---------------------------------------------------------------------------*/
 
 /**
- * This macro retrieves the member address respect to the class begin.
+ * This macro retrieves the member address with respect to the class begin.
  */
 #define INTROSPECTION_MEMBER_INDEX(className, memberName) \
     (intptr)&(((className *)0)->memberName)
@@ -120,14 +114,14 @@ private:
  * This macro creates a static instance of IntrospectionEntry with the provided inputs.
  */
 #define DECLARE_CLASS_MEMBER(className, memberName, type, modifierString, attributeString ) \
-    static const IntrospectionEntry className ## _ ## memberName ## _introspectionEntry =      \
-    IntrospectionEntry(                                                                        \
-        #memberName,                                                                           \
-        #type,                                                                                 \
-        modifierString,                                                                        \
-        attributeString,                                                                       \
-        INTROSPECTION_MEMBER_SIZE(className, memberName),                                        \
-        INTROSPECTION_MEMBER_INDEX(className, memberName)                                        \
+    static const IntrospectionEntry className ## _ ## memberName ## _introspectionEntry =   \
+    IntrospectionEntry(                                                                     \
+        #memberName,                                                                        \
+        #type,                                                                              \
+        modifierString,                                                                     \
+        attributeString,                                                                    \
+        INTROSPECTION_MEMBER_SIZE(className, memberName),                                   \
+        INTROSPECTION_MEMBER_INDEX(className, memberName)                                   \
     )
 
 
