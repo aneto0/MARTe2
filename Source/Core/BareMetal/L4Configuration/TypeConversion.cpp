@@ -113,14 +113,14 @@ static bool FloatToFloat(const FloatType1 source,
 
     destination = static_cast<FloatType2>(0.0);
 
-    bool isSourceNan = isNaN(source);
-    bool isSourceInf = isInf(source);
+    bool isSourceNan = IsNaN(source);
+    bool isSourceInf = IsInf(source);
     bool ret = ((!isSourceNan) && (!isSourceInf));
     if (ret) {
         FloatType2 test = static_cast<FloatType2>(source);
 
-        bool isTestNan = isNaN(test);
-        bool isTestInf = isInf(test);
+        bool isTestNan = IsNaN(test);
+        bool isTestInf = IsInf(test);
         if ((isTestNan) || (isTestInf)) {
             if (sizeof(FloatType2) < sizeof(FloatType1)) {
                 ret = MinMaxFloat((source > static_cast<FloatType2>(0.0)), destination);

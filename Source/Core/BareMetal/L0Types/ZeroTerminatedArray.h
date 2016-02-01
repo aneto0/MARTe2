@@ -89,6 +89,9 @@ private:
      */
     bool Zero(const T & data) const;
 
+    /**
+     * The array
+     */
     T * array;
 
 };

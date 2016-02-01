@@ -722,7 +722,7 @@ static bool PrivateValidate(const float32 floatValue,
                 ret = false;
 
                 for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
-                    ret = isEqual(floatValue, elements[i]);
+                    ret = IsEqual(floatValue, elements[i]);
                 }
             }
         }
@@ -791,7 +791,7 @@ static bool PrivateValidate(const float64 floatValue,
                 ret = false;
 
                 for (uint32 i = 0u; (i < numberOfValues) && (!ret); i++) {
-                    ret = isEqual(floatValue, elements[i]);
+                    ret = IsEqual(floatValue, elements[i]);
                 }
             }
         }

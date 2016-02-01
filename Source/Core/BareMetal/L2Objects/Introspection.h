@@ -130,7 +130,9 @@ private:
         INTROSPECTION_MEMBER_INDEX(className, memberName)                                        \
     )
 
-
+/**
+ * This macro creates a static instance of Introspection with the provided inputs.
+ */
 #define DECLARE_CLASS_INTROSPECTION(className, introEntryArray) \
     static Introspection className ## _ ## introspection(introEntryArray, sizeof(className))
 

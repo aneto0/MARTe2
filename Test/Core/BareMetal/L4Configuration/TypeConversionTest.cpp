@@ -371,7 +371,7 @@ bool TypeConversionTest::TestObjectToObject_Reverse() {
         return false;
     }
     for (uint32 i = 0u; i < 32; i++) {
-        if (!isEqual(testDestination.member3_from[i], (float32)i)) {
+        if (!IsEqual(testDestination.member3_from[i], (float32)i)) {
             return false;
         }
     }

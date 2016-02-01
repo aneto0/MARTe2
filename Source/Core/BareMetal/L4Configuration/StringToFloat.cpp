@@ -156,12 +156,12 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
 
         if ((newDigit >= 0) && (newDigit <= 9)) {
             T numberTemp = number * static_cast<T>(10.0);
-            bool nanNumber = isNaN(numberTemp);
-            bool infNumber = isInf(numberTemp);
+            bool nanNumber = IsNaN(numberTemp);
+            bool infNumber = IsInf(numberTemp);
             if ((!nanNumber) && (!infNumber)) {
                 numberTemp += static_cast<T>(newDigit);
-                nanNumber = isNaN(numberTemp);
-                infNumber = isInf(numberTemp);
+                nanNumber = IsNaN(numberTemp);
+                infNumber = IsInf(numberTemp);
                 if ((!nanNumber) && (!infNumber)) {
                     number = numberTemp;
                 }
@@ -207,8 +207,8 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
 
                 if ((newDigit >= 0) && (newDigit <= 9)) {
                     decimalExp *= static_cast<T>(10.0);
-                    bool nanExp = isNaN(decimalExp);
-                    bool infExp = isInf(decimalExp);
+                    bool nanExp = IsNaN(decimalExp);
+                    bool infExp = IsInf(decimalExp);
                     if ((!nanExp) && (!infExp)) {
                         decimalPart += static_cast<T>(newDigit) / decimalExp;
                     }
@@ -233,8 +233,8 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
             }
             T numberTemp = number;
             numberTemp += decimalPart;
-            bool nanNumber = isNaN(numberTemp);
-            bool infNumber = isInf(numberTemp);
+            bool nanNumber = IsNaN(numberTemp);
+            bool infNumber = IsInf(numberTemp);
             if ((!nanNumber) && (!infNumber)) {
                 number = numberTemp;
             }
@@ -285,8 +285,8 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
             if (!canReturn) {
                 T numberTemp = number;
                 AddExponent(numberTemp, exponent, expPositive);
-                bool nanNumber = isNaN(numberTemp);
-                bool infNumber = isInf(numberTemp);
+                bool nanNumber = IsNaN(numberTemp);
+                bool infNumber = IsInf(numberTemp);
                 if ((!nanNumber) && (!infNumber)) {
                     number = numberTemp;
                 }

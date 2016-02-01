@@ -1161,7 +1161,7 @@ FloatDisplayModes CheckNumber(const T number,
     FloatDisplayModes ret = NoFormat;
 
 // check for NaN
-    if (isNaN(number)) {
+    if (IsNaN(number)) {
         if (maximumSize < 3) {
             neededSize = 1;
             ret = InsufficientSpaceForFloat;
@@ -1173,7 +1173,7 @@ FloatDisplayModes CheckNumber(const T number,
     }
 
 // check for Inf
-    if (isInf(number)) {
+    if (IsInf(number)) {
         if (maximumSize < 4) {
             neededSize = 1;
             ret = InsufficientSpaceForFloat;
