@@ -344,6 +344,6 @@ bool IntrospectionTest::TestMacroToAddObjectClassRegistryDatabase() {
 
     *memberPtr = 2;
 
-    return obj.member == 1;
+    return obj.member == 2;
 
 }
