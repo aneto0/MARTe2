@@ -158,7 +158,7 @@ public:
     static const char8 *GetTypeNameFromTypeDescriptor(const TypeDescriptor &typeDescriptor);
 
     /**
-     * @brief Provides the access to the type { name - TypeDescriptor } lookup table defined in TypeDescriptor.cpp
+     * @brief Provides direct access to the type { name - TypeDescriptor } lookup table,
      * returning the TypeDescriptor in the specified position.
      * @param[in] index is the position inside the lookup table
      * @return the TypeDescriptor in the \a index position inside the lookup table.
@@ -166,7 +166,7 @@ public:
     static TypeDescriptor GetTypeDescriptorFromStaticTable(const uint32 index);
 
     /**
-     * @brief Provides the access to the type { name - TypeDescriptor } lookup table defined in TypeDescriptor.cpp
+     * @brief Provides direct access to the type { name - TypeDescriptor } lookup table, 
      * returning the type name in the specified position.
      * @param[in] index is the position inside the lookup table
      * @return the type name in the \a index position inside the lookup table.

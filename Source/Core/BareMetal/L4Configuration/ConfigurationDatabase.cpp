@@ -153,7 +153,6 @@ bool ConfigurationDatabase::Copy(StructuredDataI &destination) {
         }
     }
     return ok;
-    //return destination.AddToCurrentNode(currentNode);
 }
 
 bool ConfigurationDatabase::MoveToRoot() {

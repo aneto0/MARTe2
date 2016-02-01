@@ -37,7 +37,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-/*lint -e9150 [MISRA C++ Rule 11-0-1]. Justification: Used a structure instead of a class. */
+/*lint -e9150 [MISRA C++ Rule 11-0-1]. Justification: a structure with no functions is used to describe this type. */
 struct TypeCastInfo {
     TypeDescriptor typeDes;
     const char8 *castName;

@@ -42,7 +42,7 @@
 namespace MARTe {
 
 /**
- * @brief Creates a new AnyType object which could be a scalar, vector or matrix.
+ * @brief Helper class to create a new AnyType object. This can be either a scalar, a vector or a matrix.
  *
  * @details The methods implemented allow converting the tokens (C-string type) in input to the desired type and adding them
  * consecutively in an internal allocated memory to create multidimensional AnyTypes.

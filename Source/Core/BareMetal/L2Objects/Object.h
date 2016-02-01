@@ -166,7 +166,7 @@
     }
 
 /**
- * This macro has to be inserted in every unit file due to add an introspection class to the ClassRegistryDatabase.
+ * This macro has to be inserted in every unit file in order to add an introspection class to the ClassRegistryDatabase.
  * The definition of the  _## className ## ClassRegistryItem variable will
  * instantiate a new ClassRegistryItem for every unit file compiled in the application.
  * Upon instantiation each ClassRegistryItem will automatically add itself to the ClassRegistryDatabase.

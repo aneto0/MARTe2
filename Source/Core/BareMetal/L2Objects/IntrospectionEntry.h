@@ -51,15 +51,15 @@ public:
      * @brief Constructor.
      * @param[in] memberNameIn is the member name.
      * @param[in] typeNameIn is the member type name.
-     * @param[in] modifiersIn specifies the member modifiers.
-     * @param[in] attributesIn specifies the member attributes.
+     * @param[in] modifiersIn specifies the member modifiers (@see GetMemberModifiers).
+     * @param[in] attributesIn specifies the member attributes (@see GetMemberAttributes).
      * @param[in] sizeIn is the size of the member.
-     * @param[in] byteOffsetIn is the address of the member respect to the class begin pointer.
+     * @param[in] byteOffsetIn is the relative address of the member with respect to the class beginning pointer.
      * @post
      *   GetMemberName() == memberNameIn &&
      *   GetMemberModifiers() == modifiersIn &&
      *   GetMemberSize() == sizeIn &&
-     *   GetMemberByteOffset() == byteOffsetIn &&
+     *   GetMemberByteOffset() == byteOffsetIn
      */
     IntrospectionEntry(const char8 * const memberNameIn,
                        const char8 * const typeNameIn,
@@ -95,8 +95,8 @@ public:
      *   'C'   = constant;\n
      *   '[n]' = array of n elements;
      *
-     * The string must be a combination of '*' and 'C' with at the end the specification for the array if needed.
-     * Assuming that the type \a int and the variable is called \a x, some examples follow:
+     * The string must be a combination of '*'s and 'C's terminated by, if applicable, the specification for the array size.
+     * Assuming that the type \a int and that the variable is called \a x, some examples follow:
      *
      *   "**"     --->   double pointer ( int ** x );\n
      *   "**C"    --->   constant double pointer ( int ** const x );\n
@@ -123,8 +123,8 @@ public:
      *   min_size   = ...    ---> the minimum size\n
      *   max_size   = ...    ---> the maximum size
      *
-     * The function ValidateBasicType will take as input this attributes to check if the value to associate to the class
-     * member respects the constraints.
+     * The functions in the class ValidateBasicType will take as input these attributes to check if the value to associate to the class
+     * member respects the constraints returned by this function.
      *
      * @return the member attributes.
      */
@@ -137,8 +137,8 @@ public:
     uint32 GetMemberSize() const;
 
     /**
-     * @brief Retrieves the offset from the member and its class pointers.
-     * @return the offset from the member and its class pointers in byte.
+     * @brief Retrieves the offset from the member with respect to beginning of the class pointer.
+     * @return the offset from the member with respect to beginning of the class pointer.
      */
     uint32 GetMemberByteOffset() const;
 
@@ -159,7 +159,7 @@ public:
 
     /**
      * @brief Retrieves the pointer level of the member (i.e for "int **x" the pointer level is 2).
-     * @return the pointer level of the member
+     * @return the pointer level of the member.
      */
     uint32 GetMemberPointerLevel() const;
 
@@ -170,7 +170,7 @@ public:
      *   GetNumberOfDimensions() == 0 --> scalar\n
      *   GetNumberOfDimensions() == 1 --> array\n
      *   GetNumberOfDimensions() == 2 --> matrix\n
-     *   GetNumberOfDimensions() == 2 --> mesh
+     *   GetNumberOfDimensions() == 3 --> mesh
      *
      * @return Retrieves the number of dimensions related to the member.
      */
