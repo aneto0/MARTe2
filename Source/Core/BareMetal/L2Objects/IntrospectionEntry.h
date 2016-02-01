@@ -57,7 +57,9 @@ public:
      * @param[in] byteOffsetIn is the relative address of the member with respect to the class beginning pointer.
      * @post
      *   GetMemberName() == memberNameIn &&
+     *   GetMemberTypeName() == typeNameIn &&
      *   GetMemberModifiers() == modifiersIn &&
+     *   GetMemberAttributes() == attributesIn &&
      *   GetMemberSize() == sizeIn &&
      *   GetMemberByteOffset() == byteOffsetIn
      */

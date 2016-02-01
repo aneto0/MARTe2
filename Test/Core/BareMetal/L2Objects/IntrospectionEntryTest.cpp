@@ -52,6 +52,11 @@ bool IntrospectionEntryTest::TestConstructor(const char8* memberName,
     if (StringHelper::Compare(memberInfo.GetMemberName(), memberName) != 0) {
         return false;
     }
+
+    if (StringHelper::Compare(memberInfo.GetMemberTypeName(), type) != 0) {
+        return false;
+    }
+
     if (StringHelper::Compare(memberInfo.GetMemberModifiers(), modifiers) != 0) {
         return false;
     }
