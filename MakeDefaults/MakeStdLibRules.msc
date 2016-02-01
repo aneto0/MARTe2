@@ -108,8 +108,8 @@ $(BUILD_DIR)/%.def : $(BUILD_DIR)/dummy.dll
 
 
 $(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.obj $(OBJS) $(LIBRARIES) createLibrary
-	$(COMPILER)  $(LFLAGS)  $(DEBUG) $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) -o $@ $(LOPTS)
-	@rm createLibrary
+	$(COMPILER)  $(LFLAGS) -MT -DSFML_STATIC $(DEBUG) $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) -o $@ $(LOPTS)
+	@if exist createLibrary rm -f createLibrary
 	
 
 $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
