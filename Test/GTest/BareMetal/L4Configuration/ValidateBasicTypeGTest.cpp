@@ -363,7 +363,7 @@ TEST(ValidateBasicTypeGTest,TestValidateMatrix_int32) {
             {"min=2\n max=120 \n", {{2, 50} ,{70, 100 }}, true},
             {"min=2\n max=120 \n", {{2, 50},{3, 120}}, true},
             {"min=2\n max=120 \n", {{1, 50}, {70, 100}}, false},
-            {0,{ 0}, 0}
+            {0, {{0}}, 0}
     };
 
     ASSERT_TRUE(validateTest.TestValidateBasicTypeMatrix(table));
@@ -376,7 +376,7 @@ TEST(ValidateBasicTypeGTest,TestValidateMatrix_float32) {
             {"min=2\n max=120 \n", {{2.5, 50.1}, {3.9, 100.25 }}, true},
             {"min=2\n max=120 \n", {{2.3, 50.3}, {75.2, 119.9}}, true},
             {"min=2\n max=120 \n", {{1.5, 50.5}, {100.25, -3.5}}, false},
-            {0,{ 0}, 0}
+            {0, {{0}}, 0}
     };
 
     ASSERT_TRUE(validateTest.TestValidateBasicTypeMatrix(table));
@@ -389,7 +389,7 @@ TEST(ValidateBasicTypeGTest,TestValidateMatrix_string) {
     const ValidateBasicTypeTestTableMatrix<const char8 *, 2,2> table[]={
             {"min=bau\n max=miao \n", {{"ciao", "miao"},{"beee", "bau"}}, true},
             {"min=bau\n max=miao \n", {{"ziao", "miao"}, {"beee","bau"}}, false},
-            {0, {0}, 0}
+            {0, {{0}}, 0}
     };
 
     ASSERT_TRUE(validateTest.TestValidateBasicTypeMatrix(table));

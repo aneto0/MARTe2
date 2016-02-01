@@ -88,7 +88,7 @@ TEST(IntrospectionEntryGTest,TestGetMemberAttributes) {
 
 TEST(IntrospectionEntryGTest,TestIsConstant) {
     IntrospectionEntryTest IntrospectionEntryTest;
-    static const IntrospectionEntryTestTable table[]{
+    const IntrospectionEntryTestTable table[] = {
             {"C", 0, true},
             {"", 0, false},
             {"C*", 1, false},
@@ -110,7 +110,7 @@ TEST(IntrospectionEntryGTest,TestIsConstant) {
 
 TEST(IntrospectionEntryGTest,TestGetMemberPointerLevel) {
     IntrospectionEntryTest IntrospectionEntryTest;
-    static const IntrospectionEntryTestTable table[]{
+    const IntrospectionEntryTestTable table[] = {
             {"C", 0, true},
             {"C*", 1, true},
             {"*C", 1, true},

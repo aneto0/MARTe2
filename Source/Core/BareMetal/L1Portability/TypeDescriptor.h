@@ -158,16 +158,33 @@ public:
     static const char8 *GetTypeNameFromTypeDescriptor(const TypeDescriptor &typeDescriptor);
 
     /**
-     * @brief Provides direct access to the type { name - TypeDescriptor } lookup table,
+     * @brief Provides direct access to the { name - TypeDescriptor } lookup table,
      * returning the TypeDescriptor in the specified position.
+     * @details The { name - TypeDescriptor } lookup table is as follows: \n
+     * TypeDescriptor        |TypeName
+     * ----------------------|--------
+     * CharString            | "string"
+     * SignedInteger8Bit     | "int8"
+     * SignedInteger16Bit    | "int16"
+     * SignedInteger32Bit    | "int32"
+     * SignedInteger64Bit    | "int64"
+     * UnsignedInteger8Bit   | "uint8"
+     * UnsignedInteger16Bit  | "uint16"
+     * UnsignedInteger32Bit  | "uint32"
+     * UnsignedInteger64Bit  | "uint64"
+     * Float32Bit            | "float32"
+     * Float64Bit            | "float64"
+     * Character8Bit         | "char8"
+     * VoidType              | "void"
+     * InvalidType           | NULL
      * @param[in] index is the position inside the lookup table
      * @return the TypeDescriptor in the \a index position inside the lookup table.
      */
     static TypeDescriptor GetTypeDescriptorFromStaticTable(const uint32 index);
 
     /**
-     * @brief Provides direct access to the type { name - TypeDescriptor } lookup table, 
-     * returning the type name in the specified position.
+     * @brief Provides direct access to the type { name - TypeDescriptor } lookup table
+     * (see GetTypeDescriptorFromStaticTable), returning the type name in the specified position.
      * @param[in] index is the position inside the lookup table
      * @return the type name in the \a index position inside the lookup table.
      */
