@@ -516,9 +516,10 @@ bool IOBufferTest::TestPrintCArrayVector(const TestPrintFormattedTableVector<con
     }
 
     Clear(ioBuffer);
-    AnyType at= table[0].vectorInput;
+    char8 bufferInfo[32];
+    AnyType at(bufferInfo);
     ioBuffer.PrintFormatted("%?", &at);
-    return StringHelper::Compare(ioBuffer.Buffer(), "Char Array");
+    return StringHelper::Compare(ioBuffer.Buffer(), "Char Array")==0;
 }
 
 template<uint32 nRows, uint32 nCols>
