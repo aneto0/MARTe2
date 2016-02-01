@@ -52,11 +52,34 @@ struct TestIntrospectionStructure {
     TestIntrospectionNestedStructure member5;
 };
 
+/**
+ * @brief Helper class to support the testing of references.
+ */
+class DummyObject: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    DummyObject() {
+        member = 1;
+    }
+
+    virtual ~DummyObject() {
+    }
+
+    int32 member;
+
+};
+
+DECLARE_CLASS_MEMBER(DummyObject, member, int32, "", "");
+static const IntrospectionEntry* objFields[] = { &DummyObject_member_introspectionEntry, 0 };
+DECLARE_CLASS_INTROSPECTION(DummyObject, objFields);
+CLASS_INTROSPECTION_REGISTER(DummyObject, "1.0", DummyObject_introspection)
+
 DECLARE_CLASS_MEMBER(TestIntrospectionNestedStructure, nestedMember1, uint32, "", "");
 
 static const IntrospectionEntry* nestedFields[] = { &TestIntrospectionNestedStructure_nestedMember1_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(TestIntrospectionNestedStructure , nestedFields);
+DECLARE_CLASS_INTROSPECTION(TestIntrospectionNestedStructure, nestedFields);
 INTROSPECTION_REGISTER(TestIntrospectionNestedStructure, "1.0", TestIntrospectionNestedStructure_introspection)
 
 static IntrospectionEntry member1Field("member1", "uint32", "", "", INTROSPECTION_MEMBER_SIZE(TestIntrospectionStructure, member1),
@@ -74,7 +97,7 @@ static const IntrospectionEntry* fields[] = { &member1Field, &TestIntrospectionS
         &TestIntrospectionStructure_member3_introspectionEntry, &TestIntrospectionStructure_member4_introspectionEntry,
         &TestIntrospectionStructure_member5_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(TestIntrospectionStructure , fields);
+DECLARE_CLASS_INTROSPECTION(TestIntrospectionStructure, fields);
 INTROSPECTION_REGISTER(TestIntrospectionStructure, "1.0", TestIntrospectionStructure_introspection)
 
 /*---------------------------------------------------------------------------*/
@@ -260,8 +283,7 @@ bool IntrospectionTest::TestMacroToAddStructuredInClassRegistryDatabase() {
 
 }
 
-
-bool IntrospectionTest::TestGetNumberOfMembers(){
+bool IntrospectionTest::TestGetNumberOfMembers() {
 
     ClassRegistryDatabase *instance = ClassRegistryDatabase::Instance();
     const ClassRegistryItem *item = instance->Find("TestIntrospectionStructure");
@@ -270,11 +292,10 @@ bool IntrospectionTest::TestGetNumberOfMembers(){
     }
 
     const Introspection *classIntro = item->GetIntrospection();
-    return classIntro->GetNumberOfMembers()==5u;
+    return classIntro->GetNumberOfMembers() == 5u;
 }
 
-
-bool IntrospectionTest::TestGetClassSize(){
+bool IntrospectionTest::TestGetClassSize() {
     ClassRegistryDatabase *instance = ClassRegistryDatabase::Instance();
     const ClassRegistryItem *item = instance->Find("TestIntrospectionStructure");
     if (item == NULL) {
@@ -282,5 +303,47 @@ bool IntrospectionTest::TestGetClassSize(){
     }
 
     const Introspection *classIntro = item->GetIntrospection();
-    return classIntro->GetClassSize()==sizeof(TestIntrospectionStructure);
+    return classIntro->GetClassSize() == sizeof(TestIntrospectionStructure);
+}
+
+bool IntrospectionTest::TestMacroToAddObjectClassRegistryDatabase() {
+
+    ClassRegistryDatabase *instance = ClassRegistryDatabase::Instance();
+    const ClassRegistryItem *introInfo = instance->Find("DummyObject");
+    if (introInfo == NULL) {
+        return false;
+    }
+
+    IntrospectionEntry memberCopy = (*introInfo->GetIntrospection())[0];
+    if (StringHelper::Compare(memberCopy.GetMemberName(), "member") != 0) {
+        return false;
+    }
+
+    if (memberCopy.IsConstant()) {
+        return false;
+    }
+
+    if (memberCopy.GetMemberTypeDescriptor().isStructuredData) {
+        return false;
+    }
+
+    if (StringHelper::Compare(memberCopy.GetMemberModifiers(), "") != 0) {
+        return false;
+    }
+
+    if (memberCopy.GetMemberSize() != sizeof(int32)) {
+        return false;
+    }
+
+    DummyObject obj;
+    char8* objBegin = (char8*) &obj;
+
+    char8* memberPtrChar = objBegin + memberCopy.GetMemberByteOffset();
+
+    int32* memberPtr = (int32*) memberPtrChar;
+
+    *memberPtr = 2;
+
+    return obj.member == 1;
+
 }

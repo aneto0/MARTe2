@@ -68,6 +68,12 @@ public:
      */
     bool TestMacroToAddStructuredInClassRegistryDatabase();
 
+    /**
+     * @brief Checks if the ClassRegistryDatabase saves correctly the introspection of a object-derived class after the registration
+     * of the class using defined macros.
+     */
+    bool TestMacroToAddObjectClassRegistryDatabase();
+
 
     /**
      * @brief Tests if the function returns correctly the number of members.

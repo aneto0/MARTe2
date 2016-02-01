@@ -74,3 +74,9 @@ TEST(IntrospectionGTest,TestGetClassSize) {
     ASSERT_TRUE(IntrospectionTest.TestGetClassSize());
 }
 
+TEST(IntrospectionGTest,TestMacroToAddObjectClassRegistryDatabase) {
+    IntrospectionTest IntrospectionTest;
+    ASSERT_TRUE(IntrospectionTest.TestMacroToAddObjectClassRegistryDatabase());
+}
+
+

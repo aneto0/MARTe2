@@ -809,7 +809,8 @@ private:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0) == 1 &&
      *   GetNumberOfElements(1) == 1 &&
-     *   GetNumberOfElements(2) == 1
+     *   GetNumberOfElements(2) == 1 &&
+     *   IsStaticDeclared() == true
      */
     inline void Init();
 };

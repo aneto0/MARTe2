@@ -214,9 +214,9 @@
           * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
           * of an application or loading of a loadable library. It will automatically add the class type to the             \
           * ClassRegistryDatabase.                                                                                          \
-          * e.g. static ClassRegistryItem MyClassTypeClassRegistryItem_( MyClassTypeClassProperties_, &MyClassTypeBuildFn_);\
+          * e.g. static ClassRegistryItem MyClassTypeClassRegistryItem_( MyClassTypeClassProperties_, &MyClassTypeBuildFn_, introspection);\
           */                                                                                                                \
-         static MARTe::ClassRegistryItem className ## ClassRegistryItem_( className ## ClassProperties_, & className ## BuildFn_); \
+         static MARTe::ClassRegistryItem className ## ClassRegistryItem_( className ## ClassProperties_, & className ## BuildFn_, introspection); \
          /*                                                                                                                 \
           * @brief Function called when a new instance of this class type is to be instantiated in the provided heap.       \
           * @param[in] h the heap where the object will be instantiated.                                                    \
