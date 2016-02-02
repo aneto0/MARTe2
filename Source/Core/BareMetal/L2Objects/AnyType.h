@@ -46,22 +46,26 @@
 /*lint -sem(MARTe::AnyType::Init,initializer)*/
 namespace MARTe {
 /**
- * @brief AnyType class.
+ * @brief Class which provides a smart mechanism for the generic representation
+ * of types.
+ * @details Each instance of this class is made by:
+ * - a void* pointer to the data;
+ * - an uint8 representing the bit-shift from the void* pointer to the actual
+ * data (used in bitfields);
+ * - a TypeDescriptor which defines the type, constantness, signedness, etc.
+ * of the data.
  *
- * @details This class provides a smart mechanism for the generic representation of types.\n
- * An AnyType is made by:
- *   - a void* pointer to the data;
- *   - an uint8 representing the bit-shift from the void* pointer to the actual data (used in bitfields);
- *   - a TypeDescriptor which defines the type, constantness, signedness, etc. of the data.
- *
- * AnyType works with basic types as well as classes, as long as they are registered in the ClassRegistryDatabase.\n
- * @note A constructor for each basic type has been defined and implemented in order to
- * automatically build the relative AnyType object.
+ * AnyType works with basic types as well as classes, as long as they are
+ * registered in the ClassRegistryDatabase.
+ * @note A constructor for each basic type has been defined and implemented in
+ * order to automatically build the relative AnyType object. Some of these
+ * constructors are templates.
  */
 /*lint -save -e925 -e926 -e929 -e9005 -e1773 .
  * (925) pointer cast required by this implementation of AnyType */
-/* (9005,1773) Cast away of const required by this implementation of AnyType and justified because in the TypeDescriptor
- * attribute the flag "isConstant" will be set to true.
+/* (9005,1773) Cast away of const required by this implementation of AnyType
+ * and justified because in the TypeDescriptor attribute the flag "isConstant"
+ * will be set to true.
  */
 class DLL_API AnyType {
 

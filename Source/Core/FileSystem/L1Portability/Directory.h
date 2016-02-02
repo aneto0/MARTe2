@@ -49,13 +49,16 @@ namespace MARTe {
      * @brief A class which encapsulates attributes and information about
      * a file or a directory.
      *
+     * @details The instances of this class are meant to be bound to a given
+     * filesystem item (file or directory), so it will be able to be queried
+     * about its properties. Is is also available to create and delete any
+     * filesystem item.
+     *
      * @warning This class needs the target environment being properly
      * configured, in order to execute some of its methods. For instance,
      * getting the last access time for a file on Windows could fail,
      * because it is a feature that can be disabled on that operating
      * system.
-     *
-     * @details
      *
      * **How to verify if the last access time stamping is enabled on
      * Windows?**
