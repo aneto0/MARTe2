@@ -104,6 +104,7 @@ public:
     /**
      * @brief Constructor by 16 bit integer.
      * @param[in] x contains the type informations which must be stored into this memory area.
+     * @post x == all
      */
     TypeDescriptor(const uint16 x = 0u);
 
@@ -112,6 +113,10 @@ public:
      * @param[in] isConstantIn specifies if the type is constant.
      * @param[in] typeIn is the type.
      * @param[in] numberOfBitsIn the number of bits associated to the type.
+     * @post
+     *   isConstantIn == isConstant &&
+     *   typeIn == type &&
+     *   numberOfBitsIn == numberOfBits
      */
     TypeDescriptor(const bool isConstantIn,
                    const uint16 typeIn,
@@ -121,6 +126,9 @@ public:
      * @brief Structured objects constructor.
      * @param[in] isConstantIn in specifies if the object is constant.
      * @param[in] structuredDataIdCodeIn is the 14 bit code associated to the object type.
+     * @post
+     *   isConstantIn == isConstant &&
+     *   structuredDataIdCodeIn == structuredDataIdCode
      */
     TypeDescriptor(const bool isConstantIn,
                    const ClassUID &structuredDataIdCodeIn);
