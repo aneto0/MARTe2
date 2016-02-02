@@ -179,6 +179,11 @@ public:
     bool TestGetChildName();
 
     /**
+     * @brief Tests the GetName function.
+     */
+    bool TestGetName();
+
+    /**
      * @brief Tests the TestGetNumberOfChildren function.
      */
     bool TestGetNumberOfChildren();

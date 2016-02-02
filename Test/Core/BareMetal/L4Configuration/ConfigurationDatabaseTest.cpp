@@ -556,6 +556,24 @@ bool ConfigurationDatabaseTest::TestGetChildName() {
     return ok;
 }
 
+
+bool ConfigurationDatabaseTest::TestGetName(){
+    ConfigurationDatabase cdb;
+    if(cdb.GetName()!=NULL){
+        return false;
+    }
+
+    cdb.CreateAbsolute("A.B.C");
+    cdb.MoveAbsolute("A");
+    bool ret=(StringHelper::Compare(cdb.GetName(), "A")==0);
+    cdb.MoveAbsolute("A.B");
+    ret&=(StringHelper::Compare(cdb.GetName(), "B")==0);
+    cdb.MoveAbsolute("A.B.C");
+    ret&=(StringHelper::Compare(cdb.GetName(), "C")==0);
+    return ret;
+}
+
+
 bool ConfigurationDatabaseTest::TestGetType_Invalid() {
     ConfigurationDatabase cdb;
     AnyType t = cdb.GetType("");

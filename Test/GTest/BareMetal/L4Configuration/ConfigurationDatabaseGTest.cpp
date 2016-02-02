@@ -309,6 +309,10 @@ TEST(ConfigurationDatabaseGTest,TestGetChildName) {
     ASSERT_TRUE(cdbTest.TestGetChildName());
 }
 
+TEST(ConfigurationDatabaseGTest,TestGetName) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetName());
+}
 TEST(ConfigurationDatabaseGTest,TestGetNumberOfChildren) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetNumberOfChildren());

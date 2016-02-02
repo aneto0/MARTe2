@@ -92,7 +92,7 @@ AnyType AnyType::operator[](const uint32 position) const {
             if (numberOfDimensions == 2u) {
                 if (position < numberOfElements[1]) {
                     if (staticDeclared) {
-                        uint32 index = position * size;
+                        uint32 index = (position * size) * numberOfElements[0];
                         void* posPointer = &reinterpret_cast<char8*>(dataPointer)[index];
                         ret = AnyType(dataDescriptor, bitAddress, posPointer);
                         ret.SetNumberOfDimensions(1u);
@@ -113,7 +113,7 @@ AnyType AnyType::operator[](const uint32 position) const {
                     if (dataDescriptor == CharString) {
                         posPointer = reinterpret_cast<char8**>(dataPointer)[position];
                     }
-                    else if (dataDescriptor.type == Pointer) {
+                    else if (dataDescriptor == PointerType) {
                         posPointer = reinterpret_cast<char8**>(dataPointer)[position];
                     }
                     else {
