@@ -51,6 +51,11 @@ namespace MARTe {
  *
  * All the other operating system stream functions will be left untouched allowing full access to the specific
  * operating system stream implementation.
+ *
+ * @tparam bufferedStream a class representing a buffered stream, i.e. a class
+ * derived from the abstract class BufferedStreamI.
+ * @tparam basicStream a class representing a basic stream, i.e. a class
+ * derived from the abstract class StreamI.
  */
 template<class bufferedStream, class basicStream>
 class BufferedStreamGenerator: public bufferedStream, public basicStream {

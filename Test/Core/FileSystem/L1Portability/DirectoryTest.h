@@ -47,6 +47,8 @@ using namespace MARTe;
 
 /**
  * @brief Tests the Directory class.
+ * @warning In case some tests fail, check Directory class' documentation
+ * for operating system configuration requirements.
  */
 class DirectoryTest {
 

@@ -47,7 +47,7 @@
 namespace MARTe {
 
 /**
- * @brief Buffered stream implementation (single buffer).
+ * @brief Buffered stream (single buffer version).
  * @details This class offers a buffering mechanism for character streams.
  * It supplements a low-level OperatingSystemStream (which implements the
  * low-level calls such as Read, Write, Seek, ...) with a buffering scheme.
