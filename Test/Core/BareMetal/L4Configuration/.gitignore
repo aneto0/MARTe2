@@ -4,3 +4,6 @@
 /depends.msc
 /dependsRaw.msc
 /vc120.pdb
+/cov/
+/dependsRaw.cov
+/depends.cov
