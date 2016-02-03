@@ -287,6 +287,10 @@ bool EscapeChar(char8 &c) {
         c = '"';
     }
         break;
+    case ('\\'): {
+        c = '\\';
+    }
+        break;
     default: {
         ret = false;
     }

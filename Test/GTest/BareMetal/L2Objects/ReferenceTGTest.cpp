@@ -97,6 +97,7 @@ TEST(ReferenceTGTest,TestBuildFakeObjectConstructor) {
     ASSERT_TRUE(referenceTTest.TestBuildFakeObjectConstructor());
 }
 
+
 TEST(ReferenceTGTest,TestCopyFromObjPtrConstructor) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyFromObjPtrConstructor());

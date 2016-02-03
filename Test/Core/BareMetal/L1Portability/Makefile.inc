@@ -45,7 +45,9 @@ OBJSX=  AtomicTest.x \
 		StringHelperTest.x \
 		StringPortableTest.x \
 		TimeStampTest.x \
-		TimeoutTypeTest.x
+		TimeoutTypeTest.x \
+		TypeDescriptorTest.x 
+		
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

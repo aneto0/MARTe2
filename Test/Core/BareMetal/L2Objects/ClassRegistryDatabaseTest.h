@@ -83,15 +83,14 @@ public:
      * @param[in] create specifies if the class should be registered or not in the database (determining the result of the find function).
      * @return true if the find on registered class names succeeds and fails if the class is not registered.
      */
-    bool TestFind(const MARTe::char8 *name,
-                  bool create);
+    bool TestFind();
 
     /**
      * @brief Tests the Find function using a string length > 129u and the pattern dllname::name.
      * @param[in] create specifies if the class should be registered or not in the database (determining the result of the find function).
      * @return True if the find on registered class returns NULL.
      */
-    bool TestFindLongName(bool create);
+    bool TestFindLongName();
 
     /**
      * @brief Tests the TestFindTypeIdName function.

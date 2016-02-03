@@ -73,6 +73,30 @@ public:
 };
 
 /**
+ * @brief Utility class to store the test parameters for the static tables that are used
+ * in the PrintFormatted tests.
+ */
+template<typename T, uint32 nDims>
+struct TestPrintFormattedTableVector{
+    const char8* format;
+    T vectorInput[nDims];
+    const char8* expected;
+};
+
+/**
+ * @brief Utility class to store the test parameters for the static tables that are used
+ * in the PrintFormatted tests.
+ */
+template<typename T, uint32 nRows, uint32 nCols>
+struct TestPrintFormattedTableMatrix{
+    const char8* format;
+    T matrixInput[nRows][nCols];
+    const char8* expected;
+};
+
+
+
+/**
  * @brief Minimal StreamI implementation for the Buffer and Stream tests.
  * It is implemented over a char buffer with dimension MAX_STREAM_DIMENSION
  */

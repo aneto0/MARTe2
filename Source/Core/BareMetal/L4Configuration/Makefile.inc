@@ -38,6 +38,7 @@ OBJSX=	AnyObject.x \
 		Token.x \
 		ParserI.x \
 		StandardParser.x \
+		ValidateBasicType.x \
 		XMLParser.x 
         
 PACKAGE=Core/BareMetal

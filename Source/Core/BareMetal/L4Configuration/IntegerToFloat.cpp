@@ -56,8 +56,8 @@ static bool IntegerToFloat(const IntegerType source,
     dest = static_cast<FloatType>(0.0);
     FloatType test = static_cast<FloatType>(source);
 
-    bool isTestNan = (isNaN(test));
-    bool isTestInf = (isInf(test));
+    bool isTestNan = (IsNaN(test));
+    bool isTestInf = (IsInf(test));
     if ((isTestNan) || (isTestInf)) {
         REPORT_ERROR(ErrorManagement::FatalError, "IntegerToFloat: Conversion Failed, the result is NaN or Inf");
         ret = false;

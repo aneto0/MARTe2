@@ -27,6 +27,8 @@ OBJSX=  AnyTypeGTest.x \
 		ClassPropertiesGTest.x \
 		ClassRegistryDatabaseGTest.x \
 		ClassRegistryItemGTest.x \
+		IntrospectionEntryGTest.x\
+		IntrospectionGTest.x\
 		ObjectGTest.x \
 		ReferenceContainerFilterObjectNameGTest.x \
 		ReferenceContainerFilterReferencesGTest.x \

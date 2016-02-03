@@ -128,6 +128,30 @@ public:
     inline bool IsVoid() const;
 
     /**
+     * @brief Constructor from 8 bit character.
+     * @param[in] i is the 8 bit character input.
+     * @post
+     *   GetDataPointer() == &i &&
+     *   IsStaticDeclared == true &&
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetTypeDescriptor() == Character8Bit &&
+     *   GetNumberOfElements(0:2) == 0
+     */
+    inline AnyType(char8 &i);
+
+    /**
+     * @brief Constructor from 8 bit character.
+     * @param[in] i is the 8 bit character input.
+     * @post
+     *   GetDataPointer() == &i &&
+     *   IsStaticDeclared == true &&
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetTypeDescriptor() == Character8Bit &&
+     *   GetNumberOfElements(0:2) == 0
+     */
+    inline AnyType(const char8 &i);
+
+    /**
      * @brief Constructor from signed 8 bit integer.
      * @param[in] i is the signed 8 bit integer input.
      * @post
@@ -678,7 +702,7 @@ public:
 
     /**
      * @brief Gets the number of dimensions associated to this AnyType.
-     * @detail GetNumberOfDimensions() == 0 => scalar, GetNumberOfDimensions() == 1 => vector
+     * @details GetNumberOfDimensions() == 0 => scalar, GetNumberOfDimensions() == 1 => vector
      * GetNumberOfDimensions() == 2 => matrix
      * @return the number of dimensions associated to this AnyType.
      */
@@ -687,7 +711,7 @@ public:
     /**
      * @brief Sets the number of dimensions associated to this AnyType.
      * @param[in] nOfDimensions the new number of dimensions represented by this AnyType.
-     * @detail nOfDimensions == 0 => scalar, nOfDimensions == 1 => vector
+     * @details nOfDimensions == 0 => scalar, nOfDimensions == 1 => vector
      * nOfDimensions == 2 => matrix
      */
     inline void SetNumberOfDimensions(const uint8 nOfDimensions);
@@ -736,6 +760,15 @@ public:
      */
     inline uint32 GetBitSize() const;
 
+
+    /**
+     * @brief Retrieves the element in the specified position.
+     * @param[in] position is the position of the required element.
+     * @return voidAnyType if this AnyType is scalar or in case of errors, a scalar AnyType if this
+     * AnyType is a vector, a vector AnyType if this AnyType is a scalar.
+     */
+    AnyType operator[](const uint32 position) const;
+
 private:
 
     /**
@@ -776,7 +809,8 @@ private:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0) == 1 &&
      *   GetNumberOfElements(1) == 1 &&
-     *   GetNumberOfElements(2) == 1
+     *   GetNumberOfElements(2) == 1 &&
+     *   IsStaticDeclared() == true
      */
     inline void Init();
 };
@@ -822,6 +856,23 @@ AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,
 
 bool AnyType::IsVoid() const {
     return (dataDescriptor == VoidType);
+}
+
+/*---------------------------------------------------------------------------*/
+
+AnyType::AnyType(char8 &i) {
+    Init();
+    dataPointer = static_cast<void *>(&i);
+    bitAddress = 0u;
+    dataDescriptor = Character8Bit;
+}
+
+AnyType::AnyType(const char8 &i) {
+    Init();
+    dataPointer = static_cast<void *>(const_cast<char8*>(&i));
+    bitAddress = 0u;
+    dataDescriptor = Character8Bit;
+    dataDescriptor.isConstant = true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1311,6 +1362,9 @@ uint32 AnyType::GetByteSize() const {
 uint32 AnyType::GetBitSize() const {
     return (dataDescriptor.numberOfBits + bitAddress);
 }
+
+
+
 
 /**
  * Definition of the void AnyType (empty constructor).

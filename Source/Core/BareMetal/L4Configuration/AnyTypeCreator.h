@@ -42,10 +42,11 @@
 namespace MARTe {
 
 /**
- * @brief Creates a new AnyType object which could be a scalar, vector or matrix.
+ * @brief Helper class to create a new AnyType object. This can be either be a scalar, a vector or a matrix.
  *
- * @details The methods implemented allow converting the tokens (C-string type) in input to the desired type and adding them
- * consecutively in an internal allocated memory to create multidimensional AnyTypes.
+ * @details This class is used by the Parser to create multi-dimensional AnyType objects. Memory for the value of each element is
+ * allocated sequentially in memory (see Add). When all elements have been added the AnyType can be created and assigned to the
+ * previously allocated memory by calling Create with the correct dimensions.
  */
 class DLL_API AnyTypeCreator {
 
@@ -64,7 +65,7 @@ public:
      * @brief Creates the AnyType.
      * @param[in] nOfDimensions specifies if the type is a scalar, vector or matrix.
      * @param[in] dimensionSize specifies the number of elements for each dimension.
-     * @return the AnyType created using the parameters in input and the internal allocated memory.
+     * @return the AnyType created using the parameters in input and the internal allocated memory (allocated with Add).
      * voidAnyType is returned in case of input parameters inconsistency.
      * @pre
      *   nOfDimensions < 3 &&
@@ -76,8 +77,8 @@ public:
                    const uint32 dimensionSize[3]) const;
 
     /**
-     * @brief Adds an element to the memory converting it from a string token.
-     * @details If the type is unrecognized, the default type "string" will be considered.
+     * @brief Adds an element to the internal AnyType memory converting it from a string token.
+     * @details If the type is not recognised, the default type "string" will be considered.
      * @param[in] type is the desired type for the element to be added.
      * @param[in] data is the element in string format which has to be converted.
      * @return false if in the memory there are already element with a different type or if

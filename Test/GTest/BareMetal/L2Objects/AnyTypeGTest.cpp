@@ -183,6 +183,17 @@ TEST(AnyTypeGTest, TestAnyType_ConstCharPointerToConst) {
     ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstCharPointerToConst());
 }
 
+TEST(AnyTypeGTest, TestAnyType_Char8) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_Char8());
+}
+
+TEST(AnyTypeGTest, TestAnyType_ConstChar8) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstChar8());
+}
+
+
 TEST(AnyTypeGTest, TestAnyType_Object) {
     AnyTypeTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestAnyType_Object());
@@ -361,5 +372,108 @@ TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerInt32) {
 TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerInt64) {
     AnyTypeTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<int64>());
+}
+
+TEST(AnyTypeGTest, TestSetDataPointer) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestSetDataPointer());
+}
+
+TEST(AnyTypeGTest, TestGetDataPointer) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestGetDataPointer());
+}
+
+TEST(AnyTypeGTest, TestGetTypeDescriptor) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestGetTypeDescriptor());
+}
+
+
+TEST(AnyTypeGTest, TestGetBitAddress) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestGetBitAddress());
+}
+
+TEST(AnyTypeGTest, TestSetNumberOfDimensions) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestSetNumberOfDimensions());
+}
+
+TEST(AnyTypeGTest, TestGetNumberOfDimensions) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestGetNumberOfDimensions());
+}
+
+TEST(AnyTypeGTest, TestSetNumberOfElements) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestSetNumberOfElements());
+}
+
+TEST(AnyTypeGTest, TestGetNumberOfElements) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestGetNumberOfElements());
+}
+
+TEST(AnyTypeGTest, TestSetStaticDeclared) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestSetStaticDeclared());
+}
+
+TEST(AnyTypeGTest, TestIsStaticDeclared) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestIsStaticDeclared());
+}
+
+TEST(AnyTypeGTest, TestGetBitSize) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestGetBitSize());
+}
+
+TEST(AnyTypeGTest, TestGetByteSize) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestGetByteSize());
+}
+
+
+TEST(AnyTypeGTest, TestPositionOperator_MatrixStructuredStaticDeclared) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_MatrixStructuredStaticDeclared());
+}
+
+
+TEST(AnyTypeGTest, TestPositionOperator_MatrixStructuredHeapDeclared) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_MatrixStructuredHeapDeclared());
+}
+
+TEST(AnyTypeGTest, TestPositionOperator_MatrixBasicStaticDeclared) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_MatrixBasicStaticDeclared());
+}
+
+TEST(AnyTypeGTest, TestPositionOperator_MatrixBasicHeapDeclared) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_MatrixBasicHeapDeclared());
+}
+
+TEST(AnyTypeGTest, TestPositionOperator_VectorStructured) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_VectorStructured());
+}
+
+TEST(AnyTypeGTest, TestPositionOperator_VectorBasic) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_VectorBasic());
+}
+
+TEST(AnyTypeGTest, TestPositionOperator_VectorCString) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_VectorCString());
+}
+
+TEST(AnyTypeGTest, TestPositionOperator_VectorPointer) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_VectorPointer());
 }
 

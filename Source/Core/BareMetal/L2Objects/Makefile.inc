@@ -30,6 +30,8 @@ OBJSX=  AnyType.x\
 		ClassProperties.x \
 		ClassRegistryDatabase.x \
 		ClassRegistryItem.x \
+		Introspection.x\
+		IntrospectionEntry.x \
 		Object.x \
 		Reference.x \
 		ReferenceContainer.x \
