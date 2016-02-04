@@ -27,8 +27,4 @@ TARGET=cov
 
 include Makefile.inc
 
-<<<<<<< HEAD
-=======
-
->>>>>>> refs/heads/#188_Object_Introspection
 LIBRARIES_STATIC= L1Portability/cov/L1PortabilityFGTest$(LIBEXT)
