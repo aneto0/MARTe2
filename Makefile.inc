@@ -26,6 +26,7 @@
 OBJSX=
 SPB    = Source/Core.x Test/Core/BareMetal.x Test/Core/Scheduler.x Test/Core/FileSystem.x Test/GTest.x
 
+
 MAKEDEFAULTDIR=MakeDefaults
 
 ROOT_DIR=.

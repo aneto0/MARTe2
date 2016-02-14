@@ -92,7 +92,7 @@ bool DoubleBufferedStreamTest::TestRead(uint32 bufferSize,
     uint32 n = 0;
     while (n < 2) {
         uint32 size = readSize;
-        char8 *bufferWrite = (char8 *) malloc(readSize);
+        char8 *bufferWrite = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(readSize);
         uint32 i = 0;
         for (i = 0; i < readSize; i++) {
             bufferWrite[i] = i * i;
@@ -107,7 +107,7 @@ bool DoubleBufferedStreamTest::TestRead(uint32 bufferSize,
         }
         stream.Seek(0);
 
-        char8 *bufferRead = (char8 *) malloc(readSize);
+        char8 *bufferRead = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(readSize);
         size = readSize;
 
         start = 0;
@@ -122,8 +122,8 @@ bool DoubleBufferedStreamTest::TestRead(uint32 bufferSize,
         bufferWrite[readSize - 1] = '\0';
         ok = (StringHelper::Compare(bufferRead, bufferWrite) == 0);
 
-        free(bufferRead);
-        free(bufferWrite);
+        GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferRead));
+        GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferWrite));
         n++;
     }
     return ok;
@@ -170,7 +170,7 @@ bool DoubleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSiz
     DummyDoubleBufferedStream stream(true);
     stream.SetBufferSize(bufferSize, bufferSize);
 
-    char8 *bufferWrite = (char8 *) malloc(writeSize);
+    char8 *bufferWrite = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(writeSize);
     uint32 i = 0;
     for (i = 0; i < writeSize; i++) {
         bufferWrite[i] = i * i;
@@ -189,7 +189,7 @@ bool DoubleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSiz
     }
 
     stream.Seek(0);
-    char8 *bufferRead = (char8 *) malloc(writeSize);
+    char8 *bufferRead = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(writeSize);
     size = writeSize;
     start = 0;
     while ((size > 0) && (stream.Read(bufferRead + start, size))) {
@@ -203,8 +203,8 @@ bool DoubleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSiz
     bufferWrite[writeSize - 1] = '\0';
     bool ok = (StringHelper::Compare(bufferRead, bufferWrite) == 0);
 
-    free(bufferRead);
-    free(bufferWrite);
+    GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferRead));
+    GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferWrite));
     return ok;
 }
 

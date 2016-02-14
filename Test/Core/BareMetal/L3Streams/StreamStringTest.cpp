@@ -352,6 +352,17 @@ bool StreamStringTest::TestRelativeSeek(uint32 initialPos,
     return ret == expected;
 }
 
+
+
+bool StreamStringTest::TestRelativeSeek_OutOfInt32Range(){
+    StreamString string="HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
+
+    int64 toMuchSeek=MAX_INT32;
+    toMuchSeek++;
+
+    return !string.RelativeSeek(toMuchSeek);
+}
+
 bool StreamStringTest::TestPosition() {
 
     StreamString string;

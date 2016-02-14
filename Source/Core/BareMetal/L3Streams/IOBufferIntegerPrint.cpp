@@ -438,8 +438,7 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
  * @param[in] s is the string to be printed.
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-template<class ioBufferer>
-static bool PutS(ioBufferer & ioBuffer,
+static bool PutS(IOBuffer &ioBuffer,
                  const char8 *s) {
     bool ok = true;
     while (ok && (s[0] != '\0')) {
@@ -467,10 +466,10 @@ static bool PutS(ioBufferer & ioBuffer,
  * @return true if the format is correct, false otherwise.
  */
 template<typename T>
-bool IntegerToStreamPrivate(IOBuffer &ioBuffer,
-                            const T number,
-                            const FormatDescriptor &format,
-                            uint16 actualBitSize = static_cast<uint16>(sizeof(T) * 8u)) {
+static bool IntegerToStreamPrivate(IOBuffer &ioBuffer,
+                                   const T number,
+                                   const FormatDescriptor &format,
+                                   uint16 actualBitSize = static_cast<uint16>(sizeof(T) * 8u)) {
 
     bool ret = false;
 // do not use actual Bit Size if binaryPadded is not set
@@ -656,9 +655,11 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
 
     // if negative invert it and account for the '-' in the size
     if (number < static_cast<T>(0)) {
+
         /*lint -e{9134} -e{501} -e{732} the number is signed */
         positiveNumber = -number;
         numberSize++;
+
     }
     else {
         // if positive copy it and account for the '+' in the size if addPositiveSign set
@@ -671,7 +672,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
     bool ok = true;
 
     // 0x800000....
-    if (positiveNumber < static_cast<T>(0)) {
+    if ((number == Shift::LogicalLeftSafeShift(static_cast<T>(1), static_cast<uint8>((sizeof(T) * 8u) - 1u))) && (number < static_cast<T>(0))) {
         if ((sizeof(T) == 8u) && (maximumSize >= 20u)) {
             if (!PutS(ioBuffer, "-9223372036854775808")) {
                 REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
@@ -679,7 +680,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
             }
             ret = true;
         }
-        if ((sizeof(T) == 4u) && (maximumSize >= 10u)) {
+        if ((sizeof(T) == 4u) && (maximumSize >= 11u)) {
             if (!PutS(ioBuffer, "-2147483648")) {
                 REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;

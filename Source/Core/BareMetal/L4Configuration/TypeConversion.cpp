@@ -34,7 +34,9 @@
 #include "AnyType.h"
 #include "BitSetToInteger.h"
 #include "StreamString.h"
-
+#include "ClassRegistryDatabase.h"
+#include "StructuredDataI.h"
+#include "ValidateBasicType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -69,28 +71,26 @@ extern bool FloatToIntegerGeneric(const float32 * const source,
 /**
  * @brief Saturate the number in input to the maximum or minimum 32-bit float number.
  * @param[in] isPositive specifies if the number must be set to the maximum 32-bit float (true) or to the minimum (false).
- * @param[in] numberOfBits specifies the bit-size of the number in input.
  * @param[in, out] number is the float number to be set.
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename FloatType>
 static bool MinMaxFloat(const bool isPositive,
-                        const uint8 numberOfBits,
                         FloatType &number) {
 
     bool ret = false;
     if (isPositive) {
-        if (numberOfBits == 4u) {
+        if (sizeof(FloatType) == 4u) {
             REPORT_ERROR(ErrorManagement::Warning, "FloatToFloat: Saturation to maximum float");
             uint32 maxFloat32Mask = 0x7f7fffffu;
             ret = MemoryOperationsHelper::Copy(&number, &maxFloat32Mask, 4u);
         }
     }
     else {
-        if (numberOfBits == 4u) {
+        if (sizeof(FloatType) == 4u) {
             REPORT_ERROR(ErrorManagement::Warning, "FloatToFloat: Saturation to minimum float");
-            uint32 maxFloat32Mask = 0xff7fffffu;
-            ret = MemoryOperationsHelper::Copy(&number, &maxFloat32Mask, 4u);
+            uint32 minFloat32Mask = 0xff7fffffu;
+            ret = MemoryOperationsHelper::Copy(&number, &minFloat32Mask, 4u);
         }
     }
     return ret;
@@ -113,17 +113,17 @@ static bool FloatToFloat(const FloatType1 source,
 
     destination = static_cast<FloatType2>(0.0);
 
-    bool isSourceNan = isNaN(source);
-    bool isSourceInf = isInf(source);
+    bool isSourceNan = IsNaN(source);
+    bool isSourceInf = IsInf(source);
     bool ret = ((!isSourceNan) && (!isSourceInf));
     if (ret) {
         FloatType2 test = static_cast<FloatType2>(source);
 
-        bool isTestNan = isNaN(test);
-        bool isTestInf = isInf(test);
+        bool isTestNan = IsNaN(test);
+        bool isTestInf = IsInf(test);
         if ((isTestNan) || (isTestInf)) {
             if (sizeof(FloatType2) < sizeof(FloatType1)) {
-                ret = MinMaxFloat((source > static_cast<FloatType2>(0.0)), static_cast<uint8>(sizeof(FloatType2)), destination);
+                ret = MinMaxFloat((source > static_cast<FloatType2>(0.0)), destination);
             }
             else {
                 ret = false;
@@ -160,12 +160,15 @@ static bool IntegerToType(const AnyType &destination,
 
     bool isSourceSignedInteger = (sourceDescriptor.type == SignedInteger);
     bool isSourceUnsignedInteger = (sourceDescriptor.type == UnsignedInteger);
+    bool isSourcePointer = (sourceDescriptor.type == Pointer);
 
-    if ((isSourceSignedInteger) || (isSourceUnsignedInteger)) {
+    if ((isSourceSignedInteger) || (isSourceUnsignedInteger) || (isSourcePointer)) {
+
+        const char8 *format = (isSourcePointer) ? ("%p") : ("%d");
 
         if (destinationDescriptor.type == SString) {
             StreamString tempString;
-            ret = tempString.PrintFormatted("%d", &source);
+            ret = tempString.PrintFormatted(format, &source);
             if (ret) {
                 uint32 stringLength = static_cast<uint32>(tempString.Size());
                 ret = (reinterpret_cast<StreamString*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
@@ -173,15 +176,17 @@ static bool IntegerToType(const AnyType &destination,
         }
         if (destinationDescriptor.type == CArray) {
             StreamString tempString;
-            ret = tempString.PrintFormatted("%d", &source);
+            ret = tempString.PrintFormatted(format, &source);
             if (ret) {
                 uint32 stringLength = static_cast<uint32>(tempString.Size());
                 uint32 arraySize = destination.GetByteSize();
                 if (stringLength >= arraySize) {
                     REPORT_ERROR(ErrorManagement::Warning, "IntegerToType: The input is too long for the output buffer.");
                     ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
-                    uint32 lastCharIndex = arraySize - 1u;
-                    reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
+                    if (arraySize > 1u) {
+                        uint32 lastCharIndex = arraySize - 1u;
+                        reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
+                    }
                 }
                 else {
                     ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
@@ -190,71 +195,64 @@ static bool IntegerToType(const AnyType &destination,
         }
         if (destinationDescriptor.type == CCString) {
             StreamString tempString;
-            ret = tempString.PrintFormatted("%d", &source);
+            ret = tempString.PrintFormatted(format, &source);
             if (ret) {
-                // in this case the data pointer is the const char*
-                if (destination.GetNumberOfDimensions() == 0u) {
-                    ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
-                }
-                // in this case the data pointer points to the const char *
-                else {
-                    ret = StringHelper::Copy(*reinterpret_cast<char8 **>(destinationPointer), tempString.Buffer());
-                }
+                ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
             }
         }
         if (destinationDescriptor.type == SignedInteger) {
+
+            uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
+            uint8* sourceInput = (sourceDescriptor.type == Pointer) ? (reinterpret_cast<uint8*>(&sourcePointer)) : (reinterpret_cast<uint8*>(sourcePointer));
+            uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
+            uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
             if ((sourceDescriptor.type == SignedInteger)) {
-                uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
-                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
-                uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
-                uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
                 ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), true, sourceInput, sourceShift,
                                      static_cast<uint8>(sourceDescriptor.numberOfBits), true);
-
             }
             if (sourceDescriptor.type == UnsignedInteger) {
-                uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
-                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
-                uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
-                uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), true, sourceInput, sourceShift,
+                                     static_cast<uint8>(sourceDescriptor.numberOfBits), false);
+            }
+            if (sourceDescriptor.type == Pointer) {
                 ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), true, sourceInput, sourceShift,
                                      static_cast<uint8>(sourceDescriptor.numberOfBits), false);
             }
         }
         if (destinationDescriptor.type == UnsignedInteger) {
+            uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
+            uint8* sourceInput = (sourceDescriptor.type == Pointer) ? (reinterpret_cast<uint8*>(&sourcePointer)) : (reinterpret_cast<uint8*>(sourcePointer));
+            uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
+            uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
             if ((sourceDescriptor.type == SignedInteger)) {
-                uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
-                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
-                uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
-                uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
                 ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
                                      static_cast<uint8>(sourceDescriptor.numberOfBits), true);
             }
             if (sourceDescriptor.type == UnsignedInteger) {
-                uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
-                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
-                uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
-                uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
+                                     static_cast<uint8>(sourceDescriptor.numberOfBits), false);
+            }
+            if (sourceDescriptor.type == Pointer) {
                 ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
                                      static_cast<uint8>(sourceDescriptor.numberOfBits), false);
             }
         }
 
         if (destinationDescriptor.type == Float) {
+            uint8* sourceInput = (sourceDescriptor.type == Pointer) ? (reinterpret_cast<uint8*>(&sourcePointer)) : (reinterpret_cast<uint8*>(sourcePointer));
+            float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
             if ((sourceDescriptor.type == SignedInteger)) {
-                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
-                float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
                 ret = IntegerToFloatGeneric(sourceInput, source.GetBitSize(), destinationInput, destination.GetBitSize(), true);
             }
             if (sourceDescriptor.type == UnsignedInteger) {
-                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
-                float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
+                ret = IntegerToFloatGeneric(sourceInput, source.GetBitSize(), destinationInput, destination.GetBitSize(), false);
+            }
+            if (sourceDescriptor.type == Pointer) {
                 ret = IntegerToFloatGeneric(sourceInput, source.GetBitSize(), destinationInput, destination.GetBitSize(), false);
             }
         }
     }
     return ret;
-
 }
 
 /**
@@ -295,8 +293,10 @@ static bool FloatToType(const AnyType &destination,
                 if (stringLength >= arraySize) {
                     REPORT_ERROR(ErrorManagement::Warning, "FloatToType: The input is too long for the output buffer.");
                     ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
-                    uint32 lastCharIndex = arraySize - 1u;
-                    reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
+                    if (arraySize > 1u) {
+                        uint32 lastCharIndex = arraySize - 1u;
+                        reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
+                    }
                 }
                 else {
                     ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
@@ -307,14 +307,7 @@ static bool FloatToType(const AnyType &destination,
             StreamString tempString;
             ret = tempString.PrintFormatted("%E", &source);
             if (ret) {
-                // in this case the data pointer is the const char*
-                if (destination.GetNumberOfDimensions() == 0u) {
-                    ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
-                }
-                // in this case the data pointer points to the const char *
-                else {
-                    ret = StringHelper::Copy(*reinterpret_cast<char8 **>(destinationPointer), tempString.Buffer());
-                }
+                ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
             }
         }
         if (destinationDescriptor.type == SignedInteger) {
@@ -363,14 +356,7 @@ static bool StringToType(const AnyType &destination,
 
     const char8* token = static_cast<const char8 *>(NULL);
     if (sourceDescriptor.type == CCString) {
-        // in this case the data pointer is the const char*
-        if (source.GetNumberOfDimensions() == 0u) {
-            token = reinterpret_cast<const char8*>(sourcePointer);
-        }
-        // in this case the data pointer points to the const char *
-        else {
-            token = *reinterpret_cast<const char8**>(sourcePointer);
-        }
+        token = reinterpret_cast<const char8*>(sourcePointer);
     }
     if (sourceDescriptor.type == CArray) {
         token = reinterpret_cast<const char8*>(sourcePointer);
@@ -387,32 +373,28 @@ static bool StringToType(const AnyType &destination,
         }
         if (destinationDescriptor.type == CArray) {
             uint32 arraySize = destination.GetByteSize();
+            // case char
             if (tokenLength >= arraySize) {
                 REPORT_ERROR(ErrorManagement::Warning, "StringToType: The input is too long for the output buffer.");
                 ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), token, arraySize);
-                uint32 lastCharIndex = arraySize - 1u;
-                reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
+                if(arraySize>1u) {
+                    uint32 lastCharIndex = arraySize - 1u;
+                    reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
+                }
             }
             else {
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
             }
         }
         if (destinationDescriptor.type == CCString) {
-            // in this case the data pointer is the const char*
-            if (destination.GetNumberOfDimensions() == 0u) {
-                ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
-            }
-            // in this case the data pointer points to the const char *
-            else {
-                ret = StringHelper::Copy(*reinterpret_cast<char8 **>(destinationPointer), token);
-            }
+            ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
+
         }
         if (destinationDescriptor.type == SignedInteger) {
             ret = StringToIntegerGeneric(token, reinterpret_cast<uint8*>(destinationPointer), destination.GetBitSize(), true);
 
         }
         if (destinationDescriptor.type == UnsignedInteger) {
-
             ret = StringToIntegerGeneric(token, reinterpret_cast<uint8*>(destinationPointer), destination.GetBitSize(), false);
         }
         if (destinationDescriptor.type == Float) {
@@ -420,6 +402,314 @@ static bool StringToType(const AnyType &destination,
         }
     }
     return ret;
+}
+
+/**
+ * @brief Performs the conversion between two compatible objects.
+ * @param[out] destination is the output.
+ * @param[in] source is the input.
+ * @return true if the conversion succeeds, false otherwise.
+ * @pre
+ *   The objects represented by \a source and \a destination must be introspectable and registered into ClassRegistryDatabase.
+ */
+static bool ObjectToObject(const AnyType &destination,
+                           const AnyType &source) {
+
+    bool ret = false;
+    const TypeDescriptor sourceDescriptor = source.GetTypeDescriptor();
+    const TypeDescriptor destinationDescriptor = destination.GetTypeDescriptor();
+    const ClassRegistryItem *sourceItem = ClassRegistryDatabase::Instance()->Peek(sourceDescriptor.structuredDataIdCode);
+    const ClassRegistryItem *destinationItem = ClassRegistryDatabase::Instance()->Peek(destinationDescriptor.structuredDataIdCode);
+    if ((sourceItem != NULL) && (destinationItem != NULL)) {
+        const Introspection *sourceIntrospection=sourceItem->GetIntrospection();
+        const Introspection *destinationIntrospection=destinationItem->GetIntrospection();
+        if ((sourceIntrospection != NULL) && (destinationIntrospection != NULL)) {
+            if(sourceIntrospection->GetNumberOfMembers()==destinationIntrospection->GetNumberOfMembers()) {
+                uint32 numberOfMembers=sourceIntrospection->GetNumberOfMembers();
+                ret=true;
+                for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
+                    IntrospectionEntry sourceMemberIntrospection=(*sourceIntrospection)[i];
+                    IntrospectionEntry destinationMemberIntrospection=(*destinationIntrospection)[i];
+
+                    TypeDescriptor sourceMemberDescriptor=sourceMemberIntrospection.GetMemberTypeDescriptor();
+                    TypeDescriptor destinationMemberDescriptor=destinationMemberIntrospection.GetMemberTypeDescriptor();
+
+                    TypeDescriptor newSourceDescriptor=sourceMemberDescriptor;
+                    // source is a pointer!
+                    if(sourceMemberIntrospection.GetMemberPointerLevel()>0u) {
+                        newSourceDescriptor=TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*))*8u);
+                    }
+
+                    TypeDescriptor newDestinationDescriptor=destinationMemberDescriptor;
+                    // destination is a pointer!
+                    if(destinationMemberIntrospection.GetMemberPointerLevel()>0u) {
+                        newDestinationDescriptor=TypeDescriptor(false, UnsignedInteger,static_cast<uint8>(sizeof(void*))*8u);
+                    }
+
+                    char8* sourceMemberDataPointer=&(static_cast<char8*>(source.GetDataPointer())[sourceMemberIntrospection.GetMemberByteOffset()]);
+
+                    AnyType newSource(newSourceDescriptor, 0u, sourceMemberDataPointer);
+                    // special case char* string because is a pointer
+                    if(newSourceDescriptor==CharString) {
+                        if(sourceMemberIntrospection.GetNumberOfDimensions()==0u) {
+                            newSource=AnyType(*reinterpret_cast<char8**>(sourceMemberDataPointer));
+                        }
+                    }
+
+                    char8* destinationMemberDataPointer=&(static_cast<char8*>(destination.GetDataPointer())[destinationMemberIntrospection.GetMemberByteOffset()]);
+                    AnyType newDestination(newDestinationDescriptor, 0u, destinationMemberDataPointer);
+
+                    // special case char* string because is a pointer
+                    if(newDestinationDescriptor==CharString) {
+                        if(destinationMemberIntrospection.GetNumberOfDimensions()==0u) {
+                            newDestination=AnyType(*reinterpret_cast<char8**>(destinationMemberDataPointer));
+                        }
+                    }
+
+                    for(uint32 j=0u; j<3u; j++) {
+                        newSource.SetNumberOfElements(j, sourceMemberIntrospection.GetNumberOfElements(j));
+                        newDestination.SetNumberOfElements(j, destinationMemberIntrospection.GetNumberOfElements(j));
+                    }
+                    newSource.SetNumberOfDimensions(sourceMemberIntrospection.GetNumberOfDimensions());
+                    newDestination.SetNumberOfDimensions(destinationMemberIntrospection.GetNumberOfDimensions());
+                    // call the conversion recursively !
+                    ret= TypeConvert(newDestination, newSource);
+                    if(ret) {
+                        // validate the output
+                        ret=ValidateBasicType(newDestination, destinationMemberIntrospection.GetMemberAttributes());
+                    }
+                }
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::FatalError,"ObjectToObject: The classes does not have the same number of members");
+            }
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,"ObjectToObject: Introspection not found for the specified classes");
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError,"ObjectToObject: Class not registered");
+    }
+    return ret;
+}
+
+/**
+ * @brief Performs the conversion from a StructuredDataI to a compatible object.
+ * @details If the structure represented by the StructuredDataI node is introspectable its members
+ * will be searched by name, otherwise they will be considered as they are sorted inside the node.
+ * @param[out] destination is the output.
+ * @param[in] source is the input.
+ * @return true if the conversion succeeds, false otherwise.
+ * @pre
+ *   At least the object represented by \a destination must be introspectable.
+ */
+static bool StructuredDataToObject(const AnyType &destination,
+                                   const AnyType &source) {
+
+    bool ret = false;
+    StructuredDataI* sourcePointer = reinterpret_cast<StructuredDataI*>(source.GetDataPointer());
+    const TypeDescriptor destinationDescriptor = destination.GetTypeDescriptor();
+    StreamString sourceStructName;
+    bool isSourceIntrospection = true;
+    const ClassRegistryItem *sourceItem = NULL_PTR(const ClassRegistryItem *);
+    uint32 beginIndex = 0u;
+    // if the Class field does not exists, the introspection for the source does not exists
+    if (!sourcePointer->Read("Class", sourceStructName)) {
+        isSourceIntrospection = false;
+    }
+    else {
+        // Assume that Class is the first field
+        beginIndex++;
+        sourceItem = ClassRegistryDatabase::Instance()->Find(sourceStructName.Buffer());
+        isSourceIntrospection = (sourceItem != NULL);
+    }
+    const ClassRegistryItem *destinationItem = ClassRegistryDatabase::Instance()->Peek(destinationDescriptor.structuredDataIdCode);
+
+    if (destinationItem != NULL) {
+        const Introspection *sourceIntrospection=NULL_PTR(const Introspection *);
+        if(isSourceIntrospection) {
+            sourceIntrospection=sourceItem->GetIntrospection();
+            isSourceIntrospection=(sourceIntrospection != NULL);
+        }
+        const Introspection *destinationIntrospection=destinationItem->GetIntrospection();
+        if (destinationIntrospection != NULL) {
+            uint32 numberOfFields = sourcePointer->GetNumberOfChildren();
+
+            if(isSourceIntrospection) {
+                // if there is the introspection get the number of members
+                numberOfFields=sourceIntrospection->GetNumberOfMembers();
+                beginIndex=0u;
+            }
+            uint32 numberOfMembers=(numberOfFields-beginIndex);
+            if(numberOfMembers==destinationIntrospection->GetNumberOfMembers()) {
+
+                ret=true;
+                for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
+                    IntrospectionEntry destinationMemberIntrospection=(*destinationIntrospection)[i];
+
+                    TypeDescriptor destinationMemberDescriptor=destinationMemberIntrospection.GetMemberTypeDescriptor();
+
+                    TypeDescriptor newDestinationDescriptor=destinationMemberDescriptor;
+                    // destination is a pointer!
+                    if(destinationMemberIntrospection.GetMemberPointerLevel()>0u) {
+                        newDestinationDescriptor=TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*))*8u);
+                    }
+
+                    char8* destinationMemberDataPointer=&(static_cast<char8*>(destination.GetDataPointer())[destinationMemberIntrospection.GetMemberByteOffset()]);
+                    AnyType newDestination(newDestinationDescriptor, 0u, destinationMemberDataPointer);
+
+                    // special case char* string because is a pointer
+                    if(newDestinationDescriptor==CharString) {
+                        if(destinationMemberIntrospection.GetNumberOfDimensions()==0u) {
+                            newDestination=AnyType(*reinterpret_cast<char8**>(destinationMemberDataPointer));
+                        }
+                    }
+
+                    for(uint32 j=0u; j<3u; j++) {
+                        newDestination.SetNumberOfElements(j, destinationMemberIntrospection.GetNumberOfElements(j));
+                    }
+                    newDestination.SetNumberOfDimensions(destinationMemberIntrospection.GetNumberOfDimensions());
+
+                    AnyType newSource;
+                    const char8* childName=NULL_PTR(const char8*);
+                    // get the member AnyType from the database if the member is a basic type!
+                    if(isSourceIntrospection) {
+                        // if the introspection for the source class exists find the member name
+                        IntrospectionEntry sourceMemberIntrospection=(*sourceIntrospection)[i];
+                        childName=sourceMemberIntrospection.GetMemberName();
+                        newSource=sourcePointer->GetType(childName);
+                    }
+                    else {
+                        childName=sourcePointer->GetChildName(i+beginIndex);
+                        newSource=sourcePointer->GetType(childName);
+                    }
+
+                    if(newSource.GetDataPointer()==NULL) {
+                        // could be a structured node!
+                        ret=sourcePointer->MoveRelative(childName);
+                        if(ret) {
+                            // call the conversion recursively !
+                            ret= TypeConvert(newDestination, source);
+                            if(!sourcePointer->MoveToAncestor(1u)) {
+                                ret=false;
+                            }
+                        }
+                    }
+                    // could be a leaf!
+                    else {
+                        // call the conversion recursively !
+                        ret= TypeConvert(newDestination, newSource);
+                        if(ret) {
+                            // validate the output
+                            ret=ValidateBasicType(newDestination, destinationMemberIntrospection.GetMemberAttributes());
+                        }
+                    }
+                }
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::FatalError,"StructuredDataToObject: The classes does not have the same number of members");
+            }
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,"StructuredDataToObject: Introspection not found for the specified classes");
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError,"StructuredDataToObject: Class not registered");
+    }
+
+    return ret;
+}
+
+/**
+ * @Performs the conversion from an object to a StructuredDataI node.
+ * @param[out] destination is the output.
+ * @param[in] source is the input.
+ * @return true if the conversion succeeds, false otherwise.
+ * @pre
+ *   The object represented by source must be introspectable.
+ */
+static bool ObjectToStructuredData(const AnyType &destination,
+                                   const AnyType &source) {
+
+    bool ret = false;
+    const TypeDescriptor sourceDescriptor = source.GetTypeDescriptor();
+    const ClassRegistryItem *sourceItem = ClassRegistryDatabase::Instance()->Peek(sourceDescriptor.structuredDataIdCode);
+
+    StructuredDataI* destinationPointer = reinterpret_cast<StructuredDataI*>(destination.GetDataPointer());
+
+    if (sourceItem != NULL) {
+        const Introspection *sourceIntrospection=sourceItem->GetIntrospection();
+        if (sourceIntrospection != NULL) {
+            if(destinationPointer->Write("Class", sourceItem->GetClassProperties()->GetName())) {
+                uint32 numberOfMembers=sourceIntrospection->GetNumberOfMembers();
+                ret=true;
+                for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
+                    IntrospectionEntry sourceMemberIntrospection=(*sourceIntrospection)[i];
+
+                    TypeDescriptor sourceMemberDescriptor=sourceMemberIntrospection.GetMemberTypeDescriptor();
+
+                    TypeDescriptor newSourceDescriptor=sourceMemberDescriptor;
+                    // source is a pointer!
+                    if(sourceMemberIntrospection.GetMemberPointerLevel()>0u) {
+                        newSourceDescriptor=TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*))*8u);
+                    }
+
+                    char8* sourceMemberDataPointer=&(static_cast<char8*>(source.GetDataPointer())[sourceMemberIntrospection.GetMemberByteOffset()]);
+                    AnyType newSource(newSourceDescriptor, 0u, sourceMemberDataPointer);
+                    // special case char* string because is a pointer
+                    if(newSourceDescriptor==CharString) {
+                        if(sourceMemberIntrospection.GetNumberOfDimensions()==0u) {
+                            newSource=AnyType(*reinterpret_cast<char8**>(sourceMemberDataPointer));
+                        }
+                    }
+                    for(uint32 j=0u; j<3u; j++) {
+                        newSource.SetNumberOfElements(j, sourceMemberIntrospection.GetNumberOfElements(j));
+                    }
+                    newSource.SetNumberOfDimensions(sourceMemberIntrospection.GetNumberOfDimensions());
+
+                    bool isNewSourceStructured=newSourceDescriptor.isStructuredData;
+                    if(isNewSourceStructured) {
+                        // structured data again! Create a node and go recursively
+                        ret=destinationPointer->CreateRelative(sourceMemberIntrospection.GetMemberName());
+                        if(ret) {
+                            ret=TypeConvert(destination, newSource);
+                            if(!destinationPointer->MoveToAncestor(1u)) {
+                                ret=false;
+                            }
+                        }
+                    }
+                    else {
+                        // in this case only write
+                        ret=destinationPointer->Write(sourceMemberIntrospection.GetMemberName(), newSource);
+                    }
+                }
+            }
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,"ObjectToStructuredData: Introspection not found for the specified class");
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError,"ObjectToStructuredData: Class not registered");
+    }
+
+    return ret;
+}
+
+/**
+ * @brief Performs the conversion from a StructuredDataI node to a StructuredDataI node.
+ * @param[out] destination is the output.
+ * @param[in] source is the input.
+ * @return true if the conversion succeeds, false otherwise.
+ */
+static bool StructuredDataToStructuredData(const AnyType &destination,
+                                           const AnyType &source) {
+    StructuredDataI* sourcePointer = reinterpret_cast<StructuredDataI*>(source.GetDataPointer());
+    StructuredDataI* destinationPointer = reinterpret_cast<StructuredDataI*>(destination.GetDataPointer());
+
+    return sourcePointer->Copy(*destinationPointer);
 }
 
 /**
@@ -439,40 +729,80 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
 
     bool ret = false;
 
-    if (sourceDescriptor == destinationDescriptor) {
-        if (sourceDescriptor.type == SString) {
-            StreamString *stringSource = reinterpret_cast<StreamString*>(sourcePointer);
-            StreamString *stringDestination = reinterpret_cast<StreamString*>(destinationPointer);
-            uint32 stringLength = static_cast<uint32>(stringSource->Size());
-            ret = stringDestination->Write(stringSource->Buffer(), stringLength);
+    bool isSourceStructured = sourceDescriptor.isStructuredData;
+    bool isDestinationStructured = destinationDescriptor.isStructuredData;
+
+    // case source is a StructuredDataNode
+    if (sourceDescriptor == StructuredDataInterfaceType) {
+
+        if (isDestinationStructured) {
+            ret = StructuredDataToObject(destination, source);
         }
-        else if (sourceDescriptor.type == CCString) {
-            if (source.GetNumberOfDimensions() == 0u) {
+        else if (destinationDescriptor == StructuredDataInterfaceType) {
+            ret = StructuredDataToStructuredData(destination, source);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,
+                         "ScalarBasicTypeConvert: No known conversion StructuredDataI to basic type. Use StructuredDataI::Read(*)");
+        }
+    }
+
+    // case source is a StructuredDataNode
+    else if (destinationDescriptor == StructuredDataInterfaceType) {
+
+        if (isSourceStructured) {
+            ret = ObjectToStructuredData(destination, source);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,
+                         "ScalarBasicTypeConvert: No known conversion from basic type to StructuredDataI. Use StructuredDataI::Write(*)");
+        }
+    }
+    else if ((isSourceStructured) && (isDestinationStructured)) {
+
+        ret = ObjectToObject(destination, source);
+    }
+    // source and descriptor are not StructuredDataNode
+    else if ((!isSourceStructured) && (!isDestinationStructured)) {
+
+        if (sourceDescriptor == destinationDescriptor) {
+            if (sourceDescriptor.type == SString) {
+                StreamString *stringSource = reinterpret_cast<StreamString*>(sourcePointer);
+                StreamString *stringDestination = reinterpret_cast<StreamString*>(destinationPointer);
+                uint32 stringLength = static_cast<uint32>(stringSource->Size());
+                ret = stringDestination->Write(stringSource->Buffer(), stringLength);
+            }
+            else if (sourceDescriptor.type == CCString) {
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), reinterpret_cast<const char8 *>(sourcePointer));
             }
+            else if (sourceDescriptor.type == Pointer) {
+                REPORT_ERROR(ErrorManagement::UnsupportedFeature,
+                             "ScalarBasicTypeConvert: Conversion to pointer unsupported. Try to cast the pointer to uintp");
+            }
             else {
-                ret = StringHelper::Copy(*reinterpret_cast<char8 **>(destinationPointer), *reinterpret_cast<const char8 **>(sourcePointer));
+                uint32 copySize = source.GetByteSize();
+                ret = MemoryOperationsHelper::Copy(destinationPointer, sourcePointer, copySize);
             }
         }
         else {
-            uint32 copySize = static_cast<uint32>(sourceDescriptor.numberOfBits) / 8u;
-            ret = MemoryOperationsHelper::Copy(destinationPointer, sourcePointer, copySize);
+            bool isSourceSignedInteger = (sourceDescriptor.type == SignedInteger);
+            bool isSourceUnsignedInteger = (sourceDescriptor.type == UnsignedInteger);
+            bool isSourcePointer = (sourceDescriptor.type == Pointer);
+
+            if ((isSourceSignedInteger) || (isSourceUnsignedInteger) || (isSourcePointer)) {
+                ret = IntegerToType(destination, source);
+            }
+            else if (sourceDescriptor.type == Float) {
+                ret = FloatToType(destination, source);
+            }
+            else {
+                ret = StringToType(destination, source);
+            }
+
         }
     }
     else {
-        bool isSourceSignedInteger = (sourceDescriptor.type == SignedInteger);
-        bool isSourceUnsignedInteger = (sourceDescriptor.type == UnsignedInteger);
-
-        if ((isSourceSignedInteger) || (isSourceUnsignedInteger)) {
-            ret = IntegerToType(destination, source);
-        }
-        else if (sourceDescriptor.type == Float) {
-            ret = FloatToType(destination, source);
-        }
-        else {
-            ret = StringToType(destination, source);
-        }
-
+        REPORT_ERROR(ErrorManagement::FatalError, "ScalarBasicTypeConvert: No known conversion between types in input");
     }
 
     return ret;
@@ -524,10 +854,24 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
             destinationIndex = 0u;
         }
 
-        AnyType elementSource(source);
-        elementSource.SetDataPointer(&sourceArray[sourceIndex]);
-        AnyType elementDestination(destination);
-        elementDestination.SetDataPointer(&destinationArray[destinationIndex]);
+        char8 *newSourcePointer = &sourceArray[sourceIndex];
+        AnyType elementSource(source.GetTypeDescriptor(), source.GetBitAddress(), newSourcePointer);
+        // special case of c-string
+        if (source.GetTypeDescriptor() == CharString) {
+            elementSource = AnyType(*reinterpret_cast<char8**>(newSourcePointer));
+        }
+
+        // special case of pointer
+        if (source.GetTypeDescriptor().type == Pointer) {
+            elementSource = AnyType(*reinterpret_cast<void**>(newSourcePointer));
+        }
+
+        char8 *newDestinationPointer = &destinationArray[destinationIndex];
+        AnyType elementDestination(destination.GetTypeDescriptor(), destination.GetBitAddress(), newDestinationPointer);
+        // special case of c-string
+        if (destination.GetTypeDescriptor() == CharString) {
+            elementDestination = AnyType(*reinterpret_cast<char8**>(newDestinationPointer));
+        }
 
         if (!ScalarBasicTypeConvert(elementDestination, elementSource)) {
             ok = false;

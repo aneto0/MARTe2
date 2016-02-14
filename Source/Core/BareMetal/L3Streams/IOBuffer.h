@@ -44,7 +44,8 @@
 namespace MARTe {
 
 /**
- * @brief The most generic buffer used by streams.
+ * @brief Class which represents a generic input output buffer intended to be
+ * used by any kind of streams.
  *
  * @details This class represents a naked memory buffer with a pointer at the
  * beginning. It adds a movable pointer across the memory area and attributes
@@ -376,6 +377,7 @@ public:
             uint32 outputBufferSize,
             char8 &saveTerminator,
             const char8 * skipCharacters);
+
     /**
      * @brief Reads a token from the buffer and writes it on an output buffer.
      * @details Extracts a token from the buffer into a string data until a

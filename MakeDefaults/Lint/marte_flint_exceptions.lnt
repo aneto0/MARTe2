@@ -198,6 +198,15 @@
 -esym(1960, MARTe::ReferenceT<<1>>::Init*)
 -esym(1960, MARTe::ReferenceT<<1>>::RemoveReference*)
 -esym(1960, MARTe::BitBoolean*::operator=*)
+-esym(1960, MARTe::TimeStamp::*)
+
+/*
+ * Rule flexelint 1960 
+ * Rule MISRA 0-1-8
+ * Void functions must have an external effect. 
+ * Justification: In Linux EndThread is not implemented.
+ */
+-esym(1960, MARTe::Threads::EndThread*) 
 
 /*
  * Rule flexelint 1784. 

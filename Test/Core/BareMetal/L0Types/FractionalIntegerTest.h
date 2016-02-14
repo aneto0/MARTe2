@@ -41,6 +41,7 @@ using namespace MARTe;
 
 /**
  * @brief Tests all the FractionalInteger functions.
+ * @tparam T TODO Define T
  */
 template<typename T>
 class FractionalIntegerTest {
@@ -49,6 +50,7 @@ public:
     /**
      * @brief Tests the cast to the base type using for FractionalInteger with a bit size
      * minor than the input size.
+     * @tparam T2 TODO Define T2
      * @param[in] input specifies the input type.
      * @return true if the maximum input value is saturated to the maximum FractionalInteger value and
      * if the minimum input value is saturated to the minimum FractionalInteger value. If this type is
@@ -60,6 +62,7 @@ public:
     /**
      * @brief Tests the cast to the base type using for FractionalInteger a bit size
      * greater than the input size.
+     * @tparam T2 TODO Define T2
      * @param[in] input specifies the input type.
      * @return true if the FractionalInteger value is equal to the maximum input value and
      * if the FractionalInteger value is equal to the minimum input value is saturated to the minimum. If this type is

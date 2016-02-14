@@ -71,6 +71,10 @@ public:
 
     /**
      * @see StructuredDataI::Read
+     * @details It is possible read directly a structure or a class if
+     * the node with the \a name provided has a compatible structure.
+     * In this case the class must be introspectable and registered into
+     * the ConfigurationDatabase.
      */
     virtual bool Read(const char8 * const name,
                       const AnyType &value);
@@ -82,6 +86,9 @@ public:
 
     /**
      * @see StructuredDataI::Write
+     * @details It is possible write directly a structure or a class
+     * if it is introspectable and registered into
+     * the ConfigurationDatabase.
      */
     virtual bool Write(const char8 * const name,
                        const AnyType &value);
@@ -130,6 +137,21 @@ public:
      * @see StructuredDataI::Delete
      */
     virtual bool Delete(const char8 * const name);
+
+    /**
+     * @brief StructuredDataI::GetName
+     */
+    virtual const char8 *GetName();
+
+    /**
+     * @brief StructuredDataI::GetChildName
+     */
+    virtual const char8 *GetChildName(const uint32 index);
+
+    /**
+     * @brief StructuredDataI::GetNumberOfChildren
+     */
+    virtual uint32 GetNumberOfChildren();
 
     /**
      * @brief Locks the shared semaphore.

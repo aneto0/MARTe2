@@ -142,16 +142,16 @@ void SetPriority(const ThreadIdentifier &threadId,
 
             uint32 priorityClassNumber = 0u;
             switch (priorityClass) {
-            case UnknownPriorityClass:
+                case UnknownPriorityClass:
                 priorityClassNumber = 0u;
                 break;
-            case IdlePriorityClass:
+                case IdlePriorityClass:
                 priorityClassNumber = 1u;
                 break;
-            case NormalPriorityClass:
+                case NormalPriorityClass:
                 priorityClassNumber = 2u;
                 break;
-            case RealTimePriorityClass:
+                case RealTimePriorityClass:
                 priorityClassNumber = 3u;
                 break;
             }
@@ -342,6 +342,9 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         }
     }
     return threadId;
+}
+
+void EndThread() {
 }
 
 const char8 *Name(const ThreadIdentifier &threadId) {

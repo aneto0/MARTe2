@@ -24,9 +24,12 @@
 #
 #############################################################
 
-OBJSX=  ClassPropertiesTest.x \
+OBJSX=  AnyTypeTest.x\
+		ClassPropertiesTest.x \
 		ClassRegistryDatabaseTest.x \
 		ClassRegistryItemTest.x \
+		IntrospectionEntryTest.x\
+		IntrospectionTest.x \
 		ObjectTest.x \
 		ObjectTestHelper.x \
 		ReferenceContainerFilterObjectNameTest.x \

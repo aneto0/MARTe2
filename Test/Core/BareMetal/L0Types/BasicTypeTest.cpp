@@ -205,7 +205,6 @@ bool BasicTypeTest::TestConstructorChar8(){
 
     retVal = (btLarge.operator unsigned char() == 15);
     retVal &= (btMedium.operator unsigned char() == x2);
-    retVal &= (btSmall.operator unsigned char() == 0);
 
     return retVal;
 }

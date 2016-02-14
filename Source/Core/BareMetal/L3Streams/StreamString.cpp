@@ -155,13 +155,23 @@ bool StreamString::Seek(const uint64 pos) {
             REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
         }
         retval = false;
+        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Desired Position greater than current size: moved to end");
     }
 
     return (retval) ? (buffer.Seek(static_cast<uint32>(pos))) : false;
 }
 
-bool StreamString::RelativeSeek(const int32 deltaPos) {
-    return buffer.RelativeSeek(deltaPos);
+bool StreamString::RelativeSeek(const int64 deltaPos) {
+
+    bool ret = true;
+    if ((deltaPos > MAX_INT32) || (deltaPos < MIN_INT32)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "RelativeSeek: The seek offset should be in the int32 range");
+        ret = false;
+    }
+    else {
+        ret = buffer.RelativeSeek(static_cast<int32>(deltaPos));
+    }
+    return ret;
 }
 
 uint64 StreamString::Position() {

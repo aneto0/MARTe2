@@ -123,6 +123,7 @@ BasicConsole::~BasicConsole() {
     if (handle != static_cast<BasicConsoleProperties *>(NULL)) {
         /*lint -e{534} possible closure failure is not handled in the destructor.*/
         /*lint -e{1551} exception not caught.*/
+        /*lint -e{1506} [MISRA C++ Rule 5-0-4] remove the warning of calling Close() inside destructor.*/
         Close();
         delete handle;
     }
@@ -466,7 +467,7 @@ bool BasicConsole::Seek(const uint64 pos) {
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: console cannot seek. */
-bool BasicConsole::RelativeSeek(const int32 deltaPos) {
+bool BasicConsole::RelativeSeek(const int64 deltaPos) {
     return false;
 }
 

@@ -24,8 +24,7 @@
 #
 #############################################################
 
-OBJSX=	AnyTypeTest.x \
-		BitSetToIntegerTest.x \
+OBJSX=	BitSetToIntegerTest.x \
 		BufferedStreamIOBufferTest.x \
 		BufferedStreamITest.x \
 		CharBufferTest.x \
@@ -47,6 +46,7 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
 INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 INCLUDES += -I../L2Objects
 
 all: $(OBJS) \

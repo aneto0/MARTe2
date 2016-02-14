@@ -89,7 +89,7 @@ bool SingleBufferedStreamTest::TestRead(uint32 bufferSize,
     while (n < 2) {
         stream.Seek(0);
         uint32 size = readSize;
-        char8 *bufferWrite = (char8 *) malloc(readSize);
+        char8 *bufferWrite = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(readSize);
         uint32 i = 0;
         for (i = 0; i < readSize; i++) {
             bufferWrite[i] = i * i;
@@ -105,7 +105,7 @@ bool SingleBufferedStreamTest::TestRead(uint32 bufferSize,
         ok &= (stream.Position() == readSize);
         stream.Seek(0);
 
-        char8 *bufferRead = (char8 *) malloc(readSize);
+        char8 *bufferRead = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(readSize);
         size = readSize;
 
         start = 0;
@@ -121,8 +121,8 @@ bool SingleBufferedStreamTest::TestRead(uint32 bufferSize,
         ok &= (StringHelper::Compare(bufferRead, bufferWrite) == 0);
         ok &= (stream.Position() == readSize);
 
-        free(bufferRead);
-        free(bufferWrite);
+        GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferRead));
+        GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferWrite));
         n++;
     }
     return ok;
@@ -169,7 +169,7 @@ bool SingleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSiz
     DummySingleBufferedStream stream(true);
     stream.SetBufferSize(bufferSize);
 
-    char8 *bufferWrite = (char8 *) malloc(writeSize);
+    char8 *bufferWrite = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(writeSize);
     uint32 i = 0;
     for (i = 0; i < writeSize; i++) {
         bufferWrite[i] = i * i;
@@ -189,7 +189,7 @@ bool SingleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSiz
 
     bool ok = (stream.Position() == writeSize);
     stream.Seek(0);
-    char8 *bufferRead = (char8 *) malloc(writeSize);
+    char8 *bufferRead = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(writeSize);
     size = writeSize;
     start = 0;
     while ((size > 0) && (stream.Read(bufferRead + start, size))) {
@@ -204,8 +204,8 @@ bool SingleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSiz
     ok &= (StringHelper::Compare(bufferRead, bufferWrite) == 0);
     ok &= (stream.Position() == writeSize);
 
-    free(bufferRead);
-    free(bufferWrite);
+    GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferRead));
+    GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferWrite));
     return ok;
 }
 
@@ -271,6 +271,51 @@ bool SingleBufferedStreamTest::TestRelativeSeek() {
     return ok;
 }
 
+bool SingleBufferedStreamTest::TestRelativeSeek_OutOfInt32Range() {
+    DummySingleBufferedStream stream(true);
+    stream.SetBufferSize(64);
+
+    uint32 size = 32;
+    char buffer[32];
+    uint32 i = 0;
+    for (i = 0; i < size; i++) {
+        buffer[i] = i;
+    }
+    stream.Write(buffer, size);
+
+    // go in read mode
+    stream.Seek(0);
+    uint32 sizeRead = 1;
+    stream.Read(buffer, sizeRead);
+    int64 toMuchSeek = MAX_INT32;
+    toMuchSeek++;
+    // call directly OSSeek
+    stream.RelativeSeek(toMuchSeek);
+    // this depends by OSSeek in DummySingleBufferedStream implementation
+    return stream.OSPosition()==(uint64)(toMuchSeek+sizeRead);
+}
+
+bool SingleBufferedStreamTest::TestRelativeSeek_NegativeFinalPosition() {
+    DummySingleBufferedStream stream(true);
+    stream.SetBufferSize(64);
+
+    uint32 size = 32;
+    char buffer[32];
+    uint32 i = 0;
+    for (i = 0; i < size; i++) {
+        buffer[i] = i;
+    }
+    stream.Write(buffer, size);
+
+    // go in read mode
+    stream.Seek(0);
+    uint32 sizeRead = 12;
+    stream.Read(buffer, sizeRead);
+    int32 negativeSeek=sizeRead;
+    negativeSeek++;
+    return !stream.RelativeSeek(-negativeSeek);
+}
+
 bool SingleBufferedStreamTest::TestPosition() {
     DummySingleBufferedStream stream(true);
     stream.SetBufferSize(64);
@@ -320,7 +365,7 @@ bool SingleBufferedStreamTest::TestRelativeSeek_OverflowInternalBuffer(uint32 bu
     DummySingleBufferedStream stream(true);
     stream.SetBufferSize(bufferSize);
 
-    char8 *bufferWrite = (char8 *) malloc(writeSize);
+    char8 *bufferWrite = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(writeSize);
     uint32 i = 0;
     for (i = 0; i < writeSize; i++) {
         bufferWrite[i] = i * i;
@@ -340,6 +385,6 @@ bool SingleBufferedStreamTest::TestRelativeSeek_OverflowInternalBuffer(uint32 bu
         stream.RelativeSeek(-1);
     }
 
-    free(bufferWrite);
+    GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferWrite));
     return (stream.Position() == writeSize);
 }

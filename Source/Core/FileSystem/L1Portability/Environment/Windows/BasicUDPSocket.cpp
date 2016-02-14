@@ -273,7 +273,7 @@ bool BasicUDPSocket::Seek(const uint64 pos) {
     return false;
 }
 
-bool BasicUDPSocket::RelativeSeek(const int32 deltaPos) {
+bool BasicUDPSocket::RelativeSeek(const int64 deltaPos) {
     return false;
 }
 

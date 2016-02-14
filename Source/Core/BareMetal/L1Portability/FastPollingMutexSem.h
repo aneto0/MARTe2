@@ -39,7 +39,6 @@
 #include "HighResolutionTimer.h"
 #include "TimeoutType.h"
 #include "Sleep.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -47,7 +46,7 @@
 namespace MARTe {
 
 /**
- * @brief Implementation of semaphore based on spin locks.
+ * @brief This class is a semaphore based on spin locks.
  *
  * @details This semaphore is not recursive i.e is the same thread locks two times sequentially causes a deadlock.
  * Moreover a thread can unlock the semaphore locked by another thread.

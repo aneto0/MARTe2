@@ -38,7 +38,7 @@
 #include "GlobalObjectsDatabase.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Local Module declaration                         */
+/*                           Local Module declaration                        */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
@@ -51,7 +51,11 @@ namespace HeapManager /*Internals*/{
 static const int32 MaximumNumberOfHeaps = 16;
 
 /**
- * @brief Hidden class to store HeapI pointers.
+ * @brief Class to store HeapI pointers.
+ * @details This class allows to store and recover pointers to HeapI objects,
+ * which are addressable by a numeric index. It also offers methods for
+ * locking the access to the database. It is intended to be created following
+ * the singleton pattern by means of the Instance method.
  */
 class HeapDatabase: public GlobalObjectI {
 

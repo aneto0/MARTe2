@@ -373,6 +373,20 @@ bool StreamMemoryReferenceTest::TestRelativeSeek(const uint32 bufferSize,
 
 }
 
+bool StreamMemoryReferenceTest::TestRelativeSeek_OutOfInt32Range(){
+
+    const char8 *bufferIn = "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
+    const uint32 size = StringHelper::Length(bufferIn);
+
+    StreamMemoryReference sMR(bufferIn, size);
+
+    int64 toMuchSeek=MAX_INT32;
+    toMuchSeek++;
+
+    return !sMR.RelativeSeek(toMuchSeek);
+}
+
+
 bool StreamMemoryReferenceTest::TestPosition(const uint32 bufferSize,
                                              uint32 finalPos) {
 

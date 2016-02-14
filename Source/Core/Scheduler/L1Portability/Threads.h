@@ -151,6 +151,12 @@ uint32 exceptionHandlerBehaviour = ExceptionHandler::NotHandled,
 ProcessorType runOnCPUs = UndefinedCPUs);
 
 /**
+ * @brief Deallocated the thread resources.
+ */
+DLL_API void EndThread();
+
+
+/**
  * @brief Gets the current thread id;
  * @return the current thread id.
  */

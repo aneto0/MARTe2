@@ -33,13 +33,12 @@
 /*---------------------------------------------------------------------------*/
 #include "TypeConversion.h"
 #include "StreamString.h"
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
-
 
 /**
  * @brief A table node used to test the TypeConvert function between basic elements.
@@ -71,7 +70,6 @@ struct TypeToTypeMatrixTableTest {
     T2 result[nRows][nCols];
     bool go;
 };
-
 
 /**
  * @brief Tests all the TypeConversion functions.
@@ -224,6 +222,24 @@ public:
     bool TestTypeConvertMatrixHeapToStaticCCString(const TypeToTypeMatrixTableTest<T1, const char8*, nRows, nCols>* table);
 
     /**
+     * @brief Tests the type conversion from a scalar pointer
+     */
+    template<typename T1, typename T2>
+    bool TestTypeConvertPointer(const TypeToTypeTableTest<T1, T2>* table);
+
+    /**
+     * @brief Tests the type conversion from a vector of pointers
+     */
+    template<typename T1, typename T2, uint32 nElements>
+    bool TestTypeConvertPointerVector(const TypeToTypeVectorTableTest<T1, T2, nElements>* table);
+
+    /**
+     * @brief Tests the type conversion from a matrix of pointers
+     */
+    template<typename T1, typename T2, uint32 nRows, uint32 nCols>
+    bool TestTypeConvertPointerMatrix(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table);
+
+    /**
      * @brief Tests the conversion from a char[] to a char*.
      */
     bool TestCArrayToCCStringScalar();
@@ -268,6 +284,61 @@ public:
      */
     bool TestCCStringToCArrayMatrix_Trunc();
 
+    /**
+     * @brief Tests the conversion between two structured objects.
+     */
+    bool TestObjectToObject();
+
+    /**
+     * @brief Tests the conversion between two structured objects.
+     */
+    bool TestObjectToObject_Reverse();
+
+    /**
+     * @brief Tests if the conversion fails if the source class does not provide its introspection.
+     */
+    bool TestObjectToObject_ErrorNoSourceIntrospection();
+
+    /**
+     * @brief Tests if the conversion fails if the destination class does not provide its introspection.
+     */
+    bool TestObjectToObject_ErrorNoDestIntrospection();
+
+    /**
+     * @brief Tests if the conversion fails if the classes are not compatible.
+     */
+    bool TestObjectToObject_NoCompatibility();
+
+    /**
+     * @brief Tests the read of a structured object from a ConfigurationDatabase.
+     */
+    bool TestStructuredDataToObject_SourceIntrospection();
+
+    /**
+     * @brief Tests the read of a structured object from a ConfigurationDatabase.
+     */
+    bool TestStructuredDataToObject_NoSourceIntrospection();
+
+    /**
+     * @brief Tests if the conversion fails if the destination class does not provide its introspection.
+     */
+    bool TestStructuredDataToObject_ErrorNoDestIntrospection();
+
+    /**
+     * @brief Tests if the conversion fails if the classes are not compatible.
+     */
+    bool TestStructuredDataToObject_NoCompatibility();
+
+    /**
+     * @brief Tests the write of a structured object on a ConfigurationDatabase.
+     */
+    bool TestObjectToStructuredData();
+
+    /**
+     * @brief Tests the if the functions clones the source ConfigurationDatabase into the destination ConfigurationDatabase.
+     */
+    bool TestStructuredDataToStructuredData();
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -285,7 +356,7 @@ bool TypeConversionTest::TestTypeConvert(const TypeToTypeTableTest<T1, T2>* tabl
 
         bool ret = TypeConvert(element, toConvert);
         if (element != result) {
-             printf("\n%d \n", i);
+            printf("\n%d \n", i);
 
             return false;
         }
@@ -299,6 +370,104 @@ bool TypeConversionTest::TestTypeConvert(const TypeToTypeTableTest<T1, T2>* tabl
     }
     return true;
 
+}
+
+template<typename T1, typename T2>
+bool TypeConversionTest::TestTypeConvertPointer(const TypeToTypeTableTest<T1, T2>* table) {
+    uint32 i = 0;
+    while (table[i].go) {
+
+        T2 element;
+        const void* toConvert = &table[i].typeToConvert;
+
+        TypeConvert(element, toConvert);
+        uintp test = (uintp) &table[i].typeToConvert;
+        T2 element2;
+        TypeConvert(element2, test);
+        if (element != element2) {
+            printf("\n%d\n",i);
+            return false;
+        }
+
+
+        i++;
+    }
+    return true;
+
+}
+
+template<typename T1, typename T2, uint32 nElements>
+bool TypeConversionTest::TestTypeConvertPointerVector(const TypeToTypeVectorTableTest<T1, T2, nElements>* table){
+
+    uint32 i = 0;
+    while (table[i].go) {
+        T2 element[nElements];
+        T2 element2[nElements];
+        //T2 result = table[i].result;
+        //T1 toConvert = table[i].typeToConvert;
+        const void* toConvert[nElements];
+        uintp test[nElements];
+        for (uint32 j = 0; j < nElements; j++) {
+            // to avoid const errors
+            toConvert[j] = &table[i].typeToConvert[j];
+            test[j]=(uintp)&table[i].typeToConvert[j];
+        }
+
+        TypeConvert(element, toConvert);
+        TypeConvert(element2, test);
+
+        for (uint32 j = 0; j < nElements; j++) {
+            //  T2 result=table[i].result[j];
+            if (element[j] != element2[j]) {
+
+                return false;
+            }
+        }
+
+        i++;
+    }
+    return true;
+
+}
+
+template<typename T1, typename T2, uint32 nRows, uint32 nCols>
+bool TypeConversionTest::TestTypeConvertPointerMatrix(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table){
+    uint32 i = 0;
+    while (table[i].go) {
+        T2 element[nRows][nCols];
+        T2 element2[nRows][nCols];
+        //T2 result = table[i].result;
+        //T1 toConvert = table[i].typeToConvert;
+        const void* toConvert[nRows][nCols];
+        uintp test[nRows][nCols];
+        for (uint32 j = 0; j < nRows; j++) {
+            for (uint32 k = 0; k < nCols; k++) {
+                // to avoid const errors
+                toConvert[j][k] = &table[i].typeToConvert[j][k];
+                test[j][k] = (uintp)&table[i].typeToConvert[j][k];
+            }
+        }
+
+        TypeConvert(element, toConvert);
+        TypeConvert(element2, test);
+
+
+        for (uint32 j = 0; j < nRows; j++) {
+            for (uint32 k = 0; k < nCols; k++) {
+
+                //  T2 result=table[i].result[j];
+                if (element[j][k] != element2[j][k]) {
+                    //printf("\n%d %d %d\n", toConvert[j][k], element[j][k], table[i].result[j][k]);
+                    //printf("\n%s %s %d\n", element[j].Buffer(), result.Buffer(), j);
+
+                    return false;
+                }
+            }
+        }
+
+        i++;
+    }
+    return true;
 }
 
 template<typename T1>

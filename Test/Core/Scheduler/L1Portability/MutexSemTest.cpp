@@ -120,6 +120,8 @@ void TestLockCallback(MutexSemTest &mt) {
     //assignment operation and the subtraction of the value thus generating
     //a racing condition at the end of the test (see below while(nOfExecutingThreads > 0)
     Atomic::Decrement(&mt.nOfExecutingThreads);
+    Threads::EndThread();
+
 }
 
 bool MutexSemTest::TestLock(int32 nOfThreads,
@@ -148,6 +150,8 @@ void TestUnLockCallback(MutexSemTest &mt) {
     //assignment operation and the subtraction of the value thus generating
     //a racing condition at the end of the test (see below while(nOfExecutingThreads > 0)
     Atomic::Decrement(&mt.nOfExecutingThreads);
+    Threads::EndThread();
+
 }
 
 bool MutexSemTest::TestUnLock(int32 nOfThreads,
@@ -163,6 +167,8 @@ void TestLockErrorCodeCallback(MutexSemTest &mt) {
         mt.failed = true;
     }
     Atomic::Decrement(&mt.nOfExecutingThreads);
+    Threads::EndThread();
+
 }
 
 bool MutexSemTest::TestLockErrorCode() {
@@ -207,6 +213,8 @@ void TestRecursiveCallback(MutexSemTest &mt) {
     mt.testMutex.UnLock();
     mt.testMutex.UnLock();
     Atomic::Decrement(&mt.nOfExecutingThreads);
+    Threads::EndThread();
+
 }
 
 bool MutexSemTest::TestRecursive(bool recursive) {

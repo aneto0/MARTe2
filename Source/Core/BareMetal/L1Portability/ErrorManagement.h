@@ -33,9 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ErrorInformation.h"
-#include "ErrorType.h"
 #include "GeneralDefinitions.h"
-#include "HighResolutionTimer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                              */

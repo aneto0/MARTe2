@@ -345,6 +345,7 @@ namespace ParserConstant {
  * The index of initial expected token identifier.
  */
 static const uint32 START_SYMBOL = 0u;
+
 /**
  * The end of the input.
  */
@@ -354,6 +355,7 @@ static const uint32 END_OF_SLK_INPUT = 1u;
  * The start index of the expected token identifiers array.
  */
 static const uint32 START_STATE = 2u;
+
 /**
  * The start index of the conflicts array.
  */

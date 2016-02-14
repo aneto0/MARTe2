@@ -36,6 +36,7 @@
 #include "LoadableLibrary.h"
 #include "ClassProperties.h"
 #include "FractionalInteger.h"
+#include "Introspection.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -64,13 +65,32 @@ class DLL_API ClassRegistryItem {
 public:
 
     /**
-     * @brief Assigns the input variables to the class members.
+     * @brief Assigns the input variables to the class members and registers this item in the ClassRegistryDatabase::Instance().
      * @param[in] clProperties the class properties associated with the class that is being registered.
      * @param[in] objBuildFn the function that allows to instantiate a new object from the class
      * represented by this ClassRegistryItem instance.
      */
     ClassRegistryItem(const ClassProperties &clProperties,
-                      const ObjectBuildFn * const objBuildFn);
+            const ObjectBuildFn * const objBuildFn);
+
+    /**
+     * @brief Assigns the input variables to the class members and registers this item in the ClassRegistryDatabase::Instance().
+     * @param[in] clProperties the class properties associated with the class that is being registered.
+     * @param[in] introspectionIn is the Introspection structure containing the class metadata
+     * represented by this ClassRegistryItem instance.
+     */
+    ClassRegistryItem(const ClassProperties &clProperties, Introspection &introspectionIn);
+
+    /**
+     * @brief Assigns the input variables to the class members and registers this item in the ClassRegistryDatabase::Instance().
+     * @param[in] clProperties the class properties associated with the class that is being registered.
+     * @param[in] objBuildFn the function that allows to instantiate a new object from the class
+     * @param[in] introspectionIn is the Introspection structure containing the class metadata
+     * represented by this ClassRegistryItem instance.
+     */
+    ClassRegistryItem(const ClassProperties &clProperties,
+            const ObjectBuildFn * const objBuildFn, Introspection &introspectionIn);
+
 
     /**
      * Destructor.
@@ -107,6 +127,13 @@ public:
      * @return a pointer to the class parameters represented by this registry item.
      */
     const ClassProperties *GetClassProperties() const;
+
+
+    /**
+     * @brief Returns a pointer to the class introspection.
+     * @return a pointer to the class introspection.
+     */
+    const Introspection * GetIntrospection() const;
 
     /**
      * @brief Returns a pointer to the library (dll).
@@ -155,6 +182,11 @@ private:
      * The object instantiation function.
      */
     const ObjectBuildFn *objectBuildFn;
+
+    /**
+     * The introspection associated to the class.
+     */
+    Introspection *introspection;
 
     /**
      * @brief Default constructor

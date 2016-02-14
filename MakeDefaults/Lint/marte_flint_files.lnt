@@ -58,6 +58,9 @@ InternetHostCore.h
 InternetService.cpp
 InternetServiceCore.h
 Introspection.h
+Introspection.cpp
+IntrospectionEntry.h
+IntrospectionEntry.cpp
 Iterator.h
 IteratorT.h
 JsonParser.cpp
@@ -124,5 +127,9 @@ TokenInfo.cpp
 TypeCharacteristics.h
 TypeConversion.cpp
 TypeDescriptor.h
+TypeDescriptor.cpp
+ValidateBasicType.h
+ValidateBasicType.cpp
 Vector.h
 XMLParser.cpp
+ZeroTerminatedArray.h

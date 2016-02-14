@@ -104,9 +104,10 @@ public:
                        const AnyType &value) = 0;
 
     /**
-     * @brief Copies the database from the current node to the provided destination.
+     * @brief Copies the content of the current node to the provided destination.
+     * @details A deep copy of the contents is recursively performed.
      * @param[in] destination where the database will be copied to.
-     * @return if the copy is successful.
+     * @return true if the copy is successful.
      */
     virtual bool Copy(StructuredDataI &destination) = 0;
 
@@ -182,12 +183,42 @@ public:
      */
     virtual bool Delete(const char8 * const name) = 0;
 
+    /**
+     * @brief Retrieves the name of the current node.
+     * @return the name of the current node.
+     */
+    virtual const char8 *GetName()=0;
+
+    /**
+     * @brief Retrieves the name of the child in the specified index.
+     * @param[in] index is the index of the current node child.
+     * @return the name of the child in the specified index.
+     */
+    virtual const char8 *GetChildName(const uint32 index)=0;
+
+    /**
+     * @brief Retrieves the number of children of the current node.
+     * @return the number of children of the current node.
+     */
+    virtual uint32 GetNumberOfChildren()=0;
+
+    /**
+     * @brief Automatic cast to AnyType.
+     */
+    inline operator AnyType();
+
 };
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+StructuredDataI::operator AnyType() {
+    AnyType anyTypeConversion(StructuredDataInterfaceType, 0u, this);
+    return anyTypeConversion;
+}
+
+}
 
 #endif /* CONFIGURATION_DATABASE_H_ */
 

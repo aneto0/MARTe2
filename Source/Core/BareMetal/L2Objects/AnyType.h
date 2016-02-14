@@ -46,22 +46,26 @@
 /*lint -sem(MARTe::AnyType::Init,initializer)*/
 namespace MARTe {
 /**
- * @brief AnyType class.
+ * @brief Class which provides a smart mechanism for the generic representation
+ * of types.
+ * @details Each instance of this class is made by:
+ * - a void* pointer to the data;
+ * - an uint8 representing the bit-shift from the void* pointer to the actual
+ * data (used in bitfields);
+ * - a TypeDescriptor which defines the type, constantness, signedness, etc.
+ * of the data.
  *
- * @details This class provides a smart mechanism for the generic representation of types.\n
- * An AnyType is made by:
- *   - a void* pointer to the data;
- *   - an uint8 representing the bit-shift from the void* pointer to the actual data (used in bitfields);
- *   - a TypeDescriptor which defines the type, constantness, signedness, etc. of the data.
- *
- * AnyType works with basic types as well as classes, as long as they are registered in the ClassRegistryDatabase.\n
- * @note A constructor for each basic type has been defined and implemented in order to
- * automatically build the relative AnyType object.
+ * AnyType works with basic types as well as classes, as long as they are
+ * registered in the ClassRegistryDatabase.
+ * @note A constructor for each basic type has been defined and implemented in
+ * order to automatically build the relative AnyType object. Some of these
+ * constructors are templates.
  */
 /*lint -save -e925 -e926 -e929 -e9005 -e1773 .
  * (925) pointer cast required by this implementation of AnyType */
-/* (9005,1773) Cast away of const required by this implementation of AnyType and justified because in the TypeDescriptor
- * attribute the flag "isConstant" will be set to true.
+/* (9005,1773) Cast away of const required by this implementation of AnyType
+ * and justified because in the TypeDescriptor attribute the flag "isConstant"
+ * will be set to true.
  */
 class DLL_API AnyType {
 
@@ -126,6 +130,30 @@ public:
      * @return true if the TypeDescriptor is VoidType.
      */
     inline bool IsVoid() const;
+
+    /**
+     * @brief Constructor from 8 bit character.
+     * @param[in] i is the 8 bit character input.
+     * @post
+     *   GetDataPointer() == &i &&
+     *   IsStaticDeclared == true &&
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetTypeDescriptor() == Character8Bit &&
+     *   GetNumberOfElements(0:2) == 0
+     */
+    inline AnyType(char8 &i);
+
+    /**
+     * @brief Constructor from 8 bit character.
+     * @param[in] i is the 8 bit character input.
+     * @post
+     *   GetDataPointer() == &i &&
+     *   IsStaticDeclared == true &&
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetTypeDescriptor() == Character8Bit &&
+     *   GetNumberOfElements(0:2) == 0
+     */
+    inline AnyType(const char8 &i);
 
     /**
      * @brief Constructor from signed 8 bit integer.
@@ -461,6 +489,8 @@ public:
 
     /**
      * @brief Constructor by BitBoolean.
+     * @tparam baseType the standard type which is used as a base for bitBool's type
+     * @tparam bitOffset the actual bit offset of the bitBool's type
      * @param[in] bitBool is the BitBoolean object input.
      */
     template<typename baseType, uint8 bitOffset>
@@ -468,6 +498,9 @@ public:
 
     /**
      * @brief Constructor by BitRange.
+     * @tparam baseType the standard type which is used as a base for bitRange's type
+     * @tparam bitSize the actual bit size of the bitRange's type
+     * @tparam bitOffset the actual bit offset of the bitRange's type
      * @param[in] bitRange is the BitRange object input.
      */
     template<typename baseType, uint8 bitSize, uint8 bitOffset>
@@ -475,6 +508,8 @@ public:
 
     /**
      * @brief Constructor by FractionalInteger.
+     * @tparam baseType the standard type which is used as a base for fractionalInt's type
+     * @tparam bitSize the actual bit size of the fractionalInt's type
      * @param[in] fractionalInt is the FractionalInteger object input.
      */
     template<typename baseType, uint8 bitSize>
@@ -482,6 +517,8 @@ public:
 
     /**
      * @brief Constructor by constant FractionalInteger.
+     * @tparam baseType the standard type which is used as a base for fractionalInt's type
+     * @tparam bitSize the actual bit size of the fractionalInt's type
      * @param[in] fractionalInt is the constant FractionalInteger object input.
      */
     template<typename baseType, uint8 bitSize>
@@ -489,7 +526,8 @@ public:
 
     /**
      * @brief Constructor from a statically declared array [].
-     * @param[in] nOfElementsStatic number of elements in the array, automatically computed by the compiler.
+     * @tparam T the type of the elements in the array
+     * @tparam nOfElementsStatic number of elements in the array, automatically computed by the compiler.
      * @param[in] source address of the statically declared array.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -503,7 +541,7 @@ public:
 
     /**
      * @brief Constructor from a statically declared array of characters [].
-     * @param[in] nOfElementsStatic number of elements in the array, automatically computed by the compiler.
+     * @tparam nOfElementsStatic number of elements in the array, automatically computed by the compiler.
      * @param[in] source address of the statically declared array.
      * @pre
      *   The C Array must be always 0 terminated like a normal C string.
@@ -519,7 +557,7 @@ public:
 
     /**
      * @brief Constructor from a constant statically declared array of characters [].
-     * @param[in] nOfElementsStatic number of elements in the array, automatically computed by the compiler.
+     * @tparam nOfElementsStatic number of elements in the array, automatically computed by the compiler.
      * @param[in] source address of the statically declared array.
      * @pre
      *   The C Array must be always 0 terminated like a normal C string.
@@ -535,8 +573,9 @@ public:
 
     /**
      * @brief Constructor from a statically declared table [][].
-     * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
-     * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
+     * @tparam T the type of the elements in the array
+     * @tparam nOfRowsStatic number of rows in the table, automatically computed by the compiler.
+     * @tparam nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
      * @param[in] source address of the statically declared table.
      * @post
      *   GetNumberOfDimensions() == 2 &&
@@ -551,8 +590,8 @@ public:
 
     /**
      * @brief Constructor from a statically declared table of characters [][].
-     * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
-     * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
+     * @tparam nOfRowsStatic number of rows in the table, automatically computed by the compiler.
+     * @tparam nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
      * @param[in] source address of the statically declared table.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -566,8 +605,9 @@ public:
 
     /**
      * @brief Constructor from a statically declared table of characters [][][].
-     * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
-     * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
+     * @tparam nOfRowsStatic number of rows in the table, automatically computed by the compiler.
+     * @tparam nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
+     * @tparam nOfChars number of chars in each cell of the table, automatically computed by the compiler.
      * @param[in] source address of the statically declared table.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -581,6 +621,7 @@ public:
 
     /**
      * @brief Constructor from an existent Matrix.
+     * @tparam T the type of the elements in the matrix
      * @param[in] mat the matrix from whose this AnyType will be constructed.
      * @post
      *   GetNumberOfDimensions() == 2 &&
@@ -607,6 +648,7 @@ public:
 
     /**
      * @brief Constructor from an existent Vector.
+     * @tparam T the type of the elements in the vector
      * @param[in] vec the vector from whose this AnyType will be constructed.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -658,6 +700,7 @@ public:
 
     /**
      * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
+     * @tparam baseType the type of the source object
      * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegisteredDatabase).
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.
@@ -668,6 +711,7 @@ public:
 
     /**
      * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
+     * @tparam baseType the type of the source object
      * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegistryDatabase).
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.
@@ -678,7 +722,7 @@ public:
 
     /**
      * @brief Gets the number of dimensions associated to this AnyType.
-     * @detail GetNumberOfDimensions() == 0 => scalar, GetNumberOfDimensions() == 1 => vector
+     * @details GetNumberOfDimensions() == 0 => scalar, GetNumberOfDimensions() == 1 => vector
      * GetNumberOfDimensions() == 2 => matrix
      * @return the number of dimensions associated to this AnyType.
      */
@@ -687,7 +731,7 @@ public:
     /**
      * @brief Sets the number of dimensions associated to this AnyType.
      * @param[in] nOfDimensions the new number of dimensions represented by this AnyType.
-     * @detail nOfDimensions == 0 => scalar, nOfDimensions == 1 => vector
+     * @details nOfDimensions == 0 => scalar, nOfDimensions == 1 => vector
      * nOfDimensions == 2 => matrix
      */
     inline void SetNumberOfDimensions(const uint8 nOfDimensions);
@@ -736,6 +780,15 @@ public:
      */
     inline uint32 GetBitSize() const;
 
+
+    /**
+     * @brief Retrieves the element in the specified position.
+     * @param[in] position is the position of the required element.
+     * @return voidAnyType if this AnyType is scalar or in case of errors, a scalar AnyType if this
+     * AnyType is a vector, a vector AnyType if this AnyType is a scalar.
+     */
+    AnyType operator[](const uint32 position) const;
+
 private:
 
     /**
@@ -776,7 +829,8 @@ private:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0) == 1 &&
      *   GetNumberOfElements(1) == 1 &&
-     *   GetNumberOfElements(2) == 1
+     *   GetNumberOfElements(2) == 1 &&
+     *   IsStaticDeclared() == true
      */
     inline void Init();
 };
@@ -822,6 +876,23 @@ AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,
 
 bool AnyType::IsVoid() const {
     return (dataDescriptor == VoidType);
+}
+
+/*---------------------------------------------------------------------------*/
+
+AnyType::AnyType(char8 &i) {
+    Init();
+    dataPointer = static_cast<void *>(&i);
+    bitAddress = 0u;
+    dataDescriptor = Character8Bit;
+}
+
+AnyType::AnyType(const char8 &i) {
+    Init();
+    dataPointer = static_cast<void *>(const_cast<char8*>(&i));
+    bitAddress = 0u;
+    dataDescriptor = Character8Bit;
+    dataDescriptor.isConstant = true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1311,6 +1382,9 @@ uint32 AnyType::GetByteSize() const {
 uint32 AnyType::GetBitSize() const {
     return (dataDescriptor.numberOfBits + bitAddress);
 }
+
+
+
 
 /**
  * Definition of the void AnyType (empty constructor).

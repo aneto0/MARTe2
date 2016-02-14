@@ -68,9 +68,9 @@ public:
      *   UsedAmountLeft() == 0 &&
      *   Position() == 0u &&
      *   UsedSize() == 0 &&
-     *   undoLevel == 0 ??
-     *   AllocationGranularity() == 1u && &&
-     *   UndoLevel() == 0
+     *   undoLevel == 0 &&
+     *   AllocationGranularity() == 1u &&
+     *   UndoLevel() == 0 &&
      *   GetStream() == NULL &&
      */
     BufferedStreamIOBuffer();
@@ -87,9 +87,9 @@ public:
      *   UsedAmountLeft() == 0 &&
      *   Position() == 0u &&
      *   UsedSize() == 0 &&
-     *   undoLevel == 0 ??
-     *   AllocationGranularity() == 1u && &&
-     *   UndoLevel() == 0
+     *   undoLevel == 0 &&
+     *   AllocationGranularity() == 1u &&
+     *   UndoLevel() == 0 &&
      *   GetStream() == s &&
      */
     BufferedStreamIOBuffer(OperatingSystemCallbacksI * const s);

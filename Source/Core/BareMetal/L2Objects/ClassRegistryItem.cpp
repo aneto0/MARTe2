@@ -51,7 +51,9 @@ ClassRegistryItem::ClassRegistryItem() :
     numberOfInstances = 0u;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
+    introspection = NULL_PTR(Introspection *);
 }
+
 //LCOV_EXCL_STOP
 
 ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
@@ -60,6 +62,28 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
     classProperties = clProperties;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = objBuildFn;
+    introspection = NULL_PTR(Introspection *);
+    ClassRegistryDatabase::Instance()->Add(this);
+}
+
+ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
+                                     Introspection &introspectionIn) {
+    numberOfInstances = 0u;
+    classProperties = clProperties;
+    loadableLibrary = NULL_PTR(LoadableLibrary *);
+    objectBuildFn = NULL_PTR(ObjectBuildFn *);
+    introspection = &introspectionIn;
+    ClassRegistryDatabase::Instance()->Add(this);
+}
+
+ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
+                                     const ObjectBuildFn * const objBuildFn,
+                                     Introspection &introspectionIn) {
+    numberOfInstances = 0u;
+    classProperties = clProperties;
+    loadableLibrary = NULL_PTR(LoadableLibrary *);
+    objectBuildFn = objBuildFn;
+    introspection = &introspectionIn;
     ClassRegistryDatabase::Instance()->Add(this);
 }
 
@@ -70,6 +94,7 @@ ClassRegistryItem::~ClassRegistryItem() {
         delete loadableLibrary;
     }
     loadableLibrary = NULL_PTR(LoadableLibrary *);
+    introspection = NULL_PTR(Introspection *);
 }
 
 void ClassRegistryItem::GetClassPropertiesCopy(ClassProperties &destination) const {
@@ -78,6 +103,10 @@ void ClassRegistryItem::GetClassPropertiesCopy(ClassProperties &destination) con
 
 const ClassProperties *ClassRegistryItem::GetClassProperties() const {
     return &classProperties;
+}
+
+const Introspection * ClassRegistryItem::GetIntrospection() const {
+    return introspection;
 }
 
 void ClassRegistryItem::IncrementNumberOfInstances() {

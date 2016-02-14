@@ -38,15 +38,16 @@ OBJSX=  AtomicTest.x \
 		LoadableLibraryTest.x \
 		MemoryCheckTest.x \
 		MemoryOperationsHelperTest.x\
-		MemoryTest.x \
 		ProcessorTypeTest.x \
-		SleepTest.x \
+		SleepTest.x\
 		StandardHeap_GenericTest.x \
 		StaticListTest.x \
 		StringHelperTest.x \
 		StringPortableTest.x \
 		TimeStampTest.x \
-		TimeoutTypeTest.x
+		TimeoutTypeTest.x \
+		TypeDescriptorTest.x 
+		
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
