@@ -97,7 +97,7 @@ uint32 Object::NumberOfReferences() const {
 }
 
 /*lint -e{715} data is not used as this is not implemented on purpose*/
-bool Object::Initialise(const StructuredDataI &data) {
+bool Object::Initialise(StructuredDataI &data) {
     return false;
 }
 

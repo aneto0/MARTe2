@@ -1,8 +1,8 @@
 /**
- * @file BasicType.h
- * @brief Header file for class BasicType
- * @date 28/08/2015
- * @author Filippo Sartori
+ * @file RealTimeThread.h
+ * @brief Header file for class RealTimeThread
+ * @date 19/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,85 +16,44 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class BasicType
+ * @details This header file contains the declaration of the class RealTimeThread
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef BASICTYPE_H_
-#define BASICTYPE_H_
+#ifndef REALTIMETHREAD_H_
+#define REALTIMETHREAD_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "CompilerTypes.h"
-#include "FractionalInteger.h"
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
+#include "ReferenceContainer.h"
+#include "RealTimeState.h"
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+namespace MARTe{
 
-/**
- * @brief Definition of BasicType as a 4 bit integer.
- */
-typedef uint4 BasicType;
+class RealTimeThread: public ReferenceContainer {
 
-/**
- * The type is a signed integer.
- */
-const BasicType SignedInteger = 0u;
+public:
+    bool Validate(RealTimeApplication &rtApp, RealTimeState &rtState);
 
-/**
- * The type is an unsigned integer.
- */
-const BasicType UnsignedInteger = 1u;
+    virtual bool Initialise(StructuredDataI & data);
 
-/**
- * The type is a float number.
- */
-const BasicType Float = 2u;
+private:
 
-/**
- * The type is a pointer.
- */
-const BasicType Pointer = 3u;
+    StreamString* functions;
+    uint32 numberOfFunctions;
 
-/**
- * The type is a C string
- * (const char *)
- */
-const BasicType CCString = 4u;
-
-/**
- * The type is a pointer to a C string allocated on heap.
- * (char **)
- */
-const BasicType PCString = 5u;
-
-/**
- * The type is an array of bytes with the size
- * specified in the size field.
- */
-const BasicType CArray = 6u;
-
-/**
- * The type is a StreamString class.
- */
-const BasicType SString = 7u;
-
-/**
- * The type is a StreamInterface class.
- */
-const BasicType Stream = 8u;
-
-/**
- * The StructuredDataI type
- */
-const BasicType StructuredDataNode = 9u;
-
+};
 
 }
 
@@ -102,4 +61,5 @@ const BasicType StructuredDataNode = 9u;
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* BASICTYPE_H_ */
+#endif /* REALTIMETHREAD_H_ */
+

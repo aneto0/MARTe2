@@ -23,19 +23,7 @@
 #############################################################
 
 
-OBJSX=  AnyObjectGTest.x \
-		AnyTypeCreatorGTest.x \
-		ConfigurationDatabaseGTest.x \
-		JsonParserGTest.x \
-		LexicalAnalyzerGTest.x \
-		ObjectRegistryDatabaseGTest.x \
-		StandardParserGTest.x \
-		TokenGTest.x \
-		TokenInfoGTest.x \
-		TypeConversionGTest.x\
-		ValidateBasicTypeGTest.x\
-		XMLParserGTest.x
-		 
+OBJSX= 	GAMGTest.x	 
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
@@ -58,13 +46,14 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
+INCLUDES += -I../../../../Source/Core/BareMetal/L5GAMs
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 
 
 all: $(OBJS)    \
-        $(BUILD_DIR)/L4ConfigurationBGTest$(LIBEXT) 
+        $(BUILD_DIR)/L5GAMsBGTest$(LIBEXT) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)
