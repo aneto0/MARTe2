@@ -312,11 +312,10 @@ public:
      */
     virtual bool Initialise(StructuredDataI &data);
 
-/*
+
     virtual bool ToStructuredData(StructuredDataI & data);
 
     virtual bool IntrospectionToStructuredData(StructuredDataI & data);
-*/
 
 
     /**

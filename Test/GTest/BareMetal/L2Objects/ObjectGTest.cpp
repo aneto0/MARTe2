@@ -106,3 +106,13 @@ TEST(ObjectGTest,TestGetUniqueName2) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestGetUniqueName2());
 }
+
+TEST(ObjectGTest,TestToStructuredData) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestToStructuredData());
+}
+
+TEST(ObjectGTest,TestToIntrospectionToStructuredData) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestToIntrospectionToStructuredData());
+}

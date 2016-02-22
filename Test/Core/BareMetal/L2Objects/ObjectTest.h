@@ -112,6 +112,12 @@ public:
      * @return true if the name returned by GetUniqueName is different for two objects with the same name, false otherwise.
      */
     bool TestGetUniqueName2();
+
+
+
+    bool TestToStructuredData();
+    bool TestToIntrospectionToStructuredData();
+
 };
 
 /*---------------------------------------------------------------------------*/
