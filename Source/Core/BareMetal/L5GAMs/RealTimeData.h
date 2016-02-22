@@ -1,8 +1,8 @@
 /**
  * @file RealTimeData.h
  * @brief Header file for class RealTimeData
- * @date 19/feb/2016
- * @author pc
+ * @date 19/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMEDATA_H_
-#define 		SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMEDATA_H_
+#ifndef REALTIMEDATA_H_
+#define REALTIMEDATA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,12 +32,19 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "ReferenceContainer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe{
+// interface
+class RealTimeData: public ReferenceContainer {
 
-class RealTimeData {
+public:
+    virtual bool Verify()=0;
+
 };
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

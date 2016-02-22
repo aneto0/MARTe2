@@ -44,6 +44,11 @@ namespace MARTe{
 class RealTimeThread: public ReferenceContainer {
 
 public:
+
+    RealTimeThread();
+
+    ~RealTimeThread();
+
     bool Validate(RealTimeApplication &rtApp, RealTimeState &rtState);
 
     virtual bool Initialise(StructuredDataI & data);

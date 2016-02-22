@@ -33,32 +33,72 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 
+const uint32 functionArrayGranularity = 16u;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+RealTimeState::RealTimeState() {
+    statefulGAMs = NULL_PTR(ReferenceT<GAM>*);
+    numberOfFunctions = 0u;
+}
+
+RealTimeState::~RealTimeState() {
+    if (statefulGAMs != NULL) {
+        if(!HeapManager::Free(reinterpret_cast<void*&>(statefulGAMs))) {
+            //TODO
+        }
+    }
+}
 
 bool RealTimeState::Validate(RealTimeApplication & rtApp) {
-    // calls RealTimeThread.Validate(rtApp, this)
 
-    return true;
+    bool ret = true;
+    // for each thread call the Validate
+    for (uint32 i = 0u; (i < Size()) && (ret); i++) {
+        ReferenceT<RealTimeThread> rtThread = Get(i);
+        if (rtThread.IsValid()) {
+            ret = rtThread->Validate(rtApp, *this);
+        }
+        else {
+            //TODO Error??
+        }
+    }
+
+    return ret;
 }
 
 bool RealTimeState::AddFunction(ReferenceT<GAM> element) {
+    bool ret = true;
+    if ((numberOfFunctions % functionArrayGranularity) == 0u) {
+        Reference<GAM>* temp =
+                reinterpret_cast<Reference<GAM>*>(HeapManager::Realloc(statefulGAMs, sizeof(ReferenceT<GAM> ) * (numberOfFunctions + functionArrayGranularity)));
+        ret = (temp != NULL);
+        if (ret) {
+            statefulGAMs = temp;
+        }
+        else {
+            //TODO Error in reallocation
+        }
+    }
 
-    Reference<GAM>* temp = reinterpret_cast<Reference<GAM>*>(HeapManager::Realloc(statefulGAMs, sizeof(ReferenceT<GAM> ) * (numberOfFunctions + 1u)));
-
-    bool ret = (temp != NULL);
     if (ret) {
-        statefulGAMs = temp;
         statefulGAMs[numberOfFunctions] = element;
         numberOfFunctions++;
     }
 
     return ret;
 
+}
+
+void RealTimeState::ChangeState() {
+    for (uint32 i = 0u; i < numberOfFunctions; i++) {
+
+        // to be developed
+        statefulGAMs[i]->ChangeState();
+    }
 }
 
 }

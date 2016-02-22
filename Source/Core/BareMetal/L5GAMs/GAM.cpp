@@ -30,7 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAM.h"
-
+#include "ObjectRegistryDatabase.h"
+//#include "GAMBlock.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,3 +40,76 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
+GAM::GAM() {
+    supportedStates = NULL_PTR(StreamString*);
+    supportedContexts = NULL_PTR(ReferenceT<GAMContext>*);
+    numberOfContexts=0u;
+}
+
+GAM::~GAM() {
+    if (supportedStates != NULL) {
+        delete supportedStates;
+    }
+    if(supportedContexts!=NULL) {
+        delete supportedContexts;
+    }
+}
+
+void GAM::SetUp() {
+    for (uint32 i = 0u; i < Size(); i++) {
+  //      ReferenceT<GAMBlock> block = Get(i);
+  //      if (block.IsValid()) {
+          //  block.SetUp();
+          //  block.SetContext(supportedContexts[0u]);
+        //}
+    }
+}
+
+void GAM::ChangeState() {
+    static uint32 contextNumber=0u;
+    // circular
+    if((contextNumber%numberOfContexts)==0u){
+        contextNumber=0u;
+    }
+    for (uint32 i = 0u; i < Size(); i++) {
+        //ReferenceT<GAMBlock> block = Get(i);
+        //if (block.IsValid()) {
+           // block.SetContext(supportedContexts[contextNumber]);
+        //}
+    }
+}
+
+bool GAM::Initialise(StructuredDataI &data) {
+    bool ret = ReferenceContainer::Initialise(data);
+    if (ret) {
+        AnyType statesAt = data.GetType("states");
+        uint32 numberOfSupportedStates = statesAt.GetNumberOfElements(0u);
+        supportedStates = new StreamString[numberOfSupportedStates];
+        ret = (data.Read("states", supportedStates));
+    }
+    if (ret) {
+        AnyType statesAt = data.GetType("contexts");
+        uint32 numberOfSupportedContexts = statesAt.GetNumberOfElements(0u);
+        StreamString *contextString;
+
+        supportedContexts = new ReferenceT<GAMContext> [numberOfSupportedContexts];
+        contextString = new StreamString[numberOfSupportedContexts];
+        ret = (data.Read("states", supportedStates));
+
+        // fill the supported context array
+        for (uint32 i = 0u; (i < numberOfSupportedContexts) && (ret); i++) {
+            ObjectRegistryDatabase* god = ObjectRegistryDatabase::Instance();
+            ReferenceT<GAMContext> context = god->Find(contextString[i].Buffer());
+            ret = context.IsValid();
+            if (ret) {
+                supportedContexts[i] = context;
+                numberOfContexts++;
+            }
+        }
+    }
+    return ret;
+}
+
+}

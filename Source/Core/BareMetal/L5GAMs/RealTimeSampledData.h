@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMESAMPLEDDATA_H_
-#define 		SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMESAMPLEDDATA_H_
+#ifndef REALTIMESAMPLEDDATA_H_
+#define REALTIMESAMPLEDDATA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,17 +31,39 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "RealTimeData.h"
+#include "StreamString.h"
+#include "StructuredDataI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class RealTimeSampledData {
+namespace MARTe{
+class RealTimeSampledData: public RealTimeData {
+public:
+
+    RealTimeSampledData();
+
+    virtual bool Initialise(StructuredDataI &data);
+
+    virtual bool Verify();
+
+private:
+
+    StreamString address;
+    StreamString type;
+
+    // how many samples in the specified number of cycles
+    int32 samples;
+    int32 cycles;
+
+
 };
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMESAMPLEDDATA_H_ */
+#endif /* REALTIMESAMPLEDDATA_H_ */
 

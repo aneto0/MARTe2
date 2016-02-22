@@ -42,19 +42,30 @@
 
 namespace MARTe {
 
+RealTimeThread::RealTimeThread() {
+    functions = NULL_PTR(StreamString*);
+    numberOfFunctions = 0u;
+}
+
+RealTimeThread::~RealTimeThread() {
+    if (functions != NULL) {
+        delete functions;
+    }
+}
+
 bool RealTimeThread::Validate(RealTimeApplication &rtApp,
                               RealTimeState &rtState) {
 
-    ObjectRegistryDatabase *god= ObjectRegistryDatabase::Instance();
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     // checks if the gam referenced declared here exist and support the state where this thread is declared into
-    for(uint32 i=0u; i<numberOfFunctions; i++){
+    for (uint32 i = 0u; i < numberOfFunctions; i++) {
         // search
-        ReferenceT<GAM> function=god->Find(functions[i].Buffer());
-        if(function.IsValid()){
+        ReferenceT<GAM> function = god->Find(functions[i].Buffer());
+        if (function.IsValid()) {
             rtState.AddFunction(function);
         }
-        else{
+        else {
             //TODO warning the gam referenced does not exists
         }
 

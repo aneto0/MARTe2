@@ -1,7 +1,7 @@
 /**
- * @file GAM.h
- * @brief Header file for class GAM
- * @date 18/02/2016
+ * @file RealTimeDataContainer.h
+ * @brief Header file for class RealTimeDataContainer
+ * @date 22/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAM
+ * @details This header file contains the declaration of the class RealTimeDataContainer
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L5GAMS_GAM_H_
-#define L5GAMS_GAM_H_
+#ifndef REALTIMEDATACONTAINER_H_
+#define REALTIMEDATACONTAINER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,42 +32,23 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
-#include "StructuredDataI.h"
-#include "StreamString.h"
-#include "GAMContext.h"
-#include "ReferenceT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe{
 
-class GAM: public ReferenceContainer {
+// a container of RealTimeDatas
+class RealTimeDataContainer: public ReferenceContainer {
 public:
+    bool Verify();
 
-    GAM();
-
-    ~GAM();
-
-    void SetUp();
-
-    virtual void ChangeState();
-
-    virtual bool Initialise(StructuredDataI &data);
-
-private:
-
-    StreamString *supportedStates;
-
-    ReferenceT<GAMContext> *supportedContexts;
-    uint32 numberOfContexts;
 };
 
 }
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_GAM_H_ */
+#endif /* REALTIMEDATACONTAINER_H_ */
 

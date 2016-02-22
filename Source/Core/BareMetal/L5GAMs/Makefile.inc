@@ -24,7 +24,8 @@
 #
 #############################################################
 
-OBJSX=	GAM.x
+OBJSX=	GAM.x\
+        GAMContext.x
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

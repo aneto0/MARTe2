@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataI.h
- * @brief Header file for class RealTimeDataI
- * @date 19/02/2016
- * @author Giuseppe Ferrò
+ * @file RealTimeDefaultData.cpp
+ * @brief Source file for class RealTimeDefaultData
+ * @date 22/feb/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,32 +16,51 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataI
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class RealTimeDefaultData (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef REALTIMEDATAI_H_
-#define REALTIMEDATAI_H_
-
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+#include "RealTimeDefaultData.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 
-class RealTimeDataI {
-};
+RealTimeDefaultData::RealTimeDefaultData() {
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+}
 
-#endif /* REALTIMEDATAI_H_ */
+bool RealTimeDefaultData::Verify() {
+    bool ret = false;
 
+    // Verifies the data inside RealTimeDataSource!!!
+
+    return ret;
+}
+
+bool RealTimeDefaultData::Initialise(StructuredDataI& data) {
+    bool ret = data.Read("address", address);
+    if (ret) {
+        ret = data.Read("type", type);
+    }
+    if (ret) {
+        ret = data.Read("default", defaultValue);
+    }
+    return ret;
+}
+
+}

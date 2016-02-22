@@ -38,4 +38,28 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 
+GAMBlock::GAMBlock() {
+
+}
+GAMBlock::~GAMBlock() {
+
+}
+
+void GAMBlock::SetUp() {
+
+}
+
+bool GAMBlock::Initialise(StructuredDataI &data) {
+
+}
+
+bool GAMBlock::Verify() {
+
+}
+
+void GAMBlock::Execute() {
+    // must be implemented by the user
+}
+}

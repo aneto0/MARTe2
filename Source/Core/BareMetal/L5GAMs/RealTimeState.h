@@ -46,9 +46,13 @@ public:
 
     RealTimeState();
 
+    ~RealTimeState();
+
     bool Validate(RealTimeApplication & rtApp);
 
     bool AddFunction(ReferenceT<GAM> element);
+
+    void ChangeState();
 
 private:
 

@@ -39,3 +39,31 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
+RealTimeSampledData::RealTimeSampledData() {
+    samples = 1;
+    cycles = 1;
+
+}
+
+bool RealTimeSampledData::Verify() {
+    return true;
+}
+
+bool RealTimeSampledData::Initialise(StructuredDataI &data){
+    bool ret=data.Read("address", address);
+
+    if(ret){
+        ret=data.Read("type", type);
+    }
+
+    if(ret){
+        ret=data.Read("samples", samples);
+    }
+
+    if(ret){
+        ret=data.Read("cycles", cycles);
+    }
+    return ret;
+}

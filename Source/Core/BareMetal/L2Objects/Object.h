@@ -315,7 +315,7 @@ public:
 
     virtual bool ToStructuredData(StructuredDataI & data);
 
-    virtual bool IntrospectionToStructuredData(StructuredDataI & data);
+    virtual bool IntrospectionToStructuredData(StructuredDataI & data, int32 level=-1);
 
 
     /**
