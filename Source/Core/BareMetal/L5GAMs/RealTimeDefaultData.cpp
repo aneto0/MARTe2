@@ -1,8 +1,8 @@
 /**
  * @file RealTimeDefaultData.cpp
  * @brief Source file for class RealTimeDefaultData
- * @date 22/feb/2016
- * @author pc
+ * @date 22/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -41,26 +41,56 @@
 namespace MARTe {
 
 RealTimeDefaultData::RealTimeDefaultData() {
-
 }
 
 bool RealTimeDefaultData::Verify() {
-    bool ret = false;
+    bool ret = (path == "");
 
-    // Verifies the data inside RealTimeDataSource!!!
+    // check myself
+    if (!ret) {
+        StreamString typePath = path + ".Type";
+        RealTimeDataSource *dataSource = RealTimeDataSource::Instance();
+        StreamString testType;
+        if (dataSource->Read(typePath.Buffer(), testType)) {
+            if (testType == type) {
+                ret = true;
+            }
+        }
+    }
+
+    // here if the the self check goes fine or the path is empty
+    if (ret) {
+        // check the children!!!
+        for (uint32 i = 0u; (i < Size()) && (ret); i++) {
+            ReferenceT<RealTimeDefaultData> subnode = Get(i);
+            ret = subnode->Verify();
+        }
+    }
 
     return ret;
 }
 
 bool RealTimeDefaultData::Initialise(StructuredDataI& data) {
-    bool ret = data.Read("address", address);
+    bool ret = data.Read("Path", path);
     if (ret) {
-        ret = data.Read("type", type);
+        ret = data.Read("Type", type);
     }
     if (ret) {
-        ret = data.Read("default", defaultValue);
+        ret = data.Read("Default", defaultValue);
     }
     return ret;
+}
+
+const char8 *RealTimeDefaultData::GetPath() {
+    return path.Buffer();
+}
+
+const char8 *RealTimeDefaultData::GetType() {
+    return type.Buffer();
+}
+
+const char8 *RealTimeDefaultData::GetDefaultValue() {
+    return defaultValue.Buffer();
 }
 
 }

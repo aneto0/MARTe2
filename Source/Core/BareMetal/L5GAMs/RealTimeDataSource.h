@@ -31,13 +31,54 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "GlobalObjectI.h"
+#include "StructuredDataI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 
-class RealTimeDataSource {
+// it is a tree of AnyTypes
+// overload of read and write to allow to store structured data leafs? (or we can use directly
+// the current configuration)
+// disallow the move
+class RealTimeDataSource: public GlobalObjectI, public StructuredDataI {
+
+public:
+
+    static RealTimeDataSource *Instance();
+
+    virtual const char8 * const GetClassName() const;
+
+    /**
+     * @brief Locks the shared semaphore.
+     * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
+     * @return true if the shared semaphore is successfully locked.
+     */
+    bool Lock(const TimeoutType &timeout);
+
+    /**
+     * @brief Unlocks the shared semaphore.
+     * @return true if the shared semaphore is successfully unlocked.
+     */
+    void Unlock();
+
+
+private:
+    RealTimeDataSource();
+
+    /**
+     * @brief Disallow the usage of new.
+     * @param[in] size the size of the object.
+     */
+    static void *operator new(osulong size) throw ();
+    /**
+     * The shared mutex semaphore.
+     */
+    FastPollingMutexSem mux;
+
 };
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

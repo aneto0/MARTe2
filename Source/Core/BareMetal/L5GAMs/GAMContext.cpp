@@ -30,12 +30,98 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAMContext.h"
-
+#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+GAMContext::GAMContext() {
+    items = NULL_PTR(NamedPointer*);
+    numberOfItems = 0u;
+}
+GAMContext::~GAMContext() {
+    if (items != NULL) {
+        delete [] items;
+    }
+    numberOfItems=0u;
+}
+
+bool GAMContext::Read(const char8* name,
+                      void * output) {
+
+    bool ret = false;
+    if (items != NULL) {
+        for(uint32 i=0u; i<numberOfItems; i++) {
+            // name found
+            if(StringHelper::Compare(items[i].name.Buffer(), name)==0) {
+                if(MemoryOperationsHelper::Copy(output, items[i].pointer, items[i].size)) {
+                    ret=true;
+                }
+            }
+        }
+    }
+    return ret;
+}
+
+bool GAMContext::Write(const char8* name,
+                       void * input) {
+    bool ret = false;
+    if (items != NULL) {
+        for(uint32 i=0u; i<numberOfItems; i++) {
+            // name found
+            if(StringHelper::Compare(items[i].name.Buffer(), name)==0) {
+                if(MemoryOperationsHelper::Copy(items[i].pointer, input,items[i].size)) {
+                    ret=true;
+                }
+            }
+        }
+    }
+    return ret;
+}
+
+bool GAMContext::Validate(GAMContextContainer& contextContainer) {
+    bool ret = true;
+    const char8 * managerPath = contextContainer.GetContextManagerPath();
+    ReferenceT<GAMContextManager> manager = ObjectRegistryDatabase::Instance()->Find(managerPath);
+    if (manager.IsValid()) {
+        for (uint32 i = 0u; (i < numberOfItems) && (ret); i++) {
+            NamedPointer* itemRet = manager->GetItem(items[i].name);
+            if (itemRet != NULL) {
+                items[i].pointer=itemRet->pointer;
+                items[i].type=itemRet->type;
+                items[i].size=itemRet->size;
+            }
+            else {
+                //TODO
+                ret=false;
+            }
+        }
+        manager->AddContext(ReferenceT<GAMContext>(this));
+    }
+    return ret;
+}
+
+bool GAMContext::Initialise(StructuredDataI &data) {
+    AnyType itemsAT = data.GetType("Items");
+
+    if (itemsAT != NULL) {
+        numberOfItems=itemsAT.GetNumberOfElements(0u);
+        StreamString *itemNames=new StreamString[numberOfItems];
+        items=new NamedPointer[numberOfItems];
+        if(data.Read("Items", itemNames)) {
+            for(uint32 i=0u; i<numberOfItems; i++) {
+                items[i].name=itemNames;
+            }
+        }
+        delete [] itemNames;
+    }
+    return true;
+}
+
+}

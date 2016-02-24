@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDefaultData.h
- * @brief Header file for class RealTimeDefaultData
- * @date 22/feb/2016
- * @author pc
+ * @file GAMContextManager.h
+ * @brief Header file for class GAMContextManager
+ * @date 23/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDefaultData
+ * @details This header file contains the declaration of the class GAMContextManager
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDEFAULTDATA_H_
-#define REALTIMEDEFAULTDATA_H_
+#ifndef GAMCONTEXTMANAGER_H_
+#define GAMCONTEXTMANAGER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,37 +31,46 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeData.h"
-#include "StreamString.h"
-#include "StructuredDataI.h"
+#include "Object.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-class RealTimeDefaultData: public RealTimeData {
+namespace MARTe{
+class GAMContextManager: public Object {
 public:
-    RealTimeDefaultData();
+    GAMContextManager();
 
-    virtual bool Verify();
+    virtual bool Initialise(StructuredDataI & data);
 
-    virtual bool Initialise(StructuredDataI& data);
+    // call GAMContextContainer::Validate initialising itself
+    bool Validate();
 
-    virtual const char8 *GetPath();
+    bool AddContext(ReferenceT<GAMContext> newContext);
 
-    virtual const char8 *GetType();
+    // triggered by the scheduler
+    void SwitchToNext();
 
-    virtual const char8 *GetDefaultValue();
 
 private:
-    StreamString path;
-    StreamString type;
-    StreamString defaultValue;
+    StreamString contextContainerPath;
+
+    MemoryArea contextMemory;
+
+    NamedPointer* items;
+
+    uint32 numberOfItems;
+
+    Reference<GAMContext> *contexts;
+
+    uint32 numberOfContexts;
+
 };
+
 }
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDEFAULTDATA_H_ */
+#endif /* GAMCONTEXTMANAGER_H_ */
 

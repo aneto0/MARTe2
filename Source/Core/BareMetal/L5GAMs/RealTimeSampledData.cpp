@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeSampledData.h"
-
+#include "RealTimeDataSource.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -48,22 +48,60 @@ RealTimeSampledData::RealTimeSampledData() {
 }
 
 bool RealTimeSampledData::Verify() {
-    return true;
+    bool ret = false;
+
+    // check myself
+    if (path != "") {
+        StreamString typePath = path + ".Type";
+        RealTimeDataSource *dataSource = RealTimeDataSource::Instance();
+        StreamString testType;
+        if (dataSource->Read(typePath.Buffer(), testType)) {
+            if (testType == type) {
+                ret = true;
+            }
+        }
+
+        if (ret) {
+            ret = false;
+            StreamString samplesPath = path + ".Samples";
+            RealTimeDataSource *dataSource = RealTimeDataSource::Instance();
+            StreamString testSamples;
+            if (dataSource->Read(samplesPath.Buffer(), testSamples)) {
+                if (testSamples == samples) {
+                    ret = true;
+                }
+            }
+        }
+
+        if (ret) {
+            ret = false;
+            StreamString cyclesPath = path + ".Cycles";
+            RealTimeDataSource *dataSource = RealTimeDataSource::Instance();
+            StreamString testCycles;
+            if (dataSource->Read(cyclesPath.Buffer(), testCycles)) {
+                if (testCycles == cycles) {
+                    ret = true;
+                }
+            }
+        }
+    }
+
+    return ret;
 }
 
-bool RealTimeSampledData::Initialise(StructuredDataI &data){
-    bool ret=data.Read("address", address);
+bool RealTimeSampledData::Initialise(StructuredDataI &data) {
+    bool ret = data.Read("Path", path);
 
-    if(ret){
-        ret=data.Read("type", type);
+    if (ret) {
+        ret = data.Read("Type", type);
     }
 
-    if(ret){
-        ret=data.Read("samples", samples);
+    if (ret) {
+        ret = data.Read("Samples", samples);
     }
 
-    if(ret){
-        ret=data.Read("cycles", cycles);
+    if (ret) {
+        ret = data.Read("Cycles", cycles);
     }
     return ret;
 }

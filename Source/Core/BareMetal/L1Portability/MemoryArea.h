@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDefaultData.h
- * @brief Header file for class RealTimeDefaultData
- * @date 22/feb/2016
- * @author pc
+ * @file MemoryArea.h
+ * @brief Header file for class MemoryArea
+ * @date 23/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDefaultData
+ * @details This header file contains the declaration of the class MemoryArea
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDEFAULTDATA_H_
-#define REALTIMEDEFAULTDATA_H_
+#ifndef MEMORYAREA_H_
+#define MEMORYAREA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,37 +31,36 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeData.h"
-#include "StreamString.h"
-#include "StructuredDataI.h"
+#include "HeapManager.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-class RealTimeDefaultData: public RealTimeData {
+
+namespace MARTe{
+
+class MemoryArea {
+
 public:
-    RealTimeDefaultData();
+    MemoryArea();
 
-    virtual bool Verify();
+    ~MemoryArea();
 
-    virtual bool Initialise(StructuredDataI& data);
+    bool Free();
 
-    virtual const char8 *GetPath();
+    void* Add(void* element, uint32 memorySize);
 
-    virtual const char8 *GetType();
-
-    virtual const char8 *GetDefaultValue();
+    void* Add(uint32 memorySize);
 
 private:
-    StreamString path;
-    StreamString type;
-    StreamString defaultValue;
-};
-}
 
+    void* memory;
+    uint32 size;
+};
+
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDEFAULTDATA_H_ */
+#endif /* MEMORYAREA_H_ */
 

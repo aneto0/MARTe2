@@ -50,7 +50,7 @@ public:
 
 private:
 
-    StreamString address;
+    StreamString path;
     StreamString type;
 
     // how many samples in the specified number of cycles

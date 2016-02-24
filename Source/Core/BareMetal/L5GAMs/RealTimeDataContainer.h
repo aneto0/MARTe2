@@ -43,6 +43,8 @@ class RealTimeDataContainer: public ReferenceContainer {
 public:
     bool Verify();
 
+    // Initialise is automatic
+
 };
 
 }

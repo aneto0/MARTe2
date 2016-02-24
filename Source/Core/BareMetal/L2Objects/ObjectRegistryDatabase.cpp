@@ -130,7 +130,7 @@ const char8 * const ObjectRegistryDatabase::GetClassName() const {
     return "ObjectRegistryDatabase";
 }
 
-static void *ObjectRegistryDatabase::operator new(osulong size) throw () {
+void *ObjectRegistryDatabase::operator new(osulong size) throw () {
     return GlobalObjectI::operator new(size);
 }
 

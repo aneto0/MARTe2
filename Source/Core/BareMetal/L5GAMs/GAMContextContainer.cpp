@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataContainer.cpp
- * @brief Source file for class RealTimeDataContainer
- * @date 22/02/2016
- * @author Giuseppe Ferrò
+ * @file GAMContextContainer.cpp
+ * @brief Source file for class GAMContextContainer
+ * @date 24/feb/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataContainer (public, protected, and private). Be aware that some 
+ * the class GAMContextContainer (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeDataContainer.h"
+#include "GAMContextContainer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,21 +38,35 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
-bool RealTimeDataContainer::Verify(){
 
+namespace MARTe {
+GAMContextContainer::GAMContextContainer() {
+
+}
+
+bool GAMContextContainer::Validate(){
     bool ret=false;
-    for(uint32 i=0u; (i<Size()) && (ret); i++){
-        ReferenceT<RealTimeData> item=Get(i);
-        if(item.IsValid()){
-            ret=item->Verify();
+    for(uint32 i=0u; i<Size(); i++){
+        ReferenceT<GAMContext> context= Get(i);
+        if(context.IsValid()){
+            ret=context->Validate(*this);
         }
     }
-
     return ret;
 }
 
 
+virtual bool GAMContextContainer::Initialise(StructuredDataI & data) {
+    bool ret=true;
+    ReferenceContainer::Initialise(data);
+    if (!data.Read("ContextManagerPath", contextManagerPath)) {
+        ret=false;
+        //TODO
+    }
+    return ret;
+}
 
-
+const char8* GAMContextContainer::GetContextManagerPath(){
+    return contextManagerPath.Buffer();
+}
 }

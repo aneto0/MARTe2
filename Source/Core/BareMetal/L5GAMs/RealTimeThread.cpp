@@ -58,7 +58,6 @@ bool RealTimeThread::Validate(RealTimeApplication &rtApp,
 
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
-    // checks if the gam referenced declared here exist and support the state where this thread is declared into
     for (uint32 i = 0u; i < numberOfFunctions; i++) {
         // search
         ReferenceT<GAM> function = god->Find(functions[i].Buffer());

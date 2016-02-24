@@ -40,11 +40,13 @@
 
 
 namespace MARTe{
+// a reference container with a fixed structure
 class GAMBlock: public ReferenceContainer {
 
 public:
 
     GAMBlock();
+
     ~GAMBlock();
 
     void SetUp();
@@ -56,7 +58,9 @@ public:
     virtual void Execute();
 private:
 
-
+    ReferenceT<GAMContext> context;
+    // address of the father
+    StreamString gam;
 };
 
 }

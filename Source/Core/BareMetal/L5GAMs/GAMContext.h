@@ -31,12 +31,44 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
+#include "Object.h"
+#include "MemoryArea.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe{
-class GAMContext: public ReferenceContainer {
+
+
+
+class NamedPointer {
+public:
+    void * pointer;
+    StreamString type;
+    StreamString name;
+    uint32 size;
+};
+
+class GAMContext: public Object {
+
+public:
+
+    GAMContext();
+
+    bool Read(const char8* name, void * output);
+
+    bool Write(const char8* name, void * input);
+
+    // initialises the pointer table and add itself to the gam manager
+    bool Validate(GAMContextContainer &contextContainer);
+
+    // gets the array of path to the memory
+    virtual bool Initialise(StructuredDataI &data);
+
+private:
+
+    NamedPointer* items;
+
+    uint32 numberOfItems;
 };
 }
 

@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "GlobalObjectsDatabase.h"
 #include "RealTimeDataSource.h"
 
 /*---------------------------------------------------------------------------*/
@@ -39,3 +40,37 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
+RealTimeDataSource* RealTimeDataSource::Instance(){
+
+    static RealTimeDataSource *instance = NULL_PTR(RealTimeDataSource *);
+    if (instance == NULL) {
+        instance=new RealTimeDataSource();
+        GlobalObjectsDatabase::Instance()->Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 2u);
+    }
+    return instance;
+}
+
+
+const char8 * const RealTimeDataSource::GetClassName() const{
+    return "RealTimeDataSource";
+}
+
+RealTimeDataSource::RealTimeDataSource(){
+    mux.Create();
+}
+
+
+void *RealTimeDataSource::operator new(osulong size) throw () {
+    return GlobalObjectI::operator new(size);
+}
+
+bool RealTimeDataSource::Lock(const TimeoutType &timeout) {
+    return (mux.FastLock(timeout) == ErrorManagement::NoError);
+}
+
+void RealTimeDataSource::Unlock() {
+    mux.FastUnLock();
+}
+}

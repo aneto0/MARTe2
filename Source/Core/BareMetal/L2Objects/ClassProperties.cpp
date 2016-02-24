@@ -45,15 +45,18 @@ ClassProperties::ClassProperties() {
     typeidClassName = static_cast<const char8 *>(NULL);
     classVersion = static_cast<const char8 *>(NULL);
     uniqueIdentifier = 0u;
+    size=0u;
 }
 
 ClassProperties::ClassProperties(const char8 * const cName,
                                  const char8 * const typeidName,
-                                 const char8 * const cVersion) {
+                                 const char8 * const cVersion,
+                                 const uint32 cSize) {
     className = cName;
     typeidClassName = typeidName;
     classVersion = cVersion;
     uniqueIdentifier = 0u;
+    size = cSize;
 }
 
 const char8* ClassProperties::GetName() const {
@@ -68,12 +71,16 @@ const char8* ClassProperties::GetVersion() const {
     return classVersion;
 }
 
-ClassUID ClassProperties::GetUniqueIdentifier() const{
+ClassUID ClassProperties::GetUniqueIdentifier() const {
     return uniqueIdentifier;
 }
 
-void ClassProperties::SetUniqueIdentifier(const ClassUID &uid){
+void ClassProperties::SetUniqueIdentifier(const ClassUID &uid) {
     uniqueIdentifier = uid;
+}
+
+uint32 ClassProperties::GetSize() const {
+    return size;
 }
 
 }
