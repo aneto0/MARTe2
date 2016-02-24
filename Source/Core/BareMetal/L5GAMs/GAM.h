@@ -44,7 +44,7 @@ namespace MARTe{
 
 class GAM: public ReferenceContainer {
 public:
-
+/*
     GAM();
 
     ~GAM();
@@ -63,7 +63,7 @@ private:
 
     //? IOData?
 
-
+*/
 };
 
 }

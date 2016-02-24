@@ -32,6 +32,7 @@ OBJSX=  AnyType.x\
 		ClassRegistryItem.x \
 		Introspection.x\
 		IntrospectionEntry.x \
+		MessageI.x \
 		Object.x \
 		ObjectRegistryDatabase.x \
 		Reference.x \

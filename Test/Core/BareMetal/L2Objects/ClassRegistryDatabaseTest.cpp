@@ -38,14 +38,14 @@
 /*---------------------------------------------------------------------------*/
 static ClassProperties testClassProperties("TestAdd", "TestAdd", "V");
 
-static ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, NULL);
+static ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, (ObjectBuildFn*)NULL);
 
 ClassProperties testClassPropertiesLongName(
         "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf",
         "", "V");
 
 //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
-ClassRegistryItem myItemLongName = ClassRegistryItem(testClassPropertiesLongName, NULL);
+ClassRegistryItem myItemLongName = ClassRegistryItem(testClassPropertiesLongName, (ObjectBuildFn*)NULL);
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

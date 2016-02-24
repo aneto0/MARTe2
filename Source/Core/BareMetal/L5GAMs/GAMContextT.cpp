@@ -1,7 +1,7 @@
 /**
- * @file GAMBlock.cpp
- * @brief Source file for class GAMBlock
- * @date 19/feb/2016
+ * @file GAMContextT.cpp
+ * @brief Source file for class GAMContextT
+ * @date 24/feb/2016
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMBlock (public, protected, and private). Be aware that some 
+ * the class GAMContextT (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GAMBlock.h"
+#include "GAMContextT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,28 +38,4 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
 
-GAMBlock::GAMBlock() {
-
-}
-GAMBlock::~GAMBlock() {
-
-}
-
-void GAMBlock::SetUp() {
-
-}
-
-bool GAMBlock::Initialise(StructuredDataI &data) {
-
-}
-
-bool GAMBlock::Verify() {
-
-}
-
-void GAMBlock::Execute() {
-    // must be implemented by the user
-}
-}

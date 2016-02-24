@@ -71,12 +71,51 @@ bool RealTimeDefaultData::Verify() {
 }
 
 bool RealTimeDefaultData::Initialise(StructuredDataI& data) {
-    bool ret = data.Read("Path", path);
+
+    bool ret = ReferenceContainer::Initialise(data);
+
+    if (ret) {
+        ret = data.Read("Path", path);
+    }
     if (ret) {
         ret = data.Read("Type", type);
     }
     if (ret) {
         ret = data.Read("Default", defaultValue);
+    }
+    if (ret) {
+        ret = data.Read("IsFinalised", finalised);
+    }
+    return ret;
+}
+
+bool RealTimeDefaultData::MergeWithLocal(StructuredDataI & localData) {
+
+    uint32 newItemsNumber = localData.GetNumberOfChildren();
+    bool ret = ((finalised) && (newItemsNumber == 0u));
+
+    if (!finalised) {
+        ret = true;
+        for (uint32 i = 0u; (i < newItemsNumber) & (ret); i++) {
+            const char8 * newItemName = localData.GetChildName(i);
+            for (uint32 j = 0u; j < Size(); j++) {
+                Reference item = Get(i);
+                if (StringHelper::Compare(item->GetName(), newItemName) == 0) {
+                    ret = false;
+                    //TODO Already exists a variable with the same name!!
+                }
+                else {
+                    ReferenceT<RealTimeData> newItem;
+                    newItem.Initialise(localData, false);
+                    if (newItem.IsValid()) {
+                        ret = Insert(newItem);
+                    }
+                    else{
+                        ret=false;
+                    }
+                }
+            }
+        }
     }
     return ret;
 }

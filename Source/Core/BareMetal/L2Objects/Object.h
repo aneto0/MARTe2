@@ -38,6 +38,7 @@
 #include "ClassRegistryItem.h"
 #include "StructuredDataI.h"
 #include "AnyType.h"
+#include "MessageI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                        Macro definitions                                  */

@@ -1,6 +1,6 @@
 /**
- * @file GAMContextContainer.cpp
- * @brief Source file for class GAMContextContainer
+ * @file GAMGroup.cpp
+ * @brief Source file for class GAMGroup
  * @date 24/feb/2016
  * @author pc
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMContextContainer (public, protected, and private). Be aware that some 
+ * the class GAMGroup (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GAMContextContainer.h"
+#include "GAMGroup.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,35 +38,39 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
-GAMContextContainer::GAMContextContainer() {
 
+GAMGroup::GAMGroup() {
+    supportedStates = NULL_PTR(StreamString*);
 }
 
-bool GAMContextContainer::Validate(){
-    bool ret=false;
-    for(uint32 i=0u; i<Size(); i++){
-        ReferenceT<GAMContext> context= Get(i);
-        if(context.IsValid()){
-            ret=context->Validate(*this);
+GAMGroup::~GAMGroup() {
+    if (supportedStates != NULL) {
+        delete supportedStates;
+    }
+}
+
+void GAMGroup::SetUp() {
+    for (uint32 i = 0u; i < Size(); i++) {
+        ReferenceT<GAM> gam = Get(i);
+        if (gam.IsValid()) {
+            gam->SetUp();
         }
     }
-    return ret;
 }
 
+void GAMGroup::ChangeState() {
+    // Use the two buffer in GAMContext
+}
 
-virtual bool GAMContextContainer::Initialise(StructuredDataI & data) {
-    bool ret=true;
-    ReferenceContainer::Initialise(data);
-    if (!data.Read("ContextManagerPath", contextManagerPath)) {
-        ret=false;
-        //TODO
+bool GAMGroup::Initialise(StructuredDataI &data) {
+    bool ret = ReferenceContainer::Initialise(data);
+    if (ret) {
+        AnyType statesAt = data.GetType("States");
+        uint32 numberOfSupportedStates = statesAt.GetNumberOfElements(0u);
+        supportedStates = new StreamString[numberOfSupportedStates];
+        ret = (data.Read("states", supportedStates));
     }
     return ret;
-}
-
-const char8* GAMContextContainer::GetContextManagerPath(){
-    return contextManagerPath.Buffer();
 }
 }

@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataContainer.cpp
- * @brief Source file for class RealTimeDataContainer
- * @date 22/02/2016
- * @author Giuseppe Ferrò
+ * @file MessageI.cpp
+ * @brief Source file for class MessageI
+ * @date 24/feb/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataContainer (public, protected, and private). Be aware that some 
+ * the class MessageI (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeDataContainer.h"
+#include "MessageI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,57 +38,48 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
-bool RealTimeDataContainer::Verify() {
 
-    bool ret = false;
-    for (uint32 i = 0u; (i < Size()) && (ret); i++) {
-        ReferenceT<RealTimeData> item = Get(i);
-        if (item.IsValid()) {
-            ret = item->Verify();
-        }
-    }
+MessageI::MessageI() {
+    requestCode = 0u;
+    uniqueId = 0;
 
-    return ret;
 }
 
-bool RealTimeDataContainer::MergeWithLocal(StructuredDataI & localData) {
 
-    uint32 newItemsNumber = localData.GetNumberOfChildren();
-    bool ret = ((finalised) && (newItemsNumber == 0u));
+MessageI::~MessageI(){
 
-    if (!finalised) {
-        ret = true;
-        for (uint32 i = 0u; (i < newItemsNumber) & (ret); i++) {
-            const char8 * newItemName = localData.GetChildName(i);
-            for (uint32 j = 0u; j < Size(); j++) {
-                Reference item = Get(i);
-                if (StringHelper::Compare(item->GetName(), newItemName) == 0) {
-                    ret = false;
-                    //TODO Already exists a variable with the same name!!
-                }
-                else {
-                    ReferenceT<RealTimeData> newItem;
-                    newItem.Initialise(localData, false);
-                    if (newItem.IsValid()) {
-                        ret = Insert(newItem);
-                    }
-                    else{
-                        ret=false;
-                    }
-                }
-            }
-        }
-    }
-    return ret;
 }
 
-bool RealTimeDataContainer::Initialise(StructuredDataI & data) {
-    bool ret = ReferenceContainer::Initialise(data);
-    if (ret) {
-        ret = (data.Read("IsFinalised", finalised));
-    }
-    return ret;
+
+bool MessageI::SetContent(StructuredDataI & data) {
+    //TODO
+    return true;
 }
+
+StructuredDataI *MessageI::GetContent(){
+    //TODO
+    return NULL_PTR(StructuredDataI*);
+}
+
+
+
+void MessageI::SetUniqueId(int32 id) {
+    uniqueId = id;
+}
+
+void MessageI::SetRequestCode(uint32 code) {
+    requestCode = code;
+}
+
+uint32 MessageI::GetRequestCode() const {
+    return requestCode;
+}
+
+uint32 MessageI::GetUniqueId() const {
+    return uniqueId;
+}
+
 
 }

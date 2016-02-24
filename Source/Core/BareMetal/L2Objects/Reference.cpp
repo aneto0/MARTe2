@@ -89,10 +89,10 @@ Reference::~Reference() {
 
 /*lint -e{715} data and createOnly not referenced to be removed when the method is implemented in the future*/
 bool Reference::Initialise(StructuredDataI &data,
-                           const bool &createOnly) {
+                           const bool &initOnly) {
 
     bool ok = false;
-    if ((!createOnly) && (objectPointer == NULL_PTR(Object*))) {
+    if ((!initOnly) && (objectPointer == NULL_PTR(Object*))) {
         char8 className[256] = { '\0' };
         if (data.Read("Class", className)) {
             Object *objPtr = CreateByName(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());

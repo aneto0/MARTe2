@@ -52,7 +52,7 @@ ClassRegistryItem::ClassRegistryItem() :
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
     introspection = NULL_PTR(Introspection *);
-    genericFn = NULL_PTR(GenericFn);
+    genericFn = NULL_PTR(GenericFn*);
 }
 
 //LCOV_EXCL_STOP
@@ -64,7 +64,7 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = objBuildFn;
     introspection = NULL_PTR(Introspection *);
-    genericFn = NULL_PTR(GenericFn);
+    genericFn = NULL_PTR(GenericFn*);
     ClassRegistryDatabase::Instance()->Add(this);
 }
 
@@ -75,7 +75,7 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
     introspection = &introspectionIn;
-    genericFn = NULL_PTR(GenericFn);
+    genericFn = NULL_PTR(GenericFn*);
     ClassRegistryDatabase::Instance()->Add(this);
 }
 
@@ -87,7 +87,7 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = objBuildFn;
     introspection = &introspectionIn;
-    genericFn = NULL_PTR(GenericFn);
+    genericFn = NULL_PTR(GenericFn*);
     ClassRegistryDatabase::Instance()->Add(this);
 }
 
