@@ -41,9 +41,20 @@ namespace MARTe{
 // a container of RealTimeDatas
 class RealTimeDataContainer: public ReferenceContainer {
 public:
+
+    // call RealTimeData::Verify
     bool Verify();
 
-    // Initialise is automatic
+
+    // initialises all from the cdb
+    virtual bool Initialise(StructuredDataI & data);
+
+    // if exists another IO data declared in the local cdb, add it
+    // returns false in case of redeclaration
+    bool MergeWithLocal(StructuredDataI & localData);
+
+private:
+    bool finalised;
 
 };
 

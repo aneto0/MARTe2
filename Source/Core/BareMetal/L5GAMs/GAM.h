@@ -34,7 +34,7 @@
 #include "ReferenceContainer.h"
 #include "StructuredDataI.h"
 #include "StreamString.h"
-#include "GAMContext.h"
+//#include "GAMContext.h"
 #include "ReferenceT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -51,16 +51,19 @@ public:
 
     void SetUp();
 
-    virtual void ChangeState();
-
     virtual bool Initialise(StructuredDataI &data);
+
+    virtual bool Verify(StructuredDataI &localData);
+
+    virtual void Execute();
 
 private:
 
-    StreamString *supportedStates;
+    StreamString gamGroupPath;
 
-    ReferenceT<GAMContext> *supportedContexts;
-    uint32 numberOfContexts;
+    //? IOData?
+
+
 };
 
 }

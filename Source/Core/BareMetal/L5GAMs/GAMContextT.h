@@ -1,8 +1,8 @@
 /**
- * @file GAMContextContainer.h
- * @brief Header file for class GAMContextContainer
- * @date 24/02/2016
- * @author Giuseppe Ferrò
+ * @file GAMContextT.h
+ * @brief Header file for class GAMContextT
+ * @date 24/feb/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMContextContainer
+ * @details This header file contains the declaration of the class GAMContextT
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMCONTEXTCONTAINER_H_
-#define GAMCONTEXTCONTAINER_H_
+#ifndef GAMCONTEXTT_H_
+#define GAMCONTEXTT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,33 +31,41 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
-class GAMContextContainer: public ReferenceContainer {
+
+namespace MARTe {
+
+template<typename T>
+class GAMContextT {
 
 public:
 
-    GAMContextContainer();
+    GAMContextT();
 
-    bool Validate();
-
-    virtual bool Initialise (StructuredDataI & data);
-
-    const char8* GetContextManagerPath();
+    // full access to the context: the GAMGroup can change it
+    T &GetContext(uint8 activeBuffer);
 
 private:
-     StreamString contextManagerPath;
 
+    T context[2];
 
 };
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMCONTEXTCONTAINER_H_ */
+
+
+
+template<typename T>
+T &GAMContextT<T>::GetContext(uint8 activeBuffer) {
+    return context[activeBuffer];
+}
+
+}
+#endif /* GAMCONTEXTT_H_ */
 

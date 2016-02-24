@@ -1,7 +1,7 @@
 /**
- * @file GAMContext.h
- * @brief Header file for class GAMContext
- * @date 22/02/2016
+ * @file GAMGroup.h
+ * @brief Header file for class GAMGroup
+ * @date 24/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMContext
+ * @details This header file contains the declaration of the class GAMGroup
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMCONTEXT_H_
-#define GAMCONTEXT_H_
+#ifndef GAMGROUP_H_
+#define GAMGROUP_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,44 +31,31 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Object.h"
-#include "MemoryArea.h"
+#include "ReferenceContainer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
-
-
-
-class NamedPointer {
-public:
-    void * pointer;
-    StreamString type;
-    StreamString name;
-    uint32 size;
-};
-
-class GAMContext: public Object {
-
+namespace MARTe {
+class GAMGroup: public ReferenceContainer {
 public:
 
-    GAMContext();
+    GAMGroup();
 
-    bool Read(const char8* name, void * output);
+    virtual ~GAMGroup();
 
-    bool Write(const char8* name, void * input);
+    virtual void SetUp();
 
-    // initialises the pointer table and add itself to the gam manager
-    bool Validate(GAMContextContainer &contextContainer);
+    virtual void ChangeState(RealTimeStateInfo status);
 
-    // gets the array of path to the memory
     virtual bool Initialise(StructuredDataI &data);
 
 private:
 
-    NamedPointer* items;
+    StreamString *supportedStates;
 
-    uint32 numberOfItems;
+    //? Possible specific GAMContexts
+    //? Possible uint8 currentContextBuffer
+
 };
 }
 
@@ -76,5 +63,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMCONTEXT_H_ */
+#endif /* GAMGROUP_H_ */
 

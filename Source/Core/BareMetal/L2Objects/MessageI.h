@@ -1,7 +1,7 @@
 /**
- * @file GAMContextManager.h
- * @brief Header file for class GAMContextManager
- * @date 23/02/2016
+ * @file MessageI.h
+ * @brief Header file for class MessageI
+ * @date 24/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMContextManager
+ * @details This header file contains the declaration of the class MessageI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMCONTEXTMANAGER_H_
-#define GAMCONTEXTMANAGER_H_
+#ifndef MESSAGEI_H_
+#define MESSAGEI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -35,36 +35,36 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
-class GAMContextManager: public Object {
+namespace MARTe {
+
+class MessageI: public Object {
+
 public:
-    GAMContextManager();
+
+    MessageI();
 
     virtual bool Initialise(StructuredDataI & data);
 
-    // call GAMContextContainer::Validate initialising itself
-    bool Validate();
+    virtual bool SetContent(StructuredDataI & data);
 
-    bool AddContext(ReferenceT<GAMContext> newContext);
+    virtual StructuredDataI *GetContent();
 
-    // triggered by the scheduler
-    void SwitchToNext();
+    void SetUniqueId(int32 id);
 
+    void SetRequestCode(uint32 code);
+
+    uint32 GetRequestCode() const;
+    uint32 GetUniqueId() const;
 
 private:
-    StreamString contextContainerPath;
 
-    MemoryArea contextMemory;
-
-    NamedPointer* items;
-
-    uint32 numberOfItems;
-
-    Reference<GAMContext> *contexts;
-
-    uint32 numberOfContexts;
+    uint32 requestCode;
+    int32 uniqueId;
 
 };
+
+const uint32 InformationRequest = 0u;
+const uint32 DataRequest = 0u;
 
 }
 
@@ -72,5 +72,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMCONTEXTMANAGER_H_ */
+#endif /* SOURCE_CORE_BAREMETAL_L2OBJECTS_MESSAGEI_H_ */
 

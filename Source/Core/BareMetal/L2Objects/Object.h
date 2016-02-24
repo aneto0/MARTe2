@@ -264,8 +264,6 @@
              className ## ClassRegistryItem_.DecrementNumberOfInstances();                                                  \
          }
 
-
-
 #define FUNCTION_REGISTER(functionName,ver,function)     \
         /*                                                                                                                 \
          * Class properties of this class type. One instance per class type automatically instantiated at the start        \
@@ -323,11 +321,12 @@ public:
      */
     virtual bool Initialise(StructuredDataI &data);
 
+    virtual bool ProcessMessage(MessageI & data);
 
     virtual bool ToStructuredData(StructuredDataI & data);
 
-    virtual bool IntrospectionToStructuredData(StructuredDataI & data, int32 level=-1);
-
+    virtual bool IntrospectionToStructuredData(StructuredDataI & data,
+                                               int32 level = -1);
 
     /**
      * @brief Returns the number of references.
@@ -363,9 +362,6 @@ public:
      * @pre newName != NULL
      */
     void SetName(const char8 * const newName);
-
-
-
 
 private:
 

@@ -88,11 +88,11 @@ public:
     /**
      * @brief Creates an object from a structured list of elements.
      * @param[in] data the data to initialise the underlying object.
-     * @param[in] createOnly if true the object Initialise method is not called.
+     * @param[in] initOnly if true the object is supposed to be already created and will be only initialized.
      * @return true if the object was successfully created and initialized, false otherwise.
      */
     virtual bool Initialise(StructuredDataI &data,
-    const bool &createOnly);
+    const bool &initOnly);
 
     /**
      * @brief Removes the reference to the underlying object.

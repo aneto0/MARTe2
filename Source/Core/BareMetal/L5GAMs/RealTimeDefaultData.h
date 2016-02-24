@@ -46,6 +46,8 @@ public:
 
     virtual bool Initialise(StructuredDataI& data);
 
+    bool MergeWithLocal(StructuredDataI & localData);
+
     virtual const char8 *GetPath();
 
     virtual const char8 *GetType();
@@ -56,6 +58,7 @@ private:
     StreamString path;
     StreamString type;
     StreamString defaultValue;
+    bool finalised;
 };
 }
 

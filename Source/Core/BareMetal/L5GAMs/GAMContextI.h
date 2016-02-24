@@ -1,7 +1,7 @@
 /**
- * @file GAMBlock.h
- * @brief Header file for class GAMBlock
- * @date 19/02/2016
+ * @file GAMContextI.h
+ * @brief Header file for class GAMContextI
+ * @date 24/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMBlock
+ * @details This header file contains the declaration of the class GAMContextI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMBLOCK_H_
-#define GAMBLOCK_H_
+#ifndef GAMCONTEXTI_H_
+#define GAMCONTEXTI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,42 +31,27 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
-#include "StreamString.h";
-#include "StructuredDataI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
-namespace MARTe{
-// a reference container with a fixed structure
-class GAMBlock: public ReferenceContainer {
+namespace MARTe {
+class GAMContextI {
 
 public:
 
-    GAMBlock();
 
-    ~GAMBlock();
 
-    void SetUp();
-
-    virtual bool Initialise(StructuredDataI &data);
-
-    bool Verify();
-
-    virtual void Execute();
 private:
 
-    ReferenceT<GAMContext> context;
-    // address of the father
-    StreamString gam;
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMBLOCK_H_ */
+#endif /* GAMCONTEXTI_H_ */
 
