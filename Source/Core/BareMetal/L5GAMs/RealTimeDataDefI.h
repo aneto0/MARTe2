@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSource.h
- * @brief Header file for class RealTimeDataSource
- * @date 22/02/2016
+ * @file RealTimeDataDefI.h
+ * @brief Header file for class RealTimeDataDefI
+ * @date 25/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSource
+ * @details This header file contains the declaration of the class RealTimeDataDefI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCE_H_
-#define REALTIMEDATASOURCE_H_
+#ifndef REALTIMEDATADEFI_H_
+#define REALTIMEDATADEFI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,58 +31,72 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GlobalObjectI.h"
-#include "StructuredDataI.h"
+
+#include "ReferenceContainer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
+namespace MARTe{
 
-// it is a tree of AnyTypes
-// overload of read and write to allow to store structured data leafs? (or we can use directly
-// the current configuration)
-// disallow the move
-class RealTimeDataSource: public GlobalObjectI, public StructuredDataI {
+/**
+ * @brief The interface of a real time data definition structure.
+ * @details Maps a structure to the RealTimeDataSource.
+ */
+class RealTimeDataDefI: public ReferenceContainer {
 
 public:
 
-    static RealTimeDataSource *Instance();
-
-    virtual const char8 * const GetClassName() const;
+    /**
+     * @Constructor
+     * @post
+     *   GetType() == "" &&
+     *   GetPath() == "";
+     */
+    RealTimeDataDefI();
 
     /**
-     * @brief Locks the shared semaphore.
-     * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
-     * @return true if the shared semaphore is successfully locked.
+     * @brief Merges the global definition (initialised using Initialise(*) function) with the
+     * definition expressed in the local StructuredData in input.
+     * @param[in] localData is the local StructuredData.
+     * @return true if there are not conflicts between the local and the global definitions.
      */
-    bool Lock(const TimeoutType &timeout);
+    virtual bool MergeWithLocal(StructuredDataI &localData)=0;
 
     /**
-     * @brief Unlocks the shared semaphore.
-     * @return true if the shared semaphore is successfully unlocked.
+     * @brief retrieves the variable address in the RealTimeDataSource.
+     * @return the variable address in the RealTimeDataSource.
      */
-    void Unlock();
-
-
-private:
-    RealTimeDataSource();
+    const char8 *GetPath();
 
     /**
-     * @brief Disallow the usage of new.
-     * @param[in] size the size of the object.
+     * @brief Retrieves the variable type.
+     * @return the variable type.
      */
-    static void *operator new(osulong size) throw ();
-    /**
-     * The shared mutex semaphore.
-     */
-    FastPollingMutexSem mux;
+    const char8 *GetType();
 
+    /**
+     * @brief Initialises the container and reads the variable address and type from the StructuredData
+     * in input.
+     */
+    virtual bool Initialise(StructuredDataI &data);
+
+protected:
+
+    /**
+     * The address of the variable in the RealTimeDataSource
+     */
+    StreamString path;
+
+    /**
+     * The variable type
+     */
+    StreamString type;
 };
 }
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCE_H_ */
+#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMEDATADEFI_H_ */
 

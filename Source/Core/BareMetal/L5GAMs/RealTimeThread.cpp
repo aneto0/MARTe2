@@ -49,47 +49,77 @@ RealTimeThread::RealTimeThread() {
 
 RealTimeThread::~RealTimeThread() {
     if (functions != NULL) {
-        delete functions;
+        delete [] functions;
     }
 }
 
 bool RealTimeThread::Validate(RealTimeApplication &rtApp,
                               RealTimeState &rtState) {
 
-    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-
-    for (uint32 i = 0u; i < numberOfFunctions; i++) {
+    bool ret = true;
+    for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
+        ret = false;
         // search
-        ReferenceT<GAM> function = god->Find(functions[i].Buffer());
-        if (function.IsValid()) {
-            rtState.AddFunction(function);
+        Reference functionGeneric = ObjectRegistryDatabase::Instance()->Find(functions[i].Buffer());
+        if (functionGeneric.IsValid()) {
+            // case GAMGroup (stateful gams)
+            ReferenceT<GAMGroup> functionGAMGroup = functionGeneric;
+            if (functionGAMGroup.IsValid()) {
+                // add the GAMGroup to the RealTimeState accelerator array
+                if (rtState.AddGAMGroup(functionGAMGroup)) {
+                    uint32 nOfSubGAMs = functionGAMGroup->Size();
+                    // add all the gams in the order of the configuration inside GAMGroup
+                    for (uint32 j = 0u; j < nOfSubGAMs; j++) {
+                        ReferenceT<GAM> subGam = functionGAMGroup->Get(j);
+                        if (subGam.IsValid()) {
+                            if (Insert(subGam)) {
+                                ret = true;
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                // case stateless GAM
+                ReferenceT<GAM> functionGAM = functionGeneric;
+                if (functionGAM.IsValid()) {
+                    if (Insert(functionGAM)) {
+                        ret = true;
+                    }
+                }
+            }
         }
-        else {
-            //TODO warning the gam referenced does not exists
+        else{
+            //TODO error the gam referenced does not exists
         }
-
     }
 
-    return true;
+    return ret;
 }
 
 bool RealTimeThread::Initialise(StructuredDataI & data) {
     bool ret = false;
-    if (ReferenceContainer::Initialise(data)) {
-        // set up the string array
-        AnyType functionsArray = data.GetType("functions");
-        if (functionsArray.GetDataPointer() != NULL) {
-            numberOfFunctions=functionsArray.GetNumberOfElements(0u);
-            functions=new StreamString[numberOfFunctions];
+    // set up the string array
+    AnyType functionsArray = data.GetType("Functions");
+    if (functionsArray.GetDataPointer() != NULL) {
+        numberOfFunctions=functionsArray.GetNumberOfElements(0u);
+        functions=new StreamString[numberOfFunctions];
 
-            Vector<StreamString> functionVector(functions, numberOfFunctions);
+        Vector<StreamString> functionVector(functions, numberOfFunctions);
 
-            if(data.Read("functions", functionVector)) {
-                ret=true;
-            }
+        if(data.Read("Functions", functionVector)) {
+            ret=true;
         }
     }
     return ret;
+}
+
+StreamString * RealTimeThread::GetFunctions() const {
+    return functions;
+}
+
+uint32 RealTimeThread::GetNumberOfFunctions() const {
+    return numberOfFunctions;
 }
 
 }

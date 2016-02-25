@@ -42,15 +42,18 @@ namespace MARTe {
 
 GAMGroup::GAMGroup() {
     supportedStates = NULL_PTR(StreamString*);
+    numberOfSupportedStates = 0u;
 }
 
 GAMGroup::~GAMGroup() {
     if (supportedStates != NULL) {
-        delete supportedStates;
+        delete [] supportedStates;
     }
 }
 
 void GAMGroup::SetUp() {
+    // initialise the context here
+
     for (uint32 i = 0u; i < Size(); i++) {
         ReferenceT<GAM> gam = Get(i);
         if (gam.IsValid()) {
@@ -59,18 +62,34 @@ void GAMGroup::SetUp() {
     }
 }
 
-void GAMGroup::ChangeState() {
-    // Use the two buffer in GAMContext
+/*
+void GAMGroup::PrepareNextState(const RealTimeStateInfo &status) {
+    // Use the two buffers in GAMContext
+    // preparing the next buffer for the next state
 }
+*/
+
 
 bool GAMGroup::Initialise(StructuredDataI &data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (ret) {
         AnyType statesAt = data.GetType("States");
-        uint32 numberOfSupportedStates = statesAt.GetNumberOfElements(0u);
+        numberOfSupportedStates = statesAt.GetNumberOfElements(0u);
         supportedStates = new StreamString[numberOfSupportedStates];
         ret = (data.Read("states", supportedStates));
     }
+    // if there is a context to be initialised a good strategy could be
+    // put a pointer to the context for each gam and the function Switch() is only
+    // a change of the index 0-1
     return ret;
 }
+
+StreamString *GAMGroup::GetSupportedStates() const {
+    return supportedStates;
+}
+
+uint32 GAMGroup::GetNumberOfSupportedStates() const {
+    return numberOfSupportedStates;
+}
+
 }

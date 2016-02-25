@@ -41,33 +41,33 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-/*
+
 GAM::GAM() {
 }
 
-GAM::~GAM() {
+/*void GAM::SetUp() {
+ // initialises the local status
+ }*/
 
-}
+/*
+ virtual void Execute(){
+ // execution routine
+ */
 
-void GAM::SetUp() {
-    // initialises the local status
-}
-
-bool GAM::Verify(StructuredDataI &localData){
-    // check if the RealTimeDataItems are meaningful with the IO types
+bool GAM::Verify(StructuredDataI &localData) {
     // use for each of them before RealTimeDataContainer::MergeWithLocal(localData)
     // and merge the result with the existing one
+    bool ret = true;
+    uint32 numberOfElements = Size();
+    for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
+        ReferenceT<RealTimeDataDefContainer> def = Get(i);
+        if (def.IsValid()) {
+            // the partial definitions after this must become complete
+            ret = def->MergeWithLocal(localData);
+        }
+    }
+    return ret;
 }
 
-
-bool GAM::Initialise(StructuredDataI &data) {
-    // initialises the definitions using RealTimeDataContainer::Initialise()
-    bool ret = ReferenceContainer::Initialise(data);
-    if (ret) {
-        ret = data.Read("GAMGroupPath", gamGroupPath);
-    }
-
-    return ret;
-}*/
 
 }

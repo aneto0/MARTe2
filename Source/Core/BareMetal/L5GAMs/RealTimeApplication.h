@@ -38,13 +38,52 @@
 
 namespace MARTe{
 
-// contains gams (as functions) and RealTimeStates
+/**
+ * @brief A container of Functions (GAMGroup or GAM), and States (RealTimeState) references.
+ * @details The syntax in the configuration stream should be:
+ * RealTimeApplication_name = {\n
+ *     Class = RealTimeApplication\n
+ *     Functions = {\n
+ *         Class = ReferenceContainer\n
+ *         GAM_name = {\n
+ *             Class = GAM\n
+ *             ...\n
+ *         }\n
+ *         GAM_Group_name = {\n
+ *             Class = GAMGroup\n
+ *             ...\n
+ *         }\n
+ *         ...\n
+ *     }\n
+ *     States = {\n
+ *         class = ReferenceContainer\n
+ *         State_name = {\n
+ *             Class = RealTimeState\n
+ *             ...\n
+ *         }\n
+ *         ...\n
+ *     }\n
+ * }\n
+ */
 class RealTimeApplication: public ReferenceContainer {
 public:
 
+    /**
+     * @brief Constructor
+     */
+    RealTimeApplication();
 
+    /**
+     * @brief Validates the configuration.
+     * @details Checks if the functions (GAM or GAMGroup) declared in the RealTimeThread configuration are really defined
+     * and supports the state where they are declared into. Moreover creates accelerators to the specific GAM References
+     * for each RealTimeState and adds the GAM References in each RealTimeThread.
+     * @return true if all the GAMs declared in the RealTimeThread configuration are really defined
+     * and supports the state where they are declared into, false otherwise.
+     */
     bool Validate();
 
+    // The Initialise function is automatic
 };
 
 }

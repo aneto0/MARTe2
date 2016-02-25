@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataContainer.h
- * @brief Header file for class RealTimeDataContainer
- * @date 22/02/2016
+ * @file RealTimeStateInfo.h
+ * @brief Header file for class RealTimeStateInfo
+ * @date 25/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataContainer
+ * @details This header file contains the declaration of the class RealTimeStateInfo
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATACONTAINER_H_
-#define REALTIMEDATACONTAINER_H_
+#ifndef REALTIMESTATEINFO_H_
+#define REALTIMESTATEINFO_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,37 +31,27 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
+#include "GeneralDefinitions.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
-// a container of RealTimeDatas
-class RealTimeDataContainer: public ReferenceContainer {
-public:
-
-    // call RealTimeData::Verify
-    bool Verify();
-
-
-    // initialises all from the cdb
-    virtual bool Initialise(StructuredDataI & data);
-
-    // if exists another IO data declared in the local cdb, add it
-    // returns false in case of redeclaration
-    bool MergeWithLocal(StructuredDataI & localData);
-
-private:
-    bool finalised;
-
+/**
+ * The scheduler knows what is the current and the next state
+ */
+struct RealTimeStateInfo {
+    uint32 currentStateIndex;
+    uint32 nextStateIndex;
+    uint8 activeBuffer;
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATACONTAINER_H_ */
+#endif /* REALTIMESTATEINFO_H_ */
 

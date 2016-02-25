@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataSource.cpp
- * @brief Source file for class RealTimeDataSource
- * @date 22/02/2016
- * @author Giuseppe Ferrò
+ * @file RealTimeSampledDataDef.cpp
+ * @brief Source file for class RealTimeSampledDataDef
+ * @date 25/feb/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataSource (public, protected, and private). Be aware that some 
+ * the class RealTimeSampledDataDef (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,8 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GlobalObjectsDatabase.h"
-#include "RealTimeDataSource.h"
+#include "RealTimeSampledDataDef.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,37 +39,42 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+#include "RealTimeSampledDataDef.h"
+#include "RealTimeDataSource.h"
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
 
-RealTimeDataSource* RealTimeDataSource::Instance(){
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
-    static RealTimeDataSource *instance = NULL_PTR(RealTimeDataSource *);
-    if (instance == NULL) {
-        instance=new RealTimeDataSource();
-        GlobalObjectsDatabase::Instance()->Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 2u);
+namespace MARTe {
+
+RealTimeSampledDataDef::RealTimeSampledDataDef() {
+    samples = 1;
+    cycles = 1;
+
+}
+
+bool RealTimeSampledDataDef::Verify() {
+    //TODO
+    return true;
+}
+
+bool RealTimeSampledDataDef::MergeWithLocal(StructuredDataI &localData){
+    return true;
+}
+
+bool RealTimeSampledDataDef::Initialise(StructuredDataI &data) {
+    bool ret= RealTimeDataDefI::Initialise(data);
+    if (ret) {
+        ret = data.Read("Samples", samples);
     }
-    return instance;
-}
 
-
-const char8 * const RealTimeDataSource::GetClassName() const{
-    return "RealTimeDataSource";
-}
-
-RealTimeDataSource::RealTimeDataSource(){
-    mux.Create();
-}
-
-
-void *RealTimeDataSource::operator new(osulong size) throw () {
-    return GlobalObjectI::operator new(size);
-}
-
-bool RealTimeDataSource::Lock(const TimeoutType &timeout) {
-    return (mux.FastLock(timeout) == ErrorManagement::NoError);
-}
-
-void RealTimeDataSource::Unlock() {
-    mux.FastUnLock();
+    if (ret) {
+        ret = data.Read("Cycles", cycles);
+    }
+    return ret;
 }
 }

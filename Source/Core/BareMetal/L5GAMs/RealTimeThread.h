@@ -41,21 +41,68 @@
 
 namespace MARTe{
 
+
+/**
+ * @brief A container of GAM references.
+ * @details The syntax in the configuration stream should be:
+ * Thread_name = {\n
+ *     Class = RealTimeThread\n
+ *     RealTimeThread_name = {\n
+ *         Class = RealTimeThread\n
+ *         Functions = { GAM1_name, GAMGroup2_name, ... }
+ *         ...\n
+ *     }\n
+ *     ...\n
+ * }\n
+ */
 class RealTimeThread: public ReferenceContainer {
 
 public:
 
+    /**
+     * @brief Constructor.
+     * @post
+     *   GetFunctions() == NULL &&
+     *   GetNumberOfFunction == 0;
+     */
     RealTimeThread();
 
+    /**
+     * @brief Destructor. Frees the array with the function names.
+     */
     ~RealTimeThread();
 
+    /**
+     * @see RealTimeApplication::Validate()
+     */
     bool Validate(RealTimeApplication &rtApp, RealTimeState &rtState);
 
+    /**
+     * @brief Reads the array with the GAM names to be launched by this thread from the StructuredData in input.
+     * @param[in] data is the StructuredData to be read from.
+     */
     virtual bool Initialise(StructuredDataI & data);
+
+    /**
+     * @brief Returns the array with the name of the GAMs involved by this thread.
+     */
+    StreamString * GetFunctions() const;
+
+    /**
+     * @brief Returns the number of GAMs involved by this thread.
+     */
+    uint32 GetNumberOfFunctions() const;
 
 private:
 
+    /**
+     * The array with the GAM names
+     */
     StreamString* functions;
+
+    /**
+     * The number of GAMs
+     */
     uint32 numberOfFunctions;
 
 };

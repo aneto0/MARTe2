@@ -34,36 +34,52 @@
 #include "ReferenceContainer.h"
 #include "StructuredDataI.h"
 #include "StreamString.h"
-//#include "GAMContext.h"
 #include "ReferenceT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
+/**
+ * @brief The Generic Acquisition Module.
+ * @details In order to allow custom implementations, some of the methods
+ * of this class are pure virtual. A generic derived class should have
+ * specific IO structures and their definitions (see RealTimeDataDef)
+ * can be expressed in the global configuration stream and / or in the local
+ * configuration stream.
+ *
+ * @details The Initialise method (which can be override) configures the GAM reading
+ * from the global configuration stream. If the definitions of the input and output
+ * structures is incomplete (or also empty), it is possible use the method Verify(*) passing the
+ * local configuration stream and complete all the definitions.
+ */
 class GAM: public ReferenceContainer {
 public:
-/*
-    GAM();
 
-    ~GAM();
+    /**
+     * @brief Setup the GAM.
+     * @details Initialises the local status (memory allocation
+     * of the IO structures, parsing of a local configuration file, accelerators creation, ecc)
+     */
+    virtual void SetUp()=0;
 
-    void SetUp();
-
-    virtual bool Initialise(StructuredDataI &data);
-
+    /**
+     * @brief Completes the IO structure definitions (see RealTimeDataDef) found in the global CDB
+     * with the definitions in the local CDB.
+     * @return false in case of conflicts between the local and the global definitions, true otherwise.
+     */
     virtual bool Verify(StructuredDataI &localData);
 
-    virtual void Execute();
+    /**
+     * @brief The core function to be executed.
+     * @param[in] activeContextBuffer is the context buffer currently active.
+     */
+    virtual void Execute(uint8 activeContextBuffer)=0;
 
 private:
-
-    StreamString gamGroupPath;
-
     //? IOData?
-
-*/
+    //? context?
 };
 
 }

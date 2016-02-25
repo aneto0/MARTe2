@@ -52,12 +52,17 @@ private:
 
     T context[2];
 
+    uint8 activeBuffer;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+template<typename T>
+GAMContextT<T>::GAMContextT(){
+    activeBuffer=0u;
+}
 
 
 

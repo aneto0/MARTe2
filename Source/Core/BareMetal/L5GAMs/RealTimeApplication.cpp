@@ -39,13 +39,36 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
-bool RealTimeApplication::Validate(){
+RealTimeApplication::RealTimeApplication(){
 
-    //call RealTimeStates.Validate(this)
-    return true;
 }
 
+
+
+bool RealTimeApplication::Validate() {
+
+    // there must be the container called "States"
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, "States");
+    ReferenceContainer resultSingle;
+    bool ret = Find(resultSingle, filter);
+    if (ret) {
+
+        ReferenceT<ReferenceContainer> functionsContainer = resultSingle.Get(resultSingle.Size() - 1u);
+        ret = functionsContainer.IsValid();
+        if (ret) {
+            // States contains RealTimeState references
+            // for each of them call Validate(*)
+            for (uint32 i = 0u; (i < functionsContainer->Size()) && (ret); i++) {
+                ReferenceT<RealTimeState> state = functionsContainer->Get(i);
+                if (state.IsValid()) {
+                    ret = state->Validate(*this);
+                }
+            }
+        }
+    }
+    return ret;
+}
 
 }

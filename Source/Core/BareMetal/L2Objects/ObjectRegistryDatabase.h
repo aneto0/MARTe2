@@ -51,8 +51,7 @@ public:
     virtual ~ObjectRegistryDatabase();
 
     Reference Find(const char8 * const path,
-                   const Reference current = Reference(),
-                   uint32 backSteps = 0u);
+                   const Reference current = Reference());
 
     /**
      * @brief Locks the shared semaphore.

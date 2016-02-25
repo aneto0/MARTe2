@@ -1,7 +1,7 @@
 /**
- * @file GAMContextI.cpp
- * @brief Source file for class GAMContextI
- * @date 24/feb/2016
+ * @file RealTimeStateInfo.cpp
+ * @brief Source file for class RealTimeStateInfo
+ * @date 25/feb/2016
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMContextI (public, protected, and private). Be aware that some 
+ * the class RealTimeStateInfo (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GAMContextI.h"
+#include "RealTimeStateInfo.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

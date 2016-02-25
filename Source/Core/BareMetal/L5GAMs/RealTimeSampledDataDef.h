@@ -1,7 +1,7 @@
 /**
- * @file RealTimeData.h
- * @brief Header file for class RealTimeData
- * @date 19/02/2016
+ * @file RealTimeSampledDataDef.h
+ * @brief Header file for class RealTimeSampledDataDef
+ * @date 25/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeData
+ * @details This header file contains the declaration of the class RealTimeSampledDataDef
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATA_H_
-#define REALTIMEDATA_H_
+#ifndef REALTIMESAMPLEDDATADEF_H_
+#define REALTIMESAMPLEDDATADEF_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,18 +31,59 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "ReferenceContainer.h"
-#include "RealTimeDataSource.h"
+#include "RealTimeDataDefI.h"
+#include "StreamString.h"
+#include "StructuredDataI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
-// interface
-class RealTimeData: public ReferenceContainer {
 
+namespace MARTe {
+
+/**
+ * @brief Maps a final structure definition to the RealTimeDataSource.
+ * @details The definition is final for data which is supposed to be
+ * interfaced directly with the hardware.
+ *
+ * @details The definition express how many samples of data will be generated
+ * in a specified number of cycles.
+ */
+class RealTimeSampledDataDef: public RealTimeDataDefI {
 public:
-    virtual bool Verify()=0;
+
+    /**
+     * @brief Constructor
+     * @post
+     *   GetSamples() == 1 &&
+     *   GetCycles() == 1;
+     */
+    RealTimeSampledDataDef();
+
+    /**
+     * @brief Returns true.
+     */
+    bool MergeWithLocal(StructuredDataI &localData);
+
+    /**
+     * @brief Reads the samples and cycles values to determine the number of samples per cycle.
+     */
+    virtual bool Initialise(StructuredDataI &data);
+
+    //TODO
+    virtual bool Verify();
+
+private:
+
+
+    /**
+     * How many samples
+     */
+    int32 samples;
+
+    /**
+     * How many cycles
+     */
+    int32 cycles;
 
 };
 }
@@ -51,5 +92,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMEDATA_H_ */
+#endif /* REALTIMESAMPLEDDATADEF_H_ */
 

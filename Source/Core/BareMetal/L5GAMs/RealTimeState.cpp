@@ -35,19 +35,21 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-const uint32 functionArrayGranularity = 16u;
+// the allocation granularity
+const uint32 functionArrayGranularity = 8u;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 RealTimeState::RealTimeState() {
-    statefulGAMs = NULL_PTR(ReferenceT<GAM>*);
-    numberOfFunctions = 0u;
+    statefulGAMGroups = NULL_PTR(ReferenceT<GAM>*);
+    numberOfElements = 0u;
+    activeBuffer = 0u;
 }
 
 RealTimeState::~RealTimeState() {
-    if (statefulGAMs != NULL) {
-        if(!HeapManager::Free(reinterpret_cast<void*&>(statefulGAMs))) {
+    if (statefulGAMGroups != NULL) {
+        if(!HeapManager::Free(reinterpret_cast<void*&>(statefulGAMGroups))) {
             //TODO
         }
     }
@@ -64,20 +66,21 @@ bool RealTimeState::Validate(RealTimeApplication & rtApp) {
         }
         else {
             //TODO Error??
+            ret = false;
         }
     }
 
     return ret;
 }
 
-bool RealTimeState::AddFunction(ReferenceT<GAM> element) {
+bool RealTimeState::AddGAMGroup(ReferenceT<GAMGroup> element) {
     bool ret = true;
-    if ((numberOfFunctions % functionArrayGranularity) == 0u) {
-        Reference<GAM>* temp =
-                reinterpret_cast<Reference<GAM>*>(HeapManager::Realloc(statefulGAMs, sizeof(ReferenceT<GAM> ) * (numberOfFunctions + functionArrayGranularity)));
+    if ((numberOfElements % functionArrayGranularity) == 0u) {
+        Reference<GAMGroup>* temp = reinterpret_cast<Reference<GAMGroup>*>(HeapManager::Realloc(
+                statefulGAMGroups, sizeof(ReferenceT<GAMGroup> ) * (numberOfElements + functionArrayGranularity)));
         ret = (temp != NULL);
         if (ret) {
-            statefulGAMs = temp;
+            statefulGAMGroups = temp;
         }
         else {
             //TODO Error in reallocation
@@ -85,20 +88,31 @@ bool RealTimeState::AddFunction(ReferenceT<GAM> element) {
     }
 
     if (ret) {
-        statefulGAMs[numberOfFunctions] = element;
-        numberOfFunctions++;
+        statefulGAMGroups[numberOfElements] = element;
+        numberOfElements++;
     }
 
     return ret;
 
 }
 
-void RealTimeState::ChangeState() {
-    for (uint32 i = 0u; i < numberOfFunctions; i++) {
-
-        // to be developed
-        statefulGAMs[i]->ChangeState();
+void RealTimeState::ChangeState(const RealTimeStateInfo &status) {
+    for (uint32 i = 0u; i < numberOfElements; i++) {
+        statefulGAMGroups[i]->PrepareNextState(status);
     }
+    activeBuffer = ((activeBuffer + 1u) % 2u);
+}
+
+ReferenceT<GAM> * RealTimeState::GetStatefulGAMGroups() const {
+    return statefulGAMGroups;
+}
+
+uint32 RealTimeState::GetNumberOfElements() const {
+    return numberOfElements;
+}
+
+uint8 RealTimeState::GetContextActiveBuffer() const {
+    return activeBuffer;
 }
 
 }

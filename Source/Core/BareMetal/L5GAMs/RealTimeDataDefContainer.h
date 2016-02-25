@@ -1,8 +1,8 @@
 /**
- * @file RealTimeSampledData.h
- * @brief Header file for class RealTimeSampledData
- * @date 19/feb/2016
- * @author pc
+ * @file RealTimeDataDefContainer.h
+ * @brief Header file for class RealTimeDataDefContainer
+ * @date 25/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeSampledData
+ * @details This header file contains the declaration of the class RealTimeDataDefContainer
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMESAMPLEDDATA_H_
-#define REALTIMESAMPLEDDATA_H_
+#ifndef REALTIMEDATADEFCONTAINER_H_
+#define REALTIMEDATADEFCONTAINER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,39 +31,66 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeData.h"
-#include "StreamString.h"
-#include "StructuredDataI.h"
+#include "ReferenceContainer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe{
-class RealTimeSampledData: public RealTimeData {
+
+/**
+ * @brief Collects a set of RealTimeDataDefI
+ * @details It defines the IO GAM interface with respect to the RealTimeDataSource.
+ */
+class RealTimeDataDefContainer: public ReferenceContainer {
 public:
 
-    RealTimeSampledData();
+    /**
+     * @brief Constructor
+     * @post
+     *   IsFinal() == false;
+     */
+    RealTimeDataDefContainer();
 
-    virtual bool Initialise(StructuredDataI &data);
+    //TODO
+    bool Verify();
 
-    virtual bool Verify();
+
+    /**
+     * @brief Inserts all the RealTimeDataDefI items in the container and reads
+     * from the StructuredData if the container is final defined (complete definition) or not.
+     */
+    virtual bool Initialise(StructuredDataI & data);
+
+    /**
+     * @brief Merges definitions with the local StructuredData.
+     * @details If the definition from the global configuration stream is not complete,
+     * completes the definition using the local StructuredData.
+     * @param[in] localData is the local StructuredData.
+     * @return true if the merge succeeds with no conflicts, false otherwise.
+     */
+    bool MergeWithLocal(StructuredDataI & localData);
+
+    /**
+     * @brief Specifies if the definition is complete or not.
+     * @return true if the definition is complete, false otherwise.
+     */
+    bool IsFinal() const;
+
 
 private:
 
-    StreamString path;
-    StreamString type;
-
-    // how many samples in the specified number of cycles
-    int32 samples;
-    int32 cycles;
-
+    /**
+     * Specifies if the definition is complete
+     */
+    bool final;
 
 };
-}
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMESAMPLEDDATA_H_ */
+#endif /* REALTIMEDATADEFCONTAINER_H_ */
 
