@@ -30,7 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeApplication.h"
-
+#include "RealTimeState.h"
+#include "ReferenceContainerFilterObjectName.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,18 +42,17 @@
 
 namespace MARTe {
 
-RealTimeApplication::RealTimeApplication(){
+RealTimeApplication::RealTimeApplication() {
 
 }
-
-
 
 bool RealTimeApplication::Validate() {
 
     // there must be the container called "States"
     ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, "States");
     ReferenceContainer resultSingle;
-    bool ret = Find(resultSingle, filter);
+    Find(resultSingle, filter);
+    bool ret = (resultSingle.Size() > 0u);
     if (ret) {
 
         ReferenceT<ReferenceContainer> functionsContainer = resultSingle.Get(resultSingle.Size() - 1u);
@@ -70,5 +70,5 @@ bool RealTimeApplication::Validate() {
     }
     return ret;
 }
-
+CLASS_REGISTER(RealTimeApplication,"1.0");
 }

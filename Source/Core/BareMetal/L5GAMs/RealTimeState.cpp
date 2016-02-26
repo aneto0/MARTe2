@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeState.h"
+#include "RealTimeThread.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -42,7 +43,7 @@ const uint32 functionArrayGranularity = 8u;
 /*---------------------------------------------------------------------------*/
 
 RealTimeState::RealTimeState() {
-    statefulGAMGroups = NULL_PTR(ReferenceT<GAM>*);
+    statefulGAMGroups = NULL_PTR(ReferenceT<GAMGroup>*);
     numberOfElements = 0u;
     activeBuffer = 0u;
 }
@@ -76,8 +77,8 @@ bool RealTimeState::Validate(RealTimeApplication & rtApp) {
 bool RealTimeState::AddGAMGroup(ReferenceT<GAMGroup> element) {
     bool ret = true;
     if ((numberOfElements % functionArrayGranularity) == 0u) {
-        Reference<GAMGroup>* temp = reinterpret_cast<Reference<GAMGroup>*>(HeapManager::Realloc(
-                statefulGAMGroups, sizeof(ReferenceT<GAMGroup> ) * (numberOfElements + functionArrayGranularity)));
+        ReferenceT<GAMGroup>* temp = reinterpret_cast<ReferenceT<GAMGroup>*>(HeapManager::Realloc(
+                reinterpret_cast<void*&>(statefulGAMGroups), sizeof(ReferenceT<GAMGroup> ) * (numberOfElements + functionArrayGranularity)));
         ret = (temp != NULL);
         if (ret) {
             statefulGAMGroups = temp;
@@ -103,7 +104,7 @@ void RealTimeState::ChangeState(const RealTimeStateInfo &status) {
     activeBuffer = ((activeBuffer + 1u) % 2u);
 }
 
-ReferenceT<GAM> * RealTimeState::GetStatefulGAMGroups() const {
+ReferenceT<GAMGroup> * RealTimeState::GetStatefulGAMGroups() const {
     return statefulGAMGroups;
 }
 
@@ -114,5 +115,6 @@ uint32 RealTimeState::GetNumberOfElements() const {
 uint8 RealTimeState::GetContextActiveBuffer() const {
     return activeBuffer;
 }
+CLASS_REGISTER(RealTimeState,"1.0");
 
 }

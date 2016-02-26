@@ -39,16 +39,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeSampledDataDef.h"
-#include "RealTimeDataSource.h"
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 
 RealTimeSampledDataDef::RealTimeSampledDataDef() {
@@ -58,7 +48,7 @@ RealTimeSampledDataDef::RealTimeSampledDataDef() {
 }
 
 bool RealTimeSampledDataDef::Verify() {
-    //TODO
+    // the type is complete
     return true;
 }
 

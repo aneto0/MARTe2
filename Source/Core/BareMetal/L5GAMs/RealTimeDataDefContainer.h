@@ -52,7 +52,10 @@ public:
      */
     RealTimeDataDefContainer();
 
-    //TODO
+
+    /**
+     * @brief Calls RealTimeDataDefI::Verify(*) for each item in the container
+     */
     bool Verify();
 
 
@@ -64,7 +67,7 @@ public:
 
     /**
      * @brief Merges definitions with the local StructuredData.
-     * @details If the definition from the global configuration stream is not complete,
+     * @details If the definition from the global StructuredData is not complete,
      * completes the definition using the local StructuredData.
      * @param[in] localData is the local StructuredData.
      * @return true if the merge succeeds with no conflicts, false otherwise.
@@ -87,7 +90,7 @@ private:
 
 };
 
-
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

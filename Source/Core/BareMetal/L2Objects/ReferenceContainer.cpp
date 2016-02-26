@@ -184,9 +184,9 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                 if (ok) {
                     ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
                     uint32 sizeBeforeBranching = result.list.ListSize();
-                    mux.FastUnLock();
+                    UnLock();
                     currentNodeContainer->Find(result, filter);
-                    if (mux.FastLock(muxTimeout) == ErrorManagement::NoError) {
+                    if (Lock()) {
                         //Something was found if the result size has changed
                         if (sizeBeforeBranching == result.list.ListSize()) {
                             //Nothing found. Remove the stored path (which led to nowhere).

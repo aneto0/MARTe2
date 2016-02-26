@@ -1,8 +1,8 @@
 /**
  * @file GAM.cpp
  * @brief Source file for class GAM
- * @date 18/feb/2016
- * @author pc
+ * @date 18/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -30,8 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAM.h"
-#include "ObjectRegistryDatabase.h"
-//#include "GAMBlock.h"
+#include "RealTimeDataDefContainer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,9 +41,9 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-/*
+
 GAM::GAM() {
-}*/
+}
 
 /*void GAM::SetUp() {
  // initialises the local status
@@ -53,7 +53,7 @@ GAM::GAM() {
  virtual void Execute(){
  // execution routine
  */
-/*
+
 bool GAM::Verify(StructuredDataI &localData) {
     // use for each of them before RealTimeDataContainer::MergeWithLocal(localData)
     // and merge the result with the existing one
@@ -64,10 +64,13 @@ bool GAM::Verify(StructuredDataI &localData) {
         if (def.IsValid()) {
             // the partial definitions after this must become complete
             ret = def->MergeWithLocal(localData);
+            if (ret) {
+                // check if the definitions are meaningful
+                ret = def->Verify();
+            }
         }
     }
     return ret;
 }
 
-*/
 }

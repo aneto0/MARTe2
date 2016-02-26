@@ -52,30 +52,37 @@ namespace MARTe {
  * @details The Initialise method (which can be override) configures the GAM reading
  * from the global configuration stream. If the definitions of the input and output
  * structures is incomplete (or also empty), it is possible use the method Verify(*) passing the
- * local configuration stream and complete all the definitions.
+ * local configuration stream and completing all the definitions.
  */
 class GAM: public ReferenceContainer {
 public:
 
     /**
-     * @brief Setup the GAM.
-     * @details Initialises the local status (memory allocation
-     * of the IO structures, parsing of a local configuration file, accelerators creation, ecc)
+     * @brief Constructor
      */
-   // virtual void SetUp()=0;
+    GAM();
 
     /**
-     * @brief Completes the IO structure definitions (see RealTimeDataDef) found in the global CDB
-     * with the definitions in the local CDB.
-     * @return false in case of conflicts between the local and the global definitions, true otherwise.
+     * @brief Setup the GAM.
+     * @details Initialises the local status (memory allocation
+     * of the IO structures, parsing of a local configuration file, accelerator creations, ecc)
      */
-    //virtual bool Verify(StructuredDataI &localData);
+    virtual void SetUp()=0;
+
+    /**
+     * @brief Completes the IO structure definitions (see RealTimeDataDefI) found in the global CDB
+     * with the definitions in the local CDB and check their consistency.
+     * @param[in] localData is the local StructuredData.
+     * @return false in case of conflicts between the local and the global definitions, or
+     * if the definitions are inconsistent with registered types. True otherwise.
+     */
+    virtual bool Verify(StructuredDataI &localData);
 
     /**
      * @brief The core function to be executed.
      * @param[in] activeContextBuffer is the context buffer currently active.
      */
-    //virtual void Execute(uint8 activeContextBuffer)=0;
+    virtual void Execute(uint8 activeContextBuffer)=0;
 
 private:
     //? IOData?

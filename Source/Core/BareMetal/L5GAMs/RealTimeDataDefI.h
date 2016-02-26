@@ -33,11 +33,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ReferenceContainer.h"
-
+#include "StreamString.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
+namespace MARTe {
 
 /**
  * @brief The interface of a real time data definition structure.
@@ -57,11 +57,20 @@ public:
 
     /**
      * @brief Merges the global definition (initialised using Initialise(*) function) with the
-     * definition expressed in the local StructuredData in input.
+     * informations stored in the local StructuredData in input.
      * @param[in] localData is the local StructuredData.
      * @return true if there are not conflicts between the local and the global definitions.
      */
     virtual bool MergeWithLocal(StructuredDataI &localData)=0;
+
+
+    /**
+     * @brief Checks if the definition is consistent with the introspection of a registered structure
+     * if the field type is specified.
+     * @return true if the type is unspecified or if the specified type definition is consistent
+     * with the introspection of a registered structure.
+     */
+    virtual bool Verify()=0;
 
     /**
      * @brief retrieves the variable address in the RealTimeDataSource.

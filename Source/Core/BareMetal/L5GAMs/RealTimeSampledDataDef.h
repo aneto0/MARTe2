@@ -60,8 +60,7 @@ public:
     RealTimeSampledDataDef();
 
     /**
-     * @brief Returns false, this definition is already final.
-     *
+     * @see RealTimeDataDefI::MergeWithLocal(*)
      */
     bool MergeWithLocal(StructuredDataI &localData);
 
@@ -70,7 +69,9 @@ public:
      */
     virtual bool Initialise(StructuredDataI &data);
 
-    //TODO
+    /**
+     * @see RealTimeDataDefI::Verify(*)
+     */
     virtual bool Verify();
 
 private:

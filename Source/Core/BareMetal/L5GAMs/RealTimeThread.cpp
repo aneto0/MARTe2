@@ -32,6 +32,7 @@
 #include "RealTimeThread.h"
 #include "Vector.h"
 #include "ObjectRegistryDatabase.h"
+#include "GAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -60,37 +61,42 @@ bool RealTimeThread::Validate(RealTimeApplication &rtApp,
     for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
         ret = false;
         // search
-        Reference functionGeneric = ObjectRegistryDatabase::Instance()->Find(functions[i].Buffer());
-        if (functionGeneric.IsValid()) {
-            // case GAMGroup (stateful gams)
-            ReferenceT<GAMGroup> functionGAMGroup = functionGeneric;
-            if (functionGAMGroup.IsValid()) {
-                // add the GAMGroup to the RealTimeState accelerator array
-                if (rtState.AddGAMGroup(functionGAMGroup)) {
-                    uint32 nOfSubGAMs = functionGAMGroup->Size();
-                    // add all the gams in the order of the configuration inside GAMGroup
-                    for (uint32 j = 0u; j < nOfSubGAMs; j++) {
-                        ReferenceT<GAM> subGam = functionGAMGroup->Get(j);
-                        if (subGam.IsValid()) {
-                            if (Insert(subGam)) {
-                                ret = true;
+        ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, functions[i].Buffer());
+        ReferenceContainer result;
+        rtApp.Find(result, filter);
+        if (result.Size() > 0u) {
+            Reference functionGeneric = result.Get(result.Size() - 1u);
+            if (functionGeneric.IsValid()) {
+                // case GAMGroup (stateful gams)
+                ReferenceT<GAMGroup> functionGAMGroup = functionGeneric;
+                if (functionGAMGroup.IsValid()) {
+                    // add the GAMGroup to the RealTimeState accelerator array
+                    if (rtState.AddGAMGroup(functionGAMGroup)) {
+                        uint32 nOfSubGAMs = functionGAMGroup->Size();
+                        // add all the gams in the order of the configuration inside GAMGroup
+                        for (uint32 j = 0u; j < nOfSubGAMs; j++) {
+                            ReferenceT<GAM> subGam = functionGAMGroup->Get(j);
+                            if (subGam.IsValid()) {
+                                if (Insert(subGam)) {
+                                    ret = true;
+                                }
                             }
+                        }
+                    }
+                }
+                else {
+                    // case stateless GAM
+                    ReferenceT<GAM> functionGAM = functionGeneric;
+                    if (functionGAM.IsValid()) {
+                        if (Insert(functionGAM)) {
+                            ret = true;
                         }
                     }
                 }
             }
             else {
-                // case stateless GAM
-                ReferenceT<GAM> functionGAM = functionGeneric;
-                if (functionGAM.IsValid()) {
-                    if (Insert(functionGAM)) {
-                        ret = true;
-                    }
-                }
+                //TODO error the gam referenced does not exists
             }
-        }
-        else{
-            //TODO error the gam referenced does not exists
         }
     }
 
@@ -121,5 +127,6 @@ StreamString * RealTimeThread::GetFunctions() const {
 uint32 RealTimeThread::GetNumberOfFunctions() const {
     return numberOfFunctions;
 }
+CLASS_REGISTER(RealTimeThread, "1.0");
 
 }

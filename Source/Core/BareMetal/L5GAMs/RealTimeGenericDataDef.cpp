@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeGenericDataDef.h"
-
+#include "ReferenceT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -45,8 +45,69 @@ RealTimeGenericDataDef::RealTimeGenericDataDef() {
 }
 
 bool RealTimeGenericDataDef::Verify() {
-    //TODO
-    return true;
+    // verify myself
+    bool ret = true;
+    // if type is not empty
+    if (type != "") {
+        // if the type is basic return true (nothing to check)
+        // the type is structured
+        if (TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer()) == InvalidType) {
+            ret = false;
+            // in this case it must be registered
+            const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
+            if (item != NULL) {
+                const Introspection *intro=item->GetIntrospection();
+                if(intro!=NULL) {
+                    // not final
+                    if(path=="") {
+                        uint32 numberOfMembers=Size();
+                        if(numberOfMembers==intro->GetNumberOfMembers()) {
+                            ret=true;
+                            for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
+                                const IntrospectionEntry introEntry=(*intro)[i];
+                                ReferenceT<RealTimeGenericDataDef> element=Get(i);
+                                if(element.IsValid()) {
+                                    // compare the type
+                                    ret=(StringHelper::Compare(element->GetType(),introEntry.GetMemberTypeName())==0);
+                                    if(ret){
+                                        // compare the name
+                                        ret=(StringHelper::Compare(element->GetName(),introEntry.GetMemberName())==0);
+                                    }
+                                    if(ret) {
+                                        // go recursively
+                                        // verify the sub type
+                                        ret=element->Verify();
+                                    }
+                                    else{
+                                        //TODO type mismatch
+                                    }
+                                }
+                                else{
+                                    //TODO invalid element
+                                }
+                            }
+
+                        }
+                        else{
+                            //TODO #members mismatch
+                        }
+                    }
+                    else{
+                        // the type exists and it is complete
+                        ret=true;
+                    }
+                }
+                else{
+                    //TODO undefined type
+                }
+            }
+            else{
+               //TODO undefined type
+            }
+        }
+    }
+
+    return ret;
 }
 
 bool RealTimeGenericDataDef::Initialise(StructuredDataI& data) {
@@ -67,7 +128,6 @@ bool RealTimeGenericDataDef::Initialise(StructuredDataI& data) {
 
 bool RealTimeGenericDataDef::MergeWithLocal(StructuredDataI & localData) {
 
-    uint32 newItemsNumber = localData.GetNumberOfChildren();
 
     StreamString isLocalDefFinal;
     bool ret = localData.Read("IsFinal", isLocalDefFinal);
@@ -75,15 +135,16 @@ bool RealTimeGenericDataDef::MergeWithLocal(StructuredDataI & localData) {
     if (ret) {
         bool localFinal = (isLocalDefFinal == "true");
 
-        // no need to merge if both definitions are final, return true
-        ret = ((final) && (localFinal));
+        ret = (!final) && (!localFinal);
 
         // merge if both are not final, return false in other cases
-        if ((!final) && (!localFinal)) {
-            //ret = (newItemsNumber > 0u);
+        if (ret) {
+
+            uint32 newItemsNumber = localData.GetNumberOfChildren();
             for (uint32 i = 0u; (i < newItemsNumber) & (ret); i++) {
                 const char8 * newItemName = localData.GetChildName(i);
-                for (uint32 j = 0u; j < Size(); j++) {
+                uint32 itemsNumber=Size();
+                for (uint32 j = 0u; (j < itemsNumber) && (ret); j++) {
                     ReferenceT<RealTimeGenericDataDef> item = Get(i);
                     if (item.IsValid()) {
                         if (StringHelper::Compare(item->GetName(), newItemName) == 0) {
@@ -96,7 +157,7 @@ bool RealTimeGenericDataDef::MergeWithLocal(StructuredDataI & localData) {
                             }
                         }
                         else {
-                            ReferenceT<RealTimeDataDefI> newItem;
+                            ReferenceT<RealTimeGenericDataDef> newItem;
                             newItem.Initialise(localData, false);
                             if (newItem.IsValid()) {
                                 ret = Insert(newItem);
@@ -113,16 +174,12 @@ bool RealTimeGenericDataDef::MergeWithLocal(StructuredDataI & localData) {
     return ret;
 }
 
-
-
 const char8 *RealTimeGenericDataDef::GetDefaultValue() {
     return defaultValue.Buffer();
 }
 
-bool RealTimeGenericDataDef::IsFinal() const{
+bool RealTimeGenericDataDef::IsFinal() const {
     return final;
 }
-
-
 
 }

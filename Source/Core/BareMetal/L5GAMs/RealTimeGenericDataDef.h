@@ -55,7 +55,9 @@ public:
      */
     RealTimeGenericDataDef();
 
-    //TODO
+    /**
+     * @see RealTimeDataDefI::Verify(*)
+     */
     virtual bool Verify();
 
     /**
@@ -65,8 +67,7 @@ public:
     virtual bool Initialise(StructuredDataI& data);
 
     /**
-     * @brief If the definition from the global StructuredData is not complete, merges it
-     * with the definition expressed in the local StructuredData.
+     * @see RealTimeDataDefI::MergeWithLocal(*)
      */
     virtual bool MergeWithLocal(StructuredDataI & localData);
 

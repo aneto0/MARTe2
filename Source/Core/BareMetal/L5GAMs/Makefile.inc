@@ -24,7 +24,16 @@
 #
 #############################################################
 
-OBJSX=	GAM.x
+OBJSX=	GAM.x\
+		GAMGroup.x \
+		RealTimeApplication.x \
+		RealTimeDataDefContainer.x \
+		RealTimeDataDefI.x \
+		RealTimeGenericDataDef.x \
+		RealTimeSampledDataDef.x \
+		RealTimeState.x \
+		RealTimeThread.x 
+		
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

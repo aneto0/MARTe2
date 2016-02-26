@@ -31,9 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
 #include "ObjectRegistryDatabase.h"
 #include "RealTimeStateInfo.h"
+#include "GAMGroup.h"
+#include "RealTimeApplication.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -55,6 +56,7 @@ namespace MARTe{
 class RealTimeState: public ReferenceContainer {
 
 public:
+    CLASS_REGISTER_DECLARATION();
 
     /**
      * @brief Constructor
@@ -91,7 +93,7 @@ public:
      * @brief Returns the stateful GAMGroups array.
      * @return the stateful GAMGroups array.
      */
-    ReferenceT<GAM> * GetStatefulGAMGroups() const;
+    ReferenceT<GAMGroup> * GetStatefulGAMGroups() const;
 
     /**
      * @brief Returns the number of GAMGroups currently registered.

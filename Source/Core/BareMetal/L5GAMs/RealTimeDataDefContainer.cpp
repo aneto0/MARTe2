@@ -30,7 +30,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeDataDefContainer.h"
-
+#include "ReferenceT.h"
+#include "RealTimeDataDefI.h"
+#include "StreamString.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -49,10 +51,11 @@ RealTimeDataDefContainer::RealTimeDataDefContainer(){
 bool RealTimeDataDefContainer::Verify() {
 
     bool ret = false;
-    for (uint32 i = 0u; (i < Size()) && (ret); i++) {
+    uint32 itemsNumber=Size();
+    for (uint32 i = 0u; (i < itemsNumber) && (ret); i++) {
         ReferenceT<RealTimeDataDefI> item = Get(i);
         if (item.IsValid()) {
-            //ret = item->Verify();
+            ret = item->Verify();
         }
     }
 
@@ -61,7 +64,6 @@ bool RealTimeDataDefContainer::Verify() {
 
 bool RealTimeDataDefContainer::MergeWithLocal(StructuredDataI & localData) {
 
-    uint32 newItemsNumber = localData.GetNumberOfChildren();
 
     StreamString isLocalDefFinal;
     bool ret = localData.Read("IsFinal", isLocalDefFinal);
@@ -69,15 +71,15 @@ bool RealTimeDataDefContainer::MergeWithLocal(StructuredDataI & localData) {
     if (ret) {
         bool localFinal = (isLocalDefFinal == "true");
 
-        // no need to merge if both definitions are final, return true
-        ret = ((final) && (localFinal));
+        ret = (!final) && (!localFinal);
         // merge if both are not final, return false in other cases
-        if ((!final) && (!localFinal)) {
-
-            //ret = (newItemsNumber > 0u);
+        if (ret) {
+            uint32 newItemsNumber = localData.GetNumberOfChildren();
             for (uint32 i = 0u; (i < newItemsNumber) & (ret); i++) {
                 const char8 * newItemName = localData.GetChildName(i);
-                for (uint32 j = 0u; j < Size(); j++) {
+
+                uint32 itemsNumber=Size();
+                for (uint32 j = 0u; (j < itemsNumber) && (ret); j++) {
                     ReferenceT<RealTimeDataDefI> item = Get(i);
                     if (StringHelper::Compare(item->GetName(), newItemName) == 0) {
                         if (localData.MoveRelative(newItemName)) {

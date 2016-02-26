@@ -58,6 +58,7 @@ namespace MARTe{
 class RealTimeThread: public ReferenceContainer {
 
 public:
+    CLASS_REGISTER_DECLARATION();
 
     /**
      * @brief Constructor.

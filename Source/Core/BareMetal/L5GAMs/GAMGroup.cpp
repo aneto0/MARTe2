@@ -1,8 +1,8 @@
 /**
  * @file GAMGroup.cpp
  * @brief Source file for class GAMGroup
- * @date 24/feb/2016
- * @author pc
+ * @date 24/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAMGroup.h"
+#include "ReferenceT.h"
+#include "GAM.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
