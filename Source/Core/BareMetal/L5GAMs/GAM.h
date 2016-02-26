@@ -62,20 +62,20 @@ public:
      * @details Initialises the local status (memory allocation
      * of the IO structures, parsing of a local configuration file, accelerators creation, ecc)
      */
-    virtual void SetUp()=0;
+   // virtual void SetUp()=0;
 
     /**
      * @brief Completes the IO structure definitions (see RealTimeDataDef) found in the global CDB
      * with the definitions in the local CDB.
      * @return false in case of conflicts between the local and the global definitions, true otherwise.
      */
-    virtual bool Verify(StructuredDataI &localData);
+    //virtual bool Verify(StructuredDataI &localData);
 
     /**
      * @brief The core function to be executed.
      * @param[in] activeContextBuffer is the context buffer currently active.
      */
-    virtual void Execute(uint8 activeContextBuffer)=0;
+    //virtual void Execute(uint8 activeContextBuffer)=0;
 
 private:
     //? IOData?

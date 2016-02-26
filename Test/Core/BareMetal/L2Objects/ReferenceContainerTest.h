@@ -361,6 +361,13 @@ public:
      */
     bool TestDelete();
 
+
+    /**
+     * @brief Tests if for each of the marked nodes of \a data a new Object
+     * will be created and its Reference added to the container.
+     */
+    bool TestInitialise();
+
     /**
      * List of nodes for the tree described in the GenerateTestTree function
      */
@@ -412,6 +419,9 @@ public:
      * @return the container with the generated tree, i.e. the Root
      */
     ReferenceT<ReferenceContainer> GenerateTestTreeLarge(uint32 depth);
+
+
+
 
 private:
     /**
@@ -467,6 +477,8 @@ private:
     bool GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source,
                                                                  ReferenceContainer &result,
                                                                  const char8 * const str);
+
+
 };
 
 /*---------------------------------------------------------------------------*/

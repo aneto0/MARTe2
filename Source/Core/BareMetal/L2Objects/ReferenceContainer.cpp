@@ -54,7 +54,7 @@ ReferenceContainer::ReferenceContainer() :
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
 Reference ReferenceContainer::Get(const uint32 idx) {
     Reference ref;
-    if (mux.FastLock(muxTimeout) == ErrorManagement::NoError) {
+    if (Lock()) {
         if (idx < list.ListSize()) {
             ReferenceContainerNode *node = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(idx));
             if (node != NULL) {
@@ -63,7 +63,7 @@ Reference ReferenceContainer::Get(const uint32 idx) {
         }
         REPORT_ERROR(ErrorManagement::Warning,"ReferenceContainer: input greater than the list size.");
     }
-    mux.FastUnLock();
+    UnLock();
     return ref;
 }
 
@@ -90,7 +90,7 @@ ReferenceContainer::~ReferenceContainer() {
 /*lint -e{593} .Justification: The node (newItem) will be deleted by the destructor. */
 bool ReferenceContainer::Insert(Reference ref,
                                 const int32 &position) {
-    bool ok = (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
+    bool ok = (Lock());
     if (ok) {
         ReferenceContainerNode *newItem = new ReferenceContainerNode();
         if (newItem->SetReference(ref)) {
@@ -109,7 +109,7 @@ bool ReferenceContainer::Insert(Reference ref,
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
     }
-    mux.FastUnLock();
+    UnLock();
     return ok;
 }
 
@@ -130,7 +130,7 @@ bool ReferenceContainer::IsContainer(const Reference &ref) const {
 void ReferenceContainer::Find(ReferenceContainer &result,
                               ReferenceContainerFilter &filter) {
     int32 index = 0;
-    bool ok = (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
+    bool ok = (Lock());
     if (ok && (list.ListSize() > 0u)) {
         if (filter.IsReverse()) {
             index = static_cast<int32>(list.ListSize()) - 1;
@@ -212,26 +212,27 @@ void ReferenceContainer::Find(ReferenceContainer &result,
             }
         }
     }
-    mux.FastUnLock();
+    UnLock();
 }
 
 uint32 ReferenceContainer::Size() {
     uint32 size = 0u;
-    if (mux.FastLock(muxTimeout) == ErrorManagement::NoError) {
+    if (Lock()) {
         size = list.ListSize();
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
     }
-    mux.FastUnLock();
+    UnLock();
     return size;
 }
 
 bool ReferenceContainer::Initialise(StructuredDataI &data) {
 
-    bool ok=true;
     // Recursive initialization
-    for (uint32 i = 0u; i < data.GetNumberOfChildren(); i++) {
+    bool ok =true;
+    uint32 numberOfChildren=data.GetNumberOfChildren();
+    for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
         const char8* childName = data.GetChildName(i);
         // case object
         if ((childName[0] == '+') || (childName[0] == '$')) {
@@ -254,6 +255,16 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
     }
     return ok;
 }
+
+bool ReferenceContainer::Lock() {
+    return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
+}
+
+void ReferenceContainer::UnLock(){
+    mux.FastUnLock();
+}
+
+
 
 CLASS_REGISTER(ReferenceContainer, "1.0")
 

@@ -35,6 +35,8 @@
 #include "ReferenceContainerFilter.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
+#include "ConfigurationDatabase.h"
+#include "ObjectTestHelper.h"
 
 ReferenceContainerTest::ReferenceContainerTest() {
     h = NULL;
@@ -603,6 +605,53 @@ bool ReferenceContainerTest::TestDelete() {
     bool ok = (containerRoot->Delete(containerC));
     ok &= (containerRoot->Size() == 3);
     return ok;
+}
+
+bool ReferenceContainerTest::TestInitialise() {
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("+intObj1");
+    cdb.Write("Class", "IntegerObject");
+    int32 value=1;
+    cdb.Write("var", value);
+    cdb.CreateAbsolute("$container");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateRelative("+intObj2");
+    cdb.Write("Class", "IntegerObject");
+    value=3;
+    cdb.Write("var", value);
+    cdb.MoveToAncestor(1u);
+    cdb.CreateRelative("+specIntObj3");
+    cdb.Write("Class", "SpecialIntegerObject");
+    cdb.MoveToRoot();
+    ReferenceContainer container;
+    if (!container.Initialise(cdb)) {
+        return false;
+    }
+
+    ReferenceContainerFilterObjectName filter1(1, ReferenceContainerFilterMode::RECURSIVE, "+intObj1");
+    ReferenceContainer resultSingle1;
+    container.Find(resultSingle1, filter1);
+    ReferenceT<IntegerObject> test1 = (resultSingle1.Get(0));
+    if (test1->GetVariable() != 1) {
+        return false;
+    }
+
+    ReferenceContainerFilterObjectName filter2(1, ReferenceContainerFilterMode::RECURSIVE, "$container.+intObj2");
+    ReferenceContainer resultSingle2;
+    container.Find(resultSingle2, filter2);
+    ReferenceT<IntegerObject> test2 = (resultSingle2.Get(1));
+    if (test2->GetVariable() != 3) {
+        return false;
+    }
+
+    ReferenceContainerFilterObjectName filter3(1, ReferenceContainerFilterMode::RECURSIVE, "$container.+specIntObj3");
+    ReferenceContainer resultSingle3;
+    container.Find(resultSingle3, filter3);
+    ReferenceT<SpecialIntegerObject> test3 = (resultSingle3.Get(1));
+    if (test3->GetVariable() != 2) {
+        return false;
+    }
+    return true;
 }
 
 ReferenceT<ReferenceContainer> ReferenceContainerTest::GenerateTestTree() {

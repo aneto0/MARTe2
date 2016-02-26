@@ -60,7 +60,7 @@ public:
     /**
      * @return the value of the dummy variable.
      */
-    uint32 GetVariable() const {
+    int32 GetVariable() const {
         return dummyVariable;
     }
 
@@ -72,6 +72,14 @@ public:
         this->dummyVariable = dummyVariable;
     }
 
+    virtual bool Initialise(StructuredDataI & data) {
+        int32 value;
+        if (data.Read("var", value)) {
+            dummyVariable = value;
+        }
+        return true;
+    }
+
 protected:
     /**
      * Dummy variable
@@ -79,7 +87,6 @@ protected:
     int32 dummyVariable;
 
 };
-
 
 /**
  * @brief An object which inherits from integer object.
@@ -110,10 +117,14 @@ public:
         return dummyVariable > threshold ? threshold : dummyVariable;
     }
 
+    virtual bool Initialise(StructuredDataI & data) {
+        dummyVariable = 2;
+        return true;
+    }
+
 private:
 
 };
-
 
 /**
  * @brief An object which inherits from Object.
@@ -151,6 +162,11 @@ public:
         this->dummyFVariable = dummyVariable;
     }
 
+    virtual bool Initialise(StructuredDataI & data) {
+        dummyFVariable = 2.0;
+        return true;
+    }
+
 private:
     /**
      * Dummy variable
@@ -158,7 +174,6 @@ private:
     float32 dummyFVariable;
 
 };
-
 
 /**
  * @brief A class which contains two different Object types.
@@ -190,7 +205,7 @@ public:
      * @brief Sets the value of the first object.
      * @param[in] inumber is the desired value associated to the first object.
      */
-    void SetInteger(int32 inumber){
+    void SetInteger(int32 inumber) {
         oneInteger.SetVariable(inumber);
     }
 
@@ -198,7 +213,7 @@ public:
      * @brief Sets the value of the second object.
      * @param[in] inumber is the desired value associated to the second object.
      */
-    void SetSpecialInteger(int32 inumber){
+    void SetSpecialInteger(int32 inumber) {
         oneSpecialInteger.SetVariable(inumber);
     }
 
@@ -210,7 +225,6 @@ public:
         return oneInteger.GetVariable();
     }
 
-
     /**
      * @brief Returns the value of the second object.
      * @return the value of the second object.
@@ -219,7 +233,6 @@ public:
         return oneSpecialInteger.GetVariable();
     }
 };
-
 
 #endif /* OBJECTTESTHELPER_H_ */
 

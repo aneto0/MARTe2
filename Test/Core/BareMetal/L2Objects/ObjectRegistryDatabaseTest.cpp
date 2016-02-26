@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ObjectRegistryDatabaseTest.h"
-#include "ConfigurationDatabase.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -47,39 +46,7 @@ CLASS_REGISTER(PID, "1.0")
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool ObjectRegistryDatabaseTest::TestInitialise() {
-ObjectRegistryDatabase *db=ObjectRegistryDatabase::Instance();
-
-ConfigurationDatabase cdb;
-cdb.CreateAbsolute("+PID1");
-cdb.CreateAbsolute("+PID2");
-cdb.MoveAbsolute("+PID1");
-cdb.Write("Class", "PID");
-cdb.Write("Kp", 1);
-cdb.Write("Ki", 2);
-cdb.Write("Kd", 3);
-cdb.MoveAbsolute("+PID2");
-cdb.Write("Class", "PID");
-cdb.Write("Kp", 4);
-cdb.Write("Ki", 5);
-cdb.Write("Kd", 6);
-
-cdb.MoveToRoot();
-db->Initialise(cdb);
-
-ReferenceT<PID> test=db->Find("+PID2");
-
-printf("\n%d\n", test->Kp);
-return true;
-}
-
-
-
-
-bool ObjectRegistryDatabaseTest::TestFind(){
-
-    ObjectRegistryDatabase *db=ObjectRegistryDatabase::Instance();
-    ConfigurationDatabase cdb;
+ObjectRegistryDatabaseTest::ObjectRegistryDatabaseTest() {
     cdb.CreateAbsolute("$A");
     cdb.Write("Class", "ReferenceContainer");
     cdb.CreateRelative("+PID");
@@ -102,18 +69,90 @@ bool ObjectRegistryDatabaseTest::TestFind(){
     cdb.Write("Ki", 2);
     cdb.Write("Kd", 3);
     cdb.MoveToRoot();
-    db->Initialise(cdb);
+    ObjectRegistryDatabase::Instance()->Initialise(cdb);
 
+}
 
-    ReferenceT<PID> test=db->Find("$A.$B.$C.+PID");
+bool ObjectRegistryDatabaseTest::TestInstance() {
+    return ObjectRegistryDatabase::Instance() != NULL;
+}
 
-    ReferenceT<PID> test1=db->Find("+PID", test, 2);
+bool ObjectRegistryDatabaseTest::TestFind() {
 
-    ReferenceT<PID> test2=db->Find("+PID", test, 3);
+    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("$A.$B.$C.+PID");
+    if (test->Kp != 1) {
+        return false;
+    }
+    if (test->Ki != 2) {
+        return false;
+    }
+    if (test->Kd != 3) {
+        return false;
+    }
 
-    printf("\n%d\n", test->Kp);
-    printf("\n%d\n", test1->Kp);
-    printf("\n%d\n", test2->Kp);
+    ReferenceT<PID> test1 = ObjectRegistryDatabase::Instance()->Find("::+PID", test);
+    if (test1->Kp != 4) {
+        return false;
+    }
+    if (test1->Ki != 5) {
+        return false;
+    }
+    if (test1->Kd != 6) {
+        return false;
+    }
+
+    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find(":::+PID", test);
+    if (test2->Kp != 7) {
+        return false;
+    }
+    if (test2->Ki != 8) {
+        return false;
+    }
+    if (test2->Kd != 9) {
+        return false;
+    }
+
+    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("$A.$B");
+    // relative search
+    ReferenceT<PID> test4 = ObjectRegistryDatabase::Instance()->Find("$C.+PID", start);
+    if (test4->Kp != 1) {
+        return false;
+    }
+    if (test4->Ki != 2) {
+        return false;
+    }
+    if (test4->Kd != 3) {
+        return false;
+    }
+
     return true;
 
+}
+
+bool ObjectRegistryDatabaseTest::TestFindTooManyBackSteps() {
+    ReferenceT<PID> start = ObjectRegistryDatabase::Instance()->Find("$A.$B.$C.+PID");
+    if (!start.IsValid()) {
+        return false;
+    }
+
+    // searches from the beginning
+    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find("::::+PID", start);
+    if (test2->Kp != 7) {
+        return false;
+    }
+    if (test2->Ki != 8) {
+        return false;
+    }
+    if (test2->Kd != 9) {
+        return false;
+    }
+
+    return true;
+}
+
+
+
+
+bool ObjectRegistryDatabaseTest::TestGetClassName() {
+    return StringHelper::Compare(ObjectRegistryDatabase::Instance()->GetClassName(), "ObjectRegistryDatabase") == 0;
 }

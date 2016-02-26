@@ -129,10 +129,26 @@ public:
      */
     void SetTimeout(const TimeoutType &timeout);
 
-
+    /**
+     * @brief Explores the StructuredDataI in input and builds Objects storing
+     * their References.
+     * @details The Object will be built only if the node name in the data tree
+     * has the special symbol '+' or '$' at the beginning. The symbol '$' marks the
+     * node as a domain and will be used for relative researches by path in ObjectRegistryDatabase::Find(*)
+     * @param[in] data is the StructuredData in input.
+     */
     virtual bool Initialise(StructuredDataI &data);
 
+    /**
+     * @brief Locks the internal spin-lock mutex.
+     * @return true if the lock succeeds.
+     */
+    bool Lock();
 
+    /**
+     * @Unlocks the internal spin-lock mutex.
+     */
+    void UnLock();
 
 private:
     /**

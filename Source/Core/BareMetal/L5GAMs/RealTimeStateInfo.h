@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
+#include "StreamString.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -39,11 +39,23 @@
 namespace MARTe {
 
 /**
- * The scheduler knows what is the current and the next state
+ * @brief Collects the information to be given to the GAMGroups in order to prepare
+ * the new context before the change of state.
  */
 struct RealTimeStateInfo {
-    uint32 currentStateIndex;
-    uint32 nextStateIndex;
+    /**
+     * The current active state
+     */
+    const char8* currentState;
+
+    /**
+     * The next state will be activated
+     */
+    const char8* nextState;
+
+    /**
+     * The state active buffer (0 or 1)
+     */
     uint8 activeBuffer;
 };
 

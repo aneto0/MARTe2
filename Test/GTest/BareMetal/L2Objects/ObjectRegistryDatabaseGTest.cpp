@@ -40,12 +40,21 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ObjectRegistryDatabaseGTest,Testinitialise) {
+TEST(ObjectRegistryDatabaseGTest,TestInstance) {
     ObjectRegistryDatabaseTest objRegTest;
-    ASSERT_TRUE(objRegTest.TestInitialise());
+    ASSERT_TRUE(objRegTest.TestInstance());
 }
 
 TEST(ObjectRegistryDatabaseGTest,TestFind) {
     ObjectRegistryDatabaseTest objRegTest;
     ASSERT_TRUE(objRegTest.TestFind());
+}
+
+TEST(ObjectRegistryDatabaseGTest,TestFindTooManyBackSteps) {
+    ObjectRegistryDatabaseTest objRegTest;
+    ASSERT_TRUE(objRegTest.TestFindTooManyBackSteps());
+}
+TEST(ObjectRegistryDatabaseGTest,TestGetClassName) {
+    ObjectRegistryDatabaseTest objRegTest;
+    ASSERT_TRUE(objRegTest.TestGetClassName());
 }

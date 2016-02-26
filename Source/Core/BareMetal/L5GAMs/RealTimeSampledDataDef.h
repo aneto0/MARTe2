@@ -60,7 +60,8 @@ public:
     RealTimeSampledDataDef();
 
     /**
-     * @brief Returns true.
+     * @brief Returns false, this definition is already final.
+     *
      */
     bool MergeWithLocal(StructuredDataI &localData);
 

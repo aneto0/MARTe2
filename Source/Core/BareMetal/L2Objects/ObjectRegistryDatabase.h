@@ -39,10 +39,17 @@
 
 namespace MARTe {
 
+/**
+ * @brief Singleton database of References to MARTe Objects.
+ */
 class DLL_API ObjectRegistryDatabase: public ReferenceContainer, public GlobalObjectI {
 
 public:
 
+    /**
+     * @brief Singleton access to the database.
+     * @return a pointer to the database.
+     */
     static ObjectRegistryDatabase *Instance();
 
     /**
@@ -50,24 +57,24 @@ public:
      */
     virtual ~ObjectRegistryDatabase();
 
+    /**
+     * @brief Retrieves the Reference at the given address.
+     * @param[in] path is the address of the Reference into the database. The syntax is
+     * "A.B.C" where A, B and C must be replaced with the specific object names.
+     * param[in] current is the research start point. In this case we admit the syntax "::A.B.C"
+     * where the ':' symbol set the search start point to the previous domain with respect to \a current.
+     * If no ':' is found at the beginning of the path, the start point is supposed to be \a current
+     * (the function will perform a relative research).
+     * @return the reference found at the provided \a path or an invalid reference in case of failure.
+     */
     Reference Find(const char8 * const path,
                    const Reference current = Reference());
 
-    /**
-     * @brief Locks the shared semaphore.
-     * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
-     * @return true if the shared semaphore is successfully locked.
-     */
-    bool Lock(const TimeoutType &timeout);
 
     /**
-     * @brief Unlocks the shared semaphore.
-     * @return true if the shared semaphore is successfully unlocked.
+     * @see Object::GetClassName
+     * @return "ObjectRegistryDatabase".
      */
-    void Unlock();
-
-    bool Build(StructuredDataI &configuration);
-
     virtual const char8 * const GetClassName() const;
 
 private:
@@ -79,16 +86,9 @@ private:
 
     /**
      * @brief Default constructor.
-     * Initialises the shared mutex Semaphore.
-     * @post
-     *   MoveToRoot() == true
      */
     ObjectRegistryDatabase();
 
-    /**
-     * The shared mutex semaphore.
-     */
-    FastPollingMutexSem mux;
 
 };
 

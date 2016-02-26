@@ -63,7 +63,7 @@ bool RealTimeSampledDataDef::Verify() {
 }
 
 bool RealTimeSampledDataDef::MergeWithLocal(StructuredDataI &localData){
-    return true;
+    return false;
 }
 
 bool RealTimeSampledDataDef::Initialise(StructuredDataI &data) {

@@ -41,9 +41,9 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
+/*
 GAM::GAM() {
-}
+}*/
 
 /*void GAM::SetUp() {
  // initialises the local status
@@ -53,7 +53,7 @@ GAM::GAM() {
  virtual void Execute(){
  // execution routine
  */
-
+/*
 bool GAM::Verify(StructuredDataI &localData) {
     // use for each of them before RealTimeDataContainer::MergeWithLocal(localData)
     // and merge the result with the existing one
@@ -69,5 +69,5 @@ bool GAM::Verify(StructuredDataI &localData) {
     return ret;
 }
 
-
+*/
 }

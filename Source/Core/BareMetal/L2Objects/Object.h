@@ -265,14 +265,6 @@
              className ## ClassRegistryItem_.DecrementNumberOfInstances();                                                  \
          }
 
-#define FUNCTION_REGISTER(functionName,ver,function)     \
-        /*                                                                                                                 \
-         * Class properties of this class type. One instance per class type automatically instantiated at the start        \
-         * of an application or loading of a loadable library.                                                             \
-         * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
-         */                                                                                                                \
-        static MARTe::ClassProperties functionName ## _ ## ClassProperties_( #functionName , typeid(functionName).name(), ver, 0u);          \                                                                             \
-        static MARTe::ClassRegistryItem functionName ## _ ## ClassRegistryItem(functionName ## _ ## ClassProperties_, function);
 
 /*lint -restore */
 

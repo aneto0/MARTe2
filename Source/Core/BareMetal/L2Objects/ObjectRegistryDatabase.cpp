@@ -56,7 +56,6 @@ ObjectRegistryDatabase *ObjectRegistryDatabase::Instance() {
 }
 
 ObjectRegistryDatabase::ObjectRegistryDatabase() {
-    mux.Create();
 }
 
 ObjectRegistryDatabase::~ObjectRegistryDatabase() {
@@ -64,51 +63,53 @@ ObjectRegistryDatabase::~ObjectRegistryDatabase() {
 
 Reference ObjectRegistryDatabase::Find(const char8 * const path,
                                        const Reference current) {
-    ReferenceT<ReferenceContainer> domain;
-    bool isSearchDomain=current.IsValid();
-    uint32 backSteps=0u;
+    ReferenceT<ReferenceContainer> domain = current;
+    bool isSearchDomain = current.IsValid();
+    uint32 backSteps = 0u;
     if (isSearchDomain) {
-        while(path[backSteps]==':'){
+        while (path[backSteps] == ':') {
             backSteps++;
         }
-        ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::PATH, current);
+        uint32 stepsCounter = backSteps;
+        // search the current remembering the path
+        ReferenceContainerFilterReferences filterRef(1, ReferenceContainerFilterMode::PATH, current);
         ReferenceContainer resultPath;
-        ReferenceContainer::Find(resultPath, filter);
+        ReferenceContainer::Find(resultPath, filterRef);
         for (uint32 i = 0u; i < resultPath.Size(); i++) {
             Reference test = resultPath.Get(resultPath.Size() - i - 1u);
-            if (backSteps == 0u) {
+            if (stepsCounter == 0u) {
                 break;
             }
             if (test.IsValid()) {
                 if (test->GetName()[0] == '$') {
                     domain = test;
-                    backSteps--;
+                    stepsCounter--;
                 }
             }
         }
 
-        if (backSteps > 0) {
-            //TODO Warning too many back steps
-            isSearchDomain=false;
+        if (stepsCounter > 0) {
+            REPORT_ERROR(ErrorManagement::Warning, "Find: Too many back steps in the path. The searching will start from the root");
+            isSearchDomain = false;
         }
 
     }
     // now search from the domain forward
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, &path[backSteps]);
-    ReferenceContainer resultSingle;
     Reference ret;
+    ReferenceContainerFilterObjectName filterName(1, ReferenceContainerFilterMode::RECURSIVE, &path[backSteps]);
+    ReferenceContainer resultSingle;
 
     if (isSearchDomain) {
         if (domain.IsValid()) {
-            domain->Find(resultSingle, filter);
+            domain->Find(resultSingle, filterName);
         }
         else {
-            //TODO error
+            REPORT_ERROR(ErrorManagement::FatalError, "Find: Invalid domain");
         }
     }
     else {
         // search from the beginning
-        ReferenceContainer::Find(resultSingle, filter);
+        ReferenceContainer::Find(resultSingle, filterName);
     }
 
     bool ok = (resultSingle.Size() > 0u);
@@ -118,14 +119,6 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
     }
 
     return ret;
-}
-
-bool ObjectRegistryDatabase::Lock(const TimeoutType &timeout) {
-    return (mux.FastLock(timeout) == ErrorManagement::NoError);
-}
-
-void ObjectRegistryDatabase::Unlock() {
-    mux.FastUnLock();
 }
 
 const char8 * const ObjectRegistryDatabase::GetClassName() const {

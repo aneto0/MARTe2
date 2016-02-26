@@ -92,10 +92,6 @@ public:
             const ObjectBuildFn * const objBuildFn, Introspection &introspectionIn);
 
 
-    // costructor of a generic function registered
-    ClassRegistryItem(const ClassProperties &clProperties,const GenericFn * const genericFunction);
-
-
     /**
      * Destructor.
      * Responsible for destroying the assigned loadable library.
@@ -159,9 +155,6 @@ public:
      */
     const ObjectBuildFn *GetObjectBuildFunction() const;
 
-    const GenericFn *GetGenericFunction() const;
-
-
 
     /**
      * @brief Sets the unique identifier for the class described by this ClassRegistryItem.
@@ -191,8 +184,6 @@ private:
      */
     const ObjectBuildFn *objectBuildFn;
 
-
-    const GenericFn *genericFn;
 
     /**
      * The introspection associated to the class.

@@ -28,7 +28,6 @@ OBJSX=  AnyObjectGTest.x \
 		ConfigurationDatabaseGTest.x \
 		JsonParserGTest.x \
 		LexicalAnalyzerGTest.x \
-		ObjectRegistryDatabaseGTest.x \
 		StandardParserGTest.x \
 		TokenGTest.x \
 		TokenInfoGTest.x \
