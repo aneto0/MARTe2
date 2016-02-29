@@ -30,6 +30,7 @@ OBJSX=  AnyType.x\
 		ClassProperties.x \
 		ClassRegistryDatabase.x \
 		ClassRegistryItem.x \
+		Envelope.x \
 		Introspection.x\
 		IntrospectionEntry.x \
 		MessageI.x \
