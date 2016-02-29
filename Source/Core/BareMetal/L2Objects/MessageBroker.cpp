@@ -74,7 +74,9 @@ void MessageBroker::SendMessage(const Envelope &envelope) {
     ref = ObjectRegistryDatabase::Instance()->Find(envelope.GetAddress());
 
     if (ref.IsValid()) {
-        ref->ProcessMessage(envelope.GetMessage());
+        bool ret;
+        MessageI msg = envelope.GetMessage();
+        ret = ref->ProcessMessage(msg);
     }
 }
 
