@@ -68,7 +68,7 @@ MessageBroker::~MessageBroker() {
 
 }
 
-void SendMessage(Envelope envelope) {
+void MessageBroker::SendMessage(const Envelope &envelope) {
     Reference ref;
 
     ref = ObjectRegistryDatabase::Instance()->Find(envelope.GetAddress());

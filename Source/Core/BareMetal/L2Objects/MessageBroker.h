@@ -60,8 +60,7 @@ public:
      */
     static MessageBroker *Instance();
 
-    void SendMessage(Envelope envelope);
-    //void SendMessage(Address address, MessageI message); //TODO: Add this, too?
+    void SendMessage(const Envelope &envelope);
 
     virtual const char8 * const GetClassName() const;
 private:
