@@ -34,6 +34,7 @@ OBJSX=  AnyType.x\
 		Introspection.x\
 		IntrospectionEntry.x \
 		MessageI.x \
+		MessageBroker.x \
 		Object.x \
 		ObjectRegistryDatabase.x \
 		Reference.x \
