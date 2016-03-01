@@ -113,7 +113,7 @@ public:
     /**
      * @brief Copies the content of the current node to the provided destination.
      * @details A deep copy of the contents is recursively performed.
-     * @param[in] destination where the database will be copied to.
+     * @param[out] destination where the database will be copied to.
      * @return true if the copy is successful.
      */
     virtual bool Copy(StructuredDataI &destination) = 0;
