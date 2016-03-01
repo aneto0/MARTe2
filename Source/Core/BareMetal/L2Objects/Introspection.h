@@ -43,7 +43,7 @@ namespace MARTe {
 /**
  * @brief Groups the information about each member of a class or a structure.
  */
-class  Introspection {
+class DLL_API Introspection {
 
 public:
 
