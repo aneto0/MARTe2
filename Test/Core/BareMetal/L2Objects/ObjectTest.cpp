@@ -33,6 +33,8 @@
 #include "Reference.h"
 #include "StringHelper.h"
 #include "ObjectTestHelper.h"
+#include "StreamString.h"
+#include "ConfigurationDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -213,4 +215,102 @@ bool ObjectTest::TestGetProperties() {
     const char8 *name = properties.GetName();
     const char8 *version = properties.GetVersion();
     return (StringHelper::Compare("Object", name) == 0) && (StringHelper::Compare("1.0", version) == 0);
+}
+
+bool ObjectTest::TestExportData() {
+    bool result = true;
+    {
+        bool test = false;
+        NonRegisteredIntegerObject obj;
+        ConfigurationDatabase cdb;
+        obj.SetName("Test1");
+        obj.SetVariable(10);
+        test = !obj.ExportData(cdb);
+        result = result && test;
+    }
+    {
+        bool test = false;
+        NonIntrospectableIntegerObject obj;
+        ConfigurationDatabase cdb;
+        obj.SetName("Test2");
+        obj.SetVariable(20);
+        test = !obj.ExportData(cdb);
+        result = result && test;
+    }
+    {
+        bool test_status = false;
+        bool test_values = true;
+        IntrospectableIntegerObject obj;
+        ConfigurationDatabase cdb;
+        obj.SetName("Test3");
+        obj.SetVariable(30);
+        test_status = obj.ExportData(cdb);
+        if (test_status) {
+            StructuredDataI& sd = cdb;
+            StreamString className;
+            int32 dummyVariable;
+            test_status = sd.MoveRelative(obj.GetName());
+            test_status = sd.Read("Class",className);
+            test_values = (test_values && (className == "IntrospectableIntegerObject"));
+            test_status = sd.Read("dummyVariable", dummyVariable);
+            test_values = (test_values && (dummyVariable == 30));
+        }
+        result = result && test_status && test_values;
+    }
+    return result;
+}
+
+bool ObjectTest::TestExportMetadata() {
+    /*
+     * Variants of case
+     * An object introspectable vs one not introspectable.
+     * An object from a registered class vs a not registered one.
+     * A recursion level for -1, 0, 1, 2, and N.
+     *
+     *
+     */
+    bool result = true;
+    {
+        bool test = false;
+        NonRegisteredIntegerObject obj;
+        ConfigurationDatabase cdb;
+        test = !obj.ExportMetadata(cdb);
+        result = result && test;
+    }
+    {
+        bool test = false;
+        NonIntrospectableIntegerObject obj;
+        ConfigurationDatabase cdb;
+        test = !obj.ExportMetadata(cdb);
+        result = result && test;
+    }
+    {
+        bool test_status = false;
+        bool test_values = true;
+        IntrospectableIntegerObject obj;
+        ConfigurationDatabase cdb;
+        test_status = obj.ExportMetadata(cdb);
+        if (test_status) {
+            StructuredDataI& sd = cdb;
+            StreamString type;
+            StreamString modifiers;
+            StreamString attributes;
+            uint32 size;
+            uintp pointer;
+            test_status = sd.MoveRelative("IntrospectableIntegerObject");
+            test_status = sd.MoveRelative("dummyVariable");
+            test_status = sd.Read("type",type);
+            test_values = (test_values && (type == "int32"));
+            test_status = sd.Read("modifiers",modifiers);
+            test_values = (test_values && (modifiers == ""));
+            test_status = sd.Read("attributes",attributes);
+            test_values = (test_values && (attributes == ""));
+            test_status = sd.Read("size",size);
+            test_values = (test_values && (size == 4));
+            test_status = sd.Read("pointer",pointer);
+            test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 24)));
+        }
+        result = result && test_status && test_values;
+    }
+    return result;
 }

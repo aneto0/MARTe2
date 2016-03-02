@@ -80,7 +80,6 @@ protected:
 
 };
 
-
 /**
  * @brief An object which inherits from integer object.
  */
@@ -113,7 +112,6 @@ public:
 private:
 
 };
-
 
 /**
  * @brief An object which inherits from Object.
@@ -159,7 +157,6 @@ private:
 
 };
 
-
 /**
  * @brief A class which contains two different Object types.
  */
@@ -190,7 +187,7 @@ public:
      * @brief Sets the value of the first object.
      * @param[in] inumber is the desired value associated to the first object.
      */
-    void SetInteger(int32 inumber){
+    void SetInteger(int32 inumber) {
         oneInteger.SetVariable(inumber);
     }
 
@@ -198,7 +195,7 @@ public:
      * @brief Sets the value of the second object.
      * @param[in] inumber is the desired value associated to the second object.
      */
-    void SetSpecialInteger(int32 inumber){
+    void SetSpecialInteger(int32 inumber) {
         oneSpecialInteger.SetVariable(inumber);
     }
 
@@ -210,7 +207,6 @@ public:
         return oneInteger.GetVariable();
     }
 
-
     /**
      * @brief Returns the value of the second object.
      * @return the value of the second object.
@@ -220,6 +216,133 @@ public:
     }
 };
 
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class NonRegisteredIntegerObject: public Object {
+public:
+
+    /**
+     * @brief Default constructor
+     */
+    NonRegisteredIntegerObject() {
+        dummyVariable = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~NonRegisteredIntegerObject() {
+    }
+
+    /**
+     * @return the value of the dummy variable.
+     */
+    uint32 GetVariable() const {
+        return dummyVariable;
+    }
+
+    /**
+     * @brief Updates the value of the dummy variable.
+     * @param dummyVariable the new value to set.
+     */
+    void SetVariable(int32 dummyVariable) {
+        this->dummyVariable = dummyVariable;
+    }
+
+    /**
+     * Dummy variable
+     */
+    int32 dummyVariable;
+
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class NonIntrospectableIntegerObject: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    NonIntrospectableIntegerObject() {
+        dummyVariable = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~NonIntrospectableIntegerObject() {
+    }
+
+    /**
+     * @return the value of the dummy variable.
+     */
+    uint32 GetVariable() const {
+        return dummyVariable;
+    }
+
+    /**
+     * @brief Updates the value of the dummy variable.
+     * @param dummyVariable the new value to set.
+     */
+    void SetVariable(int32 dummyVariable) {
+        this->dummyVariable = dummyVariable;
+    }
+
+    /**
+     * Dummy variable
+     */
+    int32 dummyVariable;
+
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class IntrospectableIntegerObject: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    IntrospectableIntegerObject() {
+        dummyVariable = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~IntrospectableIntegerObject() {
+    }
+
+    /**
+     * @return the value of the dummy variable.
+     */
+    uint32 GetVariable() const {
+        return dummyVariable;
+    }
+
+    /**
+     * @brief Updates the value of the dummy variable.
+     * @param dummyVariable the new value to set.
+     */
+    void SetVariable(int32 dummyVariable) {
+        this->dummyVariable = dummyVariable;
+    }
+
+    /**
+     * Dummy variable
+     */
+    int32 dummyVariable;
+
+};
 
 #endif /* OBJECTTESTHELPER_H_ */
 

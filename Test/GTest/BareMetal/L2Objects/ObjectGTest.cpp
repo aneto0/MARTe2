@@ -106,3 +106,13 @@ TEST(ObjectGTest,TestGetUniqueName2) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestGetUniqueName2());
 }
+
+TEST(ObjectGTest,TestExportData) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestExportData());
+}
+
+TEST(ObjectGTest,TestExportMetadata) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestExportMetadata());
+}

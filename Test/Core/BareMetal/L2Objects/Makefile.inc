@@ -50,6 +50,8 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
 INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
+INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 
 all: $(OBJS) \

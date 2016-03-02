@@ -347,6 +347,34 @@ public:
      */
     void SetName(const char8 * const newName);
 
+    /**
+     * @brief Extracts the data of the object and puts it into an object which
+     * implements the StructuredDataI interface.
+     * @details The returned StructuredDataI object is a tree which contains a
+     * root node with a leaf for each simple data member of *this. If any of
+     * the members is a complex one, then a node is created instead of a leaf
+     * and a subtree is created. This happens recursively for all data members.
+     * @param[out] data The holder for the tree that contains the extracted
+     * data of the object.
+     */
+    bool ExportData(StructuredDataI & data);
+
+    /**
+     * @brief Extracts the metadata of the object and puts it into an object
+     * which implements the StructuredDataI interface.
+     * @details The returned StructuredDataI object is a tree which contains a
+     * root node with a leaf for each simple data member of *this. If any of
+     * the members is a complex one, then a node is created instead of a leaf
+     * and a subtree is created. This happens recursively for all data members
+     * only limited by the level parameter, which determines the depth of the
+     * tree.
+     * @param[out] data The holder for the tree that contains the extracted
+     * metadata of the object.
+     * @param[in] level The level of recursion, hence the depth of the tree.
+     */
+    bool ExportMetadata(StructuredDataI & data,
+                                               const int32 level = -1);
+
 private:
 
     /**
@@ -375,6 +403,44 @@ private:
      * @param[in] size the size of the object.
      */
     static void *operator new(osulong size) throw ();
+
+    /**
+     * @brief Extracts the data of an input object and puts it into an object
+     * which implements the StructuredDataI interface.
+     * @details The returned StructuredDataI object is a tree which contains a
+     * root node with a leaf for each simple data member of *ptr. If any of
+     * the members is a complex one, then a node is created instead of a leaf
+     * and a subtree is created. This happens recursively for all data members.
+     * @param[in] ptr The pointer to the object whose data is expected to be
+     * extracted.
+     * @param[in] className The name of the class of the object pointed by ptr.
+     * @param[out] data The holder for the tree that contains the extracted
+     * data of the object.
+     * @param[in] objName The name of the object, i.e. the root's name.
+     */
+    bool ConvertDataToStructuredData(void* ptr,
+                                 const char8* const className,
+                                 StructuredDataI& data,
+                                 const char8* const objName = NULL);
+
+    /**
+     * @brief Extracts the metadata of an input object and puts it into an
+     * object which implements the StructuredDataI interface.
+     * @details The returned StructuredDataI object is a tree which contains a
+     * root node with a leaf for each simple data member of *ptr. If any of
+     * the members is a complex one, then a node is created instead of a leaf
+     * and a subtree is created. This happens recursively for all data members.
+     * @param[in] ptr The pointer to the object whose metadata is expected to
+     * be extracted.
+     * @param[in] className The name of the class of the object pointed by ptr.
+     * @param[out] data The holder for the tree that contains the extracted
+     * metadata of the object.
+     * @param[in] level The level of recursion, hence the depth of the tree.
+     */
+    bool ConvertMetadataToStructuredData(void * ptr,
+                                              const char8 * const className,
+                                              StructuredDataI &data,
+                                              const int32 recursionLevel = -1);
 
     /**
      * The number of references to this object.

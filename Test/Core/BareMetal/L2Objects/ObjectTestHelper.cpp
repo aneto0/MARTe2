@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "ObjectTestHelper.h"
+#include "Introspection.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -49,4 +50,12 @@ CLASS_REGISTER(FloatObject, "1.0")
 
 CLASS_REGISTER(CollectInts, "1.0")
 
+
+CLASS_REGISTER(NonIntrospectableIntegerObject, "1.0")
+
+
+DECLARE_CLASS_MEMBER(IntrospectableIntegerObject, dummyVariable, int32, "", "");
+static const IntrospectionEntry* objFields[] = { &IntrospectableIntegerObject_dummyVariable_introspectionEntry, 0 };
+DECLARE_CLASS_INTROSPECTION(IntrospectableIntegerObject, objFields);
+CLASS_INTROSPECTION_REGISTER(IntrospectableIntegerObject, "1.0", IntrospectableIntegerObject_introspection)
 
