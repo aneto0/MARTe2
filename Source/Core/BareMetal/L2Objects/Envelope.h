@@ -66,7 +66,8 @@ public:
     Envelope(Address address, MessageI message);
     virtual ~Envelope();
     Address GetAddress() const;
-    MessageI GetMessage() const;
+    //MessageI GetMessage() const;
+    void GetMessage(MessageI &msg) const;
 private:
     Address address_;
     MessageI message_;

@@ -322,7 +322,7 @@ public:
      */
     virtual bool Initialise(StructuredDataI &data);
 
-    virtual bool ProcessMessage(MessageI & data);
+    virtual bool ProcessMessage(const MessageI & message, MessageI & data);
 
     virtual bool ToStructuredData(StructuredDataI & data);
 

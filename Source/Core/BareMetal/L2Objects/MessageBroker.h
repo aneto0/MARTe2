@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Envelope.h"
+#include "MessageI.h"
 #include "CompilerTypes.h"
 
 /*---------------------------------------------------------------------------*/
@@ -51,7 +52,7 @@ namespace MARTe {
  * services it provides. Example: "This class represents a stack of doubles,
  * that is, a data structure which ..."
  */
-class DLL_API MessageBroker: public GlobalObjectI {
+class DLL_API MessageBroker : public GlobalObjectI {
 public:
 
     /**
@@ -60,7 +61,7 @@ public:
      */
     static MessageBroker *Instance();
 
-    void SendMessage(const Envelope &envelope);
+    void SendMessage(const Envelope &envelope, MessageI &reply);
 
     virtual const char8 * const GetClassName() const;
 private:

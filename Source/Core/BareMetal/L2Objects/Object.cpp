@@ -363,10 +363,10 @@ void Object::SetName(const char8 * const newName) {
     name = StringHelper::StringDup(newName);
 }
 
-bool Object::ProcessMessage(MessageI & data) {
+bool Object::ProcessMessage(const MessageI & message, MessageI & data) {
 
     bool ret = false;
-    uint32 code = data.GetRequestCode();
+    uint32 code = message.GetRequestCode();
     const char8* className = NULL_PTR(const char8*);
     const ClassProperties *myProperties = GetClassProperties();
     if (myProperties != NULL) {

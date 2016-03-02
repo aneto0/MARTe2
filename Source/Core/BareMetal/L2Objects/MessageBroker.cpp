@@ -68,15 +68,14 @@ MessageBroker::~MessageBroker() {
 
 }
 
-void MessageBroker::SendMessage(const Envelope &envelope) {
+void MessageBroker::SendMessage(const Envelope &envelope, MessageI &reply) {
     Reference ref;
 
     ref = ObjectRegistryDatabase::Instance()->Find(envelope.GetAddress());
 
     if (ref.IsValid()) {
         bool ret;
-        MessageI msg = envelope.GetMessage();
-        ret = ref->ProcessMessage(msg);
+        ret = ref->ProcessMessage(envelope.GetMessage(), reply);
     }
 }
 

@@ -48,7 +48,8 @@ public:
 
     virtual bool SetContent(StructuredDataI & data);
 
-    virtual StructuredDataI *GetContent();
+    //virtual StructuredDataI GetContent();
+    virtual void GetContent(StructuredDataI &data);
 
     void SetUniqueId(int32 id);
 
