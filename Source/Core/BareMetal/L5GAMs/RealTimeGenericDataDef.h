@@ -44,6 +44,7 @@ namespace MARTe {
  */
 class RealTimeGenericDataDef: public RealTimeDataDefI {
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Constructor
@@ -66,6 +67,9 @@ public:
      */
     virtual bool Initialise(StructuredDataI& data);
 
+
+    virtual bool ToStructuredData(StructuredDataI& data);
+
     /**
      * @see RealTimeDataDefI::MergeWithLocal(*)
      */
@@ -79,7 +83,7 @@ public:
 
     /**
      * @brief Specifies if the definition is complete or not.
-     * @return true if the definition is complete, falsee otherwise.
+     * @return true if the definition is complete, false otherwise.
      */
     bool IsFinal() const;
 
@@ -94,6 +98,7 @@ private:
      * Specifies if the definition is complete
      */
     bool final;
+
 };
 }
 

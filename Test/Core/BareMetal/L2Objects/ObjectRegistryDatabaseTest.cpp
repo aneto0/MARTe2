@@ -73,6 +73,12 @@ ObjectRegistryDatabaseTest::ObjectRegistryDatabaseTest() {
 
 }
 
+
+ObjectRegistryDatabaseTest::~ObjectRegistryDatabaseTest(){
+    ObjectRegistryDatabase::Instance()->CleanUp();
+}
+
+
 bool ObjectRegistryDatabaseTest::TestInstance() {
     return ObjectRegistryDatabase::Instance() != NULL;
 }

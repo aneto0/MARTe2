@@ -1,7 +1,7 @@
 /**
- * @file RealTimeSampledDataDef.h
- * @brief Header file for class RealTimeSampledDataDef
- * @date 25/02/2016
+ * @file RealTimeDataSource.h
+ * @brief Header file for class RealTimeDataSource
+ * @date 29/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeSampledDataDef
+ * @details This header file contains the declaration of the class RealTimeDataSource
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMESAMPLEDDATADEF_H_
-#define REALTIMESAMPLEDDATADEF_H_
+#ifndef REALTIMEDATASOURCE_H_
+#define REALTIMEDATASOURCE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,69 +31,77 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeDataDefI.h"
+
+#include "Object.h"
+#include "MemoryArea.h"
 #include "StreamString.h"
-#include "StructuredDataI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
-/**
- * @brief Maps a final structure definition to the RealTimeDataSource.
- * @details The definition is final for data which is supposed to be
- * interfaced directly with the hardware.
- *
- * @details The definition express how many samples of data will be generated
- * in a specified number of cycles.
- */
-class RealTimeSampledDataDef: public RealTimeDataDefI {
+class RealTimeDataSource: public ReferenceContainer {
+
 public:
-    CLASS_REGISTER_DECLARATION()
+
+    virtual bool AddDataDefinition(RealTimeDataDefContainer &definitionContainer);
+
 
     /**
-     * @brief Constructor
-     * @post
-     *   GetSamples() == 1 &&
-     *   GetCycles() == 1;
+     * @brief retrieves the variable address in the RealTimeDataSource.
+     * @return the variable address in the RealTimeDataSource.
      */
-    RealTimeSampledDataDef();
+    const char8 *GetName();
+
+    void SetName(const char8* pathName);
 
     /**
-     * @see RealTimeDataDefI::MergeWithLocal(*)
+     * @brief Retrieves the variable type.
+     * @return the variable type.
      */
-    virtual bool MergeWithLocal(StructuredDataI &localData);
+    const char8 *GetType();
 
     /**
-     * @brief Reads the samples and cycles values to determine the number of samples per cycle.
+     * @brief Initialises the container and reads the variable address and type from the StructuredData
+     * in input.
      */
     virtual bool Initialise(StructuredDataI &data);
 
-    /**
-     * @see RealTimeDataDefI::Verify(*)
-     */
-    virtual bool Verify();
+    /*
+     RealTimeDataSource();
 
+     bool AddDefinitionInterface(RealTimeDataDefContainer &dataDefinition,
+     uint32 userId,
+     bool isConsumer,
+     bool isProducer);
+     */
 private:
 
+    bool AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> definition,
+                                 const char8 * userName,
+                                 const char8 * threadName,
+                                 const char8 * stateName,
+                                 bool isProducer,
+                                 bool isConsumer);
 
-    /**
-     * How many samples
-     */
-    int32 samples;
+    /*
+     bool AddSingleData(ReferenceT<RealTimeDataDefI> singleDefinition,
+     uint32 userId,
+     bool isConsumer,
+     bool isProducer);
 
-    /**
-     * How many cycles
-     */
-    int32 cycles;
+     MemoryArea memory;
+
+     StaticList<RealTimeDataSourceRecord> records;*/
 
 };
-}
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMESAMPLEDDATADEF_H_ */
+#endif /* REALTIMEDATASOURCE_H_ */
 

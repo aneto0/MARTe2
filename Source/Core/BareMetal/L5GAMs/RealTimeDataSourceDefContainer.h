@@ -1,7 +1,7 @@
 /**
- * @file GAMGTest.h
- * @brief Header file for class GAMGTest
- * @date 18/02/2016
+ * @file RealTimeDataSourceDefContainer.h
+ * @brief Header file for class RealTimeDataSourceDefContainer
+ * @date 01/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMGTest
+ * @details This header file contains the declaration of the class RealTimeDataSourceDefContainer
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMGTEST_H_
-#define GAMGTEST_H_
+#ifndef REALTIMEDATASOURCEDEFCONTAINER_H_
+#define REALTIMEDATASOURCEDEFCONTAINER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,17 +31,54 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "ReferenceContainer.h"
+#include "RealTimeDataDefContainer.h"
+#include "RealTimeDataDefI.h"
+#include "GAM.h"
+#include "ReferenceT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class GAMGTest {
+namespace MARTe{
+class RealTimeDataSourceDefContainer: public ReferenceContainer {
+
+
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    RealTimeDataSourceDefContainer();
+
+    virtual bool AddDataDefinition(ReferenceT<GAM> gam);
+
+
+    virtual bool Initialise(StructuredDataI & data);
+
+
+    bool Verify();
+
+private:
+
+
+    bool AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> definition,
+                                 const char8 * userName,
+                                 StreamString *supportedStates,
+                                 uint32 numberOfStates,
+                                 bool isProducer,
+                                 bool isConsumer, StreamString defaultPath="");
+
+
+    uint32 numberOfInitialDDBs;
+
+    bool final;
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMGTEST_H_ */
+#endif /* REALTIMEDATASOURCEDEFCONTAINER_H_ */
 

@@ -75,14 +75,19 @@ public:
     /**
      * @see RealTimeApplication::Validate().
      */
-    bool Validate(RealTimeApplication & rtApp);
+    bool ConfigureArchitecture(RealTimeApplication & rtApp);
+
+
+    bool ConfigureDataSource();
+
+    bool InsertFunction(Reference functionReference);
 
     /**
      * @brief Stores a stateful group of GAMGroups into the internal array.
      * @param[in] element is the new GAMGroup to be added.
      * @return true if the memory allocation succeeds, false otherwise.
      */
-    bool AddGAMGroup(ReferenceT<GAMGroup> element);
+    void AddGAMGroup(ReferenceT<GAMGroup> element);
 
     /**
      * @brief Prepare the context for the state in each registered GAMGroup.

@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataDefI.cpp
- * @brief Source file for class RealTimeDataDefI
- * @date 25/02/2016
- * @author Giuseppe Ferrò
+ * @file RealTimeGenericDataDefGTest.cpp
+ * @brief Source file for class RealTimeGenericDataDefGTest
+ * @date 03/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataDefI (public, protected, and private). Be aware that some 
+ * the class RealTimeGenericDataDefGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,10 +25,14 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <limits.h>
+#include "gtest/gtest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeDataDefI.h"
+
+#include "RealTimeGenericDataDefTest.h"
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -37,40 +41,37 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-RealTimeDataDefI::RealTimeDataDefI() {
-
+TEST(RealTimeGenericDataDefGTest,TestConstructor) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestConstructor());
 }
 
-const char8 *RealTimeDataDefI::GetPath() {
-    return path.Buffer();
+TEST(RealTimeGenericDataDefGTest,TestInitialiseTrue) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ConfigurationDatabase data;
+    data.Write("IsFinal", "true");
+    data.Write("Default", "1");
+
+    ASSERT_TRUE(rtgdTest.TestInitialise(data, true));
 }
 
-const char8 *RealTimeDataDefI::GetType() {
-    return type.Buffer();
+TEST(RealTimeGenericDataDefGTest,TestInitialiseFalseNoIsFinalFlag) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ConfigurationDatabase data;
+    data.Write("Default", "1");
+
+    ASSERT_TRUE(rtgdTest.TestInitialise(data, false));
 }
 
-bool RealTimeDataDefI::Initialise(StructuredDataI &data) {
+TEST(RealTimeGenericDataDefGTest,TestInitialiseTrueNoDefault) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ConfigurationDatabase data;
+    data.Write("IsFinal", "true");
 
-    bool ret = ReferenceContainer::Initialise(data);
-
-    if (ret) {
-        if (!data.Read("Path", path)) {
-            //TODO Warning?
-        }
-        if (!data.Read("Type", type)) {
-            //TODO Warning?
-        }
-    }
-    return ret;
+    ASSERT_TRUE(rtgdTest.TestInitialise(data, true));
 }
 
-void RealTimeDataDefI::SetPath(const char8* pathName) {
-    path = pathName;
-}
-
-void RealTimeDataDefI::SetType(const char8 *typeName) {
-    type = typeName;
-}
-
+TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestMergeWithLocal());
 }

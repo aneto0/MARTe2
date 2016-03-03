@@ -32,7 +32,6 @@
 #include "RealTimeDataDefContainer.h"
 #include "ReferenceT.h"
 #include "RealTimeDataDefI.h"
-#include "StreamString.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -43,15 +42,17 @@
 
 namespace MARTe {
 
-RealTimeDataDefContainer::RealTimeDataDefContainer(){
+RealTimeDataDefContainer::RealTimeDataDefContainer() {
     final = false;
-}
+    isInput = false;
+    isOutput = false;
 
+}
 
 bool RealTimeDataDefContainer::Verify() {
 
-    bool ret = false;
-    uint32 itemsNumber=Size();
+    bool ret = true;
+    uint32 itemsNumber = Size();
     for (uint32 i = 0u; (i < itemsNumber) && (ret); i++) {
         ReferenceT<RealTimeDataDefI> item = Get(i);
         if (item.IsValid()) {
@@ -64,43 +65,70 @@ bool RealTimeDataDefContainer::Verify() {
 
 bool RealTimeDataDefContainer::MergeWithLocal(StructuredDataI & localData) {
 
-
     StreamString isLocalDefFinal;
-    bool ret = localData.Read("IsFinal", isLocalDefFinal);
 
-    if (ret) {
-        bool localFinal = (isLocalDefFinal == "true");
+    bool ret = true;
+    uint32 newItemsNumber = localData.GetNumberOfChildren();
 
-        ret = (!final) && (!localFinal);
-        // merge if both are not final, return false in other cases
-        if (ret) {
-            uint32 newItemsNumber = localData.GetNumberOfChildren();
-            for (uint32 i = 0u; (i < newItemsNumber) & (ret); i++) {
-                const char8 * newItemName = localData.GetChildName(i);
+    // check the IO definitions
+    // false is by default, so enable if it is defined true in the local
 
-                uint32 itemsNumber=Size();
-                for (uint32 j = 0u; (j < itemsNumber) && (ret); j++) {
-                    ReferenceT<RealTimeDataDefI> item = Get(i);
-                    if (StringHelper::Compare(item->GetName(), newItemName) == 0) {
-                        if (localData.MoveRelative(newItemName)) {
-                            ret = (item->MergeWithLocal(localData));
-                            if (!localData.MoveToAncestor(1u)) {
-                                ret = false;
-                            }
+    StreamString isLocalInputStr;
+    bool isLocalInput = isInput;
+    if (localData.Read("IsInput", isLocalInputStr)) {
+        if ((!isInput) && (isLocalInputStr == "true")) {
+            isInput = true;
+        }
+    }
+
+    StreamString isLocalOutputStr;
+    if (localData.Read("IsOutput", isLocalOutputStr)) {
+        if ((!isOutput) && (isLocalOutputStr == "true")) {
+            isOutput = true;
+        }
+    }
+
+    for (uint32 i = 0u; (i < newItemsNumber) & (ret); i++) {
+        const char8 * newItemName = localData.GetChildName(i);
+        // take only the objects
+        if ((newItemName[0] == '+') || (newItemName[0] == '$')) {
+            uint32 itemsNumber = Size();
+            bool found = false;
+            for (uint32 j = 0u; (j < itemsNumber) && (ret) && (!found); j++) {
+                ReferenceT<RealTimeDataDefI> item = Get(j);
+                // if the name are equal go inside the definition
+                if (StringHelper::Compare(item->GetName(), newItemName) == 0) {
+                    if (localData.MoveRelative(newItemName)) {
+                        ret = (item->MergeWithLocal(localData));
+                        if (!localData.MoveToAncestor(1u)) {
+                            ret = false;
                         }
                     }
-                    else {
-                        if (localData.MoveRelative(newItemName)) {
-                            ReferenceT<RealTimeDataDefI> newItem;
-                            newItem.Initialise(localData, false);
-                            ret = (newItem.IsValid());
+                    found = true;
+                }
+            }
+            // if does not exist yest and it is not final add the definition
+            if ((ret) && (!found)) {
+                if (!final) {
+                    if (localData.MoveRelative(newItemName)) {
+                        ReferenceT<RealTimeDataDefI> newItem;
+                        newItem.Initialise(localData, false);
+                        ret = (newItem.IsValid());
+                        if (ret) {
+                            newItem->SetName(newItemName);
+                            ret = Insert(newItem);
                             if (!localData.MoveToAncestor(1u)) {
                                 ret = false;
                             }
                         }
                     }
                 }
+                else {
+                    //TODO Cannot add if one of them is declared final
+                    ret = false;
+                }
             }
+
         }
     }
     return ret;
@@ -114,15 +142,39 @@ bool RealTimeDataDefContainer::Initialise(StructuredDataI & data) {
         if (ret) {
             final = (isFinal == "true");
         }
+        StreamString isInput;
+        if (data.Read("IsInput", isInput)) {
+            isInput = (isInput == "true");
+        }
+        StreamString isOutput;
+        if (data.Read("IsOutput", isOutput)) {
+            isInput = (isOutput == "true");
+        }
     }
     return ret;
 }
 
-
-bool RealTimeDataDefContainer::IsFinal() const{
+bool RealTimeDataDefContainer::IsFinal() const {
     return final;
 }
 
+void RealTimeDataDefContainer::SetInput(bool isInputPar) {
+    isInput = isInputPar;
+}
+
+void RealTimeDataDefContainer::SetOutput(bool isOutputPar) {
+    isOutput = isOutputPar;
+}
+
+bool RealTimeDataDefContainer::IsInput() const {
+    return isInput;
+}
+
+bool RealTimeDataDefContainer::IsOutput() const {
+    return isOutput;
+}
+
+CLASS_REGISTER(RealTimeDataDefContainer, "1.0")
 
 }
 

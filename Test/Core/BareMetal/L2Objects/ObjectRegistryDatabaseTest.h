@@ -79,6 +79,12 @@ public:
     ObjectRegistryDatabaseTest();
 
     /**
+     * @brief Destructor
+     */
+    ~ObjectRegistryDatabaseTest();
+
+
+    /**
      * @brief Tests if the function does not return null
      */
     bool TestInstance();

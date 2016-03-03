@@ -78,6 +78,11 @@ public:
     bool Insert(Reference ref,
                 const int32 &position = -1);
 
+
+    bool Insert(const char8 * path, Reference ref);
+
+
+
     /**
      * @brief Removes the references from the container.
      * @details This call is not recursive, i.e. if the container contains other containers, the \a ref
@@ -96,6 +101,10 @@ public:
      */
     void Find(ReferenceContainer &result,
               ReferenceContainerFilter &filter);
+
+
+
+    Reference Find(const char8 * path);
 
     /**
      * @brief Checks if \a ref holds a container.
@@ -138,6 +147,11 @@ public:
      * @param[in] data is the StructuredData in input.
      */
     virtual bool Initialise(StructuredDataI &data);
+
+
+
+    virtual bool ToStructuredData(StructuredDataI & data);
+
 
     /**
      * @brief Locks the internal spin-lock mutex.

@@ -32,6 +32,9 @@
 #include "RealTimeApplication.h"
 #include "RealTimeState.h"
 #include "ReferenceContainerFilterObjectName.h"
+#include "RealTimeDataSourceDefContainer.h"
+#include "GAM.h"
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -46,29 +49,113 @@ RealTimeApplication::RealTimeApplication() {
 
 }
 
-bool RealTimeApplication::Validate() {
+bool RealTimeApplication::ConfigureArchitecture() {
+
+    printf("\nStart ConfigureArchitecture\n");
+    // there must be the container called "States"
+    ReferenceT<ReferenceContainer> statesContainer = Find("+States");
+    bool ret = statesContainer.IsValid();
+    if (ret) {
+        // States contains RealTimeState references
+        // for each of them call Validate(*)
+        uint32 numberOfStates = statesContainer->Size();
+        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+            ReferenceT<RealTimeState> state = statesContainer->Get(i);
+            if (state.IsValid()) {
+                // for each state call the configuration function
+                ret = state->ConfigureArchitecture(*this);
+            }
+        }
+    }
+    else {
+        //TODO States container not found
+    }
+
+    printf("\nEnd of ConfigureArchitecture with result %d\n", ret);
+    return ret;
+}
+
+bool RealTimeApplication::ConfigureDataSource() {
+
+    printf("\nStart ConfigureDataSource\n");
 
     // there must be the container called "States"
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, "States");
-    ReferenceContainer resultSingle;
-    Find(resultSingle, filter);
-    bool ret = (resultSingle.Size() > 0u);
+    ReferenceT<ReferenceContainer> functionsContainer = Find("+Functions");
+    bool ret = functionsContainer.IsValid();
     if (ret) {
+        // configure
+        ret = ConfigureDataSourcePrivate(functionsContainer);
+    }
+    else {
+        // TODO Functions container not found
+    }
 
-        ReferenceT<ReferenceContainer> functionsContainer = resultSingle.Get(resultSingle.Size() - 1u);
-        ret = functionsContainer.IsValid();
-        if (ret) {
-            // States contains RealTimeState references
-            // for each of them call Validate(*)
-            for (uint32 i = 0u; (i < functionsContainer->Size()) && (ret); i++) {
-                ReferenceT<RealTimeState> state = functionsContainer->Get(i);
-                if (state.IsValid()) {
-                    ret = state->Validate(*this);
+    printf("\nEnd of ConfigureDataSource with result %d\n", ret);
+
+    return ret;
+
+}
+
+bool RealTimeApplication::ValidateDataSource() {
+
+    // there must be the container called "States"
+    ReferenceT<RealTimeDataSourceDefContainer> dataContainer = Find("+Data");
+    bool ret = dataContainer.IsValid();
+    if (ret) {
+        // States contains RealTimeState references
+        // for each of them call Validate(*)
+        dataContainer->Verify();
+    }
+    return ret;
+}
+
+bool RealTimeApplication::ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functionsContainer) {
+
+    bool ret = functionsContainer.IsValid();
+
+    if (ret) {
+        uint32 numberOfFunctions = functionsContainer->Size();
+        for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
+            Reference genericFunction = functionsContainer->Get(i);
+
+            ReferenceT<GAM> gam = genericFunction;
+            // a GAM
+            if (gam.IsValid()) {
+                // call the single gam configuration
+                gam->ConfigureDataSource();
+            }
+            else {
+                // a GAMGroup
+                ReferenceT<GAMGroup> gamGroup = genericFunction;
+                if (gamGroup.IsValid()) {
+                    uint32 numberOfSubGams = gamGroup->Size();
+                    for (uint32 j = 0u; (j < numberOfSubGams) && (ret); j++) {
+                        ReferenceT<GAM> subGam = gamGroup->Get(j);
+                        ret = subGam.IsValid();
+                        if (ret) {
+                            // call the single gam configuration
+                            ret = subGam->ConfigureDataSource();
+                        }
+                    }
+                }
+                else {
+                    // a ReferenceContainer
+                    ReferenceT<ReferenceContainer> gamContainer = genericFunction;
+                    bool ret = gamContainer.IsValid();
+                    if (ret) {
+                        // go recursively
+                        ret = ConfigureDataSourcePrivate(gamContainer);
+                    }
+                    else {
+                        //TODO What is it?
+                    }
                 }
             }
         }
     }
+
     return ret;
 }
-CLASS_REGISTER(RealTimeApplication,"1.0");
+
+CLASS_REGISTER(RealTimeApplication, "1.0");
 }

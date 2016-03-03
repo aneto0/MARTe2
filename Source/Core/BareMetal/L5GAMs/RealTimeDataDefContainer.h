@@ -32,11 +32,13 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
+#include "StreamString.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /**
  * @brief Collects a set of RealTimeDataDefI
@@ -44,6 +46,7 @@ namespace MARTe{
  */
 class RealTimeDataDefContainer: public ReferenceContainer {
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Constructor
@@ -52,12 +55,10 @@ public:
      */
     RealTimeDataDefContainer();
 
-
     /**
      * @brief Calls RealTimeDataDefI::Verify(*) for each item in the container
      */
     bool Verify();
-
 
     /**
      * @brief Inserts all the RealTimeDataDefI items in the container and reads
@@ -80,6 +81,14 @@ public:
      */
     bool IsFinal() const;
 
+    void SetInput(bool isInputPar);
+
+    void SetOutput(bool isOutputPar);
+
+    bool IsInput() const;
+
+    bool IsOutput() const;
+
 
 private:
 
@@ -87,6 +96,12 @@ private:
      * Specifies if the definition is complete
      */
     bool final;
+
+    // initialised from cdb
+    bool isInput;
+
+    // initialised from cdb
+    bool isOutput;
 
 };
 

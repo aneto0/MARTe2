@@ -1,8 +1,8 @@
 /**
- * @file RealTimeSampledDataDef.h
- * @brief Header file for class RealTimeSampledDataDef
- * @date 25/02/2016
- * @author Giuseppe Ferrò
+ * @file GAMTestHelper.h
+ * @brief Header file for class GAMTestHelper
+ * @date 01/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeSampledDataDef
+ * @details This header file contains the declaration of the class GAMTestHelper
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMESAMPLEDDATADEF_H_
-#define REALTIMESAMPLEDDATADEF_H_
+#ifndef GAMTESTHELPER_H_
+#define GAMTESTHELPER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,69 +31,55 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeDataDefI.h"
-#include "StreamString.h"
-#include "StructuredDataI.h"
+#include "GAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+using namespace MARTe;
 
-/**
- * @brief Maps a final structure definition to the RealTimeDataSource.
- * @details The definition is final for data which is supposed to be
- * interfaced directly with the hardware.
- *
- * @details The definition express how many samples of data will be generated
- * in a specified number of cycles.
- */
-class RealTimeSampledDataDef: public RealTimeDataDefI {
+struct TrackError{
+    uint32 Par1;
+    uint32 Par2;
+};
+
+
+struct ControlIn{
+    uint32 Par1;
+    uint32 Par2;
+};
+
+
+struct ControlNoise{
+    float32 noiseValue;
+};
+
+class PIDGAM: public GAM {
+
 public:
     CLASS_REGISTER_DECLARATION()
 
-    /**
-     * @brief Constructor
-     * @post
-     *   GetSamples() == 1 &&
-     *   GetCycles() == 1;
-     */
-    RealTimeSampledDataDef();
+    ~PIDGAM();
 
-    /**
-     * @see RealTimeDataDefI::MergeWithLocal(*)
-     */
-    virtual bool MergeWithLocal(StructuredDataI &localData);
+    virtual void SetUp();
+    virtual void Execute(uint8 activeContextBuffer);
 
-    /**
-     * @brief Reads the samples and cycles values to determine the number of samples per cycle.
-     */
-    virtual bool Initialise(StructuredDataI &data);
-
-    /**
-     * @see RealTimeDataDefI::Verify(*)
-     */
-    virtual bool Verify();
-
-private:
-
-
-    /**
-     * How many samples
-     */
-    int32 samples;
-
-    /**
-     * How many cycles
-     */
-    int32 cycles;
+    virtual void SetLocalData();
 
 };
-}
+
+class PIDGAMGroup: public GAMGroup {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+
+    virtual void PrepareNextState(const RealTimeStateInfo &status);
+};
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMESAMPLEDDATADEF_H_ */
+#endif /* GAMTESTHELPER_H_ */
 

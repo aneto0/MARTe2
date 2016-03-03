@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
+#include "ReferenceT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -82,9 +83,16 @@ public:
      * @return true if all the GAMs declared in the RealTimeThread configuration are really defined
      * and supports the state where they are declared into, false otherwise.
      */
-    bool Validate();
+    bool ConfigureArchitecture();
+
+    bool ConfigureDataSource();
+
+    bool ValidateDataSource();
 
     // The Initialise function is automatic
+
+private:
+    bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functionsContainer);
 };
 
 }

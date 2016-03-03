@@ -88,11 +88,6 @@ public:
      */
     virtual void PrepareNextState(const RealTimeStateInfo &status)=0;
 
-    /**
-     * @brief Initialises the object from cdb.
-     * @param[in] data is the StructuredData containing the initialisation data.
-     */
-    virtual bool Initialise(StructuredDataI &data);
 
     /**
      * @brief Returns the array with the names of the states in which this GAMGroup is involved.
@@ -106,7 +101,10 @@ public:
      */
     uint32 GetNumberOfSupportedStates() const;
 
-private:
+
+    void AddState(const char8 * stateName);
+
+protected:
 
     /**
      * The names of the supported states

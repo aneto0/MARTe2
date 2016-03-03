@@ -35,6 +35,7 @@
 #include "StructuredDataI.h"
 #include "StreamString.h"
 #include "ReferenceT.h"
+#include "RealTimeState.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -62,6 +63,9 @@ public:
      */
     GAM();
 
+    virtual ~GAM();
+
+
     /**
      * @brief Setup the GAM.
      * @details Initialises the local status (memory allocation
@@ -76,7 +80,18 @@ public:
      * @return false in case of conflicts between the local and the global definitions, or
      * if the definitions are inconsistent with registered types. True otherwise.
      */
-    virtual bool Verify(StructuredDataI &localData);
+    virtual bool ConfigureFunction();
+
+    virtual bool ConfigureDataSource();
+
+
+    void SetApplication(ReferenceT<RealTimeApplication> rtApp);
+
+    void SetGAMGroup(ReferenceT<GAMGroup> gamGroup);
+
+
+
+    void AddState(const char8 *stateName);
 
     /**
      * @brief The core function to be executed.
@@ -84,7 +99,42 @@ public:
      */
     virtual void Execute(uint8 activeContextBuffer)=0;
 
-private:
+
+    // the routine used to get the local cdb
+    virtual void SetLocalData()=0;
+
+
+    virtual bool Initialise(StructuredDataI & data);
+
+
+    StreamString *GetSupportedStates() ;
+
+    /**
+     * @brief Returns the number of the supported states.
+     * @return the number of the supported states.
+     */
+    uint32 GetNumberOfSupportedStates() ;
+
+
+protected:
+
+    /**
+     * The names of the supported states
+     */
+    StreamString *supportedStates;
+
+    /**
+     * How many supported states
+     */
+    uint32 numberOfSupportedStates;
+
+
+    StructuredDataI* localData;
+
+
+    ReferenceT<RealTimeApplication> application;
+
+    ReferenceT<GAMGroup> group;
     //? IOData?
     //? context?
 };

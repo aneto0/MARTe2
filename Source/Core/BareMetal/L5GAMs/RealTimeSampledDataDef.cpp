@@ -52,12 +52,12 @@ bool RealTimeSampledDataDef::Verify() {
     return true;
 }
 
-bool RealTimeSampledDataDef::MergeWithLocal(StructuredDataI &localData){
+bool RealTimeSampledDataDef::MergeWithLocal(StructuredDataI &localData) {
     return false;
 }
 
 bool RealTimeSampledDataDef::Initialise(StructuredDataI &data) {
-    bool ret= RealTimeDataDefI::Initialise(data);
+    bool ret = RealTimeDataDefI::Initialise(data);
     if (ret) {
         ret = data.Read("Samples", samples);
     }
@@ -67,4 +67,7 @@ bool RealTimeSampledDataDef::Initialise(StructuredDataI &data) {
     }
     return ret;
 }
+
+CLASS_REGISTER(RealTimeSampledDataDef, "1.0")
+
 }

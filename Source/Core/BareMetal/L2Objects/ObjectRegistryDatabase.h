@@ -57,6 +57,10 @@ public:
      */
     virtual ~ObjectRegistryDatabase();
 
+
+    virtual bool CleanUp();
+
+
     /**
      * @brief Retrieves the Reference at the given address.
      * @param[in] path is the address of the Reference into the database. The syntax is

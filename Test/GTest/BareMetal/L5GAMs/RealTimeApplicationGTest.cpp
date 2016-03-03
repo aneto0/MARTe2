@@ -1,7 +1,7 @@
 /**
- * @file GAMTest.h
- * @brief Header file for class GAMTest
- * @date 18/02/2016
+ * @file RealTimeApplicationGTest.cpp
+ * @brief Source file for class RealTimeApplicationGTest
+ * @date 01/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,49 +16,47 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMTest
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class RealTimeApplicationGTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef GAMTEST_H_
-#define GAMTEST_H_
-
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
-/*---------------------------------------------------------------------------*/
-#include "GAM.h"
-#include "ConfigurationDatabase.h"
+#include <limits.h>
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-using namespace MARTe;
-
-class GAMTest {
-
-public:
-
-    GAMTest();
-
-    ~GAMTest();
-
-
-    bool TestInitialise();
-
-private:
-    ConfigurationDatabase cdb;
-
-};
+#include "RealTimeApplicationTest.h"
 
 /*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
+/*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMTEST_H_ */
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
+TEST(RealTimeApplicationGTest,TestConstructor) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConstructor());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureArchitecture) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConfigureArchitecture());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureArchitectureGAMGroup) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConfigureArchitectureGAMGroup());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureDataSource) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConfigureDataSource());
+}

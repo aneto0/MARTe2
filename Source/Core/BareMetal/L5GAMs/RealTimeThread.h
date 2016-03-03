@@ -34,13 +34,13 @@
 #include "ReferenceContainer.h"
 #include "RealTimeState.h"
 #include "StreamString.h"
+#include "GAM.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
-
+namespace MARTe {
 
 /**
  * @brief A container of GAM references.
@@ -58,7 +58,7 @@ namespace MARTe{
 class RealTimeThread: public ReferenceContainer {
 
 public:
-    CLASS_REGISTER_DECLARATION();
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Constructor.
@@ -76,7 +76,11 @@ public:
     /**
      * @see RealTimeApplication::Validate()
      */
-    bool Validate(RealTimeApplication &rtApp, RealTimeState &rtState);
+    bool ConfigureArchitecture(RealTimeApplication &rtApp,
+                               RealTimeState &rtState);
+
+
+    bool ConfigureDataSource();
 
     /**
      * @brief Reads the array with the GAM names to be launched by this thread from the StructuredData in input.
@@ -94,7 +98,17 @@ public:
      */
     uint32 GetNumberOfFunctions() const;
 
+    ReferenceT<GAM> *GetGAMs() const;
+
+    uint32 GetNumberOfGAMs() const;
+
 private:
+
+    bool ConfigureArchitecturePrivate(Reference functionGeneric,
+                                      RealTimeApplication &rtApp,
+                                      RealTimeState &rtState);
+
+    void AddGAM(ReferenceT<GAM> element);
 
     /**
      * The array with the GAM names
@@ -106,6 +120,15 @@ private:
      */
     uint32 numberOfFunctions;
 
+    /**
+     * The GAM to be executed by this thread.
+     */
+    ReferenceT<GAM> * GAMs;
+
+    /**
+     * The number of GAMs to be executed by this thread
+     */
+    uint32 numberOfGAMs;
 };
 
 }

@@ -32,15 +32,17 @@
 #include "GAMGroup.h"
 #include "ReferenceT.h"
 #include "GAM.h"
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
+static const uint32 stateNamesGranularity = 8u;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
 
 GAMGroup::GAMGroup() {
     supportedStates = NULL_PTR(StreamString*);
@@ -72,20 +74,6 @@ void GAMGroup::PrepareNextState(const RealTimeStateInfo &status) {
 */
 
 
-bool GAMGroup::Initialise(StructuredDataI &data) {
-    bool ret = ReferenceContainer::Initialise(data);
-    if (ret) {
-        AnyType statesAt = data.GetType("States");
-        numberOfSupportedStates = statesAt.GetNumberOfElements(0u);
-        supportedStates = new StreamString[numberOfSupportedStates];
-        ret = (data.Read("states", supportedStates));
-    }
-    // if there is a context to be initialised a good strategy could be
-    // put a pointer to the context for each gam and the function Switch() is only
-    // a change of the index 0-1
-    return ret;
-}
-
 StreamString *GAMGroup::GetSupportedStates() const {
     return supportedStates;
 }
@@ -93,5 +81,25 @@ StreamString *GAMGroup::GetSupportedStates() const {
 uint32 GAMGroup::GetNumberOfSupportedStates() const {
     return numberOfSupportedStates;
 }
+
+
+void GAMGroup::AddState(const char8 * stateName){
+    if ((numberOfSupportedStates % stateNamesGranularity) == 0u) {
+        uint32 newSize = numberOfSupportedStates + stateNamesGranularity;
+        StreamString *temp = new StreamString[newSize];
+        if (supportedStates != NULL) {
+            for (uint32 i = 0u; i < numberOfSupportedStates; i++) {
+                temp[i] = supportedStates[i];
+            }
+            delete [] supportedStates;
+        }
+        supportedStates = temp;
+
+    }
+    supportedStates[numberOfSupportedStates] = stateName;
+    numberOfSupportedStates++;
+
+}
+
 
 }

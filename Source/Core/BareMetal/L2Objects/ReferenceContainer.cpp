@@ -35,6 +35,8 @@
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceT.h"
 #include "ErrorManagement.h"
+#include "StringHelper.h"
+#include "ReferenceContainerFilterObjectName.h"
 #include <typeinfo>
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -61,7 +63,7 @@ Reference ReferenceContainer::Get(const uint32 idx) {
                 ref = node->GetReference();
             }
         }
-        REPORT_ERROR(ErrorManagement::Warning,"ReferenceContainer: input greater than the list size.");
+        REPORT_ERROR(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
     }
     UnLock();
     return ref;
@@ -113,6 +115,78 @@ bool ReferenceContainer::Insert(Reference ref,
     return ok;
 }
 
+bool ReferenceContainer::Insert(const char8 * path,
+                                Reference ref) {
+    bool ok = ref.IsValid();
+    if (ok) {
+        if (StringHelper::Length(path) == 0u) {
+            ok = Insert(ref);
+        }
+        else {
+            bool created = false;
+            ReferenceT<ReferenceContainer> currentNode(this);
+            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(sizeof(char8) * StringHelper::Length(path)));
+            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(sizeof(char8) * StringHelper::Length(path)));
+
+            const char8* toTokenize = path;
+            const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
+            toTokenize = next;
+
+            while ((token[0] != '\0') && (ok)) {
+                ok = (StringHelper::Length(token) > 0u);
+                if (ok) {
+                    //Check if a node with this name already exists
+                    bool found = false;
+                    Reference foundReference;
+                    uint32 i;
+                    for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
+                        foundReference = currentNode->Get(i);
+                        found = (StringHelper::Compare(foundReference->GetName(), token) == 0);
+                    }
+                    // take the next token
+
+                    next = StringHelper::TokenizeByChars(toTokenize, ".", nextToken);
+                    toTokenize = next;
+
+                    if (found) {
+                        currentNode = foundReference;
+                    }
+                    else {
+                        // insert the reference
+                        if (nextToken[0] == '\0') {
+                            ref->SetName(token);
+                            created = currentNode->Insert(ref);
+                        }
+                        // create a node
+                        else {
+                            ReferenceT<ReferenceContainer> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                            container->SetName(token);
+                            ok = currentNode->Insert(container);
+                            if (ok) {
+                                currentNode = container;
+                            }
+                        }
+                    }
+                    StringHelper::Copy(token, nextToken);
+                }
+            }
+
+            if (ok) {
+                ok = created;
+            }
+
+            if (HeapManager::Free(reinterpret_cast<void*&>(token))) {
+
+            }
+            if (HeapManager::Free(reinterpret_cast<void*&>(nextToken))) {
+
+            }
+        }
+    }
+    return ok;
+
+}
+
 bool ReferenceContainer::Delete(Reference ref) {
     ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::REMOVE, ref);
     ReferenceContainer result;
@@ -140,8 +214,8 @@ void ReferenceContainer::Find(ReferenceContainer &result,
         while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
             ReferenceContainerNode *currentNode = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(static_cast<uint32>(index)));
-            Reference currentNodeReference = currentNode->GetReference();
 
+            Reference currentNodeReference = currentNode->GetReference();
             //Check if the current node meets the filter criteria
             bool found = filter.Test(result, currentNodeReference);
             if (found) {
@@ -215,6 +289,17 @@ void ReferenceContainer::Find(ReferenceContainer &result,
     UnLock();
 }
 
+Reference ReferenceContainer::Find(const char8 * path) {
+    Reference ret;
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
+    ReferenceContainer resultSingle;
+    Find(resultSingle, filter);
+    if (resultSingle.Size() > 0u) {
+        ret = resultSingle.Get(resultSingle.Size() - 1u);
+    }
+    return ret;
+}
+
 uint32 ReferenceContainer::Size() {
     uint32 size = 0u;
     if (Lock()) {
@@ -230,8 +315,8 @@ uint32 ReferenceContainer::Size() {
 bool ReferenceContainer::Initialise(StructuredDataI &data) {
 
     // Recursive initialization
-    bool ok =true;
-    uint32 numberOfChildren=data.GetNumberOfChildren();
+    bool ok = true;
+    uint32 numberOfChildren = data.GetNumberOfChildren();
     for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
         const char8* childName = data.GetChildName(i);
         // case object
@@ -239,13 +324,15 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
             if (data.MoveRelative(childName)) {
                 Reference newObject;
                 ok = newObject.Initialise(data, false);
-                newObject->SetName(childName);
+                ok = (newObject.IsValid());
                 if (ok) {
+                    newObject->SetName(childName);
                     ok = ReferenceContainer::Insert(newObject);
                 }
                 if (ok) {
                     ok = data.MoveToAncestor(1u);
                 }
+
             }
             else {
                 //TODO error
@@ -256,15 +343,33 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
     return ok;
 }
 
+bool ReferenceContainer::ToStructuredData(StructuredDataI & data) {
+
+    const char8 * name = GetName();
+    bool ret = data.CreateRelative(name);
+    uint32 numberOfChildren = Size();
+    for (uint32 i = 0u; i < numberOfChildren; i++) {
+        Reference child = Get(i);
+        ret = child.IsValid();
+        if (ret) {
+            if (ret) {
+                ret = child->ToStructuredData(data);
+            }
+        }
+    }
+    if (data.MoveToAncestor(1u)) {
+        ret = false;
+    }
+    return ret;
+}
+
 bool ReferenceContainer::Lock() {
     return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
 }
 
-void ReferenceContainer::UnLock(){
+void ReferenceContainer::UnLock() {
     mux.FastUnLock();
 }
-
-
 
 CLASS_REGISTER(ReferenceContainer, "1.0")
 

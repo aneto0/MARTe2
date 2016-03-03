@@ -50,7 +50,7 @@ ObjectRegistryDatabase *ObjectRegistryDatabase::Instance() {
     static ObjectRegistryDatabase *instance = NULL_PTR(ObjectRegistryDatabase *);
     if (instance == NULL) {
         instance=new ObjectRegistryDatabase(); //dynamic_cast<ObjectRegistryDatabase*>(ObjectRegistryDatabase_BuildFn());
-        GlobalObjectsDatabase::Instance()->Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 2u);
+        GlobalObjectsDatabase::Instance()->Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 3u);
     }
     return instance;
 }
@@ -59,6 +59,15 @@ ObjectRegistryDatabase::ObjectRegistryDatabase() {
 }
 
 ObjectRegistryDatabase::~ObjectRegistryDatabase() {
+}
+
+bool ObjectRegistryDatabase::CleanUp() {
+    bool ret;
+    for (uint32 i = 0u; i < Size(); i++) {
+        Reference toBeRemoved=Get(i);
+        ret=ReferenceContainer::Delete(toBeRemoved);
+    }
+    return ret;
 }
 
 Reference ObjectRegistryDatabase::Find(const char8 * const path,

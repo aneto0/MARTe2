@@ -1,8 +1,8 @@
 /**
  * @file GAMGTest.cpp
  * @brief Source file for class GAMGTest
- * @date 18/feb/2016
- * @author pc
+ * @date 18/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -25,11 +25,14 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <limits.h>
+#include "gtest/gtest.h"
+
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "GAMGTest.h"
+#include "GAMTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,3 +42,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+TEST(GAMGTest,TestInitialise) {
+    GAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestInitialise());
+}
