@@ -47,15 +47,6 @@ namespace MARTe {
 RealTimeDataSourceDef::RealTimeDataSourceDef() {
 }
 
-RealTimeDataSourceDef::~RealTimeDataSourceDef() {
-
-    printf("\n!!!\n");
-
-    //if (records != NULL) {
-    //  delete [] records;
-    // }
-}
-
 void RealTimeDataSourceDef::AddConsumer(const char8 *stateIn,
                                         ReferenceT<GAM> gam) {
     uint32 index;
@@ -86,7 +77,7 @@ void RealTimeDataSourceDef::AddConsumer(const char8 *stateIn,
     }
 }
 
-void RealTimeDataSourceDef::Addproducer(const char8 *stateIn,
+void RealTimeDataSourceDef::AddProducer(const char8 *stateIn,
                                         ReferenceT<GAM> gam) {
 
     uint32 index;
@@ -103,13 +94,13 @@ void RealTimeDataSourceDef::Addproducer(const char8 *stateIn,
         }
     }
     if (found) {
-        record->Addproducer(gam);
+        record->AddProducer(gam);
     }
     else {
         record = ReferenceT<RealTimeDataSourceDefRecord>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         if (record.IsValid()) {
             record->SetStateName(stateIn);
-            record->Addproducer(gam);
+            record->AddProducer(gam);
             if (!Insert(record)) {
                 //TODO
             }
@@ -118,21 +109,9 @@ void RealTimeDataSourceDef::Addproducer(const char8 *stateIn,
 }
 
 uint32 RealTimeDataSourceDef::GetNumberOfConsumers(const char8 * stateIn) {
-    uint32 index;
     uint32 ret = 0u;
-    bool found = false;
-    ReferenceT<RealTimeDataSourceDefRecord> record;
-    uint32 numberOfStates = Size();
-    for (index = 0u; (index < numberOfStates) && (!found); index++) {
-        record = Get(index);
-        if (record.IsValid()) {
-            StreamString stateName = stateIn;
-            if (stateName == record->GetStateName()) {
-                found = true;
-            }
-        }
-    }
-    if (found) {
+    ReferenceT<RealTimeDataSourceDefRecord> record = Find(stateIn);
+    if (record.IsValid()) {
         ret = record->GetNumberOfConsumers();
     }
     return ret;
@@ -140,21 +119,9 @@ uint32 RealTimeDataSourceDef::GetNumberOfConsumers(const char8 * stateIn) {
 }
 
 uint32 RealTimeDataSourceDef::GetNumberOfProducers(const char8 * stateIn) {
-    uint32 index;
     uint32 ret = 0u;
-    bool found = false;
-    ReferenceT<RealTimeDataSourceDefRecord> record;
-    uint32 numberOfStates = Size();
-    for (index = 0u; (index < numberOfStates) && (!found); index++) {
-        record = Get(index);
-        if (record.IsValid()) {
-            StreamString stateName = stateIn;
-            if (stateName == record->GetStateName()) {
-                found = true;
-            }
-        }
-    }
-    if (found) {
+    ReferenceT<RealTimeDataSourceDefRecord> record = Find(stateIn);
+    if (record.IsValid()) {
         ret = record->GetNumberOfProducers();
     }
     return ret;

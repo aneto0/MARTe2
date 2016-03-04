@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataDefI.cpp
- * @brief Source file for class RealTimeDataDefI
- * @date 25/02/2016
+ * @file RealTimeDataSourceDefGTest.cpp
+ * @brief Source file for class RealTimeDataSourceDefGTest
+ * @date 04/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataDefI (public, protected, and private). Be aware that some 
+ * the class RealTimeDataSourceDefGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,10 +25,13 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <limits.h>
+#include "gtest/gtest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeDataDefI.h"
+
+#include "RealTimeDataSourceDefTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -37,32 +40,32 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-RealTimeDataDefI::RealTimeDataDefI() {
-
+TEST(RealTimeDataSourceDefGTest,TestConstructor) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestConstructor());
 }
 
-const char8 *RealTimeDataDefI::GetPath() {
-    return path.Buffer();
+TEST(RealTimeDataSourceDefGTest,TestAddConsumer) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestAddConsumer());
 }
 
-const char8 *RealTimeDataDefI::GetType() {
-    return type.Buffer();
+TEST(RealTimeDataSourceDefGTest,TestAddProducer) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestAddProducer());
 }
 
-bool RealTimeDataDefI::Initialise(StructuredDataI &data) {
-
-    bool ret = ReferenceContainer::Initialise(data);
-
-    if (ret) {
-        if (!data.Read("Path", path)) {
-            //TODO Warning?
-        }
-        if (!data.Read("Type", type)) {
-            //TODO Warning?
-        }
-    }
-    return ret;
+TEST(RealTimeDataSourceDefGTest,TestVerifyTrue) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestVerifyTrue());
 }
 
+TEST(RealTimeDataSourceDefGTest,TestVerifyFalse_MoreThanOneProducer) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestVerifyFalse_MoreThanOneProducer());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestVerifyNoConsumers) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestVerifyNoConsumers());
 }

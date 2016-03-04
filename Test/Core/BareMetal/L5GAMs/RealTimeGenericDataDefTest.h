@@ -43,9 +43,40 @@ public:
 
     bool TestConstructor();
 
-    bool TestInitialise(StructuredDataI & data, bool expected);
+    bool TestInitialise();
 
     bool TestMergeWithLocal();
+
+    bool TestMergeWithLocalFalse_FinalGlobal();
+
+    bool TestMergeWithLocalFalse_BothFinal();
+
+    bool TestMergeWithLocal_AddType();
+
+    bool TestMergeWithLocal_AddPath();
+
+    bool TestMergeWithLocal_AddDefaultValues();
+
+    bool TestMergeWithLocal_DifferentTypes();
+
+    bool TestMergeWithLocal_DifferentPaths();
+
+    bool TestMergeWithLocal_DifferentDefaultValues();
+
+    bool TestGetDefaultValue();
+
+    bool TestToStructuredData();
+
+    bool TestVerify();
+
+    bool TestVerifyFalse_UnregisteredType();
+
+    bool TestVerifyFalse_UnintrospectableType();
+
+    bool TestVerifyFalse_InvalidMemberName();
+
+    bool TestVerifyFalse_InvalidMemberType();
+
 
 };
 

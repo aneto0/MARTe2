@@ -45,6 +45,7 @@ RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord() {
 
     // can be explored
     ReferenceT<ReferenceContainer> prod(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    prod->SetName("Producers");
     if(prod.IsValid()){
         if(Insert(prod)){
             producers=prod;
@@ -55,6 +56,7 @@ RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord() {
     }
 
     ReferenceT<ReferenceContainer> cons(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    cons->SetName("Consumers");
     if(cons.IsValid()){
         if(Insert(cons)){
             consumers=cons;
@@ -65,9 +67,6 @@ RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord() {
     }
 }
 
-RealTimeDataSourceDefRecord::~RealTimeDataSourceDefRecord() {
-
-}
 
 void RealTimeDataSourceDefRecord::SetStateName(const char8 * stateName) {
     state = stateName;
@@ -86,7 +85,7 @@ bool RealTimeDataSourceDefRecord::AddConsumer(ReferenceT<GAM> gamConsumer) {
     return ret;
 }
 
-bool RealTimeDataSourceDefRecord::Addproducer(ReferenceT<GAM> gamProducer) {
+bool RealTimeDataSourceDefRecord::AddProducer(ReferenceT<GAM> gamProducer) {
     bool ret = producers.IsValid();
     if (ret) {
         ret = producers->Insert(gamProducer);

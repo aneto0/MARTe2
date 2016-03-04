@@ -130,7 +130,7 @@ bool RealTimeDataSourceDefContainer::AddSingleDataDefinition(ReferenceT<RealTime
                 }
                 if (isProducer) {
                     for (uint32 i = 0u; i < numberOfStates; i++) {
-                        element->Addproducer(supportedStates[i].Buffer(), userName);
+                        element->AddProducer(supportedStates[i].Buffer(), userName);
                     }
                 }
             }
@@ -148,7 +148,7 @@ bool RealTimeDataSourceDefContainer::AddSingleDataDefinition(ReferenceT<RealTime
                     }
                     if (isProducer) {
                         for (uint32 i = 0u; i < numberOfStates; i++) {
-                            element->Addproducer(supportedStates[i].Buffer(), userName);
+                            element->AddProducer(supportedStates[i].Buffer(), userName);
                         }
                     }
                     ret = Insert(path.Buffer(), element);

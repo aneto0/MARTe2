@@ -81,11 +81,7 @@ public:
      */
     const char8 *GetDefaultValue();
 
-    /**
-     * @brief Specifies if the definition is complete or not.
-     * @return true if the definition is complete, false otherwise.
-     */
-    bool IsFinal() const;
+
 
 private:
 

@@ -75,19 +75,11 @@ public:
      */
     bool MergeWithLocal(StructuredDataI & localData);
 
-    /**
-     * @brief Specifies if the definition is complete or not.
-     * @return true if the definition is complete, false otherwise.
-     */
-    bool IsFinal() const;
-
-    void SetInput(bool isInputPar);
-
-    void SetOutput(bool isOutputPar);
-
     bool IsInput() const;
 
     bool IsOutput() const;
+
+    virtual bool ToStructuredData(StructuredDataI & data);
 
 
 private:

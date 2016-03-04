@@ -78,16 +78,12 @@ public:
      */
     const char8 *GetPath();
 
-    void SetPath(const char8* pathName);
-
     /**
      * @brief Retrieves the variable type.
      * @return the variable type.
      */
     const char8 *GetType();
 
-
-    void SetType(const char8 *typeName);
 
     /**
      * @brief Initialises the container and reads the variable address and type from the StructuredData

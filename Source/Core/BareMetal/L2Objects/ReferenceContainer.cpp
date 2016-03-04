@@ -347,18 +347,25 @@ bool ReferenceContainer::ToStructuredData(StructuredDataI & data) {
 
     const char8 * name = GetName();
     bool ret = data.CreateRelative(name);
-    uint32 numberOfChildren = Size();
-    for (uint32 i = 0u; i < numberOfChildren; i++) {
-        Reference child = Get(i);
-        ret = child.IsValid();
+    if (ret) {
+        const ClassProperties *properties = GetClassProperties();
+        ret = (properties != NULL);
         if (ret) {
-            if (ret) {
-                ret = child->ToStructuredData(data);
+            ret = data.Write("Class", properties->GetName());
+            uint32 numberOfChildren = Size();
+            for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
+                Reference child = Get(i);
+                ret = child.IsValid();
+                if (ret) {
+                    if (ret) {
+                        ret = child->ToStructuredData(data);
+                    }
+                }
             }
         }
-    }
-    if (data.MoveToAncestor(1u)) {
-        ret = false;
+        if (!data.MoveToAncestor(1u)) {
+            ret = false;
+        }
     }
     return ret;
 }

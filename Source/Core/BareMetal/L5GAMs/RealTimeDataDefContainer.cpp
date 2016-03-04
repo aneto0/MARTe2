@@ -74,16 +74,15 @@ bool RealTimeDataDefContainer::MergeWithLocal(StructuredDataI & localData) {
     // false is by default, so enable if it is defined true in the local
 
     StreamString isLocalInputStr;
-    bool isLocalInput = isInput;
     if (localData.Read("IsInput", isLocalInputStr)) {
-        if ((!isInput) && (isLocalInputStr == "true")) {
+        if (isLocalInputStr == "true") {
             isInput = true;
         }
     }
 
     StreamString isLocalOutputStr;
     if (localData.Read("IsOutput", isLocalOutputStr)) {
-        if ((!isOutput) && (isLocalOutputStr == "true")) {
+        if (isLocalOutputStr == "true") {
             isOutput = true;
         }
     }
@@ -138,32 +137,19 @@ bool RealTimeDataDefContainer::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (ret) {
         StreamString isFinal;
-        ret = (data.Read("IsFinal", isFinal));
-        if (ret) {
+        if (data.Read("IsFinal", isFinal)) {
             final = (isFinal == "true");
         }
-        StreamString isInput;
-        if (data.Read("IsInput", isInput)) {
-            isInput = (isInput == "true");
+        StreamString isInputStr;
+        if (data.Read("IsInput", isInputStr)) {
+            isInput = (isInputStr == "true");
         }
-        StreamString isOutput;
-        if (data.Read("IsOutput", isOutput)) {
-            isInput = (isOutput == "true");
+        StreamString isOutputStr;
+        if (data.Read("IsOutput", isOutputStr)) {
+            isOutput = (isOutputStr == "true");
         }
     }
     return ret;
-}
-
-bool RealTimeDataDefContainer::IsFinal() const {
-    return final;
-}
-
-void RealTimeDataDefContainer::SetInput(bool isInputPar) {
-    isInput = isInputPar;
-}
-
-void RealTimeDataDefContainer::SetOutput(bool isOutputPar) {
-    isOutput = isOutputPar;
 }
 
 bool RealTimeDataDefContainer::IsInput() const {
@@ -172,6 +158,35 @@ bool RealTimeDataDefContainer::IsInput() const {
 
 bool RealTimeDataDefContainer::IsOutput() const {
     return isOutput;
+}
+
+bool RealTimeDataDefContainer::ToStructuredData(StructuredDataI & data) {
+    const char8 * name = GetName();
+    bool ret = data.CreateRelative(name);
+    if (ret) {
+        ret = data.Write("Class", "RealTimeDataDefContainer");
+
+        if (ret && isInput) {
+            ret = data.Write("IsInput", "true");
+        }
+        if (ret && isOutput) {
+            ret = data.Write("IsOutput", "true");
+        }
+        if (ret) {
+            uint32 numberOfDefinitions = Size();
+            for (uint32 i = 0u; (i < numberOfDefinitions) && (ret); i++) {
+                Reference def = Get(i);
+                ret = def.IsValid();
+                if (ret) {
+                    ret = def->ToStructuredData(data);
+                }
+            }
+        }
+        if (!data.MoveToAncestor(1u)) {
+            ret = false;
+        }
+    }
+    return ret;
 }
 
 CLASS_REGISTER(RealTimeDataDefContainer, "1.0")

@@ -55,8 +55,8 @@ public:
     /**
      * @brief Constructor
      * @post
-     *   GetSamples() == 1 &&
-     *   GetCycles() == 1;
+     *   GetSamples() == 0 &&
+     *   GetSamplesPerCycle() == 0;
      */
     RealTimeSampledDataDef();
 
@@ -75,6 +75,14 @@ public:
      */
     virtual bool Verify();
 
+
+    int32 GetSamples() const;
+
+    int32 GetSamplesPerCycle() const;
+
+    virtual bool ToStructuredData( StructuredDataI & data);
+
+
 private:
 
 
@@ -86,7 +94,9 @@ private:
     /**
      * How many cycles
      */
-    int32 cycles;
+    int32 samplesPerCycle;
+
+    bool final;
 
 };
 }

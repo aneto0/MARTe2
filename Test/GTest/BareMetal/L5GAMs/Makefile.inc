@@ -25,7 +25,12 @@
 
 OBJSX= 	GAMGTest.x \
 		RealTimeApplicationGTest.x \
-		RealTimeGenericDataDefGTest.x	 
+		RealTimeDataDefContainerGTest.x \
+		RealTimeDataDefIGTest.x \
+		RealTimeGenericDataDefGTest.x \
+		RealTimeSampledDataDefGTest.x	\
+		RealTimeDataSourceDefGTest.x \
+		RealTimeDataSourceDefRecordGTest.x
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..

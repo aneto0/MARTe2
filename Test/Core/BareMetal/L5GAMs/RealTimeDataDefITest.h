@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceDefRecord.h
- * @brief Header file for class RealTimeDataSourceDefRecord
- * @date 01/03/2016
+ * @file RealTimeDataDefITest.h
+ * @brief Header file for class RealTimeDataDefITest
+ * @date 04/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceDefRecord
+ * @details This header file contains the declaration of the class RealTimeDataDefITest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEDEFRECORD_H_
-#define REALTIMEDATASOURCEDEFRECORD_H_
+#ifndef REALTIMEDATADEFITEST_H_
+#define REALTIMEDATADEFITEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,47 +31,29 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "StreamString.h"
-#include "ReferenceContainer.h"
-#include "ReferenceT.h"
-#include "GAM.h"
+#include "RealTimeSampledDataDef.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-class RealTimeDataSourceDefRecord: public ReferenceContainer {
+
+using namespace MARTe;
+
+class RealTimeDataDefITest {
+
 public:
-    CLASS_REGISTER_DECLARATION()
 
-    RealTimeDataSourceDefRecord();
+    bool TestConstructor();
 
-    void SetStateName(const char8 * stateName);
+    bool TestInitialise();
 
-    bool AddConsumer(ReferenceT<GAM> gamConsumer);
+    bool TestGetType();
 
-    bool AddProducer(ReferenceT<GAM> gamProducer);
-
-    uint32 GetNumberOfConsumers();
-
-    uint32 GetNumberOfProducers();
-
-    const char8 * GetStateName();
-
-    ReferenceT<ReferenceContainer> GetConsumers();
-
-    ReferenceT<ReferenceContainer> GetProducers();
-
-private:
-
-    ReferenceT<ReferenceContainer> producers;
-    ReferenceT<ReferenceContainer> consumers;
-
-    StreamString state;
+    bool TestGetPath();
 };
-}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEDEFRECORD_H_ */
+#endif /* REALTIMEDATADEFITEST_H_ */
 

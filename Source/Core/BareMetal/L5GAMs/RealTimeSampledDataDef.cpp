@@ -42,28 +42,115 @@
 namespace MARTe {
 
 RealTimeSampledDataDef::RealTimeSampledDataDef() {
-    samples = 1;
-    cycles = 1;
-
+    samples = 0;
+    samplesPerCycle = 0;
+    final = false;
 }
 
 bool RealTimeSampledDataDef::Verify() {
-    // the type is complete
-    return true;
+
+    bool ret = (type != "");
+    if (ret) {
+        // if a basic type return true
+        if (TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer()) == InvalidType) {
+            // structured type
+            const ClassRegistryItem * item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
+            ret = (item != NULL);
+            if (ret) {
+                const Introspection * intro = item->GetIntrospection();
+                if (intro == NULL) {
+                    ret=false;
+                    // TODO Unintrospectable type
+                }
+            }
+            else {
+                // TODO not registered type
+            }
+        }
+    }
+    return ret;
 }
 
 bool RealTimeSampledDataDef::MergeWithLocal(StructuredDataI &localData) {
-    return false;
+    bool ret = (!final);
+    if (ret) {
+        if (type == "") {
+            if (!localData.Read("Type", type)) {
+                //TODO Warning empty type
+            }
+        }
+
+        if (path == "") {
+            if (!localData.Read("Path", path)) {
+                //TODO Warning empty path
+            }
+        }
+
+        if (samples == 0) {
+            if (!localData.Read("Samples", samples)) {
+                //TODO Warning samples not initialised
+            }
+        }
+        if (samplesPerCycle == 0) {
+            if (!localData.Read("SamplesPerCycle", samplesPerCycle)) {
+                //TODO Warning samplesXcycle not initialised
+            }
+        }
+    }
+
+    return ret;
 }
 
 bool RealTimeSampledDataDef::Initialise(StructuredDataI &data) {
     bool ret = RealTimeDataDefI::Initialise(data);
     if (ret) {
-        ret = data.Read("Samples", samples);
-    }
+        if (data.Read("Samples", samples)) {
 
+        }
+        if (data.Read("SamplesPerCycle", samplesPerCycle)) {
+
+        }
+
+        StreamString isFinal;
+        if (data.Read("IsFinal", isFinal)) {
+            final = (isFinal == "true");
+        }
+    }
+    return ret;
+}
+
+int32 RealTimeSampledDataDef::GetSamples() const {
+    return samples;
+}
+
+int32 RealTimeSampledDataDef::GetSamplesPerCycle() const {
+    return samplesPerCycle;
+}
+
+bool RealTimeSampledDataDef::ToStructuredData(StructuredDataI & data) {
+    const char8 * name = GetName();
+    bool ret = (data.CreateRelative(name));
     if (ret) {
-        ret = data.Read("Cycles", cycles);
+        ret = data.Write("Class", "RealTimeSampledDataDef");
+        if (ret) {
+            if (type != "") {
+                ret = data.Write("Type", type);
+            }
+        }
+        if (ret) {
+            if (path != "") {
+                ret = data.Write("Path", path);
+            }
+        }
+        if (ret) {
+            ret = data.Write("Samples", samples);
+        }
+        if (ret) {
+            ret = data.Write("SamplesPerCycle", samplesPerCycle);
+        }
+        if (!data.MoveToAncestor(1u)) {
+            ret = false;
+        }
     }
     return ret;
 }

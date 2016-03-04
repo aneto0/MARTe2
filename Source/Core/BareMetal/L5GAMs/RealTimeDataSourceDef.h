@@ -46,11 +46,9 @@ public:
 
     RealTimeDataSourceDef();
 
-    ~RealTimeDataSourceDef();
-
     void AddConsumer(const char8 *stateIn, ReferenceT<GAM> gam);
 
-    void Addproducer(const char8 *stateIn, ReferenceT<GAM> gam);
+    void AddProducer(const char8 *stateIn, ReferenceT<GAM> gam);
 
     uint32 GetNumberOfConsumers(const char8 * stateIn);
 

@@ -28,7 +28,12 @@
 OBJSX=	GAMTest.x \
 		GAMTestHelper.x\
 		RealTimeApplicationTest.x \
-		RealTimeGenericDataDefTest.x
+		RealTimeDataDefContainerTest.x \
+		RealTimeDataDefITest.x \
+		RealTimeGenericDataDefTest.x \
+		RealTimeSampledDataDefTest.x \
+		RealTimeDataSourceDefTest.x \
+		RealTimeDataSourceDefRecordTest.x 
 			
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

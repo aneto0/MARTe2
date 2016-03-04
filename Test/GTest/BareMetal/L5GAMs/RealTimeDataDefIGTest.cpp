@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataDefI.cpp
- * @brief Source file for class RealTimeDataDefI
- * @date 25/02/2016
- * @author Giuseppe Ferrò
+ * @file RealTimeDataDefIGTest.cpp
+ * @brief Source file for class RealTimeDataDefIGTest
+ * @date 04/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,18 +17,20 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataDefI (public, protected, and private). Be aware that some 
+ * the class RealTimeDataDefIGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <limits.h>
+#include "gtest/gtest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeDataDefI.h"
+
+#include "RealTimeDataDefITest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -37,32 +39,22 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-RealTimeDataDefI::RealTimeDataDefI() {
-
+TEST(RealTimeDataDefIGTest,TestConstructor) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestConstructor());
 }
 
-const char8 *RealTimeDataDefI::GetPath() {
-    return path.Buffer();
+TEST(RealTimeDataDefIGTest,TestInitialise) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestInitialise());
 }
 
-const char8 *RealTimeDataDefI::GetType() {
-    return type.Buffer();
+TEST(RealTimeDataDefIGTest,TestGetType) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestGetType());
 }
 
-bool RealTimeDataDefI::Initialise(StructuredDataI &data) {
-
-    bool ret = ReferenceContainer::Initialise(data);
-
-    if (ret) {
-        if (!data.Read("Path", path)) {
-            //TODO Warning?
-        }
-        if (!data.Read("Type", type)) {
-            //TODO Warning?
-        }
-    }
-    return ret;
-}
-
+TEST(RealTimeDataDefIGTest,TestGetPath) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestGetPath());
 }

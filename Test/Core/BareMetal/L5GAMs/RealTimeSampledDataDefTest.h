@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSource.h
- * @brief Header file for class RealTimeDataSource
- * @date 29/02/2016
+ * @file RealTimeSampledDataDefTest.h
+ * @brief Header file for class RealTimeSampledDataDefTest
+ * @date 04/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSource
+ * @details This header file contains the declaration of the class RealTimeSampledDataDefTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCE_H_
-#define REALTIMEDATASOURCE_H_
+#ifndef REALTIMESAMPLEDDATADEFTEST_H_
+#define L5GAMS_REALTIMESAMPLEDDATADEFTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,77 +31,55 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "Object.h"
-#include "MemoryArea.h"
-#include "StreamString.h"
-
+#include "RealTimeSampledDataDef.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+using namespace MARTe;
 
-class RealTimeDataSource: public ReferenceContainer {
+class RealTimeSampledDataDefTest {
 
 public:
+    bool TestConstructor();
 
-    virtual bool AddDataDefinition(RealTimeDataDefContainer &definitionContainer);
+    bool TestInitialise(StructuredDataI & data);
 
+    bool TestMergeWithLocal_AddSamples();
 
-    /**
-     * @brief retrieves the variable address in the RealTimeDataSource.
-     * @return the variable address in the RealTimeDataSource.
-     */
-    const char8 *GetName();
+    bool TestMergeWithLocal_AddSamplesPerCycle();
 
-    void SetName(const char8* pathName);
+    bool TestMergeWithLocal_AddPath();
 
-    /**
-     * @brief Retrieves the variable type.
-     * @return the variable type.
-     */
-    const char8 *GetType();
+    bool TestMergeWithLocal_AddType();
 
-    /**
-     * @brief Initialises the container and reads the variable address and type from the StructuredData
-     * in input.
-     */
-    virtual bool Initialise(StructuredDataI &data);
+    bool TestMergeWithLocalFalse_FinalGlobal();
 
-    /*
-     RealTimeDataSource();
+    bool TestMergeWithLocal_DifferentSamples();
 
-     bool AddDefinitionInterface(RealTimeDataDefContainer &dataDefinition,
-     uint32 userId,
-     bool isConsumer,
-     bool isProducer);
-     */
-private:
+    bool TestMergeWithLocal_DifferentSamplesPerCycle();
 
-    bool AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> definition,
-                                 const char8 * userName,
-                                 const char8 * threadName,
-                                 const char8 * stateName,
-                                 bool isProducer,
-                                 bool isConsumer);
+    bool TestMergeWithLocal_DifferentType();
 
-    /*
-     bool AddSingleData(ReferenceT<RealTimeDataDefI> singleDefinition,
-     uint32 userId,
-     bool isConsumer,
-     bool isProducer);
+    bool TestMergeWithLocal_DifferentPath();
 
-     MemoryArea memory;
+    bool TestVerify();
 
-     StaticList<RealTimeDataSourceRecord> records;*/
+    bool TestVerifyFalse_UnregisteredType();
+
+    bool TestVerifyFalse_UnintrospectableType();
+
+    bool TestGetSamples();
+
+    bool TestGetSamplesPerCycle();
+
+    bool TestToStructuredData();
 
 };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCE_H_ */
+#endif /* REALTIMESAMPLEDDATADEFTEST_H_ */
 

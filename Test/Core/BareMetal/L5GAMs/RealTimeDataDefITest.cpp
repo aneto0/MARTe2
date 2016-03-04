@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataDefI.cpp
- * @brief Source file for class RealTimeDataDefI
- * @date 25/02/2016
+ * @file RealTimeDataDefITest.cpp
+ * @brief Source file for class RealTimeDataDefITest
+ * @date 04/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataDefI (public, protected, and private). Be aware that some 
+ * the class RealTimeDataDefITest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeDataDefI.h"
+
+#include "RealTimeDataDefITest.h"
+#include "ConfigurationDatabase.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -37,32 +40,58 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-RealTimeDataDefI::RealTimeDataDefI() {
+bool RealTimeDataDefITest::TestConstructor() {
+    RealTimeSampledDataDef def;
 
-}
-
-const char8 *RealTimeDataDefI::GetPath() {
-    return path.Buffer();
-}
-
-const char8 *RealTimeDataDefI::GetType() {
-    return type.Buffer();
-}
-
-bool RealTimeDataDefI::Initialise(StructuredDataI &data) {
-
-    bool ret = ReferenceContainer::Initialise(data);
-
-    if (ret) {
-        if (!data.Read("Path", path)) {
-            //TODO Warning?
-        }
-        if (!data.Read("Type", type)) {
-            //TODO Warning?
-        }
+    if (StringHelper::Compare(def.GetType(), "") != 0) {
+        return false;
     }
-    return ret;
+
+    return (StringHelper::Compare(def.GetPath(), "") == 0);
 }
+
+bool RealTimeDataDefITest::TestInitialise() {
+    RealTimeSampledDataDef def;
+
+    ConfigurationDatabase cdb;
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "DDB1.PID1.Kp");
+
+    if (!def.Initialise(cdb)) {
+        return false;
+    }
+
+    if (StringHelper::Compare(def.GetType(), "uint32") != 0) {
+        return false;
+    }
+
+    return (StringHelper::Compare(def.GetPath(), "DDB1.PID1.Kp") == 0);
+}
+
+bool RealTimeDataDefITest::TestGetType() {
+    RealTimeSampledDataDef def;
+
+    ConfigurationDatabase cdb;
+    cdb.Write("Type", "uint32");
+
+    if (!def.Initialise(cdb)) {
+        return false;
+    }
+
+    return (StringHelper::Compare(def.GetType(), "uint32") == 0);
+
+}
+
+bool RealTimeDataDefITest::TestGetPath() {
+    RealTimeSampledDataDef def;
+
+    ConfigurationDatabase cdb;
+    cdb.Write("Path", "DDB1.PID1.Kp");
+
+    if (!def.Initialise(cdb)) {
+        return false;
+    }
+
+    return (StringHelper::Compare(def.GetPath(), "DDB1.PID1.Kp") == 0);
 
 }

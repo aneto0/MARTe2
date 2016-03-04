@@ -47,9 +47,9 @@ RealTimeGenericDataDef::RealTimeGenericDataDef() {
 
 bool RealTimeGenericDataDef::Verify() {
     // verify myself
-    bool ret = true;
+    bool ret = (type != "");
     // if type is not empty
-    if (type != "") {
+    if (ret) {
         // if the type is basic return true (nothing to check)
         // the type is structured
         if (TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer()) == InvalidType) {
@@ -120,6 +120,9 @@ bool RealTimeGenericDataDef::Verify() {
             }
         }
     }
+    else {
+        //TODO not final type?
+    }
 
     return ret;
 }
@@ -134,8 +137,7 @@ bool RealTimeGenericDataDef::Initialise(StructuredDataI& data) {
     }
     if (ret) {
         StreamString isFinal;
-        ret = data.Read("IsFinal", isFinal);
-        if (ret) {
+        if (data.Read("IsFinal", isFinal)) {
             final = (isFinal == "true");
         }
     }
@@ -148,13 +150,19 @@ bool RealTimeGenericDataDef::ToStructuredData(StructuredDataI& data) {
     bool ret = data.CreateRelative(name);
     ret = data.Write("Class", "RealTimeGenericDataDef");
     if (ret) {
-        ret = data.Write("Type", type);
+        if (type != "") {
+            ret = data.Write("Type", type);
+        }
     }
     if (ret) {
-        ret = data.Write("Path", path);
+        if (path != "") {
+            ret = data.Write("Path", path);
+        }
     }
     if (ret) {
-        data.Write("Default", defaultValue);
+        if (defaultValue != "") {
+            data.Write("Default", defaultValue);
+        }
     }
     if (ret) {
         uint32 numberOfChildren = Size();
@@ -168,7 +176,7 @@ bool RealTimeGenericDataDef::ToStructuredData(StructuredDataI& data) {
             }
         }
     }
-    if (data.MoveToAncestor(1u)) {
+    if (!data.MoveToAncestor(1u)) {
         ret = false;
     }
 
@@ -177,27 +185,26 @@ bool RealTimeGenericDataDef::ToStructuredData(StructuredDataI& data) {
 
 bool RealTimeGenericDataDef::MergeWithLocal(StructuredDataI & localData) {
 
-    StreamString isLocalDefFinal;
-    bool localFinal = false;
-    if (localData.Read("IsFinal", isLocalDefFinal)) {
-        localFinal = (isLocalDefFinal == "true");
-    }
-
-    bool ret = (!final) && (!localFinal);
+    bool ret = (!final);
     // merge if both are not final, return false in other cases
     if (ret) {
         // if type and path are different, take the globals without returning error
-        if (StringHelper::Compare(GetType(), "") == 0) {
-            StreamString localType;
-            if (localData.Read("Type", localType)) {
-                SetType(localType.Buffer());
+        if (type == "") {
+            if (!localData.Read("Type", type)) {
+                // TODO Warning empty type
             }
         }
         // the same with the path
-        if (StringHelper::Compare(GetPath(), "") == 0) {
-            StreamString localPath;
-            if (localData.Read("Path", localPath)) {
-                SetPath(localPath.Buffer());
+        if (path == "") {
+            if (!localData.Read("Path", path)) {
+                // TODO Warning empty path
+            }
+        }
+
+        // the same with the default value
+        if (defaultValue == "") {
+            if (!localData.Read("Default", defaultValue)) {
+                // TODO Warning empty dvalue
             }
         }
 
@@ -248,9 +255,6 @@ const char8 *RealTimeGenericDataDef::GetDefaultValue() {
     return defaultValue.Buffer();
 }
 
-bool RealTimeGenericDataDef::IsFinal() const {
-    return final;
-}
 CLASS_REGISTER(RealTimeGenericDataDef, "1.0")
 
 }

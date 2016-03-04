@@ -32,7 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeGenericDataDefTest.h"
-#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -48,30 +47,87 @@ TEST(RealTimeGenericDataDefGTest,TestConstructor) {
 
 TEST(RealTimeGenericDataDefGTest,TestInitialiseTrue) {
     RealTimeGenericDataDefTest rtgdTest;
-    ConfigurationDatabase data;
-    data.Write("IsFinal", "true");
-    data.Write("Default", "1");
-
-    ASSERT_TRUE(rtgdTest.TestInitialise(data, true));
-}
-
-TEST(RealTimeGenericDataDefGTest,TestInitialiseFalseNoIsFinalFlag) {
-    RealTimeGenericDataDefTest rtgdTest;
-    ConfigurationDatabase data;
-    data.Write("Default", "1");
-
-    ASSERT_TRUE(rtgdTest.TestInitialise(data, false));
-}
-
-TEST(RealTimeGenericDataDefGTest,TestInitialiseTrueNoDefault) {
-    RealTimeGenericDataDefTest rtgdTest;
-    ConfigurationDatabase data;
-    data.Write("IsFinal", "true");
-
-    ASSERT_TRUE(rtgdTest.TestInitialise(data, true));
+    ASSERT_TRUE(rtgdTest.TestInitialise());
 }
 
 TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal) {
     RealTimeGenericDataDefTest rtgdTest;
     ASSERT_TRUE(rtgdTest.TestMergeWithLocal());
 }
+
+
+TEST(RealTimeGenericDataDefGTest,TestMergeWithLocalFalse_FinalGlobal) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestMergeWithLocalFalse_FinalGlobal());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestMergeWithLocalFalse_BothFinal) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestMergeWithLocalFalse_BothFinal());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_AddType) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestMergeWithLocal_AddType());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_AddPath) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestMergeWithLocal_AddPath());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_AddDefaultValues) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestMergeWithLocal_AddDefaultValues());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_DifferentTypes) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestMergeWithLocal_DifferentTypes());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_DifferentPaths) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestMergeWithLocal_DifferentPaths());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestGetDefaultValue) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestGetDefaultValue());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestToStructuredData) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestToStructuredData());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerify) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerify());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_UnregisteredType) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_UnregisteredType());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_UnintrospectableType) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_UnintrospectableType());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_InvalidMemberName) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_InvalidMemberName());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_InvalidMemberType) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_InvalidMemberType());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_DifferentDefaultValues) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestMergeWithLocal_DifferentDefaultValues());
+}
+
