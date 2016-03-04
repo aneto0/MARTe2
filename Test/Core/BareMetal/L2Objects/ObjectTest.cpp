@@ -128,7 +128,7 @@ bool ObjectTest::TestGetUniqueName(const char8* name,
     const uint32 size = 128;
 
     Object myObj;
-    uintp ptr = (uintp) &myObj;
+    uintp ptr = (uintp) & myObj;
     char buffer[size];
     for (uint32 i = 0; i < size; i++) {
         buffer[i] = 0;
@@ -220,40 +220,143 @@ bool ObjectTest::TestGetProperties() {
 bool ObjectTest::TestExportData() {
     bool result = true;
     {
+        /*
+         * This test verifies that method ObjectTest::ExportData signals an
+         * error because the testing object is an instance of a non registered
+         * class.
+         */
         bool test = false;
         NonRegisteredIntegerObject obj;
         ConfigurationDatabase cdb;
         obj.SetName("Test1");
-        obj.SetVariable(10);
+        obj.member = 10;
         test = !obj.ExportData(cdb);
         result = result && test;
     }
     {
+        /*
+         * This test verifies that method ObjectTest::ExportData signals an
+         * error because the testing object is an instance of a registered but
+         * non introspectable class.
+         */
         bool test = false;
         NonIntrospectableIntegerObject obj;
         ConfigurationDatabase cdb;
         obj.SetName("Test2");
-        obj.SetVariable(20);
+        obj.member = 20;
         test = !obj.ExportData(cdb);
         result = result && test;
     }
     {
-        bool test_status = false;
+        /*
+         * This test verifies that method ObjectTest::ExportData returns the
+         * following tree (from a testing object which is an instance of a
+         * registered and introspectable class):
+         * root
+         *  |+"Test3"
+         *   |-"Class": "IntrospectableIntegerObject"
+         *   |-"member": 30
+         */
+        bool test_status = true;
         bool test_values = true;
         IntrospectableIntegerObject obj;
         ConfigurationDatabase cdb;
         obj.SetName("Test3");
-        obj.SetVariable(30);
-        test_status = obj.ExportData(cdb);
+        obj.member = 30;
+        test_status = (test_status && (obj.ExportData(cdb)));
         if (test_status) {
             StructuredDataI& sd = cdb;
             StreamString className;
-            int32 dummyVariable;
-            test_status = sd.MoveRelative(obj.GetName());
-            test_status = sd.Read("Class",className);
+            int32 member;
+            test_status = (test_status && (sd.MoveAbsolute("Test3")));
+            test_status = (test_status && (sd.Read("Class", className)));
             test_values = (test_values && (className == "IntrospectableIntegerObject"));
-            test_status = sd.Read("dummyVariable", dummyVariable);
-            test_values = (test_values && (dummyVariable == 30));
+            test_status = (test_status && (sd.Read("member", member)));
+            test_values = (test_values && (member == 30));
+        }
+        result = result && test_status && test_values;
+    }
+    {
+        /*
+         * This test verifies that method ObjectTest::ExportData returns the
+         * following tree (from a testing object which is an instance of a
+         * registered and introspectable class):
+         * root
+         *  |+"Test4"
+         *   |-"Class": "IntrospectableObjectWith2Members"
+         *   |-"member1": 10
+         *   |-"member2": 20
+         */
+        bool test_status = true;
+        bool test_values = true;
+        IntrospectableObjectWith2Members obj;
+        ConfigurationDatabase cdb;
+        obj.SetName("Test4");
+        obj.member1 = 10;
+        obj.member2 = 20;
+        test_status = (test_status && (obj.ExportData(cdb)));
+        if (test_status) {
+            StructuredDataI& sd = cdb;
+            StreamString className;
+            int32 member1;
+            uint64 member2;
+            test_status = (test_status && (sd.MoveAbsolute("Test4")));
+            test_status = (test_status && (sd.Read("Class", className)));
+            test_values = (test_values && (className == "IntrospectableObjectWith2Members"));
+            test_status = (test_status && (sd.Read("member1", member1)));
+            test_values = (test_values && (member1 == 10));
+            test_status = (test_status && (sd.Read("member2", member2)));
+            test_values = (test_values && (member2 == 20));
+        }
+        result = result && test_status && test_values;
+    }
+    {
+        /*
+         * This test verifies that method ObjectTest::ExportData returns the
+         * following tree (from a testing object which is an instance of a
+         * registered and introspectable class):
+         * root
+         *  |+"Test5"
+         *   |-"Class": "IntrospectableObjectWith3Members"
+         *   |-"member1": 30
+         *   |-"member2": 60
+         *   |+"member3"
+         *    |-"Class": "IntrospectableIntegerObject"
+         *    |-"member": 90
+         */
+        bool test_status = true;
+        bool test_values = true;
+        IntrospectableObjectWith3Members obj;
+        ConfigurationDatabase cdb;
+        obj.SetName("Test5");
+        obj.member1 = 10;
+        obj.member2 = 20;
+        obj.member3.member = 30;
+        test_status = (test_status && (obj.ExportData(cdb)));
+        if (test_status) {
+            StructuredDataI& sd = cdb;
+            StreamString className;
+            int32 member1;
+            uint64 member2;
+            IntrospectableIntegerObject member3;
+            test_status = (test_status && (sd.MoveAbsolute("Test5")));
+            test_status = (test_status && (sd.Read("Class", className)));
+            test_values = (test_values && (className == "IntrospectableObjectWith3Members"));
+            test_status = (test_status && (sd.Read("member1", member1)));
+            test_values = (test_values && (member1 == 10));
+            test_status = (test_status && (sd.Read("member2", member2)));
+            test_values = (test_values && (member2 == 20));
+            test_status = (test_status && (sd.Read("member3", member3)));
+            test_values = (test_values && (member3.member == 30));
+            {
+                StreamString className;
+                int32 member;
+                test_status = (test_status && (sd.MoveAbsolute("Test5.member3")));
+                test_status = (test_status && (sd.Read("Class", className)));
+                test_values = (test_values && (className == "IntrospectableIntegerObject"));
+                test_status = (test_status && (sd.Read("member", member)));
+                test_values = (test_values && (member == 30));
+            }
         }
         result = result && test_status && test_values;
     }
@@ -271,6 +374,11 @@ bool ObjectTest::TestExportMetadata() {
      */
     bool result = true;
     {
+        /*
+         * This test verifies that method ObjectTest::ExportMetata signals an
+         * error because the testing object is an instance of a non registered
+         * class.
+         */
         bool test = false;
         NonRegisteredIntegerObject obj;
         ConfigurationDatabase cdb;
@@ -278,6 +386,11 @@ bool ObjectTest::TestExportMetadata() {
         result = result && test;
     }
     {
+        /*
+         * This test verifies that method ObjectTest::ExportMetdata signals an
+         * error because the testing object is an instance of a registered but
+         * non introspectable class.
+         */
         bool test = false;
         NonIntrospectableIntegerObject obj;
         ConfigurationDatabase cdb;
@@ -285,11 +398,24 @@ bool ObjectTest::TestExportMetadata() {
         result = result && test;
     }
     {
-        bool test_status = false;
+        /*
+         * This test verifies that method ObjectTest::ExportMetadata returns
+         * the following tree (from a testing object which is an instance of
+         * a registered and introspectable class):
+         * root
+         *  |+"IntrospectableIntegerObject"
+         *   |+"member"
+         *    |-"type": "int32"
+         *    |-"modifiers": ""
+         *    |-"attributes": ""
+         *    |-"size": sizeof(int32)
+//         *    |-"pointer": &this+24
+         */
+        bool test_status = true;
         bool test_values = true;
         IntrospectableIntegerObject obj;
         ConfigurationDatabase cdb;
-        test_status = obj.ExportMetadata(cdb);
+        test_status = (test_status && (obj.ExportMetadata(cdb)));
         if (test_status) {
             StructuredDataI& sd = cdb;
             StreamString type;
@@ -297,18 +423,192 @@ bool ObjectTest::TestExportMetadata() {
             StreamString attributes;
             uint32 size;
             uintp pointer;
-            test_status = sd.MoveRelative("IntrospectableIntegerObject");
-            test_status = sd.MoveRelative("dummyVariable");
-            test_status = sd.Read("type",type);
+            test_status = (test_status && (sd.MoveAbsolute("IntrospectableIntegerObject.member")));
+            test_status = (test_status && (sd.Read("type", type)));
             test_values = (test_values && (type == "int32"));
-            test_status = sd.Read("modifiers",modifiers);
+            test_status = (test_status && (sd.Read("modifiers", modifiers)));
             test_values = (test_values && (modifiers == ""));
-            test_status = sd.Read("attributes",attributes);
+            test_status = (test_status && (sd.Read("attributes", attributes)));
             test_values = (test_values && (attributes == ""));
-            test_status = sd.Read("size",size);
-            test_values = (test_values && (size == 4));
-            test_status = sd.Read("pointer",pointer);
-            test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 24)));
+            test_status = (test_status && (sd.Read("size", size)));
+            test_values = (test_values && (size == sizeof(int32)));
+            test_status = (test_status && (sd.Read("pointer", pointer)));
+//            test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 24)));
+//            test_values = (test_values && (pointer == (uintp)&(((IntrospectableIntegerObject *)0)->member)));
+        }
+        result = result && test_status && test_values;
+    }
+    {
+        /*
+         * This test verifies that method ObjectTest::ExportMetadata returns
+         * the following tree (from a testing object which is an instance of
+         * a registered and introspectable class):
+         * root
+         *  |+"IntrospectableObjectWith2Members"
+         *   |+"member1"
+         *    |-"type": "int32"
+         *    |-"modifiers": ""
+         *    |-"attributes": ""
+         *    |-"size": sizeof(int32)
+//         *    |-"pointer": &this+24
+         *   |+"member2"
+         *    |-"type": "uint64"
+         *    |-"modifiers": ""
+         *    |-"attributes": ""
+         *    |-"size": sizeof(uint64)
+//         *    |-"pointer": &this+32
+         */
+        bool test_status = true;
+        bool test_values = true;
+        IntrospectableObjectWith2Members obj;
+        ConfigurationDatabase cdb;
+        test_status = (test_status && (obj.ExportMetadata(cdb)));
+        if (test_status) {
+            StructuredDataI& sd = cdb;
+            {
+                StreamString type;
+                StreamString modifiers;
+                StreamString attributes;
+                uint32 size;
+                uintp pointer;
+                test_status = (test_status && (sd.MoveAbsolute("IntrospectableObjectWith2Members.member1")));
+                test_status = (test_status && (sd.Read("type", type)));
+                test_values = (test_values && (type == "int32"));
+                test_status = (test_status && (sd.Read("modifiers", modifiers)));
+                test_values = (test_values && (modifiers == ""));
+                test_status = (test_status && (sd.Read("attributes", attributes)));
+                test_values = (test_values && (attributes == ""));
+                test_status = (test_status && (sd.Read("size", size)));
+                test_values = (test_values && (size == sizeof(int32)));
+                test_status = (test_status && (sd.Read("pointer", pointer)));
+//                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 24)));
+            }
+            {
+                StreamString type;
+                StreamString modifiers;
+                StreamString attributes;
+                uint32 size;
+                uintp pointer;
+                test_status = (test_status && (sd.MoveAbsolute("IntrospectableObjectWith2Members.member2")));
+                test_status = (test_status && (sd.Read("type", type)));
+                test_values = (test_values && (type == "uint64"));
+                test_status = (test_status && (sd.Read("modifiers", modifiers)));
+                test_values = (test_values && (modifiers == ""));
+                test_status = (test_status && (sd.Read("attributes", attributes)));
+                test_values = (test_values && (attributes == ""));
+                test_status = (test_status && (sd.Read("size", size)));
+                test_values = (test_values && (size == sizeof(uint64)));
+                test_status = (test_status && (sd.Read("pointer", pointer)));
+//                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 32)));
+            }
+        }
+        result = result && test_status && test_values;
+    }
+    {
+        /*
+         * This test verifies that method ObjectTest::ExportMetadata returns
+         * the following tree (from a testing object which is an instance of
+         * a registered and introspectable class):
+         * root
+         *  |+"IntrospectableObjectWith3Members"
+         *   |+"member1"
+         *    |-"type": "int32"
+         *    |-"modifiers": ""
+         *    |-"attributes": ""
+         *    |-"size": sizeof(int32)
+//         *    |-"pointer": &this+24
+         *   |+"member2"
+         *    |-"type": "uint64"
+         *    |-"modifiers": ""
+         *    |-"attributes": ""
+         *    |-"size": sizeof(uint64)
+//         *    |-"pointer": &this+32
+         *   |+"member3"
+         *    |-"type": "IntrospectableIntegerObject"
+         *    |-"modifiers": ""
+         *    |-"attributes": ""
+         *    |-"size": sizeof(uint64)
+//         *    |-"pointer": &this+32
+         *    |+"IntrospectableIntegerObject"
+         *     |+"member"
+         *      |-"type": "int32"
+         *      |-"modifiers": ""
+         *      |-"attributes": ""
+         *      |-"size": sizeof(int32)
+//         *      |-"pointer": &this+24
+         */
+        bool test_status = true;
+        bool test_values = true;
+        IntrospectableObjectWith3Members obj;
+        ConfigurationDatabase cdb;
+        test_status = (test_status && (obj.ExportMetadata(cdb)));
+        if (test_status) {
+            StructuredDataI& sd = cdb;
+            {
+                StreamString type;
+                StreamString modifiers;
+                StreamString attributes;
+                uint32 size;
+                uintp pointer;
+                test_status = (test_status && (sd.MoveAbsolute("IntrospectableObjectWith3Members.member1")));
+                test_status = (test_status && (sd.Read("type", type)));
+                test_values = (test_values && (type == "int32"));
+                test_status = (test_status && (sd.Read("modifiers", modifiers)));
+                test_values = (test_values && (modifiers == ""));
+                test_status = (test_status && (sd.Read("attributes", attributes)));
+                test_values = (test_values && (attributes == ""));
+                test_status = (test_status && (sd.Read("size", size)));
+                test_values = (test_values && (size == sizeof(int32)));
+                test_status = (test_status && (sd.Read("pointer", pointer)));
+//                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 24)));
+            }
+            {
+                StreamString type;
+                StreamString modifiers;
+                StreamString attributes;
+                uint32 size;
+                uintp pointer;
+                test_status = (test_status && (sd.MoveAbsolute("IntrospectableObjectWith3Members.member2")));
+                test_status = (test_status && (sd.Read("type", type)));
+                test_values = (test_values && (type == "uint64"));
+                test_status = (test_status && (sd.Read("modifiers", modifiers)));
+                test_values = (test_values && (modifiers == ""));
+                test_status = (test_status && (sd.Read("attributes", attributes)));
+                test_values = (test_values && (attributes == ""));
+                test_status = (test_status && (sd.Read("size", size)));
+                test_values = (test_values && (size == sizeof(uint64)));
+                test_status = (test_status && (sd.Read("pointer", pointer)));
+//                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 32)));
+            }
+            {
+                StreamString type;
+                StreamString modifiers;
+                StreamString attributes;
+                uint32 size;
+                uintp pointer;
+                test_status = (test_status && (sd.MoveAbsolute("IntrospectableObjectWith3Members.member3")));
+                test_status = (test_status && (sd.Read("type", type)));
+                test_values = (test_values && (type == "IntrospectableIntegerObject"));
+                test_status = (test_status && (sd.Read("modifiers", modifiers)));
+                test_values = (test_values && (modifiers == ""));
+                test_status = (test_status && (sd.Read("attributes", attributes)));
+                test_values = (test_values && (attributes == ""));
+                test_status = (test_status && (sd.Read("size", size)));
+                test_values = (test_values && (size == sizeof(IntrospectableIntegerObject)));
+                test_status = (test_status && (sd.Read("pointer", pointer)));
+//                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 32)));
+                test_status = (test_status && (sd.MoveAbsolute("IntrospectableObjectWith3Members.member3.IntrospectableIntegerObject.member")));
+                test_status = (test_status && (sd.Read("type", type)));
+                test_values = (test_values && (type == "int32"));  ERROR!!!!
+                test_status = (test_status && (sd.Read("modifiers", modifiers)));
+                test_values = (test_values && (modifiers == ""));
+                test_status = (test_status && (sd.Read("attributes", attributes)));
+                test_values = (test_values && (attributes == ""));
+                test_status = (test_status && (sd.Read("size", size)));
+                test_values = (test_values && (size == sizeof(int32)));
+                test_status = (test_status && (sd.Read("pointer", pointer)));
+//                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 24)));
+            }
         }
         result = result && test_status && test_values;
     }

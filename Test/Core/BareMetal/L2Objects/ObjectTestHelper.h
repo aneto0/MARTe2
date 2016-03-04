@@ -227,7 +227,7 @@ public:
      * @brief Default constructor
      */
     NonRegisteredIntegerObject() {
-        dummyVariable = 0;
+        member = 0;
     }
 
     /**
@@ -237,24 +237,9 @@ public:
     }
 
     /**
-     * @return the value of the dummy variable.
+     * Member attribute
      */
-    uint32 GetVariable() const {
-        return dummyVariable;
-    }
-
-    /**
-     * @brief Updates the value of the dummy variable.
-     * @param dummyVariable the new value to set.
-     */
-    void SetVariable(int32 dummyVariable) {
-        this->dummyVariable = dummyVariable;
-    }
-
-    /**
-     * Dummy variable
-     */
-    int32 dummyVariable;
+    int32 member;
 
 };
 
@@ -270,7 +255,7 @@ public:
      * @brief Default constructor
      */
     NonIntrospectableIntegerObject() {
-        dummyVariable = 0;
+        member = 0;
     }
 
     /**
@@ -280,24 +265,9 @@ public:
     }
 
     /**
-     * @return the value of the dummy variable.
+     * Member attribute
      */
-    uint32 GetVariable() const {
-        return dummyVariable;
-    }
-
-    /**
-     * @brief Updates the value of the dummy variable.
-     * @param dummyVariable the new value to set.
-     */
-    void SetVariable(int32 dummyVariable) {
-        this->dummyVariable = dummyVariable;
-    }
-
-    /**
-     * Dummy variable
-     */
-    int32 dummyVariable;
+    int32 member;
 
 };
 
@@ -313,7 +283,7 @@ public:
      * @brief Default constructor
      */
     IntrospectableIntegerObject() {
-        dummyVariable = 0;
+        member = 0;
     }
 
     /**
@@ -323,24 +293,82 @@ public:
     }
 
     /**
-     * @return the value of the dummy variable.
+     * Member attribute
      */
-    uint32 GetVariable() const {
-        return dummyVariable;
+    int32 member;
+
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class IntrospectableObjectWith2Members: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    IntrospectableObjectWith2Members() {
+        member1 = 0;
+        member2 = 0;
     }
 
     /**
-     * @brief Updates the value of the dummy variable.
-     * @param dummyVariable the new value to set.
+     * @brief Destructor
      */
-    void SetVariable(int32 dummyVariable) {
-        this->dummyVariable = dummyVariable;
+    virtual ~IntrospectableObjectWith2Members() {
     }
 
     /**
-     * Dummy variable
+     * Member 1 attribute
      */
-    int32 dummyVariable;
+    int32 member1;
+
+    /**
+     * Member 2 attribute
+     */
+    uint64 member2;
+
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class IntrospectableObjectWith3Members: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    IntrospectableObjectWith3Members() {
+        member1 = 0;
+        member2 = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~IntrospectableObjectWith3Members() {
+    }
+
+    /**
+     * Member 1 attribute
+     */
+    int32 member1;
+
+    /**
+     * Member 2 attribute
+     */
+    uint64 member2;
+
+    /**
+     * Member 3 atribute
+     */
+    IntrospectableIntegerObject member3;
 
 };
 
