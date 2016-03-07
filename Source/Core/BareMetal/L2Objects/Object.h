@@ -456,7 +456,7 @@ private:
      * data of the object.
      * @param[in] objName The name of the object, i.e. the root's name.
      */
-    bool ConvertDataToStructuredData(void* ptr,
+    bool ConvertDataToStructuredData(void* const ptr,
                                  const char8* const className,
                                  StructuredDataI& data,
                                  const char8* const objName = NULL);
@@ -479,7 +479,7 @@ private:
      * metadata of the object.
      * @param[in] level The level of recursion, hence the depth of the tree.
      */
-    bool ConvertMetadataToStructuredData(void * ptr,
+    bool ConvertMetadataToStructuredData(void * const ptr,
                                               const char8 * const className,
                                               StructuredDataI &data,
                                               const int32 recursionLevel = -1);
