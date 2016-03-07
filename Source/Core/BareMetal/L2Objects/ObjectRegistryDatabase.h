@@ -57,9 +57,7 @@ public:
      */
     virtual ~ObjectRegistryDatabase();
 
-
     virtual bool CleanUp();
-
 
     /**
      * @brief Retrieves the Reference at the given address.
@@ -92,7 +90,6 @@ private:
      * @brief Default constructor.
      */
     ObjectRegistryDatabase();
-
 
 };
 

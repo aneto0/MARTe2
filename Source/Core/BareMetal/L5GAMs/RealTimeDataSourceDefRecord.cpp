@@ -91,7 +91,7 @@ bool RealTimeDataSourceDefRecord::AddProducer(ReferenceT<GAM> gamProducer) {
         ret = producers->Insert(gamProducer);
     }
     else {
-        //TODO Consumers not found
+        //TODO Producers not found
     }
     return ret;
 }

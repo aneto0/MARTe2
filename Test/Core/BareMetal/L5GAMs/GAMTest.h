@@ -49,7 +49,30 @@ public:
     ~GAMTest();
 
 
+    bool TestConstructor();
+
     bool TestInitialise();
+
+
+    bool TestSetApplication();
+
+    bool TestSetGAMGroup();
+
+    bool TestAddState();
+
+    bool TestGetNumberOfSupportedStates();
+
+    bool TestGetNumberOfSupportedStates_GAMGroup();
+
+    bool TestGetSupportedStates();
+
+    bool TestGetSupportedStates_GAMGroup();
+
+    bool TestConfigureDataSource();
+
+    bool TestConfigureDataSource_NotFinal();
+
+    bool TestConfigureDataSourceFalse_Final();
 
 private:
     ConfigurationDatabase cdb;

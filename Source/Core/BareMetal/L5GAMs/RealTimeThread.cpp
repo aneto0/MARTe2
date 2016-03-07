@@ -33,6 +33,7 @@
 #include "Vector.h"
 #include "ObjectRegistryDatabase.h"
 #include "ReferenceContainerFilterObjectName.h"
+#include "ReferenceContainerFilterReferences.h"
 #include "GAM.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
@@ -92,7 +93,25 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
             if (functionGAM.IsValid()) {
                 AddGAM(functionGAM);
                 functionGAM->SetApplication(ReferenceT<RealTimeApplication>(&rtApp));
-                functionGAM->AddState(rtState.GetName());
+                // if it is a stateful GAM, add its GAMGroup
+                ReferenceContainerFilterReferences filterGAM(1, ReferenceContainerFilterMode::PATH, functionGAM);
+                ReferenceContainer result;
+                ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(result, filterGAM);
+                ret = (result.Size() > 1u); //there must be the father!
+                if (ret) {
+                    ReferenceT<GAMGroup> gamGroup = result.Get(result.Size() - 2u);
+                    if (gamGroup.IsValid()) {
+                        rtState.AddGAMGroup(gamGroup);
+                        functionGAM->SetGAMGroup(gamGroup);
+                        gamGroup->AddState(rtState.GetName());
+                    }
+                    else {
+                        functionGAM->AddState(rtState.GetName());
+                    }
+                }
+                else {
+                    //TODO ??? no father
+                }
             }
             else {
                 // a generic container
@@ -119,38 +138,24 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
     return ret;
 }
 
-bool RealTimeThread::ConfigureDataSource() {
-    bool ret = true;
-    if (GAMs != NULL) {
-        for (uint32 i = 0u; (i < numberOfGAMs) && (ret); i++) {
-            if (GAMs[i].IsValid()) {
-                ret = GAMs[i]->ConfigureDataSource();
-            }
-        }
-    }
-    else {
-        ret = false;
-        //TODO Warning not initialised
-    }
-    return ret;
-}
-
 void RealTimeThread::AddGAM(ReferenceT<GAM> element) {
-    if ((numberOfGAMs % gamsArrayGranularity) == 0u) {
-        uint32 newSize = numberOfGAMs + gamsArrayGranularity;
-        ReferenceT<GAM> *temp = new ReferenceT<GAM> [newSize];
+    if (element.IsValid()) {
+        if ((numberOfGAMs % gamsArrayGranularity) == 0u) {
+            uint32 newSize = numberOfGAMs + gamsArrayGranularity;
+            ReferenceT<GAM> *temp = new ReferenceT<GAM> [newSize];
 
-        if (GAMs != NULL) {
-            for (uint32 i = 0u; i < numberOfGAMs; i++) {
-                temp[i] = GAMs[i];
+            if (GAMs != NULL) {
+                for (uint32 i = 0u; i < numberOfGAMs; i++) {
+                    temp[i] = GAMs[i];
+                }
+                delete[] GAMs;
             }
-            delete[] GAMs;
+            GAMs = temp;
         }
-        GAMs = temp;
-    }
 
-    GAMs[numberOfGAMs] = element;
-    numberOfGAMs++;
+        GAMs[numberOfGAMs] = element;
+        numberOfGAMs++;
+    }
 }
 
 bool RealTimeThread::ConfigureArchitecture(RealTimeApplication &rtApp,
@@ -217,6 +222,36 @@ ReferenceT<GAM> *RealTimeThread::GetGAMs() const {
 
 uint32 RealTimeThread::GetNumberOfGAMs() const {
     return numberOfGAMs;
+}
+
+bool RealTimeThread::ToStructuredData(StructuredDataI& data) {
+    const char8 * name = GetName();
+    bool ret = data.CreateRelative(name);
+    if (ret) {
+        ret = data.Write("Class", "RealTimeThread");
+        if (ret) {
+            if (functions != NULL) {
+                Vector<StreamString> functionVector(functions, numberOfFunctions);
+                ret = data.Write("Functions", functionVector);
+            }
+        }
+        if (ret) {
+            uint32 numberOfChildren = Size();
+            for (uint32 i = 0u; i < numberOfChildren; i++) {
+                Reference child = Get(i);
+                ret = child.IsValid();
+                if (ret) {
+                    if (ret) {
+                        ret = child->ToStructuredData(data);
+                    }
+                }
+            }
+        }
+        if (!data.MoveToAncestor(1u)) {
+            ret = false;
+        }
+    }
+    return ret;
 }
 
 CLASS_REGISTER(RealTimeThread, "1.0");

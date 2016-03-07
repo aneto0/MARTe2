@@ -91,22 +91,30 @@ Reference::~Reference() {
 bool Reference::Initialise(StructuredDataI &data,
                            const bool &initOnly) {
 
-    bool ok = false;
-    if ((!initOnly) && (objectPointer == NULL_PTR(Object*))) {
-        char8 className[256] = { '\0' };
-        if (data.Read("Class", className)) {
-            Object *objPtr = CreateByName(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
-            if (objPtr != NULL_PTR(Object*)) {
-                objectPointer = objPtr;
-                objectPointer->IncrementReferences();
+    bool ok = (objectPointer != NULL_PTR(Object*));
+
+    if (!initOnly) {
+        if (objectPointer == NULL_PTR(Object*)) {
+            char8 className[256] = { '\0' };
+            ok = data.Read("Class", className);
+            if (ok) {
+                Object *objPtr = CreateByName(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                ok = (objPtr != NULL_PTR(Object*));
+                if (ok) {
+                    objectPointer = objPtr;
+                    objectPointer->IncrementReferences();
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
+                }
             }
-            else {
-                REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
-            }
+        }
+        else {
+            //TODO Warning the object already exists
         }
     }
 
-    if (objectPointer != NULL_PTR(Object*)) {
+    if (ok) {
         ok = objectPointer->Initialise(data);
     }
 

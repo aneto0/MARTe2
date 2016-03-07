@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataSourceDef.h
- * @brief Header file for class RealTimeDataSourceDef
- * @date 29/02/2016
- * @author Giuseppe Ferrò
+ * @file RealTimeDataSourceDefContainerTest.h
+ * @brief Header file for class RealTimeDataSourceDefContainerTest
+ * @date 07/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceDef
+ * @details This header file contains the declaration of the class RealTimeDataSourceDefContainerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEDEF_H_
-#define REALTIMEDATASOURCEDEF_H_
+#ifndef REALTIMEDATASOURCEDEFCONTAINERTEST_H_
+#define REALTIMEDATASOURCEDEFCONTAINERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,39 +31,39 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
-#include "ReferenceT.h"
-#include "GAM.h"
+#include "RealTimeDataSourceDefContainer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+using namespace MARTe;
 
-class RealTimeDataSourceDef: public ReferenceContainer {
+class RealTimeDataSourceDefContainerTest {
+
 public:
-    CLASS_REGISTER_DECLARATION()
 
-    RealTimeDataSourceDef();
+    bool TestConstructor();
 
-    bool AddConsumer(const char8 *stateIn, ReferenceT<GAM> gam);
+    bool TestInitialise();
 
-    bool AddProducer(const char8 *stateIn, ReferenceT<GAM> gam);
 
-    uint32 GetNumberOfConsumers(const char8 * stateIn);
+    bool TestAddDataDefinition_Final();
 
-    uint32 GetNumberOfProducers(const char8 * stateIn);
+    bool TestAddDataDefinition_AlreadyExistentLeaf();
 
-    bool Verify();
+    bool TestAddDataDefinitionFalse_Final();
 
+    bool TestAddDataDefinition_NotFinal();
+
+    bool TestVerify();
+
+    bool TestVerify_TwoProducers();
 
 };
 
-
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEDEF_H_ */
+#endif /* REALTIMEDATASOURCEDEFCONTAINERTEST_H_ */
 

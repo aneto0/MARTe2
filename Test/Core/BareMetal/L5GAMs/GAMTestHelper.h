@@ -32,25 +32,24 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GAM.h"
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
 
-struct TrackError{
+struct TrackError {
     uint32 Par1;
     uint32 Par2;
 };
 
-
-struct ControlIn{
+struct ControlIn {
     uint32 Par1;
     uint32 Par2;
 };
 
-
-struct ControlNoise{
+struct ControlNoise {
     float32 noiseValue;
 };
 
@@ -64,18 +63,164 @@ public:
     virtual void SetUp();
     virtual void Execute(uint8 activeContextBuffer);
 
-    virtual void SetLocalData();
-
 };
 
 class PIDGAMGroup: public GAMGroup {
 public:
     CLASS_REGISTER_DECLARATION()
 
-
+    virtual void SetUp();
     virtual void PrepareNextState(const RealTimeStateInfo &status);
+
+    uint32 GetContext();
+
+private:
+    uint32 context;
+
 };
 
+class PlantGAM: public GAM {
+
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    virtual void SetUp();
+    virtual void Execute(uint8 activeContextBuffer);
+
+};
+
+static ConfigurationDatabase GetCDB() {
+    ConfigurationDatabase cdb;
+
+// application
+    cdb.CreateAbsolute("$Application1");
+    cdb.Write("Class", "RealTimeApplication");
+//functions
+    cdb.CreateAbsolute("$Application1.+Functions");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM1");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM2");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1");
+    cdb.Write("Class", "PIDGAMGroup");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM3");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM4");
+    cdb.Write("Class", "PIDGAM");
+
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer");
+    cdb.Write("Class", "ReferenceContainer");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsInput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs.+Error");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "TrackError");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs.+Error.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Default", "2");
+    cdb.Write("Path", "+DDB1.PidError2");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsOutput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlIn");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "+DDB2.PidControl2");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Noise");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlNoise");
+    cdb.Write("IsFinal", "true");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Noise.+noiseValue");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "float32");
+    cdb.Write("Default", "2");
+    cdb.Write("Path", "+DDB2.PidNoise");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs");
+    cdb.Write("IsOutput", "true");
+    cdb.Write("IsFinal", "true");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlIn");
+    cdb.Write("IsFinal", "true");
+    cdb.Write("Default", "1");
+    cdb.Write("Path", "+DDB1.u1");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM6");
+    cdb.Write("Class", "PIDGAM");
+
+
+
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2");
+    cdb.Write("Class", "PIDGAMGroup");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8");
+    cdb.Write("Class", "PIDGAM");
+
+// state 1
+    cdb.CreateAbsolute("$Application1.+States");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateAbsolute("$Application1.+States.+State1");
+    cdb.Write("Class", "RealTimeState");
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threads");
+    cdb.Write("Class", "ReferenceContainer");
+
+// state 1 threads
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread1");
+    cdb.Write("Class", "RealTimeThread");
+    const char8 *functionsT1[2] = { ":+Functions.+GAM1", ":+Functions.+GAM2" };
+    cdb.Write("Functions", functionsT1);
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread2");
+    cdb.Write("Class", "RealTimeThread");
+    const char8 *functionsT2[1] = { ":+Functions.+PIDGroup1" };
+    cdb.Write("Functions", functionsT2);
+
+// state 2
+    cdb.CreateAbsolute("$Application1.+States.+State2");
+    cdb.Write("Class", "RealTimeState");
+    cdb.CreateAbsolute("$Application1.+States.+State2.+Threads");
+    cdb.Write("Class", "ReferenceContainer");
+
+// state 2 threads
+    cdb.CreateAbsolute("$Application1.+States.+State2.+Threads.+Thread1");
+    cdb.Write("Class", "RealTimeThread");
+    const char8 *functionsT3[1] = { ":+Functions.+GAMContainer" };
+    cdb.Write("Functions", functionsT3);
+    cdb.CreateAbsolute("$Application1.+States.+State2.+Threads.+Thread2");
+    cdb.Write("Class", "RealTimeThread");
+    const char8 *functionsT4[2] = { ":+Functions.+PIDGroup2.+GAM7", ":+Functions.+PIDGroup2.+GAM8" };
+    cdb.Write("Functions", functionsT4);
+
+// data
+    cdb.CreateAbsolute("$Application1.+Data");
+    cdb.Write("Class", "RealTimeDataSourceDefContainer");
+    cdb.Write("IsFinal", "false");
+    cdb.MoveToRoot();
+    return cdb;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

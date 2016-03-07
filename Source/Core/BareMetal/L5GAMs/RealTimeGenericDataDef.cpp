@@ -148,36 +148,38 @@ bool RealTimeGenericDataDef::ToStructuredData(StructuredDataI& data) {
 
     const char8 * name = GetName();
     bool ret = data.CreateRelative(name);
-    ret = data.Write("Class", "RealTimeGenericDataDef");
     if (ret) {
-        if (type != "") {
-            ret = data.Write("Type", type);
+        ret = data.Write("Class", "RealTimeGenericDataDef");
+        if (ret) {
+            if (type != "") {
+                ret = data.Write("Type", type);
+            }
         }
-    }
-    if (ret) {
-        if (path != "") {
-            ret = data.Write("Path", path);
+        if (ret) {
+            if (path != "") {
+                ret = data.Write("Path", path);
+            }
         }
-    }
-    if (ret) {
-        if (defaultValue != "") {
-            data.Write("Default", defaultValue);
+        if (ret) {
+            if (defaultValue != "") {
+                data.Write("Default", defaultValue);
+            }
         }
-    }
-    if (ret) {
-        uint32 numberOfChildren = Size();
-        for (uint32 i = 0u; i < numberOfChildren; i++) {
-            Reference child = Get(i);
-            ret = child.IsValid();
-            if (ret) {
+        if (ret) {
+            uint32 numberOfChildren = Size();
+            for (uint32 i = 0u; i < numberOfChildren; i++) {
+                Reference child = Get(i);
+                ret = child.IsValid();
                 if (ret) {
-                    ret = child->ToStructuredData(data);
+                    if (ret) {
+                        ret = child->ToStructuredData(data);
+                    }
                 }
             }
         }
-    }
-    if (!data.MoveToAncestor(1u)) {
-        ret = false;
+        if (!data.MoveToAncestor(1u)) {
+            ret = false;
+        }
     }
 
     return ret;

@@ -45,7 +45,7 @@ static const uint32 functionArrayGranularity = 8u;
 
 RealTimeState::RealTimeState() {
     statefulGAMGroups = NULL_PTR(ReferenceT<GAMGroup>*);
-    numberOfElements = 0u;
+    numberOfGAMGroups = 0u;
     activeBuffer = 0u;
 }
 
@@ -90,7 +90,7 @@ bool RealTimeState::InsertFunction(Reference functionReference) {
             functionsContainer->SetName("+Functions");
             ret = Insert(functionsContainer);
         }
-        else{
+        else {
             //TODO Failed State.Functions container
         }
     }
@@ -101,53 +101,48 @@ bool RealTimeState::InsertFunction(Reference functionReference) {
     return ret;
 }
 
-bool RealTimeState::ConfigureDataSource() {
-    bool ret = true;
-    // for each thread call the Validate
-    for (uint32 i = 0u; (i < Size()) && (ret); i++) {
-        ReferenceT<RealTimeThread> rtThread = Get(i);
-        if (rtThread.IsValid()) {
-            ret = rtThread->ConfigureDataSource();
-        }
-        else {
-            //TODO Error??
-            ret = false;
-        }
-    }
-    return ret;
-}
-
 void RealTimeState::AddGAMGroup(ReferenceT<GAMGroup> element) {
-    if ((numberOfElements % functionArrayGranularity) == 0u) {
-        uint32 newSize = numberOfElements + functionArrayGranularity;
-        ReferenceT<GAMGroup> *temp = new ReferenceT<GAMGroup> [newSize];
-        if (statefulGAMGroups != NULL) {
-            for (uint32 i = 0u; i < numberOfElements; i++) {
-                temp[i] = statefulGAMGroups[i];
-            }
-            delete [] statefulGAMGroups;
+    if (element.IsValid()) {
+        bool found = false;
+
+        for (uint32 i = 0u; (i < numberOfGAMGroups) && (!found); i++) {
+            found = (element == statefulGAMGroups[i]);
         }
 
-        statefulGAMGroups = temp;
+        if (!found) {
+            if ((numberOfGAMGroups % functionArrayGranularity) == 0u) {
+                uint32 newSize = numberOfGAMGroups + functionArrayGranularity;
+                ReferenceT<GAMGroup> *temp = new ReferenceT<GAMGroup> [newSize];
+                if (statefulGAMGroups != NULL) {
+                    for (uint32 i = 0u; i < numberOfGAMGroups; i++) {
+                        temp[i] = statefulGAMGroups[i];
+                    }
+                    delete[] statefulGAMGroups;
+                }
+
+                statefulGAMGroups = temp;
+            }
+
+            statefulGAMGroups[numberOfGAMGroups] = element;
+            numberOfGAMGroups++;
+        }
     }
 
-    statefulGAMGroups[numberOfElements] = element;
-    numberOfElements++;
 }
 
 void RealTimeState::ChangeState(const RealTimeStateInfo &status) {
-    for (uint32 i = 0u; i < numberOfElements; i++) {
+    for (uint32 i = 0u; i < numberOfGAMGroups; i++) {
         statefulGAMGroups[i]->PrepareNextState(status);
     }
     activeBuffer = ((activeBuffer + 1u) % 2u);
 }
 
-ReferenceT<GAMGroup> * RealTimeState::GetStatefulGAMGroups() const {
+ReferenceT<GAMGroup> * RealTimeState::GetGAMGroups() const {
     return statefulGAMGroups;
 }
 
-uint32 RealTimeState::GetNumberOfElements() const {
-    return numberOfElements;
+uint32 RealTimeState::GetNumberOfGAMGroups() const {
+    return numberOfGAMGroups;
 }
 
 uint8 RealTimeState::GetContextActiveBuffer() const {

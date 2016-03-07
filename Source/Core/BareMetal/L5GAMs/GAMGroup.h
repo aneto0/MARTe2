@@ -76,10 +76,10 @@ public:
     virtual ~GAMGroup();
 
     /**
-     * @brief Setup all the GAMs in the container. This function can be customly
+     * @brief Setup all the GAMs in the container. This function can be custom
      * implemented to initialise the context, make accelerators, ecc.
      */
-    virtual void SetUp();
+    virtual void SetUp()=0;
 
     /**
      * @brief Does all the necessary operations to prepare the context used for the
@@ -103,6 +103,9 @@ public:
 
 
     void AddState(const char8 * stateName);
+
+
+    virtual bool Initialise(StructuredDataI &data);
 
 protected:
 

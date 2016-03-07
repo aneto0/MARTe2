@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataSourceDef.h
- * @brief Header file for class RealTimeDataSourceDef
- * @date 29/02/2016
- * @author Giuseppe Ferrò
+ * @file RealTimeStateGTest.cpp
+ * @brief Source file for class RealTimeStateGTest
+ * @date 07/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,54 +16,41 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceDef
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class RealTimeStateGTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef REALTIMEDATASOURCEDEF_H_
-#define REALTIMEDATASOURCEDEF_H_
-
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <limits.h>
+#include "gtest/gtest.h"
 /*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
-/*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
-#include "ReferenceT.h"
-#include "GAM.h"
-/*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+#include "RealTimeStateTest.h"
+#include "ConfigurationDatabase.h"
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
 
-class RealTimeDataSourceDef: public ReferenceContainer {
-public:
-    CLASS_REGISTER_DECLARATION()
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
-    RealTimeDataSourceDef();
-
-    bool AddConsumer(const char8 *stateIn, ReferenceT<GAM> gam);
-
-    bool AddProducer(const char8 *stateIn, ReferenceT<GAM> gam);
-
-    uint32 GetNumberOfConsumers(const char8 * stateIn);
-
-    uint32 GetNumberOfProducers(const char8 * stateIn);
-
-    bool Verify();
-
-
-};
-
-
+TEST(RealTimeStateGTest,TestConstructor) {
+    RealTimeStateTest rtsTest;
+    ASSERT_TRUE(rtsTest.TestConstructor());
 }
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEDEF_H_ */
+TEST(RealTimeStateGTest,TestConfigureArchitecture) {
+    RealTimeStateTest rtsTest;
+    ASSERT_TRUE(rtsTest.TestConfigureArchitecture());
+}
 
+TEST(RealTimeStateGTest,TestConfigureArchitecture_SingleInGAMGroup) {
+    RealTimeStateTest rtsTest;
+    ASSERT_TRUE(rtsTest.TestConfigureArchitecture_SingleInGAMGroup());
+}

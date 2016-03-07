@@ -73,6 +73,8 @@ bool GAM::ConfigureFunction() {
 
         ReferenceT<RealTimeDataDefContainer> def = Get(i);
 
+        // must be all RealTimeDataDefContainer ??
+
         if (def.IsValid()) {
             if (localData != NULL) {
                 const char8 * defName = def->GetName();
@@ -95,21 +97,27 @@ bool GAM::ConfigureFunction() {
 
 bool GAM::ConfigureDataSource() {
 
-    bool ret = application.IsValid();
-    if (ret) {
-        ReferenceT<RealTimeDataSourceDefContainer> dataContainer = application->Find("+Data");
-        ret = (dataContainer.IsValid());
+    bool ret = true;
+    if (numberOfSupportedStates > 0u) {
+        ret = application.IsValid();
         if (ret) {
-            ret = dataContainer->AddDataDefinition(ReferenceT<GAM>(this));
+            ReferenceT<RealTimeDataSourceDefContainer> dataContainer = application->Find("+Data");
+            ret = (dataContainer.IsValid());
+            if (ret) {
+                ret = dataContainer->AddDataDefinition(ReferenceT<GAM>(this));
+            }
+            else {
+                //TODO Data container not found
+                printf("\nError, data container not found\n");
+            }
         }
         else {
-            //TODO Data container not found
-            printf("\nError, data container not found\n");
+            //TODO application not set
+            printf("\nError, application not set\n");
         }
     }
     else {
-        //TODO application not set
-        printf("\nError, application not set\n");
+        //TODO Warning GAM never called
     }
     return ret;
 }
@@ -120,13 +128,11 @@ bool GAM::Initialise(StructuredDataI & data) {
 
     if (ret) {
         // implemented in the derived classes
-        SetLocalData();
+        // get the local cdb
+        SetUp();
+        // merge definitions
         ret = ConfigureFunction();
     }
-    printf("\nret=%d\n", ret);
-
-    // get the local cdb
-
     return ret;
 }
 
@@ -143,20 +149,28 @@ void GAM::SetGAMGroup(ReferenceT<GAMGroup> gamGroup) {
 }
 
 void GAM::AddState(const char8 *stateName) {
-    if ((numberOfSupportedStates % stateNamesGranularity) == 0u) {
-        uint32 newSize = numberOfSupportedStates + stateNamesGranularity;
-        StreamString *temp = new StreamString[newSize];
-        if (supportedStates != NULL) {
-            for (uint32 i = 0u; i < numberOfSupportedStates; i++) {
-                temp[i] = supportedStates[i];
-            }
-            delete[] supportedStates;
-        }
-        supportedStates = temp;
 
+    bool found = false;
+    for (uint32 i = 0u; (i < numberOfSupportedStates) && (!found); i++) {
+        found = (supportedStates[i] == stateName);
     }
-    supportedStates[numberOfSupportedStates] = stateName;
-    numberOfSupportedStates++;
+
+    if (!found) {
+        if ((numberOfSupportedStates % stateNamesGranularity) == 0u) {
+            uint32 newSize = numberOfSupportedStates + stateNamesGranularity;
+            StreamString *temp = new StreamString[newSize];
+            if (supportedStates != NULL) {
+                for (uint32 i = 0u; i < numberOfSupportedStates; i++) {
+                    temp[i] = supportedStates[i];
+                }
+                delete[] supportedStates;
+            }
+            supportedStates = temp;
+
+        }
+        supportedStates[numberOfSupportedStates] = stateName;
+        numberOfSupportedStates++;
+    }
 
 }
 

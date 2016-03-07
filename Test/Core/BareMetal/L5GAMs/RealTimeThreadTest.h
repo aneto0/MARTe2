@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceDef.h
- * @brief Header file for class RealTimeDataSourceDef
- * @date 29/02/2016
+ * @file RealTimeThreadTest.h
+ * @brief Header file for class RealTimeThreadTest
+ * @date 07/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceDef
+ * @details This header file contains the declaration of the class RealTimeThreadTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEDEF_H_
-#define REALTIMEDATASOURCEDEF_H_
+#ifndef REALTIMETHREADTEST_H_
+#define REALTIMETHREADTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,39 +31,52 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
-#include "ReferenceT.h"
-#include "GAM.h"
+#include "RealTimeThread.h"
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+using namespace MARTe;
 
-class RealTimeDataSourceDef: public ReferenceContainer {
+class RealTimeThreadTest {
+
 public:
-    CLASS_REGISTER_DECLARATION()
 
-    RealTimeDataSourceDef();
+    RealTimeThreadTest();
 
-    bool AddConsumer(const char8 *stateIn, ReferenceT<GAM> gam);
+    ~RealTimeThreadTest();
 
-    bool AddProducer(const char8 *stateIn, ReferenceT<GAM> gam);
+    bool TestConstructor();
 
-    uint32 GetNumberOfConsumers(const char8 * stateIn);
+    bool TestInitialise();
 
-    uint32 GetNumberOfProducers(const char8 * stateIn);
+    bool TestConfigureArchitecture();
 
-    bool Verify();
+    bool TestConfigureArchitecture_GAMGroup();
+
+    bool TestConfigureArchitecture_ReferenceContainer();
+
+    bool TestConfigureArchitecture_SingleInGAMGroup();
+
+    bool TestGetNumberOfFunctions();
+
+    bool TestGetFunctions();
 
 
+    bool TestGetGAMs();
+
+    bool TestGetNumberOfGAMs();
+
+    bool TestToStructuredData();
+
+private:
+    ConfigurationDatabase cdb;
 };
 
-
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEDEF_H_ */
+#endif /* REALTIMETHREADTEST_H_ */
 

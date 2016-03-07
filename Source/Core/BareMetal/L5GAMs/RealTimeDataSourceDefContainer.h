@@ -41,33 +41,27 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 class RealTimeDataSourceDefContainer: public ReferenceContainer {
-
 
 public:
     CLASS_REGISTER_DECLARATION()
 
     RealTimeDataSourceDefContainer();
 
-    virtual bool AddDataDefinition(ReferenceT<GAM> gam);
-
-
     virtual bool Initialise(StructuredDataI & data);
 
+    bool AddDataDefinition(ReferenceT<GAM> gam);
 
     bool Verify();
 
 private:
 
-
     bool AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> definition,
-                                 const char8 * userName,
-                                 StreamString *supportedStates,
-                                 uint32 numberOfStates,
+                                 ReferenceT<GAM> gam,
                                  bool isProducer,
-                                 bool isConsumer, StreamString defaultPath="");
-
+                                 bool isConsumer,
+                                 StreamString defaultPath = "");
 
     uint32 numberOfInitialDDBs;
 

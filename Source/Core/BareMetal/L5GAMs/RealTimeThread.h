@@ -79,9 +79,6 @@ public:
     bool ConfigureArchitecture(RealTimeApplication &rtApp,
                                RealTimeState &rtState);
 
-
-    bool ConfigureDataSource();
-
     /**
      * @brief Reads the array with the GAM names to be launched by this thread from the StructuredData in input.
      * @param[in] data is the StructuredData to be read from.
@@ -101,6 +98,8 @@ public:
     ReferenceT<GAM> *GetGAMs() const;
 
     uint32 GetNumberOfGAMs() const;
+
+    virtual bool ToStructuredData(StructuredDataI& data);
 
 private:
 

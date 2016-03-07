@@ -1,7 +1,7 @@
 /**
- * @file GAMGroup.cpp
- * @brief Source file for class GAMGroup
- * @date 24/02/2016
+ * @file GAMGroupTest.cpp
+ * @brief Source file for class GAMGroupTest
+ * @date 07/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMGroup (public, protected, and private). Be aware that some 
+ * the class GAMGroupTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,86 +29,70 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GAMGroup.h"
-#include "ReferenceT.h"
-#include "GAM.h"
-#include "stdio.h"
+#include "GAMGroupTest.h"
+#include "GAMTestHelper.h"
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-
-static const uint32 stateNamesGranularity = 8u;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAMGroup::GAMGroup() {
-    supportedStates = NULL_PTR(StreamString*);
-    numberOfSupportedStates = 0u;
-}
-
-GAMGroup::~GAMGroup() {
-    if (supportedStates != NULL) {
-        delete[] supportedStates;
+bool GAMGroupTest::TestConstructor() {
+    PIDGAMGroup test;
+    if (test.GetSupportedStates() != NULL) {
+        return false;
     }
+    return test.GetNumberOfSupportedStates() == 0;
 }
 
-/*
- void GAMGroup::SetUp() {
- // initialise the context here
- }
-
- */
-/*
- void GAMGroup::PrepareNextState(const RealTimeStateInfo &status) {
- // Use the two buffers in GAMContext
- // preparing the next buffer for the next state
- }
- */
-
-StreamString *GAMGroup::GetSupportedStates() const {
-    return supportedStates;
-}
-
-uint32 GAMGroup::GetNumberOfSupportedStates() const {
-    return numberOfSupportedStates;
-}
-
-void GAMGroup::AddState(const char8 * stateName) {
-
-    bool found = false;
-    for (uint32 i = 0u; (i < numberOfSupportedStates) && (!found); i++) {
-        found = (supportedStates[i] == stateName);
+bool GAMGroupTest::TestAddState() {
+    ReferenceT<PIDGAMGroup> gamGroup = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    const uint32 size = 4;
+    StreamString states[4] = { "state1", "state2", "state3", "state4" };
+    for (uint32 i = 0u; i < size; i++) {
+        gamGroup->AddState(states[i].Buffer());
     }
 
-    if (!found) {
-        if ((numberOfSupportedStates % stateNamesGranularity) == 0u) {
-            uint32 newSize = numberOfSupportedStates + stateNamesGranularity;
-            StreamString *temp = new StreamString[newSize];
-            if (supportedStates != NULL) {
-                for (uint32 i = 0u; i < numberOfSupportedStates; i++) {
-                    temp[i] = supportedStates[i];
-                }
-                delete[] supportedStates;
-            }
-            supportedStates = temp;
+    if (gamGroup->GetNumberOfSupportedStates() != size) {
+        return false;
+    }
 
+    StreamString *retStates = gamGroup->GetSupportedStates();
+    for (uint32 i = 0u; i < size; i++) {
+        if (retStates[i] != states[i]) {
+            return false;
         }
-        supportedStates[numberOfSupportedStates] = stateName;
-        numberOfSupportedStates++;
     }
+    return true;
 }
 
-bool GAMGroup::Initialise(StructuredDataI &data) {
-    bool ret = ReferenceContainer::Initialise(data);
-
-    if (ret) {
-        // Setup the context
-        SetUp();
-    }
-    return ret;
+bool GAMGroupTest::TestGetSupportedStates() {
+    return TestAddState();
 }
 
+bool GAMGroupTest::TestGetNumberOfSupportedStates() {
+    return TestAddState();
+}
+
+bool GAMGroupTest::TestInitialise() {
+
+    ConfigurationDatabase cdb;
+    cdb.Write("Class", "PIDGAMGroup");
+    cdb.CreateAbsolute("PID1");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("PID2");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("PID3");
+    cdb.Write("Class", "PIDGAM");
+    cdb.MoveToRoot();
+
+    PIDGAMGroup test;
+    if (!test.Initialise(cdb)) {
+        return false;
+    }
+
+    return test.GetContext() == 1;
 }

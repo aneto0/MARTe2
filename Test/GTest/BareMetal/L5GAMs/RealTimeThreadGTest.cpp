@@ -1,7 +1,7 @@
 /**
- * @file GAMGTest.cpp
- * @brief Source file for class GAMGTest
- * @date 18/02/2016
+ * @file RealTimeThreadGTest.cpp
+ * @brief Source file for class RealTimeThreadGTest
+ * @date 07/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,22 +17,21 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMGTest (public, protected, and private). Be aware that some 
+ * the class RealTimeThreadGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
 #include <limits.h>
 #include "gtest/gtest.h"
-
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "GAMTest.h"
 
+#include "RealTimeThreadTest.h"
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,63 +40,57 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(GAMGTest,TestConstructor) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConstructor());
+TEST(RealTimeThreadGTest,TestConstructor) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestConstructor());
 }
 
-TEST(GAMGTest,TestInitialise) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestInitialise());
+TEST(RealTimeThreadGTest,TestInitialise) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestInitialise());
 }
 
-TEST(GAMGTest,TestSetApplication) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestSetApplication());
+TEST(RealTimeThreadGTest,TestConfigureArchitecture) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestConfigureArchitecture());
 }
 
-TEST(GAMGTest,TestSetGAMGroup) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestSetGAMGroup());
+TEST(RealTimeThreadGTest,TestConfigureArchitecture_GAMGroup) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestConfigureArchitecture_GAMGroup());
 }
 
-TEST(GAMGTest,TestAddState) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestAddState());
+TEST(RealTimeThreadGTest,TestConfigureArchitecture_ReferenceContainer) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestConfigureArchitecture_ReferenceContainer());
 }
 
-TEST(GAMGTest,TestGetNumberOfSupportedStates) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetNumberOfSupportedStates());
+TEST(RealTimeThreadGTest,TestConfigureArchitecture_SingleInGAMGroup) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestConfigureArchitecture_SingleInGAMGroup());
 }
 
-TEST(GAMGTest,TestGetSupportedStates) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetSupportedStates());
+TEST(RealTimeThreadGTest,TestGetNumberOfFunctions) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestGetNumberOfFunctions());
 }
 
-
-TEST(GAMGTest,TestGetNumberOfSupportedStates_GAMGroup) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetNumberOfSupportedStates_GAMGroup());
+TEST(RealTimeThreadGTest,TestGetFunctions) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestGetFunctions());
 }
 
-TEST(GAMGTest,TestGetSupportedStates_GAMGroup) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetSupportedStates_GAMGroup());
+TEST(RealTimeThreadGTest,TestGetGAMs) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestGetGAMs());
 }
 
-TEST(GAMGTest,TestConfigureDataSource) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSource());
+TEST(RealTimeThreadGTest,TestGetNumberOfGAMs) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestGetGAMs());
 }
 
-TEST(GAMGTest,TestConfigureDataSource_NotFinal) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSource_NotFinal());
-}
-
-TEST(GAMGTest,TestConfigureDataSourceFalse_Final) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSourceFalse_Final());
+TEST(RealTimeThreadGTest,TestToStructuredData) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestToStructuredData());
 }

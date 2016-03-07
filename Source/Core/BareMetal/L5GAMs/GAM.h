@@ -99,11 +99,6 @@ public:
      */
     virtual void Execute(uint8 activeContextBuffer)=0;
 
-
-    // the routine used to get the local cdb
-    virtual void SetLocalData()=0;
-
-
     virtual bool Initialise(StructuredDataI & data);
 
 

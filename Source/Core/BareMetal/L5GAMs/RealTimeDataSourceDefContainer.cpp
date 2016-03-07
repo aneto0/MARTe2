@@ -36,12 +36,39 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
+static bool VerifyPrivate(ReferenceT<ReferenceContainer> ref) {
+    bool ret = ref.IsValid();
+    if (ret) {
+        uint32 size = ref->Size();
+
+        for (uint32 i = 0u; (i < size) && (ret); i++) {
+            Reference generic = ref->Get(i);
+            ret = ref.IsValid();
+            if (ret) {
+                // case leaf
+                ReferenceT<RealTimeDataSourceDef> rtLeaf = generic;
+                if (rtLeaf.IsValid()) {
+                    // verify the leaf
+                    ret = rtLeaf->Verify();
+                }
+                else {
+                    ReferenceT<ReferenceContainer> rtNode = generic;
+                    if (rtNode.IsValid()) {
+                        // go recursively
+                        ret = VerifyPrivate(rtNode);
+                    }
+                }
+            }
+        }
+    }
+    return ret;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe {
 
 RealTimeDataSourceDefContainer::RealTimeDataSourceDefContainer() {
     numberOfInitialDDBs = 0u;
@@ -52,9 +79,6 @@ bool RealTimeDataSourceDefContainer::AddDataDefinition(ReferenceT<GAM> gam) {
 
     bool ret = (gam.IsValid());
     if (ret) {
-        const char8 * userName = gam->GetName();
-        StreamString *supportedStates = gam->GetSupportedStates();
-        uint32 numberOfStates = gam->GetNumberOfSupportedStates();
 
         // the number of definition containers (input, output, ecc)
         uint32 numberOfElements = gam->Size();
@@ -70,7 +94,8 @@ bool RealTimeDataSourceDefContainer::AddDataDefinition(ReferenceT<GAM> gam) {
                     ReferenceT<RealTimeDataDefI> definition = defContainer->Get(j);
                     ret = definition.IsValid();
                     if (ret) {
-                        ret = AddSingleDataDefinition(definition, userName, supportedStates, numberOfStates, isProducer, isConsumer);
+                        ret = AddSingleDataDefinition(definition, gam, isProducer, isConsumer);
+                        printf("\nAdded %s\n", definition->GetName());
                     }
                     else {
                         //TODO Does not contain a definition
@@ -90,15 +115,18 @@ bool RealTimeDataSourceDefContainer::AddDataDefinition(ReferenceT<GAM> gam) {
 }
 
 bool RealTimeDataSourceDefContainer::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> definition,
-                                                             const char8 * userName,
-                                                             StreamString *supportedStates,
-                                                             uint32 numberOfStates,
+                                                             ReferenceT<GAM> gam,
                                                              bool isProducer,
                                                              bool isConsumer,
                                                              StreamString defaultPath) {
 
     bool ret = definition.IsValid();
     if (ret) {
+        const char8 * userName = gam->GetName();
+        StreamString *supportedStates = gam->GetSupportedStates();
+        uint32 numberOfStates = gam->GetNumberOfSupportedStates();
+
+
         StreamString path = definition->GetPath();
         bool isLeaf = (definition->Size() == 0u);
 
@@ -107,12 +135,11 @@ bool RealTimeDataSourceDefContainer::AddSingleDataDefinition(ReferenceT<RealTime
         StreamString newDefaultPath = path;
         if (path == "") {
             // set the path
-            newDefaultPath=defaultPath;
+            newDefaultPath = defaultPath;
             newDefaultPath += definition->GetName();
             path = newDefaultPath;
         }
         newDefaultPath += ".";
-
 
         if (isLeaf) {
             printf("\nfound a leaf, the path is %s the user is %s\n", path.Buffer(), userName);
@@ -124,13 +151,13 @@ bool RealTimeDataSourceDefContainer::AddSingleDataDefinition(ReferenceT<RealTime
 
                 // if the path exists adds only the infos
                 if (isConsumer) {
-                    for (uint32 i = 0u; i < numberOfStates; i++) {
-                        element->AddConsumer(supportedStates[i].Buffer(), userName);
+                    for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+                        ret = element->AddConsumer(supportedStates[i].Buffer(), gam);
                     }
                 }
                 if (isProducer) {
-                    for (uint32 i = 0u; i < numberOfStates; i++) {
-                        element->AddProducer(supportedStates[i].Buffer(), userName);
+                    for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+                        ret = element->AddProducer(supportedStates[i].Buffer(), gam);
                     }
                 }
             }
@@ -142,16 +169,18 @@ bool RealTimeDataSourceDefContainer::AddSingleDataDefinition(ReferenceT<RealTime
                     printf("\nleaf added\n");
 
                     if (isConsumer) {
-                        for (uint32 i = 0u; i < numberOfStates; i++) {
-                            element->AddConsumer(supportedStates[i].Buffer(), userName);
+                        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+                            ret = element->AddConsumer(supportedStates[i].Buffer(), gam);
                         }
                     }
                     if (isProducer) {
-                        for (uint32 i = 0u; i < numberOfStates; i++) {
-                            element->AddProducer(supportedStates[i].Buffer(), userName);
+                        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+                            ret = element->AddProducer(supportedStates[i].Buffer(), gam);
                         }
                     }
-                    ret = Insert(path.Buffer(), element);
+                    if (ret) {
+                        ret = Insert(path.Buffer(), element);
+                    }
                 }
             }
         }
@@ -160,11 +189,14 @@ bool RealTimeDataSourceDefContainer::AddSingleDataDefinition(ReferenceT<RealTime
 
             // is structured, go inside to the sub members
             uint32 numberOfMembers = definition->Size();
-            ret = true;
             for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
                 ReferenceT<RealTimeDataDefI> subDefinition = definition->Get(i);
                 if (subDefinition.IsValid()) {
-                    ret = AddSingleDataDefinition(subDefinition, userName, supportedStates, numberOfStates, isProducer, isConsumer, newDefaultPath);
+                    ret = AddSingleDataDefinition(subDefinition, gam, isProducer, isConsumer, newDefaultPath);
+                    printf("\nAdded %s %d\n", subDefinition->GetName(), numberOfMembers);
+                }
+                else{
+                    printf("\n???\n");
                 }
             }
         }
@@ -200,16 +232,10 @@ bool RealTimeDataSourceDefContainer::Initialise(StructuredDataI & data) {
 }
 
 bool RealTimeDataSourceDefContainer::Verify() {
-    uint32 size = Size();
-    bool ret = true;
-    for (uint32 i = 0u; (i < size) && (ret); i++) {
-        ReferenceT<RealTimeDataSourceDef> rtDef = Get(i);
-        if (rtDef.IsValid()) {
-            rtDef->Verify();
-        }
-    }
-    return ret;
+
+    return VerifyPrivate(ReferenceT<ReferenceContainer>(this));
 }
+
 CLASS_REGISTER(RealTimeDataSourceDefContainer, "1.0")
 
 }

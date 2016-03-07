@@ -1,7 +1,7 @@
 /**
- * @file GAMGTest.cpp
- * @brief Source file for class GAMGTest
- * @date 18/02/2016
+ * @file RealTimeDataSourceDefContainerGTest.cpp
+ * @brief Source file for class RealTimeDataSourceDefContainerGTest
+ * @date 07/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMGTest (public, protected, and private). Be aware that some 
+ * the class RealTimeDataSourceDefContainerGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,14 +25,17 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
-#include "gtest/gtest.h"
-
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "GAMTest.h"
 
+#include <limits.h>
+#include "gtest/gtest.h"
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+#include "RealTimeDataSourceDefContainerTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,63 +44,42 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(GAMGTest,TestConstructor) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConstructor());
+TEST(RealTimeDataSourceDefContainerGTest,TestConstructor) {
+    RealTimeDataSourceDefContainerTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestConstructor());
 }
 
-TEST(GAMGTest,TestInitialise) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestInitialise());
+TEST(RealTimeDataSourceDefContainerGTest,TestInitialise) {
+    RealTimeDataSourceDefContainerTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestInitialise());
 }
 
-TEST(GAMGTest,TestSetApplication) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestSetApplication());
+TEST(RealTimeDataSourceDefContainerGTest,TestAddDataDefinition_Final) {
+    RealTimeDataSourceDefContainerTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinition_Final());
 }
 
-TEST(GAMGTest,TestSetGAMGroup) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestSetGAMGroup());
+TEST(RealTimeDataSourceDefContainerGTest,TestAddDataDefinitionFalse_Final) {
+    RealTimeDataSourceDefContainerTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinitionFalse_Final());
 }
 
-TEST(GAMGTest,TestAddState) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestAddState());
+TEST(RealTimeDataSourceDefContainerGTest,TestAddDataDefinition_NotFinal) {
+    RealTimeDataSourceDefContainerTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinition_NotFinal());
 }
 
-TEST(GAMGTest,TestGetNumberOfSupportedStates) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetNumberOfSupportedStates());
+TEST(RealTimeDataSourceDefContainerGTest,TestAddDataDefinition_AlreadyExistentLeaf) {
+    RealTimeDataSourceDefContainerTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinition_AlreadyExistentLeaf());
 }
 
-TEST(GAMGTest,TestGetSupportedStates) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetSupportedStates());
+TEST(RealTimeDataSourceDefContainerGTest,TestVerify) {
+    RealTimeDataSourceDefContainerTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestVerify());
 }
 
-
-TEST(GAMGTest,TestGetNumberOfSupportedStates_GAMGroup) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetNumberOfSupportedStates_GAMGroup());
-}
-
-TEST(GAMGTest,TestGetSupportedStates_GAMGroup) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetSupportedStates_GAMGroup());
-}
-
-TEST(GAMGTest,TestConfigureDataSource) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSource());
-}
-
-TEST(GAMGTest,TestConfigureDataSource_NotFinal) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSource_NotFinal());
-}
-
-TEST(GAMGTest,TestConfigureDataSourceFalse_Final) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSourceFalse_Final());
+TEST(RealTimeDataSourceDefContainerGTest,TestVerify_TwoProducers) {
+    RealTimeDataSourceDefContainerTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestVerify_TwoProducers());
 }

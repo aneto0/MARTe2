@@ -78,7 +78,6 @@ public:
     bool ConfigureArchitecture(RealTimeApplication & rtApp);
 
 
-    bool ConfigureDataSource();
 
     bool InsertFunction(Reference functionReference);
 
@@ -98,13 +97,13 @@ public:
      * @brief Returns the stateful GAMGroups array.
      * @return the stateful GAMGroups array.
      */
-    ReferenceT<GAMGroup> * GetStatefulGAMGroups() const;
+    ReferenceT<GAMGroup> * GetGAMGroups() const;
 
     /**
      * @brief Returns the number of GAMGroups currently registered.
      * @return the number of GAMGroups currently registered.
      */
-    uint32 GetNumberOfElements() const;
+    uint32 GetNumberOfGAMGroups() const;
 
     /**
      * @brief Gets the context active buffer.
@@ -120,7 +119,7 @@ private:
     /**
      * The number of stateful GAMGroups registered.
      */
-    uint32 numberOfElements;
+    uint32 numberOfGAMGroups;
 
 
     /**

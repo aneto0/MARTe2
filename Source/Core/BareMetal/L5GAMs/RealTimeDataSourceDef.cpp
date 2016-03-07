@@ -38,8 +38,6 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-//static const uint32 statesGranularity = 8u;
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -47,10 +45,11 @@ namespace MARTe {
 RealTimeDataSourceDef::RealTimeDataSourceDef() {
 }
 
-void RealTimeDataSourceDef::AddConsumer(const char8 *stateIn,
+bool RealTimeDataSourceDef::AddConsumer(const char8 *stateIn,
                                         ReferenceT<GAM> gam) {
     uint32 index;
     bool found = false;
+    bool ret = false;
     ReferenceT<RealTimeDataSourceDefRecord> record;
     uint32 numberOfStates = Size();
     for (index = 0u; (index < numberOfStates) && (!found); index++) {
@@ -63,25 +62,27 @@ void RealTimeDataSourceDef::AddConsumer(const char8 *stateIn,
         }
     }
     if (found) {
-        record->AddConsumer(gam);
+        ret = record->AddConsumer(gam);
     }
     else {
         record = ReferenceT<RealTimeDataSourceDefRecord>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         if (record.IsValid()) {
             record->SetStateName(stateIn);
-            record->AddConsumer(gam);
-            if (!Insert(record)) {
-                //TODO
+            ret = record->AddConsumer(gam);
+            if (ret) {
+                ret = Insert(record);
             }
         }
     }
+    return ret;
 }
 
-void RealTimeDataSourceDef::AddProducer(const char8 *stateIn,
+bool RealTimeDataSourceDef::AddProducer(const char8 *stateIn,
                                         ReferenceT<GAM> gam) {
 
     uint32 index;
     bool found = false;
+    bool ret = false;
     ReferenceT<RealTimeDataSourceDefRecord> record;
     uint32 numberOfStates = Size();
     for (index = 0u; (index < numberOfStates) && (!found); index++) {
@@ -94,18 +95,20 @@ void RealTimeDataSourceDef::AddProducer(const char8 *stateIn,
         }
     }
     if (found) {
-        record->AddProducer(gam);
+        ret = record->AddProducer(gam);
     }
     else {
         record = ReferenceT<RealTimeDataSourceDefRecord>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         if (record.IsValid()) {
             record->SetStateName(stateIn);
-            record->AddProducer(gam);
-            if (!Insert(record)) {
-                //TODO
+            ret = record->AddProducer(gam);
+            if (ret) {
+                ret = Insert(record);
             }
         }
     }
+    return ret;
+
 }
 
 uint32 RealTimeDataSourceDef::GetNumberOfConsumers(const char8 * stateIn) {

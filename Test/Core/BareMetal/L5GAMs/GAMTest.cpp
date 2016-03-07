@@ -32,6 +32,8 @@
 #include "GAMTest.h"
 #include "GAMTestHelper.h"
 #include "RealTimeDataDefContainer.h"
+#include "RealTimeDataSourceDef.h"
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -42,8 +44,6 @@
 
 GAMTest::GAMTest() {
 
-    const char8 * states[] = { "state1" };
-    cdb.Write("States", states);
     cdb.CreateAbsolute("+Inputs");
     cdb.Write("Class", "RealTimeDataDefContainer");
     cdb.Write("IsInput", "true");
@@ -56,7 +56,7 @@ GAMTest::GAMTest() {
     cdb.Write("Class", "RealTimeGenericDataDef");
     cdb.Write("Type", "uint32");
     cdb.Write("Default", "2");
-    cdb.Write("Address", "PidError2");
+    cdb.Write("Path", "+DDB1.PidError2");
     cdb.Write("IsFinal", "true");
 
     cdb.CreateAbsolute("+Outputs");
@@ -70,7 +70,7 @@ GAMTest::GAMTest() {
     cdb.CreateAbsolute("+Outputs.+Control.+Par2");
     cdb.Write("Class", "RealTimeGenericDataDef");
     cdb.Write("Type", "uint32");
-    cdb.Write("Address", "PidControl2");
+    cdb.Write("Path", "+DDB2.PidControl2");
     cdb.Write("Default", "1");
     cdb.Write("IsFinal", "true");
 
@@ -82,41 +82,254 @@ GAMTest::GAMTest() {
     cdb.Write("Class", "RealTimeGenericDataDef");
     cdb.Write("Type", "float32");
     cdb.Write("Default", "2");
-    cdb.Write("Address", "PidNoise");
+    cdb.Write("Path", "+DDB2.PidNoise");
     cdb.Write("IsFinal", "true");
     cdb.MoveToRoot();
 }
 
-
-GAMTest::~GAMTest(){
+GAMTest::~GAMTest() {
     ObjectRegistryDatabase::Instance()->CleanUp();
 }
 
+bool GAMTest::TestConstructor() {
+    PIDGAM gamTest;
+    if (gamTest.GetNumberOfSupportedStates() != 0) {
+        return false;
+    }
+    if (gamTest.GetSupportedStates() != NULL) {
+        return false;
+    }
+    return true;
+}
 
 bool GAMTest::TestInitialise() {
     PIDGAM gamTest;
-    if(!gamTest.Initialise(cdb)){
+    if (!gamTest.Initialise(cdb)) {
         return false;
     }
 
     // there must be two containers
-    if(gamTest.Size()!=2){
+    if (gamTest.Size() != 2) {
         return false;
     }
 
     // check the input
-    ReferenceT<RealTimeDataDefContainer> inputs=gamTest.Get(0);
-    if(inputs->Size()!=1){
+    ReferenceT<RealTimeDataDefContainer> inputs = gamTest.Get(0);
+    if (inputs->Size() != 1) {
         return false;
     }
 
     // check the output
-    ReferenceT<RealTimeDataDefContainer> outputs=gamTest.Get(1);
-    if(outputs->Size()!=2){
+    ReferenceT<RealTimeDataDefContainer> outputs = gamTest.Get(1);
+    if (outputs->Size() != 2) {
         return false;
     }
 
+    return true;
+}
+
+bool GAMTest::TestSetApplication() {
+    ReferenceT<RealTimeApplication> rtApp;
+    PIDGAM gam;
+    gam.SetApplication(rtApp);
+    return true;
+}
+
+bool GAMTest::TestSetGAMGroup() {
+    ReferenceT<PIDGAMGroup> rtgg;
+    PIDGAM gam;
+    gam.SetGAMGroup(rtgg);
+    return true;
+}
+
+bool GAMTest::TestAddState() {
+
+    PIDGAM gam;
+    const uint32 size = 4;
+    StreamString states[4] = { "state1", "state2", "state3", "state4" };
+    for (uint32 i = 0u; i < size; i++) {
+        gam.AddState(states[i].Buffer());
+    }
+
+    if (gam.GetNumberOfSupportedStates() != size) {
+        return false;
+    }
+
+    StreamString *retStates = gam.GetSupportedStates();
+    for (uint32 i = 0u; i < size; i++) {
+        if (retStates[i] != states[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool GAMTest::TestGetNumberOfSupportedStates() {
+    return TestAddState();
+}
+
+bool GAMTest::TestGetSupportedStates() {
+    return TestAddState();
+}
+
+bool GAMTest::TestGetNumberOfSupportedStates_GAMGroup() {
+
+    ReferenceT<PIDGAMGroup> gamGroup = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    const uint32 size = 4;
+    StreamString states[4] = { "state1", "state2", "state3", "state4" };
+    for (uint32 i = 0u; i < size; i++) {
+        gamGroup->AddState(states[i].Buffer());
+    }
+
+    gam->SetGAMGroup(gamGroup);
+
+    StreamString *retStates = gam->GetSupportedStates();
+    for (uint32 i = 0u; i < size; i++) {
+        if (retStates[i] != states[i]) {
+            return false;
+        }
+    }
+    return true;
+
+}
+
+bool GAMTest::TestGetSupportedStates_GAMGroup() {
+    ReferenceT<PIDGAMGroup> gamGroup = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    const uint32 size = 4;
+    StreamString states[4] = { "state1", "state2", "state3", "state4" };
+    for (uint32 i = 0u; i < size; i++) {
+        gamGroup->AddState(states[i].Buffer());
+    }
+
+    gam->SetGAMGroup(gamGroup);
+
+    return (gam->GetNumberOfSupportedStates() == size);
+}
+
+bool GAMTest::TestConfigureDataSource() {
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSourceDefContainer");
+    appCDB.Write("IsFinal", "true");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!gam->Initialise(cdb)) {
+        return false;
+    }
+
+    gam->SetApplication(rtapp);
+    gam->AddState("state1");
+    gam->AddState("state2");
+
+    if (!gam->ConfigureDataSource()) {
+        return false;
+    }
+    ReferenceT<RealTimeDataSourceDef> def1 = rtapp->Find("+Data.+DDB1.PidError1");
+    if (def1->GetNumberOfConsumers("state1") != 1 || def1->GetNumberOfConsumers("state2") != 1) {
+
+    }
+
+    ReferenceT<RealTimeDataSourceDef> def2 = rtapp->Find("+Data.+DDB1.PidError2");
+    if (def2->GetNumberOfConsumers("state1") != 1 || def2->GetNumberOfConsumers("state2") != 1) {
+
+    }
+
+    ReferenceT<RealTimeDataSourceDef> def3 = rtapp->Find("+Data.+DDB2.PidControl1");
+    if (def3->GetNumberOfProducers("state1") != 1 || def3->GetNumberOfProducers("state2") != 1) {
+
+    }
+    ReferenceT<RealTimeDataSourceDef> def4 = rtapp->Find("+Data.+DDB2.PidControl2");
+    if (def4->GetNumberOfProducers("state1") != 1 || def4->GetNumberOfProducers("state2") != 1) {
+
+    }
 
     return true;
+}
+
+bool GAMTest::TestConfigureDataSource_NotFinal() {
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSourceDefContainer");
+    appCDB.Write("IsFinal", "false");
+
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!gam->Initialise(cdb)) {
+        return false;
+    }
+
+    gam->SetApplication(rtapp);
+    gam->AddState("state1");
+    gam->AddState("state2");
+
+    if (!gam->ConfigureDataSource()) {
+        return false;
+    }
+    ReferenceT<RealTimeDataSourceDef> def1 = rtapp->Find("+Data.+DDB1.PidError1");
+    if (def1->GetNumberOfConsumers("state1") != 1 || def1->GetNumberOfConsumers("state2") != 1) {
+
+    }
+
+    ReferenceT<RealTimeDataSourceDef> def2 = rtapp->Find("+Data.+DDB1.PidError2");
+    if (def2->GetNumberOfConsumers("state1") != 1 || def2->GetNumberOfConsumers("state2") != 1) {
+
+    }
+
+    ReferenceT<RealTimeDataSourceDef> def3 = rtapp->Find("+Data.+DDB2.PidControl1");
+    if (def3->GetNumberOfProducers("state1") != 1 || def3->GetNumberOfProducers("state2") != 1) {
+
+    }
+    ReferenceT<RealTimeDataSourceDef> def4 = rtapp->Find("+Data.+DDB2.PidControl2");
+    if (def4->GetNumberOfProducers("state1") != 1 || def4->GetNumberOfProducers("state2") != 1) {
+
+    }
+
+    return true;
+}
+
+bool GAMTest::TestConfigureDataSourceFalse_Final() {
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSourceDefContainer");
+    appCDB.Write("IsFinal", "true");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+Data.+DDB3");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!gam->Initialise(cdb)) {
+        return false;
+    }
+
+    gam->SetApplication(rtapp);
+    gam->AddState("state1");
+    gam->AddState("state2");
+
+    return (!gam->ConfigureDataSource());
 }
 

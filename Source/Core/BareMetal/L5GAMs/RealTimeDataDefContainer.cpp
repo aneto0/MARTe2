@@ -106,7 +106,7 @@ bool RealTimeDataDefContainer::MergeWithLocal(StructuredDataI & localData) {
                     found = true;
                 }
             }
-            // if does not exist yest and it is not final add the definition
+            // if does not exist yet and it is not final add the definition
             if ((ret) && (!found)) {
                 if (!final) {
                     if (localData.MoveRelative(newItemName)) {
