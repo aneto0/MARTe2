@@ -113,8 +113,22 @@ public:
      */
     bool TestGetUniqueName2();
 
+    /**
+     * @brief Tests the Object::ExportData function.
+     * @details Checks that the Object::ExportData method returns the right
+     * tree (StructuredDataI) for common examples of objects (with simple
+     * members, with complex ones, etc).
+     * @return true if the tests explained in the details section succeed, false otherwise.
+     */
     bool TestExportData();
 
+    /**
+     * @brief Tests the Object::ExportMetaData function.
+     * @details Checks that the Object::ExportMetaData method returns the right
+     * tree (StructuredDataI) for common examples of objects (with simple
+     * members, with complex ones, etc).
+     * @return true if the tests explained in the details section succeed, false otherwise.
+     */
     bool TestExportMetadata();
 };
 

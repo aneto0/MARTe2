@@ -25,6 +25,8 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <cstddef>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -128,7 +130,7 @@ bool ObjectTest::TestGetUniqueName(const char8* name,
     const uint32 size = 128;
 
     Object myObj;
-    uintp ptr = (uintp) & myObj;
+    uintp ptr = (uintp) &myObj;
     char buffer[size];
     for (uint32 i = 0; i < size; i++) {
         buffer[i] = 0;
@@ -268,11 +270,12 @@ bool ObjectTest::TestExportData() {
             StructuredDataI& sd = cdb;
             StreamString className;
             int32 member;
-            test_status = (test_status && (sd.MoveAbsolute("Test3")));
+            test_status = (test_status && (sd.MoveRelative("Test3")));
             test_status = (test_status && (sd.Read("Class", className)));
             test_values = (test_values && (className == "IntrospectableIntegerObject"));
             test_status = (test_status && (sd.Read("member", member)));
             test_values = (test_values && (member == 30));
+            test_status = (test_status && (sd.MoveToAncestor(1u)));
         }
         result = result && test_status && test_values;
     }
@@ -300,13 +303,14 @@ bool ObjectTest::TestExportData() {
             StreamString className;
             int32 member1;
             uint64 member2;
-            test_status = (test_status && (sd.MoveAbsolute("Test4")));
+            test_status = (test_status && (sd.MoveRelative("Test4")));
             test_status = (test_status && (sd.Read("Class", className)));
             test_values = (test_values && (className == "IntrospectableObjectWith2Members"));
             test_status = (test_status && (sd.Read("member1", member1)));
             test_values = (test_values && (member1 == 10));
             test_status = (test_status && (sd.Read("member2", member2)));
             test_values = (test_values && (member2 == 20));
+            test_status = (test_status && (sd.MoveToAncestor(1u)));
         }
         result = result && test_status && test_values;
     }
@@ -339,7 +343,7 @@ bool ObjectTest::TestExportData() {
             int32 member1;
             uint64 member2;
             IntrospectableIntegerObject member3;
-            test_status = (test_status && (sd.MoveAbsolute("Test5")));
+            test_status = (test_status && (sd.MoveRelative("Test5")));
             test_status = (test_status && (sd.Read("Class", className)));
             test_values = (test_values && (className == "IntrospectableObjectWith3Members"));
             test_status = (test_status && (sd.Read("member1", member1)));
@@ -351,12 +355,14 @@ bool ObjectTest::TestExportData() {
             {
                 StreamString className;
                 int32 member;
-                test_status = (test_status && (sd.MoveAbsolute("Test5.member3")));
+                test_status = (test_status && (sd.MoveRelative("member3")));
                 test_status = (test_status && (sd.Read("Class", className)));
                 test_values = (test_values && (className == "IntrospectableIntegerObject"));
                 test_status = (test_status && (sd.Read("member", member)));
                 test_values = (test_values && (member == 30));
+                test_status = (test_status && (sd.MoveToAncestor(1u)));
             }
+            test_status = (test_status && (sd.MoveToAncestor(1u)));
         }
         result = result && test_status && test_values;
     }
@@ -409,7 +415,7 @@ bool ObjectTest::TestExportMetadata() {
          *    |-"modifiers": ""
          *    |-"attributes": ""
          *    |-"size": sizeof(int32)
-//         *    |-"pointer": &this+24
+         *    |-"pointer": &this+offsetof(IntrospectableIntegerObject, member)
          */
         bool test_status = true;
         bool test_values = true;
@@ -418,23 +424,27 @@ bool ObjectTest::TestExportMetadata() {
         test_status = (test_status && (obj.ExportMetadata(cdb)));
         if (test_status) {
             StructuredDataI& sd = cdb;
-            StreamString type;
-            StreamString modifiers;
-            StreamString attributes;
-            uint32 size;
-            uintp pointer;
-            test_status = (test_status && (sd.MoveAbsolute("IntrospectableIntegerObject.member")));
-            test_status = (test_status && (sd.Read("type", type)));
-            test_values = (test_values && (type == "int32"));
-            test_status = (test_status && (sd.Read("modifiers", modifiers)));
-            test_values = (test_values && (modifiers == ""));
-            test_status = (test_status && (sd.Read("attributes", attributes)));
-            test_values = (test_values && (attributes == ""));
-            test_status = (test_status && (sd.Read("size", size)));
-            test_values = (test_values && (size == sizeof(int32)));
-            test_status = (test_status && (sd.Read("pointer", pointer)));
-//            test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 24)));
-//            test_values = (test_values && (pointer == (uintp)&(((IntrospectableIntegerObject *)0)->member)));
+            test_status = (test_status && (sd.MoveRelative("IntrospectableIntegerObject")));
+            {
+                StreamString type;
+                StreamString modifiers;
+                StreamString attributes;
+                uint32 size;
+                uintp pointer;
+                test_status = (test_status && (sd.MoveRelative("member")));
+                test_status = (test_status && (sd.Read("type", type)));
+                test_values = (test_values && (type == "int32"));
+                test_status = (test_status && (sd.Read("modifiers", modifiers)));
+                test_values = (test_values && (modifiers == ""));
+                test_status = (test_status && (sd.Read("attributes", attributes)));
+                test_values = (test_values && (attributes == ""));
+                test_status = (test_status && (sd.Read("size", size)));
+                test_values = (test_values && (size == sizeof(int32)));
+                test_status = (test_status && (sd.Read("pointer", pointer)));
+                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + offsetof(IntrospectableIntegerObject, member))));
+                test_status = (test_status && (sd.MoveToAncestor(1u)));
+            }
+            test_status = (test_status && (sd.MoveToAncestor(1u)));
         }
         result = result && test_status && test_values;
     }
@@ -450,13 +460,13 @@ bool ObjectTest::TestExportMetadata() {
          *    |-"modifiers": ""
          *    |-"attributes": ""
          *    |-"size": sizeof(int32)
-//         *    |-"pointer": &this+24
+         *    |-"pointer": &this+offsetof(IntrospectableObjectWith2Members, member1)
          *   |+"member2"
          *    |-"type": "uint64"
          *    |-"modifiers": ""
          *    |-"attributes": ""
          *    |-"size": sizeof(uint64)
-//         *    |-"pointer": &this+32
+         *    |-"pointer": &this+offsetof(IntrospectableObjectWith2Members, member2)
          */
         bool test_status = true;
         bool test_values = true;
@@ -465,13 +475,14 @@ bool ObjectTest::TestExportMetadata() {
         test_status = (test_status && (obj.ExportMetadata(cdb)));
         if (test_status) {
             StructuredDataI& sd = cdb;
+            test_status = (test_status && (sd.MoveRelative("IntrospectableObjectWith2Members")));
             {
                 StreamString type;
                 StreamString modifiers;
                 StreamString attributes;
                 uint32 size;
                 uintp pointer;
-                test_status = (test_status && (sd.MoveAbsolute("IntrospectableObjectWith2Members.member1")));
+                test_status = (test_status && (sd.MoveRelative("member1")));
                 test_status = (test_status && (sd.Read("type", type)));
                 test_values = (test_values && (type == "int32"));
                 test_status = (test_status && (sd.Read("modifiers", modifiers)));
@@ -481,7 +492,8 @@ bool ObjectTest::TestExportMetadata() {
                 test_status = (test_status && (sd.Read("size", size)));
                 test_values = (test_values && (size == sizeof(int32)));
                 test_status = (test_status && (sd.Read("pointer", pointer)));
-//                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 24)));
+                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + offsetof(IntrospectableObjectWith2Members, member1))));
+                test_status = (test_status && (sd.MoveToAncestor(1u)));
             }
             {
                 StreamString type;
@@ -489,7 +501,7 @@ bool ObjectTest::TestExportMetadata() {
                 StreamString attributes;
                 uint32 size;
                 uintp pointer;
-                test_status = (test_status && (sd.MoveAbsolute("IntrospectableObjectWith2Members.member2")));
+                test_status = (test_status && (sd.MoveRelative("member2")));
                 test_status = (test_status && (sd.Read("type", type)));
                 test_values = (test_values && (type == "uint64"));
                 test_status = (test_status && (sd.Read("modifiers", modifiers)));
@@ -499,8 +511,10 @@ bool ObjectTest::TestExportMetadata() {
                 test_status = (test_status && (sd.Read("size", size)));
                 test_values = (test_values && (size == sizeof(uint64)));
                 test_status = (test_status && (sd.Read("pointer", pointer)));
-//                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 32)));
+                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + offsetof(IntrospectableObjectWith2Members, member2))));
+                test_status = (test_status && (sd.MoveToAncestor(1u)));
             }
+            test_status = (test_status && (sd.MoveToAncestor(1u)));
         }
         result = result && test_status && test_values;
     }
@@ -516,26 +530,26 @@ bool ObjectTest::TestExportMetadata() {
          *    |-"modifiers": ""
          *    |-"attributes": ""
          *    |-"size": sizeof(int32)
-//         *    |-"pointer": &this+24
+         *    |-"pointer": &this+offsetof(IntrospectableObjectWith3Members, member1)
          *   |+"member2"
          *    |-"type": "uint64"
          *    |-"modifiers": ""
          *    |-"attributes": ""
          *    |-"size": sizeof(uint64)
-//         *    |-"pointer": &this+32
+         *    |-"pointer": &this+offsetof(IntrospectableObjectWith3Members, member2)
          *   |+"member3"
          *    |-"type": "IntrospectableIntegerObject"
          *    |-"modifiers": ""
          *    |-"attributes": ""
          *    |-"size": sizeof(uint64)
-//         *    |-"pointer": &this+32
+         *    |-"pointer": &this+offsetof(IntrospectableObjectWith3Members, member3)
          *    |+"IntrospectableIntegerObject"
          *     |+"member"
          *      |-"type": "int32"
          *      |-"modifiers": ""
          *      |-"attributes": ""
          *      |-"size": sizeof(int32)
-//         *      |-"pointer": &this+24
+         *      |-"pointer": &this.member+offsetof(IntrospectableIntegerObject, member)
          */
         bool test_status = true;
         bool test_values = true;
@@ -544,13 +558,14 @@ bool ObjectTest::TestExportMetadata() {
         test_status = (test_status && (obj.ExportMetadata(cdb)));
         if (test_status) {
             StructuredDataI& sd = cdb;
+            test_status = (test_status && (sd.MoveRelative("IntrospectableObjectWith3Members")));
             {
                 StreamString type;
                 StreamString modifiers;
                 StreamString attributes;
                 uint32 size;
                 uintp pointer;
-                test_status = (test_status && (sd.MoveAbsolute("IntrospectableObjectWith3Members.member1")));
+                test_status = (test_status && (sd.MoveRelative("member1")));
                 test_status = (test_status && (sd.Read("type", type)));
                 test_values = (test_values && (type == "int32"));
                 test_status = (test_status && (sd.Read("modifiers", modifiers)));
@@ -560,7 +575,8 @@ bool ObjectTest::TestExportMetadata() {
                 test_status = (test_status && (sd.Read("size", size)));
                 test_values = (test_values && (size == sizeof(int32)));
                 test_status = (test_status && (sd.Read("pointer", pointer)));
-//                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 24)));
+                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + offsetof(IntrospectableObjectWith3Members, member1))));
+                test_status = (test_status && (sd.MoveToAncestor(1u)));
             }
             {
                 StreamString type;
@@ -568,7 +584,7 @@ bool ObjectTest::TestExportMetadata() {
                 StreamString attributes;
                 uint32 size;
                 uintp pointer;
-                test_status = (test_status && (sd.MoveAbsolute("IntrospectableObjectWith3Members.member2")));
+                test_status = (test_status && (sd.MoveRelative("member2")));
                 test_status = (test_status && (sd.Read("type", type)));
                 test_values = (test_values && (type == "uint64"));
                 test_status = (test_status && (sd.Read("modifiers", modifiers)));
@@ -578,7 +594,8 @@ bool ObjectTest::TestExportMetadata() {
                 test_status = (test_status && (sd.Read("size", size)));
                 test_values = (test_values && (size == sizeof(uint64)));
                 test_status = (test_status && (sd.Read("pointer", pointer)));
-//                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 32)));
+                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + offsetof(IntrospectableObjectWith3Members, member2))));
+                test_status = (test_status && (sd.MoveToAncestor(1u)));
             }
             {
                 StreamString type;
@@ -586,7 +603,7 @@ bool ObjectTest::TestExportMetadata() {
                 StreamString attributes;
                 uint32 size;
                 uintp pointer;
-                test_status = (test_status && (sd.MoveAbsolute("IntrospectableObjectWith3Members.member3")));
+                test_status = (test_status && (sd.MoveRelative("member3")));
                 test_status = (test_status && (sd.Read("type", type)));
                 test_values = (test_values && (type == "IntrospectableIntegerObject"));
                 test_status = (test_status && (sd.Read("modifiers", modifiers)));
@@ -596,19 +613,29 @@ bool ObjectTest::TestExportMetadata() {
                 test_status = (test_status && (sd.Read("size", size)));
                 test_values = (test_values && (size == sizeof(IntrospectableIntegerObject)));
                 test_status = (test_status && (sd.Read("pointer", pointer)));
-//                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 32)));
-                test_status = (test_status && (sd.MoveAbsolute("IntrospectableObjectWith3Members.member3.IntrospectableIntegerObject.member")));
-                test_status = (test_status && (sd.Read("type", type)));
-                test_values = (test_values && (type == "int32"));  ERROR!!!!
-                test_status = (test_status && (sd.Read("modifiers", modifiers)));
-                test_values = (test_values && (modifiers == ""));
-                test_status = (test_status && (sd.Read("attributes", attributes)));
-                test_values = (test_values && (attributes == ""));
-                test_status = (test_status && (sd.Read("size", size)));
-                test_values = (test_values && (size == sizeof(int32)));
-                test_status = (test_status && (sd.Read("pointer", pointer)));
-//                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + 24)));
+                test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj) + offsetof(IntrospectableObjectWith3Members, member3))));
+                {
+                    StreamString type;
+                    StreamString modifiers;
+                    StreamString attributes;
+                    uint32 size;
+                    uintp pointer;
+                    test_status = (test_status && (sd.MoveRelative("IntrospectableIntegerObject.member")));
+                    test_status = (test_status && (sd.Read("type", type)));
+                    test_values = (test_values && (type == "int32"));
+                    test_status = (test_status && (sd.Read("modifiers", modifiers)));
+                    test_values = (test_values && (modifiers == ""));
+                    test_status = (test_status && (sd.Read("attributes", attributes)));
+                    test_values = (test_values && (attributes == ""));
+                    test_status = (test_status && (sd.Read("size", size)));
+                    test_values = (test_values && (size == sizeof(int32)));
+                    test_status = (test_status && (sd.Read("pointer", pointer)));
+                    test_values = (test_values && (pointer == (reinterpret_cast<uintp>(&obj.member3) + offsetof(IntrospectableIntegerObject, member))));
+                    test_status = (test_status && (sd.MoveToAncestor(1u)));
+                }
+                test_status = (test_status && (sd.MoveToAncestor(1u)));
             }
+            test_status = (test_status && (sd.MoveToAncestor(1u)));
         }
         result = result && test_status && test_values;
     }
