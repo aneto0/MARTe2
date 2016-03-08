@@ -52,8 +52,18 @@ namespace MARTe {
  *
  * @details The Initialise method (which can be override) configures the GAM reading
  * from the global configuration stream. If the definitions of the input and output
- * structures is incomplete (or also empty), it is possible use the method Verify(*) passing the
- * local configuration stream and completing all the definitions.
+ * structures is incomplete (or also empty), the method ConfigureFunction(*) will merge
+ * them with the ones declared in the local configuration.
+ *
+ * @details The syntax in the configuration stream has to be:
+ * GAM_name = {\n
+ *     Class = GAM_className\n
+ *     RealTimeDataDefContainer_name = {\n
+ *         Class = RealTimeDataDefContainer\n
+ *         ...\n
+ *     }\n
+ *     ...\n
+ * }\n
  */
 class GAM: public ReferenceContainer {
 public:

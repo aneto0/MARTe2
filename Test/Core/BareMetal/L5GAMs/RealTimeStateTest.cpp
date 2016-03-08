@@ -205,12 +205,13 @@ bool RealTimeStateTest::TestGetNumberOfGAMGroups() {
 bool RealTimeStateTest::TestChangeState() {
     RealTimeState state;
 
+    ConfigurationDatabase empty;
     const uint32 size = 32;
     ReferenceT<PIDGAMGroup> gamGroup[size];
     for (uint32 i = 0; i < size; i++) {
         gamGroup[i] = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         state.AddGAMGroup(gamGroup[i]);
-        gamGroup[i]->SetUp();
+        gamGroup[i]->Initialise(empty);
     }
     if (state.GetContextActiveBuffer() != 0) {
         return false;

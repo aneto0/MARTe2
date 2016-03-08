@@ -50,9 +50,8 @@ namespace MARTe {
  * block RealTimeApplicatio.Functions
  * GAMGroup_name = {\n
  *    Class = GAMGroup\n
- *    States = {State1_name, State2_name, ... }\n
  *    ... // context definition, ecc\n
- *    GAM1_name = {\n
+ *    GAM_name = {\n
  *        Class = GAM\n
  *        ...\n
  *    }\n
@@ -75,11 +74,6 @@ public:
      */
     virtual ~GAMGroup();
 
-    /**
-     * @brief Setup all the GAMs in the container. This function can be custom
-     * implemented to initialise the context, make accelerators, ecc.
-     */
-    virtual void SetUp()=0;
 
     /**
      * @brief Does all the necessary operations to prepare the context used for the
@@ -102,12 +96,25 @@ public:
     uint32 GetNumberOfSupportedStates() const;
 
 
+    /**
+     * @brief Adds the name of a RealTimeState where this GAMGroup is declared into.
+     * @param[in] stateName is the RealTimeState name.
+     */
     void AddState(const char8 * stateName);
 
-
+    /**
+     * @brief Initialises all the sub-nodes, then call SetUp(*) to setup the environment.
+     */
     virtual bool Initialise(StructuredDataI &data);
 
 protected:
+
+    /**
+     * @brief Setup the GAMGroup. This function can be custom
+     * implemented to initialise the context, make accelerators, ecc.
+     */
+    virtual void SetUp()=0;
+
 
     /**
      * The names of the supported states

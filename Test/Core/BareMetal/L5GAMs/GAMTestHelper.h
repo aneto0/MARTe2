@@ -71,10 +71,13 @@ class PIDGAMGroup: public GAMGroup {
 public:
     CLASS_REGISTER_DECLARATION()
 
-    virtual void SetUp();
     virtual void PrepareNextState(const RealTimeStateInfo &status);
 
     uint32 GetContext();
+
+protected:
+    virtual void SetUp();
+
 
 private:
     uint32 context;

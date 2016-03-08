@@ -101,6 +101,9 @@ public:
     /**
      * @brief Prepare the context for the state in each registered GAMGroup.
      * @param[in] status contains informations about the current and the next state.
+     * @post
+     *   The context active buffer swap from 0 to 1
+     *   or vice versa.
      */
     void ChangeState(const RealTimeStateInfo &status);
 
