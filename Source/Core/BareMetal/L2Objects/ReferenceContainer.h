@@ -129,6 +129,11 @@ public:
      */
     void SetTimeout(const TimeoutType &timeout);
 
+
+    virtual bool Initialise(StructuredDataI &data);
+
+
+
 private:
     /**
      * The list of references

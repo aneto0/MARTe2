@@ -83,6 +83,9 @@ public:
     virtual bool Read(const char8 * const name,
                       const AnyType &value) = 0;
 
+
+ //   virtual Reference Read(const char8* const name)=0;
+
     /**
      * @brief Gets the type of a previously stored AnyType.
      * @param[in] name the name of the leaf used to store the AnyType \a value.
@@ -102,6 +105,10 @@ public:
      */
     virtual bool Write(const char8 * const name,
                        const AnyType &value) = 0;
+
+
+   // virtual bool Write(const Reference &reference)=0;
+
 
     /**
      * @brief Copies the content of the current node to the provided destination.

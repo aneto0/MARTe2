@@ -61,7 +61,7 @@ typedef uint64      uintp;
 #elif defined __ILP64__
 typedef uint64      uintp;
 #elif defined __LLP64__
-typedef uint64 long uintp;
+typedef uint64      uintp;
 #else
 typedef uint64      uintp;
 #endif

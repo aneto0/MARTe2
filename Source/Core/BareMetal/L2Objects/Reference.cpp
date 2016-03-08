@@ -50,15 +50,16 @@ Reference::Reference(const Reference& sourceReference) {
     (*this) = sourceReference;
 }
 
-Reference::Reference(const char8* const typeName, HeapI* const heap) {
+Reference::Reference(const char8* const typeName,
+                     HeapI* const heap) {
     objectPointer = NULL_PTR(Object*);
     Object *objPtr = CreateByName(typeName, heap);
     if (objPtr != NULL_PTR(Object*)) {
         objectPointer = objPtr;
         objectPointer->IncrementReferences();
     }
-    else{
-        REPORT_ERROR(ErrorManagement::FatalError,"Reference: Failed CreateByName() in constructor");
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
     }
 }
 
@@ -87,9 +88,29 @@ Reference::~Reference() {
 }
 
 /*lint -e{715} data and createOnly not referenced to be removed when the method is implemented in the future*/
-bool Reference::Initialise(const StructuredDataI &data, const bool &createOnly) {
-//TODO
-    return true;
+bool Reference::Initialise(StructuredDataI &data,
+                           const bool &initOnly) {
+
+    bool ok = false;
+    if ((!initOnly) && (objectPointer == NULL_PTR(Object*))) {
+        char8 className[256] = { '\0' };
+        if (data.Read("Class", className)) {
+            Object *objPtr = CreateByName(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
+            if (objPtr != NULL_PTR(Object*)) {
+                objectPointer = objPtr;
+                objectPointer->IncrementReferences();
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
+            }
+        }
+    }
+
+    if (objectPointer != NULL_PTR(Object*)) {
+        ok = objectPointer->Initialise(data);
+    }
+
+    return ok;
 }
 
 void Reference::RemoveReference() {
@@ -141,7 +162,8 @@ Object* Reference::operator->() {
     return objectPointer;
 }
 
-Object *Reference::CreateByName(const char8 * const className, HeapI* const heap) const {
+Object *Reference::CreateByName(const char8 * const className,
+                                HeapI* const heap) const {
     Object *obj = NULL_PTR(Object *);
 
     const ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance()->Find(className);

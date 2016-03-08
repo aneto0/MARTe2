@@ -43,7 +43,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
+namespace MARTe {
 
 ReferenceContainer::ReferenceContainer() :
         Object() {
@@ -106,8 +106,8 @@ bool ReferenceContainer::Insert(Reference ref,
             ok = false;
         }
     }
-    else{
-        REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed FastLock()");
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
     }
     mux.FastUnLock();
     return ok;
@@ -158,19 +158,19 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                                     index--;
                                 }
                             }
-                            else{
-                                REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed StaticList::Delete()");
+                            else {
+                                REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Delete()");
                             }
                         }
                     }
-                    else{
-                        REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed StaticList::Insert()");
+                    else {
+                        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                     }
                 }
             }
 
             // no other stack waste!!
-            if(filter.IsFinished()){
+            if (filter.IsFinished()) {
                 break;
             }
 
@@ -196,12 +196,12 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                             }
                         }
                     }
-                    else{
-                        REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed FastLock()");
+                    else {
+                        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
                     }
                 }
-                else{
-                    REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed StaticList::Insert()");
+                else {
+                    REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                 }
             }
             if (!filter.IsReverse()) {
@@ -220,11 +220,39 @@ uint32 ReferenceContainer::Size() {
     if (mux.FastLock(muxTimeout) == ErrorManagement::NoError) {
         size = list.ListSize();
     }
-    else{
-        REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed FastLock()");
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
     }
     mux.FastUnLock();
     return size;
+}
+
+bool ReferenceContainer::Initialise(StructuredDataI &data) {
+
+    bool ok=true;
+    // Recursive initialization
+    for (uint32 i = 0u; i < data.GetNumberOfChildren(); i++) {
+        const char8* childName = data.GetChildName(i);
+        // case object
+        if ((childName[0] == '+') || (childName[0] == '$')) {
+            if (data.MoveRelative(childName)) {
+                Reference newObject;
+                ok = newObject.Initialise(data, false);
+                newObject->SetName(childName);
+                if (ok) {
+                    ok = ReferenceContainer::Insert(newObject);
+                }
+                if (ok) {
+                    ok = data.MoveToAncestor(1u);
+                }
+            }
+            else {
+                //TODO error
+                ok = false;
+            }
+        }
+    }
+    return ok;
 }
 
 CLASS_REGISTER(ReferenceContainer, "1.0")

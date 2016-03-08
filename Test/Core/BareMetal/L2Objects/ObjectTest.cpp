@@ -33,10 +33,13 @@
 #include "Reference.h"
 #include "StringHelper.h"
 #include "ObjectTestHelper.h"
-
+#include "TestObjectHelper3.h"
+#include "ConfigurationDatabase.h"
+#include "StreamString.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -214,3 +217,32 @@ bool ObjectTest::TestGetProperties() {
     const char8 *version = properties.GetVersion();
     return (StringHelper::Compare("Object", name) == 0) && (StringHelper::Compare("1.0", version) == 0);
 }
+
+#include "stdio.h"
+
+
+
+bool ObjectTest::TestToStructuredData(){
+
+    TestObjectHelper3 test;
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("test");
+    test.ToStructuredData(cdb);
+    cdb.MoveToRoot();
+    StreamString output;
+    output.Printf("%!", cdb);
+    printf("\n%s\n", output.Buffer());
+    return true;
+}
+
+
+bool ObjectTest::TestToIntrospectionToStructuredData(){
+    TestObjectHelper3 test;
+    ConfigurationDatabase cdb;
+    test.IntrospectionToStructuredData(cdb);
+    StreamString output;
+    output.Printf("%!", cdb);
+    printf("\n%s\n", output.Buffer());
+    return true;
+}
+

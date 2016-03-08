@@ -38,6 +38,7 @@
 #include "ClassRegistryItem.h"
 #include "StructuredDataI.h"
 #include "AnyType.h"
+#include "MessageI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                        Macro definitions                                  */
@@ -110,7 +111,7 @@
      * of an application or loading of a loadable library.                                                             \
      * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
      */                                                                                                                \
-    static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver);                 \
+    static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver, sizeof(className));                 \
     /*                                                                                                                 \
      * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
      * of an application or loading of a loadable library. It will automatically add the class type to the             \
@@ -177,7 +178,7 @@
           * of an application or loading of a loadable library.                                                             \
           * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
           */                                                                                                                \
-         static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver);          \
+         static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver, sizeof(className));          \
          /*                                                                                                                 \
           * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
           * of an application or loading of a loadable library. It will automatically add the class type to the             \
@@ -209,7 +210,7 @@
           * of an application or loading of a loadable library.                                                             \
           * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
           */                                                                                                                \
-         static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver);                 \
+         static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver, sizeof(className));                 \
          /*                                                                                                                 \
           * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
           * of an application or loading of a loadable library. It will automatically add the class type to the             \
@@ -264,6 +265,15 @@
              className ## ClassRegistryItem_.DecrementNumberOfInstances();                                                  \
          }
 
+#define FUNCTION_REGISTER(functionName,ver,function)     \
+        /*                                                                                                                 \
+         * Class properties of this class type. One instance per class type automatically instantiated at the start        \
+         * of an application or loading of a loadable library.                                                             \
+         * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
+         */                                                                                                                \
+        static MARTe::ClassProperties functionName ## _ ## ClassProperties_( #functionName , typeid(functionName).name(), ver, 0u);          \                                                                             \
+        static MARTe::ClassRegistryItem functionName ## _ ## ClassRegistryItem(functionName ## _ ## ClassProperties_, function);
+
 /*lint -restore */
 
 /*---------------------------------------------------------------------------*/
@@ -310,7 +320,14 @@ public:
      * @return true if all the input \a data is valid and can be successfully assigned
      * to the Object member variables.
      */
-    virtual bool Initialise(const StructuredDataI &data);
+    virtual bool Initialise(StructuredDataI &data);
+
+    virtual bool ProcessMessage(const MessageI & message, MessageI & data);
+
+    virtual bool ToStructuredData(StructuredDataI & data);
+
+    virtual bool IntrospectionToStructuredData(StructuredDataI & data,
+                                               int32 level = -1);
 
     /**
      * @brief Returns the number of references.

@@ -1,0 +1,94 @@
+/**
+ * @file RealTimeDataContainer.cpp
+ * @brief Source file for class RealTimeDataContainer
+ * @date 22/02/2016
+ * @author Giuseppe Ferrò
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This source file contains the definition of all the methods for
+ * the class RealTimeDataContainer (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+#include "RealTimeDataContainer.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+namespace MARTe {
+bool RealTimeDataContainer::Verify() {
+
+    bool ret = false;
+    for (uint32 i = 0u; (i < Size()) && (ret); i++) {
+        ReferenceT<RealTimeData> item = Get(i);
+        if (item.IsValid()) {
+            ret = item->Verify();
+        }
+    }
+
+    return ret;
+}
+
+bool RealTimeDataContainer::MergeWithLocal(StructuredDataI & localData) {
+
+    uint32 newItemsNumber = localData.GetNumberOfChildren();
+    bool ret = ((finalised) && (newItemsNumber == 0u));
+
+    if (!finalised) {
+        ret = true;
+        for (uint32 i = 0u; (i < newItemsNumber) & (ret); i++) {
+            const char8 * newItemName = localData.GetChildName(i);
+            for (uint32 j = 0u; j < Size(); j++) {
+                Reference item = Get(i);
+                if (StringHelper::Compare(item->GetName(), newItemName) == 0) {
+                    ret = false;
+                    //TODO Already exists a variable with the same name!!
+                }
+                else {
+                    ReferenceT<RealTimeData> newItem;
+                    newItem.Initialise(localData, false);
+                    if (newItem.IsValid()) {
+                        ret = Insert(newItem);
+                    }
+                    else{
+                        ret=false;
+                    }
+                }
+            }
+        }
+    }
+    return ret;
+}
+
+bool RealTimeDataContainer::Initialise(StructuredDataI & data) {
+    bool ret = ReferenceContainer::Initialise(data);
+    if (ret) {
+        ret = (data.Read("IsFinalised", finalised));
+    }
+    return ret;
+}
+
+}
