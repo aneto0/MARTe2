@@ -50,13 +50,15 @@ bool RealTimeDataSourceDef::AddConsumer(const char8 *stateIn,
     uint32 index;
     bool found = false;
     bool ret = false;
+    printf("\nadding consumer %s\n", stateIn);
+
     ReferenceT<RealTimeDataSourceDefRecord> record;
     uint32 numberOfStates = Size();
     for (index = 0u; (index < numberOfStates) && (!found); index++) {
         StreamString stateName = stateIn;
         record = Get(index);
         if (record.IsValid()) {
-            if (stateName == record->GetStateName()) {
+            if (stateName == record->GetName()) {
                 found = true;
             }
         }
@@ -67,7 +69,7 @@ bool RealTimeDataSourceDef::AddConsumer(const char8 *stateIn,
     else {
         record = ReferenceT<RealTimeDataSourceDefRecord>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         if (record.IsValid()) {
-            record->SetStateName(stateIn);
+            record->SetName(stateIn);
             ret = record->AddConsumer(gam);
             if (ret) {
                 ret = Insert(record);
@@ -83,13 +85,15 @@ bool RealTimeDataSourceDef::AddProducer(const char8 *stateIn,
     uint32 index;
     bool found = false;
     bool ret = false;
+    printf("\nadding producer %s\n", stateIn);
+
     ReferenceT<RealTimeDataSourceDefRecord> record;
     uint32 numberOfStates = Size();
     for (index = 0u; (index < numberOfStates) && (!found); index++) {
         StreamString stateName = stateIn;
         record = Get(index);
         if (record.IsValid()) {
-            if (stateName == record->GetStateName()) {
+            if (stateName == record->GetName()) {
                 found = true;
             }
         }
@@ -100,7 +104,7 @@ bool RealTimeDataSourceDef::AddProducer(const char8 *stateIn,
     else {
         record = ReferenceT<RealTimeDataSourceDefRecord>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         if (record.IsValid()) {
-            record->SetStateName(stateIn);
+            record->SetName(stateIn);
             ret = record->AddProducer(gam);
             if (ret) {
                 ret = Insert(record);
@@ -113,7 +117,17 @@ bool RealTimeDataSourceDef::AddProducer(const char8 *stateIn,
 
 uint32 RealTimeDataSourceDef::GetNumberOfConsumers(const char8 * stateIn) {
     uint32 ret = 0u;
-    ReferenceT<RealTimeDataSourceDefRecord> record = Find(stateIn);
+    uint32 numberOfRecords = Size();
+    ReferenceT<RealTimeDataSourceDefRecord> record;
+    for (uint32 i = 0u; i < numberOfRecords; i++) {
+        record = Get(i);
+        if (record.IsValid()) {
+            if (StringHelper::Compare(record->GetName(), stateIn) == 0) {
+                break;
+            }
+        }
+    }
+
     if (record.IsValid()) {
         ret = record->GetNumberOfConsumers();
     }
@@ -123,7 +137,16 @@ uint32 RealTimeDataSourceDef::GetNumberOfConsumers(const char8 * stateIn) {
 
 uint32 RealTimeDataSourceDef::GetNumberOfProducers(const char8 * stateIn) {
     uint32 ret = 0u;
-    ReferenceT<RealTimeDataSourceDefRecord> record = Find(stateIn);
+    uint32 numberOfRecords = Size();
+    ReferenceT<RealTimeDataSourceDefRecord> record;
+    for (uint32 i = 0u; i < numberOfRecords; i++) {
+        record = Get(i);
+        if (record.IsValid()) {
+            if (StringHelper::Compare(record->GetName(), stateIn) == 0) {
+                break;
+            }
+        }
+    }
     if (record.IsValid()) {
         ret = record->GetNumberOfProducers();
     }

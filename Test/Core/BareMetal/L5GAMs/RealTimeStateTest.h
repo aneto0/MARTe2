@@ -53,6 +53,17 @@ public:
 
     bool TestConfigureArchitecture_SingleInGAMGroup();
 
+    bool TestInsertFunction();
+
+    bool TestAddGAMGroup();
+
+    bool TestGetGAMGroups();
+
+    bool TestGetNumberOfGAMGroups();
+
+    bool TestChangeState();
+
+    bool TestGetContextActiveBuffer();
 
 private:
     ConfigurationDatabase cdb;

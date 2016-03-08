@@ -60,9 +60,11 @@ public:
 
     ~PIDGAM();
 
-    virtual void SetUp();
     virtual void Execute(uint8 activeContextBuffer);
+protected:
+    virtual void SetUp();
 
+private:
 };
 
 class PIDGAMGroup: public GAMGroup {
@@ -84,8 +86,9 @@ class PlantGAM: public GAM {
 public:
     CLASS_REGISTER_DECLARATION()
 
-    virtual void SetUp();
     virtual void Execute(uint8 activeContextBuffer);
+protected:
+    virtual void SetUp();
 
 };
 
@@ -108,7 +111,6 @@ static ConfigurationDatabase GetCDB() {
     cdb.Write("Class", "PIDGAM");
     cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM4");
     cdb.Write("Class", "PIDGAM");
-
 
     cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer");
     cdb.Write("Class", "ReferenceContainer");
@@ -171,12 +173,43 @@ static ConfigurationDatabase GetCDB() {
     cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM6");
     cdb.Write("Class", "PIDGAM");
 
-
-
     cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2");
     cdb.Write("Class", "PIDGAMGroup");
     cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7");
     cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7.+Inputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsInput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7.+Inputs.+Error");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "TrackError");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7.+Inputs.+Error.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Default", "2");
+    cdb.Write("Path", "+DDB3.PidError2");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7.+Outputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsOutput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7.+Outputs.+Control");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlIn");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7.+Outputs.+Control.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "+DDB4.PidControl2");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "true");
+
+
+
     cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8");
     cdb.Write("Class", "PIDGAM");
 

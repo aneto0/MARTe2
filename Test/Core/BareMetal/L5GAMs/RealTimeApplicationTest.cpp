@@ -35,6 +35,7 @@
 #include "ObjectRegistryDatabase.h"
 #include "RealTimeDataSourceDefContainer.h"
 #include "GAMTestHelper.h"
+#include "RealTimeDataSourceDef.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -45,7 +46,7 @@
 /*---------------------------------------------------------------------------*/
 
 RealTimeApplicationTest::RealTimeApplicationTest() {
-    cdb=GetCDB();
+    cdb = GetCDB();
     bool x = ObjectRegistryDatabase::Instance()->Initialise(cdb);
     printf("\nINITIALIZATION = %d\n", x);
 }
@@ -67,8 +68,11 @@ bool RealTimeApplicationTest::TestConfigureArchitecture() {
         return false;
     }
 
-    application->ConfigureArchitecture();
+    if (!application->ConfigureArchitecture()) {
+        return false;
+    }
 
+    // check if the state 1 is consistent with definitions
     ReferenceT<RealTimeState> state1 = god->Find("$Application1.+States.+State1");
     if (!state1.IsValid()) {
         return false;
@@ -78,6 +82,12 @@ bool RealTimeApplicationTest::TestConfigureArchitecture() {
         return false;
     }
 
+    ReferenceT<PIDGAMGroup> gamGroup1 = god->Find("$Application1.+Functions.+PIDGroup1");
+    if (state1->GetGAMGroups()[0] != gamGroup1) {
+        return false;
+    }
+
+    // check the thread 1
     ReferenceT<RealTimeThread> thread1 = god->Find("$Application1.+States.+State1.+Threads.+Thread1");
     if (!thread1.IsValid()) {
         return false;
@@ -88,48 +98,18 @@ bool RealTimeApplicationTest::TestConfigureArchitecture() {
         return false;
     }
 
-    ReferenceT<GAM> *gams = thread1->GetGAMs();
+    ReferenceT<GAM> *gams1 = thread1->GetGAMs();
     ReferenceT<GAM> test1 = god->Find("$Application1.+Functions.+GAM1");
     ReferenceT<GAM> test2 = god->Find("$Application1.+Functions.+GAM2");
 
-    if ((!test1.IsValid()) || (!test2.IsValid())) {
+    if (gams1[0] != test1) {
         return false;
     }
-    if (gams[0] != test1) {
-        return false;
-    }
-    if (gams[1] != test2) {
+    if (gams1[1] != test2) {
         return false;
     }
 
-    StreamString output;
-    ConfigurationDatabase outputCDB;
-    god->ToStructuredData(outputCDB);
-    output.Printf("%!", outputCDB);
-    printf("\n%s\n", output.Buffer());
-
-    return true;
-}
-
-bool RealTimeApplicationTest::TestConfigureArchitectureGAMGroup() {
-
-    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-    ReferenceT<RealTimeApplication> application = god->Find("$Application1");
-    if (!application.IsValid()) {
-        return false;
-    }
-
-    application->ConfigureArchitecture();
-
-    ReferenceT<RealTimeState> state1 = god->Find("$Application1.+States.+State1");
-    if (!state1.IsValid()) {
-        return false;
-    }
-
-    if (state1->GetNumberOfGAMGroups() != 1) {
-        return false;
-    }
-
+    // check the thread 2
     ReferenceT<RealTimeThread> thread2 = god->Find("$Application1.+States.+State1.+Threads.+Thread2");
     if (!thread2.IsValid()) {
         return false;
@@ -145,23 +125,87 @@ bool RealTimeApplicationTest::TestConfigureArchitectureGAMGroup() {
         return false;
     }
 
-    ReferenceT<GAM> *gams = thread2->GetGAMs();
-    ReferenceT<GAM> test1 = god->Find("$Application1.+Functions.+PIDGroup1.+GAM3");
-    ReferenceT<GAM> test2 = god->Find("$Application1.+Functions.+PIDGroup1.+GAM4");
+    ReferenceT<GAM> *gams2 = thread2->GetGAMs();
+    ReferenceT<GAM> test3 = god->Find("$Application1.+Functions.+PIDGroup1.+GAM3");
+    ReferenceT<GAM> test4 = god->Find("$Application1.+Functions.+PIDGroup1.+GAM4");
 
-    if ((!test1.IsValid()) || (!test2.IsValid())) {
+    if (gams2[0] != test3) {
         return false;
     }
-    if (gams[0] != test1) {
+    if (gams2[1] != test4) {
         return false;
     }
-    if (gams[1] != test2) {
+
+    // check the state 2
+    ReferenceT<RealTimeState> state2 = god->Find("$Application1.+States.+State2");
+    if (!state2.IsValid()) {
+        return false;
+    }
+
+    if (state2->GetNumberOfGAMGroups() != 1) {
+        return false;
+    }
+
+    ReferenceT<PIDGAMGroup> gamGroup2 = god->Find("$Application1.+Functions.+PIDGroup2");
+    if (state2->GetGAMGroups()[0] != gamGroup2) {
+        return false;
+    }
+
+    // check the thread 3
+
+    ReferenceT<RealTimeThread> thread3 = god->Find("$Application1.+States.+State2.+Threads.+Thread1");
+    if (!thread3.IsValid()) {
+        return false;
+    }
+
+    if (thread3->GetNumberOfFunctions() != 1) {
+        printf("\n%d\n", thread2->GetNumberOfFunctions());
+        return false;
+    }
+
+    if (thread3->GetNumberOfGAMs() != 2) {
+        printf("\n%d\n", thread2->GetNumberOfGAMs());
+        return false;
+    }
+
+    ReferenceT<GAM> *gams3 = thread3->GetGAMs();
+    ReferenceT<GAM> test5 = god->Find("$Application1.+Functions.+GAMContainer.+GAM5");
+    ReferenceT<GAM> test6 = god->Find("$Application1.+Functions.+GAMContainer.+GAM6");
+
+    if (gams3[0] != test5) {
+        return false;
+    }
+    if (gams3[1] != test6) {
+        return false;
+    }
+
+    // check the thread 4
+    ReferenceT<RealTimeThread> thread4 = god->Find("$Application1.+States.+State2.+Threads.+Thread2");
+
+    if (thread4->GetNumberOfFunctions() != 2) {
+        printf("\n%d\n", thread2->GetNumberOfFunctions());
+        return false;
+    }
+
+    if (thread4->GetNumberOfGAMs() != 2) {
+        printf("\n%d\n", thread2->GetNumberOfGAMs());
+        return false;
+    }
+
+    ReferenceT<GAM> *gams4 = thread4->GetGAMs();
+    ReferenceT<GAM> test7 = god->Find("$Application1.+Functions.+PIDGroup2.+GAM7");
+    ReferenceT<GAM> test8 = god->Find("$Application1.+Functions.+PIDGroup2.+GAM8");
+
+    if (gams4[0] != test7) {
+        return false;
+    }
+    if (gams4[1] != test8) {
         return false;
     }
 
     StreamString output;
     ConfigurationDatabase outputCDB;
-    god->ToStructuredData(outputCDB);
+    application->ToStructuredData(outputCDB);
     output.Printf("%!", outputCDB);
     printf("\n%s\n", output.Buffer());
 
@@ -169,74 +213,596 @@ bool RealTimeApplicationTest::TestConfigureArchitectureGAMGroup() {
 }
 
 bool RealTimeApplicationTest::TestConfigureDataSource() {
+    ConfigurationDatabase cdb1;
 
-    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-    ReferenceT<RealTimeApplication> application = god->Find("$Application1");
-    if (!application.IsValid()) {
+    // application
+    cdb1.CreateAbsolute("$Application1");
+    cdb1.Write("Class", "RealTimeApplication");
+    //functions
+    cdb1.CreateAbsolute("$Application1.+Functions");
+    cdb1.Write("Class", "ReferenceContainer");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM1");
+    cdb1.Write("Class", "PlantGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM1.+Inputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsInput", "true");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM1.+Inputs.+Control");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "TrackError");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM1.+Inputs.+Control.+Par1");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB2.PidControl1");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM1.+Inputs.+Control.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB2.PidControl2");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM1.+Outputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsOutput", "true");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM1.+Outputs.+Error");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "TrackError");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM1.+Outputs.+Error.+Par1");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "1");
+    cdb1.Write("Path", "+DDB1.PidError1");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM1.+Outputs.+Error.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB1.PidError2");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM2");
+    cdb1.Write("Class", "PIDGAM");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup1");
+    cdb1.Write("Class", "PIDGAMGroup");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM3");
+    cdb1.Write("Class", "PIDGAM");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM4");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer");
+    cdb1.Write("Class", "ReferenceContainer");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsInput", "true");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs.+Error");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "TrackError");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs.+Error.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB1.PidError2");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsOutput", "true");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "ControlIn");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Path", "+DDB2.PidControl2");
+    cdb1.Write("Default", "1");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Noise");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "ControlNoise");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Noise.+noiseValue");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "float32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB2.PidNoise");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs");
+    cdb1.Write("IsOutput", "true");
+    cdb1.Write("IsFinal", "true");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "ControlIn");
+    cdb1.Write("IsFinal", "true");
+    cdb1.Write("Default", "1");
+    cdb1.Write("Path", "+DDB1.u1");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM6");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2");
+    cdb1.Write("Class", "PIDGAMGroup");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8");
+    cdb1.Write("Class", "PIDGAM");
+
+    // state 1
+    cdb1.CreateAbsolute("$Application1.+States");
+    cdb1.Write("Class", "ReferenceContainer");
+    cdb1.CreateAbsolute("$Application1.+States.+State1");
+    cdb1.Write("Class", "RealTimeState");
+    cdb1.CreateAbsolute("$Application1.+States.+State1.+Threads");
+    cdb1.Write("Class", "ReferenceContainer");
+
+    // state 1 threads
+    cdb1.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread1");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT1[2] = { ":+Functions.+GAM1", ":+Functions.+GAM2" };
+    cdb1.Write("Functions", functionsT1);
+    cdb1.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread2");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT2[1] = { ":+Functions.+PIDGroup1" };
+    cdb1.Write("Functions", functionsT2);
+
+    // state 2
+    cdb1.CreateAbsolute("$Application1.+States.+State2");
+    cdb1.Write("Class", "RealTimeState");
+    cdb1.CreateAbsolute("$Application1.+States.+State2.+Threads");
+    cdb1.Write("Class", "ReferenceContainer");
+
+    // state 2 threads
+    cdb1.CreateAbsolute("$Application1.+States.+State2.+Threads.+Thread1");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT3[1] = { ":+Functions.+GAMContainer" };
+    cdb1.Write("Functions", functionsT3);
+    cdb1.CreateAbsolute("$Application1.+States.+State2.+Threads.+Thread2");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT4[2] = { ":+Functions.+PIDGroup2.+GAM7", ":+Functions.+PIDGroup2.+GAM8" };
+    cdb1.Write("Functions", functionsT4);
+
+    // data
+    cdb1.CreateAbsolute("$Application1.+Data");
+    cdb1.Write("Class", "RealTimeDataSourceDefContainer");
+    cdb1.Write("IsFinal", "false");
+    cdb1.MoveToRoot();
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Initialise(cdb1);
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("$Application1");
+
+    if (!app->ConfigureArchitecture()) {
+        return false;
+    }
+    if (!app->ConfigureDataSource()) {
         return false;
     }
 
-    if (!application->ConfigureArchitecture()) {
+    // each definition must have one producer and one consumer
+    ReferenceT<RealTimeDataSourceDef> def1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+Data.+DDB1.PidError1");
+    if (def1->GetNumberOfConsumers("+State1") != 0 || def1->GetNumberOfProducers("+State1") != 1) {
+        printf("\n1 %d %d\n", def1->GetNumberOfConsumers("+State1"), def1->GetNumberOfProducers("+State1"));
         return false;
     }
 
-    if (!application->ConfigureDataSource()) {
+    if (def1->GetNumberOfConsumers("+State2") != 1 || def1->GetNumberOfProducers("+State2") != 0) {
         return false;
     }
 
-    ReferenceT<RealTimeDataSourceDefContainer> data = god->Find("$Application1.+Data");
-    if (!data.IsValid()) {
+    // each definition must have one producer and one consumer
+    ReferenceT<RealTimeDataSourceDef> def2 = ObjectRegistryDatabase::Instance()->Find("$Application1.+Data.+DDB1.PidError2");
+    if (def2->GetNumberOfConsumers("+State1") != 0 || def2->GetNumberOfProducers("+State1") != 1) {
+        printf("\n2 %d %d\n", def2->GetNumberOfConsumers("+State1"), def2->GetNumberOfProducers("+State1"));
         return false;
     }
 
-    StreamString output;
-    ConfigurationDatabase outputCDB;
-    god->ToStructuredData(outputCDB);
-    output.Printf("%!", outputCDB);
-    printf("\n%s\n", output.Buffer());
+    if (def2->GetNumberOfConsumers("+State2") != 1 || def2->GetNumberOfProducers("+State2") != 0) {
+        return false;
+    }
 
-    printf("\n%d\n", data->Size());
-    return data->Size() == 2;
+    // each definition must have one producer and one consumer
+    ReferenceT<RealTimeDataSourceDef> def3 = ObjectRegistryDatabase::Instance()->Find("$Application1.+Data.+DDB2.PidControl1");
+    if (def3->GetNumberOfConsumers("+State1") != 1 || def3->GetNumberOfProducers("+State1") != 0) {
+        printf("\n3 %d %d\n", def3->GetNumberOfConsumers("+State1"), def3->GetNumberOfProducers("+State1"));
+        return false;
+    }
 
-    /*    ReferenceT<RealTimeState> state1 = god->Find("$Application1.+States.+State1");
-     if (!state1.IsValid()) {
-     return false;
-     }
+    if (def3->GetNumberOfConsumers("+State2") != 0 || def3->GetNumberOfProducers("+State2") != 1) {
+        return false;
+    }
 
-     if (state1->GetNumberOfElements() != 1) {
-     return false;
-     }
+    // each definition must have one producer and one consumer
+    ReferenceT<RealTimeDataSourceDef> def4 = ObjectRegistryDatabase::Instance()->Find("$Application1.+Data.+DDB2.PidControl2");
+    if (def4->GetNumberOfConsumers("+State1") != 1 || def4->GetNumberOfProducers("+State1") != 0) {
+        printf("\n4 %d %d\n", def4->GetNumberOfConsumers("+State1"), def4->GetNumberOfProducers("+State1"));
+        return false;
+    }
 
-     ReferenceT<RealTimeThread> thread2 = god->Find("$Application1.+States.+State1.+Threads.+Thread2");
-     if (!thread2.IsValid()) {
-     return false;
-     }
+    if (def4->GetNumberOfConsumers("+State2") != 0 || def4->GetNumberOfProducers("+State2") != 1) {
+        return false;
+    }
 
-     if (thread2->GetNumberOfFunctions() != 1) {
-     printf("\n%d\n", thread2->GetNumberOfFunctions());
-     return false;
-     }
-
-     if (thread2->GetNumberOfGAMs() != 2) {
-     printf("\n%d\n", thread2->GetNumberOfGAMs());
-     return false;
-     }
-
-     ReferenceT<GAM> *gams = thread2->GetGAMs();
-     ReferenceT<GAM> test1 = god->Find("$Application1.+Functions.+PIDGroup1.+GAM3");
-     ReferenceT<GAM> test2 = god->Find("$Application1.+Functions.+PIDGroup1.+GAM4");
-
-     if ((!test1.IsValid()) || (!test2.IsValid())) {
-     return false;
-     }
-     if (gams[0] != test1) {
-     return false;
-     }
-     if (gams[1] != test2) {
-     return false;
-     }
-     */
     return true;
-
 }
 
+bool RealTimeApplicationTest::TestValidateDataSource() {
+    ConfigurationDatabase cdb1;
+
+    // application
+    cdb1.CreateAbsolute("$Application1");
+    cdb1.Write("Class", "RealTimeApplication");
+    //functions
+    cdb1.CreateAbsolute("$Application1.+Functions");
+    cdb1.Write("Class", "ReferenceContainer");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM1");
+    cdb1.Write("Class", "PIDGAM");
+
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM2");
+    cdb1.Write("Class", "PIDGAM");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup1");
+    cdb1.Write("Class", "PIDGAMGroup");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM3");
+    cdb1.Write("Class", "PIDGAM");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM4");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer");
+    cdb1.Write("Class", "ReferenceContainer");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsInput", "true");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs.+Error");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "TrackError");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs.+Error.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB1.PidError2");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsOutput", "true");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "ControlIn");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Path", "+DDB2.PidControl2");
+    cdb1.Write("Default", "1");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Noise");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "ControlNoise");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Noise.+noiseValue");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "float32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB2.PidNoise");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs");
+    cdb1.Write("IsOutput", "true");
+    cdb1.Write("IsFinal", "true");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "ControlIn");
+    cdb1.Write("IsFinal", "true");
+    cdb1.Write("Default", "1");
+    cdb1.Write("Path", "+DDB1.u1");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM6");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2");
+    cdb1.Write("Class", "PIDGAMGroup");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8");
+    cdb1.Write("Class", "PlantGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Inputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsInput", "true");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Inputs.+Control");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "TrackError");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Inputs.+Control.+Par1");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB2.PidControl1");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Inputs.+Control.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB2.PidControl2");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Outputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsOutput", "true");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Outputs.+Error");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "TrackError");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Outputs.+Error.+Par1");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "1");
+    cdb1.Write("Path", "+DDB1.PidError1");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Outputs.+Error.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB1.PidError2");
+    cdb1.Write("IsFinal", "true");
+
+
+    // state 1
+    cdb1.CreateAbsolute("$Application1.+States");
+    cdb1.Write("Class", "ReferenceContainer");
+    cdb1.CreateAbsolute("$Application1.+States.+State1");
+    cdb1.Write("Class", "RealTimeState");
+    cdb1.CreateAbsolute("$Application1.+States.+State1.+Threads");
+    cdb1.Write("Class", "ReferenceContainer");
+
+    // state 1 threads
+    cdb1.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread1");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT1[2] = { ":+Functions.+GAM1", ":+Functions.+GAM2" };
+    cdb1.Write("Functions", functionsT1);
+    cdb1.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread2");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT2[1] = { ":+Functions.+PIDGroup1" };
+    cdb1.Write("Functions", functionsT2);
+
+    // state 2
+    cdb1.CreateAbsolute("$Application1.+States.+State2");
+    cdb1.Write("Class", "RealTimeState");
+    cdb1.CreateAbsolute("$Application1.+States.+State2.+Threads");
+    cdb1.Write("Class", "ReferenceContainer");
+
+    // state 2 threads
+    cdb1.CreateAbsolute("$Application1.+States.+State2.+Threads.+Thread1");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT3[1] = { ":+Functions.+GAMContainer" };
+    cdb1.Write("Functions", functionsT3);
+    cdb1.CreateAbsolute("$Application1.+States.+State2.+Threads.+Thread2");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT4[2] = { ":+Functions.+PIDGroup2.+GAM7", ":+Functions.+PIDGroup2.+GAM8" };
+    cdb1.Write("Functions", functionsT4);
+
+    // data
+    cdb1.CreateAbsolute("$Application1.+Data");
+    cdb1.Write("Class", "RealTimeDataSourceDefContainer");
+    cdb1.Write("IsFinal", "false");
+    cdb1.MoveToRoot();
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Initialise(cdb1);
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("$Application1");
+
+    if (!app->ConfigureArchitecture()) {
+        return false;
+    }
+    if (!app->ConfigureDataSource()) {
+        return false;
+    }
+
+    return app->ValidateDataSource();
+}
+
+bool RealTimeApplicationTest::TestValidateDataSourceFalse_MoreThanOneConsumer(){
+    ConfigurationDatabase cdb1;
+
+    // application
+    cdb1.CreateAbsolute("$Application1");
+    cdb1.Write("Class", "RealTimeApplication");
+    //functions
+    cdb1.CreateAbsolute("$Application1.+Functions");
+    cdb1.Write("Class", "ReferenceContainer");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM1");
+    cdb1.Write("Class", "PIDGAM");
+
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM2");
+    cdb1.Write("Class", "PIDGAM");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup1");
+    cdb1.Write("Class", "PIDGAMGroup");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM3");
+    cdb1.Write("Class", "PIDGAM");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM4");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer");
+    cdb1.Write("Class", "ReferenceContainer");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsInput", "true");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs.+Error");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "TrackError");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs.+Error.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB1.PidError2");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsOutput", "true");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "ControlIn");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Path", "+DDB2.PidControl2");
+    cdb1.Write("Default", "1");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Noise");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "ControlNoise");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Noise.+noiseValue");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "float32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB2.PidNoise");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs");
+    cdb1.Write("IsOutput", "true");
+    cdb1.Write("IsFinal", "true");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "ControlIn");
+    cdb1.Write("IsFinal", "true");
+    cdb1.Write("Default", "1");
+    cdb1.Write("Path", "+DDB1.u1");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM6");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2");
+    cdb1.Write("Class", "PIDGAMGroup");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Inputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsInput", "true");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Inputs.+Error");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "TrackError");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Inputs.+Error.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB1.PidError2");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Outputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsOutput", "true");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Outputs.+Control");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "ControlIn");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Outputs.+Control.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Path", "+DDB2.PidControl2");
+    cdb1.Write("Default", "1");
+    cdb1.Write("IsFinal", "true");
+
+
+    // state 1
+    cdb1.CreateAbsolute("$Application1.+States");
+    cdb1.Write("Class", "ReferenceContainer");
+    cdb1.CreateAbsolute("$Application1.+States.+State1");
+    cdb1.Write("Class", "RealTimeState");
+    cdb1.CreateAbsolute("$Application1.+States.+State1.+Threads");
+    cdb1.Write("Class", "ReferenceContainer");
+
+    // state 1 threads
+    cdb1.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread1");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT1[2] = { ":+Functions.+GAM1", ":+Functions.+GAM2" };
+    cdb1.Write("Functions", functionsT1);
+    cdb1.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread2");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT2[1] = { ":+Functions.+PIDGroup1" };
+    cdb1.Write("Functions", functionsT2);
+
+    // state 2
+    cdb1.CreateAbsolute("$Application1.+States.+State2");
+    cdb1.Write("Class", "RealTimeState");
+    cdb1.CreateAbsolute("$Application1.+States.+State2.+Threads");
+    cdb1.Write("Class", "ReferenceContainer");
+
+    // state 2 threads
+    cdb1.CreateAbsolute("$Application1.+States.+State2.+Threads.+Thread1");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT3[1] = { ":+Functions.+GAMContainer" };
+    cdb1.Write("Functions", functionsT3);
+    cdb1.CreateAbsolute("$Application1.+States.+State2.+Threads.+Thread2");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT4[2] = { ":+Functions.+PIDGroup2.+GAM7", ":+Functions.+PIDGroup2.+GAM8" };
+    cdb1.Write("Functions", functionsT4);
+
+    // data
+    cdb1.CreateAbsolute("$Application1.+Data");
+    cdb1.Write("Class", "RealTimeDataSourceDefContainer");
+    cdb1.Write("IsFinal", "false");
+    cdb1.MoveToRoot();
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Initialise(cdb1);
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("$Application1");
+
+    if (!app->ConfigureArchitecture()) {
+
+        return false;
+    }
+    if (!app->ConfigureDataSource()) {
+        return false;
+    }
+
+    return !app->ValidateDataSource();
+}

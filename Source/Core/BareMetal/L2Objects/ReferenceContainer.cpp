@@ -314,6 +314,8 @@ uint32 ReferenceContainer::Size() {
 
 bool ReferenceContainer::Initialise(StructuredDataI &data) {
 
+    // only one thread has to initialise.
+
     // Recursive initialization
     bool ok = true;
     uint32 numberOfChildren = data.GetNumberOfChildren();
@@ -345,6 +347,7 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
 
 bool ReferenceContainer::ToStructuredData(StructuredDataI & data) {
 
+    // no need to lock
     const char8 * name = GetName();
     bool ret = data.CreateRelative(name);
     if (ret) {

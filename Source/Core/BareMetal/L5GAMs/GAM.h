@@ -63,34 +63,36 @@ public:
      */
     GAM();
 
+    /**
+     * @brief Destructor
+     * @details Frees the array containing the supported states names.
+     */
     virtual ~GAM();
 
 
     /**
-     * @brief Setup the GAM.
-     * @details Initialises the local status (memory allocation
-     * of the IO structures, parsing of a local configuration file, accelerator creations, ecc)
+     * @brief Generates the data source definitions ( in RealTimeApplication_name.+Data ) looking to the path
+     * of each RealTimeDataDefI declared into this GAM.
      */
-    virtual void SetUp()=0;
-
-    /**
-     * @brief Completes the IO structure definitions (see RealTimeDataDefI) found in the global CDB
-     * with the definitions in the local CDB and check their consistency.
-     * @param[in] localData is the local StructuredData.
-     * @return false in case of conflicts between the local and the global definitions, or
-     * if the definitions are inconsistent with registered types. True otherwise.
-     */
-    virtual bool ConfigureFunction();
-
     virtual bool ConfigureDataSource();
 
-
+    /**
+     * @brief Links this GAM to its RealTimeApplication.
+     * @param[in] rtApp is a reference to the RealTimeApplication where this GAM is declared into.
+     */
     void SetApplication(ReferenceT<RealTimeApplication> rtApp);
 
+    /**
+     * @brief Links this GAM to its GAMGroup.
+     * @param[in] gamGroup is the GAMGroup involving this GAM.
+     */
     void SetGAMGroup(ReferenceT<GAMGroup> gamGroup);
 
 
-
+    /**
+     * @brief Adds the name of a RealTimeState where this GAM is declared into.
+     * @param[in] stateName is the RealTimeState name.
+     */
     void AddState(const char8 *stateName);
 
     /**
@@ -99,9 +101,16 @@ public:
      */
     virtual void Execute(uint8 activeContextBuffer)=0;
 
+    /**
+     * @brief calls the Initialise(*) function for each sub-node, then calls the functions
+     * SetUp(*) and ConfigureFunction(*) due to initialise the local environment.
+     */
     virtual bool Initialise(StructuredDataI & data);
 
 
+    /**
+     * @brief Retrieves the states names where this class is declared into
+     */
     StreamString *GetSupportedStates() ;
 
     /**
@@ -114,6 +123,13 @@ public:
 protected:
 
     /**
+     * @brief Setup the GAM.
+     * @details Initialises the local status (memory allocation
+     * of the IO structures, local configuration file, ecc)
+     */
+    virtual void SetUp()=0;
+
+    /**
      * The names of the supported states
      */
     StreamString *supportedStates;
@@ -124,14 +140,34 @@ protected:
     uint32 numberOfSupportedStates;
 
 
+    /**
+     * The local configuration
+     */
     StructuredDataI* localData;
 
-
+    /**
+     * Link to the RealTimeApplication
+     */
     ReferenceT<RealTimeApplication> application;
 
+    /**
+     * Link to the GAMGroup
+     */
     ReferenceT<GAMGroup> group;
     //? IOData?
     //? context?
+
+private:
+    /**
+     * @brief Completes the IO structure definitions (see RealTimeDataDefI) found in the global CDB
+     * with the definitions in the local CDB and check their consistency.
+     * @param[in] localData is the local StructuredData.
+     * @return false in case of conflicts between the local and the global definitions, or
+     * if the definitions are inconsistent with registered types. True otherwise.
+     */
+    bool ConfigureFunction();
+
+
 };
 
 }

@@ -68,11 +68,6 @@ RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord() {
 }
 
 
-void RealTimeDataSourceDefRecord::SetStateName(const char8 * stateName) {
-    state = stateName;
-
-}
-
 bool RealTimeDataSourceDefRecord::AddConsumer(ReferenceT<GAM> gamConsumer) {
 
     bool ret = consumers.IsValid();
@@ -104,9 +99,6 @@ uint32 RealTimeDataSourceDefRecord::GetNumberOfProducers() {
     return producers->Size();
 }
 
-const char8 * RealTimeDataSourceDefRecord::GetStateName() {
-    return state.Buffer();
-}
 
 ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetConsumers() {
     return consumers;

@@ -55,6 +55,16 @@ TEST(RealTimeDataSourceDefGTest,TestAddProducer) {
     ASSERT_TRUE(rtdsdTest.TestAddProducer());
 }
 
+TEST(RealTimeDataSourceDefGTest,TestGetNumberOfConsumers) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestGetNumberOfConsumers());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestGetNumberOfProducers) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestGetNumberOfProducers());
+}
+
 TEST(RealTimeDataSourceDefGTest,TestVerifyTrue) {
     RealTimeDataSourceDefTest rtdsdTest;
     ASSERT_TRUE(rtdsdTest.TestVerifyTrue());

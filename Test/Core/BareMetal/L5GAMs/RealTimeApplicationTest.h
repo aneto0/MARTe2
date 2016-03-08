@@ -52,10 +52,11 @@ public:
 
     bool TestConfigureArchitecture();
 
-    bool TestConfigureArchitectureGAMGroup();
-
     bool TestConfigureDataSource();
 
+    bool TestValidateDataSource();
+
+    bool TestValidateDataSourceFalse_MoreThanOneConsumer();
 
 private:
     ConfigurationDatabase cdb;

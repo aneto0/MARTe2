@@ -51,12 +51,18 @@ TEST(RealTimeApplicationGTest,TestConfigureArchitecture) {
     ASSERT_TRUE(rtappTest.TestConfigureArchitecture());
 }
 
-TEST(RealTimeApplicationGTest,TestConfigureArchitectureGAMGroup) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestConfigureArchitectureGAMGroup());
-}
 
 TEST(RealTimeApplicationGTest,TestConfigureDataSource) {
     RealTimeApplicationTest rtappTest;
     ASSERT_TRUE(rtappTest.TestConfigureDataSource());
+}
+
+TEST(RealTimeApplicationGTest,TestValidateDataSource) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestValidateDataSource());
+}
+
+TEST(RealTimeApplicationGTest,TestValidateDataSourceFalse_MoreThanOneConsumer) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestValidateDataSourceFalse_MoreThanOneConsumer());
 }

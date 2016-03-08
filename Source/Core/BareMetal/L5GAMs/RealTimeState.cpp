@@ -58,7 +58,17 @@ RealTimeState::~RealTimeState() {
 bool RealTimeState::ConfigureArchitecture(RealTimeApplication & rtApp) {
 
     // there must be a container called Threads
-    ReferenceT<ReferenceContainer> threadContainer = Find("+Threads");
+    ReferenceT<ReferenceContainer> threadContainer;
+    uint32 numberOfContainers = Size();
+    for (uint32 i = 0u; i < numberOfContainers; i++) {
+        Reference item = Get(i);
+        if (item.IsValid()) {
+            if (StringHelper::Compare(item->GetName(), "+Threads") == 0) {
+                threadContainer = item;
+            }
+        }
+    }
+
     bool ret = threadContainer.IsValid();
 
     if (ret) {
@@ -80,7 +90,16 @@ bool RealTimeState::ConfigureArchitecture(RealTimeApplication & rtApp) {
 }
 
 bool RealTimeState::InsertFunction(Reference functionReference) {
-    ReferenceT<ReferenceContainer> functionsContainer = Find("+Functions");
+    ReferenceT<ReferenceContainer> functionsContainer;
+    uint32 numberOfContainers = Size();
+    for (uint32 i = 0u; i < numberOfContainers; i++) {
+        Reference item = Get(i);
+        if (item.IsValid()) {
+            if (StringHelper::Compare(item->GetName(), "+Functions") == 0) {
+                functionsContainer = item;
+            }
+        }
+    }
     bool ret = functionsContainer.IsValid();
     // if the functions container does not exists, create it.
     if (!ret) {

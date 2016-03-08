@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -44,7 +45,7 @@ namespace MARTe{
  * @details The syntax in the configuration stream should be:
  * RealTimeApplication_name = {\n
  *     Class = RealTimeApplication\n
- *     Functions = {\n
+ *     +Functions = {\n
  *         Class = ReferenceContainer\n
  *         GAM_name = {\n
  *             Class = GAM\n
@@ -56,13 +57,21 @@ namespace MARTe{
  *         }\n
  *         ...\n
  *     }\n
- *     States = {\n
- *         class = ReferenceContainer\n
+ *     +States = {\n
+ *         Class = ReferenceContainer\n
  *         State_name = {\n
  *             Class = RealTimeState\n
  *             ...\n
  *         }\n
  *         ...\n
+ *     }\n
+ *     +Data = {\n
+ *         Class = RealTimeDataSourceDefContainer
+ *         IsFinal = true v false\n
+ *         DataSource_name = {\n
+ *             ...\n
+ *         }\n
+ *         ...
  *     }\n
  * }\n
  */
@@ -76,7 +85,7 @@ public:
     RealTimeApplication();
 
     /**
-     * @brief Validates the configuration.
+     * @brief Configuration of the application environment.
      * @details Checks if the functions (GAM or GAMGroup) declared in the RealTimeThread configuration are really defined
      * and supports the state where they are declared into. Moreover creates accelerators to the specific GAM References
      * for each RealTimeState and adds the GAM References in each RealTimeThread.
@@ -85,14 +94,34 @@ public:
      */
     bool ConfigureArchitecture();
 
+    /**
+     * @brief Configuration of the data sources.
+     * @details Generates the data source definitions from the RealTimeDataDef definitions in each GAM. If the
+     * container "+Data" is declared as final (i.e IsFinal=true in the configuration), it is not possible add
+     * other data sources over the ones already defined by configuration. Inside the "+Data" container will be added
+     * the definitions of data source types as trees generated accordingly with the field "Path" in each RealTimeDataDef
+     * in the GAMs. Each leaf of these trees is a RealTimeDataSourceDef containing, for each state, the GAMs which will produce
+     * and consume that specific data.
+     * @return false in case of errors, true otherwise.
+     */
     bool ConfigureDataSource();
 
+    /**
+     * @brief Validates the data sources.
+     * @details Checks if for each state there is only a single GAM producer for each data source definition. Moreover
+     * if there are not GAM consumer, a warning will be generated (that source will be never read).
+     * @return true if for each state there is an unique GAM producer, false otherwise.
+     */
     bool ValidateDataSource();
 
-    // The Initialise function is automatic
-
 private:
-    bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functionsContainer);
+
+    /**
+     * @brief Explores the "+Functions" container recursively finding GAMs and
+     * for each of them calls GAM::ConfigureDataSource(*)
+     */
+    bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functions);
+
 };
 
 }

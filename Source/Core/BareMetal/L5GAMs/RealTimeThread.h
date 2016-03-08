@@ -43,16 +43,11 @@
 namespace MARTe {
 
 /**
- * @brief A container of GAM references.
- * @details The syntax in the configuration stream should be:
- * Thread_name = {\n
+ * @brief Defines the GAMs to be executed in a real time thread.
+ * @details The syntax in the configuration stream has to be:
+ * RealTimeThread_name = {\n
  *     Class = RealTimeThread\n
- *     RealTimeThread_name = {\n
- *         Class = RealTimeThread\n
- *         Functions = { GAM1_name, GAMGroup2_name, ... }
- *         ...\n
- *     }\n
- *     ...\n
+ *     Functions = { GAM1_name, GAMGroup2_name, ... }
  * }\n
  */
 class RealTimeThread: public ReferenceContainer {
@@ -64,7 +59,9 @@ public:
      * @brief Constructor.
      * @post
      *   GetFunctions() == NULL &&
-     *   GetNumberOfFunction == 0;
+     *   GetNumberOfFunction == 0 &&
+     *   GetGAMs() == NULL &&
+     *   GetNumberOfGAMs == 0;
      */
     RealTimeThread();
 
@@ -74,7 +71,9 @@ public:
     ~RealTimeThread();
 
     /**
-     * @see RealTimeApplication::Validate()
+     * @see RealTimeApplication::ConfigureArchitecture()
+     * @param[in] rtApp is the RealTimeApplication where this thread is declared into.
+     * @param[in] rtState is the RealTimeState where this thread is declared into.
      */
     bool ConfigureArchitecture(RealTimeApplication &rtApp,
                                RealTimeState &rtState);
@@ -95,18 +94,34 @@ public:
      */
     uint32 GetNumberOfFunctions() const;
 
+    /**
+     * @brief Retrieves the accelerator to the GAMs involved in this thread.
+     */
     ReferenceT<GAM> *GetGAMs() const;
 
+    /**
+     * @brief Retrieves the number of GAMs involved in this thread.
+     */
     uint32 GetNumberOfGAMs() const;
 
+    /**
+     * @see Object::ToStructuredData(*)
+     */
     virtual bool ToStructuredData(StructuredDataI& data);
 
 private:
 
+    /**
+     * @brief Links the RealTimeState and the GAMGroup to each GAM declared in this
+     * thread.
+     */
     bool ConfigureArchitecturePrivate(Reference functionGeneric,
                                       RealTimeApplication &rtApp,
                                       RealTimeState &rtState);
 
+    /**
+     * @brief Adds a GAM reference into the accelerator array.
+     */
     void AddGAM(ReferenceT<GAM> element);
 
     /**

@@ -82,6 +82,15 @@ bool ReferenceContainerTest::TestSetTimeout(TimeoutType timeout) {
     return ok;
 }
 
+bool ReferenceContainerTest::TestFind() {
+    Reference result = tree->Find("E");
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, "E");
+    ReferenceContainer resTest;
+    tree->Find(resTest, filter);
+
+    return resTest.Get(0) == result;
+}
+
 bool ReferenceContainerTest::TestFindFirstOccurrenceAlways(ReferenceContainerFilter &filter) {
     bool ok = true;
     uint32 i = 0;
@@ -487,6 +496,20 @@ bool ReferenceContainerTest::TestFindFilter(ReferenceT<ReferenceContainer> tree,
     return ok;
 }
 
+bool ReferenceContainerTest::TestInsertWithPath() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+    Reference ref("Object");
+    containerRoot->Insert("A.B.C.MyObject", ref);
+
+    if(containerRoot->Find("A.B.C.MyObject") != ref){
+        return false;
+    }
+
+    Reference ref2("Object");
+    containerRoot->Insert("A.B.C.MyObject2", ref2);
+    return (containerRoot->Find("A.B.C.MyObject2") == ref2);
+}
+
 bool ReferenceContainerTest::TestInsertAtEnd() {
     ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
     containerRoot->Insert(leafB);
@@ -611,13 +634,13 @@ bool ReferenceContainerTest::TestInitialise() {
     ConfigurationDatabase cdb;
     cdb.CreateAbsolute("+intObj1");
     cdb.Write("Class", "IntegerObject");
-    int32 value=1;
+    int32 value = 1;
     cdb.Write("var", value);
     cdb.CreateAbsolute("$container");
     cdb.Write("Class", "ReferenceContainer");
     cdb.CreateRelative("+intObj2");
     cdb.Write("Class", "IntegerObject");
-    value=3;
+    value = 3;
     cdb.Write("var", value);
     cdb.MoveToAncestor(1u);
     cdb.CreateRelative("+specIntObj3");

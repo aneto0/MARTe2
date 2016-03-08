@@ -45,8 +45,6 @@ public:
 
     RealTimeDataSourceDefRecord();
 
-    void SetStateName(const char8 * stateName);
-
     bool AddConsumer(ReferenceT<GAM> gamConsumer);
 
     bool AddProducer(ReferenceT<GAM> gamProducer);
@@ -54,8 +52,6 @@ public:
     uint32 GetNumberOfConsumers();
 
     uint32 GetNumberOfProducers();
-
-    const char8 * GetStateName();
 
     ReferenceT<ReferenceContainer> GetConsumers();
 
@@ -66,7 +62,6 @@ private:
     ReferenceT<ReferenceContainer> producers;
     ReferenceT<ReferenceContainer> consumers;
 
-    StreamString state;
 };
 }
 /*---------------------------------------------------------------------------*/

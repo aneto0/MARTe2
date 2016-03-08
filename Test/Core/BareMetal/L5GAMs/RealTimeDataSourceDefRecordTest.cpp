@@ -50,8 +50,8 @@ bool RealTimeDataSourceDefRecordTest::TestConstructor() {
 
 bool RealTimeDataSourceDefRecordTest::TestSetStateName(const char8 * stateName) {
     RealTimeDataSourceDefRecord record;
-    record.SetStateName(stateName);
-    return (stateName == NULL)?(StringHelper::Compare(record.GetStateName(), "") == 0):(StringHelper::Compare(record.GetStateName(), stateName) == 0);
+    record.SetName(stateName);
+    return (stateName == NULL)?(record.GetName()== NULL):(StringHelper::Compare(record.GetName(), stateName) == 0);
 }
 
 bool RealTimeDataSourceDefRecordTest::TestGetStateName(const char8 * stateName) {

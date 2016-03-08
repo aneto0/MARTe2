@@ -79,6 +79,12 @@ public:
     bool TestSetTimeout(TimeoutType timeout);
 
     /**
+     * @brief Tests the ReferenceContainer::Find function.
+     * @return true if the leaf "E" is found.
+     */
+    bool TestFind();
+
+    /**
      * @brief Tests the ReferenceContainer::Find function with a use-case that always finds an occurrence.
      * @details For all the ReferenceContainerFilterMode combinations this test will always find the leaf "B".
      * @param[in] filter The filter must be setup to look for the first occurrence of the leaf "B".
@@ -289,6 +295,13 @@ public:
      */
     float TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
                               ReferenceContainerFilter &filter);
+
+
+    /**
+     * @brief Tests the ReferenceContainer::Insert with the full path as parameter.
+     * @return true if the function inserts the reference at the specified path
+     */
+    bool TestInsertWithPath();
 
     /**
      * @brief Tests the ReferenceContainer::Insert function.

@@ -62,10 +62,11 @@ ObjectRegistryDatabase::~ObjectRegistryDatabase() {
 }
 
 bool ObjectRegistryDatabase::CleanUp() {
-    bool ret;
-    for (uint32 i = 0u; i < Size(); i++) {
-        Reference toBeRemoved=Get(i);
-        ret=ReferenceContainer::Delete(toBeRemoved);
+    bool ret = true;
+    for (uint32 i = 0u; (i < Size()) && (ret); i++) {
+        Reference toBeRemoved = Get(i);
+        ret = ReferenceContainer::Delete(toBeRemoved);
+
     }
     return ret;
 }
@@ -75,6 +76,7 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
     ReferenceT<ReferenceContainer> domain = current;
     bool isSearchDomain = current.IsValid();
     uint32 backSteps = 0u;
+    bool ok = true;
     if (isSearchDomain) {
         while (path[backSteps] == ':') {
             backSteps++;
@@ -90,10 +92,14 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
                 break;
             }
             if (test.IsValid()) {
-                if (test->GetName()[0] == '$') {
-                    domain = test;
-                    stepsCounter--;
+                ok = Lock();
+                if (ok) {
+                    if (test->GetName()[0] == '$') {
+                        domain = test;
+                        stepsCounter--;
+                    }
                 }
+                UnLock();
             }
         }
 
@@ -105,32 +111,32 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
     }
     // now search from the domain forward
     Reference ret;
-    ReferenceContainerFilterObjectName filterName(1, ReferenceContainerFilterMode::RECURSIVE, &path[backSteps]);
-    ReferenceContainer resultSingle;
+    if (ok) {
+        ReferenceContainerFilterObjectName filterName(1, ReferenceContainerFilterMode::RECURSIVE, &path[backSteps]);
+        ReferenceContainer resultSingle;
 
-    if (isSearchDomain) {
-        if (domain.IsValid()) {
-            domain->Find(resultSingle, filterName);
+        if (isSearchDomain) {
+            if (domain.IsValid()) {
+                // already safe
+                domain->Find(resultSingle, filterName);
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::FatalError, "Find: Invalid domain");
+            }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Find: Invalid domain");
+            // search from the beginning
+            ReferenceContainer::Find(resultSingle, filterName);
+        }
+
+        ok = (resultSingle.Size() > 0u);
+        if (ok) {
+            //Invalidate move to leafs
+            ret = resultSingle.Get(resultSingle.Size() - 1u);
         }
     }
-    else {
-        // search from the beginning
-        ReferenceContainer::Find(resultSingle, filterName);
-    }
-
-    bool ok = (resultSingle.Size() > 0u);
-    if (ok) {
-        //Invalidate move to leafs
-        ret = resultSingle.Get(resultSingle.Size() - 1u);
-    }
-
     return ret;
 }
-
-
 
 const char8 * const ObjectRegistryDatabase::GetClassName() const {
     return "ObjectRegistryDatabase";

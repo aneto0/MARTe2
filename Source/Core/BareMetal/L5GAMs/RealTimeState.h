@@ -46,11 +46,13 @@ namespace MARTe{
  * @details The syntax in the configuration stream should be:
  * State_name = {\n
  *     Class = RealTimeState\n
- *     RealTimeThread_name = {\n
- *         Class = RealTimeThread\n
+ *     +Threads = {
+ *         RealTimeThread_name = {\n
+ *             Class = RealTimeThread\n
+ *             ...\n
+ *         }\n
  *         ...\n
- *     }\n
- *     ...\n
+ *      }\n
  * }\n
  */
 class RealTimeState: public ReferenceContainer {
@@ -73,16 +75,24 @@ public:
     virtual ~RealTimeState();
 
     /**
-     * @see RealTimeApplication::Validate().
+     * @see RealTimeApplication::ConfigureArchitecture(*).
+     * @details After the configuration, all the references to the GAMs declared into this state
+     * will be inserted into a container called "+Functions".
+     * @param[in] rtApp is the RealTimeApplication where this state is declared into.
      */
     bool ConfigureArchitecture(RealTimeApplication & rtApp);
 
 
-
+    /**
+     * @brief Inserts a function.
+     * @details If the container called "+Functions" it is not present, it will be created and \a functionReference
+     * will be inserted into.
+     * @param[in] functionReference is the reference to be inserted.
+     */
     bool InsertFunction(Reference functionReference);
 
     /**
-     * @brief Stores a stateful group of GAMGroups into the internal array.
+     * @brief Stores a stateful GAMGroup into the internal array.
      * @param[in] element is the new GAMGroup to be added.
      * @return true if the memory allocation succeeds, false otherwise.
      */
@@ -90,6 +100,7 @@ public:
 
     /**
      * @brief Prepare the context for the state in each registered GAMGroup.
+     * @param[in] status contains informations about the current and the next state.
      */
     void ChangeState(const RealTimeStateInfo &status);
 
@@ -126,6 +137,7 @@ private:
      * The active buffer in the context
      */
     uint8 activeBuffer;
+
 };
 
 }

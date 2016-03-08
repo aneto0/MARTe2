@@ -89,6 +89,9 @@ bool RealTimeDataSourceDefTest::TestAddProducer() {
         return false;
     }
 
+    printf("\n%s\n", def.Get(0)->GetName());
+    printf("\n%s\n", def.Get(1)->GetName());
+
     if (def.GetNumberOfProducers("state1") != size) {
         return false;
     }

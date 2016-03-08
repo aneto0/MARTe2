@@ -111,7 +111,16 @@ void PIDGAMGroup::SetUp() {
 }
 
 void PIDGAMGroup::PrepareNextState(const RealTimeStateInfo &status) {
-
+    if (StringHelper::Compare(status.currentState, "state1") == 0) {
+        if (StringHelper::Compare(status.nextState, "state2") == 0) {
+            context++;
+        }
+    }
+    if (StringHelper::Compare(status.currentState, "state2") == 0) {
+        if (StringHelper::Compare(status.nextState, "state1") == 0) {
+            context--;
+        }
+    }
 }
 
 uint32 PIDGAMGroup::GetContext() {

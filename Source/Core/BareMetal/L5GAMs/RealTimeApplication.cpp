@@ -52,8 +52,18 @@ RealTimeApplication::RealTimeApplication() {
 bool RealTimeApplication::ConfigureArchitecture() {
 
     printf("\nStart ConfigureArchitecture\n");
+    ReferenceT<ReferenceContainer> statesContainer;
+    uint32 numberOfContainers = Size();
+    for (uint32 i = 0u; i < numberOfContainers; i++) {
+        Reference item = Get(i);
+        if (item.IsValid()) {
+            if (StringHelper::Compare(item->GetName(), "+States") == 0) {
+                statesContainer = item;
+            }
+        }
+    }
+
     // there must be the container called "States"
-    ReferenceT<ReferenceContainer> statesContainer = Find("+States");
     bool ret = statesContainer.IsValid();
     if (ret) {
         // States contains RealTimeState references
@@ -78,9 +88,18 @@ bool RealTimeApplication::ConfigureArchitecture() {
 bool RealTimeApplication::ConfigureDataSource() {
 
     printf("\nStart ConfigureDataSource\n");
+    ReferenceT<ReferenceContainer> functionsContainer;
+    uint32 numberOfContainers = Size();
+    for (uint32 i = 0u; i < numberOfContainers; i++) {
+        Reference item = Get(i);
+        if (item.IsValid()) {
+            if (StringHelper::Compare(item->GetName(), "+Functions") == 0) {
+                functionsContainer = item;
+            }
+        }
+    }
 
     // there must be the container called "States"
-    ReferenceT<ReferenceContainer> functionsContainer = Find("+Functions");
     bool ret = functionsContainer.IsValid();
     if (ret) {
         // configure
@@ -98,29 +117,39 @@ bool RealTimeApplication::ConfigureDataSource() {
 
 bool RealTimeApplication::ValidateDataSource() {
 
+    ReferenceT<RealTimeDataSourceDefContainer> dataContainer;
+    uint32 numberOfContainers = Size();
+    for (uint32 i = 0u; i < numberOfContainers; i++) {
+        Reference item = Get(i);
+        if (item.IsValid()) {
+            if (StringHelper::Compare(item->GetName(), "+Data") == 0) {
+                dataContainer = item;
+            }
+        }
+    }
     // there must be the container called "States"
-    ReferenceT<RealTimeDataSourceDefContainer> dataContainer = Find("+Data");
     bool ret = dataContainer.IsValid();
     if (ret) {
         // States contains RealTimeState references
         // for each of them call Validate(*)
-        dataContainer->Verify();
+        ret = dataContainer->Verify();
     }
     return ret;
 }
 
-bool RealTimeApplication::ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functionsContainer) {
+bool RealTimeApplication::ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functions) {
 
-    bool ret = functionsContainer.IsValid();
+    bool ret = functions.IsValid();
 
     if (ret) {
-        uint32 numberOfFunctions = functionsContainer->Size();
+        uint32 numberOfFunctions = functions->Size();
         for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
-            Reference genericFunction = functionsContainer->Get(i);
+            Reference genericFunction = functions->Get(i);
 
             ReferenceT<GAM> gam = genericFunction;
             // a GAM
             if (gam.IsValid()) {
+                printf("\nConfiguration of %s\n", gam->GetName());
                 // call the single gam configuration
                 gam->ConfigureDataSource();
             }
@@ -133,6 +162,7 @@ bool RealTimeApplication::ConfigureDataSourcePrivate(ReferenceT<ReferenceContain
                         ReferenceT<GAM> subGam = gamGroup->Get(j);
                         ret = subGam.IsValid();
                         if (ret) {
+                            printf("\nConfiguration of %s\n", subGam->GetName());
                             // call the single gam configuration
                             ret = subGam->ConfigureDataSource();
                         }

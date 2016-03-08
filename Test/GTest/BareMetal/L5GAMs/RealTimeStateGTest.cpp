@@ -54,3 +54,33 @@ TEST(RealTimeStateGTest,TestConfigureArchitecture_SingleInGAMGroup) {
     RealTimeStateTest rtsTest;
     ASSERT_TRUE(rtsTest.TestConfigureArchitecture_SingleInGAMGroup());
 }
+
+TEST(RealTimeStateGTest,TestInsertFunction) {
+    RealTimeStateTest rtsTest;
+    ASSERT_TRUE(rtsTest.TestInsertFunction());
+}
+
+TEST(RealTimeStateGTest,TestAddGAMGroup) {
+    RealTimeStateTest rtsTest;
+    ASSERT_TRUE(rtsTest.TestAddGAMGroup());
+}
+
+TEST(RealTimeStateGTest,TestGetGAMGroups) {
+    RealTimeStateTest rtsTest;
+    ASSERT_TRUE(rtsTest.TestGetGAMGroups());
+}
+
+TEST(RealTimeStateGTest,TestGetNumberOfGAMGroups) {
+    RealTimeStateTest rtsTest;
+    ASSERT_TRUE(rtsTest.TestGetNumberOfGAMGroups());
+}
+
+TEST(RealTimeStateGTest,TestChangeState) {
+    RealTimeStateTest rtsTest;
+    ASSERT_TRUE(rtsTest.TestChangeState());
+}
+
+TEST(RealTimeStateGTest,TestGetContextActiveBuffer) {
+    RealTimeStateTest rtsTest;
+    ASSERT_TRUE(rtsTest.TestGetContextActiveBuffer());
+}

@@ -68,15 +68,15 @@ bool GAM::ConfigureFunction() {
     // use for each of them before RealTimeDataContainer::MergeWithLocal(localData)
     // and merge the result with the existing one
     bool ret = true;
-    uint32 numberOfElements = Size();
-    for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
+    if (localData != NULL) {
+        uint32 numberOfElements = Size();
+        for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
 
-        ReferenceT<RealTimeDataDefContainer> def = Get(i);
+            ReferenceT<RealTimeDataDefContainer> def = Get(i);
 
-        // must be all RealTimeDataDefContainer ??
+            // must be all RealTimeDataDefContainer ??
 
-        if (def.IsValid()) {
-            if (localData != NULL) {
+            if (def.IsValid()) {
                 const char8 * defName = def->GetName();
                 if (localData->MoveRelative(defName)) {
                     // the partial definitions after this must become complete
@@ -85,10 +85,10 @@ bool GAM::ConfigureFunction() {
                         ret = localData->MoveToAncestor(1u);
                     }
                 }
-            }
-            if (ret) {
-                // check if the definitions are meaningful
-                ret = def->Verify();
+                if (ret) {
+                    // check if the definitions are meaningful
+                    ret = def->Verify();
+                }
             }
         }
     }
@@ -98,7 +98,7 @@ bool GAM::ConfigureFunction() {
 bool GAM::ConfigureDataSource() {
 
     bool ret = true;
-    if (numberOfSupportedStates > 0u) {
+    if (GetNumberOfSupportedStates() > 0u) {
         ret = application.IsValid();
         if (ret) {
             ReferenceT<RealTimeDataSourceDefContainer> dataContainer = application->Find("+Data");

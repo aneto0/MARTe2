@@ -91,8 +91,7 @@ bool RealTimeStateTest::TestConfigureArchitecture() {
 
 }
 
-
-bool RealTimeStateTest::TestConfigureArchitecture_SingleInGAMGroup(){
+bool RealTimeStateTest::TestConfigureArchitecture_SingleInGAMGroup() {
     ReferenceT<RealTimeState> state2 = ObjectRegistryDatabase::Instance()->Find("$Application1.+States.+State2");
 
     ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("$Application1");
@@ -113,4 +112,147 @@ bool RealTimeStateTest::TestConfigureArchitecture_SingleInGAMGroup(){
 
 }
 
+bool RealTimeStateTest::TestInsertFunction() {
+    RealTimeState state;
 
+    if (state.Size() != 0) {
+        return false;
+    }
+
+    ReferenceT<PIDGAM> function1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    function1->SetName("function1");
+
+    ReferenceT<PIDGAM> function2 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    function1->SetName("function2");
+
+    if (!state.InsertFunction(function1)) {
+        return false;
+    }
+    if (!state.InsertFunction(function2)) {
+        return false;
+    }
+
+    if (state.Size() != 1) {
+        return false;
+    }
+
+    ReferenceT<ReferenceContainer> functionsContainer = state.Get(0);
+    if (StringHelper::Compare(functionsContainer->GetName(), "+Functions") != 0) {
+        return false;
+    }
+
+    return functionsContainer->Size() == 2;
+
+}
+
+bool RealTimeStateTest::TestAddGAMGroup() {
+    RealTimeState state;
+
+    const uint32 size = 32;
+    ReferenceT<PIDGAMGroup> gamGroup[size];
+    for (uint32 i = 0; i < size; i++) {
+        gamGroup[i] = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        state.AddGAMGroup(gamGroup[i]);
+    }
+
+    if (state.GetNumberOfGAMGroups() != size) {
+        return false;
+    }
+
+    ReferenceT<GAMGroup> *ret = state.GetGAMGroups();
+
+    for (uint32 i = 0; i < size; i++) {
+        if (ret[i] != gamGroup[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool RealTimeStateTest::TestGetGAMGroups() {
+    RealTimeState state;
+
+    const uint32 size = 32;
+    ReferenceT<PIDGAMGroup> gamGroup[size];
+    for (uint32 i = 0; i < size; i++) {
+        gamGroup[i] = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        state.AddGAMGroup(gamGroup[i]);
+    }
+
+    ReferenceT<GAMGroup> *ret = state.GetGAMGroups();
+
+    for (uint32 i = 0; i < size; i++) {
+        if (ret[i] != gamGroup[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool RealTimeStateTest::TestGetNumberOfGAMGroups() {
+    RealTimeState state;
+
+    const uint32 size = 32;
+    ReferenceT<PIDGAMGroup> gamGroup[size];
+    for (uint32 i = 0; i < size; i++) {
+        gamGroup[i] = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        state.AddGAMGroup(gamGroup[i]);
+    }
+
+    return (state.GetNumberOfGAMGroups() == size);
+}
+
+bool RealTimeStateTest::TestChangeState() {
+    RealTimeState state;
+
+    const uint32 size = 32;
+    ReferenceT<PIDGAMGroup> gamGroup[size];
+    for (uint32 i = 0; i < size; i++) {
+        gamGroup[i] = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        state.AddGAMGroup(gamGroup[i]);
+        gamGroup[i]->SetUp();
+    }
+    if (state.GetContextActiveBuffer() != 0) {
+        return false;
+    }
+
+    RealTimeStateInfo info;
+    info.activeBuffer = 0;
+    info.currentState = "state1";
+    info.nextState = "state2";
+
+    state.ChangeState(info);
+
+    if (state.GetContextActiveBuffer() != 1) {
+        return false;
+    }
+
+    for (uint32 i = 0; i < size; i++) {
+        if (gamGroup[i]->GetContext() != 2) {
+            return false;
+        }
+    }
+
+    info.activeBuffer = 1;
+    info.currentState = "state2";
+    info.nextState = "state1";
+
+    // change again
+    state.ChangeState(info);
+
+    if (state.GetContextActiveBuffer() != 0) {
+        return false;
+    }
+
+    for (uint32 i = 0; i < size; i++) {
+        if (gamGroup[i]->GetContext() != 1) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+bool RealTimeStateTest::TestGetContextActiveBuffer(){
+    return TestChangeState();
+}

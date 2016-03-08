@@ -103,7 +103,11 @@ public:
               ReferenceContainerFilter &filter);
 
 
-
+    /**
+     * @brief Finds the first element identified by \a path in RECURSIVE mode.
+     * @param[in] path is the name of the element to be found or its full path.
+     * @return the element if it is found or an invalid reference if not.
+     */
     Reference Find(const char8 * path);
 
     /**
@@ -149,7 +153,9 @@ public:
     virtual bool Initialise(StructuredDataI &data);
 
 
-
+    /**
+     * @see Object::ToStructuredData(*)
+     */
     virtual bool ToStructuredData(StructuredDataI & data);
 
 
