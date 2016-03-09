@@ -84,6 +84,11 @@ public:
      */
     const char8 *GetType();
 
+    /**
+     * @brief Retrieves the variable default value.
+     * @return the variable default value.
+     */
+    const char8 *GetDefaultValue();
 
     /**
      * @brief Initialises the container and reads the variable address and type from the StructuredData
@@ -91,6 +96,9 @@ public:
      */
     virtual bool Initialise(StructuredDataI &data);
 
+
+
+    void SetPath(const char8 * newPath);
 protected:
 
     /**
@@ -102,6 +110,11 @@ protected:
      * The variable type
      */
     StreamString type;
+
+    /**
+     * The default value
+     */
+    StreamString defaultValue;
 };
 }
 /*---------------------------------------------------------------------------*/

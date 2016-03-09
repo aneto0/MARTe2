@@ -46,27 +46,26 @@ RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord() {
     // can be explored
     ReferenceT<ReferenceContainer> prod(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     prod->SetName("Producers");
-    if(prod.IsValid()){
-        if(Insert(prod)){
-            producers=prod;
+    if (prod.IsValid()) {
+        if (Insert(prod)) {
+            producers = prod;
         }
-        else{
+        else {
             //TODO
         }
     }
 
     ReferenceT<ReferenceContainer> cons(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     cons->SetName("Consumers");
-    if(cons.IsValid()){
-        if(Insert(cons)){
-            consumers=cons;
+    if (cons.IsValid()) {
+        if (Insert(cons)) {
+            consumers = cons;
         }
-        else{
+        else {
             //TODO
         }
     }
 }
-
 
 bool RealTimeDataSourceDefRecord::AddConsumer(ReferenceT<GAM> gamConsumer) {
 
@@ -91,6 +90,17 @@ bool RealTimeDataSourceDefRecord::AddProducer(ReferenceT<GAM> gamProducer) {
     return ret;
 }
 
+void RealTimeDataSourceDefRecord::SetDefaultValue(const char8* defaultIn) {
+    if (defaultIn != NULL) {
+        if (defaultValue != "") {
+            if(defaultValue!=defaultIn) {
+                //TODO Warning default already defined
+            }
+        }
+        defaultValue = defaultIn;
+    }
+}
+
 uint32 RealTimeDataSourceDefRecord::GetNumberOfConsumers() {
     return consumers->Size();
 }
@@ -99,13 +109,16 @@ uint32 RealTimeDataSourceDefRecord::GetNumberOfProducers() {
     return producers->Size();
 }
 
-
 ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetConsumers() {
     return consumers;
 }
 
-ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetProducers()  {
+ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetProducers() {
     return producers;
+}
+
+const char8 *RealTimeDataSourceDefRecord::GetDefaultValue(){
+    return defaultValue.Buffer();
 }
 
 CLASS_REGISTER(RealTimeDataSourceDefRecord, "1.0")

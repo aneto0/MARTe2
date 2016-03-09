@@ -75,20 +75,8 @@ public:
      */
     virtual bool MergeWithLocal(StructuredDataI & localData);
 
-    /**
-     * @brief Retrieves the variable default value.
-     * @return the variable return value.
-     */
-    const char8 *GetDefaultValue();
-
-
 
 private:
-
-    /**
-     * The variable default value
-     */
-    StreamString defaultValue;
 
     /**
      * Specifies if the definition is complete

@@ -211,7 +211,7 @@ bool GAMTest::TestGetSupportedStates_GAMGroup() {
 bool GAMTest::TestConfigureDataSource() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSourceDefContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.Write("IsFinal", "true");
     appCDB.CreateAbsolute("+Data.+DDB1");
     appCDB.Write("Class", "ReferenceContainer");
@@ -261,7 +261,7 @@ bool GAMTest::TestConfigureDataSource() {
 bool GAMTest::TestConfigureDataSource_NotFinal() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSourceDefContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.Write("IsFinal", "false");
 
     appCDB.MoveToRoot();
@@ -308,7 +308,7 @@ bool GAMTest::TestConfigureDataSource_NotFinal() {
 bool GAMTest::TestConfigureDataSourceFalse_Final() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSourceDefContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.Write("IsFinal", "true");
     appCDB.CreateAbsolute("+Data.+DDB1");
     appCDB.Write("Class", "ReferenceContainer");

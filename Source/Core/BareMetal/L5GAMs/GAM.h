@@ -36,6 +36,8 @@
 #include "StreamString.h"
 #include "ReferenceT.h"
 #include "RealTimeState.h"
+#include "RealTimeDataSourceInputReader.h"
+#include "RealTimeDataSourceOutputWriter.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -79,7 +81,6 @@ public:
      */
     virtual ~GAM();
 
-
     /**
      * @brief Generates the data source definitions ( in RealTimeApplication_name.+Data ) looking to the path
      * of each RealTimeDataDefI declared into this GAM.
@@ -97,7 +98,6 @@ public:
      * @param[in] gamGroup is the GAMGroup involving this GAM.
      */
     void SetGAMGroup(ReferenceT<GAMGroup> gamGroup);
-
 
     /**
      * @brief Adds the name of a RealTimeState where this GAM is declared into.
@@ -117,18 +117,21 @@ public:
      */
     virtual bool Initialise(StructuredDataI & data);
 
-
     /**
      * @brief Retrieves the states names where this class is declared into
      */
-    StreamString *GetSupportedStates() ;
+    StreamString *GetSupportedStates();
 
     /**
      * @brief Returns the number of the supported states.
      * @return the number of the supported states.
      */
-    uint32 GetNumberOfSupportedStates() ;
+    uint32 GetNumberOfSupportedStates();
 
+
+    ReferenceT<RealTimeDataSourceInputReader> GetInputReader();
+
+    ReferenceT<RealTimeDataSourceInputReader> GetOutputWriter();
 
 protected:
 
@@ -139,6 +142,11 @@ protected:
      */
     virtual void SetUp()=0;
 
+
+
+    virtual bool ConfigureDataSourceLinks();
+
+
     /**
      * The names of the supported states
      */
@@ -148,7 +156,6 @@ protected:
      * How many supported states
      */
     uint32 numberOfSupportedStates;
-
 
     /**
      * The local configuration
@@ -164,6 +171,11 @@ protected:
      * Link to the GAMGroup
      */
     ReferenceT<GAMGroup> group;
+
+    ReferenceT<RealTimeDataSourceInputReader> inputReader;
+
+    ReferenceT<RealTimeDataSourceOutputWriter> outputWriter;
+
     //? IOData?
     //? context?
 
@@ -176,7 +188,6 @@ private:
      * if the definitions are inconsistent with registered types. True otherwise.
      */
     bool ConfigureFunction();
-
 
 };
 

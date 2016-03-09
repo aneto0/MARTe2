@@ -131,11 +131,6 @@ bool RealTimeGenericDataDef::Initialise(StructuredDataI& data) {
 
     bool ret = RealTimeDataDefI::Initialise(data);
     if (ret) {
-        if (!data.Read("Default", defaultValue)) {
-            //TODO
-        }
-    }
-    if (ret) {
         StreamString isFinal;
         if (data.Read("IsFinal", isFinal)) {
             final = (isFinal == "true");
@@ -253,9 +248,6 @@ bool RealTimeGenericDataDef::MergeWithLocal(StructuredDataI & localData) {
     return ret;
 }
 
-const char8 *RealTimeGenericDataDef::GetDefaultValue() {
-    return defaultValue.Buffer();
-}
 
 CLASS_REGISTER(RealTimeGenericDataDef, "1.0")
 

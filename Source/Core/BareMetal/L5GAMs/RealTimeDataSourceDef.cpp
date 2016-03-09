@@ -32,6 +32,8 @@
 #include "RealTimeDataSourceDef.h"
 #include "ReferenceT.h"
 #include "RealTimeDataSourceDefRecord.h"
+#include "StandardParser.h"
+#include "ConfigurationDatabase.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -43,6 +45,11 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 RealTimeDataSourceDef::RealTimeDataSourceDef() {
+
+    bufferPtr[0] = NULL;
+    bufferPtr[1] = NULL;
+    currentUsedBuffer = NULL;
+
 }
 
 bool RealTimeDataSourceDef::AddConsumer(const char8 *stateIn,
@@ -115,6 +122,39 @@ bool RealTimeDataSourceDef::AddProducer(const char8 *stateIn,
 
 }
 
+bool RealTimeDataSourceDef::SetDefaultValue(const char8 *stateIn,
+                                            const char8* defaultIn) {
+    uint32 index;
+    bool found = false;
+    bool ret = false;
+
+    printf("\nset default value %s\n", defaultIn);
+    ReferenceT<RealTimeDataSourceDefRecord> record;
+    uint32 numberOfStates = Size();
+    for (index = 0u; (index < numberOfStates) && (!found); index++) {
+        StreamString stateName = stateIn;
+        record = Get(index);
+        if (record.IsValid()) {
+            if (stateName == record->GetName()) {
+                found = true;
+            }
+        }
+    }
+    if (found) {
+        record->SetDefaultValue(defaultIn);
+        ret = true;
+    }
+    else {
+        record = ReferenceT<RealTimeDataSourceDefRecord>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        if (record.IsValid()) {
+            record->SetName(stateIn);
+            record->SetDefaultValue(defaultIn);
+            ret = Insert(record);
+        }
+    }
+    return ret;
+}
+
 uint32 RealTimeDataSourceDef::GetNumberOfConsumers(const char8 * stateIn) {
     uint32 ret = 0u;
     uint32 numberOfRecords = Size();
@@ -171,6 +211,105 @@ bool RealTimeDataSourceDef::Verify() {
     }
     return ret;
 }
+
+bool RealTimeDataSourceDef::SetType(const char8 *typeName) {
+    bool ret = true;
+    if (type != "") {
+        if (type != typeName) {
+            ret = false;
+            //TODO type mismatch
+        }
+        type = typeName;
+    }
+    return ret;
+}
+
+const char8 *RealTimeDataSourceDef::GetType() {
+    return type.Buffer();
+}
+
+void RealTimeDataSourceDef::SetDataSourcePointer(uint8 bufferIndex,
+                                                 void* ptr) {
+    if (bufferIndex > 1u) {
+        //TODO Warning
+        bufferIndex = bufferIndex % 2u;
+    }
+    else {
+        bufferPtr[bufferIndex] = ptr;
+    }
+
+    if ((bufferPtr[0] != NULL) && (bufferPtr[1] != NULL)) {
+        currentUsedBuffer = &bufferPtr[0];
+    }
+}
+
+void **RealTimeDataSourceDef::GetDataSourcePointer() {
+    return currentUsedBuffer;
+}
+
+bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
+
+    bool ret = true;
+    // search the current state
+    uint32 numberOfStates = Size();
+    bool found = false;
+    ReferenceT<RealTimeDataSourceDefRecord> record;
+    for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
+        record = Get(i);
+        if (record.IsValid()) {
+            // match
+            if (StringHelper::Compare(record->GetName(), status.currentState) == 0) {
+                found = true;
+            }
+        }
+    }
+    // this variable was dead
+    if (!found) {
+        found = false;
+        for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
+            record = Get(i);
+            if (record.IsValid()) {
+                // match
+                if (StringHelper::Compare(record->GetName(), status.nextState) == 0) {
+                    found = true;
+                }
+            }
+        }
+    }
+
+    // this variable will be used in the next
+    if (found) {
+        AnyType at;
+        uint8 nextBuffer = (status.activeBuffer + 1u) % 2u;
+        StreamString defaultValue = record->GetDefaultValue();
+        TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
+        if (typeDes == InvalidType) {
+            const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
+            ret = (item != NULL);
+            if (ret) {
+                const ClassProperties *properties = item->GetClassProperties();
+                ret = (properties != NULL);
+                if (ret) {
+                    typeDes = TypeDescriptor(false, properties->GetUniqueIdentifier());
+                    at=AnyType(typeDes, 0u, bufferPtr[nextBuffer]);
+                    ConfigurationDatabase cdb;
+                    StandardParser parser(defaultValue, cdb);
+                    ret = parser.Parse();
+                    if (ret) {
+                        ret = TypeConvert(at, cdb);
+                    }
+                }
+            }
+
+        }
+        else {
+            at=AnyType(typeDes, 0u, bufferPtr[nextBuffer]);
+            ret=TypeConvert(at, defaultValue);
+        }
+    }
+    return ret;
+}
+
 CLASS_REGISTER(RealTimeDataSourceDef, "1.0")
 
 }

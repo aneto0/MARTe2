@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceDefRecord.h
- * @brief Header file for class RealTimeDataSourceDefRecord
- * @date 01/03/2016
+ * @file RealTimeDataSourceInputReader.h
+ * @brief Header file for class RealTimeDataSourceInputReader
+ * @date 09/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceDefRecord
+ * @details This header file contains the declaration of the class RealTimeDataSourceInputReader
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEDEFRECORD_H_
-#define REALTIMEDATASOURCEDEFRECORD_H_
+#ifndef REALTIMEDATASOURCEINPUTREADER_H_
+#define REALTIMEDATASOURCEINPUTREADER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,47 +31,25 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "StreamString.h"
-#include "ReferenceContainer.h"
-#include "ReferenceT.h"
-#include "GAM.h"
+#include "RealTimeDataSourceBroker.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-class RealTimeDataSourceDefRecord: public ReferenceContainer {
+
+namespace MARTe{
+
+class RealTimeDataSourceInputReader: public RealTimeDataSourceBroker {
 public:
-    CLASS_REGISTER_DECLARATION()
+    RealTimeDataSourceInputReader();
 
-    RealTimeDataSourceDefRecord();
-
-    bool AddConsumer(ReferenceT<GAM> gamConsumer);
-
-    bool AddProducer(ReferenceT<GAM> gamProducer);
-
-    void SetDefaultValue(const char8* defaultIn);
-
-    uint32 GetNumberOfConsumers();
-
-    uint32 GetNumberOfProducers();
-
-    ReferenceT<ReferenceContainer> GetConsumers();
-
-    ReferenceT<ReferenceContainer> GetProducers();
-
-
-    const char8 *GetDefaultValue();
-private:
-
-    ReferenceT<ReferenceContainer> producers;
-    ReferenceT<ReferenceContainer> consumers;
-    StreamString defaultValue;
 
 };
+
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEDEFRECORD_H_ */
+#endif /* REALTIMEDATASOURCEINPUTREADER_H_ */
 

@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSource.cpp
- * @brief Source file for class RealTimeDataSource
- * @date 08/03/2016
+ * @file RealTimeDataSourceGTest.cpp
+ * @brief Source file for class RealTimeDataSourceGTest
+ * @date 09/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataSource (public, protected, and private). Be aware that some 
+ * the class RealTimeDataSourceGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,12 +25,13 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <limits.h>
+#include "gtest/gtest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeDataSource.h"
-
+#include "RealTimeDataSourceTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,27 +40,42 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
-RealTimeDataSource::RealTimeDataSource() {
-
+TEST(RealTimeDataSourceGTest,TestConstructor) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestConstructor());
 }
 
-RealTimeDataSource::~RealTimeDataSource() {
-    if (!memory.Free()) {
-        //TODO
-    }
+TEST(RealTimeDataSourceGTest,TestInitialise) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestInitialise());
 }
 
-void* RealTimeDataSource::AddSignal(uint32 memorySize,
-                                    const char8 * defaultValue) {
-    void* ret = memory.Add(memorySize);
-    if (ret != NULL) {
-        // parse the default value getting the cdb
-        // set the default value
-
-    }
-    return ret;
+TEST(RealTimeDataSourceGTest,TestAddDataDefinition_Final) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinition_Final());
 }
 
+TEST(RealTimeDataSourceGTest,TestAddDataDefinitionFalse_Final) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinitionFalse_Final());
+}
+
+TEST(RealTimeDataSourceGTest,TestAddDataDefinition_NotFinal) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinition_NotFinal());
+}
+
+TEST(RealTimeDataSourceGTest,TestAddDataDefinition_AlreadyExistentLeaf) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinition_AlreadyExistentLeaf());
+}
+
+TEST(RealTimeDataSourceGTest,TestVerify) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestVerify());
+}
+
+TEST(RealTimeDataSourceGTest,TestVerify_TwoProducers) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestVerify_TwoProducers());
 }

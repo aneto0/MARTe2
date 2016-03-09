@@ -31,9 +31,12 @@ OBJSX=	GAM.x\
 		RealTimeDataDefI.x \
 		RealTimeGenericDataDef.x \
 		RealTimeSampledDataDef.x \
+		RealTimeDataSource.x \
+		RealTimeDataSourceBroker.x \
 		RealTimeDataSourceDef.x \
-		RealTimeDataSourceDefContainer.x \
 		RealTimeDataSourceDefRecord.x \
+		RealTimeDataSourceInputReader.x \
+		RealTimeDataSourceOutputWriter.x \
 		RealTimeState.x \
 		RealTimeThread.x 
 		

@@ -66,7 +66,7 @@ namespace MARTe{
  *         ...\n
  *     }\n
  *     +Data = {\n
- *         Class = RealTimeDataSourceDefContainer
+ *         Class = RealTimeDataSource
  *         IsFinal = true v false\n
  *         DataSource_name = {\n
  *             ...\n
@@ -113,6 +113,11 @@ public:
      * @return true if for each state there is an unique GAM producer, false otherwise.
      */
     bool ValidateDataSource();
+
+
+
+
+
 
 private:
 

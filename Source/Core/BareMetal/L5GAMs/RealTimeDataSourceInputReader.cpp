@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataDefI.cpp
- * @brief Source file for class RealTimeDataDefI
- * @date 25/02/2016
- * @author Giuseppe Ferrò
+ * @file RealTimeDataSourceInputReader.cpp
+ * @brief Source file for class RealTimeDataSourceInputReader
+ * @date 09/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataDefI (public, protected, and private). Be aware that some 
+ * the class RealTimeDataSourceInputReader (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeDataDefI.h"
+
+#include "RealTimeDataSourceInputReader.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -38,46 +40,9 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-RealTimeDataDefI::RealTimeDataDefI() {
 
-}
+RealTimeDataSourceInputReader::RealTimeDataSourceInputReader() {
 
-const char8 *RealTimeDataDefI::GetPath() {
-    return path.Buffer();
-}
-
-const char8 *RealTimeDataDefI::GetType() {
-    return type.Buffer();
-}
-
-const char8 *RealTimeDataDefI::GetDefaultValue() {
-    return defaultValue.Buffer();
-}
-
-bool RealTimeDataDefI::Initialise(StructuredDataI &data) {
-
-    bool ret = ReferenceContainer::Initialise(data);
-
-    if (ret) {
-        if (!data.Read("Path", path)) {
-            //TODO Warning?
-        }
-        if (!data.Read("Type", type)) {
-            //TODO Warning?
-        }
-
-        if (!data.Read("Default", defaultValue)) {
-            //TODO Warning?
-        }
-    }
-    return ret;
-}
-
-void RealTimeDataDefI::SetPath(const char8 * newPath) {
-    if (path != "") {
-        //TODO warning
-    }
-    path = newPath;
 }
 
 }

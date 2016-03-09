@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceDefRecord.h
- * @brief Header file for class RealTimeDataSourceDefRecord
- * @date 01/03/2016
+ * @file RealTimeDataSourceBroker.h
+ * @brief Header file for class RealTimeDataSourceBroker
+ * @date 09/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceDefRecord
+ * @details This header file contains the declaration of the class RealTimeDataSourceBroker
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEDEFRECORD_H_
-#define REALTIMEDATASOURCEDEFRECORD_H_
+#ifndef REALTIMEDATASOURCEBROKER_H_
+#define REALTIMEDATASOURCEBROKER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,47 +31,50 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "StreamString.h"
 #include "ReferenceContainer.h"
+#include "MemoryArea.h"
 #include "ReferenceT.h"
-#include "GAM.h"
+#include "RealTimeApplication.h"
+#include "RealTimeDataDefI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
-class RealTimeDataSourceDefRecord: public ReferenceContainer {
+
+class RealTimeDataSourceBroker: public ReferenceContainer {
+
 public:
-    CLASS_REGISTER_DECLARATION()
-
-    RealTimeDataSourceDefRecord();
-
-    bool AddConsumer(ReferenceT<GAM> gamConsumer);
-
-    bool AddProducer(ReferenceT<GAM> gamProducer);
-
-    void SetDefaultValue(const char8* defaultIn);
-
-    uint32 GetNumberOfConsumers();
-
-    uint32 GetNumberOfProducers();
-
-    ReferenceT<ReferenceContainer> GetConsumers();
-
-    ReferenceT<ReferenceContainer> GetProducers();
+    RealTimeDataSourceBroker();
 
 
-    const char8 *GetDefaultValue();
-private:
+    void SetApplication(ReferenceT<RealTimeApplication> rtApp);
 
-    ReferenceT<ReferenceContainer> producers;
-    ReferenceT<ReferenceContainer> consumers;
-    StreamString defaultValue;
+    bool AddVariable(ReferenceT<RealTimeDataDefI> def, void* ptr=NULL);
+
+    void *GetData(uint32 i);
+
+protected:
+
+
+    ReferenceT<RealTimeApplication> application;
+
+    MemoryArea memory;
+
+    StaticList<void *> GAMPointers;
+
+    StaticList<void **> DSPointers;
+
+    StaticList<uint32> sizes;
+
+    StaticList<uint32> chunkIndex;
 
 };
+
 }
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEDEFRECORD_H_ */
+#endif /* REALTIMEDATASOURCEBROKER_H_ */
 

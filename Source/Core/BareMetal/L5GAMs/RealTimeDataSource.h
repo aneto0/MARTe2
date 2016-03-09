@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceDefRecord.h
- * @brief Header file for class RealTimeDataSourceDefRecord
- * @date 01/03/2016
+ * @file RealTimeDataSource.h
+ * @brief Header file for class RealTimeDataSource
+ * @date 09/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceDefRecord
+ * @details This header file contains the declaration of the class RealTimeDataSource
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEDEFRECORD_H_
-#define REALTIMEDATASOURCEDEFRECORD_H_
+#ifndef REALTIMEDATASOURCE_H_
+#define REALTIMEDATASOURCE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,47 +31,62 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "StreamString.h"
+#include "MemoryArea.h"
+#include "StaticList.h"
 #include "ReferenceContainer.h"
-#include "ReferenceT.h"
+#include "RealTimeDataSourceDef.h"
+#include "RealTimeDataDefI.h"
 #include "GAM.h"
+#include "ReferenceT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-class RealTimeDataSourceDefRecord: public ReferenceContainer {
+
+namespace MARTe{
+
+class RealTimeDataSource: public ReferenceContainer {
+
 public:
     CLASS_REGISTER_DECLARATION()
 
-    RealTimeDataSourceDefRecord();
+    RealTimeDataSource();
 
-    bool AddConsumer(ReferenceT<GAM> gamConsumer);
+    bool Allocate();
 
-    bool AddProducer(ReferenceT<GAM> gamProducer);
+    virtual bool Initialise(StructuredDataI & data);
 
-    void SetDefaultValue(const char8* defaultIn);
+    bool AddDataDefinition(ReferenceT<GAM> gam);
 
-    uint32 GetNumberOfConsumers();
+    bool Verify();
 
-    uint32 GetNumberOfProducers();
-
-    ReferenceT<ReferenceContainer> GetConsumers();
-
-    ReferenceT<ReferenceContainer> GetProducers();
-
-
-    const char8 *GetDefaultValue();
 private:
 
-    ReferenceT<ReferenceContainer> producers;
-    ReferenceT<ReferenceContainer> consumers;
-    StreamString defaultValue;
+    bool AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> definition,
+                                 ReferenceT<GAM> gam,
+                                 bool isProducer,
+                                 bool isConsumer,
+                                 StreamString defaultPath = "");
+
+    bool AllocatePrivate(ReferenceT<ReferenceContainer> container);
+
+
+    bool AllocateSingleDefinition(ReferenceT<RealTimeDataSourceDef> dsDef);
+
+
+    uint32 numberOfInitialDDBs;
+
+    bool final;
+
+
+    MemoryArea memory;
 
 };
+
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEDEFRECORD_H_ */
+#endif /* REALTIMEDATASOURCE_H_ */
 

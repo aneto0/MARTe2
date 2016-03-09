@@ -252,7 +252,7 @@ static ConfigurationDatabase GetCDB() {
 
 // data
     cdb.CreateAbsolute("$Application1.+Data");
-    cdb.Write("Class", "RealTimeDataSourceDefContainer");
+    cdb.Write("Class", "RealTimeDataSource");
     cdb.Write("IsFinal", "false");
     cdb.MoveToRoot();
     return cdb;

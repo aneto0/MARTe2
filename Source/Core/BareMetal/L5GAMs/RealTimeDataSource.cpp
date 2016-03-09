@@ -1,8 +1,8 @@
 /**
  * @file RealTimeDataSource.cpp
  * @brief Source file for class RealTimeDataSource
- * @date 01/03/2016
- * @author Giuseppe Ferrò
+ * @date 09/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataSource (public, protected, and private). Be aware that some
+ * the class RealTimeDataSource (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -31,7 +31,7 @@
 
 #include "RealTimeDataSource.h"
 #include "ReferenceContainerFilterObjectName.h"
-#include "RealTimeDataSourceDef.h"
+#include "RealTimeDataDefContainer.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -65,14 +65,113 @@ static bool VerifyPrivate(ReferenceT<ReferenceContainer> ref) {
     }
     return ret;
 }
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 RealTimeDataSource::RealTimeDataSource() {
     numberOfInitialDDBs = 0u;
-    final = true;
+
+    final = false;
+}
+
+bool RealTimeDataSource::Allocate() {
+    bool ret = true;
+    uint32 numberOfNodes = Size();
+    for (uint32 i = 0u; i < numberOfNodes; i++) {
+        ReferenceT<ReferenceContainer> subContainer = Get(i);
+        if (subContainer.IsValid()) {
+            ReferenceT<RealTimeDataSourceDef> def = subContainer;
+            if (def.IsValid()) {
+                ret = AllocateSingleDefinition(def);
+            }
+            else {
+                ret = AllocatePrivate(subContainer);
+            }
+        }
+        else {
+            //TODO ??
+        }
+
+    }
+    return ret;
+}
+
+bool RealTimeDataSource::AllocatePrivate(ReferenceT<ReferenceContainer> container) {
+    bool ret = true;
+    uint32 numberOfNodes = container->Size();
+    for (uint32 i = 0u; i < numberOfNodes; i++) {
+        ReferenceT<ReferenceContainer> subContainer = container->Get(i);
+        if (subContainer.IsValid()) {
+            ReferenceT<RealTimeDataSourceDef> def = subContainer;
+            if (def.IsValid()) {
+                ret = AllocateSingleDefinition(def);
+            }
+            else {
+                ret = AllocatePrivate(subContainer);
+            }
+        }
+        else {
+            //TODO ??
+        }
+
+    }
+    return ret;
+}
+
+bool RealTimeDataSource::AllocateSingleDefinition(ReferenceT<RealTimeDataSourceDef> dsDef) {
+
+    bool ret = dsDef.IsValid();
+
+    if (ret) {
+        const char8* type = dsDef->GetType();
+        TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(type);
+        uint32 varSize = 0u;
+        // structured type
+        if (typeDes == InvalidType) {
+            const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type);
+            ret = (item != NULL);
+            if (ret) {
+                const ClassProperties *properties = item->GetClassProperties();
+                ret = (properties != NULL);
+                if (ret) {
+                    varSize = properties->GetSize();
+                }
+                else {
+                    //TODO ??
+                }
+            }
+            else {
+                //TODO type not registered
+            }
+        }
+        // basic type
+        else {
+            varSize = (typeDes.numberOfBits + 7u) / 8u;
+        }
+        // allocate the memory
+        if (varSize != 0u) {
+            void *ptr0 = memory.Add(varSize);
+            ret = (ptr0 != NULL);
+            if (ret) {
+                dsDef->SetDataSourcePointer(0u, ptr0);
+                if (ret) {
+                    void *ptr1 = memory.Add(varSize);
+                    ret = (ptr1 != NULL);
+                    if (ret) {
+                        dsDef->SetDataSourcePointer(1u, ptr1);
+                    }
+                    else {
+                        //TODO Failed allocation
+                    }
+                }
+            }
+            else {
+                //TODO Failed allocation
+            }
+        }
+    }
+    return ret;
 }
 
 bool RealTimeDataSource::AddDataDefinition(ReferenceT<GAM> gam) {
@@ -115,10 +214,10 @@ bool RealTimeDataSource::AddDataDefinition(ReferenceT<GAM> gam) {
 }
 
 bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> definition,
-                                                             ReferenceT<GAM> gam,
-                                                             bool isProducer,
-                                                             bool isConsumer,
-                                                             StreamString defaultPath) {
+                                                 ReferenceT<GAM> gam,
+                                                 bool isProducer,
+                                                 bool isConsumer,
+                                                 StreamString defaultPath) {
 
     bool ret = definition.IsValid();
     if (ret) {

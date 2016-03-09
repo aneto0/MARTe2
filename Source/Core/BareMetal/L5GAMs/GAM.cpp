@@ -31,7 +31,8 @@
 
 #include "GAM.h"
 #include "RealTimeDataDefContainer.h"
-#include "RealTimeDataSourceDefContainer.h"
+#include "RealTimeDataSource.h"
+#include "RealTimeDataDefI.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -47,6 +48,8 @@ GAM::GAM() {
     localData = NULL_PTR(StructuredDataI*);
     numberOfSupportedStates = 0u;
     supportedStates = NULL_PTR(StreamString *);
+    inputReader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    outputWriter = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
 }
 
 GAM::~GAM() {
@@ -101,7 +104,7 @@ bool GAM::ConfigureDataSource() {
     if (GetNumberOfSupportedStates() > 0u) {
         ret = application.IsValid();
         if (ret) {
-            ReferenceT<RealTimeDataSourceDefContainer> dataContainer = application->Find("+Data");
+            ReferenceT<RealTimeDataSource> dataContainer = application->Find("+Data");
             ret = (dataContainer.IsValid());
             if (ret) {
                 ret = dataContainer->AddDataDefinition(ReferenceT<GAM>(this));
@@ -132,6 +135,34 @@ bool GAM::Initialise(StructuredDataI & data) {
         SetUp();
         // merge definitions
         ret = ConfigureFunction();
+
+        if (ret) {
+            ret = ConfigureDataSourceLinks();
+        }
+
+    }
+    return ret;
+}
+
+bool GAM::ConfigureDataSourceLinks() {
+    bool ret = true;
+    uint32 numberOfElements = Size();
+    for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
+        ReferenceT<RealTimeDataDefContainer> defContainer = Get(i);
+        if (defContainer.IsValid()) {
+            uint32 numberOfDefs = defContainer->Size();
+            for (uint32 j = 0; j < numberOfDefs; j++) {
+                ReferenceT<RealTimeDataDefI> def = defContainer->Get(j);
+                if (def.IsValid()) {
+                    if (defContainer->IsInput()) {
+                        inputReader->AddVariable(def);
+                    }
+                    if (defContainer->IsOutput()) {
+                        outputWriter->AddVariable(def);
+                    }
+                }
+            }
+        }
     }
     return ret;
 }
@@ -174,17 +205,21 @@ void GAM::AddState(const char8 *stateName) {
 
 }
 
-StreamString *GAM::GetSupportedStates() {
+StreamString * GAM::GetSupportedStates() {
     return (group.IsValid()) ? (group->GetSupportedStates()) : (supportedStates);
 }
 
-/**
- * @brief Returns the number of the supported states.
- * @return the number of the supported states.
- */
 uint32 GAM::GetNumberOfSupportedStates() {
     return (group.IsValid()) ? (group->GetNumberOfSupportedStates()) : (numberOfSupportedStates);
 
+}
+
+ReferenceT<RealTimeDataSourceInputReader> GAM::GetInputReader() {
+    return inputReader;
+}
+
+ReferenceT<RealTimeDataSourceInputReader> GAM::GetOutputWriter() {
+    return outputWriter;
 }
 
 }

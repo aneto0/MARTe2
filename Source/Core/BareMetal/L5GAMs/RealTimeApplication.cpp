@@ -32,7 +32,7 @@
 #include "RealTimeApplication.h"
 #include "RealTimeState.h"
 #include "ReferenceContainerFilterObjectName.h"
-#include "RealTimeDataSourceDefContainer.h"
+#include "RealTimeDataSource.h"
 #include "GAM.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
@@ -117,7 +117,7 @@ bool RealTimeApplication::ConfigureDataSource() {
 
 bool RealTimeApplication::ValidateDataSource() {
 
-    ReferenceT<RealTimeDataSourceDefContainer> dataContainer;
+    ReferenceT<RealTimeDataSource> dataContainer;
     uint32 numberOfContainers = Size();
     for (uint32 i = 0u; i < numberOfContainers; i++) {
         Reference item = Get(i);

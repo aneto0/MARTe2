@@ -38,7 +38,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 class RealTimeDataSourceDef: public ReferenceContainer {
 public:
@@ -46,9 +46,16 @@ public:
 
     RealTimeDataSourceDef();
 
-    bool AddConsumer(const char8 *stateIn, ReferenceT<GAM> gam);
+    bool AddConsumer(const char8 *stateIn,
+                     ReferenceT<GAM> gam);
 
-    bool AddProducer(const char8 *stateIn, ReferenceT<GAM> gam);
+    bool AddProducer(const char8 *stateIn,
+                     ReferenceT<GAM> gam);
+
+    bool SetDefaultValue(const char8 *stateIn,
+                         const char8* defaultIn);
+
+    bool SetType(const char8 *typeName);
 
     uint32 GetNumberOfConsumers(const char8 * stateIn);
 
@@ -56,9 +63,25 @@ public:
 
     bool Verify();
 
+    const char8 *GetType();
+
+
+    void SetDataSourcePointer(uint8 bufferIndex, void* ptr);
+
+
+    void **GetDataSourcePointer();
+
+    bool PrepareNextState(const RealTimeStateInfo &status);
+
+private:
+
+    StreamString type;
+
+    void *bufferPtr[2];
+
+    void **currentUsedBuffer;
 
 };
-
 
 }
 /*---------------------------------------------------------------------------*/

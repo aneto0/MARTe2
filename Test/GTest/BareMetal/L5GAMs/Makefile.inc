@@ -30,8 +30,8 @@ OBJSX= 	GAMGTest.x \
 		RealTimeDataDefIGTest.x \
 		RealTimeGenericDataDefGTest.x \
 		RealTimeSampledDataDefGTest.x	\
+		RealTimeDataSourceGTest.x \
 		RealTimeDataSourceDefGTest.x \
-		RealTimeDataSourceDefContainerGTest.x \
 		RealTimeDataSourceDefRecordGTest.x \
 		RealTimeStateGTest.x \
 		RealTimeThreadGTest.x

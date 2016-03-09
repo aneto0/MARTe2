@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSource.h
- * @brief Header file for class RealTimeDataSource
- * @date 08/03/2016
+ * @file RealTimeDataSourceTest.h
+ * @brief Header file for class RealTimeDataSourceTest
+ * @date 09/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSource
+ * @details This header file contains the declaration of the class RealTimeDataSourceTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCE_H_
-#define REALTIMEDATASOURCE_H_
+#ifndef REALTIMEDATASOURCETEST_H_
+#define REALTIMEDATASOURCETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,33 +31,40 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "MemoryArea.h"
-#include "Object.h"
+#include "RealTimeDataSource.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
 
-class RealTimeDataSource: public Object {
+using namespace MARTe;
+class RealTimeDataSourceTest {
 public:
-    RealTimeDataSource();
 
-    ~RealTimeDataSource();
+    bool TestConstructor();
 
-    void* AddSignal(uint32 memorySize, const char8 * defaultValue);
-
+    bool TestInitialise();
 
 
-private:
+    bool TestAddDataDefinition_Final();
 
-    MemoryArea memory;
+    bool TestAddDataDefinition_AlreadyExistentLeaf();
+
+    bool TestAddDataDefinitionFalse_Final();
+
+    bool TestAddDataDefinition_NotFinal();
+
+    bool TestVerify();
+
+    bool TestVerify_TwoProducers();
+
+
+
 };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCE_H_ */
+#endif /* REALTIMEDATASOURCETEST_H_ */
 

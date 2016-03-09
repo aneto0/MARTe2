@@ -33,7 +33,7 @@
 #include "RealTimeState.h"
 #include "RealTimeThread.h"
 #include "ObjectRegistryDatabase.h"
-#include "RealTimeDataSourceDefContainer.h"
+#include "RealTimeDataSource.h"
 #include "GAMTestHelper.h"
 #include "RealTimeDataSourceDef.h"
 #include "stdio.h"
@@ -380,7 +380,7 @@ bool RealTimeApplicationTest::TestConfigureDataSource() {
 
     // data
     cdb1.CreateAbsolute("$Application1.+Data");
-    cdb1.Write("Class", "RealTimeDataSourceDefContainer");
+    cdb1.Write("Class", "RealTimeDataSource");
     cdb1.Write("IsFinal", "false");
     cdb1.MoveToRoot();
 
@@ -612,7 +612,7 @@ bool RealTimeApplicationTest::TestValidateDataSource() {
 
     // data
     cdb1.CreateAbsolute("$Application1.+Data");
-    cdb1.Write("Class", "RealTimeDataSourceDefContainer");
+    cdb1.Write("Class", "RealTimeDataSource");
     cdb1.Write("IsFinal", "false");
     cdb1.MoveToRoot();
 
@@ -788,7 +788,7 @@ bool RealTimeApplicationTest::TestValidateDataSourceFalse_MoreThanOneConsumer(){
 
     // data
     cdb1.CreateAbsolute("$Application1.+Data");
-    cdb1.Write("Class", "RealTimeDataSourceDefContainer");
+    cdb1.Write("Class", "RealTimeDataSource");
     cdb1.Write("IsFinal", "false");
     cdb1.MoveToRoot();
 

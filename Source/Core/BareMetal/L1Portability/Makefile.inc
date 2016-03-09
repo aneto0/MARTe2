@@ -34,6 +34,7 @@ OBJSX=  FastMath.x \
 		GlobalObjectI.x \
 		GlobalObjectsDatabase.x \
 		HeapManager.x \
+		MemoryArea.x \
 		ProcessorType.x \
 		StaticList.x \
 		StaticListHolder.x \
