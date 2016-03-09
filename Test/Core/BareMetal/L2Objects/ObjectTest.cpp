@@ -37,6 +37,8 @@
 #include "ObjectTestHelper.h"
 #include "StreamString.h"
 #include "ConfigurationDatabase.h"
+#include "StructuredDataToJsonTransformation.h"
+#include "StreamStringIOBuffer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -276,6 +278,22 @@ bool ObjectTest::TestExportData() {
             test_status = (test_status && (sd.Read("member", member)));
             test_values = (test_values && (member == 30));
             test_status = (test_status && (sd.MoveToAncestor(1u)));
+
+            /*
+             * {
+             *   "Test3": {
+             *     "Class": "IntrospectableIntegerObject",
+             *     "member": 30
+             *   }
+             * }
+             */
+            StructuredDataToJsonTransformation transform;
+            StreamStringIOBuffer json;
+            StreamStringIOBuffer json2;
+            bool ret = transform.Execute(sd, json);
+            json.Seek(0);
+            ret = transform.FormatJson(json, json2);
+            ret = !ret;
         }
         result = result && test_status && test_values;
     }
