@@ -80,7 +80,3 @@ TEST(RealTimeStateGTest,TestChangeState) {
     ASSERT_TRUE(rtsTest.TestChangeState());
 }
 
-TEST(RealTimeStateGTest,TestGetContextActiveBuffer) {
-    RealTimeStateTest rtsTest;
-    ASSERT_TRUE(rtsTest.TestGetContextActiveBuffer());
-}

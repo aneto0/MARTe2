@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
+#include "RealTimeStateInfo.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -115,18 +116,22 @@ public:
     bool ValidateDataSource();
 
 
+    bool AllocateDataSource();
+
+    bool ConfigureDataSourceLinks();
+
+    bool PrepareNextState(const RealTimeStateInfo &status);
 
 
+    uint8 ChangeState();
 
 
+    uint8 GetActiveBuffer() const ;
 private:
 
-    /**
-     * @brief Explores the "+Functions" container recursively finding GAMs and
-     * for each of them calls GAM::ConfigureDataSource(*)
-     */
-    bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functions);
 
+
+    uint8 activeBuffer;
 };
 
 }

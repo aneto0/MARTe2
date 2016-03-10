@@ -1,4 +1,5 @@
 /**
+    bool Write(uint8 activeDataSourceBuffer);
  * @file RealTimeDataSourceOutputWriter.h
  * @brief Header file for class RealTimeDataSourceOutputWriter
  * @date 09/03/2016
@@ -43,6 +44,8 @@ class RealTimeDataSourceOutputWriter: public RealTimeDataSourceBroker {
 public:
 
     RealTimeDataSourceOutputWriter();
+
+    bool Write(uint8 activeDataSourceBuffer);
 
 
 };

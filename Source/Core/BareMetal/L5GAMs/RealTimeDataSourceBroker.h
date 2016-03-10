@@ -61,9 +61,9 @@ protected:
 
     MemoryArea memory;
 
-    StaticList<void *> GAMPointers;
+    StaticList<uint32> GAMOffsets;
 
-    StaticList<void **> DSPointers;
+    StaticList<void **> DSPointers[2];
 
     StaticList<uint32> sizes;
 

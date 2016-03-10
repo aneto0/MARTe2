@@ -72,20 +72,24 @@ bool RealTimeGenericDataDef::Verify() {
                                     element = Get(j);
                                     ret = element.IsValid();
                                     if (ret) {
-                                        // compare the name
-                                        // skip the + or $ at the beginning
-                                        found = (StringHelper::Compare(&(element->GetName()[1]), introEntry.GetMemberName()) == 0);
-                                        if (found) {
-                                            // compare the type
-                                            ret = (StringHelper::Compare(element->GetType(), introEntry.GetMemberTypeName()) == 0);
+                                        const char8 *defMemberName = element->GetName();
+                                        ret = defMemberName != NULL;
+                                        if (ret) {
+                                            // compare the name
+                                            // skip the + or $ at the beginning
+                                            found = (StringHelper::Compare(&(defMemberName[1]), introEntry.GetMemberName()) == 0);
+                                            if (found) {
+                                                // compare the type
+                                                ret = (StringHelper::Compare(element->GetType(), introEntry.GetMemberTypeName()) == 0);
 
-                                            if (ret) {
-                                                // go recursively
-                                                // verify the sub type
-                                                ret = element->Verify();
-                                            }
-                                            else {
-                                                //TODO type mismatch
+                                                if (ret) {
+                                                    // go recursively
+                                                    // verify the sub type
+                                                    ret = element->Verify();
+                                                }
+                                                else {
+                                                    //TODO type mismatch
+                                                }
                                             }
                                         }
                                     }
@@ -247,7 +251,6 @@ bool RealTimeGenericDataDef::MergeWithLocal(StructuredDataI & localData) {
     }
     return ret;
 }
-
 
 CLASS_REGISTER(RealTimeGenericDataDef, "1.0")
 

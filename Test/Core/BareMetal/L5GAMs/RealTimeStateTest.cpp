@@ -58,9 +58,6 @@ bool RealTimeStateTest::TestConstructor() {
     if (test.GetNumberOfGAMGroups() != 0) {
         return false;
     }
-    if (test.GetContextActiveBuffer() != 0) {
-        return false;
-    }
 
     if (test.GetGAMGroups() != NULL) {
         return false;
@@ -213,20 +210,15 @@ bool RealTimeStateTest::TestChangeState() {
         state.AddGAMGroup(gamGroup[i]);
         gamGroup[i]->Initialise(empty);
     }
-    if (state.GetContextActiveBuffer() != 0) {
-        return false;
-    }
+
 
     RealTimeStateInfo info;
     info.activeBuffer = 0;
     info.currentState = "state1";
     info.nextState = "state2";
 
-    state.ChangeState(info);
+    state.PrepareState(info);
 
-    if (state.GetContextActiveBuffer() != 1) {
-        return false;
-    }
 
     for (uint32 i = 0; i < size; i++) {
         if (gamGroup[i]->GetContext() != 2) {
@@ -239,11 +231,7 @@ bool RealTimeStateTest::TestChangeState() {
     info.nextState = "state1";
 
     // change again
-    state.ChangeState(info);
-
-    if (state.GetContextActiveBuffer() != 0) {
-        return false;
-    }
+    state.PrepareState(info);
 
     for (uint32 i = 0; i < size; i++) {
         if (gamGroup[i]->GetContext() != 1) {
@@ -253,7 +241,3 @@ bool RealTimeStateTest::TestChangeState() {
     return true;
 }
 
-
-bool RealTimeStateTest::TestGetContextActiveBuffer(){
-    return TestChangeState();
-}

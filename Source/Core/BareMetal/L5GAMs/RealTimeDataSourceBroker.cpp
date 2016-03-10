@@ -31,6 +31,7 @@
 
 #include "RealTimeDataSourceBroker.h"
 #include "RealTimeDataSource.h"
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,10 +40,10 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
-RealTimeDataSourceBroker::RealTimeDataSourceBroker(){
-
+RealTimeDataSourceBroker::RealTimeDataSourceBroker() {
+    chunkIndex.Add(0u);
 }
 
 void RealTimeDataSourceBroker::SetApplication(ReferenceT<RealTimeApplication> rtApp) {
@@ -50,74 +51,70 @@ void RealTimeDataSourceBroker::SetApplication(ReferenceT<RealTimeApplication> rt
 }
 
 bool RealTimeDataSourceBroker::AddVariable(ReferenceT<RealTimeDataDefI> def,
-                                                 void* ptr) {
+                                           void* ptr) {
 
     bool ret = application.IsValid();
-    if(ret) {
+    if (ret) {
         ReferenceT<RealTimeDataSource> data;
 
-        for(uint32 i=0u; i<application->Size(); i++) {
-            data=application->Get(i);
-            if(StringHelper::Compare(data->GetName(),"+Data")==0) {
+        for (uint32 i = 0u; i < application->Size(); i++) {
+            data = application->Get(i);
+            if (StringHelper::Compare(data->GetName(), "+Data") == 0) {
                 break;
             }
         }
 
-        ret=data.IsValid();
-        if(ret) {
+        ret = data.IsValid();
+        if (ret) {
             const char8* typeName = def->GetType();
 
             // case structured
             TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(typeName);
+            uint32 offset = static_cast<uint32>((uintp) ptr - (uintp) memory.GetMemoryStart());
+            uint32 varSize = 0u;
+            uint32 numberOfMembers = def->Size();
+
             if (typeDes == InvalidType) {
 
                 const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(typeName);
-                ret=(item != NULL);
+                ret = (item != NULL);
                 if (ret) {
                     const Introspection *intro = item->GetIntrospection();
-                    ret=(intro != NULL);
+                    ret = (intro != NULL);
                     if (ret) {
-                        uint32 varSize=intro->GetClassSize();
-                        if(ptr==NULL) {
-                            ptr=memory.Add(varSize);
+                        varSize = intro->GetClassSize();
+                        if (ptr == NULL) {
+                            ret = memory.Add(varSize, offset);
+                            ptr = memory.GetMemoryStart();
                         }
+                        if (ret) {
+                            // final type
+                            if (numberOfMembers > 0u) {
+                                uint32 numberOfIntroMembers = intro->GetNumberOfMembers();
 
-                        uint32 numberOfMembers = def->Size();
-                        // final type
-                        if (numberOfMembers == 0u) {
-                            const char8* path=def->GetPath();
-                            ReferenceT<RealTimeDataSourceDef> dsDef=data->Find(path);
-                            ret=dsDef.IsValid();
-                            if(ret) {
-                                void **dsPointer=dsDef->GetDataSourcePointer();
-                                ret=(dsPointer!=NULL);
-                                if(ret) {
-                                    // add the data source pointer
-                                    ret=DSPointers.Add(dsPointer);
-                                }
-                                if(ret) {
-                                    // add the GAM pointer
-                                    ret=GAMPointers.Add(ptr);
-                                }
-                                if(ret) {
-                                    ret=sizes.Add(varSize);
-                                }
-                            }
-                            else {
-                                //TODO data source not found
-                            }
-                        }
-                        else {
-                            uint32 numberOfIntroMembers=intro->GetNumberOfMembers();
-                            // the variables will be added in the same order of the introspection
-                            for (uint32 i = 0u; (i < numberOfIntroMembers) && (ret); i++) {
-                                for(uint32 j=0u; (j<numberOfMembers) && (ret); j++) {
-                                    ReferenceT<RealTimeDataDefI> subDef = def->Get(j);
-                                    // if the member name matches
-                                    if(StringHelper::Compare((*intro)[i].GetMemberName(), def->GetName())==0) {
-                                        char8 *pointablePtr=reinterpret_cast<char8*>(ptr);
-                                        ret=AddVariable(subDef, &pointablePtr[(*intro)[i].GetMemberByteOffset()]);
-                                        break;
+                                // the variables will be added in the same order of the introspection
+                                for (uint32 i = 0u; (i < numberOfIntroMembers) && (ret); i++) {
+                                    bool found = false;
+                                    for (uint32 j = 0u; (j < numberOfMembers) && (ret) && (!found); j++) {
+                                        ReferenceT<RealTimeDataDefI> subDef = def->Get(j);
+                                        ret = def.IsValid();
+                                        if (ret) {
+                                            // if the member name matches
+                                            const char8 *defMemberName = subDef->GetName();
+                                            ret = (defMemberName != NULL);
+                                            if (ret) {
+                                                if (StringHelper::Compare((*intro)[i].GetMemberName(), &defMemberName[1]) == 0) {
+                                                    printf("\n insert %s path = %s\n", &defMemberName[1], subDef->GetPath());
+                                                    char8 *pointablePtr = reinterpret_cast<char8*>(ptr);
+                                                    ret = AddVariable(subDef, &pointablePtr[(*intro)[i].GetMemberByteOffset()]);
+                                                    found = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (!found) {
+                                        ret = false;
+                                        //TODO not found
                                     }
                                 }
                             }
@@ -134,17 +131,45 @@ bool RealTimeDataSourceBroker::AddVariable(ReferenceT<RealTimeDataDefI> def,
             }
             // basic type
             else {
-                uint32 varSize=(typeDes.numberOfBits+7u)/8u;
-                char8 *ptr=reinterpret_cast<char8*>(memory.Add(varSize));
-                // add the pointer
-                ret=GAMPointers.Add(ptr);
-                if(ret) {
-                    sizes.Add(varSize);
+                varSize = (typeDes.numberOfBits + 7u) / 8u;
+                printf("\noffset is %d size is %d\n", offset, varSize);
+                if (ptr == NULL) {
+                    ret = memory.Add(varSize, offset);
                 }
             }
 
-            if(ret) {
-                ret=chunkIndex.Add(GAMPointers.GetSize());
+            // same code for structured and basic
+            if ((ret) && (numberOfMembers == 0u)) {
+                const char8* path = def->GetPath();
+                printf("\npath is %s name is %s\n", def->GetPath(), def->GetName());
+                ReferenceT<RealTimeDataSourceDef> dsDef = data->Find(path);
+                ret = dsDef.IsValid();
+                if (ret) {
+                    void **dsPointer0 = dsDef->GetDataSourcePointer(0);
+                    void **dsPointer1 = dsDef->GetDataSourcePointer(1);
+
+                    ret = ((dsPointer0 != NULL) && (dsPointer1 != NULL));
+                    if (ret) {
+                        // add the data source pointer
+                        ret = DSPointers[0].Add(dsPointer0);
+                        if (ret) {
+                            ret = DSPointers[1].Add(dsPointer1);
+                        }
+                    }
+                    if (ret) {
+                        // add the GAM pointer
+                        ret = GAMOffsets.Add(offset);
+                    }
+                    if (ret) {
+                        ret = sizes.Add(varSize);
+                    }
+
+                    printf("\ntest...%d %d\n", *(uint32*) (*dsPointer0), *(uint32*) (*dsPointer1));
+                }
+            }
+
+            if (ret) {
+                ret = chunkIndex.Add(GAMOffsets.GetSize());
             }
         }
         else {
@@ -160,10 +185,11 @@ bool RealTimeDataSourceBroker::AddVariable(ReferenceT<RealTimeDataDefI> def,
 
 void *RealTimeDataSourceBroker::GetData(uint32 i) {
     void *ret = NULL;
-    uint32 index=0u;
-    if(chunkIndex.Peek(i, index)) {
-        if(!GAMPointers.Peek(index , ret)) {
-            //TODO
+    uint32 index = 0u;
+    if (chunkIndex.Peek(i, index)) {
+        uint32 offset = 0u;
+        if (GAMOffsets.Peek(index, offset)) {
+            ret = memory.GetPointer(offset);
         }
     }
     return ret;

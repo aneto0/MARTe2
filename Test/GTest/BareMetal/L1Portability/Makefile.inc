@@ -34,6 +34,7 @@ OBJSX=  AtomicGTest.x \
 		HeapManagerGTest.x \
 		HighResolutionTimerGTest.x \
 		LoadableLibraryGTest.x \
+		MemoryAreaGTest.x \
 		MemoryCheckGTest.x\
 		MemoryOperationsHelperGTest.x\
 		ProcessorTypeGTest.x \

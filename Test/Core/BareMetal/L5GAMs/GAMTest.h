@@ -74,6 +74,7 @@ public:
 
     bool TestConfigureDataSourceFalse_Final();
 
+    bool TestExecute();
 private:
     ConfigurationDatabase cdb;
 

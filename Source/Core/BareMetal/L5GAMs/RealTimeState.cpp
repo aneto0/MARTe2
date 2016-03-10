@@ -46,7 +46,6 @@ static const uint32 functionArrayGranularity = 8u;
 RealTimeState::RealTimeState() {
     statefulGAMGroups = NULL_PTR(ReferenceT<GAMGroup>*);
     numberOfGAMGroups = 0u;
-    activeBuffer = 0u;
 }
 
 RealTimeState::~RealTimeState() {
@@ -149,11 +148,10 @@ void RealTimeState::AddGAMGroup(ReferenceT<GAMGroup> element) {
 
 }
 
-void RealTimeState::ChangeState(const RealTimeStateInfo &status) {
+void RealTimeState::PrepareState(const RealTimeStateInfo &status) {
     for (uint32 i = 0u; i < numberOfGAMGroups; i++) {
         statefulGAMGroups[i]->PrepareNextState(status);
     }
-    activeBuffer = ((activeBuffer + 1u) % 2u);
 }
 
 ReferenceT<GAMGroup> * RealTimeState::GetGAMGroups() const {
@@ -164,9 +162,6 @@ uint32 RealTimeState::GetNumberOfGAMGroups() const {
     return numberOfGAMGroups;
 }
 
-uint8 RealTimeState::GetContextActiveBuffer() const {
-    return activeBuffer;
-}
 CLASS_REGISTER(RealTimeState, "1.0");
 
 }

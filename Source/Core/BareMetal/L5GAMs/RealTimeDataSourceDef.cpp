@@ -46,9 +46,11 @@ namespace MARTe {
 
 RealTimeDataSourceDef::RealTimeDataSourceDef() {
 
-    bufferPtr[0] = NULL;
-    bufferPtr[1] = NULL;
-    currentUsedBuffer = NULL;
+    bufferPtrOffset[0] = 0u;
+    bufferPtrOffset[1] = 0u;
+    memory = NULL_PTR(MemoryArea *);
+    usedBuffer[0] = NULL;
+    usedBuffer[1] = NULL;
 
 }
 
@@ -214,13 +216,16 @@ bool RealTimeDataSourceDef::Verify() {
 
 bool RealTimeDataSourceDef::SetType(const char8 *typeName) {
     bool ret = true;
-    if (type != "") {
-        if (type != typeName) {
+    if (type != typeName) {
+        if (type != "") {
             ret = false;
             //TODO type mismatch
         }
-        type = typeName;
+        else {
+            type = typeName;
+        }
     }
+
     return ret;
 }
 
@@ -228,83 +233,137 @@ const char8 *RealTimeDataSourceDef::GetType() {
     return type.Buffer();
 }
 
-void RealTimeDataSourceDef::SetDataSourcePointer(uint8 bufferIndex,
-                                                 void* ptr) {
+void **RealTimeDataSourceDef::GetDataSourcePointer(uint8 bufferIndex) {
     if (bufferIndex > 1u) {
         //TODO Warning
         bufferIndex = bufferIndex % 2u;
     }
+
+    void ** ret = NULL;
+    if (memory != NULL) {
+        printf("\nreturn a pointer to the buffer %d\n", bufferIndex);
+        usedBuffer[bufferIndex] = memory->GetPointer(bufferPtrOffset[bufferIndex]);
+        ret = &usedBuffer[bufferIndex];
+    }
     else {
-        bufferPtr[bufferIndex] = ptr;
+        //TODO
     }
 
-    if ((bufferPtr[0] != NULL) && (bufferPtr[1] != NULL)) {
-        currentUsedBuffer = &bufferPtr[0];
-    }
-}
-
-void **RealTimeDataSourceDef::GetDataSourcePointer() {
-    return currentUsedBuffer;
+    return ret;
 }
 
 bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
 
-    bool ret = true;
-    // search the current state
-    uint32 numberOfStates = Size();
-    bool found = false;
-    ReferenceT<RealTimeDataSourceDefRecord> record;
-    for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
-        record = Get(i);
-        if (record.IsValid()) {
-            // match
-            if (StringHelper::Compare(record->GetName(), status.currentState) == 0) {
-                found = true;
-            }
-        }
-    }
-    // this variable was dead
-    if (!found) {
-        found = false;
+    bool ret = (memory != NULL);
+
+    if (ret) {
+        // by default use the same buffer in the next state
+        uint8 nextBuffer = (status.activeBuffer + 1u) % 2u;
+        usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[status.activeBuffer]);
+
+        // search the current state
+        uint32 numberOfStates = Size();
+        bool found = false;
+        ReferenceT<RealTimeDataSourceDefRecord> record;
         for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
             record = Get(i);
             if (record.IsValid()) {
                 // match
-                if (StringHelper::Compare(record->GetName(), status.nextState) == 0) {
+                if (StringHelper::Compare(record->GetName(), status.currentState) == 0) {
                     found = true;
                 }
             }
         }
-    }
-
-    // this variable will be used in the next
-    if (found) {
-        AnyType at;
-        uint8 nextBuffer = (status.activeBuffer + 1u) % 2u;
-        StreamString defaultValue = record->GetDefaultValue();
-        TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
-        if (typeDes == InvalidType) {
-            const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
-            ret = (item != NULL);
-            if (ret) {
-                const ClassProperties *properties = item->GetClassProperties();
-                ret = (properties != NULL);
-                if (ret) {
-                    typeDes = TypeDescriptor(false, properties->GetUniqueIdentifier());
-                    at=AnyType(typeDes, 0u, bufferPtr[nextBuffer]);
-                    ConfigurationDatabase cdb;
-                    StandardParser parser(defaultValue, cdb);
-                    ret = parser.Parse();
-                    if (ret) {
-                        ret = TypeConvert(at, cdb);
+        // this variable was dead
+        if (!found) {
+            found = false;
+            for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
+                record = Get(i);
+                if (record.IsValid()) {
+                    // match
+                    if (StringHelper::Compare(record->GetName(), status.nextState) == 0) {
+                        found = true;
                     }
                 }
             }
 
+            // this variable will be used in the next
+            if (found) {
+                AnyType at;
+                StreamString defaultValue = record->GetDefaultValue();
+                TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
+                if (typeDes == InvalidType) {
+                    const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
+                    ret = (item != NULL);
+                    if (ret) {
+                        const ClassProperties *properties = item->GetClassProperties();
+                        ret = (properties != NULL);
+                        if (ret) {
+                            typeDes = TypeDescriptor(false, properties->GetUniqueIdentifier());
+                            at = AnyType(typeDes, 0u, memory->GetPointer(bufferPtrOffset[nextBuffer]));
+                            ConfigurationDatabase cdb;
+                            StandardParser parser(defaultValue, cdb);
+                            ret = parser.Parse();
+                            if (ret) {
+                                ret = TypeConvert(at, cdb);
+                            }
+                            if (ret) {
+                                //set the next used buffer
+                                usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[nextBuffer]);
+                            }
+                        }
+                    }
+
+                }
+                else {
+                    printf("\nSet default value:: %s found: defaultValue= %s nextBuff=%d\n", GetName(), defaultValue.Buffer(), nextBuffer);
+                    at = AnyType(typeDes, 0u, memory->GetPointer(bufferPtrOffset[nextBuffer]));
+                    ret = TypeConvert(at, defaultValue);
+                    if (ret) {
+                        printf("\ndata is %d\n", *(uint32*)memory->GetPointer(bufferPtrOffset[nextBuffer]));
+                        //set the next used buffer
+                        usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[nextBuffer]);
+                    }
+                }
+            }
+        }
+    }
+    return ret;
+}
+
+bool RealTimeDataSourceDef::Allocate(MemoryArea &dsMemory) {
+
+    bool ret = true;
+    memory = &dsMemory;
+    TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
+    uint32 varSize = 0u;
+    // structured type
+    if (typeDes == InvalidType) {
+        const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
+        ret = (item != NULL);
+        if (ret) {
+            const ClassProperties *properties = item->GetClassProperties();
+            ret = (properties != NULL);
+            if (ret) {
+                varSize = properties->GetSize();
+            }
+            else {
+                //TODO ??
+            }
         }
         else {
-            at=AnyType(typeDes, 0u, bufferPtr[nextBuffer]);
-            ret=TypeConvert(at, defaultValue);
+            //TODO type not registered
+        }
+    }
+    // basic type
+    else {
+        varSize = (typeDes.numberOfBits + 7u) / 8u;
+    }
+    // allocate the memory
+    if (varSize != 0u) {
+        ret = memory->Add(varSize, bufferPtrOffset[0]);
+        if (ret) {
+            ret = memory->Add(varSize, bufferPtrOffset[1]);
         }
     }
     return ret;

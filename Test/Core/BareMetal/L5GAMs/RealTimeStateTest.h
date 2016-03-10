@@ -63,7 +63,6 @@ public:
 
     bool TestChangeState();
 
-    bool TestGetContextActiveBuffer();
 
 private:
     ConfigurationDatabase cdb;

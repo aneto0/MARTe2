@@ -65,6 +65,54 @@ static bool VerifyPrivate(ReferenceT<ReferenceContainer> ref) {
     }
     return ret;
 }
+
+static bool PrepareNextStatePrivate(const RealTimeStateInfo &status,
+                                    ReferenceT<ReferenceContainer> ref) {
+
+// go inside definitions to prepare the next state
+    uint32 numberOfContainers = ref->Size();
+    bool ret = true;
+    for (uint32 i = 0u; (i < numberOfContainers) && (ret); i++) {
+        ReferenceT<ReferenceContainer> container = ref->Get(i);
+        if (container.IsValid()) {
+            ReferenceT<RealTimeDataSourceDef> def = container;
+            if (def.IsValid()) {
+                ret = def->PrepareNextState(status);
+            }
+            else {
+                ret = PrepareNextStatePrivate(status, container);
+            }
+        }
+
+    }
+    return ret;
+}
+
+static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
+                            MemoryArea &memory) {
+    bool ret = true;
+    uint32 numberOfNodes = container->Size();
+    for (uint32 i = 0u; (i < numberOfNodes) && (ret); i++) {
+        ReferenceT<ReferenceContainer> subContainer = container->Get(i);
+        if (subContainer.IsValid()) {
+            ReferenceT<RealTimeDataSourceDef> def = subContainer;
+            if (def.IsValid()) {
+                printf("\nallocation of %s %s\n", def->GetName(), def->GetType());
+                ret = def->Allocate(memory);
+            }
+            else {
+                ret = AllocatePrivate(subContainer, memory);
+            }
+        }
+        else {
+            ret = false;
+            //TODO ??
+        }
+
+    }
+    return ret;
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -76,102 +124,7 @@ RealTimeDataSource::RealTimeDataSource() {
 }
 
 bool RealTimeDataSource::Allocate() {
-    bool ret = true;
-    uint32 numberOfNodes = Size();
-    for (uint32 i = 0u; i < numberOfNodes; i++) {
-        ReferenceT<ReferenceContainer> subContainer = Get(i);
-        if (subContainer.IsValid()) {
-            ReferenceT<RealTimeDataSourceDef> def = subContainer;
-            if (def.IsValid()) {
-                ret = AllocateSingleDefinition(def);
-            }
-            else {
-                ret = AllocatePrivate(subContainer);
-            }
-        }
-        else {
-            //TODO ??
-        }
-
-    }
-    return ret;
-}
-
-bool RealTimeDataSource::AllocatePrivate(ReferenceT<ReferenceContainer> container) {
-    bool ret = true;
-    uint32 numberOfNodes = container->Size();
-    for (uint32 i = 0u; i < numberOfNodes; i++) {
-        ReferenceT<ReferenceContainer> subContainer = container->Get(i);
-        if (subContainer.IsValid()) {
-            ReferenceT<RealTimeDataSourceDef> def = subContainer;
-            if (def.IsValid()) {
-                ret = AllocateSingleDefinition(def);
-            }
-            else {
-                ret = AllocatePrivate(subContainer);
-            }
-        }
-        else {
-            //TODO ??
-        }
-
-    }
-    return ret;
-}
-
-bool RealTimeDataSource::AllocateSingleDefinition(ReferenceT<RealTimeDataSourceDef> dsDef) {
-
-    bool ret = dsDef.IsValid();
-
-    if (ret) {
-        const char8* type = dsDef->GetType();
-        TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(type);
-        uint32 varSize = 0u;
-        // structured type
-        if (typeDes == InvalidType) {
-            const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type);
-            ret = (item != NULL);
-            if (ret) {
-                const ClassProperties *properties = item->GetClassProperties();
-                ret = (properties != NULL);
-                if (ret) {
-                    varSize = properties->GetSize();
-                }
-                else {
-                    //TODO ??
-                }
-            }
-            else {
-                //TODO type not registered
-            }
-        }
-        // basic type
-        else {
-            varSize = (typeDes.numberOfBits + 7u) / 8u;
-        }
-        // allocate the memory
-        if (varSize != 0u) {
-            void *ptr0 = memory.Add(varSize);
-            ret = (ptr0 != NULL);
-            if (ret) {
-                dsDef->SetDataSourcePointer(0u, ptr0);
-                if (ret) {
-                    void *ptr1 = memory.Add(varSize);
-                    ret = (ptr1 != NULL);
-                    if (ret) {
-                        dsDef->SetDataSourcePointer(1u, ptr1);
-                    }
-                    else {
-                        //TODO Failed allocation
-                    }
-                }
-            }
-            else {
-                //TODO Failed allocation
-            }
-        }
-    }
-    return ret;
+    return AllocatePrivate(ReferenceT<ReferenceContainer>(this), memory);
 }
 
 bool RealTimeDataSource::AddDataDefinition(ReferenceT<GAM> gam) {
@@ -241,7 +194,7 @@ bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> de
         newDefaultPath += ".";
 
         if (isLeaf) {
-            printf("\nfound a leaf, the path is %s the user is %s\n", path.Buffer(), userName);
+            printf("\nfound a leaf, the path is %s the user is %s type is %s\n", path.Buffer(), userName, definition->GetType());
 
             ReferenceT<RealTimeDataSourceDef> element = Find(path.Buffer());
             if (element.IsValid()) {
@@ -359,6 +312,11 @@ bool RealTimeDataSource::Initialise(StructuredDataI & data) {
 bool RealTimeDataSource::Verify() {
 
     return VerifyPrivate(ReferenceT<ReferenceContainer>(this));
+}
+
+bool RealTimeDataSource::PrepareNextState(const RealTimeStateInfo &status) {
+
+    return PrepareNextStatePrivate(status, ReferenceT<ReferenceContainer>(this));
 }
 
 CLASS_REGISTER(RealTimeDataSource, "1.0")

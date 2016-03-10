@@ -46,55 +46,67 @@ MemoryArea::MemoryArea() {
 }
 
 MemoryArea::~MemoryArea() {
-    if(Free()){
-
-    }
+    Free();
 }
 
-bool MemoryArea::Free(){
-    bool ret=false;
+void MemoryArea::Free() {
     if (memory != NULL) {
         if(HeapManager::Free(reinterpret_cast<void*&>(memory))) {
-            ret=true;
             memory=NULL;
         }
     }
-    size=0u;
-    return ret;
+    size = 0u;
 }
 
-void* MemoryArea::Add(uint32 memorySize) {
-    char8* ret = NULL_PTR(char8*);
+bool MemoryArea::Add(uint32 memorySize,
+                     uint32 &offset) {
+    bool ret = false;
 
     if (size == 0u) {
         memory = HeapManager::Malloc(memorySize);
         if (memory != NULL) {
-            ret = reinterpret_cast<char8 *>(memory);
             size += memorySize;
+            offset=0u;
+            ret=true;
         }
     }
     else {
         void* temp = memory;
         memory = HeapManager::Realloc(temp, (size + memorySize));
         if (memory != NULL) {
-            ret=&reinterpret_cast<char8*>(memory)[size];
+            offset=size;
             size+=memorySize;
+            ret=true;
         }
     }
-    return reinterpret_cast<void*>(ret);
-}
-
-
-void* MemoryArea::Add(void* element, uint32 memorySize) {
-    void* ret = Add(memorySize);
-
-    if(!MemoryOperationsHelper::Copy(ret, element, memorySize)){
-        //TODO
-    }
-
     return ret;
 }
 
+bool MemoryArea::Add(void* element,
+                     uint32 memorySize,
+                     uint32 &offset) {
+    bool ret = Add(memorySize, offset);
+    if (ret) {
+        ret = (MemoryOperationsHelper::Copy(&reinterpret_cast<char8*>(memory)[offset], element, memorySize));
+    }
+    return ret;
+}
+
+void* MemoryArea::GetMemoryStart() const {
+    return memory;
+}
+
+uint32 MemoryArea::GetMemorySize() const {
+    return size;
+}
+
+void* MemoryArea::GetPointer(uint32 offset) {
+    void* ret = NULL;
+    if(offset<size) {
+        ret=&reinterpret_cast<char8*>(memory)[offset];
+    }
+    return ret;
+}
 
 }
 

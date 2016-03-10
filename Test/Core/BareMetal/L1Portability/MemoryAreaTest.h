@@ -1,7 +1,7 @@
 /**
- * @file MemoryArea.h
- * @brief Header file for class MemoryArea
- * @date 23/02/2016
+ * @file MemoryAreaTest.h
+ * @brief Header file for class MemoryAreaTest
+ * @date 10/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MemoryArea
+ * @details This header file contains the declaration of the class MemoryAreaTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MEMORYAREA_H_
-#define MEMORYAREA_H_
+#ifndef MEMORYAREATEST_H_
+#define MEMORYAREATEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,42 +31,38 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "HeapManager.h"
+#include "MemoryArea.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+using namespace MARTe;
 
-class MemoryArea {
+class MemoryAreaTest {
 
 public:
-    MemoryArea();
 
-    ~MemoryArea();
+    bool TestConstructor();
 
-    void Free();
+    bool TestAdd_OnlySize();
 
-    bool Add(void* element, uint32 memorySize, uint32 &offset);
+    bool TestAdd_Element();
 
-    bool Add(uint32 memorySize, uint32 &offset);
+    bool TestFree();
 
-    void* GetMemoryStart() const;
+    bool TestGetMemoryStart();
 
-    uint32 GetMemorySize() const;
+    bool TestGetMemorySize(uint32 size);
 
-    void* GetPointer(uint32 offset);
+    bool TestGetPointer();
 
-private:
 
-    void* memory;
-    uint32 size;
 };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* MEMORYAREA_H_ */
+#endif /* TEST_CORE_BAREMETAL_L1PORTABILITY_MEMORYAREATEST_H_ */
 

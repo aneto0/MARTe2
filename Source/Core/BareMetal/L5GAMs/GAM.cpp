@@ -135,30 +135,27 @@ bool GAM::Initialise(StructuredDataI & data) {
         SetUp();
         // merge definitions
         ret = ConfigureFunction();
-
-        if (ret) {
-            ret = ConfigureDataSourceLinks();
-        }
-
     }
     return ret;
 }
 
 bool GAM::ConfigureDataSourceLinks() {
+    // it is virtual... can be overriden if the data are static
+
     bool ret = true;
     uint32 numberOfElements = Size();
     for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
         ReferenceT<RealTimeDataDefContainer> defContainer = Get(i);
         if (defContainer.IsValid()) {
             uint32 numberOfDefs = defContainer->Size();
-            for (uint32 j = 0; j < numberOfDefs; j++) {
+            for (uint32 j = 0; (j < numberOfDefs) && (ret); j++) {
                 ReferenceT<RealTimeDataDefI> def = defContainer->Get(j);
                 if (def.IsValid()) {
                     if (defContainer->IsInput()) {
-                        inputReader->AddVariable(def);
+                        ret=inputReader->AddVariable(def);
                     }
                     if (defContainer->IsOutput()) {
-                        outputWriter->AddVariable(def);
+                        ret=outputWriter->AddVariable(def);
                     }
                 }
             }
@@ -170,6 +167,8 @@ bool GAM::ConfigureDataSourceLinks() {
 void GAM::SetApplication(ReferenceT<RealTimeApplication> rtApp) {
     if (!application.IsValid()) {
         application = rtApp;
+        inputReader->SetApplication(rtApp);
+        outputWriter->SetApplication(rtApp);
     }
 }
 

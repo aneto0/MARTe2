@@ -333,3 +333,65 @@ bool GAMTest::TestConfigureDataSourceFalse_Final() {
     return (!gam->ConfigureDataSource());
 }
 
+bool GAMTest::TestExecute() {
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("IsFinal", "true");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States.+state1");
+    appCDB.Write("Class", "RealTimeState");
+    appCDB.MoveToRoot();
+
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    gam->SetName("Pid1");
+    if (!gam->Initialise(cdb)) {
+        return false;
+    }
+
+    gam->SetApplication(rtapp);
+    gam->AddState("+state1");
+
+    if (!gam->ConfigureDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->ValidateDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->AllocateDataSource()) {
+        return false;
+    }
+
+    RealTimeStateInfo info;
+    info.currentState="";
+    info.nextState="+state1";
+    info.activeBuffer=1;
+    if (!rtapp->PrepareNextState(info)) {
+        return false;
+    }
+
+    if(!gam->ConfigureDataSourceLinks()){
+        return false;
+    }
+
+
+
+    gam->Execute(0);
+
+
+    return true;
+
+}

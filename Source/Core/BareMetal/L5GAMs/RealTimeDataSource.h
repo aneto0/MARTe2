@@ -59,6 +59,8 @@ public:
 
     bool Verify();
 
+    bool PrepareNextState(const RealTimeStateInfo &status);
+
 private:
 
     bool AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> definition,
@@ -67,10 +69,7 @@ private:
                                  bool isConsumer,
                                  StreamString defaultPath = "");
 
-    bool AllocatePrivate(ReferenceT<ReferenceContainer> container);
 
-
-    bool AllocateSingleDefinition(ReferenceT<RealTimeDataSourceDef> dsDef);
 
 
     uint32 numberOfInitialDDBs;

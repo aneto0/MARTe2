@@ -31,6 +31,7 @@
 
 #include "GAMTestHelper.h"
 #include "ConfigurationDatabase.h"
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -63,6 +64,23 @@ INTROSPECTION_REGISTER(ControlNoise, "1.0", ControlNoise_introspection)
 
 void PIDGAM::Execute(uint8 activeContextBuffer) {
 
+    inputReader->Read(activeContextBuffer);
+    TrackError *error = (TrackError*) inputReader->GetData(0);
+
+    printf("\nExecuting: error.par1= %d, error.par2= %d\n", error->Par1, error->Par2);
+
+    ControlIn *control = (ControlIn*) outputWriter->GetData(0);
+    ControlNoise *noise = (ControlNoise*) outputWriter->GetData(1);
+    uint32 Kp = 10;
+
+    control->Par1 = Kp * error->Par1;
+    control->Par2 = Kp * error->Par2;
+
+    if (noise->noiseValue > 0) {
+        noise->noiseValue = -noise->noiseValue;
+    }
+
+    outputWriter->Write(activeContextBuffer);
 }
 
 PIDGAM::~PIDGAM() {

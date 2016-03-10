@@ -1,7 +1,7 @@
 /**
- * @file GAMGTest.cpp
- * @brief Source file for class GAMGTest
- * @date 18/02/2016
+ * @file MemoryAreaGTest.cpp
+ * @brief Source file for class MemoryAreaGTest
+ * @date 10/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMGTest (public, protected, and private). Be aware that some 
+ * the class MemoryAreaGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -26,12 +26,13 @@
 /*---------------------------------------------------------------------------*/
 
 #include <limits.h>
-#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "GAMTest.h"
+
+#include "gtest/gtest.h"
+#include "MemoryAreaTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,69 +42,43 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(GAMGTest,TestConstructor) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConstructor());
+TEST(MemoryAreaGTest,TestConstructor) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestConstructor());
 }
 
-TEST(GAMGTest,TestInitialise) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestInitialise());
+TEST(MemoryAreaGTest,TestAdd_OnlySize) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestAdd_OnlySize());
 }
 
-TEST(GAMGTest,TestSetApplication) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestSetApplication());
+TEST(MemoryAreaGTest,TestAdd_Element) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestAdd_Element());
 }
 
-TEST(GAMGTest,TestSetGAMGroup) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestSetGAMGroup());
+TEST(MemoryAreaGTest,TestFree) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestFree());
 }
 
-TEST(GAMGTest,TestAddState) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestAddState());
+TEST(MemoryAreaGTest,TestGetMemoryStart) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestGetMemoryStart());
 }
 
-TEST(GAMGTest,TestGetNumberOfSupportedStates) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetNumberOfSupportedStates());
+TEST(MemoryAreaGTest,TestGetMemorySize_32) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestGetMemorySize(32));
 }
 
-TEST(GAMGTest,TestGetSupportedStates) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetSupportedStates());
+TEST(MemoryAreaGTest,TestGetMemorySize_0) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestGetMemorySize(0));
 }
 
-
-TEST(GAMGTest,TestGetNumberOfSupportedStates_GAMGroup) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetNumberOfSupportedStates_GAMGroup());
-}
-
-TEST(GAMGTest,TestGetSupportedStates_GAMGroup) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetSupportedStates_GAMGroup());
-}
-
-TEST(GAMGTest,TestConfigureDataSource) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSource());
-}
-
-TEST(GAMGTest,TestConfigureDataSource_NotFinal) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSource_NotFinal());
-}
-
-TEST(GAMGTest,TestConfigureDataSourceFalse_Final) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSourceFalse_Final());
-}
-
-TEST(GAMGTest,TestExecute) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestExecute());
+TEST(MemoryAreaGTest,TestGetPointer) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestGetPointer());
 }
 

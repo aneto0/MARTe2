@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeDataSourceInputReader.h"
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -43,6 +43,34 @@ namespace MARTe {
 
 RealTimeDataSourceInputReader::RealTimeDataSourceInputReader() {
 
+}
+
+bool RealTimeDataSourceInputReader::Read(uint8 activeDataSourceBuffer) {
+
+    bool ret = true;
+    for (uint32 i = 0u; (i < GAMOffsets.GetSize()) && (ret); i++) {
+        void ** DSPointer = NULL;
+        DSPointers[activeDataSourceBuffer].Peek(i, DSPointer);
+        ret=(DSPointer!=NULL);
+        void * GAMPointer=NULL;
+        uint32 offset=0u;
+        if(ret) {
+            GAMOffsets.Peek(i, offset);
+            GAMPointer=memory.GetPointer(offset);
+            ret=(GAMPointer!=NULL);
+        }
+        uint32 size=0u;
+        if(ret) {
+            sizes.Peek(i, size);
+            ret=(size!=0u);
+        }
+        if(ret) {
+            printf("\ntest in read %d size = %d, offs = %d\n", *(uint32*)(*DSPointer), size, offset);
+            ret=MemoryOperationsHelper::Copy(GAMPointer, *DSPointer, size);
+        }
+    }
+
+    return ret;
 }
 
 }

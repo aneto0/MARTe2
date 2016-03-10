@@ -42,6 +42,7 @@ class RealTimeDataSourceInputReader: public RealTimeDataSourceBroker {
 public:
     RealTimeDataSourceInputReader();
 
+    bool Read(uint8 activeDataSourceBuffer);
 
 };
 

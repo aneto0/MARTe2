@@ -105,7 +105,7 @@ public:
      *   The context active buffer swap from 0 to 1
      *   or vice versa.
      */
-    void ChangeState(const RealTimeStateInfo &status);
+    void PrepareState(const RealTimeStateInfo &status);
 
     /**
      * @brief Returns the stateful GAMGroups array.
@@ -119,10 +119,6 @@ public:
      */
     uint32 GetNumberOfGAMGroups() const;
 
-    /**
-     * @brief Gets the context active buffer.
-     */
-    uint8 GetContextActiveBuffer() const;
 private:
 
     /**
@@ -136,10 +132,6 @@ private:
     uint32 numberOfGAMGroups;
 
 
-    /**
-     * The active buffer in the context
-     */
-    uint8 activeBuffer;
 
 };
 

@@ -36,6 +36,7 @@ OBJSX=  AtomicTest.x \
 		HeapManagerTest.x \
 		HighResolutionTimerTest.x \
 		LoadableLibraryTest.x \
+		MemoryAreaTest.x \
 		MemoryCheckTest.x \
 		MemoryOperationsHelperTest.x\
 		ProcessorTypeTest.x \

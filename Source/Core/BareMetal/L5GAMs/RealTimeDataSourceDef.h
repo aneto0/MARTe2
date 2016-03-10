@@ -66,21 +66,21 @@ public:
     const char8 *GetType();
 
 
-    void SetDataSourcePointer(uint8 bufferIndex, void* ptr);
-
-
-    void **GetDataSourcePointer();
+    void **GetDataSourcePointer(uint8 bufferIndex);
 
     bool PrepareNextState(const RealTimeStateInfo &status);
+
+    bool Allocate(MemoryArea &dsMemory);
 
 private:
 
     StreamString type;
 
-    void *bufferPtr[2];
+    uint32 bufferPtrOffset[2];
 
-    void **currentUsedBuffer;
+    void *usedBuffer[2];
 
+    MemoryArea *memory;
 };
 
 }

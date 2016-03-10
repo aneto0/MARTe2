@@ -105,11 +105,15 @@ public:
      */
     void AddState(const char8 *stateName);
 
+
+
+    virtual bool ConfigureDataSourceLinks();
+
     /**
      * @brief The core function to be executed.
-     * @param[in] activeContextBuffer is the context buffer currently active.
+     * @param[in] activeBuffer is the context buffer currently active.
      */
-    virtual void Execute(uint8 activeContextBuffer)=0;
+    virtual void Execute(uint8 activeBuffer)=0;
 
     /**
      * @brief calls the Initialise(*) function for each sub-node, then calls the functions
@@ -141,10 +145,6 @@ protected:
      * of the IO structures, local configuration file, ecc)
      */
     virtual void SetUp()=0;
-
-
-
-    virtual bool ConfigureDataSourceLinks();
 
 
     /**
