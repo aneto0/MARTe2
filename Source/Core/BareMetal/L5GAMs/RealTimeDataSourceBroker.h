@@ -47,12 +47,15 @@ class RealTimeDataSourceBroker: public ReferenceContainer {
 public:
     RealTimeDataSourceBroker();
 
-
     void SetApplication(ReferenceT<RealTimeApplication> rtApp);
 
     bool AddVariable(ReferenceT<RealTimeDataDefI> def, void* ptr=NULL);
 
     void *GetData(uint32 i);
+
+    void *GetMemoryPointer(uint32 n);
+
+    bool Finalise();
 
 protected:
 
@@ -63,11 +66,22 @@ protected:
 
     StaticList<uint32> GAMOffsets;
 
+    StaticList<void *> beginPointers;
+
+    StaticList<void *> GAMPointers;
+
     StaticList<void **> DSPointers[2];
 
     StaticList<uint32> sizes;
 
     StaticList<uint32> chunkIndex;
+
+    bool finalised;
+private:
+
+    bool AddVariablePrivate(ReferenceT<RealTimeDataDefI> def, void* ptr, void *memStart );
+
+    void *GetMemoryPointerPrivate(uint32 n);
 
 };
 

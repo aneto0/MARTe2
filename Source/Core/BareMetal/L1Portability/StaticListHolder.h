@@ -249,6 +249,9 @@ public:
     bool Extract(const uint32 position,
                  void * const copyTo);
 
+
+    bool Set(const uint32 position, const void *const value);
+
     /**
      * @brief Retrieves the pointer to the allocated memory area.
      * @return the pointer to the allocated memory area.

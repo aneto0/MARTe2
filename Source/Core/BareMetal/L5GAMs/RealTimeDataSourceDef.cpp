@@ -299,30 +299,37 @@ bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
                         const ClassProperties *properties = item->GetClassProperties();
                         ret = (properties != NULL);
                         if (ret) {
-                            typeDes = TypeDescriptor(false, properties->GetUniqueIdentifier());
-                            at = AnyType(typeDes, 0u, memory->GetPointer(bufferPtrOffset[nextBuffer]));
-                            ConfigurationDatabase cdb;
-                            StandardParser parser(defaultValue, cdb);
-                            ret = parser.Parse();
-                            if (ret) {
-                                ret = TypeConvert(at, cdb);
-                            }
-                            if (ret) {
-                                //set the next used buffer
-                                usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[nextBuffer]);
+                            // if defaultValue is not set, remain with the same buffer of the previous state
+                            if (defaultValue != "") {
+                                typeDes = TypeDescriptor(false, properties->GetUniqueIdentifier());
+                                at = AnyType(typeDes, 0u, memory->GetPointer(bufferPtrOffset[nextBuffer]));
+                                ConfigurationDatabase cdb;
+                                StandardParser parser(defaultValue, cdb);
+                                ret = parser.Parse();
+                                if (ret) {
+                                    ret = TypeConvert(at, cdb);
+                                }
+
+                                if (ret) {
+                                    //set the next used buffer
+                                    usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[nextBuffer]);
+                                }
                             }
                         }
                     }
 
                 }
                 else {
-                    printf("\nSet default value:: %s found: defaultValue= %s nextBuff=%d\n", GetName(), defaultValue.Buffer(), nextBuffer);
-                    at = AnyType(typeDes, 0u, memory->GetPointer(bufferPtrOffset[nextBuffer]));
-                    ret = TypeConvert(at, defaultValue);
-                    if (ret) {
-                        printf("\ndata is %d\n", *(uint32*)memory->GetPointer(bufferPtrOffset[nextBuffer]));
-                        //set the next used buffer
-                        usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[nextBuffer]);
+                    // if defaultValue is not set, remain with the same buffer of the previous state
+                    if (defaultValue != "") {
+                        printf("\nSet default value:: %s found: defaultValue= %s nextBuff=%d\n", GetName(), defaultValue.Buffer(), nextBuffer);
+                        at = AnyType(typeDes, 0u, memory->GetPointer(bufferPtrOffset[nextBuffer]));
+                        ret = TypeConvert(at, defaultValue);
+                        if (ret) {
+                            printf("\ndata is %d\n", *(uint32*) memory->GetPointer(bufferPtrOffset[nextBuffer]));
+                            //set the next used buffer
+                            usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[nextBuffer]);
+                        }
                     }
                 }
             }

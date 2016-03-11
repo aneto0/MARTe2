@@ -1,8 +1,7 @@
 /**
-    bool Write(uint8 activeDataSourceBuffer);
- * @file RealTimeDataSourceOutputWriter.h
- * @brief Header file for class RealTimeDataSourceOutputWriter
- * @date 09/03/2016
+ * @file RealTimeDataSourceBrokerTest.h
+ * @brief Header file for class RealTimeDataSourceBrokerTest
+ * @date 11/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceOutputWriter
+ * @details This header file contains the declaration of the class RealTimeDataSourceBrokerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEOUTPUTWRITER_H_
-#define REALTIMEDATASOURCEOUTPUTWRITER_H_
+#ifndef REALTIMEDATASOURCEBROKERTEST_H_
+#define REALTIMEDATASOURCEBROKERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,29 +32,54 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "RealTimeDataSourceBroker.h"
+#include "ConfigurationDatabase.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+using namespace MARTe;
 
-class RealTimeDataSourceOutputWriter: public RealTimeDataSourceBroker {
+class RealTimeDataSourceBrokerTest {
 
 public:
-    CLASS_REGISTER_DECLARATION()
 
-    RealTimeDataSourceOutputWriter();
+    RealTimeDataSourceBrokerTest();
 
-    bool Write(uint8 activeDataSourceBuffer);
+    bool TestConstructor();
 
+    bool TestSetApplication();
+
+    bool TestAddVariable_Allocation();
+
+    bool TestAddVariable_Static();
+
+    bool TestAddVariableFalse_NoApplicationSet();
+
+    bool TestAddVariableFalse_InvalidType();
+
+    bool TestAddVariableFalse_UnintrospectableType();
+
+    bool TestAddVariableFalse_NotInDataSource();
+
+    bool TestGetData_Allocation();
+
+    bool TestGetData_Static();
+
+    bool TestGetMemoryPointer_Allocation();
+
+    bool TestGetMemoryPointer_Static();
+
+    bool TestFinalise();
+
+private:
+    ConfigurationDatabase cdb;
 
 };
-
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEOUTPUTWRITER_H_ */
+#endif /* REALTIMEDATASOURCEBROKERTEST_H_ */
 

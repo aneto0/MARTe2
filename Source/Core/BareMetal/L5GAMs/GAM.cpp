@@ -49,7 +49,13 @@ GAM::GAM() {
     numberOfSupportedStates = 0u;
     supportedStates = NULL_PTR(StreamString *);
     inputReader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (inputReader.IsValid()) {
+        inputReader->SetName("inputReader");
+    }
     outputWriter = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (outputWriter.IsValid()) {
+        outputWriter->SetName("outputWriter");
+    }
 }
 
 GAM::~GAM() {
@@ -142,7 +148,7 @@ bool GAM::Initialise(StructuredDataI & data) {
 bool GAM::ConfigureDataSourceLinks() {
     // it is virtual... can be overriden if the data are static
 
-    bool ret = true;
+    bool ret = (inputReader.IsValid() && outputWriter.IsValid());
     uint32 numberOfElements = Size();
     for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
         ReferenceT<RealTimeDataDefContainer> defContainer = Get(i);
@@ -152,15 +158,24 @@ bool GAM::ConfigureDataSourceLinks() {
                 ReferenceT<RealTimeDataDefI> def = defContainer->Get(j);
                 if (def.IsValid()) {
                     if (defContainer->IsInput()) {
-                        ret=inputReader->AddVariable(def);
+                        printf("\nAdd Variable in input\n");
+                        ret = inputReader->AddVariable(def);
                     }
                     if (defContainer->IsOutput()) {
-                        ret=outputWriter->AddVariable(def);
+                        printf("\nAdd Variable in output\n");
+                        ret = outputWriter->AddVariable(def);
                     }
                 }
             }
         }
     }
+    if (ret) {
+        ret = inputReader->Finalise();
+    }
+    if (ret) {
+        ret = outputWriter->Finalise();
+    }
+
     return ret;
 }
 

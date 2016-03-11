@@ -40,6 +40,9 @@ namespace MARTe{
 
 class RealTimeDataSourceInputReader: public RealTimeDataSourceBroker {
 public:
+    CLASS_REGISTER_DECLARATION()
+
+
     RealTimeDataSourceInputReader();
 
     bool Read(uint8 activeDataSourceBuffer);
