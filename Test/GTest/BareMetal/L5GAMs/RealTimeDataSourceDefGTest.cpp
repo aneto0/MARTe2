@@ -79,3 +79,69 @@ TEST(RealTimeDataSourceDefGTest,TestVerifyNoConsumers) {
     RealTimeDataSourceDefTest rtdsdTest;
     ASSERT_TRUE(rtdsdTest.TestVerifyNoConsumers());
 }
+
+TEST(RealTimeDataSourceDefGTest,TestGetType) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestGetType());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestSetType) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestSetType());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestAllocate_Basic) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestAllocate_Basic());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestAllocate_Structured) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestAllocate_Structured());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestAllocate_Unintrospectable) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestAllocate_Unintrospectable());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestAllocateFalse_Invalid) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestAllocateFalse_Invalid());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestGetDataSourcePointer) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestGetDataSourcePointer());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestPrepareNextState_Basic_ContinueVar) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestPrepareNextState_Basic_ContinueVar());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestPrepareNextState_Basic_DeadVar) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestPrepareNextState_Basic_DeadVar());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestPrepareNextState_Structured_ContinueVar) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestPrepareNextState_Structured_ContinueVar());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestPrepareNextState_Structured_DeadVar) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestPrepareNextState_Structured_DeadVar());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestSetDefaultValue) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestSetDefaultValue());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestGetDefaultValue) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestGetDefaultValue());
+}
+

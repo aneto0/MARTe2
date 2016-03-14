@@ -587,7 +587,6 @@ bool RealTimeDataSourceBrokerTest::TestGetData_Static() {
         return false;
     }
 
-
     if (broker->GetData(0) != &control) {
         return false;
     }
@@ -653,6 +652,10 @@ bool RealTimeDataSourceBrokerTest::TestGetMemoryPointer_Allocation() {
     }
 
     if (!broker->AddVariable(def2)) {
+        return false;
+    }
+
+    if (!broker->Finalise()) {
         return false;
     }
 
@@ -746,6 +749,82 @@ bool RealTimeDataSourceBrokerTest::TestGetMemoryPointer_Static() {
 }
 
 bool RealTimeDataSourceBrokerTest::TestFinalise() {
+
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("IsFinal", "true");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States.+state1");
+    appCDB.Write("Class", "RealTimeState");
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    gam->SetName("Pid1");
+    if (!gam->Initialise(cdb)) {
+        return false;
+    }
+
+    gam->SetApplication(rtapp);
+    gam->AddState("+state1");
+    if (!gam->ConfigureDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->ValidateDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->AllocateDataSource()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def = gam->Find("+Outputs.+Control");
+    ReferenceT<RealTimeGenericDataDef> def2 = gam->Find("+Outputs.+Noise");
+
+    ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    broker->SetName("broker");
+
+    broker->SetApplication(rtapp);
+
+    if (!broker->AddVariable(def)) {
+        return false;
+    }
+
+    if (!broker->AddVariable(def2)) {
+        return false;
+    }
+
+    if (broker->GetData(0) != NULL) {
+        return false;
+    }
+
+    if (broker->GetMemoryPointer(0) != NULL) {
+        return false;
+    }
+
+    if (!broker->Finalise()) {
+        return false;
+    }
+
+    if (broker->GetData(0) == NULL) {
+        return false;
+    }
+
+    if (broker->GetMemoryPointer(0) == NULL) {
+        return false;
+    }
+
     return true;
 }
 

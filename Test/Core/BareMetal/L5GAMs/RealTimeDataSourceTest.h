@@ -45,7 +45,6 @@ public:
 
     bool TestInitialise();
 
-
     bool TestAddDataDefinition_Final();
 
     bool TestAddDataDefinition_AlreadyExistentLeaf();
@@ -58,7 +57,11 @@ public:
 
     bool TestVerify_TwoProducers();
 
+    bool TestAllocate();
 
+    bool TestAllocate_Structure();
+
+    bool TestPrepareNextState();
 
 };
 

@@ -85,14 +85,16 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
     if (ret) {
         ReferenceT<RealTimeDataSource> data;
 
-        for (uint32 i = 0u; i < application->Size(); i++) {
+        ret = false;
+        for (uint32 i = 0u; (i < application->Size()) && (!ret); i++) {
             data = application->Get(i);
-            if (StringHelper::Compare(data->GetName(), "+Data") == 0) {
-                break;
+            if (data.IsValid()) {
+                if (StringHelper::Compare(data->GetName(), "+Data") == 0) {
+                    ret = true;
+                }
             }
         }
 
-        ret = data.IsValid();
         if (ret) {
             ret = def.IsValid();
             if (ret) {

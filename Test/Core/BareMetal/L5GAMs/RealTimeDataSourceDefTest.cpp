@@ -31,6 +31,7 @@
 
 #include "RealTimeDataSourceDefTest.h"
 #include "GAMTestHelper.h"
+#include "RealTimeDataSourceDefRecord.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -171,3 +172,393 @@ bool RealTimeDataSourceDefTest::TestVerifyNoConsumers() {
 
 }
 
+bool RealTimeDataSourceDefTest::TestGetType() {
+    RealTimeDataSourceDef def;
+    def.SetType("A_Type");
+    return StringHelper::Compare(def.GetType(), "A_Type") == 0;
+}
+
+bool RealTimeDataSourceDefTest::TestSetType() {
+    return TestGetType();
+}
+
+bool RealTimeDataSourceDefTest::TestAllocate_Basic() {
+
+    RealTimeDataSourceDef def;
+    def.SetType("uint32");
+
+    if (def.GetDataSourcePointer(0) != NULL) {
+        return false;
+    }
+
+    if (def.GetDataSourcePointer(1) != NULL) {
+        return false;
+    }
+
+    MemoryArea mem;
+
+    if (!def.Allocate(mem)) {
+        return false;
+    }
+    // double buffer
+    if (mem.GetMemorySize() != (2 * sizeof(uint32))) {
+        return false;
+    }
+    return true;
+
+}
+
+bool RealTimeDataSourceDefTest::TestAllocate_Structured() {
+    RealTimeDataSourceDef def;
+    def.SetType("TrackError");
+
+    if (def.GetDataSourcePointer(0) != NULL) {
+        return false;
+    }
+
+    if (def.GetDataSourcePointer(1) != NULL) {
+        return false;
+    }
+
+    MemoryArea mem;
+
+    if (!def.Allocate(mem)) {
+        return false;
+    }
+    // double buffer
+    if (mem.GetMemorySize() != (2 * sizeof(TrackError))) {
+        return false;
+    }
+    return true;
+
+}
+
+bool RealTimeDataSourceDefTest::TestAllocate_Unintrospectable() {
+    RealTimeDataSourceDef def;
+    def.SetType("Object");
+
+    if (def.GetDataSourcePointer(0) != NULL) {
+        return false;
+    }
+
+    if (def.GetDataSourcePointer(1) != NULL) {
+        return false;
+    }
+
+    MemoryArea mem;
+
+    if (!def.Allocate(mem)) {
+        return false;
+    }
+    // double buffer
+    if (mem.GetMemorySize() != (2 * sizeof(Object))) {
+        return false;
+    }
+    return true;
+
+}
+
+bool RealTimeDataSourceDefTest::TestAllocateFalse_Invalid() {
+    RealTimeDataSourceDef def;
+    def.SetType("Invalid");
+
+    if (def.GetDataSourcePointer(0) != NULL) {
+        return false;
+    }
+
+    if (def.GetDataSourcePointer(1) != NULL) {
+        return false;
+    }
+
+    MemoryArea mem;
+
+    return (!def.Allocate(mem));
+
+}
+
+bool RealTimeDataSourceDefTest::TestGetDataSourcePointer() {
+    RealTimeDataSourceDef def;
+    def.SetType("uint32");
+
+    if (def.GetDataSourcePointer(0) != NULL) {
+        return false;
+    }
+
+    if (def.GetDataSourcePointer(1) != NULL) {
+        return false;
+    }
+
+    MemoryArea mem;
+
+    if (!def.Allocate(mem)) {
+        return false;
+    }
+
+    // double buffer
+    if (mem.GetMemorySize() != (2 * sizeof(uint32))) {
+        return false;
+    }
+
+    uint32 *first = (uint32 *) mem.GetPointer(0);
+    uint32 *second = (uint32 *) mem.GetPointer(sizeof(uint32));
+
+    *first = 1;
+    *second = 2;
+
+    uint32 **buff1 = (uint32**) def.GetDataSourcePointer(0);
+    uint32 **buff2 = (uint32**) def.GetDataSourcePointer(1);
+
+    if (*first != **buff1) {
+        return false;
+    }
+
+    if (*second != **buff2) {
+        return false;
+    }
+
+    return true;
+}
+
+bool RealTimeDataSourceDefTest::TestPrepareNextState_Basic_ContinueVar() {
+    RealTimeDataSourceDef def;
+
+    def.SetType("uint32");
+
+    MemoryArea mem;
+
+    if (!def.Allocate(mem)) {
+        return false;
+    }
+
+    uint32 **buff1 = (uint32**) def.GetDataSourcePointer(0);
+    uint32 **buff2 = (uint32**) def.GetDataSourcePointer(1);
+
+    ReferenceT<PIDGAM> gamS1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def.AddConsumer("state1", gamS1);
+
+    def.SetDefaultValue("1");
+    ReferenceT<PIDGAM> gamS2 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def.AddConsumer("state2", gamS2);
+
+    // begin
+    RealTimeStateInfo info;
+    info.activeBuffer = 1;
+    info.currentState = "";
+    info.nextState = "state1";
+    if (!def.PrepareNextState(info)) {
+        return false;
+    }
+
+    if (**((uint32**) buff1) != 1) {
+        return false;
+    }
+
+    uint32 *var = (uint32 *) mem.GetPointer(0);
+    *var = 2;
+
+    // switch state
+    info.activeBuffer = 0;
+    info.currentState = "state1";
+    info.nextState = "state2";
+
+    if (!def.PrepareNextState(info)) {
+        return false;
+    }
+
+    return **((uint32**) buff2) == 2;
+}
+
+bool RealTimeDataSourceDefTest::TestPrepareNextState_Basic_DeadVar() {
+    RealTimeDataSourceDef def;
+
+    def.SetType("uint32");
+
+    MemoryArea mem;
+
+    if (!def.Allocate(mem)) {
+        return false;
+    }
+
+    uint32 **buff1 = (uint32**) def.GetDataSourcePointer(0);
+    uint32 **buff2 = (uint32**) def.GetDataSourcePointer(1);
+
+    ReferenceT<PIDGAM> gamS1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def.AddConsumer("state1", gamS1);
+
+    def.SetDefaultValue("1");
+    ReferenceT<PIDGAM> gamS3 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def.AddConsumer("state3", gamS3);
+
+    RealTimeStateInfo info;
+    // begin
+    info.activeBuffer = 1;
+    info.currentState = "";
+    info.nextState = "state1";
+    if (!def.PrepareNextState(info)) {
+        return false;
+    }
+
+    if (**((uint32**) buff1) != 1) {
+        return false;
+    }
+
+    uint32 *var = (uint32 *) mem.GetPointer(0);
+    *var = 2;
+
+    // switch state
+    info.activeBuffer = 0;
+    info.currentState = "state2";
+    info.nextState = "state3";
+
+    if (!def.PrepareNextState(info)) {
+        return false;
+    }
+
+    return **((uint32**) buff2) == 1;
+
+}
+
+bool RealTimeDataSourceDefTest::TestPrepareNextState_Structured_ContinueVar() {
+    RealTimeDataSourceDef def;
+
+    def.SetType("TrackError");
+
+    MemoryArea mem;
+
+    if (!def.Allocate(mem)) {
+        return false;
+    }
+
+    TrackError **buff1 = (TrackError**) def.GetDataSourcePointer(0);
+    TrackError **buff2 = (TrackError**) def.GetDataSourcePointer(1);
+
+    ReferenceT<PIDGAM> gamS1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def.AddConsumer("state1", gamS1);
+
+    def.SetDefaultValue("Class=TrackError \n Par1=1\n Par2=2");
+
+    ReferenceT<PIDGAM> gamS2 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def.AddConsumer("state2", gamS2);
+
+    // begin
+    RealTimeStateInfo info;
+    info.activeBuffer = 1;
+    info.currentState = "";
+    info.nextState = "state1";
+    if (!def.PrepareNextState(info)) {
+        return false;
+    }
+
+    if ((*buff1)->Par1 != 1) {
+        return false;
+    }
+
+    if ((*buff1)->Par2 != 2) {
+        return false;
+    }
+
+    TrackError *var = (TrackError *) mem.GetPointer(0);
+    var->Par1 = 3;
+    var->Par2 = 4;
+
+    // switch state
+    info.activeBuffer = 0;
+    info.currentState = "state1";
+    info.nextState = "state2";
+
+    if (!def.PrepareNextState(info)) {
+        return false;
+    }
+
+    if ((*buff2)->Par1 != 3) {
+        return false;
+    }
+
+    if ((*buff2)->Par2 != 4) {
+        return false;
+    }
+
+    return true;
+
+}
+
+bool RealTimeDataSourceDefTest::TestPrepareNextState_Structured_DeadVar() {
+    RealTimeDataSourceDef def;
+
+    def.SetType("TrackError");
+
+    MemoryArea mem;
+
+    if (!def.Allocate(mem)) {
+        return false;
+    }
+
+    TrackError **buff1 = (TrackError**) def.GetDataSourcePointer(0);
+    TrackError **buff2 = (TrackError**) def.GetDataSourcePointer(1);
+
+    ReferenceT<PIDGAM> gamS1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def.AddConsumer("state1", gamS1);
+
+    def.SetDefaultValue("Class=TrackError \n Par1=1\n Par2=2");
+
+    ReferenceT<PIDGAM> gamS3 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def.AddConsumer("state3", gamS3);
+
+    // begin
+    RealTimeStateInfo info;
+    info.activeBuffer = 1;
+    info.currentState = "";
+    info.nextState = "state1";
+    if (!def.PrepareNextState(info)) {
+        return false;
+    }
+
+    if ((*buff1)->Par1 != 1) {
+        return false;
+    }
+
+    if ((*buff1)->Par2 != 2) {
+        return false;
+    }
+
+    TrackError *var = (TrackError *) mem.GetPointer(0);
+    var->Par1 = 3;
+    var->Par2 = 4;
+
+    // switch state
+    info.activeBuffer = 0;
+    info.currentState = "state2";
+    info.nextState = "state3";
+
+    if (!def.PrepareNextState(info)) {
+        return false;
+    }
+
+    if ((*buff2)->Par1 != 1) {
+        return false;
+    }
+
+    if ((*buff2)->Par2 != 2) {
+        return false;
+    }
+
+    return true;
+
+}
+
+bool RealTimeDataSourceDefTest::TestSetDefaultValue() {
+    RealTimeDataSourceDef def;
+
+    const char8 * defVal1 = "123123";
+    def.SetDefaultValue(defVal1);
+
+    if (StringHelper::Compare(defVal1, def.GetDefaultValue()) != 0) {
+        return false;
+    }
+
+    return true;
+}
+
+bool RealTimeDataSourceDefTest::TestGetDefaultValue() {
+    return TestSetDefaultValue();
+}

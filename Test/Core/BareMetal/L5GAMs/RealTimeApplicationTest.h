@@ -47,7 +47,6 @@ public:
 
     ~RealTimeApplicationTest();
 
-
     bool TestConstructor();
 
     bool TestConfigureArchitecture();
@@ -58,8 +57,16 @@ public:
 
     bool TestValidateDataSourceFalse_MoreThanOneConsumer();
 
-private:
-    ConfigurationDatabase cdb;
+    bool TestAllocateDataSource();
+
+    bool TestConfigureDataSourceLinks();
+
+    bool TestPrepareNextState();
+
+    bool TestChangeState();
+
+    bool TestGetActiveBuffer();
+
 
 };
 

@@ -95,7 +95,7 @@ protected:
 
 };
 
-static ConfigurationDatabase GetCDB() {
+static ConfigurationDatabase GetCDB1() {
     ConfigurationDatabase cdb;
 
 // application
@@ -257,6 +257,182 @@ static ConfigurationDatabase GetCDB() {
     cdb.MoveToRoot();
     return cdb;
 }
+
+
+
+static ConfigurationDatabase GetCDB2() {
+    ConfigurationDatabase cdb1;
+    // application
+    cdb1.CreateAbsolute("$Application1");
+    cdb1.Write("Class", "RealTimeApplication");
+    //functions
+    cdb1.CreateAbsolute("$Application1.+Functions");
+    cdb1.Write("Class", "ReferenceContainer");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM1");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAM2");
+    cdb1.Write("Class", "PIDGAM");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup1");
+    cdb1.Write("Class", "PIDGAMGroup");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM3");
+    cdb1.Write("Class", "PIDGAM");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM4");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer");
+    cdb1.Write("Class", "ReferenceContainer");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsInput", "true");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs.+Error");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "TrackError");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Inputs.+Error.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB1.PidError2");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsOutput", "true");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "ControlIn");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Path", "+DDB2.PidControl2");
+    cdb1.Write("Default", "1");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Noise");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "ControlNoise");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Noise.+noiseValue");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "float32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB2.PidNoise");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs");
+    cdb1.Write("IsOutput", "true");
+    cdb1.Write("IsFinal", "true");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "ControlIn");
+    cdb1.Write("IsFinal", "true");
+    cdb1.Write("Default", "1");
+    cdb1.Write("Path", "+DDB1.u1");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM6");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2");
+    cdb1.Write("Class", "PIDGAMGroup");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7");
+    cdb1.Write("Class", "PIDGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8");
+    cdb1.Write("Class", "PlantGAM");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Inputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsInput", "true");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Inputs.+Control");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "TrackError");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Inputs.+Control.+Par1");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB2.PidControl1");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Inputs.+Control.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB2.PidControl2");
+    cdb1.Write("IsFinal", "true");
+
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Outputs");
+    cdb1.Write("Class", "RealTimeDataDefContainer");
+    cdb1.Write("IsOutput", "true");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Outputs.+Error");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "TrackError");
+    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Outputs.+Error.+Par1");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "1");
+    cdb1.Write("Path", "+DDB1.PidError1");
+    cdb1.Write("IsFinal", "true");
+    cdb1.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8.+Outputs.+Error.+Par2");
+    cdb1.Write("Class", "RealTimeGenericDataDef");
+    cdb1.Write("Type", "uint32");
+    cdb1.Write("Default", "2");
+    cdb1.Write("Path", "+DDB1.PidError2");
+    cdb1.Write("IsFinal", "true");
+
+    // state 1
+    cdb1.CreateAbsolute("$Application1.+States");
+    cdb1.Write("Class", "ReferenceContainer");
+    cdb1.CreateAbsolute("$Application1.+States.+State1");
+    cdb1.Write("Class", "RealTimeState");
+    cdb1.CreateAbsolute("$Application1.+States.+State1.+Threads");
+    cdb1.Write("Class", "ReferenceContainer");
+
+    // state 1 threads
+    cdb1.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread1");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT1[2] = { ":+Functions.+GAM1", ":+Functions.+GAM2" };
+    cdb1.Write("Functions", functionsT1);
+    cdb1.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread2");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT2[1] = { ":+Functions.+PIDGroup1" };
+    cdb1.Write("Functions", functionsT2);
+
+    // state 2
+    cdb1.CreateAbsolute("$Application1.+States.+State2");
+    cdb1.Write("Class", "RealTimeState");
+    cdb1.CreateAbsolute("$Application1.+States.+State2.+Threads");
+    cdb1.Write("Class", "ReferenceContainer");
+
+    // state 2 threads
+    cdb1.CreateAbsolute("$Application1.+States.+State2.+Threads.+Thread1");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT3[1] = { ":+Functions.+GAMContainer" };
+    cdb1.Write("Functions", functionsT3);
+    cdb1.CreateAbsolute("$Application1.+States.+State2.+Threads.+Thread2");
+    cdb1.Write("Class", "RealTimeThread");
+    const char8 *functionsT4[2] = { ":+Functions.+PIDGroup2.+GAM7", ":+Functions.+PIDGroup2.+GAM8" };
+    cdb1.Write("Functions", functionsT4);
+
+    // data
+    cdb1.CreateAbsolute("$Application1.+Data");
+    cdb1.Write("Class", "RealTimeDataSource");
+    cdb1.Write("IsFinal", "false");
+    cdb1.MoveToRoot();
+    return cdb1;
+}
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

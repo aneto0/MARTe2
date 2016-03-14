@@ -42,7 +42,7 @@
 /*---------------------------------------------------------------------------*/
 
 RealTimeThreadTest::RealTimeThreadTest() {
-    cdb = GetCDB();
+    cdb = GetCDB1();
     if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
         printf("\n!!!\n");
     }

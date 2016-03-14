@@ -135,7 +135,7 @@ public:
 
     ReferenceT<RealTimeDataSourceInputReader> GetInputReader();
 
-    ReferenceT<RealTimeDataSourceInputReader> GetOutputWriter();
+    ReferenceT<RealTimeDataSourceOutputWriter> GetOutputWriter();
 
 protected:
 

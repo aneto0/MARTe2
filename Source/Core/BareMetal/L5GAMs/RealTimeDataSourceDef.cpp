@@ -124,53 +124,37 @@ bool RealTimeDataSourceDef::AddProducer(const char8 *stateIn,
 
 }
 
-bool RealTimeDataSourceDef::SetDefaultValue(const char8 *stateIn,
-                                            const char8* defaultIn) {
-    uint32 index;
-    bool found = false;
-    bool ret = false;
+void RealTimeDataSourceDef::SetDefaultValue(const char8* defaultIn) {
 
-    printf("\nset default value %s\n", defaultIn);
-    ReferenceT<RealTimeDataSourceDefRecord> record;
-    uint32 numberOfStates = Size();
-    for (index = 0u; (index < numberOfStates) && (!found); index++) {
-        StreamString stateName = stateIn;
-        record = Get(index);
-        if (record.IsValid()) {
-            if (stateName == record->GetName()) {
-                found = true;
+    if (defaultIn != NULL) {
+        if (defaultValue != "") {
+            if (defaultValue != defaultIn) {
+                //TODO Warning default already defined
             }
         }
+        defaultValue = defaultIn;
     }
-    if (found) {
-        record->SetDefaultValue(defaultIn);
-        ret = true;
-    }
-    else {
-        record = ReferenceT<RealTimeDataSourceDefRecord>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-        if (record.IsValid()) {
-            record->SetName(stateIn);
-            record->SetDefaultValue(defaultIn);
-            ret = Insert(record);
-        }
-    }
-    return ret;
+}
+
+const char8 *RealTimeDataSourceDef::GetDefaultValue() {
+    return defaultValue.Buffer();
 }
 
 uint32 RealTimeDataSourceDef::GetNumberOfConsumers(const char8 * stateIn) {
     uint32 ret = 0u;
     uint32 numberOfRecords = Size();
     ReferenceT<RealTimeDataSourceDefRecord> record;
-    for (uint32 i = 0u; i < numberOfRecords; i++) {
+    bool found = false;
+    for (uint32 i = 0u; (i < numberOfRecords) && (!found); i++) {
         record = Get(i);
         if (record.IsValid()) {
             if (StringHelper::Compare(record->GetName(), stateIn) == 0) {
-                break;
+                found = true;
             }
         }
     }
 
-    if (record.IsValid()) {
+    if (found) {
         ret = record->GetNumberOfConsumers();
     }
     return ret;
@@ -181,15 +165,16 @@ uint32 RealTimeDataSourceDef::GetNumberOfProducers(const char8 * stateIn) {
     uint32 ret = 0u;
     uint32 numberOfRecords = Size();
     ReferenceT<RealTimeDataSourceDefRecord> record;
-    for (uint32 i = 0u; i < numberOfRecords; i++) {
+    bool found = false;
+    for (uint32 i = 0u; (i < numberOfRecords) && (!found); i++) {
         record = Get(i);
         if (record.IsValid()) {
             if (StringHelper::Compare(record->GetName(), stateIn) == 0) {
-                break;
+                found = true;
             }
         }
     }
-    if (record.IsValid()) {
+    if (found) {
         ret = record->GetNumberOfProducers();
     }
     return ret;
@@ -290,7 +275,6 @@ bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
             // this variable will be used in the next
             if (found) {
                 AnyType at;
-                StreamString defaultValue = record->GetDefaultValue();
                 TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
                 if (typeDes == InvalidType) {
                     const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
@@ -304,8 +288,10 @@ bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
                                 typeDes = TypeDescriptor(false, properties->GetUniqueIdentifier());
                                 at = AnyType(typeDes, 0u, memory->GetPointer(bufferPtrOffset[nextBuffer]));
                                 ConfigurationDatabase cdb;
+                                defaultValue.Seek(0);
                                 StandardParser parser(defaultValue, cdb);
                                 ret = parser.Parse();
+                                cdb.Write("Class", type.Buffer());
                                 if (ret) {
                                     ret = TypeConvert(at, cdb);
                                 }

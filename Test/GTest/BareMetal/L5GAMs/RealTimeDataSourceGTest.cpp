@@ -79,3 +79,18 @@ TEST(RealTimeDataSourceGTest,TestVerify_TwoProducers) {
     RealTimeDataSourceTest rtdsdcTest;
     ASSERT_TRUE(rtdsdcTest.TestVerify_TwoProducers());
 }
+
+TEST(RealTimeDataSourceGTest,TestAllocate) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestAllocate());
+}
+
+TEST(RealTimeDataSourceGTest,TestAllocate_Structure) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestAllocate_Structure());
+}
+
+TEST(RealTimeDataSourceGTest,TestPrepareNextState) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestPrepareNextState());
+}

@@ -1,7 +1,7 @@
 /**
- * @file GAMGTest.cpp
- * @brief Source file for class GAMGTest
- * @date 18/02/2016
+ * @file RealTimeDataSourceInputReaderGTest.cpp
+ * @brief Source file for class RealTimeDataSourceInputReaderGTest
+ * @date 14/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,22 +17,20 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMGTest (public, protected, and private). Be aware that some 
+ * the class RealTimeDataSourceInputReaderGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
 #include <limits.h>
 #include "gtest/gtest.h"
-
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "GAMTest.h"
 
+#include "RealTimeDataSourceInputReaderTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,74 +39,32 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(GAMGTest,TestConstructor) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConstructor());
+TEST(RealTimeDataSourceInputReaderGTest,TestConstructor) {
+    RealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestConstructor());
 }
 
-TEST(GAMGTest,TestInitialise) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestInitialise());
+TEST(RealTimeDataSourceInputReaderGTest,TestRead_DefaultValues_Static) {
+    RealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_DefaultValues_Static());
 }
 
-TEST(GAMGTest,TestSetApplication) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestSetApplication());
+TEST(RealTimeDataSourceInputReaderGTest,TestRead_DefaultValues_Allocation) {
+    RealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_DefaultValues_Allocation());
 }
 
-TEST(GAMGTest,TestSetGAMGroup) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestSetGAMGroup());
+TEST(RealTimeDataSourceInputReaderGTest,TestRead_Static) {
+    RealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_Static());
 }
 
-TEST(GAMGTest,TestAddState) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestAddState());
+TEST(RealTimeDataSourceInputReaderGTest,TestRead_Allocation) {
+    RealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_Allocation());
 }
 
-TEST(GAMGTest,TestGetNumberOfSupportedStates) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetNumberOfSupportedStates());
+TEST(RealTimeDataSourceInputReaderGTest,TestRead_MoreThanOneVariable) {
+    RealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_MoreThanOneVariable());
 }
-
-TEST(GAMGTest,TestGetSupportedStates) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetSupportedStates());
-}
-
-
-TEST(GAMGTest,TestGetNumberOfSupportedStates_GAMGroup) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetNumberOfSupportedStates_GAMGroup());
-}
-
-TEST(GAMGTest,TestGetSupportedStates_GAMGroup) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestGetSupportedStates_GAMGroup());
-}
-
-TEST(GAMGTest,TestConfigureDataSource) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSource());
-}
-
-TEST(GAMGTest,TestConfigureDataSource_NotFinal) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSource_NotFinal());
-}
-
-TEST(GAMGTest,TestConfigureDataSourceFalse_Final) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSourceFalse_Final());
-}
-
-TEST(GAMGTest,TestConfigureDataSourceLinks) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSourceLinks());
-}
-
-TEST(GAMGTest,TestExecute) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestExecute());
-}
-

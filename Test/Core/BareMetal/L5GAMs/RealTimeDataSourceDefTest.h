@@ -41,6 +41,7 @@ using namespace MARTe;
 class RealTimeDataSourceDefTest {
 
 public:
+
     bool TestConstructor();
 
     bool TestAddConsumer();
@@ -56,6 +57,32 @@ public:
     bool TestVerifyFalse_MoreThanOneProducer();
 
     bool TestVerifyNoConsumers();
+
+    bool TestGetType();
+
+    bool TestSetType();
+
+    bool TestAllocate_Basic();
+
+    bool TestAllocate_Structured();
+
+    bool TestAllocate_Unintrospectable();
+
+    bool TestAllocateFalse_Invalid();
+
+    bool TestGetDataSourcePointer();
+
+    bool TestPrepareNextState_Basic_ContinueVar();
+
+    bool TestPrepareNextState_Basic_DeadVar();
+
+    bool TestPrepareNextState_Structured_ContinueVar();
+
+    bool TestPrepareNextState_Structured_DeadVar();
+
+    bool TestSetDefaultValue();
+
+    bool TestGetDefaultValue();
 
 };
 

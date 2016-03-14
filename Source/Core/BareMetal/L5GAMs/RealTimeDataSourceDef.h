@@ -52,10 +52,9 @@ public:
     bool AddProducer(const char8 *stateIn,
                      ReferenceT<GAM> gam);
 
-    bool SetDefaultValue(const char8 *stateIn,
-                         const char8* defaultIn);
+    void SetDefaultValue(const char8* defaultIn);
 
-    bool SetType(const char8 *typeName);
+    const char8 *GetDefaultValue();
 
     uint32 GetNumberOfConsumers(const char8 * stateIn);
 
@@ -63,8 +62,9 @@ public:
 
     bool Verify();
 
-    const char8 *GetType();
+    bool SetType(const char8 *typeName);
 
+    const char8 *GetType();
 
     void **GetDataSourcePointer(uint8 bufferIndex);
 
@@ -75,6 +75,8 @@ public:
 private:
 
     StreamString type;
+
+    StreamString defaultValue;
 
     uint32 bufferPtrOffset[2];
 

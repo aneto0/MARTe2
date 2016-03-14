@@ -103,3 +103,7 @@ TEST(RealTimeDataSourceBrokerGTest,TestGetMemoryPointer_Static) {
     ASSERT_TRUE(rtdsbTest.TestGetMemoryPointer_Static());
 }
 
+TEST(RealTimeDataSourceBrokerGTest,TestFinalise) {
+    RealTimeDataSourceBrokerTest rtdsbTest;
+    ASSERT_TRUE(rtdsbTest.TestFinalise());
+}

@@ -51,8 +51,6 @@ public:
 
     RealTimeDataSource();
 
-    bool Allocate();
-
     virtual bool Initialise(StructuredDataI & data);
 
     bool AddDataDefinition(ReferenceT<GAM> gam);
@@ -60,6 +58,8 @@ public:
     bool Verify();
 
     bool PrepareNextState(const RealTimeStateInfo &status);
+
+    bool Allocate();
 
 private:
 

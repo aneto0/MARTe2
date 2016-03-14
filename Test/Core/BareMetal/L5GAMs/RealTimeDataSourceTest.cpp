@@ -33,6 +33,7 @@
 #include "ConfigurationDatabase.h"
 #include "GAMTestHelper.h"
 #include "RealTimeDataSourceDef.h"
+#include "RealTimeGenericDataDef.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,7 +42,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 
 bool RealTimeDataSourceTest::TestConstructor() {
     return true;
@@ -270,7 +270,7 @@ bool RealTimeDataSourceTest::TestAddDataDefinition_AlreadyExistentLeaf() {
     cdbPlant.Write("IsFinal", "false");
     cdbPlant.CreateAbsolute("+Inputs.+Control");
     cdbPlant.Write("Class", "RealTimeGenericDataDef");
-    cdbPlant.Write("Type", "TrackError");
+    cdbPlant.Write("Type", "ControlIn");
     cdbPlant.Write("IsFinal", "true");
     cdbPlant.CreateAbsolute("+Inputs.+Control.+Par1");
     cdbPlant.Write("Class", "RealTimeGenericDataDef");
@@ -518,7 +518,7 @@ bool RealTimeDataSourceTest::TestVerify() {
     cdbPlant.Write("IsFinal", "false");
     cdbPlant.CreateAbsolute("+Inputs.+Control");
     cdbPlant.Write("Class", "RealTimeGenericDataDef");
-    cdbPlant.Write("Type", "TrackError");
+    cdbPlant.Write("Type", "ControlIn");
     cdbPlant.Write("IsFinal", "true");
     cdbPlant.CreateAbsolute("+Inputs.+Control.+Par1");
     cdbPlant.Write("Class", "RealTimeGenericDataDef");
@@ -652,7 +652,7 @@ bool RealTimeDataSourceTest::TestVerify_TwoProducers() {
     cdbPlant.Write("IsFinal", "false");
     cdbPlant.CreateAbsolute("+Inputs.+Control");
     cdbPlant.Write("Class", "RealTimeGenericDataDef");
-    cdbPlant.Write("Type", "TrackError");
+    cdbPlant.Write("Type", "ControlIn");
     cdbPlant.Write("IsFinal", "true");
     cdbPlant.CreateAbsolute("+Inputs.+Control.+Par1");
     cdbPlant.Write("Class", "RealTimeGenericDataDef");
@@ -724,3 +724,519 @@ bool RealTimeDataSourceTest::TestVerify_TwoProducers() {
     }
     return !sourceDefs->Verify();
 }
+
+bool RealTimeDataSourceTest::TestAllocate() {
+
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("+Inputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsInput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Inputs.+Error");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "TrackError");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Inputs.+Error.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Default", "2");
+    cdb.Write("Path", "+DDB1.PidError2");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("+Outputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsOutput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Outputs.+Control");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlIn");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Outputs.+Control.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "+DDB2.PidControl2");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("+Outputs.+Noise");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlNoise");
+    cdb.Write("IsFinal", "true");
+    cdb.CreateAbsolute("+Outputs.+Noise.+noiseValue");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "float32");
+    cdb.Write("Default", "2");
+    cdb.Write("Path", "+DDB2.PidNoise");
+    cdb.Write("IsFinal", "true");
+    cdb.MoveToRoot();
+
+    ReferenceT<PIDGAM> gam1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!gam1->Initialise(cdb)) {
+        return false;
+    }
+    gam1->SetName("PID1");
+    gam1->AddState("state1");
+    gam1->AddState("state2");
+
+    ConfigurationDatabase cdbPlant;
+
+    cdbPlant.CreateAbsolute("+Inputs");
+    cdbPlant.Write("Class", "RealTimeDataDefContainer");
+    cdbPlant.Write("IsInput", "true");
+    cdbPlant.Write("IsFinal", "false");
+    cdbPlant.CreateAbsolute("+Inputs.+Control");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "ControlIn");
+    cdbPlant.Write("IsFinal", "true");
+    cdbPlant.CreateAbsolute("+Inputs.+Control.+Par1");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "uint32");
+    cdbPlant.Write("Default", "2");
+    cdbPlant.Write("Path", "+DDB2.PidControl1");
+    cdbPlant.Write("IsFinal", "true");
+    cdbPlant.CreateAbsolute("+Inputs.+Control.+Par2");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "uint32");
+    cdbPlant.Write("Default", "2");
+    cdbPlant.Write("Path", "+DDB2.PidControl2");
+    cdbPlant.Write("IsFinal", "true");
+
+    cdbPlant.CreateAbsolute("+Outputs");
+    cdbPlant.Write("Class", "RealTimeDataDefContainer");
+    cdbPlant.Write("IsOutput", "true");
+    cdbPlant.Write("IsFinal", "true");
+    cdbPlant.CreateAbsolute("+Outputs.+Error");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "TrackError");
+    cdbPlant.Write("IsFinal", "false");
+    cdbPlant.CreateAbsolute("+Outputs.+Error.+Par1");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "uint32");
+    cdbPlant.Write("Default", "1");
+    cdbPlant.Write("Path", "+DDB1.PidError1");
+    cdbPlant.Write("IsFinal", "true");
+    cdbPlant.CreateAbsolute("+Outputs.+Error.+Par2");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "uint32");
+    cdbPlant.Write("Default", "2");
+    cdbPlant.Write("Path", "+DDB1.PidError2");
+    cdbPlant.Write("IsFinal", "true");
+    cdbPlant.MoveToRoot();
+
+    ReferenceT<PlantGAM> gam2 = ReferenceT<PlantGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+    if (!gam2->Initialise(cdbPlant)) {
+        printf("\nfailed gam2 init\n");
+        return false;
+    }
+    gam2->SetName("Plant");
+    gam2->AddState("state1");
+    gam2->AddState("state2");
+
+    ConfigurationDatabase cdbDS;
+
+    cdbDS.Write("Class", "RealTimeDataSource");
+    cdbDS.Write("IsFinal", "true");
+    cdbDS.CreateAbsolute("+DDB1");
+    cdbDS.Write("Class", "ReferenceContainer");
+    cdbDS.CreateAbsolute("+DDB2");
+    cdbDS.Write("Class", "ReferenceContainer");
+    cdbDS.MoveToRoot();
+
+    ReferenceT<RealTimeDataSource> sourceDefs = ReferenceT<RealTimeDataSource>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sourceDefs->SetName("+Data");
+    if (!sourceDefs->Initialise(cdbDS)) {
+        return false;
+    }
+
+    if (!sourceDefs->AddDataDefinition(gam1)) {
+        return false;
+    }
+
+    if (!sourceDefs->AddDataDefinition(gam2)) {
+        return false;
+    }
+
+    if (!sourceDefs->Verify()) {
+        return false;
+    }
+
+    if (!sourceDefs->Allocate()) {
+        return false;
+    }
+
+    // test if it is possible read a value
+    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<RealTimeGenericDataDef> defOut = gam2->Find("+Outputs.+Error");
+
+    ReferenceT<RealTimeApplication> app = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    app->Insert(sourceDefs);
+
+    writer->SetApplication(app);
+    writer->AddVariable(defOut);
+    writer->Finalise();
+
+    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<RealTimeGenericDataDef> defIn = gam1->Find("+Inputs.+Error");
+    reader->SetApplication(app);
+    reader->AddVariable(defIn);
+    reader->Finalise();
+
+    TrackError *var = (TrackError *) writer->GetData(0);
+    var->Par1 = 1;
+    var->Par2 = 2;
+    writer->Write(0);
+
+    reader->Read(0);
+    TrackError *ret = (TrackError *) reader->GetData(0);
+    if (ret->Par1 != 1) {
+        return false;
+    }
+    if (ret->Par2 != 2) {
+        return false;
+    }
+
+    return true;
+
+}
+
+bool RealTimeDataSourceTest::TestAllocate_Structure() {
+
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("+Inputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsInput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Inputs.+Error");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "TrackError");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Inputs.+Error.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Default", "2");
+    cdb.Write("Path", "+DDB1.PidError2");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("+Outputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsOutput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Outputs.+Control");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlIn");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Outputs.+Control.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "+DDB2.PidControl2");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("+Outputs.+Noise");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlNoise");
+    cdb.Write("Default", "noiseValue=0.5");
+    cdb.Write("Path", "+DDB2.PidNoise");
+    cdb.Write("IsFinal", "true");
+    cdb.MoveToRoot();
+
+    ReferenceT<PIDGAM> gam1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!gam1->Initialise(cdb)) {
+        return false;
+    }
+    gam1->SetName("PID1");
+    gam1->AddState("state1");
+    gam1->AddState("state2");
+
+    ConfigurationDatabase cdbPlant;
+
+    cdbPlant.CreateAbsolute("+Inputs");
+    cdbPlant.Write("Class", "RealTimeDataDefContainer");
+    cdbPlant.Write("IsInput", "true");
+    cdbPlant.Write("IsFinal", "false");
+    cdbPlant.CreateAbsolute("+Inputs.+Control");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "ControlIn");
+    cdbPlant.Write("Default", "Par1=1 \n Par2=2");
+    cdbPlant.Write("Path", "+DDB2.PlantControl");
+    cdbPlant.Write("IsFinal", "true");
+    cdbPlant.CreateAbsolute("+Inputs.+Noise");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "ControlNoise");
+    cdbPlant.Write("Default", "noiseValue=0.5");
+    cdbPlant.Write("Path", "+DDB2.PidNoise");
+    cdbPlant.Write("IsFinal", "true");
+
+
+    cdbPlant.CreateAbsolute("+Outputs");
+    cdbPlant.Write("Class", "RealTimeDataDefContainer");
+    cdbPlant.Write("IsOutput", "true");
+    cdbPlant.Write("IsFinal", "true");
+    cdbPlant.CreateAbsolute("+Outputs.+Error");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "TrackError");
+    cdbPlant.Write("IsFinal", "false");
+    cdbPlant.CreateAbsolute("+Outputs.+Error.+Par1");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "uint32");
+    cdbPlant.Write("Default", "1");
+    cdbPlant.Write("Path", "+DDB1.PidError1");
+    cdbPlant.Write("IsFinal", "true");
+    cdbPlant.CreateAbsolute("+Outputs.+Error.+Par2");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "uint32");
+    cdbPlant.Write("Default", "2");
+    cdbPlant.Write("Path", "+DDB1.PidError2");
+    cdbPlant.Write("IsFinal", "true");
+    cdbPlant.MoveToRoot();
+
+    ReferenceT<PlantGAM> gam2 = ReferenceT<PlantGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+    if (!gam2->Initialise(cdbPlant)) {
+        printf("\nfailed gam2 init\n");
+        return false;
+    }
+    gam2->SetName("Plant");
+    gam2->AddState("state1");
+    gam2->AddState("state2");
+
+    ConfigurationDatabase cdbDS;
+
+    cdbDS.Write("Class", "RealTimeDataSource");
+    cdbDS.Write("IsFinal", "true");
+    cdbDS.CreateAbsolute("+DDB1");
+    cdbDS.Write("Class", "ReferenceContainer");
+    cdbDS.CreateAbsolute("+DDB2");
+    cdbDS.Write("Class", "ReferenceContainer");
+    cdbDS.MoveToRoot();
+
+    ReferenceT<RealTimeDataSource> sourceDefs = ReferenceT<RealTimeDataSource>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sourceDefs->SetName("+Data");
+    if (!sourceDefs->Initialise(cdbDS)) {
+        return false;
+    }
+
+    if (!sourceDefs->AddDataDefinition(gam1)) {
+        return false;
+    }
+
+    if (!sourceDefs->AddDataDefinition(gam2)) {
+        return false;
+    }
+
+    if (!sourceDefs->Verify()) {
+        return false;
+    }
+
+    if (!sourceDefs->Allocate()) {
+        return false;
+    }
+
+    // test if it is possible read a value
+    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<RealTimeGenericDataDef> defOut = gam2->Find("+Inputs.+Noise");
+
+    ReferenceT<RealTimeApplication> app = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    app->Insert(sourceDefs);
+
+    writer->SetApplication(app);
+    writer->AddVariable(defOut);
+    writer->Finalise();
+
+    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<RealTimeGenericDataDef> defIn = gam1->Find("+Outputs.+Noise");
+    reader->SetApplication(app);
+    reader->AddVariable(defIn);
+    reader->Finalise();
+
+    ControlNoise *var = (ControlNoise *) writer->GetData(0);
+    var->noiseValue = 3.5;
+    writer->Write(0);
+
+    reader->Read(0);
+    ControlNoise *ret = (ControlNoise *) reader->GetData(0);
+    if (ret->noiseValue != 3.5) {
+        return false;
+    }
+
+    return true;
+}
+
+bool RealTimeDataSourceTest::TestPrepareNextState() {
+
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("+Inputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsInput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Inputs.+Error");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "TrackError");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Inputs.+Error.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Default", "2");
+    cdb.Write("Path", "+DDB1.PidError2");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("+Outputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsOutput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Outputs.+Control");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlIn");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Outputs.+Control.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "+DDB2.PidControl2");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("+Outputs.+Noise");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlNoise");
+    cdb.Write("IsFinal", "true");
+    cdb.CreateAbsolute("+Outputs.+Noise.+noiseValue");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "float32");
+    cdb.Write("Default", "2");
+    cdb.Write("Path", "+DDB2.PidNoise");
+    cdb.Write("IsFinal", "true");
+    cdb.MoveToRoot();
+
+    ReferenceT<PIDGAM> gam1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!gam1->Initialise(cdb)) {
+        return false;
+    }
+    gam1->SetName("PID1");
+    gam1->AddState("state1");
+    gam1->AddState("state2");
+
+    ConfigurationDatabase cdbPlant;
+
+    cdbPlant.CreateAbsolute("+Inputs");
+    cdbPlant.Write("Class", "RealTimeDataDefContainer");
+    cdbPlant.Write("IsInput", "true");
+    cdbPlant.Write("IsFinal", "false");
+    cdbPlant.CreateAbsolute("+Inputs.+Control");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "ControlIn");
+    cdbPlant.Write("IsFinal", "true");
+    cdbPlant.CreateAbsolute("+Inputs.+Control.+Par1");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "uint32");
+    cdbPlant.Write("Default", "1");
+    cdbPlant.Write("Path", "+DDB2.PidControl1");
+    cdbPlant.Write("IsFinal", "true");
+    cdbPlant.CreateAbsolute("+Inputs.+Control.+Par2");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "uint32");
+    cdbPlant.Write("Default", "2");
+    cdbPlant.Write("Path", "+DDB2.PidControl2");
+    cdbPlant.Write("IsFinal", "true");
+
+    cdbPlant.CreateAbsolute("+Outputs");
+    cdbPlant.Write("Class", "RealTimeDataDefContainer");
+    cdbPlant.Write("IsOutput", "true");
+    cdbPlant.Write("IsFinal", "true");
+    cdbPlant.CreateAbsolute("+Outputs.+Error");
+    cdbPlant.Write("Class", "RealTimeGenericDataDef");
+    cdbPlant.Write("Type", "TrackError");
+    cdbPlant.Write("IsFinal", "true");
+    cdbPlant.Write("Path", "+DDB1.PlantOutput");
+    cdbPlant.Write("Default", "Par1=3 \n Par2=4");
+    cdbPlant.MoveToRoot();
+
+    ReferenceT<PlantGAM> gam2 = ReferenceT<PlantGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+    if (!gam2->Initialise(cdbPlant)) {
+        printf("\nfailed gam2 init\n");
+        return false;
+    }
+    gam2->SetName("Plant");
+    gam2->AddState("state1");
+    gam2->AddState("state2");
+
+    ConfigurationDatabase cdbDS;
+
+    cdbDS.Write("Class", "RealTimeDataSource");
+    cdbDS.Write("IsFinal", "true");
+    cdbDS.CreateAbsolute("+DDB1");
+    cdbDS.Write("Class", "ReferenceContainer");
+    cdbDS.CreateAbsolute("+DDB2");
+    cdbDS.Write("Class", "ReferenceContainer");
+    cdbDS.MoveToRoot();
+
+    ReferenceT<RealTimeDataSource> sourceDefs = ReferenceT<RealTimeDataSource>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sourceDefs->SetName("+Data");
+    if (!sourceDefs->Initialise(cdbDS)) {
+        return false;
+    }
+
+    if (!sourceDefs->AddDataDefinition(gam1)) {
+        return false;
+    }
+
+    if (!sourceDefs->AddDataDefinition(gam2)) {
+        return false;
+    }
+
+    if (!sourceDefs->Verify()) {
+        return false;
+    }
+
+    if (!sourceDefs->Allocate()) {
+        return false;
+    }
+
+    RealTimeStateInfo info;
+    info.currentState = "";
+    info.nextState = "state1";
+    info.activeBuffer = 1;
+
+    if (!sourceDefs->PrepareNextState(info)) {
+        return false;
+    }
+
+    // test if it is possible read a value
+    ReferenceT<RealTimeApplication> app = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    app->Insert(sourceDefs);
+
+    ReferenceT<RealTimeDataSourceInputReader> reader1 = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<RealTimeGenericDataDef> def1 = gam1->Find("+Inputs.+Error");
+    reader1->SetApplication(app);
+    reader1->AddVariable(def1);
+    reader1->Finalise();
+
+    reader1->Read(0);
+    TrackError *ret1 = (TrackError *) reader1->GetData(0);
+    if (ret1->Par1 != 1) {
+        return false;
+    }
+    if (ret1->Par2 != 2) {
+        return false;
+    }
+
+    ReferenceT<RealTimeDataSourceInputReader> reader2 = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<RealTimeGenericDataDef> def2 = gam2->Find("+Outputs.+Error");
+    reader2->SetApplication(app);
+    reader2->AddVariable(def2);
+    reader2->Finalise();
+
+    reader2->Read(0);
+    TrackError *ret2 = (TrackError *) reader2->GetData(0);
+    if (ret2->Par1 != 3) {
+        return false;
+    }
+    if (ret2->Par2 != 4) {
+        return false;
+    }
+
+    return true;
+
+}
+

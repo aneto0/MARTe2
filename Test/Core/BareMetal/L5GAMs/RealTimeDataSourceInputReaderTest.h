@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceDefRecord.h
- * @brief Header file for class RealTimeDataSourceDefRecord
- * @date 01/03/2016
+ * @file RealTimeDataSourceInputReaderTest.h
+ * @brief Header file for class RealTimeDataSourceInputReaderTest
+ * @date 14/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceDefRecord
+ * @details This header file contains the declaration of the class RealTimeDataSourceInputReaderTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEDEFRECORD_H_
-#define REALTIMEDATASOURCEDEFRECORD_H_
+#ifndef REALTIMEDATASOURCEINPUTREADERTEST_H_
+#define REALTIMEDATASOURCEINPUTREADERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,42 +31,40 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "StreamString.h"
-#include "ReferenceContainer.h"
-#include "ReferenceT.h"
-#include "GAM.h"
+#include "RealTimeDataSourceInputReader.h"
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-class RealTimeDataSourceDefRecord: public ReferenceContainer {
+
+using namespace MARTe;
+
+class RealTimeDataSourceInputReaderTest {
+
 public:
-    CLASS_REGISTER_DECLARATION()
 
-    RealTimeDataSourceDefRecord();
+    RealTimeDataSourceInputReaderTest();
 
-    bool AddConsumer(ReferenceT<GAM> gamConsumer);
+    bool TestConstructor();
 
-    bool AddProducer(ReferenceT<GAM> gamProducer);
+    bool TestRead_DefaultValues_Static();
 
-    uint32 GetNumberOfConsumers();
+    bool TestRead_DefaultValues_Allocation();
 
-    uint32 GetNumberOfProducers();
+    bool TestRead_Static();
 
-    ReferenceT<ReferenceContainer> GetConsumers();
+    bool TestRead_Allocation();
 
-    ReferenceT<ReferenceContainer> GetProducers();
+    bool TestRead_MoreThanOneVariable();
 
 private:
-
-    ReferenceT<ReferenceContainer> producers;
-    ReferenceT<ReferenceContainer> consumers;
+    ConfigurationDatabase cdb;
 
 };
-}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEDEFRECORD_H_ */
+#endif /* REALTIMEDATASOURCEINPUTREADERTEST_H_ */
 

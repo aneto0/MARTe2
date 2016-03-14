@@ -34,6 +34,8 @@ OBJSX= 	GAMGTest.x \
 		RealTimeDataSourceBrokerGTest.x \
 		RealTimeDataSourceDefGTest.x \
 		RealTimeDataSourceDefRecordGTest.x \
+		RealTimeDataSourceInputReaderGTest.x \
+		RealTimeDataSourceOutputWriterGTest.x \
 		RealTimeStateGTest.x \
 		RealTimeThreadGTest.x
 

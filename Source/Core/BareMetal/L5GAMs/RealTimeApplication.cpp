@@ -145,7 +145,7 @@ static bool ConfigureDataSourceLinksPrivate(ReferenceT<ReferenceContainer> funct
 /*---------------------------------------------------------------------------*/
 
 RealTimeApplication::RealTimeApplication() {
-    activeBuffer = 0u;
+    activeBuffer = 1u;
 }
 
 bool RealTimeApplication::ConfigureArchitecture() {
@@ -153,18 +153,18 @@ bool RealTimeApplication::ConfigureArchitecture() {
     printf("\nStart ConfigureArchitecture\n");
     ReferenceT<ReferenceContainer> statesContainer;
     uint32 numberOfContainers = Size();
-    for (uint32 i = 0u; i < numberOfContainers; i++) {
+    // there must be the container called "States"
+    bool ret = false;
+    for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
         Reference item = Get(i);
         if (item.IsValid()) {
             if (StringHelper::Compare(item->GetName(), "+States") == 0) {
                 statesContainer = item;
-                break;
+                ret = statesContainer.IsValid();
             }
         }
     }
 
-    // there must be the container called "States"
-    bool ret = statesContainer.IsValid();
     if (ret) {
         // States contains RealTimeState references
         // for each of them call Validate(*)
@@ -189,18 +189,19 @@ bool RealTimeApplication::ConfigureDataSource() {
 
     printf("\nStart ConfigureDataSource\n");
     ReferenceT<ReferenceContainer> functionsContainer;
+
+    bool ret = false;
     uint32 numberOfContainers = Size();
-    for (uint32 i = 0u; i < numberOfContainers; i++) {
+    for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
         Reference item = Get(i);
         if (item.IsValid()) {
             if (StringHelper::Compare(item->GetName(), "+Functions") == 0) {
                 functionsContainer = item;
-                break;
+                ret = functionsContainer.IsValid();
             }
         }
     }
 
-    bool ret = functionsContainer.IsValid();
     if (ret) {
         // configure
         ret = ConfigureDataSourcePrivate(functionsContainer);
@@ -219,17 +220,18 @@ bool RealTimeApplication::ValidateDataSource() {
 
     ReferenceT<RealTimeDataSource> dataContainer;
     uint32 numberOfContainers = Size();
-    for (uint32 i = 0u; i < numberOfContainers; i++) {
+    bool ret = false;
+    // there must be the container called "States"
+
+    for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
         Reference item = Get(i);
         if (item.IsValid()) {
             if (StringHelper::Compare(item->GetName(), "+Data") == 0) {
                 dataContainer = item;
-                break;
+                ret = dataContainer.IsValid();
             }
         }
     }
-    // there must be the container called "States"
-    bool ret = dataContainer.IsValid();
     if (ret) {
         // States contains RealTimeState references
         // for each of them call Validate(*)
@@ -241,16 +243,16 @@ bool RealTimeApplication::ValidateDataSource() {
 bool RealTimeApplication::AllocateDataSource() {
     ReferenceT<RealTimeDataSource> dataSource;
     uint32 numberOfContainers = Size();
-    for (uint32 i = 0u; i < numberOfContainers; i++) {
+    bool ret = false;
+    for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
         Reference container = Get(i);
         if (container.IsValid()) {
             if (StringHelper::Compare(container->GetName(), "+Data") == 0) {
                 dataSource = container;
-                break;
+                ret = dataSource.IsValid();
             }
         }
     }
-    bool ret = dataSource.IsValid();
     if (ret) {
         ret = dataSource->Allocate();
     }
@@ -260,16 +262,17 @@ bool RealTimeApplication::AllocateDataSource() {
 bool RealTimeApplication::ConfigureDataSourceLinks() {
     ReferenceT<ReferenceContainer> functionsContainer;
     uint32 numberOfContainers = Size();
-    for (uint32 i = 0u; i < numberOfContainers; i++) {
+    // there must be the container called "States"
+    bool ret = false;
+    for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
         Reference item = Get(i);
         if (item.IsValid()) {
             if (StringHelper::Compare(item->GetName(), "+Functions") == 0) {
                 functionsContainer = item;
-                break;
+                ret = functionsContainer.IsValid();
             }
         }
-    }    // there must be the container called "States"
-    bool ret = functionsContainer.IsValid();
+    }
     if (ret) {
         // configure
         ret = ConfigureDataSourceLinksPrivate(functionsContainer);
@@ -277,7 +280,6 @@ bool RealTimeApplication::ConfigureDataSourceLinks() {
     else {
         // TODO Functions container not found
     }
-
 
     return ret;
 }
@@ -295,16 +297,16 @@ bool RealTimeApplication::PrepareNextState(const RealTimeStateInfo &status) {
     if (ret) {
         ReferenceT<RealTimeDataSource> dataSource;
         uint32 numberOfContainers = Size();
-        for (uint32 i = 0u; i < numberOfContainers; i++) {
+        ret = false;
+        for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
             Reference container = Get(i);
             if (container.IsValid()) {
                 if (StringHelper::Compare(container->GetName(), "+Data") == 0) {
                     dataSource = container;
-                    break;
+                    ret = dataSource.IsValid();
                 }
             }
         }
-        ret = dataSource.IsValid();
         if (ret) {
             ret = dataSource->PrepareNextState(status);
         }

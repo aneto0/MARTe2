@@ -110,8 +110,19 @@ bool GAM::ConfigureDataSource() {
     if (GetNumberOfSupportedStates() > 0u) {
         ret = application.IsValid();
         if (ret) {
-            ReferenceT<RealTimeDataSource> dataContainer = application->Find("+Data");
-            ret = (dataContainer.IsValid());
+            ReferenceT<RealTimeDataSource> dataContainer;
+            uint32 numberOfAppItems = application->Size();
+            ret = false;
+            for (uint32 i = 0u; (i < numberOfAppItems) && (!ret); i++) {
+                Reference item = application->Get(i);
+                if (item.IsValid()) {
+                    if (StringHelper::Compare(item->GetName(), "+Data") == 0) {
+                        dataContainer = item;
+                        ret = dataContainer.IsValid();
+                    }
+                }
+            }
+
             if (ret) {
                 ret = dataContainer->AddDataDefinition(ReferenceT<GAM>(this));
             }
@@ -182,8 +193,12 @@ bool GAM::ConfigureDataSourceLinks() {
 void GAM::SetApplication(ReferenceT<RealTimeApplication> rtApp) {
     if (!application.IsValid()) {
         application = rtApp;
-        inputReader->SetApplication(rtApp);
-        outputWriter->SetApplication(rtApp);
+        if (inputReader.IsValid()) {
+            inputReader->SetApplication(rtApp);
+        }
+        if (outputWriter.IsValid()) {
+            outputWriter->SetApplication(rtApp);
+        }
     }
 }
 
@@ -232,7 +247,7 @@ ReferenceT<RealTimeDataSourceInputReader> GAM::GetInputReader() {
     return inputReader;
 }
 
-ReferenceT<RealTimeDataSourceInputReader> GAM::GetOutputWriter() {
+ReferenceT<RealTimeDataSourceOutputWriter> GAM::GetOutputWriter() {
     return outputWriter;
 }
 

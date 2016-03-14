@@ -90,16 +90,6 @@ bool RealTimeDataSourceDefRecord::AddProducer(ReferenceT<GAM> gamProducer) {
     return ret;
 }
 
-void RealTimeDataSourceDefRecord::SetDefaultValue(const char8* defaultIn) {
-    if (defaultIn != NULL) {
-        if (defaultValue != "") {
-            if(defaultValue!=defaultIn) {
-                //TODO Warning default already defined
-            }
-        }
-        defaultValue = defaultIn;
-    }
-}
 
 uint32 RealTimeDataSourceDefRecord::GetNumberOfConsumers() {
     return consumers->Size();
@@ -117,9 +107,6 @@ ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetProducers() {
     return producers;
 }
 
-const char8 *RealTimeDataSourceDefRecord::GetDefaultValue(){
-    return defaultValue.Buffer();
-}
 
 CLASS_REGISTER(RealTimeDataSourceDefRecord, "1.0")
 

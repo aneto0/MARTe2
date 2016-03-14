@@ -66,3 +66,28 @@ TEST(RealTimeApplicationGTest,TestValidateDataSourceFalse_MoreThanOneConsumer) {
     RealTimeApplicationTest rtappTest;
     ASSERT_TRUE(rtappTest.TestValidateDataSourceFalse_MoreThanOneConsumer());
 }
+
+TEST(RealTimeApplicationGTest,TestAllocateDataSource) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestAllocateDataSource());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureDataSourceLinks) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConfigureDataSourceLinks());
+}
+
+TEST(RealTimeApplicationGTest,TestPrepareNextState) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestPrepareNextState());
+}
+
+TEST(RealTimeApplicationGTest,TestChangeState) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestChangeState());
+}
+
+TEST(RealTimeApplicationGTest,TestGetActiveBuffer) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestGetActiveBuffer());
+}

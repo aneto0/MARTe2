@@ -35,6 +35,8 @@ OBJSX=	GAMTest.x \
 		RealTimeDataSourceBrokerTest.x \
 		RealTimeDataSourceDefTest.x \
 		RealTimeDataSourceDefRecordTest.x \
+		RealTimeDataSourceInputReaderTest.x \
+		RealTimeDataSourceOutputWriterTest.x \
 		RealTimeGenericDataDefTest.x \
 		RealTimeSampledDataDefTest.x \
 		RealTimeStateTest.x \

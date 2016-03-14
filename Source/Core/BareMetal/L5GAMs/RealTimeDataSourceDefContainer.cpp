@@ -152,7 +152,7 @@ bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> de
                 // if the path exists adds only the infos
                 if (isConsumer) {
                     for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-                        ret = element->SetDefaultValue(supportedStates[i].Buffer(), defaultValue.Buffer());
+                        element->SetDefaultValue(defaultValue.Buffer());
                         if (ret) {
                             ret = element->AddConsumer(supportedStates[i].Buffer(), gam);
                         }
@@ -160,7 +160,7 @@ bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> de
                 }
                 if (isProducer) {
                     for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-                        ret = element->SetDefaultValue(supportedStates[i].Buffer(), defaultValue.Buffer());
+                        element->SetDefaultValue(defaultValue.Buffer());
                         if (ret) {
                             ret = element->AddProducer(supportedStates[i].Buffer(), gam);
                         }
@@ -184,7 +184,7 @@ bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> de
 
                     if (isConsumer) {
                         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-                            ret = element->SetDefaultValue(supportedStates[i].Buffer(), defaultValue.Buffer());
+                            element->SetDefaultValue(defaultValue.Buffer());
                             if (ret) {
                                 ret = element->AddConsumer(supportedStates[i].Buffer(), gam);
                             }
@@ -192,7 +192,7 @@ bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> de
                     }
                     if (isProducer) {
                         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-                            ret = element->SetDefaultValue(supportedStates[i].Buffer(), defaultValue.Buffer());
+                            element->SetDefaultValue(defaultValue.Buffer());
                             if (ret) {
                                 ret = element->AddProducer(supportedStates[i].Buffer(), gam);
                             }

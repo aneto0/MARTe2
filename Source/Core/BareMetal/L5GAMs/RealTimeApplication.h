@@ -122,14 +122,11 @@ public:
 
     bool PrepareNextState(const RealTimeStateInfo &status);
 
-
     uint8 ChangeState();
 
-
     uint8 GetActiveBuffer() const ;
+
 private:
-
-
 
     uint8 activeBuffer;
 };
