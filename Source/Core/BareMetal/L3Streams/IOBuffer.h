@@ -136,7 +136,7 @@ public:
      *   not CanWrite()
      */
     inline IOBuffer(const uint32 allocationGranularity,
-            const uint32 newUndoLevel);
+                    const uint32 newUndoLevel);
 
     /**
      * @brief Destructor.
@@ -159,7 +159,7 @@ public:
      * @return false if the allocation fails, true otherwise.
      */
     virtual bool SetBufferHeapMemory(const uint32 desiredSize,
-            const uint32 reservedSpaceAtEnd);
+                                     const uint32 reservedSpaceAtEnd);
 
     /**
      * @brief Assigns a preallocated memory with read and write access.
@@ -170,8 +170,8 @@ public:
      * @param[in] reservedSpaceAtEnd is the memory allocated over the usable memory area.
      */
     virtual void SetBufferReferencedMemory(char8 * const buffer,
-            const uint32 bufferSize,
-            const uint32 reservedSpaceAtEnd);
+                                           const uint32 bufferSize,
+                                           const uint32 reservedSpaceAtEnd);
 
     /**
      * @brief Assigns a preallocated memory only with read access.
@@ -182,8 +182,8 @@ public:
      * @param[in] reservedSpaceAtEnd is the memory allocated but not .
      */
     virtual void SetBufferReadOnlyReferencedMemory(const char8 * const buffer,
-            const uint32 bufferSize,
-            const uint32 reservedSpaceAtEnd);
+                                                   const uint32 bufferSize,
+                                                   const uint32 reservedSpaceAtEnd);
 
     /*---------------------------------------------------------------------------*/
 
@@ -311,7 +311,7 @@ public:
      * @return false if errors copying data
      */
     virtual bool Write(const char8 * const buffer,
-            uint32 &size);
+                       uint32 &size);
 
     /**
      * @brief Writes all the size in the argument from an input buffer.
@@ -321,7 +321,7 @@ public:
      * @param[in] size is the number of byte to be copied.
      */
     bool WriteAll(const char8 * buffer,
-            const uint32 &size);
+                  const uint32 &size);
 
     /**
      * @brief Reads from this buffer to an output buffer.
@@ -331,7 +331,7 @@ public:
      * @return false if errors copying data
      */
     virtual bool Read(char8 * const buffer,
-            uint32 &size);
+                      uint32 &size);
 
     /*---------------------------------------------------------------------------*/
 
@@ -345,7 +345,7 @@ public:
      * @return false in case of errors.
      */
     bool PrintFormatted(const char8 * format,
-            const AnyType pars[]);
+                        const AnyType pars[]);
 
     /**
      * @brief Reads a token from the buffer and writes it on an output buffer.
@@ -373,10 +373,10 @@ public:
      * termination, false only on error and no data available.
      */
     bool GetToken(char8 * outputBuffer,
-            const char8 * terminator,
-            uint32 outputBufferSize,
-            char8 &saveTerminator,
-            const char8 * skipCharacters);
+                  const char8 * terminator,
+                  uint32 outputBufferSize,
+                  char8 &saveTerminator,
+                  const char8 * skipCharacters);
 
     /**
      * @brief Reads a token from the buffer and writes it on an output buffer.
@@ -402,9 +402,9 @@ public:
      * false only on error and no data available.
      */
     bool GetToken(IOBuffer & outputBuffer,
-            const char8 * terminator,
-            char8 &saveTerminator,
-            const char8 * skipCharacters);
+                  const char8 * terminator,
+                  char8 &saveTerminator,
+                  const char8 * skipCharacters);
 
     /**
      * @brief Skips a number of tokens on the buffer.
@@ -413,7 +413,7 @@ public:
      * @return false if the number of skipped tokens is minor than the desired.
      */
     bool SkipTokens(uint32 count,
-            const char8 * terminator);
+                    const char8 * terminator);
 protected:
 
     /**
@@ -566,37 +566,39 @@ void IOBuffer::Empty() {
 
 bool IOBuffer::PutC(const char8 c) {
 
-    bool retval = (positionPtr != NULL);
-    if(retval) {
-        // check if buffer needs updating and or saving
-        if (amountLeft <= undoLevel) {
-            if (!NoMoreSpaceToWrite()) {
-                retval = false;
-            }
-
-            // check if we can continue or must abort
-            if (amountLeft == 0u) {
-                retval = false;
-            }
-        }
-
-        // check later so that to give a chance to allocate memory
-        // if that is the policy of this buffering scheme
-        if (!internalBuffer.CanWrite()) {
+    bool retval = true;
+    
+    // check if buffer needs updating and or saving
+    if (amountLeft <= undoLevel) {
+        if (!NoMoreSpaceToWrite()) {
             retval = false;
         }
 
+        // check if we can continue or must abort
+        if (amountLeft == 0u) {
+            retval = false;
+        }
+    }
+
+    // check later so that to give a chance to allocate memory
+    // if that is the policy of this buffering scheme
+    if (!internalBuffer.CanWrite()) {
+        retval = false;
     }
 
     if (retval) {
-        /*lint -e{613} . Justification: The NULL pointer condition is handled*/
-        *positionPtr = c;
+        retval = (positionPtr != NULL);
+        if (retval) {
+            /*lint -e{613} . Justification: The NULL pointer condition is handled*/
 
-        /*lint -e{613} . Justification: The NULL pointer condition is handled*/
-        positionPtr++;
-        amountLeft--;
-        if (fillLeft > amountLeft) {
-            fillLeft = amountLeft;
+            *positionPtr = c;
+
+            /*lint -e{613} . Justification: The NULL pointer condition is handled*/
+            positionPtr++;
+            amountLeft--;
+            if (fillLeft > amountLeft) {
+                fillLeft = amountLeft;
+            }
         }
     }
 
@@ -621,29 +623,30 @@ bool IOBuffer::UnPutC() {
 
 bool IOBuffer::GetC(char8 &c) {
 
-    bool retval = (positionPtr != NULL);
+    bool retval = true;
 
-    if(retval) {
-        // check if buffer needs updating and or saving
-        if (UsedAmountLeft() <= undoLevel) {
-            if (!NoMoreDataToRead()) {
-                retval = false;
-            }
-
-            if (UsedAmountLeft() == 0u) {
-                retval = false;
-            }
+    // check if buffer needs updating and or saving
+    if (UsedAmountLeft() <= undoLevel) {
+        if (!NoMoreDataToRead()) {
+            retval = false;
         }
 
+        if (UsedAmountLeft() == 0u) {
+            retval = false;
+        }
+    }
+
+    if (retval) {
+        retval = (positionPtr != NULL);
         if (retval) {
             /*lint -e{613} . Justification: The NULL pointer condition is handled*/
             c = *positionPtr;
             /*lint -e{613} . Justification: The NULL pointer condition is handled*/
             positionPtr++;
             amountLeft--;
-
         }
     }
+
     return retval;
 }
 
