@@ -116,3 +116,8 @@ TEST(ObjectGTest,TestExportMetadata) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestExportMetadata());
 }
+
+TEST(ObjectGTest,TestJsonConversion) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestJsonConversion());
+}

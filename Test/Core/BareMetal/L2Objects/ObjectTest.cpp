@@ -44,6 +44,31 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace {
+
+bool CreateTest3Object(IntrospectableIntegerObject& obj) {
+    obj.SetName("Test3");
+    obj.member = 30;
+    return true;
+}
+
+bool CreateTest4Object(IntrospectableObjectWith2Members& obj) {
+    obj.SetName("Test4");
+    obj.member1 = 10;
+    obj.member2 = 20;
+    return true;
+}
+
+bool CreateTest5Object(IntrospectableObjectWith3Members& obj) {
+    obj.SetName("Test5");
+    obj.member1 = 10;
+    obj.member2 = 20;
+    obj.member3.member = 30;
+    return true;
+}
+
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -132,7 +157,7 @@ bool ObjectTest::TestGetUniqueName(const char8* name,
     const uint32 size = 128;
 
     Object myObj;
-    uintp ptr = (uintp) &myObj;
+    uintp ptr = (uintp) & myObj;
     char buffer[size];
     for (uint32 i = 0; i < size; i++) {
         buffer[i] = 0;
@@ -265,8 +290,9 @@ bool ObjectTest::TestExportData() {
         bool test_values = true;
         IntrospectableIntegerObject obj;
         ConfigurationDatabase cdb;
-        obj.SetName("Test3");
-        obj.member = 30;
+        CreateTest3Object(obj);
+//        obj.SetName("Test3");
+//        obj.member = 30;
         test_status = (test_status && (obj.ExportData(cdb)));
         if (test_status) {
             StructuredDataI& sd = cdb;
@@ -278,22 +304,6 @@ bool ObjectTest::TestExportData() {
             test_status = (test_status && (sd.Read("member", member)));
             test_values = (test_values && (member == 30));
             test_status = (test_status && (sd.MoveToAncestor(1u)));
-
-            /*
-             * {
-             *   "Test3": {
-             *     "Class": "IntrospectableIntegerObject",
-             *     "member": 30
-             *   }
-             * }
-             */
-            StructuredDataToJsonTransformation transform;
-            StreamStringIOBuffer json;
-            StreamStringIOBuffer json2;
-            bool ret = transform.Execute(sd, json);
-            json.Seek(0);
-            ret = transform.FormatJson(json, json2);
-            ret = !ret;
         }
         result = result && test_status && test_values;
     }
@@ -312,9 +322,10 @@ bool ObjectTest::TestExportData() {
         bool test_values = true;
         IntrospectableObjectWith2Members obj;
         ConfigurationDatabase cdb;
-        obj.SetName("Test4");
-        obj.member1 = 10;
-        obj.member2 = 20;
+        CreateTest4Object(obj);
+//        obj.SetName("Test4");
+//        obj.member1 = 10;
+//        obj.member2 = 20;
         test_status = (test_status && (obj.ExportData(cdb)));
         if (test_status) {
             StructuredDataI& sd = cdb;
@@ -340,20 +351,21 @@ bool ObjectTest::TestExportData() {
          * root
          *  |+"Test5"
          *   |-"Class": "IntrospectableObjectWith3Members"
-         *   |-"member1": 30
-         *   |-"member2": 60
+         *   |-"member1": 10
+         *   |-"member2": 20
          *   |+"member3"
          *    |-"Class": "IntrospectableIntegerObject"
-         *    |-"member": 90
+         *    |-"member": 30
          */
         bool test_status = true;
         bool test_values = true;
         IntrospectableObjectWith3Members obj;
         ConfigurationDatabase cdb;
-        obj.SetName("Test5");
-        obj.member1 = 10;
-        obj.member2 = 20;
-        obj.member3.member = 30;
+        CreateTest5Object(obj);
+//        obj.SetName("Test5");
+//        obj.member1 = 10;
+//        obj.member2 = 20;
+//        obj.member3.member = 30;
         test_status = (test_status && (obj.ExportData(cdb)));
         if (test_status) {
             StructuredDataI& sd = cdb;
@@ -556,7 +568,7 @@ bool ObjectTest::TestExportMetadata() {
          *    |-"type": "IntrospectableIntegerObject"
          *    |-"modifiers": ""
          *    |-"attributes": ""
-         *    |-"size": sizeof(uint64)
+         *    |-"size": sizeof(IntrospectableIntegerObject)
          *    |-"pointer": &this+offsetof(IntrospectableObjectWith3Members, member3)
          *    |+"IntrospectableIntegerObject"
          *     |+"member"
@@ -654,6 +666,146 @@ bool ObjectTest::TestExportMetadata() {
                 test_status = (test_status && (sd.MoveToAncestor(1u)));
             }
         }
+        result = result && test_status && test_values;
+    }
+    return result;
+}
+
+bool ObjectTest::TestJsonConversion() {
+    bool result = true;
+    {
+        /*
+         * This test verifies that method ObjectTest::ExportData returns the
+         * following tree (from a testing object which is an instance of a
+         * registered and introspectable class):
+         * root
+         *  |+"Test3"
+         *   |-"Class": "IntrospectableIntegerObject"
+         *   |-"member": 30
+         * root
+         * {
+         *   "Test3": {
+         *     "Class": "IntrospectableIntegerObject",
+         *     "member": 30
+         *   }
+         * }
+         * root
+         *  |+"Test4"
+         *   |-"Class": "IntrospectableObjectWith2Members"
+         *   |-"member1": 10
+         *   |-"member2": 20
+         * root
+         *  |+"Test5"
+         *   |-"Class": "IntrospectableObjectWith3Members"
+         *   |-"member1": 30
+         *   |-"member2": 60
+         *   |+"member3"
+         *    |-"Class": "IntrospectableIntegerObject"
+         *    |-"member": 90
+         * root
+         *  |+"IntrospectableIntegerObject"
+         *   |+"member"
+         *    |-"type": "int32"
+         *    |-"modifiers": ""
+         *    |-"attributes": ""
+         *    |-"size": sizeof(int32)
+         *    |-"pointer": &this+offsetof(IntrospectableIntegerObject, member)
+         * root
+         *  |+"IntrospectableObjectWith2Members"
+         *   |+"member1"
+         *    |-"type": "int32"
+         *    |-"modifiers": ""
+         *    |-"attributes": ""
+         *    |-"size": sizeof(int32)
+         *    |-"pointer": &this+offsetof(IntrospectableObjectWith2Members, member1)
+         *   |+"member2"
+         *    |-"type": "uint64"
+         *    |-"modifiers": ""
+         *    |-"attributes": ""
+         *    |-"size": sizeof(uint64)
+         *    |-"pointer": &this+offsetof(IntrospectableObjectWith2Members, member2)
+         * root
+         *  |+"IntrospectableObjectWith3Members"
+         *   |+"member1"
+         *    |-"type": "int32"
+         *    |-"modifiers": ""
+         *    |-"attributes": ""
+         *    |-"size": sizeof(int32)
+         *    |-"pointer": &this+offsetof(IntrospectableObjectWith3Members, member1)
+         *   |+"member2"
+         *    |-"type": "uint64"
+         *    |-"modifiers": ""
+         *    |-"attributes": ""
+         *    |-"size": sizeof(uint64)
+         *    |-"pointer": &this+offsetof(IntrospectableObjectWith3Members, member2)
+         *   |+"member3"
+         *    |-"type": "IntrospectableIntegerObject"
+         *    |-"modifiers": ""
+         *    |-"attributes": ""
+         *    |-"size": sizeof(IntrospectableIntegerObject)
+         *    |-"pointer": &this+offsetof(IntrospectableObjectWith3Members, member3)
+         *    |+"IntrospectableIntegerObject"
+         *     |+"member"
+         *      |-"type": "int32"
+         *      |-"modifiers": ""
+         *      |-"attributes": ""
+         *      |-"size": sizeof(int32)
+         *      |-"pointer": &this.member+offsetof(IntrospectableIntegerObject, member)
+         */
+        const int MAX_TESTS = 6;
+        const char8* CANONICAL_JSON[MAX_TESTS] =
+                { "{\"Test3\":{\"Class\":\"IntrospectableIntegerObject\",\"member\":30}}",
+                        "{\"Test4\":{\"Class\":\"IntrospectableObjectWith2Members\",\"member1\":10,\"member2\":20}}",
+                        "{\"Test5\":{\"Class\":\"IntrospectableObjectWith3Members\",\"member1\":10,\"member2\":20,{\"member3\":{\"Class\":\"IntrospectableIntegerObject\",\"member\":30}}}}",
+                        "{\"IntrospectableIntegerObject\":{\"member\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":\"sizeof(int32)\",\"pointer\":\"&this+offsetof(IntrospectableIntegerObject, member)\"}}}",
+                        "{\"IntrospectableObjectWith2Members\":{\"member1\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":\"sizeof(int32)\",\"pointer\":\"&this+offsetof(IntrospectableObjectWith2Members, member1)\"}},{\"member2\":{\"type\":\"uint64\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":\"sizeof(uint64)\",\"pointer\":\"&this+offsetof(IntrospectableObjectWith2Members, member2)\"}}}",
+                        "{\"IntrospectableObjectWith3Members\":{\"member1\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":\"sizeof(int32)\",\"pointer\":\"&this+offsetof(IntrospectableObjectWith3Members, member1)\"}},{\"member2\":{\"type\":\"uint64\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":\"sizeof(uint64)\",\"pointer\":\"&this+offsetof(IntrospectableObjectWith3Members, member2)\"}},{\"member3\":{\"type\":\"IntrospectableIntegerObject\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":\"sizeof(IntrospectableIntegerObject)\",\"pointer\":\"&this+offsetof(IntrospectableObjectWith3Members, member3)\",\"IntrospectableIntegerObject\":{\"member\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":\"sizeof(int32)\",\"pointer\":\"&this+offsetof(IntrospectableIntegerObject, member)\"}}}}" };
+        const char8* FORMATTED_JSON[MAX_TESTS] = { "{\n\"Test3\":\n{\n\"Class\":\"IntrospectableIntegerObject\",\n\"member\":30\n}\n}",
+                "{\n\"Test4\":\n{\n\"Class\":\"IntrospectableObjectWith2Members\",\n\"member1\":10,\n\"member2\":20\n}\n}", "", "", "", "" };
+        bool test_status = true;
+        bool test_values = true;
+        ConfigurationDatabase cdb[MAX_TESTS];
+        {
+            IntrospectableIntegerObject obj;
+            CreateTest3Object(obj);
+            test_status = (test_status && (obj.ExportData(cdb[0])));
+        }
+        {
+            IntrospectableObjectWith2Members obj;
+            CreateTest4Object(obj);
+            test_status = (test_status && (obj.ExportData(cdb[1])));
+        }
+        {
+            IntrospectableObjectWith3Members obj;
+            CreateTest5Object(obj);
+            test_status = (test_status && (obj.ExportData(cdb[2])));
+        }
+        {
+            IntrospectableIntegerObject obj;
+            test_status = (test_status && (obj.ExportMetadata(cdb[3])));
+        }
+        {
+            IntrospectableObjectWith2Members obj;
+            test_status = (test_status && (obj.ExportMetadata(cdb[4])));
+        }
+        const char8 JSON[] = "{\"Test3\":{\"Class\":\"IntrospectableIntegerObject\",\"member\":30}}";
+        IOBuffer buf;
+        uint32 size = sizeof(JSON);
+        buf.WriteAll(JSON, size);
+        test_values = (test_values && (StreamString(JSON) == StreamString(CANONICAL_JSON[0])));
+        test_values = (test_values && (StreamString(buf.Buffer()) == StreamString(CANONICAL_JSON[0])));
+//        if (test_status) {
+//            for (int i = 0; i < MAX_TESTS; i++) {
+//                StructuredDataToJsonTransformation transform;
+//                StreamStringIOBuffer json;
+//                StreamStringIOBuffer json2;
+//                bool ret = transform.Execute(cdb[i], json);
+//                test_values = (test_values && (StreamString(json.Buffer()) == StreamString(CANONICAL_JSON[i])));
+//                json.Seek(0);
+//                ret = transform.FormatJson(json, json2);
+//                test_values = (test_values && (StreamString(json2.Buffer()) == StreamString(FORMATTED_JSON[i])));
+//            }
+//        }
         result = result && test_status && test_values;
     }
     return result;

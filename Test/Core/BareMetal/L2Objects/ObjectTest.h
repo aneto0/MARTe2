@@ -130,6 +130,8 @@ public:
      * @return true if the tests explained in the details section succeed, false otherwise.
      */
     bool TestExportMetadata();
+
+    bool TestJsonConversion();
 };
 
 /*---------------------------------------------------------------------------*/

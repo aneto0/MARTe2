@@ -66,8 +66,8 @@ bool StructuredDataToJsonTransformation::Execute(StructuredDataI& input,
 
     static const AnyType BEGIN_OBJECT[] = { "{", voidAnyType };
     static const AnyType END_OBJECT[] = { "}", voidAnyType };
-    //static const AnyType BEGIN_ARRAY[] = { "[", voidAnyType };
-    //static const AnyType END_ARRAY[] = { "]", voidAnyType };
+    static const AnyType BEGIN_ARRAY[] = { "[", voidAnyType };
+    static const AnyType END_ARRAY[] = { "]", voidAnyType };
     static const AnyType NAME_SEPARATOR[] = { ":", voidAnyType };
     static const AnyType VALUE_SEPARATOR[] = { ",", voidAnyType };
     static const AnyType NULL_VALUE[] = { "null", voidAnyType };
@@ -115,6 +115,7 @@ bool StructuredDataToJsonTransformation::Execute(StructuredDataI& input,
                 if (input.Read(childName, rawValue)) {
                     //The child is a leaf
                     StreamString cookedValue;
+                    //Cook the raw value
                     {
                         TypeDescriptor descriptor;
                         descriptor = input.GetType(childName).GetTypeDescriptor();
@@ -126,10 +127,50 @@ bool StructuredDataToJsonTransformation::Execute(StructuredDataI& input,
                             cookedValue += rawValue;
                             cookedValue += "\"";
                         }
+//                        else if (vector) {
+//                            if (!output.PrintFormatted("%s", &BEGIN_ARRAY[0])) {
+//                                ret = false;
+//                            }
+//                            for (uint32 i = 0u; (i < value.GetNumberOfElements(0u)); i++) {
+//                                print_value();
+//                            }
+//                            if (!output.PrintFormatted("%s", &VALUE_SEPARATOR[0])) {
+//                                ret = false;
+//                            }
+//                            if (!output.PrintFormatted("%s", &END_ARRAY[0])) {
+//                                ret = false;
+//                            }
+//                        }
+//                        else if (matrix) {
+//                            if (!output.PrintFormatted("%s", &BEGIN_ARRAY[0])) {
+//                                ret = false;
+//                            }
+//                            for (uint32 i = 0u; (i < value.GetNumberOfElements(1u)); i++) {
+//                                if (!output.PrintFormatted("%s", &BEGIN_ARRAY[0])) {
+//                                    ret = false;
+//                                }
+//                                for (uint32 i = 0u; (i < value.GetNumberOfElements(0u)); i++) {
+//                                    print_value();
+//                                }
+//                                if (!output.PrintFormatted("%s", &VALUE_SEPARATOR[0])) {
+//                                    ret = false;
+//                                }
+//                                if (!output.PrintFormatted("%s", &END_ARRAY[0])) {
+//                                    ret = false;
+//                                }
+//                            }
+//                            if (!output.PrintFormatted("%s", &VALUE_SEPARATOR[0])) {
+//                                ret = false;
+//                            }
+//                            if (!output.PrintFormatted("%s", &END_ARRAY[0])) {
+//                                ret = false;
+//                            }
+//                        }
                         else {
                             cookedValue = rawValue;
                         }
                     }
+                    //Print the cooked value
                     {
                         AnyType printLeaf[] = { cookedValue.Buffer(), voidAnyType };
                         if (!output.PrintFormatted("%s", &printLeaf[0])) {
@@ -197,6 +238,32 @@ bool StructuredDataToJsonTransformation::FormatJson(IOBuffer& input,
         output.WriteAll(str.Buffer(), size);
     }
     return ret;  //TODO: Check ret!!
+
+//    case '}':
+//        char8 c2;
+//        bool get;
+//        get = input.GetC(c2);
+//        while (get && (c2 == ' ')) { // || c2=='\t' || c2=='\n' || c2=='\r')) {
+//            get = input.GetC(c2);
+//        }
+//        if (get) {
+//            if (c2 == ',') {
+//                str = "},\n";
+//                size = 3;
+//            }
+//            else {
+//                str = "}\n";
+//                size = 2;
+//                input.UnGetC();
+//            }
+//        }
+//        else {
+//            str = "}\n";
+//            size = 2;
+//        }
+//        break;
+
+
 }
 
 }
