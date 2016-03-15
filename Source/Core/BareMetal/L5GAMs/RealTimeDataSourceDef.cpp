@@ -51,6 +51,10 @@ RealTimeDataSourceDef::RealTimeDataSourceDef() {
     memory = NULL_PTR(MemoryArea *);
     usedBuffer[0] = NULL;
     usedBuffer[1] = NULL;
+    numberOfDimensions = 0u;
+    for (uint32 k = 0u; k < 3u; k++) {
+        numberOfElements[k] = 1u;
+    }
 
 }
 
@@ -310,7 +314,32 @@ bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
                     if (defaultValue != "") {
                         printf("\nSet default value:: %s found: defaultValue= %s nextBuff=%d\n", GetName(), defaultValue.Buffer(), nextBuffer);
                         at = AnyType(typeDes, 0u, memory->GetPointer(bufferPtrOffset[nextBuffer]));
-                        ret = TypeConvert(at, defaultValue);
+                        if (numberOfDimensions > 0u) {
+                            // consider the multi-dimensional
+                            // set the output
+                            at.SetNumberOfDimensions(numberOfDimensions);
+                            for (uint32 k = 0u; k < 3u; k++) {
+                                at.SetNumberOfElements(k, numberOfElements[k]);
+                            }
+                            // set the input
+                            ConfigurationDatabase cdb;
+                            // create a stream with "node = { element1, element2, ...}
+                            StreamString fakeNodeConfig = "node = ";
+                            fakeNodeConfig += defaultValue;
+                            fakeNodeConfig.Seek(0);
+                            // parse it
+                            StandardParser parser(fakeNodeConfig, cdb);
+                            ret = parser.Parse();
+                            // get the input
+                            AnyType multiDim = cdb.GetType("node");
+
+                            if (ret) {
+                                ret = TypeConvert(at, multiDim);
+                            }
+                        }
+                        else {
+                            ret = TypeConvert(at, defaultValue);
+                        }
                         if (ret) {
                             printf("\ndata is %d\n", *(uint32*) memory->GetPointer(bufferPtrOffset[nextBuffer]));
                             //set the next used buffer
@@ -332,34 +361,63 @@ bool RealTimeDataSourceDef::Allocate(MemoryArea &dsMemory) {
     uint32 varSize = 0u;
     // structured type
     if (typeDes == InvalidType) {
-        const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
-        ret = (item != NULL);
+        ret = numberOfDimensions == 0u;
         if (ret) {
-            const ClassProperties *properties = item->GetClassProperties();
-            ret = (properties != NULL);
+            const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
+            ret = (item != NULL);
             if (ret) {
-                varSize = properties->GetSize();
+                const ClassProperties *properties = item->GetClassProperties();
+                ret = (properties != NULL);
+                if (ret) {
+                    varSize = properties->GetSize();
+                }
+                else {
+                    //TODO ??
+                }
             }
             else {
-                //TODO ??
+                //TODO type not registered
             }
         }
         else {
-            //TODO type not registered
+            //TODO Multidimensional structures not supported
         }
     }
     // basic type
     else {
         varSize = (typeDes.numberOfBits + 7u) / 8u;
+        // consider the multi - dimensional
+        for (uint32 k = 0u; k < numberOfDimensions; k++) {
+            varSize *= numberOfElements[k];
+        }
+
     }
     // allocate the memory
-    if (varSize != 0u) {
+    if (ret) {
+
         ret = memory->Add(varSize, bufferPtrOffset[0]);
         if (ret) {
             ret = memory->Add(varSize, bufferPtrOffset[1]);
         }
     }
     return ret;
+}
+
+void RealTimeDataSourceDef::SetNumberOfElements(uint8 dimension,
+                                                uint32 nElements) {
+    if (dimension > 2u) {
+        //TODO Warning
+        dimension = 2u;
+    }
+    numberOfElements[dimension] = nElements;
+
+}
+
+void RealTimeDataSourceDef::SetNumberOfDimensions(uint8 nDimensions) {
+    if (nDimensions > 2u) {
+        //TODO Warning
+    }
+    numberOfDimensions = nDimensions;
 }
 
 CLASS_REGISTER(RealTimeDataSourceDef, "1.0")

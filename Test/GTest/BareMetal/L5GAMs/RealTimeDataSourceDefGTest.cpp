@@ -110,6 +110,21 @@ TEST(RealTimeDataSourceDefGTest,TestAllocateFalse_Invalid) {
     ASSERT_TRUE(rtdsdTest.TestAllocateFalse_Invalid());
 }
 
+TEST(RealTimeDataSourceDefGTest,TestAllocateMultiDim_Vector) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestAllocateMultiDim_Vector());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestAllocateMultiDim_Matrix) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestAllocateMultiDim_Matrix());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestAllocateFalse_MultiDimStructured) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestAllocateFalse_MultiDimStructured());
+}
+
 TEST(RealTimeDataSourceDefGTest,TestGetDataSourcePointer) {
     RealTimeDataSourceDefTest rtdsdTest;
     ASSERT_TRUE(rtdsdTest.TestGetDataSourcePointer());
@@ -133,6 +148,11 @@ TEST(RealTimeDataSourceDefGTest,TestPrepareNextState_Structured_ContinueVar) {
 TEST(RealTimeDataSourceDefGTest,TestPrepareNextState_Structured_DeadVar) {
     RealTimeDataSourceDefTest rtdsdTest;
     ASSERT_TRUE(rtdsdTest.TestPrepareNextState_Structured_DeadVar());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestPrepareNextStateMultiDimensional) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestPrepareNextStateMultiDimensional());
 }
 
 TEST(RealTimeDataSourceDefGTest,TestSetDefaultValue) {

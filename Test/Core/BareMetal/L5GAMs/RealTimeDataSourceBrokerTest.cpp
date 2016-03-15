@@ -436,6 +436,457 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_NotInDataSource() {
     return !broker->AddVariable(def);
 }
 
+bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Static_Vector() {
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("IsFinal", "true");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States.+state1");
+    appCDB.Write("Class", "RealTimeState");
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    ConfigurationDatabase cdbMulti;
+
+    cdbMulti.CreateAbsolute("+Inputs");
+    cdbMulti.Write("Class", "RealTimeDataDefContainer");
+    cdbMulti.Write("IsInput", "true");
+    cdbMulti.Write("IsFinal", "false");
+    cdbMulti.CreateAbsolute("+Inputs.+Error");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "TrackErrorArray");
+    cdbMulti.Write("IsFinal", "true");
+    cdbMulti.CreateAbsolute("+Inputs.+Error.+Pars");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "uint32");
+    cdbMulti.Write("Modifiers", "[2]");
+    cdbMulti.Write("Default", "{1,2}");
+    cdbMulti.Write("Path", "+DDB1.PidErrorArray");
+    cdbMulti.Write("IsFinal", "true");
+
+    cdbMulti.CreateAbsolute("+Outputs");
+    cdbMulti.Write("Class", "RealTimeDataDefContainer");
+    cdbMulti.Write("IsOutput", "true");
+    cdbMulti.Write("IsFinal", "false");
+    cdbMulti.CreateAbsolute("+Outputs.+Control");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "ControlInArray");
+    cdbMulti.Write("IsFinal", "true");
+    cdbMulti.CreateAbsolute("+Outputs.+Control.+Pars");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "uint32");
+    cdbMulti.Write("Modifiers", "[2]");
+    cdbMulti.Write("Path", "+DDB2.PidControlArray");
+    cdbMulti.Write("Default", "{3,4}");
+    cdbMulti.Write("IsFinal", "true");
+
+    cdbMulti.MoveToRoot();
+
+    ReferenceT<PIDGAM2> gam = ReferenceT<PIDGAM2>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    gam->SetName("Pid1");
+    if (!gam->Initialise(cdbMulti)) {
+        return false;
+    }
+
+    gam->SetApplication(rtapp);
+    gam->AddState("+state1");
+    if (!gam->ConfigureDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->ValidateDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->AllocateDataSource()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def = gam->Find("+Inputs.+Error");
+
+    ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    broker->SetName("broker");
+
+    broker->SetApplication(rtapp);
+
+    TrackErrorArray output;
+
+    output.Pars[0] = 1;
+    output.Pars[1] = 2;
+
+    if (broker->GetData(0) != NULL) {
+        return false;
+    }
+
+    if (!broker->AddVariable(def, &output)) {
+        return false;
+    }
+
+    if (!broker->Finalise()) {
+        return false;
+    }
+
+    if (broker->GetData(0) != &output) {
+        return false;
+    }
+
+    TrackErrorArray *ret = (TrackErrorArray *) broker->GetData(0);
+    if (ret->Pars[0] != 1) {
+        return false;
+    }
+
+    if (ret->Pars[1] != 2) {
+        return false;
+    }
+
+    return true;
+}
+
+bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Allocation_Vector() {
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("IsFinal", "true");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States.+state1");
+    appCDB.Write("Class", "RealTimeState");
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    ConfigurationDatabase cdbMulti;
+
+    cdbMulti.CreateAbsolute("+Inputs");
+    cdbMulti.Write("Class", "RealTimeDataDefContainer");
+    cdbMulti.Write("IsInput", "true");
+    cdbMulti.Write("IsFinal", "false");
+    cdbMulti.CreateAbsolute("+Inputs.+Error");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "TrackErrorArray");
+    cdbMulti.Write("IsFinal", "true");
+    cdbMulti.CreateAbsolute("+Inputs.+Error.+Pars");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "uint32");
+    cdbMulti.Write("Default", "{1,2}");
+    cdbMulti.Write("Modifiers", "[2]");
+    cdbMulti.Write("Path", "+DDB1.PidErrorArray");
+    cdbMulti.Write("IsFinal", "true");
+
+    cdbMulti.CreateAbsolute("+Outputs");
+    cdbMulti.Write("Class", "RealTimeDataDefContainer");
+    cdbMulti.Write("IsOutput", "true");
+    cdbMulti.Write("IsFinal", "false");
+    cdbMulti.CreateAbsolute("+Outputs.+Control");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "ControlInArray");
+    cdbMulti.Write("IsFinal", "true");
+    cdbMulti.CreateAbsolute("+Outputs.+Control.+Pars");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "uint32");
+    cdbMulti.Write("Modifiers", "[2]");
+    cdbMulti.Write("Path", "+DDB2.PidControlArray");
+    cdbMulti.Write("Default", "{3,4}");
+    cdbMulti.Write("IsFinal", "true");
+
+    cdbMulti.MoveToRoot();
+
+    ReferenceT<PIDGAM2> gam = ReferenceT<PIDGAM2>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    gam->SetName("Pid1");
+    if (!gam->Initialise(cdbMulti)) {
+        return false;
+    }
+
+    gam->SetApplication(rtapp);
+    gam->AddState("+state1");
+    if (!gam->ConfigureDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->ValidateDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->AllocateDataSource()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def = gam->Find("+Inputs.+Error");
+
+    ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    broker->SetName("broker");
+
+    broker->SetApplication(rtapp);
+
+    if (broker->GetData(0) != NULL) {
+        return false;
+    }
+
+    if (!broker->AddVariable(def)) {
+        return false;
+    }
+
+    if (!broker->Finalise()) {
+        return false;
+    }
+
+    TrackErrorArray *ret = (TrackErrorArray *) broker->GetData(0);
+
+    return ret != NULL;
+}
+
+bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Static_Matrix() {
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("IsFinal", "true");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States.+state1");
+    appCDB.Write("Class", "RealTimeState");
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    ConfigurationDatabase cdbMulti;
+
+    cdbMulti.CreateAbsolute("+Inputs");
+    cdbMulti.Write("Class", "RealTimeDataDefContainer");
+    cdbMulti.Write("IsInput", "true");
+    cdbMulti.Write("IsFinal", "false");
+    cdbMulti.CreateAbsolute("+Inputs.+Error");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "TrackErrorMatrix");
+    cdbMulti.Write("IsFinal", "true");
+    cdbMulti.CreateAbsolute("+Inputs.+Error.+Pars");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "uint32");
+    cdbMulti.Write("Modifiers", "[3][2]");
+    cdbMulti.Write("Default", "{{1,2},{3,4},{5,6}}");
+    cdbMulti.Write("Path", "+DDB1.PidErrorArray");
+    cdbMulti.Write("IsFinal", "true");
+
+    cdbMulti.CreateAbsolute("+Outputs");
+    cdbMulti.Write("Class", "RealTimeDataDefContainer");
+    cdbMulti.Write("IsOutput", "true");
+    cdbMulti.Write("IsFinal", "false");
+    cdbMulti.CreateAbsolute("+Outputs.+Control");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "ControlInMatrix");
+    cdbMulti.Write("IsFinal", "true");
+    cdbMulti.CreateAbsolute("+Outputs.+Control.+Pars");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "uint32");
+    cdbMulti.Write("Modifiers", "[3][2]");
+    cdbMulti.Write("Path", "+DDB2.PidControlArray");
+    cdbMulti.Write("Default", "{{7,8},{9,10},{11,12}}");
+    cdbMulti.Write("IsFinal", "true");
+
+    cdbMulti.MoveToRoot();
+
+    ReferenceT<PIDGAM3> gam = ReferenceT<PIDGAM3>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    gam->SetName("Pid1");
+    if (!gam->Initialise(cdbMulti)) {
+        return false;
+    }
+
+    gam->SetApplication(rtapp);
+    gam->AddState("+state1");
+    if (!gam->ConfigureDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->ValidateDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->AllocateDataSource()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def = gam->Find("+Inputs.+Error");
+
+    ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    broker->SetName("broker");
+
+    broker->SetApplication(rtapp);
+
+    TrackErrorMatrix output;
+
+    output.Pars[0][0] = 1;
+    output.Pars[0][1] = 2;
+    output.Pars[1][0] = 3;
+    output.Pars[1][1] = 4;
+    output.Pars[2][0] = 5;
+    output.Pars[2][1] = 6;
+
+    if (broker->GetData(0) != NULL) {
+        return false;
+    }
+
+    if (!broker->AddVariable(def, &output)) {
+        return false;
+    }
+
+    if (!broker->Finalise()) {
+        return false;
+    }
+
+    if (broker->GetData(0) != &output) {
+        return false;
+    }
+
+    TrackErrorMatrix *ret = (TrackErrorMatrix *) broker->GetData(0);
+    if (ret->Pars[0][0] != 1) {
+        return false;
+    }
+
+    if (ret->Pars[0][1] != 2) {
+        return false;
+    }
+    if (ret->Pars[1][0] != 3) {
+        return false;
+    }
+
+    if (ret->Pars[1][1] != 4) {
+        return false;
+    }
+
+    if (ret->Pars[2][0] != 5) {
+        return false;
+    }
+
+    if (ret->Pars[2][1] != 6) {
+        return false;
+    }
+
+    return true;
+}
+
+bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Allocation_Matrix() {
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("IsFinal", "true");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States.+state1");
+    appCDB.Write("Class", "RealTimeState");
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    ConfigurationDatabase cdbMulti;
+
+    cdbMulti.CreateAbsolute("+Inputs");
+    cdbMulti.Write("Class", "RealTimeDataDefContainer");
+    cdbMulti.Write("IsInput", "true");
+    cdbMulti.Write("IsFinal", "false");
+    cdbMulti.CreateAbsolute("+Inputs.+Error");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "TrackErrorMatrix");
+    cdbMulti.Write("IsFinal", "true");
+    cdbMulti.CreateAbsolute("+Inputs.+Error.+Pars");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "uint32");
+    cdbMulti.Write("Modifiers", "[3][2]");
+    cdbMulti.Write("Default", "{{1,2},{3,4},{5,6}}");
+    cdbMulti.Write("Path", "+DDB1.PidErrorArray");
+    cdbMulti.Write("IsFinal", "true");
+
+    cdbMulti.CreateAbsolute("+Outputs");
+    cdbMulti.Write("Class", "RealTimeDataDefContainer");
+    cdbMulti.Write("IsOutput", "true");
+    cdbMulti.Write("IsFinal", "false");
+    cdbMulti.CreateAbsolute("+Outputs.+Control");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "ControlInMatrix");
+    cdbMulti.Write("IsFinal", "true");
+    cdbMulti.CreateAbsolute("+Outputs.+Control.+Pars");
+    cdbMulti.Write("Class", "RealTimeGenericDataDef");
+    cdbMulti.Write("Type", "uint32");
+    cdbMulti.Write("Modifiers", "[3][2]");
+    cdbMulti.Write("Path", "+DDB2.PidControlArray");
+    cdbMulti.Write("Default", "{{7,8},{9,10},{11,12}}");
+    cdbMulti.Write("IsFinal", "true");
+
+    cdbMulti.MoveToRoot();
+
+    ReferenceT<PIDGAM3> gam = ReferenceT<PIDGAM3>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    gam->SetName("Pid1");
+    if (!gam->Initialise(cdbMulti)) {
+        return false;
+    }
+
+    gam->SetApplication(rtapp);
+    gam->AddState("+state1");
+    if (!gam->ConfigureDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->ValidateDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->AllocateDataSource()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def = gam->Find("+Inputs.+Error");
+
+    ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    broker->SetName("broker");
+
+    broker->SetApplication(rtapp);
+
+    if (broker->GetData(0) != NULL) {
+        return false;
+    }
+
+    if (!broker->AddVariable(def)) {
+        return false;
+    }
+
+    if (!broker->Finalise()) {
+        return false;
+    }
+
+    TrackErrorMatrix *ret = (TrackErrorMatrix *) broker->GetData(0);
+
+    return (ret != NULL);
+}
+
 bool RealTimeDataSourceBrokerTest::TestGetData_Allocation() {
 
     ConfigurationDatabase appCDB;

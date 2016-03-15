@@ -58,6 +58,31 @@ static const IntrospectionEntry* ControlNoiseEntries[] = { &ControlNoise_noiseVa
 DECLARE_CLASS_INTROSPECTION(ControlNoise, ControlNoiseEntries);
 INTROSPECTION_REGISTER(ControlNoise, "1.0", ControlNoise_introspection)
 
+DECLARE_CLASS_MEMBER(TrackErrorArray, Pars, uint32, "[2]", "");
+static const IntrospectionEntry* TrackErrorArrayEntries[] = { &TrackErrorArray_Pars_introspectionEntry, 0 };
+DECLARE_CLASS_INTROSPECTION(TrackErrorArray, TrackErrorArrayEntries);
+INTROSPECTION_REGISTER(TrackErrorArray, "1.0", TrackErrorArray_introspection)
+
+DECLARE_CLASS_MEMBER(ControlInArray, Pars, uint32, "[2]", "");
+static const IntrospectionEntry* ControlInArrayEntries[] = { &ControlInArray_Pars_introspectionEntry, 0 };
+DECLARE_CLASS_INTROSPECTION(ControlInArray, ControlInArrayEntries);
+INTROSPECTION_REGISTER(ControlInArray, "1.0", ControlInArray_introspection)
+
+
+
+
+DECLARE_CLASS_MEMBER(TrackErrorMatrix, Pars, uint32, "[3][2]", "");
+static const IntrospectionEntry* TrackErrorMatrixEntries[] = { &TrackErrorMatrix_Pars_introspectionEntry, 0 };
+DECLARE_CLASS_INTROSPECTION(TrackErrorMatrix, TrackErrorMatrixEntries);
+INTROSPECTION_REGISTER(TrackErrorMatrix, "1.0", TrackErrorMatrix_introspection)
+
+DECLARE_CLASS_MEMBER(ControlInMatrix, Pars, uint32, "[3][2]", "");
+static const IntrospectionEntry* ControlInMatrixEntries[] = { &ControlInMatrix_Pars_introspectionEntry, 0 };
+DECLARE_CLASS_INTROSPECTION(ControlInMatrix, ControlInMatrixEntries);
+INTROSPECTION_REGISTER(ControlInMatrix, "1.0", ControlInMatrix_introspection)
+
+
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -155,3 +180,60 @@ void PlantGAM::Execute(uint8 activeContextBuffer) {
 }
 
 CLASS_REGISTER(PlantGAM, "1.0")
+
+void PIDGAM2::Execute(uint8 activeContextBuffer) {
+
+    inputReader->Read(activeContextBuffer);
+    TrackErrorArray *error = (TrackErrorArray*) inputReader->GetData(0);
+
+    printf("\nExecuting: error.par1= %d, error.par2= %d\n", error->Pars[0], error->Pars[1]);
+
+    ControlInArray *control = (ControlInArray*) outputWriter->GetData(0);
+    uint32 Kp = 10;
+
+    control->Pars[0] = Kp * error->Pars[0];
+    control->Pars[1] = Kp * error->Pars[1];
+
+    outputWriter->Write(activeContextBuffer);
+}
+
+PIDGAM2::~PIDGAM2() {
+
+}
+
+void PIDGAM2::SetUp() {
+
+}
+CLASS_REGISTER(PIDGAM2, "1.0")
+
+
+
+void PIDGAM3::Execute(uint8 activeContextBuffer) {
+
+    inputReader->Read(activeContextBuffer);
+    TrackErrorMatrix *error = (TrackErrorMatrix*) inputReader->GetData(0);
+
+
+    ControlInMatrix*control = (ControlInMatrix*) outputWriter->GetData(0);
+    uint32 Kp = 10;
+
+
+    control->Pars[0][0] = Kp * error->Pars[0][0];
+    control->Pars[0][1] = Kp * error->Pars[0][1];
+    control->Pars[1][0] = Kp * error->Pars[1][0];
+    control->Pars[1][1] = Kp * error->Pars[1][1];
+    control->Pars[2][0] = Kp * error->Pars[2][0];
+    control->Pars[2][1] = Kp * error->Pars[2][1];
+
+
+    outputWriter->Write(activeContextBuffer);
+}
+
+PIDGAM3::~PIDGAM3() {
+
+}
+
+void PIDGAM3::SetUp() {
+
+}
+CLASS_REGISTER(PIDGAM3, "1.0")

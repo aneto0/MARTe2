@@ -223,6 +223,13 @@ bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> de
                 }
 
                 if (ret) {
+                    element->SetNumberOfDimensions(definition->GetNumberOfDimensions());
+                    for (uint32 k = 0u; k < 3u; k++) {
+                        element->SetNumberOfElements(k, definition->GetNumberOfElements(k));
+                    }
+                }
+
+                if (ret) {
                     definition->SetPath(path.Buffer());
                 }
 
@@ -256,6 +263,13 @@ bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> de
                     if (ret) {
                         ret = element->SetType(definition->GetType());
                     }
+                    if (ret) {
+                        element->SetNumberOfDimensions(definition->GetNumberOfDimensions());
+                        for (uint32 k = 0u; k < 3u; k++) {
+                            element->SetNumberOfElements(k, definition->GetNumberOfElements(k));
+                        }
+                    }
+
                     if (ret) {
                         definition->SetPath(path.Buffer());
                     }

@@ -72,6 +72,10 @@ public:
 
     bool Allocate(MemoryArea &dsMemory);
 
+    void SetNumberOfElements(uint8 dimension, uint32 nElements);
+
+    void SetNumberOfDimensions(uint8 nDimensions);
+
 private:
 
     StreamString type;
@@ -81,6 +85,10 @@ private:
     uint32 bufferPtrOffset[2];
 
     void *usedBuffer[2];
+
+    uint8 numberOfDimensions;
+
+    uint32 numberOfElements[3];
 
     MemoryArea *memory;
 };

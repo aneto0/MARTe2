@@ -62,6 +62,14 @@ public:
 
     bool TestAddVariableFalse_NotInDataSource();
 
+    bool TestAddVariable_MultiDimensional_Static_Vector();
+
+    bool TestAddVariable_MultiDimensional_Allocation_Vector();
+
+    bool TestAddVariable_MultiDimensional_Static_Matrix();
+
+    bool TestAddVariable_MultiDimensional_Allocation_Matrix();
+
     bool TestGetData_Allocation();
 
     bool TestGetData_Static();

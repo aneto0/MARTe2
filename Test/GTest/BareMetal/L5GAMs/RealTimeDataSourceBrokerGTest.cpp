@@ -83,6 +83,26 @@ TEST(RealTimeDataSourceBrokerGTest,TestAddVariableFalse_NotInDataSource) {
     ASSERT_TRUE(rtdsbTest.TestAddVariableFalse_NotInDataSource());
 }
 
+TEST(RealTimeDataSourceBrokerGTest,TestAddVariable_MultiDimensional_Static_Vector) {
+    RealTimeDataSourceBrokerTest rtdsbTest;
+    ASSERT_TRUE(rtdsbTest.TestAddVariable_MultiDimensional_Static_Vector());
+}
+
+TEST(RealTimeDataSourceBrokerGTest,TestAddVariable_MultiDimensional_Allocation_Vector) {
+    RealTimeDataSourceBrokerTest rtdsbTest;
+    ASSERT_TRUE(rtdsbTest.TestAddVariable_MultiDimensional_Allocation_Vector());
+}
+
+TEST(RealTimeDataSourceBrokerGTest,TestAddVariable_MultiDimensional_Allocation_Matrix) {
+    RealTimeDataSourceBrokerTest rtdsbTest;
+    ASSERT_TRUE(rtdsbTest.TestAddVariable_MultiDimensional_Allocation_Matrix());
+}
+
+TEST(RealTimeDataSourceBrokerGTest,TestAddVariable_MultiDimensional_Static_Matrix) {
+    RealTimeDataSourceBrokerTest rtdsbTest;
+    ASSERT_TRUE(rtdsbTest.TestAddVariable_MultiDimensional_Static_Matrix());
+}
+
 TEST(RealTimeDataSourceBrokerGTest,TestGetData_Allocation) {
     RealTimeDataSourceBrokerTest rtdsbTest;
     ASSERT_TRUE(rtdsbTest.TestGetData_Allocation());

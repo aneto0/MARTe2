@@ -70,6 +70,12 @@ public:
 
     bool TestAllocateFalse_Invalid();
 
+    bool TestAllocateMultiDim_Vector();
+
+    bool TestAllocateMultiDim_Matrix();
+
+    bool TestAllocateFalse_MultiDimStructured();
+
     bool TestGetDataSourcePointer();
 
     bool TestPrepareNextState_Basic_ContinueVar();
@@ -79,6 +85,8 @@ public:
     bool TestPrepareNextState_Structured_ContinueVar();
 
     bool TestPrepareNextState_Structured_DeadVar();
+
+    bool TestPrepareNextStateMultiDimensional();
 
     bool TestSetDefaultValue();
 

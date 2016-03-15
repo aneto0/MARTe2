@@ -63,7 +63,6 @@ public:
      */
     virtual bool MergeWithLocal(StructuredDataI &localData)=0;
 
-
     /**
      * @brief Checks if the definition is consistent with the introspection of a registered structure
      * if the field type is specified.
@@ -96,9 +95,14 @@ public:
      */
     virtual bool Initialise(StructuredDataI &data);
 
-
-
     void SetPath(const char8 * newPath);
+
+
+    uint8 GetNumberOfDimensions() const;
+
+
+    uint32 GetNumberOfElements(uint32 dimension);
+
 protected:
 
     /**
@@ -110,6 +114,11 @@ protected:
      * The variable type
      */
     StreamString type;
+
+    uint8 numberOfDimensions;
+
+    uint32 numberOfElements[3];
+
 
     /**
      * The default value

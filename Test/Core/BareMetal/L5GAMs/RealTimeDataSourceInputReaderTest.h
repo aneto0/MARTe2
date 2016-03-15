@@ -57,6 +57,10 @@ public:
 
     bool TestRead_MoreThanOneVariable();
 
+    bool TestRead_MultiDim_Vector();
+
+    bool TestRead_MultiDim_Matrix();
+
 private:
     ConfigurationDatabase cdb;
 

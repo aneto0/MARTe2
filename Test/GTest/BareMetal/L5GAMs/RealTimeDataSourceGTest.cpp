@@ -94,3 +94,14 @@ TEST(RealTimeDataSourceGTest,TestPrepareNextState) {
     RealTimeDataSourceTest rtdsdcTest;
     ASSERT_TRUE(rtdsdcTest.TestPrepareNextState());
 }
+
+TEST(RealTimeDataSourceGTest,TestPrepareNextState_MultiDim_Vector) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestPrepareNextState_MultiDim_Vector());
+}
+
+
+TEST(RealTimeDataSourceGTest,TestPrepareNextState_MultiDim_Vector_Matrix) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestPrepareNextState_MultiDim_Matrix());
+}

@@ -51,6 +51,10 @@ public:
 
     bool TestWrite_MoreThanOneVariable();
 
+    bool TestWrite_MultiDim_Vector();
+
+    bool TestWrite_MultiDim_Matrix();
+
 private:
 
     ConfigurationDatabase cdb;

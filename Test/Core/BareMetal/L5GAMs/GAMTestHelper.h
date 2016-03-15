@@ -53,6 +53,27 @@ struct ControlNoise {
     float32 noiseValue;
 };
 
+
+struct TrackErrorArray {
+    uint32 Pars[2];
+};
+
+struct ControlInArray {
+    uint32 Pars[2];
+};
+
+
+
+struct TrackErrorMatrix {
+    uint32 Pars[3][2];
+};
+
+struct ControlInMatrix {
+    uint32 Pars[3][2];
+};
+
+
+
 class PIDGAM: public GAM {
 
 public:
@@ -65,6 +86,8 @@ protected:
     virtual void SetUp();
 
 private:
+
+    bool ExecuteOk;
 };
 
 class PIDGAMGroup: public GAMGroup {
@@ -83,6 +106,37 @@ private:
     uint32 context;
 
 };
+
+
+class PIDGAM2: public GAM {
+
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    ~PIDGAM2();
+
+    virtual void Execute(uint8 activeContextBuffer);
+protected:
+    virtual void SetUp();
+
+private:
+};
+
+
+class PIDGAM3: public GAM {
+
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    ~PIDGAM3();
+
+    virtual void Execute(uint8 activeContextBuffer);
+protected:
+    virtual void SetUp();
+
+private:
+};
+
 
 class PlantGAM: public GAM {
 

@@ -68,3 +68,14 @@ TEST(RealTimeDataSourceInputReaderGTest,TestRead_MoreThanOneVariable) {
     RealTimeDataSourceInputReaderTest rtdsirTest;
     ASSERT_TRUE(rtdsirTest.TestRead_MoreThanOneVariable());
 }
+
+TEST(RealTimeDataSourceInputReaderGTest,TestRead_MultiDim_Vector) {
+    RealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_MultiDim_Vector());
+}
+
+TEST(RealTimeDataSourceInputReaderGTest,TestRead_MultiDim_Matrix) {
+    RealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_MultiDim_Matrix());
+}
+

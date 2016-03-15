@@ -121,10 +121,17 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                         ret = (intro != NULL);
                         if (ret) {
                             varSize = intro->GetClassSize();
-                            if (ptr == NULL) {
-                                ret = memory.Add(varSize, offset);
-                                ptr = memory.GetPointer(offset);
-                                memStart = memory.GetMemoryStart();
+                            // unsupported multi-dimensional
+                            ret = (def->GetNumberOfDimensions() == 0u);
+                            if (ret) {
+                                if (ptr == NULL) {
+                                    ret = memory.Add(varSize, offset);
+                                    ptr = memory.GetPointer(offset);
+                                    memStart = memory.GetMemoryStart();
+                                }
+                            }
+                            else{
+                                //TODO Warning unsupported multidimensional for structures
                             }
 
                             if (ret) {
@@ -172,6 +179,11 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                 // basic type
                 else {
                     varSize = (typeDes.numberOfBits + 7u) / 8u;
+                    // consider multi-dimensional
+                    uint8 numberOfDimensions = def->GetNumberOfDimensions();
+                    for (uint32 k = 0u; k < numberOfDimensions; k++) {
+                        varSize *= def->GetNumberOfElements(k);
+                    }
                     printf("\noffset is %d size is %d\n", offset, varSize);
                     if (ptr == NULL) {
                         ret = memory.Add(varSize, offset);
@@ -201,6 +213,7 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                             ret = GAMOffsets.Add(offset);
                         }
                         if (ret) {
+
                             ret = sizes.Add(varSize);
                         }
 

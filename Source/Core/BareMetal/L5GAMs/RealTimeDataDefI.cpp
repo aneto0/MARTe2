@@ -39,6 +39,11 @@
 
 namespace MARTe {
 RealTimeDataDefI::RealTimeDataDefI() {
+    numberOfDimensions = 0u;
+
+    for (uint32 i = 0u; i < 3u; i++) {
+        numberOfElements[i] = 1u;
+    }
 
 }
 
@@ -69,8 +74,32 @@ bool RealTimeDataDefI::Initialise(StructuredDataI &data) {
         if (!data.Read("Default", defaultValue)) {
             //TODO Warning?
         }
+
+        StreamString modifiers;
+        if (data.Read("Modifiers", modifiers)) {
+            // use introspection entry to parse the modifiers
+            IntrospectionEntry entry("", "", modifiers.Buffer(), "", 0u, 0u);
+            numberOfDimensions = entry.GetNumberOfDimensions();
+            for (uint32 i = 0u; i < 3u; i++) {
+                numberOfElements[i] = entry.GetNumberOfElements(i);
+            }
+            if (entry.GetMemberPointerLevel() > 0u) {
+                //TODO Warning: pointers not supported
+            }
+        }
+
     }
     return ret;
+}
+
+uint8 RealTimeDataDefI::GetNumberOfDimensions() const {
+    return numberOfDimensions;
+
+}
+
+uint32 RealTimeDataDefI::GetNumberOfElements(uint32 dimension) {
+    uint32 dimensionNumber = dimension;
+    return (dimensionNumber < 3u) ? numberOfElements[dimensionNumber] : numberOfElements[2];
 }
 
 void RealTimeDataDefI::SetPath(const char8 * newPath) {

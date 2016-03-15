@@ -38,6 +38,8 @@
 
 using namespace MARTe;
 
+
+
 class RealTimeDataDefITest {
 
 public:
@@ -49,6 +51,15 @@ public:
     bool TestGetType();
 
     bool TestGetPath();
+
+    bool TestNumberOfDimensions(const char8 * type,
+                                const char8 * modifiers,
+                                uint8 ret);
+
+    bool TestNumberOfElements(const char8 * type,
+                              const char8 * modifiers,
+                              uint32 ret[3]);
+
 };
 
 /*---------------------------------------------------------------------------*/

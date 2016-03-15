@@ -59,3 +59,12 @@ TEST(RealTimeDataSourceOutputWriterGTest,TestWrite_MoreThanOneVariable) {
     ASSERT_TRUE(rtdsorTest.TestWrite_MoreThanOneVariable());
 }
 
+TEST(RealTimeDataSourceOutputWriterGTest,TestWrite_MultiDim_Vector) {
+    RealTimeDataSourceOutputWriterTest rtdsorTest;
+    ASSERT_TRUE(rtdsorTest.TestWrite_MultiDim_Vector());
+}
+
+TEST(RealTimeDataSourceOutputWriterGTest,TestWrite_MultiDim_Matrix) {
+    RealTimeDataSourceOutputWriterTest rtdsorTest;
+    ASSERT_TRUE(rtdsorTest.TestWrite_MultiDim_Matrix());
+}

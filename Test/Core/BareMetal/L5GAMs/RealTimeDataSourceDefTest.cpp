@@ -276,6 +276,77 @@ bool RealTimeDataSourceDefTest::TestAllocateFalse_Invalid() {
 
 }
 
+bool RealTimeDataSourceDefTest::TestAllocateMultiDim_Vector() {
+    RealTimeDataSourceDef def;
+    def.SetType("uint32");
+
+    const uint32 numberOfElements = 32;
+
+    def.SetNumberOfDimensions(1);
+    def.SetNumberOfElements(0, numberOfElements);
+
+    if (def.GetDataSourcePointer(0) != NULL) {
+        return false;
+    }
+
+    if (def.GetDataSourcePointer(1) != NULL) {
+        return false;
+    }
+
+    MemoryArea mem;
+
+    if (!def.Allocate(mem)) {
+        return false;
+    }
+
+    return mem.GetMemorySize() == 2 * sizeof(uint32) * numberOfElements;
+}
+
+bool RealTimeDataSourceDefTest::TestAllocateMultiDim_Matrix() {
+    RealTimeDataSourceDef def;
+    def.SetType("uint32");
+
+    const uint32 numberOfRows = 32;
+    const uint32 numberOfColumns = 12;
+
+    def.SetNumberOfDimensions(2);
+    def.SetNumberOfElements(1, numberOfRows);
+    def.SetNumberOfElements(0, numberOfColumns);
+
+    if (def.GetDataSourcePointer(0) != NULL) {
+        return false;
+    }
+
+    if (def.GetDataSourcePointer(1) != NULL) {
+        return false;
+    }
+
+    MemoryArea mem;
+
+    if (!def.Allocate(mem)) {
+        return false;
+    }
+
+    return mem.GetMemorySize() == 2 * sizeof(uint32) * numberOfRows * numberOfColumns;
+
+}
+
+bool RealTimeDataSourceDefTest::TestAllocateFalse_MultiDimStructured() {
+    RealTimeDataSourceDef def;
+    def.SetType("TrackError");
+
+    const uint32 numberOfRows = 32;
+    const uint32 numberOfColumns = 12;
+
+    def.SetNumberOfDimensions(2);
+    def.SetNumberOfElements(1, numberOfRows);
+    def.SetNumberOfElements(0, numberOfColumns);
+
+    MemoryArea mem;
+
+    return (!def.Allocate(mem));
+}
+
 bool RealTimeDataSourceDefTest::TestGetDataSourcePointer() {
     RealTimeDataSourceDef def;
     def.SetType("uint32");
@@ -540,6 +611,73 @@ bool RealTimeDataSourceDefTest::TestPrepareNextState_Structured_DeadVar() {
 
     if ((*buff2)->Par2 != 2) {
         return false;
+    }
+
+    return true;
+
+}
+
+bool RealTimeDataSourceDefTest::TestPrepareNextStateMultiDimensional() {
+    RealTimeDataSourceDef def;
+
+    def.SetType("uint32");
+    def.SetNumberOfDimensions(1);
+
+    const uint32 numberOfElements = 4;
+    const char8 *defaultVal = "{0,1,2,3}";
+    def.SetNumberOfElements(0, numberOfElements);
+
+    MemoryArea mem;
+
+    if (!def.Allocate(mem)) {
+        return false;
+    }
+
+    uint32 **buff1 = (uint32**) def.GetDataSourcePointer(0);
+    uint32 **buff2 = (uint32**) def.GetDataSourcePointer(1);
+
+    ReferenceT<PIDGAM> gamS1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def.AddConsumer("state1", gamS1);
+
+    def.SetDefaultValue(defaultVal);
+
+    ReferenceT<PIDGAM> gamS3 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def.AddConsumer("state3", gamS3);
+
+    // begin
+    RealTimeStateInfo info;
+    info.activeBuffer = 1;
+    info.currentState = "";
+    info.nextState = "state1";
+    if (!def.PrepareNextState(info)) {
+        return false;
+    }
+
+    for (uint32 i = 0; i < numberOfElements; i++) {
+        if ((*buff1)[i] != i) {
+            return false;
+        }
+    }
+
+    uint32 *var = (uint32 *) mem.GetPointer(0);
+
+    for (uint32 i = 0; i < (2 * numberOfElements); i++) {
+        var[i] = 0;
+    }
+
+    // switch state
+    info.activeBuffer = 0;
+    info.currentState = "state2";
+    info.nextState = "state3";
+
+    if (!def.PrepareNextState(info)) {
+        return false;
+    }
+
+    for (uint32 i = 0; i < numberOfElements; i++) {
+        if ((*buff2)[i] != i) {
+            return false;
+        }
     }
 
     return true;

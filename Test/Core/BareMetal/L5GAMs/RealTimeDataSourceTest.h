@@ -63,6 +63,10 @@ public:
 
     bool TestPrepareNextState();
 
+    bool TestPrepareNextState_MultiDim_Vector();
+
+    bool TestPrepareNextState_MultiDim_Matrix();
+
 };
 
 /*---------------------------------------------------------------------------*/
