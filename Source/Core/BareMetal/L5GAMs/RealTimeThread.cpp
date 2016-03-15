@@ -35,7 +35,7 @@
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "GAM.h"
-#include "stdio.h"
+#include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -83,7 +83,6 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
                     AddGAM(subGam);
                     subGam->SetApplication(ReferenceT<RealTimeApplication>(&rtApp));
                     subGam->SetGAMGroup(functionGAMGroup);
-                    //TODO AddGam failed
                 }
             }
         }
@@ -110,13 +109,15 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
                     }
                 }
                 else {
-                    //TODO ??? no father
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s must be defined in the +Function container of the application",
+                                            functionGAM->GetName())
                 }
             }
             else {
                 // a generic container
                 ReferenceT<ReferenceContainer> functionContainer = functionGeneric;
-                if (functionContainer.IsValid()) {
+                ret = functionContainer.IsValid();
+                if (ret) {
                     uint32 size = functionContainer->Size();
                     for (uint32 i = 0u; (i < size) && (ret); i++) {
                         Reference newRef = functionContainer->Get(i);
@@ -125,15 +126,14 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
                     }
                 }
                 else {
-                    ret = false;
-                    //TODO What is it?
+                    REPORT_ERROR(ErrorManagement::FatalError, "The function be a GAM, GAMGroups or ReferenceContainer");
                 }
             }
 
         }
     }
     else {
-        //TODO Invalid
+        REPORT_ERROR(ErrorManagement::FatalError, "Invalid Reference");
     }
     return ret;
 }
@@ -174,19 +174,17 @@ bool RealTimeThread::ConfigureArchitecture(RealTimeApplication &rtApp,
             if (ret) {
                 // insert here the reference
                 ret = Insert(functionGeneric);
-                printf("\ninserted in thread\n");
                 if (ret) {
                     // insert the reference into the state
                     ret = rtState.InsertFunction(functionGeneric);
-                    printf("\ninserted in state\n");
                 }
             }
             else {
-                //TODO Failed configuration for this thread
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Failed inserting the function %s", functionGeneric->GetName())
             }
         }
         else {
-            // TODO GAM not found
+            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Undefined %s", functions[i].Buffer())
         }
     }
 
@@ -194,16 +192,20 @@ bool RealTimeThread::ConfigureArchitecture(RealTimeApplication &rtApp,
 }
 
 bool RealTimeThread::Initialise(StructuredDataI & data) {
-    bool ret = false;
     // set up the string array
     AnyType functionsArray = data.GetType("Functions");
-    if (functionsArray.GetDataPointer() != NULL) {
+    bool ret = (functionsArray.GetDataPointer() != NULL);
+
+    if (ret) {
         numberOfFunctions = functionsArray.GetNumberOfElements(0u);
         functions = new StreamString[numberOfFunctions];
 
         Vector<StreamString> functionVector(functions, numberOfFunctions);
 
         ret = (data.Read("Functions", functionVector));
+    }
+    else {
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No functions defined for the RealTimeThread %s", GetName())
     }
     return ret;
 }

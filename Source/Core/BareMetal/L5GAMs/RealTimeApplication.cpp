@@ -34,7 +34,7 @@
 #include "ReferenceContainerFilterObjectName.h"
 #include "RealTimeDataSource.h"
 #include "GAM.h"
-#include "stdio.h"
+#include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -52,7 +52,6 @@ static bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functions)
             ReferenceT<GAM> gam = genericFunction;
             // a GAM
             if (gam.IsValid()) {
-                printf("\nConfiguration of %s\n", gam->GetName());
                 // call the single gam configuration
                 gam->ConfigureDataSource();
             }
@@ -65,7 +64,6 @@ static bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functions)
                         ReferenceT<GAM> subGam = gamGroup->Get(j);
                         ret = subGam.IsValid();
                         if (ret) {
-                            printf("\nConfiguration of %s\n", subGam->GetName());
                             // call the single gam configuration
                             ret = subGam->ConfigureDataSource();
                         }
@@ -80,7 +78,7 @@ static bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functions)
                         ret = ConfigureDataSourcePrivate(gamContainer);
                     }
                     else {
-                        //TODO What is it?
+                        REPORT_ERROR(ErrorManagement::FatalError, "+Functions must contain GAM, GAMGroup or ReferenceContainer references");
                     }
                 }
             }
@@ -102,7 +100,6 @@ static bool ConfigureDataSourceLinksPrivate(ReferenceT<ReferenceContainer> funct
             ReferenceT<GAM> gam = genericFunction;
             // a GAM
             if (gam.IsValid()) {
-                printf("\nConfiguration of %s\n", gam->GetName());
                 // call the single gam configuration
                 gam->ConfigureDataSourceLinks();
             }
@@ -115,7 +112,6 @@ static bool ConfigureDataSourceLinksPrivate(ReferenceT<ReferenceContainer> funct
                         ReferenceT<GAM> subGam = gamGroup->Get(j);
                         ret = subGam.IsValid();
                         if (ret) {
-                            printf("\nConfiguration of %s\n", subGam->GetName());
                             // call the single gam configuration
                             ret = subGam->ConfigureDataSourceLinks();
                         }
@@ -130,7 +126,7 @@ static bool ConfigureDataSourceLinksPrivate(ReferenceT<ReferenceContainer> funct
                         ret = ConfigureDataSourceLinksPrivate(gamContainer);
                     }
                     else {
-                        //TODO What is it?
+                        REPORT_ERROR(ErrorManagement::FatalError, "+Functions must contain GAM, GAMGroup or ReferenceContainer references");
                     }
                 }
             }
@@ -150,7 +146,6 @@ RealTimeApplication::RealTimeApplication() {
 
 bool RealTimeApplication::ConfigureArchitecture() {
 
-    printf("\nStart ConfigureArchitecture\n");
     ReferenceT<ReferenceContainer> statesContainer;
     uint32 numberOfContainers = Size();
     // there must be the container called "States"
@@ -178,16 +173,14 @@ bool RealTimeApplication::ConfigureArchitecture() {
         }
     }
     else {
-        //TODO States container not found
+        REPORT_ERROR(ErrorManagement::FatalError, "+States container not found");
     }
 
-    printf("\nEnd of ConfigureArchitecture with result %d\n", ret);
     return ret;
 }
 
 bool RealTimeApplication::ConfigureDataSource() {
 
-    printf("\nStart ConfigureDataSource\n");
     ReferenceT<ReferenceContainer> functionsContainer;
 
     bool ret = false;
@@ -207,10 +200,8 @@ bool RealTimeApplication::ConfigureDataSource() {
         ret = ConfigureDataSourcePrivate(functionsContainer);
     }
     else {
-        // TODO Functions container not found
+        REPORT_ERROR(ErrorManagement::FatalError, "+Functions container not found");
     }
-
-    printf("\nEnd of ConfigureDataSource with result %d\n", ret);
 
     return ret;
 
@@ -237,6 +228,9 @@ bool RealTimeApplication::ValidateDataSource() {
         // for each of them call Validate(*)
         ret = dataContainer->Verify();
     }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "+Data container not found");
+    }
     return ret;
 }
 
@@ -255,6 +249,9 @@ bool RealTimeApplication::AllocateDataSource() {
     }
     if (ret) {
         ret = dataSource->Allocate();
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "+Data container not found");
     }
     return ret;
 }
@@ -278,7 +275,7 @@ bool RealTimeApplication::ConfigureDataSourceLinks() {
         ret = ConfigureDataSourceLinksPrivate(functionsContainer);
     }
     else {
-        // TODO Functions container not found
+        REPORT_ERROR(ErrorManagement::FatalError, "+Functions container not found");
     }
 
     return ret;
@@ -309,6 +306,9 @@ bool RealTimeApplication::PrepareNextState(const RealTimeStateInfo &status) {
         }
         if (ret) {
             ret = dataSource->PrepareNextState(status);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "+Data container not found");
         }
     }
 

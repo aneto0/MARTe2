@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeSampledDataDef.h"
+#include "AdvancedErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -58,15 +59,18 @@ bool RealTimeSampledDataDef::Verify() {
             ret = (item != NULL);
             if (ret) {
                 const Introspection * intro = item->GetIntrospection();
-                if (intro == NULL) {
-                    ret=false;
-                    // TODO Unintrospectable type
+                ret = (intro != NULL);
+                if (!ret) {
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type %s not introspectable", type.Buffer())
                 }
             }
             else {
-                // TODO not registered type
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type %s not registered", type.Buffer())
             }
         }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "The type cannot be empty");
     }
     return ret;
 }
@@ -76,24 +80,20 @@ bool RealTimeSampledDataDef::MergeWithLocal(StructuredDataI &localData) {
     if (ret) {
         if (type == "") {
             if (!localData.Read("Type", type)) {
-                //TODO Warning empty type
             }
         }
 
         if (path == "") {
             if (!localData.Read("Path", path)) {
-                //TODO Warning empty path
             }
         }
 
         if (samples == 0) {
             if (!localData.Read("Samples", samples)) {
-                //TODO Warning samples not initialised
             }
         }
         if (samplesPerCycle == 0) {
             if (!localData.Read("SamplesPerCycle", samplesPerCycle)) {
-                //TODO Warning samplesXcycle not initialised
             }
         }
     }

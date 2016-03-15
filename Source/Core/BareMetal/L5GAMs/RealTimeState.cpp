@@ -31,7 +31,8 @@
 
 #include "RealTimeState.h"
 #include "RealTimeThread.h"
-#include "stdio.h"
+#include "AdvancedErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -59,16 +60,17 @@ bool RealTimeState::ConfigureArchitecture(RealTimeApplication & rtApp) {
     // there must be a container called Threads
     ReferenceT<ReferenceContainer> threadContainer;
     uint32 numberOfContainers = Size();
-    for (uint32 i = 0u; i < numberOfContainers; i++) {
+    bool ret=false;
+    for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
         Reference item = Get(i);
         if (item.IsValid()) {
             if (StringHelper::Compare(item->GetName(), "+Threads") == 0) {
                 threadContainer = item;
+                ret = threadContainer.IsValid();
             }
         }
     }
 
-    bool ret = threadContainer.IsValid();
 
     if (ret) {
         // for each thread call the Validate
@@ -82,7 +84,7 @@ bool RealTimeState::ConfigureArchitecture(RealTimeApplication & rtApp) {
         }
     }
     else {
-        //TODO Threads container not found
+        REPORT_ERROR(ErrorManagement::FatalError,"+Threads container not found");
     }
 
     return ret;
@@ -109,7 +111,7 @@ bool RealTimeState::InsertFunction(Reference functionReference) {
             ret = Insert(functionsContainer);
         }
         else {
-            //TODO Failed State.Functions container
+            REPORT_ERROR(ErrorManagement::FatalError,"Failed creation of +Functions container");
         }
     }
 

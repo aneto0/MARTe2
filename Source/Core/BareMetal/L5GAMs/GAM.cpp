@@ -33,7 +33,7 @@
 #include "RealTimeDataDefContainer.h"
 #include "RealTimeDataSource.h"
 #include "RealTimeDataDefI.h"
-#include "stdio.h"
+#include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -127,17 +127,15 @@ bool GAM::ConfigureDataSource() {
                 ret = dataContainer->AddDataDefinition(ReferenceT<GAM>(this));
             }
             else {
-                //TODO Data container not found
-                printf("\nError, data container not found\n");
+                REPORT_ERROR(ErrorManagement::FatalError, "+Data container not found or invalid in the application");
             }
         }
         else {
-            //TODO application not set
-            printf("\nError, application not set\n");
+            REPORT_ERROR(ErrorManagement::FatalError, "Application not set");
         }
     }
     else {
-        //TODO Warning GAM never called
+        REPORT_ERROR(ErrorManagement::Warning, "GAM %s never called in states or threads");
     }
     return ret;
 }
@@ -169,11 +167,9 @@ bool GAM::ConfigureDataSourceLinks() {
                 ReferenceT<RealTimeDataDefI> def = defContainer->Get(j);
                 if (def.IsValid()) {
                     if (defContainer->IsInput()) {
-                        printf("\nAdd Variable in input\n");
                         ret = inputReader->AddVariable(def);
                     }
                     if (defContainer->IsOutput()) {
-                        printf("\nAdd Variable in output\n");
                         ret = outputWriter->AddVariable(def);
                     }
                 }

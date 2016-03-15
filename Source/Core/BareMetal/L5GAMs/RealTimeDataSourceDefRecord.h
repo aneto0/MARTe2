@@ -39,27 +39,66 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
+
+/**
+ * @brief Contains the producer and consumer GAMs of a specific variable in
+ * a specific RealTimeState state.
+ */
 class RealTimeDataSourceDefRecord: public ReferenceContainer {
 public:
     CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief Constructor
+     */
     RealTimeDataSourceDefRecord();
 
+    /**
+     * @brief Inserts a GAM as a consumer.
+     * @param[in] gamConsumer is the GAM consumer to be inserted.
+     */
     bool AddConsumer(ReferenceT<GAM> gamConsumer);
 
+    /**
+     * @brief Inserts a GAM as a producer.
+     * @param[in] gamProducer is the GAM producer to be inserted.
+     */
     bool AddProducer(ReferenceT<GAM> gamProducer);
 
+    /**
+     * @brief Retrieves the number of GAM consumers inserted.
+     * @return The number of GAM consumers inserted
+     */
     uint32 GetNumberOfConsumers();
 
+    /**
+     * @brief Retrieves the number of GAM producers inserted.
+     * @return The number of GAM producers inserted
+     */
     uint32 GetNumberOfProducers();
 
+    /**
+     * @brief Retrieves the consumers container.
+     * @return The consumers container.
+     */
     ReferenceT<ReferenceContainer> GetConsumers();
 
+    /**
+     * @brief Retrieves the producers container.
+     * @return The producers container.
+     */
     ReferenceT<ReferenceContainer> GetProducers();
 
 private:
 
+    /**
+     * Accelerator to the producers container.
+     */
     ReferenceT<ReferenceContainer> producers;
+
+    /**
+     * Accelerator to the consumers container.
+     */
     ReferenceT<ReferenceContainer> consumers;
 
 };

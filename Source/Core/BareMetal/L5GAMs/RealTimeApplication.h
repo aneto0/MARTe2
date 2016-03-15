@@ -39,7 +39,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /**
  * @brief A container of Functions (GAMGroup or GAM), and States (RealTimeState) references.
@@ -78,7 +78,8 @@ namespace MARTe{
  */
 class RealTimeApplication: public ReferenceContainer {
 public:
-    CLASS_REGISTER_DECLARATION();
+    CLASS_REGISTER_DECLARATION()
+    ;
 
     /**
      * @brief Constructor
@@ -115,19 +116,52 @@ public:
      */
     bool ValidateDataSource();
 
-
+    /**
+     * @brief Allocates the data sources memory.
+     * @details Browses the RealTimeDataSourceDef tree (+Data is the root) built using ConfigureDataSource() function and for each
+     * definition (leaf of the tree) allocates the memory for the specified type and dimension (scalar, vector or matrix). For each variable
+     * a double buffer of memory is provided, in order to reset the variable in safe mode in case of state switching. See PrepareNextState(*)
+     * for more documentation.
+     * @return false in case of errors, true otherwise.
+     */
     bool AllocateDataSource();
 
+    /**
+     * @brief Creates the interfaces for read and write operations between GAMs and RealTimeDataSource.
+     * @details Browses the +Functions tree and for each GAM (leaf of the tree) configures its internally RealTimeDataSourceInputReader
+     * and RealTimeDataSourceOutputWriter. See GAM::ConfigureDataSourceLinks(*) for more documentation.
+     * @return false in case of errors, true otherwise.
+     */
     bool ConfigureDataSourceLinks();
 
+    /**
+     * @brief Prepares the environment for the next state.
+     * @details This function has to be executed in a low-priority thread in order to prepare the context for the contextful GAMs
+     * and resets the variables in the RealTimeDataSource to the default values if they will be used in the next state but are not
+     * used in the current (the value is supposed to be consistent if it is used in both two consecutive states).
+     * @param[in] status contains informations about the current and the next state. // we need only the next state if the scheduler is inside here
+     * @return false in case of errors, true otherwise.
+     */
     bool PrepareNextState(const RealTimeStateInfo &status);
 
+    /**
+     * @brief Switches the active buffer index.
+     * @details Flips the active buffer index from 0 to 1 or vice versa.
+     * @return The value of the new active buffer index (0 or 1).
+     */
     uint8 ChangeState();
 
-    uint8 GetActiveBuffer() const ;
+    /**
+     * @brief Retrieves the current active buffer index.
+     * @return the value of the current buffer index (0 or 1).
+     */
+    uint8 GetActiveBuffer() const;
 
 private:
 
+    /**
+     * The active buffer.
+     */
     uint8 activeBuffer;
 };
 

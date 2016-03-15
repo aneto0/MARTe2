@@ -31,7 +31,8 @@
 
 #include "RealTimeGenericDataDef.h"
 #include "ReferenceT.h"
-#include "stdio.h"
+#include "AdvancedErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -53,17 +54,18 @@ bool RealTimeGenericDataDef::Verify() {
         // if the type is basic return true (nothing to check)
         // the type is structured
         if (TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer()) == InvalidType) {
-            ret = false;
             // in this case it must be registered
             const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
-            if (item != NULL) {
+            ret = (item != NULL);
+            if (ret) {
                 const Introspection *intro = item->GetIntrospection();
-                if (intro != NULL) {
+                ret = (intro != NULL);
+                if (ret) {
                     // not final
                     if (Size() > 0u) {
                         uint32 numberOfMembers = Size();
-                        if (numberOfMembers == intro->GetNumberOfMembers()) {
-                            ret = true;
+                        ret = (numberOfMembers == intro->GetNumberOfMembers());
+                        if (ret) {
                             for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
                                 const IntrospectionEntry introEntry = (*intro)[i];
                                 bool found = false;
@@ -88,44 +90,37 @@ bool RealTimeGenericDataDef::Verify() {
                                                     ret = element->Verify();
                                                 }
                                                 else {
-                                                    //TODO type mismatch
+                                                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
+                                                                            "Type mismatch for the member %s defined in introspection as %s",
+                                                                            introEntry.GetMemberName(), introEntry.GetMemberTypeName())
                                                 }
                                             }
                                         }
                                     }
                                 }
                                 if (!found) {
-                                    //TODO Invalid element
+                                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Member %s not found in introspection", introEntry.GetMemberName())
                                     ret = false;
                                 }
                             }
-
                         }
                         else {
-                            //TODO #members mismatch
-                        }
-                    }
-                    else {
-                        if (path == "") {
-                            //TODO Final type without address
-                        }
-                        else {
-                            // the type exists and it is complete
-                            ret = true;
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The number of members does not coincide with %d defined in introspection",
+                                                    numberOfMembers)
                         }
                     }
                 }
                 else {
-                    //TODO undefined type
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type %s not introspectable", type.Buffer())
                 }
             }
             else {
-                //TODO undefined type
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type %s not registered", type.Buffer())
             }
         }
     }
     else {
-        //TODO not final type?
+        REPORT_ERROR(ErrorManagement::FatalError, "The type cannot be empty");
     }
 
     return ret;
@@ -192,20 +187,17 @@ bool RealTimeGenericDataDef::MergeWithLocal(StructuredDataI & localData) {
         // if type and path are different, take the globals without returning error
         if (type == "") {
             if (!localData.Read("Type", type)) {
-                // TODO Warning empty type
             }
         }
         // the same with the path
         if (path == "") {
             if (!localData.Read("Path", path)) {
-                // TODO Warning empty path
             }
         }
 
         // the same with the default value
         if (defaultValue == "") {
             if (!localData.Read("Default", defaultValue)) {
-                // TODO Warning empty dvalue
             }
         }
 
@@ -248,6 +240,9 @@ bool RealTimeGenericDataDef::MergeWithLocal(StructuredDataI & localData) {
 
             }
         }
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::FatalError, "Trying to merge a final definition with local configuration data");
     }
     return ret;
 }

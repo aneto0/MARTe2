@@ -92,15 +92,36 @@ public:
     /**
      * @brief Initialises the container and reads the variable address and type from the StructuredData
      * in input.
+     * @details The following fields can be specified:\n
+     *   - Path = "the path of the variable in the RealTimeDataSource"\n
+     *   - Type = "the variable type"\n
+     *   - DefaultValue = "the variable default value"\n
+     *   - Modifiers = "the variable modifiers"\n
+     * The Modifiers parameter follows the same format of the modifiers string in IntrospectionEntry. In particular in this
+     * case Modifiers = "[n]" denotes an array with n elements, Modifiers = [n][m] denotes a matrix with n rows and m columns.
+     * @param[in] data contains the configuration data.
      */
     virtual bool Initialise(StructuredDataI &data);
 
+    /**
+     * @brief Sets the path to the variable in the RealTimeDataSource
+     */
     void SetPath(const char8 * newPath);
 
 
+    /**
+     * @brief Retrieves the number of dimensions (0=scalar, 1=vector, 2=matrix).
+     * @return the number of dimensions.
+     */
     uint8 GetNumberOfDimensions() const;
 
-
+    /**
+     * @brief Retrieves the number of elements related to a specific dimension.
+     * @param[in] dimension is the dimension to be checked.
+     * @return the number of elements of the dimension \a dimension.
+     * @pre
+     *   dimension < 3
+     */
     uint32 GetNumberOfElements(uint32 dimension);
 
 protected:
@@ -115,8 +136,15 @@ protected:
      */
     StreamString type;
 
+    /**
+     * The number of dimensions of this variable
+     */
     uint8 numberOfDimensions;
 
+    /**
+     * The number of elements for each dimension
+     * of this variable.
+     */
     uint32 numberOfElements[3];
 
 

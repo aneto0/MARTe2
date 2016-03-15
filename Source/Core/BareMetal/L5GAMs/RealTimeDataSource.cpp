@@ -32,7 +32,7 @@
 #include "RealTimeDataSource.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "RealTimeDataDefContainer.h"
-#include "stdio.h"
+#include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -94,21 +94,16 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
     uint32 numberOfNodes = container->Size();
     for (uint32 i = 0u; (i < numberOfNodes) && (ret); i++) {
         ReferenceT<ReferenceContainer> subContainer = container->Get(i);
-        if (subContainer.IsValid()) {
+        ret = subContainer.IsValid();
+        if (ret) {
             ReferenceT<RealTimeDataSourceDef> def = subContainer;
             if (def.IsValid()) {
-                printf("\nallocation of %s %s\n", def->GetName(), def->GetType());
                 ret = def->Allocate(memory);
             }
             else {
                 ret = AllocatePrivate(subContainer, memory);
             }
         }
-        else {
-            ret = false;
-            //TODO ??
-        }
-
     }
     return ret;
 }
@@ -119,7 +114,6 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
 
 RealTimeDataSource::RealTimeDataSource() {
     numberOfInitialDDBs = 0u;
-
     final = false;
 }
 
@@ -147,21 +141,20 @@ bool RealTimeDataSource::AddDataDefinition(ReferenceT<GAM> gam) {
                     ret = definition.IsValid();
                     if (ret) {
                         ret = AddSingleDataDefinition(definition, gam, isProducer, isConsumer);
-                        printf("\nAdded %s\n", definition->GetName());
                     }
                     else {
-                        //TODO Does not contain a definition
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The Reference in the RealTimeDataDefContainer %s is not a RealTimeDataDefI",
+                                                defContainer->GetName())
                     }
                 }
             }
             else {
-                //TODO Does not contain a definition container
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The Reference in the GAM %s is not a RealTimeDataDefContainer", gam->GetName())
             }
         }
     }
     else {
-        //TODO invalid
-        printf("\nError, data container not found\n");
+        REPORT_ERROR(ErrorManagement::FatalError, "Invalid Reference to GAM in input");
     }
     return ret;
 }
@@ -174,73 +167,32 @@ bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> de
 
     bool ret = definition.IsValid();
     if (ret) {
-        const char8 * userName = gam->GetName();
-        StreamString *supportedStates = gam->GetSupportedStates();
-        uint32 numberOfStates = gam->GetNumberOfSupportedStates();
-        StreamString defaultValue = definition->GetDefaultValue();
+        ret = gam.IsValid();
+        if (ret) {
+            StreamString *supportedStates = gam->GetSupportedStates();
+            uint32 numberOfStates = gam->GetNumberOfSupportedStates();
+            StreamString defaultValue = definition->GetDefaultValue();
 
-        StreamString path = definition->GetPath();
-        bool isLeaf = (definition->Size() == 0u);
+            StreamString path = definition->GetPath();
+            bool isLeaf = (definition->Size() == 0u);
 
-        // the path exists?
-        // default refresh
-        StreamString newDefaultPath = path;
-        if (path == "") {
-            // set the path
-            newDefaultPath = defaultPath;
-            newDefaultPath += definition->GetName();
-            path = newDefaultPath;
-        }
-        newDefaultPath += ".";
-
-        if (isLeaf) {
-            printf("\nfound a leaf, the path is %s the user is %s type is %s\n", path.Buffer(), userName, definition->GetType());
-
-            ReferenceT<RealTimeDataSourceDef> element = Find(path.Buffer());
-            if (element.IsValid()) {
-
-                printf("\nleaf already inside\n");
-
-                // if the path exists adds only the infos
-                if (isConsumer) {
-                    for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-                        element->SetDefaultValue(defaultValue.Buffer());
-                        if (ret) {
-                            ret = element->AddConsumer(supportedStates[i].Buffer(), gam);
-                        }
-                    }
-                }
-                if (isProducer) {
-                    for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-                        element->SetDefaultValue(defaultValue.Buffer());
-                        if (ret) {
-                            ret = element->AddProducer(supportedStates[i].Buffer(), gam);
-                        }
-                    }
-                }
-                if (ret) {
-                    ret = element->SetType(definition->GetType());
-                }
-
-                if (ret) {
-                    element->SetNumberOfDimensions(definition->GetNumberOfDimensions());
-                    for (uint32 k = 0u; k < 3u; k++) {
-                        element->SetNumberOfElements(k, definition->GetNumberOfElements(k));
-                    }
-                }
-
-                if (ret) {
-                    definition->SetPath(path.Buffer());
-                }
-
+            // the path exists?
+            // default refresh
+            StreamString newDefaultPath = path;
+            if (path == "") {
+                // set the path
+                newDefaultPath = defaultPath;
+                newDefaultPath += definition->GetName();
+                path = newDefaultPath;
             }
-            // if the definition does not exist creates it
-            else {
+            newDefaultPath += ".";
 
-                ReferenceT<RealTimeDataSourceDef> element(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+            if (isLeaf) {
+
+                ReferenceT<RealTimeDataSourceDef> element = Find(path.Buffer());
                 if (element.IsValid()) {
-                    printf("\nleaf added\n");
 
+                    // if the path exists adds only the infos
                     if (isConsumer) {
                         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
                             element->SetDefaultValue(defaultValue.Buffer());
@@ -258,11 +210,9 @@ bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> de
                         }
                     }
                     if (ret) {
-                        ret = Insert(path.Buffer(), element);
-                    }
-                    if (ret) {
                         ret = element->SetType(definition->GetType());
                     }
+
                     if (ret) {
                         element->SetNumberOfDimensions(definition->GetNumberOfDimensions());
                         for (uint32 k = 0u; k < 3u; k++) {
@@ -273,35 +223,79 @@ bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> de
                     if (ret) {
                         definition->SetPath(path.Buffer());
                     }
+
+                }
+                // if the definition does not exist creates it
+                else {
+
+                    ReferenceT<RealTimeDataSourceDef> element(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                    if (element.IsValid()) {
+
+                        if (isConsumer) {
+                            for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+                                element->SetDefaultValue(defaultValue.Buffer());
+                                if (ret) {
+                                    ret = element->AddConsumer(supportedStates[i].Buffer(), gam);
+                                }
+                            }
+                        }
+                        if (isProducer) {
+                            for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+                                element->SetDefaultValue(defaultValue.Buffer());
+                                if (ret) {
+                                    ret = element->AddProducer(supportedStates[i].Buffer(), gam);
+                                }
+                            }
+                        }
+                        if (ret) {
+                            ret = Insert(path.Buffer(), element);
+                        }
+                        if (ret) {
+                            ret = element->SetType(definition->GetType());
+                        }
+                        if (ret) {
+                            element->SetNumberOfDimensions(definition->GetNumberOfDimensions());
+                            for (uint32 k = 0u; k < 3u; k++) {
+                                element->SetNumberOfElements(k, definition->GetNumberOfElements(k));
+                            }
+                        }
+
+                        if (ret) {
+                            definition->SetPath(path.Buffer());
+                        }
+                    }
+                }
+            }
+            else {
+
+                // is structured, go inside to the sub members
+                uint32 numberOfMembers = definition->Size();
+                for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
+                    ReferenceT<RealTimeDataDefI> subDefinition = definition->Get(i);
+                    if (subDefinition.IsValid()) {
+                        ret = AddSingleDataDefinition(subDefinition, gam, isProducer, isConsumer, newDefaultPath);
+                    }
+                    else {
+                    }
+                }
+            }
+
+            if (ret) {
+                // if final can not add another definition
+                if (final) {
+                    ret = (Size() == numberOfInitialDDBs);
+                    if (!ret) {
+                        REPORT_ERROR(ErrorManagement::FatalError, "Trying to add a new data source definition on a RealTimeDataSource declared as final");
+                    }
                 }
             }
         }
         else {
-            printf("\nfound a structure, the path is %s the user is %s\n", path.Buffer(), userName);
-
-            // is structured, go inside to the sub members
-            uint32 numberOfMembers = definition->Size();
-            for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
-                ReferenceT<RealTimeDataDefI> subDefinition = definition->Get(i);
-                if (subDefinition.IsValid()) {
-                    ret = AddSingleDataDefinition(subDefinition, gam, isProducer, isConsumer, newDefaultPath);
-                    printf("\nAdded %s %d\n", subDefinition->GetName(), numberOfMembers);
-                }
-                else {
-                    printf("\n???\n");
-                }
-            }
-        }
-
-        if (ret) {
-            // if final can not add another definition
-            if (final) {
-                ret = (Size() == numberOfInitialDDBs);
-            }
+            REPORT_ERROR(ErrorManagement::FatalError, "Invalid Reference to GAM in input");
         }
     }
     else {
-        //TODO Invalid
+        REPORT_ERROR(ErrorManagement::FatalError, "Invalid Reference to RealTimeDataDefI in input");
     }
     return ret;
 
@@ -315,8 +309,6 @@ bool RealTimeDataSource::Initialise(StructuredDataI & data) {
             if (isFinal == "true") {
                 final = true;
             }
-            else
-                final = false;
         }
     }
     numberOfInitialDDBs = Size();

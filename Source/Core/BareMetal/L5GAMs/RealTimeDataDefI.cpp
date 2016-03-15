@@ -28,7 +28,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "RealTimeDataDefI.h"
+#include "AdvancedErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -84,7 +87,7 @@ bool RealTimeDataDefI::Initialise(StructuredDataI &data) {
                 numberOfElements[i] = entry.GetNumberOfElements(i);
             }
             if (entry.GetMemberPointerLevel() > 0u) {
-                //TODO Warning: pointers not supported
+                REPORT_ERROR(ErrorManagement::Warning, "Pointers not supported. The statement will be ignored");
             }
         }
 
@@ -104,7 +107,7 @@ uint32 RealTimeDataDefI::GetNumberOfElements(uint32 dimension) {
 
 void RealTimeDataDefI::SetPath(const char8 * newPath) {
     if (path != "") {
-        //TODO warning
+        REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "Path already set to %s", path.Buffer())
     }
     path = newPath;
 }

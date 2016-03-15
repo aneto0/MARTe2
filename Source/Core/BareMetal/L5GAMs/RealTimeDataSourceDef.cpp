@@ -34,7 +34,8 @@
 #include "RealTimeDataSourceDefRecord.h"
 #include "StandardParser.h"
 #include "ConfigurationDatabase.h"
-#include "stdio.h"
+#include "AdvancedErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -63,7 +64,6 @@ bool RealTimeDataSourceDef::AddConsumer(const char8 *stateIn,
     uint32 index;
     bool found = false;
     bool ret = false;
-    printf("\nadding consumer %s\n", stateIn);
 
     ReferenceT<RealTimeDataSourceDefRecord> record;
     uint32 numberOfStates = Size();
@@ -98,8 +98,6 @@ bool RealTimeDataSourceDef::AddProducer(const char8 *stateIn,
     uint32 index;
     bool found = false;
     bool ret = false;
-    printf("\nadding producer %s\n", stateIn);
-
     ReferenceT<RealTimeDataSourceDefRecord> record;
     uint32 numberOfStates = Size();
     for (index = 0u; (index < numberOfStates) && (!found); index++) {
@@ -196,7 +194,7 @@ bool RealTimeDataSourceDef::Verify() {
                 ret = false;
             }
             if (record->GetNumberOfConsumers() == 0u) {
-                //TODO Warning variable not consumed
+                REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "Variable %s not consumed", GetName());
             }
         }
     }
@@ -208,13 +206,12 @@ bool RealTimeDataSourceDef::SetType(const char8 *typeName) {
     if (type != typeName) {
         if (type != "") {
             ret = false;
-            //TODO type mismatch
+            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type already set to %s", type.Buffer())
         }
         else {
             type = typeName;
         }
     }
-
     return ret;
 }
 
@@ -224,13 +221,11 @@ const char8 *RealTimeDataSourceDef::GetType() {
 
 void **RealTimeDataSourceDef::GetDataSourcePointer(uint8 bufferIndex) {
     if (bufferIndex > 1u) {
-        //TODO Warning
         bufferIndex = bufferIndex % 2u;
     }
 
     void ** ret = NULL;
     if (memory != NULL) {
-        printf("\nreturn a pointer to the buffer %d\n", bufferIndex);
         usedBuffer[bufferIndex] = memory->GetPointer(bufferPtrOffset[bufferIndex]);
         ret = &usedBuffer[bufferIndex];
     }
@@ -312,7 +307,6 @@ bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
                 else {
                     // if defaultValue is not set, remain with the same buffer of the previous state
                     if (defaultValue != "") {
-                        printf("\nSet default value:: %s found: defaultValue= %s nextBuff=%d\n", GetName(), defaultValue.Buffer(), nextBuffer);
                         at = AnyType(typeDes, 0u, memory->GetPointer(bufferPtrOffset[nextBuffer]));
                         if (numberOfDimensions > 0u) {
                             // consider the multi-dimensional
@@ -341,7 +335,6 @@ bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
                             ret = TypeConvert(at, defaultValue);
                         }
                         if (ret) {
-                            printf("\ndata is %d\n", *(uint32*) memory->GetPointer(bufferPtrOffset[nextBuffer]));
                             //set the next used buffer
                             usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[nextBuffer]);
                         }

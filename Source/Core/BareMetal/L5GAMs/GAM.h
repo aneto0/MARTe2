@@ -105,8 +105,11 @@ public:
      */
     void AddState(const char8 *stateName);
 
-
-
+    /**
+     * @brief Links the GAM with RealTimeDataSource.
+     * @details Configures the input (RealTimeDataInputReader) and output interfaces (RealTimeDataOutputWriter)
+     * to communicate with the RealTimeDataSource.
+     */
     virtual bool ConfigureDataSourceLinks();
 
     /**
@@ -132,9 +135,16 @@ public:
      */
     uint32 GetNumberOfSupportedStates();
 
-
+    /**
+     * @brief Retrieves the input interface with the RealTimeDataSource.
+     * @return the input interface with the RealTimeDataSource.
+     */
     ReferenceT<RealTimeDataSourceInputReader> GetInputReader();
 
+    /**
+     * @brief Retrieves the output interface with the RealTimeDataSource.
+     * @return the output interface with the RealTimeDataSource.
+     */
     ReferenceT<RealTimeDataSourceOutputWriter> GetOutputWriter();
 
 protected:
@@ -145,7 +155,6 @@ protected:
      * of the IO structures, local configuration file, ecc)
      */
     virtual void SetUp()=0;
-
 
     /**
      * The names of the supported states
@@ -172,8 +181,14 @@ protected:
      */
     ReferenceT<GAMGroup> group;
 
+    /**
+     * The input interface with the RealTimeDataSource
+     */
     ReferenceT<RealTimeDataSourceInputReader> inputReader;
 
+    /**
+     * The output interface with the RealTimeDataSource
+     */
     ReferenceT<RealTimeDataSourceOutputWriter> outputWriter;
 
     //? IOData?

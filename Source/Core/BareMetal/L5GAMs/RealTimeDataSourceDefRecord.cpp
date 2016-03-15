@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeDataSourceDefRecord.h"
+#include "AdvancedErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -51,7 +52,7 @@ RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord() {
             producers = prod;
         }
         else {
-            //TODO
+            REPORT_ERROR(ErrorManagement::FatalError, "Failed in creation of the producers container");
         }
     }
 
@@ -62,7 +63,7 @@ RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord() {
             consumers = cons;
         }
         else {
-            //TODO
+            REPORT_ERROR(ErrorManagement::FatalError, "Failed in creation of the consumers container");
         }
     }
 }
@@ -74,7 +75,7 @@ bool RealTimeDataSourceDefRecord::AddConsumer(ReferenceT<GAM> gamConsumer) {
         ret = consumers->Insert(gamConsumer);
     }
     else {
-        //TODO Consumers not found
+        REPORT_ERROR(ErrorManagement::FatalError, "Consumers container not found or invalid");
     }
     return ret;
 }
@@ -85,11 +86,10 @@ bool RealTimeDataSourceDefRecord::AddProducer(ReferenceT<GAM> gamProducer) {
         ret = producers->Insert(gamProducer);
     }
     else {
-        //TODO Producers not found
+        REPORT_ERROR(ErrorManagement::FatalError, "Producers container not found or invalid");
     }
     return ret;
 }
-
 
 uint32 RealTimeDataSourceDefRecord::GetNumberOfConsumers() {
     return consumers->Size();
@@ -106,7 +106,6 @@ ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetConsumers() {
 ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetProducers() {
     return producers;
 }
-
 
 CLASS_REGISTER(RealTimeDataSourceDefRecord, "1.0")
 
