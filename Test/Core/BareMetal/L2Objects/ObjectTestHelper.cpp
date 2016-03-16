@@ -25,9 +25,12 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <cstddef>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "ObjectTestHelper.h"
 #include "Introspection.h"
 
@@ -73,3 +76,209 @@ DECLARE_CLASS_MEMBER(IntrospectableObjectWith3Members, member3, IntrospectableIn
 static const IntrospectionEntry* IntrospectableObjectWith3Members_objFields[] = { &IntrospectableObjectWith3Members_member1_introspectionEntry, &IntrospectableObjectWith3Members_member2_introspectionEntry, &IntrospectableObjectWith3Members_member3_introspectionEntry, 0 };
 DECLARE_CLASS_INTROSPECTION(IntrospectableObjectWith3Members, IntrospectableObjectWith3Members_objFields);
 CLASS_INTROSPECTION_REGISTER(IntrospectableObjectWith3Members, "1.0", IntrospectableObjectWith3Members_introspection)
+
+DECLARE_CLASS_MEMBER(IntrospectableObjectWithVector, member1, int32, "", "");
+DECLARE_CLASS_MEMBER(IntrospectableObjectWithVector, member2, uint64, "", "");
+DECLARE_CLASS_MEMBER(IntrospectableObjectWithVector, member3, int32, "[5]", "");
+static const IntrospectionEntry* IntrospectableObjectWithVector_objFields[] = { &IntrospectableObjectWithVector_member1_introspectionEntry, &IntrospectableObjectWithVector_member2_introspectionEntry, &IntrospectableObjectWithVector_member3_introspectionEntry, 0 };
+DECLARE_CLASS_INTROSPECTION(IntrospectableObjectWithVector, IntrospectableObjectWithVector_objFields);
+CLASS_INTROSPECTION_REGISTER(IntrospectableObjectWithVector, "1.0", IntrospectableObjectWithVector_introspection)
+
+DECLARE_CLASS_MEMBER(IntrospectableObjectWithMatrix, member1, int32, "", "");
+DECLARE_CLASS_MEMBER(IntrospectableObjectWithMatrix, member2, uint64, "", "");
+DECLARE_CLASS_MEMBER(IntrospectableObjectWithMatrix, member3, int32, "[5][3]", "");
+static const IntrospectionEntry* IntrospectableObjectWithMatrix_objFields[] = { &IntrospectableObjectWithMatrix_member1_introspectionEntry, &IntrospectableObjectWithMatrix_member2_introspectionEntry, &IntrospectableObjectWithMatrix_member3_introspectionEntry, 0 };
+DECLARE_CLASS_INTROSPECTION(IntrospectableObjectWithMatrix, IntrospectableObjectWithMatrix_objFields);
+CLASS_INTROSPECTION_REGISTER(IntrospectableObjectWithMatrix, "1.0", IntrospectableObjectWithMatrix_introspection)
+
+IntrospectableIntegerObject& TestObjectsDataSet::GetTest3Object() {
+    static bool init = false;
+    static IntrospectableIntegerObject obj;
+    if (!init) {
+        obj.SetName("Test3");
+        obj.member = 30;
+        init = true;
+    }
+    return obj;
+}
+
+IntrospectableObjectWith2Members& TestObjectsDataSet::GetTest4Object() {
+    static bool init = false;
+    static IntrospectableObjectWith2Members obj;
+    if (!init) {
+        obj.SetName("Test4");
+        obj.member1 = 10;
+        obj.member2 = 20;
+        init = true;
+    }
+    return obj;
+}
+
+IntrospectableObjectWith3Members& TestObjectsDataSet::GetTest5Object() {
+    static bool init = false;
+    static IntrospectableObjectWith3Members obj;
+    if (!init) {
+        obj.SetName("Test5");
+        obj.member1 = 10;
+        obj.member2 = 20;
+        obj.member3.member = 30;
+        init = true;
+    }
+    return obj;
+}
+
+IntrospectableObjectWithVector& TestObjectsDataSet::GetTest6Object() {
+    static bool init = false;
+    static IntrospectableObjectWithVector obj;
+    if (!init) {
+        obj.SetName("Test6");
+        obj.member1 = 10;
+        obj.member2 = 20;
+        obj.member3[0] = 0;
+        obj.member3[1] = 10;
+        obj.member3[2] = 20;
+        obj.member3[3] = 30;
+        obj.member3[4] = 40;
+        init = true;
+    }
+    return obj;
+}
+
+IntrospectableObjectWithMatrix& TestObjectsDataSet::GetTest7Object() {
+    static bool init = false;
+    static IntrospectableObjectWithMatrix obj;
+    if (!init) {
+        obj.SetName("Test7");
+        obj.member1 = 10;
+        obj.member2 = 20;
+        obj.member3[0][0] = 1;
+        obj.member3[0][1] = 2;
+        obj.member3[0][2] = 3;
+        obj.member3[1][0] = 4;
+        obj.member3[1][1] = 5;
+        obj.member3[1][2] = 6;
+        obj.member3[2][0] = 7;
+        obj.member3[2][1] = 8;
+        obj.member3[2][2] = 9;
+        obj.member3[3][0] = 10;
+        obj.member3[3][1] = 11;
+        obj.member3[3][2] = 12;
+        obj.member3[4][0] = 13;
+        obj.member3[4][1] = 14;
+        obj.member3[4][2] = 15;
+        init = true;
+    }
+    return obj;
+}
+
+const StreamString& JsonStreamsDataSet::GetTest3DataJson() {
+    static bool init = false;
+    static StreamString str;
+    if (!init) {
+        static const char8 TEMPLATE[] =
+                "{\"Test3\":{\"Class\":\"IntrospectableIntegerObject\",\"member\":30}}";
+        static const AnyType PARAMS[] = { voidAnyType };
+        str.PrintFormatted(TEMPLATE, &PARAMS[0]);
+        str.Seek(0);
+        init = true;
+    }
+    return str;
+}
+
+const StreamString& JsonStreamsDataSet::GetTest3MetadataJson() {
+    static bool init = false;
+    static StreamString str;
+    if (!init) {
+        static const char8 TEMPLATE[] =
+                "{\"IntrospectableIntegerObject\":{\"member\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u}}}";
+        static const AnyType PARAMS[] = { static_cast<uint8>(sizeof(int32)), static_cast<uint64>(offsetof(IntrospectableIntegerObject, member)), voidAnyType };
+        str.PrintFormatted(TEMPLATE, &PARAMS[0]);
+        str.Seek(0);
+        init = true;
+    }
+    return str;
+}
+
+const StreamString& JsonStreamsDataSet::GetTest4DataJson() {
+    static bool init = false;
+    static StreamString str;
+    if (!init) {
+        static const char8 TEMPLATE[] =
+                "{\"Test4\":{\"Class\":\"IntrospectableObjectWith2Members\",\"member1\":10,\"member2\":20}}";
+        static const AnyType PARAMS[] = { voidAnyType };
+        str.PrintFormatted(TEMPLATE, &PARAMS[0]);
+        str.Seek(0);
+        init = true;
+    }
+    return str;
+}
+
+const StreamString& JsonStreamsDataSet::GetTest4MetadataJson() {
+    static bool init = false;
+    static StreamString str;
+    if (!init) {
+        static const char8 TEMPLATE[] =
+                "{\"IntrospectableObjectWith2Members\":{\"member1\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member2\":{\"type\":\"uint64\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u}}}";
+        static const AnyType PARAMS[] = { static_cast<uint8>(sizeof(int32)), static_cast<uint64>(offsetof(IntrospectableObjectWith2Members, member1)), static_cast<uint8>(sizeof(uint64)), static_cast<uint64>(offsetof(IntrospectableObjectWith2Members, member2)), voidAnyType };
+        str.PrintFormatted(TEMPLATE, &PARAMS[0]);
+        str.Seek(0);
+        init = true;
+    }
+    return str;
+}
+
+const StreamString& JsonStreamsDataSet::GetTest5DataJson() {
+    static bool init = false;
+    static StreamString str;
+    if (!init) {
+        static const char8 TEMPLATE[] =
+                "{\"Test5\":{\"Class\":\"IntrospectableObjectWith3Members\",\"member1\":10,\"member2\":20,\"member3\":{\"Class\":\"IntrospectableIntegerObject\",\"member\":30}}}";
+        static const AnyType PARAMS[] = { voidAnyType };
+        str.PrintFormatted(TEMPLATE, &PARAMS[0]);
+        str.Seek(0);
+        init = true;
+    }
+    return str;
+}
+
+const StreamString& JsonStreamsDataSet::GetTest5MetadataJson() {
+    static bool init = false;
+    static StreamString str;
+    if (!init) {
+        static const char8 TEMPLATE[] =
+                "{\"IntrospectableObjectWith3Members\":{\"member1\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member2\":{\"type\":\"uint64\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member3\":{\"type\":\"IntrospectableIntegerObject\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u,\"IntrospectableIntegerObject\":{\"member\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u}}}}}";
+        static const AnyType PARAMS[] = { static_cast<uint8>(sizeof(int32)), static_cast<uint64>(offsetof(IntrospectableObjectWith3Members, member1)), static_cast<uint8>(sizeof(uint64)), static_cast<uint64>(offsetof(IntrospectableObjectWith3Members, member2)), static_cast<uint8>(sizeof(IntrospectableIntegerObject)), static_cast<uint64>(offsetof(IntrospectableObjectWith3Members, member3)), static_cast<uint8>(sizeof(int32)), static_cast<uint64>(offsetof(IntrospectableIntegerObject, member)), voidAnyType };
+        str.PrintFormatted(TEMPLATE, &PARAMS[0]);
+        str.Seek(0);
+        init = true;
+    }
+    return str;
+}
+
+const StreamString& JsonStreamsDataSet::GetTest6DataJson() {
+    static bool init = false;
+    static StreamString str;
+    if (!init) {
+        static const char8 TEMPLATE[] =
+                "{\"Test6\":{\"Class\":\"IntrospectableObjectWithVector\",\"member1\":10,\"member2\":20,\"member3\":[0,10,20,30,40]}}";
+        static const AnyType PARAMS[] = { voidAnyType };
+        str.PrintFormatted(TEMPLATE, &PARAMS[0]);
+        str.Seek(0);
+        init = true;
+    }
+    return str;
+}
+
+const StreamString& JsonStreamsDataSet::GetTest7DataJson() {
+    static bool init = false;
+    static StreamString str;
+    if (!init) {
+        static const char8 TEMPLATE[] =
+                "{\"Test7\":{\"Class\":\"IntrospectableObjectWithMatrix\",\"member1\":10,\"member2\":20,\"member3\":[[1,2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15]]}}";
+        static const AnyType PARAMS[] = { voidAnyType };
+        str.PrintFormatted(TEMPLATE, &PARAMS[0]);
+        str.Seek(0);
+        init = true;
+    }
+    return str;
+}

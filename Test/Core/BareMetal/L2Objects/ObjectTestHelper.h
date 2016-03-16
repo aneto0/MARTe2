@@ -372,5 +372,112 @@ public:
 
 };
 
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class IntrospectableObjectWithVector: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    IntrospectableObjectWithVector() :
+            member1(0),
+            member2(0),
+            member3() {
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~IntrospectableObjectWithVector() {
+    }
+
+    /**
+     * Member 1 attribute
+     */
+    int32 member1;
+
+    /**
+     * Member 2 attribute
+     */
+    uint64 member2;
+
+    /**
+     * Member 3 atribute
+     */
+    int32 member3[5];
+
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class IntrospectableObjectWithMatrix: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    IntrospectableObjectWithMatrix() :
+            member1(0),
+            member2(0),
+            member3() {
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~IntrospectableObjectWithMatrix() {
+    }
+
+    /**
+     * Member 1 attribute
+     */
+    int32 member1;
+
+    /**
+     * Member 2 attribute
+     */
+    uint64 member2;
+
+    /**
+     * Member 3 atribute
+     */
+    int32 member3[5][3];
+
+};
+
+#include <StreamString.h>
+
+class TestObjectsDataSet {
+public:
+    IntrospectableIntegerObject& GetTest3Object();
+    IntrospectableObjectWith2Members& GetTest4Object();
+    IntrospectableObjectWith3Members& GetTest5Object();
+    IntrospectableObjectWithVector& GetTest6Object();
+    IntrospectableObjectWithMatrix& GetTest7Object();
+private:
+};
+
+//class JsonReferenceBuilder
+class JsonStreamsDataSet {
+public:
+    //operator[](int i)
+    const StreamString& GetTest3DataJson();
+    const StreamString& GetTest3MetadataJson();
+    const StreamString& GetTest4DataJson();
+    const StreamString& GetTest4MetadataJson();
+    const StreamString& GetTest5DataJson();
+    const StreamString& GetTest5MetadataJson();
+    const StreamString& GetTest6DataJson();
+    const StreamString& GetTest7DataJson();
+private:
+};
+
 #endif /* OBJECTTESTHELPER_H_ */
 

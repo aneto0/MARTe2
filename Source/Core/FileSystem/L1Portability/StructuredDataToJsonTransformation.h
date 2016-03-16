@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StructuredDataI.h"
-#include "IOBuffer.h"
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -47,8 +47,9 @@ public:
     StructuredDataToJsonTransformation();
     virtual ~StructuredDataToJsonTransformation();
     //JSON defined at RFC 7159 ["The JavaScript Object Notation (JSON) Data Interchange Format"|https://tools.ietf.org/html/rfc7159]
-    bool Execute (MARTe::StructuredDataI& input, MARTe::IOBuffer& output);
-    bool FormatJson (MARTe::IOBuffer& input, MARTe::IOBuffer& output);
+    bool Execute (MARTe::StructuredDataI& input, MARTe::StreamString& output);
+    bool FormatJson (MARTe::StreamString& input, MARTe::StreamString& output);
+    bool FilterBlanks (MARTe::StreamString& input, MARTe::StreamString& output);
 };
 
 }

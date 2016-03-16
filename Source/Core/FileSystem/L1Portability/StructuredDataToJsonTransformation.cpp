@@ -32,13 +32,32 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StructuredDataToJsonTransformation.h"
-#include "StreamString.h"
+#include "Vector.h"
+#include "Matrix.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
 namespace {
+
+using namespace MARTe;
+
+void cookValue(const StreamString& value,
+               const TypeDescriptor descriptor,
+               StreamString& result) {
+    if (descriptor == VoidType || descriptor == InvalidType) {
+        result = "null";
+    }
+    else if (descriptor == PointerType || descriptor == Character8Bit || descriptor == ConstCharString || descriptor == CharString) {
+        result = "\"";
+        result += value;
+        result += "\"";
+    }
+    else {
+        result = value;
+    }
+}
 
 }
 
@@ -61,143 +80,140 @@ StructuredDataToJsonTransformation::~StructuredDataToJsonTransformation() {
 }
 
 bool StructuredDataToJsonTransformation::Execute(StructuredDataI& input,
-                                                 IOBuffer& output) {
+                                                 StreamString& output) {
     bool ret = true;
 
-    static const AnyType BEGIN_OBJECT[] = { "{", voidAnyType };
-    static const AnyType END_OBJECT[] = { "}", voidAnyType };
-    static const AnyType BEGIN_ARRAY[] = { "[", voidAnyType };
-    static const AnyType END_ARRAY[] = { "]", voidAnyType };
-    static const AnyType NAME_SEPARATOR[] = { ":", voidAnyType };
-    static const AnyType VALUE_SEPARATOR[] = { ",", voidAnyType };
-    static const AnyType NULL_VALUE[] = { "null", voidAnyType };
-    //static const AnyType TRUE_VALUE[] = { "true", voidAnyType };
-    //static const AnyType FALSE_VALUE[] = { "false", voidAnyType };
+    static const AnyType BEGIN_OBJECT = "{";
+    static const AnyType END_OBJECT = "}";
+    static const AnyType BEGIN_ARRAY = "[";
+    static const AnyType END_ARRAY = "]";
+    static const AnyType NAME_SEPARATOR = ":";
+    static const AnyType VALUE_SEPARATOR = ",";
+    static const AnyType NULL_VALUE = "null";
+    static const AnyType TRUE_VALUE = "true";
+    static const AnyType FALSE_VALUE = "false";
 
-    //TODO: Arrays and matrices!!
-
-    uint32 numberOfChildren = input.GetNumberOfChildren();
+    const uint32 numberOfChildren = input.GetNumberOfChildren();
 
     if (numberOfChildren == 0) {
         //There is no children, so it is a null value
-        if (!output.PrintFormatted("%s", &NULL_VALUE[0])) {
-            ret = false;
-        }
+        ret = output.Printf("%s", NULL_VALUE);
     }
     else {
         //There is at least 1 child, so it is an object value
-        if (!output.PrintFormatted("%s", &BEGIN_OBJECT[0])) {
-            ret = false;
-        }
+        ret = output.Printf("%s", BEGIN_OBJECT);
 
-        for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
-            const char8 * childName = input.GetChildName(i);
+        for (uint32 childNumber = 0u; (childNumber < numberOfChildren) && (ret); childNumber++) {
+            const char8 * childName = input.GetChildName(childNumber);
             //value separator
-            if (i > 0) {
-                if (!output.PrintFormatted("%s", &VALUE_SEPARATOR[0])) {
-                    ret = false;
-                }
+            if (childNumber > 0) {
+                ret = output.Printf("%s", VALUE_SEPARATOR);
             }
             //key name
-            {
-                AnyType printChildName[] = { childName, voidAnyType };
-                if (!output.PrintFormatted("\"%s\"", &printChildName[0])) {
-                    ret = false;
-                }
+            if (ret) {
+                ret = output.Printf("\"%s\"", childName);
             }
             //name separator
-            if (!output.PrintFormatted("%s", &NAME_SEPARATOR[0])) {
-                ret = false;
+            if (ret) {
+                ret = output.Printf("%s", NAME_SEPARATOR);
             }
             //value
-            {
-                StreamString rawValue;
-                if (input.Read(childName, rawValue)) {
-                    //The child is a leaf
-                    StreamString cookedValue;
-                    //Cook the raw value
-                    {
-                        TypeDescriptor descriptor;
-                        descriptor = input.GetType(childName).GetTypeDescriptor();
-                        if (descriptor == VoidType || descriptor == InvalidType) {
-                            cookedValue = "null";
+            if (ret) {
+                const TypeDescriptor descriptor = input.GetType(childName).GetTypeDescriptor();
+                const uint8 dimensions = input.GetType(childName).GetNumberOfDimensions();
+                if (dimensions == 0) {
+                    StreamString value;
+                    bool isRead = input.Read(childName, value);
+                    if (isRead) {
+                        //The child is a leaf
+                        StreamString cookedValue;
+                        cookValue(value, descriptor, cookedValue);
+                        ret = output.Printf("%s", cookedValue.Buffer());
+                    }
+                    else {
+                        //The child is a node
+                        if (ret) {
+                            ret = input.MoveRelative(childName);
                         }
-                        else if (descriptor == PointerType || descriptor == Character8Bit || descriptor == ConstCharString || descriptor == CharString) {
-                            cookedValue = "\"";
-                            cookedValue += rawValue;
-                            cookedValue += "\"";
+                        if (ret) {
+                            ret = Execute(input, output);
                         }
-//                        else if (vector) {
-//                            if (!output.PrintFormatted("%s", &BEGIN_ARRAY[0])) {
-//                                ret = false;
-//                            }
-//                            for (uint32 i = 0u; (i < value.GetNumberOfElements(0u)); i++) {
-//                                print_value();
-//                            }
-//                            if (!output.PrintFormatted("%s", &VALUE_SEPARATOR[0])) {
-//                                ret = false;
-//                            }
-//                            if (!output.PrintFormatted("%s", &END_ARRAY[0])) {
-//                                ret = false;
-//                            }
-//                        }
-//                        else if (matrix) {
-//                            if (!output.PrintFormatted("%s", &BEGIN_ARRAY[0])) {
-//                                ret = false;
-//                            }
-//                            for (uint32 i = 0u; (i < value.GetNumberOfElements(1u)); i++) {
-//                                if (!output.PrintFormatted("%s", &BEGIN_ARRAY[0])) {
-//                                    ret = false;
-//                                }
-//                                for (uint32 i = 0u; (i < value.GetNumberOfElements(0u)); i++) {
-//                                    print_value();
-//                                }
-//                                if (!output.PrintFormatted("%s", &VALUE_SEPARATOR[0])) {
-//                                    ret = false;
-//                                }
-//                                if (!output.PrintFormatted("%s", &END_ARRAY[0])) {
-//                                    ret = false;
-//                                }
-//                            }
-//                            if (!output.PrintFormatted("%s", &VALUE_SEPARATOR[0])) {
-//                                ret = false;
-//                            }
-//                            if (!output.PrintFormatted("%s", &END_ARRAY[0])) {
-//                                ret = false;
-//                            }
-//                        }
-                        else {
-                            cookedValue = rawValue;
+                        if (ret) {
+                            ret = input.MoveToAncestor(1u);
+                        }
+
+                    }
+                }
+                else if (dimensions == 1) {
+                    ret = output.Printf("%s", BEGIN_ARRAY);
+                    if (ret) {
+                        const uint8 elements = input.GetType(childName).GetNumberOfElements(0u);
+                        Vector<StreamString> values(elements);
+                        ret = input.Read(childName, values);
+                        uint i = 0;
+                        while (ret && i < elements) {
+                            if (ret && (i > 0)) {
+                                ret = output.Printf("%s", VALUE_SEPARATOR);
+                            }
+                            if (ret) {
+                                StreamString cookedValue;
+                                cookValue(values[i], descriptor, cookedValue);
+                                ret = output.Printf("%s", cookedValue.Buffer());
+                            }
+                            i++;
                         }
                     }
-                    //Print the cooked value
-                    {
-                        AnyType printLeaf[] = { cookedValue.Buffer(), voidAnyType };
-                        if (!output.PrintFormatted("%s", &printLeaf[0])) {
-                            ret = false;
+                    if (ret) {
+                        ret = output.Printf("%s", END_ARRAY);
+                    }
+                }
+                else if (dimensions == 2) {
+                    ret = output.Printf("%s", BEGIN_ARRAY);
+                    if (ret) {
+                        const uint8 rows = input.GetType(childName).GetNumberOfElements(1u);
+                        const uint8 cols = input.GetType(childName).GetNumberOfElements(0u);
+                        Matrix<StreamString> values(rows, cols);
+                        ret = input.Read(childName, values);
+                        uint i = 0;
+                        while (ret && i < rows) {
+                            if (ret && (i > 0)) {
+                                ret = output.Printf("%s", VALUE_SEPARATOR);
+                            }
+                            if (ret) {
+                                ret = output.Printf("%s", BEGIN_ARRAY);
+                            }
+                            if (ret) {
+                                uint j = 0;
+                                while (ret && j < cols) {
+                                    if (ret && (j > 0)) {
+                                        ret = output.Printf("%s", VALUE_SEPARATOR);
+                                    }
+                                    if (ret) {
+                                        StreamString cookedValue;
+                                        cookValue(values[i][j], descriptor, cookedValue);
+                                        ret = output.Printf("%s", cookedValue.Buffer());
+                                    }
+                                    j++;
+                                }
+                            }
+                            if (ret) {
+                                ret = output.Printf("%s", END_ARRAY);
+                            }
+                            i++;
                         }
+                    }
+                    if (ret) {
+                        ret = output.Printf("%s", END_ARRAY);
                     }
                 }
                 else {
-                    //The child is a node
-                    if (ret) {
-                        if (input.MoveRelative(childName)) {
-                            ret = Execute(input, output);
-                            if (!input.MoveToAncestor(1u)) {
-                                ret = false;
-                            }
-                        }
-                        else {
-                            ret = false;
-                        }
-                    }
-
+                    ret = false;
                 }
             }
         }
 
-        if (!output.PrintFormatted("%s", &END_OBJECT[0])) {
-            ret = false;
+        if (ret) {
+            ret = output.Printf("%s", END_OBJECT);
         }
 
     }
@@ -206,37 +222,37 @@ bool StructuredDataToJsonTransformation::Execute(StructuredDataI& input,
 
 }
 
-bool StructuredDataToJsonTransformation::FormatJson(IOBuffer& input,
-                                                    IOBuffer& output) {
+bool StructuredDataToJsonTransformation::FormatJson(StreamString& input,
+                                                    StreamString& output) {
     bool ret = true;
-    char8 c;
-    while (input.GetC(c)) {
-        StreamString str;
-        uint32 size;
-        switch (c) {
-        case '{':
-            str = "{\n";
-            size = 2;
-            break;
-        case ':':
-            str = ": ";
-            size = 2;
-            break;
-        case ',':
-            str = ",\n";
-            size = 2;
-            break;
-        case '}':
-            str = "\n}";
-            size = 2;
-            break;
-        default:
-            str = c;
-            size = 1;
-            break;
-        }
-        output.WriteAll(str.Buffer(), size);
-    }
+//    char8 c;
+//    while (input.GetC(c)) {
+//        StreamString str;
+//        uint32 size;
+//        switch (c) {
+//        case '{':
+//            str = "{\n";
+//            size = 2;
+//            break;
+//        case ':':
+//            str = ": ";
+//            size = 2;
+//            break;
+//        case ',':
+//            str = ",\n";
+//            size = 2;
+//            break;
+//        case '}':
+//            str = "\n}";
+//            size = 2;
+//            break;
+//        default:
+//            str = c;
+//            size = 1;
+//            break;
+//        }
+//        output.WriteAll(str.Buffer(), size);
+//    }
     return ret;  //TODO: Check ret!!
 
 //    case '}':
@@ -263,8 +279,26 @@ bool StructuredDataToJsonTransformation::FormatJson(IOBuffer& input,
 //        }
 //        break;
 
+}
 
+bool StructuredDataToJsonTransformation::FilterBlanks(MARTe::StreamString& input,
+                                                      MARTe::StreamString& output) {
+    bool ret = true;
+    uint64 i = 0;
+    char8 c[] = "\0\0";
+    while (i < input.Size()) {
+        c[0] = input[i];
+        while (c[0] == ' ') {
+            c[0] = input[i];
+            i++;
+        }
+        if (i < input.Size()) {
+            uint32 size = 1;
+            output.Write(c, size);
+        }
+        i++;
+    }
+    return ret;
 }
 
 }
-
