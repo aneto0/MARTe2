@@ -63,7 +63,6 @@ public:
 
     bool TestGetFunctions();
 
-
     bool TestGetGAMs();
 
     bool TestGetNumberOfGAMs();

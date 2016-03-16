@@ -39,7 +39,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-static const uint32 stateNamesGranularity = 8u;
+static const uint32 stateNamesGranularity = 4u;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -48,6 +48,8 @@ GAM::GAM() {
     localData = NULL_PTR(StructuredDataI*);
     numberOfSupportedStates = 0u;
     supportedStates = NULL_PTR(StreamString *);
+    group = NULL_PTR(GAMGroup*);
+    application = NULL_PTR(RealTimeApplication *);
     inputReader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     if (inputReader.IsValid()) {
         inputReader->SetName("inputReader");
@@ -108,7 +110,7 @@ bool GAM::ConfigureDataSource() {
 
     bool ret = true;
     if (GetNumberOfSupportedStates() > 0u) {
-        ret = application.IsValid();
+        ret = (application != NULL);
         if (ret) {
             ReferenceT<RealTimeDataSource> dataContainer;
             uint32 numberOfAppItems = application->Size();
@@ -186,9 +188,9 @@ bool GAM::ConfigureDataSourceLinks() {
     return ret;
 }
 
-void GAM::SetApplication(ReferenceT<RealTimeApplication> rtApp) {
-    if (!application.IsValid()) {
-        application = rtApp;
+void GAM::SetApplication(RealTimeApplication &rtApp) {
+    if (application == NULL) {
+        application = &rtApp;
         if (inputReader.IsValid()) {
             inputReader->SetApplication(rtApp);
         }
@@ -199,8 +201,8 @@ void GAM::SetApplication(ReferenceT<RealTimeApplication> rtApp) {
 }
 
 void GAM::SetGAMGroup(ReferenceT<GAMGroup> gamGroup) {
-    if (!group.IsValid()) {
-        group = gamGroup;
+    if (group == NULL) {
+        group = gamGroup.operator->();
     }
 }
 
@@ -231,11 +233,11 @@ void GAM::AddState(const char8 *stateName) {
 }
 
 StreamString * GAM::GetSupportedStates() {
-    return (group.IsValid()) ? (group->GetSupportedStates()) : (supportedStates);
+    return (group != NULL) ? (group->GetSupportedStates()) : (supportedStates);
 }
 
 uint32 GAM::GetNumberOfSupportedStates() {
-    return (group.IsValid()) ? (group->GetNumberOfSupportedStates()) : (numberOfSupportedStates);
+    return (group != NULL) ? (group->GetNumberOfSupportedStates()) : (numberOfSupportedStates);
 
 }
 

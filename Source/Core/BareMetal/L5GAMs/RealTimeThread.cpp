@@ -42,7 +42,7 @@
 namespace MARTe {
 
 // the allocation granularity
-static const uint32 gamsArrayGranularity = 8u;
+static const uint32 gamsArrayGranularity = 4u;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -79,9 +79,10 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
             // add all the gams in the order of the configuration inside GAMGroup
             for (uint32 j = 0u; (j < nOfSubGAMs) && (ret); j++) {
                 ReferenceT<GAM> subGam = functionGAMGroup->Get(j);
-                if (subGam.IsValid()) {
+                ret = subGam.IsValid();
+                if (ret) {
                     AddGAM(subGam);
-                    subGam->SetApplication(ReferenceT<RealTimeApplication>(&rtApp));
+                    subGam->SetApplication(rtApp);
                     subGam->SetGAMGroup(functionGAMGroup);
                 }
             }
@@ -91,7 +92,7 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
             ReferenceT<GAM> functionGAM = functionGeneric;
             if (functionGAM.IsValid()) {
                 AddGAM(functionGAM);
-                functionGAM->SetApplication(ReferenceT<RealTimeApplication>(&rtApp));
+                functionGAM->SetApplication(rtApp);
                 // if it is a stateful GAM, add its GAMGroup
                 ReferenceContainerFilterReferences filterGAM(1, ReferenceContainerFilterMode::PATH, functionGAM);
                 ReferenceContainer result;
@@ -155,6 +156,7 @@ void RealTimeThread::AddGAM(ReferenceT<GAM> element) {
 
         GAMs[numberOfGAMs] = element;
         numberOfGAMs++;
+
     }
 }
 

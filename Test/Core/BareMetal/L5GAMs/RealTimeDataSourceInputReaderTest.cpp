@@ -117,7 +117,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -138,7 +138,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
     ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("broker");
 
-    reader->SetApplication(rtapp);
+    reader->SetApplication(*rtapp.operator ->());
 
     if (!reader->AddVariable(def, &error)) {
         return false;
@@ -202,7 +202,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Allocation() {
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -221,7 +221,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Allocation() {
     ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("broker");
 
-    reader->SetApplication(rtapp);
+    reader->SetApplication(*rtapp.operator ->());
 
     if (!reader->AddVariable(def)) {
         return false;
@@ -286,7 +286,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Static() {
         return false;
     }
 
-    pid->SetApplication(rtapp);
+    pid->SetApplication(*rtapp.operator ->());
     pid->AddState("+state1");
     if (!pid->ConfigureDataSource()) {
         return false;
@@ -343,7 +343,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Static() {
         return false;
     }
 
-    plant->SetApplication(rtapp);
+    plant->SetApplication(*rtapp.operator ->());
     plant->AddState("+state1");
     if (!plant->ConfigureDataSource()) {
         return false;
@@ -364,7 +364,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Static() {
     ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
-    reader->SetApplication(rtapp);
+    reader->SetApplication(*rtapp.operator ->());
 
     if (!reader->AddVariable(def, &errorPID)) {
         return false;
@@ -383,7 +383,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Static() {
     ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
-    writer->SetApplication(rtapp);
+    writer->SetApplication(*rtapp.operator ->());
 
     if (!writer->AddVariable(def2, &errorPlant)) {
         return false;
@@ -448,7 +448,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Allocation() {
         return false;
     }
 
-    pid->SetApplication(rtapp);
+    pid->SetApplication(*rtapp.operator ->());
     pid->AddState("+state1");
     if (!pid->ConfigureDataSource()) {
         return false;
@@ -505,7 +505,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Allocation() {
         return false;
     }
 
-    plant->SetApplication(rtapp);
+    plant->SetApplication(*rtapp.operator ->());
     plant->AddState("+state1");
     if (!plant->ConfigureDataSource()) {
         return false;
@@ -524,7 +524,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Allocation() {
     ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
-    reader->SetApplication(rtapp);
+    reader->SetApplication(*rtapp.operator ->());
 
     if (!reader->AddVariable(def)) {
         return false;
@@ -539,7 +539,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Allocation() {
     ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
-    writer->SetApplication(rtapp);
+    writer->SetApplication(*rtapp.operator ->());
 
     if (!writer->AddVariable(def2)) {
         return false;
@@ -612,7 +612,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
         return false;
     }
 
-    pid->SetApplication(rtapp);
+    pid->SetApplication(*rtapp.operator ->());
     pid->AddState("+state1");
     if (!pid->ConfigureDataSource()) {
         return false;
@@ -679,7 +679,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
         return false;
     }
 
-    plant->SetApplication(rtapp);
+    plant->SetApplication(*rtapp.operator ->());
     plant->AddState("+state1");
     if (!plant->ConfigureDataSource()) {
         return false;
@@ -699,7 +699,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
     ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
-    writer->SetApplication(rtapp);
+    writer->SetApplication(*rtapp.operator ->());
 
     if (!writer->AddVariable(def1)) {
         return false;
@@ -725,7 +725,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
     ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
-    reader->SetApplication(rtapp);
+    reader->SetApplication(*rtapp.operator ->());
 
     if (!reader->AddVariable(def3)) {
         return false;
@@ -837,7 +837,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
         return false;
     }
 
-    pid->SetApplication(rtapp);
+    pid->SetApplication(*rtapp.operator ->());
     pid->AddState("+state1");
     if (!pid->ConfigureDataSource()) {
         return false;
@@ -856,7 +856,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
     ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
-    writer->SetApplication(rtapp);
+    writer->SetApplication(*rtapp.operator ->());
 
     if (!writer->AddVariable(defOut)) {
         return false;
@@ -876,7 +876,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
     ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
-    reader->SetApplication(rtapp);
+    reader->SetApplication(*rtapp.operator ->());
 
     if (!reader->AddVariable(defIn)) {
         return false;
@@ -978,7 +978,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
         return false;
     }
 
-    pid->SetApplication(rtapp);
+    pid->SetApplication(*rtapp.operator ->());
     pid->AddState("+state1");
     if (!pid->ConfigureDataSource()) {
         return false;
@@ -997,7 +997,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
     ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
-    writer->SetApplication(rtapp);
+    writer->SetApplication(*rtapp.operator ->());
 
     if (!writer->AddVariable(defOut)) {
         return false;
@@ -1021,7 +1021,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
     ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
-    reader->SetApplication(rtapp);
+    reader->SetApplication(*rtapp.operator ->());
 
     if (!reader->AddVariable(defIn)) {
         return false;

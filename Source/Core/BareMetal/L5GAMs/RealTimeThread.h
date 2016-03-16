@@ -68,7 +68,7 @@ public:
     /**
      * @brief Destructor. Frees the array with the function names.
      */
-    ~RealTimeThread();
+    virtual ~RealTimeThread();
 
     /**
      * @see RealTimeApplication::ConfigureArchitecture()

@@ -39,13 +39,27 @@
 
 namespace MARTe {
 
+/**
+ * @brief Writes data to the RealTimeDataSource.
+ */
 class RealTimeDataSourceOutputWriter: public RealTimeDataSourceBroker {
 
 public:
     CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief Constructor.
+     */
     RealTimeDataSourceOutputWriter();
 
+    /**
+     * @brief Writes data to the RealTimeDataSource.
+     * @details After the configuration of the interface between GAM and RealTimeDataSource
+     * (see RealTimeDataSourceBroker), copies data the GAM variables to the RealTimeDataSource.
+     * @param[in] activeDataSourceBuffer is the buffer index to be used. This parameter must change
+     * from 0 to 1 on each state switch.
+     * @return false in case of errors, true otherwise.
+     */
     bool Write(uint8 activeDataSourceBuffer);
 
 

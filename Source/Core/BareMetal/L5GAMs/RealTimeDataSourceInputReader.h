@@ -38,13 +38,26 @@
 
 namespace MARTe{
 
+/**
+ * @brief Reads data from the RealTimeDataSource.
+ */
 class RealTimeDataSourceInputReader: public RealTimeDataSourceBroker {
 public:
     CLASS_REGISTER_DECLARATION()
 
-
+    /**
+     * @brief Constructor
+     */
     RealTimeDataSourceInputReader();
 
+    /**
+     * @brief Reads data from the RealTimeDataSource.
+     * @details After the configuration of the interface between GAM and RealTimeDataSource
+     * (see RealTimeDataSourceBroker), copies data from the RealTimeDataSource into the GAM variables.
+     * @param[in] activeDataSourceBuffer is the buffer index to be used. This parameter must change
+     * from 0 to 1 on each state switch.
+     * @return false in case of errors, true otherwise.
+     */
     bool Read(uint8 activeDataSourceBuffer);
 
 };

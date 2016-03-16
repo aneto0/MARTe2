@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeDataSourceInputReader.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -65,7 +64,6 @@ bool RealTimeDataSourceInputReader::Read(uint8 activeDataSourceBuffer) {
             ret = (size != 0u);
         }
         if (ret) {
-            printf("\ntest in read %d size = %d\n", *(uint32*) (*DSPointer), size);
             ret = MemoryOperationsHelper::Copy(GAMPointer, *DSPointer, size);
         }
     }

@@ -96,7 +96,6 @@ bool RealTimeThreadTest::TestInitialise() {
 bool RealTimeThreadTest::TestConfigureArchitecture() {
 
     ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+States.+State1.+Threads.+Thread1");
-
     ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+States.+State1");
 
     ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("$Application1");

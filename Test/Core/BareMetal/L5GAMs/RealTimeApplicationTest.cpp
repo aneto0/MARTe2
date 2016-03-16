@@ -665,13 +665,13 @@ bool RealTimeApplicationTest::TestAllocateDataSource() {
     // test if it is possible read a value
     ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> defOut = app->Find("+Functions.+PIDGroup2.+GAM8.+Outputs.+Error");
-    writer->SetApplication(app);
+    writer->SetApplication(*app.operator ->());
     writer->AddVariable(defOut);
     writer->Finalise();
 
     ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> defIn = app->Find("+Functions.+GAMContainer.+GAM5.+Inputs.+Error");
-    reader->SetApplication(app);
+    reader->SetApplication(*app.operator ->());
     reader->AddVariable(defIn);
     reader->Finalise();
 

@@ -74,6 +74,12 @@ public:
 
     bool TestConfigureDataSourceFalse_Final();
 
+    bool TestConfigureDataSourceFalse_NoData();
+
+    bool TestConfigureDataSourceFalse_NoApplicationSet();
+
+    bool TestConfigureDataSource_NoStates();
+
     bool TestConfigureDataSourceLinks();
 
     bool TestExecute();

@@ -1,8 +1,8 @@
 /**
  * @file RealTimeDataSourceBroker.cpp
  * @brief Source file for class RealTimeDataSourceBroker
- * @date 09/mar/2016
- * @author pc
+ * @date 09/03/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -31,7 +31,7 @@
 
 #include "RealTimeDataSourceBroker.h"
 #include "RealTimeDataSource.h"
-#include "stdio.h"
+#include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -43,12 +43,12 @@
 namespace MARTe {
 
 RealTimeDataSourceBroker::RealTimeDataSourceBroker() {
-
+    application = NULL_PTR(RealTimeApplication *);
     finalised = false;
 }
 
-void RealTimeDataSourceBroker::SetApplication(ReferenceT<RealTimeApplication> rtApp) {
-    application = rtApp;
+void RealTimeDataSourceBroker::SetApplication(RealTimeApplication &rtApp) {
+    application = &rtApp;
 }
 
 bool RealTimeDataSourceBroker::AddVariable(ReferenceT<RealTimeDataDefI> def,
@@ -57,10 +57,8 @@ bool RealTimeDataSourceBroker::AddVariable(ReferenceT<RealTimeDataDefI> def,
     bool ret = false;
     void *memStart = NULL;
     if (ptr != NULL) {
-        // ??
         ret = beginPointers.Add(ptr);
         memStart = ptr;
-        // printf("\nadd static pointer %llx\n", (uintp) ptr);
     }
     else {
         // we do not know yet
@@ -81,7 +79,7 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                                                   void* ptr,
                                                   void* memStart) {
 
-    bool ret = application.IsValid();
+    bool ret = (application != NULL);
     if (ret) {
         ReferenceT<RealTimeDataSource> data;
 
@@ -130,8 +128,8 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                                     memStart = memory.GetMemoryStart();
                                 }
                             }
-                            else{
-                                //TODO Warning unsupported multidimensional for structures
+                            else {
+                                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Unsupported multi-dimensional structure %s", def->GetName())
                             }
 
                             if (ret) {
@@ -151,7 +149,6 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                                                 ret = (defMemberName != NULL);
                                                 if (ret) {
                                                     if (StringHelper::Compare((*intro)[i].GetMemberName(), &defMemberName[1]) == 0) {
-                                                        printf("\n insert %s path = %s\n", &defMemberName[1], subDef->GetPath());
                                                         char8 *pointablePtr = reinterpret_cast<char8*>(ptr);
                                                         ret = AddVariablePrivate(subDef, &pointablePtr[(*intro)[i].GetMemberByteOffset()], memStart);
                                                         found = true;
@@ -161,18 +158,20 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                                         }
                                         if (!found) {
                                             ret = false;
-                                            //TODO not found
+                                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
+                                                    "Member %s of %s does not matches with introspection of its type %s",
+                                                    (*intro)[i].GetMemberName(), def->GetName(), def->GetType())
                                         }
                                     }
                                 }
                             }
                         }
                         else {
-                            //TODO not introspectable
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s is not introspectable", def->GetType())
                         }
                     }
                     else {
-                        //TODO not registered
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s is not registered", def->GetType())
                     }
 
                 }
@@ -184,7 +183,6 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                     for (uint32 k = 0u; k < numberOfDimensions; k++) {
                         varSize *= def->GetNumberOfElements(k);
                     }
-                    printf("\noffset is %d size is %d\n", offset, varSize);
                     if (ptr == NULL) {
                         ret = memory.Add(varSize, offset);
                     }
@@ -193,7 +191,6 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                 // same code for structured and basic
                 if ((ret) && (numberOfMembers == 0u)) {
                     const char8* path = def->GetPath();
-                    printf("\npath is %s name is %s\n", def->GetPath(), def->GetName());
                     ReferenceT<RealTimeDataSourceDef> dsDef = data->Find(path);
                     ret = dsDef.IsValid();
                     if (ret) {
@@ -216,21 +213,19 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
 
                             ret = sizes.Add(varSize);
                         }
-
-                        printf("\ntest...%d %d\n", *(uint32*) (*dsPointer0), *(uint32*) (*dsPointer1));
                     }
                 }
             }
             else {
-                //TODO invalid def
+                REPORT_ERROR(ErrorManagement::FatalError, "Invalid definition in input");
             }
         }
         else {
-            //TODO invalid data
+            REPORT_ERROR(ErrorManagement::FatalError, "+Data container invalid or not found in RealTimeApplication");
         }
     }
     else {
-        //TODO invalid application
+        REPORT_ERROR(ErrorManagement::FatalError, "RealTimeApplication invalid or not set");
     }
     return ret;
 
@@ -245,15 +240,13 @@ void *RealTimeDataSourceBroker::GetData(uint32 i) {
             if (chunkIndex.Peek(i, index)) {
                 uint32 offset = 0u;
                 if (GAMOffsets.Peek(index, offset)) {
-                    printf("Get Data: offset=%d", offset);
                     ret = &reinterpret_cast<char8 *>(beginPtr)[offset];
-                    //printf("\nget data %llx offset=%d, chunkIndex=%d ?? %d\n", (uintp) ret, offset, index, GAMOffsets.GetSize());
                 }
             }
         }
     }
     else {
-        //TODO Not Finalised!!!
+        REPORT_ERROR(ErrorManagement::FatalError, "The object definition is not finalised");
     }
     return ret;
 }
@@ -263,11 +256,11 @@ void *RealTimeDataSourceBroker::GetMemoryPointer(uint32 n) {
 
     if (finalised) {
         if (!GAMPointers.Peek(n, ret)) {
-            //TODO
+
         }
     }
     else {
-        //TODO Not Finalised!
+        REPORT_ERROR(ErrorManagement::FatalError, "The object definition is not finalised");
     }
     return ret;
 }
@@ -286,7 +279,6 @@ void *RealTimeDataSourceBroker::GetMemoryPointerPrivate(uint32 n) {
             uint32 structIndex = 0u;
             go = (chunkIndex.Peek(i, structIndex));
             if (go) {
-                printf("\nstruct nPointers = %d\n", structIndex);
                 if (structIndex > n) {
                     go = false;
                 }
@@ -296,7 +288,6 @@ void *RealTimeDataSourceBroker::GetMemoryPointerPrivate(uint32 n) {
             }
         }
 
-        printf("\n%s: begIndex=%d nStructs=%d\n", GetName(), ptrIndex, numberOfStructures);
         void *beginPtr = NULL;
         if (beginPointers.Peek(ptrIndex, beginPtr)) {
             uint32 offset = 0u;
@@ -312,8 +303,6 @@ bool RealTimeDataSourceBroker::Finalise() {
 
     bool ret = true;
 
-    printf("\nFinalising %s\n", GetName());
-
     // refresh the pointers
     uint32 numberOfStructures = beginPointers.GetSize();
     for (uint32 i = 0u; (i < numberOfStructures) && (ret); i++) {
@@ -321,7 +310,6 @@ bool RealTimeDataSourceBroker::Finalise() {
         ret = (beginPointers.Peek(i, ptr));
         if (ret) {
             if (ptr == NULL) {
-                printf("\nset memory area\n");
                 ptr = memory.GetMemoryStart();
                 ret = beginPointers.Set(i, ptr);
             }

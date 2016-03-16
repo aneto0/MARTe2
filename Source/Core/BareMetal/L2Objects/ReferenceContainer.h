@@ -79,12 +79,19 @@ public:
                 const int32 &position = -1);
 
 
+    /**
+     * @brief Inserts a new reference in the specified path.
+     * @details Creates all the nodes in the \a path if needed before adding \a ref as a leaf.
+     * @param[in] path is the path where \a ref must be inserted to.
+     * @param[in] red is the Reference to be inserted in the container.
+     * @return false if \a ref is not valid or in case of errors, true otherwise.
+     */
     bool Insert(const char8 * path, Reference ref);
 
 
 
     /**
-     * @brief Removes the references from the container.
+     * @brief Removes a reference from the container.
      * @details This call is not recursive, i.e. if the container contains other containers, the \a ref
      * will not be recursively searched (this can be achieved with the Find method and ReferenceContainerFilterReferences filter).
      * @param[in] ref the reference to be deleted.

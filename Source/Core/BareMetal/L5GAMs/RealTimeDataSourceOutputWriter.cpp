@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeDataSourceOutputWriter.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -65,7 +64,6 @@ bool RealTimeDataSourceOutputWriter::Write(uint8 activeDataSourceBuffer) {
             ret = (size != 0u);
         }
         if (ret) {
-            printf("\ntest output: %d\n", *(uint32*) GAMPointer);
             ret = MemoryOperationsHelper::Copy(*DSPointer, GAMPointer, size);
         }
     }

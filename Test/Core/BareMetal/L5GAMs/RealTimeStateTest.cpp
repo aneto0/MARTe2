@@ -150,6 +150,8 @@ bool RealTimeStateTest::TestAddGAMGroup() {
     for (uint32 i = 0; i < size; i++) {
         gamGroup[i] = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         state.AddGAMGroup(gamGroup[i]);
+        // add it two times
+        state.AddGAMGroup(gamGroup[i]);
     }
 
     if (state.GetNumberOfGAMGroups() != size) {

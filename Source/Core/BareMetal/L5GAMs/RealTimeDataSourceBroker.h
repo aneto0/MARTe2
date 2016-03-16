@@ -42,45 +42,132 @@
 
 namespace MARTe {
 
+/**
+ * @brief The interface between GAMs and RealTimeDataSource.
+ */
 class RealTimeDataSourceBroker: public ReferenceContainer {
 
 public:
+
+    /**
+     * @brief Constructor.
+     * @post
+     *   GetData(*) == NULL &&
+     *   GetMemoryPointer(*) == NULL
+     */
     RealTimeDataSourceBroker();
 
-    void SetApplication(ReferenceT<RealTimeApplication> rtApp);
+    /**
+     * @brief Sets the application where this object is involved in.
+     * @param[in] rtApp is a Reference to the application to be set.
+     */
+    void SetApplication(RealTimeApplication &rtApp);
 
+    /**
+     * @brief Links a GAM variable with the RealTimeDataSource.
+     * @details If \a ptr is null, this function allocates memory for the variable and stores the pointer
+     * in a vector. The pointer to the respective variable memory, allocated in the RealTimeDataSource, will be
+     * stored into another vector. If \a ptr is not NULL, this means that the GAM provides the memory of that
+     * variable by itself, then the allocation is not performed.
+     * @param[in] def is the variable definition.
+     * @param[in] ptr is the pointer to the variable memory area.
+     * @return false in case of errors, true otherwise.
+     */
     bool AddVariable(ReferenceT<RealTimeDataDefI> def, void* ptr=NULL);
 
+    /**
+     * @brief Retrieves the pointer to the \a i-th variable.
+     * @param[in] i is the variable index.
+     * @return the pointer to the \a i-th variable. NULL if this object is not finalised (see Finalise()).
+     */
     void *GetData(uint32 i);
 
+    /**
+     * @brief Retrieves the n-th pointer.
+     * @details This function is different from GetData(*) when variables are structures.
+     * Actually this function can provide a direct access to the variable internal members.
+     * @return the n-th pointer. NULL if the object is not finalised (see Finalise()).
+     */
     void *GetMemoryPointer(uint32 n);
 
+    /**
+     * @brief Finalises the object.
+     * @details This function has to be called after all the variables are added.
+     * @return false in case of errors, true otherwise.
+     */
     bool Finalise();
 
 protected:
 
+    /**
+     * The RealTimeApplication where this object is
+     * involved in.
+     */
+    RealTimeApplication *application;
 
-    ReferenceT<RealTimeApplication> application;
-
+    /**
+     * The memory area where variables will be allocated
+     * on.
+     */
     MemoryArea memory;
 
+    /**
+     * Stores the indexes of the allocations
+     * in memory area.
+     */
     StaticList<uint32> GAMOffsets;
 
+    /**
+     * Stores the pointers to the begin
+     * of memory areas
+     */
     StaticList<void *> beginPointers;
 
+    /**
+     * Stores the final pointers to the
+     * GAM variables.
+     */
     StaticList<void *> GAMPointers;
 
+    /**
+     * Stores the pointers to the RealTimeDataSource
+     * variables.
+     */
     StaticList<void **> DSPointers[2];
 
+    /**
+     * Stores the sizes of the variables.
+     */
     StaticList<uint32> sizes;
 
+    /**
+     * Stores the indexes of each variable
+     * into the GAMPointers.
+     */
     StaticList<uint32> chunkIndex;
 
+    /**
+     * Specifies if Finalise() is called or not.
+     */
     bool finalised;
 private:
 
+    /**
+     * @brief Links a GAM variable with the RealTimeDataSource.
+     * @details This function can call itself recursively if the variable to be allocated is a structure.
+     * @param[in] def is the variable definition.
+     * @param[in] ptr is the pointer to be added in the \a GAMPointers array. If NULL, the memory
+     * will be allocated.
+     * @param[in] memStart is the begin of the variable memory area.
+     * @return false in case of errors, true otherwise.
+     */
     bool AddVariablePrivate(ReferenceT<RealTimeDataDefI> def, void* ptr, void *memStart );
 
+    /**
+     * @brief Retrieves the pointer at the \a n-th position before the Finalise().
+     * @param[in] n is the index of the pointer to be returned.
+     * @return the pointer at the \a n-th position.
+     */
     void *GetMemoryPointerPrivate(uint32 n);
 
 };

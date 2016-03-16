@@ -57,6 +57,10 @@ public:
      */
     virtual ~ObjectRegistryDatabase();
 
+    /**
+     * @brief Deletes all the entries.
+     * @return false in case of errors, true otherwise.
+     */
     virtual bool CleanUp();
 
     /**

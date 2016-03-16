@@ -91,7 +91,7 @@ public:
      * @brief Links this GAM to its RealTimeApplication.
      * @param[in] rtApp is a reference to the RealTimeApplication where this GAM is declared into.
      */
-    void SetApplication(ReferenceT<RealTimeApplication> rtApp);
+    void SetApplication(RealTimeApplication &rtApp);
 
     /**
      * @brief Links this GAM to its GAMGroup.
@@ -174,12 +174,12 @@ protected:
     /**
      * Link to the RealTimeApplication
      */
-    ReferenceT<RealTimeApplication> application;
+    RealTimeApplication *application;
 
     /**
      * Link to the GAMGroup
      */
-    ReferenceT<GAMGroup> group;
+    GAMGroup *group;
 
     /**
      * The input interface with the RealTimeDataSource

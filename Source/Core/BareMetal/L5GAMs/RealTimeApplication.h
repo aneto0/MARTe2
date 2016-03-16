@@ -79,12 +79,16 @@ namespace MARTe {
 class RealTimeApplication: public ReferenceContainer {
 public:
     CLASS_REGISTER_DECLARATION()
-    ;
 
     /**
      * @brief Constructor
      */
     RealTimeApplication();
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~RealTimeApplication();
 
     /**
      * @brief Configuration of the application environment.

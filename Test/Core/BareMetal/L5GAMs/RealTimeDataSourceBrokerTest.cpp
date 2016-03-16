@@ -93,7 +93,7 @@ bool RealTimeDataSourceBrokerTest::TestConstructor() {
 bool RealTimeDataSourceBrokerTest::TestSetApplication() {
     RealTimeDataSourceBroker test;
     ReferenceT<RealTimeApplication> rtApp;
-    test.SetApplication(rtApp);
+    test.SetApplication(*rtApp.operator ->());
     return true;
 }
 
@@ -124,7 +124,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_Allocation() {
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -143,7 +143,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_Allocation() {
     ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
-    broker->SetApplication(rtapp);
+    broker->SetApplication(*rtapp.operator ->());
 
     if (broker->GetData(0) != NULL) {
         return false;
@@ -190,7 +190,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_Static() {
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -209,7 +209,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_Static() {
     ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
-    broker->SetApplication(rtapp);
+    broker->SetApplication(*rtapp.operator ->());
 
     TrackError output;
 
@@ -259,7 +259,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_NoApplicationSet() {
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -313,7 +313,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_InvalidType() {
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -384,7 +384,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_UnintrospectableType() {
     ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
-    broker->SetApplication(app);
+    broker->SetApplication(*app.operator ->());
 
     return !broker->AddVariable(def);
 }
@@ -431,7 +431,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_NotInDataSource() {
     ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
-    broker->SetApplication(app);
+    broker->SetApplication(*app.operator ->());
 
     return !broker->AddVariable(def);
 }
@@ -498,7 +498,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Static_Vecto
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -517,7 +517,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Static_Vecto
     ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
-    broker->SetApplication(rtapp);
+    broker->SetApplication(*rtapp.operator ->());
 
     TrackErrorArray output;
 
@@ -614,7 +614,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Allocation_V
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -633,7 +633,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Allocation_V
     ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
-    broker->SetApplication(rtapp);
+    broker->SetApplication(*rtapp.operator ->());
 
     if (broker->GetData(0) != NULL) {
         return false;
@@ -714,7 +714,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Static_Matri
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -733,7 +733,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Static_Matri
     ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
-    broker->SetApplication(rtapp);
+    broker->SetApplication(*rtapp.operator ->());
 
     TrackErrorMatrix output;
 
@@ -849,7 +849,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Allocation_M
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -868,7 +868,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Allocation_M
     ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
-    broker->SetApplication(rtapp);
+    broker->SetApplication(*rtapp.operator ->());
 
     if (broker->GetData(0) != NULL) {
         return false;
@@ -914,7 +914,7 @@ bool RealTimeDataSourceBrokerTest::TestGetData_Allocation() {
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -934,7 +934,7 @@ bool RealTimeDataSourceBrokerTest::TestGetData_Allocation() {
     ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
-    broker->SetApplication(rtapp);
+    broker->SetApplication(*rtapp.operator ->());
 
     if (broker->GetData(0) != NULL) {
         return false;
@@ -993,7 +993,7 @@ bool RealTimeDataSourceBrokerTest::TestGetData_Static() {
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -1016,7 +1016,7 @@ bool RealTimeDataSourceBrokerTest::TestGetData_Static() {
     ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
-    broker->SetApplication(rtapp);
+    broker->SetApplication(*rtapp.operator ->());
 
     if (broker->GetData(0) != NULL) {
         return false;
@@ -1076,7 +1076,7 @@ bool RealTimeDataSourceBrokerTest::TestGetMemoryPointer_Allocation() {
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -1096,7 +1096,7 @@ bool RealTimeDataSourceBrokerTest::TestGetMemoryPointer_Allocation() {
     ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
-    broker->SetApplication(rtapp);
+    broker->SetApplication(*rtapp.operator ->());
 
     if (!broker->AddVariable(def)) {
         return false;
@@ -1147,7 +1147,7 @@ bool RealTimeDataSourceBrokerTest::TestGetMemoryPointer_Static() {
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -1170,7 +1170,7 @@ bool RealTimeDataSourceBrokerTest::TestGetMemoryPointer_Static() {
     ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
-    broker->SetApplication(rtapp);
+    broker->SetApplication(*rtapp.operator ->());
 
     if (!broker->AddVariable(def, &control)) {
         return false;
@@ -1226,7 +1226,7 @@ bool RealTimeDataSourceBrokerTest::TestFinalise() {
         return false;
     }
 
-    gam->SetApplication(rtapp);
+    gam->SetApplication(*rtapp.operator ->());
     gam->AddState("+state1");
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -1246,7 +1246,7 @@ bool RealTimeDataSourceBrokerTest::TestFinalise() {
     ReferenceT<RealTimeDataSourceBroker> broker = ReferenceT<RealTimeDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
-    broker->SetApplication(rtapp);
+    broker->SetApplication(*rtapp.operator ->());
 
     if (!broker->AddVariable(def)) {
         return false;

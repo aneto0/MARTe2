@@ -59,6 +59,9 @@ ObjectRegistryDatabase::ObjectRegistryDatabase() {
 }
 
 ObjectRegistryDatabase::~ObjectRegistryDatabase() {
+    if(!CleanUp()){
+
+    }
 }
 
 bool ObjectRegistryDatabase::CleanUp() {
@@ -66,7 +69,6 @@ bool ObjectRegistryDatabase::CleanUp() {
     for (uint32 i = 0u; (i < Size()) && (ret); i++) {
         Reference toBeRemoved = Get(i);
         ret = ReferenceContainer::Delete(toBeRemoved);
-
     }
     return ret;
 }

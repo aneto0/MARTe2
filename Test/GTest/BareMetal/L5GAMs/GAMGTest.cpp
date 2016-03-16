@@ -76,7 +76,6 @@ TEST(GAMGTest,TestGetSupportedStates) {
     ASSERT_TRUE(gamTest.TestGetSupportedStates());
 }
 
-
 TEST(GAMGTest,TestGetNumberOfSupportedStates_GAMGroup) {
     GAMTest gamTest;
     ASSERT_TRUE(gamTest.TestGetNumberOfSupportedStates_GAMGroup());
@@ -100,6 +99,21 @@ TEST(GAMGTest,TestConfigureDataSource_NotFinal) {
 TEST(GAMGTest,TestConfigureDataSourceFalse_Final) {
     GAMTest gamTest;
     ASSERT_TRUE(gamTest.TestConfigureDataSourceFalse_Final());
+}
+
+TEST(GAMGTest,TestConfigureDataSourceFalse_NoData) {
+    GAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestConfigureDataSourceFalse_NoData());
+}
+
+TEST(GAMGTest,TestConfigureDataSourceFalse_NoApplicationSet) {
+    GAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestConfigureDataSourceFalse_NoApplicationSet());
+}
+
+TEST(GAMGTest,TestConfigureDataSource_NoStates) {
+    GAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestConfigureDataSource_NoStates());
 }
 
 TEST(GAMGTest,TestConfigureDataSourceLinks) {

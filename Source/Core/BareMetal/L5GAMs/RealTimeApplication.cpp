@@ -144,6 +144,12 @@ RealTimeApplication::RealTimeApplication() {
     activeBuffer = 1u;
 }
 
+
+RealTimeApplication::~RealTimeApplication(){
+
+}
+
+
 bool RealTimeApplication::ConfigureArchitecture() {
 
     ReferenceT<ReferenceContainer> statesContainer;
