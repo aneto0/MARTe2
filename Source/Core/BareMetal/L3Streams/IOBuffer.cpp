@@ -265,49 +265,49 @@ static bool PrintObjectIntrospection(IOBuffer & iobuff,
     bool ret = false;
 
     if (item != NULL) {
-        const ClassProperties *properties=item->GetClassProperties();
-        const char8* data=NULL_PTR(const char8*);
+        const ClassProperties *properties = item->GetClassProperties();
+        const char8* data = NULL_PTR(const char8*);
         // print the class name
-        if(properties!=NULL) {
-            data=properties->GetName();
-            AnyType printClassName[]= {data, "= {", voidAnyType};
-            if(iobuff.PrintFormatted("\n%s %s\n", &printClassName[0])) {
-                const Introspection *introspection=item->GetIntrospection();
-                if(introspection!=NULL) {
-                    ret=true;
-                    uint32 numberOfMembers=introspection->GetNumberOfMembers();
-                    for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
-                        IntrospectionEntry memberIntrospection=(*introspection)[i];
-                        data=memberIntrospection.GetMemberName();
-                        AnyType printMemberName[]= {data,"= {", voidAnyType};
-                        if(!iobuff.PrintFormatted("    %s %s\n", &printMemberName[0])) {
-                            ret=false;
+        if (properties != NULL) {
+            data = properties->GetName();
+            AnyType printClassName[] = { data, "= {", voidAnyType };
+            if (iobuff.PrintFormatted("\n%s %s\n", &printClassName[0])) {
+                const Introspection *introspection = item->GetIntrospection();
+                if (introspection != NULL) {
+                    ret = true;
+                    uint32 numberOfMembers = introspection->GetNumberOfMembers();
+                    for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
+                        IntrospectionEntry memberIntrospection = (*introspection)[i];
+                        data = memberIntrospection.GetMemberName();
+                        AnyType printMemberName[] = { data, "= {", voidAnyType };
+                        if (!iobuff.PrintFormatted("    %s %s\n", &printMemberName[0])) {
+                            ret = false;
                         }
-                        if(ret) {
-                            data=memberIntrospection.GetMemberTypeName();
-                            AnyType printType[]= {"type =", data, voidAnyType};
-                            if(!iobuff.PrintFormatted("        %s %s\n", &printType[0])) {
-                                ret=false;
+                        if (ret) {
+                            data = memberIntrospection.GetMemberTypeName();
+                            AnyType printType[] = { "type =", data, voidAnyType };
+                            if (!iobuff.PrintFormatted("        %s %s\n", &printType[0])) {
+                                ret = false;
                             }
                         }
-                        if(ret) {
-                            data=memberIntrospection.GetMemberModifiers();
-                            AnyType printModifiers[]= {"modifiers =", data, voidAnyType};
-                            if(!iobuff.PrintFormatted("        %s \"%s\"\n", &printModifiers[0])) {
-                                ret=false;
+                        if (ret) {
+                            data = memberIntrospection.GetMemberModifiers();
+                            AnyType printModifiers[] = { "modifiers =", data, voidAnyType };
+                            if (!iobuff.PrintFormatted("        %s \"%s\"\n", &printModifiers[0])) {
+                                ret = false;
                             }
                         }
-                        if(ret) {
-                            data=memberIntrospection.GetMemberAttributes();
-                            AnyType printAttributes[]= {"attributes =", data, voidAnyType};
-                            if(!iobuff.PrintFormatted("        %s \"%s\"\n    }\n", &printAttributes[0])) {
-                                ret=false;
+                        if (ret) {
+                            data = memberIntrospection.GetMemberAttributes();
+                            AnyType printAttributes[] = { "attributes =", data, voidAnyType };
+                            if (!iobuff.PrintFormatted("        %s \"%s\"\n    }\n", &printAttributes[0])) {
+                                ret = false;
                             }
                         }
                     }
-                    AnyType printClose[]= {"}", voidAnyType};
-                    if(!iobuff.PrintFormatted("%s\n", &printClose[0])) {
-                        ret=false;
+                    AnyType printClose[] = { "}", voidAnyType };
+                    if (!iobuff.PrintFormatted("%s\n", &printClose[0])) {
+                        ret = false;
                     }
                 }
                 REPORT_ERROR(ErrorManagement::FatalError, "PrintObjectIntrospection: The object is not introspectable");
@@ -391,61 +391,61 @@ static bool PrintObject(IOBuffer & iobuff,
     bool ret = false;
 
     if (item != NULL) {
-        const ClassProperties *properties=item->GetClassProperties();
-        const char8* data=NULL_PTR(const char8*);
+        const ClassProperties *properties = item->GetClassProperties();
+        const char8* data = NULL_PTR(const char8*);
         // print the class name
-        if(properties!=NULL) {
-            data=properties->GetName();
-            AnyType printClassName[]= {"Class =", data, voidAnyType};
-            if(iobuff.PrintFormatted("\n%s %s\n", &printClassName[0])) {
-                const Introspection *introspection=item->GetIntrospection();
-                if(introspection!=NULL) {
-                    ret=true;
-                    uint32 numberOfMembers=introspection->GetNumberOfMembers();
-                    for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
-                        IntrospectionEntry memberIntrospection=(*introspection)[i];
+        if (properties != NULL) {
+            data = properties->GetName();
+            AnyType printClassName[] = { "Class =", data, voidAnyType };
+            if (iobuff.PrintFormatted("\n%s %s\n", &printClassName[0])) {
+                const Introspection *introspection = item->GetIntrospection();
+                if (introspection != NULL) {
+                    ret = true;
+                    uint32 numberOfMembers = introspection->GetNumberOfMembers();
+                    for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
+                        IntrospectionEntry memberIntrospection = (*introspection)[i];
                         // the member name
-                        data=memberIntrospection.GetMemberName();
+                        data = memberIntrospection.GetMemberName();
 
-                        AnyType printMemberName[]= {data,"= ", voidAnyType};
-                        if(!iobuff.PrintFormatted("%s %s", &printMemberName[0])) {
-                            ret=false;
+                        AnyType printMemberName[] = { data, "= ", voidAnyType };
+                        if (!iobuff.PrintFormatted("%s %s", &printMemberName[0])) {
+                            ret = false;
                         }
-                        if(ret) {
-                            uint32 byteOffset=memberIntrospection.GetMemberByteOffset();
-                            TypeDescriptor memberDescriptor=memberIntrospection.GetMemberTypeDescriptor();
-                            bool isMemberStructured=memberDescriptor.isStructuredData;
-                            if(isMemberStructured) {
-                                AnyType printOpen[]= {"{", voidAnyType};
-                                if(!iobuff.PrintFormatted("%s\n", &printOpen[0])) {
-                                    ret=false;
+                        if (ret) {
+                            uint32 byteOffset = memberIntrospection.GetMemberByteOffset();
+                            TypeDescriptor memberDescriptor = memberIntrospection.GetMemberTypeDescriptor();
+                            bool isMemberStructured = memberDescriptor.isStructuredData;
+                            if (isMemberStructured) {
+                                AnyType printOpen[] = { "{", voidAnyType };
+                                if (!iobuff.PrintFormatted("%s\n", &printOpen[0])) {
+                                    ret = false;
                                 }
                             }
-                            if(ret) {
+                            if (ret) {
                                 // create the member type
-                                char8* memberPointer=&dataPointer[byteOffset];
+                                char8* memberPointer = &dataPointer[byteOffset];
                                 AnyType member(memberDescriptor, 0u, memberPointer);
 
-                                if(memberIntrospection.GetMemberPointerLevel()>0u) {
-                                    member=AnyType(*reinterpret_cast<void**>(memberPointer));
+                                if (memberIntrospection.GetMemberPointerLevel() > 0u) {
+                                    member = AnyType(*reinterpret_cast<void**>(memberPointer));
                                 }
 
-                                if(memberDescriptor==CharString) {
-                                    if(memberIntrospection.GetNumberOfDimensions()==0u) {
-                                        member=AnyType(*reinterpret_cast<char8**>(memberPointer));
+                                if (memberDescriptor == CharString) {
+                                    if (memberIntrospection.GetNumberOfDimensions() == 0u) {
+                                        member = AnyType(*reinterpret_cast<char8**>(memberPointer));
                                     }
                                 }
 
-                                for(uint32 j=0u; j<3u; j++) {
+                                for (uint32 j = 0u; j < 3u; j++) {
                                     member.SetNumberOfElements(j, memberIntrospection.GetNumberOfElements(j));
                                 }
                                 member.SetNumberOfDimensions(memberIntrospection.GetNumberOfDimensions());
-                                ret=iobuff.PrintFormatted("%!\n", &member);
+                                ret = iobuff.PrintFormatted("%!\n", &member);
                             }
-                            if(isMemberStructured) {
-                                AnyType printClose[]= {"}", voidAnyType};
-                                if(!iobuff.PrintFormatted("%s\n", &printClose[0])) {
-                                    ret=false;
+                            if (isMemberStructured) {
+                                AnyType printClose[] = { "}", voidAnyType };
+                                if (!iobuff.PrintFormatted("%s\n", &printClose[0])) {
+                                    ret = false;
                                 }
                             }
                         }
@@ -488,7 +488,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                 ret = PrintObjectIntrospection(iobuff, parIn);
             }
             else {
-                if(fd.desiredAction != PrintAnything) {
+                if (fd.desiredAction != PrintAnything) {
                     if (fd.desiredAction != PrintStruct) {
                         REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a struct will be printed");
                     }
@@ -506,7 +506,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                     ret = PrintToStreamScalar(iobuff, info, newFD);
                 }
                 else {
-                    if(fd.desiredAction != PrintAnything) {
+                    if (fd.desiredAction != PrintAnything) {
                         if (fd.desiredAction != PrintInteger) {
                             REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: an unsigned integer will be printed");
                         }
@@ -514,33 +514,33 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                     //native unsigned integer types.
                     if (par.GetBitAddress() == 0u) {
                         switch ((par.GetTypeDescriptor()).numberOfBits) {
-                            case 8u: {
-                                uint8 *data = static_cast<uint8 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 8u: {
+                            uint8 *data = static_cast<uint8 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            case 16u: {
-                                uint16 *data = static_cast<uint16 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 16u: {
+                            uint16 *data = static_cast<uint16 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            case 32u: {
-                                uint32 *data = static_cast<uint32 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 32u: {
+                            uint32 *data = static_cast<uint32 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            case 64u: {
-                                uint64 *data = static_cast<uint64 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 64u: {
+                            uint64 *data = static_cast<uint64 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            default: {
-                                // use native standard integer
-                                uint32 *number = static_cast<uint32 *>(dataPointer);
-                                // all the remaining cases here
-                                uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
-                                ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, false, fd);
-                            }
+                        default: {
+                            // use native standard integer
+                            uint32 *number = static_cast<uint32 *>(dataPointer);
+                            // all the remaining cases here
+                            uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
+                            ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, false, fd);
+                        }
                         }
                     }
                     else {
@@ -562,7 +562,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                     ret = PrintToStreamScalar(iobuff, info, newFD);
                 }
                 else {
-                    if(fd.desiredAction != PrintAnything) {
+                    if (fd.desiredAction != PrintAnything) {
                         if (fd.desiredAction != PrintInteger) {
                             REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a signed integer will be printed");
                         }
@@ -570,33 +570,33 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                     //native signed integer types.
                     if (par.GetBitAddress() == 0u) {
                         switch ((par.GetTypeDescriptor()).numberOfBits) {
-                            case 8u: {
-                                int8 *data = static_cast<int8 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 8u: {
+                            int8 *data = static_cast<int8 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            case 16u: {
-                                int16 *data = static_cast<int16 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 16u: {
+                            int16 *data = static_cast<int16 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            case 32u: {
-                                int32 *data = static_cast<int32 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 32u: {
+                            int32 *data = static_cast<int32 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            case 64u: {
-                                int64 *data = static_cast<int64 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 64u: {
+                            int64 *data = static_cast<int64 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            default: {
-                                // use native standard integer
-                                uint32 *number = static_cast<uint32 *>(dataPointer);
-                                uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
-                                // all the remaining cases here
-                                ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, true, fd);
-                            }
+                        default: {
+                            // use native standard integer
+                            uint32 *number = static_cast<uint32 *>(dataPointer);
+                            uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
+                            // all the remaining cases here
+                            ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, true, fd);
+                        }
                         }
                     }
                     else {
@@ -617,32 +617,32 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                     ret = PrintToStreamScalar(iobuff, info, newFD);
                 }
                 else {
-                    if(fd.desiredAction != PrintAnything) {
+                    if (fd.desiredAction != PrintAnything) {
                         if (fd.desiredAction != PrintFloat) {
                             REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a float number will be printed");
                         }
                     }
                     //native float32 types. Float 128 bit is not supported.
                     switch ((par.GetTypeDescriptor()).numberOfBits) {
-                        case 32u: {
-                            float32 *data = static_cast<float32 *>(dataPointer);
-                            ret = FloatToStream(iobuff, *data, fd);
-                        }
+                    case 32u: {
+                        float32 *data = static_cast<float32 *>(dataPointer);
+                        ret = FloatToStream(iobuff, *data, fd);
+                    }
                         break;
-                        case 64u: {
-                            float64 *data = static_cast<float64 *>(dataPointer);
-                            ret = FloatToStream(iobuff, *data, fd);
-                        }
+                    case 64u: {
+                        float64 *data = static_cast<float64 *>(dataPointer);
+                        ret = FloatToStream(iobuff, *data, fd);
+                    }
                         break;
-                        case 128u: {
-                            REPORT_ERROR(ErrorManagement::UnsupportedFeature, "IOBuffer: Unsupported 128 bit floats");
-                            ret = false;
-                        }
+                    case 128u: {
+                        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "IOBuffer: Unsupported 128 bit floats");
+                        ret = false;
+                    }
                         break;
-                        default: {
-                            //REPORT_ERROR(ParametersError,"non standard float32 size")
-                            ret = false;
-                        }
+                    default: {
+                        //REPORT_ERROR(ParametersError,"non standard float32 size")
+                        ret = false;
+                    }
                     }
                 }
             }
@@ -657,7 +657,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                     ret = PrintToStreamScalar(iobuff, info, newFD);
                 }
                 else {
-                    if(fd.desiredAction != PrintAnything) {
+                    if (fd.desiredAction != PrintAnything) {
                         if (fd.desiredAction != PrintPointer) {
                             REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a pointer will be printed");
                         }
@@ -689,7 +689,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                         ret = PrintToStreamScalar(iobuff, at, fd);
                     }
                     else {
-                        if(fd.desiredAction != PrintAnything) {
+                        if (fd.desiredAction != PrintAnything) {
                             if (fd.desiredAction != PrintString) {
                                 REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a string will be printed");
                             }
@@ -709,7 +709,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                     ret = PrintToStreamScalar(iobuff, info, newFD);
                 }
                 else {
-                    if(fd.desiredAction != PrintAnything) {
+                    if (fd.desiredAction != PrintAnything) {
                         if (fd.desiredAction != PrintString) {
                             REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a string will be printed");
                         }
@@ -719,7 +719,9 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                 }
             }
             //general stream type.
-            if (((par.GetTypeDescriptor()).type) == Stream) {
+            bool isStream = (((par.GetTypeDescriptor()).type) == Stream);
+            bool isSString = (((par.GetTypeDescriptor()).type) == SString);
+            if ((isStream) || (isSString)) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Stream";
                     AnyType info = infoName;
@@ -728,7 +730,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                     ret = PrintToStreamScalar(iobuff, info, newFD);
                 }
                 else {
-                    if(fd.desiredAction != PrintAnything) {
+                    if (fd.desiredAction != PrintAnything) {
                         if (fd.desiredAction != PrintString) {
                             REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a stream will be printed");
                         }
@@ -838,9 +840,9 @@ static bool PrintToStreamMatrix(IOBuffer & iobuff,
             if (vectorPointer != NULL) {
                 AnyType vector(descriptor, parIn.GetBitAddress(), vectorPointer);
                 vector.SetNumberOfDimensions(1u);
-                vector.SetNumberOfElements(0u,numberOfColumns);
+                vector.SetNumberOfElements(0u, numberOfColumns);
                 vector.SetStaticDeclared(parIn.IsStaticDeclared());
-                ret=PrintToStreamVector(iobuff, vector, fd);
+                ret = PrintToStreamVector(iobuff, vector, fd);
             }
         }
 
@@ -863,14 +865,14 @@ static bool PrintToStream(IOBuffer & iobuff,
     AnyType par = parIn;
     void* dataPointer = par.GetDataPointer();
     if (dataPointer != NULL) {
-        if(parIn.GetNumberOfDimensions()==2u) {
-            ret=PrintToStreamMatrix(iobuff, parIn, fd);
+        if (parIn.GetNumberOfDimensions() == 2u) {
+            ret = PrintToStreamMatrix(iobuff, parIn, fd);
         }
-        else if(parIn.GetNumberOfDimensions()==1u) {
-            ret=PrintToStreamVector(iobuff, parIn, fd);
+        else if (parIn.GetNumberOfDimensions() == 1u) {
+            ret = PrintToStreamVector(iobuff, parIn, fd);
         }
-        else if(parIn.GetNumberOfDimensions()==0u) {
-            ret=PrintToStreamScalar(iobuff, parIn, fd);
+        else if (parIn.GetNumberOfDimensions() == 0u) {
+            ret = PrintToStreamScalar(iobuff, parIn, fd);
         }
         else {
             REPORT_ERROR(ErrorManagement::FatalError, "PrintToStream: Print of type with dimension > 2 not supported");
