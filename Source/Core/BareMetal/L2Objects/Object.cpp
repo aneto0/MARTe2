@@ -337,7 +337,7 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
                             uint32 memberOffset=sourceMemberIntrospection.GetMemberByteOffset();
                             /*lint -e{9091} -e{923} the casting from pointer type to integer type is
                              * required in order to be able to get a numeric address of the pointer.*/
-                            if(!data.Write("pointer", (reinterpret_cast<uintp>(ptr)+memberOffset))) {
+                            if(!data.Write("pointer", memberOffset)) {
                                 REPORT_ERROR(ErrorManagement::FatalError,"ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
                                 ret=false;
                             }
