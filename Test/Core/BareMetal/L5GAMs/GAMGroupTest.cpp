@@ -50,8 +50,8 @@ bool GAMGroupTest::TestConstructor() {
 
 bool GAMGroupTest::TestAddState() {
     ReferenceT<PIDGAMGroup> gamGroup = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    const uint32 size = 4;
-    StreamString states[4] = { "state1", "state2", "state3", "state4" };
+    const uint32 size = 5;
+    StreamString states[size] = { "state1", "state2", "state3", "state4", "state5" };
     for (uint32 i = 0u; i < size; i++) {
         gamGroup->AddState(states[i].Buffer());
     }

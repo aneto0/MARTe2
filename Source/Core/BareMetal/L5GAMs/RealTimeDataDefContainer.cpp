@@ -95,15 +95,17 @@ bool RealTimeDataDefContainer::MergeWithLocal(StructuredDataI & localData) {
             bool found = false;
             for (uint32 j = 0u; (j < itemsNumber) && (ret) && (!found); j++) {
                 ReferenceT<RealTimeDataDefI> item = Get(j);
-                // if the name are equal go inside the definition
-                if (StringHelper::Compare(item->GetName(), newItemName) == 0) {
-                    if (localData.MoveRelative(newItemName)) {
-                        ret = (item->MergeWithLocal(localData));
-                        if (!localData.MoveToAncestor(1u)) {
-                            ret = false;
+                if (item.IsValid()) {
+                    // if the name are equal go inside the definition
+                    if (StringHelper::Compare(item->GetName(), newItemName) == 0) {
+                        if (localData.MoveRelative(newItemName)) {
+                            ret = (item->MergeWithLocal(localData));
+                            if (!localData.MoveToAncestor(1u)) {
+                                ret = false;
+                            }
                         }
+                        found = true;
                     }
-                    found = true;
                 }
             }
             // if does not exist yet and it is not final add the definition

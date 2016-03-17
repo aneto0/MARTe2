@@ -50,6 +50,11 @@ TEST(RealTimeThreadGTest,TestInitialise) {
     ASSERT_TRUE(rttTest.TestInitialise());
 }
 
+TEST(RealTimeThreadGTest,TestInitialiseFalse_NoFunctions) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestInitialiseFalse_NoFunctions());
+}
+
 TEST(RealTimeThreadGTest,TestConfigureArchitecture) {
     RealTimeThreadTest rttTest;
     ASSERT_TRUE(rttTest.TestConfigureArchitecture());
@@ -68,6 +73,26 @@ TEST(RealTimeThreadGTest,TestConfigureArchitecture_ReferenceContainer) {
 TEST(RealTimeThreadGTest,TestConfigureArchitecture_SingleInGAMGroup) {
     RealTimeThreadTest rttTest;
     ASSERT_TRUE(rttTest.TestConfigureArchitecture_SingleInGAMGroup());
+}
+
+TEST(RealTimeThreadGTest,TestConfigureArchitecture_MoreGAMs) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestConfigureArchitecture_MoreGAMs());
+}
+
+TEST(RealTimeThreadGTest,TestConfigureArchitectureFalse_OrphanGAM) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestConfigureArchitectureFalse_OrphanGAM());
+}
+
+TEST(RealTimeThreadGTest,TestConfigureArchitectureFalse_InvalidGAMType) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestConfigureArchitectureFalse_InvalidGAMType());
+}
+
+TEST(RealTimeThreadGTest,TestConfigureArchitectureFalse_InvalidGAMPath) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestConfigureArchitectureFalse_InvalidGAMPath());
 }
 
 TEST(RealTimeThreadGTest,TestGetNumberOfFunctions) {

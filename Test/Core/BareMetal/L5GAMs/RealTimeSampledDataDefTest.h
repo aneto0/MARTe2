@@ -69,11 +69,14 @@ public:
 
     bool TestVerifyFalse_UnintrospectableType();
 
+    bool TestVerifyFalse_EmptyType();
+
     bool TestGetSamples();
 
     bool TestGetSamplesPerCycle();
 
     bool TestToStructuredData();
+
 
 };
 

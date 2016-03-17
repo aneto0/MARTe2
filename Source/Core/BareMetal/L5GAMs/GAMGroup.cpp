@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-static const uint32 stateNamesGranularity = 8u;
+static const uint32 stateNamesGranularity = 4u;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

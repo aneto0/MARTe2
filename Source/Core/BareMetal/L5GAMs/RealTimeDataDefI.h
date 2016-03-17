@@ -136,6 +136,12 @@ protected:
      */
     StreamString type;
 
+
+    /**
+     * The modifiers
+     */
+    StreamString modifiers;
+
     /**
      * The number of dimensions of this variable
      */

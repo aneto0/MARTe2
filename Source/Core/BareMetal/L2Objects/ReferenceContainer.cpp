@@ -326,15 +326,16 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
             if (data.MoveRelative(childName)) {
                 Reference newObject;
                 ok = newObject.Initialise(data, false);
-                ok = (newObject.IsValid());
                 if (ok) {
-                    newObject->SetName(childName);
-                    ok = ReferenceContainer::Insert(newObject);
+                    ok = (newObject.IsValid());
+                    if (ok) {
+                        newObject->SetName(childName);
+                        ok = ReferenceContainer::Insert(newObject);
+                    }
+                    if (ok) {
+                        ok = data.MoveToAncestor(1u);
+                    }
                 }
-                if (ok) {
-                    ok = data.MoveToAncestor(1u);
-                }
-
             }
             else {
                 //TODO error

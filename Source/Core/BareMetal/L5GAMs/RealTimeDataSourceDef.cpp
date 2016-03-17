@@ -131,7 +131,7 @@ void RealTimeDataSourceDef::SetDefaultValue(const char8* defaultIn) {
     if (defaultIn != NULL) {
         if (defaultValue != "") {
             if (defaultValue != defaultIn) {
-                //TODO Warning default already defined
+                REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "A different default value equal to \"%s\" was set. It will be refreshed by the new one", defaultValue.Buffer())
             }
         }
         defaultValue = defaultIn;
@@ -230,7 +230,7 @@ void **RealTimeDataSourceDef::GetDataSourcePointer(uint8 bufferIndex) {
         ret = &usedBuffer[bufferIndex];
     }
     else {
-        //TODO
+        REPORT_ERROR(ErrorManagement::FatalError, "The RealTimeDataSource memory has to be allocated before calling this function");
     }
 
     return ret;
@@ -354,7 +354,7 @@ bool RealTimeDataSourceDef::Allocate(MemoryArea &dsMemory) {
     uint32 varSize = 0u;
     // structured type
     if (typeDes == InvalidType) {
-        ret = numberOfDimensions == 0u;
+        ret = (numberOfDimensions == 0u);
         if (ret) {
             const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
             ret = (item != NULL);
@@ -365,15 +365,15 @@ bool RealTimeDataSourceDef::Allocate(MemoryArea &dsMemory) {
                     varSize = properties->GetSize();
                 }
                 else {
-                    //TODO ??
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s does not provide ClassProperties", type.Buffer())
                 }
             }
             else {
-                //TODO type not registered
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s is not registered", type.Buffer())
             }
         }
         else {
-            //TODO Multidimensional structures not supported
+            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Unsupported multi-dimensional structured types for the type %s", type.Buffer())
         }
     }
     // basic type
@@ -399,7 +399,7 @@ bool RealTimeDataSourceDef::Allocate(MemoryArea &dsMemory) {
 void RealTimeDataSourceDef::SetNumberOfElements(uint8 dimension,
                                                 uint32 nElements) {
     if (dimension > 2u) {
-        //TODO Warning
+        REPORT_ERROR(ErrorManagement::Warning, "The dimension id in input is too high (max dimension id = 2). The 2nd dimension id will be considered");
         dimension = 2u;
     }
     numberOfElements[dimension] = nElements;
@@ -408,9 +408,70 @@ void RealTimeDataSourceDef::SetNumberOfElements(uint8 dimension,
 
 void RealTimeDataSourceDef::SetNumberOfDimensions(uint8 nDimensions) {
     if (nDimensions > 2u) {
-        //TODO Warning
+        REPORT_ERROR(ErrorManagement::Warning,
+                     "The number of dimensions in input is too high (max number of dimensions = 2). The 2nd dimension will be considered");
+        nDimensions = 2u;
     }
     numberOfDimensions = nDimensions;
+}
+
+uint8 RealTimeDataSourceDef::GetNumberOfDimensions() const {
+    return numberOfDimensions;
+}
+
+uint32 RealTimeDataSourceDef::GetNumberOfElements(uint8 dimension) const {
+    if (dimension > 2u) {
+        REPORT_ERROR(ErrorManagement::Warning, "The dimension id in input is too high (max dimension id = 2). The 2nd dimension id will be considered");
+        dimension = 2u;
+    }
+    return numberOfElements[dimension];
+}
+
+bool RealTimeDataSourceDef::ToStructuredData(StructuredDataI& data) {
+
+    const char8 * name = GetName();
+    bool ret = data.CreateRelative(name);
+    if (ret) {
+        ret = data.Write("Class", "RealTimeDataSourceDef");
+        if (ret) {
+            if (type != "") {
+                ret = data.Write("Type", type);
+            }
+        }
+
+        if (ret) {
+            if (defaultValue != "") {
+                ret = data.Write("Default", defaultValue);
+            }
+        }
+
+        if (ret) {
+            if (numberOfDimensions > 0u) {
+                ret = data.Write("NumberOfDimensions", numberOfDimensions);
+                if (ret) {
+                    ret = data.Write("NumberOfElements", numberOfElements);
+                }
+            }
+        }
+
+        if (ret) {
+            uint32 numberOfChildren = Size();
+            for (uint32 i = 0u; i < numberOfChildren; i++) {
+                Reference child = Get(i);
+                ret = child.IsValid();
+                if (ret) {
+                    if (ret) {
+                        ret = child->ToStructuredData(data);
+                    }
+                }
+            }
+        }
+        if (!data.MoveToAncestor(1u)) {
+            ret = false;
+        }
+    }
+
+    return ret;
 }
 
 CLASS_REGISTER(RealTimeDataSourceDef, "1.0")

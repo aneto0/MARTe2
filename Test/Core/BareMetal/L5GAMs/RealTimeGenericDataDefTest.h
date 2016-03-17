@@ -55,6 +55,8 @@ public:
 
     bool TestMergeWithLocal_AddPath();
 
+    bool TestMergeWithLocal_AddModifiers();
+
     bool TestMergeWithLocal_AddDefaultValues();
 
     bool TestMergeWithLocal_DifferentTypes();
@@ -62,6 +64,8 @@ public:
     bool TestMergeWithLocal_DifferentPaths();
 
     bool TestMergeWithLocal_DifferentDefaultValues();
+
+    bool TestMergeWithLocal_DifferentModifiers();
 
     bool TestGetDefaultValue();
 
@@ -77,6 +81,9 @@ public:
 
     bool TestVerifyFalse_InvalidMemberType();
 
+    bool TestVerifyFalse_InvalidNumberOfMembers();
+
+    bool TestVerifyFalse_EmptyType();
 
 };
 

@@ -174,7 +174,9 @@ bool RealTimeDataSourceDefTest::TestVerifyNoConsumers() {
 
 bool RealTimeDataSourceDefTest::TestGetType() {
     RealTimeDataSourceDef def;
-    def.SetType("A_Type");
+    if (!def.SetType("A_Type")) {
+        return false;
+    }
     return StringHelper::Compare(def.GetType(), "A_Type") == 0;
 }
 
@@ -205,6 +207,21 @@ bool RealTimeDataSourceDefTest::TestAllocate_Basic() {
         return false;
     }
     return true;
+
+}
+
+bool RealTimeDataSourceDefTest::TestSetType_WarningAlreadySet() {
+    RealTimeDataSourceDef def;
+    if (!def.SetType("type1")) {
+        return false;
+    }
+    if (StringHelper::Compare(def.GetType(), "type1") != 0) {
+        return false;
+    }
+    if (def.SetType("type2")) {
+        return false;
+    }
+    return (StringHelper::Compare(def.GetType(), "type1") == 0);
 
 }
 
@@ -387,7 +404,7 @@ bool RealTimeDataSourceDefTest::TestGetDataSourcePointer() {
         return false;
     }
 
-    return true;
+    return (**((uint32**) def.GetDataSourcePointer(2)) == *first) && (**((uint32**) def.GetDataSourcePointer(3)) == *second);
 }
 
 bool RealTimeDataSourceDefTest::TestPrepareNextState_Basic_ContinueVar() {
@@ -699,4 +716,151 @@ bool RealTimeDataSourceDefTest::TestSetDefaultValue() {
 
 bool RealTimeDataSourceDefTest::TestGetDefaultValue() {
     return TestSetDefaultValue();
+}
+
+bool RealTimeDataSourceDefTest::TestSetNumberOfElements() {
+    RealTimeDataSourceDef def;
+    def.SetNumberOfElements(0, 32);
+    if (def.GetNumberOfElements(0) != 32) {
+        return false;
+    }
+
+    def.SetNumberOfElements(1, 32);
+    if (def.GetNumberOfElements(1) != 32) {
+        return false;
+    }
+    def.SetNumberOfElements(2, 32);
+    if (def.GetNumberOfElements(2) != 32) {
+        return false;
+    }
+
+    def.SetNumberOfElements(3, 12);
+    if (def.GetNumberOfElements(2) != 12) {
+        return false;
+    }
+    return true;
+}
+
+bool RealTimeDataSourceDefTest::TestSetNumberOfDimensions() {
+    RealTimeDataSourceDef def;
+    def.SetNumberOfDimensions(0);
+    if (def.GetNumberOfDimensions() != 0) {
+        return false;
+    }
+    def.SetNumberOfDimensions(1);
+    if (def.GetNumberOfDimensions() != 1) {
+        return false;
+    }
+    def.SetNumberOfDimensions(2);
+    if (def.GetNumberOfDimensions() != 2) {
+        return false;
+    }
+    def.SetNumberOfDimensions(3);
+    if (def.GetNumberOfDimensions() != 2) {
+        return false;
+    }
+    return true;
+
+}
+
+bool RealTimeDataSourceDefTest::TestGetNumberOfElements() {
+    RealTimeDataSourceDef def;
+    def.SetNumberOfElements(0, 32);
+    if (def.GetNumberOfElements(0) != 32) {
+        return false;
+    }
+
+    def.SetNumberOfElements(1, 32);
+    if (def.GetNumberOfElements(1) != 32) {
+        return false;
+    }
+    def.SetNumberOfElements(2, 32);
+    if (def.GetNumberOfElements(2) != 32) {
+        return false;
+    }
+
+    def.SetNumberOfElements(2, 12);
+    if (def.GetNumberOfElements(3) != 12) {
+        return false;
+    }
+    return true;
+}
+
+bool RealTimeDataSourceDefTest::TestGetNumberOfDimensions() {
+    return TestSetNumberOfDimensions();
+}
+
+bool RealTimeDataSourceDefTest::TestToStructuredData() {
+    ReferenceT<RealTimeDataSourceDef> def = ReferenceT<RealTimeDataSourceDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def->SetName("DefinitonToPrint");
+
+    ReferenceT<PIDGAM> gamS1_Prod = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    gamS1_Prod->SetName("GAMS1_Prod");
+    def->AddProducer("state1", gamS1_Prod);
+
+    ReferenceT<PIDGAM> gamS1_Cons = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    gamS1_Cons->SetName("GAMS1_Cons");
+    def->AddConsumer("state1", gamS1_Cons);
+
+    ReferenceT<PIDGAM> gamS2_Prod = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    gamS2_Prod->SetName("GAMS2_Prod");
+    def->AddProducer("state2", gamS2_Prod);
+
+    ReferenceT<PIDGAM> gamS2_Cons = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    gamS2_Cons->SetName("GAMS2_Cons");
+    def->AddConsumer("state2", gamS2_Cons);
+
+    def->SetType("uint32");
+    def->SetDefaultValue("{{1,2},{3,4}}");
+    def->SetNumberOfDimensions(2);
+
+    def->SetNumberOfElements(0, 2);
+    def->SetNumberOfElements(1, 2);
+
+    StreamString display;
+    ConfigurationDatabase output;
+    def->ToStructuredData(output);
+    display.Printf("%!", output);
+
+    StreamString test = "DefinitonToPrint = {\n"
+            "Class = RealTimeDataSourceDef\n"
+            "Type = uint32\n"
+            "Default = {{1,2},{3,4}}\n"
+            "NumberOfDimensions = 2\n"
+            "NumberOfElements = { 2 2 1 } \n"
+            "state1 = {\n"
+            "Class = RealTimeDataSourceDefRecord\n"
+            "Producers = {\n"
+            "Class = ReferenceContainer\n"
+            "GAMS1_Prod = {\n"
+            "Class = PIDGAM\n"
+            "}\n"
+            "}\n"
+            "Consumers = {\n"
+            "Class = ReferenceContainer\n"
+            "GAMS1_Cons = {\n"
+            "Class = PIDGAM\n"
+            "}\n"
+            "}\n"
+            "}\n"
+            "state2 = {\n"
+            "Class = RealTimeDataSourceDefRecord\n"
+            "Producers = {\n"
+            "Class = ReferenceContainer\n"
+            "GAMS2_Prod = {\n"
+            "Class = PIDGAM\n"
+            "}\n"
+            "}\n"
+            "Consumers = {\n"
+            "Class = ReferenceContainer\n"
+            "GAMS2_Cons = {\n"
+            "Class = PIDGAM\n"
+            "}\n"
+            "}\n"
+            "}\n"
+            "}\n";
+
+    printf("\n%s\n", display.Buffer());
+    return test == display;
+
 }

@@ -53,6 +53,12 @@ public:
 
     bool TestAddDataDefinition_NotFinal();
 
+    bool TestAddDataDefinitionFalse_NoDefinitionInGAM();
+
+    bool TestAddDataDefinitionFalse_NoDefinitionContainerInGAM();
+
+    bool TestAddDataDefinitionFalse_InvalidGAM();
+
     bool TestVerify();
 
     bool TestVerify_TwoProducers();

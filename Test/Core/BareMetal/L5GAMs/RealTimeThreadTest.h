@@ -51,13 +51,23 @@ public:
 
     bool TestInitialise();
 
+    bool TestInitialiseFalse_NoFunctions();
+
     bool TestConfigureArchitecture();
+
+    bool TestConfigureArchitecture_MoreGAMs();
 
     bool TestConfigureArchitecture_GAMGroup();
 
     bool TestConfigureArchitecture_ReferenceContainer();
 
     bool TestConfigureArchitecture_SingleInGAMGroup();
+
+    bool TestConfigureArchitectureFalse_OrphanGAM();
+
+    bool TestConfigureArchitectureFalse_InvalidGAMType();
+
+    bool TestConfigureArchitectureFalse_InvalidGAMPath();
 
     bool TestGetNumberOfFunctions();
 

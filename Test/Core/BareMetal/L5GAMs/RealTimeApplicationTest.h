@@ -51,21 +51,38 @@ public:
 
     bool TestConfigureArchitecture();
 
+    bool TestConfigureArchitectureFalse_NoStates();
+
     bool TestConfigureDataSource();
+
+    bool TestConfigureDataSourceFalse_NoFunctions();
+
+    bool TestConfigureDataSourceFalse_InvalidFunction();
 
     bool TestValidateDataSource();
 
     bool TestValidateDataSourceFalse_MoreThanOneConsumer();
 
+    bool TestValidateDataSourceFalse_NoData();
+
     bool TestAllocateDataSource();
+
+    bool TestAllocateDataSourceFalse_NoData();
 
     bool TestConfigureDataSourceLinks();
 
+    bool TestConfigureDataSourceLinksFalse_NoFunctions();
+
+    bool TestConfigureDataSourceLinksFalse_InvalidFunction();
+
     bool TestPrepareNextState();
+
+    bool TestPrepareNextStateFalse_NoData();
 
     bool TestChangeState();
 
     bool TestGetActiveBuffer();
+
 
 
 };

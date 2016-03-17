@@ -50,6 +50,11 @@ TEST(RealTimeStateGTest,TestConfigureArchitecture) {
     ASSERT_TRUE(rtsTest.TestConfigureArchitecture());
 }
 
+TEST(RealTimeStateGTest,TestConfigureArchitectureFalse_NoThreads) {
+    RealTimeStateTest rtsTest;
+    ASSERT_TRUE(rtsTest.TestConfigureArchitectureFalse_NoThreads());
+}
+
 TEST(RealTimeStateGTest,TestConfigureArchitecture_SingleInGAMGroup) {
     RealTimeStateTest rtsTest;
     ASSERT_TRUE(rtsTest.TestConfigureArchitecture_SingleInGAMGroup());

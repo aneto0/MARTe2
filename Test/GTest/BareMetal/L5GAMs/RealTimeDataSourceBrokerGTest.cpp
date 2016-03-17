@@ -63,14 +63,36 @@ TEST(RealTimeDataSourceBrokerGTest,TestAddVariable_Static) {
     ASSERT_TRUE(rtdsbTest.TestAddVariable_Static());
 }
 
+
+TEST(RealTimeDataSourceBrokerGTest,TestAddVariable_Allocation_BasicType) {
+    RealTimeDataSourceBrokerTest rtdsbTest;
+    ASSERT_TRUE(rtdsbTest.TestAddVariable_Allocation_BasicType());
+}
+
+TEST(RealTimeDataSourceBrokerGTest,TestAddVariable_Static_BasicType) {
+    RealTimeDataSourceBrokerTest rtdsbTest;
+    ASSERT_TRUE(rtdsbTest.TestAddVariable_Static_BasicType());
+}
+
+
+TEST(RealTimeDataSourceBrokerGTest,TestAddVariableFalse_InvalidDef) {
+    RealTimeDataSourceBrokerTest rtdsbTest;
+    ASSERT_TRUE(rtdsbTest.TestAddVariableFalse_InvalidDef());
+}
+
 TEST(RealTimeDataSourceBrokerGTest,TestAddVariableFalse_NoApplicationSet) {
     RealTimeDataSourceBrokerTest rtdsbTest;
     ASSERT_TRUE(rtdsbTest.TestAddVariableFalse_NoApplicationSet());
 }
 
+TEST(RealTimeDataSourceBrokerGTest,TestAddVariableFalse_NoDataInApplication) {
+    RealTimeDataSourceBrokerTest rtdsbTest;
+    ASSERT_TRUE(rtdsbTest.TestAddVariableFalse_NoDataInApplication());
+}
+
 TEST(RealTimeDataSourceBrokerGTest,TestAddVariableFalse_InvalidType) {
     RealTimeDataSourceBrokerTest rtdsbTest;
-    ASSERT_TRUE(rtdsbTest.TestAddVariableFalse_InvalidType());
+    ASSERT_TRUE(rtdsbTest.TestAddVariableFalse_UnregisteredType());
 }
 
 TEST(RealTimeDataSourceBrokerGTest,TestAddVariableFalse_UnintrospectableType) {
@@ -101,6 +123,16 @@ TEST(RealTimeDataSourceBrokerGTest,TestAddVariable_MultiDimensional_Allocation_M
 TEST(RealTimeDataSourceBrokerGTest,TestAddVariable_MultiDimensional_Static_Matrix) {
     RealTimeDataSourceBrokerTest rtdsbTest;
     ASSERT_TRUE(rtdsbTest.TestAddVariable_MultiDimensional_Static_Matrix());
+}
+
+TEST(RealTimeDataSourceBrokerGTest,TestAddVariableFalse_UnsupportedMultidimStructured) {
+    RealTimeDataSourceBrokerTest rtdsbTest;
+    ASSERT_TRUE(rtdsbTest.TestAddVariableFalse_UnsupportedMultidimStructured());
+}
+
+TEST(RealTimeDataSourceBrokerGTest,TestAddVariableFalse_UnfoundMember) {
+    RealTimeDataSourceBrokerTest rtdsbTest;
+    ASSERT_TRUE(rtdsbTest.TestAddVariableFalse_UnfoundMember());
 }
 
 TEST(RealTimeDataSourceBrokerGTest,TestGetData_Allocation) {

@@ -92,6 +92,18 @@ bool RealTimeSampledDataDef::MergeWithLocal(StructuredDataI &localData) {
             if (!localData.Read("Samples", samples)) {
             }
         }
+
+        if (modifiers == "") {
+            if (localData.Read("Modifiers", modifiers)) {
+                // use introspection entry to parse the modifiers
+                IntrospectionEntry entry("", "", modifiers.Buffer(), "", 0u, 0u);
+                numberOfDimensions = entry.GetNumberOfDimensions();
+                for (uint32 i = 0u; i < 3u; i++) {
+                    numberOfElements[i] = entry.GetNumberOfElements(i);
+                }
+            }
+        }
+
         if (samplesPerCycle == 0) {
             if (!localData.Read("SamplesPerCycle", samplesPerCycle)) {
             }
@@ -143,11 +155,20 @@ bool RealTimeSampledDataDef::ToStructuredData(StructuredDataI & data) {
             }
         }
         if (ret) {
+            if (numberOfDimensions > 0u) {
+                ret = data.Write("NumberOfDimensions", numberOfDimensions);
+                if (ret) {
+                    ret = data.Write("NumberOfElements", numberOfElements);
+                }
+            }
+        }
+        if (ret) {
             ret = data.Write("Samples", samples);
         }
         if (ret) {
             ret = data.Write("SamplesPerCycle", samplesPerCycle);
         }
+
         if (!data.MoveToAncestor(1u)) {
             ret = false;
         }

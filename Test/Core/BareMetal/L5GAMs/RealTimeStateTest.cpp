@@ -109,6 +109,42 @@ bool RealTimeStateTest::TestConfigureArchitecture_SingleInGAMGroup() {
 
 }
 
+bool RealTimeStateTest::TestConfigureArchitectureFalse_NoThreads() {
+
+    ConfigurationDatabase cdb;
+
+// application
+    cdb.CreateAbsolute("$Application1");
+    cdb.Write("Class", "RealTimeApplication");
+
+// state 1
+    cdb.CreateAbsolute("$Application1.+States");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateAbsolute("$Application1.+States.+State1");
+    cdb.Write("Class", "RealTimeState");
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threadss");
+    cdb.Write("Class", "ReferenceContainer");
+
+// state 1 threads
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threadss.+Thread1");
+    cdb.Write("Class", "RealTimeThread");
+    const char8 *functionsT1[2] = { ":+Functions.+GAM1", ":+Functions.+GAM2" };
+    cdb.Write("Functions", functionsT1);
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threadss.+Thread2");
+    cdb.Write("Class", "RealTimeThread");
+    const char8 *functionsT2[1] = { ":+Functions.+PIDGroup1" };
+    cdb.Write("Functions", functionsT2);
+    cdb.MoveToRoot();
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Initialise(cdb);
+
+    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+States.+State1");
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("$Application1");
+
+    return (!state1->ConfigureArchitecture(*app.operator->()));
+
+}
+
 bool RealTimeStateTest::TestInsertFunction() {
     RealTimeState state;
 
@@ -213,14 +249,12 @@ bool RealTimeStateTest::TestChangeState() {
         gamGroup[i]->Initialise(empty);
     }
 
-
     RealTimeStateInfo info;
     info.activeBuffer = 0;
     info.currentState = "state1";
     info.nextState = "state2";
 
     state.PrepareState(info);
-
 
     for (uint32 i = 0; i < size; i++) {
         if (gamGroup[i]->GetContext() != 2) {

@@ -133,6 +133,11 @@ TEST(RealTimeSampledDataDefGTest,TestVerifyFalse_UnintrospectableType) {
     ASSERT_TRUE(rtsdTest.TestVerifyFalse_UnintrospectableType());
 }
 
+TEST(RealTimeSampledDataDefGTest,TestVerifyFalse_EmptyType) {
+    RealTimeSampledDataDefTest rtsdTest;
+    ASSERT_TRUE(rtsdTest.TestVerifyFalse_EmptyType());
+}
+
 TEST(RealTimeSampledDataDefGTest,TestGetSamples) {
     RealTimeSampledDataDefTest rtsdTest;
     ASSERT_TRUE(rtsdTest.TestGetSamples());

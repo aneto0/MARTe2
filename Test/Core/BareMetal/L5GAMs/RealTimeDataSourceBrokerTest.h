@@ -54,9 +54,15 @@ public:
 
     bool TestAddVariable_Static();
 
+    bool TestAddVariable_Allocation_BasicType();
+
+    bool TestAddVariable_Static_BasicType();
+
     bool TestAddVariableFalse_NoApplicationSet();
 
-    bool TestAddVariableFalse_InvalidType();
+    bool TestAddVariableFalse_NoDataInApplication();
+
+    bool TestAddVariableFalse_InvalidDef();
 
     bool TestAddVariableFalse_UnintrospectableType();
 
@@ -69,6 +75,12 @@ public:
     bool TestAddVariable_MultiDimensional_Static_Matrix();
 
     bool TestAddVariable_MultiDimensional_Allocation_Matrix();
+
+    bool TestAddVariableFalse_UnsupportedMultidimStructured();
+
+    bool TestAddVariableFalse_UnregisteredType();
+
+    bool TestAddVariableFalse_UnfoundMember();
 
     bool TestGetData_Allocation();
 

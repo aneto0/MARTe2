@@ -62,6 +62,8 @@ public:
 
     bool TestSetType();
 
+    bool TestSetType_WarningAlreadySet();
+
     bool TestAllocate_Basic();
 
     bool TestAllocate_Structured();
@@ -91,6 +93,16 @@ public:
     bool TestSetDefaultValue();
 
     bool TestGetDefaultValue();
+
+    bool TestSetNumberOfElements();
+
+    bool TestSetNumberOfDimensions();
+
+    bool TestGetNumberOfElements();
+
+    bool TestGetNumberOfDimensions();
+
+    bool TestToStructuredData();
 
 };
 

@@ -76,6 +76,11 @@ TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_AddPath) {
     ASSERT_TRUE(rtgdTest.TestMergeWithLocal_AddPath());
 }
 
+TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_AddModifiers) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestMergeWithLocal_AddModifiers());
+}
+
 TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_AddDefaultValues) {
     RealTimeGenericDataDefTest rtgdTest;
     ASSERT_TRUE(rtgdTest.TestMergeWithLocal_AddDefaultValues());
@@ -89,6 +94,11 @@ TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_DifferentTypes) {
 TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_DifferentPaths) {
     RealTimeGenericDataDefTest rtgdTest;
     ASSERT_TRUE(rtgdTest.TestMergeWithLocal_DifferentPaths());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_DifferentModifiers) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestMergeWithLocal_DifferentModifiers());
 }
 
 TEST(RealTimeGenericDataDefGTest,TestGetDefaultValue) {
@@ -131,3 +141,12 @@ TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_DifferentDefaultValues) {
     ASSERT_TRUE(rtgdTest.TestMergeWithLocal_DifferentDefaultValues());
 }
 
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_InvalidNumberOfMembers) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_InvalidNumberOfMembers());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_EmptyType) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_EmptyType());
+}

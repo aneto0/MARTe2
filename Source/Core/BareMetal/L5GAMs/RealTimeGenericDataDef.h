@@ -75,6 +75,7 @@ public:
     /**
      * @brief Converts this object in a StructuredData.
      * @param[in] data contains the configuration data.
+     * @return false in case of errors, true otherwise.
      */
     virtual bool ToStructuredData(StructuredDataI& data);
 

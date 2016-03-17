@@ -391,6 +391,23 @@ bool RealTimeSampledDataDefTest::TestVerifyFalse_UnintrospectableType() {
     return !def->Verify();
 }
 
+bool RealTimeSampledDataDefTest::TestVerifyFalse_EmptyType() {
+    ConfigurationDatabase cdb;
+    cdb.Write("Class", "RealTimeSampledDataDef");
+    cdb.Write("IsFinal", "true");
+    int32 samples = 10;
+    int32 samplesPerCycle = 3;
+    cdb.Write("Samples", samples);
+    cdb.Write("SamplesPerCycle", samplesPerCycle);
+    ReferenceT<RealTimeSampledDataDef> def = ReferenceT<RealTimeSampledDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def->SetName("ADC");
+    if (!def->Initialise(cdb)) {
+        return false;
+    }
+    return !def->Verify();
+
+}
+
 bool RealTimeSampledDataDefTest::TestGetSamples() {
 
     RealTimeSampledDataDef def;
@@ -429,6 +446,7 @@ bool RealTimeSampledDataDefTest::TestToStructuredData() {
 
     cdb.Write("Type", "ControlIn");
     cdb.Write("Path", "DDB.control");
+    cdb.Write("Modifiers", "[2][3]");
     int32 samplesPerCycle = 1;
     cdb.Write("SamplesPerCycle", samplesPerCycle);
     int32 samples = 2;
@@ -450,6 +468,8 @@ bool RealTimeSampledDataDefTest::TestToStructuredData() {
             "Class = RealTimeSampledDataDef\n"
             "Type = ControlIn\n"
             "Path = DDB.control\n"
+            "NumberOfDimensions = 2\n"
+            "NumberOfElements = { 3 2 1 } \n"
             "Samples = 2\n"
             "SamplesPerCycle = 1\n"
             "}\n";

@@ -70,6 +70,21 @@ TEST(RealTimeDataSourceGTest,TestAddDataDefinition_AlreadyExistentLeaf) {
     ASSERT_TRUE(rtdsdcTest.TestAddDataDefinition_AlreadyExistentLeaf());
 }
 
+TEST(RealTimeDataSourceGTest,TestAddDataDefinitionFalse_NoDefinitionInGAM) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinitionFalse_NoDefinitionInGAM());
+}
+
+TEST(RealTimeDataSourceGTest,TestAddDataDefinitionFalse_NoDefinitionContainerInGAM) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinitionFalse_NoDefinitionContainerInGAM());
+}
+
+TEST(RealTimeDataSourceGTest,TestAddDataDefinitionFalse_InvalidGAM) {
+    RealTimeDataSourceTest rtdsdcTest;
+    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinitionFalse_InvalidGAM());
+}
+
 TEST(RealTimeDataSourceGTest,TestVerify) {
     RealTimeDataSourceTest rtdsdcTest;
     ASSERT_TRUE(rtdsdcTest.TestVerify());

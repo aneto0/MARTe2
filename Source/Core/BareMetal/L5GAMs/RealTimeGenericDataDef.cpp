@@ -159,6 +159,16 @@ bool RealTimeGenericDataDef::ToStructuredData(StructuredDataI& data) {
                 data.Write("Default", defaultValue);
             }
         }
+
+        if (ret) {
+            if (numberOfDimensions > 0u) {
+                ret = data.Write("NumberOfDimensions", numberOfDimensions);
+                if (ret) {
+                    ret = data.Write("NumberOfElements", numberOfElements);
+                }
+            }
+        }
+
         if (ret) {
             uint32 numberOfChildren = Size();
             for (uint32 i = 0u; i < numberOfChildren; i++) {
@@ -198,6 +208,17 @@ bool RealTimeGenericDataDef::MergeWithLocal(StructuredDataI & localData) {
         // the same with the default value
         if (defaultValue == "") {
             if (!localData.Read("Default", defaultValue)) {
+            }
+        }
+
+        if (modifiers == "") {
+            if (localData.Read("Modifiers", modifiers)) {
+                // use introspection entry to parse the modifiers
+                IntrospectionEntry entry("", "", modifiers.Buffer(), "", 0u, 0u);
+                numberOfDimensions = entry.GetNumberOfDimensions();
+                for (uint32 i = 0u; i < 3u; i++) {
+                    numberOfElements[i] = entry.GetNumberOfElements(i);
+                }
             }
         }
 
@@ -241,7 +262,7 @@ bool RealTimeGenericDataDef::MergeWithLocal(StructuredDataI & localData) {
             }
         }
     }
-    else{
+    else {
         REPORT_ERROR(ErrorManagement::FatalError, "Trying to merge a final definition with local configuration data");
     }
     return ret;

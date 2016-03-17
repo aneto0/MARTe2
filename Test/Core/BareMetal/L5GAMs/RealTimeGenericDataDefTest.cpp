@@ -83,6 +83,7 @@ bool RealTimeGenericDataDefTest::TestMergeWithLocal() {
     cdb.Write("Class", "RealTimeGenericDataDef");
     cdb.Write("Type", "uint32");
     cdb.Write("Path", "PidControl2");
+    cdb.Write("Modifiers", "[2][3]");
     cdb.Write("Default", "1");
     cdb.Write("IsFinal", "true");
     cdb.MoveToRoot();
@@ -113,6 +114,8 @@ bool RealTimeGenericDataDefTest::TestMergeWithLocal() {
             "Type = uint32\n"
             "Path = PidControl2\n"
             "Default = 1\n"
+            "NumberOfDimensions = 2\n"
+            "NumberOfElements = { 3 2 1 } \n"
             "}\n"
             "+Par1 = {\n"
             "Class = RealTimeGenericDataDef\n"
@@ -337,6 +340,82 @@ bool RealTimeGenericDataDefTest::TestMergeWithLocal_AddPath() {
             "Type = uint32\n"
             "Path = DDB2.PidControl1\n"
             "Default = 1\n"
+            "}\n"
+            "}\n";
+
+    printf("|%s|\n|%s|", display.Buffer(), testOut.Buffer());
+
+    return testOut == display;
+}
+
+bool RealTimeGenericDataDefTest::TestMergeWithLocal_AddModifiers() {
+    ConfigurationDatabase localData;
+
+    localData.Write("Class", "RealTimeGenericDataDef");
+    localData.Write("Type", "ControlIn");
+    localData.Write("IsFinal", "false");
+    localData.CreateAbsolute("+Par1");
+    localData.Write("Modifiers", "[2][3]");
+    localData.Write("Class", "RealTimeGenericDataDef");
+    localData.Write("Type", "uint32");
+    localData.Write("Path", "DDB2.PidControl1");
+    localData.Write("Default", "1");
+    localData.Write("IsFinal", "false");
+    localData.MoveToRoot();
+
+    ConfigurationDatabase cdb;
+
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlIn");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "PidControl2");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "true");
+    cdb.CreateAbsolute("+Par1");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "DDB2.PidControl1");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "false");
+    cdb.MoveToRoot();
+
+    ReferenceT<RealTimeGenericDataDef> test = ReferenceT<RealTimeGenericDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    test->SetName("Control");
+    if (!test->Initialise(cdb)) {
+        return false;
+    }
+
+    if (!test->MergeWithLocal(localData)) {
+        return false;
+    }
+
+    ConfigurationDatabase out;
+    test->ToStructuredData(out);
+
+    //out.MoveToRoot();
+    StreamString display;
+
+    display.Printf("%!", out);
+
+    StreamString testOut = "Control = {\n"
+            "Class = RealTimeGenericDataDef\n"
+            "Type = ControlIn\n"
+            "+Par2 = {\n"
+            "Class = RealTimeGenericDataDef\n"
+            "Type = uint32\n"
+            "Path = PidControl2\n"
+            "Default = 1\n"
+            "}\n"
+            "+Par1 = {\n"
+            "Class = RealTimeGenericDataDef\n"
+            "Type = uint32\n"
+            "Path = DDB2.PidControl1\n"
+            "Default = 1\n"
+            "NumberOfDimensions = 2\n"
+            "NumberOfElements = { 3 2 1 } \n"
             "}\n"
             "}\n";
 
@@ -635,6 +714,83 @@ bool RealTimeGenericDataDefTest::TestMergeWithLocal_DifferentDefaultValues() {
 
 }
 
+bool RealTimeGenericDataDefTest::TestMergeWithLocal_DifferentModifiers() {
+    ConfigurationDatabase localData;
+
+    localData.Write("Class", "RealTimeGenericDataDef");
+    localData.Write("Type", "ControlIn");
+    localData.Write("IsFinal", "false");
+    localData.CreateAbsolute("+Par1");
+    localData.Write("Class", "RealTimeGenericDataDef");
+    localData.Write("Type", "uint32");
+    localData.Write("Path", "DDB2.PidControl1");
+    localData.Write("Default", "1");
+    localData.Write("IsFinal", "true");
+    localData.CreateAbsolute("+Par2");
+    localData.Write("Class", "RealTimeGenericDataDef");
+    localData.Write("Type", "uint32");
+    localData.Write("Path", "PidControl2");
+    localData.Write("Modifiers", "[3]");
+    localData.Write("Default", "1");
+    localData.Write("IsFinal", "false");
+    localData.MoveToRoot();
+
+    ConfigurationDatabase cdb;
+
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlIn");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "PidControl2");
+    cdb.Write("Modifiers", "[2][3]");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "false");
+    cdb.MoveToRoot();
+
+    ReferenceT<RealTimeGenericDataDef> test = ReferenceT<RealTimeGenericDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    test->SetName("Control");
+    if (!test->Initialise(cdb)) {
+        return false;
+    }
+
+    if (!test->MergeWithLocal(localData)) {
+        return false;
+    }
+
+    ConfigurationDatabase out;
+    test->ToStructuredData(out);
+
+    //out.MoveToRoot();
+    StreamString display;
+
+    display.Printf("%!", out);
+
+    StreamString testOut = "Control = {\n"
+            "Class = RealTimeGenericDataDef\n"
+            "Type = ControlIn\n"
+            "+Par2 = {\n"
+            "Class = RealTimeGenericDataDef\n"
+            "Type = uint32\n"
+            "Path = PidControl2\n"
+            "Default = 1\n"
+            "NumberOfDimensions = 2\n"
+            "NumberOfElements = { 3 2 1 } \n"
+            "}\n"
+            "+Par1 = {\n"
+            "Class = RealTimeGenericDataDef\n"
+            "Type = uint32\n"
+            "Path = DDB2.PidControl1\n"
+            "Default = 1\n"
+            "}\n"
+            "}\n";
+
+    printf("|%s|\n|%s|", display.Buffer(), testOut.Buffer());
+
+    return testOut == display;
+}
+
 bool RealTimeGenericDataDefTest::TestGetDefaultValue() {
     ConfigurationDatabase cdb;
     const char8* defaultValue = "\"member_1=1\n"
@@ -662,6 +818,7 @@ bool RealTimeGenericDataDefTest::TestToStructuredData() {
     cdb.CreateAbsolute("+Par2");
     cdb.Write("Class", "RealTimeGenericDataDef");
     cdb.Write("Type", "uint32");
+    cdb.Write("Modifiers","[2][2]");
     cdb.Write("Path", "PidControl2");
     cdb.Write("Default", "1");
     cdb.Write("IsFinal", "true");
@@ -690,6 +847,8 @@ bool RealTimeGenericDataDefTest::TestToStructuredData() {
             "Type = uint32\n"
             "Path = PidControl2\n"
             "Default = 1\n"
+            "NumberOfDimensions = 2\n"
+            "NumberOfElements = { 2 2 1 } \n"
             "}\n"
             "}\n";
 
@@ -847,6 +1006,71 @@ bool RealTimeGenericDataDefTest::TestVerifyFalse_InvalidMemberType() {
     cdb.CreateAbsolute("+Par2");
     cdb.Write("Class", "RealTimeGenericDataDef");
     cdb.Write("Type", "float32");
+    cdb.Write("Path", "PidControl2");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "true");
+    cdb.MoveToRoot();
+
+    ReferenceT<RealTimeGenericDataDef> test = ReferenceT<RealTimeGenericDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    test->SetName("Control");
+    if (!test->Initialise(cdb)) {
+        return false;
+    }
+
+    return !(test->Verify());
+
+}
+
+bool RealTimeGenericDataDefTest::TestVerifyFalse_InvalidNumberOfMembers() {
+    ConfigurationDatabase cdb;
+
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlIn");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Par1");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "DDB2.PidControl1");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "true");
+    cdb.CreateAbsolute("+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "PidControl2");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "true");
+    cdb.CreateAbsolute("+Par3");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "PidControl3");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "true");
+    cdb.MoveToRoot();
+
+    ReferenceT<RealTimeGenericDataDef> test = ReferenceT<RealTimeGenericDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    test->SetName("Control");
+    if (!test->Initialise(cdb)) {
+        return false;
+    }
+
+    return !(test->Verify());
+
+}
+
+bool RealTimeGenericDataDefTest::TestVerifyFalse_EmptyType() {
+    ConfigurationDatabase cdb;
+
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Par1");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "DDB2.PidControl1");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "true");
+    cdb.CreateAbsolute("+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
     cdb.Write("Path", "PidControl2");
     cdb.Write("Default", "1");
     cdb.Write("IsFinal", "true");

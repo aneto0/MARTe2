@@ -180,6 +180,24 @@ public:
      */
     void SetNumberOfDimensions(uint8 nDimensions);
 
+    /**
+     * @brief Retrieves the number of dimensions of this type definition (0=scalar, 1=vector, 2=matrix)
+     * @return the number of dimensions of this type definition.
+     */
+    uint8 GetNumberOfDimensions() const;
+
+    /**
+     * @brief Retrieves the number of elements belonging to a specific dimension.
+     * @return the number of elements belonging to a specific dimension.
+     */
+    uint32 GetNumberOfElements(uint8 dimension) const;
+
+    /**
+     * @brief Converts this object in a StructuredData.
+     * @param[in] data contains the configuration data.
+     * @return false in case of errors, true otherwise.
+     */
+    virtual bool ToStructuredData(StructuredDataI & data);
 private:
 
     /**

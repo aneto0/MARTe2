@@ -273,7 +273,7 @@ uint32 Object::NumberOfReferences() const {
 
 /*lint -e{715} data is not used as this is not implemented on purpose*/
 bool Object::Initialise(StructuredDataI &data) {
-    return false;
+    return true;
 }
 
 //LCOV_EXCL_START

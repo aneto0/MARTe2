@@ -90,6 +90,11 @@ TEST(RealTimeDataSourceDefGTest,TestSetType) {
     ASSERT_TRUE(rtdsdTest.TestSetType());
 }
 
+TEST(RealTimeDataSourceDefGTest,TestSetType_WarningAlreadySet) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestSetType_WarningAlreadySet());
+}
+
 TEST(RealTimeDataSourceDefGTest,TestAllocate_Basic) {
     RealTimeDataSourceDefTest rtdsdTest;
     ASSERT_TRUE(rtdsdTest.TestAllocate_Basic());
@@ -165,3 +170,27 @@ TEST(RealTimeDataSourceDefGTest,TestGetDefaultValue) {
     ASSERT_TRUE(rtdsdTest.TestGetDefaultValue());
 }
 
+TEST(RealTimeDataSourceDefGTest,TestSetNumberOfElements) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestSetNumberOfElements());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestSetNumberOfDimensions) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestSetNumberOfDimensions());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestGetNumberOfElements) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestGetNumberOfElements());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestGetNumberOfDimensions) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestGetNumberOfDimensions());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestToStructuredData) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestToStructuredData());
+}

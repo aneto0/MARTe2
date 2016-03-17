@@ -51,9 +51,6 @@ RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord() {
         if (Insert(prod)) {
             producers = prod;
         }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Failed in creation of the producers container");
-        }
     }
 
     ReferenceT<ReferenceContainer> cons(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -61,9 +58,6 @@ RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord() {
     if (cons.IsValid()) {
         if (Insert(cons)) {
             consumers = cons;
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Failed in creation of the consumers container");
         }
     }
 }

@@ -53,6 +53,8 @@ public:
 
     bool TestConfigureArchitecture_SingleInGAMGroup();
 
+    bool TestConfigureArchitectureFalse_NoThreads();
+
     bool TestInsertFunction();
 
     bool TestAddGAMGroup();

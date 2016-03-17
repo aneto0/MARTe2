@@ -54,7 +54,7 @@ void RealTimeDataSourceBroker::SetApplication(RealTimeApplication &rtApp) {
 bool RealTimeDataSourceBroker::AddVariable(ReferenceT<RealTimeDataDefI> def,
                                            void* ptr) {
 
-    bool ret = false;
+    bool ret = true;
     void *memStart = NULL;
     if (ptr != NULL) {
         ret = beginPointers.Add(ptr);
@@ -71,7 +71,6 @@ bool RealTimeDataSourceBroker::AddVariable(ReferenceT<RealTimeDataDefI> def,
             ret = AddVariablePrivate(def, ptr, memStart);
         }
     }
-
     return ret;
 }
 
@@ -104,7 +103,7 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                 // offset used in recursion
                 uint32 offset = 0u;
                 if (ptr != NULL) {
-                    offset = static_cast<uint32>((uintp) ptr - (uintp) memStart);
+                    offset = static_cast<uint32>(reinterpret_cast<uintp>(ptr)- reinterpret_cast<uintp>(memStart));
                 }
 
                 uint32 varSize = 0u;
@@ -129,6 +128,7 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                                 }
                             }
                             else {
+                                // this should never happen if we call before RealTimeDataSource.Allocate()
                                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Unsupported multi-dimensional structure %s", def->GetName())
                             }
 
@@ -156,10 +156,11 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                                                 }
                                             }
                                         }
+                                        // this should never happen if we call before RealTimeDataDefI.Verify()
                                         if (!found) {
                                             ret = false;
                                             REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                                    "Member %s of %s does not matches with introspection of its type %s",
+                                                    "Member %s of %s  with type %s does not matches with the introspection data",
                                                     (*intro)[i].GetMemberName(), def->GetName(), def->GetType())
                                         }
                                     }

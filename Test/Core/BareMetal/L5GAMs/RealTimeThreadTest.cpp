@@ -93,6 +93,13 @@ bool RealTimeThreadTest::TestInitialise() {
 
 }
 
+bool RealTimeThreadTest::TestInitialiseFalse_NoFunctions() {
+    ConfigurationDatabase cdb;
+
+    RealTimeThread test;
+    return (!test.Initialise(cdb));
+}
+
 bool RealTimeThreadTest::TestConfigureArchitecture() {
 
     ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+States.+State1.+Threads.+Thread1");
@@ -121,6 +128,84 @@ bool RealTimeThreadTest::TestConfigureArchitecture() {
     if (gam2->GetSupportedStates()[0] != "+State1") {
         return false;
     }
+
+    return true;
+}
+
+bool RealTimeThreadTest::TestConfigureArchitecture_MoreGAMs() {
+    ConfigurationDatabase cdb;
+
+    // application
+    cdb.CreateAbsolute("$Application1");
+    cdb.Write("Class", "RealTimeApplication");
+    //functions
+    cdb.CreateAbsolute("$Application1.+Functions");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM1");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM2");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1");
+    cdb.Write("Class", "PIDGAMGroup");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM3");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM4");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer");
+    cdb.Write("Class", "ReferenceContainer");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM6");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2");
+    cdb.Write("Class", "PIDGAMGroup");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8");
+    cdb.Write("Class", "PIDGAM");
+
+    // state 1
+    cdb.CreateAbsolute("$Application1.+States");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateAbsolute("$Application1.+States.+State1");
+    cdb.Write("Class", "RealTimeState");
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threads");
+    cdb.Write("Class", "ReferenceContainer");
+
+    // state 1 threads
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread1");
+    cdb.Write("Class", "RealTimeThread");
+    const char8 *functionsT1[6] = { ":+Functions.+GAM1", ":+Functions.+GAM2", ":+Functions.+PIDGroup1", ":+Functions.+GAMContainer",
+            ":+Functions.+PIDGroup2.+GAM7", ":+Functions.+PIDGroup2.+GAM8" };
+    cdb.Write("Functions", functionsT1);
+
+    // data
+    cdb.CreateAbsolute("$Application1.+Data");
+    cdb.Write("Class", "RealTimeDataSource");
+    cdb.Write("IsFinal", "false");
+    cdb.MoveToRoot();
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+States.+State1.+Threads.+Thread1");
+
+    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+States.+State1");
+
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("$Application1");
+
+    if (!thread1->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
+        return false;
+    }
+
+    if (thread1->GetNumberOfGAMs() != 8) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
 
     return true;
 }
@@ -218,6 +303,233 @@ bool RealTimeThreadTest::TestConfigureArchitecture_SingleInGAMGroup() {
         return false;
     }
 
+    return true;
+}
+
+bool RealTimeThreadTest::TestConfigureArchitectureFalse_OrphanGAM() {
+    ConfigurationDatabase cdb;
+
+    // application
+
+    cdb.CreateAbsolute("+GAM1");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1");
+    cdb.Write("Class", "RealTimeApplication");
+    //functions
+    cdb.CreateAbsolute("$Application1.+Functions");
+    cdb.Write("Class", "ReferenceContainer");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM2");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1");
+    cdb.Write("Class", "PIDGAMGroup");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM3");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM4");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer");
+    cdb.Write("Class", "ReferenceContainer");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM6");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2");
+    cdb.Write("Class", "PIDGAMGroup");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8");
+    cdb.Write("Class", "PIDGAM");
+
+    // state 1
+    cdb.CreateAbsolute("$Application1.+States");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateAbsolute("$Application1.+States.+State1");
+    cdb.Write("Class", "RealTimeState");
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threads");
+    cdb.Write("Class", "ReferenceContainer");
+
+    // state 1 threads
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread1");
+    cdb.Write("Class", "RealTimeThread");
+    const char8 *functionsT1[6] = { "::+GAM1", ":+Functions.+GAM2", ":+Functions.+PIDGroup1", ":+Functions.+GAMContainer", ":+Functions.+PIDGroup2.+GAM7",
+            ":+Functions.+PIDGroup2.+GAM8" };
+    cdb.Write("Functions", functionsT1);
+
+    // data
+    cdb.CreateAbsolute("$Application1.+Data");
+    cdb.Write("Class", "RealTimeDataSource");
+    cdb.Write("IsFinal", "false");
+    cdb.MoveToRoot();
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Initialise(cdb);
+
+    printf("\nsize ordb= %d\n", ObjectRegistryDatabase::Instance()->Size());
+    ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+States.+State1.+Threads.+Thread1");
+
+    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+States.+State1");
+
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("$Application1");
+
+    if (thread1->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    return true;
+}
+
+bool RealTimeThreadTest::TestConfigureArchitectureFalse_InvalidGAMType() {
+    ConfigurationDatabase cdb;
+
+    // application
+    cdb.CreateAbsolute("$Application1");
+    cdb.Write("Class", "RealTimeApplication");
+    //functions
+    cdb.CreateAbsolute("$Application1.+Functions");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM1");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM2");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1");
+    cdb.Write("Class", "PIDGAMGroup");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM3");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM4");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer");
+    cdb.Write("Class", "ReferenceContainer");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5");
+    cdb.Write("Class", "PIDGAM");
+
+    //invalid here
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM6");
+    cdb.Write("Class", "Object");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2");
+    cdb.Write("Class", "PIDGAMGroup");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8");
+    cdb.Write("Class", "PIDGAM");
+
+    // state 1
+    cdb.CreateAbsolute("$Application1.+States");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateAbsolute("$Application1.+States.+State1");
+    cdb.Write("Class", "RealTimeState");
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threads");
+    cdb.Write("Class", "ReferenceContainer");
+
+    // state 1 threads
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread1");
+    cdb.Write("Class", "RealTimeThread");
+    const char8 *functionsT1[6] = { ":+Functions.+GAM1", ":+Functions.+GAM2", ":+Functions.+PIDGroup1", ":+Functions.+GAMContainer",
+            ":+Functions.+PIDGroup2.+GAM7", ":+Functions.+PIDGroup2.+GAM8" };
+    cdb.Write("Functions", functionsT1);
+
+    // data
+    cdb.CreateAbsolute("$Application1.+Data");
+    cdb.Write("Class", "RealTimeDataSource");
+    cdb.Write("IsFinal", "false");
+    cdb.MoveToRoot();
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+States.+State1.+Threads.+Thread1");
+
+    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+States.+State1");
+
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("$Application1");
+
+    if (thread1->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    return true;
+
+}
+
+bool RealTimeThreadTest::TestConfigureArchitectureFalse_InvalidGAMPath() {
+    ConfigurationDatabase cdb;
+
+    // application
+    cdb.CreateAbsolute("$Application1");
+    cdb.Write("Class", "RealTimeApplication");
+    //functions
+    cdb.CreateAbsolute("$Application1.+Functions");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM1");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM2");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1");
+    cdb.Write("Class", "PIDGAMGroup");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM3");
+    cdb.Write("Class", "PIDGAM");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup1.+GAM4");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer");
+    cdb.Write("Class", "ReferenceContainer");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM6");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2");
+    cdb.Write("Class", "PIDGAMGroup");
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM7");
+    cdb.Write("Class", "PIDGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8");
+    cdb.Write("Class", "PIDGAM");
+
+    // state 1
+    cdb.CreateAbsolute("$Application1.+States");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateAbsolute("$Application1.+States.+State1");
+    cdb.Write("Class", "RealTimeState");
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threads");
+    cdb.Write("Class", "ReferenceContainer");
+
+    // state 1 threads
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread1");
+    cdb.Write("Class", "RealTimeThread");
+    const char8 *functionsT1[6] = { ":+Functions.boh.+GAM1", ":+Functions.+GAM2", ":+Functions.+PIDGroup1", ":+Functions.+GAMContainer",
+            ":+Functions.+PIDGroup2.+GAM7", ":+Functions.+PIDGroup2.+GAM8" };
+    cdb.Write("Functions", functionsT1);
+
+    // data
+    cdb.CreateAbsolute("$Application1.+Data");
+    cdb.Write("Class", "RealTimeDataSource");
+    cdb.Write("IsFinal", "false");
+    cdb.MoveToRoot();
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+States.+State1.+Threads.+Thread1");
+
+    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+States.+State1");
+
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("$Application1");
+
+    if (thread1->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
     return true;
 }
 

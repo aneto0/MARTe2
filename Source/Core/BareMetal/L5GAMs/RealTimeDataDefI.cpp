@@ -78,7 +78,6 @@ bool RealTimeDataDefI::Initialise(StructuredDataI &data) {
             //TODO Warning?
         }
 
-        StreamString modifiers;
         if (data.Read("Modifiers", modifiers)) {
             // use introspection entry to parse the modifiers
             IntrospectionEntry entry("", "", modifiers.Buffer(), "", 0u, 0u);

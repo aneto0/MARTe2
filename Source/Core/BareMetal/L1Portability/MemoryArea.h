@@ -36,30 +36,88 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
+/**
+ * @brief Memory allocated area
+ */
 class MemoryArea {
 
 public:
+    /**
+     * @brief Constructor
+     * @post
+     *   GetMemoryStart() == NULL &&
+     *   GetMemorySize() == 0;
+     */
     MemoryArea();
 
+    /**
+     * @brief Destructor. Frees the memory.
+     * @post
+     *   GetMemoryStart() == NULL &&
+     *   GetMemorySize() == 0;
+     */
     ~MemoryArea();
 
+    /**
+     * @brief Frees all the allocated memory.
+     */
     void Free();
 
-    bool Add(void* element, uint32 memorySize, uint32 &offset);
+    /**
+     * @brief Copies a chunk on memory in this memory area.
+     * @param[in] element points to the memory which must be copied.
+     * @param[in] memorySize is the size of the element in bytes.
+     * @param[out] offset is the index of the allocated memory chunk with respect
+     * to the begin of this memory area.
+     * @return true if the memory will be allocated without errors, false otherwise.
+     */
+    bool Add(void* element,
+             uint32 memorySize,
+             uint32 &offset);
 
-    bool Add(uint32 memorySize, uint32 &offset);
+    /**
+     * @brief Creates a chunk on memory in this memory area.
+     * @param[in] memorySize is the size to be allocated in bytes.
+     * @param[out] offset is the index of the allocated memory chunk with respect
+     * to the begin of this memory area.
+     * @return true if the memory will be allocated without errors, false otherwise.
+     */
+    bool Add(uint32 memorySize,
+             uint32 &offset);
 
+    /**
+     * @brief Retrieves the pointer to the begin of the memory area.
+     * @return the pointer to the begin of the memory area.
+     */
     void* GetMemoryStart() const;
 
+    /**
+     * @brief Retrieves the total size of the memory area.
+     * @return the total allocated size.
+     */
     uint32 GetMemorySize() const;
 
+    /**
+     * @brief Retrieves the pointer to the memory allocated
+     * in a specific position.
+     * @param[in] offset is the offset of the required memory with respect
+     * the begin of the memory area.
+     * return &GetMemoryStart()[offset]
+     */
     void* GetPointer(uint32 offset);
 
 private:
 
+    /**
+     * The memory area.
+     */
     void* memory;
+
+    /**
+     * The size of the memory area.
+     */
     uint32 size;
 };
 

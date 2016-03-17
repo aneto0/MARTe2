@@ -51,15 +51,34 @@ TEST(RealTimeApplicationGTest,TestConfigureArchitecture) {
     ASSERT_TRUE(rtappTest.TestConfigureArchitecture());
 }
 
+TEST(RealTimeApplicationGTest,TestConfigureArchitectureFalse_NoStates) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConfigureArchitectureFalse_NoStates());
+}
 
 TEST(RealTimeApplicationGTest,TestConfigureDataSource) {
     RealTimeApplicationTest rtappTest;
     ASSERT_TRUE(rtappTest.TestConfigureDataSource());
 }
 
+TEST(RealTimeApplicationGTest,TestConfigureDataSourceFalse_NoFunctions) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConfigureDataSourceFalse_NoFunctions());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureDataSourceFalse_InvalidFunction) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConfigureDataSourceFalse_InvalidFunction());
+}
+
 TEST(RealTimeApplicationGTest,TestValidateDataSource) {
     RealTimeApplicationTest rtappTest;
     ASSERT_TRUE(rtappTest.TestValidateDataSource());
+}
+
+TEST(RealTimeApplicationGTest,TestValidateDataSourceFalse_NoData) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestValidateDataSourceFalse_NoData());
 }
 
 TEST(RealTimeApplicationGTest,TestValidateDataSourceFalse_MoreThanOneConsumer) {
@@ -72,14 +91,34 @@ TEST(RealTimeApplicationGTest,TestAllocateDataSource) {
     ASSERT_TRUE(rtappTest.TestAllocateDataSource());
 }
 
+TEST(RealTimeApplicationGTest,TestAllocateDataSourceFalse_NoData) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestAllocateDataSourceFalse_NoData());
+}
+
 TEST(RealTimeApplicationGTest,TestConfigureDataSourceLinks) {
     RealTimeApplicationTest rtappTest;
     ASSERT_TRUE(rtappTest.TestConfigureDataSourceLinks());
 }
 
+TEST(RealTimeApplicationGTest,TestConfigureDataSourceLinksFalse_NoFunctions) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConfigureDataSourceLinksFalse_NoFunctions());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureDataSourceLinksFalse_InvalidFunction) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConfigureDataSourceLinksFalse_InvalidFunction());
+}
+
 TEST(RealTimeApplicationGTest,TestPrepareNextState) {
     RealTimeApplicationTest rtappTest;
     ASSERT_TRUE(rtappTest.TestPrepareNextState());
+}
+
+TEST(RealTimeApplicationGTest,TestPrepareNextStateFalse_NoData) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestPrepareNextStateFalse_NoData());
 }
 
 TEST(RealTimeApplicationGTest,TestChangeState) {

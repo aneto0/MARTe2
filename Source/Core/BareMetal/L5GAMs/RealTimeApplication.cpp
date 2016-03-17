@@ -53,7 +53,7 @@ static bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functions)
             // a GAM
             if (gam.IsValid()) {
                 // call the single gam configuration
-                gam->ConfigureDataSource();
+                ret = gam->ConfigureDataSource();
             }
             else {
                 // a GAMGroup
@@ -72,7 +72,7 @@ static bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functions)
                 else {
                     // a ReferenceContainer
                     ReferenceT<ReferenceContainer> gamContainer = genericFunction;
-                    bool ret = gamContainer.IsValid();
+                    ret = gamContainer.IsValid();
                     if (ret) {
                         // go recursively
                         ret = ConfigureDataSourcePrivate(gamContainer);
@@ -101,7 +101,7 @@ static bool ConfigureDataSourceLinksPrivate(ReferenceT<ReferenceContainer> funct
             // a GAM
             if (gam.IsValid()) {
                 // call the single gam configuration
-                gam->ConfigureDataSourceLinks();
+                ret = gam->ConfigureDataSourceLinks();
             }
             else {
                 // a GAMGroup
@@ -120,7 +120,7 @@ static bool ConfigureDataSourceLinksPrivate(ReferenceT<ReferenceContainer> funct
                 else {
                     // a ReferenceContainer
                     ReferenceT<ReferenceContainer> gamContainer = genericFunction;
-                    bool ret = gamContainer.IsValid();
+                    ret = gamContainer.IsValid();
                     if (ret) {
                         // go recursively
                         ret = ConfigureDataSourceLinksPrivate(gamContainer);
@@ -144,11 +144,9 @@ RealTimeApplication::RealTimeApplication() {
     activeBuffer = 1u;
 }
 
-
-RealTimeApplication::~RealTimeApplication(){
+RealTimeApplication::~RealTimeApplication() {
 
 }
-
 
 bool RealTimeApplication::ConfigureArchitecture() {
 

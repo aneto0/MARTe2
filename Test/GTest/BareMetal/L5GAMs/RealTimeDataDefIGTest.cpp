@@ -91,3 +91,9 @@ TEST(RealTimeDataDefIGTest,TestNumberOfElements_Matrix) {
     ASSERT_TRUE(rtiTest.TestNumberOfElements("uint32", "[32][12]", ret));
 }
 
+TEST(RealTimeDataDefIGTest,TestNumberOfElements_Pointer) {
+    RealTimeDataDefITest rtiTest;
+    uint32 ret[3] = { 12, 32, 1 };
+    ASSERT_TRUE(rtiTest.TestNumberOfElements("uint32", "*[32][12]", ret));
+}
+

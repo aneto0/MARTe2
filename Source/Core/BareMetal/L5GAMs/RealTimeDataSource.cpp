@@ -165,137 +165,126 @@ bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> de
                                                  bool isConsumer,
                                                  StreamString defaultPath) {
 
-    bool ret = definition.IsValid();
-    if (ret) {
-        ret = gam.IsValid();
-        if (ret) {
-            StreamString *supportedStates = gam->GetSupportedStates();
-            uint32 numberOfStates = gam->GetNumberOfSupportedStates();
-            StreamString defaultValue = definition->GetDefaultValue();
+    bool ret = true;
+    StreamString *supportedStates = gam->GetSupportedStates();
+    uint32 numberOfStates = gam->GetNumberOfSupportedStates();
+    StreamString defaultValue = definition->GetDefaultValue();
 
-            StreamString path = definition->GetPath();
-            bool isLeaf = (definition->Size() == 0u);
+    StreamString path = definition->GetPath();
+    bool isLeaf = (definition->Size() == 0u);
 
-            // the path exists?
-            // default refresh
-            StreamString newDefaultPath = path;
-            if (path == "") {
-                // set the path
-                newDefaultPath = defaultPath;
-                newDefaultPath += definition->GetName();
-                path = newDefaultPath;
-            }
-            newDefaultPath += ".";
+    // the path exists?
+    // default refresh
+    StreamString newDefaultPath = path;
+    if (path == "") {
+        // set the path
+        newDefaultPath = defaultPath;
+        newDefaultPath += definition->GetName();
+        path = newDefaultPath;
+    }
+    newDefaultPath += ".";
 
-            if (isLeaf) {
+    if (isLeaf) {
 
-                ReferenceT<RealTimeDataSourceDef> element = Find(path.Buffer());
-                if (element.IsValid()) {
+        ReferenceT<RealTimeDataSourceDef> element = Find(path.Buffer());
+        if (element.IsValid()) {
 
-                    // if the path exists adds only the infos
-                    if (isConsumer) {
-                        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-                            element->SetDefaultValue(defaultValue.Buffer());
-                            if (ret) {
-                                ret = element->AddConsumer(supportedStates[i].Buffer(), gam);
-                            }
-                        }
-                    }
-                    if (isProducer) {
-                        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-                            element->SetDefaultValue(defaultValue.Buffer());
-                            if (ret) {
-                                ret = element->AddProducer(supportedStates[i].Buffer(), gam);
-                            }
-                        }
-                    }
+            // if the path exists adds only the infos
+            if (isConsumer) {
+                for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+                    element->SetDefaultValue(defaultValue.Buffer());
                     if (ret) {
-                        ret = element->SetType(definition->GetType());
-                    }
-
-                    if (ret) {
-                        element->SetNumberOfDimensions(definition->GetNumberOfDimensions());
-                        for (uint32 k = 0u; k < 3u; k++) {
-                            element->SetNumberOfElements(k, definition->GetNumberOfElements(k));
-                        }
-                    }
-
-                    if (ret) {
-                        definition->SetPath(path.Buffer());
-                    }
-
-                }
-                // if the definition does not exist creates it
-                else {
-
-                    ReferenceT<RealTimeDataSourceDef> element(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-                    if (element.IsValid()) {
-
-                        if (isConsumer) {
-                            for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-                                element->SetDefaultValue(defaultValue.Buffer());
-                                if (ret) {
-                                    ret = element->AddConsumer(supportedStates[i].Buffer(), gam);
-                                }
-                            }
-                        }
-                        if (isProducer) {
-                            for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-                                element->SetDefaultValue(defaultValue.Buffer());
-                                if (ret) {
-                                    ret = element->AddProducer(supportedStates[i].Buffer(), gam);
-                                }
-                            }
-                        }
-                        if (ret) {
-                            ret = Insert(path.Buffer(), element);
-                        }
-                        if (ret) {
-                            ret = element->SetType(definition->GetType());
-                        }
-                        if (ret) {
-                            element->SetNumberOfDimensions(definition->GetNumberOfDimensions());
-                            for (uint32 k = 0u; k < 3u; k++) {
-                                element->SetNumberOfElements(k, definition->GetNumberOfElements(k));
-                            }
-                        }
-
-                        if (ret) {
-                            definition->SetPath(path.Buffer());
-                        }
+                        ret = element->AddConsumer(supportedStates[i].Buffer(), gam);
                     }
                 }
             }
-            else {
+            if (isProducer) {
+                for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+                    element->SetDefaultValue(defaultValue.Buffer());
+                    if (ret) {
+                        ret = element->AddProducer(supportedStates[i].Buffer(), gam);
+                    }
+                }
+            }
+            if (ret) {
+                ret = element->SetType(definition->GetType());
+            }
 
-                // is structured, go inside to the sub members
-                uint32 numberOfMembers = definition->Size();
-                for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
-                    ReferenceT<RealTimeDataDefI> subDefinition = definition->Get(i);
-                    if (subDefinition.IsValid()) {
-                        ret = AddSingleDataDefinition(subDefinition, gam, isProducer, isConsumer, newDefaultPath);
-                    }
-                    else {
-                    }
+            if (ret) {
+                element->SetNumberOfDimensions(definition->GetNumberOfDimensions());
+                for (uint32 k = 0u; k < 3u; k++) {
+                    element->SetNumberOfElements(k, definition->GetNumberOfElements(k));
                 }
             }
 
             if (ret) {
-                // if final can not add another definition
-                if (final) {
-                    ret = (Size() == numberOfInitialDDBs);
-                    if (!ret) {
-                        REPORT_ERROR(ErrorManagement::FatalError, "Trying to add a new data source definition on a RealTimeDataSource declared as final");
+                definition->SetPath(path.Buffer());
+            }
+
+        }
+        // if the definition does not exist creates it
+        else {
+
+            ReferenceT<RealTimeDataSourceDef> element(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+            if (element.IsValid()) {
+
+                if (isConsumer) {
+                    for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+                        element->SetDefaultValue(defaultValue.Buffer());
+                        if (ret) {
+                            ret = element->AddConsumer(supportedStates[i].Buffer(), gam);
+                        }
                     }
+                }
+                if (isProducer) {
+                    for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+                        element->SetDefaultValue(defaultValue.Buffer());
+                        if (ret) {
+                            ret = element->AddProducer(supportedStates[i].Buffer(), gam);
+                        }
+                    }
+                }
+                if (ret) {
+                    ret = Insert(path.Buffer(), element);
+                }
+                if (ret) {
+                    ret = element->SetType(definition->GetType());
+                }
+                if (ret) {
+                    element->SetNumberOfDimensions(definition->GetNumberOfDimensions());
+                    for (uint32 k = 0u; k < 3u; k++) {
+                        element->SetNumberOfElements(k, definition->GetNumberOfElements(k));
+                    }
+                }
+
+                if (ret) {
+                    definition->SetPath(path.Buffer());
                 }
             }
         }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Invalid Reference to GAM in input");
-        }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Invalid Reference to RealTimeDataDefI in input");
+
+        // is structured, go inside to the sub members
+        uint32 numberOfMembers = definition->Size();
+        for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
+            ReferenceT<RealTimeDataDefI> subDefinition = definition->Get(i);
+            if (subDefinition.IsValid()) {
+                ret = AddSingleDataDefinition(subDefinition, gam, isProducer, isConsumer, newDefaultPath);
+            }
+            else {
+            }
+        }
+    }
+
+    if (ret) {
+        // if final can not add another definition
+        if (final) {
+            ret = (Size() == numberOfInitialDDBs);
+            if (!ret) {
+                REPORT_ERROR(ErrorManagement::FatalError, "Trying to add a new data source definition on a RealTimeDataSource declared as final");
+            }
+        }
     }
     return ret;
 

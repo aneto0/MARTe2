@@ -67,74 +67,69 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
                                                   RealTimeApplication &rtApp,
                                                   RealTimeState &rtState) {
 
-    bool ret = functionGeneric.IsValid();
-    if (ret) {
-        // case GAMGroup (stateful gams)
-        ReferenceT<GAMGroup> functionGAMGroup = functionGeneric;
-        if (functionGAMGroup.IsValid()) {
-            // add the GAMGroup to the RealTimeState accelerator array
-            functionGAMGroup->AddState(rtState.GetName());
-            rtState.AddGAMGroup(functionGAMGroup);
-            uint32 nOfSubGAMs = functionGAMGroup->Size();
-            // add all the gams in the order of the configuration inside GAMGroup
-            for (uint32 j = 0u; (j < nOfSubGAMs) && (ret); j++) {
-                ReferenceT<GAM> subGam = functionGAMGroup->Get(j);
-                ret = subGam.IsValid();
-                if (ret) {
-                    AddGAM(subGam);
-                    subGam->SetApplication(rtApp);
-                    subGam->SetGAMGroup(functionGAMGroup);
-                }
+    bool ret = true;
+    // case GAMGroup (stateful gams)
+    ReferenceT<GAMGroup> functionGAMGroup = functionGeneric;
+    if (functionGAMGroup.IsValid()) {
+        // add the GAMGroup to the RealTimeState accelerator array
+        functionGAMGroup->AddState(rtState.GetName());
+        rtState.AddGAMGroup(functionGAMGroup);
+        uint32 nOfSubGAMs = functionGAMGroup->Size();
+        // add all the gams in the order of the configuration inside GAMGroup
+        for (uint32 j = 0u; (j < nOfSubGAMs) && (ret); j++) {
+            ReferenceT<GAM> subGam = functionGAMGroup->Get(j);
+            ret = subGam.IsValid();
+            if (ret) {
+                AddGAM(subGam);
+                subGam->SetApplication(rtApp);
+                subGam->SetGAMGroup(functionGAMGroup);
             }
-        }
-        else {
-            // case stateless GAM
-            ReferenceT<GAM> functionGAM = functionGeneric;
-            if (functionGAM.IsValid()) {
-                AddGAM(functionGAM);
-                functionGAM->SetApplication(rtApp);
-                // if it is a stateful GAM, add its GAMGroup
-                ReferenceContainerFilterReferences filterGAM(1, ReferenceContainerFilterMode::PATH, functionGAM);
-                ReferenceContainer result;
-                ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(result, filterGAM);
-                ret = (result.Size() > 1u); //there must be the father!
-                if (ret) {
-                    ReferenceT<GAMGroup> gamGroup = result.Get(result.Size() - 2u);
-                    if (gamGroup.IsValid()) {
-                        rtState.AddGAMGroup(gamGroup);
-                        functionGAM->SetGAMGroup(gamGroup);
-                        gamGroup->AddState(rtState.GetName());
-                    }
-                    else {
-                        functionGAM->AddState(rtState.GetName());
-                    }
-                }
-                else {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s must be defined in the +Function container of the application",
-                                            functionGAM->GetName())
-                }
-            }
-            else {
-                // a generic container
-                ReferenceT<ReferenceContainer> functionContainer = functionGeneric;
-                ret = functionContainer.IsValid();
-                if (ret) {
-                    uint32 size = functionContainer->Size();
-                    for (uint32 i = 0u; (i < size) && (ret); i++) {
-                        Reference newRef = functionContainer->Get(i);
-                        // go recursively
-                        ret = ConfigureArchitecturePrivate(newRef, rtApp, rtState);
-                    }
-                }
-                else {
-                    REPORT_ERROR(ErrorManagement::FatalError, "The function be a GAM, GAMGroups or ReferenceContainer");
-                }
-            }
-
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Invalid Reference");
+        // case stateless GAM
+        ReferenceT<GAM> functionGAM = functionGeneric;
+        if (functionGAM.IsValid()) {
+            AddGAM(functionGAM);
+            functionGAM->SetApplication(rtApp);
+            // if it is a stateful GAM, add its GAMGroup
+            ReferenceContainerFilterReferences filterGAM(1, ReferenceContainerFilterMode::PATH, functionGAM);
+            ReferenceContainer result;
+            ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(result, filterGAM);
+            ret = (result.Size() > 1u); //there must be the father!
+            if (ret) {
+                ReferenceT<GAMGroup> gamGroup = result.Get(result.Size() - 2u);
+                if (gamGroup.IsValid()) {
+                    rtState.AddGAMGroup(gamGroup);
+                    functionGAM->SetGAMGroup(gamGroup);
+                    gamGroup->AddState(rtState.GetName());
+                }
+                else {
+                    functionGAM->AddState(rtState.GetName());
+                }
+            }
+            else {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s must be defined in the +Function container of the application",
+                                        functionGAM->GetName())
+            }
+        }
+        else {
+            // a generic container
+            ReferenceT<ReferenceContainer> functionContainer = functionGeneric;
+            ret = functionContainer.IsValid();
+            if (ret) {
+                uint32 size = functionContainer->Size();
+                for (uint32 i = 0u; (i < size) && (ret); i++) {
+                    Reference newRef = functionContainer->Get(i);
+                    // go recursively
+                    ret = ConfigureArchitecturePrivate(newRef, rtApp, rtState);
+                }
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::FatalError, "The function be a GAM, GAMGroups or ReferenceContainer");
+            }
+        }
+
     }
     return ret;
 }
@@ -180,9 +175,6 @@ bool RealTimeThread::ConfigureArchitecture(RealTimeApplication &rtApp,
                     // insert the reference into the state
                     ret = rtState.InsertFunction(functionGeneric);
                 }
-            }
-            else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Failed inserting the function %s", functionGeneric->GetName())
             }
         }
         else {
