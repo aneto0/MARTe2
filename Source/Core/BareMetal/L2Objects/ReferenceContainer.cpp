@@ -115,7 +115,7 @@ bool ReferenceContainer::Insert(Reference ref,
     return ok;
 }
 
-bool ReferenceContainer::Insert(const char8 * path,
+bool ReferenceContainer::Insert(const char8 * const path,
                                 Reference ref) {
     bool ok = ref.IsValid();
     if (ok) {
@@ -125,8 +125,8 @@ bool ReferenceContainer::Insert(const char8 * path,
         else {
             bool created = false;
             ReferenceT<ReferenceContainer> currentNode(this);
-            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(sizeof(char8) * StringHelper::Length(path)));
-            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(sizeof(char8) * StringHelper::Length(path)));
+            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
 
             const char8* toTokenize = path;
             const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
@@ -167,7 +167,9 @@ bool ReferenceContainer::Insert(const char8 * path,
                             }
                         }
                     }
-                    StringHelper::Copy(token, nextToken);
+                    if (ok) {
+                        ok = StringHelper::Copy(token, nextToken);
+                    }
                 }
             }
 
@@ -289,7 +291,7 @@ void ReferenceContainer::Find(ReferenceContainer &result,
     UnLock();
 }
 
-Reference ReferenceContainer::Find(const char8 * path) {
+Reference ReferenceContainer::Find(const char8 * const path) {
     Reference ret;
     ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
     ReferenceContainer resultSingle;
@@ -349,8 +351,8 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
 bool ReferenceContainer::ToStructuredData(StructuredDataI & data) {
 
     // no need to lock
-    const char8 * name = GetName();
-    bool ret = data.CreateRelative(name);
+    const char8 * objName = GetName();
+    bool ret = data.CreateRelative(objName);
     if (ret) {
         const ClassProperties *properties = GetClassProperties();
         ret = (properties != NULL);

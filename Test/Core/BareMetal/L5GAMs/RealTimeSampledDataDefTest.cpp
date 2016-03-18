@@ -174,6 +174,40 @@ bool RealTimeSampledDataDefTest::TestMergeWithLocal_AddType() {
 
 }
 
+bool RealTimeSampledDataDefTest::TestMergeWithLocal_AddModifiers() {
+    ConfigurationDatabase localData;
+    int32 localSamplesPerCycle = 2;
+    localData.Write("SamplesPerCycle", localSamplesPerCycle);
+    localData.Write("Modifiers", "[2][2]");
+
+    ConfigurationDatabase cdb;
+    int32 samples = 3;
+    cdb.Write("Samples", samples);
+    cdb.Write("Type", "ControlIn");
+    // not final by default
+
+    ReferenceT<RealTimeSampledDataDef> def = ReferenceT<RealTimeSampledDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def->SetName("ADC");
+    if (!def->Initialise(cdb)) {
+        return false;
+    }
+
+    if (!def->MergeWithLocal(localData)) {
+        return false;
+    }
+
+    if (def->GetSamplesPerCycle() != localSamplesPerCycle) {
+        return false;
+    }
+
+    if (def->GetSamples() != samples) {
+        return false;
+    }
+
+    return (def->GetNumberOfDimensions() == 2);
+
+}
+
 bool RealTimeSampledDataDefTest::TestMergeWithLocalFalse_FinalGlobal() {
 
     ConfigurationDatabase localData;
@@ -327,6 +361,41 @@ bool RealTimeSampledDataDefTest::TestMergeWithLocal_DifferentPath() {
 
 }
 
+
+bool RealTimeSampledDataDefTest::TestMergeWithLocal_DifferentModifiers(){
+    ConfigurationDatabase localData;
+    int32 localSamplesPerCycle = 2;
+    localData.Write("SamplesPerCycle", localSamplesPerCycle);
+    localData.Write("Modifiers", "[3]");
+
+    ConfigurationDatabase cdb;
+    int32 samples = 3;
+    cdb.Write("Samples", samples);
+    localData.Write("Modifiers", "[2][2]");
+
+    // not final by default
+
+    ReferenceT<RealTimeSampledDataDef> def = ReferenceT<RealTimeSampledDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def->SetName("ADC");
+    if (!def->Initialise(cdb)) {
+        return false;
+    }
+
+    if (!def->MergeWithLocal(localData)) {
+        return false;
+    }
+
+    if (def->GetSamplesPerCycle() != localSamplesPerCycle) {
+        return false;
+    }
+
+    if (def->GetSamples() != samples) {
+        return false;
+    }
+    return def->GetNumberOfDimensions() == 2;
+}
+
+
 bool RealTimeSampledDataDefTest::TestVerify() {
 
     ConfigurationDatabase cdb;
@@ -407,6 +476,26 @@ bool RealTimeSampledDataDefTest::TestVerifyFalse_EmptyType() {
     return !def->Verify();
 
 }
+
+bool RealTimeSampledDataDefTest::TestVerifyFalse_UnsupportedMultiDim(){
+    ConfigurationDatabase cdb;
+    cdb.Write("Class", "RealTimeSampledDataDef");
+    cdb.Write("IsFinal", "true");
+    cdb.Write("Type", "ControlIn");
+    cdb.Write("Modifiers", "[2]");
+    int32 samples = 10;
+    int32 samplesPerCycle = 3;
+    cdb.Write("Samples", samples);
+    cdb.Write("SamplesPerCycle", samplesPerCycle);
+    ReferenceT<RealTimeSampledDataDef> def = ReferenceT<RealTimeSampledDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    def->SetName("ADC");
+    if (!def->Initialise(cdb)) {
+        return false;
+    }
+    return !def->Verify();
+}
+
+
 
 bool RealTimeSampledDataDefTest::TestGetSamples() {
 

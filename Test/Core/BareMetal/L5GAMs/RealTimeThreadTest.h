@@ -39,26 +39,57 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the RealTimeThreadTest functions.
+ */
 class RealTimeThreadTest {
 
 public:
 
+    /**
+     * @brief Creates a configuration database used in tests.
+     */
     RealTimeThreadTest();
 
+    /**
+     * @brief Destroys the ObjectRegistryDatabase.
+     */
     ~RealTimeThreadTest();
 
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function initialises correctly the object from StructuredDataI
+     */
     bool TestInitialise();
 
+    /**
+     * @brief Tests if the function fails if no functions are defined in the thread.
+     */
     bool TestInitialiseFalse_NoFunctions();
 
+    /**
+     * @brief Tests if the function adds the references to the GAM to be execute in the thread and the
+     * supported states to the gams,
+     */
     bool TestConfigureArchitecture();
 
+    /**
+     * @brief Tests the function declaring a bigger number of gams to be executed.
+     */
     bool TestConfigureArchitecture_MoreGAMs();
 
+    /**
+     * @brief Tests if the function adds the supported states to the gam group.
+     */
     bool TestConfigureArchitecture_GAMGroup();
 
+    /**
+     * @brief Tests if the function works correctly
+     */
     bool TestConfigureArchitecture_ReferenceContainer();
 
     bool TestConfigureArchitecture_SingleInGAMGroup();

@@ -103,7 +103,7 @@ public:
      * @brief Adds the name of a RealTimeState where this GAM is declared into.
      * @param[in] stateName is the RealTimeState name.
      */
-    void AddState(const char8 *stateName);
+    void AddState(const char8 * const stateName);
 
     /**
      * @brief Links the GAM with RealTimeDataSource.
@@ -133,19 +133,19 @@ public:
      * @brief Returns the number of the supported states.
      * @return the number of the supported states.
      */
-    uint32 GetNumberOfSupportedStates();
+    uint32 GetNumberOfSupportedStates() const;
 
     /**
      * @brief Retrieves the input interface with the RealTimeDataSource.
      * @return the input interface with the RealTimeDataSource.
      */
-    ReferenceT<RealTimeDataSourceInputReader> GetInputReader();
+    ReferenceT<RealTimeDataSourceInputReader> GetInputReader() const;
 
     /**
      * @brief Retrieves the output interface with the RealTimeDataSource.
      * @return the output interface with the RealTimeDataSource.
      */
-    ReferenceT<RealTimeDataSourceOutputWriter> GetOutputWriter();
+    ReferenceT<RealTimeDataSourceOutputWriter> GetOutputWriter() const;
 
 protected:
 

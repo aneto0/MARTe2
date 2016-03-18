@@ -73,14 +73,15 @@ public:
      * @param[in] ptr is the pointer to the variable memory area.
      * @return false in case of errors, true otherwise.
      */
-    bool AddVariable(ReferenceT<RealTimeDataDefI> def, void* ptr=NULL);
+    bool AddVariable(ReferenceT<RealTimeDataDefI> def,
+                     void * const ptr = NULL_PTR(void*));
 
     /**
      * @brief Retrieves the pointer to the \a i-th variable.
      * @param[in] i is the variable index.
      * @return the pointer to the \a i-th variable. NULL if this object is not finalised (see Finalise()).
      */
-    void *GetData(uint32 i);
+    void *GetData(const uint32 i) const;
 
     /**
      * @brief Retrieves the n-th pointer.
@@ -88,7 +89,7 @@ public:
      * Actually this function can provide a direct access to the variable internal members.
      * @return the n-th pointer. NULL if the object is not finalised (see Finalise()).
      */
-    void *GetMemoryPointer(uint32 n);
+    void *GetMemoryPointer(const uint32 n) const;
 
     /**
      * @brief Finalises the object.
@@ -161,14 +162,16 @@ private:
      * @param[in] memStart is the begin of the variable memory area.
      * @return false in case of errors, true otherwise.
      */
-    bool AddVariablePrivate(ReferenceT<RealTimeDataDefI> def, void* ptr, void *memStart );
+    bool AddVariablePrivate(ReferenceT<RealTimeDataDefI> def,
+                            void * ptr,
+                            void * memStart);
 
     /**
      * @brief Retrieves the pointer at the \a n-th position before the Finalise().
      * @param[in] n is the index of the pointer to be returned.
      * @return the pointer at the \a n-th position.
      */
-    void *GetMemoryPointerPrivate(uint32 n);
+    void *GetMemoryPointerPrivate(const uint32 n) const;
 
 };
 

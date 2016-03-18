@@ -39,24 +39,52 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the RealTimeDataSourceOutputWriter functions.
+ */
 class RealTimeDataSourceOutputWriterTest {
 public:
+
+    /**
+     * @brief Creates a configuration database used in tests.
+     */
     RealTimeDataSourceOutputWriterTest();
 
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests the write to the RealTimeDataSource from a memory allocated internal memory.
+     */
     bool TestWrite_Allocation();
 
+    /**
+     * @brief Tests the write to the RealTimeDataSource from a preallocated memory.
+     */
     bool TestWrite_Static();
 
+    /**
+     * @brief Tests the function writing more variables at the same time.
+     */
     bool TestWrite_MoreThanOneVariable();
 
+    /**
+     * @brief Tests the function with a vector variable.
+     */
     bool TestWrite_MultiDim_Vector();
 
+    /**
+     * @brief Tests the function with a matrix variable.
+     */
     bool TestWrite_MultiDim_Matrix();
 
 private:
 
+    /**
+     * A configuration database used in tests.
+     */
     ConfigurationDatabase cdb;
 };
 

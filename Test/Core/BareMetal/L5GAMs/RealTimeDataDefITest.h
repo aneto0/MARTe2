@@ -39,23 +39,43 @@
 using namespace MARTe;
 
 
-
+/**
+ * @brief Tests all the RealTimeDataDefI functions.
+ */
 class RealTimeDataDefITest {
 
 public:
 
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function initialises correctly the definition from a StructuredDataI in input.
+     */
     bool TestInitialise();
 
+    /**
+     * @brief Tests if the function returns the type name defined.
+     */
     bool TestGetType();
 
+    /**
+     * @brief Tests if the function returns the defined variable path in the RealTimeDataSource.
+     */
     bool TestGetPath();
 
+    /**
+     * @brief Tests if the function returns the variable number of dimensions defined.
+     */
     bool TestNumberOfDimensions(const char8 * type,
                                 const char8 * modifiers,
                                 uint8 ret);
 
+    /**
+     * @brief Tests if the function returns the number of elements for each dimension specified.
+     */
     bool TestNumberOfElements(const char8 * type,
                               const char8 * modifiers,
                               uint32 ret[3]);

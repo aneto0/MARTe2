@@ -824,7 +824,7 @@ bool RealTimeApplicationTest::TestValidateDataSource() {
     return app->ValidateDataSource();
 }
 
-bool RealTimeApplicationTest::TestValidateDataSourceFalse_MoreThanOneConsumer() {
+bool RealTimeApplicationTest::TestValidateDataSourceFalse_MoreThanOneProducer() {
     ConfigurationDatabase cdb1;
 
     // application
@@ -892,16 +892,6 @@ bool RealTimeApplicationTest::TestValidateDataSourceFalse_MoreThanOneConsumer() 
     cdb1.Write("Path", "+DDB2.PidNoise");
     cdb1.Write("IsFinal", "true");
 
-    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs");
-    cdb1.Write("IsOutput", "true");
-    cdb1.Write("IsFinal", "true");
-    cdb1.Write("Class", "RealTimeDataDefContainer");
-    cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM5.+Outputs.+Control");
-    cdb1.Write("Class", "RealTimeGenericDataDef");
-    cdb1.Write("Type", "ControlIn");
-    cdb1.Write("IsFinal", "true");
-    cdb1.Write("Default", "1");
-    cdb1.Write("Path", "+DDB1.u1");
 
     cdb1.CreateAbsolute("$Application1.+Functions.+GAMContainer.+GAM6");
     cdb1.Write("Class", "PIDGAM");

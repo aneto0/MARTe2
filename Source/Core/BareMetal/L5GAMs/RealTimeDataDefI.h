@@ -106,7 +106,7 @@ public:
     /**
      * @brief Sets the path to the variable in the RealTimeDataSource
      */
-    void SetPath(const char8 * newPath);
+    void SetPath(const char8 * const newPath);
 
 
     /**
@@ -122,7 +122,7 @@ public:
      * @pre
      *   dimension < 3
      */
-    uint32 GetNumberOfElements(uint32 dimension);
+    uint32 GetNumberOfElements(const uint32 dimension) const;
 
 protected:
 

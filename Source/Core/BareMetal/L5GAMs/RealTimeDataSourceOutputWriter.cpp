@@ -40,28 +40,30 @@
 
 namespace MARTe {
 
-RealTimeDataSourceOutputWriter::RealTimeDataSourceOutputWriter() {
+RealTimeDataSourceOutputWriter::RealTimeDataSourceOutputWriter() :
+        RealTimeDataSourceBroker() {
 
 }
 
-bool RealTimeDataSourceOutputWriter::Write(uint8 activeDataSourceBuffer) {
+bool RealTimeDataSourceOutputWriter::Write(const uint8 activeDataSourceBuffer) const{
 
     bool ret = finalised;
     for (uint32 i = 0u; (i < GAMOffsets.GetSize()) && (ret); i++) {
-        void ** DSPointer = NULL;
+        void ** DSPointer = NULL_PTR(void **);
         ret = DSPointers[activeDataSourceBuffer].Peek(i, DSPointer);
         if (ret) {
             ret = (DSPointer != NULL);
         }
-        void * GAMPointer = NULL;
-        ret = GAMPointers.Peek(i, GAMPointer);
+        void * GAMPointer = NULL_PTR(void *);
+        if (ret) {
+            ret = GAMPointers.Peek(i, GAMPointer);
+        }
         if (ret) {
             ret = (GAMPointer != NULL);
         }
         uint32 size = 0u;
         if (ret) {
-            sizes.Peek(i, size);
-            ret = (size != 0u);
+            ret=sizes.Peek(i, size);
         }
         if (ret) {
             ret = MemoryOperationsHelper::Copy(*DSPointer, GAMPointer, size);

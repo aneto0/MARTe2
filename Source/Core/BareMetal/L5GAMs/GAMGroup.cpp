@@ -44,11 +44,12 @@ static const uint32 stateNamesGranularity = 4u;
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAMGroup::GAMGroup() {
+GAMGroup::GAMGroup(): ReferenceContainer() {
     supportedStates = NULL_PTR(StreamString*);
     numberOfSupportedStates = 0u;
 }
 
+/*lint -e{1551} no exception should be thrown*/
 GAMGroup::~GAMGroup() {
     if (supportedStates != NULL) {
         delete[] supportedStates;
@@ -68,7 +69,7 @@ GAMGroup::~GAMGroup() {
  }
  */
 
-StreamString *GAMGroup::GetSupportedStates() const {
+StreamString *GAMGroup::GetSupportedStates() {
     return supportedStates;
 }
 
@@ -76,10 +77,11 @@ uint32 GAMGroup::GetNumberOfSupportedStates() const {
     return numberOfSupportedStates;
 }
 
-void GAMGroup::AddState(const char8 * stateName) {
+void GAMGroup::AddState(const char8 * const stateName) {
 
     bool found = false;
     for (uint32 i = 0u; (i < numberOfSupportedStates) && (!found); i++) {
+        /*lint -e{613} never enter here if supportedStates is NULL (because numberOfSupportedStates == 0) */
         found = (supportedStates[i] == stateName);
     }
 
@@ -96,6 +98,7 @@ void GAMGroup::AddState(const char8 * stateName) {
             supportedStates = temp;
 
         }
+        /*lint -e{613} the memory of supportedStates is already allocated (numberOfSupportedStates == 0) */
         supportedStates[numberOfSupportedStates] = stateName;
         numberOfSupportedStates++;
     }

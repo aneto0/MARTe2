@@ -86,7 +86,7 @@ public:
      * @param[in] red is the Reference to be inserted in the container.
      * @return false if \a ref is not valid or in case of errors, true otherwise.
      */
-    bool Insert(const char8 * path, Reference ref);
+    bool Insert(const char8 * const path, Reference ref);
 
 
 
@@ -115,7 +115,7 @@ public:
      * @param[in] path is the name of the element to be found or its full path.
      * @return the element if it is found or an invalid reference if not.
      */
-    Reference Find(const char8 * path);
+    Reference Find(const char8 * const path);
 
     /**
      * @brief Checks if \a ref holds a container.

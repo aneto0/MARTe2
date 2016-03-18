@@ -41,10 +41,12 @@
 
 namespace MARTe {
 MemoryArea::MemoryArea() {
-    memory = NULL;
-    size=0u;
+    memory = NULL_PTR(void*);
+    size = 0u;
 }
 
+/*lint -e{1579} the pointer "memory" is freed by the function Free() */
+/*lint -e{1551} the destructor does not throw exceptions */
 MemoryArea::~MemoryArea() {
     Free();
 }
@@ -52,13 +54,13 @@ MemoryArea::~MemoryArea() {
 void MemoryArea::Free() {
     if (memory != NULL) {
         if(HeapManager::Free(reinterpret_cast<void*&>(memory))) {
-            memory=NULL;
+            memory=NULL_PTR(void*);
         }
     }
     size = 0u;
 }
 
-bool MemoryArea::Add(uint32 memorySize,
+bool MemoryArea::Add(const uint32 memorySize,
                      uint32 &offset) {
     bool ret = false;
 
@@ -82,8 +84,8 @@ bool MemoryArea::Add(uint32 memorySize,
     return ret;
 }
 
-bool MemoryArea::Add(void* element,
-                     uint32 memorySize,
+bool MemoryArea::Add(const void * const element,
+                     const uint32 memorySize,
                      uint32 &offset) {
     bool ret = Add(memorySize, offset);
     if (ret) {
@@ -92,7 +94,7 @@ bool MemoryArea::Add(void* element,
     return ret;
 }
 
-void* MemoryArea::GetMemoryStart() const {
+void* MemoryArea::GetMemoryStart()  {
     return memory;
 }
 
@@ -100,10 +102,11 @@ uint32 MemoryArea::GetMemorySize() const {
     return size;
 }
 
-void* MemoryArea::GetPointer(uint32 offset) {
-    void* ret = NULL;
-    if(offset<size) {
-        ret=&reinterpret_cast<char8*>(memory)[offset];
+void* MemoryArea::GetPointer(const uint32 offset) {
+    void* ret = NULL_PTR(void*);
+    if (offset < size) {
+        /*lint -e{613} memory cannot be NULL here (because size==0)*/
+        ret = &reinterpret_cast<char8*>(memory)[offset];
     }
     return ret;
 }

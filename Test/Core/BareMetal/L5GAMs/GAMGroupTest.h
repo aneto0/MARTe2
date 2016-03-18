@@ -38,18 +38,36 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the GAMGroup functions
+ */
 class GAMGroupTest {
 
 public:
 
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function adds the state name passes in input into its internal array.
+     */
     bool TestAddState();
 
+    /**
+     * @brief Tests if the function returns correctly the state names where the gam group is involved in.
+     */
     bool TestGetSupportedStates();
 
+    /**
+     * @brief Tests if the function returns correctly the number of states where the gam group is involved in.
+     */
     bool TestGetNumberOfSupportedStates();
 
+    /**
+     * @brief Tests if the function initialises correctly the gam group from a StructuredDataI.
+     */
     bool TestInitialise();
 
 };

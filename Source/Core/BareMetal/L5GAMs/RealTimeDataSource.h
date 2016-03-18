@@ -133,8 +133,8 @@ private:
      */
     bool AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> definition,
                                  ReferenceT<GAM> gam,
-                                 bool isProducer,
-                                 bool isConsumer,
+                                 const bool isProducer,
+                                 const bool isConsumer,
                                  StreamString defaultPath = "");
 
 

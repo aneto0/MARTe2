@@ -116,6 +116,16 @@ TEST(RealTimeGenericDataDefGTest,TestVerify) {
     ASSERT_TRUE(rtgdTest.TestVerify());
 }
 
+TEST(RealTimeGenericDataDefGTest,TestVerify_Vector) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerify_Vector());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerify_Matrix) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerify_Matrix());
+}
+
 TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_UnregisteredType) {
     RealTimeGenericDataDefTest rtgdTest;
     ASSERT_TRUE(rtgdTest.TestVerifyFalse_UnregisteredType());
@@ -150,3 +160,19 @@ TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_EmptyType) {
     RealTimeGenericDataDefTest rtgdTest;
     ASSERT_TRUE(rtgdTest.TestVerifyFalse_EmptyType());
 }
+
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_NDims) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_NDims());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_NElements) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_NElements());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_UnsupportedMultiDim) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_UnsupportedMultiDim());
+}
+

@@ -98,7 +98,7 @@ bool Reference::Initialise(StructuredDataI &data,
             char8 className[256] = { '\0' };
             ok = data.Read("Class", className);
             if (ok) {
-                Object *objPtr = CreateByName(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                Object *objPtr = CreateByName(&className[0], GlobalObjectsDatabase::Instance()->GetStandardHeap());
                 ok = (objPtr != NULL_PTR(Object*));
                 if (ok) {
                     objectPointer = objPtr;
@@ -115,6 +115,7 @@ bool Reference::Initialise(StructuredDataI &data,
     }
 
     if (ok) {
+        /*lint -e{613} checking of NULL pointer done before entering here. */
         ok = objectPointer->Initialise(data);
     }
 

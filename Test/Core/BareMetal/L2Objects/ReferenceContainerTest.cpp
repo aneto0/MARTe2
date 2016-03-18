@@ -501,13 +501,19 @@ bool ReferenceContainerTest::TestInsertWithPath() {
     Reference ref("Object");
     containerRoot->Insert("A.B.C.MyObject", ref);
 
-    if(containerRoot->Find("A.B.C.MyObject") != ref){
+    if (containerRoot->Find("A.B.C.MyObject") != ref) {
         return false;
     }
 
     Reference ref2("Object");
     containerRoot->Insert("A.B.C.MyObject2", ref2);
-    return (containerRoot->Find("A.B.C.MyObject2") == ref2);
+    containerRoot->Insert("", ref);
+
+    if (containerRoot->Find("A.B.C.MyObject2") != ref2) {
+        return false;
+    }
+    containerRoot->Insert("", ref);
+    return (containerRoot->Find("MyObject") == ref);
 }
 
 bool ReferenceContainerTest::TestInsertAtEnd() {

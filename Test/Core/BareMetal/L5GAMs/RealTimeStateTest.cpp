@@ -41,7 +41,7 @@
 /*---------------------------------------------------------------------------*/
 
 RealTimeStateTest::RealTimeStateTest() {
-    cdb = GetCDB1();
+    ConfigurationDatabase cdb = GetCDB1();
     if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
         printf("\n!!!\n");
     }
@@ -237,7 +237,7 @@ bool RealTimeStateTest::TestGetNumberOfGAMGroups() {
     return (state.GetNumberOfGAMGroups() == size);
 }
 
-bool RealTimeStateTest::TestChangeState() {
+bool RealTimeStateTest::TestPrepareState() {
     RealTimeState state;
 
     ConfigurationDatabase empty;

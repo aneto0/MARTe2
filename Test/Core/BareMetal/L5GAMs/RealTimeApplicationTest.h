@@ -40,47 +40,113 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the RealTimeApplication functions.
+ */
 class RealTimeApplicationTest {
 public:
 
+    /**
+     * @brief Initialises the ObjectRegistryDatabase.
+     */
     RealTimeApplicationTest();
 
+    /**
+     * @brief Destroys the ObjectRegistryDatabase.
+     */
     ~RealTimeApplicationTest();
 
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function configures correctly the desired environment calling the ConfigureArchitecture(*) for
+     * each internally declared thread.
+     */
     bool TestConfigureArchitecture();
 
+    /**
+     * @brief Tests if the function fails if the application does not contain the "+States" container.
+     */
     bool TestConfigureArchitectureFalse_NoStates();
 
+    /**
+     * @brief Tests if the function creates correctly all the RealTimeDataSourceDefs calling ConfigureDataSource(*)
+     * for each internally declared GAM.
+     */
     bool TestConfigureDataSource();
 
+    /**
+     * @brief Tests if the function fails if the application does not contain the "+Functions" container.
+     */
     bool TestConfigureDataSourceFalse_NoFunctions();
 
+    /**
+     * @brief Tests if the function fails if "+Functions" is not a ReferenceContainer.
+     */
     bool TestConfigureDataSourceFalse_InvalidFunction();
 
+    /**
+     * @brief Tests if the function returns true if there is no more than one producer GAM per state.
+     */
     bool TestValidateDataSource();
 
-    bool TestValidateDataSourceFalse_MoreThanOneConsumer();
+    /**
+     * @brief Tests if the function returns false if there is more than one producer GAM in a state.
+     */
+    bool TestValidateDataSourceFalse_MoreThanOneProducer();
 
+    /**
+     * @brief Tests if the function returns false if the application does not contain the "+Data" container.
+     */
     bool TestValidateDataSourceFalse_NoData();
 
+    /**
+     * @brief Tests if the function allocates correctly the RealTimeDataSource memory.
+     */
     bool TestAllocateDataSource();
 
+    /**
+     * @brief Tests if the function fails if the application does not contain the "+Data" container.
+     */
     bool TestAllocateDataSourceFalse_NoData();
 
+    /**
+     * @brief Tests if the function creates for each gam its RealTimeInputReader and RealTimeOutputWriter.
+     */
     bool TestConfigureDataSourceLinks();
 
+    /**
+     * @brief Tests if the function fails if the application does not contain the "+Functions" container.
+     */
     bool TestConfigureDataSourceLinksFalse_NoFunctions();
 
+    /**
+     * @brief Tests if the function fails if the "+Functions" is not a container.
+     */
     bool TestConfigureDataSourceLinksFalse_InvalidFunction();
 
+    /**
+     * @brief Tests if the function can set the default values of the RealTimeDataSource variables
+     * if it is requested by the change of state.
+     */
     bool TestPrepareNextState();
 
+    /**
+     * @brief Tests if the function fails if the application does not contain the "+Data" container.
+     */
     bool TestPrepareNextStateFalse_NoData();
 
+    /**
+     * @brief Tests if the function flips the active buffer flag.
+     */
     bool TestChangeState();
 
+    /**
+     * @brief Tests if the function returns correctly the current active buffer number.
+     */
     bool TestGetActiveBuffer();
 
 

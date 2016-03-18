@@ -44,7 +44,8 @@ static const uint32 stateNamesGranularity = 4u;
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAM::GAM() {
+GAM::GAM() :
+        ReferenceContainer() {
     localData = NULL_PTR(StructuredDataI*);
     numberOfSupportedStates = 0u;
     supportedStates = NULL_PTR(StreamString *);
@@ -60,10 +61,14 @@ GAM::GAM() {
     }
 }
 
+/*lint -e{1551} no exception should be thrown*/
 GAM::~GAM() {
     if (supportedStates != NULL) {
         delete[] supportedStates;
     }
+
+    application=NULL_PTR(RealTimeApplication *);
+    group = NULL_PTR(GAMGroup*);
 }
 
 /*void GAM::SetUp() {
@@ -113,9 +118,11 @@ bool GAM::ConfigureDataSource() {
         ret = (application != NULL);
         if (ret) {
             ReferenceT<RealTimeDataSource> dataContainer;
+            /*lint -e{613} NULL pointer checking done before entering here */
             uint32 numberOfAppItems = application->Size();
             ret = false;
             for (uint32 i = 0u; (i < numberOfAppItems) && (!ret); i++) {
+                /*lint -e{613} NULL pointer checking done before entering here */
                 Reference item = application->Get(i);
                 if (item.IsValid()) {
                     if (StringHelper::Compare(item->GetName(), "+Data") == 0) {
@@ -159,13 +166,15 @@ bool GAM::Initialise(StructuredDataI & data) {
 bool GAM::ConfigureDataSourceLinks() {
     // it is virtual... can be overriden if the data are static
 
-    bool ret = (inputReader.IsValid() && outputWriter.IsValid());
+    bool isReaderValid = inputReader.IsValid();
+    bool isWriterValid = outputWriter.IsValid();
+    bool ret = (isReaderValid && isWriterValid);
     uint32 numberOfElements = Size();
     for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
         ReferenceT<RealTimeDataDefContainer> defContainer = Get(i);
         if (defContainer.IsValid()) {
             uint32 numberOfDefs = defContainer->Size();
-            for (uint32 j = 0; (j < numberOfDefs) && (ret); j++) {
+            for (uint32 j = 0u; (j < numberOfDefs) && (ret); j++) {
                 ReferenceT<RealTimeDataDefI> def = defContainer->Get(j);
                 if (def.IsValid()) {
                     if (defContainer->IsInput()) {
@@ -206,10 +215,11 @@ void GAM::SetGAMGroup(ReferenceT<GAMGroup> gamGroup) {
     }
 }
 
-void GAM::AddState(const char8 *stateName) {
+void GAM::AddState(const char8 * const stateName) {
 
     bool found = false;
     for (uint32 i = 0u; (i < numberOfSupportedStates) && (!found); i++) {
+        /*lint -e{613} never enter here if supportedStates is NULL (because numberOfSupportedStates == 0) */
         found = (supportedStates[i] == stateName);
     }
 
@@ -226,6 +236,7 @@ void GAM::AddState(const char8 *stateName) {
             supportedStates = temp;
 
         }
+        /*lint -e{613} the memory of supportedStates is already allocated (numberOfSupportedStates == 0) */
         supportedStates[numberOfSupportedStates] = stateName;
         numberOfSupportedStates++;
     }
@@ -236,16 +247,16 @@ StreamString * GAM::GetSupportedStates() {
     return (group != NULL) ? (group->GetSupportedStates()) : (supportedStates);
 }
 
-uint32 GAM::GetNumberOfSupportedStates() {
+uint32 GAM::GetNumberOfSupportedStates() const {
     return (group != NULL) ? (group->GetNumberOfSupportedStates()) : (numberOfSupportedStates);
 
 }
 
-ReferenceT<RealTimeDataSourceInputReader> GAM::GetInputReader() {
+ReferenceT<RealTimeDataSourceInputReader> GAM::GetInputReader() const{
     return inputReader;
 }
 
-ReferenceT<RealTimeDataSourceOutputWriter> GAM::GetOutputWriter() {
+ReferenceT<RealTimeDataSourceOutputWriter> GAM::GetOutputWriter() const{
     return outputWriter;
 }
 

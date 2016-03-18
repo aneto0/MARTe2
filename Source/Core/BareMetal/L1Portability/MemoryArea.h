@@ -73,8 +73,8 @@ public:
      * to the begin of this memory area.
      * @return true if the memory will be allocated without errors, false otherwise.
      */
-    bool Add(void* element,
-             uint32 memorySize,
+    bool Add(const void * const element,
+             const uint32 memorySize,
              uint32 &offset);
 
     /**
@@ -84,14 +84,14 @@ public:
      * to the begin of this memory area.
      * @return true if the memory will be allocated without errors, false otherwise.
      */
-    bool Add(uint32 memorySize,
+    bool Add(const uint32 memorySize,
              uint32 &offset);
 
     /**
      * @brief Retrieves the pointer to the begin of the memory area.
      * @return the pointer to the begin of the memory area.
      */
-    void* GetMemoryStart() const;
+    void* GetMemoryStart() ;
 
     /**
      * @brief Retrieves the total size of the memory area.
@@ -106,7 +106,7 @@ public:
      * the begin of the memory area.
      * return &GetMemoryStart()[offset]
      */
-    void* GetPointer(uint32 offset);
+    void* GetPointer(const uint32 offset);
 
 private:
 

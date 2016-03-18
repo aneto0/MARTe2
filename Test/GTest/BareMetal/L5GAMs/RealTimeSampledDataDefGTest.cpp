@@ -93,6 +93,11 @@ TEST(RealTimeSampledDataDefGTest,TestMergeWithLocal_AddType) {
     ASSERT_TRUE(rtsdTest.TestMergeWithLocal_AddType());
 }
 
+TEST(RealTimeSampledDataDefGTest,TestMergeWithLocal_AddModifiers) {
+    RealTimeSampledDataDefTest rtsdTest;
+    ASSERT_TRUE(rtsdTest.TestMergeWithLocal_AddModifiers());
+}
+
 TEST(RealTimeSampledDataDefGTest,TestMergeWithLocalFalse_FinalGlobal) {
     RealTimeSampledDataDefTest rtsdTest;
     ASSERT_TRUE(rtsdTest.TestMergeWithLocalFalse_FinalGlobal());
@@ -116,6 +121,11 @@ TEST(RealTimeSampledDataDefGTest,TestMergeWithLocal_DifferentType) {
 TEST(RealTimeSampledDataDefGTest,TestMergeWithLocal_DifferentPath) {
     RealTimeSampledDataDefTest rtsdTest;
     ASSERT_TRUE(rtsdTest.TestMergeWithLocal_DifferentPath());
+}
+
+TEST(RealTimeSampledDataDefGTest,TestMergeWithLocal_DifferentModifiers) {
+    RealTimeSampledDataDefTest rtsdTest;
+    ASSERT_TRUE(rtsdTest.TestMergeWithLocal_DifferentModifiers());
 }
 
 TEST(RealTimeSampledDataDefGTest,TestVerify) {
@@ -153,4 +163,7 @@ TEST(RealTimeSampledDataDefGTest,TestToStructuredData) {
     ASSERT_TRUE(rtsdTest.TestToStructuredData());
 }
 
-
+TEST(RealTimeSampledDataDefGTest,TestVerifyFalse_UnsupportedMultiDim) {
+    RealTimeSampledDataDefTest rtsdTest;
+    ASSERT_TRUE(rtsdTest.TestVerifyFalse_UnsupportedMultiDim());
+}

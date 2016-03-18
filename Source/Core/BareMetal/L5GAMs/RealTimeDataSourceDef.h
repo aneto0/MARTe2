@@ -58,7 +58,7 @@ public:
      * @param[in] gam is the gam which will consume this variable in the state \a stateIn.
      * @return false in case of errors, false otherwise.
      */
-    bool AddConsumer(const char8 *stateIn,
+    bool AddConsumer(const char8 * const stateIn,
                      ReferenceT<GAM> gam);
 
     /**
@@ -67,7 +67,7 @@ public:
      * @param[in] gam is the gam which will produce this variable in the state \a stateIn.
      * @return false in case of errors, false otherwise.
      */
-    bool AddProducer(const char8 *stateIn,
+    bool AddProducer(const char8 * const stateIn,
                      ReferenceT<GAM> gam);
 
     /**
@@ -91,7 +91,7 @@ public:
      *
      * @param[in] defaultIn the default value.
      */
-    void SetDefaultValue(const char8* defaultIn);
+    void SetDefaultValue(const char8 * const defaultIn);
 
     /**
      * @brief Retrieves the default value.
@@ -104,14 +104,14 @@ public:
      * @param[in] statIn is the name of the state to be checked.
      * @return the number of consumer GAMs of this variable in \a stateIn.
      */
-    uint32 GetNumberOfConsumers(const char8 * stateIn);
+    uint32 GetNumberOfConsumers(const char8 * const stateIn);
 
     /**
      * @brief Retrieves the number of producer GAMs of this variable in the specified state.
      * @param[in] statIn is the name of the state to be checked.
      * @return the number of producer GAMs of this variable in \a stateIn.
      */
-    uint32 GetNumberOfProducers(const char8 * stateIn);
+    uint32 GetNumberOfProducers(const char8 * const stateIn);
 
     /**
      * @brief Checks that for each state, at most one producer GAM is defined.
@@ -125,7 +125,7 @@ public:
      * types.
      * @return false if the type is already set differently from \a typeName, true otherwise.
      */
-    bool SetType(const char8 *typeName);
+    bool SetType(const char8 * const typeName);
 
     /**
      * @brief Retrieves the variable type name.
@@ -171,8 +171,8 @@ public:
      * @param[in] dimension is the dimension where to set \nElements
      * @param[in] nElements is the number of elements in the dimension \a dimension.
      */
-    void SetNumberOfElements(uint8 dimension,
-                             uint32 nElements);
+    void SetNumberOfElements(uint32 dimension,
+                             const uint32 nElements);
 
     /**
      * @brief Sets the number of dimensions.
@@ -190,7 +190,7 @@ public:
      * @brief Retrieves the number of elements belonging to a specific dimension.
      * @return the number of elements belonging to a specific dimension.
      */
-    uint32 GetNumberOfElements(uint8 dimension) const;
+    uint32 GetNumberOfElements(uint32 dimension) const;
 
     /**
      * @brief Converts this object in a StructuredData.

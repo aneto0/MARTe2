@@ -45,13 +45,14 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RealTimeDataSourceDef::RealTimeDataSourceDef() {
+RealTimeDataSourceDef::RealTimeDataSourceDef() :
+        ReferenceContainer() {
 
     bufferPtrOffset[0] = 0u;
     bufferPtrOffset[1] = 0u;
     memory = NULL_PTR(MemoryArea *);
-    usedBuffer[0] = NULL;
-    usedBuffer[1] = NULL;
+    usedBuffer[0] = NULL_PTR(void *);
+    usedBuffer[1] = NULL_PTR(void *);
     numberOfDimensions = 0u;
     for (uint32 k = 0u; k < 3u; k++) {
         numberOfElements[k] = 1u;
@@ -59,7 +60,7 @@ RealTimeDataSourceDef::RealTimeDataSourceDef() {
 
 }
 
-bool RealTimeDataSourceDef::AddConsumer(const char8 *stateIn,
+bool RealTimeDataSourceDef::AddConsumer(const char8 * const stateIn,
                                         ReferenceT<GAM> gam) {
     uint32 index;
     bool found = false;
@@ -92,7 +93,7 @@ bool RealTimeDataSourceDef::AddConsumer(const char8 *stateIn,
     return ret;
 }
 
-bool RealTimeDataSourceDef::AddProducer(const char8 *stateIn,
+bool RealTimeDataSourceDef::AddProducer(const char8 * const stateIn,
                                         ReferenceT<GAM> gam) {
 
     uint32 index;
@@ -126,7 +127,7 @@ bool RealTimeDataSourceDef::AddProducer(const char8 *stateIn,
 
 }
 
-void RealTimeDataSourceDef::SetDefaultValue(const char8* defaultIn) {
+void RealTimeDataSourceDef::SetDefaultValue(const char8 * const defaultIn) {
 
     if (defaultIn != NULL) {
         if (defaultValue != "") {
@@ -142,7 +143,7 @@ const char8 *RealTimeDataSourceDef::GetDefaultValue() {
     return defaultValue.Buffer();
 }
 
-uint32 RealTimeDataSourceDef::GetNumberOfConsumers(const char8 * stateIn) {
+uint32 RealTimeDataSourceDef::GetNumberOfConsumers(const char8 * const stateIn) {
     uint32 ret = 0u;
     uint32 numberOfRecords = Size();
     ReferenceT<RealTimeDataSourceDefRecord> record;
@@ -163,7 +164,7 @@ uint32 RealTimeDataSourceDef::GetNumberOfConsumers(const char8 * stateIn) {
 
 }
 
-uint32 RealTimeDataSourceDef::GetNumberOfProducers(const char8 * stateIn) {
+uint32 RealTimeDataSourceDef::GetNumberOfProducers(const char8 * const stateIn) {
     uint32 ret = 0u;
     uint32 numberOfRecords = Size();
     ReferenceT<RealTimeDataSourceDefRecord> record;
@@ -194,14 +195,14 @@ bool RealTimeDataSourceDef::Verify() {
                 ret = false;
             }
             if (record->GetNumberOfConsumers() == 0u) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "Variable %s not consumed", GetName());
+                REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "Variable %s not consumed", GetName())
             }
         }
     }
     return ret;
 }
 
-bool RealTimeDataSourceDef::SetType(const char8 *typeName) {
+bool RealTimeDataSourceDef::SetType(const char8 * const typeName) {
     bool ret = true;
     if (type != typeName) {
         if (type != "") {
@@ -224,8 +225,9 @@ void **RealTimeDataSourceDef::GetDataSourcePointer(uint8 bufferIndex) {
         bufferIndex = bufferIndex % 2u;
     }
 
-    void ** ret = NULL;
+    void ** ret = NULL_PTR(void **);
     if (memory != NULL) {
+        /*lint -e{613} NULL pointer checking done before entering here */
         usedBuffer[bufferIndex] = memory->GetPointer(bufferPtrOffset[bufferIndex]);
         ret = &usedBuffer[bufferIndex];
     }
@@ -243,6 +245,7 @@ bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
     if (ret) {
         // by default use the same buffer in the next state
         uint8 nextBuffer = (status.activeBuffer + 1u) % 2u;
+        /*lint -e{613} NULL pointer checking done before entering here */
         usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[status.activeBuffer]);
 
         // search the current state
@@ -279,25 +282,32 @@ bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
                     const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
                     ret = (item != NULL);
                     if (ret) {
+                        /*lint -e{613} NULL pointer checking done before entering here */
                         const ClassProperties *properties = item->GetClassProperties();
                         ret = (properties != NULL);
                         if (ret) {
                             // if defaultValue is not set, remain with the same buffer of the previous state
                             if (defaultValue != "") {
                                 typeDes = TypeDescriptor(false, properties->GetUniqueIdentifier());
+                                /*lint -e{613} NULL pointer checking done before entering here */
                                 at = AnyType(typeDes, 0u, memory->GetPointer(bufferPtrOffset[nextBuffer]));
                                 ConfigurationDatabase cdb;
-                                defaultValue.Seek(0);
-                                StandardParser parser(defaultValue, cdb);
-                                ret = parser.Parse();
-                                cdb.Write("Class", type.Buffer());
-                                if (ret) {
-                                    ret = TypeConvert(at, cdb);
-                                }
+                                ret=defaultValue.Seek(0ull);
+                                if(ret) {
+                                    StandardParser parser(defaultValue, cdb);
+                                    ret = parser.Parse();
+                                    if(ret) {
+                                        ret=cdb.Write("Class", type.Buffer());
+                                    }
+                                    if (ret) {
+                                        ret = TypeConvert(at, cdb);
+                                    }
 
-                                if (ret) {
-                                    //set the next used buffer
-                                    usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[nextBuffer]);
+                                    if (ret) {
+                                        //set the next used buffer
+                                        /*lint -e{613} NULL pointer checking done before entering here */
+                                        usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[nextBuffer]);
+                                    }
                                 }
                             }
                         }
@@ -307,6 +317,7 @@ bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
                 else {
                     // if defaultValue is not set, remain with the same buffer of the previous state
                     if (defaultValue != "") {
+                        /*lint -e{613} NULL pointer checking done before entering here */
                         at = AnyType(typeDes, 0u, memory->GetPointer(bufferPtrOffset[nextBuffer]));
                         if (numberOfDimensions > 0u) {
                             // consider the multi-dimensional
@@ -320,15 +331,17 @@ bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
                             // create a stream with "node = { element1, element2, ...}
                             StreamString fakeNodeConfig = "node = ";
                             fakeNodeConfig += defaultValue;
-                            fakeNodeConfig.Seek(0);
-                            // parse it
-                            StandardParser parser(fakeNodeConfig, cdb);
-                            ret = parser.Parse();
-                            // get the input
-                            AnyType multiDim = cdb.GetType("node");
+                            ret=fakeNodeConfig.Seek(0ull);
+                            if(ret) {
+                                // parse it
+                                StandardParser parser(fakeNodeConfig, cdb);
+                                ret = parser.Parse();
+                                // get the input
+                                AnyType multiDim = cdb.GetType("node");
 
-                            if (ret) {
-                                ret = TypeConvert(at, multiDim);
+                                if (ret) {
+                                    ret = TypeConvert(at, multiDim);
+                                }
                             }
                         }
                         else {
@@ -336,6 +349,7 @@ bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
                         }
                         if (ret) {
                             //set the next used buffer
+                            /*lint -e{613} NULL pointer checking done before entering here */
                             usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[nextBuffer]);
                         }
                     }
@@ -359,6 +373,7 @@ bool RealTimeDataSourceDef::Allocate(MemoryArea &dsMemory) {
             const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
             ret = (item != NULL);
             if (ret) {
+                /*lint -e{613} NULL pointer checking done before entering here */
                 const ClassProperties *properties = item->GetClassProperties();
                 ret = (properties != NULL);
                 if (ret) {
@@ -378,7 +393,7 @@ bool RealTimeDataSourceDef::Allocate(MemoryArea &dsMemory) {
     }
     // basic type
     else {
-        varSize = (typeDes.numberOfBits + 7u) / 8u;
+        varSize = (static_cast<uint32>(typeDes.numberOfBits) + 7u) / 8u;
         // consider the multi - dimensional
         for (uint32 k = 0u; k < numberOfDimensions; k++) {
             varSize *= numberOfElements[k];
@@ -387,17 +402,18 @@ bool RealTimeDataSourceDef::Allocate(MemoryArea &dsMemory) {
     }
     // allocate the memory
     if (ret) {
-
+        /*lint -e{613} NULL pointer checking done before entering here */
         ret = memory->Add(varSize, bufferPtrOffset[0]);
         if (ret) {
+            /*lint -e{613} NULL pointer checking done before entering here */
             ret = memory->Add(varSize, bufferPtrOffset[1]);
         }
     }
     return ret;
 }
 
-void RealTimeDataSourceDef::SetNumberOfElements(uint8 dimension,
-                                                uint32 nElements) {
+void RealTimeDataSourceDef::SetNumberOfElements(uint32 dimension,
+                                                const uint32 nElements) {
     if (dimension > 2u) {
         REPORT_ERROR(ErrorManagement::Warning, "The dimension id in input is too high (max dimension id = 2). The 2nd dimension id will be considered");
         dimension = 2u;
@@ -419,7 +435,7 @@ uint8 RealTimeDataSourceDef::GetNumberOfDimensions() const {
     return numberOfDimensions;
 }
 
-uint32 RealTimeDataSourceDef::GetNumberOfElements(uint8 dimension) const {
+uint32 RealTimeDataSourceDef::GetNumberOfElements(uint32 dimension) const {
     if (dimension > 2u) {
         REPORT_ERROR(ErrorManagement::Warning, "The dimension id in input is too high (max dimension id = 2). The 2nd dimension id will be considered");
         dimension = 2u;
@@ -429,8 +445,8 @@ uint32 RealTimeDataSourceDef::GetNumberOfElements(uint8 dimension) const {
 
 bool RealTimeDataSourceDef::ToStructuredData(StructuredDataI& data) {
 
-    const char8 * name = GetName();
-    bool ret = data.CreateRelative(name);
+    const char8 * objName = GetName();
+    bool ret = data.CreateRelative(objName);
     if (ret) {
         ret = data.Write("Class", "RealTimeDataSourceDef");
         if (ret) {

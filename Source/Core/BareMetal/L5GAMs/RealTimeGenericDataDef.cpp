@@ -42,7 +42,8 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-RealTimeGenericDataDef::RealTimeGenericDataDef() {
+RealTimeGenericDataDef::RealTimeGenericDataDef() :
+        RealTimeDataDefI() {
     final = false;
 }
 
@@ -58,15 +59,18 @@ bool RealTimeGenericDataDef::Verify() {
             const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
             ret = (item != NULL);
             if (ret) {
+                /*lint -e{613} NULL pointer checking done before entering here */
                 const Introspection *intro = item->GetIntrospection();
                 ret = (intro != NULL);
                 if (ret) {
                     // not final
                     if (Size() > 0u) {
                         uint32 numberOfMembers = Size();
+                        /*lint -e{613} NULL pointer checking done before entering here */
                         ret = (numberOfMembers == intro->GetNumberOfMembers());
                         if (ret) {
                             for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
+                                /*lint -e{613} NULL pointer checking done before entering here */
                                 const IntrospectionEntry introEntry = (*intro)[i];
                                 bool found = false;
                                 ReferenceT<RealTimeGenericDataDef> element;
@@ -75,25 +79,49 @@ bool RealTimeGenericDataDef::Verify() {
                                     ret = element.IsValid();
                                     if (ret) {
                                         const char8 *defMemberName = element->GetName();
-                                        ret = defMemberName != NULL;
+                                        ret = (defMemberName != NULL);
                                         if (ret) {
                                             // compare the name
                                             // skip the + or $ at the beginning
+                                            /*lint -e{613} NULL pointer checking done before entering here */
                                             found = (StringHelper::Compare(&(defMemberName[1]), introEntry.GetMemberName()) == 0);
                                             if (found) {
                                                 // compare the type
                                                 ret = (StringHelper::Compare(element->GetType(), introEntry.GetMemberTypeName()) == 0);
 
+                                                // check the number of dimensions
                                                 if (ret) {
-                                                    // go recursively
-                                                    // verify the sub type
-                                                    ret = element->Verify();
+                                                    uint32 elementNumDimensions = element->GetNumberOfDimensions();
+                                                    ret = (element->GetNumberOfDimensions() == introEntry.GetNumberOfDimensions());
+                                                    if (ret) {
+                                                        for (uint32 k = 0u; (k < elementNumDimensions) && (ret); k++) {
+                                                            ret = (element->GetNumberOfElements(k) == introEntry.GetNumberOfElements(k));
+                                                        }
+                                                        if (!ret) {
+                                                            REPORT_ERROR_PARAMETERS(
+                                                                    ErrorManagement::FatalError,
+                                                                    "Number of elements in dimensions not compatibles for %s defined in introspection as %s",
+                                                                    introEntry.GetMemberName(), introEntry.GetMemberTypeName())
+
+                                                        }
+                                                    }
+                                                    else {
+                                                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
+                                                                                "Number of dimensions not compatibles for %s defined in introspection as %s",
+                                                                                introEntry.GetMemberName(), introEntry.GetMemberTypeName())
+                                                    }
                                                 }
                                                 else {
                                                     REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
                                                                             "Type mismatch for the member %s defined in introspection as %s",
                                                                             introEntry.GetMemberName(), introEntry.GetMemberTypeName())
                                                 }
+                                                if (ret) {
+                                                    // go recursively
+                                                    // verify the sub type
+                                                    ret = element->Verify();
+                                                }
+
                                             }
                                         }
                                     }
@@ -109,6 +137,16 @@ bool RealTimeGenericDataDef::Verify() {
                                                     numberOfMembers)
                         }
                     }
+                    else {
+                        // unsupported multi-dimensional structures
+                        ret = (numberOfDimensions == 0u);
+                        if (!ret) {
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Unsupported multi-dimensional structures for %s defined with type %s",
+                                                    GetName(), GetType())
+
+                        }
+                    }
+
                 }
                 else {
                     REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type %s not introspectable", type.Buffer())
@@ -140,8 +178,8 @@ bool RealTimeGenericDataDef::Initialise(StructuredDataI& data) {
 
 bool RealTimeGenericDataDef::ToStructuredData(StructuredDataI& data) {
 
-    const char8 * name = GetName();
-    bool ret = data.CreateRelative(name);
+    const char8 * objName = GetName();
+    bool ret = data.CreateRelative(objName);
     if (ret) {
         ret = data.Write("Class", "RealTimeGenericDataDef");
         if (ret) {
@@ -156,7 +194,7 @@ bool RealTimeGenericDataDef::ToStructuredData(StructuredDataI& data) {
         }
         if (ret) {
             if (defaultValue != "") {
-                data.Write("Default", defaultValue);
+                ret = data.Write("Default", defaultValue);
             }
         }
 
@@ -223,7 +261,7 @@ bool RealTimeGenericDataDef::MergeWithLocal(StructuredDataI & localData) {
         }
 
         uint32 newItemsNumber = localData.GetNumberOfChildren();
-        for (uint32 i = 0u; (i < newItemsNumber) & (ret); i++) {
+        for (uint32 i = 0u; (i < newItemsNumber) && (ret); i++) {
             const char8 * newItemName = localData.GetChildName(i);
             if ((newItemName[0] == '+') || (newItemName[0] == '$')) {
                 uint32 itemsNumber = Size();
@@ -247,13 +285,15 @@ bool RealTimeGenericDataDef::MergeWithLocal(StructuredDataI & localData) {
                 if ((!found) && (ret)) {
                     if (localData.MoveRelative(newItemName)) {
                         ReferenceT<RealTimeDataDefI> newItem;
-                        newItem.Initialise(localData, false);
-                        ret = (newItem.IsValid());
+                        ret = newItem.Initialise(localData, false);
                         if (ret) {
-                            newItem->SetName(newItemName);
-                            ret = Insert(newItem);
-                            if (!localData.MoveToAncestor(1u)) {
-                                ret = false;
+                            ret = (newItem.IsValid());
+                            if (ret) {
+                                newItem->SetName(newItemName);
+                                ret = Insert(newItem);
+                                if (!localData.MoveToAncestor(1u)) {
+                                    ret = false;
+                                }
                             }
                         }
                     }

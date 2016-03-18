@@ -42,7 +42,8 @@
 
 namespace MARTe {
 
-RealTimeDataDefContainer::RealTimeDataDefContainer() {
+RealTimeDataDefContainer::RealTimeDataDefContainer() :
+        ReferenceContainer() {
     final = false;
     isInput = false;
     isOutput = false;
@@ -65,8 +66,6 @@ bool RealTimeDataDefContainer::Verify() {
 
 bool RealTimeDataDefContainer::MergeWithLocal(StructuredDataI & localData) {
 
-    StreamString isLocalDefFinal;
-
     bool ret = true;
     uint32 newItemsNumber = localData.GetNumberOfChildren();
 
@@ -87,7 +86,7 @@ bool RealTimeDataDefContainer::MergeWithLocal(StructuredDataI & localData) {
         }
     }
 
-    for (uint32 i = 0u; (i < newItemsNumber) & (ret); i++) {
+    for (uint32 i = 0u; (i < newItemsNumber) && (ret); i++) {
         const char8 * newItemName = localData.GetChildName(i);
         // take only the objects
         if ((newItemName[0] == '+') || (newItemName[0] == '$')) {
@@ -113,13 +112,15 @@ bool RealTimeDataDefContainer::MergeWithLocal(StructuredDataI & localData) {
                 if (!final) {
                     if (localData.MoveRelative(newItemName)) {
                         ReferenceT<RealTimeDataDefI> newItem;
-                        newItem.Initialise(localData, false);
-                        ret = (newItem.IsValid());
+                        ret = newItem.Initialise(localData, false);
                         if (ret) {
-                            newItem->SetName(newItemName);
-                            ret = Insert(newItem);
-                            if (!localData.MoveToAncestor(1u)) {
-                                ret = false;
+                            ret = (newItem.IsValid());
+                            if (ret) {
+                                newItem->SetName(newItemName);
+                                ret = Insert(newItem);
+                                if (!localData.MoveToAncestor(1u)) {
+                                    ret = false;
+                                }
                             }
                         }
                     }
@@ -163,8 +164,8 @@ bool RealTimeDataDefContainer::IsOutput() const {
 }
 
 bool RealTimeDataDefContainer::ToStructuredData(StructuredDataI & data) {
-    const char8 * name = GetName();
-    bool ret = data.CreateRelative(name);
+    const char8 * objName = GetName();
+    bool ret = data.CreateRelative(objName);
     if (ret) {
         ret = data.Write("Class", "RealTimeDataDefContainer");
 

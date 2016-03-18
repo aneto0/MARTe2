@@ -79,6 +79,7 @@
      * Note that the selected heap might be different for each type of class.                                          \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
      */                                                                                                                \
+     /*lint -e{1511} This function will be redeclared in descendants */                                                \
      static void * operator new(const MARTe::osulong size, MARTe::HeapI *heap = static_cast<MARTe::HeapI *>(NULL));\
     /*                                                                                                                 \
      * @brief Delete the object.                                                                                       \
@@ -87,6 +88,7 @@
      * scope in the unit file (but is not exported) (see CLASS_REGISTER).                                              \
      * @param[in] p the pointer to the object to be deleted.                                                           \
      */                                                                                                                \
+     /*lint -e{1511} This function will be redeclared in descendants */                                                \
       static void operator delete(void *p);
 
 /**
@@ -111,7 +113,7 @@
      * of an application or loading of a loadable library.                                                             \
      * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
      */                                                                                                                \
-    static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver, sizeof(className));                 \
+    static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver, static_cast<uint32>(sizeof(className)));                 \
     /*                                                                                                                 \
      * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
      * of an application or loading of a loadable library. It will automatically add the class type to the             \
@@ -178,7 +180,7 @@
           * of an application or loading of a loadable library.                                                             \
           * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
           */                                                                                                                \
-         static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver, sizeof(className));          \
+         static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver, static_cast<uint32>(sizeof(className)));          \
          /*                                                                                                                 \
           * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
           * of an application or loading of a loadable library. It will automatically add the class type to the             \
@@ -210,7 +212,7 @@
           * of an application or loading of a loadable library.                                                             \
           * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
           */                                                                                                                \
-         static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver, sizeof(className));                 \
+         static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver, static_cast<uint32>(sizeof(className)));                 \
          /*                                                                                                                 \
           * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
           * of an application or loading of a loadable library. It will automatically add the class type to the             \

@@ -39,29 +39,63 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the RealTimeDataSourceInputReader functions.
+ */
 class RealTimeDataSourceInputReaderTest {
 
 public:
 
+    /**
+     * @brief Creates a configuration database used in tests.
+     */
     RealTimeDataSourceInputReaderTest();
 
+    /**
+     * @brief tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests the read of default value on preallocated memory.
+     */
     bool TestRead_DefaultValues_Static();
 
+    /**
+     * @brief Tests the read of default value on internal allocated memory.
+     */
     bool TestRead_DefaultValues_Allocation();
 
+    /**
+     * @brief Tests the read on a preallocated memory.
+     */
     bool TestRead_Static();
 
+    /**
+     * @brief Tests the read on the internal alloctaed memory.
+     */
     bool TestRead_Allocation();
 
+    /**
+     * @brief Tests the read of more variables.
+     */
     bool TestRead_MoreThanOneVariable();
 
+    /**
+     * @brief Tests the read of a vector variable.
+     */
     bool TestRead_MultiDim_Vector();
 
+    /**
+     * @brief Tests the read of a matrix variable.
+     */
     bool TestRead_MultiDim_Matrix();
 
 private:
+
+    /**
+     * A configuration database used in tests.
+     */
     ConfigurationDatabase cdb;
 
 };

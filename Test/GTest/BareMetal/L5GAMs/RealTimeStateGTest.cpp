@@ -80,8 +80,8 @@ TEST(RealTimeStateGTest,TestGetNumberOfGAMGroups) {
     ASSERT_TRUE(rtsTest.TestGetNumberOfGAMGroups());
 }
 
-TEST(RealTimeStateGTest,TestChangeState) {
+TEST(RealTimeStateGTest,TestPrepareState) {
     RealTimeStateTest rtsTest;
-    ASSERT_TRUE(rtsTest.TestChangeState());
+    ASSERT_TRUE(rtsTest.TestPrepareState());
 }
 

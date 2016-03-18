@@ -60,7 +60,7 @@ public:
      * from 0 to 1 on each state switch.
      * @return false in case of errors, true otherwise.
      */
-    bool Write(uint8 activeDataSourceBuffer);
+    bool Write(const uint8 activeDataSourceBuffer) const;
 
 
 };

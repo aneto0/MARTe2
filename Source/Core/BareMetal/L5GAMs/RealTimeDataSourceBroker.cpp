@@ -42,7 +42,8 @@
 
 namespace MARTe {
 
-RealTimeDataSourceBroker::RealTimeDataSourceBroker() {
+RealTimeDataSourceBroker::RealTimeDataSourceBroker() :
+        ReferenceContainer() {
     application = NULL_PTR(RealTimeApplication *);
     finalised = false;
 }
@@ -52,10 +53,10 @@ void RealTimeDataSourceBroker::SetApplication(RealTimeApplication &rtApp) {
 }
 
 bool RealTimeDataSourceBroker::AddVariable(ReferenceT<RealTimeDataDefI> def,
-                                           void* ptr) {
+                                           void * const ptr) {
 
     bool ret = true;
-    void *memStart = NULL;
+    void *memStart = NULL_PTR(void*);
     if (ptr != NULL) {
         ret = beginPointers.Add(ptr);
         memStart = ptr;
@@ -63,7 +64,7 @@ bool RealTimeDataSourceBroker::AddVariable(ReferenceT<RealTimeDataDefI> def,
     else {
         // we do not know yet
         memStart = memory.GetMemoryStart();
-        ret = beginPointers.Add(NULL);
+        ret = beginPointers.Add(NULL_PTR(void*));
     }
     if (ret) {
         ret = chunkIndex.Add(GAMOffsets.GetSize());
@@ -75,15 +76,18 @@ bool RealTimeDataSourceBroker::AddVariable(ReferenceT<RealTimeDataDefI> def,
 }
 
 bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> def,
-                                                  void* ptr,
-                                                  void* memStart) {
+                                                  void * ptr,
+                                                  void * memStart) {
 
     bool ret = (application != NULL);
     if (ret) {
         ReferenceT<RealTimeDataSource> data;
 
         ret = false;
-        for (uint32 i = 0u; (i < application->Size()) && (!ret); i++) {
+        /*lint -e{613} NULL pointer checking done before entering here */
+        uint32 numberOfAppContainers=application->Size();
+        for (uint32 i = 0u; (i < numberOfAppContainers) && (!ret); i++) {
+            /*lint -e{613} NULL pointer checking done before entering here */
             data = application->Get(i);
             if (data.IsValid()) {
                 if (StringHelper::Compare(data->GetName(), "+Data") == 0) {
@@ -103,6 +107,7 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                 // offset used in recursion
                 uint32 offset = 0u;
                 if (ptr != NULL) {
+                    /*lint -e{923} -e{9091} [MISRA C++ Rule 5-2-7][MISRA C++ Rule 5-2-8][MISRA C++ Rule 5-2-9]. Cast From pointer to integer required by this implementation */
                     offset = static_cast<uint32>(reinterpret_cast<uintp>(ptr)- reinterpret_cast<uintp>(memStart));
                 }
 
@@ -114,9 +119,11 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                     const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(typeName);
                     ret = (item != NULL);
                     if (ret) {
+                        /*lint -e{613} NULL pointer checking done before entering here */
                         const Introspection *intro = item->GetIntrospection();
                         ret = (intro != NULL);
                         if (ret) {
+                            /*lint -e{613} NULL pointer checking done before entering here */
                             varSize = intro->GetClassSize();
                             // unsupported multi-dimensional
                             ret = (def->GetNumberOfDimensions() == 0u);
@@ -135,11 +142,14 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                             if (ret) {
                                 // final type
                                 if (numberOfMembers > 0u) {
+                                    /*lint -e{613} NULL pointer checking done before entering here */
                                     uint32 numberOfIntroMembers = intro->GetNumberOfMembers();
 
                                     // the variables will be added in the same order of the introspection
                                     for (uint32 i = 0u; (i < numberOfIntroMembers) && (ret); i++) {
                                         bool found = false;
+                                        /*lint -e{613} NULL pointer checking done before entering here */
+                                        const IntrospectionEntry introEntry=(*intro)[i];
                                         for (uint32 j = 0u; (j < numberOfMembers) && (ret) && (!found); j++) {
                                             ReferenceT<RealTimeDataDefI> subDef = def->Get(j);
                                             ret = def.IsValid();
@@ -148,9 +158,11 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                                                 const char8 *defMemberName = subDef->GetName();
                                                 ret = (defMemberName != NULL);
                                                 if (ret) {
-                                                    if (StringHelper::Compare((*intro)[i].GetMemberName(), &defMemberName[1]) == 0) {
+                                                    /*lint -e{613} NULL pointer checking done before entering here */
+                                                    if (StringHelper::Compare(introEntry.GetMemberName(), &defMemberName[1]) == 0) {
                                                         char8 *pointablePtr = reinterpret_cast<char8*>(ptr);
-                                                        ret = AddVariablePrivate(subDef, &pointablePtr[(*intro)[i].GetMemberByteOffset()], memStart);
+                                                        /*lint -e{613} if (pointablePtr == NULL) it just returns the offset*/
+                                                        ret = AddVariablePrivate(subDef, &pointablePtr[introEntry.GetMemberByteOffset()], memStart);
                                                         found = true;
                                                     }
                                                 }
@@ -161,7 +173,7 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                                             ret = false;
                                             REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
                                                     "Member %s of %s  with type %s does not matches with the introspection data",
-                                                    (*intro)[i].GetMemberName(), def->GetName(), def->GetType())
+                                                    introEntry.GetMemberName(), def->GetName(), def->GetType())
                                         }
                                     }
                                 }
@@ -178,7 +190,7 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                 }
                 // basic type
                 else {
-                    varSize = (typeDes.numberOfBits + 7u) / 8u;
+                    varSize = (static_cast<uint32>(typeDes.numberOfBits) + 7u) / 8u;
                     // consider multi-dimensional
                     uint8 numberOfDimensions = def->GetNumberOfDimensions();
                     for (uint32 k = 0u; k < numberOfDimensions; k++) {
@@ -195,8 +207,8 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                     ReferenceT<RealTimeDataSourceDef> dsDef = data->Find(path);
                     ret = dsDef.IsValid();
                     if (ret) {
-                        void **dsPointer0 = dsDef->GetDataSourcePointer(0);
-                        void **dsPointer1 = dsDef->GetDataSourcePointer(1);
+                        void **dsPointer0 = dsDef->GetDataSourcePointer(0u);
+                        void **dsPointer1 = dsDef->GetDataSourcePointer(1u);
 
                         ret = ((dsPointer0 != NULL) && (dsPointer1 != NULL));
                         if (ret) {
@@ -232,9 +244,9 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
 
 }
 
-void *RealTimeDataSourceBroker::GetData(uint32 i) {
-    void *ret = NULL;
-    void* beginPtr = NULL;
+void *RealTimeDataSourceBroker::GetData(const uint32 i) const {
+    void *ret = NULL_PTR(void*);
+    void* beginPtr = NULL_PTR(void*);
     if (finalised) {
         if (beginPointers.Peek(i, beginPtr)) {
             uint32 index = 0u;
@@ -252,8 +264,8 @@ void *RealTimeDataSourceBroker::GetData(uint32 i) {
     return ret;
 }
 
-void *RealTimeDataSourceBroker::GetMemoryPointer(uint32 n) {
-    void *ret = NULL;
+void *RealTimeDataSourceBroker::GetMemoryPointer(const uint32 n) const{
+    void *ret = NULL_PTR(void*);
 
     if (finalised) {
         if (!GAMPointers.Peek(n, ret)) {
@@ -266,9 +278,9 @@ void *RealTimeDataSourceBroker::GetMemoryPointer(uint32 n) {
     return ret;
 }
 
-void *RealTimeDataSourceBroker::GetMemoryPointerPrivate(uint32 n) {
+void *RealTimeDataSourceBroker::GetMemoryPointerPrivate(const uint32 n)  const{
 
-    void *ret = NULL;
+    void *ret = NULL_PTR(void*);
 
     if (beginPointers.GetSize() > 0u) {
         uint32 numberOfStructures = chunkIndex.GetSize();
@@ -289,7 +301,7 @@ void *RealTimeDataSourceBroker::GetMemoryPointerPrivate(uint32 n) {
             }
         }
 
-        void *beginPtr = NULL;
+        void *beginPtr = NULL_PTR(void*);
         if (beginPointers.Peek(ptrIndex, beginPtr)) {
             uint32 offset = 0u;
             if (GAMOffsets.Peek(n, offset)) {
@@ -307,7 +319,7 @@ bool RealTimeDataSourceBroker::Finalise() {
     // refresh the pointers
     uint32 numberOfStructures = beginPointers.GetSize();
     for (uint32 i = 0u; (i < numberOfStructures) && (ret); i++) {
-        void* ptr = NULL;
+        void* ptr = NULL_PTR(void*);
         ret = (beginPointers.Peek(i, ptr));
         if (ret) {
             if (ptr == NULL) {

@@ -94,7 +94,7 @@ public:
     /**
      * @brief Returns the array with the name of the GAMs involved by this thread.
      */
-    StreamString * GetFunctions() const;
+    StreamString * GetFunctions();
 
     /**
      * @brief Returns the number of GAMs involved by this thread.
@@ -104,7 +104,7 @@ public:
     /**
      * @brief Retrieves the accelerator to the GAMs involved in this thread.
      */
-    ReferenceT<GAM> *GetGAMs() const;
+    ReferenceT<GAM> *GetGAMs();
 
     /**
      * @brief Retrieves the number of GAMs involved in this thread.

@@ -818,7 +818,7 @@ bool RealTimeGenericDataDefTest::TestToStructuredData() {
     cdb.CreateAbsolute("+Par2");
     cdb.Write("Class", "RealTimeGenericDataDef");
     cdb.Write("Type", "uint32");
-    cdb.Write("Modifiers","[2][2]");
+    cdb.Write("Modifiers", "[2][2]");
     cdb.Write("Path", "PidControl2");
     cdb.Write("Default", "1");
     cdb.Write("IsFinal", "true");
@@ -892,6 +892,55 @@ bool RealTimeGenericDataDefTest::TestVerify() {
     }
 
     if (!test->MergeWithLocal(localData)) {
+        return false;
+    }
+
+    return (test->Verify());
+}
+
+bool RealTimeGenericDataDefTest::TestVerify_Vector() {
+
+    ConfigurationDatabase cdb;
+
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlInArray");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Pars");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "PidControl");
+    cdb.Write("Modifiers", "[2]");
+    cdb.Write("Default", "{1,1}");
+    cdb.Write("IsFinal", "true");
+    cdb.MoveToRoot();
+
+    ReferenceT<RealTimeGenericDataDef> test = ReferenceT<RealTimeGenericDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    test->SetName("Control");
+    if (!test->Initialise(cdb)) {
+        return false;
+    }
+
+    return (test->Verify());
+}
+
+bool RealTimeGenericDataDefTest::TestVerify_Matrix() {
+    ConfigurationDatabase cdb;
+
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlInMatrix");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Pars");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "PidControl");
+    cdb.Write("Modifiers", "[3][2]");
+    cdb.Write("Default", "{{1,2},{1,2},{1,2}}");
+    cdb.Write("IsFinal", "true");
+    cdb.MoveToRoot();
+
+    ReferenceT<RealTimeGenericDataDef> test = ReferenceT<RealTimeGenericDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    test->SetName("Control");
+    if (!test->Initialise(cdb)) {
         return false;
     }
 
@@ -1045,6 +1094,74 @@ bool RealTimeGenericDataDefTest::TestVerifyFalse_InvalidNumberOfMembers() {
     cdb.Write("Path", "PidControl3");
     cdb.Write("Default", "1");
     cdb.Write("IsFinal", "true");
+    cdb.MoveToRoot();
+
+    ReferenceT<RealTimeGenericDataDef> test = ReferenceT<RealTimeGenericDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    test->SetName("Control");
+    if (!test->Initialise(cdb)) {
+        return false;
+    }
+
+    return !(test->Verify());
+
+}
+
+bool RealTimeGenericDataDefTest::TestVerifyFalse_NDims() {
+    ConfigurationDatabase cdb;
+
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlInArray");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Pars");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "PidControl");
+    cdb.Write("Default", "{1,1}");
+    cdb.Write("IsFinal", "true");
+    cdb.MoveToRoot();
+
+    ReferenceT<RealTimeGenericDataDef> test = ReferenceT<RealTimeGenericDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    test->SetName("Control");
+    if (!test->Initialise(cdb)) {
+        return false;
+    }
+
+    return !(test->Verify());
+}
+
+bool RealTimeGenericDataDefTest::TestVerifyFalse_NElements() {
+    ConfigurationDatabase cdb;
+
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlInMatrix");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Pars");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "PidControl");
+    cdb.Write("Modifiers", "[3][3]");
+    cdb.Write("Default", "{{1,2},{1,2},{1,2}}");
+    cdb.Write("IsFinal", "true");
+    cdb.MoveToRoot();
+
+    ReferenceT<RealTimeGenericDataDef> test = ReferenceT<RealTimeGenericDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    test->SetName("Control");
+    if (!test->Initialise(cdb)) {
+        return false;
+    }
+
+    return !(test->Verify());
+}
+
+bool RealTimeGenericDataDefTest::TestVerifyFalse_UnsupportedMultiDim() {
+
+    ConfigurationDatabase cdb;
+
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlInMatrix");
+    cdb.Write("Modifiers", "[3]");
+    cdb.Write("IsFinal", "true");
+    cdb.Write("Path", "PidControl");
     cdb.MoveToRoot();
 
     ReferenceT<RealTimeGenericDataDef> test = ReferenceT<RealTimeGenericDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());

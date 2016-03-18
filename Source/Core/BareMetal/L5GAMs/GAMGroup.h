@@ -87,7 +87,7 @@ public:
      * @brief Returns the array with the names of the states in which this GAMGroup is involved.
      * @return the names of the supported states.
      */
-    StreamString *GetSupportedStates() const;
+    StreamString *GetSupportedStates() ;
 
     /**
      * @brief Returns the number of the supported states.
@@ -100,7 +100,7 @@ public:
      * @brief Adds the name of a RealTimeState where this GAMGroup is declared into.
      * @param[in] stateName is the RealTimeState name.
      */
-    void AddState(const char8 * stateName);
+    void AddState(const char8 * const stateName);
 
     /**
      * @brief Initialises all the sub-nodes, then call SetUp(*) to setup the environment.

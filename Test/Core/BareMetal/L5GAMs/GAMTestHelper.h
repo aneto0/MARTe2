@@ -39,89 +39,148 @@
 
 using namespace MARTe;
 
+/**
+ * @brief An introspectable structure
+ */
 struct TrackError {
     uint32 Par1;
     uint32 Par2;
 };
 
+/**
+ * @brief An introspectable structure
+ */
 struct ControlIn {
     uint32 Par1;
     uint32 Par2;
 };
 
+/**
+ * @brief An introspectable structure
+ */
 struct ControlNoise {
     float32 noiseValue;
 };
 
-
+/**
+ * @brief An introspectable structure
+ * with a vector member
+ */
 struct TrackErrorArray {
     uint32 Pars[2];
 };
 
+/**
+ * @brief An introspectable structure
+ * with a vector member
+ */
 struct ControlInArray {
     uint32 Pars[2];
 };
 
-
-
+/**
+ * @brief An introspectable structure
+ * with a matrix member
+ */
 struct TrackErrorMatrix {
     uint32 Pars[3][2];
 };
 
+/**
+ * @brief An introspectable structure
+ * with a matrix member
+ */
 struct ControlInMatrix {
     uint32 Pars[3][2];
 };
 
-
-
+/**
+ * @brief Implementation of a GAM used in tests.
+ */
 class PIDGAM: public GAM {
 
 public:
     CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief Destructor. Frees the local cdb created internally
+     */
     ~PIDGAM();
 
+    /**
+     * @brief The execution routine.
+     */
     virtual void Execute(uint8 activeContextBuffer);
 protected:
+
+    /**
+     * @brief Creates the local cdb.
+     */
     virtual void SetUp();
 
 private:
 
-    bool ExecuteOk;
 };
 
+/**
+ * @brief Implementation of a GAMGroup used in tests.
+ */
 class PIDGAMGroup: public GAMGroup {
 public:
     CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief Dummy implementation of the pure virtual PrepareNextState() function which change a variable.
+     */
     virtual void PrepareNextState(const RealTimeStateInfo &status);
 
+    /**
+     * @brief Retrieves the variable changed by PrepareNextState().
+     */
     uint32 GetContext();
 
 protected:
+
+    /**
+     * @brief Initialises the internal variable.
+     */
     virtual void SetUp();
 
-
 private:
+
+    /**
+     * An internal variable.
+     */
     uint32 context;
 
 };
 
-
+/**
+ * @brief Implementation of a GAM used in tests.
+ */
 class PIDGAM2: public GAM {
 
 public:
     CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief Empty
+     */
     ~PIDGAM2();
 
+    /**
+     * @brief The execution routine using vector variables.
+     */
     virtual void Execute(uint8 activeContextBuffer);
 protected:
+
+    /**
+     * @brief Empty.
+     */
     virtual void SetUp();
 
 private:
 };
-
 
 class PIDGAM3: public GAM {
 
@@ -130,25 +189,43 @@ public:
 
     ~PIDGAM3();
 
+    /**
+     * @brief The execution routine using matrix variables.
+     */
     virtual void Execute(uint8 activeContextBuffer);
 protected:
+
+    /**
+     * @brief Empty
+     */
     virtual void SetUp();
 
 private:
 };
 
-
+/**
+ * Implementation of a GAM used in tests.
+ */
 class PlantGAM: public GAM {
 
 public:
     CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief The execution routine.
+     */
     virtual void Execute(uint8 activeContextBuffer);
 protected:
+    /**
+     * @brief Empty
+     */
     virtual void SetUp();
 
 };
 
+/**
+ * @brief Returns a configuration database commonly used in tests.
+ */
 static ConfigurationDatabase GetCDB1() {
     ConfigurationDatabase cdb;
 
@@ -265,8 +342,6 @@ static ConfigurationDatabase GetCDB1() {
     cdb.Write("Default", "1");
     cdb.Write("IsFinal", "true");
 
-
-
     cdb.CreateAbsolute("$Application1.+Functions.+PIDGroup2.+GAM8");
     cdb.Write("Class", "PIDGAM");
 
@@ -312,8 +387,9 @@ static ConfigurationDatabase GetCDB1() {
     return cdb;
 }
 
-
-
+/**
+ * @brief Returns a configuration database commonly used in tests.
+ */
 static ConfigurationDatabase GetCDB2() {
     ConfigurationDatabase cdb1;
     // application
@@ -486,7 +562,6 @@ static ConfigurationDatabase GetCDB2() {
     cdb1.MoveToRoot();
     return cdb1;
 }
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

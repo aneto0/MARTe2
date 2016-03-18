@@ -112,7 +112,7 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RealTimeDataSource::RealTimeDataSource() {
+RealTimeDataSource::RealTimeDataSource() : ReferenceContainer(){
     numberOfInitialDDBs = 0u;
     final = false;
 }
@@ -161,8 +161,8 @@ bool RealTimeDataSource::AddDataDefinition(ReferenceT<GAM> gam) {
 
 bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> definition,
                                                  ReferenceT<GAM> gam,
-                                                 bool isProducer,
-                                                 bool isConsumer,
+                                                 const bool isProducer,
+                                                 const bool isConsumer,
                                                  StreamString defaultPath) {
 
     bool ret = true;
@@ -225,35 +225,35 @@ bool RealTimeDataSource::AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> de
         // if the definition does not exist creates it
         else {
 
-            ReferenceT<RealTimeDataSourceDef> element(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-            if (element.IsValid()) {
+            ReferenceT<RealTimeDataSourceDef> newElement(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+            if (newElement.IsValid()) {
 
                 if (isConsumer) {
                     for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-                        element->SetDefaultValue(defaultValue.Buffer());
+                        newElement->SetDefaultValue(defaultValue.Buffer());
                         if (ret) {
-                            ret = element->AddConsumer(supportedStates[i].Buffer(), gam);
+                            ret = newElement->AddConsumer(supportedStates[i].Buffer(), gam);
                         }
                     }
                 }
                 if (isProducer) {
                     for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-                        element->SetDefaultValue(defaultValue.Buffer());
+                        newElement->SetDefaultValue(defaultValue.Buffer());
                         if (ret) {
-                            ret = element->AddProducer(supportedStates[i].Buffer(), gam);
+                            ret = newElement->AddProducer(supportedStates[i].Buffer(), gam);
                         }
                     }
                 }
                 if (ret) {
-                    ret = Insert(path.Buffer(), element);
+                    ret = Insert(path.Buffer(), newElement);
                 }
                 if (ret) {
-                    ret = element->SetType(definition->GetType());
+                    ret = newElement->SetType(definition->GetType());
                 }
                 if (ret) {
-                    element->SetNumberOfDimensions(definition->GetNumberOfDimensions());
+                    newElement->SetNumberOfDimensions(definition->GetNumberOfDimensions());
                     for (uint32 k = 0u; k < 3u; k++) {
-                        element->SetNumberOfElements(k, definition->GetNumberOfElements(k));
+                        newElement->SetNumberOfElements(k, definition->GetNumberOfElements(k));
                     }
                 }
 

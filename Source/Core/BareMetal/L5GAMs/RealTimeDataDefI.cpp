@@ -41,7 +41,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-RealTimeDataDefI::RealTimeDataDefI() {
+RealTimeDataDefI::RealTimeDataDefI():ReferenceContainer() {
     numberOfDimensions = 0u;
 
     for (uint32 i = 0u; i < 3u; i++) {
@@ -99,12 +99,12 @@ uint8 RealTimeDataDefI::GetNumberOfDimensions() const {
 
 }
 
-uint32 RealTimeDataDefI::GetNumberOfElements(uint32 dimension) {
+uint32 RealTimeDataDefI::GetNumberOfElements(const uint32 dimension) const{
     uint32 dimensionNumber = dimension;
     return (dimensionNumber < 3u) ? numberOfElements[dimensionNumber] : numberOfElements[2];
 }
 
-void RealTimeDataDefI::SetPath(const char8 * newPath) {
+void RealTimeDataDefI::SetPath(const char8 * const newPath) {
     if (path != "") {
         REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "Path already set to %s", path.Buffer())
     }

@@ -58,7 +58,7 @@ public:
      * from 0 to 1 on each state switch.
      * @return false in case of errors, true otherwise.
      */
-    bool Read(uint8 activeDataSourceBuffer);
+    bool Read(const uint8 activeDataSourceBuffer) const;
 
 };
 

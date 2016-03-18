@@ -39,35 +39,69 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the RealTimeState functions.
+ */
 class RealTimeStateTest {
 
 public:
 
+    /**
+     * @brief Creates a configuration database used in tests.
+     */
     RealTimeStateTest();
 
+    /**
+     * @brief Destroys the ObjectRegistryDatabase.
+     */
     ~RealTimeStateTest();
 
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function adds the gam group defined in threads to the state.
+     */
     bool TestConfigureArchitecture();
 
+    /**
+     * @brief Tests if the function adds the correct gam group specifying in the thread
+     * the single specific gams.
+     */
     bool TestConfigureArchitecture_SingleInGAMGroup();
 
+    /**
+     * @brief Tests if the function fails if the state does not contain the "+Threads" container.
+     */
     bool TestConfigureArchitectureFalse_NoThreads();
 
+    /**
+     * @brief Tests if the function inserts functions correctly creating the "+Functions" container.
+     */
     bool TestInsertFunction();
 
+    /**
+     * @brief Tests if the function adds gam groups to the internal array.
+     */
     bool TestAddGAMGroup();
 
+    /**
+     * @brief Tests if the function returns correctly the gam groups vector.
+     */
     bool TestGetGAMGroups();
 
+    /**
+     * @brief Tests if the function returns the number of gam groups set.
+     */
     bool TestGetNumberOfGAMGroups();
 
-    bool TestChangeState();
+    /**
+     * @brief Tests if the function calls PrepareState for each GAMGroup.
+     */
+    bool TestPrepareState();
 
-
-private:
-    ConfigurationDatabase cdb;
 };
 
 /*---------------------------------------------------------------------------*/

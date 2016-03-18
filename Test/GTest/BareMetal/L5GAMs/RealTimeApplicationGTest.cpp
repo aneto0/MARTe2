@@ -81,9 +81,9 @@ TEST(RealTimeApplicationGTest,TestValidateDataSourceFalse_NoData) {
     ASSERT_TRUE(rtappTest.TestValidateDataSourceFalse_NoData());
 }
 
-TEST(RealTimeApplicationGTest,TestValidateDataSourceFalse_MoreThanOneConsumer) {
+TEST(RealTimeApplicationGTest,TestValidateDataSourceFalse_MoreThanOneProducer) {
     RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestValidateDataSourceFalse_MoreThanOneConsumer());
+    ASSERT_TRUE(rtappTest.TestValidateDataSourceFalse_MoreThanOneProducer());
 }
 
 TEST(RealTimeApplicationGTest,TestAllocateDataSource) {

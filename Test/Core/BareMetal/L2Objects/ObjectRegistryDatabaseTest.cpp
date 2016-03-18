@@ -82,8 +82,8 @@ bool ObjectRegistryDatabaseTest::TestInstance() {
 }
 
 bool ObjectRegistryDatabaseTest::TestFind() {
-
     ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("$A.$B.$C.+PID");
+
     if (test->Kp != 1) {
         return false;
     }
@@ -94,16 +94,11 @@ bool ObjectRegistryDatabaseTest::TestFind() {
         return false;
     }
 
-    ReferenceT<PID> test1 = ObjectRegistryDatabase::Instance()->Find("::+PID", test);
-    if (test1->Kp != 4) {
-        return false;
-    }
-    if (test1->Ki != 5) {
-        return false;
-    }
-    if (test1->Kd != 6) {
-        return false;
-    }
+    return true;
+}
+
+bool ObjectRegistryDatabaseTest::TestFind_Relative() {
+    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("$A.$B.$C.+PID");
 
     ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find(":::+PID", test);
     if (test2->Kp != 7) {
@@ -118,7 +113,7 @@ bool ObjectRegistryDatabaseTest::TestFind() {
 
     ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("$A.$B");
     // relative search
-    ReferenceT<PID> test4 = ObjectRegistryDatabase::Instance()->Find("$C.+PID", start);
+    ReferenceT<PID> test4 = ObjectRegistryDatabase::Instance()->Find(":$C.+PID", start);
     if (test4->Kp != 1) {
         return false;
     }
@@ -126,6 +121,23 @@ bool ObjectRegistryDatabaseTest::TestFind() {
         return false;
     }
     if (test4->Kd != 3) {
+        return false;
+    }
+    return true;
+}
+
+bool ObjectRegistryDatabaseTest::TestFind_Absolute() {
+    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("$A.$B");
+
+// absolute search
+    ReferenceT<PID> test5 = ObjectRegistryDatabase::Instance()->Find("$A.$B.$C.+PID", start);
+    if (test5->Kp != 1) {
+        return false;
+    }
+    if (test5->Ki != 2) {
+        return false;
+    }
+    if (test5->Kd != 3) {
         return false;
     }
 
@@ -139,7 +151,7 @@ bool ObjectRegistryDatabaseTest::TestFindTooManyBackSteps() {
         return false;
     }
 
-    // searches from the beginning
+// searches from the beginning
     ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find("::::+PID", start);
     if (test2->Kp != 7) {
         return false;
@@ -170,6 +182,8 @@ bool ObjectRegistryDatabaseTest::TestCleanUp() {
     simpleCDB.Write("Class", "ReferenceContainer");
     uint32 leaf = 1;
     simpleCDB.Write("leaf", leaf);
+    simpleCDB.CreateAbsolute("+B");
+    simpleCDB.Write("Class", "ReferenceContainer");
     simpleCDB.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->Initialise(simpleCDB);

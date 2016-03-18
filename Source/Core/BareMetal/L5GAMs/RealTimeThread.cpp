@@ -47,13 +47,15 @@ static const uint32 gamsArrayGranularity = 4u;
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RealTimeThread::RealTimeThread() {
+RealTimeThread::RealTimeThread() :
+        ReferenceContainer() {
     functions = NULL_PTR(StreamString*);
     numberOfFunctions = 0u;
-    GAMs = NULL_PTR(ReferenceT<GAM>*);
+    GAMs = reinterpret_cast<ReferenceT<GAM>*>(NULL);
     numberOfGAMs = 0u;
 }
 
+/*lint -e{1551} no exception should be thrown*/
 RealTimeThread::~RealTimeThread() {
     if (functions != NULL) {
         delete[] functions;
@@ -148,7 +150,7 @@ void RealTimeThread::AddGAM(ReferenceT<GAM> element) {
             }
             GAMs = temp;
         }
-
+        /*lint -e{613} before entering the memory for GAMs is allocated because (numberOfGAMs == 0)*/
         GAMs[numberOfGAMs] = element;
         numberOfGAMs++;
 
@@ -163,6 +165,7 @@ bool RealTimeThread::ConfigureArchitecture(RealTimeApplication &rtApp,
     for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
 
         // find the functions specified in cdb
+        /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
         Reference functionGeneric = ObjectRegistryDatabase::Instance()->Find(functions[i].Buffer(), Reference(this));
         ret = functionGeneric.IsValid();
         if (ret) {
@@ -178,6 +181,7 @@ bool RealTimeThread::ConfigureArchitecture(RealTimeApplication &rtApp,
             }
         }
         else {
+            /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
             REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Undefined %s", functions[i].Buffer())
         }
     }
@@ -204,7 +208,7 @@ bool RealTimeThread::Initialise(StructuredDataI & data) {
     return ret;
 }
 
-StreamString * RealTimeThread::GetFunctions() const {
+StreamString * RealTimeThread::GetFunctions() {
     return functions;
 }
 
@@ -212,7 +216,7 @@ uint32 RealTimeThread::GetNumberOfFunctions() const {
     return numberOfFunctions;
 }
 
-ReferenceT<GAM> *RealTimeThread::GetGAMs() const {
+ReferenceT<GAM> *RealTimeThread::GetGAMs() {
     return GAMs;
 }
 
@@ -221,8 +225,8 @@ uint32 RealTimeThread::GetNumberOfGAMs() const {
 }
 
 bool RealTimeThread::ToStructuredData(StructuredDataI& data) {
-    const char8 * name = GetName();
-    bool ret = data.CreateRelative(name);
+    const char8 * objName = GetName();
+    bool ret = data.CreateRelative(objName);
     if (ret) {
         ret = data.Write("Class", "RealTimeThread");
         if (ret) {

@@ -108,7 +108,7 @@ public:
      * @brief Returns the stateful GAMGroups array.
      * @return the stateful GAMGroups array.
      */
-    ReferenceT<GAMGroup> * GetGAMGroups() const;
+    ReferenceT<GAMGroup> * GetGAMGroups();
 
     /**
      * @brief Returns the number of GAMGroups currently registered.

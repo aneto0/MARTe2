@@ -42,7 +42,7 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord() {
+RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord(): ReferenceContainer() {
 
     // can be explored
     ReferenceT<ReferenceContainer> prod(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -93,11 +93,11 @@ uint32 RealTimeDataSourceDefRecord::GetNumberOfProducers() {
     return producers->Size();
 }
 
-ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetConsumers() {
+ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetConsumers() const {
     return consumers;
 }
 
-ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetProducers() {
+ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetProducers() const {
     return producers;
 }
 

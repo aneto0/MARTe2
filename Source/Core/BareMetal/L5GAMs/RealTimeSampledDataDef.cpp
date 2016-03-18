@@ -42,7 +42,8 @@
 
 namespace MARTe {
 
-RealTimeSampledDataDef::RealTimeSampledDataDef() {
+RealTimeSampledDataDef::RealTimeSampledDataDef() :
+        RealTimeDataDefI() {
     samples = 0;
     samplesPerCycle = 0;
     final = false;
@@ -54,18 +55,28 @@ bool RealTimeSampledDataDef::Verify() {
     if (ret) {
         // if a basic type return true
         if (TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer()) == InvalidType) {
-            // structured type
-            const ClassRegistryItem * item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
-            ret = (item != NULL);
+            // unsupported multi-dimensional structures
+            ret = (numberOfDimensions == 0u);
             if (ret) {
-                const Introspection * intro = item->GetIntrospection();
-                ret = (intro != NULL);
-                if (!ret) {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type %s not introspectable", type.Buffer())
+                // structured type
+                const ClassRegistryItem * item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
+                ret = (item != NULL);
+                if (ret) {
+                    /*lint -e{613} NULL pointer checking done before entering here */
+                    const Introspection * intro = item->GetIntrospection();
+                    ret = (intro != NULL);
+                    if (!ret) {
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type %s not introspectable", type.Buffer())
+                    }
+                }
+                else {
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type %s not registered", type.Buffer())
                 }
             }
             else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type %s not registered", type.Buffer())
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Unsupported multi-dimensional structures for %s defined with type %s", GetName(),
+                                        GetType())
+
             }
         }
     }
@@ -140,8 +151,8 @@ int32 RealTimeSampledDataDef::GetSamplesPerCycle() const {
 }
 
 bool RealTimeSampledDataDef::ToStructuredData(StructuredDataI & data) {
-    const char8 * name = GetName();
-    bool ret = (data.CreateRelative(name));
+    const char8 * objName = GetName();
+    bool ret = (data.CreateRelative(objName));
     if (ret) {
         ret = data.Write("Class", "RealTimeSampledDataDef");
         if (ret) {

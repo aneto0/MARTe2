@@ -140,7 +140,7 @@ static bool ConfigureDataSourceLinksPrivate(ReferenceT<ReferenceContainer> funct
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RealTimeApplication::RealTimeApplication() {
+RealTimeApplication::RealTimeApplication():ReferenceContainer() {
     activeBuffer = 1u;
 }
 

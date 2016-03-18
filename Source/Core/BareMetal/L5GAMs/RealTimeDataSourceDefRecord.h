@@ -81,13 +81,13 @@ public:
      * @brief Retrieves the consumers container.
      * @return The consumers container.
      */
-    ReferenceT<ReferenceContainer> GetConsumers();
+    ReferenceT<ReferenceContainer> GetConsumers() const;
 
     /**
      * @brief Retrieves the producers container.
      * @return The producers container.
      */
-    ReferenceT<ReferenceContainer> GetProducers();
+    ReferenceT<ReferenceContainer> GetProducers() const;
 
 private:
 
