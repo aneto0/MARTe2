@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataSourceTest.h
- * @brief Header file for class RealTimeDataSourceTest
- * @date 09/03/2016
- * @author Giuseppe Ferrò
+ * @file BasicRealTimeDataSourceOutputWriter.h
+ * @brief Header file for class BasicRealTimeDataSourceOutputWriter
+ * @date 21/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceTest
+ * @details This header file contains the declaration of the class BasicRealTimeDataSourceOutputWriter
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCETEST_H_
-#define REALTIMEDATASOURCETEST_H_
+#ifndef BASICREALTIMEDATASOURCEOUTPUTWRITER_H_
+#define BASICREALTIMEDATASOURCEOUTPUTWRITER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,47 +31,43 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeDataSource.h"
+#include "BasicRealTimeDataSourceBroker.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
-using namespace MARTe;
+namespace MARTe {
 
 /**
- * @brief Tests all the RealTimeDataSource functions.
+ * @brief Writes data to the RealTimeDataSource.
  */
-class RealTimeDataSourceTest {
+class BasicRealTimeDataSourceOutputWriter: public BasicRealTimeDataSourceBroker {
+
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief Tests the constructor.
+     * @brief Constructor.
      */
-    bool TestConstructor();
+    BasicRealTimeDataSourceOutputWriter();
 
     /**
-     * @brief Tests if the function intitialises correctly the data source from a StructuredDataI in input.
+     * @brief Writes data to the RealTimeDataSource.
+     * @details After the configuration of the interface between GAM and RealTimeDataSource
+     * (see RealTimeDataSourceBroker), copies data the GAM variables to the RealTimeDataSource.
+     * @param[in] activeDataSourceBuffer is the buffer index to be used. This parameter must change
+     * from 0 to 1 on each state switch.
+     * @return false in case of errors, true otherwise.
      */
-    bool TestInitialise();
-
-
-    /**
-     * @brief Test if the function allocates correctly the memory for all the basic type variables.
-     */
-    bool TestAllocate();
-
-    /**
-     * @brief Tests if the function allocates correctly the memory also for some structured types.
-     */
-    bool TestAllocate_Structure();
-
+    bool Write(const uint8 activeDataSourceBuffer) const;
 
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCETEST_H_ */
+#endif /* BASICREALTIMEDATASOURCEOUTPUTWRITER_H_ */
 

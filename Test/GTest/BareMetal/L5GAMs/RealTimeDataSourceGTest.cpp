@@ -40,61 +40,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(RealTimeDataSourceGTest,TestConstructor) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestConstructor());
-}
-
-TEST(RealTimeDataSourceGTest,TestInitialise) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestInitialise());
-}
-
-TEST(RealTimeDataSourceGTest,TestAddDataDefinition_Final) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinition_Final());
-}
-
-TEST(RealTimeDataSourceGTest,TestAddDataDefinitionFalse_Final) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinitionFalse_Final());
-}
-
-TEST(RealTimeDataSourceGTest,TestAddDataDefinition_NotFinal) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinition_NotFinal());
-}
-
-TEST(RealTimeDataSourceGTest,TestAddDataDefinition_AlreadyExistentLeaf) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinition_AlreadyExistentLeaf());
-}
-
-TEST(RealTimeDataSourceGTest,TestAddDataDefinitionFalse_NoDefinitionInGAM) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinitionFalse_NoDefinitionInGAM());
-}
-
-TEST(RealTimeDataSourceGTest,TestAddDataDefinitionFalse_NoDefinitionContainerInGAM) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinitionFalse_NoDefinitionContainerInGAM());
-}
-
-TEST(RealTimeDataSourceGTest,TestAddDataDefinitionFalse_InvalidGAM) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestAddDataDefinitionFalse_InvalidGAM());
-}
-
-TEST(RealTimeDataSourceGTest,TestVerify) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestVerify());
-}
-
-TEST(RealTimeDataSourceGTest,TestVerify_TwoProducers) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestVerify_TwoProducers());
-}
-
 TEST(RealTimeDataSourceGTest,TestAllocate) {
     RealTimeDataSourceTest rtdsdcTest;
     ASSERT_TRUE(rtdsdcTest.TestAllocate());
@@ -103,20 +48,4 @@ TEST(RealTimeDataSourceGTest,TestAllocate) {
 TEST(RealTimeDataSourceGTest,TestAllocate_Structure) {
     RealTimeDataSourceTest rtdsdcTest;
     ASSERT_TRUE(rtdsdcTest.TestAllocate_Structure());
-}
-
-TEST(RealTimeDataSourceGTest,TestPrepareNextState) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestPrepareNextState());
-}
-
-TEST(RealTimeDataSourceGTest,TestPrepareNextState_MultiDim_Vector) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestPrepareNextState_MultiDim_Vector());
-}
-
-
-TEST(RealTimeDataSourceGTest,TestPrepareNextState_MultiDim_Vector_Matrix) {
-    RealTimeDataSourceTest rtdsdcTest;
-    ASSERT_TRUE(rtdsdcTest.TestPrepareNextState_MultiDim_Matrix());
 }

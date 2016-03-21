@@ -108,11 +108,6 @@ public:
     bool TestConfigureDataSource();
 
     /**
-     * @brief Tests if the function adds RealTimeDataSourceDefs if RealTimeDataSource is not declared final.
-     */
-    bool TestConfigureDataSource_NotFinal();
-
-    /**
      * @brief Tests if the function fails adding RealTimeDataSourceDefs if RealTimeDataSource is declared final.
      */
     bool TestConfigureDataSourceFalse_Final();

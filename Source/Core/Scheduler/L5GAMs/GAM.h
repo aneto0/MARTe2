@@ -67,7 +67,7 @@ namespace MARTe {
  *     ...\n
  * }\n
  */
-class GAM: public ReferenceContainer {
+class GAM: public GAMI {
 public:
 
     /**
@@ -76,110 +76,26 @@ public:
     GAM();
 
     /**
-     * @brief Destructor
-     * @details Frees the array containing the supported states names.
-     */
-    virtual ~GAM();
-
-    /**
-     * @brief Generates the data source definitions ( in RealTimeApplication_name.+Data ) looking to the path
-     * of each RealTimeDataDefI declared into this GAM.
-     */
-    virtual bool ConfigureDataSource();
-
-    /**
-     * @brief Links this GAM to its RealTimeApplication.
-     * @param[in] rtApp is a reference to the RealTimeApplication where this GAM is declared into.
-     */
-    void SetApplication(RealTimeApplication &rtApp);
-
-    /**
-     * @brief Links this GAM to its GAMGroup.
-     * @param[in] gamGroup is the GAMGroup involving this GAM.
-     */
-    void SetGAMGroup(ReferenceT<GAMGroup> gamGroup);
-
-    /**
-     * @brief Adds the name of a RealTimeState where this GAM is declared into.
-     * @param[in] stateName is the RealTimeState name.
-     */
-    void AddState(const char8 * const stateName);
-
-    /**
      * @brief Links the GAM with RealTimeDataSource.
      * @details Configures the input (RealTimeDataInputReader) and output interfaces (RealTimeDataOutputWriter)
      * to communicate with the RealTimeDataSource.
      */
     virtual bool ConfigureDataSourceLinks();
 
-    /**
-     * @brief The core function to be executed.
-     * @param[in] activeBuffer is the context buffer currently active.
-     */
-    virtual void Execute(uint8 activeBuffer)=0;
-
-    /**
-     * @brief calls the Initialise(*) function for each sub-node, then calls the functions
-     * SetUp(*) and ConfigureFunction(*) due to initialise the local environment.
-     */
-    virtual bool Initialise(StructuredDataI & data);
-
-    /**
-     * @brief Retrieves the states names where this class is declared into
-     */
-    StreamString *GetSupportedStates();
-
-    /**
-     * @brief Returns the number of the supported states.
-     * @return the number of the supported states.
-     */
-    uint32 GetNumberOfSupportedStates() const;
 
     /**
      * @brief Retrieves the input interface with the RealTimeDataSource.
      * @return the input interface with the RealTimeDataSource.
      */
-    ReferenceT<RealTimeDataSourceInputReader> GetInputReader() const;
+    virtual Reference GetInputReader() const;
 
     /**
      * @brief Retrieves the output interface with the RealTimeDataSource.
      * @return the output interface with the RealTimeDataSource.
      */
-    ReferenceT<RealTimeDataSourceOutputWriter> GetOutputWriter() const;
+    virtual Reference GetOutputWriter() const;
 
 protected:
-
-    /**
-     * @brief Setup the GAM.
-     * @details Initialises the local status (memory allocation
-     * of the IO structures, local configuration file, ecc)
-     */
-    virtual void SetUp()=0;
-
-    /**
-     * The names of the supported states
-     */
-    StreamString *supportedStates;
-
-    /**
-     * How many supported states
-     */
-    uint32 numberOfSupportedStates;
-
-    /**
-     * The local configuration
-     */
-    StructuredDataI* localData;
-
-    /**
-     * Link to the RealTimeApplication
-     */
-    RealTimeApplication *application;
-
-    /**
-     * Link to the GAMGroup
-     */
-    GAMGroup *group;
 
     /**
      * The input interface with the RealTimeDataSource

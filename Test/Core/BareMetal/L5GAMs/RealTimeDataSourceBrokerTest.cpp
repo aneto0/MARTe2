@@ -102,12 +102,11 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_Allocation() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -168,12 +167,11 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_Allocation() {
 bool RealTimeDataSourceBrokerTest::TestAddVariable_Static() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -237,12 +235,12 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_Allocation_BasicType() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.Write("IsFinal", "true");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -305,12 +303,11 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_Allocation_BasicType() {
 bool RealTimeDataSourceBrokerTest::TestAddVariable_Static_BasicType() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -376,12 +373,11 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_NoApplicationSet() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -430,12 +426,12 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_NoApplicationSet() {
 bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_NoDataInApplication() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Datas");
-    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.Write("IsFinal", "true");
     appCDB.CreateAbsolute("+Datas.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Datas.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -472,12 +468,11 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_NoDataInApplication() {
 bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_InvalidDef() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -529,9 +524,9 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_UnintrospectableType() {
     ConfigurationDatabase appCDB;
 
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.MoveToRoot();
 
     ReferenceT<RealTimeApplication> app = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -577,9 +572,9 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_NotInDataSource() {
     ConfigurationDatabase appCDB;
 
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.MoveToRoot();
 
     ReferenceT<RealTimeApplication> app = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -599,12 +594,12 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_NotInDataSource() {
 bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Static_Vector() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.Write("IsFinal", "true");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -715,12 +710,12 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Static_Vecto
 bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Allocation_Vector() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.Write("IsFinal", "true");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -815,12 +810,11 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Allocation_V
 bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Static_Matrix() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -950,12 +944,11 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Static_Matri
 bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Allocation_Matrix() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -1050,12 +1043,11 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Allocation_M
 bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_UnsupportedMultidimStructured() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -1128,12 +1120,11 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_UnsupportedMultidimStruc
 bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_UnregisteredType() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -1169,12 +1160,11 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_UnregisteredType() {
 bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_UnfoundMember() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -1221,12 +1211,11 @@ bool RealTimeDataSourceBrokerTest::TestGetData_Allocation() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -1300,12 +1289,11 @@ bool RealTimeDataSourceBrokerTest::TestGetData_Static() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -1383,12 +1371,11 @@ bool RealTimeDataSourceBrokerTest::TestGetMemoryPointer_Allocation() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -1454,12 +1441,11 @@ bool RealTimeDataSourceBrokerTest::TestGetMemoryPointer_Allocation() {
 bool RealTimeDataSourceBrokerTest::TestGetMemoryPointer_Static() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -1533,12 +1519,11 @@ bool RealTimeDataSourceBrokerTest::TestFinalise() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");

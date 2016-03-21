@@ -34,7 +34,7 @@
 #include "ReferenceContainer.h"
 #include "RealTimeState.h"
 #include "StreamString.h"
-#include "GAM.h"
+#include "GAMI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -79,7 +79,7 @@ public:
                                RealTimeState &rtState);
 
     /**
-     * @brief Reads the array with the GAM names to be launched by this thread from the StructuredData in input.
+     * @brief Reads the array with the GAMI names to be launched by this thread from the StructuredData in input.
      * @details The following fields must be defined:
      *
      *   Functions = { function1_path, function2_path, ... }
@@ -104,7 +104,7 @@ public:
     /**
      * @brief Retrieves the accelerator to the GAMs involved in this thread.
      */
-    ReferenceT<GAM> *GetGAMs();
+    ReferenceT<GAMI> *GetGAMs();
 
     /**
      * @brief Retrieves the number of GAMs involved in this thread.
@@ -119,7 +119,7 @@ public:
 private:
 
     /**
-     * @brief Links the RealTimeState and the GAMGroup to each GAM declared in this
+     * @brief Links the RealTimeState and the GAMGroup to each GAMI declared in this
      * thread.
      */
     bool ConfigureArchitecturePrivate(Reference functionGeneric,
@@ -127,12 +127,12 @@ private:
                                       RealTimeState &rtState);
 
     /**
-     * @brief Adds a GAM reference into the accelerator array.
+     * @brief Adds a GAMI reference into the accelerator array.
      */
-    void AddGAM(ReferenceT<GAM> element);
+    void AddGAM(ReferenceT<GAMI> element);
 
     /**
-     * The array with the GAM names
+     * The array with the GAMI names
      */
     StreamString* functions;
 
@@ -142,9 +142,9 @@ private:
     uint32 numberOfFunctions;
 
     /**
-     * The GAM to be executed by this thread.
+     * The GAMI to be executed by this thread.
      */
-    ReferenceT<GAM> * GAMs;
+    ReferenceT<GAMI> * GAMs;
 
     /**
      * The number of GAMs to be executed by this thread

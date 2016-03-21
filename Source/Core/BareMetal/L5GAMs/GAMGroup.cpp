@@ -31,7 +31,7 @@
 
 #include "GAMGroup.h"
 #include "ReferenceT.h"
-#include "GAM.h"
+#include "BasicGAM.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

@@ -43,16 +43,13 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
-
+namespace MARTe {
 
 extern HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
 namespace HighResolutionTimer {
 
-
-
-inline int64 Frequency() {
+inline uint64 Frequency() {
     return calibratedHighResolutionTimer.GetFrequency();
 }
 
@@ -62,7 +59,7 @@ inline float64 Period() {
 
 inline float64 TicksToTime(const int64 tStop,
                            const int64 tStart) {
-    int64 dT = tStop - tStart;
+    int64 dT = (tStop < tStart) ? ((MAX_INT64 - tStart) + tStop) : (tStop - tStart);
     return static_cast<float64>(dT) * Period();
 }
 

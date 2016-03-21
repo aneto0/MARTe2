@@ -381,8 +381,12 @@ static ConfigurationDatabase GetCDB1() {
 
 // data
     cdb.CreateAbsolute("$Application1.+Data");
+    cdb.Write("Class", "RealTimeDataSourceContainer");
+    cdb.CreateAbsolute("$Application1.+Data.+DDB1");
     cdb.Write("Class", "RealTimeDataSource");
-    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("$Application1.+Data.+DDB2");
+    cdb.Write("Class", "RealTimeDataSource");
+
     cdb.MoveToRoot();
     return cdb;
 }
@@ -557,8 +561,12 @@ static ConfigurationDatabase GetCDB2() {
 
     // data
     cdb1.CreateAbsolute("$Application1.+Data");
+    cdb1.Write("Class", "RealTimeDataSourceContainer");
+    cdb1.CreateAbsolute("$Application1.+Data.+DDB1");
     cdb1.Write("Class", "RealTimeDataSource");
-    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Data.+DDB2");
+    cdb1.Write("Class", "RealTimeDataSource");
+
     cdb1.MoveToRoot();
     return cdb1;
 }

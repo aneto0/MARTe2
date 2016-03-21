@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceInputReader.cpp
- * @brief Source file for class RealTimeDataSourceInputReader
- * @date 09/mar/2016
+ * @file RealTimeDataSourceDef.cpp
+ * @brief Source file for class RealTimeDataSourceDef
+ * @date 29/feb/2016
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataSourceInputReader (public, protected, and private). Be aware that some 
+ * the class RealTimeDataSourceDef (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,49 +29,33 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeDataSourceInputReader.h"
+#include "RealTimeDataSourceDef.h"
+#include "ReferenceT.h"
+#include "RealTimeDataSourceDefRecord.h"
+#include "StandardParser.h"
+#include "ConfigurationDatabase.h"
+#include "AdvancedErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+RealTimeDataSourceDef::RealTimeDataSourceDef() :
+        BasicRealTimeDataSourceDef() {
+    eventSem = NULL_PTR(EventSem *);
+}
 
-RealTimeDataSourceInputReader::RealTimeDataSourceInputReader() :
-        RealTimeDataSourceBroker() {
+EventSem *RealTimeDataSourceDef::GetEventSemaphore() const {
+    return eventSem;
+}
+
+
+CLASS_REGISTER(RealTimeDataSourceDef, "1.0")
 
 }
 
-bool RealTimeDataSourceInputReader::Read(const uint8 activeDataSourceBuffer) const{
-
-    bool ret = finalised;
-    for (uint32 i = 0u; (i < GAMOffsets.GetSize()) && (ret); i++) {
-        void ** DSPointer = NULL_PTR(void **);
-        ret = DSPointers[activeDataSourceBuffer].Peek(i, DSPointer);
-        if (ret) {
-            ret = (DSPointer != NULL);
-        }
-        void * GAMPointer = NULL_PTR(void *);
-        if (ret) {
-            ret = GAMPointers.Peek(i, GAMPointer);
-        }
-        if (ret) {
-            ret = (GAMPointer != NULL);
-        }
-        uint32 size = 0u;
-        if (ret) {
-            ret = sizes.Peek(i, size);
-        }
-        if (ret) {
-            ret = MemoryOperationsHelper::Copy(GAMPointer, *DSPointer, size);
-        }
-    }
-
-    return ret;
-}
-CLASS_REGISTER(RealTimeDataSourceInputReader, "1.0")
-
-}

@@ -62,7 +62,7 @@ RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord(): ReferenceContainer()
     }
 }
 
-bool RealTimeDataSourceDefRecord::AddConsumer(ReferenceT<GAM> gamConsumer) {
+bool RealTimeDataSourceDefRecord::AddConsumer(ReferenceT<BasicGAM> gamConsumer) {
 
     bool ret = consumers.IsValid();
     if (ret) {
@@ -74,7 +74,7 @@ bool RealTimeDataSourceDefRecord::AddConsumer(ReferenceT<GAM> gamConsumer) {
     return ret;
 }
 
-bool RealTimeDataSourceDefRecord::AddProducer(ReferenceT<GAM> gamProducer) {
+bool RealTimeDataSourceDefRecord::AddProducer(ReferenceT<BasicGAM> gamProducer) {
     bool ret = producers.IsValid();
     if (ret) {
         ret = producers->Insert(gamProducer);

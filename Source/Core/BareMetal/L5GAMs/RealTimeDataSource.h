@@ -34,9 +34,8 @@
 #include "MemoryArea.h"
 #include "StaticList.h"
 #include "ReferenceContainer.h"
-#include "RealTimeDataSourceDef.h"
+#include "BasicRealTimeDataSourceDef.h"
 #include "RealTimeDataDefI.h"
-#include "GAM.h"
 #include "ReferenceT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -64,7 +63,7 @@ public:
      * @brief Initialises from configuration data.
      * @details The following fields can be specified in \a data:
      *
-     *   IsFinal = true / false
+     *   HeapMemory = the name of the heap memory
      *
      * By default (if not specified) the definition is not final. If final, it is not possible adding
      * more data source definitions than the ones specified in \a data.
@@ -73,45 +72,7 @@ public:
      */
     virtual bool Initialise(StructuredDataI & data);
 
-    /**
-     * @brief Adds all the RealTimeDataDefI defined in the GAM in input.
-     *
-     * @details Explores the RealTimeDataDefContainer elements of \a gam and for each specific RealTimeDataDefI
-     * inserts an element in the path specified by the "Path" field of RealTimeDataDefI using this object as root.
-     * The final definition is a RealTimeDataSourceDef type and this function initialises its fields "defaultValue"
-     * and "type" reading informations from the related RealTimeDataDefI. Finally each RealTimeDataSourceDef
-     * will contain a list of RealTimeDataDefRecords, one for each state where the variable will be used
-     * and \a gam will be inserted as consumer or producer depending on the definition (RealTimeDataDefContainer::IsInput or
-     * RealTimeDataDefContainer::IsOutput respectively).
-     *
-     * @details If some RealTimeDataDefI definitions does not provide the field "Path" the path will be considered
-     * equal to the name.
-     *
-     * @param[in] gam is a Reference to the GAM containing all the definitions to be inserted.
-     * @return false in case of errors, true otherwise.
-     */
-    bool AddDataDefinition(ReferenceT<GAM> gam);
 
-    /**
-     * @brief Checks if for each RealTimeDataSourceDef there no more than one producer for each state.
-     * @details No more than one producer per state is allowed for each data source. If no consumers are
-     * defined for a data source, a warning will be generated (unused variable).
-     * @return true if there is at most one GAM producer for each state in each RealTimeDataSourceDef.
-     */
-    bool Verify();
-
-    /**
-     * @brief Prepares the environment for the next state.
-     * @details If the data source is not used during the current state but will be used in the next, it will be
-     * reset to its default value. The value of the variable will be preserved for the next state if it is used in the
-     * current one. Since this function will be executed in a low priority thread in parallel with the
-     * real-time execution, the operations on the data source memory will be executed on a currently unused buffer (double
-     * buffer implementation) which will be available just after the state switch as the new data source to be used.
-     * @param status contains information about the current and the next state.
-     * @return true if the default value (expressed in the configuration data) is compatible with the variable type, false
-     * otherwise.
-     */
-    bool PrepareNextState(const RealTimeStateInfo &status);
 
     /**
      * @brief Allocates the memory for each data source defined.
@@ -122,33 +83,9 @@ public:
 
 private:
 
-    /**
-     * @brief Adds a single RealTimeDataDefI definition into the tree.
-     * @param[in] definition is the definition to be inserted.
-     * @param[in] gam is the GAM containing the definition.
-     * @param[in] isProducer denotes if the GAM produces the variable.
-     * @param[in] isConsumer denotes if the GAM consumes the variable.
-     * @param[in] defaultPath is used when the path is not specified.
-     * @return false in case of errors, false otherwise.
-     */
-    bool AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> definition,
-                                 ReferenceT<GAM> gam,
-                                 const bool isProducer,
-                                 const bool isConsumer,
-                                 StreamString defaultPath = "");
 
 
-
-    /**
-     * The number of definitions initially in the
-     * configuration data.
-     */
-    uint32 numberOfInitialDDBs;
-
-    /**
-     * Specifies if the definition is final or not.
-     */
-    bool final;
+    StreamString heapName;
 
     /**
      * The memory for all the data sources.

@@ -211,59 +211,11 @@ bool GAMTest::TestGetSupportedStates_GAMGroup() {
 bool GAMTest::TestConfigureDataSource() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
-    appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
-    appCDB.MoveToRoot();
-
-    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    if (!rtapp->Initialise(appCDB)) {
-        return false;
-    }
-
-    ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    if (!gam->Initialise(cdb)) {
-        return false;
-    }
-
-    gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("state1");
-    gam->AddState("state2");
-
-    if (!gam->ConfigureDataSource()) {
-        return false;
-    }
-    ReferenceT<RealTimeDataSourceDef> def1 = rtapp->Find("+Data.+DDB1.PidError1");
-    if (def1->GetNumberOfConsumers("state1") != 1 || def1->GetNumberOfConsumers("state2") != 1) {
-
-    }
-
-    ReferenceT<RealTimeDataSourceDef> def2 = rtapp->Find("+Data.+DDB1.PidError2");
-    if (def2->GetNumberOfConsumers("state1") != 1 || def2->GetNumberOfConsumers("state2") != 1) {
-
-    }
-
-    ReferenceT<RealTimeDataSourceDef> def3 = rtapp->Find("+Data.+DDB2.PidControl1");
-    if (def3->GetNumberOfProducers("state1") != 1 || def3->GetNumberOfProducers("state2") != 1) {
-
-    }
-    ReferenceT<RealTimeDataSourceDef> def4 = rtapp->Find("+Data.+DDB2.PidControl2");
-    if (def4->GetNumberOfProducers("state1") != 1 || def4->GetNumberOfProducers("state2") != 1) {
-
-    }
-
-    return true;
-}
-
-bool GAMTest::TestConfigureDataSource_NotFinal() {
-    ConfigurationDatabase appCDB;
-    appCDB.CreateAbsolute("+Data");
     appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "false");
-
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.MoveToRoot();
 
     ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -304,16 +256,17 @@ bool GAMTest::TestConfigureDataSource_NotFinal() {
 
     return true;
 }
+
 
 bool GAMTest::TestConfigureDataSourceFalse_NoData() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Datas"); // wrong
-    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.Write("IsFinal", "true");
     appCDB.CreateAbsolute("+Datas.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Datas.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.MoveToRoot();
 
     ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -336,12 +289,12 @@ bool GAMTest::TestConfigureDataSourceFalse_NoData() {
 bool GAMTest::TestConfigureDataSourceFalse_NoApplicationSet() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.Write("IsFinal", "true");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.MoveToRoot();
 
     ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -364,12 +317,11 @@ bool GAMTest::TestConfigureDataSourceFalse_NoApplicationSet() {
 bool GAMTest::TestConfigureDataSource_NoStates() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.MoveToRoot();
 
     ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -390,12 +342,12 @@ bool GAMTest::TestConfigureDataSource_NoStates() {
 bool GAMTest::TestConfigureDataSourceFalse_Final() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.Write("IsFinal", "true");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB3");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.MoveToRoot();
 
     ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -418,12 +370,12 @@ bool GAMTest::TestConfigureDataSourceFalse_Final() {
 bool GAMTest::TestConfigureDataSourceLinks() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.Write("IsFinal", "true");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
@@ -474,12 +426,11 @@ bool GAMTest::TestConfigureDataSourceLinks() {
 bool GAMTest::TestExecute() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.Write("IsFinal", "true");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.Write("Class", "RealTimeDataSource");
     appCDB.CreateAbsolute("+States");
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");

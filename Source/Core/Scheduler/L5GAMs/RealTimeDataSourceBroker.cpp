@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeDataSourceBroker.h"
-#include "RealTimeDataSource.h"
+#include "RealTimeDataSourceContainer.h"
 #include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -43,13 +43,8 @@
 namespace MARTe {
 
 RealTimeDataSourceBroker::RealTimeDataSourceBroker() :
-        ReferenceContainer() {
-    application = NULL_PTR(RealTimeApplication *);
-    finalised = false;
-}
-
-void RealTimeDataSourceBroker::SetApplication(RealTimeApplication &rtApp) {
-    application = &rtApp;
+        BasicRealTimeDataSourceBroker() {
+    eventSem = NULL_PTR(EventSem *);
 }
 
 bool RealTimeDataSourceBroker::AddVariable(ReferenceT<RealTimeDataDefI> def,
@@ -81,7 +76,7 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
 
     bool ret = (application != NULL);
     if (ret) {
-        ReferenceT<RealTimeDataSource> data;
+        ReferenceT<RealTimeDataSourceContainer> data;
 
         ret = false;
         /*lint -e{613} NULL pointer checking done before entering here */
@@ -207,24 +202,27 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                     ReferenceT<RealTimeDataSourceDef> dsDef = data->Find(path);
                     ret = dsDef.IsValid();
                     if (ret) {
-                        void **dsPointer0 = dsDef->GetDataSourcePointer(0u);
-                        void **dsPointer1 = dsDef->GetDataSourcePointer(1u);
+                        ret=dataSources.Add(dsDef.operator ->());
+                        if(ret) {
+                            void **dsPointer0 = dsDef->GetDataSourcePointer(0u);
+                            void **dsPointer1 = dsDef->GetDataSourcePointer(1u);
 
-                        ret = ((dsPointer0 != NULL) && (dsPointer1 != NULL));
-                        if (ret) {
-                            // add the data source pointer
-                            ret = DSPointers[0].Add(dsPointer0);
+                            ret = ((dsPointer0 != NULL) && (dsPointer1 != NULL));
                             if (ret) {
-                                ret = DSPointers[1].Add(dsPointer1);
+                                // add the data source pointer
+                                ret = DSPointers[0].Add(dsPointer0);
+                                if (ret) {
+                                    ret = DSPointers[1].Add(dsPointer1);
+                                }
                             }
-                        }
-                        if (ret) {
-                            // add the GAM pointer
-                            ret = GAMOffsets.Add(offset);
-                        }
-                        if (ret) {
+                            if (ret) {
+                                // add the GAM pointer
+                                ret = GAMOffsets.Add(offset);
+                            }
+                            if (ret) {
 
-                            ret = sizes.Add(varSize);
+                                ret = sizes.Add(varSize);
+                            }
                         }
                     }
                 }
@@ -264,7 +262,7 @@ void *RealTimeDataSourceBroker::GetData(const uint32 i) const {
     return ret;
 }
 
-void *RealTimeDataSourceBroker::GetMemoryPointer(const uint32 n) const{
+void *RealTimeDataSourceBroker::GetMemoryPointer(const uint32 n) const {
     void *ret = NULL_PTR(void*);
 
     if (finalised) {
@@ -278,7 +276,7 @@ void *RealTimeDataSourceBroker::GetMemoryPointer(const uint32 n) const{
     return ret;
 }
 
-void *RealTimeDataSourceBroker::GetMemoryPointerPrivate(const uint32 n)  const{
+void *RealTimeDataSourceBroker::GetMemoryPointerPrivate(const uint32 n) const {
 
     void *ret = NULL_PTR(void*);
 
@@ -314,36 +312,35 @@ void *RealTimeDataSourceBroker::GetMemoryPointerPrivate(const uint32 n)  const{
 
 bool RealTimeDataSourceBroker::Finalise() {
 
-    bool ret = true;
-
-    // refresh the pointers
-    uint32 numberOfStructures = beginPointers.GetSize();
-    for (uint32 i = 0u; (i < numberOfStructures) && (ret); i++) {
-        void* ptr = NULL_PTR(void*);
-        ret = (beginPointers.Peek(i, ptr));
-        if (ret) {
-            if (ptr == NULL) {
-                ptr = memory.GetMemoryStart();
-                ret = beginPointers.Set(i, ptr);
-            }
-        }
-    }
+    bool ret = BasicRealTimeDataSourceBroker::Finalise();
 
     if (ret) {
-        // fill the gam pointers
-        uint32 numberOfPointers = GAMOffsets.GetSize();
-        for (uint32 i = 0u; (i < numberOfPointers) && (ret); i++) {
-            void* ptr = GetMemoryPointerPrivate(i);
-            ret = (ptr != NULL);
+        uint32 numberOfDS = dataSources.GetSize();
+        for (uint32 i = 0u; i < numberOfDS; i++) {
+            BasicRealTimeDataSourceDef * bdsDef = NULL_PTR(BasicRealTimeDataSourceDef *);
+            ret = dataSources.Peek(i, bdsDef);
             if (ret) {
-                ret = GAMPointers.Add(ptr);
+                RealTimeDataSourceDef *dsDef = dynamic_cast<RealTimeDataSourceDef *>(bdsDef);
+                ret = (dsDef != NULL);
+                if (ret) {
+                    EventSem *tempSem = dsDef->GetEventSemaphore();
+                    if (tempSem != NULL) {
+                        if(!synchronized) {
+                            if(eventSem==NULL) {
+                                eventSem=tempSem;
+                                synchronized=true;
+                            }
+                        }
+                        else {
+                            //TODO Already sync  !!
+                        }
+                    }
+                }
             }
         }
     }
 
-    // set as finalised
     finalised = ret;
-
     return ret;
 }
 

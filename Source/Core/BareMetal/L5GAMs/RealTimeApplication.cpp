@@ -32,8 +32,8 @@
 #include "RealTimeApplication.h"
 #include "RealTimeState.h"
 #include "ReferenceContainerFilterObjectName.h"
-#include "RealTimeDataSource.h"
-#include "GAM.h"
+#include "RealTimeDataSourceContainer.h"
+#include "GAMI.h"
 #include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -49,8 +49,8 @@ static bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functions)
         for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
             Reference genericFunction = functions->Get(i);
 
-            ReferenceT<GAM> gam = genericFunction;
-            // a GAM
+            ReferenceT<GAMI> gam = genericFunction;
+            // a GAMI
             if (gam.IsValid()) {
                 // call the single gam configuration
                 ret = gam->ConfigureDataSource();
@@ -61,7 +61,7 @@ static bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functions)
                 if (gamGroup.IsValid()) {
                     uint32 numberOfSubGams = gamGroup->Size();
                     for (uint32 j = 0u; (j < numberOfSubGams) && (ret); j++) {
-                        ReferenceT<GAM> subGam = gamGroup->Get(j);
+                        ReferenceT<GAMI> subGam = gamGroup->Get(j);
                         ret = subGam.IsValid();
                         if (ret) {
                             // call the single gam configuration
@@ -78,7 +78,7 @@ static bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functions)
                         ret = ConfigureDataSourcePrivate(gamContainer);
                     }
                     else {
-                        REPORT_ERROR(ErrorManagement::FatalError, "+Functions must contain GAM, GAMGroup or ReferenceContainer references");
+                        REPORT_ERROR(ErrorManagement::FatalError, "+Functions must contain GAMI, GAMGroup or ReferenceContainer references");
                     }
                 }
             }
@@ -97,8 +97,8 @@ static bool ConfigureDataSourceLinksPrivate(ReferenceT<ReferenceContainer> funct
         for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
             Reference genericFunction = functions->Get(i);
 
-            ReferenceT<GAM> gam = genericFunction;
-            // a GAM
+            ReferenceT<GAMI> gam = genericFunction;
+            // a GAMI
             if (gam.IsValid()) {
                 // call the single gam configuration
                 ret = gam->ConfigureDataSourceLinks();
@@ -109,7 +109,7 @@ static bool ConfigureDataSourceLinksPrivate(ReferenceT<ReferenceContainer> funct
                 if (gamGroup.IsValid()) {
                     uint32 numberOfSubGams = gamGroup->Size();
                     for (uint32 j = 0u; (j < numberOfSubGams) && (ret); j++) {
-                        ReferenceT<GAM> subGam = gamGroup->Get(j);
+                        ReferenceT<GAMI> subGam = gamGroup->Get(j);
                         ret = subGam.IsValid();
                         if (ret) {
                             // call the single gam configuration
@@ -126,7 +126,7 @@ static bool ConfigureDataSourceLinksPrivate(ReferenceT<ReferenceContainer> funct
                         ret = ConfigureDataSourceLinksPrivate(gamContainer);
                     }
                     else {
-                        REPORT_ERROR(ErrorManagement::FatalError, "+Functions must contain GAM, GAMGroup or ReferenceContainer references");
+                        REPORT_ERROR(ErrorManagement::FatalError, "+Functions must contain GAMI, GAMGroup or ReferenceContainer references");
                     }
                 }
             }
@@ -213,7 +213,7 @@ bool RealTimeApplication::ConfigureDataSource() {
 
 bool RealTimeApplication::ValidateDataSource() {
 
-    ReferenceT<RealTimeDataSource> dataContainer;
+    ReferenceT<RealTimeDataSourceContainer> dataContainer;
     uint32 numberOfContainers = Size();
     bool ret = false;
     // there must be the container called "States"
@@ -239,7 +239,7 @@ bool RealTimeApplication::ValidateDataSource() {
 }
 
 bool RealTimeApplication::AllocateDataSource() {
-    ReferenceT<RealTimeDataSource> dataSource;
+    ReferenceT<RealTimeDataSourceContainer> dataSource;
     uint32 numberOfContainers = Size();
     bool ret = false;
     for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
@@ -296,7 +296,7 @@ bool RealTimeApplication::PrepareNextState(const RealTimeStateInfo &status) {
         nextState->PrepareState(status);
     }
     if (ret) {
-        ReferenceT<RealTimeDataSource> dataSource;
+        ReferenceT<RealTimeDataSourceContainer> dataSource;
         uint32 numberOfContainers = Size();
         ret = false;
         for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {

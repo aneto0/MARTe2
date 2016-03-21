@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceTest.h
- * @brief Header file for class RealTimeDataSourceTest
- * @date 09/03/2016
+ * @file RealTimeDataSourceDef.h
+ * @brief Header file for class RealTimeDataSourceDef
+ * @date 29/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceTest
+ * @details This header file contains the declaration of the class RealTimeDataSourceDef
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCETEST_H_
-#define REALTIMEDATASOURCETEST_H_
+#ifndef REALTIMEDATASOURCEDEF_H_
+#define REALTIMEDATASOURCEDEF_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,47 +31,41 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeDataSource.h"
+#include "ReferenceContainer.h"
+#include "ReferenceT.h"
+#include "GAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
-using namespace MARTe;
+namespace MARTe {
 
 /**
- * @brief Tests all the RealTimeDataSource functions.
+ * @brief The definition of a real-time variable shared between GAMs.
  */
-class RealTimeDataSourceTest {
+class RealTimeDataSourceDef: public BasicRealTimeDataSourceDef {
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief Tests the constructor.
+     * @brief Constructor
      */
-    bool TestConstructor();
-
-    /**
-     * @brief Tests if the function intitialises correctly the data source from a StructuredDataI in input.
-     */
-    bool TestInitialise();
+    RealTimeDataSourceDef();
 
 
-    /**
-     * @brief Test if the function allocates correctly the memory for all the basic type variables.
-     */
-    bool TestAllocate();
+    EventSem *GetEventSemaphore() const ;
 
-    /**
-     * @brief Tests if the function allocates correctly the memory also for some structured types.
-     */
-    bool TestAllocate_Structure();
+private:
 
+
+    EventSem * eventSem;
 
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCETEST_H_ */
+#endif /* REALTIMEDATASOURCEDEF_H_ */
 

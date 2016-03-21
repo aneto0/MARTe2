@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSource.cpp
- * @brief Source file for class RealTimeDataSource
- * @date 09/mar/2016
+ * @file BasicRealTimeDataSourceOutputWriter.cpp
+ * @brief Source file for class BasicRealTimeDataSourceOutputWriter
+ * @date 21/mar/2016
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataSource (public, protected, and private). Be aware that some 
+ * the class BasicRealTimeDataSourceOutputWriter (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,57 +29,56 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeDataSource.h"
-#include "ReferenceContainerFilterObjectName.h"
-#include "RealTimeDataDefContainer.h"
-#include "AdvancedErrorManagement.h"
+#include "BasicRealTimeDataSourceOutputWriter.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-
-static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
-                            MemoryArea &memory) {
-    bool ret = true;
-    uint32 numberOfNodes = container->Size();
-    for (uint32 i = 0u; (i < numberOfNodes) && (ret); i++) {
-        ReferenceT<ReferenceContainer> subContainer = container->Get(i);
-        ret = subContainer.IsValid();
-        if (ret) {
-            ReferenceT<BasicRealTimeDataSourceDef> def = subContainer;
-            if (def.IsValid()) {
-                ret = def->Allocate(memory);
-            }
-            else {
-                ret = AllocatePrivate(subContainer, memory);
-            }
-        }
-    }
-    return ret;
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RealTimeDataSource::RealTimeDataSource() :
-        ReferenceContainer() {
+namespace MARTe {
+
+BasicRealTimeDataSourceOutputWriter::BasicRealTimeDataSourceOutputWriter() :
+        BasicRealTimeDataSourceBroker() {
+
 }
 
-bool RealTimeDataSource::Allocate() {
-    return AllocatePrivate(ReferenceT<ReferenceContainer>(this), memory);
-}
+bool BasicRealTimeDataSourceOutputWriter::Write(const uint8 activeDataSourceBuffer) const {
 
-bool RealTimeDataSource::Initialise(StructuredDataI & data) {
-    bool ret = ReferenceContainer::Initialise(data);
-    if (ret) {
-        if (data.Read("HeapName", heapName)) {
-            memory.SetHeapName(heapName.Buffer());
+    bool ret = finalised;
+    for (uint32 i = 0u; (i < GAMOffsets.GetSize()) && (ret); i++) {
+        void ** DSPointer = NULL_PTR(void **);
+        ret = DSPointers[activeDataSourceBuffer].Peek(i, DSPointer);
+        if (ret) {
+            ret = (DSPointer != NULL);
+        }
+        void * GAMPointer = NULL_PTR(void *);
+        if (ret) {
+            ret = GAMPointers.Peek(i, GAMPointer);
+        }
+        if (ret) {
+            ret = (GAMPointer != NULL);
+        }
+        uint32 size = 0u;
+        if (ret) {
+            ret = sizes.Peek(i, size);
+        }
+        BasicRealTimeDataSourceDef *dsDef = NULL_PTR(BasicRealTimeDataSourceDef *);
+        if (ret) {
+            ret = dataSources.Peek(i, dsDef);
+        }
+        if (ret) {
+            dsDef->WriteStart();
+            ret = MemoryOperationsHelper::Copy(*DSPointer, GAMPointer, size);
+            dsDef->WriteEnd();
         }
     }
+
     return ret;
 }
 
-CLASS_REGISTER(RealTimeDataSource, "1.0")
+CLASS_REGISTER(BasicRealTimeDataSourceOutputWriter, "1.0")
 
 }

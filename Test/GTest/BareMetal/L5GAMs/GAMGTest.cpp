@@ -91,11 +91,6 @@ TEST(GAMGTest,TestConfigureDataSource) {
     ASSERT_TRUE(gamTest.TestConfigureDataSource());
 }
 
-TEST(GAMGTest,TestConfigureDataSource_NotFinal) {
-    GAMTest gamTest;
-    ASSERT_TRUE(gamTest.TestConfigureDataSource_NotFinal());
-}
-
 TEST(GAMGTest,TestConfigureDataSourceFalse_Final) {
     GAMTest gamTest;
     ASSERT_TRUE(gamTest.TestConfigureDataSourceFalse_Final());

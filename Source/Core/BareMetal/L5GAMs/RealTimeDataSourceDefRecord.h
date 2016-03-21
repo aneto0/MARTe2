@@ -34,7 +34,7 @@
 #include "StreamString.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
-#include "GAM.h"
+#include "BasicGAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -54,26 +54,26 @@ public:
     RealTimeDataSourceDefRecord();
 
     /**
-     * @brief Inserts a GAM as a consumer.
-     * @param[in] gamConsumer is the GAM consumer to be inserted.
+     * @brief Inserts a BasicGAM as a consumer.
+     * @param[in] gamConsumer is the BasicGAM consumer to be inserted.
      */
-    bool AddConsumer(ReferenceT<GAM> gamConsumer);
+    bool AddConsumer(ReferenceT<BasicGAM> gamConsumer);
 
     /**
-     * @brief Inserts a GAM as a producer.
-     * @param[in] gamProducer is the GAM producer to be inserted.
+     * @brief Inserts a BasicGAM as a producer.
+     * @param[in] gamProducer is the BasicGAM producer to be inserted.
      */
-    bool AddProducer(ReferenceT<GAM> gamProducer);
+    bool AddProducer(ReferenceT<BasicGAM> gamProducer);
 
     /**
-     * @brief Retrieves the number of GAM consumers inserted.
-     * @return The number of GAM consumers inserted
+     * @brief Retrieves the number of BasicGAM consumers inserted.
+     * @return The number of BasicGAM consumers inserted
      */
     uint32 GetNumberOfConsumers();
 
     /**
-     * @brief Retrieves the number of GAM producers inserted.
-     * @return The number of GAM producers inserted
+     * @brief Retrieves the number of BasicGAM producers inserted.
+     * @return The number of BasicGAM producers inserted
      */
     uint32 GetNumberOfProducers();
 

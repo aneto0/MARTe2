@@ -90,6 +90,8 @@ public:
      */
     inline bool FastTryLock();
 
+    inline ErrorManagement::ErrorType FastWait(const TimeoutType &msecTimeout = TTInfiniteWait);
+
     /**
      * @brief Unlocks the semaphore.
      * @details A thread could unlock the semaphore locked by another thread.
@@ -142,6 +144,14 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msec
         }
         // yield CPU
         Sleep::MSec(1);
+    }
+    return err;
+}
+
+ErrorManagement::ErrorType FastPollingMutexSem::FastWait(const TimeoutType &msecTimeout) {
+    ErrorManagement::ErrorType err = FastLock(msecTimeout);
+    if (err == ErrorManagement::NoError) {
+        FastUnLock();
     }
     return err;
 }

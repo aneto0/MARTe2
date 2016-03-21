@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceDef.h
- * @brief Header file for class RealTimeDataSourceDef
- * @date 29/02/2016
+ * @file BasicRealTimeDataSourceDef.h
+ * @brief Header file for class BasicRealTimeDataSourceDef
+ * @date 21/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceDef
+ * @details This header file contains the declaration of the class BasicRealTimeDataSourceDef
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEDEF_H_
-#define REALTIMEDATASOURCEDEF_H_
+#ifndef BASICREALTIMEDATASOURCEDEF_H_
+#define BASICREALTIMEDATASOURCEDEF_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,7 +33,10 @@
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
-#include "GAM.h"
+#include "RealTimeStateInfo.h"
+#include "GAMI.h"
+#include "MemoryArea.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -43,14 +46,14 @@ namespace MARTe {
 /**
  * @brief The definition of a real-time variable shared between GAMs.
  */
-class RealTimeDataSourceDef: public ReferenceContainer {
+class BasicRealTimeDataSourceDef: public ReferenceContainer {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Constructor
      */
-    RealTimeDataSourceDef();
+    BasicRealTimeDataSourceDef();
 
     /**
      * @brief Adds a GAM as a consumer.
@@ -59,7 +62,7 @@ public:
      * @return false in case of errors, false otherwise.
      */
     bool AddConsumer(const char8 * const stateIn,
-                     ReferenceT<GAM> gam);
+                     ReferenceT<GAMI> gam);
 
     /**
      * @brief Adds a GAM as a producer.
@@ -68,7 +71,7 @@ public:
      * @return false in case of errors, false otherwise.
      */
     bool AddProducer(const char8 * const stateIn,
-                     ReferenceT<GAM> gam);
+                     ReferenceT<GAMI> gam);
 
     /**
      * @brief Sets the default value of this variable.
@@ -166,6 +169,22 @@ public:
      */
     bool Allocate(MemoryArea &dsMemory);
 
+    // routine to be executed at the begin of a write operation
+    virtual void WriteStart();
+
+    // routine to be executed at the begin of a read operation
+    virtual void ReadStart();
+
+    // routine to be executed at the end of a write operation
+    virtual void WriteEnd();
+
+    // routine to be executed at the end of a read operation
+    virtual void ReadEnd();
+
+    // EventSem * GetEventSemaphore();
+
+    FastPollingMutexSem * GetPollingSemaphore() const;
+
     /**
      * @brief Sets the number of elements for a specific dimension.
      * @param[in] dimension is the dimension where to set \nElements
@@ -236,12 +255,17 @@ private:
      * A pointer to the global memory area.
      */
     MemoryArea *memory;
+
+    //EventSem * eventSem;
+
+    FastPollingMutexSem * pollSem;
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEDEF_H_ */
+#endif /* BASICREALTIMEDATASOURCEDEF_H_ */
 

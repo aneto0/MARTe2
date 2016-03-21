@@ -1,6 +1,6 @@
 /**
- * @file RealTimeDataSourceOutputWriter.cpp
- * @brief Source file for class RealTimeDataSourceOutputWriter
+ * @file RealTimeDataSourceInputReader.cpp
+ * @brief Source file for class RealTimeDataSourceInputReader
  * @date 09/mar/2016
  * @author pc
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataSourceOutputWriter (public, protected, and private). Be aware that some 
+ * the class RealTimeDataSourceInputReader (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeDataSourceOutputWriter.h"
+#include "RealTimeDataSourceInputReader.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,12 +40,12 @@
 
 namespace MARTe {
 
-RealTimeDataSourceOutputWriter::RealTimeDataSourceOutputWriter() :
+RealTimeDataSourceInputReader::RealTimeDataSourceInputReader() :
         RealTimeDataSourceBroker() {
 
 }
 
-bool RealTimeDataSourceOutputWriter::Write(const uint8 activeDataSourceBuffer) const{
+bool RealTimeDataSourceInputReader::Read(const uint8 activeDataSourceBuffer) const {
 
     bool ret = finalised;
     for (uint32 i = 0u; (i < GAMOffsets.GetSize()) && (ret); i++) {
@@ -63,16 +63,21 @@ bool RealTimeDataSourceOutputWriter::Write(const uint8 activeDataSourceBuffer) c
         }
         uint32 size = 0u;
         if (ret) {
-            ret=sizes.Peek(i, size);
+            ret = sizes.Peek(i, size);
+        }
+        RealTimeDataSourceDef *dsDef = NULL_PTR(RealTimeDataSourceDef *);
+        if (ret) {
+            ret = dataSources.Peek(i, dsDef);
         }
         if (ret) {
-            ret = MemoryOperationsHelper::Copy(*DSPointer, GAMPointer, size);
+            dsDef->ReadStart();
+            ret = MemoryOperationsHelper::Copy(GAMPointer, *DSPointer, size);
+            dsDef->ReadEnd();
         }
     }
 
     return ret;
 }
-
-CLASS_REGISTER(RealTimeDataSourceOutputWriter, "1.0")
+CLASS_REGISTER(RealTimeDataSourceInputReader, "1.0")
 
 }

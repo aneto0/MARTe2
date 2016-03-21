@@ -31,6 +31,7 @@
 
 #include "MemoryArea.h"
 #include "MemoryOperationsHelper.h"
+#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -43,6 +44,7 @@ namespace MARTe {
 MemoryArea::MemoryArea() {
     memory = NULL_PTR(void*);
     size = 0u;
+    heapName = NULL_PTR(char8*);
 }
 
 /*lint -e{1579} the pointer "memory" is freed by the function Free() */
@@ -57,7 +59,16 @@ void MemoryArea::Free() {
             memory=NULL_PTR(void*);
         }
     }
+    if(heapName!=NULL) {
+        if(HeapManager::Free(reinterpret_cast<void*&>(heapName))) {
+            heapName=NULL_PTR(char8*);
+        }
+    }
     size = 0u;
+}
+
+void MemoryArea::SetHeapName(const char8 * heapName) {
+    heapName = StringHelper::StringDup(heapName);
 }
 
 bool MemoryArea::Add(const uint32 memorySize,
@@ -65,7 +76,7 @@ bool MemoryArea::Add(const uint32 memorySize,
     bool ret = false;
 
     if (size == 0u) {
-        memory = HeapManager::Malloc(memorySize);
+        memory = HeapManager::Malloc(memorySize, heapName);
         if (memory != NULL) {
             size += memorySize;
             offset=0u;
@@ -94,7 +105,7 @@ bool MemoryArea::Add(const void * const element,
     return ret;
 }
 
-void* MemoryArea::GetMemoryStart()  {
+void* MemoryArea::GetMemoryStart() {
     return memory;
 }
 

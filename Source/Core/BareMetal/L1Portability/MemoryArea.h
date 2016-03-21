@@ -65,6 +65,8 @@ public:
      */
     void Free();
 
+    void SetHeapName(const char8 * heapName);
+
     /**
      * @brief Copies a chunk on memory in this memory area.
      * @param[in] element points to the memory which must be copied.
@@ -75,7 +77,7 @@ public:
      */
     bool Add(const void * const element,
              const uint32 memorySize,
-             uint32 &offset);
+             uint32 &offsetconst);
 
     /**
      * @brief Creates a chunk on memory in this memory area.
@@ -91,7 +93,7 @@ public:
      * @brief Retrieves the pointer to the begin of the memory area.
      * @return the pointer to the begin of the memory area.
      */
-    void* GetMemoryStart() ;
+    void* GetMemoryStart();
 
     /**
      * @brief Retrieves the total size of the memory area.
@@ -114,6 +116,8 @@ private:
      * The memory area.
      */
     void* memory;
+
+    char8 * heapName;
 
     /**
      * The size of the memory area.

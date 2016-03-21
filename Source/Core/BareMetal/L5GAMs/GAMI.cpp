@@ -1,8 +1,8 @@
 /**
- * @file GAM.cpp
- * @brief Source file for class GAM
- * @date 18/02/2016
- * @author Giuseppe Ferrò
+ * @file GAMI.cpp
+ * @brief Source file for class GAMI
+ * @date 21/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAM (public, protected, and private). Be aware that some 
+ * the class GAMI (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,11 +29,12 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GAM.h"
+#include "GAMI.h"
 #include "RealTimeDataDefContainer.h"
-#include "RealTimeDataSource.h"
+#include "RealTimeDataSourceContainer.h"
 #include "RealTimeDataDefI.h"
 #include "AdvancedErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -44,25 +45,17 @@ static const uint32 stateNamesGranularity = 4u;
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAM::GAM() :
+GAMI::GAMI() :
         ReferenceContainer() {
     localData = NULL_PTR(StructuredDataI*);
     numberOfSupportedStates = 0u;
     supportedStates = NULL_PTR(StreamString *);
     group = NULL_PTR(GAMGroup*);
     application = NULL_PTR(RealTimeApplication *);
-    inputReader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    if (inputReader.IsValid()) {
-        inputReader->SetName("inputReader");
-    }
-    outputWriter = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    if (outputWriter.IsValid()) {
-        outputWriter->SetName("outputWriter");
-    }
 }
 
 /*lint -e{1551} no exception should be thrown*/
-GAM::~GAM() {
+GAMI::~GAMI() {
     if (supportedStates != NULL) {
         delete[] supportedStates;
     }
@@ -71,7 +64,7 @@ GAM::~GAM() {
     group = NULL_PTR(GAMGroup*);
 }
 
-/*void GAM::SetUp() {
+/*void GAMI::SetUp() {
  // initialises the local status
  }*/
 
@@ -80,7 +73,7 @@ GAM::~GAM() {
  // execution routine
  */
 
-bool GAM::ConfigureFunction() {
+bool GAMI::ConfigureFunction() {
     // use for each of them before RealTimeDataContainer::MergeWithLocal(localData)
     // and merge the result with the existing one
     bool ret = true;
@@ -111,13 +104,13 @@ bool GAM::ConfigureFunction() {
     return ret;
 }
 
-bool GAM::ConfigureDataSource() {
+bool GAMI::ConfigureDataSource() {
 
     bool ret = true;
     if (GetNumberOfSupportedStates() > 0u) {
         ret = (application != NULL);
         if (ret) {
-            ReferenceT<RealTimeDataSource> dataContainer;
+            ReferenceT<RealTimeDataSourceContainer> dataContainer;
             /*lint -e{613} NULL pointer checking done before entering here */
             uint32 numberOfAppItems = application->Size();
             ret = false;
@@ -133,7 +126,7 @@ bool GAM::ConfigureDataSource() {
             }
 
             if (ret) {
-                ret = dataContainer->AddDataDefinition(ReferenceT<GAM>(this));
+                ret = dataContainer->AddDataDefinition(ReferenceT<GAMI>(this));
             }
             else {
                 REPORT_ERROR(ErrorManagement::FatalError, "+Data container not found or invalid in the application");
@@ -144,12 +137,12 @@ bool GAM::ConfigureDataSource() {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::Warning, "GAM %s never called in states or threads");
+        REPORT_ERROR(ErrorManagement::Warning, "GAMI %s never called in states or threads");
     }
     return ret;
 }
 
-bool GAM::Initialise(StructuredDataI & data) {
+bool GAMI::Initialise(StructuredDataI & data) {
 
     bool ret = ReferenceContainer::Initialise(data);
 
@@ -163,59 +156,20 @@ bool GAM::Initialise(StructuredDataI & data) {
     return ret;
 }
 
-bool GAM::ConfigureDataSourceLinks() {
-    // it is virtual... can be overriden if the data are static
 
-    bool isReaderValid = inputReader.IsValid();
-    bool isWriterValid = outputWriter.IsValid();
-    bool ret = (isReaderValid && isWriterValid);
-    uint32 numberOfElements = Size();
-    for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
-        ReferenceT<RealTimeDataDefContainer> defContainer = Get(i);
-        if (defContainer.IsValid()) {
-            uint32 numberOfDefs = defContainer->Size();
-            for (uint32 j = 0u; (j < numberOfDefs) && (ret); j++) {
-                ReferenceT<RealTimeDataDefI> def = defContainer->Get(j);
-                if (def.IsValid()) {
-                    if (defContainer->IsInput()) {
-                        ret = inputReader->AddVariable(def);
-                    }
-                    if (defContainer->IsOutput()) {
-                        ret = outputWriter->AddVariable(def);
-                    }
-                }
-            }
-        }
-    }
-    if (ret) {
-        ret = inputReader->Finalise();
-    }
-    if (ret) {
-        ret = outputWriter->Finalise();
-    }
-
-    return ret;
-}
-
-void GAM::SetApplication(RealTimeApplication &rtApp) {
+void GAMI::SetApplication(RealTimeApplication &rtApp) {
     if (application == NULL) {
         application = &rtApp;
-        if (inputReader.IsValid()) {
-            inputReader->SetApplication(rtApp);
-        }
-        if (outputWriter.IsValid()) {
-            outputWriter->SetApplication(rtApp);
-        }
     }
 }
 
-void GAM::SetGAMGroup(ReferenceT<GAMGroup> gamGroup) {
+void GAMI::SetGAMGroup(ReferenceT<GAMGroup> gamGroup) {
     if (group == NULL) {
         group = gamGroup.operator->();
     }
 }
 
-void GAM::AddState(const char8 * const stateName) {
+void GAMI::AddState(const char8 * const stateName) {
 
     bool found = false;
     for (uint32 i = 0u; (i < numberOfSupportedStates) && (!found); i++) {
@@ -243,21 +197,14 @@ void GAM::AddState(const char8 * const stateName) {
 
 }
 
-StreamString * GAM::GetSupportedStates() {
+StreamString * GAMI::GetSupportedStates() {
     return (group != NULL) ? (group->GetSupportedStates()) : (supportedStates);
 }
 
-uint32 GAM::GetNumberOfSupportedStates() const {
+uint32 GAMI::GetNumberOfSupportedStates() const {
     return (group != NULL) ? (group->GetNumberOfSupportedStates()) : (numberOfSupportedStates);
 
 }
 
-ReferenceT<RealTimeDataSourceInputReader> GAM::GetInputReader() const{
-    return inputReader;
-}
-
-ReferenceT<RealTimeDataSourceOutputWriter> GAM::GetOutputWriter() const{
-    return outputWriter;
-}
 
 }

@@ -369,8 +369,11 @@ bool RealTimeApplicationTest::TestConfigureArchitectureFalse_NoStates() {
 
     // data
     cdb.CreateAbsolute("$Application1.+Data");
+    cdb.Write("Class", "RealTimeDataSourceContainer");
+    cdb.CreateAbsolute("$Application1.+Data.+DDB1");
     cdb.Write("Class", "RealTimeDataSource");
-    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("$Application1.+Data.+DDB2");
+    cdb.Write("Class", "RealTimeDataSource");
     cdb.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -555,8 +558,11 @@ bool RealTimeApplicationTest::TestConfigureDataSource() {
 
     // data
     cdb1.CreateAbsolute("$Application1.+Data");
+    cdb1.Write("Class", "RealTimeDataSourceContainer");
+    cdb1.CreateAbsolute("$Application1.+Data.+DDB1");
     cdb1.Write("Class", "RealTimeDataSource");
-    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Data.+DDB2");
+    cdb1.Write("Class", "RealTimeDataSource");
     cdb1.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -772,8 +778,11 @@ bool RealTimeApplicationTest::TestConfigureDataSourceFalse_NoFunctions() {
 
     // data
     cdb.CreateAbsolute("$Application1.+Data");
+    cdb.Write("Class", "RealTimeDataSourceContainer");
+    cdb.CreateAbsolute("$Application1.+Data.+DDB1");
     cdb.Write("Class", "RealTimeDataSource");
-    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("$Application1.+Data.+DDB2");
+    cdb.Write("Class", "RealTimeDataSource");
     cdb.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -970,8 +979,11 @@ bool RealTimeApplicationTest::TestValidateDataSourceFalse_MoreThanOneProducer() 
 
     // data
     cdb1.CreateAbsolute("$Application1.+Data");
+    cdb1.Write("Class", "RealTimeDataSourceContainer");
+    cdb1.CreateAbsolute("$Application1.+Data.+DDB1");
     cdb1.Write("Class", "RealTimeDataSource");
-    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Data.+DDB2");
+    cdb1.Write("Class", "RealTimeDataSource");
     cdb1.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -997,8 +1009,11 @@ bool RealTimeApplicationTest::TestValidateDataSourceFalse_NoData() {
 
     // data
     cdb1.CreateAbsolute("$Application1.+Datas");
-    cdb1.Write("Class", "RealTimeDataSource");
-    cdb1.Write("IsFinal", "false");
+    cdb1.Write("Class", "RealTimeDataSourceContainer");
+    cdb1.CreateAbsolute("$Application1.+Datas.+DDB1");
+    cdb1.Write("Class", "ReferenceContainer");
+    cdb1.CreateAbsolute("$Application1.+Datas.+DDB2");
+    cdb1.Write("Class", "ReferenceContainer");
     cdb1.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -1074,8 +1089,11 @@ bool RealTimeApplicationTest::TestAllocateDataSourceFalse_NoData() {
 
     // data
     cdb1.CreateAbsolute("$Application1.+Datas");
+    cdb1.Write("Class", "RealTimeDataSourceContainer");
+    cdb1.CreateAbsolute("$Application1.+Datas.+DDB1");
     cdb1.Write("Class", "RealTimeDataSource");
-    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Datas.+DDB2");
+    cdb1.Write("Class", "RealTimeDataSource");
     cdb1.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -1286,9 +1304,13 @@ bool RealTimeApplicationTest::TestPrepareNextStateFalse_NoData() {
     cdb1.Write("Class", "RealTimeState");
 
     // data
+    // data
     cdb1.CreateAbsolute("$Application1.+Datas");
+    cdb1.Write("Class", "RealTimeDataSourceContainer");
+    cdb1.CreateAbsolute("$Application1.+Datas.+DDB1");
     cdb1.Write("Class", "RealTimeDataSource");
-    cdb1.Write("IsFinal", "false");
+    cdb1.CreateAbsolute("$Application1.+Datas.+DDB2");
+    cdb1.Write("Class", "RealTimeDataSource");
     cdb1.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();

@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceDef.cpp
- * @brief Source file for class RealTimeDataSourceDef
- * @date 29/feb/2016
+ * @file BasicRealTimeDataSourceDef.cpp
+ * @brief Source file for class BasicRealTimeDataSourceDef
+ * @date 21/mar/2016
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataSourceDef (public, protected, and private). Be aware that some 
+ * the class BasicRealTimeDataSourceDef (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,13 +29,13 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeDataSourceDef.h"
+#include "BasicRealTimeDataSourceDef.h"
 #include "ReferenceT.h"
 #include "RealTimeDataSourceDefRecord.h"
 #include "StandardParser.h"
 #include "ConfigurationDatabase.h"
 #include "AdvancedErrorManagement.h"
-
+#include "GAMI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -45,7 +45,7 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RealTimeDataSourceDef::RealTimeDataSourceDef() :
+BasicRealTimeDataSourceDef::BasicRealTimeDataSourceDef() :
         ReferenceContainer() {
 
     bufferPtrOffset[0] = 0u;
@@ -53,6 +53,7 @@ RealTimeDataSourceDef::RealTimeDataSourceDef() :
     memory = NULL_PTR(MemoryArea *);
     usedBuffer[0] = NULL_PTR(void *);
     usedBuffer[1] = NULL_PTR(void *);
+    pollSem = NULL_PTR(FastPollingMutexSem *);
     numberOfDimensions = 0u;
     for (uint32 k = 0u; k < 3u; k++) {
         numberOfElements[k] = 1u;
@@ -60,11 +61,11 @@ RealTimeDataSourceDef::RealTimeDataSourceDef() :
 
 }
 
-bool RealTimeDataSourceDef::AddConsumer(const char8 * const stateIn,
-                                        ReferenceT<GAM> gam) {
+bool BasicRealTimeDataSourceDef::AddConsumer(const char8 * const stateIn,
+                                             ReferenceT<GAMI> gam) {
     uint32 index;
     bool found = false;
-    bool ret = false;
+    bool ret = gam.IsValid();
 
     ReferenceT<RealTimeDataSourceDefRecord> record;
     uint32 numberOfStates = Size();
@@ -93,12 +94,15 @@ bool RealTimeDataSourceDef::AddConsumer(const char8 * const stateIn,
     return ret;
 }
 
-bool RealTimeDataSourceDef::AddProducer(const char8 * const stateIn,
-                                        ReferenceT<GAM> gam) {
+bool BasicRealTimeDataSourceDef::AddProducer(const char8 * const stateIn,
+                                             ReferenceT<GAMI> gamIn) {
 
     uint32 index;
     bool found = false;
-    bool ret = false;
+
+    ReferenceT<GAMI> gam = gamIn;
+    bool ret = gam.IsValid();
+
     ReferenceT<RealTimeDataSourceDefRecord> record;
     uint32 numberOfStates = Size();
     for (index = 0u; (index < numberOfStates) && (!found); index++) {
@@ -127,7 +131,7 @@ bool RealTimeDataSourceDef::AddProducer(const char8 * const stateIn,
 
 }
 
-void RealTimeDataSourceDef::SetDefaultValue(const char8 * const defaultIn) {
+void BasicRealTimeDataSourceDef::SetDefaultValue(const char8 * const defaultIn) {
 
     if (defaultIn != NULL) {
         if (defaultValue != "") {
@@ -139,11 +143,11 @@ void RealTimeDataSourceDef::SetDefaultValue(const char8 * const defaultIn) {
     }
 }
 
-const char8 *RealTimeDataSourceDef::GetDefaultValue() {
+const char8 *BasicRealTimeDataSourceDef::GetDefaultValue() {
     return defaultValue.Buffer();
 }
 
-uint32 RealTimeDataSourceDef::GetNumberOfConsumers(const char8 * const stateIn) {
+uint32 BasicRealTimeDataSourceDef::GetNumberOfConsumers(const char8 * const stateIn) {
     uint32 ret = 0u;
     uint32 numberOfRecords = Size();
     ReferenceT<RealTimeDataSourceDefRecord> record;
@@ -164,7 +168,7 @@ uint32 RealTimeDataSourceDef::GetNumberOfConsumers(const char8 * const stateIn) 
 
 }
 
-uint32 RealTimeDataSourceDef::GetNumberOfProducers(const char8 * const stateIn) {
+uint32 BasicRealTimeDataSourceDef::GetNumberOfProducers(const char8 * const stateIn) {
     uint32 ret = 0u;
     uint32 numberOfRecords = Size();
     ReferenceT<RealTimeDataSourceDefRecord> record;
@@ -183,7 +187,7 @@ uint32 RealTimeDataSourceDef::GetNumberOfProducers(const char8 * const stateIn) 
     return ret;
 }
 
-bool RealTimeDataSourceDef::Verify() {
+bool BasicRealTimeDataSourceDef::Verify() {
 
     bool ret = true;
     uint32 numberOfStates = Size();
@@ -202,7 +206,7 @@ bool RealTimeDataSourceDef::Verify() {
     return ret;
 }
 
-bool RealTimeDataSourceDef::SetType(const char8 * const typeName) {
+bool BasicRealTimeDataSourceDef::SetType(const char8 * const typeName) {
     bool ret = true;
     if (type != typeName) {
         if (type != "") {
@@ -216,11 +220,11 @@ bool RealTimeDataSourceDef::SetType(const char8 * const typeName) {
     return ret;
 }
 
-const char8 *RealTimeDataSourceDef::GetType() {
+const char8 *BasicRealTimeDataSourceDef::GetType() {
     return type.Buffer();
 }
 
-void **RealTimeDataSourceDef::GetDataSourcePointer(uint8 bufferIndex) {
+void **BasicRealTimeDataSourceDef::GetDataSourcePointer(uint8 bufferIndex) {
     if (bufferIndex > 1u) {
         bufferIndex = bufferIndex % 2u;
     }
@@ -238,7 +242,7 @@ void **RealTimeDataSourceDef::GetDataSourcePointer(uint8 bufferIndex) {
     return ret;
 }
 
-bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
+bool BasicRealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
 
     bool ret = (memory != NULL);
 
@@ -360,7 +364,7 @@ bool RealTimeDataSourceDef::PrepareNextState(const RealTimeStateInfo &status) {
     return ret;
 }
 
-bool RealTimeDataSourceDef::Allocate(MemoryArea &dsMemory) {
+bool BasicRealTimeDataSourceDef::Allocate(MemoryArea &dsMemory) {
 
     bool ret = true;
     memory = &dsMemory;
@@ -412,8 +416,8 @@ bool RealTimeDataSourceDef::Allocate(MemoryArea &dsMemory) {
     return ret;
 }
 
-void RealTimeDataSourceDef::SetNumberOfElements(uint32 dimension,
-                                                const uint32 nElements) {
+void BasicRealTimeDataSourceDef::SetNumberOfElements(uint32 dimension,
+                                                     const uint32 nElements) {
     if (dimension > 2u) {
         REPORT_ERROR(ErrorManagement::Warning, "The dimension id in input is too high (max dimension id = 2). The 2nd dimension id will be considered");
         dimension = 2u;
@@ -422,7 +426,7 @@ void RealTimeDataSourceDef::SetNumberOfElements(uint32 dimension,
 
 }
 
-void RealTimeDataSourceDef::SetNumberOfDimensions(uint8 nDimensions) {
+void BasicRealTimeDataSourceDef::SetNumberOfDimensions(uint8 nDimensions) {
     if (nDimensions > 2u) {
         REPORT_ERROR(ErrorManagement::Warning,
                      "The number of dimensions in input is too high (max number of dimensions = 2). The 2nd dimension will be considered");
@@ -431,11 +435,11 @@ void RealTimeDataSourceDef::SetNumberOfDimensions(uint8 nDimensions) {
     numberOfDimensions = nDimensions;
 }
 
-uint8 RealTimeDataSourceDef::GetNumberOfDimensions() const {
+uint8 BasicRealTimeDataSourceDef::GetNumberOfDimensions() const {
     return numberOfDimensions;
 }
 
-uint32 RealTimeDataSourceDef::GetNumberOfElements(uint32 dimension) const {
+uint32 BasicRealTimeDataSourceDef::GetNumberOfElements(uint32 dimension) const {
     if (dimension > 2u) {
         REPORT_ERROR(ErrorManagement::Warning, "The dimension id in input is too high (max dimension id = 2). The 2nd dimension id will be considered");
         dimension = 2u;
@@ -443,12 +447,12 @@ uint32 RealTimeDataSourceDef::GetNumberOfElements(uint32 dimension) const {
     return numberOfElements[dimension];
 }
 
-bool RealTimeDataSourceDef::ToStructuredData(StructuredDataI& data) {
+bool BasicRealTimeDataSourceDef::ToStructuredData(StructuredDataI& data) {
 
     const char8 * objName = GetName();
     bool ret = data.CreateRelative(objName);
     if (ret) {
-        ret = data.Write("Class", "RealTimeDataSourceDef");
+        ret = data.Write("Class", "BasicRealTimeDataSourceDef");
         if (ret) {
             if (type != "") {
                 ret = data.Write("Type", type);
@@ -490,7 +494,26 @@ bool RealTimeDataSourceDef::ToStructuredData(StructuredDataI& data) {
     return ret;
 }
 
-CLASS_REGISTER(RealTimeDataSourceDef, "1.0")
+void BasicRealTimeDataSourceDef::WriteStart() {
 
 }
 
+void BasicRealTimeDataSourceDef::ReadStart() {
+
+}
+
+void BasicRealTimeDataSourceDef::WriteEnd() {
+
+}
+
+void BasicRealTimeDataSourceDef::ReadEnd() {
+
+}
+
+FastPollingMutexSem * BasicRealTimeDataSourceDef::GetPollingSemaphore() const {
+    return pollSem;
+}
+
+CLASS_REGISTER(BasicRealTimeDataSourceDef, "1.0")
+
+}

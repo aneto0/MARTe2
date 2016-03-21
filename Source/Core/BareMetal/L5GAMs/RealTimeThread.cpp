@@ -34,7 +34,7 @@
 #include "ObjectRegistryDatabase.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
-#include "GAM.h"
+#include "GAMI.h"
 #include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -51,7 +51,7 @@ RealTimeThread::RealTimeThread() :
         ReferenceContainer() {
     functions = NULL_PTR(StreamString*);
     numberOfFunctions = 0u;
-    GAMs = reinterpret_cast<ReferenceT<GAM>*>(NULL);
+    GAMs = reinterpret_cast<ReferenceT<GAMI>*>(NULL);
     numberOfGAMs = 0u;
 }
 
@@ -79,7 +79,7 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
         uint32 nOfSubGAMs = functionGAMGroup->Size();
         // add all the gams in the order of the configuration inside GAMGroup
         for (uint32 j = 0u; (j < nOfSubGAMs) && (ret); j++) {
-            ReferenceT<GAM> subGam = functionGAMGroup->Get(j);
+            ReferenceT<GAMI> subGam = functionGAMGroup->Get(j);
             ret = subGam.IsValid();
             if (ret) {
                 AddGAM(subGam);
@@ -89,12 +89,12 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
         }
     }
     else {
-        // case stateless GAM
-        ReferenceT<GAM> functionGAM = functionGeneric;
+        // case stateless GAMI
+        ReferenceT<GAMI> functionGAM = functionGeneric;
         if (functionGAM.IsValid()) {
             AddGAM(functionGAM);
             functionGAM->SetApplication(rtApp);
-            // if it is a stateful GAM, add its GAMGroup
+            // if it is a stateful GAMI, add its GAMGroup
             ReferenceContainerFilterReferences filterGAM(1, ReferenceContainerFilterMode::PATH, functionGAM);
             ReferenceContainer result;
             ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(result, filterGAM);
@@ -111,7 +111,7 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
                 }
             }
             else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s must be defined in the +Function container of the application",
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAMI %s must be defined in the +Function container of the application",
                                         functionGAM->GetName())
             }
         }
@@ -128,7 +128,7 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError, "The function be a GAM, GAMGroups or ReferenceContainer");
+                REPORT_ERROR(ErrorManagement::FatalError, "The function be a GAMI, GAMGroups or ReferenceContainer");
             }
         }
 
@@ -136,11 +136,11 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
     return ret;
 }
 
-void RealTimeThread::AddGAM(ReferenceT<GAM> element) {
+void RealTimeThread::AddGAM(ReferenceT<GAMI> element) {
     if (element.IsValid()) {
         if ((numberOfGAMs % gamsArrayGranularity) == 0u) {
             uint32 newSize = numberOfGAMs + gamsArrayGranularity;
-            ReferenceT<GAM> *temp = new ReferenceT<GAM> [newSize];
+            ReferenceT<GAMI> *temp = new ReferenceT<GAMI> [newSize];
 
             if (GAMs != NULL) {
                 for (uint32 i = 0u; i < numberOfGAMs; i++) {
@@ -216,7 +216,7 @@ uint32 RealTimeThread::GetNumberOfFunctions() const {
     return numberOfFunctions;
 }
 
-ReferenceT<GAM> *RealTimeThread::GetGAMs() {
+ReferenceT<GAMI> *RealTimeThread::GetGAMs() {
     return GAMs;
 }
 
