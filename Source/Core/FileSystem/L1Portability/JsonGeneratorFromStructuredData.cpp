@@ -1,6 +1,6 @@
 /**
- * @file StructuredDataToJsonTransformation.cpp
- * @brief Source file for class StructuredDataToJsonTransformation
+ * @file JsonGeneratorFromStructuredData.cpp
+ * @brief Source file for class JsonGeneratorFromStructuredData
  * @date 08/03/2016
  * @author Ivan Herrero
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StructuredDataToJsonTransformation (public, protected, and private). Be aware that some
+ * the class JsonGeneratorFromStructuredData (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -31,7 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "StructuredDataToJsonTransformation.h"
+#include "JsonGeneratorFromStructuredData.h"
 #include "Vector.h"
 #include "Matrix.h"
 
@@ -67,19 +67,19 @@ void cookValue(const StreamString& value,
 
 namespace MARTe {
 
-StructuredDataToJsonTransformation::StructuredDataToJsonTransformation() {
-//Auto-generated constructor stub for StructuredDataToJsonTransformation
+JsonGeneratorFromStructuredData::JsonGeneratorFromStructuredData() {
+//Auto-generated constructor stub for JsonGeneratorFromStructuredData
 
 //TODO Verify if manual additions are needed here
 }
 
-StructuredDataToJsonTransformation::~StructuredDataToJsonTransformation() {
-//Auto-generated destructor stub for StructuredDataToJsonTransformation
+JsonGeneratorFromStructuredData::~JsonGeneratorFromStructuredData() {
+//Auto-generated destructor stub for JsonGeneratorFromStructuredData
 
 //TODO Verify if manual additions are needed here
 }
 
-bool StructuredDataToJsonTransformation::Execute(StructuredDataI& input,
+bool JsonGeneratorFromStructuredData::Execute(StructuredDataI& input,
                                                  StreamString& output) {
     bool ret = true;
 

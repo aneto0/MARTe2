@@ -37,7 +37,7 @@
 #include "ObjectTestHelper.h"
 #include "StreamString.h"
 #include "ConfigurationDatabase.h"
-#include "StructuredDataToJsonTransformation.h"
+#include <JsonGeneratorFromStructuredData.h>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -729,7 +729,7 @@ bool ObjectTest::TestJsonConversion() {
         JsonStreamsDataSet jsds;
 
         {
-            StructuredDataToJsonTransformation transform;
+            JsonGeneratorFromStructuredData transform;
             ConfigurationDatabase cdb;
             StreamString json;
             test_status = (test_status && (tods.GetTest3Object().ExportData(cdb)));
@@ -737,7 +737,7 @@ bool ObjectTest::TestJsonConversion() {
             test_values = (test_values && (json == jsds.GetTest3DataJson()));
         }
         {
-            StructuredDataToJsonTransformation transform;
+            JsonGeneratorFromStructuredData transform;
             ConfigurationDatabase cdb;
             StreamString json;
             test_status = (test_status && (tods.GetTest4Object().ExportData(cdb)));
@@ -745,7 +745,7 @@ bool ObjectTest::TestJsonConversion() {
             test_values = (test_values && (json == jsds.GetTest4DataJson()));
         }
         {
-            StructuredDataToJsonTransformation transform;
+            JsonGeneratorFromStructuredData transform;
             ConfigurationDatabase cdb;
             StreamString json;
             test_status = (test_status && (tods.GetTest5Object().ExportData(cdb)));
@@ -753,7 +753,7 @@ bool ObjectTest::TestJsonConversion() {
             test_values = (test_values && (json == jsds.GetTest5DataJson()));
         }
         {
-            StructuredDataToJsonTransformation transform;
+            JsonGeneratorFromStructuredData transform;
             ConfigurationDatabase cdb;
             StreamString json;
             test_status = (test_status && (tods.GetTest6Object().ExportData(cdb)));
@@ -761,7 +761,7 @@ bool ObjectTest::TestJsonConversion() {
             test_values = (test_values && (json == jsds.GetTest6DataJson()));
         }
         {
-            StructuredDataToJsonTransformation transform;
+            JsonGeneratorFromStructuredData transform;
             ConfigurationDatabase cdb;
             StreamString json;
             test_status = (test_status && (tods.GetTest7Object().ExportData(cdb)));
@@ -769,7 +769,7 @@ bool ObjectTest::TestJsonConversion() {
             test_values = (test_values && (json == jsds.GetTest7DataJson()));
         }
         {
-            StructuredDataToJsonTransformation transform;
+            JsonGeneratorFromStructuredData transform;
             ConfigurationDatabase cdb;
             StreamString json;
             test_status = (test_status && (tods.GetTest3Object().ExportMetadata(cdb)));
@@ -777,7 +777,7 @@ bool ObjectTest::TestJsonConversion() {
             test_values = (test_values && (json == jsds.GetTest3MetadataJson()));
         }
         {
-            StructuredDataToJsonTransformation transform;
+            JsonGeneratorFromStructuredData transform;
             ConfigurationDatabase cdb;
             StreamString json;
             test_status = (test_status && (tods.GetTest4Object().ExportMetadata(cdb)));
@@ -785,7 +785,7 @@ bool ObjectTest::TestJsonConversion() {
             test_values = (test_values && (json == jsds.GetTest4MetadataJson()));
         }
         {
-            StructuredDataToJsonTransformation transform;
+            JsonGeneratorFromStructuredData transform;
             ConfigurationDatabase cdb;
             StreamString json;
             test_status = (test_status && (tods.GetTest5Object().ExportMetadata(cdb)));

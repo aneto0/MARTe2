@@ -1,6 +1,6 @@
 /**
- * @file StructuredDataToJsonTransformation.h
- * @brief Header file for class StructuredDataToJsonTransformation
+ * @file JsonGeneratorFromStructuredData.h
+ * @brief Header file for class JsonGeneratorFromStructuredData
  * @date 08/03/2016
  * @author Ivan Herrero
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StructuredDataToJsonTransformation
+ * @details This header file contains the declaration of the class JsonGeneratorFromStructuredData
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef STRUCTUREDDATA_TO_JSON_TRANSFORMATION
-#define STRUCTUREDDATA_TO_JSON_TRANSFORMATION
+#ifndef JSON_GENERATOR_FROM_STRUCTUREDDATA
+#define JSON_GENERATOR_FROM_STRUCTUREDDATA
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -41,11 +41,11 @@
 
 namespace MARTe {
 
-class DLL_API StructuredDataToJsonTransformation {
+class DLL_API JsonGeneratorFromStructuredData {
 
 public:
-    StructuredDataToJsonTransformation();
-    virtual ~StructuredDataToJsonTransformation();
+    JsonGeneratorFromStructuredData();
+    virtual ~JsonGeneratorFromStructuredData();
     //JSON defined at RFC 7159 ["The JavaScript Object Notation (JSON) Data Interchange Format"|https://tools.ietf.org/html/rfc7159]
     bool Execute (MARTe::StructuredDataI& input, MARTe::StreamString& output);
 };
@@ -56,5 +56,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* STRUCTUREDDATA_TO_JSON_TRANSFORMATION */
+#endif /* JSON_GENERATOR_FROM_STRUCTUREDDATA */
 

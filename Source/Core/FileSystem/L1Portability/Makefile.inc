@@ -28,7 +28,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 SPB=Environment/$(ENVIRONMENT).x
 
-OBJSX= StructuredDataToJsonTransformation.x
+OBJSX= JsonGeneratorFromStructuredData.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
