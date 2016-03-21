@@ -766,12 +766,6 @@ bool ObjectTest::TestJsonConversion() {
             StreamString json;
             test_status = (test_status && (tods.GetTest7Object().ExportData(cdb)));
             test_status = (test_status && transform.Execute(cdb, json));
-            {
-                //Test filtering a json stream without blanks ...
-                StreamString json2;
-                test_status = (test_status && transform.FilterBlanks(json, json2));
-                test_values = (test_values && (json == json2));
-            }
             test_values = (test_values && (json == jsds.GetTest7DataJson()));
         }
         {
