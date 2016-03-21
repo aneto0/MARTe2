@@ -150,7 +150,7 @@ bool StructuredDataToJsonTransformation::Execute(StructuredDataI& input,
                         const uint8 elements = input.GetType(childName).GetNumberOfElements(0u);
                         Vector<StreamString> values(elements);
                         ret = input.Read(childName, values);
-                        uint i = 0;
+                        uint8 i = 0;
                         while (ret && i < elements) {
                             if (ret && (i > 0)) {
                                 ret = output.Printf("%s", VALUE_SEPARATOR);
@@ -174,7 +174,7 @@ bool StructuredDataToJsonTransformation::Execute(StructuredDataI& input,
                         const uint8 cols = input.GetType(childName).GetNumberOfElements(0u);
                         Matrix<StreamString> values(rows, cols);
                         ret = input.Read(childName, values);
-                        uint i = 0;
+                        uint8 i = 0;
                         while (ret && i < rows) {
                             if (ret && (i > 0)) {
                                 ret = output.Printf("%s", VALUE_SEPARATOR);
@@ -183,7 +183,7 @@ bool StructuredDataToJsonTransformation::Execute(StructuredDataI& input,
                                 ret = output.Printf("%s", BEGIN_ARRAY);
                             }
                             if (ret) {
-                                uint j = 0;
+                                uint8 j = 0;
                                 while (ret && j < cols) {
                                     if (ret && (j > 0)) {
                                         ret = output.Printf("%s", VALUE_SEPARATOR);
