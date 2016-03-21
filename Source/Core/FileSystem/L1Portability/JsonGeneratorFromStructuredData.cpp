@@ -43,7 +43,7 @@ namespace {
 
 using namespace MARTe;
 
-void cookValue(const StreamString& value,
+void generateJsonScalarValue(const StreamString& value,
                const TypeDescriptor descriptor,
                StreamString& result) {
     if (descriptor == VoidType || descriptor == InvalidType) {
@@ -127,7 +127,7 @@ bool JsonGeneratorFromStructuredData::Execute(StructuredDataI& input,
                     if (isRead) {
                         //The child is a leaf
                         StreamString cookedValue;
-                        cookValue(value, descriptor, cookedValue);
+                        generateJsonScalarValue(value, descriptor, cookedValue);
                         ret = output.Printf("%s", cookedValue.Buffer());
                     }
                     else {
@@ -157,7 +157,7 @@ bool JsonGeneratorFromStructuredData::Execute(StructuredDataI& input,
                             }
                             if (ret) {
                                 StreamString cookedValue;
-                                cookValue(values[i], descriptor, cookedValue);
+                                generateJsonScalarValue(values[i], descriptor, cookedValue);
                                 ret = output.Printf("%s", cookedValue.Buffer());
                             }
                             i++;
@@ -190,7 +190,7 @@ bool JsonGeneratorFromStructuredData::Execute(StructuredDataI& input,
                                     }
                                     if (ret) {
                                         StreamString cookedValue;
-                                        cookValue(values[i][j], descriptor, cookedValue);
+                                        generateJsonScalarValue(values[i][j], descriptor, cookedValue);
                                         ret = output.Printf("%s", cookedValue.Buffer());
                                     }
                                     j++;
