@@ -1,8 +1,8 @@
 /**
- * @file BasicRealTimeDataSourceOutputWriter.cpp
- * @brief Source file for class BasicRealTimeDataSourceOutputWriter
- * @date 21/mar/2016
- * @author pc
+ * @file GAMSchedulerI.cpp
+ * @brief Source file for class GAMSchedulerI
+ * @date 22/03/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class BasicRealTimeDataSourceOutputWriter (public, protected, and private). Be aware that some 
+ * the class GAMSchedulerI (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,59 +29,76 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "BasicRealTimeDataSourceOutputWriter.h"
+#include "GAMSchedulerI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
-BasicRealTimeDataSourceOutputWriter::BasicRealTimeDataSourceOutputWriter() :
-        RealTimeDataSourceBroker() {
-
+GAMSchedulerI::GAMSchedulerI() {
 }
 
-bool BasicRealTimeDataSourceOutputWriter::Write(const uint8 activeDataSourceBuffer) const {
+bool GAMSchedulerI::InsertRecord(const char8 * stateName,
+                                 ReferenceT<RealTimeThread> thread) {
+    uint32 numberOfStates = Size();
+    ReferenceT<GAMSchedulerRecord> record;
+    bool found = false;
+    for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
+        record = Get(i);
+        if (record.IsValid()) {
+            found = (stateName == record->GetName());
+        }
+    }
+    bool ret = true;
 
-    bool ret = finalised;
-    for (uint32 i = 0u; (i < GAMOffsets.GetSize()) && (ret); i++) {
-        void ** DSPointer = NULL_PTR(void **);
-        ret = DSPointers[activeDataSourceBuffer].Peek(i, DSPointer);
+    // set the accelerator
+    if (found) {
+        record->AddThread(thread);
+    }
+    else {
+        ReferenceT<GAMSchedulerRecord> newRecord = ReferenceT<GAMSchedulerRecord>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ret = newRecord.IsValid();
         if (ret) {
-            ret = (DSPointer != NULL);
-        }
-        void * GAMPointer = NULL_PTR(void *);
-        if (ret) {
-            ret = GAMPointers.Peek(i, GAMPointer);
-        }
-        if (ret) {
-            ret = (GAMPointer != NULL);
-        }
-        uint32 size = 0u;
-        if (ret) {
-            ret = sizes.Peek(i, size);
-        }
-        BasicRealTimeDataSourceDef *dsDef = NULL_PTR(BasicRealTimeDataSourceDef *);
-        if (ret) {
-            ret = dataSources.Peek(i, dsDef);
-        }
-        if (ret) {
-            ret = (dsDef != NULL);
-        }
-        if (ret) {
-            dsDef->WriteStart();
-            ret = MemoryOperationsHelper::Copy(*DSPointer, GAMPointer, size);
-            dsDef->WriteEnd();
+            newRecord->SetName(stateName);
+            ret = Insert(newRecord);
         }
     }
 
     return ret;
 }
 
-CLASS_REGISTER(BasicRealTimeDataSourceOutputWriter, "1.0")
+bool GAMSchedulerI::PrepareNextState(RealTimeStateInfo info) {
+    uint32 numberOfStates = Size();
+    StreamString newStateName = info.nextState;
+    ReferenceT<GAMSchedulerRecord> record;
+    bool found = false;
+    for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
+        record = Get(i);
+        if (record.IsValid()) {
+            found = (newStateName == record->GetName());
+        }
+    }
+    // set the accelerator
+    if (found) {
+        uint32 nextBuffer = (info.activeBuffer + 1u) % 2u;
+        statesInExecution[nextBuffer] = record;
+    }
+    return found;
+}
+
+
+void GAMSchedulerI::ChangeState(const uint32 activeBuffer){
+    uint32 nextBuffer=(activeBuffer+1u)%2u;
+
+    StopExecution();
+    StartExecution(nextBuffer);
+
+}
 
 }

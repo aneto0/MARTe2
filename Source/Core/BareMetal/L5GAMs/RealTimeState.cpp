@@ -91,6 +91,39 @@ bool RealTimeState::ConfigureArchitecture(RealTimeApplication & rtApp) {
     return ret;
 }
 
+bool RealTimeState::ValidateDataSourceLinks() {
+    // there must be a container called Threads
+    ReferenceT<ReferenceContainer> threadContainer;
+    uint32 numberOfContainers = Size();
+    bool ret = false;
+    for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+        Reference item = Get(i);
+        if (item.IsValid()) {
+            if (StringHelper::Compare(item->GetName(), "+Threads") == 0) {
+                threadContainer = item;
+                ret = threadContainer.IsValid();
+            }
+        }
+    }
+
+    if (ret) {
+        // for each thread call the Validate
+        uint32 numberOfThreads = threadContainer->Size();
+        for (uint32 i = 0u; (i < numberOfThreads) && (ret); i++) {
+            ReferenceT<RealTimeThread> rtThread = threadContainer->Get(i);
+            if (rtThread.IsValid()) {
+                // call the configure function for each thread
+                ret = rtThread->ValidateDataSourceLinks();
+            }
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "+Threads container not found");
+    }
+
+    return ret;
+}
+
 bool RealTimeState::InsertFunction(Reference functionReference) {
     ReferenceT<ReferenceContainer> functionsContainer;
     uint32 numberOfContainers = Size();

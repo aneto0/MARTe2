@@ -32,7 +32,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeDataSourceBroker.h"
+#include "BasicRealTimeDataSourceOutputWriter.h"
+#include "EventSem.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -42,7 +43,7 @@ namespace MARTe {
 /**
  * @brief Writes data to the RealTimeDataSource.
  */
-class RealTimeDataSourceOutputWriter: public RealTimeDataSourceBroker {
+class RealTimeDataSourceOutputWriter: public BasicRealTimeDataSourceOutputWriter {
 
 public:
     CLASS_REGISTER_DECLARATION()
@@ -62,7 +63,17 @@ public:
      */
     bool Write(const uint8 activeDataSourceBuffer) const;
 
+    /**
+     * @brief Finalises the object.
+     * @details This function has to be called after all the variables are added.
+     * @return false in case of errors, true otherwise.
+     */
+    virtual bool Finalise();
 
+
+protected:
+
+    EventSem * eventSem;
 };
 
 }

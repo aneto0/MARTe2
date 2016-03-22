@@ -156,7 +156,6 @@ bool GAMI::Initialise(StructuredDataI & data) {
     return ret;
 }
 
-
 void GAMI::SetApplication(RealTimeApplication &rtApp) {
     if (application == NULL) {
         application = &rtApp;
@@ -206,5 +205,8 @@ uint32 GAMI::GetNumberOfSupportedStates() const {
 
 }
 
+bool GAMI::IsSync() const {
+    return false;
+}
 
 }

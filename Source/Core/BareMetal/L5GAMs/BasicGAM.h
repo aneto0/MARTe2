@@ -92,6 +92,10 @@ public:
      */
     virtual Reference GetOutputWriter() const;
 
+
+    virtual bool IsSync() ;
+
+
 protected:
 
     /**

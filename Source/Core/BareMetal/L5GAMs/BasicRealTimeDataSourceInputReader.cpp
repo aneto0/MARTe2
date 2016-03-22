@@ -41,7 +41,7 @@
 namespace MARTe {
 
 BasicRealTimeDataSourceInputReader::BasicRealTimeDataSourceInputReader() :
-        BasicRealTimeDataSourceBroker() {
+        RealTimeDataSourceBroker() {
 
 }
 
@@ -70,6 +70,9 @@ bool BasicRealTimeDataSourceInputReader::Read(const uint8 activeDataSourceBuffer
             ret = dataSources.Peek(i, dsDef);
         }
         if (ret) {
+            ret = (dsDef != NULL);
+        }
+        if (ret) {
             dsDef->ReadStart();
             ret = MemoryOperationsHelper::Copy(GAMPointer, *DSPointer, size);
             dsDef->ReadEnd();
@@ -78,6 +81,39 @@ bool BasicRealTimeDataSourceInputReader::Read(const uint8 activeDataSourceBuffer
 
     return ret;
 }
+
+bool BasicRealTimeDataSourceInputReader::Poll(const uint8 activeDataSourceBuffer,
+                                              float64 sampleTime,
+                                              uint32 numberOfReads,
+                                              TimeoutType timeout) {
+    bool ret = true;
+
+    uint64 tic = HighResolutionTimer::Counter();
+    // blocks the function on the spin-lock
+    for (uint32 i = 0u; (i < numberOfReads) && (ret); i++) {
+        if (synchronized) {
+            ret = (pollingSem != NULL);
+            if(ret) {
+                ret=(pollingSem->FastResetWait(timeout)==ErrorManagement::NoError);
+            }
+        }
+
+        if (ret) {
+            ret = Read(activeDataSourceBuffer);
+        }
+    }
+
+    if (ret && synchronized) {
+        // wait the sample time
+        // possible error for counter overflow
+        while ((HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic) * 1000) < sampleTime) {
+            Sleep::MSec(1);
+        }
+    }
+
+    return ret;
+}
+
 CLASS_REGISTER(BasicRealTimeDataSourceInputReader, "1.0")
 
 }

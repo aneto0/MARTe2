@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GAM.h"
+#include "BasicGAM.h"
 #include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -97,15 +97,17 @@ struct ControlInMatrix {
 /**
  * @brief Implementation of a GAM used in tests.
  */
-class PIDGAM: public GAM {
+class PIDGAM: public BasicGAM {
 
 public:
     CLASS_REGISTER_DECLARATION()
 
+    PIDGAM();
+
     /**
      * @brief Destructor. Frees the local cdb created internally
      */
-    ~PIDGAM();
+    virtual ~PIDGAM();
 
     /**
      * @brief The execution routine.
@@ -128,6 +130,8 @@ private:
 class PIDGAMGroup: public GAMGroup {
 public:
     CLASS_REGISTER_DECLARATION()
+
+    PIDGAMGroup();
 
     /**
      * @brief Dummy implementation of the pure virtual PrepareNextState() function which change a variable.
@@ -158,11 +162,11 @@ private:
 /**
  * @brief Implementation of a GAM used in tests.
  */
-class PIDGAM2: public GAM {
+class PIDGAM2: public BasicGAM {
 
 public:
     CLASS_REGISTER_DECLARATION()
-
+    PIDGAM2();
     /**
      * @brief Empty
      */
@@ -182,10 +186,11 @@ protected:
 private:
 };
 
-class PIDGAM3: public GAM {
+class PIDGAM3: public BasicGAM {
 
 public:
     CLASS_REGISTER_DECLARATION()
+    PIDGAM3();
 
     ~PIDGAM3();
 
@@ -206,10 +211,11 @@ private:
 /**
  * Implementation of a GAM used in tests.
  */
-class PlantGAM: public GAM {
+class PlantGAM: public BasicGAM {
 
 public:
     CLASS_REGISTER_DECLARATION()
+    PlantGAM();
 
     /**
      * @brief The execution routine.
@@ -386,6 +392,10 @@ static ConfigurationDatabase GetCDB1() {
     cdb.Write("Class", "RealTimeDataSource");
     cdb.CreateAbsolute("$Application1.+Data.+DDB2");
     cdb.Write("Class", "RealTimeDataSource");
+
+    //scheduler
+    cdb.CreateAbsolute("$Application1.+Scheduler");
+    cdb.Write("Class", "BasicGAMScheduler");
 
     cdb.MoveToRoot();
     return cdb;
@@ -566,6 +576,9 @@ static ConfigurationDatabase GetCDB2() {
     cdb1.Write("Class", "RealTimeDataSource");
     cdb1.CreateAbsolute("$Application1.+Data.+DDB2");
     cdb1.Write("Class", "RealTimeDataSource");
+    //scheduler
+    cdb1.CreateAbsolute("$Application1.+Scheduler");
+    cdb1.Write("Class", "BasicGAMScheduler");
 
     cdb1.MoveToRoot();
     return cdb1;

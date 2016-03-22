@@ -33,7 +33,7 @@
 #include "ConfigurationDatabase.h"
 #include "GAMTestHelper.h"
 #include "RealTimeDataSourceContainer.h"
-#include "RealTimeDataSourceDef.h"
+#include "BasicRealTimeDataSourceDef.h"
 #include "RealTimeGenericDataDef.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
@@ -211,7 +211,7 @@ bool RealTimeDataSourceTest::TestAllocate() {
     }
 
     // test if it is possible read a value
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> defOut = gam2->Find("+Outputs.+Error");
 
     ReferenceT<RealTimeApplication> app = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -221,7 +221,7 @@ bool RealTimeDataSourceTest::TestAllocate() {
     writer->AddVariable(defOut);
     writer->Finalise();
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> defIn = gam1->Find("+Inputs.+Error");
     reader->SetApplication(*app.operator ->());
     reader->AddVariable(defIn);
@@ -380,7 +380,7 @@ bool RealTimeDataSourceTest::TestAllocate_Structure() {
     }
 
     // test if it is possible read a value
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> defOut = gam2->Find("+Inputs.+Noise");
 
     ReferenceT<RealTimeApplication> app = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -390,7 +390,7 @@ bool RealTimeDataSourceTest::TestAllocate_Structure() {
     writer->AddVariable(defOut);
     writer->Finalise();
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> defIn = gam1->Find("+Outputs.+Noise");
     reader->SetApplication(*app.operator ->());
     reader->AddVariable(defIn);

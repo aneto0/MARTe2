@@ -36,6 +36,7 @@
 #include "ReferenceContainerFilterReferences.h"
 #include "GAMI.h"
 #include "AdvancedErrorManagement.h"
+#include "GAMSchedulerI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -53,6 +54,8 @@ RealTimeThread::RealTimeThread() :
     numberOfFunctions = 0u;
     GAMs = reinterpret_cast<ReferenceT<GAMI>*>(NULL);
     numberOfGAMs = 0u;
+    cpuMask = 0u;
+    stackSize = 0u;
 }
 
 /*lint -e{1551} no exception should be thrown*/
@@ -136,6 +139,22 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
     return ret;
 }
 
+bool RealTimeThread::ValidateDataSourceLinks() {
+    bool ret = true;
+    uint32 contSyncGAMs = 0u;
+    for (uint32 i = 0u; (i < numberOfGAMs) && (ret); i++) {
+        if (GAMs[i]->IsSync()) {
+            contSyncGAMs++;
+        }
+    }
+    if (contSyncGAMs > 1u) {
+        //TODO Error
+        ret = false;
+    }
+    return ret;
+
+}
+
 void RealTimeThread::AddGAM(ReferenceT<GAMI> element) {
     if (element.IsValid()) {
         if ((numberOfGAMs % gamsArrayGranularity) == 0u) {
@@ -178,6 +197,29 @@ bool RealTimeThread::ConfigureArchitecture(RealTimeApplication &rtApp,
                     // insert the reference into the state
                     ret = rtState.InsertFunction(functionGeneric);
                 }
+                // insert this thread in the scheduler
+                if (ret) {
+                    //search the scheduler
+                    uint32 numberOfItems = rtApp.Size();
+                    ret = false;
+                    ReferenceT<GAMSchedulerI> scheduler;
+                    for (uint32 i = 0u; (i < numberOfItems) && (!ret); i++) {
+                        Reference item = rtApp.Get(i);
+                        if (item.IsValid()) {
+                            if (StringHelper::Compare(item->GetName(), "+Scheduler") == 0) {
+                                scheduler = item;
+                                ret = scheduler.IsValid();
+                            }
+                        }
+                    }
+
+                    if (ret) {
+                        ret = scheduler->InsertRecord(rtState.GetName(), ReferenceT<RealTimeThread>(this));
+                    }
+                    else {
+                        //TODO Scheduler not found or invalid
+                    }
+                }
             }
         }
         else {
@@ -201,6 +243,15 @@ bool RealTimeThread::Initialise(StructuredDataI & data) {
         Vector<StreamString> functionVector(functions, numberOfFunctions);
 
         ret = (data.Read("Functions", functionVector));
+        if (ret) {
+            if (data.Read("CPUs", cpuMask)) {
+
+            }
+            if (data.Read("StackSize", stackSize)) {
+
+            }
+        }
+
     }
     else {
         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No functions defined for the RealTimeThread %s", GetName())
@@ -222,6 +273,14 @@ ReferenceT<GAMI> *RealTimeThread::GetGAMs() {
 
 uint32 RealTimeThread::GetNumberOfGAMs() const {
     return numberOfGAMs;
+}
+
+uint32 RealTimeThread::GetStackSize() const {
+    return stackSize;
+}
+
+ProcessorType RealTimeThread::GetCPU() const {
+    return cpuMask;
 }
 
 bool RealTimeThread::ToStructuredData(StructuredDataI& data) {

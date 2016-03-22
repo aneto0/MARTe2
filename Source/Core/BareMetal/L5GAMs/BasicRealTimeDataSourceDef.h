@@ -36,7 +36,7 @@
 #include "RealTimeStateInfo.h"
 #include "GAMI.h"
 #include "MemoryArea.h"
-
+#include "FastPollingEventSem.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -183,7 +183,7 @@ public:
 
     // EventSem * GetEventSemaphore();
 
-    FastPollingMutexSem * GetPollingSemaphore() const;
+    FastPollingEventSem * GetPollingSemaphore() const;
 
     /**
      * @brief Sets the number of elements for a specific dimension.
@@ -258,7 +258,7 @@ private:
 
     //EventSem * eventSem;
 
-    FastPollingMutexSem * pollSem;
+    FastPollingEventSem * pollSem;
 };
 
 }

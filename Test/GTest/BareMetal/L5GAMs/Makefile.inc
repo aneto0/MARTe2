@@ -23,7 +23,10 @@
 #############################################################
 
 
-OBJSX= 	GAMGTest.x \
+OBJSX= 	BasicGAMGTest.x \
+		BasicRealTimeDataSourceDefGTest.x \
+		BasicRealTimeDataSourceInputReaderGTest.x \
+		BasicRealTimeDataSourceOutputWriterGTest.x \
 		GAMGroupGTest.x \
 		RealTimeApplicationGTest.x \
 		RealTimeDataDefContainerGTest.x \
@@ -33,10 +36,7 @@ OBJSX= 	GAMGTest.x \
 		RealTimeDataSourceGTest.x \
 		RealTimeDataSourceBrokerGTest.x \
 		RealTimeDataSourceContainerGTest.x \
-		RealTimeDataSourceDefGTest.x \
 		RealTimeDataSourceDefRecordGTest.x \
-		RealTimeDataSourceInputReaderGTest.x \
-		RealTimeDataSourceOutputWriterGTest.x \
 		RealTimeStateGTest.x \
 		RealTimeThreadGTest.x
 

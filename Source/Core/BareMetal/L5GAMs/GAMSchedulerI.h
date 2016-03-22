@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceInputReader.h
- * @brief Header file for class RealTimeDataSourceInputReader
- * @date 09/03/2016
+ * @file GAMSchedulerI.h
+ * @brief Header file for class GAMSchedulerI
+ * @date 22/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceInputReader
+ * @details This header file contains the declaration of the class GAMSchedulerI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEINPUTREADER_H_
-#define REALTIMEDATASOURCEINPUTREADER_H_
+#ifndef GAMSCHEDULERI_H_
+#define GAMSCHEDULERI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,47 +31,36 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BasicRealTimeDataSourceInputReader.h"
-#include "EventSem.h"
+#include "ReferenceContainer.h"
+#include "ReferenceT.h"
+#include "RealTimeThread.h"
+#include "GAMSchedulerRecord.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
-/**
- * @brief Reads data from the RealTimeDataSource.
- */
-class RealTimeDataSourceInputReader: public BasicRealTimeDataSourceInputReader {
+class GAMSchedulerI: public ReferenceContainer {
+
 public:
-    CLASS_REGISTER_DECLARATION()
+    GAMSchedulerI();
 
-    /**
-     * @brief Constructor
-     */
-    RealTimeDataSourceInputReader();
 
-    /**
-     * @brief Reads data from the RealTimeDataSource.
-     * @details After the configuration of the interface between GAM and RealTimeDataSource
-     * (see RealTimeDataSourceBroker), copies data from the RealTimeDataSource into the GAM variables.
-     * @param[in] activeDataSourceBuffer is the buffer index to be used. This parameter must change
-     * from 0 to 1 on each state switch.
-     * @return false in case of errors, true otherwise.
-     */
-    bool Read(const uint8 activeDataSourceBuffer) const;
+    bool InsertRecord(const char8 * stateName, ReferenceT<RealTimeThread> thread);
 
-    virtual bool Finalise();
+    bool PrepareNextState(RealTimeStateInfo info);
 
-    bool OSPoll(const uint8 activeDataSourceBuffer,
-                float64 sampleTime = 0.0,
-                uint32 numberOfReads = 1u,
-                TimeoutType timeout = TTInfiniteWait);
+    void ChangeState(const uint32 activeBuffer);
+
+    virtual void StartExecution(const uint32 activeBuffer)=0;
+
+    virtual void StopExecution()=0;
 
 protected:
 
-    EventSem * eventSem;
-
+    // double buffer
+    ReferenceT<GAMSchedulerRecord> statesInExecution[2];
 };
 
 }
@@ -80,5 +69,5 @@ protected:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEINPUTREADER_H_ */
+#endif /* GAMSCHEDULERI_H_ */
 

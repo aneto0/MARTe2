@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataSourceOutputWriterGTest.cpp
- * @brief Source file for class RealTimeDataSourceOutputWriterGTest
- * @date 14/03/2016
- * @author Giuseppe Ferrò
+ * @file GAMSchedulerRecord.cpp
+ * @brief Source file for class GAMSchedulerRecord
+ * @date 22/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,54 +17,76 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataSourceOutputWriterGTest (public, protected, and private). Be aware that some 
+ * the class GAMSchedulerRecord (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
-#include "gtest/gtest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeDataSourceOutputWriterTest.h"
+#include "GAMSchedulerRecord.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
+static const uint32 threadsArrayGranularity = 2u;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(RealTimeDataSourceOutputWriterGTest,TestConstructor) {
-    RealTimeDataSourceOutputWriterTest rtdsorTest;
-    ASSERT_TRUE(rtdsorTest.TestConstructor());
+GAMSchedulerRecord::GAMSchedulerRecord() :
+        ReferenceContainer() {
+    threads = NULL_PTR(ReferenceT<RealTimeThread> *);
+    numberOfThreads = 0u;
 }
 
-TEST(RealTimeDataSourceOutputWriterGTest,TestWrite_Allocation) {
-    RealTimeDataSourceOutputWriterTest rtdsorTest;
-    ASSERT_TRUE(rtdsorTest.TestWrite_Allocation());
+GAMSchedulerRecord::~GAMSchedulerRecord() {
+    if (threads != NULL) {
+        delete [] threads;
+    }
+    numberOfThreads=0u;
 }
 
-TEST(RealTimeDataSourceOutputWriterGTest,TestWrite_Static) {
-    RealTimeDataSourceOutputWriterTest rtdsorTest;
-    ASSERT_TRUE(rtdsorTest.TestWrite_Static());
+void GAMSchedulerRecord::AddThread(ReferenceT<RealTimeThread> newThread) {
+    if (newThread.IsValid()) {
+        if ((numberOfThreads % threadsArrayGranularity) == 0u) {
+            uint32 newSize = numberOfThreads + threadsArrayGranularity;
+            ReferenceT<RealTimeThread> *temp = new ReferenceT<RealTimeThread> [newSize];
+
+            if (threads != NULL) {
+                for (uint32 i = 0u; i < numberOfThreads; i++) {
+                    temp[i] = threads[i];
+                }
+                delete[] threads;
+            }
+            threads = temp;
+        }
+        /*lint -e{613} before entering the memory for threads is allocated because (numberOfThreads == 0)*/
+        threads[numberOfThreads] = newThread;
+        numberOfThreads++;
+
+    }
 }
 
-TEST(RealTimeDataSourceOutputWriterGTest,TestWrite_MoreThanOneVariable) {
-    RealTimeDataSourceOutputWriterTest rtdsorTest;
-    ASSERT_TRUE(rtdsorTest.TestWrite_MoreThanOneVariable());
+ReferenceT<RealTimeThread> GAMSchedulerRecord::Peek(uint32 index) {
+
+    ReferenceT<RealTimeThread> ret;
+    if (index < numberOfThreads) {
+        ret = threads[index];
+    }
+    return ret;
 }
 
-TEST(RealTimeDataSourceOutputWriterGTest,TestWrite_MultiDim_Vector) {
-    RealTimeDataSourceOutputWriterTest rtdsorTest;
-    ASSERT_TRUE(rtdsorTest.TestWrite_MultiDim_Vector());
+uint32 GAMSchedulerRecord::GetNumberOfThreads() const {
+    return numberOfThreads;
 }
 
-TEST(RealTimeDataSourceOutputWriterGTest,TestWrite_MultiDim_Matrix) {
-    RealTimeDataSourceOutputWriterTest rtdsorTest;
-    ASSERT_TRUE(rtdsorTest.TestWrite_MultiDim_Matrix());
 }

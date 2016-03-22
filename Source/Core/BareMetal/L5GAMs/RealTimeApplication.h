@@ -138,6 +138,10 @@ public:
      */
     bool ConfigureDataSourceLinks();
 
+    // only one sync link for thread !
+    bool ValidateDataSourceLinks();
+
+
     /**
      * @brief Prepares the environment for the next state.
      * @details This function has to be executed in a low-priority thread in order to prepare the context for the contextful GAMs
@@ -146,14 +150,7 @@ public:
      * @param[in] status contains informations about the current and the next state. // we need only the next state if the scheduler is inside here
      * @return false in case of errors, true otherwise.
      */
-    bool PrepareNextState(const RealTimeStateInfo &status);
-
-    /**
-     * @brief Switches the active buffer index.
-     * @details Flips the active buffer index from 0 to 1 or vice versa.
-     * @return The value of the new active buffer index (0 or 1).
-     */
-    uint8 ChangeState();
+    bool PrepareNextState(const char8 * const nextStateName);
 
     /**
      * @brief Retrieves the current active buffer index.
@@ -161,12 +158,28 @@ public:
      */
     uint8 GetActiveBuffer() const;
 
+
+
+    virtual bool Initialise(StructuredDataI & data);
+
 private:
 
     /**
      * The active buffer.
      */
     uint8 activeBuffer;
+
+
+    StreamString currentStateName;
+
+    ReferenceT<ReferenceContainer> statesContainer;
+
+    ReferenceT<ReferenceContainer> functionsContainer;
+
+    ReferenceT<ReferenceContainer> schedulerContainer;
+
+    ReferenceT<ReferenceContainer> dataSourceContainer;
+
 };
 
 }

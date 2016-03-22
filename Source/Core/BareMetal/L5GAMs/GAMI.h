@@ -145,6 +145,9 @@ public:
      */
     virtual Reference GetOutputWriter() const = 0;
 
+
+    virtual bool IsSync() const;
+
 protected:
 
     /**

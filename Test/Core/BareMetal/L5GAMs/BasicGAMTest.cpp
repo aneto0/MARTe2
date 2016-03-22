@@ -1,7 +1,7 @@
 /**
- * @file GAMTest.cpp
- * @brief Source file for class GAMTest
- * @date 18/feb/2016
+ * @file BasicGAMTest.cpp
+ * @brief Source file for class BasicGAMTest
+ * @date 22/mar/2016
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMTest (public, protected, and private). Be aware that some 
+ * the class BasicGAMTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,10 +29,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GAMTest.h"
+#include "BasicGAMTest.h"
 #include "GAMTestHelper.h"
 #include "RealTimeDataDefContainer.h"
-#include "RealTimeDataSourceDef.h"
+#include "BasicRealTimeDataSourceDef.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,7 +42,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAMTest::GAMTest() {
+BasicGAMTest::BasicGAMTest() {
 
     cdb.CreateAbsolute("+Inputs");
     cdb.Write("Class", "RealTimeDataDefContainer");
@@ -87,11 +87,11 @@ GAMTest::GAMTest() {
     cdb.MoveToRoot();
 }
 
-GAMTest::~GAMTest() {
+BasicGAMTest::~BasicGAMTest() {
     ObjectRegistryDatabase::Instance()->CleanUp();
 }
 
-bool GAMTest::TestConstructor() {
+bool BasicGAMTest::TestConstructor() {
     PIDGAM gamTest;
     if (gamTest.GetNumberOfSupportedStates() != 0) {
         return false;
@@ -102,7 +102,7 @@ bool GAMTest::TestConstructor() {
     return true;
 }
 
-bool GAMTest::TestInitialise() {
+bool BasicGAMTest::TestInitialise() {
     PIDGAM gamTest;
     if (!gamTest.Initialise(cdb)) {
         return false;
@@ -128,21 +128,21 @@ bool GAMTest::TestInitialise() {
     return true;
 }
 
-bool GAMTest::TestSetApplication() {
+bool BasicGAMTest::TestSetApplication() {
     RealTimeApplication rtApp;
     PIDGAM gam;
     gam.SetApplication(rtApp);
     return true;
 }
 
-bool GAMTest::TestSetGAMGroup() {
+bool BasicGAMTest::TestSetGAMGroup() {
     ReferenceT<PIDGAMGroup> rtgg;
     PIDGAM gam;
     gam.SetGAMGroup(rtgg);
     return true;
 }
 
-bool GAMTest::TestAddState() {
+bool BasicGAMTest::TestAddState() {
 
     PIDGAM gam;
     const uint32 size = 5;
@@ -164,15 +164,15 @@ bool GAMTest::TestAddState() {
     return true;
 }
 
-bool GAMTest::TestGetNumberOfSupportedStates() {
+bool BasicGAMTest::TestGetNumberOfSupportedStates() {
     return TestAddState();
 }
 
-bool GAMTest::TestGetSupportedStates() {
+bool BasicGAMTest::TestGetSupportedStates() {
     return TestAddState();
 }
 
-bool GAMTest::TestGetNumberOfSupportedStates_GAMGroup() {
+bool BasicGAMTest::TestGetNumberOfSupportedStates_GAMGroup() {
 
     ReferenceT<PIDGAMGroup> gamGroup = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -194,7 +194,7 @@ bool GAMTest::TestGetNumberOfSupportedStates_GAMGroup() {
 
 }
 
-bool GAMTest::TestGetSupportedStates_GAMGroup() {
+bool BasicGAMTest::TestGetSupportedStates_GAMGroup() {
     ReferenceT<PIDGAMGroup> gamGroup = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     const uint32 size = 4;
@@ -208,7 +208,7 @@ bool GAMTest::TestGetSupportedStates_GAMGroup() {
     return (gam->GetNumberOfSupportedStates() == size);
 }
 
-bool GAMTest::TestConfigureDataSource() {
+bool BasicGAMTest::TestConfigureDataSource() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
     appCDB.Write("Class", "RealTimeDataSourceContainer");
@@ -235,21 +235,21 @@ bool GAMTest::TestConfigureDataSource() {
     if (!gam->ConfigureDataSource()) {
         return false;
     }
-    ReferenceT<RealTimeDataSourceDef> def1 = rtapp->Find("+Data.+DDB1.PidError1");
+    ReferenceT<BasicRealTimeDataSourceDef> def1 = rtapp->Find("+Data.+DDB1.PidError1");
     if (def1->GetNumberOfConsumers("state1") != 1 || def1->GetNumberOfConsumers("state2") != 1) {
 
     }
 
-    ReferenceT<RealTimeDataSourceDef> def2 = rtapp->Find("+Data.+DDB1.PidError2");
+    ReferenceT<BasicRealTimeDataSourceDef> def2 = rtapp->Find("+Data.+DDB1.PidError2");
     if (def2->GetNumberOfConsumers("state1") != 1 || def2->GetNumberOfConsumers("state2") != 1) {
 
     }
 
-    ReferenceT<RealTimeDataSourceDef> def3 = rtapp->Find("+Data.+DDB2.PidControl1");
+    ReferenceT<BasicRealTimeDataSourceDef> def3 = rtapp->Find("+Data.+DDB2.PidControl1");
     if (def3->GetNumberOfProducers("state1") != 1 || def3->GetNumberOfProducers("state2") != 1) {
 
     }
-    ReferenceT<RealTimeDataSourceDef> def4 = rtapp->Find("+Data.+DDB2.PidControl2");
+    ReferenceT<BasicRealTimeDataSourceDef> def4 = rtapp->Find("+Data.+DDB2.PidControl2");
     if (def4->GetNumberOfProducers("state1") != 1 || def4->GetNumberOfProducers("state2") != 1) {
 
     }
@@ -258,7 +258,7 @@ bool GAMTest::TestConfigureDataSource() {
 }
 
 
-bool GAMTest::TestConfigureDataSourceFalse_NoData() {
+bool BasicGAMTest::TestConfigureDataSourceFalse_NoData() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Datas"); // wrong
     appCDB.Write("Class", "RealTimeDataSourceContainer");
@@ -286,7 +286,7 @@ bool GAMTest::TestConfigureDataSourceFalse_NoData() {
     return (!gam->ConfigureDataSource());
 }
 
-bool GAMTest::TestConfigureDataSourceFalse_NoApplicationSet() {
+bool BasicGAMTest::TestConfigureDataSourceFalse_NoApplicationSet() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
     appCDB.Write("Class", "RealTimeDataSourceContainer");
@@ -314,7 +314,7 @@ bool GAMTest::TestConfigureDataSourceFalse_NoApplicationSet() {
     return (!gam->ConfigureDataSource());
 }
 
-bool GAMTest::TestConfigureDataSource_NoStates() {
+bool BasicGAMTest::TestConfigureDataSource_NoStates() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
     appCDB.Write("Class", "RealTimeDataSourceContainer");
@@ -339,7 +339,7 @@ bool GAMTest::TestConfigureDataSource_NoStates() {
     return (gam->ConfigureDataSource());
 }
 
-bool GAMTest::TestConfigureDataSourceFalse_Final() {
+bool BasicGAMTest::TestConfigureDataSourceFalse_Final() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
     appCDB.Write("Class", "RealTimeDataSourceContainer");
@@ -367,7 +367,7 @@ bool GAMTest::TestConfigureDataSourceFalse_Final() {
     return (!gam->ConfigureDataSource());
 }
 
-bool GAMTest::TestConfigureDataSourceLinks() {
+bool BasicGAMTest::TestConfigureDataSourceLinks() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
     appCDB.Write("Class", "RealTimeDataSourceContainer");
@@ -408,13 +408,8 @@ bool GAMTest::TestConfigureDataSourceLinks() {
         return false;
     }
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
+    const char8 *nextState = "+state1";
+    rtapp->PrepareNextState(nextState);
 
     if (!gam->ConfigureDataSourceLinks()) {
         return false;
@@ -423,7 +418,7 @@ bool GAMTest::TestConfigureDataSourceLinks() {
     return true;
 }
 
-bool GAMTest::TestExecute() {
+bool BasicGAMTest::TestExecute() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
     appCDB.Write("Class", "RealTimeDataSourceContainer");
@@ -463,13 +458,8 @@ bool GAMTest::TestExecute() {
         return false;
     }
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
+    const char8 *nextState = "+state1";
+    rtapp->PrepareNextState(nextState);
 
     if (!gam->ConfigureDataSourceLinks()) {
         return false;
@@ -479,4 +469,3 @@ bool GAMTest::TestExecute() {
 
     return true;
 }
-

@@ -90,8 +90,6 @@ public:
      */
     inline bool FastTryLock();
 
-    inline ErrorManagement::ErrorType FastWait(const TimeoutType &msecTimeout = TTInfiniteWait);
-
     /**
      * @brief Unlocks the semaphore.
      * @details A thread could unlock the semaphore locked by another thread.
@@ -130,12 +128,12 @@ bool FastPollingMutexSem::Locked() const {
 }
 
 ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msecTimeout) {
-    int64 ticksStop = msecTimeout.HighResolutionTimerTicks();
+    uint64 ticksStop = msecTimeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
     while (!Atomic::TestAndSet(&flag)) {
         if (msecTimeout != TTInfiniteWait) {
-            int64 ticks = HighResolutionTimer::Counter();
+            uint64 ticks = HighResolutionTimer::Counter();
             if (ticks > ticksStop) {
                 err = ErrorManagement::Timeout;
                 REPORT_ERROR(ErrorManagement::Timeout, "FastPollingMutexSem: Timeout expired");
@@ -148,13 +146,6 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msec
     return err;
 }
 
-ErrorManagement::ErrorType FastPollingMutexSem::FastWait(const TimeoutType &msecTimeout) {
-    ErrorManagement::ErrorType err = FastLock(msecTimeout);
-    if (err == ErrorManagement::NoError) {
-        FastUnLock();
-    }
-    return err;
-}
 
 bool FastPollingMutexSem::FastTryLock() {
     return (Atomic::TestAndSet(&flag));

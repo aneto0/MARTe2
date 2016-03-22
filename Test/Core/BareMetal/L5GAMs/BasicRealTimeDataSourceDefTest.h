@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataSourceDefTest.h
- * @brief Header file for class RealTimeDataSourceDefTest
- * @date 04/02/2016
- * @author Giuseppe Ferrò
+ * @file BasicRealTimeDataSourceDefTest.h
+ * @brief Header file for class BasicRealTimeDataSourceDefTest
+ * @date 22/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceDefTest
+ * @details This header file contains the declaration of the class BasicRealTimeDataSourceDefTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEDEFTEST_H_
-#define REALTIMEDATASOURCEDEFTEST_H_
+#ifndef BASICREALTIMEDATASOURCEDEFTEST_H_
+#define BASICREALTIMEDATASOURCEDEFTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,7 +31,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeDataSourceDef.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+#include "BasicRealTimeDataSourceDef.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -41,7 +46,7 @@ using namespace MARTe;
 /**
  * @brief Tests all the RealTimeDataSourceDef functions.
  */
-class RealTimeDataSourceDefTest {
+class BasicRealTimeDataSourceDefTest {
 
 public:
 
@@ -206,9 +211,10 @@ public:
 
 };
 
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEDEFTEST_H_ */
+#endif /* BASICREALTIMEDATASOURCEDEFTEST_H_ */
 

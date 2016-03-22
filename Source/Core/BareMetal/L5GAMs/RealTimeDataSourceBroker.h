@@ -1,8 +1,8 @@
 /**
  * @file RealTimeDataSourceBroker.h
  * @brief Header file for class RealTimeDataSourceBroker
- * @date 09/03/2016
- * @author Giuseppe Ferrò
+ * @date 22/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEBROKER_H_
-#define REALTIMEDATASOURCEBROKER_H_
+#ifndef SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMEDATASOURCEBROKER_H_
+#define 		SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMEDATASOURCEBROKER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,8 +31,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BasicRealTimeDataSourceBroker.h"
-#include "EventSem.h"
+#include "ReferenceContainer.h"
+#include "MemoryArea.h"
+#include "ReferenceT.h"
+#include "RealTimeApplication.h"
+#include "RealTimeDataDefI.h"
+#include "BasicRealTimeDataSourceDef.h"
+#include "FastPollingEventSem.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -42,7 +47,7 @@ namespace MARTe {
 /**
  * @brief The interface between GAMs and RealTimeDataSource.
  */
-class RealTimeDataSourceBroker: public BasicRealTimeDataSourceBroker {
+class RealTimeDataSourceBroker: public ReferenceContainer {
 
 public:
 
@@ -54,6 +59,39 @@ public:
      */
     RealTimeDataSourceBroker();
 
+    /**
+     * @brief Sets the application where this object is involved in.
+     * @param[in] rtApp is a Reference to the application to be set.
+     */
+    void SetApplication(RealTimeApplication &rtApp);
+
+    /**
+     * @brief Links a GAM variable with the RealTimeDataSource.
+     * @details If \a ptr is null, this function allocates memory for the variable and stores the pointer
+     * in a vector. The pointer to the respective variable memory, allocated in the RealTimeDataSource, will be
+     * stored into another vector. If \a ptr is not NULL, this means that the GAM provides the memory of that
+     * variable by itself, then the allocation is not performed.
+     * @param[in] def is the variable definition.
+     * @param[in] ptr is the pointer to the variable memory area.
+     * @return false in case of errors, true otherwise.
+     */
+    bool AddVariable(ReferenceT<RealTimeDataDefI> def,
+                     void * const ptr = NULL_PTR(void*));
+
+    /**
+     * @brief Retrieves the pointer to the \a i-th variable.
+     * @param[in] i is the variable index.
+     * @return the pointer to the \a i-th variable. NULL if this object is not finalised (see Finalise()).
+     */
+    void *GetData(const uint32 i) const;
+
+    /**
+     * @brief Retrieves the n-th pointer.
+     * @details This function is different from GetData(*) when variables are structures.
+     * Actually this function can provide a direct access to the variable internal members.
+     * @return the n-th pointer. NULL if the object is not finalised (see Finalise()).
+     */
+    void *GetMemoryPointer(const uint32 n) const;
 
     /**
      * @brief Finalises the object.
@@ -62,11 +100,72 @@ public:
      */
     virtual bool Finalise();
 
+
+    bool IsSync() const;
+
 protected:
 
-    EventSem * eventSem;
+    /**
+     * The RealTimeApplication where this object is
+     * involved in.
+     */
+    RealTimeApplication *application;
+
+    /**
+     * The memory area where variables will be allocated
+     * on.
+     */
+    MemoryArea memory;
+
+    /**
+     * Stores the indexes of the allocations
+     * in memory area.
+     */
+    StaticList<uint32> GAMOffsets;
+
+    /**
+     * Stores the pointers to the begin
+     * of memory areas
+     */
+    StaticList<void *> beginPointers;
+
+    /**
+     * Stores the final pointers to the
+     * GAM variables.
+     */
+    StaticList<void *> GAMPointers;
+
+    /**
+     * Stores the pointers to the RealTimeDataSource
+     * variables.
+     */
+    StaticList<void **> DSPointers[2];
 
 
+    StaticList<BasicRealTimeDataSourceDef *> dataSources;
+
+    /**
+     * Stores the sizes of the variables.
+     */
+    StaticList<uint32> sizes;
+
+    /**
+     * Stores the indexes of each variable
+     * into the GAMPointers.
+     */
+    StaticList<uint32> chunkIndex;
+
+
+    bool synchronized;
+
+
+    FastPollingEventSem *pollingSem;
+
+
+    /**
+     * Specifies if Finalise() is called or not.
+     */
+    bool finalised;
 private:
 
     /**
@@ -92,9 +191,10 @@ private:
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEBROKER_H_ */
+#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMEDATASOURCEBROKER_H_ */
 

@@ -35,6 +35,7 @@
 #include "RealTimeState.h"
 #include "StreamString.h"
 #include "GAMI.h"
+#include "ProcessorType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -78,6 +79,8 @@ public:
     bool ConfigureArchitecture(RealTimeApplication &rtApp,
                                RealTimeState &rtState);
 
+    bool ValidateDataSourceLinks();
+
     /**
      * @brief Reads the array with the GAMI names to be launched by this thread from the StructuredData in input.
      * @details The following fields must be defined:
@@ -110,6 +113,10 @@ public:
      * @brief Retrieves the number of GAMs involved in this thread.
      */
     uint32 GetNumberOfGAMs() const;
+
+    uint32 GetStackSize() const;
+
+    ProcessorType GetCPU() const;
 
     /**
      * @see Object::ToStructuredData(*)
@@ -150,6 +157,11 @@ private:
      * The number of GAMs to be executed by this thread
      */
     uint32 numberOfGAMs;
+
+
+    uint32 cpuMask;
+
+    uint32 stackSize;
 };
 
 }

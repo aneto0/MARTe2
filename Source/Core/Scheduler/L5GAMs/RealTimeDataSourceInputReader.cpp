@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeDataSourceInputReader.h"
+#include "RealTimeDataSourceDef.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,8 +42,8 @@
 namespace MARTe {
 
 RealTimeDataSourceInputReader::RealTimeDataSourceInputReader() :
-        RealTimeDataSourceBroker() {
-
+        BasicRealTimeDataSourceInputReader() {
+    eventSem = NULL_PTR(EventSem *);
 }
 
 bool RealTimeDataSourceInputReader::Read(const uint8 activeDataSourceBuffer) const {
@@ -65,9 +66,13 @@ bool RealTimeDataSourceInputReader::Read(const uint8 activeDataSourceBuffer) con
         if (ret) {
             ret = sizes.Peek(i, size);
         }
-        RealTimeDataSourceDef *dsDef = NULL_PTR(RealTimeDataSourceDef *);
+        BasicRealTimeDataSourceDef *dsDef = NULL_PTR(BasicRealTimeDataSourceDef *);
         if (ret) {
             ret = dataSources.Peek(i, dsDef);
+
+        }
+        if (ret) {
+            ret = (dsDef != NULL);
         }
         if (ret) {
             dsDef->ReadStart();
@@ -78,6 +83,72 @@ bool RealTimeDataSourceInputReader::Read(const uint8 activeDataSourceBuffer) con
 
     return ret;
 }
+
+bool RealTimeDataSourceInputReader::Finalise() {
+
+    bool ret = RealTimeDataSourceBroker::Finalise();
+
+    if (ret) {
+        uint32 numberOfDS = dataSources.GetSize();
+        for (uint32 i = 0u; i < numberOfDS; i++) {
+            BasicRealTimeDataSourceDef * bdsDef = NULL_PTR(BasicRealTimeDataSourceDef *);
+            ret = dataSources.Peek(i, bdsDef);
+            if (ret) {
+                RealTimeDataSourceDef *dsDef = dynamic_cast<RealTimeDataSourceDef *>(bdsDef);
+                ret = (dsDef != NULL);
+                if (ret) {
+                    EventSem *tempSem = dsDef->GetEventSemaphore();
+                    if (tempSem != NULL) {
+                        if(!synchronized) {
+                            if(eventSem==NULL) {
+                                eventSem=tempSem;
+                                synchronized=true;
+                            }
+                        }
+                        else {
+                            //TODO Already sync  !!
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    finalised = ret;
+    return ret;
+}
+
+bool RealTimeDataSourceInputReader::OSPoll(const uint8 activeDataSourceBuffer,
+                                           float64 sampleTime,
+                                           uint32 numberOfReads,
+                                           TimeoutType timeout) {
+    bool ret = true;
+
+    uint64 tic = HighResolutionTimer::Counter();
+    // blocks the function on the spin-lock
+    for (uint32 i = 0u; (i < numberOfReads) && (ret); i++) {
+        if (synchronized) {
+            if(eventSem != NULL) {
+                ret=(eventSem->ResetWait(timeout)==ErrorManagement::NoError);
+            }
+        }
+
+        if (ret) {
+            ret = Read(activeDataSourceBuffer);
+        }
+    }
+
+    if (ret && synchronized) {
+        // wait the sample time
+        // possible error on counter overflow
+        while ((HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic) * 1000) < sampleTime) {
+            Sleep::MSec(1);
+        }
+    }
+
+    return ret;
+}
+
 CLASS_REGISTER(RealTimeDataSourceInputReader, "1.0")
 
 }

@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataSourceInputReaderTest.cpp
- * @brief Source file for class RealTimeDataSourceInputReaderTest
- * @date 14/03/2016
- * @author Giuseppe Ferrò
+ * @file BasicRealTimeDataSourceInputReaderTest.cpp
+ * @brief Source file for class BasicRealTimeDataSourceInputReaderTest
+ * @date 22/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataSourceInputReaderTest (public, protected, and private). Be aware that some 
+ * the class BasicRealTimeDataSourceInputReaderTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeDataSourceInputReaderTest.h"
+#include "BasicRealTimeDataSourceInputReaderTest.h"
 #include "GAMTestHelper.h"
 #include "RealTimeGenericDataDef.h"
 #include "stdio.h"
@@ -41,7 +41,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RealTimeDataSourceInputReaderTest::RealTimeDataSourceInputReaderTest() {
+BasicRealTimeDataSourceInputReaderTest::BasicRealTimeDataSourceInputReaderTest() {
     cdb.CreateAbsolute("+Inputs");
     cdb.Write("Class", "RealTimeDataDefContainer");
     cdb.Write("IsInput", "true");
@@ -85,12 +85,12 @@ RealTimeDataSourceInputReaderTest::RealTimeDataSourceInputReaderTest() {
     cdb.MoveToRoot();
 }
 
-bool RealTimeDataSourceInputReaderTest::TestConstructor() {
-    RealTimeDataSourceInputReader test;
+bool BasicRealTimeDataSourceInputReaderTest::TestConstructor() {
+    BasicRealTimeDataSourceInputReader test;
     return true;
 }
 
-bool RealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
+bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
@@ -103,6 +103,8 @@ bool RealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
     appCDB.Write("Class", "ReferenceContainer");
     appCDB.CreateAbsolute("+States.+state1");
     appCDB.Write("Class", "RealTimeState");
+    appCDB.CreateAbsolute("+Scheduler");
+    appCDB.Write("Class", "BasicGAMScheduler");
     appCDB.MoveToRoot();
 
     ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -134,7 +136,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
 
     ReferenceT<RealTimeGenericDataDef> def = gam->Find("+Inputs.+Error");
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("broker");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -147,13 +149,10 @@ bool RealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
         return false;
     }
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
+    const char8 *nextState = "+state1";
+
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
 
     if (!reader->Read(0)) {
         return false;
@@ -174,7 +173,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
 
 }
 
-bool RealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Allocation() {
+bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Allocation() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
@@ -216,7 +215,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Allocation() {
 
     ReferenceT<RealTimeGenericDataDef> def = gam->Find("+Inputs.+Error");
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("broker");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -229,13 +228,9 @@ bool RealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Allocation() {
         return false;
     }
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
 
     if (!reader->Read(0)) {
         return false;
@@ -257,7 +252,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Allocation() {
     return true;
 }
 
-bool RealTimeDataSourceInputReaderTest::TestRead_Static() {
+bool BasicRealTimeDataSourceInputReaderTest::TestRead_Static() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
@@ -358,7 +353,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Static() {
 
     ReferenceT<RealTimeGenericDataDef> def = pid->Find("+Inputs.+Error");
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -377,7 +372,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Static() {
 
     ReferenceT<RealTimeGenericDataDef> def2 = plant->Find("+Outputs.+Error");
 
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -390,13 +385,9 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Static() {
         return false;
     }
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
 
     if (!writer->Write(0)) {
         return false;
@@ -419,7 +410,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Static() {
     return true;
 }
 
-bool RealTimeDataSourceInputReaderTest::TestRead_Allocation() {
+bool BasicRealTimeDataSourceInputReaderTest::TestRead_Allocation() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
     appCDB.Write("Class", "RealTimeDataSourceContainer");
@@ -517,7 +508,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Allocation() {
 
     ReferenceT<RealTimeGenericDataDef> def = pid->Find("+Inputs.+Error");
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -532,7 +523,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Allocation() {
 
     ReferenceT<RealTimeGenericDataDef> def2 = plant->Find("+Outputs.+Error");
 
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -549,13 +540,9 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Allocation() {
     errorPlant->Par1 = 10;
     errorPlant->Par2 = 20;
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
 
     if (!writer->Write(0)) {
         return false;
@@ -582,7 +569,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_Allocation() {
     return true;
 }
 
-bool RealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
+bool BasicRealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
     appCDB.Write("Class", "RealTimeDataSourceContainer");
@@ -691,7 +678,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
     ReferenceT<RealTimeGenericDataDef> def1 = pid->Find("+Outputs.+Control");
     ReferenceT<RealTimeGenericDataDef> def2 = pid->Find("+Outputs.+Noise");
 
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -717,7 +704,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
     ReferenceT<RealTimeGenericDataDef> def3 = plant->Find("+Inputs.+Control");
     ReferenceT<RealTimeGenericDataDef> def4 = plant->Find("+Inputs.+Noise");
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -734,14 +721,9 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
         return false;
     }
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
-
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
     if (!writer->Write(0)) {
         return false;
     }
@@ -771,7 +753,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
     return true;
 }
 
-bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
+bool BasicRealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
     appCDB.Write("Class", "RealTimeDataSourceContainer");
@@ -848,7 +830,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
 
     ReferenceT<RealTimeGenericDataDef> defOut = pid->Find("+Outputs.+Control");
 
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -868,7 +850,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
 
     ReferenceT<RealTimeGenericDataDef> defIn = pid->Find("+Inputs.+Error");
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -880,13 +862,9 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
         return false;
     }
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
 
     if (!writer->Write(0)) {
         return false;
@@ -912,7 +890,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
     return true;
 }
 
-bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
+bool BasicRealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
     appCDB.Write("Class", "RealTimeDataSourceContainer");
@@ -988,7 +966,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
 
     ReferenceT<RealTimeGenericDataDef> defOut = pid->Find("+Outputs.+Control");
 
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -1012,7 +990,7 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
 
     ReferenceT<RealTimeGenericDataDef> defIn = pid->Find("+Inputs.+Error");
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -1024,13 +1002,9 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
         return false;
     }
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
 
     if (!writer->Write(0)) {
         return false;
@@ -1070,4 +1044,3 @@ bool RealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
     return true;
 
 }
-

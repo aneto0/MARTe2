@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceInputReaderTest.h
- * @brief Header file for class RealTimeDataSourceInputReaderTest
- * @date 14/03/2016
+ * @file SingleThreadGAMScheduler.h
+ * @brief Header file for class SingleThreadGAMScheduler
+ * @date 22/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceInputReaderTest
+ * @details This header file contains the declaration of the class SingleThreadGAMScheduler
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEINPUTREADERTEST_H_
-#define REALTIMEDATASOURCEINPUTREADERTEST_H_
+#ifndef SINGLETHREADGAMSCHEDULER_H_
+#define SINGLETHREADGAMSCHEDULER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,78 +31,39 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeDataSourceInputReader.h"
-#include "ConfigurationDatabase.h"
+
+#include "GAMSchedulerI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
-
-/**
- * @brief Tests all the RealTimeDataSourceInputReader functions.
- */
-class RealTimeDataSourceInputReaderTest {
+namespace MARTe {
+class SingleThreadGAMScheduler: public GAMSchedulerI {
 
 public:
 
-    /**
-     * @brief Creates a configuration database used in tests.
-     */
-    RealTimeDataSourceInputReaderTest();
+    SingleThreadGAMScheduler();
 
-    /**
-     * @brief tests the constructor.
-     */
-    bool TestConstructor();
+    virtual void StartExecution(const uint32 activeBuffer);
 
-    /**
-     * @brief Tests the read of default value on preallocated memory.
-     */
-    bool TestRead_DefaultValues_Static();
+    virtual void StopExecution();
 
-    /**
-     * @brief Tests the read of default value on internal allocated memory.
-     */
-    bool TestRead_DefaultValues_Allocation();
-
-    /**
-     * @brief Tests the read on a preallocated memory.
-     */
-    bool TestRead_Static();
-
-    /**
-     * @brief Tests the read on the internal alloctaed memory.
-     */
-    bool TestRead_Allocation();
-
-    /**
-     * @brief Tests the read of more variables.
-     */
-    bool TestRead_MoreThanOneVariable();
-
-    /**
-     * @brief Tests the read of a vector variable.
-     */
-    bool TestRead_MultiDim_Vector();
-
-    /**
-     * @brief Tests the read of a matrix variable.
-     */
-    bool TestRead_MultiDim_Matrix();
 
 private:
 
-    /**
-     * A configuration database used in tests.
-     */
-    ConfigurationDatabase cdb;
+    ThreadIdentifier tid;
 
+    uint32 currentActiveBuffer;
+
+    volatile int32 spinLock;
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEINPUTREADERTEST_H_ */
+#endif /* SINGLETHREADGAMSCHEDULER_H_ */
 

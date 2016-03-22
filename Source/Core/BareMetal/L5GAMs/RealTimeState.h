@@ -83,6 +83,9 @@ public:
     bool ConfigureArchitecture(RealTimeApplication & rtApp);
 
 
+
+    bool ValidateDataSourceLinks();
+
     /**
      * @brief Inserts a function.
      * @details If the container called "+Functions" it is not present, it will be created and \a functionReference

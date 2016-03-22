@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceOutputWriterTest.h
- * @brief Header file for class RealTimeDataSourceOutputWriterTest
- * @date 14/03/2016
+ * @file BasicGAMScheduler.h
+ * @brief Header file for class BasicGAMScheduler
+ * @date 22/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceOutputWriterTest
+ * @details This header file contains the declaration of the class BasicGAMScheduler
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEOUTPUTWRITERTEST_H_
-#define REALTIMEDATASOURCEOUTPUTWRITERTEST_H_
+#ifndef BASICGAMSCHEDULER_H_
+#define BASICGAMSCHEDULER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,66 +31,36 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeDataSourceOutputWriter.h"
-#include "ConfigurationDatabase.h"
+#include "GAMSchedulerI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
+namespace MARTe{
 
-/**
- * @brief Tests all the RealTimeDataSourceOutputWriter functions.
- */
-class RealTimeDataSourceOutputWriterTest {
+class BasicGAMScheduler: public GAMSchedulerI {
+
 public:
+    CLASS_REGISTER_DECLARATION()
 
-    /**
-     * @brief Creates a configuration database used in tests.
-     */
-    RealTimeDataSourceOutputWriterTest();
+    BasicGAMScheduler();
 
-    /**
-     * @brief Tests the constructor.
-     */
-    bool TestConstructor();
+    virtual void StartExecution(const uint32 activeBuffer);
 
-    /**
-     * @brief Tests the write to the RealTimeDataSource from a memory allocated internal memory.
-     */
-    bool TestWrite_Allocation();
+    virtual void StopExecution();
 
-    /**
-     * @brief Tests the write to the RealTimeDataSource from a preallocated memory.
-     */
-    bool TestWrite_Static();
-
-    /**
-     * @brief Tests the function writing more variables at the same time.
-     */
-    bool TestWrite_MoreThanOneVariable();
-
-    /**
-     * @brief Tests the function with a vector variable.
-     */
-    bool TestWrite_MultiDim_Vector();
-
-    /**
-     * @brief Tests the function with a matrix variable.
-     */
-    bool TestWrite_MultiDim_Matrix();
+    virtual bool Initialise(StructuredDataI &data);
 
 private:
 
-    /**
-     * A configuration database used in tests.
-     */
-    ConfigurationDatabase cdb;
+    uint32 numberOfCycles;
+
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEOUTPUTWRITERTEST_H_ */
+#endif /* BASICGAMSCHEDULER_H_ */
 

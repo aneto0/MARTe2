@@ -1,8 +1,8 @@
 /**
  * @file RealTimeDataSourceBroker.cpp
  * @brief Source file for class RealTimeDataSourceBroker
- * @date 09/03/2016
- * @author Giuseppe Ferrò
+ * @date 22/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -43,8 +43,15 @@
 namespace MARTe {
 
 RealTimeDataSourceBroker::RealTimeDataSourceBroker() :
-        BasicRealTimeDataSourceBroker() {
-    eventSem = NULL_PTR(EventSem *);
+        ReferenceContainer() {
+    application = NULL_PTR(RealTimeApplication *);
+    synchronized = false;
+    pollingSem = NULL_PTR(FastPollingEventSem *);
+    finalised = false;
+}
+
+void RealTimeDataSourceBroker::SetApplication(RealTimeApplication &rtApp) {
+    application = &rtApp;
 }
 
 bool RealTimeDataSourceBroker::AddVariable(ReferenceT<RealTimeDataDefI> def,
@@ -199,7 +206,7 @@ bool RealTimeDataSourceBroker::AddVariablePrivate(ReferenceT<RealTimeDataDefI> d
                 // same code for structured and basic
                 if ((ret) && (numberOfMembers == 0u)) {
                     const char8* path = def->GetPath();
-                    ReferenceT<RealTimeDataSourceDef> dsDef = data->Find(path);
+                    ReferenceT<BasicRealTimeDataSourceDef> dsDef = data->Find(path);
                     ret = dsDef.IsValid();
                     if (ret) {
                         ret=dataSources.Add(dsDef.operator ->());
@@ -312,36 +319,60 @@ void *RealTimeDataSourceBroker::GetMemoryPointerPrivate(const uint32 n) const {
 
 bool RealTimeDataSourceBroker::Finalise() {
 
-    bool ret = BasicRealTimeDataSourceBroker::Finalise();
+    bool ret = true;
+
+    // refresh the pointers
+    uint32 numberOfStructures = beginPointers.GetSize();
+    for (uint32 i = 0u; (i < numberOfStructures) && (ret); i++) {
+        void* ptr = NULL_PTR(void*);
+        ret = (beginPointers.Peek(i, ptr));
+        if (ret) {
+            if (ptr == NULL) {
+                ptr = memory.GetMemoryStart();
+                ret = beginPointers.Set(i, ptr);
+            }
+        }
+    }
+
+    if (ret) {
+        // fill the gam pointers
+        uint32 numberOfPointers = GAMOffsets.GetSize();
+        for (uint32 i = 0u; (i < numberOfPointers) && (ret); i++) {
+            void* ptr = GetMemoryPointerPrivate(i);
+            ret = (ptr != NULL);
+            if (ret) {
+                ret = GAMPointers.Add(ptr);
+            }
+        }
+    }
 
     if (ret) {
         uint32 numberOfDS = dataSources.GetSize();
         for (uint32 i = 0u; i < numberOfDS; i++) {
-            BasicRealTimeDataSourceDef * bdsDef = NULL_PTR(BasicRealTimeDataSourceDef *);
-            ret = dataSources.Peek(i, bdsDef);
+            BasicRealTimeDataSourceDef * dsDef = NULL_PTR(BasicRealTimeDataSourceDef *);
+            ret = dataSources.Peek(i, dsDef);
             if (ret) {
-                RealTimeDataSourceDef *dsDef = dynamic_cast<RealTimeDataSourceDef *>(bdsDef);
-                ret = (dsDef != NULL);
-                if (ret) {
-                    EventSem *tempSem = dsDef->GetEventSemaphore();
-                    if (tempSem != NULL) {
-                        if(!synchronized) {
-                            if(eventSem==NULL) {
-                                eventSem=tempSem;
-                                synchronized=true;
-                            }
-                        }
-                        else {
-                            //TODO Already sync  !!
-                        }
+                FastPollingEventSem *tempSem = dsDef->GetPollingSemaphore();
+                if (tempSem != NULL) {
+                    if(!synchronized) {
+                        pollingSem=tempSem;
+                        synchronized=true;
+                    }
+                    else {
+                        //TODO Already sync  !!
                     }
                 }
             }
         }
     }
 
+    // set as finalised
     finalised = ret;
     return ret;
+}
+
+bool RealTimeDataSourceBroker::IsSync() const {
+    return synchronized;
 }
 
 }

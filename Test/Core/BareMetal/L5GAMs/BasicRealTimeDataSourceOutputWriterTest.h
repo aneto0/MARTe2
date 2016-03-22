@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSourceInputReader.h
- * @brief Header file for class RealTimeDataSourceInputReader
- * @date 09/03/2016
+ * @file BasicRealTimeDataSourceOutputWriterTest.h
+ * @brief Header file for class BasicRealTimeDataSourceOutputWriterTest
+ * @date 22/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSourceInputReader
+ * @details This header file contains the declaration of the class BasicRealTimeDataSourceOutputWriterTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCEINPUTREADER_H_
-#define REALTIMEDATASOURCEINPUTREADER_H_
+#ifndef BASICREALTIMEDATASOURCEOUTPUTWRITERTEST_H_
+#define BASICREALTIMEDATASOURCEOUTPUTWRITERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,54 +31,66 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BasicRealTimeDataSourceInputReader.h"
-#include "EventSem.h"
+#include "BasicRealTimeDataSourceOutputWriter.h"
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+using namespace MARTe;
 
 /**
- * @brief Reads data from the RealTimeDataSource.
+ * @brief Tests all the RealTimeDataSourceOutputWriter functions.
  */
-class RealTimeDataSourceInputReader: public BasicRealTimeDataSourceInputReader {
+class BasicRealTimeDataSourceOutputWriterTest {
 public:
-    CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief Constructor
+     * @brief Creates a configuration database used in tests.
      */
-    RealTimeDataSourceInputReader();
+    BasicRealTimeDataSourceOutputWriterTest();
 
     /**
-     * @brief Reads data from the RealTimeDataSource.
-     * @details After the configuration of the interface between GAM and RealTimeDataSource
-     * (see RealTimeDataSourceBroker), copies data from the RealTimeDataSource into the GAM variables.
-     * @param[in] activeDataSourceBuffer is the buffer index to be used. This parameter must change
-     * from 0 to 1 on each state switch.
-     * @return false in case of errors, true otherwise.
+     * @brief Tests the constructor.
      */
-    bool Read(const uint8 activeDataSourceBuffer) const;
+    bool TestConstructor();
 
-    virtual bool Finalise();
+    /**
+     * @brief Tests the write to the RealTimeDataSource from a memory allocated internal memory.
+     */
+    bool TestWrite_Allocation();
 
-    bool OSPoll(const uint8 activeDataSourceBuffer,
-                float64 sampleTime = 0.0,
-                uint32 numberOfReads = 1u,
-                TimeoutType timeout = TTInfiniteWait);
+    /**
+     * @brief Tests the write to the RealTimeDataSource from a preallocated memory.
+     */
+    bool TestWrite_Static();
 
-protected:
+    /**
+     * @brief Tests the function writing more variables at the same time.
+     */
+    bool TestWrite_MoreThanOneVariable();
 
-    EventSem * eventSem;
+    /**
+     * @brief Tests the function with a vector variable.
+     */
+    bool TestWrite_MultiDim_Vector();
 
+    /**
+     * @brief Tests the function with a matrix variable.
+     */
+    bool TestWrite_MultiDim_Matrix();
+
+private:
+
+    /**
+     * A configuration database used in tests.
+     */
+    ConfigurationDatabase cdb;
 };
-
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCEINPUTREADER_H_ */
+#endif /* BASICREALTIMEDATASOURCEOUTPUTWRITERTEST_H_ */
 

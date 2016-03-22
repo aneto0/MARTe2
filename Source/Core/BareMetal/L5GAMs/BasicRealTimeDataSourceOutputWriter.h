@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BasicRealTimeDataSourceBroker.h"
+#include "RealTimeDataSourceBroker.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief Writes data to the RealTimeDataSource.
  */
-class BasicRealTimeDataSourceOutputWriter: public BasicRealTimeDataSourceBroker {
+class BasicRealTimeDataSourceOutputWriter: public RealTimeDataSourceBroker {
 
 public:
     CLASS_REGISTER_DECLARATION()

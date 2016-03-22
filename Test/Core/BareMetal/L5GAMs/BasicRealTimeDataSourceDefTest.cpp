@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataSourceDefTest.cpp
- * @brief Source file for class RealTimeDataSourceDefTest
- * @date 04/03/2016
- * @author Giuseppe Ferrò
+ * @file BasicRealTimeDataSourceDefTest.cpp
+ * @brief Source file for class BasicRealTimeDataSourceDefTest
+ * @date 22/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataSourceDefTest (public, protected, and private). Be aware that some 
+ * the class BasicRealTimeDataSourceDefTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeDataSourceDefTest.h"
+#include "BasicRealTimeDataSourceDefTest.h"
 #include "GAMTestHelper.h"
 #include "RealTimeDataSourceDefRecord.h"
 #include "stdio.h"
@@ -41,14 +41,14 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool RealTimeDataSourceDefTest::TestConstructor() {
-    RealTimeDataSourceDef x;
+bool BasicRealTimeDataSourceDefTest::TestConstructor() {
+    BasicRealTimeDataSourceDef x;
     return (x.Size() == 0);
 }
 
-bool RealTimeDataSourceDefTest::TestAddConsumer() {
+bool BasicRealTimeDataSourceDefTest::TestAddConsumer() {
 
-    RealTimeDataSourceDef def;
+    BasicRealTimeDataSourceDef def;
     const uint32 size = 32;
 
     for (uint32 i = 0u; i < size; i++) {
@@ -75,8 +75,8 @@ bool RealTimeDataSourceDefTest::TestAddConsumer() {
     return true;
 }
 
-bool RealTimeDataSourceDefTest::TestAddProducer() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestAddProducer() {
+    BasicRealTimeDataSourceDef def;
     const uint32 size = 32;
 
     for (uint32 i = 0u; i < size; i++) {
@@ -103,16 +103,16 @@ bool RealTimeDataSourceDefTest::TestAddProducer() {
     return true;
 }
 
-bool RealTimeDataSourceDefTest::TestGetNumberOfConsumers() {
+bool BasicRealTimeDataSourceDefTest::TestGetNumberOfConsumers() {
     return TestAddConsumer();
 }
 
-bool RealTimeDataSourceDefTest::TestGetNumberOfProducers() {
+bool BasicRealTimeDataSourceDefTest::TestGetNumberOfProducers() {
     return TestAddProducer();
 }
 
-bool RealTimeDataSourceDefTest::TestVerifyTrue() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestVerifyTrue() {
+    BasicRealTimeDataSourceDef def;
     const uint32 size = 32;
 
     for (uint32 i = 0u; i < size; i++) {
@@ -130,8 +130,8 @@ bool RealTimeDataSourceDefTest::TestVerifyTrue() {
     return def.Verify();
 }
 
-bool RealTimeDataSourceDefTest::TestVerifyFalse_MoreThanOneProducer() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestVerifyFalse_MoreThanOneProducer() {
+    BasicRealTimeDataSourceDef def;
     const uint32 size = 32;
 
     for (uint32 i = 0u; i < size; i++) {
@@ -153,8 +153,8 @@ bool RealTimeDataSourceDefTest::TestVerifyFalse_MoreThanOneProducer() {
 
 }
 
-bool RealTimeDataSourceDefTest::TestVerifyNoConsumers() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestVerifyNoConsumers() {
+    BasicRealTimeDataSourceDef def;
     const uint32 size = 32;
 
     for (uint32 i = 0u; i < size; i++) {
@@ -172,21 +172,21 @@ bool RealTimeDataSourceDefTest::TestVerifyNoConsumers() {
 
 }
 
-bool RealTimeDataSourceDefTest::TestGetType() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestGetType() {
+    BasicRealTimeDataSourceDef def;
     if (!def.SetType("A_Type")) {
         return false;
     }
     return StringHelper::Compare(def.GetType(), "A_Type") == 0;
 }
 
-bool RealTimeDataSourceDefTest::TestSetType() {
+bool BasicRealTimeDataSourceDefTest::TestSetType() {
     return TestGetType();
 }
 
-bool RealTimeDataSourceDefTest::TestAllocate_Basic() {
+bool BasicRealTimeDataSourceDefTest::TestAllocate_Basic() {
 
-    RealTimeDataSourceDef def;
+    BasicRealTimeDataSourceDef def;
     def.SetType("uint32");
 
     if (def.GetDataSourcePointer(0) != NULL) {
@@ -210,8 +210,8 @@ bool RealTimeDataSourceDefTest::TestAllocate_Basic() {
 
 }
 
-bool RealTimeDataSourceDefTest::TestSetType_WarningAlreadySet() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestSetType_WarningAlreadySet() {
+    BasicRealTimeDataSourceDef def;
     if (!def.SetType("type1")) {
         return false;
     }
@@ -225,8 +225,8 @@ bool RealTimeDataSourceDefTest::TestSetType_WarningAlreadySet() {
 
 }
 
-bool RealTimeDataSourceDefTest::TestAllocate_Structured() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestAllocate_Structured() {
+    BasicRealTimeDataSourceDef def;
     def.SetType("TrackError");
 
     if (def.GetDataSourcePointer(0) != NULL) {
@@ -250,8 +250,8 @@ bool RealTimeDataSourceDefTest::TestAllocate_Structured() {
 
 }
 
-bool RealTimeDataSourceDefTest::TestAllocate_Unintrospectable() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestAllocate_Unintrospectable() {
+    BasicRealTimeDataSourceDef def;
     def.SetType("Object");
 
     if (def.GetDataSourcePointer(0) != NULL) {
@@ -275,8 +275,8 @@ bool RealTimeDataSourceDefTest::TestAllocate_Unintrospectable() {
 
 }
 
-bool RealTimeDataSourceDefTest::TestAllocateFalse_Invalid() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestAllocateFalse_Invalid() {
+    BasicRealTimeDataSourceDef def;
     def.SetType("Invalid");
 
     if (def.GetDataSourcePointer(0) != NULL) {
@@ -293,8 +293,8 @@ bool RealTimeDataSourceDefTest::TestAllocateFalse_Invalid() {
 
 }
 
-bool RealTimeDataSourceDefTest::TestAllocateMultiDim_Vector() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestAllocateMultiDim_Vector() {
+    BasicRealTimeDataSourceDef def;
     def.SetType("uint32");
 
     const uint32 numberOfElements = 32;
@@ -319,8 +319,8 @@ bool RealTimeDataSourceDefTest::TestAllocateMultiDim_Vector() {
     return mem.GetMemorySize() == 2 * sizeof(uint32) * numberOfElements;
 }
 
-bool RealTimeDataSourceDefTest::TestAllocateMultiDim_Matrix() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestAllocateMultiDim_Matrix() {
+    BasicRealTimeDataSourceDef def;
     def.SetType("uint32");
 
     const uint32 numberOfRows = 32;
@@ -348,8 +348,8 @@ bool RealTimeDataSourceDefTest::TestAllocateMultiDim_Matrix() {
 
 }
 
-bool RealTimeDataSourceDefTest::TestAllocateFalse_MultiDimStructured() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestAllocateFalse_MultiDimStructured() {
+    BasicRealTimeDataSourceDef def;
     def.SetType("TrackError");
 
     const uint32 numberOfRows = 32;
@@ -364,8 +364,8 @@ bool RealTimeDataSourceDefTest::TestAllocateFalse_MultiDimStructured() {
     return (!def.Allocate(mem));
 }
 
-bool RealTimeDataSourceDefTest::TestGetDataSourcePointer() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestGetDataSourcePointer() {
+    BasicRealTimeDataSourceDef def;
     def.SetType("uint32");
 
     if (def.GetDataSourcePointer(0) != NULL) {
@@ -407,8 +407,8 @@ bool RealTimeDataSourceDefTest::TestGetDataSourcePointer() {
     return (**((uint32**) def.GetDataSourcePointer(2)) == *first) && (**((uint32**) def.GetDataSourcePointer(3)) == *second);
 }
 
-bool RealTimeDataSourceDefTest::TestPrepareNextState_Basic_ContinueVar() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestPrepareNextState_Basic_ContinueVar() {
+    BasicRealTimeDataSourceDef def;
 
     def.SetType("uint32");
 
@@ -456,8 +456,8 @@ bool RealTimeDataSourceDefTest::TestPrepareNextState_Basic_ContinueVar() {
     return **((uint32**) buff2) == 2;
 }
 
-bool RealTimeDataSourceDefTest::TestPrepareNextState_Basic_DeadVar() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestPrepareNextState_Basic_DeadVar() {
+    BasicRealTimeDataSourceDef def;
 
     def.SetType("uint32");
 
@@ -506,8 +506,8 @@ bool RealTimeDataSourceDefTest::TestPrepareNextState_Basic_DeadVar() {
 
 }
 
-bool RealTimeDataSourceDefTest::TestPrepareNextState_Structured_ContinueVar() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestPrepareNextState_Structured_ContinueVar() {
+    BasicRealTimeDataSourceDef def;
 
     def.SetType("TrackError");
 
@@ -570,8 +570,8 @@ bool RealTimeDataSourceDefTest::TestPrepareNextState_Structured_ContinueVar() {
 
 }
 
-bool RealTimeDataSourceDefTest::TestPrepareNextState_Structured_DeadVar() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestPrepareNextState_Structured_DeadVar() {
+    BasicRealTimeDataSourceDef def;
 
     def.SetType("TrackError");
 
@@ -634,8 +634,8 @@ bool RealTimeDataSourceDefTest::TestPrepareNextState_Structured_DeadVar() {
 
 }
 
-bool RealTimeDataSourceDefTest::TestPrepareNextStateMultiDimensional() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestPrepareNextStateMultiDimensional() {
+    BasicRealTimeDataSourceDef def;
 
     def.SetType("uint32");
     def.SetNumberOfDimensions(1);
@@ -701,8 +701,8 @@ bool RealTimeDataSourceDefTest::TestPrepareNextStateMultiDimensional() {
 
 }
 
-bool RealTimeDataSourceDefTest::TestSetDefaultValue() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestSetDefaultValue() {
+    BasicRealTimeDataSourceDef def;
 
     const char8 * defVal1 = "123123";
     def.SetDefaultValue(defVal1);
@@ -714,12 +714,12 @@ bool RealTimeDataSourceDefTest::TestSetDefaultValue() {
     return true;
 }
 
-bool RealTimeDataSourceDefTest::TestGetDefaultValue() {
+bool BasicRealTimeDataSourceDefTest::TestGetDefaultValue() {
     return TestSetDefaultValue();
 }
 
-bool RealTimeDataSourceDefTest::TestSetNumberOfElements() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestSetNumberOfElements() {
+    BasicRealTimeDataSourceDef def;
     def.SetNumberOfElements(0, 32);
     if (def.GetNumberOfElements(0) != 32) {
         return false;
@@ -741,8 +741,8 @@ bool RealTimeDataSourceDefTest::TestSetNumberOfElements() {
     return true;
 }
 
-bool RealTimeDataSourceDefTest::TestSetNumberOfDimensions() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestSetNumberOfDimensions() {
+    BasicRealTimeDataSourceDef def;
     def.SetNumberOfDimensions(0);
     if (def.GetNumberOfDimensions() != 0) {
         return false;
@@ -763,8 +763,8 @@ bool RealTimeDataSourceDefTest::TestSetNumberOfDimensions() {
 
 }
 
-bool RealTimeDataSourceDefTest::TestGetNumberOfElements() {
-    RealTimeDataSourceDef def;
+bool BasicRealTimeDataSourceDefTest::TestGetNumberOfElements() {
+    BasicRealTimeDataSourceDef def;
     def.SetNumberOfElements(0, 32);
     if (def.GetNumberOfElements(0) != 32) {
         return false;
@@ -786,12 +786,12 @@ bool RealTimeDataSourceDefTest::TestGetNumberOfElements() {
     return true;
 }
 
-bool RealTimeDataSourceDefTest::TestGetNumberOfDimensions() {
+bool BasicRealTimeDataSourceDefTest::TestGetNumberOfDimensions() {
     return TestSetNumberOfDimensions();
 }
 
-bool RealTimeDataSourceDefTest::TestToStructuredData() {
-    ReferenceT<RealTimeDataSourceDef> def = ReferenceT<RealTimeDataSourceDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+bool BasicRealTimeDataSourceDefTest::TestToStructuredData() {
+    ReferenceT<BasicRealTimeDataSourceDef> def = ReferenceT<BasicRealTimeDataSourceDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     def->SetName("DefinitonToPrint");
 
     ReferenceT<PIDGAM> gamS1_Prod = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -823,7 +823,7 @@ bool RealTimeDataSourceDefTest::TestToStructuredData() {
     display.Printf("%!", output);
 
     StreamString test = "DefinitonToPrint = {\n"
-            "Class = RealTimeDataSourceDef\n"
+            "Class = BasicRealTimeDataSourceDef\n"
             "Type = uint32\n"
             "Default = {{1,2},{3,4}}\n"
             "NumberOfDimensions = 2\n"

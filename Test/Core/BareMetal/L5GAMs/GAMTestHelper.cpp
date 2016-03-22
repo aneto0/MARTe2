@@ -87,6 +87,10 @@ INTROSPECTION_REGISTER(ControlInMatrix, "1.0", ControlInMatrix_introspection)
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+PIDGAM::PIDGAM(): BasicGAM(){
+
+}
+
 void PIDGAM::Execute(uint8 activeContextBuffer) {
 
     inputReader->Read(activeContextBuffer);
@@ -149,6 +153,13 @@ void PIDGAM::SetUp() {
 }
 CLASS_REGISTER(PIDGAM, "1.0")
 
+
+
+
+PIDGAMGroup::PIDGAMGroup(){
+
+}
+
 void PIDGAMGroup::SetUp() {
     context = 1u;
 }
@@ -171,6 +182,11 @@ uint32 PIDGAMGroup::GetContext() {
 }
 CLASS_REGISTER(PIDGAMGroup, "1.0")
 
+
+PlantGAM::PlantGAM(){
+
+}
+
 void PlantGAM::SetUp() {
 
 }
@@ -180,6 +196,10 @@ void PlantGAM::Execute(uint8 activeContextBuffer) {
 }
 
 CLASS_REGISTER(PlantGAM, "1.0")
+
+PIDGAM2::PIDGAM2(){
+
+}
 
 void PIDGAM2::Execute(uint8 activeContextBuffer) {
 
@@ -206,6 +226,11 @@ void PIDGAM2::SetUp() {
 }
 CLASS_REGISTER(PIDGAM2, "1.0")
 
+
+PIDGAM3::PIDGAM3(){
+
+
+}
 
 
 void PIDGAM3::Execute(uint8 activeContextBuffer) {

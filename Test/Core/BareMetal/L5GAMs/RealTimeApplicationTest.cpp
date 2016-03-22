@@ -35,7 +35,7 @@
 #include "ObjectRegistryDatabase.h"
 #include "RealTimeDataSource.h"
 #include "GAMTestHelper.h"
-#include "RealTimeDataSourceDef.h"
+#include "BasicRealTimeDataSourceDef.h"
 #include "RealTimeGenericDataDef.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
@@ -100,9 +100,9 @@ bool RealTimeApplicationTest::TestConfigureArchitecture() {
         return false;
     }
 
-    ReferenceT<GAM> *gams1 = thread1->GetGAMs();
-    ReferenceT<GAM> test1 = god->Find("$Application1.+Functions.+GAM1");
-    ReferenceT<GAM> test2 = god->Find("$Application1.+Functions.+GAM2");
+    ReferenceT<GAMI> *gams1 = thread1->GetGAMs();
+    ReferenceT<GAMI> test1 = god->Find("$Application1.+Functions.+GAM1");
+    ReferenceT<GAMI> test2 = god->Find("$Application1.+Functions.+GAM2");
 
     if (gams1[0] != test1) {
         return false;
@@ -127,9 +127,9 @@ bool RealTimeApplicationTest::TestConfigureArchitecture() {
         return false;
     }
 
-    ReferenceT<GAM> *gams2 = thread2->GetGAMs();
-    ReferenceT<GAM> test3 = god->Find("$Application1.+Functions.+PIDGroup1.+GAM3");
-    ReferenceT<GAM> test4 = god->Find("$Application1.+Functions.+PIDGroup1.+GAM4");
+    ReferenceT<GAMI> *gams2 = thread2->GetGAMs();
+    ReferenceT<GAMI> test3 = god->Find("$Application1.+Functions.+PIDGroup1.+GAM3");
+    ReferenceT<GAMI> test4 = god->Find("$Application1.+Functions.+PIDGroup1.+GAM4");
 
     if (gams2[0] != test3) {
         return false;
@@ -170,9 +170,9 @@ bool RealTimeApplicationTest::TestConfigureArchitecture() {
         return false;
     }
 
-    ReferenceT<GAM> *gams3 = thread3->GetGAMs();
-    ReferenceT<GAM> test5 = god->Find("$Application1.+Functions.+GAMContainer.+GAM5");
-    ReferenceT<GAM> test6 = god->Find("$Application1.+Functions.+GAMContainer.+GAM6");
+    ReferenceT<GAMI> *gams3 = thread3->GetGAMs();
+    ReferenceT<GAMI> test5 = god->Find("$Application1.+Functions.+GAMContainer.+GAM5");
+    ReferenceT<GAMI> test6 = god->Find("$Application1.+Functions.+GAMContainer.+GAM6");
 
     if (gams3[0] != test5) {
         return false;
@@ -194,9 +194,9 @@ bool RealTimeApplicationTest::TestConfigureArchitecture() {
         return false;
     }
 
-    ReferenceT<GAM> *gams4 = thread4->GetGAMs();
-    ReferenceT<GAM> test7 = god->Find("$Application1.+Functions.+PIDGroup2.+GAM7");
-    ReferenceT<GAM> test8 = god->Find("$Application1.+Functions.+PIDGroup2.+GAM8");
+    ReferenceT<GAMI> *gams4 = thread4->GetGAMs();
+    ReferenceT<GAMI> test7 = god->Find("$Application1.+Functions.+PIDGroup2.+GAM7");
+    ReferenceT<GAMI> test8 = god->Find("$Application1.+Functions.+PIDGroup2.+GAM8");
 
     if (gams4[0] != test7) {
         return false;
@@ -374,6 +374,9 @@ bool RealTimeApplicationTest::TestConfigureArchitectureFalse_NoStates() {
     cdb.Write("Class", "RealTimeDataSource");
     cdb.CreateAbsolute("$Application1.+Data.+DDB2");
     cdb.Write("Class", "RealTimeDataSource");
+    //scheduler
+    cdb.CreateAbsolute("$Application1.+Scheduler");
+    cdb.Write("Class", "BasicGAMScheduler");
     cdb.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -563,6 +566,9 @@ bool RealTimeApplicationTest::TestConfigureDataSource() {
     cdb1.Write("Class", "RealTimeDataSource");
     cdb1.CreateAbsolute("$Application1.+Data.+DDB2");
     cdb1.Write("Class", "RealTimeDataSource");
+    //scheduler
+    cdb1.CreateAbsolute("$Application1.+Scheduler");
+    cdb1.Write("Class", "BasicGAMScheduler");
     cdb1.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -577,7 +583,7 @@ bool RealTimeApplicationTest::TestConfigureDataSource() {
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<RealTimeDataSourceDef> def1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+Data.+DDB1.PidError1");
+    ReferenceT<BasicRealTimeDataSourceDef> def1 = ObjectRegistryDatabase::Instance()->Find("$Application1.+Data.+DDB1.PidError1");
     if (def1->GetNumberOfConsumers("+State1") != 0 || def1->GetNumberOfProducers("+State1") != 1) {
         printf("\n1 %d %d\n", def1->GetNumberOfConsumers("+State1"), def1->GetNumberOfProducers("+State1"));
         return false;
@@ -588,7 +594,7 @@ bool RealTimeApplicationTest::TestConfigureDataSource() {
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<RealTimeDataSourceDef> def2 = ObjectRegistryDatabase::Instance()->Find("$Application1.+Data.+DDB1.PidError2");
+    ReferenceT<BasicRealTimeDataSourceDef> def2 = ObjectRegistryDatabase::Instance()->Find("$Application1.+Data.+DDB1.PidError2");
     if (def2->GetNumberOfConsumers("+State1") != 0 || def2->GetNumberOfProducers("+State1") != 1) {
         printf("\n2 %d %d\n", def2->GetNumberOfConsumers("+State1"), def2->GetNumberOfProducers("+State1"));
         return false;
@@ -599,7 +605,7 @@ bool RealTimeApplicationTest::TestConfigureDataSource() {
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<RealTimeDataSourceDef> def3 = ObjectRegistryDatabase::Instance()->Find("$Application1.+Data.+DDB2.PidControl1");
+    ReferenceT<BasicRealTimeDataSourceDef> def3 = ObjectRegistryDatabase::Instance()->Find("$Application1.+Data.+DDB2.PidControl1");
     if (def3->GetNumberOfConsumers("+State1") != 1 || def3->GetNumberOfProducers("+State1") != 0) {
         printf("\n3 %d %d\n", def3->GetNumberOfConsumers("+State1"), def3->GetNumberOfProducers("+State1"));
         return false;
@@ -610,7 +616,7 @@ bool RealTimeApplicationTest::TestConfigureDataSource() {
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<RealTimeDataSourceDef> def4 = ObjectRegistryDatabase::Instance()->Find("$Application1.+Data.+DDB2.PidControl2");
+    ReferenceT<BasicRealTimeDataSourceDef> def4 = ObjectRegistryDatabase::Instance()->Find("$Application1.+Data.+DDB2.PidControl2");
     if (def4->GetNumberOfConsumers("+State1") != 1 || def4->GetNumberOfProducers("+State1") != 0) {
         printf("\n4 %d %d\n", def4->GetNumberOfConsumers("+State1"), def4->GetNumberOfProducers("+State1"));
         return false;
@@ -783,6 +789,9 @@ bool RealTimeApplicationTest::TestConfigureDataSourceFalse_NoFunctions() {
     cdb.Write("Class", "RealTimeDataSource");
     cdb.CreateAbsolute("$Application1.+Data.+DDB2");
     cdb.Write("Class", "RealTimeDataSource");
+    //scheduler
+    cdb.CreateAbsolute("$Application1.+Scheduler");
+    cdb.Write("Class", "BasicGAMScheduler");
     cdb.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -984,6 +993,9 @@ bool RealTimeApplicationTest::TestValidateDataSourceFalse_MoreThanOneProducer() 
     cdb1.Write("Class", "RealTimeDataSource");
     cdb1.CreateAbsolute("$Application1.+Data.+DDB2");
     cdb1.Write("Class", "RealTimeDataSource");
+    //scheduler
+    cdb1.CreateAbsolute("$Application1.+Scheduler");
+    cdb1.Write("Class", "BasicGAMScheduler");
     cdb1.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -1052,13 +1064,13 @@ bool RealTimeApplicationTest::TestAllocateDataSource() {
     }
 
     // test if it is possible read a value
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> defOut = app->Find("+Functions.+PIDGroup2.+GAM8.+Outputs.+Error");
     writer->SetApplication(*app.operator ->());
     writer->AddVariable(defOut);
     writer->Finalise();
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> defIn = app->Find("+Functions.+GAMContainer.+GAM5.+Inputs.+Error");
     reader->SetApplication(*app.operator ->());
     reader->AddVariable(defIn);
@@ -1139,11 +1151,11 @@ bool RealTimeApplicationTest::TestConfigureDataSourceLinks() {
 
     // tests if the links are configured
 
-    ReferenceT<RealTimeDataSourceInputReader> gam5Reader = gam5->GetInputReader();
-    ReferenceT<RealTimeDataSourceOutputWriter> gam5Writer = gam5->GetOutputWriter();
+    ReferenceT<BasicRealTimeDataSourceInputReader> gam5Reader = gam5->GetInputReader();
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> gam5Writer = gam5->GetOutputWriter();
 
-    ReferenceT<RealTimeDataSourceInputReader> gam8Reader = gam8->GetInputReader();
-    ReferenceT<RealTimeDataSourceOutputWriter> gam8Writer = gam8->GetOutputWriter();
+    ReferenceT<BasicRealTimeDataSourceInputReader> gam8Reader = gam8->GetInputReader();
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> gam8Writer = gam8->GetOutputWriter();
 
     ControlIn* gam5Out = (ControlIn*) gam5Writer->GetData(0);
     gam5Out->Par1 = 2;
@@ -1250,13 +1262,9 @@ bool RealTimeApplicationTest::TestPrepareNextState() {
         return false;
     }
 
-    RealTimeStateInfo info;
+    const char8 *nextState = "+State2";
 
-    info.activeBuffer = 1;
-    info.currentState = "";
-    info.nextState = "+State2";
-
-    if (!app->PrepareNextState(info)) {
+    if (!app->PrepareNextState(nextState)) {
         return false;
     }
 
@@ -1265,9 +1273,9 @@ bool RealTimeApplicationTest::TestPrepareNextState() {
 
     // tests if the links are configured
 
-    ReferenceT<RealTimeDataSourceInputReader> gam5Reader = gam5->GetInputReader();
+    ReferenceT<BasicRealTimeDataSourceInputReader> gam5Reader = gam5->GetInputReader();
 
-    ReferenceT<RealTimeDataSourceInputReader> gam8Reader = gam8->GetInputReader();
+    ReferenceT<BasicRealTimeDataSourceInputReader> gam8Reader = gam8->GetInputReader();
 
     gam5Reader->Read(0);
     TrackError *gam5In = (TrackError *) gam5Reader->GetData(0);
@@ -1311,45 +1319,23 @@ bool RealTimeApplicationTest::TestPrepareNextStateFalse_NoData() {
     cdb1.Write("Class", "RealTimeDataSource");
     cdb1.CreateAbsolute("$Application1.+Datas.+DDB2");
     cdb1.Write("Class", "RealTimeDataSource");
+    //scheduler
+    cdb1.CreateAbsolute("$Application1.+Scheduler");
+    cdb1.Write("Class", "BasicGAMScheduler");
+
     cdb1.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
     ObjectRegistryDatabase::Instance()->Initialise(cdb1);
     ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("$Application1");
-    RealTimeStateInfo info;
 
-    info.activeBuffer = 1;
-    info.currentState = "";
-    info.nextState = "+State2";
-    return !app->PrepareNextState(info);
+    const char8 *nextState = "+State2";
+    return !app->PrepareNextState(nextState);
 }
 
-bool RealTimeApplicationTest::TestChangeState() {
-    RealTimeApplication app;
-    if (app.GetActiveBuffer() != 1) {
-        return false;
-    }
-    if (app.ChangeState() != 0) {
-        return false;
-    }
-    return app.ChangeState() == 1;
-}
 
 bool RealTimeApplicationTest::TestGetActiveBuffer() {
     RealTimeApplication app;
-    if (app.GetActiveBuffer() != 1) {
-        return false;
-    }
-    if (app.ChangeState() != 0) {
-        return false;
-    }
-    if (app.GetActiveBuffer() != 0) {
-        return false;
-    }
-
-    if (app.ChangeState() != 1) {
-        return false;
-    }
     return app.GetActiveBuffer() == 1;
 }
 

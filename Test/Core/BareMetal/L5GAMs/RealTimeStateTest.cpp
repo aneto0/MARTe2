@@ -72,6 +72,7 @@ bool RealTimeStateTest::TestConfigureArchitecture() {
 
     ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("$Application1");
 
+
     if (!state1->ConfigureArchitecture(*app.operator->())) {
         return false;
     }

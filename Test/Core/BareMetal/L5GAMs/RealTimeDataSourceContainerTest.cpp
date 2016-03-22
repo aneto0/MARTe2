@@ -33,7 +33,7 @@
 #include "RealTimeDataSourceTest.h"
 #include "ConfigurationDatabase.h"
 #include "GAMTestHelper.h"
-#include "RealTimeDataSourceDef.h"
+#include "BasicRealTimeDataSourceDef.h"
 #include "RealTimeGenericDataDef.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
@@ -341,7 +341,7 @@ bool RealTimeDataSourceContainerTest::TestAddDataDefinition_AlreadyExistentLeaf(
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<RealTimeDataSourceDef> def1 = sourceDefs->Find("+DDB1.PidError1");
+    ReferenceT<BasicRealTimeDataSourceDef> def1 = sourceDefs->Find("+DDB1.PidError1");
     if (def1->GetNumberOfConsumers("state1") != 1 || def1->GetNumberOfProducers("state1") != 1) {
         printf("\n%d %d\n", def1->GetNumberOfConsumers("state1"), def1->GetNumberOfProducers("state1"));
         return false;
@@ -353,7 +353,7 @@ bool RealTimeDataSourceContainerTest::TestAddDataDefinition_AlreadyExistentLeaf(
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<RealTimeDataSourceDef> def2 = sourceDefs->Find("+DDB1.PidError2");
+    ReferenceT<BasicRealTimeDataSourceDef> def2 = sourceDefs->Find("+DDB1.PidError2");
     if (def2->GetNumberOfConsumers("state1") != 1 || def2->GetNumberOfProducers("state1") != 1) {
         return false;
     }
@@ -362,7 +362,7 @@ bool RealTimeDataSourceContainerTest::TestAddDataDefinition_AlreadyExistentLeaf(
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<RealTimeDataSourceDef> def3 = sourceDefs->Find("+DDB2.PidControl1");
+    ReferenceT<BasicRealTimeDataSourceDef> def3 = sourceDefs->Find("+DDB2.PidControl1");
     if (def3->GetNumberOfConsumers("state1") != 1 || def3->GetNumberOfProducers("state1") != 1) {
         return false;
     }
@@ -371,7 +371,7 @@ bool RealTimeDataSourceContainerTest::TestAddDataDefinition_AlreadyExistentLeaf(
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<RealTimeDataSourceDef> def4 = sourceDefs->Find("+DDB2.PidControl2");
+    ReferenceT<BasicRealTimeDataSourceDef> def4 = sourceDefs->Find("+DDB2.PidControl2");
     if (def4->GetNumberOfConsumers("state1") != 1 || def4->GetNumberOfProducers("state1") != 1) {
         return false;
     }
@@ -950,7 +950,7 @@ bool RealTimeDataSourceContainerTest::TestAllocate() {
     }
 
     // test if it is possible read a value
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> defOut = gam2->Find("+Outputs.+Error");
 
     ReferenceT<RealTimeApplication> app = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -960,7 +960,7 @@ bool RealTimeDataSourceContainerTest::TestAllocate() {
     writer->AddVariable(defOut);
     writer->Finalise();
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> defIn = gam1->Find("+Inputs.+Error");
     reader->SetApplication(*app.operator ->());
     reader->AddVariable(defIn);
@@ -1116,7 +1116,7 @@ bool RealTimeDataSourceContainerTest::TestAllocate_Structure() {
     }
 
     // test if it is possible read a value
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> defOut = gam2->Find("+Inputs.+Noise");
 
     ReferenceT<RealTimeApplication> app = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -1126,7 +1126,7 @@ bool RealTimeDataSourceContainerTest::TestAllocate_Structure() {
     writer->AddVariable(defOut);
     writer->Finalise();
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> defIn = gam1->Find("+Outputs.+Noise");
     reader->SetApplication(*app.operator ->());
     reader->AddVariable(defIn);
@@ -1287,7 +1287,7 @@ bool RealTimeDataSourceContainerTest::TestPrepareNextState() {
     ReferenceT<RealTimeApplication> app = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     app->Insert(sourceDefs);
 
-    ReferenceT<RealTimeDataSourceInputReader> reader1 = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader1 = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> def1 = gam1->Find("+Inputs.+Error");
     reader1->SetApplication(*app.operator ->());
     reader1->AddVariable(def1);
@@ -1302,7 +1302,7 @@ bool RealTimeDataSourceContainerTest::TestPrepareNextState() {
         return false;
     }
 
-    ReferenceT<RealTimeDataSourceInputReader> reader2 = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader2 = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> def2 = gam2->Find("+Outputs.+Error");
     reader2->SetApplication(*app.operator ->());
     reader2->AddVariable(def2);
@@ -1406,7 +1406,7 @@ bool RealTimeDataSourceContainerTest::TestPrepareNextState_MultiDim_Vector() {
     ReferenceT<RealTimeApplication> app = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     app->Insert(sourceDefs);
 
-    ReferenceT<RealTimeDataSourceInputReader> reader1 = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader1 = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> def1 = gam1->Find("+Inputs.+Error");
     reader1->SetApplication(*app.operator ->());
     reader1->AddVariable(def1);
@@ -1421,7 +1421,7 @@ bool RealTimeDataSourceContainerTest::TestPrepareNextState_MultiDim_Vector() {
         return false;
     }
 
-    ReferenceT<RealTimeDataSourceInputReader> reader2 = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader2 = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> def2 = gam1->Find("+Outputs.+Control");
     reader2->SetApplication(*app.operator ->());
     reader2->AddVariable(def2);
@@ -1523,7 +1523,7 @@ bool RealTimeDataSourceContainerTest::TestPrepareNextState_MultiDim_Matrix() {
     ReferenceT<RealTimeApplication> app = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     app->Insert(sourceDefs);
 
-    ReferenceT<RealTimeDataSourceInputReader> reader1 = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader1 = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> def1 = gam1->Find("+Inputs.+Error");
     reader1->SetApplication(*app.operator ->());
     reader1->AddVariable(def1);
@@ -1550,7 +1550,7 @@ bool RealTimeDataSourceContainerTest::TestPrepareNextState_MultiDim_Matrix() {
         return false;
     }
 
-    ReferenceT<RealTimeDataSourceInputReader> reader2 = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader2 = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<RealTimeGenericDataDef> def2 = gam1->Find("+Outputs.+Control");
     reader2->SetApplication(*app.operator ->());
     reader2->AddVariable(def2);

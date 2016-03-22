@@ -186,8 +186,11 @@ bool RealTimeThreadTest::TestConfigureArchitecture_MoreGAMs() {
 
     // data
     cdb.CreateAbsolute("$Application1.+Data");
-    cdb.Write("Class", "RealTimeDataSource");
-    cdb.Write("IsFinal", "false");
+    cdb.Write("Class", "RealTimeDataSourceContainer");
+
+    //scheduler
+    cdb.CreateAbsolute("$Application1.+Scheduler");
+    cdb.Write("Class", "BasicGAMScheduler");
     cdb.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -363,8 +366,12 @@ bool RealTimeThreadTest::TestConfigureArchitectureFalse_OrphanGAM() {
 
     // data
     cdb.CreateAbsolute("$Application1.+Data");
-    cdb.Write("Class", "RealTimeDataSource");
-    cdb.Write("IsFinal", "false");
+    cdb.Write("Class", "RealTimeDataSourceContainer");
+
+    //scheduler
+    cdb.CreateAbsolute("$Application1.+Scheduler");
+    cdb.Write("Class", "BasicGAMScheduler");
+
     cdb.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -439,8 +446,12 @@ bool RealTimeThreadTest::TestConfigureArchitectureFalse_InvalidGAMType() {
 
     // data
     cdb.CreateAbsolute("$Application1.+Data");
-    cdb.Write("Class", "RealTimeDataSource");
-    cdb.Write("IsFinal", "false");
+    cdb.Write("Class", "RealTimeDataSourceContainer");
+
+    //scheduler
+    cdb.CreateAbsolute("$Application1.+Scheduler");
+    cdb.Write("Class", "BasicGAMScheduler");
+
     cdb.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -514,8 +525,11 @@ bool RealTimeThreadTest::TestConfigureArchitectureFalse_InvalidGAMPath() {
 
     // data
     cdb.CreateAbsolute("$Application1.+Data");
-    cdb.Write("Class", "RealTimeDataSource");
-    cdb.Write("IsFinal", "false");
+    cdb.Write("Class", "RealTimeDataSourceContainer");
+
+    //scheduler
+    cdb.CreateAbsolute("$Application1.+Scheduler");
+    cdb.Write("Class", "BasicGAMScheduler");
     cdb.MoveToRoot();
 
     ObjectRegistryDatabase::Instance()->CleanUp();

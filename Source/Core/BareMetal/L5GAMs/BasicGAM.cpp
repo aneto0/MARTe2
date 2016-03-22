@@ -40,7 +40,6 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-static const uint32 stateNamesGranularity = 4u;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -54,7 +53,6 @@ BasicGAM::BasicGAM() :
     application = NULL_PTR(RealTimeApplication *);
 }
 
-
 /*void BasicGAM::SetUp() {
  // initialises the local status
  }*/
@@ -63,9 +61,6 @@ BasicGAM::BasicGAM() :
  virtual void Execute(){
  // execution routine
  */
-
-
-
 
 bool BasicGAM::ConfigureDataSourceLinks() {
     // it is virtual... can be overriden if the data are static
@@ -120,16 +115,23 @@ bool BasicGAM::ConfigureDataSourceLinks() {
     return ret;
 }
 
-
-
-
-
 Reference BasicGAM::GetInputReader() const {
     return inputReader;
 }
 
 Reference BasicGAM::GetOutputWriter() const {
     return outputWriter;
+}
+
+bool BasicGAM::IsSync() {
+    bool ret = false;
+    bool isReaderValid = inputReader.IsValid();
+    bool isWriterValid = outputWriter.IsValid();
+
+    if (isReaderValid && isWriterValid) {
+        ret = (inputReader->IsSync() || outputWriter->IsSync());
+    }
+    return ret;
 }
 
 }

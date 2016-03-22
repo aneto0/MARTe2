@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeDataSourceOutputWriter.h"
+#include "RealTimeDataSourceDef.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,8 +42,8 @@
 namespace MARTe {
 
 RealTimeDataSourceOutputWriter::RealTimeDataSourceOutputWriter() :
-        RealTimeDataSourceBroker() {
-
+        BasicRealTimeDataSourceOutputWriter() {
+    eventSem = NULL_PTR(EventSem *);
 }
 
 bool RealTimeDataSourceOutputWriter::Write(const uint8 activeDataSourceBuffer) const {
@@ -65,9 +66,12 @@ bool RealTimeDataSourceOutputWriter::Write(const uint8 activeDataSourceBuffer) c
         if (ret) {
             ret = sizes.Peek(i, size);
         }
-        RealTimeDataSourceDef *dsDef = NULL_PTR(RealTimeDataSourceDef *);
+        BasicRealTimeDataSourceDef *dsDef = NULL_PTR(BasicRealTimeDataSourceDef *);
         if (ret) {
             ret = dataSources.Peek(i, dsDef);
+        }
+        if (ret) {
+            ret = (dsDef != NULL);
         }
         if (ret) {
             dsDef->WriteStart();
@@ -76,6 +80,40 @@ bool RealTimeDataSourceOutputWriter::Write(const uint8 activeDataSourceBuffer) c
         }
     }
 
+    return ret;
+}
+
+bool RealTimeDataSourceOutputWriter::Finalise() {
+
+    bool ret = RealTimeDataSourceBroker::Finalise();
+
+    if (ret) {
+        uint32 numberOfDS = dataSources.GetSize();
+        for (uint32 i = 0u; i < numberOfDS; i++) {
+            BasicRealTimeDataSourceDef * bdsDef = NULL_PTR(BasicRealTimeDataSourceDef *);
+            ret = dataSources.Peek(i, bdsDef);
+            if (ret) {
+                RealTimeDataSourceDef *dsDef = dynamic_cast<RealTimeDataSourceDef *>(bdsDef);
+                ret = (dsDef != NULL);
+                if (ret) {
+                    EventSem *tempSem = dsDef->GetEventSemaphore();
+                    if (tempSem != NULL) {
+                        if(!synchronized) {
+                            if(eventSem==NULL) {
+                                eventSem=tempSem;
+                                synchronized=true;
+                            }
+                        }
+                        else {
+                            //TODO Already sync  !!
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    finalised = ret;
     return ret;
 }
 

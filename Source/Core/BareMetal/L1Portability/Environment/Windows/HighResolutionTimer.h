@@ -59,9 +59,9 @@ inline float64 Period() {
     return calibratedHighResolutionTimer.GetPeriod();
 }
 
-inline float64 TicksToTime(int64 tStop,
-                           int64 tStart) {
-    int64 dT = (tStop < tStart) ? ((MAX_INT64 - tStart) + tStop) : (tStop - tStart);
+inline float64 TicksToTime(uint64 tStop,
+                           uint64 tStart) {
+    uint64 dT = (tStop - tStart);
     return dT * Period();
 }
 

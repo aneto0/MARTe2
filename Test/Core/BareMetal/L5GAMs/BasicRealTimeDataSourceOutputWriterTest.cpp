@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataSourceOutputWriterTest.cpp
- * @brief Source file for class RealTimeDataSourceOutputWriterTest
- * @date 14/03/2016
- * @author Giuseppe Ferrò
+ * @file BasicRealTimeDataSourceOutputWriterTest.cpp
+ * @brief Source file for class BasicRealTimeDataSourceOutputWriterTest
+ * @date 22/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataSourceOutputWriterTest (public, protected, and private). Be aware that some 
+ * the class BasicRealTimeDataSourceOutputWriterTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeDataSourceOutputWriterTest.h"
+#include "BasicRealTimeDataSourceOutputWriterTest.h"
 #include "GAMTestHelper.h"
 #include "RealTimeGenericDataDef.h"
 #include "stdio.h"
@@ -41,7 +41,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RealTimeDataSourceOutputWriterTest::RealTimeDataSourceOutputWriterTest() {
+BasicRealTimeDataSourceOutputWriterTest::BasicRealTimeDataSourceOutputWriterTest() {
     cdb.CreateAbsolute("+Inputs");
     cdb.Write("Class", "RealTimeDataDefContainer");
     cdb.Write("IsInput", "true");
@@ -85,12 +85,12 @@ RealTimeDataSourceOutputWriterTest::RealTimeDataSourceOutputWriterTest() {
     cdb.MoveToRoot();
 }
 
-bool RealTimeDataSourceOutputWriterTest::TestConstructor() {
-    RealTimeDataSourceOutputWriter test;
+bool BasicRealTimeDataSourceOutputWriterTest::TestConstructor() {
+    BasicRealTimeDataSourceOutputWriter test;
     return true;
 }
 
-bool RealTimeDataSourceOutputWriterTest::TestWrite_Allocation() {
+bool BasicRealTimeDataSourceOutputWriterTest::TestWrite_Allocation() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
@@ -189,7 +189,8 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_Allocation() {
 
     ReferenceT<RealTimeGenericDataDef> def = pid->Find("+Inputs.+Error");
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -204,7 +205,8 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_Allocation() {
 
     ReferenceT<RealTimeGenericDataDef> def2 = plant->Find("+Outputs.+Error");
 
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -221,13 +223,9 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_Allocation() {
     errorPlant->Par1 = 10;
     errorPlant->Par2 = 20;
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
 
     if (!writer->Write(0)) {
         return false;
@@ -254,7 +252,7 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_Allocation() {
     return true;
 }
 
-bool RealTimeDataSourceOutputWriterTest::TestWrite_Static() {
+bool BasicRealTimeDataSourceOutputWriterTest::TestWrite_Static() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
@@ -356,7 +354,8 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_Static() {
 
     ReferenceT<RealTimeGenericDataDef> def = pid->Find("+Inputs.+Error");
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -375,7 +374,8 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_Static() {
 
     ReferenceT<RealTimeGenericDataDef> def2 = plant->Find("+Outputs.+Error");
 
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -388,13 +388,9 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_Static() {
         return false;
     }
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
 
     if (!writer->Write(0)) {
         return false;
@@ -417,7 +413,7 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_Static() {
     return true;
 }
 
-bool RealTimeDataSourceOutputWriterTest::TestWrite_MoreThanOneVariable() {
+bool BasicRealTimeDataSourceOutputWriterTest::TestWrite_MoreThanOneVariable() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
     appCDB.Write("Class", "RealTimeDataSourceContainer");
@@ -526,7 +522,8 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_MoreThanOneVariable() {
     ReferenceT<RealTimeGenericDataDef> def1 = pid->Find("+Outputs.+Control");
     ReferenceT<RealTimeGenericDataDef> def2 = pid->Find("+Outputs.+Noise");
 
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -552,7 +549,8 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_MoreThanOneVariable() {
     ReferenceT<RealTimeGenericDataDef> def3 = plant->Find("+Inputs.+Control");
     ReferenceT<RealTimeGenericDataDef> def4 = plant->Find("+Inputs.+Noise");
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -569,13 +567,9 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_MoreThanOneVariable() {
         return false;
     }
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
 
     if (!writer->Write(0)) {
         return false;
@@ -606,7 +600,7 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_MoreThanOneVariable() {
     return true;
 }
 
-bool RealTimeDataSourceOutputWriterTest::TestWrite_MultiDim_Vector() {
+bool BasicRealTimeDataSourceOutputWriterTest::TestWrite_MultiDim_Vector() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
@@ -683,7 +677,8 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_MultiDim_Vector() {
 
     ReferenceT<RealTimeGenericDataDef> defOut = pid->Find("+Outputs.+Control");
 
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -703,7 +698,8 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_MultiDim_Vector() {
 
     ReferenceT<RealTimeGenericDataDef> defIn = pid->Find("+Inputs.+Error");
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -715,13 +711,9 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_MultiDim_Vector() {
         return false;
     }
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
 
     if (!writer->Write(0)) {
         return false;
@@ -747,7 +739,7 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_MultiDim_Vector() {
     return true;
 }
 
-bool RealTimeDataSourceOutputWriterTest::TestWrite_MultiDim_Matrix() {
+bool BasicRealTimeDataSourceOutputWriterTest::TestWrite_MultiDim_Matrix() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
@@ -824,7 +816,8 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_MultiDim_Matrix() {
 
     ReferenceT<RealTimeGenericDataDef> defOut = pid->Find("+Outputs.+Control");
 
-    ReferenceT<RealTimeDataSourceOutputWriter> writer = ReferenceT<RealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -848,7 +841,8 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_MultiDim_Matrix() {
 
     ReferenceT<RealTimeGenericDataDef> defIn = pid->Find("+Inputs.+Error");
 
-    ReferenceT<RealTimeDataSourceInputReader> reader = ReferenceT<RealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -860,13 +854,9 @@ bool RealTimeDataSourceOutputWriterTest::TestWrite_MultiDim_Matrix() {
         return false;
     }
 
-    RealTimeStateInfo info;
-    info.currentState = "";
-    info.nextState = "+state1";
-    info.activeBuffer = 1;
-    if (!rtapp->PrepareNextState(info)) {
-        return false;
-    }
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
 
     if (!writer->Write(0)) {
         return false;

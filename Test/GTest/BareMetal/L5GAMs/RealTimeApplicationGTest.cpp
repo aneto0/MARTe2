@@ -121,11 +121,6 @@ TEST(RealTimeApplicationGTest,TestPrepareNextStateFalse_NoData) {
     ASSERT_TRUE(rtappTest.TestPrepareNextStateFalse_NoData());
 }
 
-TEST(RealTimeApplicationGTest,TestChangeState) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestChangeState());
-}
-
 TEST(RealTimeApplicationGTest,TestGetActiveBuffer) {
     RealTimeApplicationTest rtappTest;
     ASSERT_TRUE(rtappTest.TestGetActiveBuffer());

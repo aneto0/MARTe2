@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BasicRealTimeDataSourceBroker.h"
+#include "RealTimeDataSourceBroker.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief Reads data from the RealTimeDataSource.
  */
-class BasicRealTimeDataSourceInputReader: public BasicRealTimeDataSourceBroker {
+class BasicRealTimeDataSourceInputReader: public RealTimeDataSourceBroker {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -59,6 +59,12 @@ public:
      * @return false in case of errors, true otherwise.
      */
     bool Read(const uint8 activeDataSourceBuffer) const;
+
+    bool Poll(const uint8 activeDataSourceBuffer,
+              float64 sampleTime = 0.0,
+              uint32 numberOfReads = 1u,
+              TimeoutType timeout = TTInfiniteWait);
+
 
 };
 

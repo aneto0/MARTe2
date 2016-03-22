@@ -1,7 +1,7 @@
 /**
- * @file GAMTest.h
- * @brief Header file for class GAMTest
- * @date 18/02/2016
+ * @file BasicGAMTest.h
+ * @brief Header file for class BasicGAMTest
+ * @date 22/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMTest
+ * @details This header file contains the declaration of the class BasicGAMTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMTEST_H_
-#define GAMTEST_H_
+#ifndef BASICGAMTEST_H_
+#define BASICGAMTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GAM.h"
+#include "BasicGAM.h"
 #include "ConfigurationDatabase.h"
 
 /*---------------------------------------------------------------------------*/
@@ -43,19 +43,19 @@ using namespace MARTe;
 /**
  * @brief Tests all the GAM functions
  */
-class GAMTest {
+class BasicGAMTest {
 
 public:
 
     /**
      * @brief Initialises a ConfigurationDatabase used for tests.
      */
-    GAMTest();
+    BasicGAMTest();
 
     /**
      * @brief Destroy the ObjectRegistryDatabase.
      */
-    ~GAMTest();
+    ~BasicGAMTest();
 
     /**
      * @brief Tests the constructor.
@@ -150,5 +150,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMTEST_H_ */
+#endif /* TEST_CORE_BAREMETAL_L5GAMS_BASICGAMTEST_H_ */
 

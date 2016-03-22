@@ -1,8 +1,8 @@
 /**
- * @file RealTimeDataSourceInputReaderGTest.cpp
- * @brief Source file for class RealTimeDataSourceInputReaderGTest
- * @date 14/03/2016
- * @author Giuseppe Ferrò
+ * @file BasicGAMScheduler.cpp
+ * @brief Source file for class BasicGAMScheduler
+ * @date 22/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,20 +17,20 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataSourceInputReaderGTest (public, protected, and private). Be aware that some 
+ * the class BasicGAMScheduler (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
-#include "gtest/gtest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeDataSourceInputReaderTest.h"
+#include "BasicGAMScheduler.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,43 +39,50 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(RealTimeDataSourceInputReaderGTest,TestConstructor) {
-    RealTimeDataSourceInputReaderTest rtdsirTest;
-    ASSERT_TRUE(rtdsirTest.TestConstructor());
+namespace MARTe {
+BasicGAMScheduler::BasicGAMScheduler() :
+        GAMSchedulerI() {
+    numberOfCycles = MAX_UINT32;
 }
 
-TEST(RealTimeDataSourceInputReaderGTest,TestRead_DefaultValues_Static) {
-    RealTimeDataSourceInputReaderTest rtdsirTest;
-    ASSERT_TRUE(rtdsirTest.TestRead_DefaultValues_Static());
+void BasicGAMScheduler::StartExecution(const uint32 activeBuffer) {
+
+    if (statesInExecution[activeBuffer]->GetNumberOfThreads() > 1u) {
+        //TODO Warning
+    }
+    ReferenceT<RealTimeThread> thread = statesInExecution[activeBuffer]->Peek(0);
+    if (thread.IsValid()) {
+        ReferenceT<GAMI> *gamArray = thread->GetGAMs();
+        uint32 numberOfGAMs = thread->GetNumberOfGAMs();
+        for (uint32 n = 0u; n < numberOfCycles; n++) {
+            for (uint32 i = 0u; i < numberOfGAMs; i++) {
+                if (gamArray[i].IsValid()) {
+                    gamArray[i]->Execute(activeBuffer);
+                }
+                else {
+                    //TODO Invalid gam?
+                }
+            }
+        }
+    }
+    else {
+        //TODO Invalid thread?
+    }
 }
 
-TEST(RealTimeDataSourceInputReaderGTest,TestRead_DefaultValues_Allocation) {
-    RealTimeDataSourceInputReaderTest rtdsirTest;
-    ASSERT_TRUE(rtdsirTest.TestRead_DefaultValues_Allocation());
+void BasicGAMScheduler::StopExecution() {
+    // nothing to do
 }
 
-TEST(RealTimeDataSourceInputReaderGTest,TestRead_Static) {
-    RealTimeDataSourceInputReaderTest rtdsirTest;
-    ASSERT_TRUE(rtdsirTest.TestRead_Static());
+bool BasicGAMScheduler::Initialise(StructuredDataI &data) {
+    bool ret = ReferenceContainer::Initialise(data);
+    if (ret) {
+        if (data.Read("NumberOfCycles", numberOfCycles)) {
+            // default is max uint32
+        }
+    }
+    return ret;
 }
+CLASS_REGISTER(BasicGAMScheduler, "1.0")
 
-TEST(RealTimeDataSourceInputReaderGTest,TestRead_Allocation) {
-    RealTimeDataSourceInputReaderTest rtdsirTest;
-    ASSERT_TRUE(rtdsirTest.TestRead_Allocation());
 }
-
-TEST(RealTimeDataSourceInputReaderGTest,TestRead_MoreThanOneVariable) {
-    RealTimeDataSourceInputReaderTest rtdsirTest;
-    ASSERT_TRUE(rtdsirTest.TestRead_MoreThanOneVariable());
-}
-
-TEST(RealTimeDataSourceInputReaderGTest,TestRead_MultiDim_Vector) {
-    RealTimeDataSourceInputReaderTest rtdsirTest;
-    ASSERT_TRUE(rtdsirTest.TestRead_MultiDim_Vector());
-}
-
-TEST(RealTimeDataSourceInputReaderGTest,TestRead_MultiDim_Matrix) {
-    RealTimeDataSourceInputReaderTest rtdsirTest;
-    ASSERT_TRUE(rtdsirTest.TestRead_MultiDim_Matrix());
-}
-

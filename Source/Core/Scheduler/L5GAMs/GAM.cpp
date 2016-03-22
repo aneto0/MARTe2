@@ -39,7 +39,6 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-static const uint32 stateNamesGranularity = 4u;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -103,6 +102,17 @@ Reference GAM::GetInputReader() const{
 
 Reference GAM::GetOutputWriter() const{
     return outputWriter;
+}
+
+bool GAM::IsSync() {
+    bool ret = false;
+    bool isReaderValid = inputReader.IsValid();
+    bool isWriterValid = outputWriter.IsValid();
+
+    if (isReaderValid && isWriterValid) {
+        ret = (inputReader->IsSync() || outputWriter->IsSync());
+    }
+    return ret;
 }
 
 }

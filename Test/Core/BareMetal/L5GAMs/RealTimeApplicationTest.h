@@ -140,11 +140,6 @@ public:
     bool TestPrepareNextStateFalse_NoData();
 
     /**
-     * @brief Tests if the function flips the active buffer flag.
-     */
-    bool TestChangeState();
-
-    /**
      * @brief Tests if the function returns correctly the current active buffer number.
      */
     bool TestGetActiveBuffer();

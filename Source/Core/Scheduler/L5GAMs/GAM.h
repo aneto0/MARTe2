@@ -95,6 +95,9 @@ public:
      */
     virtual Reference GetOutputWriter() const;
 
+
+    virtual bool IsSync() ;
+
 protected:
 
     /**
@@ -109,16 +112,6 @@ protected:
 
     //? IOData?
     //? context?
-
-private:
-    /**
-     * @brief Completes the IO structure definitions (see RealTimeDataDefI) found in the global CDB
-     * with the definitions in the local CDB and check their consistency.
-     * @param[in] localData is the local StructuredData.
-     * @return false in case of conflicts between the local and the global definitions, or
-     * if the definitions are inconsistent with registered types. True otherwise.
-     */
-    bool ConfigureFunction();
 
 };
 

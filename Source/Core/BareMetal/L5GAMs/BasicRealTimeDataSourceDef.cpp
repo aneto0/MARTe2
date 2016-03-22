@@ -53,7 +53,7 @@ BasicRealTimeDataSourceDef::BasicRealTimeDataSourceDef() :
     memory = NULL_PTR(MemoryArea *);
     usedBuffer[0] = NULL_PTR(void *);
     usedBuffer[1] = NULL_PTR(void *);
-    pollSem = NULL_PTR(FastPollingMutexSem *);
+    pollSem = NULL_PTR(FastPollingEventSem *);
     numberOfDimensions = 0u;
     for (uint32 k = 0u; k < 3u; k++) {
         numberOfElements[k] = 1u;
@@ -510,7 +510,7 @@ void BasicRealTimeDataSourceDef::ReadEnd() {
 
 }
 
-FastPollingMutexSem * BasicRealTimeDataSourceDef::GetPollingSemaphore() const {
+FastPollingEventSem * BasicRealTimeDataSourceDef::GetPollingSemaphore() const {
     return pollSem;
 }
 
