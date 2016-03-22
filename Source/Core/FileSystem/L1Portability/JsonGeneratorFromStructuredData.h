@@ -99,8 +99,11 @@ namespace MARTe {
  * (space, horizontal tab, line feed, carriage return) before or after any
  * of the six structural characters.
  *
- * Remark 2: The numbers produced by this generator never contain an exponent
- * part, but they always contain a fractional part when the number is a float.
+ * Remark 2: Real values will be produced following the engineering notation.
+ *
+ * Remark 3: Numeric values that cannot be represented in the grammar (such as
+ * Infinity and NaN) are not permitted, so real values in the input shall not
+ * contain them.
  *
  * References:
  * + JSON's website [JSON|http://www.json.org]

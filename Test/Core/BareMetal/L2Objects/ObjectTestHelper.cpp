@@ -137,12 +137,12 @@ IntrospectableObjectWithVector& TestObjectsDataSet::GetTest6Object() {
         obj.member1 = 10;
         obj.member2 = 20;
         obj.member3[0] = 0;
-        obj.member3[1] = 10;
+        obj.member3[1] = -10;
         obj.member3[2] = 20;
-        obj.member3[3] = 30;
+        obj.member3[3] = -30;
         obj.member3[4] = 40;
-        obj.member4 = 40.5f;
-        obj.member5 = 50.5;
+        obj.member4 = -4000.5f;
+        obj.member5 = 5000.5;
         init = true;
     }
     return obj;
@@ -264,7 +264,7 @@ const StreamString& JsonStreamsDataSet::GetTest6DataAsJson() {
     static StreamString str;
     if (!init) {
         static const char8 TEMPLATE[] =
-                "{\"Test6\":{\"Class\":\"IntrospectableObjectWithVector\",\"member1\":10,\"member2\":20,\"member3\":[0,10,20,30,40],\"member4\":40.50000,\"member5\":50.5000000000000}}";
+                "{\"Test6\":{\"Class\":\"IntrospectableObjectWithVector\",\"member1\":10,\"member2\":20,\"member3\":[0,-10,20,-30,40],\"member4\":-4.000500E+3,\"member5\":5.00050000000000E+3}}";
         static const AnyType PARAMS[] = { voidAnyType };
         str.PrintFormatted(TEMPLATE, &PARAMS[0]);
         str.Seek(0);
