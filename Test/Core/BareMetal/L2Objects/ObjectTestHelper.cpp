@@ -80,7 +80,9 @@ CLASS_INTROSPECTION_REGISTER(IntrospectableObjectWith3Members, "1.0", Introspect
 DECLARE_CLASS_MEMBER(IntrospectableObjectWithVector, member1, int32, "", "");
 DECLARE_CLASS_MEMBER(IntrospectableObjectWithVector, member2, uint64, "", "");
 DECLARE_CLASS_MEMBER(IntrospectableObjectWithVector, member3, int32, "[5]", "");
-static const IntrospectionEntry* IntrospectableObjectWithVector_objFields[] = { &IntrospectableObjectWithVector_member1_introspectionEntry, &IntrospectableObjectWithVector_member2_introspectionEntry, &IntrospectableObjectWithVector_member3_introspectionEntry, 0 };
+DECLARE_CLASS_MEMBER(IntrospectableObjectWithVector, member4, float32, "", "");
+DECLARE_CLASS_MEMBER(IntrospectableObjectWithVector, member5, float64, "", "");
+static const IntrospectionEntry* IntrospectableObjectWithVector_objFields[] = { &IntrospectableObjectWithVector_member1_introspectionEntry, &IntrospectableObjectWithVector_member2_introspectionEntry, &IntrospectableObjectWithVector_member3_introspectionEntry, &IntrospectableObjectWithVector_member4_introspectionEntry, &IntrospectableObjectWithVector_member5_introspectionEntry, 0 };
 DECLARE_CLASS_INTROSPECTION(IntrospectableObjectWithVector, IntrospectableObjectWithVector_objFields);
 CLASS_INTROSPECTION_REGISTER(IntrospectableObjectWithVector, "1.0", IntrospectableObjectWithVector_introspection)
 
@@ -139,6 +141,8 @@ IntrospectableObjectWithVector& TestObjectsDataSet::GetTest6Object() {
         obj.member3[2] = 20;
         obj.member3[3] = 30;
         obj.member3[4] = 40;
+        obj.member4 = 40.5f;
+        obj.member5 = 50.5;
         init = true;
     }
     return obj;
@@ -171,7 +175,7 @@ IntrospectableObjectWithMatrix& TestObjectsDataSet::GetTest7Object() {
     return obj;
 }
 
-const StreamString& JsonStreamsDataSet::GetTest3DataJson() {
+const StreamString& JsonStreamsDataSet::GetTest3DataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
@@ -185,7 +189,7 @@ const StreamString& JsonStreamsDataSet::GetTest3DataJson() {
     return str;
 }
 
-const StreamString& JsonStreamsDataSet::GetTest3MetadataJson() {
+const StreamString& JsonStreamsDataSet::GetTest3MetadataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
@@ -199,7 +203,7 @@ const StreamString& JsonStreamsDataSet::GetTest3MetadataJson() {
     return str;
 }
 
-const StreamString& JsonStreamsDataSet::GetTest4DataJson() {
+const StreamString& JsonStreamsDataSet::GetTest4DataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
@@ -213,7 +217,7 @@ const StreamString& JsonStreamsDataSet::GetTest4DataJson() {
     return str;
 }
 
-const StreamString& JsonStreamsDataSet::GetTest4MetadataJson() {
+const StreamString& JsonStreamsDataSet::GetTest4MetadataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
@@ -227,7 +231,7 @@ const StreamString& JsonStreamsDataSet::GetTest4MetadataJson() {
     return str;
 }
 
-const StreamString& JsonStreamsDataSet::GetTest5DataJson() {
+const StreamString& JsonStreamsDataSet::GetTest5DataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
@@ -241,7 +245,7 @@ const StreamString& JsonStreamsDataSet::GetTest5DataJson() {
     return str;
 }
 
-const StreamString& JsonStreamsDataSet::GetTest5MetadataJson() {
+const StreamString& JsonStreamsDataSet::GetTest5MetadataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
@@ -255,12 +259,12 @@ const StreamString& JsonStreamsDataSet::GetTest5MetadataJson() {
     return str;
 }
 
-const StreamString& JsonStreamsDataSet::GetTest6DataJson() {
+const StreamString& JsonStreamsDataSet::GetTest6DataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
         static const char8 TEMPLATE[] =
-                "{\"Test6\":{\"Class\":\"IntrospectableObjectWithVector\",\"member1\":10,\"member2\":20,\"member3\":[0,10,20,30,40]}}";
+                "{\"Test6\":{\"Class\":\"IntrospectableObjectWithVector\",\"member1\":10,\"member2\":20,\"member3\":[0,10,20,30,40],\"member4\":40.50000,\"member5\":50.5000000000000}}";
         static const AnyType PARAMS[] = { voidAnyType };
         str.PrintFormatted(TEMPLATE, &PARAMS[0]);
         str.Seek(0);
@@ -269,13 +273,41 @@ const StreamString& JsonStreamsDataSet::GetTest6DataJson() {
     return str;
 }
 
-const StreamString& JsonStreamsDataSet::GetTest7DataJson() {
+const StreamString& JsonStreamsDataSet::GetTest6MetadataAsJson() {
+    static bool init = false;
+    static StreamString str;
+    if (!init) {
+        static const char8 TEMPLATE[] =
+                "{\"IntrospectableObjectWithVector\":{\"member1\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member2\":{\"type\":\"uint64\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member3\":{\"type\":\"int32\",\"modifiers\":\"[5]\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member4\":{\"type\":\"float32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member5\":{\"type\":\"float64\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u}}}";
+        static const AnyType PARAMS[] = { static_cast<uint8>(sizeof(int32)), static_cast<uint64>(offsetof(IntrospectableObjectWithVector, member1)), static_cast<uint8>(sizeof(uint64)), static_cast<uint64>(offsetof(IntrospectableObjectWithVector, member2)), static_cast<uint64>(sizeof(int32)*5), static_cast<uint64>(offsetof(IntrospectableObjectWithVector, member3)), static_cast<uint8>(sizeof(float32)), static_cast<uint64>(offsetof(IntrospectableObjectWithVector, member4)), static_cast<uint8>(sizeof(float64)), static_cast<uint64>(offsetof(IntrospectableObjectWithVector, member5)), voidAnyType };
+        str.PrintFormatted(TEMPLATE, &PARAMS[0]);
+        str.Seek(0);
+        init = true;
+    }
+    return str;
+}
+
+const StreamString& JsonStreamsDataSet::GetTest7DataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
         static const char8 TEMPLATE[] =
                 "{\"Test7\":{\"Class\":\"IntrospectableObjectWithMatrix\",\"member1\":10,\"member2\":20,\"member3\":[[1,2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15]]}}";
         static const AnyType PARAMS[] = { voidAnyType };
+        str.PrintFormatted(TEMPLATE, &PARAMS[0]);
+        str.Seek(0);
+        init = true;
+    }
+    return str;
+}
+
+const StreamString& JsonStreamsDataSet::GetTest7MetadataAsJson() {
+    static bool init = false;
+    static StreamString str;
+    if (!init) {
+        static const char8 TEMPLATE[] =
+                "{\"IntrospectableObjectWithMatrix\":{\"member1\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member2\":{\"type\":\"uint64\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member3\":{\"type\":\"int32\",\"modifiers\":\"[5][3]\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u}}}";
+        static const AnyType PARAMS[] = { static_cast<uint8>(sizeof(int32)), static_cast<uint64>(offsetof(IntrospectableObjectWithMatrix, member1)), static_cast<uint8>(sizeof(uint64)), static_cast<uint64>(offsetof(IntrospectableObjectWithMatrix, member2)), static_cast<uint64>(sizeof(int32)*5*3), static_cast<uint64>(offsetof(IntrospectableObjectWithMatrix, member3)), voidAnyType };
         str.PrintFormatted(TEMPLATE, &PARAMS[0]);
         str.Seek(0);
         init = true;

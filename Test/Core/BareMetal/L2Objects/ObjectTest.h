@@ -118,7 +118,8 @@ public:
      * @details Checks that the Object::ExportData method returns the right
      * tree (StructuredDataI) for common examples of objects (with simple
      * members, with complex ones, etc).
-     * @return true if the tests explained in the details section succeed, false otherwise.
+     * @return true if the tests explained in the details section succeed,
+     * false otherwise.
      */
     bool TestExportData();
 
@@ -127,10 +128,19 @@ public:
      * @details Checks that the Object::ExportMetaData method returns the right
      * tree (StructuredDataI) for common examples of objects (with simple
      * members, with complex ones, etc).
-     * @return true if the tests explained in the details section succeed, false otherwise.
+     * @return true if the tests explained in the details section succeed,
+     * false otherwise.
      */
     bool TestExportMetadata();
 
+    /**
+     * @brief Tests the JsonGeneratorFromStructuredData::Execute function.
+     * @details Checks that the JsonGeneratorFromStructuredData::Execute
+     * generates the right JSON string for common examples of objects (in
+     * fact, the same examples used in TestExportData and TestExportMetadata).
+     * @return true if the tests explained in the details section succeed,
+     * false otherwise.
+     */
     bool TestJsonConversion();
 };
 

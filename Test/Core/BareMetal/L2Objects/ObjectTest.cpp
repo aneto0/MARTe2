@@ -643,85 +643,6 @@ bool ObjectTest::TestExportMetadata() {
 bool ObjectTest::TestJsonConversion() {
     bool result = true;
     {
-        /*
-         * This test verifies that method ObjectTest::ExportData returns the
-         * following tree (from a testing object which is an instance of a
-         * registered and introspectable class):
-         * root
-         *  |+"Test3"
-         *   |-"Class": "IntrospectableIntegerObject"
-         *   |-"member": 30
-         * root
-         * {
-         *   "Test3": {
-         *     "Class": "IntrospectableIntegerObject",
-         *     "member": 30
-         *   }
-         * }
-         * root
-         *  |+"Test4"
-         *   |-"Class": "IntrospectableObjectWith2Members"
-         *   |-"member1": 10
-         *   |-"member2": 20
-         * root
-         *  |+"Test5"
-         *   |-"Class": "IntrospectableObjectWith3Members"
-         *   |-"member1": 30
-         *   |-"member2": 60
-         *   |+"member3"
-         *    |-"Class": "IntrospectableIntegerObject"
-         *    |-"member": 90
-         * root
-         *  |+"IntrospectableIntegerObject"
-         *   |+"member"
-         *    |-"type": "int32"
-         *    |-"modifiers": ""
-         *    |-"attributes": ""
-         *    |-"size": sizeof(int32)
-         *    |-"pointer": &this+offsetof(IntrospectableIntegerObject, member)
-         * root
-         *  |+"IntrospectableObjectWith2Members"
-         *   |+"member1"
-         *    |-"type": "int32"
-         *    |-"modifiers": ""
-         *    |-"attributes": ""
-         *    |-"size": sizeof(int32)
-         *    |-"pointer": &this+offsetof(IntrospectableObjectWith2Members, member1)
-         *   |+"member2"
-         *    |-"type": "uint64"
-         *    |-"modifiers": ""
-         *    |-"attributes": ""
-         *    |-"size": sizeof(uint64)
-         *    |-"pointer": &this+offsetof(IntrospectableObjectWith2Members, member2)
-         * root
-         *  |+"IntrospectableObjectWith3Members"
-         *   |+"member1"
-         *    |-"type": "int32"
-         *    |-"modifiers": ""
-         *    |-"attributes": ""
-         *    |-"size": sizeof(int32)
-         *    |-"pointer": &this+offsetof(IntrospectableObjectWith3Members, member1)
-         *   |+"member2"
-         *    |-"type": "uint64"
-         *    |-"modifiers": ""
-         *    |-"attributes": ""
-         *    |-"size": sizeof(uint64)
-         *    |-"pointer": &this+offsetof(IntrospectableObjectWith3Members, member2)
-         *   |+"member3"
-         *    |-"type": "IntrospectableIntegerObject"
-         *    |-"modifiers": ""
-         *    |-"attributes": ""
-         *    |-"size": sizeof(IntrospectableIntegerObject)
-         *    |-"pointer": &this+offsetof(IntrospectableObjectWith3Members, member3)
-         *    |+"IntrospectableIntegerObject"
-         *     |+"member"
-         *      |-"type": "int32"
-         *      |-"modifiers": ""
-         *      |-"attributes": ""
-         *      |-"size": sizeof(int32)
-         *      |-"pointer": &this.member+offsetof(IntrospectableIntegerObject, member)
-         */
-
         bool test_status = true;
         bool test_values = true;
 
@@ -734,7 +655,7 @@ bool ObjectTest::TestJsonConversion() {
             StreamString json;
             test_status = (test_status && (tods.GetTest3Object().ExportData(cdb)));
             test_status = (test_status && transform.Execute(cdb, json));
-            test_values = (test_values && (json == jsds.GetTest3DataJson()));
+            test_values = (test_values && (json == jsds.GetTest3DataAsJson()));
         }
         {
             JsonGeneratorFromStructuredData transform;
@@ -742,7 +663,7 @@ bool ObjectTest::TestJsonConversion() {
             StreamString json;
             test_status = (test_status && (tods.GetTest4Object().ExportData(cdb)));
             test_status = (test_status && transform.Execute(cdb, json));
-            test_values = (test_values && (json == jsds.GetTest4DataJson()));
+            test_values = (test_values && (json == jsds.GetTest4DataAsJson()));
         }
         {
             JsonGeneratorFromStructuredData transform;
@@ -750,7 +671,7 @@ bool ObjectTest::TestJsonConversion() {
             StreamString json;
             test_status = (test_status && (tods.GetTest5Object().ExportData(cdb)));
             test_status = (test_status && transform.Execute(cdb, json));
-            test_values = (test_values && (json == jsds.GetTest5DataJson()));
+            test_values = (test_values && (json == jsds.GetTest5DataAsJson()));
         }
         {
             JsonGeneratorFromStructuredData transform;
@@ -758,7 +679,7 @@ bool ObjectTest::TestJsonConversion() {
             StreamString json;
             test_status = (test_status && (tods.GetTest6Object().ExportData(cdb)));
             test_status = (test_status && transform.Execute(cdb, json));
-            test_values = (test_values && (json == jsds.GetTest6DataJson()));
+            test_values = (test_values && (json == jsds.GetTest6DataAsJson()));
         }
         {
             JsonGeneratorFromStructuredData transform;
@@ -766,7 +687,7 @@ bool ObjectTest::TestJsonConversion() {
             StreamString json;
             test_status = (test_status && (tods.GetTest7Object().ExportData(cdb)));
             test_status = (test_status && transform.Execute(cdb, json));
-            test_values = (test_values && (json == jsds.GetTest7DataJson()));
+            test_values = (test_values && (json == jsds.GetTest7DataAsJson()));
         }
         {
             JsonGeneratorFromStructuredData transform;
@@ -774,7 +695,7 @@ bool ObjectTest::TestJsonConversion() {
             StreamString json;
             test_status = (test_status && (tods.GetTest3Object().ExportMetadata(cdb)));
             test_status = (test_status && transform.Execute(cdb, json));
-            test_values = (test_values && (json == jsds.GetTest3MetadataJson()));
+            test_values = (test_values && (json == jsds.GetTest3MetadataAsJson()));
         }
         {
             JsonGeneratorFromStructuredData transform;
@@ -782,7 +703,7 @@ bool ObjectTest::TestJsonConversion() {
             StreamString json;
             test_status = (test_status && (tods.GetTest4Object().ExportMetadata(cdb)));
             test_status = (test_status && transform.Execute(cdb, json));
-            test_values = (test_values && (json == jsds.GetTest4MetadataJson()));
+            test_values = (test_values && (json == jsds.GetTest4MetadataAsJson()));
         }
         {
             JsonGeneratorFromStructuredData transform;
@@ -790,7 +711,23 @@ bool ObjectTest::TestJsonConversion() {
             StreamString json;
             test_status = (test_status && (tods.GetTest5Object().ExportMetadata(cdb)));
             test_status = (test_status && transform.Execute(cdb, json));
-            test_values = (test_values && (json == jsds.GetTest5MetadataJson()));
+            test_values = (test_values && (json == jsds.GetTest5MetadataAsJson()));
+        }
+        {
+            JsonGeneratorFromStructuredData transform;
+            ConfigurationDatabase cdb;
+            StreamString json;
+            test_status = (test_status && (tods.GetTest6Object().ExportMetadata(cdb)));
+            test_status = (test_status && transform.Execute(cdb, json));
+            test_values = (test_values && (json == jsds.GetTest6MetadataAsJson()));
+        }
+        {
+            JsonGeneratorFromStructuredData transform;
+            ConfigurationDatabase cdb;
+            StreamString json;
+            test_status = (test_status && (tods.GetTest7Object().ExportMetadata(cdb)));
+            test_status = (test_status && transform.Execute(cdb, json));
+            test_values = (test_values && (json == jsds.GetTest7MetadataAsJson()));
         }
 
         result = result && test_status && test_values;

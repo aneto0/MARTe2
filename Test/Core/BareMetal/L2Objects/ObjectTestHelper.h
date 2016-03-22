@@ -386,7 +386,9 @@ public:
     IntrospectableObjectWithVector() :
             member1(0),
             member2(0),
-            member3() {
+            member3(),
+            member4(0.0f),
+            member5(0.0) {
     }
 
     /**
@@ -409,6 +411,16 @@ public:
      * Member 3 atribute
      */
     int32 member3[5];
+
+    /**
+     * Member 4 attribute
+     */
+    float32 member4;
+
+    /**
+     * Member 5 attribute
+     */
+    float64 member5;
 
 };
 
@@ -464,18 +476,20 @@ public:
 private:
 };
 
-//class JsonReferenceBuilder
+//TODO: Rename to class JsonReferenceBuilder?
 class JsonStreamsDataSet {
 public:
-    //operator[](int i)
-    const StreamString& GetTest3DataJson();
-    const StreamString& GetTest3MetadataJson();
-    const StreamString& GetTest4DataJson();
-    const StreamString& GetTest4MetadataJson();
-    const StreamString& GetTest5DataJson();
-    const StreamString& GetTest5MetadataJson();
-    const StreamString& GetTest6DataJson();
-    const StreamString& GetTest7DataJson();
+    //TODO: Add operator[](int i)?
+    const StreamString& GetTest3DataAsJson();
+    const StreamString& GetTest3MetadataAsJson();
+    const StreamString& GetTest4DataAsJson();
+    const StreamString& GetTest4MetadataAsJson();
+    const StreamString& GetTest5DataAsJson();
+    const StreamString& GetTest5MetadataAsJson();
+    const StreamString& GetTest6DataAsJson();
+    const StreamString& GetTest6MetadataAsJson();
+    const StreamString& GetTest7DataAsJson();
+    const StreamString& GetTest7MetadataAsJson();
 private:
 };
 
