@@ -95,9 +95,12 @@ namespace MARTe {
  * quotation-mark = %x22      ; "
  * unescaped = %x20-21 / %x23-5B / %x5D-10FFFF
  *
- * Remark: The generated JSON does not contain any insignificant whitespace
+ * Remark 1: The generated JSON does not contain any insignificant whitespace
  * (space, horizontal tab, line feed, carriage return) before or after any
  * of the six structural characters.
+ *
+ * Remark 2: The numbers produced by this generator never contain an exponent
+ * part, but they always contain a fractional part when the number is a float.
  *
  * References:
  * + JSON's website [JSON|http://www.json.org]
@@ -109,8 +112,28 @@ namespace MARTe {
 class DLL_API JsonGeneratorFromStructuredData {
 
 public:
+
+    /**
+     * @brief Default constructor
+     */
     JsonGeneratorFromStructuredData();
+
+    /**
+     * @brief Destructor
+     */
     virtual ~JsonGeneratorFromStructuredData();
+
+    /**
+     * @brief Generates a StreamString object from a StructuredData object,
+     * which contains a string representation of the contents of the
+     * StructuredData object in JSON syntax.
+     * @param[in] input The StructuredData object which contains the data to
+     * be transformed into a JSON string.
+     * @param[out] output The StreamString object which contains the data
+     * inside input as a JSON string.
+     * @return true if the generation succeed, false otherwise.
+     *
+     */
     bool Execute (MARTe::StructuredDataI& input, MARTe::StreamString& output);
 };
 

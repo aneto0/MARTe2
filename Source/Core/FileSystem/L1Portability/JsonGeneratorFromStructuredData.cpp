@@ -68,15 +68,9 @@ void generateJsonScalarValue(const StreamString& value,
 namespace MARTe {
 
 JsonGeneratorFromStructuredData::JsonGeneratorFromStructuredData() {
-//Auto-generated constructor stub for JsonGeneratorFromStructuredData
-
-//TODO Verify if manual additions are needed here
 }
 
 JsonGeneratorFromStructuredData::~JsonGeneratorFromStructuredData() {
-//Auto-generated destructor stub for JsonGeneratorFromStructuredData
-
-//TODO Verify if manual additions are needed here
 }
 
 bool JsonGeneratorFromStructuredData::Execute(StructuredDataI& input,

@@ -33,6 +33,8 @@
 /*---------------------------------------------------------------------------*/
 #include "Object.h"
 
+#include <StreamString.h>
+
 using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -464,8 +466,6 @@ public:
 
 };
 
-#include <StreamString.h>
-
 class TestObjectsDataSet {
 public:
     IntrospectableIntegerObject& GetTest3Object();
@@ -476,10 +476,8 @@ public:
 private:
 };
 
-//TODO: Rename to class JsonReferenceBuilder?
 class JsonStreamsDataSet {
 public:
-    //TODO: Add operator[](int i)?
     const StreamString& GetTest3DataAsJson();
     const StreamString& GetTest3MetadataAsJson();
     const StreamString& GetTest4DataAsJson();
