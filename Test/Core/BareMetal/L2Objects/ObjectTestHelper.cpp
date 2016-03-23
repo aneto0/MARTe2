@@ -179,9 +179,9 @@ const StreamString& JsonStreamsDataSet::GetTest3DataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
-        static const char8 TEMPLATE[] =
+        const char8 TEMPLATE[] =
                 "{\"Test3\":{\"Class\":\"IntrospectableIntegerObject\",\"member\":30}}";
-        static const AnyType PARAMS[] = { voidAnyType };
+        const AnyType PARAMS[] = { voidAnyType };
         str.PrintFormatted(TEMPLATE, &PARAMS[0]);
         str.Seek(0);
         init = true;
@@ -193,9 +193,11 @@ const StreamString& JsonStreamsDataSet::GetTest3MetadataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
-        static const char8 TEMPLATE[] =
+        const char8 TEMPLATE[] =
                 "{\"IntrospectableIntegerObject\":{\"member\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u}}}";
-        static const AnyType PARAMS[] = { static_cast<uint8>(sizeof(int32)), static_cast<uint64>(offsetof(IntrospectableIntegerObject, member)), voidAnyType };
+        uint32 p1 = INTROSPECTION_MEMBER_SIZE(IntrospectableIntegerObject, member);
+        uint32 p2 = INTROSPECTION_MEMBER_INDEX(IntrospectableIntegerObject, member);
+        const AnyType PARAMS[] = { p1, p2, voidAnyType };
         str.PrintFormatted(TEMPLATE, &PARAMS[0]);
         str.Seek(0);
         init = true;
@@ -207,9 +209,9 @@ const StreamString& JsonStreamsDataSet::GetTest4DataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
-        static const char8 TEMPLATE[] =
+        const char8 TEMPLATE[] =
                 "{\"Test4\":{\"Class\":\"IntrospectableObjectWith2Members\",\"member1\":10,\"member2\":20}}";
-        static const AnyType PARAMS[] = { voidAnyType };
+        const AnyType PARAMS[] = { voidAnyType };
         str.PrintFormatted(TEMPLATE, &PARAMS[0]);
         str.Seek(0);
         init = true;
@@ -221,9 +223,13 @@ const StreamString& JsonStreamsDataSet::GetTest4MetadataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
-        static const char8 TEMPLATE[] =
+        const char8 TEMPLATE[] =
                 "{\"IntrospectableObjectWith2Members\":{\"member1\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member2\":{\"type\":\"uint64\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u}}}";
-        static const AnyType PARAMS[] = { static_cast<uint8>(sizeof(int32)), static_cast<uint64>(offsetof(IntrospectableObjectWith2Members, member1)), static_cast<uint8>(sizeof(uint64)), static_cast<uint64>(offsetof(IntrospectableObjectWith2Members, member2)), voidAnyType };
+        uint32 p1 = INTROSPECTION_MEMBER_SIZE(IntrospectableObjectWith2Members, member1);
+        uint32 p2 = INTROSPECTION_MEMBER_INDEX(IntrospectableObjectWith2Members, member1);
+        uint32 p3 = INTROSPECTION_MEMBER_SIZE(IntrospectableObjectWith2Members, member2);
+        uint32 p4 = INTROSPECTION_MEMBER_INDEX(IntrospectableObjectWith2Members, member2);
+        const AnyType PARAMS[] = { p1, p2, p3, p4, voidAnyType };
         str.PrintFormatted(TEMPLATE, &PARAMS[0]);
         str.Seek(0);
         init = true;
@@ -235,9 +241,9 @@ const StreamString& JsonStreamsDataSet::GetTest5DataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
-        static const char8 TEMPLATE[] =
+        const char8 TEMPLATE[] =
                 "{\"Test5\":{\"Class\":\"IntrospectableObjectWith3Members\",\"member1\":10,\"member2\":20,\"member3\":{\"Class\":\"IntrospectableIntegerObject\",\"member\":30}}}";
-        static const AnyType PARAMS[] = { voidAnyType };
+        const AnyType PARAMS[] = { voidAnyType };
         str.PrintFormatted(TEMPLATE, &PARAMS[0]);
         str.Seek(0);
         init = true;
@@ -249,9 +255,17 @@ const StreamString& JsonStreamsDataSet::GetTest5MetadataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
-        static const char8 TEMPLATE[] =
+        const char8 TEMPLATE[] =
                 "{\"IntrospectableObjectWith3Members\":{\"member1\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member2\":{\"type\":\"uint64\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member3\":{\"type\":\"IntrospectableIntegerObject\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u,\"IntrospectableIntegerObject\":{\"member\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u}}}}}";
-        static const AnyType PARAMS[] = { static_cast<uint8>(sizeof(int32)), static_cast<uint64>(offsetof(IntrospectableObjectWith3Members, member1)), static_cast<uint8>(sizeof(uint64)), static_cast<uint64>(offsetof(IntrospectableObjectWith3Members, member2)), static_cast<uint8>(sizeof(IntrospectableIntegerObject)), static_cast<uint64>(offsetof(IntrospectableObjectWith3Members, member3)), static_cast<uint8>(sizeof(int32)), static_cast<uint64>(offsetof(IntrospectableIntegerObject, member)), voidAnyType };
+        uint32 p1 = INTROSPECTION_MEMBER_SIZE(IntrospectableObjectWith3Members, member1);
+        uint32 p2 = INTROSPECTION_MEMBER_INDEX(IntrospectableObjectWith3Members, member1);
+        uint32 p3 = INTROSPECTION_MEMBER_SIZE(IntrospectableObjectWith3Members, member2);
+        uint32 p4 = INTROSPECTION_MEMBER_INDEX(IntrospectableObjectWith3Members, member2);
+        uint32 p5 = INTROSPECTION_MEMBER_SIZE(IntrospectableObjectWith3Members, member3);
+        uint32 p6 = INTROSPECTION_MEMBER_INDEX(IntrospectableObjectWith3Members, member3);
+        uint32 p7 = INTROSPECTION_MEMBER_SIZE(IntrospectableIntegerObject, member);
+        uint32 p8 = INTROSPECTION_MEMBER_INDEX(IntrospectableIntegerObject, member);
+        const AnyType PARAMS[] = { p1, p2, p3, p4, p5, p6, p7, p8, voidAnyType };
         str.PrintFormatted(TEMPLATE, &PARAMS[0]);
         str.Seek(0);
         init = true;
@@ -263,9 +277,9 @@ const StreamString& JsonStreamsDataSet::GetTest6DataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
-        static const char8 TEMPLATE[] =
+        const char8 TEMPLATE[] =
                 "{\"Test6\":{\"Class\":\"IntrospectableObjectWithVector\",\"member1\":10,\"member2\":20,\"member3\":[0,-10,20,-30,40],\"member4\":-4.000500E+3,\"member5\":5.00050000000000E+3}}";
-        static const AnyType PARAMS[] = { voidAnyType };
+        const AnyType PARAMS[] = { voidAnyType };
         str.PrintFormatted(TEMPLATE, &PARAMS[0]);
         str.Seek(0);
         init = true;
@@ -277,9 +291,19 @@ const StreamString& JsonStreamsDataSet::GetTest6MetadataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
-        static const char8 TEMPLATE[] =
+        const char8 TEMPLATE[] =
                 "{\"IntrospectableObjectWithVector\":{\"member1\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member2\":{\"type\":\"uint64\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member3\":{\"type\":\"int32\",\"modifiers\":\"[5]\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member4\":{\"type\":\"float32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member5\":{\"type\":\"float64\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u}}}";
-        static const AnyType PARAMS[] = { static_cast<uint8>(sizeof(int32)), static_cast<uint64>(offsetof(IntrospectableObjectWithVector, member1)), static_cast<uint8>(sizeof(uint64)), static_cast<uint64>(offsetof(IntrospectableObjectWithVector, member2)), static_cast<uint64>(sizeof(int32)*5), static_cast<uint64>(offsetof(IntrospectableObjectWithVector, member3)), static_cast<uint8>(sizeof(float32)), static_cast<uint64>(offsetof(IntrospectableObjectWithVector, member4)), static_cast<uint8>(sizeof(float64)), static_cast<uint64>(offsetof(IntrospectableObjectWithVector, member5)), voidAnyType };
+        uint32 p1 = INTROSPECTION_MEMBER_SIZE(IntrospectableObjectWithVector, member1);
+        uint32 p2 = INTROSPECTION_MEMBER_INDEX(IntrospectableObjectWithVector, member1);
+        uint32 p3 = INTROSPECTION_MEMBER_SIZE(IntrospectableObjectWithVector, member2);
+        uint32 p4 = INTROSPECTION_MEMBER_INDEX(IntrospectableObjectWithVector, member2);
+        uint32 p5 = INTROSPECTION_MEMBER_SIZE(IntrospectableObjectWithVector, member3);
+        uint32 p6 = INTROSPECTION_MEMBER_INDEX(IntrospectableObjectWithVector, member3);
+        uint32 p7 = INTROSPECTION_MEMBER_SIZE(IntrospectableObjectWithVector, member4);
+        uint32 p8 = INTROSPECTION_MEMBER_INDEX(IntrospectableObjectWithVector, member4);
+        uint32 p9 = INTROSPECTION_MEMBER_SIZE(IntrospectableObjectWithVector, member5);
+        uint32 p10 = INTROSPECTION_MEMBER_INDEX(IntrospectableObjectWithVector, member5);
+        const AnyType PARAMS[] = { p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, voidAnyType };
         str.PrintFormatted(TEMPLATE, &PARAMS[0]);
         str.Seek(0);
         init = true;
@@ -291,9 +315,9 @@ const StreamString& JsonStreamsDataSet::GetTest7DataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
-        static const char8 TEMPLATE[] =
+        const char8 TEMPLATE[] =
                 "{\"Test7\":{\"Class\":\"IntrospectableObjectWithMatrix\",\"member1\":10,\"member2\":20,\"member3\":[[1,2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15]]}}";
-        static const AnyType PARAMS[] = { voidAnyType };
+        const AnyType PARAMS[] = { voidAnyType };
         str.PrintFormatted(TEMPLATE, &PARAMS[0]);
         str.Seek(0);
         init = true;
@@ -305,9 +329,15 @@ const StreamString& JsonStreamsDataSet::GetTest7MetadataAsJson() {
     static bool init = false;
     static StreamString str;
     if (!init) {
-        static const char8 TEMPLATE[] =
+        const char8 TEMPLATE[] =
                 "{\"IntrospectableObjectWithMatrix\":{\"member1\":{\"type\":\"int32\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member2\":{\"type\":\"uint64\",\"modifiers\":\"\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u},\"member3\":{\"type\":\"int32\",\"modifiers\":\"[5][3]\",\"attributes\":\"\",\"size\":%u,\"pointer\":%u}}}";
-        static const AnyType PARAMS[] = { static_cast<uint8>(sizeof(int32)), static_cast<uint64>(offsetof(IntrospectableObjectWithMatrix, member1)), static_cast<uint8>(sizeof(uint64)), static_cast<uint64>(offsetof(IntrospectableObjectWithMatrix, member2)), static_cast<uint64>(sizeof(int32)*5*3), static_cast<uint64>(offsetof(IntrospectableObjectWithMatrix, member3)), voidAnyType };
+        uint32 p1 = INTROSPECTION_MEMBER_SIZE(IntrospectableObjectWithMatrix, member1);
+        uint32 p2 = INTROSPECTION_MEMBER_INDEX(IntrospectableObjectWithMatrix, member1);
+        uint32 p3 = INTROSPECTION_MEMBER_SIZE(IntrospectableObjectWithMatrix, member2);
+        uint32 p4 = INTROSPECTION_MEMBER_INDEX(IntrospectableObjectWithMatrix, member2);
+        uint32 p5 = INTROSPECTION_MEMBER_SIZE(IntrospectableObjectWithMatrix, member3);
+        uint32 p6 = INTROSPECTION_MEMBER_INDEX(IntrospectableObjectWithMatrix, member3);
+        const AnyType PARAMS[] = { p1, p2, p3, p4, p5, p6, voidAnyType };
         str.PrintFormatted(TEMPLATE, &PARAMS[0]);
         str.Seek(0);
         init = true;
