@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAMSchedulerI.h"
+#include "ConfigurationDatabase.h"
+#include "RealTimeGenericDataDef.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -77,24 +79,84 @@ bool GAMSchedulerI::PrepareNextState(RealTimeStateInfo info) {
     uint32 numberOfStates = Size();
     StreamString newStateName = info.nextState;
     ReferenceT<GAMSchedulerRecord> record;
-    bool found = false;
-    for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
+    bool ret = false;
+    for (uint32 i = 0u; (i < numberOfStates) && (!ret); i++) {
         record = Get(i);
         if (record.IsValid()) {
-            found = (newStateName == record->GetName());
+            ret = (newStateName == record->GetName());
         }
     }
     // set the accelerator
-    if (found) {
+    if (ret) {
         uint32 nextBuffer = (info.activeBuffer + 1u) % 2u;
         statesInExecution[nextBuffer] = record;
+
+        // generate the output writer
+        if (writer[nextBuffer] != NULL) {
+            delete[] writer[nextBuffer];
+        }
+        uint32 numberOfThreads = record->GetNumberOfThreads();
+
+        // creates a writer for each thread
+        writer[nextBuffer] = new ReferenceT<BasicRealTimeDataSourceOutputWriter> [numberOfThreads];
+        for (uint32 i = 0u; i < numberOfThreads; i++) {
+            ReferenceT<RealTimeThread> thread = Get(i);
+            if (thread.IsValid()) {
+                uint32 numberOfGAMs = thread->GetNumberOfGAMs();
+
+                // adds for each gam the relative and absolute time definitions to the
+                // specific writer.
+                for (uint32 j = 0u; j < numberOfGAMs; j++) {
+
+                    ReferenceT<GAMI> gam = Get(j);
+                    if (gam.IsValid()) {
+                        ConfigurationDatabase defCDBAbs;
+                        defCDBAbs.Write("Class", "RealTimeGenericDataDef");
+                        defCDBAbs.Write("Type", "uint64");
+                        defCDBAbs.Write("Default", "0");
+                        defCDBAbs.Write("IsFinal", "true");
+                        StreamString path = "GAM_Times.";
+                        path += gam->GetName();
+                        path += ".AbsoluteUsecTime";
+                        defCDBAbs.Write("Path", path.Buffer());
+                        defCDBAbs.MoveToRoot();
+
+                        RealTimeGenericDataDef defAbs;
+                        ret = defAbs.Initialise(defCDBAbs);
+                        if (ret) {
+                            ret = (writer[nextBuffer])[i]->AddVariable(ReferenceT<RealTimeGenericDataDef>(&defAbs));
+                        }
+                        if (ret) {
+                            ConfigurationDatabase defCDBRel;
+                            defCDBRel.Write("Class", "RealTimeGenericDataDef");
+                            defCDBRel.Write("Type", "uint64");
+                            defCDBRel.Write("Default", "0");
+                            defCDBRel.Write("IsFinal", "true");
+                            StreamString path = "GAM_Times.";
+                            path += gam->GetName();
+                            path += ".RelativeUsecTime";
+                            defCDBRel.Write("Path", path.Buffer());
+                            defCDBRel.MoveToRoot();
+
+                            RealTimeGenericDataDef defRel;
+                            ret = defRel.Initialise(defCDBRel);
+                            if (ret) {
+                                ret = (writer[nextBuffer])[i]->AddVariable(ReferenceT<RealTimeGenericDataDef>(&defRel));
+                            }
+                            if (ret) {
+                                ret = (writer[nextBuffer])[i]->Finalise();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-    return found;
+    return ret;
 }
 
-
-void GAMSchedulerI::ChangeState(const uint32 activeBuffer){
-    uint32 nextBuffer=(activeBuffer+1u)%2u;
+void GAMSchedulerI::ChangeState(const uint32 activeBuffer) {
+    uint32 nextBuffer = (activeBuffer + 1u) % 2u;
 
     StopExecution();
     StartExecution(nextBuffer);

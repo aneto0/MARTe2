@@ -82,19 +82,20 @@ bool BasicRealTimeDataSourceInputReader::Read(const uint8 activeDataSourceBuffer
     return ret;
 }
 
-bool BasicRealTimeDataSourceInputReader::Poll(const uint8 activeDataSourceBuffer,
-                                              float64 sampleTime,
-                                              uint32 numberOfReads,
-                                              TimeoutType timeout) {
-    bool ret = true;
-
+bool BasicRealTimeDataSourceInputReader::SynchroniseOnSpinLockSem(const uint8 activeDataSourceBuffer,
+                                                                  float64 sampleTime,
+                                                                  uint32 numberOfReads,
+                                                                  TimeoutType timeout,
+                                                                  float64 sleepTime) {
     uint64 tic = HighResolutionTimer::Counter();
+
+    bool ret = true;
     // blocks the function on the spin-lock
     for (uint32 i = 0u; (i < numberOfReads) && (ret); i++) {
         if (synchronized) {
             ret = (pollingSem != NULL);
             if(ret) {
-                ret=(pollingSem->FastResetWait(timeout)==ErrorManagement::NoError);
+                ret=(pollingSem->FastResetWait(timeout, sleepTime)==ErrorManagement::NoError);
             }
         }
 
@@ -103,11 +104,11 @@ bool BasicRealTimeDataSourceInputReader::Poll(const uint8 activeDataSourceBuffer
         }
     }
 
-    if (ret && synchronized) {
+    if (ret) {
         // wait the sample time
         // possible error for counter overflow
-        while ((HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic) * 1000) < sampleTime) {
-            Sleep::MSec(1);
+        while (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic) < sampleTime) {
+            Sleep::Sec(sleepTime);
         }
     }
 

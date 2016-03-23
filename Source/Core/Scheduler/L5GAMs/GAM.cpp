@@ -44,7 +44,7 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 GAM::GAM() :
-        ReferenceContainer() {
+        GAMI() {
     localData = NULL_PTR(StructuredDataI*);
     numberOfSupportedStates = 0u;
     supportedStates = NULL_PTR(StreamString *);
@@ -59,7 +59,6 @@ GAM::GAM() :
         outputWriter->SetName("outputWriter");
     }
 }
-
 
 bool GAM::ConfigureDataSourceLinks() {
     // it is virtual... can be overriden if the data are static
@@ -95,22 +94,19 @@ bool GAM::ConfigureDataSourceLinks() {
     return ret;
 }
 
-
-Reference GAM::GetInputReader() const{
+Reference GAM::GetInputReader() const {
     return inputReader;
 }
 
-Reference GAM::GetOutputWriter() const{
+Reference GAM::GetOutputWriter() const {
     return outputWriter;
 }
 
 bool GAM::IsSync() {
     bool ret = false;
-    bool isReaderValid = inputReader.IsValid();
-    bool isWriterValid = outputWriter.IsValid();
 
-    if (isReaderValid && isWriterValid) {
-        ret = (inputReader->IsSync() || outputWriter->IsSync());
+    if (inputReader.IsValid()) {
+        ret = inputReader->IsSync();
     }
     return ret;
 }

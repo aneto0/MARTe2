@@ -118,17 +118,18 @@ bool RealTimeDataSourceInputReader::Finalise() {
     return ret;
 }
 
-bool RealTimeDataSourceInputReader::OSPoll(const uint8 activeDataSourceBuffer,
-                                           float64 sampleTime,
-                                           uint32 numberOfReads,
-                                           TimeoutType timeout) {
+bool RealTimeDataSourceInputReader::SynchroniseOnEventSem(const uint8 activeDataSourceBuffer,
+                                                          float64 sampleTime,
+                                                          uint32 numberOfReads,
+                                                          TimeoutType timeout,
+                                                          float64 sleepTime) {
     bool ret = true;
 
     uint64 tic = HighResolutionTimer::Counter();
     // blocks the function on the spin-lock
     for (uint32 i = 0u; (i < numberOfReads) && (ret); i++) {
         if (synchronized) {
-            if(eventSem != NULL) {
+            if (eventSem != NULL) {
                 ret=(eventSem->ResetWait(timeout)==ErrorManagement::NoError);
             }
         }
@@ -141,8 +142,8 @@ bool RealTimeDataSourceInputReader::OSPoll(const uint8 activeDataSourceBuffer,
     if (ret && synchronized) {
         // wait the sample time
         // possible error on counter overflow
-        while ((HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic) * 1000) < sampleTime) {
-            Sleep::MSec(1);
+        while (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic) < sampleTime) {
+            Sleep::Sec(sleepTime);
         }
     }
 

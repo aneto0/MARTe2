@@ -352,7 +352,7 @@ bool RealTimeDataSourceBroker::Finalise() {
             BasicRealTimeDataSourceDef * dsDef = NULL_PTR(BasicRealTimeDataSourceDef *);
             ret = dataSources.Peek(i, dsDef);
             if (ret) {
-                FastPollingEventSem *tempSem = dsDef->GetPollingSemaphore();
+                FastPollingEventSem *tempSem = dsDef->GetSpinLockSemaphore();
                 if (tempSem != NULL) {
                     if(!synchronized) {
                         pollingSem=tempSem;

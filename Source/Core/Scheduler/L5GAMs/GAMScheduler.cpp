@@ -1,7 +1,7 @@
 /**
- * @file SingleThreadGAMScheduler.cpp
- * @brief Source file for class SingleThreadGAMScheduler
- * @date 22/mar/2016
+ * @file GAMScheduler.cpp
+ * @brief Source file for class GAMScheduler
+ * @date 23/mar/2016
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class SingleThreadGAMScheduler (public, protected, and private). Be aware that some 
+ * the class GAMScheduler (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,9 +29,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "SingleThreadGAMScheduler.h"
+#include "GAMScheduler.h"
 #include "Threads.h"
-
+#include "RealTimeDataSourceOutputWriter.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,6 +40,7 @@ namespace MARTe {
 struct RTThreadParam {
     ReferenceT<RealTimeThread> thread;
     uint32 activeBuffer;
+    ReferenceT<RealTimeDataSourceOutputWriter> writer;
     volatile int32 *spinLock;
 };
 
@@ -48,9 +49,21 @@ static void RTThreadRoutine(RTThreadParam &par) {
     ReferenceT<GAMI> *gamArray = par.thread->GetGAMs();
     uint32 numberOfGAMs = par.thread->GetNumberOfGAMs();
     while (*(par.spinLock) == 0) {
+        uint64 absTic = HighResolutionTimer::Counter();
         for (uint32 i = 0u; i < numberOfGAMs; i++) {
             if (gamArray[i].IsValid()) {
                 gamArray[i]->Execute(par.activeBuffer);
+                // save the time before
+                uint64 relTic = HighResolutionTimer::Counter();
+                // execute the gam
+                gamArray[i]->Execute(par.activeBuffer);
+                // writes the time stamps
+                // 2*i because for each gam we have absolute and relative variable inserted
+                uint64 * absTime = reinterpret_cast<uint64 *>((par.writer)->GetData(2 * i));
+                *absTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), absTic) * 1e6);
+                uint64 * relTime = reinterpret_cast<uint64 *>((par.writer)->GetData((2 * i) + 1u));
+                *relTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), relTic) * 1e6);
+                (par.writer)->Write(par.activeBuffer);
             }
             else {
                 //TODO Invalid gam?
@@ -65,47 +78,65 @@ static void RTThreadRoutine(RTThreadParam &par) {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-SingleThreadGAMScheduler::SingleThreadGAMScheduler() :
+GAMScheduler::GAMScheduler() :
         GAMSchedulerI() {
-    currentActiveBuffer = 0u;
     spinLock = 0;
+    tid = NULL_PTR(ThreadIdentifier *);
+    numberOfThreads = 0u;
 }
 
-void SingleThreadGAMScheduler::StartExecution(const uint32 activeBuffer) {
+GAMScheduler::~GAMScheduler() {
+    if (tid != NULL) {
+        delete [] tid;
+        tid=NULL_PTR(ThreadIdentifier *);
+    }
+}
+
+void GAMScheduler::StartExecution(const uint32 activeBuffer) {
 
     if (statesInExecution[activeBuffer]->GetNumberOfThreads() > 1u) {
         //TODO Warning
     }
-    currentActiveBuffer = activeBuffer;
 
-    ReferenceT<RealTimeThread> thread = statesInExecution[activeBuffer]->Peek(0);
-    if (thread.IsValid()) {
-        RTThreadParam param;
-        param.activeBuffer = activeBuffer;
-        param.thread = thread;
-        param.spinLock = &spinLock;
-        uint32 stackSize = thread->GetStackSize();
-        tid = Threads::BeginThread(reinterpret_cast<ThreadFunctionType>(RTThreadRoutine), &param, stackSize, thread->GetName(), ExceptionHandler::NotHandled,
-                                   thread->GetCPU());
-    }
-    else {
-        //TODO Invalid thread?
+    numberOfThreads = statesInExecution[activeBuffer]->GetNumberOfThreads();
+    tid = new ThreadIdentifier[numberOfThreads];
+    for (uint32 i = 0u; i < numberOfThreads; i++) {
+        ReferenceT<RealTimeThread> thread = statesInExecution[activeBuffer]->Peek(i);
+        if (thread.IsValid()) {
+            RTThreadParam param;
+            param.activeBuffer = activeBuffer;
+            param.thread = thread;
+            param.spinLock = &spinLock;
+            param.writer = (writer[activeBuffer])[i];
+            if (param.writer.IsValid()) {
+
+                uint32 stackSize = thread->GetStackSize();
+                tid[i] = Threads::BeginThread(reinterpret_cast<ThreadFunctionType>(RTThreadRoutine), &param, stackSize, thread->GetName(),
+                                              ExceptionHandler::NotHandled, thread->GetCPU());
+            }
+            else {
+                //TODO Invalid writer
+            }
+        }
+        else {
+            //TODO Invalid thread?
+        }
     }
 }
 
-void SingleThreadGAMScheduler::StopExecution() {
+void GAMScheduler::StopExecution() {
 
-    ReferenceT<RealTimeThread> thread = statesInExecution[currentActiveBuffer]->Peek(0);
-    if (thread.IsValid()) {
-        Atomic::Increment(&spinLock);
-    }
+    Atomic::Increment(&spinLock);
 
-    // safe exit
-    while (Threads::IsAlive(tid)) {
-        Sleep::MSec(1);
+    for (uint32 i = 0u; i < numberOfThreads; i++) {
+        // safe exit
+        while (Threads::IsAlive(tid[i])) {
+            Sleep::MSec(1);
+        }
     }
 
     Atomic::Decrement(&spinLock);
+
 }
 
 }
