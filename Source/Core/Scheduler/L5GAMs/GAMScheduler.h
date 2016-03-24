@@ -55,8 +55,6 @@ public:
      */
     virtual ~GAMScheduler();
 
-protected:
-
     /**
      * @brief Starts the multi-thread execution for the current state.
      */

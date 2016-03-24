@@ -156,6 +156,13 @@ public:
     bool PrepareNextState(const char8 * const nextStateName);
 
     /**
+     * @brief Stops the application execution.
+     * @details Calls the Scheduler::StopExecution() to terminate the threads running in the current active state.
+     * @return true if the scheduler container is valid, false otherwise.
+     */
+    bool StopExecution();
+
+    /**
      * @brief Retrieves the current active buffer index.
      * @return the value of the current buffer index (0 or 1).
      */

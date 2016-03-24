@@ -62,8 +62,6 @@ public:
      */
     virtual bool Initialise(StructuredDataI &data);
 
-protected:
-
     /**
      * @see SchedulerI::StartExecution(*)
      * @details Executes the GAMs for the specified number of cycles.
@@ -75,6 +73,7 @@ protected:
      * @details Empty.
      */
     virtual void StopExecution();
+
 
 private:
 

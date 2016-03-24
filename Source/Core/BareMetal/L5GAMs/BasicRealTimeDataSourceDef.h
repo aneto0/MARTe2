@@ -228,6 +228,15 @@ public:
      * @return false in case of errors, true otherwise.
      */
     virtual bool ToStructuredData(StructuredDataI & data);
+
+protected:
+
+    /**
+     * The spin-lock semaphore
+     */
+    FastPollingEventSem * spinLockSem;
+
+
 private:
 
     /**
@@ -267,10 +276,6 @@ private:
      */
     MemoryArea *memory;
 
-    /**
-     * The spin-lock semaphore
-     */
-    FastPollingEventSem * spinLockSem;
 };
 
 }

@@ -51,6 +51,8 @@ public:
      */
     BasicRealTimeDataSourceInputReaderTest();
 
+    ~BasicRealTimeDataSourceInputReaderTest();
+
     /**
      * @brief tests the constructor.
      */
@@ -91,12 +93,20 @@ public:
      */
     bool TestRead_MultiDim_Matrix();
 
+    bool TestSynchroniseOnSpinLockSemNotSync();
+
+    bool TestSynchroniseOnSpinLockSemOneRead();
+
 private:
 
     /**
      * A configuration database used in tests.
      */
-    ConfigurationDatabase cdb;
+    ConfigurationDatabase pidCDB;
+
+    ConfigurationDatabase plantCDB;
+
+    ConfigurationDatabase appCDB;
 
 };
 

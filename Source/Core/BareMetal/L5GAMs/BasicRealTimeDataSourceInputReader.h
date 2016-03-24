@@ -75,7 +75,8 @@ public:
      * @param[in] timeout is the maximum time to wait on the spin-lock semaphore.
      * @param[in] sleepTime denotes how much time the cpu will be released during the spin-lock waiting loop and the
      * eventual wait on \a sampleTime.
-     * @return false if the read operation fails or the spin-lock wait fails because of the timeout, true otherwise.
+     * @return false if the read operation fails or the spin-lock wait fails because of the timeout or if this
+     * reader is synchronised but not by spin-lock event semaphore, true otherwise.
      */
     bool SynchroniseOnSpinLockSem(const uint8 activeDataSourceBuffer,
                                   float64 sampleTime = 0.0,

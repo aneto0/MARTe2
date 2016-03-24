@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BasicRealTimeDataSourceInputReader.h"
+#include "stdio.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -87,28 +89,42 @@ bool BasicRealTimeDataSourceInputReader::SynchroniseOnSpinLockSem(const uint8 ac
                                                                   uint32 numberOfReads,
                                                                   TimeoutType timeout,
                                                                   float64 sleepTime) {
+    printf("\nreading\n");
+
     uint64 tic = HighResolutionTimer::Counter();
 
     bool ret = true;
-    // blocks the function on the spin-lock
-    for (uint32 i = 0u; (i < numberOfReads) && (ret); i++) {
-        if (synchronized) {
-            ret = (spinLockSem != NULL);
-            if(ret) {
-                ret=(spinLockSem->FastResetWait(timeout, sleepTime)==ErrorManagement::NoError);
+    if (synchronized) {
+        printf("\nsynk ok\n");
+        ret = (spinLockSem != NULL);
+        // blocks the function on the spin-lock
+        for (uint32 i = 0u; (i < numberOfReads) && (ret); i++) {
+            printf("\nbefore waiting ok\n");
+            ret=(spinLockSem->FastResetWait(timeout, sleepTime)==ErrorManagement::NoError);
+
+            if (ret) {
+                printf("\nbefore read ok\n");
+                ret = Read(activeDataSourceBuffer);
             }
         }
-
-        if (ret) {
-            ret = Read(activeDataSourceBuffer);
-        }
+    }
+    // performs a single read
+    else {
+        printf("\n??\n");
+        ret = Read(activeDataSourceBuffer);
     }
 
     if (ret) {
-        // wait the sample time
-        // possible error for counter overflow
-        while (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic) < sampleTime) {
-            Sleep::Sec(sleepTime);
+        // sleep for the remained time
+        if (sleepTime < 0.0) {
+            Sleep::Sec(sampleTime-HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic));
+        }
+        else {
+            // wait the sample time
+            // possible error for counter overflow
+            while (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic) < sampleTime) {
+                Sleep::Sec(sleepTime);
+            }
         }
     }
 

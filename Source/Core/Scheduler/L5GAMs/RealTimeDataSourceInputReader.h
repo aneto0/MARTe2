@@ -83,7 +83,8 @@ public:
      * @param[in] timeout is the maximum time to wait on the event semaphore.
      * @param[in] sleepTime denotes how much time the cpu will be released during the the
      * eventual wait on \a sampleTime.
-     * @return false if the read operation fails or the event semaphore wait fails because of the timeout, true otherwise.
+     * @return false if the read operation fails or the event semaphore wait fails because of the timeout, or if
+     * this reader is synchronised but not by operating system event semaphore, true otherwise.
      */
     bool SynchroniseOnEventSem(const uint8 activeDataSourceBuffer,
                                float64 sampleTime = 0.0,

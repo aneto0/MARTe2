@@ -122,27 +122,35 @@ bool RealTimeDataSourceInputReader::SynchroniseOnEventSem(const uint8 activeData
                                                           uint32 numberOfReads,
                                                           TimeoutType timeout,
                                                           float64 sleepTime) {
-    bool ret = true;
-
     uint64 tic = HighResolutionTimer::Counter();
-    // blocks the function on the spin-lock
-    for (uint32 i = 0u; (i < numberOfReads) && (ret); i++) {
-        if (synchronized) {
-            if (eventSem != NULL) {
-                ret=(eventSem->ResetWait(timeout)==ErrorManagement::NoError);
-            }
+    bool ret = true;
+    if (synchronized) {
+        ret = (eventSem != NULL);
+        // blocks the function on the spin-lock
+        for (uint32 i = 0u; (i < numberOfReads) && (ret); i++) {
+            ret=(eventSem->ResetWait(timeout)==ErrorManagement::NoError);
         }
 
         if (ret) {
             ret = Read(activeDataSourceBuffer);
         }
+
+    }
+    // performs a single read
+    else {
+        ret = Read(activeDataSourceBuffer);
     }
 
     if (ret && synchronized) {
         // wait the sample time
         // possible error on counter overflow
-        while (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic) < sampleTime) {
-            Sleep::Sec(sleepTime);
+        if (sleepTime < 0.0) {
+            Sleep::Sec(sampleTime - HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic));
+        }
+        else {
+            while (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic) < sampleTime) {
+                Sleep::Sec(sleepTime);
+            }
         }
     }
 

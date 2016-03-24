@@ -72,6 +72,17 @@ public:
      */
     void ChangeState(const uint32 activeBuffer);
 
+
+    /**
+     * @brief Starts the execution of the next state threads.
+     */
+    virtual void StartExecution(const uint32 activeBuffer)=0;
+
+    /**
+     * @brief Stops the execution of the current state threads.
+     */
+    virtual void StopExecution()=0;
+
 protected:
 
     /**
@@ -84,16 +95,6 @@ protected:
      * Double buffer array of writers (one for each thread).
      */
     ReferenceT<BasicRealTimeDataSourceOutputWriter>* writer[2];
-
-    /**
-     * @brief Starts the execution of the next state threads.
-     */
-    virtual void StartExecution(const uint32 activeBuffer)=0;
-
-    /**
-     * @brief Stops the execution of the current state threads.
-     */
-    virtual void StopExecution()=0;
 
 };
 

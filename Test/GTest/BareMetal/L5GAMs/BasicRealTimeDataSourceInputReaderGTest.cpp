@@ -78,3 +78,13 @@ TEST(BasicRealTimeDataSourceInputReaderGTest,TestRead_MultiDim_Matrix) {
     BasicRealTimeDataSourceInputReaderTest rtdsirTest;
     ASSERT_TRUE(rtdsirTest.TestRead_MultiDim_Matrix());
 }
+
+TEST(BasicRealTimeDataSourceInputReaderGTest,TestSynchroniseOnSpinLockSemNotSync) {
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestSynchroniseOnSpinLockSemNotSync());
+}
+
+TEST(BasicRealTimeDataSourceInputReaderGTest,TestSynchroniseOnSpinLockSemOneRead) {
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestSynchroniseOnSpinLockSemOneRead());
+}

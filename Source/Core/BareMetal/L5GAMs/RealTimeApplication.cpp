@@ -209,7 +209,7 @@ bool RealTimeApplication::ValidateDataSource() {
 }
 
 bool RealTimeApplication::AllocateDataSource() {
-    ReferenceT<RealTimeDataSourceContainer> data= dataSourceContainer;
+    ReferenceT<RealTimeDataSourceContainer> data = dataSourceContainer;
 
     bool ret = data.IsValid();
     if (ret) {
@@ -287,7 +287,7 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
         ret = scheduler.IsValid();
         // save the accelerator to the next group of threads to be executed
         if (ret) {
-            ret=scheduler->PrepareNextState(status);
+            ret = scheduler->PrepareNextState(status);
         }
         if (ret) {
             scheduler->ChangeState(activeBuffer);
@@ -295,6 +295,16 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
     }
     activeBuffer = (activeBuffer + 1u) % 2u;
 
+    return ret;
+}
+
+bool RealTimeApplication::StopExecution() {
+    ReferenceT<GAMSchedulerI> scheduler = schedulerContainer;
+    bool ret = scheduler.IsValid();
+    // save the accelerator to the next group of threads to be executed
+    if (ret) {
+        scheduler->StopExecution();
+    }
     return ret;
 }
 
