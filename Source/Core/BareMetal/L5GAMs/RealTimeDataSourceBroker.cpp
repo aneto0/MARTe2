@@ -46,7 +46,7 @@ RealTimeDataSourceBroker::RealTimeDataSourceBroker() :
         ReferenceContainer() {
     application = NULL_PTR(RealTimeApplication *);
     synchronized = false;
-    pollingSem = NULL_PTR(FastPollingEventSem *);
+    spinLockSem = NULL_PTR(FastPollingEventSem *);
     finalised = false;
 }
 
@@ -354,8 +354,9 @@ bool RealTimeDataSourceBroker::Finalise() {
             if (ret) {
                 FastPollingEventSem *tempSem = dsDef->GetSpinLockSemaphore();
                 if (tempSem != NULL) {
-                    if(!synchronized) {
-                        pollingSem=tempSem;
+                    ret=(!synchronized);
+                    if(ret) {
+                        spinLockSem=tempSem;
                         synchronized=true;
                     }
                     else {

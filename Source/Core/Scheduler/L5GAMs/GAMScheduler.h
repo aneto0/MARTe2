@@ -37,26 +37,51 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+/**
+ * @brief The GAM scheduler
+ */
 class GAMScheduler: public GAMSchedulerI {
 
 public:
 
+    /**
+     * @brief Constructor
+     */
     GAMScheduler();
 
+    /**
+     * @brief Destructor
+     */
     virtual ~GAMScheduler();
 
 protected:
 
+    /**
+     * @brief Starts the multi-thread execution for the current state.
+     */
     virtual void StartExecution(const uint32 activeBuffer);
 
+    /**
+     * @brief Stops the execution.
+     */
     virtual void StopExecution();
 
 private:
 
+    /**
+     * The array of identifiers of the thread in execution.
+     */
     ThreadIdentifier *tid;
 
+    /**
+     * The number of thread in execution.
+     */
     uint32 numberOfThreads;
 
+    /**
+     * Synchronization spin-lock
+     */
     volatile int32 spinLock;
 };
 

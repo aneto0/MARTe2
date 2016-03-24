@@ -46,7 +46,7 @@
 namespace MARTe {
 
 /**
- * @brief This class is a semaphore based on spin locks.
+ * @brief This class is a mutex semaphore based on spin locks.
  *
  * @details This semaphore is not recursive i.e is the same thread locks two times sequentially causes a deadlock.
  * Moreover a thread can unlock the semaphore locked by another thread.
@@ -61,9 +61,12 @@ public:
      */
     FastPollingMutexSem();
 
+
+    /**
+     * @brief Constructor by external spin-lock.
+     * @param[in] externalFlag is the spin-lock which will drive the semaphore.
+     */
     FastPollingMutexSem(volatile int32 &externalFlag);
-
-
 
     /**
      * @brief Initializes the semaphore as locked or unlocked.
@@ -105,10 +108,13 @@ public:
 private:
 
     /**
-     * Atomic variable
+     * The internal spin-lock
      */
     volatile int32 internalFlag;
 
+    /**
+     * Pointer to the used spin-lock
+     */
     volatile int32 *flag;
 
 };

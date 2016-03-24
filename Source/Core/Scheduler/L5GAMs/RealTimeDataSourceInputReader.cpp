@@ -99,11 +99,10 @@ bool RealTimeDataSourceInputReader::Finalise() {
                 if (ret) {
                     EventSem *tempSem = dsDef->GetEventSemaphore();
                     if (tempSem != NULL) {
-                        if(!synchronized) {
-                            if(eventSem==NULL) {
-                                eventSem=tempSem;
-                                synchronized=true;
-                            }
+                        ret=(!synchronized);
+                        if(ret) {
+                            eventSem=tempSem;
+                            synchronized=true;
                         }
                         else {
                             //TODO Already sync  !!

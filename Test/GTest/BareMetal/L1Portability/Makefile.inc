@@ -28,6 +28,7 @@ OBJSX=  AtomicGTest.x \
 		EndianityGTest.x \
 		ErrorManagementGTest.x \
 		FastMathGTest.x \
+		FastPollingEventSemGTest.x \
 		FastPollingMutexSemGTest.x \
 		FormatDescriptorGTest.x \
 		GlobalObjectsDatabaseGTest.x \

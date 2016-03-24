@@ -61,7 +61,7 @@ public:
     bool Read(const uint8 activeDataSourceBuffer) const;
 
     /**
-     * @brief Performs an advanced synchronising read operation.
+     * @brief Performs an advanced synchronising read operation based on operating system event semaphore.
      * @details If this reader is synchronised (namely is linked to a data source which provides a spin-lock semaphore)
      * this function waits that the spin-lock event semaphore is posted by the data source before performing the read
      * operation. It is possible make a sub-sampling (with loss of data) passing the number of read operations (\a numberOfReads)

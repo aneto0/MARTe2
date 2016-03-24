@@ -126,16 +126,19 @@ void GAMScheduler::StartExecution(const uint32 activeBuffer) {
 
 void GAMScheduler::StopExecution() {
 
-    Atomic::Increment(&spinLock);
+    if (tid != NULL) {
+        Atomic::Increment(&spinLock);
 
-    for (uint32 i = 0u; i < numberOfThreads; i++) {
-        // safe exit
-        while (Threads::IsAlive(tid[i])) {
-            Sleep::MSec(1);
+        for (uint32 i = 0u; i < numberOfThreads; i++) {
+            // safe exit
+            while (Threads::IsAlive(tid[i])) {
+                Sleep::MSec(1);
+            }
         }
+        delete[] tid;
+        tid=NULL_PTR(ThreadIdentifier *);
+        Atomic::Decrement(&spinLock);
     }
-
-    Atomic::Decrement(&spinLock);
 
 }
 

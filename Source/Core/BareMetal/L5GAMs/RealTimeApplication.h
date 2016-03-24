@@ -140,8 +140,8 @@ public:
 
     /**
      * @brief Validates the data source links.
-     * @details Checks for each thread if there is no more than one synchronisation point (i.e a GAM with a sinchronised RealTimeDataSourceInputReader).
-     * return true if for each RealTimeThread there is an unique synchronisation point in the cycle.
+     * @details Checks for each thread if there is no more than one synchronization point (i.e a GAM with a synchronized RealTimeDataSourceInputReader).
+     * return true if for each RealTimeThread there is an unique synchronization point in the cycle.
      */
     bool ValidateDataSourceLinks();
 

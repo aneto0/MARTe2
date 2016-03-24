@@ -83,7 +83,9 @@ public:
     bool ConfigureArchitecture(RealTimeApplication & rtApp);
 
 
-
+    /**
+     * @see RealTimeApplication::ValidateDataSourceLinks()
+     */
     bool ValidateDataSourceLinks();
 
     /**

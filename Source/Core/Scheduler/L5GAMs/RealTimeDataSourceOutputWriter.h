@@ -73,6 +73,9 @@ public:
 
 protected:
 
+    /**
+     * A pointer to the event semaphore delivered by the data source.
+     */
     EventSem * eventSem;
 };
 

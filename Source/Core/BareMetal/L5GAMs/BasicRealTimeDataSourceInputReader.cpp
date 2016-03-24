@@ -93,9 +93,9 @@ bool BasicRealTimeDataSourceInputReader::SynchroniseOnSpinLockSem(const uint8 ac
     // blocks the function on the spin-lock
     for (uint32 i = 0u; (i < numberOfReads) && (ret); i++) {
         if (synchronized) {
-            ret = (pollingSem != NULL);
+            ret = (spinLockSem != NULL);
             if(ret) {
-                ret=(pollingSem->FastResetWait(timeout, sleepTime)==ErrorManagement::NoError);
+                ret=(spinLockSem->FastResetWait(timeout, sleepTime)==ErrorManagement::NoError);
             }
         }
 

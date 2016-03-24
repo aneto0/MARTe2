@@ -54,8 +54,8 @@ RealTimeThread::RealTimeThread() :
     numberOfFunctions = 0u;
     GAMs = reinterpret_cast<ReferenceT<GAMI>*>(NULL);
     numberOfGAMs = 0u;
-    cpuMask = 0u;
-    stackSize = 0u;
+    cpuMask = ProcessorType::GetDefaultCPUs();
+    stackSize = THREADS_DEFAULT_STACKSIZE;
 }
 
 /*lint -e{1551} no exception should be thrown*/

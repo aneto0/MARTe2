@@ -79,6 +79,9 @@ public:
     bool ConfigureArchitecture(RealTimeApplication &rtApp,
                                RealTimeState &rtState);
 
+    /**
+     * @see RealTimeApplication::ValidateDataSourceLinks()
+     */
     bool ValidateDataSourceLinks();
 
     /**
@@ -87,6 +90,12 @@ public:
      *
      *   Functions = { function1_path, function2_path, ... }
      *
+     * The following fields can be defined
+     *
+     *   StackSize = (the memory stack size in byte to be associated to the this thread)
+     *   CPUs = cpu mask where this thread is preferable to be executed (i.e 0x1 means the first cpu, 0x2 means the second, 0x3 first and second, ecc).
+     *
+     * The default value for StackSize is THREADS_DEFAULT_STACKSIZE, while for CPUs is ProcessorType::GetDefaultCPUs().\n
      * Each element must be the path of the function to be executed by this thread with respect to the position
      * of the definition of this thread itself in the configuration data. See ObjectRegistryDatabase::Find(*)
      * for more documentation on how to specify the correct path.
@@ -114,8 +123,16 @@ public:
      */
     uint32 GetNumberOfGAMs() const;
 
+    /**
+     * @brief Retrieves the stack size associated to this thread.
+     * @return the stack size associated to this thread.
+     */
     uint32 GetStackSize() const;
 
+    /**
+     * @brief Retrieves the CPUs mask associated to this thread.
+     * @return the CPUs mask associated to this thread.
+     */
     ProcessorType GetCPU() const;
 
     /**
@@ -158,9 +175,14 @@ private:
      */
     uint32 numberOfGAMs;
 
-
+    /**
+     * The thread CPUs mask.
+     */
     uint32 cpuMask;
 
+    /**
+     * The thread stack size.
+     */
     uint32 stackSize;
 };
 

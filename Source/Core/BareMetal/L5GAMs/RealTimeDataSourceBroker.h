@@ -95,12 +95,15 @@ public:
 
     /**
      * @brief Finalises the object.
-     * @details This function has to be called after all the variables are added.
+     * @details This function has to be called after all the variables are added. No more than one data source
+     * has to be synchronizing for this link.
      * @return false in case of errors, true otherwise.
      */
     virtual bool Finalise();
 
-
+    /**
+     * @brief Returns true if this link is synchronized by an spin-lock or event semaphore.
+     */
     bool IsSync() const;
 
 protected:
@@ -155,11 +158,15 @@ protected:
      */
     StaticList<uint32> chunkIndex;
 
-
+    /**
+     * Denotes if the link is synchronized.
+     */
     bool synchronized;
 
-
-    FastPollingEventSem *pollingSem;
+    /**
+     * The pointer to the spin-lock sempahore
+     */
+    FastPollingEventSem *spinLockSem;
 
 
     /**

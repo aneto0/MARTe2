@@ -61,8 +61,30 @@ public:
      */
     bool Read(const uint8 activeDataSourceBuffer) const;
 
+    /**
+     * @see RealTimeDataSourceBroker::Finalise()
+     * @details Gets the pointer to the event semaphore to be shared with the data source.
+     * @return false in case of errors or if the link is to more than one synchronized data source.
+     */
     virtual bool Finalise();
 
+    /**
+     * @brief Performs an advanced synchronising read operation based on operating system event semaphore.
+     * @details If this reader is synchronised (namely is linked to a data source which provides an event semaphore)
+     * this function waits that the event semaphore is posted by the data source before performing the read
+     * operation. It is possible make a sub-sampling (with loss of data) passing the number of read operations (\a numberOfReads)
+     * that this function has to achieve (if it is synchronized the function will wait on the semaphore before each read operation)
+     * or impose that the function cannot terminate before a specified amount of time (\a sampleTime).
+     * @param[in] activeDataSourceBuffer  is the buffer index to be used. This parameter must change
+     * from 0 to 1 on each state switch.
+     * @param[in] sampleTime is the time such that this function cannot exit before.
+     * @param[in] numberOfReads is the number of consecutive reads that this function performs. If this reader is
+     * synchronised by operating system event semaphore, each read operation will be sinchronising.
+     * @param[in] timeout is the maximum time to wait on the event semaphore.
+     * @param[in] sleepTime denotes how much time the cpu will be released during the the
+     * eventual wait on \a sampleTime.
+     * @return false if the read operation fails or the event semaphore wait fails because of the timeout, true otherwise.
+     */
     bool SynchroniseOnEventSem(const uint8 activeDataSourceBuffer,
                                float64 sampleTime = 0.0,
                                uint32 numberOfReads = 1u,
@@ -71,6 +93,9 @@ public:
 
 protected:
 
+    /**
+     * A pointer to the event semaphore delivered by the data source.
+     */
     EventSem * eventSem;
 
 };

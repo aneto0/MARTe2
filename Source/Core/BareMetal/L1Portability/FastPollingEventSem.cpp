@@ -50,8 +50,6 @@ FastPollingEventSem::FastPollingEventSem(volatile int32 &externalFlag) {
     flag = &externalFlag;
 }
 
-FastPollingEventSem::~FastPollingEventSem() {
-}
 
 void FastPollingEventSem::Create(const bool wait) {
     if (wait) {
