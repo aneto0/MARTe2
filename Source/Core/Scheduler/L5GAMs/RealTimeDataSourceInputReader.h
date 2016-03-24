@@ -63,10 +63,11 @@ public:
 
     virtual bool Finalise();
 
-    bool OSPoll(const uint8 activeDataSourceBuffer,
-                float64 sampleTime = 0.0,
-                uint32 numberOfReads = 1u,
-                TimeoutType timeout = TTInfiniteWait);
+    bool SynchroniseOnEventSem(const uint8 activeDataSourceBuffer,
+                               float64 sampleTime = 0.0,
+                               uint32 numberOfReads = 1u,
+                               TimeoutType timeout = TTInfiniteWait,
+                               float64 sleepTime = 0.0);
 
 protected:
 

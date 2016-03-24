@@ -40,3 +40,61 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+FastPollingMutexSem::FastPollingMutexSem() {
+    internalFlag = 0;
+    flag = &internalFlag;
+}
+
+FastPollingMutexSem::FastPollingMutexSem(volatile int32 &externalFlag) {
+    flag = &externalFlag;
+}
+
+void FastPollingMutexSem::Create(const bool locked) {
+    if (locked) {
+        *flag = 1;
+    }
+    else {
+        *flag = 0;
+    }
+}
+
+bool FastPollingMutexSem::Locked() const {
+    return *flag == 1;
+}
+
+ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msecTimeout,
+                                                         float64 sleepTime ) {
+    uint64 ticksStop = msecTimeout.HighResolutionTimerTicks();
+    ticksStop += HighResolutionTimer::Counter();
+    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+    bool noSleep = IsEqual(sleepTime, 0.0);
+
+    while (!Atomic::TestAndSet(flag)) {
+        if (msecTimeout != TTInfiniteWait) {
+            uint64 ticks = HighResolutionTimer::Counter();
+            if (ticks > ticksStop) {
+                err = ErrorManagement::Timeout;
+                REPORT_ERROR(ErrorManagement::Timeout, "FastPollingMutexSem: Timeout expired");
+                break;
+            }
+        }
+
+        if (!noSleep) {
+            Sleep::Sec(sleepTime);
+        }
+    }
+    return err;
+}
+
+bool FastPollingMutexSem::FastTryLock() {
+    return (Atomic::TestAndSet(flag));
+}
+
+void FastPollingMutexSem::FastUnLock() {
+    *flag = 0;
+}
+
+}

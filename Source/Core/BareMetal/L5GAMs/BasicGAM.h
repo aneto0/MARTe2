@@ -93,6 +93,10 @@ public:
     virtual Reference GetOutputWriter() const;
 
 
+    /**
+     * @brief Return true if the GAM is synchronized, false otherwise.
+     * @return true if the GAM is synchronized, false otherwise.
+     */
     virtual bool IsSync() ;
 
 

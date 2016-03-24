@@ -1,7 +1,7 @@
 /**
- * @file SingleThreadGAMScheduler.h
- * @brief Header file for class SingleThreadGAMScheduler
- * @date 22/03/2016
+ * @file GAMScheduler.h
+ * @brief Header file for class GAMScheduler
+ * @date 23/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class SingleThreadGAMScheduler
+ * @details This header file contains the declaration of the class GAMScheduler
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SINGLETHREADGAMSCHEDULER_H_
-#define SINGLETHREADGAMSCHEDULER_H_
+#ifndef GAMSCHEDULER_H_
+#define GAMSCHEDULER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,30 +31,31 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
 #include "GAMSchedulerI.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-class SingleThreadGAMScheduler: public GAMSchedulerI {
+class GAMScheduler: public GAMSchedulerI {
 
 public:
 
-    SingleThreadGAMScheduler();
+    GAMScheduler();
+
+    virtual ~GAMScheduler();
+
+protected:
 
     virtual void StartExecution(const uint32 activeBuffer);
 
     virtual void StopExecution();
 
-
 private:
 
-    ThreadIdentifier tid;
+    ThreadIdentifier *tid;
 
-    uint32 currentActiveBuffer;
+    uint32 numberOfThreads;
 
     volatile int32 spinLock;
 };
@@ -65,5 +66,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SINGLETHREADGAMSCHEDULER_H_ */
+#endif /* SOURCE_CORE_SCHEDULER_L5GAMS_GAMSCHEDULER_H_ */
 

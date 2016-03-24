@@ -44,6 +44,9 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 GAMSchedulerI::GAMSchedulerI() {
+    writer[0] = NULL_PTR(ReferenceT<BasicRealTimeDataSourceOutputWriter>*);
+    writer[1] = NULL_PTR(ReferenceT<BasicRealTimeDataSourceOutputWriter>*);
+
 }
 
 bool GAMSchedulerI::InsertRecord(const char8 * stateName,

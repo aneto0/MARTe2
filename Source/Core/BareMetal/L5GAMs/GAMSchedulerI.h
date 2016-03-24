@@ -35,6 +35,7 @@
 #include "ReferenceT.h"
 #include "RealTimeThread.h"
 #include "GAMSchedulerRecord.h"
+#include "BasicRealTimeDataSourceOutputWriter.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -44,23 +45,56 @@ namespace MARTe {
 class GAMSchedulerI: public ReferenceContainer {
 
 public:
+
+    /**
+     * @brief Constructor
+     */
     GAMSchedulerI();
 
+    /**
+     * @brief Inserts a thread to be executed in a specific state.
+     */
+    bool InsertRecord(const char8 * stateName,
+                      ReferenceT<RealTimeThread> thread);
 
-    bool InsertRecord(const char8 * stateName, ReferenceT<RealTimeThread> thread);
-
+    /**
+     * @brief Stores the GAMSchedulerRecord for the new state in the next buffer.
+     * @param[in] info contains information about the current and the next state
+     * and the active buffer index.
+     * @return true if the next state name is found, false otherwise.
+     */
     bool PrepareNextState(RealTimeStateInfo info);
 
+    /**
+     * @brief Stops the execution of the current state and starts the execution
+     * of the new state threads.
+     * @param[in] activeBuffer is the current state buffer active index .
+     */
     void ChangeState(const uint32 activeBuffer);
-
-    virtual void StartExecution(const uint32 activeBuffer)=0;
-
-    virtual void StopExecution()=0;
 
 protected:
 
-    // double buffer
+    /**
+     * Double buffer accelerator to the threads to be executed for the current
+     * and next state.
+     */
     ReferenceT<GAMSchedulerRecord> statesInExecution[2];
+
+    /**
+     * Double buffer array of writers (one for each thread).
+     */
+    ReferenceT<BasicRealTimeDataSourceOutputWriter>* writer[2];
+
+    /**
+     * @brief Starts the execution of the next state threads.
+     */
+    virtual void StartExecution(const uint32 activeBuffer)=0;
+
+    /**
+     * @brief Stops the execution of the current state threads.
+     */
+    virtual void StopExecution()=0;
+
 };
 
 }

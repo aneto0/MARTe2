@@ -46,21 +46,30 @@ public:
 
     inline FastPollingEventSem();
 
-    inline void Create();
+    inline FastPollingEventSem(volatile int32 &externalFlag);
 
-    inline ErrorManagement::ErrorType FastWait(const TimeoutType &msecTimeout = TTInfiniteWait);
+    inline void Create(const bool wait = true);
+
+    inline ~FastPollingEventSem();
+
+    inline ErrorManagement::ErrorType FastWait(const TimeoutType &msecTimeout = TTInfiniteWait,
+                                               float64 sleepTime = 1e-3);
 
     inline void FastPost();
 
     inline void Reset();
 
-    inline ErrorManagement::ErrorType FastResetWait(const TimeoutType &msecTimeout = TTInfiniteWait);
+    inline ErrorManagement::ErrorType FastResetWait(const TimeoutType &msecTimeout = TTInfiniteWait,
+                                                    float64 sleepTime = 1e-3);
 
 private:
+
+    volatile int32 internalFlag;
+
     /**
      * Atomic variable
      */
-    volatile int32 flag;
+    volatile int32 *flag;
 
 };
 
@@ -70,46 +79,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-FastPollingEventSem::FastPollingEventSem() {
-    flag = 0;
-}
-
-void FastPollingEventSem::Create() {
-    flag = 0;
-}
-
-ErrorManagement::ErrorType FastPollingEventSem::FastWait(const TimeoutType &msecTimeout) {
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
-    uint64 ticksStop = msecTimeout.HighResolutionTimerTicks();
-    ticksStop += HighResolutionTimer::Counter();
-
-    while (flag == 0u) {
-        if (msecTimeout != TTInfiniteWait) {
-            if (HighResolutionTimer::Counter() > ticksStop) {
-                err = ErrorManagement::Timeout;
-                break;
-            }
-        }
-        Sleep::MSec(1);
-    }
-
-    return err;
-}
-
-void FastPollingEventSem::FastPost() {
-    (void) (Atomic::TestAndSet(&flag));
-}
-
-void FastPollingEventSem::Reset() {
-    flag = 0;
-}
-
-ErrorManagement::ErrorType FastPollingEventSem::FastResetWait(const TimeoutType &msecTimeout) {
-    Reset();
-    return FastWait(msecTimeout);
-}
-
-}
 #endif /* FASTPOLLINGEVENTSEM_H_ */
 

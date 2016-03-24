@@ -84,7 +84,9 @@ public:
 private:
 
 
-
+    /**
+     * The heap name
+     */
     StreamString heapName;
 
     /**

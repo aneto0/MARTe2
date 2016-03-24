@@ -38,22 +38,50 @@
 
 namespace MARTe{
 
+/**
+ * @brief Basic Bare Metal scheduler.
+ */
 class BasicGAMScheduler: public GAMSchedulerI {
 
 public:
     CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief Constructor
+     * @detail Initialises the number of cycles to -1 (infinite loop)
+     */
     BasicGAMScheduler();
 
+    /**
+     * @brief Initialises the scheduler from StructuredDataI.
+     * @details The following field can be specified:
+     *
+     *   NumberOfCycles = (int64 variable)
+     *
+     * The default number of cycles is -1, namely infinite cycles.
+     */
+    virtual bool Initialise(StructuredDataI &data);
+
+protected:
+
+    /**
+     * @see SchedulerI::StartExecution(*)
+     * @details Executes the GAMs for the specified number of cycles.
+     */
     virtual void StartExecution(const uint32 activeBuffer);
 
+    /**
+     * @see SchedulerI::StopExecution()
+     * @details Empty.
+     */
     virtual void StopExecution();
-
-    virtual bool Initialise(StructuredDataI &data);
 
 private:
 
-    uint32 numberOfCycles;
+    /**
+     * The number of execution cycles.
+     */
+    int64 numberOfCycles;
 
 };
 

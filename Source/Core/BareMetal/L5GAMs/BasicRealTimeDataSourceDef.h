@@ -169,21 +169,32 @@ public:
      */
     bool Allocate(MemoryArea &dsMemory);
 
-    // routine to be executed at the begin of a write operation
+    /**
+     * @brief The routine to be executed at the begin of a write operation.
+     */
     virtual void WriteStart();
 
-    // routine to be executed at the begin of a read operation
+    /**
+     * @brief The routine to be executed at the begin of a read operation.
+     */
     virtual void ReadStart();
 
-    // routine to be executed at the end of a write operation
+    /**
+     * @brief The routine to be executed at the end of a write operation
+     */
     virtual void WriteEnd();
 
-    // routine to be executed at the end of a read operation
+    /**
+     * @brief The routine to be executed at the end of a read operation
+     */
     virtual void ReadEnd();
 
-    // EventSem * GetEventSemaphore();
-
-    FastPollingEventSem * GetPollingSemaphore() const;
+    /**
+     * @brief Retrieves the pointer to the eventual spin-lock semaphore
+     * @return the pointer to the spin-lock semaphore, NULL if it is this data source
+     * is not synchronized by spin-locks.
+     */
+    FastPollingEventSem * GetSpinLockSemaphore() const;
 
     /**
      * @brief Sets the number of elements for a specific dimension.
@@ -256,9 +267,10 @@ private:
      */
     MemoryArea *memory;
 
-    //EventSem * eventSem;
-
-    FastPollingEventSem * pollSem;
+    /**
+     * The spin-lock semaphore
+     */
+    FastPollingEventSem * spinLockSem;
 };
 
 }

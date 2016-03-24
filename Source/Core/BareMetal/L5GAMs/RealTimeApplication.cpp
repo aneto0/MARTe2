@@ -192,15 +192,15 @@ bool RealTimeApplication::ConfigureDataSource() {
 }
 
 bool RealTimeApplication::ValidateDataSource() {
-    ReferenceT<RealTimeDataSourceContainer> dataSource = dataSourceContainer;
+    ReferenceT<RealTimeDataSourceContainer> data = dataSourceContainer;
 
-    bool ret = dataSource.IsValid();
+    bool ret = data.IsValid();
     // there must be the container called "States"
 
     if (ret) {
         // States contains RealTimeState references
         // for each of them call Validate(*)
-        ret = dataSource->Verify();
+        ret = data->Verify();
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "+Data container not found");
@@ -209,11 +209,11 @@ bool RealTimeApplication::ValidateDataSource() {
 }
 
 bool RealTimeApplication::AllocateDataSource() {
-    ReferenceT<RealTimeDataSourceContainer> dataSource = dataSourceContainer;
+    ReferenceT<RealTimeDataSourceContainer> data= dataSourceContainer;
 
-    bool ret = dataSource.IsValid();
+    bool ret = data.IsValid();
     if (ret) {
-        ret = dataSource->Allocate();
+        ret = data->Allocate();
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "+Data container not found");
