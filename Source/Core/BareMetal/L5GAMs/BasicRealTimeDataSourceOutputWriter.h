@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief Writes data to the RealTimeDataSource.
  */
-class BasicRealTimeDataSourceOutputWriter: public RealTimeDataSourceBroker {
+class DLL_API BasicRealTimeDataSourceOutputWriter: public RealTimeDataSourceBroker {
 
 public:
     CLASS_REGISTER_DECLARATION()

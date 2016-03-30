@@ -40,7 +40,7 @@
 
 
 namespace MARTe{
-class GAMSchedulerRecord: public ReferenceContainer {
+class DLL_API GAMSchedulerRecord: public ReferenceContainer {
 
 public:
     GAMSchedulerRecord();

@@ -39,7 +39,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
+using namespace MARTe;
 bool GAMGroupTest::TestConstructor() {
     PIDGAMGroup test;
     if (test.GetSupportedStates() != NULL) {

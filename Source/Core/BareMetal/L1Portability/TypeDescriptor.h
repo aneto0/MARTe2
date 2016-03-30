@@ -61,7 +61,7 @@ namespace MARTe {
  * |  1                 | 1           | 14                    |
  *
  */
-class TypeDescriptor {
+class DLL_API TypeDescriptor {
 public:
 
     /**

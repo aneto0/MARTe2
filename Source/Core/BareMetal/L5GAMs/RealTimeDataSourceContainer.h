@@ -41,7 +41,7 @@
 
 namespace MARTe {
 
-class RealTimeDataSourceContainer: public ReferenceContainer {
+class DLL_API RealTimeDataSourceContainer: public ReferenceContainer {
 
 public:
     CLASS_REGISTER_DECLARATION()

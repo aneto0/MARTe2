@@ -48,7 +48,7 @@ namespace MARTe {
  * @details The definition express how many samples of data will be generated
  * in a specified number of cycles.
  */
-class RealTimeSampledDataDef: public RealTimeDataDefI {
+class DLL_API RealTimeSampledDataDef: public RealTimeDataDefI {
 public:
     CLASS_REGISTER_DECLARATION()
 

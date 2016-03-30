@@ -58,7 +58,7 @@ namespace MARTe {
  *    ...\n
  * }
  */
-class GAMGroup: public ReferenceContainer {
+class DLL_API GAMGroup: public ReferenceContainer {
 public:
 
     /**

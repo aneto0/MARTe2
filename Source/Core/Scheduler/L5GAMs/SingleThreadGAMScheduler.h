@@ -39,7 +39,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-class SingleThreadGAMScheduler: public GAMSchedulerI {
+class DLL_API SingleThreadGAMScheduler: public GAMSchedulerI {
 
 public:
 

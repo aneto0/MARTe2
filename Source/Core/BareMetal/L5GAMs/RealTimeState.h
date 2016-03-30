@@ -55,7 +55,7 @@ namespace MARTe{
  *      }\n
  * }\n
  */
-class RealTimeState: public ReferenceContainer {
+class DLL_API RealTimeState: public ReferenceContainer {
 
 public:
     CLASS_REGISTER_DECLARATION();

@@ -44,7 +44,7 @@ namespace MARTe {
  * @brief Contains the producer and consumer GAMs of a specific variable in
  * a specific RealTimeState state.
  */
-class RealTimeDataSourceDefRecord: public ReferenceContainer {
+class DLL_API RealTimeDataSourceDefRecord: public ReferenceContainer {
 public:
     CLASS_REGISTER_DECLARATION()
 

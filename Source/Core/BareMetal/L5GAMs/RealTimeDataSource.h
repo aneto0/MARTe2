@@ -47,7 +47,7 @@ namespace MARTe{
 /**
  * @brief The memory database shared between GAMs
  */
-class RealTimeDataSource: public ReferenceContainer {
+class DLL_API RealTimeDataSource: public ReferenceContainer {
 
 public:
     CLASS_REGISTER_DECLARATION()

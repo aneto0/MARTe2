@@ -47,7 +47,7 @@ namespace MARTe {
 /**
  * @brief The interface between GAMs and RealTimeDataSource.
  */
-class RealTimeDataSourceBroker: public ReferenceContainer {
+class DLL_API RealTimeDataSourceBroker: public ReferenceContainer {
 
 public:
 

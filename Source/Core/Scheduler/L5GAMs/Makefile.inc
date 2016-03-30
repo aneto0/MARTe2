@@ -20,47 +20,36 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.inc 3 2016-03-23 14:26:07Z aneto $
 #
 #############################################################
 
-OBJSX=	BasicGAM.x \
-		BasicGAMScheduler.x \
-		BasicRealTimeDataSourceDef.x \
-		BasicRealTimeDataSourceInputReader.x \
-		BasicRealTimeDataSourceOutputWriter.x \
-		GAMGroup.x \
-		GAMI.x \
-		GAMSchedulerI.x \
-		GAMSchedulerRecord.x \
-		RealTimeApplication.x \
-		RealTimeDataDefContainer.x \
-		RealTimeDataDefI.x \
-		RealTimeDataSource.x \
-		RealTimeDataSourceBroker.x \
-		RealTimeDataSourceContainer.x \
-		RealTimeDataSourceDefRecord.x \
-		RealTimeGenericDataDef.x \
-		RealTimeSampledDataDef.x \
-		RealTimeState.x \
-		RealTimeThread.x 
-		
-
-PACKAGE=Core/BareMetal
+PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
+OBJSX= GAM.x \
+    RealTimeDataSourceDef.x \
+    RealTimeDataSourceInputReader.x \
+    RealTimeDataSourceOutputWriter.x \
+    SingleThreadGAMScheduler.x
+
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES += -I.
-INCLUDES += -I../L0Types
-INCLUDES += -I../L1Portability
-INCLUDES += -I../L2Objects
-INCLUDES += -I../L3Streams
-INCLUDES += -I../L4Configuration
+INCLUDES+=-I../../
+INCLUDES+=-I../../BareMetal/L0Types/
+INCLUDES+=-I../../BareMetal/L1Portability/
+INCLUDES+=-I../../BareMetal/L2Objects/
+INCLUDES+=-I../../BareMetal/L3Streams/
+INCLUDES+=-I../../BareMetal/L4Configuration/
+INCLUDES+=-I../../BareMetal/L5GAMs/
+INCLUDES+=-I../../Scheduler/L1Portability/
+INCLUDES+=-I../../Scheduler/L1Portability/$(ENVIRONMENT)/
 
-all: $(OBJS)    \
-	        $(BUILD_DIR)/L5GAMsB$(LIBEXT) \
-	        $(BUILD_DIR)/L5GAMsB.def
+all: $(OBJS)   \
+    $(BUILD_DIR)/L5GAMsS$(LIBEXT) \
+    $(BUILD_DIR)/L5GAMsS.def
 	echo  $(OBJS)
 
 include depends.$(TARGET)

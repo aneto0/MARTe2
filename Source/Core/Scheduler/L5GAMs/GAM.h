@@ -31,13 +31,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
-#include "StructuredDataI.h"
-#include "StreamString.h"
-#include "ReferenceT.h"
-#include "RealTimeState.h"
 #include "RealTimeDataSourceInputReader.h"
 #include "RealTimeDataSourceOutputWriter.h"
+#include "RealTimeState.h"
+#include "ReferenceContainer.h"
+#include "ReferenceT.h"
+#include "StreamString.h"
+#include "StructuredDataI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -67,7 +67,7 @@ namespace MARTe {
  *     ...\n
  * }\n
  */
-class GAM: public GAMI {
+class DLL_API GAM: public GAMI {
 public:
 
     /**

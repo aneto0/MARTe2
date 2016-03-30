@@ -41,7 +41,7 @@
 
 namespace MARTe {
 
-class GAMSchedulerI: public ReferenceContainer {
+class DLL_API GAMSchedulerI: public ReferenceContainer {
 
 public:
     GAMSchedulerI();

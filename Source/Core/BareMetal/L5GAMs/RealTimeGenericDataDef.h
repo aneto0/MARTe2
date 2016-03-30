@@ -42,7 +42,7 @@ namespace MARTe {
 /**
  * @brief Generic mapping of a structure to the RealTimeDataSource.
  */
-class RealTimeGenericDataDef: public RealTimeDataDefI {
+class DLL_API RealTimeGenericDataDef: public RealTimeDataDefI {
 public:
     CLASS_REGISTER_DECLARATION()
 

@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief Reads data from the RealTimeDataSource.
  */
-class BasicRealTimeDataSourceInputReader: public RealTimeDataSourceBroker {
+class DLL_API BasicRealTimeDataSourceInputReader: public RealTimeDataSourceBroker {
 public:
     CLASS_REGISTER_DECLARATION()
 

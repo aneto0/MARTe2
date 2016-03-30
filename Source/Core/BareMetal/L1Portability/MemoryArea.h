@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief Memory allocated area
  */
-class MemoryArea {
+class DLL_API MemoryArea {
 
 public:
     /**

@@ -46,7 +46,7 @@ namespace MARTe {
 /**
  * @brief The definition of a real-time variable shared between GAMs.
  */
-class BasicRealTimeDataSourceDef: public ReferenceContainer {
+class DLL_API BasicRealTimeDataSourceDef: public ReferenceContainer {
 public:
     CLASS_REGISTER_DECLARATION()
 

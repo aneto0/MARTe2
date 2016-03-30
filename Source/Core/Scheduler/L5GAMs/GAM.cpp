@@ -25,15 +25,16 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "AdvancedErrorManagement.h"
 #include "GAM.h"
 #include "RealTimeDataDefContainer.h"
-#include "RealTimeDataSourceContainer.h"
 #include "RealTimeDataDefI.h"
-#include "AdvancedErrorManagement.h"
+#include "RealTimeDataSourceContainer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -43,8 +44,8 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAM::GAM() :
-        ReferenceContainer() {
+GAM::GAM():
+        GAMI() {
     localData = NULL_PTR(StructuredDataI*);
     numberOfSupportedStates = 0u;
     supportedStates = NULL_PTR(StreamString *);

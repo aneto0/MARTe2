@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-class Reference;
+class DLL_API Reference;
 /**
  * @brief Interface definition for any database that can store and retrieve AnyType values.
  * @details Classes that implement this interface are capable of storing and retrieving,

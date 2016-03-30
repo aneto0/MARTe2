@@ -63,7 +63,7 @@ namespace MARTe {
  *     ...\n
  * }\n
  */
-class BasicGAM: public GAMI {
+class DLL_API BasicGAM: public GAMI {
 public:
 
     /**

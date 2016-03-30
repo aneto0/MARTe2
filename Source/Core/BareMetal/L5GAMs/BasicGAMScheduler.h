@@ -38,7 +38,7 @@
 
 namespace MARTe{
 
-class BasicGAMScheduler: public GAMSchedulerI {
+class DLL_API BasicGAMScheduler: public GAMSchedulerI {
 
 public:
     CLASS_REGISTER_DECLARATION()

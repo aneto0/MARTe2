@@ -51,7 +51,7 @@ namespace MARTe {
  *     Functions = { GAM1_name, GAMGroup2_name, ... }
  * }\n
  */
-class RealTimeThread: public ReferenceContainer {
+class DLL_API RealTimeThread: public ReferenceContainer {
 
 public:
     CLASS_REGISTER_DECLARATION()

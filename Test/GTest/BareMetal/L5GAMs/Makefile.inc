@@ -21,13 +21,16 @@
 # permissions and limitations under the Licence. 
 #
 #############################################################
+PACKAGE=GTest/BareMetal
+ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 
-OBJSX= 	BasicGAMGTest.x \
-		BasicRealTimeDataSourceDefGTest.x \
-		BasicRealTimeDataSourceInputReaderGTest.x \
-		BasicRealTimeDataSourceOutputWriterGTest.x \
-		GAMGroupGTest.x \
+OBJSX= BasicGAMGTest.x \
+BasicRealTimeDataSourceDefGTest.x \
+BasicRealTimeDataSourceInputReaderGTest.x \
+BasicRealTimeDataSourceOutputWriterGTest.x \
+GAMGroupGTest.x \
 		RealTimeApplicationGTest.x \
 		RealTimeDataDefContainerGTest.x \
 		RealTimeDataDefIGTest.x \
@@ -39,10 +42,6 @@ OBJSX= 	BasicGAMGTest.x \
 		RealTimeDataSourceDefRecordGTest.x \
 		RealTimeStateGTest.x \
 		RealTimeThreadGTest.x
-
-PACKAGE=GTest/BareMetal
-ROOT_DIR=../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
@@ -64,6 +63,7 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 INCLUDES += -I../../../../Source/Core/BareMetal/L5GAMs
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
+INCLUDES += -I../../../../Source/Core/Scheduler/L5GAMs
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 

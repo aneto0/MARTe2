@@ -44,7 +44,7 @@ namespace MARTe {
  * @brief Collects a set of RealTimeDataDefI
  * @details It defines the IO GAM interface with respect to the RealTimeDataSource.
  */
-class RealTimeDataDefContainer: public ReferenceContainer {
+class DLL_API RealTimeDataDefContainer: public ReferenceContainer {
 public:
     CLASS_REGISTER_DECLARATION()
 

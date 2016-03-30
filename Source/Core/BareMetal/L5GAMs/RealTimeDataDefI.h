@@ -43,7 +43,7 @@ namespace MARTe {
  * @brief The interface of a real time data definition structure.
  * @details Maps a structure to the RealTimeDataSource.
  */
-class RealTimeDataDefI: public ReferenceContainer {
+class DLL_API RealTimeDataDefI: public ReferenceContainer {
 
 public:
 
