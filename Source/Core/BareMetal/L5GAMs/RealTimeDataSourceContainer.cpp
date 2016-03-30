@@ -36,6 +36,8 @@
 #include "AdvancedErrorManagement.h"
 #include "RealTimeDataSource.h"
 #include "BasicRealTimeDataSourceDef.h"
+#include "ConfigurationDatabase.h"
+#include "RealTimeGenericDataDef.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -125,10 +127,64 @@ bool RealTimeDataSourceContainer::AddDataDefinition(ReferenceT<BasicGAM> gam) {
                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The Reference in the RealTimeDataDefContainer %s is not a RealTimeDataDefI",
                                                 defContainer->GetName())
                     }
+
                 }
             }
             else {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The Reference in the GAM %s is not a RealTimeDataDefContainer", gam->GetName())
+            }
+        }
+
+        // Creates the definitions of the time stamps
+        if (ret) {
+            // Insert the GAM Times ddb
+            ReferenceT<RealTimeGenericDataDef> absTimeDef = ReferenceT<RealTimeGenericDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+            StreamString str = gam->GetName();
+            str += "AbsoluteUsecTime";
+
+            absTimeDef->SetName(str.Buffer());
+            ConfigurationDatabase absDefCDB;
+
+            absDefCDB.Write("Class", "RealTimeGenericDataDef");
+            absDefCDB.Write("Type", "uint64");
+            absDefCDB.Write("IsFinal", "true");
+            absDefCDB.Write("Default", "0");
+            str = "GAM_Times.";
+            str += gam->GetName();
+            str += ".AbsoluteUsecTime";
+            absDefCDB.Write("Path", str.Buffer());
+            absDefCDB.MoveToRoot();
+
+            ret = absTimeDef->Initialise(absDefCDB);
+
+            if (ret) {
+                ret = AddSingleDataDefinition(absTimeDef, gam, false, false);
+            }
+
+            if (ret) {
+                ReferenceT<RealTimeGenericDataDef> relTimeDef = ReferenceT<RealTimeGenericDataDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+                str = gam->GetName();
+                str += "RelativeUsecTime";
+
+                relTimeDef->SetName(str.Buffer());
+                ConfigurationDatabase relDefCDB;
+
+                relDefCDB.Write("Class", "RealTimeGenericDataDef");
+                relDefCDB.Write("Type", "uint64");
+                relDefCDB.Write("IsFinal", "true");
+                relDefCDB.Write("Default", "0");
+                str = "GAM_Times.";
+                str += gam->GetName();
+                str += ".RelativeUsecTime";
+                relDefCDB.Write("Path", str.Buffer());
+                relDefCDB.MoveToRoot();
+
+                ret = relTimeDef->Initialise(relDefCDB);
+                if (ret) {
+                    ret = AddSingleDataDefinition(relTimeDef, gam, false, false);
+                }
             }
         }
     }
@@ -230,11 +286,12 @@ bool RealTimeDataSourceContainer::AddSingleDataDefinition(ReferenceT<RealTimeDat
                     ret = path.GetToken(dsName, ".", terminator);
                     if (ret) {
                         uint32 numberOfDS = Size();
-                        bool found = false;
+                        bool found = (dsName == "GAM_Times");
                         for (uint32 i = 0u; (i < numberOfDS) && (!found) && (ret); i++) {
                             ReferenceT<RealTimeDataSource> ref = Get(i);
                             ret = ref.IsValid();
                             if (ret) {
+                                // for GAMTimes create it
                                 found = (dsName == ref->GetName());
                                 if (found) {
                                     ret = Insert(path.Buffer(), newElement);

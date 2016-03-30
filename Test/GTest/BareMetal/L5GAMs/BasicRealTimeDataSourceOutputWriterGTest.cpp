@@ -1,8 +1,8 @@
 /**
  * @file BasicRealTimeDataSourceOutputWriterGTest.cpp
  * @brief Source file for class BasicRealTimeDataSourceOutputWriterGTest
- * @date 30 Mar 2016 TODO Verify the value and format of the date
- * @author perezfr TODO Verify the name and format of the author
+ * @date 22/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,56 +21,55 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
-
-
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
-#include <limits.h>
-#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "BasicRealTimeDataSourceOutputWriterTest.h"
+#include <limits.h>
+#include "gtest/gtest.h"
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
 
+#include "BasicRealTimeDataSourceOutputWriterTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 TEST(BasicRealTimeDataSourceOutputWriterGTest,TestConstructor) {
-    BasicRealTimeDataSourceOutputWriterTest myBasicRealTimeDataSourceOutputWriterTest;
-    ASSERT_TRUE(myBasicRealTimeDataSourceOutputWriterTest.TestConstructor());
+    BasicRealTimeDataSourceOutputWriterTest rtdsorTest;
+    ASSERT_TRUE(rtdsorTest.TestConstructor());
 }
 
 TEST(BasicRealTimeDataSourceOutputWriterGTest,TestWrite_Allocation) {
-    BasicRealTimeDataSourceOutputWriterTest myBasicRealTimeDataSourceOutputWriterTest;
-    ASSERT_TRUE(myBasicRealTimeDataSourceOutputWriterTest.TestWrite_Allocation());
+    BasicRealTimeDataSourceOutputWriterTest rtdsorTest;
+    ASSERT_TRUE(rtdsorTest.TestWrite_Allocation());
 }
 
 TEST(BasicRealTimeDataSourceOutputWriterGTest,TestWrite_Static) {
-    BasicRealTimeDataSourceOutputWriterTest myBasicRealTimeDataSourceOutputWriterTest;
-    ASSERT_TRUE(myBasicRealTimeDataSourceOutputWriterTest.TestWrite_Static());
+    BasicRealTimeDataSourceOutputWriterTest rtdsorTest;
+    ASSERT_TRUE(rtdsorTest.TestWrite_Static());
 }
 
 TEST(BasicRealTimeDataSourceOutputWriterGTest,TestWrite_MoreThanOneVariable) {
-    BasicRealTimeDataSourceOutputWriterTest myBasicRealTimeDataSourceOutputWriterTest;
-    ASSERT_TRUE(myBasicRealTimeDataSourceOutputWriterTest.TestWrite_MoreThanOneVariable());
+    BasicRealTimeDataSourceOutputWriterTest rtdsorTest;
+    ASSERT_TRUE(rtdsorTest.TestWrite_MoreThanOneVariable());
 }
 
 TEST(BasicRealTimeDataSourceOutputWriterGTest,TestWrite_MultiDim_Vector) {
-    BasicRealTimeDataSourceOutputWriterTest myBasicRealTimeDataSourceOutputWriterTest;
-    ASSERT_TRUE(myBasicRealTimeDataSourceOutputWriterTest.TestWrite_MultiDim_Vector());
+    BasicRealTimeDataSourceOutputWriterTest rtdsorTest;
+    ASSERT_TRUE(rtdsorTest.TestWrite_MultiDim_Vector());
 }
 
 TEST(BasicRealTimeDataSourceOutputWriterGTest,TestWrite_MultiDim_Matrix) {
-    BasicRealTimeDataSourceOutputWriterTest myBasicRealTimeDataSourceOutputWriterTest;
-    ASSERT_TRUE(myBasicRealTimeDataSourceOutputWriterTest.TestWrite_MultiDim_Matrix());
+    BasicRealTimeDataSourceOutputWriterTest rtdsorTest;
+    ASSERT_TRUE(rtdsorTest.TestWrite_MultiDim_Matrix());
 }

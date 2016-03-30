@@ -32,6 +32,7 @@
 #include "BasicRealTimeDataSourceInputReaderTest.h"
 #include "GAMTestHelper.h"
 #include "RealTimeGenericDataDef.h"
+#include "Threads.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,57 +43,91 @@
 /*---------------------------------------------------------------------------*/
 
 BasicRealTimeDataSourceInputReaderTest::BasicRealTimeDataSourceInputReaderTest() {
-    cdb.CreateAbsolute("+Inputs");
-    cdb.Write("Class", "RealTimeDataDefContainer");
-    cdb.Write("IsInput", "true");
-    cdb.Write("IsFinal", "false");
-    cdb.CreateAbsolute("+Inputs.+Error");
-    cdb.Write("Class", "RealTimeGenericDataDef");
-    cdb.Write("Type", "TrackError");
-    cdb.Write("IsFinal", "false");
-    cdb.CreateAbsolute("+Inputs.+Error.+Par2");
-    cdb.Write("Class", "RealTimeGenericDataDef");
-    cdb.Write("Type", "uint32");
-    cdb.Write("Default", "2");
-    cdb.Write("Path", "+DDB1.PidError2");
-    cdb.Write("IsFinal", "true");
+    pidCDB.CreateAbsolute("+Inputs");
+    pidCDB.Write("Class", "RealTimeDataDefContainer");
+    pidCDB.Write("IsInput", "true");
+    pidCDB.Write("IsFinal", "false");
+    pidCDB.CreateAbsolute("+Inputs.+Error");
+    pidCDB.Write("Class", "RealTimeGenericDataDef");
+    pidCDB.Write("Type", "TrackError");
+    pidCDB.Write("IsFinal", "false");
+    pidCDB.CreateAbsolute("+Inputs.+Error.+Par2");
+    pidCDB.Write("Class", "RealTimeGenericDataDef");
+    pidCDB.Write("Type", "uint32");
+    pidCDB.Write("Default", "2");
+    pidCDB.Write("Path", "+DDB1.PidError2");
+    pidCDB.Write("IsFinal", "true");
 
-    cdb.CreateAbsolute("+Outputs");
-    cdb.Write("Class", "RealTimeDataDefContainer");
-    cdb.Write("IsOutput", "true");
-    cdb.Write("IsFinal", "false");
-    cdb.CreateAbsolute("+Outputs.+Control");
-    cdb.Write("Class", "RealTimeGenericDataDef");
-    cdb.Write("Type", "ControlIn");
-    cdb.Write("IsFinal", "false");
-    cdb.CreateAbsolute("+Outputs.+Control.+Par2");
-    cdb.Write("Class", "RealTimeGenericDataDef");
-    cdb.Write("Type", "uint32");
-    cdb.Write("Path", "+DDB2.PidControl2");
-    cdb.Write("Default", "1");
-    cdb.Write("IsFinal", "true");
+    pidCDB.CreateAbsolute("+Outputs");
+    pidCDB.Write("Class", "RealTimeDataDefContainer");
+    pidCDB.Write("IsOutput", "true");
+    pidCDB.Write("IsFinal", "false");
+    pidCDB.CreateAbsolute("+Outputs.+Control");
+    pidCDB.Write("Class", "RealTimeGenericDataDef");
+    pidCDB.Write("Type", "ControlIn");
+    pidCDB.Write("IsFinal", "false");
+    pidCDB.CreateAbsolute("+Outputs.+Control.+Par2");
+    pidCDB.Write("Class", "RealTimeGenericDataDef");
+    pidCDB.Write("Type", "uint32");
+    pidCDB.Write("Path", "+DDB2.+PidControl2");
+    pidCDB.Write("Default", "1");
+    pidCDB.Write("IsFinal", "true");
 
-    cdb.CreateAbsolute("+Outputs.+Noise");
-    cdb.Write("Class", "RealTimeGenericDataDef");
-    cdb.Write("Type", "ControlNoise");
-    cdb.Write("IsFinal", "true");
-    cdb.CreateAbsolute("+Outputs.+Noise.+noiseValue");
-    cdb.Write("Class", "RealTimeGenericDataDef");
-    cdb.Write("Type", "float32");
-    cdb.Write("Default", "2");
-    cdb.Write("Path", "+DDB2.PidNoise");
-    cdb.Write("IsFinal", "true");
-    cdb.MoveToRoot();
-}
+    pidCDB.CreateAbsolute("+Outputs.+Noise");
+    pidCDB.Write("Class", "RealTimeGenericDataDef");
+    pidCDB.Write("Type", "ControlNoise");
+    pidCDB.Write("IsFinal", "true");
+    pidCDB.CreateAbsolute("+Outputs.+Noise.+noiseValue");
+    pidCDB.Write("Class", "RealTimeGenericDataDef");
+    pidCDB.Write("Type", "float32");
+    pidCDB.Write("Default", "2");
+    pidCDB.Write("Path", "+DDB2.PidNoise");
+    pidCDB.Write("IsFinal", "true");
+    pidCDB.MoveToRoot();
 
-bool BasicRealTimeDataSourceInputReaderTest::TestConstructor() {
-    BasicRealTimeDataSourceInputReader test;
-    return true;
-}
+    plantCDB.CreateAbsolute("+Inputs");
+    plantCDB.Write("Class", "RealTimeDataDefContainer");
+    plantCDB.Write("IsInput", "true");
+    plantCDB.Write("IsFinal", "false");
+    plantCDB.CreateAbsolute("+Inputs.+Control");
+    plantCDB.Write("Class", "RealTimeGenericDataDef");
+    plantCDB.Write("Type", "TrackError");
+    plantCDB.Write("IsFinal", "true");
+    plantCDB.CreateAbsolute("+Inputs.+Control.+Par1");
+    plantCDB.Write("Class", "RealTimeGenericDataDef");
+    plantCDB.Write("Type", "uint32");
+    plantCDB.Write("Default", "2");
+    plantCDB.Write("Path", "+DDB2.PidControl1");
+    plantCDB.Write("IsFinal", "true");
+    plantCDB.CreateAbsolute("+Inputs.+Control.+Par2");
+    plantCDB.Write("Class", "RealTimeGenericDataDef");
+    plantCDB.Write("Type", "uint32");
+    plantCDB.Write("Default", "2");
+    plantCDB.Write("Path", "+DDB2.+PidControl2");
+    plantCDB.Write("IsFinal", "true");
 
-bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
+    plantCDB.CreateAbsolute("+Outputs");
+    plantCDB.Write("Class", "RealTimeDataDefContainer");
+    plantCDB.Write("IsOutput", "true");
+    plantCDB.Write("IsFinal", "true");
+    plantCDB.CreateAbsolute("+Outputs.+Error");
+    plantCDB.Write("Class", "RealTimeGenericDataDef");
+    plantCDB.Write("Type", "TrackError");
+    plantCDB.Write("IsFinal", "false");
+    plantCDB.CreateAbsolute("+Outputs.+Error.+Par1");
+    plantCDB.Write("Class", "RealTimeGenericDataDef");
+    plantCDB.Write("Type", "uint32");
+    plantCDB.Write("Default", "1");
+    plantCDB.Write("Path", "+DDB1.PidError1");
+    plantCDB.Write("IsFinal", "true");
+    plantCDB.CreateAbsolute("+Outputs.+Error.+Par2");
+    plantCDB.Write("Class", "RealTimeGenericDataDef");
+    plantCDB.Write("Type", "uint32");
+    plantCDB.Write("Default", "2");
+    plantCDB.Write("Path", "+DDB1.PidError2");
+    plantCDB.Write("IsFinal", "true");
+    plantCDB.MoveToRoot();
 
-    ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
     appCDB.Write("Class", "RealTimeDataSourceContainer");
     appCDB.CreateAbsolute("+Data.+DDB1");
@@ -107,6 +142,18 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
     appCDB.Write("Class", "BasicGAMScheduler");
     appCDB.MoveToRoot();
 
+}
+BasicRealTimeDataSourceInputReaderTest::~BasicRealTimeDataSourceInputReaderTest() {
+
+}
+
+bool BasicRealTimeDataSourceInputReaderTest::TestConstructor() {
+    BasicRealTimeDataSourceInputReader test;
+    return true;
+}
+
+bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
+
     ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     if (!rtapp->Initialise(appCDB)) {
         return false;
@@ -114,7 +161,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
 
     ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     gam->SetName("Pid1");
-    if (!gam->Initialise(cdb)) {
+    if (!gam->Initialise(pidCDB)) {
         return false;
     }
 
@@ -136,7 +183,8 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
 
     ReferenceT<RealTimeGenericDataDef> def = gam->Find("+Inputs.+Error");
 
-    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("broker");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -175,19 +223,6 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
 
 bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Allocation() {
 
-    ConfigurationDatabase appCDB;
-    appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSourceContainer");
-    appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.CreateAbsolute("+States");
-    appCDB.Write("Class", "ReferenceContainer");
-    appCDB.CreateAbsolute("+States.+state1");
-    appCDB.Write("Class", "RealTimeState");
-    appCDB.MoveToRoot();
-
     ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     if (!rtapp->Initialise(appCDB)) {
         return false;
@@ -195,7 +230,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Allocation()
 
     ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     gam->SetName("Pid1");
-    if (!gam->Initialise(cdb)) {
+    if (!gam->Initialise(pidCDB)) {
         return false;
     }
 
@@ -215,7 +250,8 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Allocation()
 
     ReferenceT<RealTimeGenericDataDef> def = gam->Find("+Inputs.+Error");
 
-    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("broker");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -254,19 +290,6 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Allocation()
 
 bool BasicRealTimeDataSourceInputReaderTest::TestRead_Static() {
 
-    ConfigurationDatabase appCDB;
-    appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSourceContainer");
-    appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.CreateAbsolute("+States");
-    appCDB.Write("Class", "ReferenceContainer");
-    appCDB.CreateAbsolute("+States.+state1");
-    appCDB.Write("Class", "RealTimeState");
-    appCDB.MoveToRoot();
-
     ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     if (!rtapp->Initialise(appCDB)) {
         return false;
@@ -274,7 +297,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Static() {
 
     ReferenceT<PIDGAM> pid = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     pid->SetName("Pid1");
-    if (!pid->Initialise(cdb)) {
+    if (!pid->Initialise(pidCDB)) {
         return false;
     }
 
@@ -283,51 +306,6 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Static() {
     if (!pid->ConfigureDataSource()) {
         return false;
     }
-
-    ConfigurationDatabase plantCDB;
-
-    plantCDB.CreateAbsolute("+Inputs");
-    plantCDB.Write("Class", "RealTimeDataDefContainer");
-    plantCDB.Write("IsInput", "true");
-    plantCDB.Write("IsFinal", "false");
-    plantCDB.CreateAbsolute("+Inputs.+Control");
-    plantCDB.Write("Class", "RealTimeGenericDataDef");
-    plantCDB.Write("Type", "TrackError");
-    plantCDB.Write("IsFinal", "true");
-    plantCDB.CreateAbsolute("+Inputs.+Control.+Par1");
-    plantCDB.Write("Class", "RealTimeGenericDataDef");
-    plantCDB.Write("Type", "uint32");
-    plantCDB.Write("Default", "2");
-    plantCDB.Write("Path", "+DDB2.PidControl1");
-    plantCDB.Write("IsFinal", "true");
-    plantCDB.CreateAbsolute("+Inputs.+Control.+Par2");
-    plantCDB.Write("Class", "RealTimeGenericDataDef");
-    plantCDB.Write("Type", "uint32");
-    plantCDB.Write("Default", "2");
-    plantCDB.Write("Path", "+DDB2.PidControl2");
-    plantCDB.Write("IsFinal", "true");
-
-    plantCDB.CreateAbsolute("+Outputs");
-    plantCDB.Write("Class", "RealTimeDataDefContainer");
-    plantCDB.Write("IsOutput", "true");
-    plantCDB.Write("IsFinal", "true");
-    plantCDB.CreateAbsolute("+Outputs.+Error");
-    plantCDB.Write("Class", "RealTimeGenericDataDef");
-    plantCDB.Write("Type", "TrackError");
-    plantCDB.Write("IsFinal", "false");
-    plantCDB.CreateAbsolute("+Outputs.+Error.+Par1");
-    plantCDB.Write("Class", "RealTimeGenericDataDef");
-    plantCDB.Write("Type", "uint32");
-    plantCDB.Write("Default", "1");
-    plantCDB.Write("Path", "+DDB1.PidError1");
-    plantCDB.Write("IsFinal", "true");
-    plantCDB.CreateAbsolute("+Outputs.+Error.+Par2");
-    plantCDB.Write("Class", "RealTimeGenericDataDef");
-    plantCDB.Write("Type", "uint32");
-    plantCDB.Write("Default", "2");
-    plantCDB.Write("Path", "+DDB1.PidError2");
-    plantCDB.Write("IsFinal", "true");
-    plantCDB.MoveToRoot();
 
     ReferenceT<PlantGAM> plant = ReferenceT<PlantGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     plant->SetName("plant");
@@ -353,7 +331,8 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Static() {
 
     ReferenceT<RealTimeGenericDataDef> def = pid->Find("+Inputs.+Error");
 
-    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -372,7 +351,8 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Static() {
 
     ReferenceT<RealTimeGenericDataDef> def2 = plant->Find("+Outputs.+Error");
 
-    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -411,18 +391,6 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Static() {
 }
 
 bool BasicRealTimeDataSourceInputReaderTest::TestRead_Allocation() {
-    ConfigurationDatabase appCDB;
-    appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSourceContainer");
-    appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.CreateAbsolute("+States");
-    appCDB.Write("Class", "ReferenceContainer");
-    appCDB.CreateAbsolute("+States.+state1");
-    appCDB.Write("Class", "RealTimeState");
-    appCDB.MoveToRoot();
 
     ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     if (!rtapp->Initialise(appCDB)) {
@@ -431,7 +399,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Allocation() {
 
     ReferenceT<PIDGAM> pid = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     pid->SetName("Pid1");
-    if (!pid->Initialise(cdb)) {
+    if (!pid->Initialise(pidCDB)) {
         return false;
     }
 
@@ -440,51 +408,6 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Allocation() {
     if (!pid->ConfigureDataSource()) {
         return false;
     }
-
-    ConfigurationDatabase plantCDB;
-
-    plantCDB.CreateAbsolute("+Inputs");
-    plantCDB.Write("Class", "RealTimeDataDefContainer");
-    plantCDB.Write("IsInput", "true");
-    plantCDB.Write("IsFinal", "false");
-    plantCDB.CreateAbsolute("+Inputs.+Control");
-    plantCDB.Write("Class", "RealTimeGenericDataDef");
-    plantCDB.Write("Type", "TrackError");
-    plantCDB.Write("IsFinal", "true");
-    plantCDB.CreateAbsolute("+Inputs.+Control.+Par1");
-    plantCDB.Write("Class", "RealTimeGenericDataDef");
-    plantCDB.Write("Type", "uint32");
-    plantCDB.Write("Default", "2");
-    plantCDB.Write("Path", "+DDB2.PidControl1");
-    plantCDB.Write("IsFinal", "true");
-    plantCDB.CreateAbsolute("+Inputs.+Control.+Par2");
-    plantCDB.Write("Class", "RealTimeGenericDataDef");
-    plantCDB.Write("Type", "uint32");
-    plantCDB.Write("Default", "2");
-    plantCDB.Write("Path", "+DDB2.PidControl2");
-    plantCDB.Write("IsFinal", "true");
-
-    plantCDB.CreateAbsolute("+Outputs");
-    plantCDB.Write("Class", "RealTimeDataDefContainer");
-    plantCDB.Write("IsOutput", "true");
-    plantCDB.Write("IsFinal", "true");
-    plantCDB.CreateAbsolute("+Outputs.+Error");
-    plantCDB.Write("Class", "RealTimeGenericDataDef");
-    plantCDB.Write("Type", "TrackError");
-    plantCDB.Write("IsFinal", "false");
-    plantCDB.CreateAbsolute("+Outputs.+Error.+Par1");
-    plantCDB.Write("Class", "RealTimeGenericDataDef");
-    plantCDB.Write("Type", "uint32");
-    plantCDB.Write("Default", "1");
-    plantCDB.Write("Path", "+DDB1.PidError1");
-    plantCDB.Write("IsFinal", "true");
-    plantCDB.CreateAbsolute("+Outputs.+Error.+Par2");
-    plantCDB.Write("Class", "RealTimeGenericDataDef");
-    plantCDB.Write("Type", "uint32");
-    plantCDB.Write("Default", "2");
-    plantCDB.Write("Path", "+DDB1.PidError2");
-    plantCDB.Write("IsFinal", "true");
-    plantCDB.MoveToRoot();
 
     ReferenceT<PlantGAM> plant = ReferenceT<PlantGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     plant->SetName("plant");
@@ -508,7 +431,8 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Allocation() {
 
     ReferenceT<RealTimeGenericDataDef> def = pid->Find("+Inputs.+Error");
 
-    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -523,7 +447,8 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Allocation() {
 
     ReferenceT<RealTimeGenericDataDef> def2 = plant->Find("+Outputs.+Error");
 
-    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -570,18 +495,6 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Allocation() {
 }
 
 bool BasicRealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
-    ConfigurationDatabase appCDB;
-    appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSourceContainer");
-    appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.CreateAbsolute("+States");
-    appCDB.Write("Class", "ReferenceContainer");
-    appCDB.CreateAbsolute("+States.+state1");
-    appCDB.Write("Class", "RealTimeState");
-    appCDB.MoveToRoot();
 
     ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     if (!rtapp->Initialise(appCDB)) {
@@ -590,7 +503,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
 
     ReferenceT<PIDGAM> pid = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     pid->SetName("Pid1");
-    if (!pid->Initialise(cdb)) {
+    if (!pid->Initialise(pidCDB)) {
         return false;
     }
 
@@ -620,7 +533,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
     plantCDB.Write("Class", "RealTimeGenericDataDef");
     plantCDB.Write("Type", "uint32");
     plantCDB.Write("Default", "2");
-    plantCDB.Write("Path", "+DDB2.PidControl2");
+    plantCDB.Write("Path", "+DDB2.+PidControl2");
     plantCDB.Write("IsFinal", "true");
     plantCDB.CreateAbsolute("+Inputs.+Noise");
     plantCDB.Write("Class", "RealTimeGenericDataDef");
@@ -678,7 +591,8 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
     ReferenceT<RealTimeGenericDataDef> def1 = pid->Find("+Outputs.+Control");
     ReferenceT<RealTimeGenericDataDef> def2 = pid->Find("+Outputs.+Noise");
 
-    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -704,7 +618,8 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
     ReferenceT<RealTimeGenericDataDef> def3 = plant->Find("+Inputs.+Control");
     ReferenceT<RealTimeGenericDataDef> def4 = plant->Find("+Inputs.+Noise");
 
-    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -754,19 +669,6 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
 }
 
 bool BasicRealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
-    ConfigurationDatabase appCDB;
-    appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSourceContainer");
-    appCDB.Write("IsFinal", "true");
-    appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.CreateAbsolute("+States");
-    appCDB.Write("Class", "ReferenceContainer");
-    appCDB.CreateAbsolute("+States.+state1");
-    appCDB.Write("Class", "RealTimeState");
-    appCDB.MoveToRoot();
 
     ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     if (!rtapp->Initialise(appCDB)) {
@@ -830,7 +732,8 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
 
     ReferenceT<RealTimeGenericDataDef> defOut = pid->Find("+Outputs.+Control");
 
-    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -850,7 +753,8 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
 
     ReferenceT<RealTimeGenericDataDef> defIn = pid->Find("+Inputs.+Error");
 
-    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -891,18 +795,6 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
 }
 
 bool BasicRealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
-    ConfigurationDatabase appCDB;
-    appCDB.CreateAbsolute("+Data");
-    appCDB.Write("Class", "RealTimeDataSourceContainer");
-    appCDB.CreateAbsolute("+Data.+DDB1");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.CreateAbsolute("+Data.+DDB2");
-    appCDB.Write("Class", "RealTimeDataSource");
-    appCDB.CreateAbsolute("+States");
-    appCDB.Write("Class", "ReferenceContainer");
-    appCDB.CreateAbsolute("+States.+state1");
-    appCDB.Write("Class", "RealTimeState");
-    appCDB.MoveToRoot();
 
     ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     if (!rtapp->Initialise(appCDB)) {
@@ -966,7 +858,8 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
 
     ReferenceT<RealTimeGenericDataDef> defOut = pid->Find("+Outputs.+Control");
 
-    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     writer->SetName("writer");
 
     writer->SetApplication(*rtapp.operator ->());
@@ -990,7 +883,8 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
 
     ReferenceT<RealTimeGenericDataDef> defIn = pid->Find("+Inputs.+Error");
 
-    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader->SetName("reader");
 
     reader->SetApplication(*rtapp.operator ->());
@@ -1044,3 +938,285 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
     return true;
 
 }
+
+bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemNotSync() {
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    ReferenceT<PIDGAM> pid = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    pid->SetName("Pid1");
+    if (!pid->Initialise(pidCDB)) {
+        return false;
+    }
+
+    pid->SetApplication(*rtapp.operator ->());
+    pid->AddState("+state1");
+    if (!pid->ConfigureDataSource()) {
+        return false;
+    }
+
+    ReferenceT<PlantGAM> plant = ReferenceT<PlantGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    plant->SetName("plant");
+    if (!plant->Initialise(plantCDB)) {
+        return false;
+    }
+
+    plant->SetApplication(*rtapp.operator ->());
+    plant->AddState("+state1");
+    if (!plant->ConfigureDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->ValidateDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->AllocateDataSource()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def = pid->Find("+Inputs.+Error");
+
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    reader->SetName("reader");
+
+    reader->SetApplication(*rtapp.operator ->());
+
+    if (!reader->AddVariable(def)) {
+        return false;
+    }
+
+    if (!reader->Finalise()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def2 = plant->Find("+Outputs.+Error");
+
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    writer->SetName("writer");
+
+    writer->SetApplication(*rtapp.operator ->());
+
+    if (!writer->AddVariable(def2)) {
+        return false;
+    }
+
+    if (!writer->Finalise()) {
+        return false;
+    }
+
+    TrackError *errorPlant = (TrackError *) writer->GetData(0);
+    errorPlant->Par1 = 10;
+    errorPlant->Par2 = 20;
+
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
+
+    if (!writer->Write(0)) {
+        return false;
+    }
+
+    if (!reader->SynchroniseOnSpinLockSem(0)) {
+        return false;
+    }
+
+    TrackError *errorPID;
+    errorPID = (TrackError *) reader->GetData(0);
+
+    printf("\nerror = %d %d\n", errorPID->Par1, errorPID->Par2);
+
+    // test if the deafult value are read
+    if (errorPID->Par1 != 10) {
+        return false;
+    }
+
+    if (errorPID->Par2 != 20) {
+        return false;
+    }
+
+    return true;
+}
+
+struct ReadParam {
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader;
+    uint32 numberOfReads;
+    float64 sampleTime;
+};
+
+struct WriteParam {
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer;
+    uint32 numberOfWrites;
+    float64 sampleTime;
+
+};
+
+volatile int32 spinlock;
+static void WriteData(WriteParam &arg) {
+    while (spinlock == 0) {
+        Sleep::MSec(1);
+    }
+    for (uint32 i = 0u; i < (arg.numberOfWrites+1); i++) {
+        arg.writer->Write(0);
+        Sleep::Sec(arg.sampleTime);
+    }
+    Threads::EndThread();
+}
+
+static void ReadData(ReadParam &arg) {
+    while (spinlock == 0) {
+        Sleep::MSec(1);
+    }
+    for (uint32 i = 0u; i < arg.numberOfReads; i++) {
+        arg.reader->SynchroniseOnSpinLockSem(0);
+        ControlIn *errorPID;
+        errorPID = (ControlIn *) arg.reader->GetData(0);
+        printf("\nnum= %d val=%d\n",i, errorPID->Par1);
+    }
+    Threads::EndThread();
+}
+
+bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemOneRead() {
+
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.CreateAbsolute("+Data.+DDB2.+PidControl2");
+    appCDB.Write("Class", "SharedDataSource");
+    appCDB.CreateAbsolute("+States");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States.+state1");
+    appCDB.Write("Class", "RealTimeState");
+    appCDB.CreateAbsolute("+Scheduler");
+    appCDB.Write("Class", "BasicGAMScheduler");
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    if (rtapp.IsValid()) {
+        printf("Valid App");
+    }
+
+    ReferenceT<PIDGAM> pid = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    pid->SetName("Pid1");
+    if (!pid->Initialise(pidCDB)) {
+        return false;
+    }
+
+    pid->SetApplication(*rtapp.operator ->());
+    pid->AddState("+state1");
+    if (!pid->ConfigureDataSource()) {
+        return false;
+    }
+
+    ReferenceT<PlantGAM> plant = ReferenceT<PlantGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    plant->SetName("plant");
+    if (!plant->Initialise(plantCDB)) {
+        return false;
+    }
+
+    plant->SetApplication(*rtapp.operator ->());
+    plant->AddState("+state1");
+    if (!plant->ConfigureDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->ValidateDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->AllocateDataSource()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def = plant->Find("+Inputs.+Control");
+
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    reader->SetName("reader");
+
+    reader->SetApplication(*rtapp.operator ->());
+
+    if (!reader->AddVariable(def)) {
+        return false;
+    }
+
+    if (!reader->Finalise()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def2 = pid->Find("+Outputs.+Control");
+
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    writer->SetName("writer");
+
+    writer->SetApplication(*rtapp.operator ->());
+
+    if (!writer->AddVariable(def2)) {
+        return false;
+    }
+
+    if (!writer->Finalise()) {
+        return false;
+    }
+
+    printf("\nreader in sync %d\n", writer->IsSync());
+
+    ControlIn *errorPlant = (ControlIn *) writer->GetData(0);
+    errorPlant->Par1 = 10;
+    errorPlant->Par2 = 20;
+
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
+
+    //volatile int32 spin = 0;
+    WriteParam paramWrite = { writer, 10, 0.5 };
+    ReadParam paramRead = { reader, 10, 0.5 };
+
+    Threads::BeginThread((ThreadFunctionType) (WriteData), &paramWrite);
+    Threads::BeginThread((ThreadFunctionType) (ReadData), &paramRead);
+
+    Atomic::Increment(&spinlock);
+    /*
+     if (!writer->Write(0)) {
+     return false;
+     }
+
+     if (!reader->SynchroniseOnSpinLockSem(0)) {
+     return false;
+     }
+
+     TrackError *errorPID;
+     errorPID = (TrackError *) reader->GetData(0);
+
+     printf("\nerror = %d %d\n", errorPID->Par1, errorPID->Par2);
+
+     // test if the deafult value are read
+     if (errorPID->Par1 != 10) {
+     return false;
+     }
+
+     if (errorPID->Par2 != 20) {
+     return false;
+     }
+     */
+    while (Threads::NumberOfThreads() > 0) {
+        Sleep::MSec(10);
+    }
+    return true;
+}
+

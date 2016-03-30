@@ -68,9 +68,6 @@ static const IntrospectionEntry* ControlInArrayEntries[] = { &ControlInArray_Par
 DECLARE_CLASS_INTROSPECTION(ControlInArray, ControlInArrayEntries);
 INTROSPECTION_REGISTER(ControlInArray, "1.0", ControlInArray_introspection)
 
-
-
-
 DECLARE_CLASS_MEMBER(TrackErrorMatrix, Pars, uint32, "[3][2]", "");
 static const IntrospectionEntry* TrackErrorMatrixEntries[] = { &TrackErrorMatrix_Pars_introspectionEntry, 0 };
 DECLARE_CLASS_INTROSPECTION(TrackErrorMatrix, TrackErrorMatrixEntries);
@@ -81,13 +78,12 @@ static const IntrospectionEntry* ControlInMatrixEntries[] = { &ControlInMatrix_P
 DECLARE_CLASS_INTROSPECTION(ControlInMatrix, ControlInMatrixEntries);
 INTROSPECTION_REGISTER(ControlInMatrix, "1.0", ControlInMatrix_introspection)
 
-
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-PIDGAM::PIDGAM(): BasicGAM(){
+PIDGAM::PIDGAM() :
+        BasicGAM() {
 
 }
 
@@ -153,10 +149,8 @@ void PIDGAM::SetUp() {
 }
 CLASS_REGISTER(PIDGAM, "1.0")
 
-
-
-
-PIDGAMGroup::PIDGAMGroup(){
+PIDGAMGroup::PIDGAMGroup() {
+    context = 1u;
 
 }
 
@@ -182,8 +176,7 @@ uint32 PIDGAMGroup::GetContext() {
 }
 CLASS_REGISTER(PIDGAMGroup, "1.0")
 
-
-PlantGAM::PlantGAM(){
+PlantGAM::PlantGAM() {
 
 }
 
@@ -197,7 +190,7 @@ void PlantGAM::Execute(uint8 activeContextBuffer) {
 
 CLASS_REGISTER(PlantGAM, "1.0")
 
-PIDGAM2::PIDGAM2(){
+PIDGAM2::PIDGAM2() {
 
 }
 
@@ -226,22 +219,17 @@ void PIDGAM2::SetUp() {
 }
 CLASS_REGISTER(PIDGAM2, "1.0")
 
-
-PIDGAM3::PIDGAM3(){
-
+PIDGAM3::PIDGAM3() {
 
 }
-
 
 void PIDGAM3::Execute(uint8 activeContextBuffer) {
 
     inputReader->Read(activeContextBuffer);
     TrackErrorMatrix *error = (TrackErrorMatrix*) inputReader->GetData(0);
 
-
     ControlInMatrix*control = (ControlInMatrix*) outputWriter->GetData(0);
     uint32 Kp = 10;
-
 
     control->Pars[0][0] = Kp * error->Pars[0][0];
     control->Pars[0][1] = Kp * error->Pars[0][1];
@@ -249,7 +237,6 @@ void PIDGAM3::Execute(uint8 activeContextBuffer) {
     control->Pars[1][1] = Kp * error->Pars[1][1];
     control->Pars[2][0] = Kp * error->Pars[2][0];
     control->Pars[2][1] = Kp * error->Pars[2][1];
-
 
     outputWriter->Write(activeContextBuffer);
 }
@@ -261,4 +248,22 @@ PIDGAM3::~PIDGAM3() {
 void PIDGAM3::SetUp() {
 
 }
+
 CLASS_REGISTER(PIDGAM3, "1.0")
+
+SharedDataSource::SharedDataSource() {
+    spinLockSem = new FastPollingEventSem;
+    spinLockSem->Create();
+    printf("\nCreated SharedDataSource\n");
+}
+
+SharedDataSource::~SharedDataSource() {
+    delete spinLockSem;
+}
+
+void SharedDataSource::WriteEnd() {
+    spinLockSem->FastPost();
+}
+
+CLASS_REGISTER(SharedDataSource, "1.0")
+

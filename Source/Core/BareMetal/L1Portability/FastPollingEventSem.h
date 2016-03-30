@@ -41,26 +41,74 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
+
+/**
+ * @brief This class is an event semaphore based on spin locks.
+ */
 class FastPollingEventSem {
 public:
 
-    inline FastPollingEventSem();
+    /**
+     * @brief Constructor.
+     * @details This constructor initialized the internal spin-lock such that the FastWait()
+     * operation will be blocking waiting for the FastPost().
+     */
+    FastPollingEventSem();
 
-    inline void Create();
+    /**
+     * @brief Constructor by external spin-lock.
+     * @param[in] the external spin-lock which will drive the semaphore.
+     */
+    FastPollingEventSem(volatile int32 &externalFlag);
 
-    inline ErrorManagement::ErrorType FastWait(const TimeoutType &msecTimeout = TTInfiniteWait);
+    /**
+     * @brief Sets the spin-lock value.
+     * @param[in] wait specifies if the next FastWait() operation will blocking (true), or if
+     * the semaphore is supposed to be posted and it is necessary a Reset() before the next reuse (false).
+     */
+    void Create(const bool wait = true);
 
-    inline void FastPost();
+    /**
+     * @brief Waits until the spin-lock will be set by a FastPost (or the timeout expire).
+     * @param[in] msecTimeout is the maximum amount of time to wait for the FastPost() before exiting.
+     * @param[in] sleepTime is the amount of time to release the CPU in each waiting loop cycle.
+     * @return ErrorManagement::NoError if the spin-lock is set by a FastPost(), ErrorManagement::Timeout if
+     * the timeout expires before the FastPost().
+     */
+    ErrorManagement::ErrorType FastWait(const TimeoutType &msecTimeout = TTInfiniteWait,
+                                        float64 sleepTime = 1e-3);
 
-    inline void Reset();
+    /**
+     * @brief Posts the semaphore.
+     */
+    void FastPost();
 
-    inline ErrorManagement::ErrorType FastResetWait(const TimeoutType &msecTimeout = TTInfiniteWait);
+    /**
+     * @brief Resets the semaphore in oreder to be reused again.
+     */
+    void Reset();
+
+    /**
+     * @brief Resets the semaphore and waits on the post.
+     * @param[in] msecTimeout is the maximum amount of time to wait for the FastPost() before exiting.
+     * @param[in] sleepTime is the amount of time to release the CPU in each waiting loop cycle.
+     * @return ErrorManagement::NoError if the spin-lock is set by a FastPost(), ErrorManagement::Timeout if
+     * the timeout expires before the FastPost().
+     */
+    ErrorManagement::ErrorType FastResetWait(const TimeoutType &msecTimeout = TTInfiniteWait,
+                                             float64 sleepTime = 1e-3);
 
 private:
+
     /**
-     * Atomic variable
+     * The internal spin-lock
      */
-    volatile int32 flag;
+    volatile int32 internalFlag;
+
+    /**
+     * Pointer to the used spin-lock
+     */
+    volatile int32 *flag;
 
 };
 
@@ -70,46 +118,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-FastPollingEventSem::FastPollingEventSem() {
-    flag = 0;
-}
-
-void FastPollingEventSem::Create() {
-    flag = 0;
-}
-
-ErrorManagement::ErrorType FastPollingEventSem::FastWait(const TimeoutType &msecTimeout) {
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
-    uint64 ticksStop = msecTimeout.HighResolutionTimerTicks();
-    ticksStop += HighResolutionTimer::Counter();
-
-    while (flag == 0u) {
-        if (msecTimeout != TTInfiniteWait) {
-            if (HighResolutionTimer::Counter() > ticksStop) {
-                err = ErrorManagement::Timeout;
-                break;
-            }
-        }
-        Sleep::MSec(1);
-    }
-
-    return err;
-}
-
-void FastPollingEventSem::FastPost() {
-    (void) (Atomic::TestAndSet(&flag));
-}
-
-void FastPollingEventSem::Reset() {
-    flag = 0;
-}
-
-ErrorManagement::ErrorType FastPollingEventSem::FastResetWait(const TimeoutType &msecTimeout) {
-    Reset();
-    return FastWait(msecTimeout);
-}
-
-}
 #endif /* FASTPOLLINGEVENTSEM_H_ */
 

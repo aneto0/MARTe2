@@ -194,15 +194,15 @@ bool RealTimeApplication::ConfigureDataSource() {
 }
 
 bool RealTimeApplication::ValidateDataSource() {
-    ReferenceT<RealTimeDataSourceContainer> dataSource = dataSourceContainer;
+    ReferenceT<RealTimeDataSourceContainer> data = dataSourceContainer;
 
-    bool ret = dataSource.IsValid();
+    bool ret = data.IsValid();
     // there must be the container called "States"
 
     if (ret) {
         // States contains RealTimeState references
         // for each of them call Validate(*)
-        ret = dataSource->Verify();
+        ret = data->Verify();
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "+Data container not found");
@@ -211,11 +211,11 @@ bool RealTimeApplication::ValidateDataSource() {
 }
 
 bool RealTimeApplication::AllocateDataSource() {
-    ReferenceT<RealTimeDataSourceContainer> dataSource = dataSourceContainer;
+    ReferenceT<RealTimeDataSourceContainer> data = dataSourceContainer;
 
-    bool ret = dataSource.IsValid();
+    bool ret = data.IsValid();
     if (ret) {
-        ret = dataSource->Allocate();
+        ret = data->Allocate();
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "+Data container not found");
@@ -289,7 +289,7 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
         ret = scheduler.IsValid();
         // save the accelerator to the next group of threads to be executed
         if (ret) {
-            ret=scheduler->PrepareNextState(status);
+            ret = scheduler->PrepareNextState(status);
         }
         if (ret) {
             scheduler->ChangeState(activeBuffer);
@@ -300,10 +300,22 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
     return ret;
 }
 
+bool RealTimeApplication::StopExecution() {
+    ReferenceT<GAMSchedulerI> scheduler = schedulerContainer;
+    bool ret = scheduler.IsValid();
+    // save the accelerator to the next group of threads to be executed
+    if (ret) {
+        scheduler->StopExecution();
+    }
+    return ret;
+}
+
 bool RealTimeApplication::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (ret) {
         //TODO Read the name of the first state
+        // do the PrepareNextState here.
+
         uint32 numberOfContainers = Size();
         bool found = false;
         for (uint32 i = 0u; (i < numberOfContainers) && (!found); i++) {

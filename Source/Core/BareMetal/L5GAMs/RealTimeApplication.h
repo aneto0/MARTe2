@@ -138,19 +138,29 @@ public:
      */
     bool ConfigureDataSourceLinks();
 
-    // only one sync link for thread !
+    /**
+     * @brief Validates the data source links.
+     * @details Checks for each thread if there is no more than one synchronization point (i.e a GAM with a synchronized RealTimeDataSourceInputReader).
+     * return true if for each RealTimeThread there is an unique synchronization point in the cycle.
+     */
     bool ValidateDataSourceLinks();
-
 
     /**
      * @brief Prepares the environment for the next state.
      * @details This function has to be executed in a low-priority thread in order to prepare the context for the contextful GAMs
      * and resets the variables in the RealTimeDataSource to the default values if they will be used in the next state but are not
      * used in the current (the value is supposed to be consistent if it is used in both two consecutive states).
-     * @param[in] status contains informations about the current and the next state. // we need only the next state if the scheduler is inside here
+     * @param[in] status contains informations about the current and the next state.
      * @return false in case of errors, true otherwise.
      */
     bool PrepareNextState(const char8 * const nextStateName);
+
+    /**
+     * @brief Stops the application execution.
+     * @details Calls the Scheduler::StopExecution() to terminate the threads running in the current active state.
+     * @return true if the scheduler container is valid, false otherwise.
+     */
+    bool StopExecution();
 
     /**
      * @brief Retrieves the current active buffer index.
@@ -158,8 +168,15 @@ public:
      */
     uint8 GetActiveBuffer() const;
 
-
-
+    /**
+     * @brief Initialises the application from a StructuredDataI in input.
+     * @details The following fields must be specified:
+     *
+     *   FirstState = (the name of the first state to be executed)
+     *
+     * @param[in] data contains the initialisation data.
+     * @return false if FirstState field is not specified or if the initialisation of the sub-objects fails. True otherwise.
+     */
     virtual bool Initialise(StructuredDataI & data);
 
 private:
@@ -169,15 +186,29 @@ private:
      */
     uint8 activeBuffer;
 
-
+    /**
+     * The current state name.
+     */
     StreamString currentStateName;
 
+    /**
+     * The +States container.
+     */
     ReferenceT<ReferenceContainer> statesContainer;
 
+    /**
+     * The +Functions container.
+     */
     ReferenceT<ReferenceContainer> functionsContainer;
 
+    /**
+     * The +Scheduler container.
+     */
     ReferenceT<ReferenceContainer> schedulerContainer;
 
+    /**
+     * The +Data container
+     */
     ReferenceT<ReferenceContainer> dataSourceContainer;
 
 };

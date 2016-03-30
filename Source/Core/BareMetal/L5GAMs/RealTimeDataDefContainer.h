@@ -75,10 +75,22 @@ public:
      */
     bool MergeWithLocal(StructuredDataI & localData);
 
+    /**
+     * @brief Checks if the definitions represent GAM input variables.
+     * @return true if the definitions represent GAM input variables.
+     */
     bool IsInput() const;
 
+    /**
+     * @brief Checks if the definitions represent GAM output variables.
+     * @return true if the definitions represent GAM output variables.
+     */
     bool IsOutput() const;
 
+    /**
+     * @brief Converts this object to a StructuredDataI.
+     * @return false in case of errors, true otherwise.
+     */
     virtual bool ToStructuredData(StructuredDataI & data);
 
 
@@ -89,10 +101,14 @@ private:
      */
     bool final;
 
-    // initialised from cdb
+    /**
+     * Denotes if the definitions are for input variables.
+     */
     bool isInput;
 
-    // initialised from cdb
+    /**
+     * Denotes if the definitions are for output variables.
+     */
     bool isOutput;
 
 };

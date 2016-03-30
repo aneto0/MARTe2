@@ -24,17 +24,16 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
 #define DLL_API
-
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "AdvancedErrorManagement.h"
+
 #include "GAM.h"
 #include "RealTimeDataDefContainer.h"
-#include "RealTimeDataDefI.h"
 #include "RealTimeDataSourceContainer.h"
+#include "RealTimeDataDefI.h"
+#include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -44,7 +43,7 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAM::GAM():
+GAM::GAM() :
         GAMI() {
     localData = NULL_PTR(StructuredDataI*);
     numberOfSupportedStates = 0u;
@@ -60,7 +59,6 @@ GAM::GAM():
         outputWriter->SetName("outputWriter");
     }
 }
-
 
 bool GAM::ConfigureDataSourceLinks() {
     // it is virtual... can be overriden if the data are static
@@ -96,22 +94,19 @@ bool GAM::ConfigureDataSourceLinks() {
     return ret;
 }
 
-
-Reference GAM::GetInputReader() const{
+Reference GAM::GetInputReader() const {
     return inputReader;
 }
 
-Reference GAM::GetOutputWriter() const{
+Reference GAM::GetOutputWriter() const {
     return outputWriter;
 }
 
 bool GAM::IsSync() {
     bool ret = false;
-    bool isReaderValid = inputReader.IsValid();
-    bool isWriterValid = outputWriter.IsValid();
 
-    if (isReaderValid && isWriterValid) {
-        ret = (inputReader->IsSync() || outputWriter->IsSync());
+    if (inputReader.IsValid()) {
+        ret = inputReader->IsSync();
     }
     return ret;
 }

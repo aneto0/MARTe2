@@ -52,12 +52,17 @@ public:
      */
     RealTimeDataSourceDef();
 
-
+    /**
+     * @brief Retrieves a pointer to the internal event semaphore.
+     * @return a pointer to the internal event semaphore.
+     */
     EventSem *GetEventSemaphore() const ;
 
 private:
 
-
+    /**
+     * The event semaphore pointer.
+     */
     EventSem * eventSem;
 
 };

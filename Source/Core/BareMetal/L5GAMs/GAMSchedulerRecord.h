@@ -40,22 +40,55 @@
 
 
 namespace MARTe{
+
+/**
+ * @brief Stores the RealTimeThreads to be executed for a specific RealTimeState.
+ */
 class DLL_API GAMSchedulerRecord: public ReferenceContainer {
 
 public:
+
+    /**
+     * @brief Constructor
+     *   GetNumberOfThreads() == 0 &&
+     */
     GAMSchedulerRecord();
 
+    /**
+     * @brief Destructor. Frees the threads array memory.
+     */
     virtual ~GAMSchedulerRecord();
 
+    /**
+     * @brief Adds a new thread to the internal array.
+     * @param[in] newThread is the new RealTimeThread to be added.
+     */
     void AddThread(ReferenceT<RealTimeThread> newThread);
 
+    /**
+     * @brief Peeks a specific thread from the internal array.
+     * @param[in] index is the position fo the required thread inside the array.
+     * @return a Reference to the thread in the \a index position of the internal array. The Reference
+     * will be invalid if \a index > GetNumberOfThreads.
+     */
     ReferenceT<RealTimeThread> Peek(uint32 index);
 
+    /**
+     * @brief Retrieves the number of threads stored in the internal array.
+     * @return the number of threads stored in the internal array.
+     */
     uint32 GetNumberOfThreads() const;
 
 protected:
 
+    /**
+     * The RealTimeThread array.
+     */
     ReferenceT<RealTimeThread> *threads;
+
+    /**
+     * The number of stored RealTimeThreads.
+     */
     uint32 numberOfThreads;
 
 };

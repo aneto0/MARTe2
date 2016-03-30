@@ -48,7 +48,7 @@ RealTimeDataSourceBroker::RealTimeDataSourceBroker() :
         ReferenceContainer() {
     application = NULL_PTR(RealTimeApplication *);
     synchronized = false;
-    pollingSem = NULL_PTR(FastPollingEventSem *);
+    spinLockSem = NULL_PTR(FastPollingEventSem *);
     finalised = false;
 }
 
@@ -354,10 +354,11 @@ bool RealTimeDataSourceBroker::Finalise() {
             BasicRealTimeDataSourceDef * dsDef = NULL_PTR(BasicRealTimeDataSourceDef *);
             ret = dataSources.Peek(i, dsDef);
             if (ret) {
-                FastPollingEventSem *tempSem = dsDef->GetPollingSemaphore();
+                FastPollingEventSem *tempSem = dsDef->GetSpinLockSemaphore();
                 if (tempSem != NULL) {
-                    if(!synchronized) {
-                        pollingSem=tempSem;
+                    ret=(!synchronized);
+                    if(ret) {
+                        spinLockSem=tempSem;
                         synchronized=true;
                     }
                     else {

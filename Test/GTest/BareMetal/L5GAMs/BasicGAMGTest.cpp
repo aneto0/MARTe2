@@ -1,8 +1,8 @@
 /**
  * @file BasicGAMGTest.cpp
  * @brief Source file for class BasicGAMGTest
- * @date 30 Mar 2016 TODO Verify the value and format of the date
- * @author perezfr TODO Verify the name and format of the author
+ * @date 22/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,10 +21,14 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
-
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
 
 #include <limits.h>
 #include "gtest/gtest.h"
@@ -32,96 +36,92 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
 #include "BasicGAMTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 TEST(BasicGAMGTest,TestConstructor) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestConstructor());
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestConstructor());
 }
 
 TEST(BasicGAMGTest,TestInitialise) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestInitialise());
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestInitialise());
 }
 
 TEST(BasicGAMGTest,TestSetApplication) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestSetApplication());
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestSetApplication());
 }
 
 TEST(BasicGAMGTest,TestSetGAMGroup) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestSetGAMGroup());
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestSetGAMGroup());
 }
 
 TEST(BasicGAMGTest,TestAddState) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestAddState());
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestAddState());
 }
 
 TEST(BasicGAMGTest,TestGetNumberOfSupportedStates) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestGetNumberOfSupportedStates());
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestGetNumberOfSupportedStates());
 }
 
 TEST(BasicGAMGTest,TestGetSupportedStates) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestGetSupportedStates());
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestGetSupportedStates());
 }
 
 TEST(BasicGAMGTest,TestGetNumberOfSupportedStates_GAMGroup) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestGetNumberOfSupportedStates_GAMGroup());
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestGetNumberOfSupportedStates_GAMGroup());
 }
 
 TEST(BasicGAMGTest,TestGetSupportedStates_GAMGroup) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestGetSupportedStates_GAMGroup());
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestGetSupportedStates_GAMGroup());
 }
 
 TEST(BasicGAMGTest,TestConfigureDataSource) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestConfigureDataSource());
-}
-
-TEST(BasicGAMGTest,TestConfigureDataSourceFalse_NoData) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestConfigureDataSourceFalse_NoData());
-}
-
-TEST(BasicGAMGTest,TestConfigureDataSourceFalse_NoApplicationSet) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestConfigureDataSourceFalse_NoApplicationSet());
-}
-
-TEST(BasicGAMGTest,TestConfigureDataSource_NoStates) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestConfigureDataSource_NoStates());
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestConfigureDataSource());
 }
 
 TEST(BasicGAMGTest,TestConfigureDataSourceFalse_Final) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestConfigureDataSourceFalse_Final());
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestConfigureDataSourceFalse_Final());
+}
+
+TEST(BasicGAMGTest,TestConfigureDataSourceFalse_NoData) {
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestConfigureDataSourceFalse_NoData());
+}
+
+TEST(BasicGAMGTest,TestConfigureDataSourceFalse_NoApplicationSet) {
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestConfigureDataSourceFalse_NoApplicationSet());
+}
+
+TEST(BasicGAMGTest,TestConfigureDataSource_NoStates) {
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestConfigureDataSource_NoStates());
 }
 
 TEST(BasicGAMGTest,TestConfigureDataSourceLinks) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestConfigureDataSourceLinks());
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestConfigureDataSourceLinks());
 }
 
 TEST(BasicGAMGTest,TestExecute) {
-    BasicGAMTest myBasicGAM;
-    ASSERT_TRUE(myBasicGAM.TestExecute());
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestExecute());
 }
-	

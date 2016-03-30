@@ -101,11 +101,10 @@ bool RealTimeDataSourceInputReader::Finalise() {
                 if (ret) {
                     EventSem *tempSem = dsDef->GetEventSemaphore();
                     if (tempSem != NULL) {
-                        if(!synchronized) {
-                            if(eventSem==NULL) {
-                                eventSem=tempSem;
-                                synchronized=true;
-                            }
+                        ret=(!synchronized);
+                        if(ret) {
+                            eventSem=tempSem;
+                            synchronized=true;
                         }
                         else {
                             //TODO Already sync  !!
@@ -120,31 +119,40 @@ bool RealTimeDataSourceInputReader::Finalise() {
     return ret;
 }
 
-bool RealTimeDataSourceInputReader::OSPoll(const uint8 activeDataSourceBuffer,
-                                           float64 sampleTime,
-                                           uint32 numberOfReads,
-                                           TimeoutType timeout) {
-    bool ret = true;
-
+bool RealTimeDataSourceInputReader::SynchroniseOnEventSem(const uint8 activeDataSourceBuffer,
+                                                          float64 sampleTime,
+                                                          uint32 numberOfReads,
+                                                          TimeoutType timeout,
+                                                          float64 sleepTime) {
     uint64 tic = HighResolutionTimer::Counter();
-    // blocks the function on the spin-lock
-    for (uint32 i = 0u; (i < numberOfReads) && (ret); i++) {
-        if (synchronized) {
-            if(eventSem != NULL) {
-                ret=(eventSem->ResetWait(timeout)==ErrorManagement::NoError);
-            }
+    bool ret = true;
+    if (synchronized) {
+        ret = (eventSem != NULL);
+        // blocks the function on the spin-lock
+        for (uint32 i = 0u; (i < numberOfReads) && (ret); i++) {
+            ret=(eventSem->ResetWait(timeout)==ErrorManagement::NoError);
         }
 
         if (ret) {
             ret = Read(activeDataSourceBuffer);
         }
+
+    }
+    // performs a single read
+    else {
+        ret = Read(activeDataSourceBuffer);
     }
 
     if (ret && synchronized) {
         // wait the sample time
         // possible error on counter overflow
-        while ((HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic) * 1000) < sampleTime) {
-            Sleep::MSec(1);
+        if (sleepTime < 0.0) {
+            Sleep::Sec(sampleTime - HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic));
+        }
+        else {
+            while (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic) < sampleTime) {
+                Sleep::Sec(sleepTime);
+            }
         }
     }
 

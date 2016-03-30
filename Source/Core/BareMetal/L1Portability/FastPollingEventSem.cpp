@@ -39,3 +39,61 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+
+namespace MARTe {
+FastPollingEventSem::FastPollingEventSem() {
+    internalFlag = 0;
+    flag = &internalFlag;
+}
+
+FastPollingEventSem::FastPollingEventSem(volatile int32 &externalFlag) {
+    flag = &externalFlag;
+}
+
+
+void FastPollingEventSem::Create(const bool wait) {
+    if (wait) {
+        *flag = 0;
+    }
+    else {
+        *flag = 1;
+    }
+}
+
+ErrorManagement::ErrorType FastPollingEventSem::FastWait(const TimeoutType &msecTimeout,
+                                                         float64 sleepTime) {
+    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+    uint64 ticksStop = msecTimeout.HighResolutionTimerTicks();
+    ticksStop += HighResolutionTimer::Counter();
+
+    bool noSleep = IsEqual(sleepTime, 0.0);
+
+    while (*flag == 0) {
+        if (msecTimeout != TTInfiniteWait) {
+            if (HighResolutionTimer::Counter() > ticksStop) {
+                err = ErrorManagement::Timeout;
+                break;
+            }
+        }
+        if (!noSleep) {
+            Sleep::Sec(sleepTime);
+        }
+    }
+
+    return err;
+}
+
+void FastPollingEventSem::FastPost() {
+    (void) (Atomic::TestAndSet(flag));
+}
+
+void FastPollingEventSem::Reset() {
+    *flag = 0;
+}
+
+ErrorManagement::ErrorType FastPollingEventSem::FastResetWait(const TimeoutType &msecTimeout, float64 sleepTime) {
+    Reset();
+    return FastWait(msecTimeout, sleepTime);
+}
+
+}

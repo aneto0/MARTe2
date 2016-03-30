@@ -150,6 +150,10 @@ bool ReferenceContainer::Insert(const char8 * const path,
 
                     if (found) {
                         currentNode = foundReference;
+                        // if it is a leaf exit (and return false)
+                        if (!currentNode.IsValid()) {
+                            ok = false;
+                        }
                     }
                     else {
                         // insert the reference

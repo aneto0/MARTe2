@@ -127,11 +127,9 @@ Reference BasicGAM::GetOutputWriter() const {
 
 bool BasicGAM::IsSync() {
     bool ret = false;
-    bool isReaderValid = inputReader.IsValid();
-    bool isWriterValid = outputWriter.IsValid();
 
-    if (isReaderValid && isWriterValid) {
-        ret = (inputReader->IsSync() || outputWriter->IsSync());
+    if (inputReader.IsValid()) {
+        ret = inputReader->IsSync();
     }
     return ret;
 }

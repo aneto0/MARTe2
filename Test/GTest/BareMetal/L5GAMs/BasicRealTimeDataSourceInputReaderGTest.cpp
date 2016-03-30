@@ -1,8 +1,8 @@
 /**
  * @file BasicRealTimeDataSourceInputReaderGTest.cpp
  * @brief Source file for class BasicRealTimeDataSourceInputReaderGTest
- * @date 30 Mar 2016 TODO Verify the value and format of the date
- * @author perezfr TODO Verify the name and format of the author
+ * @date 22/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,68 +21,70 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
-
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
 #include <limits.h>
 #include "gtest/gtest.h"
-
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "BasicRealTimeDataSourceInputReaderTest.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-/*TEST(BasicRealTimeDataSourceInputReaderGTest,TestConstructor) {
-    BasicRealTimeDataSourceInputReaderTest myBasicInputReaderTest;
-    ASSERT_TRUE(myBasicInputReaderTest.TestConstructor());
+TEST(BasicRealTimeDataSourceInputReaderGTest,TestConstructor) {
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestConstructor());
 }
 
 TEST(BasicRealTimeDataSourceInputReaderGTest,TestRead_DefaultValues_Static) {
-    BasicRealTimeDataSourceInputReaderTest myBasicInputReaderTest;
-    ASSERT_TRUE(myBasicInputReaderTest.TestRead_DefaultValues_Static());
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_DefaultValues_Static());
 }
 
 TEST(BasicRealTimeDataSourceInputReaderGTest,TestRead_DefaultValues_Allocation) {
-    BasicRealTimeDataSourceInputReaderTest myBasicInputReaderTest;
-    ASSERT_TRUE(myBasicInputReaderTest.TestRead_DefaultValues_Allocation());
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_DefaultValues_Allocation());
 }
 
 TEST(BasicRealTimeDataSourceInputReaderGTest,TestRead_Static) {
-    BasicRealTimeDataSourceInputReaderTest myBasicInputReaderTest;
-    ASSERT_TRUE(myBasicInputReaderTest.TestRead_Static());
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_Static());
 }
 
 TEST(BasicRealTimeDataSourceInputReaderGTest,TestRead_Allocation) {
-    BasicRealTimeDataSourceInputReaderTest myBasicInputReaderTest;
-    ASSERT_TRUE(myBasicInputReaderTest.TestRead_Allocation());
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_Allocation());
 }
 
 TEST(BasicRealTimeDataSourceInputReaderGTest,TestRead_MoreThanOneVariable) {
-    BasicRealTimeDataSourceInputReaderTest myBasicInputReaderTest;
-    ASSERT_TRUE(myBasicInputReaderTest.TestRead_MoreThanOneVariable());
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_MoreThanOneVariable());
 }
 
 TEST(BasicRealTimeDataSourceInputReaderGTest,TestRead_MultiDim_Vector) {
-    BasicRealTimeDataSourceInputReaderTest myBasicInputReaderTest;
-    ASSERT_TRUE(myBasicInputReaderTest.TestRead_MultiDim_Vector());
-}
-*/
-TEST(BasicRealTimeDataSourceInputReaderGTest,TestRead_MultiDim_Matrix) {
-    BasicRealTimeDataSourceInputReaderTest myBasicInputReaderTest;
-    ASSERT_TRUE(myBasicInputReaderTest.TestRead_MultiDim_Matrix());
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_MultiDim_Vector());
 }
 
-	
+TEST(BasicRealTimeDataSourceInputReaderGTest,TestRead_MultiDim_Matrix) {
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestRead_MultiDim_Matrix());
+}
+
+TEST(BasicRealTimeDataSourceInputReaderGTest,TestSynchroniseOnSpinLockSemNotSync) {
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestSynchroniseOnSpinLockSemNotSync());
+}
+
+TEST(BasicRealTimeDataSourceInputReaderGTest,TestSynchroniseOnSpinLockSemOneRead) {
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestSynchroniseOnSpinLockSemOneRead());
+}

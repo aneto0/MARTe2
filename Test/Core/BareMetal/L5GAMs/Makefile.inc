@@ -56,6 +56,8 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 INCLUDES += -I../../../../Source/Core/BareMetal/L5GAMs
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
+INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
+
 
 all: $(OBJS) \
     $(BUILD_DIR)/L5GAMsTest$(LIBEXT)

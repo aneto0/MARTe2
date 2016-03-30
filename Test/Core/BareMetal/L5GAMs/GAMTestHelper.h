@@ -229,6 +229,7 @@ protected:
 
 };
 
+
 /**
  * @brief Returns a configuration database commonly used in tests.
  */
@@ -583,6 +584,32 @@ static ConfigurationDatabase GetCDB2() {
     cdb1.MoveToRoot();
     return cdb1;
 }
+
+
+
+class SharedDataSource : public BasicRealTimeDataSourceDef{
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    SharedDataSource();
+
+    virtual ~SharedDataSource();
+
+    virtual void WriteEnd();
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
