@@ -31,8 +31,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 OBJSX= GAM.x \
     RealTimeDataSourceDef.x \
     RealTimeDataSourceInputReader.x \
-    RealTimeDataSourceOutputWriter.x \
-    SingleThreadGAMScheduler.x
+    RealTimeDataSourceOutputWriter.x
 
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

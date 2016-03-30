@@ -45,7 +45,7 @@ namespace MARTe {
 /**
  * @brief This class is an event semaphore based on spin locks.
  */
-class FastPollingEventSem {
+class DLL_API FastPollingEventSem {
 public:
 
     /**
