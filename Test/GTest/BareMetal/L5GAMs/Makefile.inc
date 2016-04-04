@@ -27,10 +27,13 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 
 OBJSX= BasicGAMGTest.x \
+BasicGAMSchedulerGTest.x \
 BasicRealTimeDataSourceDefGTest.x \
 BasicRealTimeDataSourceInputReaderGTest.x \
 BasicRealTimeDataSourceOutputWriterGTest.x \
 GAMGroupGTest.x \
+GAMSchedulerIGTest.x \
+GAMSchedulerRecordGTest.x \
 		RealTimeApplicationGTest.x \
 		RealTimeDataDefContainerGTest.x \
 		RealTimeDataDefIGTest.x \

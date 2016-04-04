@@ -143,9 +143,6 @@ BasicRealTimeDataSourceInputReaderTest::BasicRealTimeDataSourceInputReaderTest()
     appCDB.MoveToRoot();
 
 }
-BasicRealTimeDataSourceInputReaderTest::~BasicRealTimeDataSourceInputReaderTest() {
-
-}
 
 bool BasicRealTimeDataSourceInputReaderTest::TestConstructor() {
     BasicRealTimeDataSourceInputReader test;
@@ -1047,21 +1044,25 @@ struct ReadParam {
     ReferenceT<BasicRealTimeDataSourceInputReader> reader;
     uint32 numberOfReads;
     float64 sampleTime;
+    volatile int32 *spinlock;
+    bool retVal;
 };
 
 struct WriteParam {
     ReferenceT<BasicRealTimeDataSourceOutputWriter> writer;
     uint32 numberOfWrites;
     float64 sampleTime;
-
+    volatile int32 *spinlock;
+    bool retVal;
 };
 
-volatile int32 spinlock;
 static void WriteData(WriteParam &arg) {
-    while (spinlock == 0) {
+    while (*arg.spinlock == 0) {
         Sleep::MSec(1);
     }
-    for (uint32 i = 0u; i < (arg.numberOfWrites+1); i++) {
+    for (uint32 i = 0u; i < (arg.numberOfWrites); i++) {
+        ControlIn *controlPID = (ControlIn *) arg.writer->GetData(0);
+        controlPID->Par1 = i;
         arg.writer->Write(0);
         Sleep::Sec(arg.sampleTime);
     }
@@ -1069,19 +1070,18 @@ static void WriteData(WriteParam &arg) {
 }
 
 static void ReadData(ReadParam &arg) {
-    while (spinlock == 0) {
-        Sleep::MSec(1);
-    }
+
     for (uint32 i = 0u; i < arg.numberOfReads; i++) {
         arg.reader->SynchroniseOnSpinLockSem(0);
-        ControlIn *errorPID;
-        errorPID = (ControlIn *) arg.reader->GetData(0);
-        printf("\nnum= %d val=%d\n",i, errorPID->Par1);
+        ControlIn *controlPID;
+        controlPID = (ControlIn *) arg.reader->GetData(0);
+        arg.retVal &= (controlPID->Par1 == i);
+        printf("\nnum= %d val=%d\n", i, controlPID->Par1);
     }
     Threads::EndThread();
 }
 
-bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemOneRead() {
+bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSem() {
 
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Data");
@@ -1183,40 +1183,537 @@ bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemOneRead
     // the function will fail because of the scheduler not initialised
     rtapp->PrepareNextState(nextState);
 
+    volatile int32 spinlock = 0;
+
     //volatile int32 spin = 0;
-    WriteParam paramWrite = { writer, 10, 0.5 };
-    ReadParam paramRead = { reader, 10, 0.5 };
+    WriteParam paramWrite = { writer, 10, 0.5, &spinlock, true };
+    ReadParam paramRead = { reader, 10, 0.5, &spinlock, true };
 
     Threads::BeginThread((ThreadFunctionType) (WriteData), &paramWrite);
     Threads::BeginThread((ThreadFunctionType) (ReadData), &paramRead);
 
+    Sleep::MSec(10);
     Atomic::Increment(&spinlock);
-    /*
-     if (!writer->Write(0)) {
-     return false;
-     }
-
-     if (!reader->SynchroniseOnSpinLockSem(0)) {
-     return false;
-     }
-
-     TrackError *errorPID;
-     errorPID = (TrackError *) reader->GetData(0);
-
-     printf("\nerror = %d %d\n", errorPID->Par1, errorPID->Par2);
-
-     // test if the deafult value are read
-     if (errorPID->Par1 != 10) {
-     return false;
-     }
-
-     if (errorPID->Par2 != 20) {
-     return false;
-     }
-     */
     while (Threads::NumberOfThreads() > 0) {
         Sleep::MSec(10);
     }
-    return true;
+    return paramRead.retVal;
 }
 
+static void ReadDataWaitTime(ReadParam &arg) {
+
+    for (uint32 i = 0u; i < (arg.numberOfReads - 1); i++) {
+        arg.reader->SynchroniseOnSpinLockSem(0, arg.sampleTime);
+        ControlIn *controlPID;
+        controlPID = (ControlIn *) arg.reader->GetData(0);
+        // waiting realeasing cpu, the writer writes the 1 before the sync exits
+        // then the next one will read 2.
+        if (i >= 1) {
+            arg.retVal &= (controlPID->Par1 == (i + 1));
+        }
+        printf("\nnum= %d val=%d\n", i, controlPID->Par1);
+    }
+    Threads::EndThread();
+}
+
+bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemWaitTime() {
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.CreateAbsolute("+Data.+DDB2.+PidControl2");
+    appCDB.Write("Class", "SharedDataSource");
+    appCDB.CreateAbsolute("+States");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States.+state1");
+    appCDB.Write("Class", "RealTimeState");
+    appCDB.CreateAbsolute("+Scheduler");
+    appCDB.Write("Class", "BasicGAMScheduler");
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    if (rtapp.IsValid()) {
+        printf("Valid App");
+    }
+
+    ReferenceT<PIDGAM> pid = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    pid->SetName("Pid1");
+    if (!pid->Initialise(pidCDB)) {
+        return false;
+    }
+
+    pid->SetApplication(*rtapp.operator ->());
+    pid->AddState("+state1");
+    if (!pid->ConfigureDataSource()) {
+        return false;
+    }
+
+    ReferenceT<PlantGAM> plant = ReferenceT<PlantGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    plant->SetName("plant");
+    if (!plant->Initialise(plantCDB)) {
+        return false;
+    }
+
+    plant->SetApplication(*rtapp.operator ->());
+    plant->AddState("+state1");
+    if (!plant->ConfigureDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->ValidateDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->AllocateDataSource()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def = plant->Find("+Inputs.+Control");
+
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    reader->SetName("reader");
+
+    reader->SetApplication(*rtapp.operator ->());
+
+    if (!reader->AddVariable(def)) {
+        return false;
+    }
+
+    if (!reader->Finalise()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def2 = pid->Find("+Outputs.+Control");
+
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    writer->SetName("writer");
+
+    writer->SetApplication(*rtapp.operator ->());
+
+    if (!writer->AddVariable(def2)) {
+        return false;
+    }
+
+    if (!writer->Finalise()) {
+        return false;
+    }
+
+    printf("\nreader in sync %d\n", writer->IsSync());
+
+    ControlIn *errorPlant = (ControlIn *) writer->GetData(0);
+    errorPlant->Par1 = 10;
+    errorPlant->Par2 = 20;
+
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
+
+    volatile int32 spinlock = 0;
+
+    //volatile int32 spin = 0;
+    WriteParam paramWrite = { writer, 10, 0.5, &spinlock, true };
+    ReadParam paramRead = { reader, 10, 0.7, &spinlock, true };
+
+    Threads::BeginThread((ThreadFunctionType) (WriteData), &paramWrite);
+    Threads::BeginThread((ThreadFunctionType) (ReadDataWaitTime), &paramRead);
+
+    Sleep::MSec(10);
+    Atomic::Increment(&spinlock);
+    while (Threads::NumberOfThreads() > 0) {
+        Sleep::MSec(10);
+    }
+    return paramRead.retVal;
+}
+
+static void ReadDataMoreReads(ReadParam &arg) {
+
+    for (uint32 i = 0u; i < arg.numberOfReads; i++) {
+        arg.reader->SynchroniseOnSpinLockSem(0, 0., 2);
+        ControlIn *controlPID;
+        controlPID = (ControlIn *) arg.reader->GetData(0);
+        arg.retVal &= (controlPID->Par1 == (2 * i + 1));
+        printf("\nnum= %d val=%d\n", i, controlPID->Par1);
+    }
+    Threads::EndThread();
+}
+bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemMoreReads() {
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.CreateAbsolute("+Data.+DDB2.+PidControl2");
+    appCDB.Write("Class", "SharedDataSource");
+    appCDB.CreateAbsolute("+States");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States.+state1");
+    appCDB.Write("Class", "RealTimeState");
+    appCDB.CreateAbsolute("+Scheduler");
+    appCDB.Write("Class", "BasicGAMScheduler");
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    if (rtapp.IsValid()) {
+        printf("Valid App");
+    }
+
+    ReferenceT<PIDGAM> pid = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    pid->SetName("Pid1");
+    if (!pid->Initialise(pidCDB)) {
+        return false;
+    }
+
+    pid->SetApplication(*rtapp.operator ->());
+    pid->AddState("+state1");
+    if (!pid->ConfigureDataSource()) {
+        return false;
+    }
+
+    ReferenceT<PlantGAM> plant = ReferenceT<PlantGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    plant->SetName("plant");
+    if (!plant->Initialise(plantCDB)) {
+        return false;
+    }
+
+    plant->SetApplication(*rtapp.operator ->());
+    plant->AddState("+state1");
+    if (!plant->ConfigureDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->ValidateDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->AllocateDataSource()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def = plant->Find("+Inputs.+Control");
+
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    reader->SetName("reader");
+
+    reader->SetApplication(*rtapp.operator ->());
+
+    if (!reader->AddVariable(def)) {
+        return false;
+    }
+
+    if (!reader->Finalise()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def2 = pid->Find("+Outputs.+Control");
+
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    writer->SetName("writer");
+
+    writer->SetApplication(*rtapp.operator ->());
+
+    if (!writer->AddVariable(def2)) {
+        return false;
+    }
+
+    if (!writer->Finalise()) {
+        return false;
+    }
+
+    printf("\nreader in sync %d\n", writer->IsSync());
+
+    ControlIn *errorPlant = (ControlIn *) writer->GetData(0);
+    errorPlant->Par1 = 10;
+    errorPlant->Par2 = 20;
+
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
+
+    volatile int32 spinlock = 0;
+
+    //volatile int32 spin = 0;
+    WriteParam paramWrite = { writer, 10, 0.5, &spinlock, true };
+    ReadParam paramRead = { reader, 5, 0.5, &spinlock, true };
+
+    Threads::BeginThread((ThreadFunctionType) (WriteData), &paramWrite);
+    Threads::BeginThread((ThreadFunctionType) (ReadDataMoreReads), &paramRead);
+
+    Sleep::MSec(10);
+    Atomic::Increment(&spinlock);
+    while (Threads::NumberOfThreads() > 0) {
+        Sleep::MSec(10);
+    }
+    return paramRead.retVal;
+}
+
+static void ReadDataTimeout(ReadParam &arg) {
+    // wait only for 10 ms
+    arg.retVal = !arg.reader->SynchroniseOnSpinLockSem(0, 0., 1, 10);
+
+    Threads::EndThread();
+}
+bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemTimeout() {
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.CreateAbsolute("+Data.+DDB2.+PidControl2");
+    appCDB.Write("Class", "SharedDataSource");
+    appCDB.CreateAbsolute("+States");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States.+state1");
+    appCDB.Write("Class", "RealTimeState");
+    appCDB.CreateAbsolute("+Scheduler");
+    appCDB.Write("Class", "BasicGAMScheduler");
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    if (rtapp.IsValid()) {
+        printf("Valid App");
+    }
+
+    ReferenceT<PIDGAM> pid = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    pid->SetName("Pid1");
+    if (!pid->Initialise(pidCDB)) {
+        return false;
+    }
+
+    pid->SetApplication(*rtapp.operator ->());
+    pid->AddState("+state1");
+    if (!pid->ConfigureDataSource()) {
+        return false;
+    }
+
+    ReferenceT<PlantGAM> plant = ReferenceT<PlantGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    plant->SetName("plant");
+    if (!plant->Initialise(plantCDB)) {
+        return false;
+    }
+
+    plant->SetApplication(*rtapp.operator ->());
+    plant->AddState("+state1");
+    if (!plant->ConfigureDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->ValidateDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->AllocateDataSource()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def = plant->Find("+Inputs.+Control");
+
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    reader->SetName("reader");
+
+    reader->SetApplication(*rtapp.operator ->());
+
+    if (!reader->AddVariable(def)) {
+        return false;
+    }
+
+    if (!reader->Finalise()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def2 = pid->Find("+Outputs.+Control");
+
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    writer->SetName("writer");
+
+    writer->SetApplication(*rtapp.operator ->());
+
+    if (!writer->AddVariable(def2)) {
+        return false;
+    }
+
+    if (!writer->Finalise()) {
+        return false;
+    }
+
+    printf("\nreader in sync %d\n", writer->IsSync());
+
+    ControlIn *errorPlant = (ControlIn *) writer->GetData(0);
+    errorPlant->Par1 = 10;
+    errorPlant->Par2 = 20;
+
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
+
+    volatile int32 spinlock = 0;
+
+    //volatile int32 spin = 0;
+    WriteParam paramWrite = { writer, 1, 0.5, &spinlock, true };
+    ReadParam paramRead = { reader, 1, 0.5, &spinlock, true };
+
+    Threads::BeginThread((ThreadFunctionType) (WriteData), &paramWrite);
+    Threads::BeginThread((ThreadFunctionType) (ReadDataTimeout), &paramRead);
+
+    Sleep::MSec(10);
+    Atomic::Increment(&spinlock);
+    while (Threads::NumberOfThreads() > 0) {
+        Sleep::MSec(10);
+    }
+    return paramRead.retVal;
+}
+
+static void ReadDataWaitTimeNoSleep(ReadParam &arg) {
+
+    for (uint32 i = 0u; i < arg.numberOfReads; i++) {
+        // don't release the cpu, then the writer cannot write before this function exits
+        arg.reader->SynchroniseOnSpinLockSem(0, arg.sampleTime, 1, TTInfiniteWait, 0.0);
+        ControlIn *controlPID;
+        controlPID = (ControlIn *) arg.reader->GetData(0);
+        arg.retVal &= (controlPID->Par1 == i);
+        printf("\nnum= %d val=%d\n", i, controlPID->Par1);
+    }
+    Threads::EndThread();
+}
+
+bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockNoSleep() {
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.CreateAbsolute("+Data.+DDB2.+PidControl2");
+    appCDB.Write("Class", "SharedDataSource");
+    appCDB.CreateAbsolute("+States");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States.+state1");
+    appCDB.Write("Class", "RealTimeState");
+    appCDB.CreateAbsolute("+Scheduler");
+    appCDB.Write("Class", "BasicGAMScheduler");
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    if (rtapp.IsValid()) {
+        printf("Valid App");
+    }
+
+    ReferenceT<PIDGAM> pid = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    pid->SetName("Pid1");
+    if (!pid->Initialise(pidCDB)) {
+        return false;
+    }
+
+    pid->SetApplication(*rtapp.operator ->());
+    pid->AddState("+state1");
+    if (!pid->ConfigureDataSource()) {
+        return false;
+    }
+
+    ReferenceT<PlantGAM> plant = ReferenceT<PlantGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    plant->SetName("plant");
+    if (!plant->Initialise(plantCDB)) {
+        return false;
+    }
+
+    plant->SetApplication(*rtapp.operator ->());
+    plant->AddState("+state1");
+    if (!plant->ConfigureDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->ValidateDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->AllocateDataSource()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def = plant->Find("+Inputs.+Control");
+
+    ReferenceT<BasicRealTimeDataSourceInputReader> reader = ReferenceT<BasicRealTimeDataSourceInputReader>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    reader->SetName("reader");
+
+    reader->SetApplication(*rtapp.operator ->());
+
+    if (!reader->AddVariable(def)) {
+        return false;
+    }
+
+    if (!reader->Finalise()) {
+        return false;
+    }
+
+    ReferenceT<RealTimeGenericDataDef> def2 = pid->Find("+Outputs.+Control");
+
+    ReferenceT<BasicRealTimeDataSourceOutputWriter> writer = ReferenceT<BasicRealTimeDataSourceOutputWriter>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    writer->SetName("writer");
+
+    writer->SetApplication(*rtapp.operator ->());
+
+    if (!writer->AddVariable(def2)) {
+        return false;
+    }
+
+    if (!writer->Finalise()) {
+        return false;
+    }
+
+    printf("\nreader in sync %d\n", writer->IsSync());
+
+    ControlIn *errorPlant = (ControlIn *) writer->GetData(0);
+    errorPlant->Par1 = 10;
+    errorPlant->Par2 = 20;
+
+    const char8 *nextState = "+state1";
+    // the function will fail because of the scheduler not initialised
+    rtapp->PrepareNextState(nextState);
+
+    volatile int32 spinlock = 0;
+
+    //volatile int32 spin = 0;
+    WriteParam paramWrite = { writer, 10, 0.5, &spinlock, true };
+    ReadParam paramRead = { reader, 10, 0.7, &spinlock, true };
+
+    Threads::BeginThread((ThreadFunctionType) (WriteData), &paramWrite);
+    Threads::BeginThread((ThreadFunctionType) (ReadDataWaitTimeNoSleep), &paramRead);
+
+    Sleep::MSec(10);
+    Atomic::Increment(&spinlock);
+    while (Threads::NumberOfThreads() > 0) {
+        Sleep::MSec(10);
+    }
+    return paramRead.retVal;
+}

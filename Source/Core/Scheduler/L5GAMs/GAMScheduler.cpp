@@ -107,7 +107,7 @@ void GAMScheduler::StartExecution(const uint32 activeBuffer) {
             param.activeBuffer = activeBuffer;
             param.thread = thread;
             param.spinLock = &spinLock;
-            param.writer = (writer[activeBuffer])[i];
+            param.writer = ReferenceT<RealTimeDataSourceOutputWriter>(&((writer[activeBuffer])[i]));
             if (param.writer.IsValid()) {
 
                 uint32 stackSize = thread->GetStackSize();

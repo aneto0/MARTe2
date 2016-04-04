@@ -38,7 +38,7 @@
 #include "BasicRealTimeDataSourceDef.h"
 #include "ConfigurationDatabase.h"
 #include "RealTimeGenericDataDef.h"
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -286,20 +286,29 @@ bool RealTimeDataSourceContainer::AddSingleDataDefinition(ReferenceT<RealTimeDat
                     ret = path.GetToken(dsName, ".", terminator);
                     if (ret) {
                         uint32 numberOfDS = Size();
+                        // for GAMTimes create it
                         bool found = (dsName == "GAM_Times");
+                        if (found) {
+                            ReferenceT<RealTimeDataSource> gamTimesDS = ReferenceT<RealTimeDataSource>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                            gamTimesDS->SetName("GAM_Times");
+                            ret = Insert(gamTimesDS);
+                        }
                         for (uint32 i = 0u; (i < numberOfDS) && (!found) && (ret); i++) {
                             ReferenceT<RealTimeDataSource> ref = Get(i);
                             ret = ref.IsValid();
                             if (ret) {
-                                // for GAMTimes create it
                                 found = (dsName == ref->GetName());
-                                if (found) {
-                                    ret = Insert(path.Buffer(), newElement);
-                                }
+                            }
+                            else {
+                                REPORT_ERROR(ErrorManagement::FatalError, "RealTimeDataSourceContainer must contain only RealTimeDataSource elements");
                             }
                         }
-                        if (ret) {
-                            ret = found;
+                        if (found) {
+                            ret = Insert(path.Buffer(), newElement);
+                        }
+                        else {
+                            ret = false;
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Data Source %s not found", dsName.Buffer())
                         }
                     }
                 }
@@ -356,6 +365,9 @@ bool RealTimeDataSourceContainer::Allocate() {
         ret = dataSource.IsValid();
         if (ret) {
             ret = dataSource->Allocate();
+            if (!ret) {
+                printf("\n%s\n", dataSource->GetName());
+            }
         }
         else {
             REPORT_ERROR(ErrorManagement::FatalError, "RealTimeDataSourceContainer must contain only RealTimeDataSource references");

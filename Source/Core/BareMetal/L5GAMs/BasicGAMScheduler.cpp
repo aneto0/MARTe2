@@ -45,6 +45,7 @@ namespace MARTe {
 BasicGAMScheduler::BasicGAMScheduler() :
         GAMSchedulerI() {
     numberOfCycles = -1LL;
+    stopFlag = 0;
 }
 
 void BasicGAMScheduler::StartExecution(const uint32 activeBuffer) {
@@ -55,10 +56,12 @@ void BasicGAMScheduler::StartExecution(const uint32 activeBuffer) {
 
     ReferenceT<RealTimeThread> thread = statesInExecution[activeBuffer]->Peek(0);
     if (thread.IsValid()) {
+        // resets the flag
+        stopFlag = 0;
         ReferenceT<GAMI> *gamArray = thread->GetGAMs();
         uint32 numberOfGAMs = thread->GetNumberOfGAMs();
-        if (numberOfCycles > 0LL) {
-            for (int64 n = 0LL; n < numberOfCycles; n++) {
+        if (numberOfCycles >= 0LL) {
+            for (int64 n = 0LL; (n < numberOfCycles) && (stopFlag == 0); n++) {
                 uint64 absTic = HighResolutionTimer::Counter();
                 for (uint32 i = 0u; i < numberOfGAMs; i++) {
                     if (gamArray[i].IsValid()) {
@@ -68,20 +71,17 @@ void BasicGAMScheduler::StartExecution(const uint32 activeBuffer) {
                         gamArray[i]->Execute(activeBuffer);
                         // writes the time stamps
                         // 2*i because for each gam we have absolute and relative variable inserted
-                        uint64 * absTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0]->GetData(2 * i));
+                        uint64 * absTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0].GetData(2 * i));
                         *absTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), absTic) * 1e6);
-                        uint64 * relTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0]->GetData((2 * i) + 1u));
+                        uint64 * relTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0].GetData((2 * i) + 1u));
                         *relTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), relTic) * 1e6);
-                        (writer[activeBuffer])[0]->Write(activeBuffer);
-                    }
-                    else {
-                        //TODO Invalid gam?
+                        (writer[activeBuffer])[0].Write(activeBuffer);
                     }
                 }
             }
         }
         else {
-            for (;;) {
+            for (; (stopFlag == 0);) {
                 uint64 absTic = HighResolutionTimer::Counter();
                 for (uint32 i = 0u; i < numberOfGAMs; i++) {
                     if (gamArray[i].IsValid()) {
@@ -90,26 +90,20 @@ void BasicGAMScheduler::StartExecution(const uint32 activeBuffer) {
                         // execute the gam
                         gamArray[i]->Execute(activeBuffer);
                         // writes the time stamps
-                        uint64 * absTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0]->GetData(2 * i));
+                        uint64 * absTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0].GetData(2 * i));
                         *absTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), absTic) * 1e6);
-                        uint64 * relTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0]->GetData((2 * i) + 1u));
+                        uint64 * relTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0].GetData((2 * i) + 1u));
                         *relTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), relTic) * 1e6);
-                        (writer[activeBuffer])[0]->Write(activeBuffer);
-                    }
-                    else {
-                        //TODO Invalid gam?
+                        (writer[activeBuffer])[0].Write(activeBuffer);
                     }
                 }
             }
         }
     }
-    else {
-        //TODO Invalid thread?
-    }
 }
 
 void BasicGAMScheduler::StopExecution() {
-    // nothing to do
+    stopFlag = 1;
 }
 
 bool BasicGAMScheduler::Initialise(StructuredDataI &data) {
@@ -121,6 +115,8 @@ bool BasicGAMScheduler::Initialise(StructuredDataI &data) {
     }
     return ret;
 }
+
+
 CLASS_REGISTER(BasicGAMScheduler, "1.0")
 
 }

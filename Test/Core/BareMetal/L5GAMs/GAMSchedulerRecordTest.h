@@ -1,7 +1,7 @@
 /**
- * @file BasicGAMScheduler.h
- * @brief Header file for class BasicGAMScheduler
- * @date 22/03/2016
+ * @file GAMSchedulerRecordTest.h
+ * @brief Header file for class GAMSchedulerRecordTest
+ * @date 04/04/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class BasicGAMScheduler
+ * @details This header file contains the declaration of the class GAMSchedulerRecordTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef BASICGAMSCHEDULER_H_
-#define BASICGAMSCHEDULER_H_
+#ifndef GAMSCHEDULERRECORDTEST_H_
+#define GAMSCHEDULERRECORDTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,68 +31,32 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GAMSchedulerI.h"
+
+#include "GAMSchedulerRecord.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+using namespace MARTe;
 
-/**
- * @brief Basic Bare Metal scheduler.
- */
-class DLL_API BasicGAMScheduler: public GAMSchedulerI {
+class GAMSchedulerRecordTest {
 
 public:
-    CLASS_REGISTER_DECLARATION()
+    bool TestConstructor();
 
-    /**
-     * @brief Constructor
-     * @detail Initialises the number of cycles to -1 (infinite loop)
-     */
-    BasicGAMScheduler();
+    bool TestAddThread();
 
-    /**
-     * @brief Initialises the scheduler from StructuredDataI.
-     * @details The following field can be specified:
-     *
-     *   NumberOfCycles = (int64 variable)
-     *
-     * The default number of cycles is -1, namely infinite cycles.
-     */
-    virtual bool Initialise(StructuredDataI &data);
+    bool TestPeek();
 
-    /**
-     * @see SchedulerI::StartExecution(*)
-     * @details Executes the GAMs for the specified number of cycles.
-     */
-    virtual void StartExecution(const uint32 activeBuffer);
+    bool TestPeekOutOfRange();
 
-    /**
-     * @see SchedulerI::StopExecution()
-     * @details If this function is called inside an interrupt routine, the
-     * execution will be stopped.
-     */
-    virtual void StopExecution();
-
-private:
-
-    /**
-     * The number of execution cycles.
-     */
-    int64 numberOfCycles;
-
-
-    /**
-     * A flag to be set to stop the execution.
-     */
-    volatile int32 stopFlag;
+    bool TestNumberOfThreads();
 };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* BASICGAMSCHEDULER_H_ */
+#endif /* GAMSCHEDULERRECORDTEST_H_ */
 

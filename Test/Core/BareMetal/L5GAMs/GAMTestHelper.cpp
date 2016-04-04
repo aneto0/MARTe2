@@ -90,19 +90,23 @@ PIDGAM::PIDGAM() :
 void PIDGAM::Execute(uint8 activeContextBuffer) {
 
     inputReader->Read(activeContextBuffer);
+
     TrackError *error = (TrackError*) inputReader->GetData(0);
 
-    printf("\nExecuting: error.par1= %d, error.par2= %d\n", error->Par1, error->Par2);
+    if (error != NULL) {
+        printf("\nExecuting: error.par1= %d, error.par2= %d\n", error->Par1, error->Par2);
 
-    ControlIn *control = (ControlIn*) outputWriter->GetData(0);
-    ControlNoise *noise = (ControlNoise*) outputWriter->GetData(1);
-    uint32 Kp = 10;
+        ControlIn *control = (ControlIn*) outputWriter->GetData(0);
+        ControlNoise *noise = (ControlNoise*) outputWriter->GetData(1);
+        uint32 Kp = 10;
 
-    control->Par1 = Kp * error->Par1;
-    control->Par2 = Kp * error->Par2;
+        control->Par1 = Kp * error->Par1;
+        control->Par2 = Kp * error->Par2;
 
-    if (noise->noiseValue > 0) {
-        noise->noiseValue = -noise->noiseValue;
+        if (noise->noiseValue > 0) {
+            noise->noiseValue = -noise->noiseValue;
+        }
+
     }
 
     outputWriter->Write(activeContextBuffer);
@@ -267,3 +271,23 @@ void SharedDataSource::WriteEnd() {
 
 CLASS_REGISTER(SharedDataSource, "1.0")
 
+DummyGAM::DummyGAM() {
+
+}
+
+void DummyGAM::Execute(uint8 activeContextBuffer) {
+
+    inputReader->Read(activeContextBuffer);
+    uint32 *counterIn = (uint32*) inputReader->GetData(0);
+    uint32 *counterOut = (uint32*) outputWriter->GetData(0);
+    *counterOut = (*counterIn)+1;
+    printf("\nExecute: Input=%d, Output=%d\n", *counterIn, *counterOut);
+
+    outputWriter->Write(activeContextBuffer);
+}
+
+
+void DummyGAM::SetUp() {
+
+}
+CLASS_REGISTER(DummyGAM, "1.0")

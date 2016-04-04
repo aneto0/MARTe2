@@ -83,6 +83,11 @@ public:
      */
     virtual void StopExecution()=0;
 
+    /**
+     * @brief Sets a pointer to the RealTimeApplication.
+     */
+    void SetApplication(RealTimeApplication &rtApp);
+
 protected:
 
     /**
@@ -94,8 +99,12 @@ protected:
     /**
      * Double buffer array of writers (one for each thread).
      */
-    ReferenceT<BasicRealTimeDataSourceOutputWriter>* writer[2];
+    BasicRealTimeDataSourceOutputWriter* writer[2];
 
+    /**
+     * The RealTimeApplication pointer.
+     */
+    RealTimeApplication *application;
 };
 
 }

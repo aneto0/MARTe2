@@ -74,7 +74,8 @@ public:
      * synchronised, each read operation will be sinchronising.
      * @param[in] timeout is the maximum time to wait on the spin-lock semaphore.
      * @param[in] sleepTime denotes how much time the cpu will be released during the spin-lock waiting loop and the
-     * eventual wait on \a sampleTime.
+     * eventual wait on \a sampleTime. If it is negative (default), it will release the cpu as much as possible, it it
+     * is equal to zero, it will never release the cpu.
      * @return false if the read operation fails or the spin-lock wait fails because of the timeout or if this
      * reader is synchronised but not by spin-lock event semaphore, true otherwise.
      */
@@ -82,7 +83,7 @@ public:
                                   float64 sampleTime = 0.0,
                                   uint32 numberOfReads = 1u,
                                   TimeoutType timeout = TTInfiniteWait,
-                                  float64 sleepTime = 0.0);
+                                  float64 sleepTime = -1.0);
 
 };
 

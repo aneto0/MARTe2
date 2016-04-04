@@ -46,9 +46,9 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 GAMSchedulerI::GAMSchedulerI() {
-    writer[0] = NULL_PTR(ReferenceT<BasicRealTimeDataSourceOutputWriter>*);
-    writer[1] = NULL_PTR(ReferenceT<BasicRealTimeDataSourceOutputWriter>*);
-
+    writer[0] = NULL_PTR(BasicRealTimeDataSourceOutputWriter*);
+    writer[1] = NULL_PTR(BasicRealTimeDataSourceOutputWriter*);
+    application = NULL_PTR(RealTimeApplication*);
 }
 
 bool GAMSchedulerI::InsertRecord(const char8 * stateName,
@@ -59,7 +59,7 @@ bool GAMSchedulerI::InsertRecord(const char8 * stateName,
     for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
         record = Get(i);
         if (record.IsValid()) {
-            found = (stateName == record->GetName());
+            found = (StringHelper::Compare(stateName, record->GetName()) == 0);
         }
     }
     bool ret = true;
@@ -73,6 +73,7 @@ bool GAMSchedulerI::InsertRecord(const char8 * stateName,
         ret = newRecord.IsValid();
         if (ret) {
             newRecord->SetName(stateName);
+            newRecord->AddThread(thread);
             ret = Insert(newRecord);
         }
     }
@@ -103,53 +104,59 @@ bool GAMSchedulerI::PrepareNextState(RealTimeStateInfo info) {
         uint32 numberOfThreads = record->GetNumberOfThreads();
 
         // creates a writer for each thread
-        writer[nextBuffer] = new ReferenceT<BasicRealTimeDataSourceOutputWriter> [numberOfThreads];
-        for (uint32 i = 0u; i < numberOfThreads; i++) {
-            ReferenceT<RealTimeThread> thread = Get(i);
-            if (thread.IsValid()) {
-                uint32 numberOfGAMs = thread->GetNumberOfGAMs();
+        writer[nextBuffer] = new BasicRealTimeDataSourceOutputWriter[numberOfThreads];
+        ret = (application != NULL);
+        if (ret) {
 
-                // adds for each gam the relative and absolute time definitions to the
-                // specific writer.
-                for (uint32 j = 0u; j < numberOfGAMs; j++) {
-
-                    ReferenceT<GAMI> gam = Get(j);
-                    if (gam.IsValid()) {
-                        ConfigurationDatabase defCDBAbs;
-                        defCDBAbs.Write("Class", "RealTimeGenericDataDef");
-                        defCDBAbs.Write("Type", "uint64");
-                        defCDBAbs.Write("Default", "0");
-                        defCDBAbs.Write("IsFinal", "true");
-                        StreamString path = "GAM_Times.";
-                        path += gam->GetName();
-                        path += ".AbsoluteUsecTime";
-                        defCDBAbs.Write("Path", path.Buffer());
-                        defCDBAbs.MoveToRoot();
-
-                        RealTimeGenericDataDef defAbs;
-                        ret = defAbs.Initialise(defCDBAbs);
+            for (uint32 i = 0u; (i < numberOfThreads) && (ret); i++) {
+                (writer[nextBuffer])[i].SetApplication(*application);
+                ReferenceT<RealTimeThread> thread = record->Peek(i);
+                ret = thread.IsValid();
+                if (ret) {
+                    uint32 numberOfGAMs = thread->GetNumberOfGAMs();
+                    ReferenceT<GAMI> *gamArray = thread->GetGAMs();
+                    // adds for each gam the relative and absolute time definitions to the
+                    // specific writer.
+                    for (uint32 j = 0u; (j < numberOfGAMs) && (ret); j++) {
+                        ReferenceT<GAMI> gam = gamArray[j];
+                        ret = gam.IsValid();
                         if (ret) {
-                            ret = (writer[nextBuffer])[i]->AddVariable(ReferenceT<RealTimeGenericDataDef>(&defAbs));
-                        }
-                        if (ret) {
-                            ConfigurationDatabase defCDBRel;
-                            defCDBRel.Write("Class", "RealTimeGenericDataDef");
-                            defCDBRel.Write("Type", "uint64");
-                            defCDBRel.Write("Default", "0");
-                            defCDBRel.Write("IsFinal", "true");
+                            ConfigurationDatabase defCDBAbs;
+                            defCDBAbs.Write("Class", "RealTimeGenericDataDef");
+                            defCDBAbs.Write("Type", "uint64");
+                            defCDBAbs.Write("Default", "0");
+                            defCDBAbs.Write("IsFinal", "true");
                             StreamString path = "GAM_Times.";
                             path += gam->GetName();
-                            path += ".RelativeUsecTime";
-                            defCDBRel.Write("Path", path.Buffer());
-                            defCDBRel.MoveToRoot();
+                            path += ".AbsoluteUsecTime";
+                            defCDBAbs.Write("Path", path.Buffer());
+                            defCDBAbs.MoveToRoot();
 
-                            RealTimeGenericDataDef defRel;
-                            ret = defRel.Initialise(defCDBRel);
+                            RealTimeGenericDataDef defAbs;
+                            ret = defAbs.Initialise(defCDBAbs);
                             if (ret) {
-                                ret = (writer[nextBuffer])[i]->AddVariable(ReferenceT<RealTimeGenericDataDef>(&defRel));
+                                ret = (writer[nextBuffer])[i].AddVariable(ReferenceT<RealTimeGenericDataDef>(&defAbs));
                             }
                             if (ret) {
-                                ret = (writer[nextBuffer])[i]->Finalise();
+                                ConfigurationDatabase defCDBRel;
+                                defCDBRel.Write("Class", "RealTimeGenericDataDef");
+                                defCDBRel.Write("Type", "uint64");
+                                defCDBRel.Write("Default", "0");
+                                defCDBRel.Write("IsFinal", "true");
+                                StreamString path = "GAM_Times.";
+                                path += gam->GetName();
+                                path += ".RelativeUsecTime";
+                                defCDBRel.Write("Path", path.Buffer());
+                                defCDBRel.MoveToRoot();
+
+                                RealTimeGenericDataDef defRel;
+                                ret = defRel.Initialise(defCDBRel);
+                                if (ret) {
+                                    ret = (writer[nextBuffer])[i].AddVariable(ReferenceT<RealTimeGenericDataDef>(&defRel));
+                                }
+                                if (ret) {
+                                    ret = (writer[nextBuffer])[i].Finalise();
+                                }
                             }
                         }
                     }
@@ -166,6 +173,10 @@ void GAMSchedulerI::ChangeState(const uint32 activeBuffer) {
     StopExecution();
     StartExecution(nextBuffer);
 
+}
+
+void GAMSchedulerI::SetApplication(RealTimeApplication &rtApp) {
+    application = &rtApp;
 }
 
 }

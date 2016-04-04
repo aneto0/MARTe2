@@ -229,12 +229,32 @@ protected:
 
 };
 
+/**
+ * Implementation of a GAM used in tests.
+ */
+class DummyGAM: public BasicGAM {
+
+public:
+    CLASS_REGISTER_DECLARATION()
+    DummyGAM();
+
+    /**
+     * @brief The execution routine.
+     */
+    virtual void Execute(uint8 activeContextBuffer);
+protected:
+    /**
+     * @brief Empty
+     */
+    virtual void SetUp();
+
+};
 
 /**
  * @brief Returns a configuration database commonly used in tests.
  */
 static ConfigurationDatabase GetCDB1() {
-    ConfigurationDatabase cdb;
+    static ConfigurationDatabase cdb;
 
 // application
     cdb.CreateAbsolute("$Application1");
@@ -397,7 +417,7 @@ static ConfigurationDatabase GetCDB1() {
     //scheduler
     cdb.CreateAbsolute("$Application1.+Scheduler");
     cdb.Write("Class", "BasicGAMScheduler");
-
+    cdb.Write("NumberOfCycles", "0");
     cdb.MoveToRoot();
     return cdb;
 }
@@ -406,7 +426,7 @@ static ConfigurationDatabase GetCDB1() {
  * @brief Returns a configuration database commonly used in tests.
  */
 static ConfigurationDatabase GetCDB2() {
-    ConfigurationDatabase cdb1;
+    static ConfigurationDatabase cdb1;
     // application
     cdb1.CreateAbsolute("$Application1");
     cdb1.Write("Class", "RealTimeApplication");
@@ -580,14 +600,102 @@ static ConfigurationDatabase GetCDB2() {
     //scheduler
     cdb1.CreateAbsolute("$Application1.+Scheduler");
     cdb1.Write("Class", "BasicGAMScheduler");
-
+    cdb1.Write("NumberOfCycles", "0");
     cdb1.MoveToRoot();
     return cdb1;
 }
 
+static ConfigurationDatabase GetCDB3() {
+    static ConfigurationDatabase cdb;
+
+// application
+    cdb.CreateAbsolute("$Application1");
+    cdb.Write("Class", "RealTimeApplication");
+//functions
+    cdb.CreateAbsolute("$Application1.+Functions");
+    cdb.Write("Class", "ReferenceContainer");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM1");
+    cdb.Write("Class", "DummyGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM1.+Input");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsInput", "true");
+    cdb.Write("IsFinal", "true");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM1.+Input.+Counter");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Default", "0");
+    cdb.Write("Path", "+DDB.Counter1");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM1.+Output");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsOutput", "true");
+    cdb.Write("IsFinal", "true");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM1.+Output.+Counter");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Default", "0");
+    cdb.Write("Path", "+DDB.Counter2");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM2");
+    cdb.Write("Class", "DummyGAM");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM2.+Input");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsInput", "true");
+    cdb.Write("IsFinal", "true");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM2.+Input.+Counter");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Default", "0");
+    cdb.Write("Path", "+DDB.Counter2");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM2.+Output");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsOutput", "true");
+    cdb.Write("IsFinal", "true");
+    cdb.CreateAbsolute("$Application1.+Functions.+GAM2.+Output.+Counter");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Default", "0");
+    cdb.Write("Path", "+DDB.Counter1");
+    cdb.Write("IsFinal", "true");
 
 
-class SharedDataSource : public BasicRealTimeDataSourceDef{
+
+// state 1
+    cdb.CreateAbsolute("$Application1.+States");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateAbsolute("$Application1.+States.+State1");
+    cdb.Write("Class", "RealTimeState");
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threads");
+    cdb.Write("Class", "ReferenceContainer");
+
+// state 1 threads
+    cdb.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread1");
+    cdb.Write("Class", "RealTimeThread");
+    const char8 *functionsT1[2] = { ":+Functions.+GAM1", ":+Functions.+GAM2" };
+    cdb.Write("Functions", functionsT1);
+
+// data
+    cdb.CreateAbsolute("$Application1.+Data");
+    cdb.Write("Class", "RealTimeDataSourceContainer");
+    cdb.CreateAbsolute("$Application1.+Data.+DDB");
+    cdb.Write("Class", "RealTimeDataSource");
+
+    //scheduler
+    cdb.CreateAbsolute("$Application1.+Scheduler");
+    cdb.Write("Class", "BasicGAMScheduler");
+    cdb.Write("NumberOfCycles", "3");
+    cdb.MoveToRoot();
+    return cdb;
+}
+
+class SharedDataSource: public BasicRealTimeDataSourceDef {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -598,18 +706,6 @@ public:
     virtual void WriteEnd();
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

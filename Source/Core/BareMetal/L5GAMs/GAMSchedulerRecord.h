@@ -67,7 +67,7 @@ public:
 
     /**
      * @brief Peeks a specific thread from the internal array.
-     * @param[in] index is the position fo the required thread inside the array.
+     * @param[in] index is the position for the required thread inside the array.
      * @return a Reference to the thread in the \a index position of the internal array. The Reference
      * will be invalid if \a index > GetNumberOfThreads.
      */

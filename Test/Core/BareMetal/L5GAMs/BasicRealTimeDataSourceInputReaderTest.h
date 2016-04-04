@@ -51,8 +51,6 @@ public:
      */
     BasicRealTimeDataSourceInputReaderTest();
 
-    ~BasicRealTimeDataSourceInputReaderTest();
-
     /**
      * @brief tests the constructor.
      */
@@ -93,9 +91,36 @@ public:
      */
     bool TestRead_MultiDim_Matrix();
 
+    /**
+     * @brief Tests if the function behaves as a normal read if the spin-lock
+     * semaphore is not set.
+     */
     bool TestSynchroniseOnSpinLockSemNotSync();
 
-    bool TestSynchroniseOnSpinLockSemOneRead();
+    /**
+     * @brief Tests if the function performs a synchronised read.
+     */
+    bool TestSynchroniseOnSpinLockSem();
+
+    /**
+     * @brief Tests if the function does not exit before the sample time set.
+     */
+    bool TestSynchroniseOnSpinLockSemWaitTime();
+
+    /**
+     * @brief Tests if the function performs the specified number of synchronised read before exiting.
+     */
+    bool TestSynchroniseOnSpinLockSemMoreReads();
+
+    /**
+     * @brief Tests if the function exits after the timeout expire waiting for data on the spin-lock semaphore.
+     */
+    bool TestSynchroniseOnSpinLockSemTimeout();
+
+    /**
+     * @brief Tests if the function does not exit before the sample time set waiting without releasing the cpu.
+     */
+    bool TestSynchroniseOnSpinLockNoSleep();
 
 private:
 
@@ -104,8 +129,14 @@ private:
      */
     ConfigurationDatabase pidCDB;
 
+    /**
+     * A configuration database used in tests.
+     */
     ConfigurationDatabase plantCDB;
 
+    /**
+     * A configuration database used in tests.
+     */
     ConfigurationDatabase appCDB;
 
 };

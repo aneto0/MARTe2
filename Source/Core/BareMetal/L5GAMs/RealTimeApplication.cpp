@@ -173,7 +173,16 @@ bool RealTimeApplication::ConfigureArchitecture() {
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "+States container not found");
     }
-
+    if (ret) {
+        ReferenceT<GAMSchedulerI> scheduler = schedulerContainer;
+        ret = (scheduler.IsValid());
+        if (ret) {
+            scheduler->SetApplication(*this);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "+Scheduler container not found");
+        }
+    }
     return ret;
 }
 

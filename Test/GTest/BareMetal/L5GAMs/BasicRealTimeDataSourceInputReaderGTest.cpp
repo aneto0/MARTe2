@@ -84,7 +84,27 @@ TEST(BasicRealTimeDataSourceInputReaderGTest,TestSynchroniseOnSpinLockSemNotSync
     ASSERT_TRUE(rtdsirTest.TestSynchroniseOnSpinLockSemNotSync());
 }
 
-TEST(BasicRealTimeDataSourceInputReaderGTest,TestSynchroniseOnSpinLockSemOneRead) {
+TEST(BasicRealTimeDataSourceInputReaderGTest,TestSynchroniseOnSpinLockSem) {
     BasicRealTimeDataSourceInputReaderTest rtdsirTest;
-    ASSERT_TRUE(rtdsirTest.TestSynchroniseOnSpinLockSemOneRead());
+    ASSERT_TRUE(rtdsirTest.TestSynchroniseOnSpinLockSem());
+}
+
+TEST(BasicRealTimeDataSourceInputReaderGTest,TestSynchroniseOnSpinLockSemWaitTime) {
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestSynchroniseOnSpinLockSemWaitTime());
+}
+
+TEST(BasicRealTimeDataSourceInputReaderGTest,TestSynchroniseOnSpinLockSemMoreReads) {
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestSynchroniseOnSpinLockSemMoreReads());
+}
+
+TEST(BasicRealTimeDataSourceInputReaderGTest,TestSynchroniseOnSpinLockSemTimeout) {
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestSynchroniseOnSpinLockSemTimeout());
+}
+
+TEST(BasicRealTimeDataSourceInputReaderGTest,TestSynchroniseOnSpinLockNoSleep) {
+    BasicRealTimeDataSourceInputReaderTest rtdsirTest;
+    ASSERT_TRUE(rtdsirTest.TestSynchroniseOnSpinLockNoSleep());
 }

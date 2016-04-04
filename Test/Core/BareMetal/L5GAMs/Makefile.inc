@@ -26,10 +26,13 @@
 
 
 OBJSX=	BasicGAMTest.x \
+ 		BasicGAMSchedulerTest.x \
 		BasicRealTimeDataSourceDefTest.x \
 		BasicRealTimeDataSourceInputReaderTest.x \
 		BasicRealTimeDataSourceOutputWriterTest.x \
 		GAMGroupTest.x \
+		GAMSchedulerITest.x \
+		GAMSchedulerRecordTest.x \
 		GAMTestHelper.x\
 		RealTimeApplicationTest.x \
 		RealTimeDataDefContainerTest.x \
