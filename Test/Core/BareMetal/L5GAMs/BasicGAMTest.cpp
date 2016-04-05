@@ -147,8 +147,11 @@ bool BasicGAMTest::TestAddState() {
     PIDGAM gam;
     const uint32 size = 5;
     StreamString states[size] = { "state1", "state2", "state3", "state4", "state5" };
+    StreamString threads[size] = { "thread1", "thread1", "thread1", "thread1", "thread1" };
     for (uint32 i = 0u; i < size; i++) {
-        gam.AddState(states[i].Buffer());
+        if (!gam.AddState(states[i].Buffer(), threads[i].Buffer())) {
+            return false;
+        }
     }
 
     if (gam.GetNumberOfSupportedStates() != size) {
@@ -164,12 +167,71 @@ bool BasicGAMTest::TestAddState() {
     return true;
 }
 
+bool BasicGAMTest::TestAddStateFalse_MoreThreadsPerGAM() {
+    PIDGAM gam;
+    if (!gam.AddState("state1", "thread1")) {
+        return false;
+    }
+    if (!gam.AddState("state1", "thread1")) {
+        return false;
+    }
+    return (!gam.AddState("state1", "thread2"));
+}
+
 bool BasicGAMTest::TestGetNumberOfSupportedStates() {
     return TestAddState();
 }
 
 bool BasicGAMTest::TestGetSupportedStates() {
     return TestAddState();
+}
+
+bool BasicGAMTest::TestGetSupportedThreads() {
+    PIDGAM gam;
+    const uint32 size = 5;
+    StreamString states[size] = { "state1", "state2", "state3", "state4", "state5" };
+    StreamString threads[size] = { "thread1", "thread2", "thread3", "thread4", "thread5" };
+    for (uint32 i = 0u; i < size; i++) {
+        if (!gam.AddState(states[i].Buffer(), threads[i].Buffer())) {
+            return false;
+        }
+    }
+
+    if (gam.GetNumberOfSupportedStates() != size) {
+        return false;
+    }
+
+    StreamString *retThreads = gam.GetSupportedThreads();
+    for (uint32 i = 0u; i < size; i++) {
+        if (retThreads[i] != threads[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool BasicGAMTest::TestGetSupportedThreads_GAMGroup() {
+
+    ReferenceT<PIDGAMGroup> gamGroup = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    const uint32 size = 4;
+    StreamString states[size] = { "state1", "state2", "state3", "state4" };
+    StreamString threads[size] = { "thread1", "thread2", "thread3", "thread4" };
+
+    for (uint32 i = 0u; i < size; i++) {
+        gamGroup->AddState(states[i].Buffer(), threads[i].Buffer());
+    }
+
+    gam->SetGAMGroup(gamGroup);
+
+    StreamString *retThreads = gam->GetSupportedThreads();
+    for (uint32 i = 0u; i < size; i++) {
+        if (retThreads[i] != threads[i]) {
+            return false;
+        }
+    }
+    return true;
+
 }
 
 bool BasicGAMTest::TestGetNumberOfSupportedStates_GAMGroup() {
@@ -179,7 +241,7 @@ bool BasicGAMTest::TestGetNumberOfSupportedStates_GAMGroup() {
     const uint32 size = 4;
     StreamString states[size] = { "state1", "state2", "state3", "state4" };
     for (uint32 i = 0u; i < size; i++) {
-        gamGroup->AddState(states[i].Buffer());
+        gamGroup->AddState(states[i].Buffer(), "thread1");
     }
 
     gam->SetGAMGroup(gamGroup);
@@ -200,7 +262,7 @@ bool BasicGAMTest::TestGetSupportedStates_GAMGroup() {
     const uint32 size = 4;
     StreamString states[4] = { "state1", "state2", "state3", "state4" };
     for (uint32 i = 0u; i < size; i++) {
-        gamGroup->AddState(states[i].Buffer());
+        gamGroup->AddState(states[i].Buffer(), "thread1");
     }
 
     gam->SetGAMGroup(gamGroup);
@@ -224,13 +286,14 @@ bool BasicGAMTest::TestConfigureDataSource() {
     }
 
     ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    gam->SetName("PIDD");
     if (!gam->Initialise(cdb)) {
         return false;
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("state1");
-    gam->AddState("state2");
+    gam->AddState("state1", "thread1");
+    gam->AddState("state2", "thread1");
 
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -257,7 +320,6 @@ bool BasicGAMTest::TestConfigureDataSource() {
     return true;
 }
 
-
 bool BasicGAMTest::TestConfigureDataSourceFalse_NoData() {
     ConfigurationDatabase appCDB;
     appCDB.CreateAbsolute("+Datas"); // wrong
@@ -280,8 +342,8 @@ bool BasicGAMTest::TestConfigureDataSourceFalse_NoData() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("state1");
-    gam->AddState("state2");
+    gam->AddState("state1", "thread1");
+    gam->AddState("state2", "thread1");
 
     return (!gam->ConfigureDataSource());
 }
@@ -308,8 +370,8 @@ bool BasicGAMTest::TestConfigureDataSourceFalse_NoApplicationSet() {
     }
 
     //gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("state1");
-    gam->AddState("state2");
+    gam->AddState("state1", "thread1");
+    gam->AddState("state2", "thread1");
 
     return (!gam->ConfigureDataSource());
 }
@@ -361,8 +423,8 @@ bool BasicGAMTest::TestConfigureDataSourceFalse_Final() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("state1");
-    gam->AddState("state2");
+    gam->AddState("state1", "thread1");
+    gam->AddState("state2", "thread1");
 
     return (!gam->ConfigureDataSource());
 }
@@ -394,7 +456,7 @@ bool BasicGAMTest::TestConfigureDataSourceLinks() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1", "thread1");
 
     if (!gam->ConfigureDataSource()) {
         return false;
@@ -416,6 +478,115 @@ bool BasicGAMTest::TestConfigureDataSourceLinks() {
     }
 
     return true;
+}
+
+bool BasicGAMTest::TestIsSync() {
+    ConfigurationDatabase appCDB;
+    appCDB.CreateAbsolute("+Data");
+    appCDB.Write("Class", "RealTimeDataSourceContainer");
+    appCDB.Write("IsFinal", "true");
+    appCDB.CreateAbsolute("+Data.+DDB1");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.CreateAbsolute("+Data.+DDB1.+Driver");
+    appCDB.Write("Class", "SharedDataSource");
+    appCDB.CreateAbsolute("+Data.+DDB2");
+    appCDB.Write("Class", "RealTimeDataSource");
+    appCDB.CreateAbsolute("+States");
+    appCDB.Write("Class", "ReferenceContainer");
+    appCDB.CreateAbsolute("+States.+state1");
+    appCDB.Write("Class", "RealTimeState");
+    appCDB.MoveToRoot();
+
+    ReferenceT<RealTimeApplication> rtapp = ReferenceT<RealTimeApplication>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rtapp->Initialise(appCDB)) {
+        return false;
+    }
+
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("+Inputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsInput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Inputs.+Error");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "TrackError");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Inputs.+Error.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Default", "2");
+    cdb.Write("Path", "+DDB1.PidError2");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("+Inputs.+Sync");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+
+    cdb.Write("Type", "uint32");
+    cdb.Write("IsFinal", "true");
+    cdb.Write("Default", "2");
+    cdb.Write("Path", "+DDB1.+Driver");
+
+    cdb.CreateAbsolute("+Outputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsOutput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Outputs.+Control");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlIn");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Outputs.+Control.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Path", "+DDB2.PidControl2");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("+Outputs.+Noise");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlNoise");
+    cdb.Write("IsFinal", "true");
+    cdb.CreateAbsolute("+Outputs.+Noise.+noiseValue");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "float32");
+    cdb.Write("Default", "2");
+    cdb.Write("Path", "+DDB2.PidNoise");
+    cdb.Write("IsFinal", "true");
+    cdb.MoveToRoot();
+
+    ReferenceT<PIDGAM> gam = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    gam->SetName("Pid1");
+
+    if (gam->IsSync()) {
+        return false;
+    }
+
+    if (!gam->Initialise(cdb)) {
+        return false;
+    }
+
+    gam->SetApplication(*rtapp.operator ->());
+    gam->AddState("+state1", "thread1");
+
+    if (!gam->ConfigureDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->ValidateDataSource()) {
+        return false;
+    }
+
+    if (!rtapp->AllocateDataSource()) {
+        return false;
+    }
+
+    const char8 *nextState = "+state1";
+    rtapp->PrepareNextState(nextState);
+
+    if (!gam->ConfigureDataSourceLinks()) {
+        return false;
+    }
+
+    return gam->IsSync();
 }
 
 bool BasicGAMTest::TestExecute() {
@@ -444,7 +615,7 @@ bool BasicGAMTest::TestExecute() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1", "thread1");
 
     if (!gam->ConfigureDataSource()) {
         return false;

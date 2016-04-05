@@ -82,6 +82,8 @@ public:
     /**
      * @brief Generates the data source definitions ( in RealTimeApplication_name.+Data ) looking to the path
      * of each RealTimeDataDefI declared into this GAM.
+     * @details For more documentation see RealTimeDataSourceContainer::AddDataDefinition(*).
+     * @return false in case of errors, true otherwise.
      */
     virtual bool ConfigureDataSource();
 
@@ -100,13 +102,18 @@ public:
     /**
      * @brief Adds the name of a RealTimeState where this GAM is declared into.
      * @param[in] stateName is the RealTimeState name.
+     * @return false if the same state was already added with a different thread name. This means that the
+     * configuration is wrong: one GAM can be declared in only one RealTimeThread for each RealTimeState.
+     * Returns true otherwise.
      */
-    void AddState(const char8 * const stateName);
+    bool AddState(const char8 * const stateName,
+                  const char8 * const threadName);
 
     /**
      * @brief Links the GAM with RealTimeDataSource.
      * @details Configures the input (RealTimeDataInputReader) and output interfaces (RealTimeDataOutputWriter)
      * to communicate with the RealTimeDataSource.
+     * @return false in case of errors, true otherwise.
      */
     virtual bool ConfigureDataSourceLinks()=0;
 
@@ -119,13 +126,22 @@ public:
     /**
      * @brief calls the Initialise(*) function for each sub-node, then calls the functions
      * SetUp(*) and ConfigureFunction(*) due to initialise the local environment.
+     * @brief returns false if the eventual merge with the local configuration data fails, true otherwise.
      */
     virtual bool Initialise(StructuredDataI & data);
 
     /**
-     * @brief Retrieves the states names where this class is declared into
+     * @brief Retrieves the states names where this class is declared into.
+     * @return the states names where this class is declared into.
      */
     StreamString *GetSupportedStates();
+
+    /**
+     * @brief Retrieves the thread names where this class is declared into. The threads
+     * are related one by one with the state names array returned by GetSupportedStates().
+     * @return the thread names where this class is declared into.
+     */
+    StreamString *GetSupportedThreads();
 
     /**
      * @brief Returns the number of the supported states.
@@ -145,8 +161,11 @@ public:
      */
     virtual Reference GetOutputWriter() const = 0;
 
-
-    virtual bool IsSync() const;
+    /**
+     * @brief Specifies if this GAM is synchronising.
+     * @return true if this GAM is linked to a synchronising RealTimeDataSourceDef, false otherwise.
+     */
+    virtual bool IsSync();
 
 protected:
 
@@ -161,6 +180,11 @@ protected:
      * The names of the supported states
      */
     StreamString *supportedStates;
+
+    /**
+     * The thread associated to each supported state.
+     */
+    StreamString *supportedThreads;
 
     /**
      * How many supported states

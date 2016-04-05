@@ -42,11 +42,6 @@ class BasicGAMSchedulerTest {
 
 public:
 
-    BasicGAMSchedulerTest();
-
-    ~BasicGAMSchedulerTest();
-
-
     bool TestConstructor();
 
     bool TestInitialise();
@@ -55,6 +50,9 @@ public:
 
     bool TestStopExecution();
 
+    bool TestGAMAbsoluteExecutionTime();
+
+    bool TestGAMRelativeExecutionTime();
 };
 
 /*---------------------------------------------------------------------------*/

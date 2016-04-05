@@ -88,29 +88,82 @@ public:
     bool TestConfigureArchitecture_GAMGroup();
 
     /**
-     * @brief Tests if the function works correctly
+     * @brief Tests if the function works correctly for a function defined as a ReferenceContainer
      */
     bool TestConfigureArchitecture_ReferenceContainer();
 
+    /**
+     * @brief Tests if the function works correctly specifying the path of the single GAMs in the GAMGroup
+     */
     bool TestConfigureArchitecture_SingleInGAMGroup();
 
+    /**
+     * @brief Tests if the function fails if the GAM is not declared inside a container.
+     */
     bool TestConfigureArchitectureFalse_OrphanGAM();
 
+    /**
+     * @brief Tests if the function fails if the type declared not inherits from GAMI
+     */
     bool TestConfigureArchitectureFalse_InvalidGAMType();
 
+    /**
+     * @brief Tests if the function fails if the thread declares a wrong path for the gam
+     */
     bool TestConfigureArchitectureFalse_InvalidGAMPath();
 
+    /**
+     * @brief Tests if the function retrieves correctly the number of thread functions.
+     */
     bool TestGetNumberOfFunctions();
 
+    /**
+     * @brief Tests if the function retrieves correctly the array with the thread functions.
+     */
     bool TestGetFunctions();
 
+    /**
+     * @brief Tests if the function returns the thread GAMs array.
+     */
     bool TestGetGAMs();
 
+    /**
+     * @brief Tests if the function returns the thread stack size correctly.
+     */
+    bool TestGetStackSize();
+
+    /**
+     * @brief Tests if the function returns correctly the thread cpu mask.
+     */
+    bool TestGetCPU();
+
+    /**
+     * @brief Tests if the function returns correctly the thread number of GAMs.
+     */
     bool TestGetNumberOfGAMs();
 
+    /**
+     * @brief Tests if the function performs correctly the conversion to a StructuredDataI.
+     */
     bool TestToStructuredData();
 
+    /**
+     * @brief Tests if the function returns true if there is only one synchronising
+     * GAM in the thread.
+     */
+    bool TestValidateDataSourceLinks();
+
+    /**
+     * @brief Tests if the function returns false if there are more than one
+     * synchronising GAM in the thread.
+     */
+    bool TestValidateDataSourceLinksFalse_MoreSync();
+
 private:
+
+    /**
+     * Configuration Database used in tests.
+     */
     ConfigurationDatabase cdb;
 };
 

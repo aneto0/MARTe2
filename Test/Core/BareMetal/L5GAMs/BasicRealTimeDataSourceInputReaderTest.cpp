@@ -163,7 +163,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Static() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1", "thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -232,7 +232,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_DefaultValues_Allocation()
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -299,7 +299,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Static() {
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -311,7 +311,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Static() {
     }
 
     plant->SetApplication(*rtapp.operator ->());
-    plant->AddState("+state1");
+    plant->AddState("+state1","thread1");
     if (!plant->ConfigureDataSource()) {
         return false;
     }
@@ -401,7 +401,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Allocation() {
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -413,7 +413,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_Allocation() {
     }
 
     plant->SetApplication(*rtapp.operator ->());
-    plant->AddState("+state1");
+    plant->AddState("+state1","thread1");
     if (!plant->ConfigureDataSource()) {
         return false;
     }
@@ -505,7 +505,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -572,7 +572,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MoreThanOneVariable() {
     }
 
     plant->SetApplication(*rtapp.operator ->());
-    plant->AddState("+state1");
+    plant->AddState("+state1","thread1");
     if (!plant->ConfigureDataSource()) {
         return false;
     }
@@ -714,7 +714,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MultiDim_Vector() {
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -840,7 +840,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestRead_MultiDim_Matrix() {
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -950,7 +950,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemNotSync
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -962,7 +962,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemNotSync
     }
 
     plant->SetApplication(*rtapp.operator ->());
-    plant->AddState("+state1");
+    plant->AddState("+state1","thread1");
     if (!plant->ConfigureDataSource()) {
         return false;
     }
@@ -1116,7 +1116,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSem() {
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -1128,7 +1128,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSem() {
     }
 
     plant->SetApplication(*rtapp.operator ->());
-    plant->AddState("+state1");
+    plant->AddState("+state1","thread1");
     if (!plant->ConfigureDataSource()) {
         return false;
     }
@@ -1250,7 +1250,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemWaitTim
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -1262,7 +1262,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemWaitTim
     }
 
     plant->SetApplication(*rtapp.operator ->());
-    plant->AddState("+state1");
+    plant->AddState("+state1","thread1");
     if (!plant->ConfigureDataSource()) {
         return false;
     }
@@ -1379,7 +1379,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemMoreRea
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -1391,7 +1391,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemMoreRea
     }
 
     plant->SetApplication(*rtapp.operator ->());
-    plant->AddState("+state1");
+    plant->AddState("+state1","thread1");
     if (!plant->ConfigureDataSource()) {
         return false;
     }
@@ -1503,7 +1503,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemTimeout
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -1515,7 +1515,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockSemTimeout
     }
 
     plant->SetApplication(*rtapp.operator ->());
-    plant->AddState("+state1");
+    plant->AddState("+state1","thread1");
     if (!plant->ConfigureDataSource()) {
         return false;
     }
@@ -1634,7 +1634,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockNoSleep() 
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -1646,7 +1646,7 @@ bool BasicRealTimeDataSourceInputReaderTest::TestSynchroniseOnSpinLockNoSleep() 
     }
 
     plant->SetApplication(*rtapp.operator ->());
-    plant->AddState("+state1");
+    plant->AddState("+state1","thread1");
     if (!plant->ConfigureDataSource()) {
         return false;
     }

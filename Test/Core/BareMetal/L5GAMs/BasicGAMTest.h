@@ -83,6 +83,12 @@ public:
     bool TestAddState();
 
     /**
+     * @brief Tests if the function returns false if the same gam is called by more than one
+     * thread in the same state.
+     */
+    bool TestAddStateFalse_MoreThreadsPerGAM();
+
+    /**
      * @brief Tests if the function returns correctly the number of the contextless gam supported states
      */
     bool TestGetNumberOfSupportedStates();
@@ -96,6 +102,16 @@ public:
      * @brief Tests if the function returns correctly the contextless gam supported states
      */
     bool TestGetSupportedStates();
+
+    /**
+     * @brief Tests if the function returns correctly the number of the contextful gam supported threads.
+     */
+    bool TestGetSupportedThreads_GAMGroup();
+
+    /**
+     * @brief Tests if the function returns correctly the contextless gam supported threads
+     */
+    bool TestGetSupportedThreads();
 
     /**
      * @brief Tests if the function returns correctly the contextful gam supported states
@@ -132,6 +148,8 @@ public:
      * @brief Tests if the function configures the RealTimeInputReader and the RealTimeOutputWriter correctly.
      */
     bool TestConfigureDataSourceLinks();
+
+    bool TestIsSync();
 
     /**
      * @brief Tests a custom execute function.

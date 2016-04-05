@@ -79,7 +79,7 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
     ReferenceT<GAMGroup> functionGAMGroup = functionGeneric;
     if (functionGAMGroup.IsValid()) {
         // add the GAMGroup to the RealTimeState accelerator array
-        functionGAMGroup->AddState(rtState.GetName());
+        functionGAMGroup->AddState(rtState.GetName(), GetName());
         rtState.AddGAMGroup(functionGAMGroup);
         uint32 nOfSubGAMs = functionGAMGroup->Size();
         // add all the gams in the order of the configuration inside GAMGroup
@@ -109,10 +109,10 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
                 if (gamGroup.IsValid()) {
                     rtState.AddGAMGroup(gamGroup);
                     functionGAM->SetGAMGroup(gamGroup);
-                    gamGroup->AddState(rtState.GetName());
+                    ret=gamGroup->AddState(rtState.GetName(), GetName());
                 }
                 else {
-                    functionGAM->AddState(rtState.GetName());
+                    ret=functionGAM->AddState(rtState.GetName(), GetName());
                 }
             }
             else {
@@ -193,11 +193,31 @@ bool RealTimeThread::ConfigureArchitecture(RealTimeApplication &rtApp,
             // configure
             ret = ConfigureArchitecturePrivate(functionGeneric, rtApp, rtState);
             if (ret) {
-                // insert here the reference
-                ret = Insert(functionGeneric);
+                bool found = false;
+                uint32 numberOfFunctions = Size();
+                for (uint32 i = 0u; (i < numberOfFunctions) && (!found); i++) {
+                    Reference function = Get(i);
+                    if (function.IsValid()) {
+                        found = (StringHelper::Compare(function->GetName(), functionGeneric->GetName()) == 0);
+                    }
+                }
+                if (!found) {
+                    // insert here the reference
+                    ret = Insert(functionGeneric);
+                }
                 if (ret) {
-                    // insert the reference into the state
-                    ret = rtState.InsertFunction(functionGeneric);
+                    found = false;
+                    uint32 stateNumberOfFunctions = rtState.Size();
+                    for (uint32 i = 0u; (i < stateNumberOfFunctions) && (!found); i++) {
+                        Reference stateFunction = rtState.Get(i);
+                        if (stateFunction.IsValid()) {
+                            found = (StringHelper::Compare(stateFunction->GetName(), functionGeneric->GetName()) == 0);
+                        }
+                    }
+                    if (!found) {
+                        // insert the reference into the state
+                        ret = rtState.InsertFunction(functionGeneric);
+                    }
                 }
                 // insert this thread in the scheduler
                 if (ret) {

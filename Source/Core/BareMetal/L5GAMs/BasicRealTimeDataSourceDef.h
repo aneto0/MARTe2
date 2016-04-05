@@ -222,6 +222,20 @@ public:
      */
     uint32 GetNumberOfElements(uint32 dimension) const;
 
+
+    /**
+     * @brief Initialises the container and reads the variable address and type from the StructuredData
+     * in input.
+     * @details The following fields can be specified:\n
+     *   - Type = "the variable type"\n
+     *   - DefaultValue = "the variable default value"\n
+     *   - Modifiers = "the variable modifiers"\n
+     * The Modifiers parameter follows the same format of the modifiers string in IntrospectionEntry. In particular in this
+     * case Modifiers = "[n]" denotes an array with n elements, Modifiers = [n][m] denotes a matrix with n rows and m columns.
+     * @param[in] data contains the configuration data.
+     */
+    virtual bool Initialise(StructuredDataI & data);
+
     /**
      * @brief Converts this object in a StructuredData.
      * @param[in] data contains the configuration data.

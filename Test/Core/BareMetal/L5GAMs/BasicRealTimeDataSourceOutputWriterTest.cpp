@@ -117,7 +117,7 @@ bool BasicRealTimeDataSourceOutputWriterTest::TestWrite_Allocation() {
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -174,7 +174,7 @@ bool BasicRealTimeDataSourceOutputWriterTest::TestWrite_Allocation() {
     }
 
     plant->SetApplication(*rtapp.operator ->());
-    plant->AddState("+state1");
+    plant->AddState("+state1","thread1");
     if (!plant->ConfigureDataSource()) {
         return false;
     }
@@ -280,7 +280,7 @@ bool BasicRealTimeDataSourceOutputWriterTest::TestWrite_Static() {
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -337,7 +337,7 @@ bool BasicRealTimeDataSourceOutputWriterTest::TestWrite_Static() {
     }
 
     plant->SetApplication(*rtapp.operator ->());
-    plant->AddState("+state1");
+    plant->AddState("+state1","thread1");
     if (!plant->ConfigureDataSource()) {
         return false;
     }
@@ -439,7 +439,7 @@ bool BasicRealTimeDataSourceOutputWriterTest::TestWrite_MoreThanOneVariable() {
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -506,7 +506,7 @@ bool BasicRealTimeDataSourceOutputWriterTest::TestWrite_MoreThanOneVariable() {
     }
 
     plant->SetApplication(*rtapp.operator ->());
-    plant->AddState("+state1");
+    plant->AddState("+state1","thread1");
     if (!plant->ConfigureDataSource()) {
         return false;
     }
@@ -662,7 +662,7 @@ bool BasicRealTimeDataSourceOutputWriterTest::TestWrite_MultiDim_Vector() {
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }
@@ -801,7 +801,7 @@ bool BasicRealTimeDataSourceOutputWriterTest::TestWrite_MultiDim_Matrix() {
     }
 
     pid->SetApplication(*rtapp.operator ->());
-    pid->AddState("+state1");
+    pid->AddState("+state1","thread1");
     if (!pid->ConfigureDataSource()) {
         return false;
     }

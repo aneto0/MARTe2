@@ -115,7 +115,27 @@ TEST(RealTimeThreadGTest,TestGetNumberOfGAMs) {
     ASSERT_TRUE(rttTest.TestGetGAMs());
 }
 
+TEST(RealTimeThreadGTest,TestGetStackSize) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestGetStackSize());
+}
+
+TEST(RealTimeThreadGTest,TestGetCPU) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestGetCPU());
+}
+
 TEST(RealTimeThreadGTest,TestToStructuredData) {
     RealTimeThreadTest rttTest;
     ASSERT_TRUE(rttTest.TestToStructuredData());
+}
+
+TEST(RealTimeThreadGTest,TestValidateDataSourceLinks) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestValidateDataSourceLinks());
+}
+
+TEST(RealTimeThreadGTest,TestValidateDataSourceLinksFalse_MoreSync) {
+    RealTimeThreadTest rttTest;
+    ASSERT_TRUE(rttTest.TestValidateDataSourceLinksFalse_MoreSync());
 }

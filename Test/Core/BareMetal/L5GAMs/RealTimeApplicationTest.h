@@ -145,6 +145,9 @@ public:
     bool TestGetActiveBuffer();
 
 
+    bool TestValidateDataSourceLinks();
+
+    bool TestValidateDataSourceLinksFalse_MoreSync();
 
 };
 

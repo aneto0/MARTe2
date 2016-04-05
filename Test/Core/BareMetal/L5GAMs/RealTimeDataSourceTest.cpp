@@ -118,8 +118,8 @@ bool RealTimeDataSourceTest::TestAllocate() {
         return false;
     }
     gam1->SetName("PID1");
-    gam1->AddState("state1");
-    gam1->AddState("state2");
+    gam1->AddState("state1","thread1");
+    gam1->AddState("state2","thread1");
 
     ConfigurationDatabase cdbPlant;
 
@@ -173,8 +173,8 @@ bool RealTimeDataSourceTest::TestAllocate() {
         return false;
     }
     gam2->SetName("Plant");
-    gam2->AddState("state1");
-    gam2->AddState("state2");
+    gam2->AddState("state1","thread1");
+    gam2->AddState("state2","thread1");
 
     ConfigurationDatabase cdbDS;
 
@@ -291,8 +291,8 @@ bool RealTimeDataSourceTest::TestAllocate_Structure() {
         return false;
     }
     gam1->SetName("PID1");
-    gam1->AddState("state1");
-    gam1->AddState("state2");
+    gam1->AddState("state1","thread1");
+    gam1->AddState("state2","thread1");
 
     ConfigurationDatabase cdbPlant;
 
@@ -342,8 +342,8 @@ bool RealTimeDataSourceTest::TestAllocate_Structure() {
         return false;
     }
     gam2->SetName("Plant");
-    gam2->AddState("state1");
-    gam2->AddState("state2");
+    gam2->AddState("state1","thread1");
+    gam2->AddState("state2","thread1");
 
     ConfigurationDatabase cdbDS;
 

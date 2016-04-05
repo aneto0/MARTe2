@@ -276,7 +276,6 @@ DummyGAM::DummyGAM() {
 }
 
 void DummyGAM::Execute(uint8 activeContextBuffer) {
-
     inputReader->Read(activeContextBuffer);
     uint32 *counterIn = (uint32*) inputReader->GetData(0);
     uint32 *counterOut = (uint32*) outputWriter->GetData(0);

@@ -143,7 +143,7 @@ bool GAMSchedulerI::PrepareNextState(RealTimeStateInfo info) {
                                 defCDBRel.Write("Type", "uint64");
                                 defCDBRel.Write("Default", "0");
                                 defCDBRel.Write("IsFinal", "true");
-                                StreamString path = "GAM_Times.";
+                                path = "GAM_Times.";
                                 path += gam->GetName();
                                 path += ".RelativeUsecTime";
                                 defCDBRel.Write("Path", path.Buffer());
@@ -154,11 +154,11 @@ bool GAMSchedulerI::PrepareNextState(RealTimeStateInfo info) {
                                 if (ret) {
                                     ret = (writer[nextBuffer])[i].AddVariable(ReferenceT<RealTimeGenericDataDef>(&defRel));
                                 }
-                                if (ret) {
-                                    ret = (writer[nextBuffer])[i].Finalise();
-                                }
                             }
                         }
+                    }
+                    if (ret) {
+                        ret = (writer[nextBuffer])[i].Finalise();
                     }
                 }
             }

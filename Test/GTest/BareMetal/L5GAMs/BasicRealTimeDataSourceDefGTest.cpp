@@ -29,10 +29,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-
-
-
-
 #include <limits.h>
 #include "gtest/gtest.h"
 /*---------------------------------------------------------------------------*/
@@ -51,6 +47,11 @@
 TEST(BasicRealTimeDataSourceDefGTest,TestConstructor) {
     BasicRealTimeDataSourceDefTest rtdsdTest;
     ASSERT_TRUE(rtdsdTest.TestConstructor());
+}
+
+TEST(BasicRealTimeDataSourceDefGTest,TestInitialise) {
+    BasicRealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestInitialise());
 }
 
 TEST(BasicRealTimeDataSourceDefGTest,TestAddConsumer) {

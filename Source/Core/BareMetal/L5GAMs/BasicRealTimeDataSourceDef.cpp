@@ -449,6 +449,36 @@ uint32 BasicRealTimeDataSourceDef::GetNumberOfElements(uint32 dimension) const {
     return numberOfElements[dimension];
 }
 
+bool BasicRealTimeDataSourceDef::Initialise(StructuredDataI & data) {
+
+    bool ret = ReferenceContainer::Initialise(data);
+
+    if (ret) {
+
+        if (!data.Read("Type", type)) {
+        }
+
+        if (!data.Read("Default", defaultValue)) {
+        }
+
+        StreamString modifiers;
+        if (data.Read("Modifiers", modifiers)) {
+            // use introspection entry to parse the modifiers
+            IntrospectionEntry entry("", "", modifiers.Buffer(), "", 0u, 0u);
+            numberOfDimensions = entry.GetNumberOfDimensions();
+            for (uint32 i = 0u; i < 3u; i++) {
+                numberOfElements[i] = entry.GetNumberOfElements(i);
+            }
+            if (entry.GetMemberPointerLevel() > 0u) {
+                REPORT_ERROR(ErrorManagement::Warning, "Pointers not supported. The statement will be ignored");
+            }
+        }
+
+    }
+    return ret;
+}
+
+
 bool BasicRealTimeDataSourceDef::ToStructuredData(StructuredDataI& data) {
 
     const char8 * objName = GetName();

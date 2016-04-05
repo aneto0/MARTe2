@@ -46,8 +46,10 @@ static const uint32 stateNamesGranularity = 4u;
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAMGroup::GAMGroup(): ReferenceContainer() {
+GAMGroup::GAMGroup() :
+        ReferenceContainer() {
     supportedStates = NULL_PTR(StreamString*);
+    supportedThreads = NULL_PTR(StreamString*);
     numberOfSupportedStates = 0u;
 }
 
@@ -55,6 +57,9 @@ GAMGroup::GAMGroup(): ReferenceContainer() {
 GAMGroup::~GAMGroup() {
     if (supportedStates != NULL) {
         delete[] supportedStates;
+    }
+    if (supportedThreads!= NULL) {
+        delete[] supportedThreads;
     }
 }
 
@@ -75,35 +80,53 @@ StreamString *GAMGroup::GetSupportedStates() {
     return supportedStates;
 }
 
+StreamString *GAMGroup::GetSupportedThreads() {
+    return supportedThreads;
+}
+
 uint32 GAMGroup::GetNumberOfSupportedStates() const {
     return numberOfSupportedStates;
 }
 
-void GAMGroup::AddState(const char8 * const stateName) {
+bool GAMGroup::AddState(const char8 * const stateName,
+                        const char8 * const threadName) {
 
+    bool ret = true;
     bool found = false;
     for (uint32 i = 0u; (i < numberOfSupportedStates) && (!found); i++) {
         /*lint -e{613} never enter here if supportedStates is NULL (because numberOfSupportedStates == 0) */
         found = (supportedStates[i] == stateName);
+        if (found) {
+            ret = (supportedThreads[i] == threadName);
+            if (!ret) {
+                //TODO same gam in two different threads!
+            }
+
+        }
     }
 
     if (!found) {
         if ((numberOfSupportedStates % stateNamesGranularity) == 0u) {
             uint32 newSize = numberOfSupportedStates + stateNamesGranularity;
-            StreamString *temp = new StreamString[newSize];
+            StreamString *tempStates = new StreamString[newSize];
+            StreamString *tempThreads = new StreamString[newSize];
             if (supportedStates != NULL) {
                 for (uint32 i = 0u; i < numberOfSupportedStates; i++) {
-                    temp[i] = supportedStates[i];
+                    tempStates[i] = supportedStates[i];
+                    tempThreads[i] = supportedThreads[i];
                 }
                 delete[] supportedStates;
+                delete[] supportedThreads;
             }
-            supportedStates = temp;
-
+            supportedStates = tempStates;
+            supportedThreads = tempThreads;
         }
         /*lint -e{613} the memory of supportedStates is already allocated (numberOfSupportedStates == 0) */
         supportedStates[numberOfSupportedStates] = stateName;
+        supportedThreads[numberOfSupportedStates] = threadName;
         numberOfSupportedStates++;
     }
+    return ret;
 }
 
 bool GAMGroup::Initialise(StructuredDataI &data) {

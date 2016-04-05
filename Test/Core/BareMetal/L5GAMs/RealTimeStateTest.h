@@ -102,6 +102,9 @@ public:
      */
     bool TestPrepareState();
 
+
+    bool TestValidateDataSourceLinks();
+
 };
 
 /*---------------------------------------------------------------------------*/

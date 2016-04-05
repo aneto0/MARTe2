@@ -139,7 +139,8 @@ bool RealTimeDataSourceContainerTest::TestAddDataDefinition_Final() {
         return false;
     }
 
-    return sourceDefs->Size() == 2;
+    // consider the time data source
+    return sourceDefs->Size() == 3;
 }
 
 bool RealTimeDataSourceContainerTest::TestAddDataDefinitionFalse_Final() {
@@ -259,8 +260,8 @@ bool RealTimeDataSourceContainerTest::TestAddDataDefinition_AlreadyExistentLeaf(
         return false;
     }
     gam1->SetName("PID1");
-    gam1->AddState("state1");
-    gam1->AddState("state2");
+    gam1->AddState("state1","thread1");
+    gam1->AddState("state2","thread1");
 
     ConfigurationDatabase cdbPlant;
 
@@ -314,8 +315,8 @@ bool RealTimeDataSourceContainerTest::TestAddDataDefinition_AlreadyExistentLeaf(
         return false;
     }
     gam2->SetName("Plant");
-    gam2->AddState("state1");
-    gam2->AddState("state2");
+    gam2->AddState("state1","thread1");
+    gam2->AddState("state2","thread1");
 
     ConfigurationDatabase cdbDS;
 
@@ -594,8 +595,8 @@ bool RealTimeDataSourceContainerTest::TestVerify() {
         return false;
     }
     gam1->SetName("PID1");
-    gam1->AddState("state1");
-    gam1->AddState("state2");
+    gam1->AddState("state1","thread1");
+    gam1->AddState("state2","thread1");
 
     ConfigurationDatabase cdbPlant;
 
@@ -649,8 +650,8 @@ bool RealTimeDataSourceContainerTest::TestVerify() {
         return false;
     }
     gam2->SetName("Plant");
-    gam2->AddState("state1");
-    gam2->AddState("state2");
+    gam2->AddState("state1","thread1");
+    gam2->AddState("state2","thread1");
 
     ConfigurationDatabase cdbDS;
 
@@ -726,8 +727,8 @@ bool RealTimeDataSourceContainerTest::TestVerify_TwoProducers() {
         return false;
     }
     gam1->SetName("PID1");
-    gam1->AddState("state1");
-    gam1->AddState("state2");
+    gam1->AddState("state1","thread1");
+    gam1->AddState("state2","thread1");
 
     ConfigurationDatabase cdbPlant;
 
@@ -782,8 +783,8 @@ bool RealTimeDataSourceContainerTest::TestVerify_TwoProducers() {
         return false;
     }
     gam2->SetName("Plant");
-    gam2->AddState("state1");
-    gam2->AddState("state2");
+    gam2->AddState("state1","thread1");
+    gam2->AddState("state2","thread1");
 
     ConfigurationDatabase cdbDS;
 
@@ -860,8 +861,8 @@ bool RealTimeDataSourceContainerTest::TestAllocate() {
         return false;
     }
     gam1->SetName("PID1");
-    gam1->AddState("state1");
-    gam1->AddState("state2");
+    gam1->AddState("state1","thread1");
+    gam1->AddState("state2","thread1");
 
     ConfigurationDatabase cdbPlant;
 
@@ -915,8 +916,8 @@ bool RealTimeDataSourceContainerTest::TestAllocate() {
         return false;
     }
     gam2->SetName("Plant");
-    gam2->AddState("state1");
-    gam2->AddState("state2");
+    gam2->AddState("state1","thread1");
+    gam2->AddState("state2","thread1");
 
     ConfigurationDatabase cdbDS;
 
@@ -1030,8 +1031,8 @@ bool RealTimeDataSourceContainerTest::TestAllocate_Structure() {
         return false;
     }
     gam1->SetName("PID1");
-    gam1->AddState("state1");
-    gam1->AddState("state2");
+    gam1->AddState("state1","thread1");
+    gam1->AddState("state2","thread1");
 
     ConfigurationDatabase cdbPlant;
 
@@ -1081,8 +1082,8 @@ bool RealTimeDataSourceContainerTest::TestAllocate_Structure() {
         return false;
     }
     gam2->SetName("Plant");
-    gam2->AddState("state1");
-    gam2->AddState("state2");
+    gam2->AddState("state1","thread1");
+    gam2->AddState("state2","thread1");
 
     ConfigurationDatabase cdbDS;
 
@@ -1195,8 +1196,8 @@ bool RealTimeDataSourceContainerTest::TestPrepareNextState() {
         return false;
     }
     gam1->SetName("PID1");
-    gam1->AddState("state1");
-    gam1->AddState("state2");
+    gam1->AddState("state1","thread1");
+    gam1->AddState("state2","thread1");
 
     ConfigurationDatabase cdbPlant;
 
@@ -1240,8 +1241,8 @@ bool RealTimeDataSourceContainerTest::TestPrepareNextState() {
         return false;
     }
     gam2->SetName("Plant");
-    gam2->AddState("state1");
-    gam2->AddState("state2");
+    gam2->AddState("state1","thread1");
+    gam2->AddState("state2","thread1");
 
     ConfigurationDatabase cdbDS;
 
@@ -1363,8 +1364,8 @@ bool RealTimeDataSourceContainerTest::TestPrepareNextState_MultiDim_Vector() {
         return false;
     }
     gam1->SetName("PID1");
-    gam1->AddState("state1");
-    gam1->AddState("state2");
+    gam1->AddState("state1","thread1");
+    gam1->AddState("state2","thread1");
 
     ConfigurationDatabase cdbDS;
 
@@ -1480,8 +1481,8 @@ bool RealTimeDataSourceContainerTest::TestPrepareNextState_MultiDim_Matrix() {
         return false;
     }
     gam1->SetName("PID1");
-    gam1->AddState("state1");
-    gam1->AddState("state2");
+    gam1->AddState("state1","thread1");
+    gam1->AddState("state2","thread1");
 
     ConfigurationDatabase cdbDS;
 

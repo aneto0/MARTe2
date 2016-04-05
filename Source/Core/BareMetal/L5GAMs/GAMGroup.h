@@ -74,7 +74,6 @@ public:
      */
     virtual ~GAMGroup();
 
-
     /**
      * @brief Does all the necessary operations to prepare the context used for the
      * next state.
@@ -82,12 +81,18 @@ public:
      */
     virtual void PrepareNextState(const RealTimeStateInfo &status)=0;
 
-
     /**
      * @brief Returns the array with the names of the states in which this GAMGroup is involved.
      * @return the names of the supported states.
      */
-    StreamString *GetSupportedStates() ;
+    StreamString *GetSupportedStates();
+
+    /**
+     * @brief Returns the array with the names of the threads in which this GAMGroup is involved. The
+     * thread names are related one by one with the state names returned by GetSupportedStates().
+     * @return the names of the supported threads.
+     */
+    StreamString *GetSupportedThreads();
 
     /**
      * @brief Returns the number of the supported states.
@@ -95,12 +100,12 @@ public:
      */
     uint32 GetNumberOfSupportedStates() const;
 
-
     /**
      * @brief Adds the name of a RealTimeState where this GAMGroup is declared into.
      * @param[in] stateName is the RealTimeState name.
      */
-    void AddState(const char8 * const stateName);
+    bool AddState(const char8 * const stateName,
+                  const char8 * const threadName);
 
     /**
      * @brief Initialises all the sub-nodes, then call SetUp(*) to setup the environment.
@@ -115,11 +120,15 @@ protected:
      */
     virtual void SetUp()=0;
 
-
     /**
      * The names of the supported states
      */
     StreamString *supportedStates;
+
+    /**
+     * The names of the supported threads
+     */
+    StreamString *supportedThreads;
 
     /**
      * How many supported states

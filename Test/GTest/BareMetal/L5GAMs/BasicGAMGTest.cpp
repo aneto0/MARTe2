@@ -71,6 +71,11 @@ TEST(BasicGAMGTest,TestAddState) {
     ASSERT_TRUE(gamTest.TestAddState());
 }
 
+TEST(BasicGAMGTest,TestAddStateFalse_MoreThreadsPerGAM) {
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestAddStateFalse_MoreThreadsPerGAM());
+}
+
 TEST(BasicGAMGTest,TestGetNumberOfSupportedStates) {
     BasicGAMTest gamTest;
     ASSERT_TRUE(gamTest.TestGetNumberOfSupportedStates());
@@ -89,6 +94,16 @@ TEST(BasicGAMGTest,TestGetNumberOfSupportedStates_GAMGroup) {
 TEST(BasicGAMGTest,TestGetSupportedStates_GAMGroup) {
     BasicGAMTest gamTest;
     ASSERT_TRUE(gamTest.TestGetSupportedStates_GAMGroup());
+}
+
+TEST(BasicGAMGTest,TestGetSupportedThreads) {
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestGetSupportedThreads());
+}
+
+TEST(BasicGAMGTest,TestGetSupportedThreads_GAMGroup) {
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestGetSupportedThreads_GAMGroup());
 }
 
 TEST(BasicGAMGTest,TestConfigureDataSource) {
@@ -119,6 +134,12 @@ TEST(BasicGAMGTest,TestConfigureDataSource_NoStates) {
 TEST(BasicGAMGTest,TestConfigureDataSourceLinks) {
     BasicGAMTest gamTest;
     ASSERT_TRUE(gamTest.TestConfigureDataSourceLinks());
+}
+
+
+TEST(BasicGAMGTest,TestIsSync) {
+    BasicGAMTest gamTest;
+    ASSERT_TRUE(gamTest.TestIsSync());
 }
 
 TEST(BasicGAMGTest,TestExecute) {

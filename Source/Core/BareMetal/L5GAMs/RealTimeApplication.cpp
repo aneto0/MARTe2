@@ -252,8 +252,9 @@ bool RealTimeApplication::ValidateDataSourceLinks() {
     if (ret) {
         uint32 numberOfStates = statesContainer->Size();
         for (uint32 i = 0u; (i < numberOfStates) && ret; i++) {
-            ReferenceT<RealTimeState> state = Get(i);
-            if (state.IsValid()) {
+            ReferenceT<RealTimeState> state = statesContainer->Get(i);
+            ret = state.IsValid();
+            if (ret) {
                 ret = state->ValidateDataSourceLinks();
             }
         }

@@ -55,6 +55,12 @@ public:
      */
     bool TestConstructor();
 
+
+    /**
+     * @brief Tests if the function initialises correctly the object from StructuredDataI.
+     */
+    bool TestInitialise();
+
     /**
      * @brief Tests if the function adds a record with the state name in input and adds to it the
      * consumer gam in input.

@@ -52,6 +52,7 @@ GAMI::GAMI() :
     localData = NULL_PTR(StructuredDataI*);
     numberOfSupportedStates = 0u;
     supportedStates = NULL_PTR(StreamString *);
+    supportedThreads = NULL_PTR(StreamString *);
     group = NULL_PTR(GAMGroup*);
     application = NULL_PTR(RealTimeApplication *);
 }
@@ -60,6 +61,10 @@ GAMI::GAMI() :
 GAMI::~GAMI() {
     if (supportedStates != NULL) {
         delete[] supportedStates;
+    }
+
+    if (supportedThreads != NULL) {
+        delete[] supportedThreads;
     }
 
     application=NULL_PTR(RealTimeApplication *);
@@ -170,44 +175,65 @@ void GAMI::SetGAMGroup(ReferenceT<GAMGroup> gamGroup) {
     }
 }
 
-void GAMI::AddState(const char8 * const stateName) {
+bool GAMI::AddState(const char8 * const stateName,
+                    const char8 * const threadName) {
 
+    bool ret = true;
     bool found = false;
     for (uint32 i = 0u; (i < numberOfSupportedStates) && (!found); i++) {
         /*lint -e{613} never enter here if supportedStates is NULL (because numberOfSupportedStates == 0) */
         found = (supportedStates[i] == stateName);
+
+        if (found) {
+            ret = (supportedThreads[i] == threadName);
+            if (!ret) {
+                //TODO same gam in two different threads!
+            }
+        }
+
     }
 
     if (!found) {
         if ((numberOfSupportedStates % stateNamesGranularity) == 0u) {
             uint32 newSize = numberOfSupportedStates + stateNamesGranularity;
-            StreamString *temp = new StreamString[newSize];
+            StreamString *tempStates = new StreamString[newSize];
+            StreamString *tempThreads = new StreamString[newSize];
             if (supportedStates != NULL) {
                 for (uint32 i = 0u; i < numberOfSupportedStates; i++) {
-                    temp[i] = supportedStates[i];
+                    tempStates[i] = supportedStates[i];
+                    tempThreads[i] = supportedThreads[i];
                 }
                 delete[] supportedStates;
+                delete[] supportedThreads;
             }
-            supportedStates = temp;
+            supportedStates = tempStates;
+            supportedThreads = tempThreads;
 
         }
         /*lint -e{613} the memory of supportedStates is already allocated (numberOfSupportedStates == 0) */
         supportedStates[numberOfSupportedStates] = stateName;
+        supportedThreads[numberOfSupportedStates] = threadName;
         numberOfSupportedStates++;
     }
-
+    return ret;
 }
 
 StreamString * GAMI::GetSupportedStates() {
     return (group != NULL) ? (group->GetSupportedStates()) : (supportedStates);
 }
 
+
+StreamString * GAMI::GetSupportedThreads(){
+    return (group != NULL) ? (group->GetSupportedThreads()) : (supportedThreads);
+}
+
+
 uint32 GAMI::GetNumberOfSupportedStates() const {
     return (group != NULL) ? (group->GetNumberOfSupportedStates()) : (numberOfSupportedStates);
 
 }
 
-bool GAMI::IsSync() const {
+bool GAMI::IsSync() {
     return false;
 }
 

@@ -46,6 +46,28 @@ bool BasicRealTimeDataSourceDefTest::TestConstructor() {
     return (x.Size() == 0);
 }
 
+bool BasicRealTimeDataSourceDefTest::TestInitialise() {
+    ConfigurationDatabase cdb;
+    cdb.Write("Modifiers", "[3][2]");
+    cdb.Write("Type", "int32");
+    cdb.Write("Default", "1");
+    BasicRealTimeDataSourceDef def;
+    if (!def.Initialise(cdb)) {
+        return false;
+    }
+    if (def.GetNumberOfDimensions() != 2) {
+        return false;
+    }
+    if (def.GetNumberOfElements(0) != 2) {
+        return false;
+    }
+    if (def.GetNumberOfElements(1) != 3) {
+        return false;
+    }
+
+    return StringHelper::Compare(def.GetDefaultValue(), "1")==0;
+}
+
 bool BasicRealTimeDataSourceDefTest::TestAddConsumer() {
 
     BasicRealTimeDataSourceDef def;

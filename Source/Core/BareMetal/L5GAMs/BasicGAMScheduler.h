@@ -87,6 +87,12 @@ private:
      * A flag to be set to stop the execution.
      */
     volatile int32 stopFlag;
+
+
+    /**
+     * The time to release cpu in each cycle.
+     */
+    float64 sleepTime;
 };
 
 }

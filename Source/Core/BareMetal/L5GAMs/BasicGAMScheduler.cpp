@@ -32,7 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BasicGAMScheduler.h"
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -46,9 +46,13 @@ BasicGAMScheduler::BasicGAMScheduler() :
         GAMSchedulerI() {
     numberOfCycles = -1LL;
     stopFlag = 0;
+    sleepTime = 0.0;
 }
 
 void BasicGAMScheduler::StartExecution(const uint32 activeBuffer) {
+
+    // warning: possible segmentation faults if the previous operations
+    // lack or fail and the pointers are invalid.
 
     if (statesInExecution[activeBuffer]->GetNumberOfThreads() > 1u) {
         //TODO Warning
@@ -64,39 +68,40 @@ void BasicGAMScheduler::StartExecution(const uint32 activeBuffer) {
             for (int64 n = 0LL; (n < numberOfCycles) && (stopFlag == 0); n++) {
                 uint64 absTic = HighResolutionTimer::Counter();
                 for (uint32 i = 0u; i < numberOfGAMs; i++) {
-                    if (gamArray[i].IsValid()) {
-                        // save the time before
-                        uint64 relTic = HighResolutionTimer::Counter();
-                        // execute the gam
-                        gamArray[i]->Execute(activeBuffer);
-                        // writes the time stamps
-                        // 2*i because for each gam we have absolute and relative variable inserted
-                        uint64 * absTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0].GetData(2 * i));
-                        *absTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), absTic) * 1e6);
-                        uint64 * relTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0].GetData((2 * i) + 1u));
-                        *relTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), relTic) * 1e6);
-                        (writer[activeBuffer])[0].Write(activeBuffer);
-                    }
+                    // save the time before
+                    uint64 relTic = HighResolutionTimer::Counter();
+                    // execute the gam
+                    gamArray[i]->Execute(activeBuffer);
+                    // writes the time stamps
+                    // 2*i because for each gam we have absolute and relative variable inserted
+                    uint64 * relTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0].GetData((2 * i) + 1u));
+                    *relTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), relTic) * 1e6);
+                    uint64 * absTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0].GetData(2 * i));
+                    *absTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), absTic) * 1e6);
+                    (writer[activeBuffer])[0].Write(activeBuffer);
                 }
+
+                // release the cpu
+                Sleep::Sec(sleepTime);
             }
         }
         else {
             for (; (stopFlag == 0);) {
                 uint64 absTic = HighResolutionTimer::Counter();
                 for (uint32 i = 0u; i < numberOfGAMs; i++) {
-                    if (gamArray[i].IsValid()) {
-                        // save the time before
-                        uint64 relTic = HighResolutionTimer::Counter();
-                        // execute the gam
-                        gamArray[i]->Execute(activeBuffer);
-                        // writes the time stamps
-                        uint64 * absTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0].GetData(2 * i));
-                        *absTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), absTic) * 1e6);
-                        uint64 * relTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0].GetData((2 * i) + 1u));
-                        *relTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), relTic) * 1e6);
-                        (writer[activeBuffer])[0].Write(activeBuffer);
-                    }
+                    // save the time before
+                    uint64 relTic = HighResolutionTimer::Counter();
+                    // execute the gam
+                    gamArray[i]->Execute(activeBuffer);
+                    uint64 * relTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0].GetData((2 * i) + 1u));
+                    *relTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), relTic) * 1e6);
+                    // writes the time stamps
+                    uint64 * absTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[0].GetData(2 * i));
+                    *absTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), absTic) * 1e6);
+                    (writer[activeBuffer])[0].Write(activeBuffer);
                 }
+                // release the cpu
+                Sleep::Sec(sleepTime);
             }
         }
     }
@@ -112,10 +117,12 @@ bool BasicGAMScheduler::Initialise(StructuredDataI &data) {
         if (data.Read("NumberOfCycles", numberOfCycles)) {
             // default is infinite (-1)
         }
+        if (data.Read("SleepTime", sleepTime)) {
+            // default is infinite (-1)
+        }
     }
     return ret;
 }
-
 
 CLASS_REGISTER(BasicGAMScheduler, "1.0")
 

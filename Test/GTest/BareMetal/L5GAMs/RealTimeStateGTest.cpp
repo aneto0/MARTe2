@@ -85,3 +85,8 @@ TEST(RealTimeStateGTest,TestPrepareState) {
     ASSERT_TRUE(rtsTest.TestPrepareState());
 }
 
+TEST(RealTimeStateGTest,TestValidateDataSourceLinks) {
+    RealTimeStateTest rtsTest;
+    ASSERT_TRUE(rtsTest.TestValidateDataSourceLinks());
+}
+

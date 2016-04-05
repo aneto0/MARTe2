@@ -71,3 +71,13 @@ TEST(BasicGAMSchedulerGTest,TestStopExecution) {
     BasicGAMSchedulerTest schedTest;
     ASSERT_TRUE(schedTest.TestStopExecution());
 }
+
+TEST(BasicGAMSchedulerGTest,TestGAMAbsoluteExecutionTime) {
+    BasicGAMSchedulerTest schedTest;
+    ASSERT_TRUE(schedTest.TestStopExecution());
+}
+
+TEST(BasicGAMSchedulerGTest,TestGAMRelativeExecutionTime) {
+    BasicGAMSchedulerTest schedTest;
+    ASSERT_TRUE(schedTest.TestGAMRelativeExecutionTime());
+}

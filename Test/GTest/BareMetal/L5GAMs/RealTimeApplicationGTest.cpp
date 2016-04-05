@@ -125,3 +125,13 @@ TEST(RealTimeApplicationGTest,TestGetActiveBuffer) {
     RealTimeApplicationTest rtappTest;
     ASSERT_TRUE(rtappTest.TestGetActiveBuffer());
 }
+
+TEST(RealTimeApplicationGTest,TestValidateDataSourceLinks) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestValidateDataSourceLinks());
+}
+
+TEST(RealTimeApplicationGTest,TestValidateDataSourceLinksFalse_MoreSync) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestValidateDataSourceLinksFalse_MoreSync());
+}

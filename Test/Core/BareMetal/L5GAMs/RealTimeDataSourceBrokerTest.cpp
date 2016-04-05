@@ -125,7 +125,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_Allocation() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -190,7 +190,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_Static() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -267,7 +267,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_Allocation_BasicType() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -334,7 +334,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_Static_BasicType() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -396,7 +396,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_NoApplicationSet() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -451,7 +451,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_NoDataInApplication() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
 
     ReferenceT<RealTimeGenericDataDef> def = gam->Find("+Inputs.+Error");
 
@@ -654,7 +654,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Static_Vecto
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -770,7 +770,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Allocation_V
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -869,7 +869,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Static_Matri
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -1003,7 +1003,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariable_MultiDimensional_Allocation_M
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -1098,7 +1098,7 @@ bool RealTimeDataSourceBrokerTest::TestAddVariableFalse_UnsupportedMultidimStruc
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -1234,7 +1234,7 @@ bool RealTimeDataSourceBrokerTest::TestGetData_Allocation() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -1312,7 +1312,7 @@ bool RealTimeDataSourceBrokerTest::TestGetData_Static() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -1394,7 +1394,7 @@ bool RealTimeDataSourceBrokerTest::TestGetMemoryPointer_Allocation() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -1464,7 +1464,7 @@ bool RealTimeDataSourceBrokerTest::TestGetMemoryPointer_Static() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
@@ -1542,7 +1542,7 @@ bool RealTimeDataSourceBrokerTest::TestFinalise() {
     }
 
     gam->SetApplication(*rtapp.operator ->());
-    gam->AddState("+state1");
+    gam->AddState("+state1","thread1");
     if (!gam->ConfigureDataSource()) {
         return false;
     }
