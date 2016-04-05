@@ -52,7 +52,6 @@ ClassRegistryItem::ClassRegistryItem() :
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
     introspection = NULL_PTR(Introspection *);
-    genericFn = NULL_PTR(GenericFn*);
 }
 
 //LCOV_EXCL_STOP
@@ -64,7 +63,6 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = objBuildFn;
     introspection = NULL_PTR(Introspection *);
-    genericFn = NULL_PTR(GenericFn*);
     ClassRegistryDatabase::Instance()->Add(this);
 }
 
@@ -75,7 +73,6 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
     introspection = &introspectionIn;
-    genericFn = NULL_PTR(GenericFn*);
     ClassRegistryDatabase::Instance()->Add(this);
 }
 
@@ -87,19 +84,9 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = objBuildFn;
     introspection = &introspectionIn;
-    genericFn = NULL_PTR(GenericFn*);
     ClassRegistryDatabase::Instance()->Add(this);
 }
 
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties, const GenericFn * const genericFunction) {
-    numberOfInstances = 0u;
-    classProperties = clProperties;
-    loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuildFn = NULL_PTR(ObjectBuildFn *);
-    introspection = NULL_PTR(Introspection *);
-    genericFn = genericFunction;
-    ClassRegistryDatabase::Instance()->Add(this);
-}
 
 /*lint -e{1551} no exception should be thrown as loadableLibrary is properly initialised and
  * before deleting it is verified if the pointer is NULL*/
@@ -156,9 +143,6 @@ const ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
     return objectBuildFn;
 }
 
-const GenericFn *ClassRegistryItem::GetGenericFunction() const {
-    return genericFn;
-}
 
 void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {
     classProperties.SetUniqueIdentifier(uid);

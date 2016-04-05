@@ -1,7 +1,7 @@
 /**
- * @file GAMTest.h
- * @brief Header file for class GAMTest
- * @date 18/02/2016
+ * @file RealTimeDataSourceDefRecordTest.h
+ * @brief Header file for class RealTimeDataSourceDefRecordTest
+ * @date 04/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMTest
+ * @details This header file contains the declaration of the class RealTimeDataSourceDefRecordTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMTEST_H_
-#define GAMTEST_H_
+#ifndef REALTIMEDATASOURCEDEFRECORDTEST_H_
+#define REALTIMEDATASOURCEDEFRECORDTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,8 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GAM.h"
-#include "ConfigurationDatabase.h"
+
+#include "RealTimeDataSourceDefRecord.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -40,25 +40,31 @@
 
 using namespace MARTe;
 
-class GAMTest {
-
+class RealTimeDataSourceDefRecordTest {
 public:
 
-    GAMTest();
+    bool TestConstructor();
 
-    ~GAMTest();
+    bool TestSetStateName(const char8 * stateName);
 
+    bool TestGetStateName(const char8 * stateName);
 
-    bool TestInitialise();
+    bool TestAddConsumer();
 
-private:
-    ConfigurationDatabase cdb;
+    bool TestAddProducer();
 
+    bool TestGetNumberOfConsumers(uint32 nConsumers);
+
+    bool TestGetNumberOfProducers(uint32 nProducers);
+
+    bool TestGetConsumers();
+
+    bool TestGetProducers();
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMTEST_H_ */
+#endif /* REALTIMEDATASOURCEDEFRECORDTEST_H_ */
 

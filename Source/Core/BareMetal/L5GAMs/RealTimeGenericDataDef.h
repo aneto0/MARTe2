@@ -1,7 +1,7 @@
 /**
- * @file ObjectRegistryDatabaseTest.h
- * @brief Header file for class ObjectRegistryDatabaseTest
- * @date 18/02/2016
+ * @file RealTimeGenericDataDef.h
+ * @brief Header file for class RealTimeGenericDataDef
+ * @date 25/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ObjectRegistryDatabaseTest
+ * @details This header file contains the declaration of the class RealTimeGenericDataDef
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef OBJECTREGISTRYDATABASETEST_H_
-#define OBJECTREGISTRYDATABASETEST_H_
+#ifndef REALTIMEGENERICDATADEF_H_
+#define REALTIMEGENERICDATADEF_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,46 +31,77 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ObjectRegistryDatabase.h"
+#include "RealTimeDataDefI.h"
+#include "StreamString.h"
+#include "StructuredDataI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 
-using namespace MARTe;
-
-
-class PID: public Object {
-
-    virtual bool Initialise(StructuredDataI &data);
-
-
-
+/**
+ * @brief Generic mapping of a structure to the RealTimeDataSource.
+ */
+class RealTimeGenericDataDef: public RealTimeDataDefI {
 public:
-    uint32 Kp;
-    uint32 Ki;
-    uint32 Kd;
+    CLASS_REGISTER_DECLARATION()
 
-    CLASS_REGISTER_DECLARATION();
+    /**
+     * @brief Constructor
+     * @post
+     *   GetDefaultValue() == "" &&
+     *   GetType() == "" &&
+     *   GetPath() == "" &&
+     *   IsFinal == false;
+     */
+    RealTimeGenericDataDef();
+
+    /**
+     * @see RealTimeDataDefI::Verify(*)
+     */
+    virtual bool Verify();
+
+    /**
+     * @brief Initialises the container form StructuredData and for each sub-type definition
+     * reads the default value and the final flag (specifying if the type is complete or not).
+     */
+    virtual bool Initialise(StructuredDataI& data);
+
+
+    virtual bool ToStructuredData(StructuredDataI& data);
+
+    /**
+     * @see RealTimeDataDefI::MergeWithLocal(*)
+     */
+    virtual bool MergeWithLocal(StructuredDataI & localData);
+
+    /**
+     * @brief Retrieves the variable default value.
+     * @return the variable return value.
+     */
+    const char8 *GetDefaultValue();
+
+
+
+private:
+
+    /**
+     * The variable default value
+     */
+    StreamString defaultValue;
+
+    /**
+     * Specifies if the definition is complete
+     */
+    bool final;
+
 };
-
-
-
-
-
-
-
-class ObjectRegistryDatabaseTest {
-
-public:
-
-    bool TestInitialise();
-
-    bool TestFind();
-};
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* OBJECTREGISTRYDATABASETEST_H_ */
+
+#endif /* REALTIMEGENERICDATADEF_H_ */
 

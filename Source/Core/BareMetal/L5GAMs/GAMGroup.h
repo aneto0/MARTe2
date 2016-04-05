@@ -32,29 +32,92 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
+#include "RealTimeStateInfo.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
+
+/**
+ * @brief A group of GAMs sharing the same context.
+ * @details In order to allow custom implementations of the shared context, some of the methods
+ * of this class are pure virtual. The derived class can generally
+ * add a context (see ContextT) and implements the specific procedures in order
+ * to prepare the context for the next state (PrepareNextState(*) function) and
+ * to switch to the new context (ChangeState(*) function).
+ *
+ * @details The definition of the GAMGroup in the configuration stream is inside the
+ * block RealTimeApplicatio.Functions
+ * GAMGroup_name = {\n
+ *    Class = GAMGroup\n
+ *    States = {State1_name, State2_name, ... }\n
+ *    ... // context definition, ecc\n
+ *    GAM1_name = {\n
+ *        Class = GAM\n
+ *        ...\n
+ *    }\n
+ *    ...\n
+ * }
+ */
 class GAMGroup: public ReferenceContainer {
 public:
 
+    /**
+     * @brief Constructor
+     * @post
+     *   GetSupportedStates() == NULL &&
+     *   GetNumberOfSupportedStates() == 0;
+     */
     GAMGroup();
 
+    /**
+     * @brief Destructor. Frees the array of the supported state names.
+     */
     virtual ~GAMGroup();
 
+    /**
+     * @brief Setup all the GAMs in the container. This function can be customly
+     * implemented to initialise the context, make accelerators, ecc.
+     */
     virtual void SetUp();
 
-    virtual void ChangeState(RealTimeStateInfo status);
+    /**
+     * @brief Does all the necessary operations to prepare the context used for the
+     * next state.
+     * @param[in] status specifies the current and the next state.
+     */
+    virtual void PrepareNextState(const RealTimeStateInfo &status)=0;
 
-    virtual bool Initialise(StructuredDataI &data);
 
-private:
+    /**
+     * @brief Returns the array with the names of the states in which this GAMGroup is involved.
+     * @return the names of the supported states.
+     */
+    StreamString *GetSupportedStates() const;
 
+    /**
+     * @brief Returns the number of the supported states.
+     * @return the number of the supported states.
+     */
+    uint32 GetNumberOfSupportedStates() const;
+
+
+    void AddState(const char8 * stateName);
+
+protected:
+
+    /**
+     * The names of the supported states
+     */
     StreamString *supportedStates;
 
+    /**
+     * How many supported states
+     */
+    uint32 numberOfSupportedStates;
+
     //? Possible specific GAMContexts
-    //? Possible uint8 currentContextBuffer
+    //? Possible uint8 activeContextBuffer
 
 };
 }

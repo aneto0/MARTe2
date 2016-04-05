@@ -23,7 +23,14 @@
 #############################################################
 
 
-OBJSX= 	GAMGTest.x	 
+OBJSX= 	GAMGTest.x \
+		RealTimeApplicationGTest.x \
+		RealTimeDataDefContainerGTest.x \
+		RealTimeDataDefIGTest.x \
+		RealTimeGenericDataDefGTest.x \
+		RealTimeSampledDataDefGTest.x	\
+		RealTimeDataSourceDefGTest.x \
+		RealTimeDataSourceDefRecordGTest.x
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
@@ -39,6 +46,7 @@ INCLUDES += -I../../../Core/BareMetal/L1Portability
 INCLUDES += -I../../../Core/BareMetal/L2Objects
 INCLUDES += -I../../../Core/BareMetal/L3Streams
 INCLUDES += -I../../../Core/BareMetal/L4Configuration
+INCLUDES += -I../../../Core/BareMetal/L5GAMs
 INCLUDES += -I../../../Core/Scheduler/L1Portability
 INCLUDES += -I../../../Core/FileSystem/L1Portability
 INCLUDES += -I../../../../Source/Core/BareMetal/L0Types

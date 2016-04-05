@@ -1,7 +1,7 @@
 /**
- * @file GAMGTest.h
- * @brief Header file for class GAMGTest
- * @date 18/02/2016
+ * @file RealTimeSampledDataDefTest.h
+ * @brief Header file for class RealTimeSampledDataDefTest
+ * @date 04/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMGTest
+ * @details This header file contains the declaration of the class RealTimeSampledDataDefTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMGTEST_H_
-#define GAMGTEST_H_
+#ifndef REALTIMESAMPLEDDATADEFTEST_H_
+#define L5GAMS_REALTIMESAMPLEDDATADEFTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,17 +31,55 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "RealTimeSampledDataDef.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class GAMGTest {
+using namespace MARTe;
+
+class RealTimeSampledDataDefTest {
+
+public:
+    bool TestConstructor();
+
+    bool TestInitialise(StructuredDataI & data);
+
+    bool TestMergeWithLocal_AddSamples();
+
+    bool TestMergeWithLocal_AddSamplesPerCycle();
+
+    bool TestMergeWithLocal_AddPath();
+
+    bool TestMergeWithLocal_AddType();
+
+    bool TestMergeWithLocalFalse_FinalGlobal();
+
+    bool TestMergeWithLocal_DifferentSamples();
+
+    bool TestMergeWithLocal_DifferentSamplesPerCycle();
+
+    bool TestMergeWithLocal_DifferentType();
+
+    bool TestMergeWithLocal_DifferentPath();
+
+    bool TestVerify();
+
+    bool TestVerifyFalse_UnregisteredType();
+
+    bool TestVerifyFalse_UnintrospectableType();
+
+    bool TestGetSamples();
+
+    bool TestGetSamplesPerCycle();
+
+    bool TestToStructuredData();
+
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMGTEST_H_ */
+#endif /* REALTIMESAMPLEDDATADEFTEST_H_ */
 

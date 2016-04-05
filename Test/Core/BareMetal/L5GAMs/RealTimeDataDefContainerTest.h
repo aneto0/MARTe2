@@ -1,7 +1,7 @@
 /**
- * @file GAMTest.h
- * @brief Header file for class GAMTest
- * @date 18/02/2016
+ * @file RealTimeDataDefContainerTest.h
+ * @brief Header file for class RealTimeDataDefContainerTest
+ * @date 04/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMTest
+ * @details This header file contains the declaration of the class RealTimeDataDefContainerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMTEST_H_
-#define GAMTEST_H_
+#ifndef REALTIMEDATADEFCONTAINERTEST_H_
+#define REALTIMEDATADEFCONTAINERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,8 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GAM.h"
-#include "ConfigurationDatabase.h"
+
+#include "RealTimeDataDefContainer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -40,25 +40,38 @@
 
 using namespace MARTe;
 
-class GAMTest {
+class RealTimeDataDefContainerTest {
 
 public:
 
-    GAMTest();
-
-    ~GAMTest();
-
+    bool TestConstructor();
 
     bool TestInitialise();
 
-private:
-    ConfigurationDatabase cdb;
+    bool TestMergeWithLocal();
 
+    bool TestMergeWithLocal_AddDefinition();
+
+    bool TestMergeWithLocalFalse_GlobalFinal();
+
+    bool TestMergeWithLocal_AddInput();
+
+    bool TestMergeWithLocal_AddOutput();
+
+    bool TestVerify();
+
+    bool TestVerify_DefInvalid();
+
+    bool TestIsInput();
+
+    bool TestIsOutput();
+
+    bool TestToStructuredData();
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMTEST_H_ */
+#endif /* REALTIMEDATADEFCONTAINERTEST_H_ */
 

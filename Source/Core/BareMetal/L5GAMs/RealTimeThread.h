@@ -34,30 +34,101 @@
 #include "ReferenceContainer.h"
 #include "RealTimeState.h"
 #include "StreamString.h"
+#include "GAM.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
+/**
+ * @brief A container of GAM references.
+ * @details The syntax in the configuration stream should be:
+ * Thread_name = {\n
+ *     Class = RealTimeThread\n
+ *     RealTimeThread_name = {\n
+ *         Class = RealTimeThread\n
+ *         Functions = { GAM1_name, GAMGroup2_name, ... }
+ *         ...\n
+ *     }\n
+ *     ...\n
+ * }\n
+ */
 class RealTimeThread: public ReferenceContainer {
 
 public:
+    CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief Constructor.
+     * @post
+     *   GetFunctions() == NULL &&
+     *   GetNumberOfFunction == 0;
+     */
     RealTimeThread();
 
+    /**
+     * @brief Destructor. Frees the array with the function names.
+     */
     ~RealTimeThread();
 
-    bool Validate(RealTimeApplication &rtApp, RealTimeState &rtState);
+    /**
+     * @see RealTimeApplication::Validate()
+     */
+    bool ConfigureArchitecture(RealTimeApplication &rtApp,
+                               RealTimeState &rtState);
 
+
+    bool ConfigureDataSource();
+
+    /**
+     * @brief Reads the array with the GAM names to be launched by this thread from the StructuredData in input.
+     * @param[in] data is the StructuredData to be read from.
+     */
     virtual bool Initialise(StructuredDataI & data);
+
+    /**
+     * @brief Returns the array with the name of the GAMs involved by this thread.
+     */
+    StreamString * GetFunctions() const;
+
+    /**
+     * @brief Returns the number of GAMs involved by this thread.
+     */
+    uint32 GetNumberOfFunctions() const;
+
+    ReferenceT<GAM> *GetGAMs() const;
+
+    uint32 GetNumberOfGAMs() const;
 
 private:
 
+    bool ConfigureArchitecturePrivate(Reference functionGeneric,
+                                      RealTimeApplication &rtApp,
+                                      RealTimeState &rtState);
+
+    void AddGAM(ReferenceT<GAM> element);
+
+    /**
+     * The array with the GAM names
+     */
     StreamString* functions;
+
+    /**
+     * The number of GAMs
+     */
     uint32 numberOfFunctions;
 
+    /**
+     * The GAM to be executed by this thread.
+     */
+    ReferenceT<GAM> * GAMs;
+
+    /**
+     * The number of GAMs to be executed by this thread
+     */
+    uint32 numberOfGAMs;
 };
 
 }

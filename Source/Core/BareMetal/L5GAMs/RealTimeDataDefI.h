@@ -1,7 +1,7 @@
 /**
- * @file ObjectRegistryDatabase.h
- * @brief Header file for class ObjectRegistryDatabase
- * @date 18/02/2016
+ * @file RealTimeDataDefI.h
+ * @brief Header file for class RealTimeDataDefI
+ * @date 25/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ObjectRegistryDatabase
+ * @details This header file contains the declaration of the class RealTimeDataDefI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef OBJECTREGISTRYDATABASE_H_
-#define OBJECTREGISTRYDATABASE_H_
+#ifndef REALTIMEDATADEFI_H_
+#define REALTIMEDATADEFI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,76 +31,82 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ReferenceContainer.h"
-#include "ReferenceT.h"
+#include "StreamString.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 
 /**
- * @brief Singleton database of References to MARTe Objects.
+ * @brief The interface of a real time data definition structure.
+ * @details Maps a structure to the RealTimeDataSource.
  */
-class DLL_API ObjectRegistryDatabase: public ReferenceContainer, public GlobalObjectI {
+class RealTimeDataDefI: public ReferenceContainer {
 
 public:
 
     /**
-     * @brief Singleton access to the database.
-     * @return a pointer to the database.
+     * @Constructor
+     * @post
+     *   GetType() == "" &&
+     *   GetPath() == "";
      */
-    static ObjectRegistryDatabase *Instance();
+    RealTimeDataDefI();
 
     /**
-     * @brief Destructor.
+     * @brief Merges the global definition (initialised using Initialise(*) function) with the
+     * informations stored in the local StructuredData in input.
+     * @param[in] localData is the local StructuredData.
+     * @return true if there are not conflicts between the local and the global definitions.
      */
-    virtual ~ObjectRegistryDatabase();
-
-
-    virtual bool CleanUp();
-
-
-    /**
-     * @brief Retrieves the Reference at the given address.
-     * @param[in] path is the address of the Reference into the database. The syntax is
-     * "A.B.C" where A, B and C must be replaced with the specific object names.
-     * param[in] current is the research start point. In this case we admit the syntax "::A.B.C"
-     * where the ':' symbol set the search start point to the previous domain with respect to \a current.
-     * If no ':' is found at the beginning of the path, the start point is supposed to be \a current
-     * (the function will perform a relative research).
-     * @return the reference found at the provided \a path or an invalid reference in case of failure.
-     */
-    Reference Find(const char8 * const path,
-                   const Reference current = Reference());
+    virtual bool MergeWithLocal(StructuredDataI &localData)=0;
 
 
     /**
-     * @see Object::GetClassName
-     * @return "ObjectRegistryDatabase".
+     * @brief Checks if the definition is consistent with the introspection of a registered structure
+     * if the field type is specified.
+     * @return true if the type is unspecified or if the specified type definition is consistent
+     * with the introspection of a registered structure.
      */
-    virtual const char8 * const GetClassName() const;
-
-private:
-    /**
-     * @brief Disallow the usage of new.
-     * @param[in] size the size of the object.
-     */
-    static void *operator new(osulong size) throw ();
+    virtual bool Verify()=0;
 
     /**
-     * @brief Default constructor.
+     * @brief retrieves the variable address in the RealTimeDataSource.
+     * @return the variable address in the RealTimeDataSource.
      */
-    ObjectRegistryDatabase();
+    const char8 *GetPath();
+
+    /**
+     * @brief Retrieves the variable type.
+     * @return the variable type.
+     */
+    const char8 *GetType();
 
 
+    /**
+     * @brief Initialises the container and reads the variable address and type from the StructuredData
+     * in input.
+     */
+    virtual bool Initialise(StructuredDataI &data);
+
+protected:
+
+    /**
+     * The address of the variable in the RealTimeDataSource
+     */
+    StreamString path;
+
+    /**
+     * The variable type
+     */
+    StreamString type;
 };
-
 }
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* OBJECTREGISTRYDATABASE_H_ */
+#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMEDATADEFI_H_ */
 

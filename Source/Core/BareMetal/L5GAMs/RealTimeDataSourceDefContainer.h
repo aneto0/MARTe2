@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataContainer.h
- * @brief Header file for class RealTimeDataContainer
- * @date 22/02/2016
+ * @file RealTimeDataSourceDefContainer.h
+ * @brief Header file for class RealTimeDataSourceDefContainer
+ * @date 01/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataContainer
+ * @details This header file contains the declaration of the class RealTimeDataSourceDefContainer
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATACONTAINER_H_
-#define REALTIMEDATACONTAINER_H_
+#ifndef REALTIMEDATASOURCEDEFCONTAINER_H_
+#define REALTIMEDATASOURCEDEFCONTAINER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,36 +32,53 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
+#include "RealTimeDataDefContainer.h"
+#include "RealTimeDataDefI.h"
+#include "GAM.h"
+#include "ReferenceT.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe{
+class RealTimeDataSourceDefContainer: public ReferenceContainer {
 
-// a container of RealTimeDatas
-class RealTimeDataContainer: public ReferenceContainer {
+
 public:
+    CLASS_REGISTER_DECLARATION()
 
-    // call RealTimeData::Verify
-    bool Verify();
+    RealTimeDataSourceDefContainer();
+
+    virtual bool AddDataDefinition(ReferenceT<GAM> gam);
 
 
-    // initialises all from the cdb
     virtual bool Initialise(StructuredDataI & data);
 
-    // if exists another IO data declared in the local cdb, add it
-    // returns false in case of redeclaration
-    bool MergeWithLocal(StructuredDataI & localData);
+
+    bool Verify();
 
 private:
-    bool finalised;
 
+
+    bool AddSingleDataDefinition(ReferenceT<RealTimeDataDefI> definition,
+                                 const char8 * userName,
+                                 StreamString *supportedStates,
+                                 uint32 numberOfStates,
+                                 bool isProducer,
+                                 bool isConsumer, StreamString defaultPath="");
+
+
+    uint32 numberOfInitialDDBs;
+
+    bool final;
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATACONTAINER_H_ */
+#endif /* REALTIMEDATASOURCEDEFCONTAINER_H_ */
 

@@ -78,6 +78,11 @@ public:
     bool Insert(Reference ref,
                 const int32 &position = -1);
 
+
+    bool Insert(const char8 * path, Reference ref);
+
+
+
     /**
      * @brief Removes the references from the container.
      * @details This call is not recursive, i.e. if the container contains other containers, the \a ref
@@ -96,6 +101,10 @@ public:
      */
     void Find(ReferenceContainer &result,
               ReferenceContainerFilter &filter);
+
+
+
+    Reference Find(const char8 * path);
 
     /**
      * @brief Checks if \a ref holds a container.
@@ -129,10 +138,31 @@ public:
      */
     void SetTimeout(const TimeoutType &timeout);
 
-
+    /**
+     * @brief Explores the StructuredDataI in input and builds Objects storing
+     * their References.
+     * @details The Object will be built only if the node name in the data tree
+     * has the special symbol '+' or '$' at the beginning. The symbol '$' marks the
+     * node as a domain and will be used for relative researches by path in ObjectRegistryDatabase::Find(*)
+     * @param[in] data is the StructuredData in input.
+     */
     virtual bool Initialise(StructuredDataI &data);
 
 
+
+    virtual bool ToStructuredData(StructuredDataI & data);
+
+
+    /**
+     * @brief Locks the internal spin-lock mutex.
+     * @return true if the lock succeeds.
+     */
+    bool Lock();
+
+    /**
+     * @Unlocks the internal spin-lock mutex.
+     */
+    void UnLock();
 
 private:
     /**

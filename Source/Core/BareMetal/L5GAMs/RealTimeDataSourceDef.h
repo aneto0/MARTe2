@@ -1,7 +1,7 @@
 /**
- * @file RealTimeApplication.h
- * @brief Header file for class RealTimeApplication
- * @date 19/02/2016
+ * @file RealTimeDataSourceDef.h
+ * @brief Header file for class RealTimeDataSourceDef
+ * @date 29/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeApplication
+ * @details This header file contains the declaration of the class RealTimeDataSourceDef
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEAPPLICATION_H_
-#define REALTIMEAPPLICATION_H_
+#ifndef REALTIMEDATASOURCEDEF_H_
+#define REALTIMEDATASOURCEDEF_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,72 +33,37 @@
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
+#include "GAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe{
 
-/**
- * @brief A container of Functions (GAMGroup or GAM), and States (RealTimeState) references.
- * @details The syntax in the configuration stream should be:
- * RealTimeApplication_name = {\n
- *     Class = RealTimeApplication\n
- *     Functions = {\n
- *         Class = ReferenceContainer\n
- *         GAM_name = {\n
- *             Class = GAM\n
- *             ...\n
- *         }\n
- *         GAM_Group_name = {\n
- *             Class = GAMGroup\n
- *             ...\n
- *         }\n
- *         ...\n
- *     }\n
- *     States = {\n
- *         class = ReferenceContainer\n
- *         State_name = {\n
- *             Class = RealTimeState\n
- *             ...\n
- *         }\n
- *         ...\n
- *     }\n
- * }\n
- */
-class RealTimeApplication: public ReferenceContainer {
+class RealTimeDataSourceDef: public ReferenceContainer {
 public:
-    CLASS_REGISTER_DECLARATION();
+    CLASS_REGISTER_DECLARATION()
 
-    /**
-     * @brief Constructor
-     */
-    RealTimeApplication();
+    RealTimeDataSourceDef();
 
-    /**
-     * @brief Validates the configuration.
-     * @details Checks if the functions (GAM or GAMGroup) declared in the RealTimeThread configuration are really defined
-     * and supports the state where they are declared into. Moreover creates accelerators to the specific GAM References
-     * for each RealTimeState and adds the GAM References in each RealTimeThread.
-     * @return true if all the GAMs declared in the RealTimeThread configuration are really defined
-     * and supports the state where they are declared into, false otherwise.
-     */
-    bool ConfigureArchitecture();
+    void AddConsumer(const char8 *stateIn, ReferenceT<GAM> gam);
 
-    bool ConfigureDataSource();
+    void AddProducer(const char8 *stateIn, ReferenceT<GAM> gam);
 
-    bool ValidateDataSource();
+    uint32 GetNumberOfConsumers(const char8 * stateIn);
 
-    // The Initialise function is automatic
+    uint32 GetNumberOfProducers(const char8 * stateIn);
 
-private:
-    bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functionsContainer);
+    bool Verify();
+
+
 };
+
 
 }
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEAPPLICATION_H_ */
+#endif /* REALTIMEDATASOURCEDEF_H_ */
 

@@ -1,8 +1,8 @@
 /**
- * @file GAMContextI.cpp
- * @brief Source file for class GAMContextI
- * @date 24/feb/2016
- * @author pc
+ * @file RealTimeDataDefITest.h
+ * @brief Header file for class RealTimeDataDefITest
+ * @date 04/03/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,26 +16,44 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class GAMContextI (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+ * @details This header file contains the declaration of the class RealTimeDataDefITest
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
+#ifndef REALTIMEDATADEFITEST_H_
+#define REALTIMEDATADEFITEST_H_
+
 /*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
+#include "RealTimeSampledDataDef.h"
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-#include "GAMContextI.h"
+using namespace MARTe;
+
+class RealTimeDataDefITest {
+
+public:
+
+    bool TestConstructor();
+
+    bool TestInitialise();
+
+    bool TestGetType();
+
+    bool TestGetPath();
+};
 
 /*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
+/*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
+#endif /* REALTIMEDATADEFITEST_H_ */
 

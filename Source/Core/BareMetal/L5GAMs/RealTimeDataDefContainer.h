@@ -1,7 +1,7 @@
 /**
- * @file RealTimeData.h
- * @brief Header file for class RealTimeData
- * @date 19/02/2016
+ * @file RealTimeDataDefContainer.h
+ * @brief Header file for class RealTimeDataDefContainer
+ * @date 25/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeData
+ * @details This header file contains the declaration of the class RealTimeDataDefContainer
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATA_H_
-#define REALTIMEDATA_H_
+#ifndef REALTIMEDATADEFCONTAINER_H_
+#define REALTIMEDATADEFCONTAINER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,25 +31,76 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
 #include "ReferenceContainer.h"
-#include "RealTimeDataSource.h"
+#include "StreamString.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
-// interface
-class RealTimeData: public ReferenceContainer {
 
+namespace MARTe {
+
+/**
+ * @brief Collects a set of RealTimeDataDefI
+ * @details It defines the IO GAM interface with respect to the RealTimeDataSource.
+ */
+class RealTimeDataDefContainer: public ReferenceContainer {
 public:
-    virtual bool Verify()=0;
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Constructor
+     * @post
+     *   IsFinal() == false;
+     */
+    RealTimeDataDefContainer();
+
+    /**
+     * @brief Calls RealTimeDataDefI::Verify(*) for each item in the container
+     */
+    bool Verify();
+
+    /**
+     * @brief Inserts all the RealTimeDataDefI items in the container and reads
+     * from the StructuredData if the container is final defined (complete definition) or not.
+     */
+    virtual bool Initialise(StructuredDataI & data);
+
+    /**
+     * @brief Merges definitions with the local StructuredData.
+     * @details If the definition from the global StructuredData is not complete,
+     * completes the definition using the local StructuredData.
+     * @param[in] localData is the local StructuredData.
+     * @return true if the merge succeeds with no conflicts, false otherwise.
+     */
+    bool MergeWithLocal(StructuredDataI & localData);
+
+    bool IsInput() const;
+
+    bool IsOutput() const;
+
+    virtual bool ToStructuredData(StructuredDataI & data);
+
+
+private:
+
+    /**
+     * Specifies if the definition is complete
+     */
+    bool final;
+
+    // initialised from cdb
+    bool isInput;
+
+    // initialised from cdb
+    bool isOutput;
 
 };
-}
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMEDATA_H_ */
+#endif /* REALTIMEDATADEFCONTAINER_H_ */
 

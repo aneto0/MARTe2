@@ -1,0 +1,160 @@
+/**
+ * @file RealTimeSampledDataDef.cpp
+ * @brief Source file for class RealTimeSampledDataDef
+ * @date 25/feb/2016
+ * @author pc
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This source file contains the definition of all the methods for
+ * the class RealTimeSampledDataDef (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+#include "RealTimeSampledDataDef.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+RealTimeSampledDataDef::RealTimeSampledDataDef() {
+    samples = 0;
+    samplesPerCycle = 0;
+    final = false;
+}
+
+bool RealTimeSampledDataDef::Verify() {
+
+    bool ret = (type != "");
+    if (ret) {
+        // if a basic type return true
+        if (TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer()) == InvalidType) {
+            // structured type
+            const ClassRegistryItem * item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
+            ret = (item != NULL);
+            if (ret) {
+                const Introspection * intro = item->GetIntrospection();
+                if (intro == NULL) {
+                    ret=false;
+                    // TODO Unintrospectable type
+                }
+            }
+            else {
+                // TODO not registered type
+            }
+        }
+    }
+    return ret;
+}
+
+bool RealTimeSampledDataDef::MergeWithLocal(StructuredDataI &localData) {
+    bool ret = (!final);
+    if (ret) {
+        if (type == "") {
+            if (!localData.Read("Type", type)) {
+                //TODO Warning empty type
+            }
+        }
+
+        if (path == "") {
+            if (!localData.Read("Path", path)) {
+                //TODO Warning empty path
+            }
+        }
+
+        if (samples == 0) {
+            if (!localData.Read("Samples", samples)) {
+                //TODO Warning samples not initialised
+            }
+        }
+        if (samplesPerCycle == 0) {
+            if (!localData.Read("SamplesPerCycle", samplesPerCycle)) {
+                //TODO Warning samplesXcycle not initialised
+            }
+        }
+    }
+
+    return ret;
+}
+
+bool RealTimeSampledDataDef::Initialise(StructuredDataI &data) {
+    bool ret = RealTimeDataDefI::Initialise(data);
+    if (ret) {
+        if (data.Read("Samples", samples)) {
+
+        }
+        if (data.Read("SamplesPerCycle", samplesPerCycle)) {
+
+        }
+
+        StreamString isFinal;
+        if (data.Read("IsFinal", isFinal)) {
+            final = (isFinal == "true");
+        }
+    }
+    return ret;
+}
+
+int32 RealTimeSampledDataDef::GetSamples() const {
+    return samples;
+}
+
+int32 RealTimeSampledDataDef::GetSamplesPerCycle() const {
+    return samplesPerCycle;
+}
+
+bool RealTimeSampledDataDef::ToStructuredData(StructuredDataI & data) {
+    const char8 * name = GetName();
+    bool ret = (data.CreateRelative(name));
+    if (ret) {
+        ret = data.Write("Class", "RealTimeSampledDataDef");
+        if (ret) {
+            if (type != "") {
+                ret = data.Write("Type", type);
+            }
+        }
+        if (ret) {
+            if (path != "") {
+                ret = data.Write("Path", path);
+            }
+        }
+        if (ret) {
+            ret = data.Write("Samples", samples);
+        }
+        if (ret) {
+            ret = data.Write("SamplesPerCycle", samplesPerCycle);
+        }
+        if (!data.MoveToAncestor(1u)) {
+            ret = false;
+        }
+    }
+    return ret;
+}
+
+CLASS_REGISTER(RealTimeSampledDataDef, "1.0")
+
+}

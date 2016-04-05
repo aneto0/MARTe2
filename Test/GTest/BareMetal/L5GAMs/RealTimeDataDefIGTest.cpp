@@ -1,8 +1,8 @@
 /**
- * @file GAMTest.h
- * @brief Header file for class GAMTest
- * @date 18/02/2016
- * @author Giuseppe Ferrò
+ * @file RealTimeDataDefIGTest.cpp
+ * @brief Source file for class RealTimeDataDefIGTest
+ * @date 04/mar/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,49 +16,45 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMTest
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class RealTimeDataDefIGTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef GAMTEST_H_
-#define GAMTEST_H_
-
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <limits.h>
+#include "gtest/gtest.h"
 /*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
-/*---------------------------------------------------------------------------*/
-#include "GAM.h"
-#include "ConfigurationDatabase.h"
-
-/*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
-
-class GAMTest {
-
-public:
-
-    GAMTest();
-
-    ~GAMTest();
-
-
-    bool TestInitialise();
-
-private:
-    ConfigurationDatabase cdb;
-
-};
-
+#include "RealTimeDataDefITest.h"
 /*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
+/*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMTEST_H_ */
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
+TEST(RealTimeDataDefIGTest,TestConstructor) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestConstructor());
+}
+
+TEST(RealTimeDataDefIGTest,TestInitialise) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestInitialise());
+}
+
+TEST(RealTimeDataDefIGTest,TestGetType) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestGetType());
+}
+
+TEST(RealTimeDataDefIGTest,TestGetPath) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestGetPath());
+}

@@ -1,7 +1,7 @@
 /**
- * @file GAMTest.h
- * @brief Header file for class GAMTest
- * @date 18/02/2016
+ * @file RealTimeApplicationTest.h
+ * @brief Header file for class RealTimeApplicationTest
+ * @date 26/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMTest
+ * @details This header file contains the declaration of the class RealTimeApplicationTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMTEST_H_
-#define GAMTEST_H_
+#ifndef REALTIMEAPPLICATIONTEST_H_
+#define REALTIMEAPPLICATIONTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GAM.h"
+#include "RealTimeApplication.h"
 #include "ConfigurationDatabase.h"
 
 /*---------------------------------------------------------------------------*/
@@ -40,16 +40,22 @@
 
 using namespace MARTe;
 
-class GAMTest {
-
+class RealTimeApplicationTest {
 public:
 
-    GAMTest();
+    RealTimeApplicationTest();
 
-    ~GAMTest();
+    ~RealTimeApplicationTest();
 
 
-    bool TestInitialise();
+    bool TestConstructor();
+
+    bool TestConfigureArchitecture();
+
+    bool TestConfigureArchitectureGAMGroup();
+
+    bool TestConfigureDataSource();
+
 
 private:
     ConfigurationDatabase cdb;
@@ -60,5 +66,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMTEST_H_ */
+#endif /* REALTIMEAPPLICATIONTEST_H_ */
 

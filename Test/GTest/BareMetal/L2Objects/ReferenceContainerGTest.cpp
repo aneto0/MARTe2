@@ -457,3 +457,14 @@ TEST(ReferenceContainerGTest,TestDelete) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestDelete());
 }
+
+/*******************
+ * TestInitialise *
+ *******************/
+
+TEST(ReferenceContainerGTest,TestInitialise) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestInitialise());
+}
+
+

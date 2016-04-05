@@ -1,8 +1,8 @@
 /**
  * @file GAMGroup.cpp
  * @brief Source file for class GAMGroup
- * @date 24/feb/2016
- * @author pc
+ * @date 24/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -30,27 +30,34 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAMGroup.h"
-
+#include "ReferenceT.h"
+#include "GAM.h"
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
+static const uint32 stateNamesGranularity = 8u;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
 
 GAMGroup::GAMGroup() {
     supportedStates = NULL_PTR(StreamString*);
+    numberOfSupportedStates = 0u;
 }
 
 GAMGroup::~GAMGroup() {
     if (supportedStates != NULL) {
-        delete supportedStates;
+        delete [] supportedStates;
     }
 }
 
 void GAMGroup::SetUp() {
+    // initialise the context here
+
     for (uint32 i = 0u; i < Size(); i++) {
         ReferenceT<GAM> gam = Get(i);
         if (gam.IsValid()) {
@@ -59,18 +66,40 @@ void GAMGroup::SetUp() {
     }
 }
 
-void GAMGroup::ChangeState() {
-    // Use the two buffer in GAMContext
+/*
+void GAMGroup::PrepareNextState(const RealTimeStateInfo &status) {
+    // Use the two buffers in GAMContext
+    // preparing the next buffer for the next state
+}
+*/
+
+
+StreamString *GAMGroup::GetSupportedStates() const {
+    return supportedStates;
 }
 
-bool GAMGroup::Initialise(StructuredDataI &data) {
-    bool ret = ReferenceContainer::Initialise(data);
-    if (ret) {
-        AnyType statesAt = data.GetType("States");
-        uint32 numberOfSupportedStates = statesAt.GetNumberOfElements(0u);
-        supportedStates = new StreamString[numberOfSupportedStates];
-        ret = (data.Read("states", supportedStates));
-    }
-    return ret;
+uint32 GAMGroup::GetNumberOfSupportedStates() const {
+    return numberOfSupportedStates;
 }
+
+
+void GAMGroup::AddState(const char8 * stateName){
+    if ((numberOfSupportedStates % stateNamesGranularity) == 0u) {
+        uint32 newSize = numberOfSupportedStates + stateNamesGranularity;
+        StreamString *temp = new StreamString[newSize];
+        if (supportedStates != NULL) {
+            for (uint32 i = 0u; i < numberOfSupportedStates; i++) {
+                temp[i] = supportedStates[i];
+            }
+            delete [] supportedStates;
+        }
+        supportedStates = temp;
+
+    }
+    supportedStates[numberOfSupportedStates] = stateName;
+    numberOfSupportedStates++;
+
+}
+
+
 }

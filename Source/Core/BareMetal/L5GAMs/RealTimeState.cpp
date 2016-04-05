@@ -30,75 +30,129 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeState.h"
+#include "RealTimeThread.h"
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-const uint32 functionArrayGranularity = 16u;
+// the allocation granularity
+static const uint32 functionArrayGranularity = 8u;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 RealTimeState::RealTimeState() {
-    statefulGAMs = NULL_PTR(ReferenceT<GAM>*);
-    numberOfFunctions = 0u;
+    statefulGAMGroups = NULL_PTR(ReferenceT<GAMGroup>*);
+    numberOfElements = 0u;
+    activeBuffer = 0u;
 }
 
 RealTimeState::~RealTimeState() {
-    if (statefulGAMs != NULL) {
-        if(!HeapManager::Free(reinterpret_cast<void*&>(statefulGAMs))) {
-            //TODO
-        }
+    if (statefulGAMGroups != NULL) {
+        delete[] statefulGAMGroups;
     }
 }
 
-bool RealTimeState::Validate(RealTimeApplication & rtApp) {
+bool RealTimeState::ConfigureArchitecture(RealTimeApplication & rtApp) {
 
+    // there must be a container called Threads
+    ReferenceT<ReferenceContainer> threadContainer = Find("+Threads");
+    bool ret = threadContainer.IsValid();
+
+    if (ret) {
+        // for each thread call the Validate
+        uint32 numberOfThreads = threadContainer->Size();
+        for (uint32 i = 0u; (i < numberOfThreads) && (ret); i++) {
+            ReferenceT<RealTimeThread> rtThread = threadContainer->Get(i);
+            if (rtThread.IsValid()) {
+                // call the configure function for each thread
+                ret = rtThread->ConfigureArchitecture(rtApp, *this);
+            }
+        }
+    }
+    else {
+        //TODO Threads container not found
+    }
+
+    return ret;
+}
+
+bool RealTimeState::InsertFunction(Reference functionReference) {
+    ReferenceT<ReferenceContainer> functionsContainer = Find("+Functions");
+    bool ret = functionsContainer.IsValid();
+    // if the functions container does not exists, create it.
+    if (!ret) {
+        functionsContainer = ReferenceT<ReferenceContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ret = functionsContainer.IsValid();
+        if (ret) {
+            functionsContainer->SetName("+Functions");
+            ret = Insert(functionsContainer);
+        }
+        else{
+            //TODO Failed State.Functions container
+        }
+    }
+
+    if (ret) {
+        ret = functionsContainer->Insert(functionReference);
+    }
+    return ret;
+}
+
+bool RealTimeState::ConfigureDataSource() {
     bool ret = true;
     // for each thread call the Validate
     for (uint32 i = 0u; (i < Size()) && (ret); i++) {
         ReferenceT<RealTimeThread> rtThread = Get(i);
         if (rtThread.IsValid()) {
-            ret = rtThread->Validate(rtApp, *this);
+            ret = rtThread->ConfigureDataSource();
         }
         else {
             //TODO Error??
+            ret = false;
         }
     }
-
     return ret;
 }
 
-bool RealTimeState::AddFunction(ReferenceT<GAM> element) {
-    bool ret = true;
-    if ((numberOfFunctions % functionArrayGranularity) == 0u) {
-        Reference<GAM>* temp =
-                reinterpret_cast<Reference<GAM>*>(HeapManager::Realloc(statefulGAMs, sizeof(ReferenceT<GAM> ) * (numberOfFunctions + functionArrayGranularity)));
-        ret = (temp != NULL);
-        if (ret) {
-            statefulGAMs = temp;
+void RealTimeState::AddGAMGroup(ReferenceT<GAMGroup> element) {
+    if ((numberOfElements % functionArrayGranularity) == 0u) {
+        uint32 newSize = numberOfElements + functionArrayGranularity;
+        ReferenceT<GAMGroup> *temp = new ReferenceT<GAMGroup> [newSize];
+        if (statefulGAMGroups != NULL) {
+            for (uint32 i = 0u; i < numberOfElements; i++) {
+                temp[i] = statefulGAMGroups[i];
+            }
+            delete [] statefulGAMGroups;
         }
-        else {
-            //TODO Error in reallocation
-        }
+
+        statefulGAMGroups = temp;
     }
 
-    if (ret) {
-        statefulGAMs[numberOfFunctions] = element;
-        numberOfFunctions++;
-    }
-
-    return ret;
-
+    statefulGAMGroups[numberOfElements] = element;
+    numberOfElements++;
 }
 
-void RealTimeState::ChangeState() {
-    for (uint32 i = 0u; i < numberOfFunctions; i++) {
-
-        // to be developed
-        statefulGAMs[i]->ChangeState();
+void RealTimeState::ChangeState(const RealTimeStateInfo &status) {
+    for (uint32 i = 0u; i < numberOfElements; i++) {
+        statefulGAMGroups[i]->PrepareNextState(status);
     }
+    activeBuffer = ((activeBuffer + 1u) % 2u);
 }
+
+ReferenceT<GAMGroup> * RealTimeState::GetStatefulGAMGroups() const {
+    return statefulGAMGroups;
+}
+
+uint32 RealTimeState::GetNumberOfElements() const {
+    return numberOfElements;
+}
+
+uint8 RealTimeState::GetContextActiveBuffer() const {
+    return activeBuffer;
+}
+CLASS_REGISTER(RealTimeState, "1.0");
 
 }

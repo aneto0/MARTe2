@@ -1,8 +1,8 @@
 /**
- * @file GAMContextT.cpp
- * @brief Source file for class GAMContextT
- * @date 24/feb/2016
- * @author pc
+ * @file RealTimeDataDefI.cpp
+ * @brief Source file for class RealTimeDataDefI
+ * @date 25/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMContextT (public, protected, and private). Be aware that some 
+ * the class RealTimeDataDefI (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,9 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "GAMContextT.h"
-
+#include "RealTimeDataDefI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,3 +37,32 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+RealTimeDataDefI::RealTimeDataDefI() {
+
+}
+
+const char8 *RealTimeDataDefI::GetPath() {
+    return path.Buffer();
+}
+
+const char8 *RealTimeDataDefI::GetType() {
+    return type.Buffer();
+}
+
+bool RealTimeDataDefI::Initialise(StructuredDataI &data) {
+
+    bool ret = ReferenceContainer::Initialise(data);
+
+    if (ret) {
+        if (!data.Read("Path", path)) {
+            //TODO Warning?
+        }
+        if (!data.Read("Type", type)) {
+            //TODO Warning?
+        }
+    }
+    return ret;
+}
+
+}

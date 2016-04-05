@@ -139,11 +139,11 @@ public:
     /**
      * @brief Creates an object from a structured list of elements.
      * @param[in] data the data to initialise the underlying object.
-     * @param[in] createOnly if true the object Initialise method is not called.
+     * @param[in] initOnly if true the object is supposed to be already created.
      * @return true if the object was successfully created and initialized.
      */
     virtual bool Initialise(StructuredDataI &data,
-    const bool &createOnly);
+    const bool &initOnly);
 
 private:
 
@@ -204,8 +204,6 @@ ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);
         if (typeTObjectPointer == NULL) {
             RemoveReference();
-        }
-        else {
             REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
         }
     }
@@ -225,12 +223,14 @@ ReferenceT<T>* ReferenceT<T>::operator&() {
 
 template<typename T>
 bool ReferenceT<T>::Initialise(StructuredDataI &data,
-                               const bool &createOnly) {
-    Reference ref;
+                               const bool &initOnly) {
     bool ok = true;
-    if (ref.Initialise(data, createOnly)) {
-        *this = ref;
-        ok = IsValid();
+    if (Reference::Initialise(data, initOnly)) {
+        typeTObjectPointer = dynamic_cast<T*>(objectPointer);
+        if (typeTObjectPointer == NULL) {
+            Reference::RemoveReference();
+            typeTObjectPointer = static_cast<T *>(NULL);
+        }
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Failed Reference::Initialise()");

@@ -1,7 +1,7 @@
 /**
- * @file GAMContextI.h
- * @brief Header file for class GAMContextI
- * @date 24/02/2016
+ * @file RealTimeGenericDataDefTest.h
+ * @brief Header file for class RealTimeGenericDataDefTest
+ * @date 03/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMContextI
+ * @details This header file contains the declaration of the class RealTimeGenericDataDefTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMCONTEXTI_H_
-#define GAMCONTEXTI_H_
+#ifndef REALTIMEGENERICDATADEFTEST_H_
+#define REALTIMEGENERICDATADEFTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,27 +31,58 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "RealTimeGenericDataDef.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-class GAMContextI {
+using namespace MARTe;
 
+class RealTimeGenericDataDefTest {
 public:
 
+    bool TestConstructor();
 
+    bool TestInitialise();
 
-private:
+    bool TestMergeWithLocal();
+
+    bool TestMergeWithLocalFalse_FinalGlobal();
+
+    bool TestMergeWithLocalFalse_BothFinal();
+
+    bool TestMergeWithLocal_AddType();
+
+    bool TestMergeWithLocal_AddPath();
+
+    bool TestMergeWithLocal_AddDefaultValues();
+
+    bool TestMergeWithLocal_DifferentTypes();
+
+    bool TestMergeWithLocal_DifferentPaths();
+
+    bool TestMergeWithLocal_DifferentDefaultValues();
+
+    bool TestGetDefaultValue();
+
+    bool TestToStructuredData();
+
+    bool TestVerify();
+
+    bool TestVerifyFalse_UnregisteredType();
+
+    bool TestVerifyFalse_UnintrospectableType();
+
+    bool TestVerifyFalse_InvalidMemberName();
+
+    bool TestVerifyFalse_InvalidMemberType();
+
 
 };
-
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMCONTEXTI_H_ */
+#endif /* REALTIMEGENERICDATADEFTEST_H_ */
 

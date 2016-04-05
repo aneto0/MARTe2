@@ -30,7 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAMTest.h"
-
+#include "GAMTestHelper.h"
+#include "RealTimeDataDefContainer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -38,4 +39,84 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+GAMTest::GAMTest() {
+
+    const char8 * states[] = { "state1" };
+    cdb.Write("States", states);
+    cdb.CreateAbsolute("+Inputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsInput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Inputs.+Error");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "TrackError");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Inputs.+Error.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Default", "2");
+    cdb.Write("Address", "PidError2");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("+Outputs");
+    cdb.Write("Class", "RealTimeDataDefContainer");
+    cdb.Write("IsOutput", "true");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Outputs.+Control");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlIn");
+    cdb.Write("IsFinal", "false");
+    cdb.CreateAbsolute("+Outputs.+Control.+Par2");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "uint32");
+    cdb.Write("Address", "PidControl2");
+    cdb.Write("Default", "1");
+    cdb.Write("IsFinal", "true");
+
+    cdb.CreateAbsolute("+Outputs.+Noise");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "ControlNoise");
+    cdb.Write("IsFinal", "true");
+    cdb.CreateAbsolute("+Outputs.+Noise.+noiseValue");
+    cdb.Write("Class", "RealTimeGenericDataDef");
+    cdb.Write("Type", "float32");
+    cdb.Write("Default", "2");
+    cdb.Write("Address", "PidNoise");
+    cdb.Write("IsFinal", "true");
+    cdb.MoveToRoot();
+}
+
+
+GAMTest::~GAMTest(){
+    ObjectRegistryDatabase::Instance()->CleanUp();
+}
+
+
+bool GAMTest::TestInitialise() {
+    PIDGAM gamTest;
+    if(!gamTest.Initialise(cdb)){
+        return false;
+    }
+
+    // there must be two containers
+    if(gamTest.Size()!=2){
+        return false;
+    }
+
+    // check the input
+    ReferenceT<RealTimeDataDefContainer> inputs=gamTest.Get(0);
+    if(inputs->Size()!=1){
+        return false;
+    }
+
+    // check the output
+    ReferenceT<RealTimeDataDefContainer> outputs=gamTest.Get(1);
+    if(outputs->Size()!=2){
+        return false;
+    }
+
+
+    return true;
+}
 

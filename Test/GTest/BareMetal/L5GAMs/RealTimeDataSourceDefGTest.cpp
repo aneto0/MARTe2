@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataContainer.cpp
- * @brief Source file for class RealTimeDataContainer
- * @date 22/02/2016
+ * @file RealTimeDataSourceDefGTest.cpp
+ * @brief Source file for class RealTimeDataSourceDefGTest
+ * @date 04/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataContainer (public, protected, and private). Be aware that some 
+ * the class RealTimeDataSourceDefGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,12 +25,13 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <limits.h>
+#include "gtest/gtest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeDataContainer.h"
-
+#include "RealTimeDataSourceDefTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -38,57 +39,33 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-bool RealTimeDataContainer::Verify() {
 
-    bool ret = false;
-    for (uint32 i = 0u; (i < Size()) && (ret); i++) {
-        ReferenceT<RealTimeData> item = Get(i);
-        if (item.IsValid()) {
-            ret = item->Verify();
-        }
-    }
-
-    return ret;
+TEST(RealTimeDataSourceDefGTest,TestConstructor) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestConstructor());
 }
 
-bool RealTimeDataContainer::MergeWithLocal(StructuredDataI & localData) {
-
-    uint32 newItemsNumber = localData.GetNumberOfChildren();
-    bool ret = ((finalised) && (newItemsNumber == 0u));
-
-    if (!finalised) {
-        ret = true;
-        for (uint32 i = 0u; (i < newItemsNumber) & (ret); i++) {
-            const char8 * newItemName = localData.GetChildName(i);
-            for (uint32 j = 0u; j < Size(); j++) {
-                Reference item = Get(i);
-                if (StringHelper::Compare(item->GetName(), newItemName) == 0) {
-                    ret = false;
-                    //TODO Already exists a variable with the same name!!
-                }
-                else {
-                    ReferenceT<RealTimeData> newItem;
-                    newItem.Initialise(localData, false);
-                    if (newItem.IsValid()) {
-                        ret = Insert(newItem);
-                    }
-                    else{
-                        ret=false;
-                    }
-                }
-            }
-        }
-    }
-    return ret;
+TEST(RealTimeDataSourceDefGTest,TestAddConsumer) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestAddConsumer());
 }
 
-bool RealTimeDataContainer::Initialise(StructuredDataI & data) {
-    bool ret = ReferenceContainer::Initialise(data);
-    if (ret) {
-        ret = (data.Read("IsFinalised", finalised));
-    }
-    return ret;
+TEST(RealTimeDataSourceDefGTest,TestAddProducer) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestAddProducer());
 }
 
+TEST(RealTimeDataSourceDefGTest,TestVerifyTrue) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestVerifyTrue());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestVerifyFalse_MoreThanOneProducer) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestVerifyFalse_MoreThanOneProducer());
+}
+
+TEST(RealTimeDataSourceDefGTest,TestVerifyNoConsumers) {
+    RealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestVerifyNoConsumers());
 }

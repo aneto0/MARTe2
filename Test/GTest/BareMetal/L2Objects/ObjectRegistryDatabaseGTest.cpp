@@ -1,8 +1,8 @@
 /**
- * @file RealTimeData.cpp
- * @brief Source file for class RealTimeData
- * @date 19/feb/2016
- * @author pc
+ * @file ObjectRegistryDatabaseGTest.cpp
+ * @brief Source file for class ObjectRegistryDatabaseGTest
+ * @date 18/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeData (public, protected, and private). Be aware that some 
+ * the class ObjectRegistryDatabaseGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeData.h"
+#include "ObjectRegistryDatabaseTest.h"
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,3 +40,21 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+TEST(ObjectRegistryDatabaseGTest,TestInstance) {
+    ObjectRegistryDatabaseTest objRegTest;
+    ASSERT_TRUE(objRegTest.TestInstance());
+}
+
+TEST(ObjectRegistryDatabaseGTest,TestFind) {
+    ObjectRegistryDatabaseTest objRegTest;
+    ASSERT_TRUE(objRegTest.TestFind());
+}
+
+TEST(ObjectRegistryDatabaseGTest,TestFindTooManyBackSteps) {
+    ObjectRegistryDatabaseTest objRegTest;
+    ASSERT_TRUE(objRegTest.TestFindTooManyBackSteps());
+}
+TEST(ObjectRegistryDatabaseGTest,TestGetClassName) {
+    ObjectRegistryDatabaseTest objRegTest;
+    ASSERT_TRUE(objRegTest.TestGetClassName());
+}

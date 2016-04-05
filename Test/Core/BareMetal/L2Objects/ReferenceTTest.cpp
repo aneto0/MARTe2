@@ -36,6 +36,7 @@
 #include "ClassRegistryDatabase.h"
 #include "Threads.h"
 #include "Sleep.h"
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -121,7 +122,7 @@ bool ReferenceTTest::TestCopyConstructorNullPtr() {
 
 bool ReferenceTTest::TestCreateConstructor() {
 
-    HeapI* mem=NULL;
+    HeapI* mem = NULL;
     ReferenceT<IntegerObject> ref(mem);
 
     if (!ref.IsValid()) {
@@ -147,7 +148,6 @@ bool ReferenceTTest::TestBuildObjectConstructor() {
 }
 
 bool ReferenceTTest::TestBuildFakeObjectConstructor() {
-
 
     //an object with this name is not registered!
     ReferenceT<Object> buildObj("FakeObject");
@@ -197,13 +197,58 @@ bool ReferenceTTest::TestDestructor() {
     return (buildObj.NumberOfReferences() == 0) && (!buildObj.IsValid());
 }
 
-//TODO
-bool ReferenceTTest::TestInitialise() {
-    return true;
+bool ReferenceTTest::TestInitialiseNoCreation() {
+    ReferenceT<IntegerObject> test = Reference("IntegerObject");
+    ConfigurationDatabase cdb;
+    int32 value = 1;
+    cdb.Write("var", value);
+    if (!test.Initialise(cdb, true)) {
+        return false;
+    }
+    return test->GetVariable() == value;
 }
 
-bool ReferenceTTest::TestRemoveReference() {
+bool ReferenceTTest::TestInitialiseCreation() {
+    ReferenceT<IntegerObject> test;
+    ConfigurationDatabase cdb;
+    int32 value = 1;
+    cdb.Write("Class", "IntegerObject");
+    cdb.Write("var", value);
+    if (!test.Initialise(cdb, false)) {
+        return false;
+    }
+    return test->GetVariable() == value;
+}
 
+bool ReferenceTTest::TestInitialiseNoObject() {
+    ReferenceT<IntegerObject> test;
+    ConfigurationDatabase cdb;
+    int32 value = 1;
+    cdb.Write("var", value);
+    return !test.Initialise(cdb, true);
+}
+
+bool ReferenceTTest::TestInitialiseNoClassName() {
+    ReferenceT<IntegerObject> test;
+    ConfigurationDatabase cdb;
+    int32 value = 1;
+    cdb.Write("var", value);
+    return !test.Initialise(cdb, false);
+}
+
+
+bool ReferenceTTest::TestInitialiseIncompatibleCast() {
+    ReferenceT<IntegerObject> test;
+    ConfigurationDatabase cdb;
+    int32 value = 1;
+    cdb.Write("Class", "FloatObject");
+    cdb.Write("var", value);
+    return !test.Initialise(cdb, false);
+}
+
+
+
+bool ReferenceTTest::TestRemoveReference() {
 
     ReferenceT<IntegerObject> intObjRef("IntegerObject");
 
@@ -235,7 +280,6 @@ bool ReferenceTTest::TestRemoveReference() {
 }
 bool ReferenceTTest::TestCopyOperatorReference() {
 
-
     Reference intObjRef = Reference("IntegerObject");
 
     (dynamic_cast<IntegerObject*>(intObjRef.operator->()))->SetVariable(2);
@@ -261,7 +305,6 @@ bool ReferenceTTest::TestCopyOperatorReferenceNull() {
 
 bool ReferenceTTest::TestCopyOperatorReferenceT() {
 
-
     ReferenceT<IntegerObject> intObjRef("IntegerObject");
     intObjRef->SetVariable(2);
 
@@ -286,7 +329,6 @@ bool ReferenceTTest::TestCopyOperatorReferenceTNull() {
 
 bool ReferenceTTest::TestCopyOperatorObject() {
 
-
     ReferenceT<IntegerObject> source("IntegerObject");
 
     source->SetVariable(2);
@@ -310,7 +352,6 @@ bool ReferenceTTest::TestCopyOperatorObjectNull() {
 }
 
 bool ReferenceTTest::TestIsValid() {
-
 
     //an object with this name is not registered!
     ReferenceT<IntegerObject> fakeObj("FakeObject");
@@ -339,7 +380,6 @@ bool ReferenceTTest::TestIsValid() {
 }
 
 bool ReferenceTTest::TestNumberOfReferences() {
-
 
     ReferenceT<IntegerObject> buildObj("IntegerObject");
 
@@ -381,7 +421,6 @@ bool ReferenceTTest::TestNumberOfReferences() {
 
 bool ReferenceTTest::TestEqualOperator() {
 
-
     ReferenceT<IntegerObject> buildObj("IntegerObject");
 
     ReferenceT<IntegerObject> copy(buildObj);
@@ -417,7 +456,6 @@ bool ReferenceTTest::TestEqualOperator() {
 
 bool ReferenceTTest::TestDifferentOperator() {
 
-
     ReferenceT<IntegerObject> buildObj("IntegerObject");
 
     ReferenceT<IntegerObject> copy(buildObj);
@@ -443,7 +481,6 @@ bool ReferenceTTest::TestDifferentOperator() {
     return !(buildObj != copy);
 
 }
-
 
 void CreateRefsOnStack(ReferenceTTest &rt) {
 
@@ -535,7 +572,6 @@ bool ReferenceTTest::TestInFunctionOnHeap(uint32 nRefs) {
 
 bool ReferenceTTest::TestRightInherithance() {
 
-
     ReferenceT<IntegerObject> integer = ReferenceT<IntegerObject>("IntegerObject");
 
     ReferenceT<SpecialIntegerObject> specialInteger = ReferenceT<SpecialIntegerObject>("SpecialIntegerObject");
@@ -559,7 +595,6 @@ bool ReferenceTTest::TestRightInherithance() {
 }
 
 bool ReferenceTTest::TestWrongInherithance() {
-
 
     ReferenceT<IntegerObject> integer = ReferenceT<IntegerObject>("IntegerObject");
 

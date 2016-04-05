@@ -1,7 +1,7 @@
 /**
- * @file RealTimeApplication.h
- * @brief Header file for class RealTimeApplication
- * @date 19/02/2016
+ * @file ObjectRegistryDatabaseTest.h
+ * @brief Header file for class ObjectRegistryDatabaseTest
+ * @date 18/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeApplication
+ * @details This header file contains the declaration of the class ObjectRegistryDatabaseTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEAPPLICATION_H_
-#define REALTIMEAPPLICATION_H_
+#ifndef OBJECTREGISTRYDATABASETEST_H_
+#define OBJECTREGISTRYDATABASETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,74 +31,91 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
-#include "ReferenceT.h"
+#include "ObjectRegistryDatabase.h"
+#include "ConfigurationDatabase.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+using namespace MARTe;
+
 
 /**
- * @brief A container of Functions (GAMGroup or GAM), and States (RealTimeState) references.
- * @details The syntax in the configuration stream should be:
- * RealTimeApplication_name = {\n
- *     Class = RealTimeApplication\n
- *     Functions = {\n
- *         Class = ReferenceContainer\n
- *         GAM_name = {\n
- *             Class = GAM\n
- *             ...\n
- *         }\n
- *         GAM_Group_name = {\n
- *             Class = GAMGroup\n
- *             ...\n
- *         }\n
- *         ...\n
- *     }\n
- *     States = {\n
- *         class = ReferenceContainer\n
- *         State_name = {\n
- *             Class = RealTimeState\n
- *             ...\n
- *         }\n
- *         ...\n
- *     }\n
- * }\n
+ * @brief Class used for tests
  */
-class RealTimeApplication: public ReferenceContainer {
+class PID: public Object {
+    /**
+     * @brief Initialises the gains from cdb
+     */
+    virtual bool Initialise(StructuredDataI &data);
 public:
+    /**
+     * Proportional gain
+     */
+    uint32 Kp;
+    /**
+     * Integral gain
+     */
+    uint32 Ki;
+    /**
+     * Derivative gain
+     */
+    uint32 Kd;
     CLASS_REGISTER_DECLARATION();
+};
+
+
+/**
+ * @brief Tests all the ObjectRegistryDatabase functions
+ */
+class ObjectRegistryDatabaseTest {
+
+public:
 
     /**
      * @brief Constructor
      */
-    RealTimeApplication();
+    ObjectRegistryDatabaseTest();
 
     /**
-     * @brief Validates the configuration.
-     * @details Checks if the functions (GAM or GAMGroup) declared in the RealTimeThread configuration are really defined
-     * and supports the state where they are declared into. Moreover creates accelerators to the specific GAM References
-     * for each RealTimeState and adds the GAM References in each RealTimeThread.
-     * @return true if all the GAMs declared in the RealTimeThread configuration are really defined
-     * and supports the state where they are declared into, false otherwise.
+     * @brief Destructor
      */
-    bool ConfigureArchitecture();
+    ~ObjectRegistryDatabaseTest();
 
-    bool ConfigureDataSource();
 
-    bool ValidateDataSource();
+    /**
+     * @brief Tests if the function does not return null
+     */
+    bool TestInstance();
 
-    // The Initialise function is automatic
+    /**
+     * @brief Tests if the function behaves in the correct way searching relatively with respect to the marked domain nodes
+     */
+    bool TestFind();
+
+    /**
+     * @brief Tests if the function considers the root as the start search point when the number
+     * of back steps to the previous domain is too big.
+     */
+    bool TestFindTooManyBackSteps();
+
+    /**
+     * @brief Tests if the function returns "ObjectRegistryDatabase"
+     */
+    bool TestGetClassName();
+
 
 private:
-    bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functionsContainer);
+
+
+    ConfigurationDatabase cdb;
+
 };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEAPPLICATION_H_ */
+#endif /* OBJECTREGISTRYDATABASETEST_H_ */
 

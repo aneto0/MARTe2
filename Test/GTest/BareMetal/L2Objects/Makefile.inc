@@ -30,6 +30,7 @@ OBJSX=  AnyTypeGTest.x \
 		IntrospectionEntryGTest.x\
 		IntrospectionGTest.x\
 		ObjectGTest.x \
+		ObjectRegistryDatabaseGTest.x \
 		ReferenceContainerFilterObjectNameGTest.x \
 		ReferenceContainerFilterReferencesGTest.x \
 		ReferenceContainerGTest.x \

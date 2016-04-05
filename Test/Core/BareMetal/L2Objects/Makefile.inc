@@ -31,6 +31,7 @@ OBJSX=  AnyTypeTest.x\
 		IntrospectionEntryTest.x\
 		IntrospectionTest.x \
 		ObjectTest.x \
+		ObjectRegistryDatabaseTest.x \
 		ObjectTestHelper.x \
 		ReferenceContainerFilterObjectNameTest.x \
 		ReferenceContainerFilterReferencesTest.x \

@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDefaultData.h
- * @brief Header file for class RealTimeDefaultData
- * @date 22/feb/2016
+ * @file GAMTestHelper.h
+ * @brief Header file for class GAMTestHelper
+ * @date 01/mar/2016
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDefaultData
+ * @details This header file contains the declaration of the class GAMTestHelper
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDEFAULTDATA_H_
-#define REALTIMEDEFAULTDATA_H_
+#ifndef GAMTESTHELPER_H_
+#define GAMTESTHELPER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,40 +31,55 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeData.h"
-#include "StreamString.h"
-#include "StructuredDataI.h"
+#include "GAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-class RealTimeDefaultData: public RealTimeData {
-public:
-    RealTimeDefaultData();
 
-    virtual bool Verify();
+using namespace MARTe;
 
-    virtual bool Initialise(StructuredDataI& data);
-
-    bool MergeWithLocal(StructuredDataI & localData);
-
-    virtual const char8 *GetPath();
-
-    virtual const char8 *GetType();
-
-    virtual const char8 *GetDefaultValue();
-
-private:
-    StreamString path;
-    StreamString type;
-    StreamString defaultValue;
-    bool finalised;
+struct TrackError{
+    uint32 Par1;
+    uint32 Par2;
 };
-}
+
+
+struct ControlIn{
+    uint32 Par1;
+    uint32 Par2;
+};
+
+
+struct ControlNoise{
+    float32 noiseValue;
+};
+
+class PIDGAM: public GAM {
+
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    ~PIDGAM();
+
+    virtual void SetUp();
+    virtual void Execute(uint8 activeContextBuffer);
+
+    virtual void SetLocalData();
+
+};
+
+class PIDGAMGroup: public GAMGroup {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+
+    virtual void PrepareNextState(const RealTimeStateInfo &status);
+};
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDEFAULTDATA_H_ */
+#endif /* GAMTESTHELPER_H_ */
 

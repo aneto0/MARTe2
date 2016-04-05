@@ -31,34 +31,102 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
 #include "ObjectRegistryDatabase.h"
+#include "RealTimeStateInfo.h"
+#include "GAMGroup.h"
+#include "RealTimeApplication.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe{
 
-// contains RealTimeThreads
+/**
+ * @brief A container of RealTimeThread references.
+ * @details The syntax in the configuration stream should be:
+ * State_name = {\n
+ *     Class = RealTimeState\n
+ *     RealTimeThread_name = {\n
+ *         Class = RealTimeThread\n
+ *         ...\n
+ *     }\n
+ *     ...\n
+ * }\n
+ */
 class RealTimeState: public ReferenceContainer {
 
 public:
+    CLASS_REGISTER_DECLARATION();
 
+    /**
+     * @brief Constructor
+     * @post
+     *   GetStatefulGAMGroups() == NULL &&
+     *   GetNumberOfElements() == 0 &&
+     *   GetContextActiveBuffer() == 0;
+     */
     RealTimeState();
 
-    ~RealTimeState();
+    /**
+     * @brief Destructor. Frees the stateful GAMGroups array.
+     */
+    virtual ~RealTimeState();
 
-    bool Validate(RealTimeApplication & rtApp);
+    /**
+     * @see RealTimeApplication::Validate().
+     */
+    bool ConfigureArchitecture(RealTimeApplication & rtApp);
 
-    bool AddFunction(ReferenceT<GAM> element);
 
-    void ChangeState();
+    bool ConfigureDataSource();
 
+    bool InsertFunction(Reference functionReference);
+
+    /**
+     * @brief Stores a stateful group of GAMGroups into the internal array.
+     * @param[in] element is the new GAMGroup to be added.
+     * @return true if the memory allocation succeeds, false otherwise.
+     */
+    void AddGAMGroup(ReferenceT<GAMGroup> element);
+
+    /**
+     * @brief Prepare the context for the state in each registered GAMGroup.
+     */
+    void ChangeState(const RealTimeStateInfo &status);
+
+    /**
+     * @brief Returns the stateful GAMGroups array.
+     * @return the stateful GAMGroups array.
+     */
+    ReferenceT<GAMGroup> * GetStatefulGAMGroups() const;
+
+    /**
+     * @brief Returns the number of GAMGroups currently registered.
+     * @return the number of GAMGroups currently registered.
+     */
+    uint32 GetNumberOfElements() const;
+
+    /**
+     * @brief Gets the context active buffer.
+     */
+    uint8 GetContextActiveBuffer() const;
 private:
 
-    ReferenceT<GAM> * statefulGAMs;
+    /**
+     * The stateful GAMGroups array.
+     */
+    ReferenceT<GAMGroup> * statefulGAMGroups;
 
-    uint32 numberOfFunctions;
+    /**
+     * The number of stateful GAMGroups registered.
+     */
+    uint32 numberOfElements;
+
+
+    /**
+     * The active buffer in the context
+     */
+    uint8 activeBuffer;
 };
 
 }

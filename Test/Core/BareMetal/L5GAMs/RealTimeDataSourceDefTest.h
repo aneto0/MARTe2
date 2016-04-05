@@ -1,7 +1,7 @@
 /**
- * @file ObjectRegistryDatabaseGTest.cpp
- * @brief Source file for class ObjectRegistryDatabaseGTest
- * @date 18/02/2016
+ * @file RealTimeDataSourceDefTest.h
+ * @brief Header file for class RealTimeDataSourceDefTest
+ * @date 04/02/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,36 +16,52 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class ObjectRegistryDatabaseGTest (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+ * @details This header file contains the declaration of the class RealTimeDataSourceDefTest
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
+#ifndef REALTIMEDATASOURCEDEFTEST_H_
+#define REALTIMEDATASOURCEDEFTEST_H_
+
 /*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
+#include "RealTimeDataSourceDef.h"
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-#include "ObjectRegistryDatabaseTest.h"
-#include "gtest/gtest.h"
+using namespace MARTe;
+
+class RealTimeDataSourceDefTest {
+
+public:
+    bool TestConstructor();
+
+    bool TestAddConsumer();
+
+    bool TestAddProducer();
+
+    bool TestGetNumberOfConsumers();
+
+    bool TestGetNumberOfProducers();
+
+    bool TestVerifyTrue();
+
+    bool TestVerifyFalse_MoreThanOneProducer();
+
+    bool TestVerifyNoConsumers();
+
+};
 
 /*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
+/*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
+#endif /* REALTIMEDATASOURCEDEFTEST_H_ */
 
-TEST(ObjectRegistryDatabaseGTest,Testinitialise) {
-    ObjectRegistryDatabaseTest objRegTest;
-    ASSERT_TRUE(objRegTest.TestInitialise());
-}
-
-TEST(ObjectRegistryDatabaseGTest,TestFind) {
-    ObjectRegistryDatabaseTest objRegTest;
-    ASSERT_TRUE(objRegTest.TestFind());
-}

@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSource.h
- * @brief Header file for class RealTimeDataSource
- * @date 22/02/2016
+ * @file RealTimeDataSourceDefRecord.h
+ * @brief Header file for class RealTimeDataSourceDefRecord
+ * @date 01/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeDataSource
+ * @details This header file contains the declaration of the class RealTimeDataSourceDefRecord
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEDATASOURCE_H_
-#define REALTIMEDATASOURCE_H_
+#ifndef REALTIMEDATASOURCEDEFRECORD_H_
+#define REALTIMEDATASOURCEDEFRECORD_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,58 +31,47 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GlobalObjectI.h"
-#include "StructuredDataI.h"
+#include "StreamString.h"
+#include "ReferenceContainer.h"
+#include "ReferenceT.h"
+#include "GAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-
-// it is a tree of AnyTypes
-// overload of read and write to allow to store structured data leafs? (or we can use directly
-// the current configuration)
-// disallow the move
-class RealTimeDataSource: public GlobalObjectI, public StructuredDataI {
-
+class RealTimeDataSourceDefRecord: public ReferenceContainer {
 public:
+    CLASS_REGISTER_DECLARATION()
 
-    static RealTimeDataSource *Instance();
+    RealTimeDataSourceDefRecord();
 
-    virtual const char8 * const GetClassName() const;
+    void SetStateName(const char8 * stateName);
 
-    /**
-     * @brief Locks the shared semaphore.
-     * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
-     * @return true if the shared semaphore is successfully locked.
-     */
-    bool Lock(const TimeoutType &timeout);
+    bool AddConsumer(ReferenceT<GAM> gamConsumer);
 
-    /**
-     * @brief Unlocks the shared semaphore.
-     * @return true if the shared semaphore is successfully unlocked.
-     */
-    void Unlock();
+    bool AddProducer(ReferenceT<GAM> gamProducer);
 
+    uint32 GetNumberOfConsumers();
+
+    uint32 GetNumberOfProducers();
+
+    const char8 * GetStateName();
+
+    ReferenceT<ReferenceContainer> GetConsumers();
+
+    ReferenceT<ReferenceContainer> GetProducers();
 
 private:
-    RealTimeDataSource();
 
-    /**
-     * @brief Disallow the usage of new.
-     * @param[in] size the size of the object.
-     */
-    static void *operator new(osulong size) throw ();
-    /**
-     * The shared mutex semaphore.
-     */
-    FastPollingMutexSem mux;
+    ReferenceT<ReferenceContainer> producers;
+    ReferenceT<ReferenceContainer> consumers;
 
+    StreamString state;
 };
 }
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEDATASOURCE_H_ */
+#endif /* REALTIMEDATASOURCEDEFRECORD_H_ */
 

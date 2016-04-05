@@ -1,7 +1,7 @@
 /**
- * @file RealTimeDataSource.cpp
- * @brief Source file for class RealTimeDataSource
- * @date 22/02/2016
+ * @file RealTimeApplicationGTest.cpp
+ * @brief Source file for class RealTimeApplicationGTest
+ * @date 01/03/2016
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeDataSource (public, protected, and private). Be aware that some 
+ * the class RealTimeApplicationGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,12 +25,13 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <limits.h>
+#include "gtest/gtest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "GlobalObjectsDatabase.h"
-#include "RealTimeDataSource.h"
+#include "RealTimeApplicationTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,37 +41,22 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
-
-RealTimeDataSource* RealTimeDataSource::Instance(){
-
-    static RealTimeDataSource *instance = NULL_PTR(RealTimeDataSource *);
-    if (instance == NULL) {
-        instance=new RealTimeDataSource();
-        GlobalObjectsDatabase::Instance()->Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 2u);
-    }
-    return instance;
+TEST(RealTimeApplicationGTest,TestConstructor) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConstructor());
 }
 
-
-const char8 * const RealTimeDataSource::GetClassName() const{
-    return "RealTimeDataSource";
+TEST(RealTimeApplicationGTest,TestConfigureArchitecture) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConfigureArchitecture());
 }
 
-RealTimeDataSource::RealTimeDataSource(){
-    mux.Create();
+TEST(RealTimeApplicationGTest,TestConfigureArchitectureGAMGroup) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConfigureArchitectureGAMGroup());
 }
 
-
-void *RealTimeDataSource::operator new(osulong size) throw () {
-    return GlobalObjectI::operator new(size);
-}
-
-bool RealTimeDataSource::Lock(const TimeoutType &timeout) {
-    return (mux.FastLock(timeout) == ErrorManagement::NoError);
-}
-
-void RealTimeDataSource::Unlock() {
-    mux.FastUnLock();
-}
+TEST(RealTimeApplicationGTest,TestConfigureDataSource) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestConfigureDataSource());
 }

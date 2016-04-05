@@ -1,8 +1,8 @@
 /**
  * @file GAMContextT.h
  * @brief Header file for class GAMContextT
- * @date 24/feb/2016
- * @author pc
+ * @date 24/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -37,16 +37,33 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
+/**
+ * @brief Generic templetised context to be shared across different GAMs
+ * @details Provides two different buffers in order to change cleanly the
+ * from the previous to the next context. The function GAMGroup::PrepareNextState(*)
+ * can work on the unused buffer to prepare the context for the next state while the
+ * GAMs are still using the old buffer. When the state switch is triggered, all the GAMs
+ * will work on the new buffer.
+ */
 template<typename T>
 class GAMContextT {
 
 public:
 
+    /**
+     * @brief Constructor
+     */
     GAMContextT();
 
-    // full access to the context: the GAMGroup can change it
-    T &GetContext(uint8 activeBuffer);
+    /**
+     * @brief Full access to the context buffers.
+     * @param[in] bufferIndex specifies the buffer which must
+     * be returned (could be 0 or 1)
+     * @pre
+     *   (bufferIndex == 0) ||
+     *   (bufferIndex == 1)
+     */
+    T &GetContext(uint8 bufferIndex);
 
 private:
 
@@ -58,12 +75,15 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+template<typename T>
+GAMContextT<T>::GAMContextT(){
 
+}
 
 
 template<typename T>
-T &GAMContextT<T>::GetContext(uint8 activeBuffer) {
-    return context[activeBuffer];
+T &GAMContextT<T>::GetContext(uint8 bufferIndex) {
+    return context[bufferIndex];
 }
 
 }

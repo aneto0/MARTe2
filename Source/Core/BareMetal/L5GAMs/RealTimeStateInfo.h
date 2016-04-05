@@ -1,8 +1,8 @@
 /**
- * @file RealTimeSampledData.h
- * @brief Header file for class RealTimeSampledData
- * @date 19/feb/2016
- * @author pc
+ * @file RealTimeStateInfo.h
+ * @brief Header file for class RealTimeStateInfo
+ * @date 25/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeSampledData
+ * @details This header file contains the declaration of the class RealTimeStateInfo
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMESAMPLEDDATA_H_
-#define REALTIMESAMPLEDDATA_H_
+#ifndef REALTIMESTATEINFO_H_
+#define REALTIMESTATEINFO_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,39 +31,39 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeData.h"
 #include "StreamString.h"
-#include "StructuredDataI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
-class RealTimeSampledData: public RealTimeData {
-public:
+namespace MARTe {
 
-    RealTimeSampledData();
+/**
+ * @brief Collects the information to be given to the GAMGroups in order to prepare
+ * the new context before the change of state.
+ */
+struct RealTimeStateInfo {
+    /**
+     * The current active state
+     */
+    const char8* currentState;
 
-    virtual bool Initialise(StructuredDataI &data);
+    /**
+     * The next state will be activated
+     */
+    const char8* nextState;
 
-    virtual bool Verify();
-
-private:
-
-    StreamString path;
-    StreamString type;
-
-    // how many samples in the specified number of cycles
-    int32 samples;
-    int32 cycles;
-
-
+    /**
+     * The state active buffer (0 or 1)
+     */
+    uint8 activeBuffer;
 };
+
 }
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMESAMPLEDDATA_H_ */
+#endif /* REALTIMESTATEINFO_H_ */
 
