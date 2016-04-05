@@ -78,6 +78,15 @@ public:
      * @return the pointer to the beginning of the array.
      */
     T * GetList();
+
+    /**
+     * @brief Returns the pointer to the beginning of the array.
+     * @return the pointer to the beginning of the array.
+     */
+    operator T * (){
+        return array;
+    }
+
 private:
 
     /**
@@ -93,6 +102,7 @@ private:
      * The array
      */
     T * array;
+
 
 };
 
