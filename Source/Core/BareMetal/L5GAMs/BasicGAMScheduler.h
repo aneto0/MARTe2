@@ -54,24 +54,32 @@ public:
 
     /**
      * @brief Initialises the scheduler from StructuredDataI.
-     * @details The following field can be specified:
+     * @details The following fields can be specified:
      *
-     *   NumberOfCycles = (int64 variable)
+     *   NumberOfCycles = (int64 variable)\n
+     *   SleepTime = (float64 variable)
      *
-     * The default number of cycles is -1, namely infinite cycles.
+     * The default is (NumberOfCycles = -1) , namely infinite cycles and represents the number of
+     * execution cycles before the scheduler exits.\n
+     * The default is (SleepTime = 0) , and it represents the time to sleep at the end of each cycle.
+     * @return true.
      */
     virtual bool Initialise(StructuredDataI &data);
 
     /**
      * @see SchedulerI::StartExecution(*)
      * @details Executes the GAMs for the specified number of cycles.
+     * @warning This function is supposed to be executed in real-time mode, then for speed reasons
+     * the check of NULL pointer is not performed. Before calling this function be sure that
+     * GAMSchedulerI::PrepareNextState(*) is terminated without errors, otherwise possible Segmentation Fault
+     * crashes can occur.
      */
     virtual void StartExecution(const uint32 activeBuffer);
 
     /**
      * @see SchedulerI::StopExecution()
-     * @details If this function is called inside an interrupt routine, the
-     * execution will be stopped.
+     * @details If this function is called inside an interrupt routine (or thread), the
+     * execution will terminate.
      */
     virtual void StopExecution();
 

@@ -32,6 +32,7 @@ BasicRealTimeDataSourceDefGTest.x \
 BasicRealTimeDataSourceInputReaderGTest.x \
 BasicRealTimeDataSourceOutputWriterGTest.x \
 GAMGroupGTest.x \
+GAMIGTest.x \
 GAMSchedulerIGTest.x \
 GAMSchedulerRecordGTest.x \
 		RealTimeApplicationGTest.x \

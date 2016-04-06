@@ -206,9 +206,14 @@ public:
     bool TestGetNumberOfElements();
 
     /**
-     * @brief Tests if the function returns corectly the number of dimensions.
+     * @brief Tests if the function returns correctly the number of dimensions.
      */
     bool TestGetNumberOfDimensions();
+
+    /**
+     * @brief Tests if the function returns a NULL pointer.
+     */
+    bool TestGetSpinLockSemaphore();
 
     /**
      * @brief Tests if the function performs correctly the conversion of the definition to StructuredDataI.

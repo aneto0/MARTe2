@@ -30,25 +30,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAMSchedulerITest.h"
-
+#include "GAMTestHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class DummyScheduler: public GAMSchedulerI {
-public:
-    DummyScheduler() {
-        numberOfExecutions = 0;
-    }
-    virtual void StartExecution(const uint32 activeBuffer) {
-        numberOfExecutions++;
-    }
-    virtual void StopExecution() {
-        numberOfExecutions++;
-    }
-
-    int32 numberOfExecutions;
-};
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

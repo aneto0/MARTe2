@@ -54,10 +54,6 @@ void BasicGAMScheduler::StartExecution(const uint32 activeBuffer) {
     // warning: possible segmentation faults if the previous operations
     // lack or fail and the pointers are invalid.
 
-    if (statesInExecution[activeBuffer]->GetNumberOfThreads() > 1u) {
-        //TODO Warning
-    }
-
     ReferenceT<RealTimeThread> thread = statesInExecution[activeBuffer]->Peek(0);
     if (thread.IsValid()) {
         // resets the flag
@@ -118,7 +114,7 @@ bool BasicGAMScheduler::Initialise(StructuredDataI &data) {
             // default is infinite (-1)
         }
         if (data.Read("SleepTime", sleepTime)) {
-            // default is infinite (-1)
+            // default is 0
         }
     }
     return ret;

@@ -45,7 +45,23 @@ namespace MARTe{
 
 
 /**
- * @brief The memory database shared between GAMs
+ * @brief The memory shared between GAMs.
+ * @details All the RealTimeDataSource elements must be declared in the configuration data
+ * otherwise errors will be generated in the configuration phase if the Path field of a
+ * RealTimeDataDefI links to an undeclared RealTimeDataSource.
+ * @details It is possible manage customly the memory adding previously to the HeapManager
+ * a proper HeapI object. Declaring the name of the HeapI in the configuration data
+ * we impose to the RealTimeDataSource to use a specific HeapI and accordingly its proper
+ * methods for memory management.
+ * @details The syntax in the configuration stream has to be:
+ *
+ * +RealTimeDataSource_name = {\n
+ *     Class = RealTimeDataSource\n
+ *     HeapMemory = "the heap name" (default NULL, i.e StandardHeap will be used)
+ *     ...\n
+ * }\n
+ *
+ * and it has to be contained in the [RealTimeApplication].+Functions.[?ReferenceContainer?].[?GAMGroup?] declaration.
  */
 class DLL_API RealTimeDataSource: public ReferenceContainer {
 
@@ -65,14 +81,11 @@ public:
      *
      *   HeapMemory = the name of the heap memory
      *
-     * By default (if not specified) the definition is not final. If final, it is not possible adding
-     * more data source definitions than the ones specified in \a data.
+     * By default (if not specified) the StandardHeap will be used to manage the heap memory.
      * @param[in] data contains the configuration data.
      * @return false in case of errors, true otherwise.
      */
     virtual bool Initialise(StructuredDataI & data);
-
-
 
     /**
      * @brief Allocates the memory for each data source defined.

@@ -48,11 +48,6 @@ namespace MARTe {
 
 BasicGAM::BasicGAM() :
         GAMI() {
-    localData = NULL_PTR(StructuredDataI*);
-    numberOfSupportedStates = 0u;
-    supportedStates = NULL_PTR(StreamString *);
-    group = NULL_PTR(GAMGroup*);
-    application = NULL_PTR(RealTimeApplication *);
 }
 
 /*void BasicGAM::SetUp() {
@@ -92,11 +87,13 @@ bool BasicGAM::ConfigureDataSourceLinks() {
     uint32 numberOfElements = Size();
     for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
         ReferenceT<RealTimeDataDefContainer> defContainer = Get(i);
-        if (defContainer.IsValid()) {
+        ret=defContainer.IsValid();
+        if (ret) {
             uint32 numberOfDefs = defContainer->Size();
             for (uint32 j = 0u; (j < numberOfDefs) && (ret); j++) {
                 ReferenceT<RealTimeDataDefI> def = defContainer->Get(j);
-                if (def.IsValid()) {
+                ret=def.IsValid();
+                if (ret) {
                     if (defContainer->IsInput()) {
                         ret = inputReader->AddVariable(def);
                     }
@@ -104,7 +101,13 @@ bool BasicGAM::ConfigureDataSourceLinks() {
                         ret = outputWriter->AddVariable(def);
                     }
                 }
+                else{
+                    REPORT_ERROR(ErrorManagement::FatalError,"The RealTimeDefContainer must contain RealTimeDataDefI objects");
+                }
             }
+        }
+        else{
+            REPORT_ERROR(ErrorManagement::FatalError,"The BasicGAM must contain RealTimeDataDefContainer objects");
         }
     }
     if (ret) {

@@ -62,99 +62,33 @@ public:
      */
     bool TestConstructor();
 
-    /**
-     * @brief Tests if the function initialises the gam from a StructuredDataI in input.
-     */
-    bool TestInitialise();
-
-    /**
-     * @brief Tests if the function sets correctly the application reference in the gam.
-     */
-    bool TestSetApplication();
-
-    /**
-     * @brief Tests if the function sets correctly the gam group reference in the gam.
-     */
-    bool TestSetGAMGroup();
-
-    /**
-     * @brief Tests if the function adds correctly a state to the gam.
-     */
-    bool TestAddState();
-
-    /**
-     * @brief Tests if the function returns false if the same gam is called by more than one
-     * thread in the same state.
-     */
-    bool TestAddStateFalse_MoreThreadsPerGAM();
-
-    /**
-     * @brief Tests if the function returns correctly the number of the contextless gam supported states
-     */
-    bool TestGetNumberOfSupportedStates();
-
-    /**
-     * @brief Tests if the function returns correctly the number of the contextful gam supported states.
-     */
-    bool TestGetNumberOfSupportedStates_GAMGroup();
-
-    /**
-     * @brief Tests if the function returns correctly the contextless gam supported states
-     */
-    bool TestGetSupportedStates();
-
-    /**
-     * @brief Tests if the function returns correctly the number of the contextful gam supported threads.
-     */
-    bool TestGetSupportedThreads_GAMGroup();
-
-    /**
-     * @brief Tests if the function returns correctly the contextless gam supported threads
-     */
-    bool TestGetSupportedThreads();
-
-    /**
-     * @brief Tests if the function returns correctly the contextful gam supported states
-     */
-    bool TestGetSupportedStates_GAMGroup();
-
-    /**
-     * @brief Tests if the function creates correctly the RealTimeDataSourceDefs from the gam RealTimeDataDefI
-     */
-    bool TestConfigureDataSource();
-
-    /**
-     * @brief Tests if the function fails adding RealTimeDataSourceDefs if RealTimeDataSource is declared final.
-     */
-    bool TestConfigureDataSourceFalse_Final();
-
-    /**
-     * @brief Tests if the function fails if the application does not contain the "+Data" container.
-     */
-    bool TestConfigureDataSourceFalse_NoData();
-
-    /**
-     * @brief Tests if the function fails if the reference to the application in the gam is not set.
-     */
-    bool TestConfigureDataSourceFalse_NoApplicationSet();
-
-    /**
-     * @brief Tests if the function returns true also if the gam is not involved in any state. In this case a warning will be
-     * generated.
-     */
-    bool TestConfigureDataSource_NoStates();
 
     /**
      * @brief Tests if the function configures the RealTimeInputReader and the RealTimeOutputWriter correctly.
      */
     bool TestConfigureDataSourceLinks();
 
+    /**
+     * @brief Tests if the function returns true if the GAM input reader is linked to a synchronising data source.
+     */
     bool TestIsSync();
+
+    /**
+     * @brief Tests if the function returns a reference to the GAM input reader.
+     */
+    bool TestGetInputReader();
+
+    /**
+     * @brief Tests if the function returns a reference to the GAM output writer.
+     */
+    bool TestGetOutputWriter();
 
     /**
      * @brief Tests a custom execute function.
      */
     bool TestExecute();
+
+
 private:
 
     /**

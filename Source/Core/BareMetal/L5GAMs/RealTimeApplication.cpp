@@ -313,7 +313,6 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
 bool RealTimeApplication::StopExecution() {
     ReferenceT<GAMSchedulerI> scheduler = schedulerContainer;
     bool ret = scheduler.IsValid();
-    // save the accelerator to the next group of threads to be executed
     if (ret) {
         scheduler->StopExecution();
     }

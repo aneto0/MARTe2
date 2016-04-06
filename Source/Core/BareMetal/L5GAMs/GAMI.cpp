@@ -187,6 +187,8 @@ bool GAMI::AddState(const char8 * const stateName,
         if (found) {
             ret = (supportedThreads[i] == threadName);
             if (!ret) {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s cannot be in both %s and %s threads into the state %s", GetName(),
+                                        supportedThreads[i].Buffer(), threadName, stateName)
                 //TODO same gam in two different threads!
             }
         }
@@ -222,11 +224,9 @@ StreamString * GAMI::GetSupportedStates() {
     return (group != NULL) ? (group->GetSupportedStates()) : (supportedStates);
 }
 
-
-StreamString * GAMI::GetSupportedThreads(){
+StreamString * GAMI::GetSupportedThreads() {
     return (group != NULL) ? (group->GetSupportedThreads()) : (supportedThreads);
 }
-
 
 uint32 GAMI::GetNumberOfSupportedStates() const {
     return (group != NULL) ? (group->GetNumberOfSupportedStates()) : (numberOfSupportedStates);

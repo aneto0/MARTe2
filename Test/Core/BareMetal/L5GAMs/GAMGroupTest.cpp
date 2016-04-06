@@ -45,13 +45,17 @@ bool GAMGroupTest::TestConstructor() {
     if (test.GetSupportedStates() != NULL) {
         return false;
     }
+    if (test.GetSupportedThreads() != NULL) {
+        return false;
+    }
+
     return test.GetNumberOfSupportedStates() == 0;
 }
 
 bool GAMGroupTest::TestAddState() {
     ReferenceT<PIDGAMGroup> gamGroup = ReferenceT<PIDGAMGroup>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     const uint32 size = 5;
-    StreamString states[size] = { "state1",  "state2", "state3", "state4", "state5" };
+    StreamString states[size] = { "state1", "state2", "state3", "state4", "state5" };
     StreamString threads[size] = { "thread1", "thread2", "thread3", "thread1", "thread1" };
 
     for (uint32 i = 0u; i < size; i++) {
@@ -69,6 +73,17 @@ bool GAMGroupTest::TestAddState() {
         }
     }
     return true;
+}
+
+bool GAMGroupTest::TestAddStateFalse_MoreThreadsPerGAM() {
+    PIDGAMGroup gamGroup;
+    if (!gamGroup.AddState("state1", "thread1")) {
+        return false;
+    }
+    if (!gamGroup.AddState("state1", "thread1")) {
+        return false;
+    }
+    return (!gamGroup.AddState("state1", "thread2"));
 }
 
 bool GAMGroupTest::TestGetSupportedStates() {

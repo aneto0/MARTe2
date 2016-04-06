@@ -55,6 +55,13 @@ public:
      */
     bool TestAddState();
 
+
+    /**
+     * @brief Tests if the function returns false if the same gam group is called by more than one
+     * thread in the same state.
+     */
+    bool TestAddStateFalse_MoreThreadsPerGAM();
+
     /**
      * @brief Tests if the function returns correctly the state names where the gam group is involved in.
      */

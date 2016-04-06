@@ -34,6 +34,7 @@
 #include "GAMSchedulerI.h"
 #include "ConfigurationDatabase.h"
 #include "RealTimeGenericDataDef.h"
+#include "AdvancedErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -107,7 +108,6 @@ bool GAMSchedulerI::PrepareNextState(RealTimeStateInfo info) {
         writer[nextBuffer] = new BasicRealTimeDataSourceOutputWriter[numberOfThreads];
         ret = (application != NULL);
         if (ret) {
-
             for (uint32 i = 0u; (i < numberOfThreads) && (ret); i++) {
                 (writer[nextBuffer])[i].SetApplication(*application);
                 ReferenceT<RealTimeThread> thread = record->Peek(i);
@@ -161,8 +161,13 @@ bool GAMSchedulerI::PrepareNextState(RealTimeStateInfo info) {
                         ret = (writer[nextBuffer])[i].Finalise();
                     }
                 }
+                REPORT_ERROR(ErrorManagement::FatalError, "Invalid Thread in GAMSchedulerRecord");
             }
         }
+        REPORT_ERROR(ErrorManagement::FatalError, "Application not set");
+    }
+    else{
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Next state %s not found", newStateName)
     }
     return ret;
 }

@@ -39,7 +39,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 namespace MARTe {
 FastPollingEventSem::FastPollingEventSem() {
     internalFlag = 0;
@@ -49,7 +48,6 @@ FastPollingEventSem::FastPollingEventSem() {
 FastPollingEventSem::FastPollingEventSem(volatile int32 &externalFlag) {
     flag = &externalFlag;
 }
-
 
 void FastPollingEventSem::Create(const bool wait) {
     if (wait) {
@@ -65,6 +63,11 @@ ErrorManagement::ErrorType FastPollingEventSem::FastWait(const TimeoutType &msec
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
     uint64 ticksStop = msecTimeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
+
+    // sets the default if negative
+    if (sleepTime < 0.0) {
+        sleepTime = 1e-3;
+    }
 
     bool noSleep = IsEqual(sleepTime, 0.0);
 
@@ -91,7 +94,8 @@ void FastPollingEventSem::Reset() {
     *flag = 0;
 }
 
-ErrorManagement::ErrorType FastPollingEventSem::FastResetWait(const TimeoutType &msecTimeout, float64 sleepTime) {
+ErrorManagement::ErrorType FastPollingEventSem::FastResetWait(const TimeoutType &msecTimeout,
+                                                              float64 sleepTime) {
     Reset();
     return FastWait(msecTimeout, sleepTime);
 }

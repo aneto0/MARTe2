@@ -64,8 +64,10 @@ public:
     /**
      * @brief Initialises the container form StructuredData and for each sub-type definition
      * reads the default value and the final flag (specifying if the type is complete or not).
-     * @details The following parameters can be specified:\n
-     *   - IsFinal = true / False\n
+     * @details The following parameters can be specified:
+     *
+     *   - IsFinal = true (default false)
+     *
      * The field IsFinal is false by default but if it is defined true in \a data, then this
      * definition it is supposed to be final and cannot be merged with any local configuration data
      * to be completed.

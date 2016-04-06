@@ -67,6 +67,16 @@ public:
     bool TestGetPath();
 
     /**
+     * @brief Tests if the function sets the specified path.
+     */
+    bool TestSetPath();
+
+    /**
+     * @brief Tests if the function returns the variable default value.
+     */
+    bool TestGetDefaultValue();
+
+    /**
      * @brief Tests if the function returns the variable number of dimensions defined.
      */
     bool TestNumberOfDimensions(const char8 * type,

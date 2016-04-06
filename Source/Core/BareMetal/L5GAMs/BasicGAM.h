@@ -41,27 +41,8 @@
 namespace MARTe {
 
 /**
- * @brief The Generic Acquisition Module.
- * @details In order to allow custom implementations, some of the methods
- * of this class are pure virtual. A generic derived class should have
- * specific IO structures and their definitions (see RealTimeDataDef)
- * can be expressed in the global configuration stream and / or in the local
- * configuration stream.
- *
- * @details The Initialise method (which can be override) configures the GAM reading
- * from the global configuration stream. If the definitions of the input and output
- * structures is incomplete (or also empty), the method ConfigureFunction(*) will merge
- * them with the ones declared in the local configuration.
- *
- * @details The syntax in the configuration stream has to be:
- * GAM_name = {\n
- *     Class = GAM_className\n
- *     RealTimeDataDefContainer_name = {\n
- *         Class = RealTimeDataDefContainer\n
- *         ...\n
- *     }\n
- *     ...\n
- * }\n
+ * @brief Implementation of GAMI with BasicInputReader and BasicOutputWriter
+ * used to link the GAM with the RealTimeDataSource.
  */
 class DLL_API BasicGAM: public GAMI {
 public:
@@ -112,8 +93,6 @@ protected:
      */
     ReferenceT<BasicRealTimeDataSourceOutputWriter> outputWriter;
 
-    //? IOData?
-    //? context?
 
 };
 

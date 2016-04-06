@@ -64,9 +64,10 @@ public:
      * @brief Performs an advanced synchronising read operation based on operating system event semaphore.
      * @details If this reader is synchronised (namely is linked to a data source which provides a spin-lock semaphore)
      * this function waits that the spin-lock event semaphore is posted by the data source before performing the read
-     * operation. It is possible make a sub-sampling (with loss of data) passing the number of read operations (\a numberOfReads)
-     * that this function has to achieve (if it is synchronized the function will wait on the spin-lock before each read operation)
+     * operation. It is possible make a sub-sampling (with loss of data) passing the number of sync read operations (\a numberOfReads)
+     * that this function has to perform (the function will wait on the spin-lock before each read operation)
      * or impose that the function cannot terminate before a specified amount of time (\a sampleTime).
+     * If this reader is not synchronised, this functions calls trivially a Read(\a activeDataSourceBuffer).
      * @param[in] activeDataSourceBuffer  is the buffer index to be used. This parameter must change
      * from 0 to 1 on each state switch.
      * @param[in] sampleTime is the time such that this function cannot exit before.

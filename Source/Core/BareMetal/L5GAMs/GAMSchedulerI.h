@@ -42,6 +42,23 @@
 
 namespace MARTe {
 
+/**
+ * @brief The GAM scheduler interface.
+ *
+ * @details Provides methods to link the scheduler to the threads to be executed and
+ * the mechanisms of the state switch. The methods to start and stops the execution
+ * are pure virtual to be implemented by custom schedulers which inherits from this
+ * interface.
+ *
+ * @details The syntax in the configuration stream has to be:
+ *
+ * +Scheduler = {\n
+ *    Class = Scheduler_name
+ *     ...\n
+ * }\n
+ *
+ * and it has to be contained in the [RealTimeApplication] declaration.
+ */
 class DLL_API GAMSchedulerI: public ReferenceContainer {
 
 public:
@@ -53,6 +70,7 @@ public:
 
     /**
      * @brief Inserts a thread to be executed in a specific state.
+     * @return false in case of errors, true otherwise.
      */
     bool InsertRecord(const char8 * stateName,
                       ReferenceT<RealTimeThread> thread);

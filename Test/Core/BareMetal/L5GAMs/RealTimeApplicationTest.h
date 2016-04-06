@@ -62,6 +62,11 @@ public:
     bool TestConstructor();
 
     /**
+     * @brief Tests if the function initialises correctly the object from configuration data.
+     */
+    bool TestInitialise();
+
+    /**
      * @brief Tests if the function configures correctly the desired environment calling the ConfigureArchitecture(*) for
      * each internally declared thread.
      */
@@ -144,10 +149,20 @@ public:
      */
     bool TestGetActiveBuffer();
 
-
+    /**
+     * @brief Tests if the function returns true if there is no more than one synchronised GAM per thread.
+     */
     bool TestValidateDataSourceLinks();
 
+    /**
+     * @brief Tests if the function returns false if there is more than one synchronised gam in some threads.
+     */
     bool TestValidateDataSourceLinksFalse_MoreSync();
+
+    /**
+     * @brief Tests if the function stops the current scheduler execution.
+     */
+    bool TestStopExecution();
 
 };
 

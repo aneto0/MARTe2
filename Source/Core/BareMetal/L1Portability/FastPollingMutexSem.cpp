@@ -70,6 +70,11 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msec
     uint64 ticksStop = msecTimeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
+
+    // sets the default if it is negative
+    if (sleepTime < 0.0) {
+        sleepTime = 1e-3;
+    }
     bool noSleep = IsEqual(sleepTime, 0.0);
 
     while (!Atomic::TestAndSet(flag)) {

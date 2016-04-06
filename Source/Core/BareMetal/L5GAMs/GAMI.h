@@ -43,7 +43,7 @@
 namespace MARTe {
 
 /**
- * @brief The Generic Acquisition Module.
+ * @brief The generic MARTe block interface.
  * @details In order to allow custom implementations, some of the methods
  * of this class are pure virtual. A generic derived class should have
  * specific IO structures and their definitions (see RealTimeDataDef)
@@ -56,14 +56,17 @@ namespace MARTe {
  * them with the ones declared in the local configuration.
  *
  * @details The syntax in the configuration stream has to be:
- * GAM_name = {\n
+ *
+ * +GAM_name = {\n
  *     Class = GAM_className\n
- *     RealTimeDataDefContainer_name = {\n
+ *     +RealTimeDataDefContainer_name = {\n
  *         Class = RealTimeDataDefContainer\n
  *         ...\n
  *     }\n
  *     ...\n
  * }\n
+ *
+ * and it has to be contained in the [RealTimeApplication].+Functions.[?ReferenceContainer?].[?GAMGroup?] declaration.
  */
 class DLL_API GAMI: public ReferenceContainer {
 public:
@@ -102,6 +105,7 @@ public:
     /**
      * @brief Adds the name of a RealTimeState where this GAM is declared into.
      * @param[in] stateName is the RealTimeState name.
+     * @param[in] threadName is the RealTimeThread name.
      * @return false if the same state was already added with a different thread name. This means that the
      * configuration is wrong: one GAM can be declared in only one RealTimeThread for each RealTimeState.
      * Returns true otherwise.
@@ -126,6 +130,7 @@ public:
     /**
      * @brief calls the Initialise(*) function for each sub-node, then calls the functions
      * SetUp(*) and ConfigureFunction(*) due to initialise the local environment.
+     * @param[in] data contains the initialisation data.
      * @brief returns false if the eventual merge with the local configuration data fails, true otherwise.
      */
     virtual bool Initialise(StructuredDataI & data);
@@ -206,8 +211,6 @@ protected:
      */
     GAMGroup *group;
 
-    //? IOData?
-    //? context?
 
 private:
     /**

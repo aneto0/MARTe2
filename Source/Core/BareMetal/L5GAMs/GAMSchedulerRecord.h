@@ -42,7 +42,7 @@
 namespace MARTe{
 
 /**
- * @brief Stores the RealTimeThreads to be executed for a specific RealTimeState.
+ * @brief Contains the RealTimeThreads to be executed in a specific RealTimeState.
  */
 class DLL_API GAMSchedulerRecord: public ReferenceContainer {
 

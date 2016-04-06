@@ -812,6 +812,13 @@ bool BasicRealTimeDataSourceDefTest::TestGetNumberOfDimensions() {
     return TestSetNumberOfDimensions();
 }
 
+
+bool BasicRealTimeDataSourceDefTest::TestGetSpinLockSemaphore(){
+    BasicRealTimeDataSourceDef def;
+    return def.GetSpinLockSemaphore()==NULL;
+}
+
+
 bool BasicRealTimeDataSourceDefTest::TestToStructuredData() {
     ReferenceT<BasicRealTimeDataSourceDef> def = ReferenceT<BasicRealTimeDataSourceDef>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     def->SetName("DefinitonToPrint");

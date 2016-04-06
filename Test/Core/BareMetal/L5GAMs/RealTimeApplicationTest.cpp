@@ -58,6 +58,13 @@ bool RealTimeApplicationTest::TestConstructor() {
     return true;
 }
 
+bool RealTimeApplicationTest::TestInitialise() {
+    ConfigurationDatabase cdb = GetCDB1();
+    cdb.MoveAbsolute("$Application1");
+    RealTimeApplication test;
+    return test.Initialise(cdb);
+}
+
 bool RealTimeApplicationTest::TestConfigureArchitecture() {
     ConfigurationDatabase cdb = GetCDB1();
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -1410,7 +1417,6 @@ bool RealTimeApplicationTest::TestValidateDataSourceLinks() {
     cdb.CreateAbsolute("$Application1.+Functions.+GAM6");
     cdb.Write("Class", "DummyGAM");
 
-
     cdb.CreateAbsolute("$Application1.+Functions.+GAM7");
     cdb.Write("Class", "DummyGAM");
 
@@ -1473,7 +1479,6 @@ bool RealTimeApplicationTest::TestValidateDataSourceLinks() {
     cdb.Write("Class", "RealTimeState");
     cdb.CreateAbsolute("$Application1.+States.+State2.+Threads");
     cdb.Write("Class", "ReferenceContainer");
-
 
     // state 1 threads
     cdb.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread1");
@@ -1544,8 +1549,7 @@ bool RealTimeApplicationTest::TestValidateDataSourceLinks() {
     return ret;
 }
 
-
-bool RealTimeApplicationTest::TestValidateDataSourceLinksFalse_MoreSync(){
+bool RealTimeApplicationTest::TestValidateDataSourceLinksFalse_MoreSync() {
     ConfigurationDatabase cdb;
     // application
     cdb.CreateAbsolute("$Application1");
@@ -1616,7 +1620,6 @@ bool RealTimeApplicationTest::TestValidateDataSourceLinksFalse_MoreSync(){
     cdb.CreateAbsolute("$Application1.+Functions.+GAM6");
     cdb.Write("Class", "DummyGAM");
 
-
     cdb.CreateAbsolute("$Application1.+Functions.+GAM7");
     cdb.Write("Class", "DummyGAM");
 
@@ -1681,7 +1684,6 @@ bool RealTimeApplicationTest::TestValidateDataSourceLinksFalse_MoreSync(){
     cdb.Write("Class", "RealTimeState");
     cdb.CreateAbsolute("$Application1.+States.+State2.+Threads");
     cdb.Write("Class", "ReferenceContainer");
-
 
     // state 1 threads
     cdb.CreateAbsolute("$Application1.+States.+State1.+Threads.+Thread1");
@@ -1752,4 +1754,23 @@ bool RealTimeApplicationTest::TestValidateDataSourceLinksFalse_MoreSync(){
     return ret;
 }
 
+bool RealTimeApplicationTest::TestStopExecution() {
+    ConfigurationDatabase dummyCDB;
+
+    dummyCDB.Write("Class", "RealTimeApplication");
+    dummyCDB.CreateAbsolute("+Scheduler");
+    dummyCDB.Write("Class", "DummyScheduler");
+    dummyCDB.MoveToRoot();
+    RealTimeApplication app;
+    if (!app.Initialise(dummyCDB)) {
+        return false;
+    }
+
+    if (!app.StopExecution()) {
+        return false;
+    }
+
+    ReferenceT<DummyScheduler> sched = app.Find("+Scheduler");
+    return sched->numberOfExecutions == 1;
+}
 

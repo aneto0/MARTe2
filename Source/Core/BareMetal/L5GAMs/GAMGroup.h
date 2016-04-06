@@ -46,8 +46,8 @@ namespace MARTe {
  * to prepare the context for the next state (PrepareNextState(*) function) and
  * to switch to the new context (ChangeState(*) function).
  *
- * @details The definition of the GAMGroup in the configuration stream is inside the
- * block RealTimeApplicatio.Functions
+ * @details The syntax in the configuration stream has to be:
+ *
  * GAMGroup_name = {\n
  *    Class = GAMGroup\n
  *    ... // context definition, ecc\n
@@ -57,6 +57,8 @@ namespace MARTe {
  *    }\n
  *    ...\n
  * }
+ *
+ * and it has to be contained in the [RealTimeApplication].+Functions.[?ReferenceContainer?] declaration.
  */
 class DLL_API GAMGroup: public ReferenceContainer {
 public:
@@ -102,13 +104,18 @@ public:
 
     /**
      * @brief Adds the name of a RealTimeState where this GAMGroup is declared into.
+     * @details This function checks if a GAMGroup is declared in more than one thread inside a state.
+     * In this case the function returns false.
      * @param[in] stateName is the RealTimeState name.
+     * @param[in] threadName is the RealTimeThread name.
+     * @return false if the \a stateName was already set but related with a different \a threadName, true otherwise.
      */
     bool AddState(const char8 * const stateName,
                   const char8 * const threadName);
 
     /**
      * @brief Initialises all the sub-nodes, then call SetUp(*) to setup the environment.
+     * @return true if no errors occur, false otherwise.
      */
     virtual bool Initialise(StructuredDataI &data);
 
@@ -136,7 +143,6 @@ protected:
     uint32 numberOfSupportedStates;
 
     //? Possible specific GAMContexts
-    //? Possible uint8 activeContextBuffer
 
 };
 }

@@ -290,3 +290,19 @@ void DummyGAM::SetUp() {
 
 }
 CLASS_REGISTER(DummyGAM, "1.0")
+
+
+
+DummyScheduler::DummyScheduler() {
+    numberOfExecutions = 0;
+}
+void DummyScheduler::StartExecution(const uint32 activeBuffer) {
+    numberOfExecutions++;
+}
+void DummyScheduler::StopExecution() {
+    numberOfExecutions++;
+}
+
+CLASS_REGISTER(DummyScheduler, "1.0")
+
+

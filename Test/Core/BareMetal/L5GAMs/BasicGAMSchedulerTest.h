@@ -38,20 +38,43 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the BasicGAMScheduler functions.
+ */
 class BasicGAMSchedulerTest {
 
 public:
 
+    /**
+     * @brief Tests the constructor
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function initialises correctly the object
+     * from a StructuredDataI.
+     */
     bool TestInitialise();
 
+    /**
+     * @brief Tests if the function performs correctly an execution of a two GAMs thread
+     * cycle.
+     */
     bool TestStartExecution();
 
+    /**
+     * @brief Tests if is this function is called inside a thread the execution will terminate.
+     */
     bool TestStopExecution();
 
+    /**
+     * @brief Tests if the scheduler writes the absolute execution time of each GAM.
+     */
     bool TestGAMAbsoluteExecutionTime();
 
+    /**
+     * @brief Tests if the scheduler writes the relative execution time of each GAM.
+     */
     bool TestGAMRelativeExecutionTime();
 };
 

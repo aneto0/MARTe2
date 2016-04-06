@@ -199,6 +199,11 @@ TEST(BasicRealTimeDataSourceDefGTest,TestGetNumberOfDimensions) {
     ASSERT_TRUE(rtdsdTest.TestGetNumberOfDimensions());
 }
 
+TEST(BasicRealTimeDataSourceDefGTest,TestGetSpinLockSemaphore) {
+    BasicRealTimeDataSourceDefTest rtdsdTest;
+    ASSERT_TRUE(rtdsdTest.TestGetSpinLockSemaphore());
+}
+
 TEST(BasicRealTimeDataSourceDefGTest,TestToStructuredData) {
     BasicRealTimeDataSourceDefTest rtdsdTest;
     ASSERT_TRUE(rtdsdTest.TestToStructuredData());

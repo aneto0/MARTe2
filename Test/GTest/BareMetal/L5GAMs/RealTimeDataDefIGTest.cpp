@@ -59,6 +59,16 @@ TEST(RealTimeDataDefIGTest,TestGetPath) {
     ASSERT_TRUE(rtiTest.TestGetPath());
 }
 
+TEST(RealTimeDataDefIGTest,TestSetPath) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestSetPath());
+}
+
+TEST(RealTimeDataDefIGTest,TestGetDefaultValue) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestGetDefaultValue());
+}
+
 TEST(RealTimeDataDefIGTest,TestNumberOfDimensions_Vector) {
     RealTimeDataDefITest rtiTest;
     ASSERT_TRUE(rtiTest.TestNumberOfDimensions("uint32", "[32]", 1));

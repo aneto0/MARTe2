@@ -40,17 +40,38 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the GAMSchedulerRecord functions.
+ */
 class GAMSchedulerRecordTest {
 
 public:
+
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the functions add threads correctly.
+     */
     bool TestAddThread();
 
+    /**
+     * @brief Tests if the function retrieves the thread in the
+     * specified position.
+     */
     bool TestPeek();
 
+    /**
+     * @brief Tests if the function returns an invalid reference trying
+     * to access to a position greater than the number of threads inserted.
+     */
     bool TestPeekOutOfRange();
 
+    /**
+     * @brief Tests if the function returns the correct number of threads inserted.
+     */
     bool TestNumberOfThreads();
 };
 

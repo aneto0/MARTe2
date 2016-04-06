@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "BasicGAM.h"
 #include "ConfigurationDatabase.h"
+#include "GAMSchedulerI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -813,6 +814,22 @@ public:
     virtual void WriteEnd();
 
 };
+
+
+class DummyScheduler: public GAMSchedulerI {
+public:
+
+    CLASS_REGISTER_DECLARATION()
+
+    DummyScheduler() ;
+
+    virtual void StartExecution(const uint32 activeBuffer);
+
+    virtual void StopExecution() ;
+
+    int32 numberOfExecutions;
+};
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

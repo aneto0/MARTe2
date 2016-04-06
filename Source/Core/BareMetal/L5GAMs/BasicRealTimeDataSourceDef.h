@@ -45,6 +45,22 @@ namespace MARTe {
 
 /**
  * @brief The definition of a real-time variable shared between GAMs.
+ *
+ * @details If this object is not declared in the configuration data,
+ * it will be created automatically looking at the field "Path" of the RealTimeDataDefI
+ * defined inside GAMs (during RealTimeApplication::ConfigureDataSource(*)).\n
+ * In case of custom data sources (i.e drivers), it is possible inheriting
+ * a new object from this class but it is necessary declare it into the configuration
+ * data in order to use it.
+ *
+ * @details The syntax in the configuration stream has to be:
+ *
+ * +BasicRealTimeDataSourceDef_Name = {\n
+ *    Class = (name of class child of BasicRealTimeDataSourceDef)
+ *     ...\n
+ * }\n
+ *
+ * and it has to be contained in the RealTimeDataSource declaration.
  */
 class DLL_API BasicRealTimeDataSourceDef: public ReferenceContainer {
 public:
@@ -58,7 +74,7 @@ public:
     /**
      * @brief Adds a GAM as a consumer.
      * @param[in] stateIn the state name where \a gam is involved as a consumer of this variable.
-     * @param[in] gam is the gam which will consume this variable in the state \a stateIn.
+     * @param[in] gam is the GAM which will consume this variable in the state \a stateIn.
      * @return false in case of errors, false otherwise.
      */
     bool AddConsumer(const char8 * const stateIn,
@@ -67,7 +83,7 @@ public:
     /**
      * @brief Adds a GAM as a producer.
      * @param[in] stateIn the state name where \a gam is involved as a producer of this variable.
-     * @param[in] gam is the gam which will produce this variable in the state \a stateIn.
+     * @param[in] gam is the GAM which will produce this variable in the state \a stateIn.
      * @return false in case of errors, false otherwise.
      */
     bool AddProducer(const char8 * const stateIn,
@@ -82,8 +98,8 @@ public:
      * @details If the variable is a scalar basic type the variable will be initialised
      * with the value result of the conversion from \a defaultIn (string) to the specific type.\n
      * If the variable is a multi-dimensional basic type (vector or matrix) \a defaultIn must be in the form:
-     *   - { element1, element2, ... } for vectors \n
-     *   - { { element11, element12, ... } { element21, element22, ... } } for matrices \n
+     *   - { element_1, element_2, ... } for vectors \n
+     *   - { { element_1_1, element_1_2, ... } { element_2_1, element_2_2, ... } } for matrices \n
      * If the variable is a structure, the default value must define all the members:\n
      *   - member1_scalar_basic = element\n
      *     member2_scalar_vector = { element ...}\n
@@ -123,7 +139,7 @@ public:
     bool Verify();
 
     /**
-     * @brief Set the variable type.
+     * @brief Sets the variable type.
      * @param[in] typeName is the name of the type. See TypeDescriptor for more documentation about the basic
      * types.
      * @return false if the type is already set differently from \a typeName, true otherwise.
@@ -231,7 +247,8 @@ public:
      *   - DefaultValue = "the variable default value"\n
      *   - Modifiers = "the variable modifiers"\n
      * The Modifiers parameter follows the same format of the modifiers string in IntrospectionEntry. In particular in this
-     * case Modifiers = "[n]" denotes an array with n elements, Modifiers = [n][m] denotes a matrix with n rows and m columns.
+     * case Modifiers = "[n]" denotes an array with n elements, Modifiers = "[n][m]" denotes a matrix with n rows and m columns.
+     * See IntrospectionEntry::GetModifiers() for more documentation.
      * @param[in] data contains the configuration data.
      */
     virtual bool Initialise(StructuredDataI & data);

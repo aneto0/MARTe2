@@ -46,6 +46,11 @@ TEST(RealTimeApplicationGTest,TestConstructor) {
     ASSERT_TRUE(rtappTest.TestConstructor());
 }
 
+TEST(RealTimeApplicationGTest,TestInitialise) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestInitialise());
+}
+
 TEST(RealTimeApplicationGTest,TestConfigureArchitecture) {
     RealTimeApplicationTest rtappTest;
     ASSERT_TRUE(rtappTest.TestConfigureArchitecture());
@@ -134,4 +139,9 @@ TEST(RealTimeApplicationGTest,TestValidateDataSourceLinks) {
 TEST(RealTimeApplicationGTest,TestValidateDataSourceLinksFalse_MoreSync) {
     RealTimeApplicationTest rtappTest;
     ASSERT_TRUE(rtappTest.TestValidateDataSourceLinksFalse_MoreSync());
+}
+
+TEST(RealTimeApplicationGTest,TestStopExecution) {
+    RealTimeApplicationTest rtappTest;
+    ASSERT_TRUE(rtappTest.TestStopExecution());
 }

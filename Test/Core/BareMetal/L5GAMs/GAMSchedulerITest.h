@@ -39,22 +39,46 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the GAMSchedulerI functions
+ */
 class GAMSchedulerITest {
 
 public:
 
+    /**
+     * @brief Tests the constructor
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function inserts a new GAMSchedulerRecord.
+     */
     bool TestInsertRecord();
 
+    /**
+     * @brief Tests if the function creates the accelerator to the next GAMSchedulerRecord.
+     */
     bool TestPrepareNextState();
 
+    /**
+     * @brief Tests if the function fails when the next state name is not found.
+     */
     bool TestPrepareNextStateFalse_InvalidNextState();
 
+    /**
+     * @brief Tests if the function fails if the application is not set.
+     */
     bool TestPrepareNextStateFalse_NoAppSet();
 
+    /**
+     * @brief Tests if the function sets the application.
+     */
     bool TestSetApplication();
 
+    /**
+     * @brief Tests if the function stops the current execution and starts a new one.
+     */
     bool TestChangeState();
 
 };

@@ -65,6 +65,11 @@ public:
      */
     void Free();
 
+    /**
+     * @brief Sets the heap name.
+     * @param[in] heapName is the name of the heap where the memory has to be
+     * allocated.
+     */
     void SetHeapName(const char8 * heapName);
 
     /**

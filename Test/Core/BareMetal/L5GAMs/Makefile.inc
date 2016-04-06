@@ -31,6 +31,7 @@ OBJSX=	BasicGAMTest.x \
 		BasicRealTimeDataSourceInputReaderTest.x \
 		BasicRealTimeDataSourceOutputWriterTest.x \
 		GAMGroupTest.x \
+		GAMITest.x \
 		GAMSchedulerITest.x \
 		GAMSchedulerRecordTest.x \
 		GAMTestHelper.x\

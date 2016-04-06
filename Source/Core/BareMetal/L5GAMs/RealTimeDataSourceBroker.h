@@ -1,8 +1,8 @@
 /**
  * @file RealTimeDataSourceBroker.h
  * @brief Header file for class RealTimeDataSourceBroker
- * @date 22/mar/2016
- * @author pc
+ * @date 22/04/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMEDATASOURCEBROKER_H_
-#define 		SOURCE_CORE_BAREMETAL_L5GAMS_REALTIMEDATASOURCEBROKER_H_
+#ifndef REALTIMEDATASOURCEBROKER_H_
+#define REALTIMEDATASOURCEBROKER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -45,7 +45,7 @@
 namespace MARTe {
 
 /**
- * @brief The interface between GAMs and RealTimeDataSource.
+ * @brief The communication interface between GAMs and RealTimeDataSource.
  */
 class DLL_API RealTimeDataSourceBroker: public ReferenceContainer {
 
@@ -89,7 +89,7 @@ public:
      * @brief Retrieves the n-th pointer.
      * @details This function is different from GetData(*) when variables are structures.
      * Actually this function can provide a direct access to the variable internal members.
-     * @return the n-th pointer. NULL if the object is not finalised (see Finalise()).
+     * @return the \a n-th pointer. NULL if this object is not finalised (see Finalise()).
      */
     void *GetMemoryPointer(const uint32 n) const;
 

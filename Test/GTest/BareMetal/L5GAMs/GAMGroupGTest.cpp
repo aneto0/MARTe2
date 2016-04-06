@@ -51,6 +51,11 @@ TEST(GAMGroupGTest,TestAddState) {
     ASSERT_TRUE(gamGroupTest.TestAddState());
 }
 
+TEST(GAMGroupGTest,TestAddStateFalse_MoreThreadsPerGAM) {
+    GAMGroupTest gamGroupTest;
+    ASSERT_TRUE(gamGroupTest.TestAddStateFalse_MoreThreadsPerGAM());
+}
+
 TEST(GAMGroupGTest,TestGetSupportedStates) {
     GAMGroupTest gamGroupTest;
     ASSERT_TRUE(gamGroupTest.TestGetSupportedStates());

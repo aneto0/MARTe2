@@ -32,6 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAMSchedulerRecord.h"
+#include "AdvancedErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -83,6 +84,9 @@ ReferenceT<RealTimeThread> GAMSchedulerRecord::Peek(uint32 index) {
     ReferenceT<RealTimeThread> ret;
     if (index < numberOfThreads) {
         ret = threads[index];
+    }
+    else{
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Position %d out of range (size = %d)", index, numberOfThreads)
     }
     return ret;
 }

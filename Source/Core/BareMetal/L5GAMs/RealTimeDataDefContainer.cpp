@@ -34,6 +34,8 @@
 #include "RealTimeDataDefContainer.h"
 #include "ReferenceT.h"
 #include "RealTimeDataDefI.h"
+#include "AdvancedErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -74,17 +76,19 @@ bool RealTimeDataDefContainer::MergeWithLocal(StructuredDataI & localData) {
     // check the IO definitions
     // false is by default, so enable if it is defined true in the local
 
-    StreamString isLocalInputStr;
-    if (localData.Read("IsInput", isLocalInputStr)) {
-        if (isLocalInputStr == "true") {
-            isInput = true;
+    if (!final) {
+        StreamString isLocalInputStr;
+        if (localData.Read("IsInput", isLocalInputStr)) {
+            if (isLocalInputStr == "true") {
+                isInput = true;
+            }
         }
-    }
 
-    StreamString isLocalOutputStr;
-    if (localData.Read("IsOutput", isLocalOutputStr)) {
-        if (isLocalOutputStr == "true") {
-            isOutput = true;
+        StreamString isLocalOutputStr;
+        if (localData.Read("IsOutput", isLocalOutputStr)) {
+            if (isLocalOutputStr == "true") {
+                isOutput = true;
+            }
         }
     }
 
@@ -128,7 +132,9 @@ bool RealTimeDataDefContainer::MergeWithLocal(StructuredDataI & localData) {
                     }
                 }
                 else {
-                    //TODO Cannot add if one of them is declared final
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
+                                            "The local RealTimeDataDefI %s cannot be added because the RealTimeDataDefContainer %s is declared final",
+                                            newItemName, GetName())
                     ret = false;
                 }
             }
@@ -152,6 +158,10 @@ bool RealTimeDataDefContainer::Initialise(StructuredDataI & data) {
         StreamString isOutputStr;
         if (data.Read("IsOutput", isOutputStr)) {
             isOutput = (isOutputStr == "true");
+        }
+
+        if ((!isInput) && (!isOutput)) {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "The definition %s is not for input neither for output", GetName())
         }
     }
     return ret;

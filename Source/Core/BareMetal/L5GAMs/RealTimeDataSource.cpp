@@ -56,6 +56,9 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
                 ret = AllocatePrivate(subContainer, memory);
             }
         }
+        else{
+            REPORT_ERROR(ErrorManagement::FatalError, "RealTimeDataSource must contain a ReferenceContainer");
+        }
     }
     return ret;
 }

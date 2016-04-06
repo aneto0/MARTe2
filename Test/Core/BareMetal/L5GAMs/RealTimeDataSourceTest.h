@@ -55,7 +55,6 @@ public:
      */
     bool TestInitialise();
 
-
     /**
      * @brief Test if the function allocates correctly the memory for all the basic type variables.
      */

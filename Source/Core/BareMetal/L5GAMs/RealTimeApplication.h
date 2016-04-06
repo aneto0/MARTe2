@@ -44,6 +44,7 @@ namespace MARTe {
 /**
  * @brief A container of Functions (GAMGroup or GAM), and States (RealTimeState) references.
  * @details The syntax in the configuration stream should be:
+ *
  * RealTimeApplication_name = {\n
  *     Class = RealTimeApplication\n
  *     +Functions = {\n
@@ -73,6 +74,10 @@ namespace MARTe {
  *             ...\n
  *         }\n
  *         ...
+ *     }\n
+ *     +Scheduler = {\n
+ *         Class = Scheduler_class_name (inherited from GAMSchedulerI)\n
+ *         ...\n
  *     }\n
  * }\n
  */
@@ -146,10 +151,11 @@ public:
     bool ValidateDataSourceLinks();
 
     /**
-     * @brief Prepares the environment for the next state.
+     * @brief Prepares the environment for the next state and starts the new execution.
      * @details This function has to be executed in a low-priority thread in order to prepare the context for the contextful GAMs
      * and resets the variables in the RealTimeDataSource to the default values if they will be used in the next state but are not
-     * used in the current (the value is supposed to be consistent if it is used in both two consecutive states).
+     * used in the current (the value is supposed to be consistent if it is used in both two consecutive states). When all is ready,
+     * this function calls the scheduler to stop the current state execution and starts the next state execution.
      * @param[in] status contains informations about the current and the next state.
      * @return false in case of errors, true otherwise.
      */
@@ -172,7 +178,7 @@ public:
      * @brief Initialises the application from a StructuredDataI in input.
      * @details The following fields must be specified:
      *
-     *   FirstState = (the name of the first state to be executed)
+     *   FirstState = (the name of the first state to be executed) //TODO (State Machine ?)
      *
      * @param[in] data contains the initialisation data.
      * @return false if FirstState field is not specified or if the initialisation of the sub-objects fails. True otherwise.
