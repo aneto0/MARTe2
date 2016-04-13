@@ -91,22 +91,31 @@ Reference::~Reference() {
 bool Reference::Initialise(StructuredDataI &data,
                            const bool &initOnly) {
 
-    bool ok = false;
-    if ((!initOnly) && (objectPointer == NULL_PTR(Object*))) {
-        char8 className[256] = { '\0' };
-        if (data.Read("Class", className)) {
-            Object *objPtr = CreateByName(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
-            if (objPtr != NULL_PTR(Object*)) {
-                objectPointer = objPtr;
-                objectPointer->IncrementReferences();
+    bool ok = (objectPointer != NULL_PTR(Object*));
+
+    if (!initOnly) {
+        if (objectPointer == NULL_PTR(Object*)) {
+            char8 className[256] = { '\0' };
+            ok = data.Read("Class", className);
+            if (ok) {
+                Object *objPtr = CreateByName(&className[0], GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                ok = (objPtr != NULL_PTR(Object*));
+                if (ok) {
+                    objectPointer = objPtr;
+                    objectPointer->IncrementReferences();
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
+                }
             }
-            else {
-                REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
-            }
+        }
+        else {
+            //TODO Warning the object already exists
         }
     }
 
-    if (objectPointer != NULL_PTR(Object*)) {
+    if (ok) {
+        /*lint -e{613} checking of NULL pointer done before entering here. */
         ok = objectPointer->Initialise(data);
     }
 
@@ -168,8 +177,8 @@ Object *Reference::CreateByName(const char8 * const className,
 
     const ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance()->Find(className);
     if ((classRegistryItem != NULL)) {
-        if (classRegistryItem->GetObjectBuildFunction() != NULL) {
-            obj = classRegistryItem->GetObjectBuildFunction()(heap);
+        if (classRegistryItem->GetObjectBuilder() != NULL) {
+            obj = classRegistryItem->GetObjectBuilder()->Build(heap);
         }
     }
 

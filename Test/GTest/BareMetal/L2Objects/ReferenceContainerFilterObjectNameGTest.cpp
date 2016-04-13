@@ -75,10 +75,6 @@ TEST(ReferenceContainerFilterObjectNameGTest,TestFullConstructorInvalidNodeSearc
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestFullConstructor(-1, "He..llo"));
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestDestructor) {
-    ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
-    ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestDestructor());
-}
 
 TEST(ReferenceContainerFilterObjectNameGTest,TestCopyConstructor) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;

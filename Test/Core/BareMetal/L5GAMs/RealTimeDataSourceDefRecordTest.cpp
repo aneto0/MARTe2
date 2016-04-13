@@ -48,15 +48,6 @@ bool RealTimeDataSourceDefRecordTest::TestConstructor() {
     return consumers.IsValid() && producers.IsValid();
 }
 
-bool RealTimeDataSourceDefRecordTest::TestSetStateName(const char8 * stateName) {
-    RealTimeDataSourceDefRecord record;
-    record.SetStateName(stateName);
-    return (stateName == NULL)?(StringHelper::Compare(record.GetStateName(), "") == 0):(StringHelper::Compare(record.GetStateName(), stateName) == 0);
-}
-
-bool RealTimeDataSourceDefRecordTest::TestGetStateName(const char8 * stateName) {
-    return TestSetStateName(stateName);
-}
 
 bool RealTimeDataSourceDefRecordTest::TestAddConsumer() {
     ReferenceT<PIDGAM> gam1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -139,4 +130,8 @@ bool RealTimeDataSourceDefRecordTest::TestGetProducers() {
     }
     return true;
 }
+
+
+
+
 

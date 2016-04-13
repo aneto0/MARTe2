@@ -40,7 +40,6 @@
 
 using namespace MARTe;
 
-
 /**
  * @brief Class used for tests
  */
@@ -61,10 +60,9 @@ public:
     /**
      * Derivative gain
      */
-    uint32 Kd;
-    CLASS_REGISTER_DECLARATION();
+    uint32 Kd;CLASS_REGISTER_DECLARATION()
+    ;
 };
-
 
 /**
  * @brief Tests all the ObjectRegistryDatabase functions
@@ -83,16 +81,26 @@ public:
      */
     ~ObjectRegistryDatabaseTest();
 
-
     /**
      * @brief Tests if the function does not return null
      */
     bool TestInstance();
 
     /**
-     * @brief Tests if the function behaves in the correct way searching relatively with respect to the marked domain nodes
+     * @brief Tests if the function behaves in the correct way searching absolute path (without passing reference start point in input)
      */
     bool TestFind();
+
+    /**
+     * @brief Tests the function behaves correctly searching the path relatively with respect to
+     * a provided node.
+     */
+    bool TestFind_Relative();
+
+    /**
+     * @brief Tests if the function behaves in the correct way searching absolute path (passing reference start point in input)
+     */
+    bool TestFind_Absolute();
 
     /**
      * @brief Tests if the function considers the root as the start search point when the number
@@ -105,10 +113,16 @@ public:
      */
     bool TestGetClassName();
 
+    /**
+     * @brief Tests if the function empties the database.
+     */
+    bool TestCleanUp();
 
 private:
 
-
+    /**
+     * Configuration database used in tests.
+     */
     ConfigurationDatabase cdb;
 
 };

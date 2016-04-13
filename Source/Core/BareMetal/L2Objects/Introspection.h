@@ -34,6 +34,7 @@
 
 #include "IntrospectionEntry.h"
 #include "ZeroTerminatedArray.h"
+#include "ClassRegistryItem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -43,6 +44,7 @@ namespace MARTe {
 /**
  * @brief Groups the information about each member of a class or a structure.
  */
+
 class DLL_API Introspection {
 
 public:
@@ -93,6 +95,28 @@ private:
 
 
 
+/**
+ * TODO
+ */
+template <class T>
+class IntrospectionT: public Introspection{
+public:
+
+    /**
+     * TODO
+     */
+    IntrospectionT(const IntrospectionEntry ** const introspectionListIn, const uint32 classSizeIn):
+        Introspection(introspectionListIn,classSizeIn){
+
+        ClassRegistryItem *cri;
+        cri = T::GetClassRegistryItem();
+        if (cri != NULL)cri->SetIntrospection(this);
+
+    }
+};
+
+
+
 }
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
@@ -124,11 +148,12 @@ private:
         INTROSPECTION_MEMBER_INDEX(className, memberName)                                   \
     )
 
+
 /**
  * This macro creates a static instance of Introspection with the provided inputs.
  */
 #define DECLARE_CLASS_INTROSPECTION(className, introEntryArray) \
-    static Introspection className ## _ ## introspection(introEntryArray, sizeof(className))
+    static MARTe::Introspection<className> className ## _ ## introspection(introEntryArray, sizeof(className));
 
 #endif /* INTROSPECTION_H_ */
 

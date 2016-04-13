@@ -24,16 +24,24 @@
 #
 #############################################################
 
-OBJSX=	GAM.x\
+OBJSX=	BasicGAM.x \
+		BasicGAMScheduler.x \
+		BasicRealTimeDataSourceDef.x \
+		BasicRealTimeDataSourceInputReader.x \
+		BasicRealTimeDataSourceOutputWriter.x \
 		GAMGroup.x \
+		GAMI.x \
+		GAMSchedulerI.x \
+		GAMSchedulerRecord.x \
 		RealTimeApplication.x \
 		RealTimeDataDefContainer.x \
 		RealTimeDataDefI.x \
+		RealTimeDataSource.x \
+		RealTimeDataSourceBroker.x \
+		RealTimeDataSourceContainer.x \
+		RealTimeDataSourceDefRecord.x \
 		RealTimeGenericDataDef.x \
 		RealTimeSampledDataDef.x \
-		RealTimeDataSourceDef.x \
-		RealTimeDataSourceDefContainer.x \
-		RealTimeDataSourceDefRecord.x \
 		RealTimeState.x \
 		RealTimeThread.x 
 		

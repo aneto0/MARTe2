@@ -44,26 +44,6 @@ TEST(RealTimeDataSourceDefRecordGTest,TestConstructor) {
     ASSERT_TRUE(rtsdrTest.TestConstructor());
 }
 
-TEST(RealTimeDataSourceDefRecordGTest,TestSetStateName) {
-    RealTimeDataSourceDefRecordTest rtsdrTest;
-    ASSERT_TRUE(rtsdrTest.TestSetStateName("state"));
-}
-
-TEST(RealTimeDataSourceDefRecordGTest,TestSetStateName_NULL) {
-    RealTimeDataSourceDefRecordTest rtsdrTest;
-    ASSERT_TRUE(rtsdrTest.TestSetStateName(NULL));
-}
-
-TEST(RealTimeDataSourceDefRecordGTest,TestGetStateName) {
-    RealTimeDataSourceDefRecordTest rtsdrTest;
-    ASSERT_TRUE(rtsdrTest.TestGetStateName("state"));
-}
-
-TEST(RealTimeDataSourceDefRecordGTest,TestGetStateName_NULL) {
-    RealTimeDataSourceDefRecordTest rtsdrTest;
-    ASSERT_TRUE(rtsdrTest.TestGetStateName(NULL));
-}
-
 TEST(RealTimeDataSourceDefRecordGTest,TestAddConsumer) {
     RealTimeDataSourceDefRecordTest rtsdrTest;
     ASSERT_TRUE(rtsdrTest.TestAddConsumer());
@@ -93,4 +73,6 @@ TEST(RealTimeDataSourceDefRecordGTest,TestGetProducers) {
     RealTimeDataSourceDefRecordTest rtsdrTest;
     ASSERT_TRUE(rtsdrTest.TestGetProducers());
 }
+
+
 

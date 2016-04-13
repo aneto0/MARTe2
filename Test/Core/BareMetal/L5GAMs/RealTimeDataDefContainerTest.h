@@ -40,32 +40,70 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the RealTimeDataDefContainer functions.
+ */
 class RealTimeDataDefContainerTest {
 
 public:
 
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function intialises correctly all the definitions from a StructuredDataI in input.
+     */
     bool TestInitialise();
 
+    /**
+     * @brief Tests if the function performs correctly the merging of all definitions contained with the StructuredDataI in input.
+     */
     bool TestMergeWithLocal();
 
+    /**
+     * @brief Tests if the function can add a new definition.
+     */
     bool TestMergeWithLocal_AddDefinition();
 
+    /**
+     * @brief Tests if the merging fails if the definition is declared final.
+     */
     bool TestMergeWithLocalFalse_GlobalFinal();
 
+    /**
+     * @brief Tests if the function adds the IsInput flag to the definition reading from the local data.
+     */
     bool TestMergeWithLocal_AddInput();
 
+    /**
+     * @brief Tests if the function adds the IsOutput flag to the definition reading from the local data.
+     */
     bool TestMergeWithLocal_AddOutput();
 
+    /**
+     * @brief Tests if the function returns true if all the definitions matches with their introspections.
+     */
     bool TestVerify();
 
+    /**
+     * @brief Tests if the function returns false if a definition does not match with its introspection.
+     */
     bool TestVerify_DefInvalid();
 
+    /**
+     * @brief Tests if the function returns true if the definition container is for input and false otherwise.
+     */
     bool TestIsInput();
-
+    /**
+     * @brief Tests if the function returns true if the definition container is for output and false otherwise.
+     */
     bool TestIsOutput();
 
+    /**
+     * @brief Tests if the conversion to a StructuredData will be performed correctly.
+     */
     bool TestToStructuredData();
 };
 

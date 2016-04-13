@@ -25,12 +25,15 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "MemoryArea.h"
-
+#include "MemoryOperationsHelper.h"
+#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,60 +44,85 @@
 
 namespace MARTe {
 MemoryArea::MemoryArea() {
-    memory = NULL;
-    size=0u;
+    memory = NULL_PTR(void*);
+    size = 0u;
+    heapName = NULL_PTR(char8*);
 }
 
+/*lint -e{1579} the pointer "memory" is freed by the function Free() */
+/*lint -e{1551} the destructor does not throw exceptions */
 MemoryArea::~MemoryArea() {
-    if(Free()){
-
-    }
+    Free();
 }
 
-bool MemoryArea::Free(){
-    bool ret=false;
+void MemoryArea::Free() {
     if (memory != NULL) {
         if(HeapManager::Free(reinterpret_cast<void*&>(memory))) {
-            ret=true;
-            memory=NULL;
+            memory=NULL_PTR(void*);
         }
     }
-    size=0u;
-    return ret;
+    if(heapName!=NULL) {
+        if(HeapManager::Free(reinterpret_cast<void*&>(heapName))) {
+            heapName=NULL_PTR(char8*);
+        }
+    }
+    size = 0u;
 }
 
-void* MemoryArea::Add(uint32 memorySize) {
-    char8* ret = NULL_PTR(char8*);
+void MemoryArea::SetHeapName(const char8 * heapName) {
+    heapName = StringHelper::StringDup(heapName);
+}
+
+bool MemoryArea::Add(const uint32 memorySize,
+                     uint32 &offset) {
+    bool ret = false;
 
     if (size == 0u) {
-        memory = HeapManager::Malloc(memorySize);
+        memory = HeapManager::Malloc(memorySize, heapName);
         if (memory != NULL) {
-            ret = reinterpret_cast<char8 *>(memory);
             size += memorySize;
+            offset=0u;
+            ret=true;
         }
     }
     else {
         void* temp = memory;
         memory = HeapManager::Realloc(temp, (size + memorySize));
         if (memory != NULL) {
-            ret=&reinterpret_cast<char8*>(memory)[size];
+            offset=size;
             size+=memorySize;
+            ret=true;
         }
     }
-    return reinterpret_cast<void*>(ret);
-}
-
-
-void* MemoryArea::Add(void* element, uint32 memorySize) {
-    void* ret = Add(memorySize);
-
-    if(!MemoryOperationsHelper::Copy(ret, element, memorySize)){
-        //TODO
-    }
-
     return ret;
 }
 
+bool MemoryArea::Add(const void * const element,
+                     const uint32 memorySize,
+                     uint32 &offset) {
+    bool ret = Add(memorySize, offset);
+    if (ret) {
+        ret = (MemoryOperationsHelper::Copy(&reinterpret_cast<char8*>(memory)[offset], element, memorySize));
+    }
+    return ret;
+}
+
+void* MemoryArea::GetMemoryStart() {
+    return memory;
+}
+
+uint32 MemoryArea::GetMemorySize() const {
+    return size;
+}
+
+void* MemoryArea::GetPointer(const uint32 offset) {
+    void* ret = NULL_PTR(void*);
+    if (offset < size) {
+        /*lint -e{613} memory cannot be NULL here (because size==0)*/
+        ret = &reinterpret_cast<char8*>(memory)[offset];
+    }
+    return ret;
+}
 
 }
 

@@ -40,10 +40,25 @@
 namespace MARTe {
 
 /**
- * @brief The interface of a real time data definition structure.
- * @details Maps a structure to the RealTimeDataSource.
+ * @brief The definition of a GAM input or output (or both) variable, which has to be read or
+ * write (or both) by the GAM to the RealTimeDataSource.
+ * @details Maps a GAM variable to the RealTimeDataSource. Some methods are pure virtual and must be
+ * implemented by the specific type of definitions inheriting from this class.
+ *
+ * @details The syntax in the configuration stream has to be:
+ *
+ * +RealTimeDataDefI_name = {\n
+ *     Class = RealTimeDataDefI_class_name (child of RealTimeDataDefI) \n
+ *     Path = "the path of the variable in the RealTimeDataSource" (default "")\n
+ *     Type = "the variable type" (default "")\n
+ *     Default = "the variable default value" (default "")\n
+ *     Modifiers = "the variable modifiers" (default "")
+ *     ...\n
+ * }\n
+ *
+ * and it has to be contained in the [RealTimeDataDefContainer] declaration.
  */
-class RealTimeDataDefI: public ReferenceContainer {
+class DLL_API RealTimeDataDefI: public ReferenceContainer {
 
 public:
 
@@ -57,12 +72,14 @@ public:
 
     /**
      * @brief Merges the global definition (initialised using Initialise(*) function) with the
-     * informations stored in the local StructuredData in input.
+     * informations stored in the local StructuredData in input. It is possible completing structured
+     * type definitions or setting from local data the Path, Type, Default and Modifiers fields. If
+     * a defined field in the global one is going to be overridden by a local field, the global definition
+     * will be considered valid.
      * @param[in] localData is the local StructuredData.
      * @return true if there are not conflicts between the local and the global definitions.
      */
     virtual bool MergeWithLocal(StructuredDataI &localData)=0;
-
 
     /**
      * @brief Checks if the definition is consistent with the introspection of a registered structure
@@ -84,12 +101,50 @@ public:
      */
     const char8 *GetType();
 
+    /**
+     * @brief Retrieves the variable default value.
+     * @return the variable default value.
+     */
+    const char8 *GetDefaultValue();
 
     /**
      * @brief Initialises the container and reads the variable address and type from the StructuredData
      * in input.
+     * @details The following fields can be specified:
+     *
+     *   - Path = "the path of the variable in the RealTimeDataSource" (default "")\n
+     *   - Type = "the variable type" (default "")\n
+     *   - Default = "the variable default value" (default "")\n
+     *   - Modifiers = "the variable modifiers" (default "")
+     *
+     * The Modifiers parameter follows the same format of the modifiers string in IntrospectionEntry. In particular in this
+     * case Modifiers = "[n]" denotes an array with n elements, Modifiers = "[n][m]" denotes a matrix with n rows and m columns.
+     * @param[in] data contains the configuration data.
+     * @return false in case of errors, true otherwise.
      */
     virtual bool Initialise(StructuredDataI &data);
+
+    /**
+     * @brief Sets the path to the variable in the RealTimeDataSource
+     * @param[in] newPath is the path to the data source to be set.
+     */
+    void SetPath(const char8 * const newPath);
+
+
+    /**
+     * @brief Retrieves the number of dimensions (0=scalar, 1=vector, 2=matrix).
+     * @return the number of dimensions.
+     */
+    uint8 GetNumberOfDimensions() const;
+
+    /**
+     * @brief Retrieves the number of elements related to a specific dimension.
+     * @param[in] dimension is the dimension to be checked.
+     * @return the number of elements of the dimension \a dimension.
+     * @pre
+     *   dimension < 3
+     */
+    uint32 GetNumberOfElements(const uint32 dimension) const;
 
 protected:
 
@@ -102,6 +157,28 @@ protected:
      * The variable type
      */
     StreamString type;
+
+
+    /**
+     * The modifiers
+     */
+    StreamString modifiers;
+
+    /**
+     * The number of dimensions of this variable
+     */
+    uint8 numberOfDimensions;
+
+    /**
+     * The number of elements for each dimension
+     * of this variable.
+     */
+    uint32 numberOfElements[3];
+
+     /**
+     * The default value
+     */
+    StreamString defaultValue;
 };
 }
 /*---------------------------------------------------------------------------*/

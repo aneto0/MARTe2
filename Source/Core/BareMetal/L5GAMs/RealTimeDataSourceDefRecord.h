@@ -34,39 +34,73 @@
 #include "StreamString.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
-#include "GAM.h"
+#include "BasicGAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-class RealTimeDataSourceDefRecord: public ReferenceContainer {
+
+/**
+ * @brief Contains the producer and consumer GAMs of a specific variable in
+ * a specific RealTimeState state.
+ */
+class DLL_API RealTimeDataSourceDefRecord: public ReferenceContainer {
 public:
     CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief Constructor
+     */
     RealTimeDataSourceDefRecord();
 
-    void SetStateName(const char8 * stateName);
+    /**
+     * @brief Inserts a BasicGAM as a consumer.
+     * @param[in] gamConsumer is the BasicGAM consumer to be inserted.
+     */
+    bool AddConsumer(ReferenceT<BasicGAM> gamConsumer);
 
-    bool AddConsumer(ReferenceT<GAM> gamConsumer);
+    /**
+     * @brief Inserts a BasicGAM as a producer.
+     * @param[in] gamProducer is the BasicGAM producer to be inserted.
+     */
+    bool AddProducer(ReferenceT<BasicGAM> gamProducer);
 
-    bool AddProducer(ReferenceT<GAM> gamProducer);
-
+    /**
+     * @brief Retrieves the number of BasicGAM consumers inserted.
+     * @return The number of BasicGAM consumers inserted
+     */
     uint32 GetNumberOfConsumers();
 
+    /**
+     * @brief Retrieves the number of BasicGAM producers inserted.
+     * @return The number of BasicGAM producers inserted
+     */
     uint32 GetNumberOfProducers();
 
-    const char8 * GetStateName();
+    /**
+     * @brief Retrieves the consumers container.
+     * @return The consumers container.
+     */
+    ReferenceT<ReferenceContainer> GetConsumers() const;
 
-    ReferenceT<ReferenceContainer> GetConsumers();
-
-    ReferenceT<ReferenceContainer> GetProducers();
+    /**
+     * @brief Retrieves the producers container.
+     * @return The producers container.
+     */
+    ReferenceT<ReferenceContainer> GetProducers() const;
 
 private:
 
+    /**
+     * Accelerator to the producers container.
+     */
     ReferenceT<ReferenceContainer> producers;
+
+    /**
+     * Accelerator to the consumers container.
+     */
     ReferenceT<ReferenceContainer> consumers;
 
-    StreamString state;
 };
 }
 /*---------------------------------------------------------------------------*/

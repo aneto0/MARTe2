@@ -40,26 +40,48 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the RealTimeDataSourceDefRecord functions.
+ */
 class RealTimeDataSourceDefRecordTest {
 public:
 
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
-    bool TestSetStateName(const char8 * stateName);
-
-    bool TestGetStateName(const char8 * stateName);
-
+    /**
+     * @brief Tests if the function adds a consumer gam into the container.
+     */
     bool TestAddConsumer();
 
+    /**
+     * @brief Tests if the function adds a producer gam into the container.
+     */
     bool TestAddProducer();
 
+    /**
+     * @brief Tests if the function returns the number of consumer gams.
+     */
     bool TestGetNumberOfConsumers(uint32 nConsumers);
 
+    /**
+     * @brief Tests if the function returns the number producer gams.
+     */
     bool TestGetNumberOfProducers(uint32 nProducers);
 
+    /**
+     * @brief Tests if the function returns a reference to the consumer gams container.
+     */
     bool TestGetConsumers();
 
+    /**
+     * @brief Tests if the function returns a reference to the producer gams container.
+     */
     bool TestGetProducers();
+
+
 };
 
 /*---------------------------------------------------------------------------*/

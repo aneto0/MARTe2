@@ -42,16 +42,33 @@ namespace MARTe {
 
 /**
  * @brief Collects a set of RealTimeDataDefI
- * @details It defines the IO GAM interface with respect to the RealTimeDataSource.
+ * @details It defines an input or output (or both) collection of GAM data. It is possible
+ * integrate the declaration in the global configuration StructuredDataI with a
+ * local declaration (if defined inside the GAM) to add new RealTimeDataDefI into this
+ * collection or specify locally if it is for input - output.
+ *
+ * @details The syntax in the configuration stream has to be:
+ *
+ * +RealTimeDataDefContainer_name = {\n
+ *     Class = RealTimeDataDefContainer\n
+ *     IsFinal = true (false by default)\n
+ *     IsInput = true (false by default)\n
+ *     IsOutput = true (false by default)\n
+ *     ...\n
+ * }\n
+ *
+ * and it has to be contained in the [GAM] declaration.
  */
-class RealTimeDataDefContainer: public ReferenceContainer {
+class DLL_API RealTimeDataDefContainer: public ReferenceContainer {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Constructor
      * @post
-     *   IsFinal() == false;
+     *   IsFinal() == false &&
+     *   IsInput() == false &&
+     *   IsOutput() == false;
      */
     RealTimeDataDefContainer();
 
@@ -63,22 +80,49 @@ public:
     /**
      * @brief Inserts all the RealTimeDataDefI items in the container and reads
      * from the StructuredData if the container is final defined (complete definition) or not.
+     * @details The following fields can be specified:
+     *
+     *   IsInput = true (false by default)
+     *   IsOutput = true (false by default)
+     *   IsFinal = true (false by default)
+     *
+     * @details If after the initialisation this definition is not an input neither an output definition
+     * a warning will be generated.
+     *
+     * @param[in] data contains the initialisation data.
+     * @return false in case of errors, true otherwise.
      */
     virtual bool Initialise(StructuredDataI & data);
 
     /**
      * @brief Merges definitions with the local StructuredData.
      * @details If the definition from the global StructuredData is not complete,
-     * completes the definition using the local StructuredData.
+     * completes the definition using the local StructuredData. It is possible setting
+     * from local data the input - output attributes or adding new RealTimeDataDefI
+     * definitions. All the definitions contained will be also eventually completed
+     * calling RealTimeDataDefI::MergeWithLocal(*).
      * @param[in] localData is the local StructuredData.
      * @return true if the merge succeeds with no conflicts, false otherwise.
      */
     bool MergeWithLocal(StructuredDataI & localData);
 
+    /**
+     * @brief Checks if the definitions represent GAM input variables.
+     * @return true if the definitions represent GAM input variables.
+     */
     bool IsInput() const;
 
+    /**
+     * @brief Checks if the definitions represent GAM output variables.
+     * @return true if the definitions represent GAM output variables.
+     */
     bool IsOutput() const;
 
+    /**
+     * @brief Converts this object to a StructuredDataI.
+     * @param[out] data is the StructuredDataI output.
+     * @return false in case of errors, true otherwise.
+     */
     virtual bool ToStructuredData(StructuredDataI & data);
 
 
@@ -89,10 +133,14 @@ private:
      */
     bool final;
 
-    // initialised from cdb
+    /**
+     * Denotes if the definitions are for input variables.
+     */
     bool isInput;
 
-    // initialised from cdb
+    /**
+     * Denotes if the definitions are for output variables.
+     */
     bool isOutput;
 
 };

@@ -25,11 +25,16 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeSampledDataDef.h"
+#include "AdvancedErrorManagement.h"
+#include "Introspection.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,7 +46,8 @@
 
 namespace MARTe {
 
-RealTimeSampledDataDef::RealTimeSampledDataDef() {
+RealTimeSampledDataDef::RealTimeSampledDataDef() :
+        RealTimeDataDefI() {
     samples = 0;
     samplesPerCycle = 0;
     final = false;
@@ -53,20 +59,33 @@ bool RealTimeSampledDataDef::Verify() {
     if (ret) {
         // if a basic type return true
         if (TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer()) == InvalidType) {
-            // structured type
-            const ClassRegistryItem * item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
-            ret = (item != NULL);
+            // unsupported multi-dimensional structures
+            ret = (numberOfDimensions == 0u);
             if (ret) {
-                const Introspection * intro = item->GetIntrospection();
-                if (intro == NULL) {
-                    ret=false;
-                    // TODO Unintrospectable type
+                // structured type
+                const ClassRegistryItem * item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
+                ret = (item != NULL);
+                if (ret) {
+                    /*lint -e{613} NULL pointer checking done before entering here */
+                    const Introspection * intro = item->GetIntrospection();
+                    ret = (intro != NULL);
+                    if (!ret) {
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type %s not introspectable", type.Buffer())
+                    }
+                }
+                else {
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type %s not registered", type.Buffer())
                 }
             }
             else {
-                // TODO not registered type
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Unsupported multi-dimensional structures for %s defined with type %s", GetName(),
+                                        GetType())
+
             }
         }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "The type cannot be empty");
     }
     return ret;
 }
@@ -76,24 +95,32 @@ bool RealTimeSampledDataDef::MergeWithLocal(StructuredDataI &localData) {
     if (ret) {
         if (type == "") {
             if (!localData.Read("Type", type)) {
-                //TODO Warning empty type
             }
         }
 
         if (path == "") {
             if (!localData.Read("Path", path)) {
-                //TODO Warning empty path
             }
         }
 
         if (samples == 0) {
             if (!localData.Read("Samples", samples)) {
-                //TODO Warning samples not initialised
             }
         }
+
+        if (modifiers == "") {
+            if (localData.Read("Modifiers", modifiers)) {
+                // use introspection entry to parse the modifiers
+                IntrospectionEntry entry("", "", modifiers.Buffer(), "", 0u, 0u);
+                numberOfDimensions = entry.GetNumberOfDimensions();
+                for (uint32 i = 0u; i < 3u; i++) {
+                    numberOfElements[i] = entry.GetNumberOfElements(i);
+                }
+            }
+        }
+
         if (samplesPerCycle == 0) {
             if (!localData.Read("SamplesPerCycle", samplesPerCycle)) {
-                //TODO Warning samplesXcycle not initialised
             }
         }
     }
@@ -128,8 +155,8 @@ int32 RealTimeSampledDataDef::GetSamplesPerCycle() const {
 }
 
 bool RealTimeSampledDataDef::ToStructuredData(StructuredDataI & data) {
-    const char8 * name = GetName();
-    bool ret = (data.CreateRelative(name));
+    const char8 * objName = GetName();
+    bool ret = (data.CreateRelative(objName));
     if (ret) {
         ret = data.Write("Class", "RealTimeSampledDataDef");
         if (ret) {
@@ -143,11 +170,20 @@ bool RealTimeSampledDataDef::ToStructuredData(StructuredDataI & data) {
             }
         }
         if (ret) {
+            if (numberOfDimensions > 0u) {
+                ret = data.Write("NumberOfDimensions", numberOfDimensions);
+                if (ret) {
+                    ret = data.Write("NumberOfElements", numberOfElements);
+                }
+            }
+        }
+        if (ret) {
             ret = data.Write("Samples", samples);
         }
         if (ret) {
             ret = data.Write("SamplesPerCycle", samplesPerCycle);
         }
+
         if (!data.MoveToAncestor(1u)) {
             ret = false;
         }

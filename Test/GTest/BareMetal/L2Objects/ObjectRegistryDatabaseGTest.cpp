@@ -50,6 +50,16 @@ TEST(ObjectRegistryDatabaseGTest,TestFind) {
     ASSERT_TRUE(objRegTest.TestFind());
 }
 
+TEST(ObjectRegistryDatabaseGTest,TestFind_Relative) {
+    ObjectRegistryDatabaseTest objRegTest;
+    ASSERT_TRUE(objRegTest.TestFind_Relative());
+}
+
+TEST(ObjectRegistryDatabaseGTest,TestFind_Absolute) {
+    ObjectRegistryDatabaseTest objRegTest;
+    ASSERT_TRUE(objRegTest.TestFind_Absolute());
+}
+
 TEST(ObjectRegistryDatabaseGTest,TestFindTooManyBackSteps) {
     ObjectRegistryDatabaseTest objRegTest;
     ASSERT_TRUE(objRegTest.TestFindTooManyBackSteps());
@@ -57,4 +67,9 @@ TEST(ObjectRegistryDatabaseGTest,TestFindTooManyBackSteps) {
 TEST(ObjectRegistryDatabaseGTest,TestGetClassName) {
     ObjectRegistryDatabaseTest objRegTest;
     ASSERT_TRUE(objRegTest.TestGetClassName());
+}
+
+TEST(ObjectRegistryDatabaseGTest,TestCleanUp) {
+    ObjectRegistryDatabaseTest objRegTest;
+    ASSERT_TRUE(objRegTest.TestCleanUp());
 }

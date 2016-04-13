@@ -32,6 +32,7 @@
 #include "FastPollingMutexSem.h"
 #include "StringHelper.h"
 #include "HeapI.h"
+#include "Introspection.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -273,7 +274,7 @@ uint32 Object::NumberOfReferences() const {
 
 /*lint -e{715} data is not used as this is not implemented on purpose*/
 bool Object::Initialise(StructuredDataI &data) {
-    return false;
+    return true;
 }
 
 //LCOV_EXCL_START
@@ -362,7 +363,7 @@ void Object::SetName(const char8 * const newName) {
     }
     name = StringHelper::StringDup(newName);
 }
-
+#if 0
 bool Object::ProcessMessage(const MessageI & message, MessageI & data) {
 
     bool ret = false;
@@ -385,6 +386,7 @@ bool Object::ProcessMessage(const MessageI & message, MessageI & data) {
     }
     return ret;
 }
+#endif
 
 bool Object::ToStructuredData(StructuredDataI & data) {
     bool ret = false;

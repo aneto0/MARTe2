@@ -38,41 +38,121 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the RealTimeSampledData functions
+ */
 class RealTimeSampledDataDefTest {
 
 public:
+
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function initialises correctly the definition from a StructuredDataI in input.
+     */
     bool TestInitialise(StructuredDataI & data);
 
+    /**
+     * @brief Tests if the function sets the number of samples from local data.
+     */
     bool TestMergeWithLocal_AddSamples();
 
+    /**
+     * @brief Tests if the function sets the number of samples per cycle from local data.
+     */
     bool TestMergeWithLocal_AddSamplesPerCycle();
 
+    /**
+     * @brief Tests if the function sets the path from local data.
+     */
     bool TestMergeWithLocal_AddPath();
 
+    /**
+     * @brief Tests if the function sets the type reading from local data.
+     */
     bool TestMergeWithLocal_AddType();
 
+    /**
+     * @brief Tests if the function sets the modifiers reading from local data.
+     */
+    bool TestMergeWithLocal_AddModifiers();
+
+    /**
+     * @brief Tests if the function fails if the definition is declared final.
+     */
     bool TestMergeWithLocalFalse_FinalGlobal();
 
+    /**
+     * @brief Tests if when the number of samples is specified in both local and global definitions,
+     * the global one will be considered.
+     */
     bool TestMergeWithLocal_DifferentSamples();
 
+    /**
+     * @brief Tests if when the number of samples per cycle is specified in both local and global definitions,
+     * the global one will be considered.
+     */
     bool TestMergeWithLocal_DifferentSamplesPerCycle();
 
+    /**
+     * @brief Tests if when the type is specified in both local and global definitions,
+     * the global one will be considered.
+     */
     bool TestMergeWithLocal_DifferentType();
 
+    /**
+     * @brief Tests if when the path is specified in both local and global definitions,
+     * the global one will be considered.
+     */
     bool TestMergeWithLocal_DifferentPath();
 
+    /**
+     * @brief Tests if when the modifiers is specified in both local and global definitions,
+     * the global one will be considered.
+     */
+    bool TestMergeWithLocal_DifferentModifiers();
+
+    /**
+     * @brief Tests if the function returns true if the type matches its introspection.
+     */
     bool TestVerify();
 
+    /**
+     * @brief Tests if the function fails if the type is not registered.
+     */
     bool TestVerifyFalse_UnregisteredType();
 
+    /**
+     * @brief Tests if the function fails if the introspection for the type is does not exist.
+     */
     bool TestVerifyFalse_UnintrospectableType();
 
+    /**
+     * @brief Tests if the function fails if the type is empty.
+     */
+    bool TestVerifyFalse_EmptyType();
+
+    /**
+     * @brief Tests if the function fails for multi-dimensional structured types.
+     */
+    bool TestVerifyFalse_UnsupportedMultiDim();
+
+    /**
+     * @brief Tests if the function returns the number of samples defined.
+     */
     bool TestGetSamples();
 
+    /**
+     * @brief Tests if the function returns the number of samples per cycle defined.
+     */
     bool TestGetSamplesPerCycle();
 
+    /**
+     * @brief Tests if the function performs correctly the conversion to a StructuredDataI.
+     */
     bool TestToStructuredData();
 
 };

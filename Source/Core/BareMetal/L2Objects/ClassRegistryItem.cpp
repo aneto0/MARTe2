@@ -32,6 +32,10 @@
 #include "ClassRegistryItem.h"
 #include "FastPollingMutexSem.h"
 #include "ErrorManagement.h"
+#include "Introspection.h"
+#include "ClassMethodsRegistryItem.h"
+#include "ObjectBuilder.h"
+
 
 namespace MARTe {
 /*---------------------------------------------------------------------------*/
@@ -45,47 +49,24 @@ static FastPollingMutexSem classRegistryItemMuxSem;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-//LCOV_EXCL_START
-ClassRegistryItem::ClassRegistryItem() :
-        classProperties() {
+// TODO remove LCOV_EXCL_START
+ClassRegistryItem::ClassRegistryItem(ClassProperties &classProperties_in) :
+        classProperties(classProperties_in) {
     numberOfInstances = 0u;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuildFn = NULL_PTR(ObjectBuildFn *);
+    objectBuilder = NULL_PTR(ObjectBuilder *);
     introspection = NULL_PTR(Introspection *);
 }
 
-//LCOV_EXCL_STOP
 
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
-                                     const ObjectBuildFn * const objBuildFn) {
-    numberOfInstances = 0u;
-    classProperties = clProperties;
-    loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuildFn = objBuildFn;
-    introspection = NULL_PTR(Introspection *);
-    ClassRegistryDatabase::Instance()->Add(this);
+void ClassRegistryItem::SetObjectBuilder(ObjectBuilder *objectBuilderIn){
+    objectBuilder = objectBuilderIn;
 }
 
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
-                                     Introspection &introspectionIn) {
-    numberOfInstances = 0u;
-    classProperties = clProperties;
-    loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuildFn = NULL_PTR(ObjectBuildFn *);
-    introspection = &introspectionIn;
-    ClassRegistryDatabase::Instance()->Add(this);
+const ObjectBuilder *ClassRegistryItem::GetObjectBuilder() const{
+    return objectBuilder;
 }
 
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
-                                     const ObjectBuildFn * const objBuildFn,
-                                     Introspection &introspectionIn) {
-    numberOfInstances = 0u;
-    classProperties = clProperties;
-    loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuildFn = objBuildFn;
-    introspection = &introspectionIn;
-    ClassRegistryDatabase::Instance()->Add(this);
-}
 
 
 /*lint -e{1551} no exception should be thrown as loadableLibrary is properly initialised and
@@ -96,6 +77,7 @@ ClassRegistryItem::~ClassRegistryItem() {
     }
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     introspection = NULL_PTR(Introspection *);
+    objectBuilder = NULL_PTR(ObjectBuilder *);
 }
 
 void ClassRegistryItem::GetClassPropertiesCopy(ClassProperties &destination) const {
@@ -106,9 +88,28 @@ const ClassProperties *ClassRegistryItem::GetClassProperties() const {
     return &classProperties;
 }
 
+void ClassRegistryItem::SetIntrospection(Introspection *introspectionIn){
+    introspection = introspectionIn;
+}
+
 const Introspection * ClassRegistryItem::GetIntrospection() const {
     return introspection;
 }
+
+
+const LoadableLibrary *ClassRegistryItem::GetLoadableLibrary() const {
+    return loadableLibrary;
+}
+
+void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const loadLibrary) {
+    this->loadableLibrary = loadLibrary;
+}
+
+
+void ClassRegistryItem::RegisterMethods(ClassMethodsRegistryItem *classMethodRecord){
+    classMethods.ListAdd(static_cast<LinkedListableT<ClassMethodsRegistryItem> *>(classMethodRecord));
+}
+
 
 void ClassRegistryItem::IncrementNumberOfInstances() {
     if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
@@ -131,17 +132,6 @@ uint32 ClassRegistryItem::GetNumberOfInstances() const {
     return numberOfInstances;
 }
 
-const LoadableLibrary *ClassRegistryItem::GetLoadableLibrary() const {
-    return loadableLibrary;
-}
-
-void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const loadLibrary) {
-    this->loadableLibrary = loadLibrary;
-}
-
-const ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
-    return objectBuildFn;
-}
 
 
 void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {

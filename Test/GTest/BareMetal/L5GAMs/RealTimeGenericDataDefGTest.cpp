@@ -76,6 +76,11 @@ TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_AddPath) {
     ASSERT_TRUE(rtgdTest.TestMergeWithLocal_AddPath());
 }
 
+TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_AddModifiers) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestMergeWithLocal_AddModifiers());
+}
+
 TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_AddDefaultValues) {
     RealTimeGenericDataDefTest rtgdTest;
     ASSERT_TRUE(rtgdTest.TestMergeWithLocal_AddDefaultValues());
@@ -91,6 +96,11 @@ TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_DifferentPaths) {
     ASSERT_TRUE(rtgdTest.TestMergeWithLocal_DifferentPaths());
 }
 
+TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_DifferentModifiers) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestMergeWithLocal_DifferentModifiers());
+}
+
 TEST(RealTimeGenericDataDefGTest,TestGetDefaultValue) {
     RealTimeGenericDataDefTest rtgdTest;
     ASSERT_TRUE(rtgdTest.TestGetDefaultValue());
@@ -104,6 +114,16 @@ TEST(RealTimeGenericDataDefGTest,TestToStructuredData) {
 TEST(RealTimeGenericDataDefGTest,TestVerify) {
     RealTimeGenericDataDefTest rtgdTest;
     ASSERT_TRUE(rtgdTest.TestVerify());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerify_Vector) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerify_Vector());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerify_Matrix) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerify_Matrix());
 }
 
 TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_UnregisteredType) {
@@ -129,5 +149,30 @@ TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_InvalidMemberType) {
 TEST(RealTimeGenericDataDefGTest,TestMergeWithLocal_DifferentDefaultValues) {
     RealTimeGenericDataDefTest rtgdTest;
     ASSERT_TRUE(rtgdTest.TestMergeWithLocal_DifferentDefaultValues());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_InvalidNumberOfMembers) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_InvalidNumberOfMembers());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_EmptyType) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_EmptyType());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_NDims) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_NDims());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_NElements) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_NElements());
+}
+
+TEST(RealTimeGenericDataDefGTest,TestVerifyFalse_UnsupportedMultiDim) {
+    RealTimeGenericDataDefTest rtgdTest;
+    ASSERT_TRUE(rtgdTest.TestVerifyFalse_UnsupportedMultiDim());
 }
 

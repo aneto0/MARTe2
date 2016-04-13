@@ -26,7 +26,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -45,7 +45,7 @@ namespace MARTe {
 
 Introspection::Introspection(const IntrospectionEntry ** const introspectionListIn,
                              const uint32 classSizeIn) :
-        fields(introspectionListIn) {
+    fields(introspectionListIn) {
     classSize = classSizeIn;
 }
 

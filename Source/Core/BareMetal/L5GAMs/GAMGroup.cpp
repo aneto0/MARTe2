@@ -25,81 +25,118 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "GAMGroup.h"
 #include "ReferenceT.h"
-#include "GAM.h"
-#include "stdio.h"
+#include "BasicGAM.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-static const uint32 stateNamesGranularity = 8u;
+static const uint32 stateNamesGranularity = 4u;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAMGroup::GAMGroup() {
+GAMGroup::GAMGroup() :
+        ReferenceContainer() {
     supportedStates = NULL_PTR(StreamString*);
+    supportedThreads = NULL_PTR(StreamString*);
     numberOfSupportedStates = 0u;
 }
 
+/*lint -e{1551} no exception should be thrown*/
 GAMGroup::~GAMGroup() {
     if (supportedStates != NULL) {
-        delete [] supportedStates;
+        delete[] supportedStates;
     }
-}
-
-void GAMGroup::SetUp() {
-    // initialise the context here
-
-    for (uint32 i = 0u; i < Size(); i++) {
-        ReferenceT<GAM> gam = Get(i);
-        if (gam.IsValid()) {
-            gam->SetUp();
-        }
+    if (supportedThreads!= NULL) {
+        delete[] supportedThreads;
     }
 }
 
 /*
-void GAMGroup::PrepareNextState(const RealTimeStateInfo &status) {
-    // Use the two buffers in GAMContext
-    // preparing the next buffer for the next state
-}
-*/
+ void GAMGroup::SetUp() {
+ // initialise the context here
+ }
 
+ */
+/*
+ void GAMGroup::PrepareNextState(const RealTimeStateInfo &status) {
+ // Use the two buffers in GAMContext
+ // preparing the next buffer for the next state
+ }
+ */
 
-StreamString *GAMGroup::GetSupportedStates() const {
+StreamString *GAMGroup::GetSupportedStates() {
     return supportedStates;
+}
+
+StreamString *GAMGroup::GetSupportedThreads() {
+    return supportedThreads;
 }
 
 uint32 GAMGroup::GetNumberOfSupportedStates() const {
     return numberOfSupportedStates;
 }
 
+bool GAMGroup::AddState(const char8 * const stateName,
+                        const char8 * const threadName) {
 
-void GAMGroup::AddState(const char8 * stateName){
-    if ((numberOfSupportedStates % stateNamesGranularity) == 0u) {
-        uint32 newSize = numberOfSupportedStates + stateNamesGranularity;
-        StreamString *temp = new StreamString[newSize];
-        if (supportedStates != NULL) {
-            for (uint32 i = 0u; i < numberOfSupportedStates; i++) {
-                temp[i] = supportedStates[i];
+    bool ret = true;
+    bool found = false;
+    for (uint32 i = 0u; (i < numberOfSupportedStates) && (!found); i++) {
+        /*lint -e{613} never enter here if supportedStates is NULL (because numberOfSupportedStates == 0) */
+        found = (supportedStates[i] == stateName);
+        if (found) {
+            ret = (supportedThreads[i] == threadName);
+            if (!ret) {
+                //TODO same gam in two different threads!
             }
-            delete [] supportedStates;
+
         }
-        supportedStates = temp;
-
     }
-    supportedStates[numberOfSupportedStates] = stateName;
-    numberOfSupportedStates++;
 
+    if (!found) {
+        if ((numberOfSupportedStates % stateNamesGranularity) == 0u) {
+            uint32 newSize = numberOfSupportedStates + stateNamesGranularity;
+            StreamString *tempStates = new StreamString[newSize];
+            StreamString *tempThreads = new StreamString[newSize];
+            if (supportedStates != NULL) {
+                for (uint32 i = 0u; i < numberOfSupportedStates; i++) {
+                    tempStates[i] = supportedStates[i];
+                    tempThreads[i] = supportedThreads[i];
+                }
+                delete[] supportedStates;
+                delete[] supportedThreads;
+            }
+            supportedStates = tempStates;
+            supportedThreads = tempThreads;
+        }
+        /*lint -e{613} the memory of supportedStates is already allocated (numberOfSupportedStates == 0) */
+        supportedStates[numberOfSupportedStates] = stateName;
+        supportedThreads[numberOfSupportedStates] = threadName;
+        numberOfSupportedStates++;
+    }
+    return ret;
 }
 
+bool GAMGroup::Initialise(StructuredDataI &data) {
+    bool ret = ReferenceContainer::Initialise(data);
+
+    if (ret) {
+        // Setup the context
+        SetUp();
+    }
+    return ret;
+}
 
 }

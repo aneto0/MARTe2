@@ -25,10 +25,17 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "RealTimeDataDefI.h"
+#include "AdvancedErrorManagement.h"
+#include "Introspection.h"
+
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -38,7 +45,12 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-RealTimeDataDefI::RealTimeDataDefI() {
+RealTimeDataDefI::RealTimeDataDefI():ReferenceContainer() {
+    numberOfDimensions = 0u;
+
+    for (uint32 i = 0u; i < 3u; i++) {
+        numberOfElements[i] = 1u;
+    }
 
 }
 
@@ -48,6 +60,10 @@ const char8 *RealTimeDataDefI::GetPath() {
 
 const char8 *RealTimeDataDefI::GetType() {
     return type.Buffer();
+}
+
+const char8 *RealTimeDataDefI::GetDefaultValue() {
+    return defaultValue.Buffer();
 }
 
 bool RealTimeDataDefI::Initialise(StructuredDataI &data) {
@@ -61,8 +77,42 @@ bool RealTimeDataDefI::Initialise(StructuredDataI &data) {
         if (!data.Read("Type", type)) {
             //TODO Warning?
         }
+
+        if (!data.Read("Default", defaultValue)) {
+            //TODO Warning?
+        }
+
+        if (data.Read("Modifiers", modifiers)) {
+            // use introspection entry to parse the modifiers
+            IntrospectionEntry entry("", "", modifiers.Buffer(), "", 0u, 0u);
+            numberOfDimensions = entry.GetNumberOfDimensions();
+            for (uint32 i = 0u; i < 3u; i++) {
+                numberOfElements[i] = entry.GetNumberOfElements(i);
+            }
+            if (entry.GetMemberPointerLevel() > 0u) {
+                REPORT_ERROR(ErrorManagement::Warning, "Pointers not supported. The statement will be ignored");
+            }
+        }
+
     }
     return ret;
+}
+
+uint8 RealTimeDataDefI::GetNumberOfDimensions() const {
+    return numberOfDimensions;
+
+}
+
+uint32 RealTimeDataDefI::GetNumberOfElements(const uint32 dimension) const{
+    uint32 dimensionNumber = dimension;
+    return (dimensionNumber < 3u) ? numberOfElements[dimensionNumber] : numberOfElements[2];
+}
+
+void RealTimeDataDefI::SetPath(const char8 * const newPath) {
+    if (path != "") {
+        REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "Path already set to %s", path.Buffer())
+    }
+    path = newPath;
 }
 
 }

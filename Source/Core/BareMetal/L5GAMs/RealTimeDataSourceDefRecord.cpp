@@ -25,11 +25,14 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeDataSourceDefRecord.h"
+#include "AdvancedErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,57 +44,45 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord() {
+RealTimeDataSourceDefRecord::RealTimeDataSourceDefRecord(): ReferenceContainer() {
 
     // can be explored
     ReferenceT<ReferenceContainer> prod(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     prod->SetName("Producers");
-    if(prod.IsValid()){
-        if(Insert(prod)){
-            producers=prod;
-        }
-        else{
-            //TODO
+    if (prod.IsValid()) {
+        if (Insert(prod)) {
+            producers = prod;
         }
     }
 
     ReferenceT<ReferenceContainer> cons(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     cons->SetName("Consumers");
-    if(cons.IsValid()){
-        if(Insert(cons)){
-            consumers=cons;
-        }
-        else{
-            //TODO
+    if (cons.IsValid()) {
+        if (Insert(cons)) {
+            consumers = cons;
         }
     }
 }
 
-
-void RealTimeDataSourceDefRecord::SetStateName(const char8 * stateName) {
-    state = stateName;
-
-}
-
-bool RealTimeDataSourceDefRecord::AddConsumer(ReferenceT<GAM> gamConsumer) {
+bool RealTimeDataSourceDefRecord::AddConsumer(ReferenceT<BasicGAM> gamConsumer) {
 
     bool ret = consumers.IsValid();
     if (ret) {
         ret = consumers->Insert(gamConsumer);
     }
     else {
-        //TODO Consumers not found
+        REPORT_ERROR(ErrorManagement::FatalError, "Consumers container not found or invalid");
     }
     return ret;
 }
 
-bool RealTimeDataSourceDefRecord::AddProducer(ReferenceT<GAM> gamProducer) {
+bool RealTimeDataSourceDefRecord::AddProducer(ReferenceT<BasicGAM> gamProducer) {
     bool ret = producers.IsValid();
     if (ret) {
         ret = producers->Insert(gamProducer);
     }
     else {
-        //TODO Consumers not found
+        REPORT_ERROR(ErrorManagement::FatalError, "Producers container not found or invalid");
     }
     return ret;
 }
@@ -104,15 +95,11 @@ uint32 RealTimeDataSourceDefRecord::GetNumberOfProducers() {
     return producers->Size();
 }
 
-const char8 * RealTimeDataSourceDefRecord::GetStateName() {
-    return state.Buffer();
-}
-
-ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetConsumers() {
+ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetConsumers() const {
     return consumers;
 }
 
-ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetProducers()  {
+ReferenceT<ReferenceContainer> RealTimeDataSourceDefRecord::GetProducers() const {
     return producers;
 }
 

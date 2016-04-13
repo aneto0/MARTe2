@@ -58,3 +58,52 @@ TEST(RealTimeDataDefIGTest,TestGetPath) {
     RealTimeDataDefITest rtiTest;
     ASSERT_TRUE(rtiTest.TestGetPath());
 }
+
+TEST(RealTimeDataDefIGTest,TestSetPath) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestSetPath());
+}
+
+TEST(RealTimeDataDefIGTest,TestGetDefaultValue) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestGetDefaultValue());
+}
+
+TEST(RealTimeDataDefIGTest,TestNumberOfDimensions_Vector) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestNumberOfDimensions("uint32", "[32]", 1));
+}
+
+TEST(RealTimeDataDefIGTest,TestNumberOfDimensions_Vector_1Dim) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestNumberOfDimensions("uint32", "[1]", 1));
+}
+
+TEST(RealTimeDataDefIGTest,TestNumberOfDimensions_Matrix) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestNumberOfDimensions("uint32", "[32][12]", 2));
+}
+
+TEST(RealTimeDataDefIGTest,TestNumberOfDimensions_Matrix_1Dim) {
+    RealTimeDataDefITest rtiTest;
+    ASSERT_TRUE(rtiTest.TestNumberOfDimensions("uint32", "[1][1]", 2));
+}
+
+TEST(RealTimeDataDefIGTest,TestNumberOfElements_Vector) {
+    RealTimeDataDefITest rtiTest;
+    uint32 ret[3] = { 32, 1, 1 };
+    ASSERT_TRUE(rtiTest.TestNumberOfElements("uint32", "[32]", ret));
+}
+
+TEST(RealTimeDataDefIGTest,TestNumberOfElements_Matrix) {
+    RealTimeDataDefITest rtiTest;
+    uint32 ret[3] = { 12, 32, 1 };
+    ASSERT_TRUE(rtiTest.TestNumberOfElements("uint32", "[32][12]", ret));
+}
+
+TEST(RealTimeDataDefIGTest,TestNumberOfElements_Pointer) {
+    RealTimeDataDefITest rtiTest;
+    uint32 ret[3] = { 12, 32, 1 };
+    ASSERT_TRUE(rtiTest.TestNumberOfElements("uint32", "*[32][12]", ret));
+}
+

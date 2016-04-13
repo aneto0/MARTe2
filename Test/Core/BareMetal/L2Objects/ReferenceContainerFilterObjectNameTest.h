@@ -73,11 +73,6 @@ public:
     bool TestCopyConstructor(int32 occurrence,
                              const char8 *toSearch);
 
-    /**
-     * @brief Tests the destructor.
-     * @return true if the filter after the destructor does not work anymore.
-     */
-    bool TestDestructor();
 
     /**
      * @brief Tests the filter test function.

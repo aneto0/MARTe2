@@ -25,15 +25,27 @@
 #############################################################
 
 
-OBJSX=	GAMTest.x \
+OBJSX=	BasicGAMTest.x \
+ 		BasicGAMSchedulerTest.x \
+		BasicRealTimeDataSourceDefTest.x \
+		BasicRealTimeDataSourceInputReaderTest.x \
+		BasicRealTimeDataSourceOutputWriterTest.x \
+		GAMGroupTest.x \
+		GAMITest.x \
+		GAMSchedulerITest.x \
+		GAMSchedulerRecordTest.x \
 		GAMTestHelper.x\
 		RealTimeApplicationTest.x \
 		RealTimeDataDefContainerTest.x \
 		RealTimeDataDefITest.x \
+		RealTimeDataSourceTest.x \
+		RealTimeDataSourceBrokerTest.x \
+		RealTimeDataSourceContainerTest.x \
+		RealTimeDataSourceDefRecordTest.x \
 		RealTimeGenericDataDefTest.x \
 		RealTimeSampledDataDefTest.x \
-		RealTimeDataSourceDefTest.x \
-		RealTimeDataSourceDefRecordTest.x 
+		RealTimeStateTest.x \
+		RealTimeThreadTest.x
 			
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
@@ -48,6 +60,8 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 INCLUDES += -I../../../../Source/Core/BareMetal/L5GAMs
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
+INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
+
 
 all: $(OBJS) \
     $(BUILD_DIR)/L5GAMsTest$(LIBEXT)

@@ -48,7 +48,7 @@ namespace MARTe {
  * @details The definition express how many samples of data will be generated
  * in a specified number of cycles.
  */
-class RealTimeSampledDataDef: public RealTimeDataDefI {
+class DLL_API RealTimeSampledDataDef: public RealTimeDataDefI {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -67,6 +67,13 @@ public:
 
     /**
      * @brief Reads the samples and cycles values to determine the number of samples per cycle.
+     * @details The following fields can be specified:\n
+     *   - Samples = "the number of samples of the variable"\n
+     *   - SamplesPerCycle = "the number of samples per cycle"\n
+     *   - IsFinal = true / false\n
+     * Is Final is false by default. If it is specified true, this definition is supposed to be
+     * completed, otherwise can be completed merging it with local configuration data (see MergeWithLocal(*))
+     * @return false in case of errors, true otherwise.
      */
     virtual bool Initialise(StructuredDataI &data);
 
@@ -75,11 +82,23 @@ public:
      */
     virtual bool Verify();
 
-
+    /**
+     * @brief Retrieves the number of samples of this variable.
+     * @return the number of samples of this variable.
+     */
     int32 GetSamples() const;
 
+    /**
+     * @brief Retrieves the number of samples per cycle of this variable.
+     * @return the number of samples per cycle of this variable.
+     */
     int32 GetSamplesPerCycle() const;
 
+    /**
+     * @brief Converts this object to a configuration data.
+     * @param[out] data is the result of the conversion.
+     * @return false in case of errors, true otherwise.
+     */
     virtual bool ToStructuredData( StructuredDataI & data);
 
 

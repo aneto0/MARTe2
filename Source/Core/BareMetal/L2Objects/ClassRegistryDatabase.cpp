@@ -76,7 +76,7 @@ void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
     mux.FastUnLock();
 }
 
-const ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
+ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className)  {
     ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
     if (mux.FastLock() == ErrorManagement::NoError) {
         const uint32 maxSize = 129u;
@@ -177,7 +177,7 @@ const ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
     return registryItem;
 }
 
-const ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(const char8 * const typeidName) {
+ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(const char8 * const typeidName)  {
     ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
     if (mux.FastLock() == ErrorManagement::NoError) {
         bool found = false;

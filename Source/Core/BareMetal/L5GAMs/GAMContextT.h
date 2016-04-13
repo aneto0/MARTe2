@@ -46,7 +46,7 @@ namespace MARTe {
  * will work on the new buffer.
  */
 template<typename T>
-class GAMContextT {
+class DLL_API GAMContextT {
 
 public:
 

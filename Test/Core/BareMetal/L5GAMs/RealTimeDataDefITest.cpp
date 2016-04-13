@@ -93,5 +93,73 @@ bool RealTimeDataDefITest::TestGetPath() {
     }
 
     return (StringHelper::Compare(def.GetPath(), "DDB1.PID1.Kp") == 0);
+}
 
+
+bool RealTimeDataDefITest::TestSetPath(){
+    RealTimeSampledDataDef def;
+
+    ConfigurationDatabase cdb;
+    cdb.Write("Path", "DDB1.PID1.Kp");
+
+    if (!def.Initialise(cdb)) {
+        return false;
+    }
+
+    if(StringHelper::Compare(def.GetPath(), "DDB1.PID1.Kp") != 0){
+        return false;
+    }
+
+    def.SetPath("MyPath");
+    return (StringHelper::Compare(def.GetPath(), "MyPath") == 0);
+}
+
+
+bool RealTimeDataDefITest::TestGetDefaultValue() {
+    RealTimeSampledDataDef def;
+
+    ConfigurationDatabase cdb;
+    cdb.Write("Default", "123");
+
+    if (!def.Initialise(cdb)) {
+        return false;
+    }
+
+    return (StringHelper::Compare(def.GetDefaultValue(), "123") == 0);
+}
+
+bool RealTimeDataDefITest::TestNumberOfDimensions(const char8 * type,
+                                                  const char8 * modifiers,
+                                                  uint8 ret) {
+    RealTimeSampledDataDef def;
+
+    ConfigurationDatabase cdb;
+    cdb.Write("Type", type);
+    cdb.Write("Path", "DDB1.PID1.Kp");
+    cdb.Write("Modifiers", modifiers);
+    if (!def.Initialise(cdb)) {
+        return false;
+    }
+    return def.GetNumberOfDimensions() == ret;
+}
+
+bool RealTimeDataDefITest::TestNumberOfElements(const char8 * type,
+                                                const char8 * modifiers,
+                                                uint32 ret[3]) {
+    RealTimeSampledDataDef def;
+
+    ConfigurationDatabase cdb;
+    cdb.Write("Type", type);
+    cdb.Write("Path", "DDB1.PID1.Kp");
+    cdb.Write("Modifiers", modifiers);
+    if (!def.Initialise(cdb)) {
+        return false;
+    }
+
+    for (uint32 k = 0; k < 3; k++) {
+        if (def.GetNumberOfElements(k) != ret[k]) {
+            return false;
+        }
+    }
+    return true;
 }

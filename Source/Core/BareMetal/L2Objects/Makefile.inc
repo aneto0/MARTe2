@@ -27,14 +27,13 @@ ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  AnyType.x\
+                ClassMethodReturn.x \
+                ClassMethodsRegistryItem.x \
 		ClassProperties.x \
 		ClassRegistryDatabase.x \
 		ClassRegistryItem.x \
-		Envelope.x \
 		Introspection.x\
 		IntrospectionEntry.x \
-		MessageI.x \
-		MessageBroker.x \
 		Object.x \
 		ObjectRegistryDatabase.x \
 		Reference.x \
@@ -44,6 +43,11 @@ OBJSX=  AnyType.x\
 		ReferenceContainerFilterReferences.x \
 		ReferenceContainerFilterObjectName.x \
 		ReferenceT.x
+
+# Envelope.x \
+#		MessageI.x \
+#        MessageBroker.x \
+
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

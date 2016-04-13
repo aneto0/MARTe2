@@ -38,45 +38,151 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the RealTimeGenericDataDef functions.
+ */
 class RealTimeGenericDataDefTest {
 public:
 
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function intialises correctly the definition from a StructuredDataI in input.
+     */
     bool TestInitialise();
 
+    /**
+     * @brief Tests if the function merges correctly the definition with the local data.
+     */
     bool TestMergeWithLocal();
 
+    /**
+     * @brief Tests if the function fails if the definition is declared final.
+     */
     bool TestMergeWithLocalFalse_FinalGlobal();
 
+    /**
+     * @brief Tests if the function fails if definition and local data are declare both final.
+     */
     bool TestMergeWithLocalFalse_BothFinal();
 
+    /**
+     * @brief Tests if the function sets the type from the local data.
+     */
     bool TestMergeWithLocal_AddType();
 
+    /**
+     * @brief Tests if the function sets the path from the local data.
+     */
     bool TestMergeWithLocal_AddPath();
 
+    /**
+     * @brief Tests if the function sets the modifiers from the local data.
+     */
+    bool TestMergeWithLocal_AddModifiers();
+
+    /**
+     * @brief Tests if the function sets the default values from local data.
+     */
     bool TestMergeWithLocal_AddDefaultValues();
 
+    /**
+     * @brief Tests if when the type is specified in both local and global definitions,
+     * the global one will be considered.
+     */
     bool TestMergeWithLocal_DifferentTypes();
 
+    /**
+     * @brief Tests if when the path is specified in both local and global definitions,
+     * the global one will be considered.
+     */
     bool TestMergeWithLocal_DifferentPaths();
 
+    /**
+     * @brief Tests if when the default value is specified in both local and global definitions,
+     * the global one will be considered.
+     */
     bool TestMergeWithLocal_DifferentDefaultValues();
 
+    /**
+     * @brief Tests if when the modifiers is specified in both local and global definitions,
+     * the global one will be considered.
+     */
+    bool TestMergeWithLocal_DifferentModifiers();
+
+    /**
+     * @brief Tests if the function returns the default value.
+     */
     bool TestGetDefaultValue();
 
+    /**
+     * @brief Tests if the function converts correctly the definition to a StructuredDataI.
+     */
     bool TestToStructuredData();
 
+    /**
+     * @brief Tests if the function returns true if all the definitions math with their
+     * introspection.
+     */
     bool TestVerify();
 
+    /**
+     * @brief Tests the function with vector variables.
+     */
+    bool TestVerify_Vector();
+
+    /**
+     * @brief Tests the function with matrix variables.
+     */
+    bool TestVerify_Matrix();
+
+    /**
+     * @brief Tests if the function fails if the type defined is not registered.
+     */
     bool TestVerifyFalse_UnregisteredType();
 
+    /**
+     * @brief Tests if the function fails if the introspection for the type does not exist.
+     */
     bool TestVerifyFalse_UnintrospectableType();
 
+    /**
+     * @brief Tests if the function fails if the member name does not match with the introspection.
+     */
     bool TestVerifyFalse_InvalidMemberName();
 
+    /**
+     * @brief Tests if the function fails if the member type does not match with the introspection.
+     */
     bool TestVerifyFalse_InvalidMemberType();
 
+    /**
+     * @brief Tests if the function fails if the number of members does not match with the introspection.
+     */
+    bool TestVerifyFalse_InvalidNumberOfMembers();
+
+    /**
+     * @brief Tests if the function fails if the number of dimensions does not match with the introspection.
+     */
+    bool TestVerifyFalse_NDims();
+
+    /**
+     * @brief Tests if the function fails if the number of Elements does not match with the introspection.
+     */
+    bool TestVerifyFalse_NElements();
+
+    /**
+     * @brief Tests if the function if the definition represents a multi-dimensiona structured type.
+     */
+    bool TestVerifyFalse_UnsupportedMultiDim();
+
+    /**
+     * @brief Tests if the function fails if the type field is empty.
+     */
+    bool TestVerifyFalse_EmptyType();
 
 };
 

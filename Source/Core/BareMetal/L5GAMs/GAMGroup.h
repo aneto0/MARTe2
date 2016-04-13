@@ -46,20 +46,21 @@ namespace MARTe {
  * to prepare the context for the next state (PrepareNextState(*) function) and
  * to switch to the new context (ChangeState(*) function).
  *
- * @details The definition of the GAMGroup in the configuration stream is inside the
- * block RealTimeApplicatio.Functions
+ * @details The syntax in the configuration stream has to be:
+ *
  * GAMGroup_name = {\n
  *    Class = GAMGroup\n
- *    States = {State1_name, State2_name, ... }\n
  *    ... // context definition, ecc\n
- *    GAM1_name = {\n
+ *    GAM_name = {\n
  *        Class = GAM\n
  *        ...\n
  *    }\n
  *    ...\n
  * }
+ *
+ * and it has to be contained in the [RealTimeApplication].+Functions.[?ReferenceContainer?] declaration.
  */
-class GAMGroup: public ReferenceContainer {
+class DLL_API GAMGroup: public ReferenceContainer {
 public:
 
     /**
@@ -76,24 +77,24 @@ public:
     virtual ~GAMGroup();
 
     /**
-     * @brief Setup all the GAMs in the container. This function can be customly
-     * implemented to initialise the context, make accelerators, ecc.
-     */
-    virtual void SetUp();
-
-    /**
      * @brief Does all the necessary operations to prepare the context used for the
      * next state.
      * @param[in] status specifies the current and the next state.
      */
     virtual void PrepareNextState(const RealTimeStateInfo &status)=0;
 
-
     /**
      * @brief Returns the array with the names of the states in which this GAMGroup is involved.
      * @return the names of the supported states.
      */
-    StreamString *GetSupportedStates() const;
+    StreamString *GetSupportedStates();
+
+    /**
+     * @brief Returns the array with the names of the threads in which this GAMGroup is involved. The
+     * thread names are related one by one with the state names returned by GetSupportedStates().
+     * @return the names of the supported threads.
+     */
+    StreamString *GetSupportedThreads();
 
     /**
      * @brief Returns the number of the supported states.
@@ -101,10 +102,30 @@ public:
      */
     uint32 GetNumberOfSupportedStates() const;
 
+    /**
+     * @brief Adds the name of a RealTimeState where this GAMGroup is declared into.
+     * @details This function checks if a GAMGroup is declared in more than one thread inside a state.
+     * In this case the function returns false.
+     * @param[in] stateName is the RealTimeState name.
+     * @param[in] threadName is the RealTimeThread name.
+     * @return false if the \a stateName was already set but related with a different \a threadName, true otherwise.
+     */
+    bool AddState(const char8 * const stateName,
+                  const char8 * const threadName);
 
-    void AddState(const char8 * stateName);
+    /**
+     * @brief Initialises all the sub-nodes, then call SetUp(*) to setup the environment.
+     * @return true if no errors occur, false otherwise.
+     */
+    virtual bool Initialise(StructuredDataI &data);
 
 protected:
+
+    /**
+     * @brief Setup the GAMGroup. This function can be custom
+     * implemented to initialise the context, make accelerators, ecc.
+     */
+    virtual void SetUp()=0;
 
     /**
      * The names of the supported states
@@ -112,12 +133,16 @@ protected:
     StreamString *supportedStates;
 
     /**
+     * The names of the supported threads
+     */
+    StreamString *supportedThreads;
+
+    /**
      * How many supported states
      */
     uint32 numberOfSupportedStates;
 
     //? Possible specific GAMContexts
-    //? Possible uint8 activeContextBuffer
 
 };
 }

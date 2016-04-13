@@ -29,11 +29,13 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 SPB=Environment/$(ENVIRONMENT).x
 
 OBJSX=  FastMath.x \
+		FastPollingEventSem.x \
 		FastPollingMutexSem.x \
 		FormatDescriptor.x \
 		GlobalObjectI.x \
 		GlobalObjectsDatabase.x \
 		HeapManager.x \
+		MemoryArea.x \
 		ProcessorType.x \
 		StaticList.x \
 		StaticListHolder.x \

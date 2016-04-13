@@ -51,7 +51,7 @@ namespace MARTe {
          * @brief A high resolution 64-bit time counter.
          * @details Reads the cpu ticks on an 64 bits integer.
          */
-        inline int64 Counter();
+        inline uint64 Counter();
 
         /**
          * @brief A high resolution 32-bit time counter.
@@ -69,7 +69,7 @@ namespace MARTe {
          * @brief Gets the cpu clock frequency.
          * @return the current frequency of the cpu.
          */
-        inline int64 Frequency();
+        inline uint64 Frequency();
 
         /**
          * @brief Converts HighResolutionTimer ticks to time in seconds.
@@ -77,8 +77,8 @@ namespace MARTe {
          * @param[in] tStart is the initial ticks number.
          * @return the time elapsed in seconds
          */
-        inline float64 TicksToTime(int64 tStop,
-                int64 tStart = 0);
+        inline float64 TicksToTime(uint64 tStop,
+                uint64 tStart = 0u);
 
         /**
          * @brief Gets the current time stamp [microseconds, seconds, minutes, hour, day, month, year].

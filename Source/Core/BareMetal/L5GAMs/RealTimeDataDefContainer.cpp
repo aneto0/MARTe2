@@ -25,6 +25,8 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -32,6 +34,8 @@
 #include "RealTimeDataDefContainer.h"
 #include "ReferenceT.h"
 #include "RealTimeDataDefI.h"
+#include "AdvancedErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -42,7 +46,8 @@
 
 namespace MARTe {
 
-RealTimeDataDefContainer::RealTimeDataDefContainer() {
+RealTimeDataDefContainer::RealTimeDataDefContainer() :
+        ReferenceContainer() {
     final = false;
     isInput = false;
     isOutput = false;
@@ -65,29 +70,29 @@ bool RealTimeDataDefContainer::Verify() {
 
 bool RealTimeDataDefContainer::MergeWithLocal(StructuredDataI & localData) {
 
-    StreamString isLocalDefFinal;
-
     bool ret = true;
     uint32 newItemsNumber = localData.GetNumberOfChildren();
 
     // check the IO definitions
     // false is by default, so enable if it is defined true in the local
 
-    StreamString isLocalInputStr;
-    if (localData.Read("IsInput", isLocalInputStr)) {
-        if (isLocalInputStr == "true") {
-            isInput = true;
+    if (!final) {
+        StreamString isLocalInputStr;
+        if (localData.Read("IsInput", isLocalInputStr)) {
+            if (isLocalInputStr == "true") {
+                isInput = true;
+            }
+        }
+
+        StreamString isLocalOutputStr;
+        if (localData.Read("IsOutput", isLocalOutputStr)) {
+            if (isLocalOutputStr == "true") {
+                isOutput = true;
+            }
         }
     }
 
-    StreamString isLocalOutputStr;
-    if (localData.Read("IsOutput", isLocalOutputStr)) {
-        if (isLocalOutputStr == "true") {
-            isOutput = true;
-        }
-    }
-
-    for (uint32 i = 0u; (i < newItemsNumber) & (ret); i++) {
+    for (uint32 i = 0u; (i < newItemsNumber) && (ret); i++) {
         const char8 * newItemName = localData.GetChildName(i);
         // take only the objects
         if ((newItemName[0] == '+') || (newItemName[0] == '$')) {
@@ -95,35 +100,41 @@ bool RealTimeDataDefContainer::MergeWithLocal(StructuredDataI & localData) {
             bool found = false;
             for (uint32 j = 0u; (j < itemsNumber) && (ret) && (!found); j++) {
                 ReferenceT<RealTimeDataDefI> item = Get(j);
-                // if the name are equal go inside the definition
-                if (StringHelper::Compare(item->GetName(), newItemName) == 0) {
-                    if (localData.MoveRelative(newItemName)) {
-                        ret = (item->MergeWithLocal(localData));
-                        if (!localData.MoveToAncestor(1u)) {
-                            ret = false;
+                if (item.IsValid()) {
+                    // if the name are equal go inside the definition
+                    if (StringHelper::Compare(item->GetName(), newItemName) == 0) {
+                        if (localData.MoveRelative(newItemName)) {
+                            ret = (item->MergeWithLocal(localData));
+                            if (!localData.MoveToAncestor(1u)) {
+                                ret = false;
+                            }
                         }
+                        found = true;
                     }
-                    found = true;
                 }
             }
-            // if does not exist yest and it is not final add the definition
+            // if does not exist yet and it is not final add the definition
             if ((ret) && (!found)) {
                 if (!final) {
                     if (localData.MoveRelative(newItemName)) {
                         ReferenceT<RealTimeDataDefI> newItem;
-                        newItem.Initialise(localData, false);
-                        ret = (newItem.IsValid());
+                        ret = newItem.Initialise(localData, false);
                         if (ret) {
-                            newItem->SetName(newItemName);
-                            ret = Insert(newItem);
-                            if (!localData.MoveToAncestor(1u)) {
-                                ret = false;
+                            ret = (newItem.IsValid());
+                            if (ret) {
+                                newItem->SetName(newItemName);
+                                ret = Insert(newItem);
+                                if (!localData.MoveToAncestor(1u)) {
+                                    ret = false;
+                                }
                             }
                         }
                     }
                 }
                 else {
-                    //TODO Cannot add if one of them is declared final
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
+                                            "The local RealTimeDataDefI %s cannot be added because the RealTimeDataDefContainer %s is declared final",
+                                            newItemName, GetName())
                     ret = false;
                 }
             }
@@ -148,6 +159,10 @@ bool RealTimeDataDefContainer::Initialise(StructuredDataI & data) {
         if (data.Read("IsOutput", isOutputStr)) {
             isOutput = (isOutputStr == "true");
         }
+
+        if ((!isInput) && (!isOutput)) {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "The definition %s is not for input neither for output", GetName())
+        }
     }
     return ret;
 }
@@ -161,8 +176,8 @@ bool RealTimeDataDefContainer::IsOutput() const {
 }
 
 bool RealTimeDataDefContainer::ToStructuredData(StructuredDataI & data) {
-    const char8 * name = GetName();
-    bool ret = data.CreateRelative(name);
+    const char8 * objName = GetName();
+    bool ret = data.CreateRelative(objName);
     if (ret) {
         ret = data.Write("Class", "RealTimeDataDefContainer");
 

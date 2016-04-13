@@ -79,12 +79,19 @@ public:
                 const int32 &position = -1);
 
 
-    bool Insert(const char8 * path, Reference ref);
+    /**
+     * @brief Inserts a new reference in the specified path.
+     * @details Creates all the nodes in the \a path if needed before adding \a ref as a leaf.
+     * @param[in] path is the path where \a ref must be inserted to.
+     * @param[in] red is the Reference to be inserted in the container.
+     * @return false if \a ref is not valid or in case of errors, true otherwise.
+     */
+    bool Insert(const char8 * const path, Reference ref);
 
 
 
     /**
-     * @brief Removes the references from the container.
+     * @brief Removes a reference from the container.
      * @details This call is not recursive, i.e. if the container contains other containers, the \a ref
      * will not be recursively searched (this can be achieved with the Find method and ReferenceContainerFilterReferences filter).
      * @param[in] ref the reference to be deleted.
@@ -103,8 +110,12 @@ public:
               ReferenceContainerFilter &filter);
 
 
-
-    Reference Find(const char8 * path);
+    /**
+     * @brief Finds the first element identified by \a path in RECURSIVE mode.
+     * @param[in] path is the name of the element to be found or its full path.
+     * @return the element if it is found or an invalid reference if not.
+     */
+    Reference Find(const char8 * const path);
 
     /**
      * @brief Checks if \a ref holds a container.
@@ -149,7 +160,9 @@ public:
     virtual bool Initialise(StructuredDataI &data);
 
 
-
+    /**
+     * @see Object::ToStructuredData(*)
+     */
     virtual bool ToStructuredData(StructuredDataI & data);
 
 

@@ -37,6 +37,8 @@
 #include "ClassRegistryDatabase.h"
 #include "StructuredDataI.h"
 #include "ValidateBasicType.h"
+#include "Introspection.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

@@ -42,7 +42,7 @@ namespace MARTe {
 /**
  * @brief Generic mapping of a structure to the RealTimeDataSource.
  */
-class RealTimeGenericDataDef: public RealTimeDataDefI {
+class DLL_API RealTimeGenericDataDef: public RealTimeDataDefI {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -64,10 +64,21 @@ public:
     /**
      * @brief Initialises the container form StructuredData and for each sub-type definition
      * reads the default value and the final flag (specifying if the type is complete or not).
+     * @details The following parameters can be specified:
+     *
+     *   - IsFinal = true (default false)
+     *
+     * The field IsFinal is false by default but if it is defined true in \a data, then this
+     * definition it is supposed to be final and cannot be merged with any local configuration data
+     * to be completed.
      */
     virtual bool Initialise(StructuredDataI& data);
 
-
+    /**
+     * @brief Converts this object in a StructuredData.
+     * @param[in] data contains the configuration data.
+     * @return false in case of errors, true otherwise.
+     */
     virtual bool ToStructuredData(StructuredDataI& data);
 
     /**
@@ -75,20 +86,8 @@ public:
      */
     virtual bool MergeWithLocal(StructuredDataI & localData);
 
-    /**
-     * @brief Retrieves the variable default value.
-     * @return the variable return value.
-     */
-    const char8 *GetDefaultValue();
-
-
 
 private:
-
-    /**
-     * The variable default value
-     */
-    StreamString defaultValue;
 
     /**
      * Specifies if the definition is complete

@@ -57,9 +57,11 @@ public:
      */
     virtual ~ObjectRegistryDatabase();
 
-
+    /**
+     * @brief Deletes all the entries.
+     * @return false in case of errors, true otherwise.
+     */
     virtual bool CleanUp();
-
 
     /**
      * @brief Retrieves the Reference at the given address.
@@ -67,8 +69,7 @@ public:
      * "A.B.C" where A, B and C must be replaced with the specific object names.
      * param[in] current is the research start point. In this case we admit the syntax "::A.B.C"
      * where the ':' symbol set the search start point to the previous domain with respect to \a current.
-     * If no ':' is found at the beginning of the path, the start point is supposed to be \a current
-     * (the function will perform a relative research).
+     * If no ':' is found at the beginning of the path, the start point is the root.
      * @return the reference found at the provided \a path or an invalid reference in case of failure.
      */
     Reference Find(const char8 * const path,
@@ -86,13 +87,12 @@ private:
      * @brief Disallow the usage of new.
      * @param[in] size the size of the object.
      */
-    static void *operator new(osulong size) throw ();
+    static void *operator new(const osulong size) throw ();
 
     /**
      * @brief Default constructor.
      */
     ObjectRegistryDatabase();
-
 
 };
 

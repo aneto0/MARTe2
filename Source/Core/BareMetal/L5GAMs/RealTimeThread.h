@@ -34,7 +34,8 @@
 #include "ReferenceContainer.h"
 #include "RealTimeState.h"
 #include "StreamString.h"
-#include "GAM.h"
+#include "GAMI.h"
+#include "ProcessorType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -43,19 +44,14 @@
 namespace MARTe {
 
 /**
- * @brief A container of GAM references.
- * @details The syntax in the configuration stream should be:
- * Thread_name = {\n
+ * @brief Defines the GAMs to be executed in a real time thread.
+ * @details The syntax in the configuration stream has to be:
+ * RealTimeThread_name = {\n
  *     Class = RealTimeThread\n
- *     RealTimeThread_name = {\n
- *         Class = RealTimeThread\n
- *         Functions = { GAM1_name, GAMGroup2_name, ... }
- *         ...\n
- *     }\n
- *     ...\n
+ *     Functions = { GAM1_name, GAMGroup2_name, ... }
  * }\n
  */
-class RealTimeThread: public ReferenceContainer {
+class DLL_API RealTimeThread: public ReferenceContainer {
 
 public:
     CLASS_REGISTER_DECLARATION()
@@ -64,26 +60,45 @@ public:
      * @brief Constructor.
      * @post
      *   GetFunctions() == NULL &&
-     *   GetNumberOfFunction == 0;
+     *   GetNumberOfFunction == 0 &&
+     *   GetGAMs() == NULL &&
+     *   GetNumberOfGAMs == 0;
      */
     RealTimeThread();
 
     /**
      * @brief Destructor. Frees the array with the function names.
      */
-    ~RealTimeThread();
+    virtual ~RealTimeThread();
 
     /**
-     * @see RealTimeApplication::Validate()
+     * @see RealTimeApplication::ConfigureArchitecture()
+     * @param[in] rtApp is the RealTimeApplication where this thread is declared into.
+     * @param[in] rtState is the RealTimeState where this thread is declared into.
      */
     bool ConfigureArchitecture(RealTimeApplication &rtApp,
                                RealTimeState &rtState);
 
-
-    bool ConfigureDataSource();
+    /**
+     * @see RealTimeApplication::ValidateDataSourceLinks()
+     */
+    bool ValidateDataSourceLinks();
 
     /**
-     * @brief Reads the array with the GAM names to be launched by this thread from the StructuredData in input.
+     * @brief Reads the array with the GAMI names to be launched by this thread from the StructuredData in input.
+     * @details The following fields must be defined:
+     *
+     *   Functions = { function1_path, function2_path, ... }
+     *
+     * The following fields can be defined
+     *
+     *   StackSize = (the memory stack size in byte to be associated to the this thread)
+     *   CPUs = cpu mask where this thread is preferable to be executed (i.e 0x1 means the first cpu, 0x2 means the second, 0x3 first and second, ecc).
+     *
+     * The default value for StackSize is THREADS_DEFAULT_STACKSIZE, while for CPUs is ProcessorType::GetDefaultCPUs().\n
+     * Each element must be the path of the function to be executed by this thread with respect to the position
+     * of the definition of this thread itself in the configuration data. See ObjectRegistryDatabase::Find(*)
+     * for more documentation on how to specify the correct path.
      * @param[in] data is the StructuredData to be read from.
      */
     virtual bool Initialise(StructuredDataI & data);
@@ -91,27 +106,57 @@ public:
     /**
      * @brief Returns the array with the name of the GAMs involved by this thread.
      */
-    StreamString * GetFunctions() const;
+    StreamString * GetFunctions();
 
     /**
      * @brief Returns the number of GAMs involved by this thread.
      */
     uint32 GetNumberOfFunctions() const;
 
-    ReferenceT<GAM> *GetGAMs() const;
+    /**
+     * @brief Retrieves the accelerator to the GAMs involved in this thread.
+     */
+    ReferenceT<GAMI> *GetGAMs();
 
+    /**
+     * @brief Retrieves the number of GAMs involved in this thread.
+     */
     uint32 GetNumberOfGAMs() const;
+
+    /**
+     * @brief Retrieves the stack size associated to this thread.
+     * @return the stack size associated to this thread.
+     */
+    uint32 GetStackSize() const;
+
+    /**
+     * @brief Retrieves the CPUs mask associated to this thread.
+     * @return the CPUs mask associated to this thread.
+     */
+    ProcessorType GetCPU() const;
+
+    /**
+     * @see Object::ToStructuredData(*)
+     */
+    virtual bool ToStructuredData(StructuredDataI& data);
 
 private:
 
+    /**
+     * @brief Links the RealTimeState and the GAMGroup to each GAMI declared in this
+     * thread.
+     */
     bool ConfigureArchitecturePrivate(Reference functionGeneric,
                                       RealTimeApplication &rtApp,
                                       RealTimeState &rtState);
 
-    void AddGAM(ReferenceT<GAM> element);
+    /**
+     * @brief Adds a GAMI reference into the accelerator array.
+     */
+    void AddGAM(ReferenceT<GAMI> element);
 
     /**
-     * The array with the GAM names
+     * The array with the GAMI names
      */
     StreamString* functions;
 
@@ -121,14 +166,24 @@ private:
     uint32 numberOfFunctions;
 
     /**
-     * The GAM to be executed by this thread.
+     * The GAMI to be executed by this thread.
      */
-    ReferenceT<GAM> * GAMs;
+    ReferenceT<GAMI> * GAMs;
 
     /**
      * The number of GAMs to be executed by this thread
      */
     uint32 numberOfGAMs;
+
+    /**
+     * The thread CPUs mask.
+     */
+    uint32 cpuMask;
+
+    /**
+     * The thread stack size.
+     */
+    uint32 stackSize;
 };
 
 }
