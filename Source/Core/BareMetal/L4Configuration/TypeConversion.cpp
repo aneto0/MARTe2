@@ -195,7 +195,7 @@ static bool IntegerToType(const AnyType &destination,
                 }
             }
         }
-        if (destinationDescriptor.type == CCString) {
+        if (destinationDescriptor.type == BT_CCString) {
             StreamString tempString;
             ret = tempString.PrintFormatted(format, &source);
             if (ret) {
@@ -305,7 +305,7 @@ static bool FloatToType(const AnyType &destination,
                 }
             }
         }
-        if (destinationDescriptor.type == CCString) {
+        if (destinationDescriptor.type == BT_CCString) {
             StreamString tempString;
             ret = tempString.PrintFormatted("%E", &source);
             if (ret) {
@@ -357,7 +357,7 @@ static bool StringToType(const AnyType &destination,
     bool ret = false;
 
     const char8* token = static_cast<const char8 *>(NULL);
-    if (sourceDescriptor.type == CCString) {
+    if (sourceDescriptor.type == BT_CCString) {
         token = reinterpret_cast<const char8*>(sourcePointer);
     }
     if (sourceDescriptor.type == CArray) {
@@ -388,7 +388,7 @@ static bool StringToType(const AnyType &destination,
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
             }
         }
-        if (destinationDescriptor.type == CCString) {
+        if (destinationDescriptor.type == BT_CCString) {
             ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
 
         }
@@ -774,7 +774,7 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
                 uint32 stringLength = static_cast<uint32>(stringSource->Size());
                 ret = stringDestination->Write(stringSource->Buffer(), stringLength);
             }
-            else if (sourceDescriptor.type == CCString) {
+            else if (sourceDescriptor.type == BT_CCString) {
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), reinterpret_cast<const char8 *>(sourcePointer));
             }
             else if (sourceDescriptor.type == Pointer) {

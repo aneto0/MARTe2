@@ -24,8 +24,7 @@
 #
 #############################################################
 
-OBJSX=	AnyObject.x \
-		Message.x
+OBJSX=	MessageI.x
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

@@ -123,7 +123,7 @@ bool StreamMemoryReferenceTest::TestAnyTypeOperator(const char8* initializationS
         return false;
     }
 
-    if (td.type != CCString) {
+    if (td.type != BT_CCString) {
         return false;
     }
     if (td.numberOfBits != (sizeof(const char8*) * 8)) {

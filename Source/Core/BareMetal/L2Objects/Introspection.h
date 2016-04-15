@@ -109,7 +109,7 @@ public:
         Introspection(introspectionListIn,classSizeIn){
 
         ClassRegistryItem *cri;
-        cri = T::GetClassRegistryItem();
+        cri = T::GetClassRegistryItem_Static();
         if (cri != NULL)cri->SetIntrospection(this);
 
     }
@@ -138,8 +138,8 @@ public:
  * This macro creates a static instance of IntrospectionEntry with the provided inputs.
  */
 #define DECLARE_CLASS_MEMBER(className, memberName, type, modifierString, attributeString ) \
-    static const IntrospectionEntry className ## _ ## memberName ## _introspectionEntry =   \
-    IntrospectionEntry(                                                                     \
+    static const MARTe::IntrospectionEntry className ## _ ## memberName ## _introspectionEntry =   \
+    MARTe::IntrospectionEntry(                                                                     \
         #memberName,                                                                        \
         #type,                                                                              \
         modifierString,                                                                     \
@@ -153,7 +153,20 @@ public:
  * This macro creates a static instance of Introspection with the provided inputs.
  */
 #define DECLARE_CLASS_INTROSPECTION(className, introEntryArray) \
-    static MARTe::Introspection<className> className ## _ ## introspection(introEntryArray, sizeof(className));
+    static MARTe::IntrospectionT<className> className ## _ ## introspection(introEntryArray, sizeof(className));
+
+#define DECLARE_STRUCT_INTROSPECTION(structName, introEntryArray)                                                              \
+class structName ## _Registrable: public structName {                                                                          \
+public:                                                                                                                        \
+    static MARTe::ClassProperties classProperties;                                                                             \
+    static MARTe::ClassRegistryItem * GetClassRegistryItem_Static() {                                                          \
+        return &ClassRegistryItemT<structName ## _Registrable>::Instance();                                                    \
+    }                                                                                                                          \
+};                                                                                                                             \
+MARTe::ClassProperties structName ## _Registrable::classProperties                                                             \
+                                  ( #structName, typeid(structName).name(), "", static_cast<uint32>(sizeof(structName)));      \
+static MARTe::IntrospectionT<structName ## _Registrable> structName ## _ ## introspection(introEntryArray, sizeof(structName));
+
 
 #endif /* INTROSPECTION_H_ */
 

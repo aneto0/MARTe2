@@ -53,7 +53,7 @@ static bool SerializeStaticMatrix(const AnyType &typeIn,
     // allocate the memory block on destination
     uint32 memoryAllocationSize = 0u;
     bool isString = (sourceDescriptor.type == SString);
-    bool isCCString = (sourceDescriptor.type == CCString);
+    bool isCCString = (sourceDescriptor.type == BT_CCString);
 
     // the SString will be changed into a CCString
     if (isString) {
@@ -113,7 +113,7 @@ static bool SerializeHeapMatrix(const AnyType &typeIn,
 
     bool ret = true;
     bool isString = (sourceDescriptor.type == SString);
-    bool isCCString = (sourceDescriptor.type == CCString);
+    bool isCCString = (sourceDescriptor.type == BT_CCString);
 
     uint32 rowSize = 0u;
 
@@ -189,7 +189,7 @@ static bool SerializeVector(const AnyType &typeIn,
     // allocate the memory block on destination
     uint32 memoryAllocationSize = 0u;
     bool isString = (sourceDescriptor.type == SString);
-    bool isCCString = (sourceDescriptor.type == CCString);
+    bool isCCString = (sourceDescriptor.type == BT_CCString);
     bool isCArray = (sourceDescriptor.type == CArray);
     bool isStaticDeclared = (typeIn.IsStaticDeclared());
 
@@ -256,7 +256,7 @@ static bool SerializeScalar(const AnyType &typeIn,
     void* sourcePointer = typeIn.GetDataPointer();
 
     bool isString = (sourceDescriptor.type == SString);
-    bool isCCString = (sourceDescriptor.type == CCString);
+    bool isCCString = (sourceDescriptor.type == BT_CCString);
     bool isCArray = (sourceDescriptor.type == CArray);
     bool isStaticDeclared = (typeIn.IsStaticDeclared());
     bool isCArrayOnHeap = ((isCArray) && (!isStaticDeclared));
@@ -351,7 +351,7 @@ bool AnyObject::Serialise(const AnyType &typeIn) {
 
 void AnyObject::CleanUp() {
     void *typePointer = type.GetDataPointer();
-    bool cString = (type.GetTypeDescriptor().type == CCString);
+    bool cString = (type.GetTypeDescriptor().type == BT_CCString);
     bool sString = (type.GetTypeDescriptor().type == SString);
     bool cArray = (type.GetTypeDescriptor().type == CArray);
     bool staticDeclared = type.IsStaticDeclared();

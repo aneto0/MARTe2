@@ -49,7 +49,7 @@ bool AnyObjectTest::TestGetType_Scalar_String() {
     MARTe::AnyObject anyObj;
     StreamString s = "ThisIsAString";
     bool ok = anyObj.Serialise(s);
-    ok = (anyObj.GetType().GetTypeDescriptor().type == CCString);
+    ok = (anyObj.GetType().GetTypeDescriptor().type == BT_CCString);
     return ok;
 }
 

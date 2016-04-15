@@ -130,9 +130,10 @@ ClassMethodReturn ClassMethodsRegistryItem::CallFunction(Object * context, const
     return returnValue;
 }
 
-
-
 }
+
+#if 0
+
 namespace MARTe {
 
 #include "Object.h"
@@ -158,35 +159,7 @@ ClassMethodInterfaceMapper CMIMS[] = {&Dummy::Test,&Dummy::Test};
 
 CLASS_METHOD_REGISTER(Dummy,&Dummy::Test)
 
-//static const MARTe::ClassMethodsRegistryItem Dummy__ClassMethodsRegistryItem(Dummy::GetClassRegistryItem_Static(),{__VA_ARGS__},#__VA_ARGS__);
-
-
-/*
-ClassMethodInterfaceMapper *CMIM= {&Dummy::Test};
-
-static const MARTe::ClassMethodsRegistryItem Dummy_ClassMethodsRegistryItem(Dummy::GetClassRegistryItem_Static(),{Dummy::Test},"Dummy::Test");
-
-
-CLASS_METHOD_REGISTER(Dummy,Dummy::Test)
-*/
 
 }
-
-#if 0
-/**
- * TODO
- * */
-static const MARTe::ClassMethodInterfaceMapper FunctionTable[];
-/**
- * TODO
- * */
-static const char *FunctionNames;
-
-
-MARTe::ClassMethodsRegistryItem Dummy_ClassMethodsRegistryItem(Dummy::GetClassRegistryItem(),{Dummy::Test},"Dummy::Test");
-
-static const MARTe::ClassMethodInterfaceMapper FunctionTable[] = {Dummy::Test};
-static const char *FunctionNames = "Dummy::Test";
-
 #endif
 	

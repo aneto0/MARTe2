@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Message.h"
+#include "TimeoutType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -41,35 +42,69 @@
 namespace MARTe {
 
 /**
- *
+ * TODO
  * */
-class MessageI{
-
+class MessageI  {
 public:
     /**
-     *
+     * TODO
+     * Finds the target object
+     * Calls the ReceiveMessage function of the target
+     * Reply is not expected here
+     * returns whenever possible
      * */
-     virtual bool ReceiveMessage(const Message &message) {
-         return HandleMessage(message);
-     }
+    static bool SendMessage( ReferenceT<Message> &message,Object *sender = NULL);
+
+    /**
+     * TODO
+     * Finds the target object
+     * Calls the ReceiveMessage function of the target
+     * Waits for reply and returns
+     * */
+    static bool SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender = NULL);
+
+    /**
+     * TODO
+     * Finds the target object
+     * Calls the ReceiveMessage function of the target
+     * Reply is expected but does not Waits for a reply and returns
+     * */
+    static bool SendMessageAndExpectReplyLater(ReferenceT<Message> &message,Object *sender = NULL);
+
+
+    virtual ~MessageI(){};
 
 protected:
 
+    /**
+      * TODO
+      * Default message handling mechanism
+      * Handles the reception of a message
+      * By default simply calls SortMessage
+      * Can be overridden to implement message Queues etc...
+      * true - message is accepted
+      * false - message is rejected
+     * */
+     virtual bool ReceiveMessage(ReferenceT<Message> &message);
+
      /**
-      *
+      * TODO
+      * Default message sorting mechanism
+      * By default checks if there are usable registered methods
+      * Otherwise calls HandleMessage
       * */
-    virtual bool HandleMessage(const Message &message){
-        //check if RemoteFunctionInterface  calls RemoteFunction
-        //check if ..
-        return CustomMessageHandler(message);
-     }
+     virtual bool SortMessage(ReferenceT<Message> &message);
 
     /**
-     *
+      * TODO
+      * Default message handling mechanism
+      * By default refuses messages returning false
      * */
-     virtual bool CustomMessageHandler(const Message &message){
-         return false;
-     }
+     virtual bool HandleMessage(ReferenceT<Message> &message);
+
+private:
+
+     static ReferenceT<MessageI> FindDestination(CCString destination);
 
 
 };
@@ -78,6 +113,8 @@ protected:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+
 
 #endif /* MESSAGEI_H_ */
 	

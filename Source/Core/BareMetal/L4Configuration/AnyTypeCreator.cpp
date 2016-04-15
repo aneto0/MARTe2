@@ -95,7 +95,7 @@ AnyType AnyTypeCreator::Create(const uint8 nOfDimensions,
             ret = (nOfDimensions >= dimCheck) && (nOfDimensions < 3u);
             if (ret) {
 
-                if ((TypeDescriptor::GetTypeDescriptorFromStaticTable(typeIndex).type == CCString) && (nOfDimensions == 0u)) {
+                if ((TypeDescriptor::GetTypeDescriptorFromStaticTable(typeIndex).type == BT_CCString) && (nOfDimensions == 0u)) {
                     /*lint -e{613} .Justification: possible NULL memory is checked before entering here*/
                     element = AnyType(TypeDescriptor::GetTypeDescriptorFromStaticTable(typeIndex), static_cast<uint8>(0u), *static_cast<char8**>(memory->GetAllocatedMemory()));
                 }
