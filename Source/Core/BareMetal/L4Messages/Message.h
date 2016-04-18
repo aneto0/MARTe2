@@ -36,6 +36,7 @@
 #include "ReferenceContainer.h"
 #include "CString.h"
 #include "StreamString.h"
+#include "TimeoutType.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -112,6 +113,8 @@ class DLL_API Message: public ReferenceContainer{
          */
         bool missingReply:1;
 
+
+        /// default initialisation
         MessageFlags(){
             expectsReply          = false;
             expectsImmediateReply = false;
@@ -120,7 +123,17 @@ class DLL_API Message: public ReferenceContainer{
             missingReply          = false;
         }
 
-    } mode;
+       /// initialisation from string
+        MessageFlags(CCString asString){
+            expectsReply          = (StringHelper::Compare(asString,"ExpectsReply")==0);
+            expectsImmediateReply = (StringHelper::Compare(asString,"ExpectsImmediateReply")==0);
+            if (expectsImmediateReply) expectsReply = true;
+            isReply               = false;
+            willBeAsyncReply      = false;
+            missingReply          = false;
+        }
+
+    } flags;
 public:
 
     CLASS_REGISTER_DECLARATION()
@@ -148,22 +161,22 @@ public:
      * marked by send when requiring reply
      * */
     void MarkReplyExpected(bool immediate = false){
-        mode.expectsReply = true;
-        mode.expectsImmediateReply = true;
+        flags.expectsReply = true;
+        flags.expectsImmediateReply = true;
     }
 
     /**
      * TODO
      * */
     bool IsReplyMessage(){
-        return mode.isReply;
+        return flags.isReply;
     }
 
     /**
      * TODO
      * */
     bool ReplyMessagePlanned(){
-        return mode.willBeAsyncReply;
+        return flags.willBeAsyncReply;
     }
 
     /**

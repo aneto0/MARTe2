@@ -50,24 +50,23 @@ public:
      * TODO
      * Finds the target object
      * Calls the ReceiveMessage function of the target
-     * Reply is not expected here
-     * returns whenever possible
+     * The sync/async behaviour depends on the flags set in the message
+     * by default: Reply is not expected here. Returns whenever possible
+     * if Message::flags.expectsReply= true          - Then reply message will requested but not waited for
+     * if Message::flags.expectsImmediateReply= true - Then reply message will be waited for at the destination
      * */
     static bool SendMessage( ReferenceT<Message> &message,Object *sender = NULL);
 
     /**
      * TODO
-     * Finds the target object
-     * Calls the ReceiveMessage function of the target
-     * Waits for reply and returns
+     * Sets Message::maxWait
+     * Sets Message::flags.expectsImmediateReply and calls SendMessage
      * */
-    static bool SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender = NULL);
+    static bool SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender = NULL,TimeoutType maxWait);
 
     /**
      * TODO
-     * Finds the target object
-     * Calls the ReceiveMessage function of the target
-     * Reply is expected but does not Waits for a reply and returns
+     * Sets Message::flags.expectsReply and calls SendMessage
      * */
     static bool SendMessageAndExpectReplyLater(ReferenceT<Message> &message,Object *sender = NULL);
 
