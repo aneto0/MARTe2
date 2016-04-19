@@ -46,7 +46,7 @@ namespace MARTe {
  * @tparam T the type of the object which will be checked by the Test method.
  */
 template<typename T>
-class SearchFilterT {
+class SearchFilterT: public SearchFilter {
 public:
 
     /**
@@ -62,7 +62,11 @@ public:
      * @param[in] data the current LinkedListable element to be tested.
      * @return true if \a data meets the search criteria.
      */
-    virtual bool Test(T data)=0;
+    virtual bool Test(T *data)=0;
+
+    virtual bool Test(LinkedListable *data){
+        return Test(static_cast<T *>(data));
+    }
 };
 
 }

@@ -60,7 +60,7 @@ bool Message::Initialise(StructuredDataI &data){
 
     StreamString messageFlags;
     if (data.Read("Mode",messageFlags)){
-        flags = MessageFlags(messageFlags);
+        flags = MessageFlags(messageFlags.Buffer());
     } else {
         // TODO warning about flags set to default
     }

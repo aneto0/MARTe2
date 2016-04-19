@@ -167,6 +167,15 @@ public:
 
     /**
      * TODO
+     * marked by send when requiring reply
+     * */
+    bool ReplyExpected(){
+        return (flags.expectsReply || flags.expectsImmediateReply);
+    }
+
+
+    /**
+     * TODO
      * */
     bool IsReplyMessage(){
         return flags.isReply;
@@ -189,22 +198,29 @@ public:
     /**
      * TODO
      * */
-    CCString GetSender(){
+    inline CCString GetSender(){
         return sender.Buffer();
     }
 
     /**
      * TODO
      * */
-    void SetSender(CCString senderName){
+    inline void SetSender(CCString senderName){
         sender = senderName;
     }
 
     /**
      * TODO
      * */
-    CCString GetFunction(){
+    inline CCString GetFunction(){
         return function.Buffer();
+    }
+
+    /**
+     * TODO
+     * */
+    inline void SetReplyTimeout(TimeoutType maxWaitIn){
+        maxWait = maxWaitIn;
     }
 
 };

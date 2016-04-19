@@ -35,6 +35,7 @@
 #include "Introspection.h"
 #include "ClassMethodsRegistryItem.h"
 #include "ObjectBuilder.h"
+#include "SearchFilterT.h"
 
 
 namespace MARTe {
@@ -56,6 +57,21 @@ ClassRegistryItem::ClassRegistryItem(ClassProperties &classProperties_in) :
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuilder = NULL_PTR(ObjectBuilder *);
     introspection = NULL_PTR(Introspection *);
+}
+
+ClassRegistryItem *ClassRegistryItem::Instance(ClassRegistryItem *&instance,ClassProperties &classProperties_in){
+    ClassRegistryDatabase* crd = ClassRegistryDatabase::Instance();
+
+    if ((crd != NULL_PTR(ClassRegistryDatabase*)) && (instance != NULL_PTR(ClassRegistryItem*))){
+
+        instance = new ClassRegistryItem(classProperties_in);
+
+        if (instance != NULL){
+            crd->Add(instance);
+        }
+    }
+
+    return instance;
 }
 
 
@@ -132,10 +148,52 @@ uint32 ClassRegistryItem::GetNumberOfInstances() const {
     return numberOfInstances;
 }
 
+class CallRegisteredMethodIterator : public SearchFilterT<ClassMethodsRegistryItem >{
+    CCString methodName;
+    ReferenceContainer & parameters;
+    Object *object;
+    ClassMethodReturn ret;
+public:
+
+
+    CallRegisteredMethodIterator(Object *objectIn,CCString methodNameIn,ReferenceContainer & parametersIn): parameters(parametersIn),ret(false){
+        object = objectIn;
+        methodName= methodNameIn;
+    }
+
+    virtual bool Test(ClassMethodsRegistryItem *data){
+        ret = data->CallFunction(object,methodName,parameters);
+        return ret.methodFound;
+    }
+
+    ClassMethodReturn GetResults(){ return ret; }
+
+};
+
+
+ClassMethodReturn ClassRegistryItem::CallRegisteredMethod(Object *object,CCString methodName,ReferenceContainer & parameters){
+    ClassMethodReturn ret(true);
+
+    ret.error = ((object == NULL_PTR(Object*)) || (methodName == NULL_PTR(char8*)));
+
+    if (ret.AllOk()){
+        CallRegisteredMethodIterator browser(object,methodName,parameters);
+        if (classMethods.ListSearch(&browser)){
+            ret = browser.GetResults();
+        } else {
+            ret.methodFound = false;
+        }
+    }
+    return ret;
+}
+
+
 
 
 void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {
     classProperties.SetUniqueIdentifier(uid);
 }
+
+
 
 }

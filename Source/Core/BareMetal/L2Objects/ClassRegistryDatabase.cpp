@@ -47,6 +47,7 @@
 
 namespace MARTe {
 
+
 ClassRegistryDatabase *ClassRegistryDatabase::Instance() {
     static ClassRegistryDatabase *instance = NULL_PTR(ClassRegistryDatabase *);
     if (instance == NULL_PTR(ClassRegistryDatabase *)) {

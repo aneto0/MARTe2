@@ -37,8 +37,8 @@
 #include "ClassProperties.h"
 #include "FractionalInteger.h"
 #include "ObjectBuilder.h"
-//#include "Introspection.h"
-//#include "ClassMethodsRegistryItem.h"
+#include "CString.h"
+#include "ClassMethodReturn.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -48,6 +48,7 @@ namespace MARTe {
 
 class Introspection;
 class ClassMethodsRegistryItem;
+class ReferenceContainer;
 
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
 class Object;
@@ -139,12 +140,16 @@ public:
      */
     const ObjectBuilder *GetObjectBuilder() const;
 
-
     /**
      * @brief Sets the unique identifier for the class described by this ClassRegistryItem.
      * @param[in] uid the new unique identifier to be set for the class described by this ClassRegistryItem.
      */
     void SetUniqueIdentifier(const ClassUID &uid);
+
+    /**
+     * TODO
+     */
+    ClassMethodReturn CallRegisteredMethod(Object *object,CCString methodName,ReferenceContainer & parameters);
 
 protected:
     /**
@@ -153,6 +158,11 @@ protected:
      */
     ClassRegistryItem(ClassProperties &classProperties_in);
 
+    /** singleton approach - usable only by descendant methods
+     * common code
+     * static ptr is specialised in the templetised descendant
+     */
+    static ClassRegistryItem *Instance(ClassRegistryItem *&instance,ClassProperties &classProperties_in);
 
 private:
     /**
@@ -190,6 +200,7 @@ private:
 };
 
 
+
 /**
  * TODO
  */
@@ -206,12 +217,11 @@ public:
     /**
      * @brief Singleton access to the database.
      * @return a reference to the database.
+     * TODO
      */
-    static ClassRegistryItem &Instance(){
-
-        static ClassRegistryItemT<T> localInstance(T::classProperties);
-
-        return localInstance;
+    static inline ClassRegistryItem *Instance(){
+        static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
+        return ClassRegistryItem::Instance(instance,T::classProperties);
     }
 
 

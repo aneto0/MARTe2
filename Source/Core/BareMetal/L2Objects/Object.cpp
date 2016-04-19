@@ -39,6 +39,8 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+CLASS_REGISTER(Object,"1.0")
+
 static bool ConvertToStructuredData(void* ptr,
                                     const char8 * const className,
                                     StructuredDataI &data,
@@ -411,6 +413,30 @@ bool Object::IntrospectionToStructuredData(StructuredDataI & data,
     return ret;
 }
 
-CLASS_REGISTER(Object, "1.0")
+ClassMethodReturn Object::CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters){
+    ClassMethodReturn ret(false);
+    ClassRegistryItem * cri = GetClassRegistryItem();
+
+    if (cri!=NULL_PTR(ClassRegistryItem *)){
+        ret = cri->CallRegisteredMethod(this,methodName,parameters);
+    }
+
+    return ret;
+
+}
+
+ const ClassProperties *Object::GetClassProperties() const{
+     const ClassProperties *cp = NULL_PTR(ClassProperties *);
+     ClassRegistryItem * cri = GetClassRegistryItem();
+
+     if (cri!=NULL_PTR(ClassRegistryItem *)){
+         cp = cri->GetClassProperties();
+     }
+
+     return cp;
+ }
+
+
+
 
 }

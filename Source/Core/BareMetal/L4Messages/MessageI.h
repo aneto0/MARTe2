@@ -34,6 +34,7 @@
 
 #include "Message.h"
 #include "TimeoutType.h"
+#include "ReferenceT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -62,7 +63,7 @@ public:
      * Sets Message::maxWait
      * Sets Message::flags.expectsImmediateReply and calls SendMessage
      * */
-    static bool SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender = NULL,TimeoutType maxWait);
+    static bool SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender = NULL,TimeoutType maxWait=TTInfiniteWait);
 
     /**
      * TODO

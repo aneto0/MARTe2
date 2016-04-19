@@ -38,7 +38,7 @@
 #include "ClassRegistryItem.h"
 #include "StructuredDataI.h"
 #include "AnyType.h"
-//#include "MessageI.h"
+#include "ClassMethodReturn.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -65,16 +65,6 @@
  */
 #define CLASS_REGISTER_DECLARATION()                                                                                   \
     static ClassProperties classProperties;                                                                            \
-    /*                                                                                                                 \
-     * @brief Returns the class properties associated with this class type.                                            \
-     * @param[in, out] destination the destination where to copy the class properties to.                              \
-     */                                                                                                                \
-     virtual const MARTe::ClassProperties *GetClassProperties() const;                                                 \
-    /*                                                                                                                 \
-     * @brief Returns the class properties associated with this class type.                                            \
-     * @param[in, out] destination the destination where to copy the class properties to.                              \
-     */                                                                                                                \
-     const MARTe::ClassProperties *GetClassProperties_Static() ;                                                       \
     /*                                                                                                                 \
      * TODO                                                                                                            \
      */                                                                                                                \
@@ -119,22 +109,10 @@
      * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
      */                                                                                                                \
     MARTe::ClassProperties className::classProperties( #className , typeid(className).name(), ver, static_cast<uint32>(sizeof(className)));                 \
-    /*                                                                                                                 \
-     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
-     */                                                                                                                \
-    const MARTe::ClassProperties *className::GetClassProperties_Static() {                                             \
-        return &classProperties;                                                                                       \
-    }                                                                                                                  \
-    /*                                                                                                                 \
-     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
-     */                                                                                                                \
-    const MARTe::ClassProperties *className::GetClassProperties() const {                                              \
-        return 0; /*className::GetClassProperties_Static();*/                                                                            \
-    }                                                                                                                  \
     /*  TODO                                                                                                           \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                              \
-        return &ClassRegistryItemT<className>::Instance();                                                             \
+        return ClassRegistryItemT<className>::Instance();                                                              \
     }                                                                                                                  \
     /*  TODO                                                                                                           \
      */                                                                                                                \
@@ -165,8 +143,32 @@
         GetClassRegistryItem_Static()->DecrementNumberOfInstances();                                                   \
     }
 
+#if 0
+    /*                                                                                                                 \
+     * @brief Returns the class properties associated with this class type.                                            \
+     * @param[in, out] destination the destination where to copy the class properties to.                              \
+     */                                                                                                                \
+     virtual const MARTe::ClassProperties *GetClassProperties() const;                                                 \
+    /*                                                                                                                 \
+     * @brief Returns the class properties associated with this class type.                                            \
+     * @param[in, out] destination the destination where to copy the class properties to.                              \
+     */                                                                                                                \
+     const MARTe::ClassProperties *GetClassProperties_Static() ;                                                       \
 
 
+/*                                                                                                                 \
+     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
+     */                                                                                                                \
+    const MARTe::ClassProperties *className::GetClassProperties_Static() {                                             \
+        return &classProperties;                                                                                       \
+    }                                                                                                                  \
+    /*                                                                                                                 \
+     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
+     */                                                                                                                \
+    const MARTe::ClassProperties *className::GetClassProperties() const {                                              \
+        return 0; /*className::GetClassProperties_Static();*/                                                          \
+    }
+#endif
 
 /*lint -restore */
 
@@ -192,7 +194,6 @@ class DLL_API Object {
      */
     friend class Reference;
 public:
-    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Default constructor. Sets the number of references to zero.
@@ -218,8 +219,10 @@ public:
 
     //virtual bool ProcessMessage(const MessageI & message, MessageI & data);
 
+    // TODO
     virtual bool ToStructuredData(StructuredDataI & data);
 
+    // TODO
     virtual bool IntrospectionToStructuredData(StructuredDataI & data,
                                                int32 level = -1);
 
@@ -257,6 +260,25 @@ public:
      * @pre newName != NULL
      */
     void SetName(const char8 * const newName);
+
+    /**
+     * TODO
+     */
+    ClassMethodReturn CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters);
+
+    /*
+     * @brief Returns the class properties associated with this class type.
+     */
+     const ClassProperties *GetClassProperties() const;
+
+#if 0
+     /*
+      * @brief Returns the record containing all class information.
+      */
+     virtual ClassRegistryItem * GetClassRegistryItem() const = 0;
+#endif
+
+     CLASS_REGISTER_DECLARATION()
 
 private:
 

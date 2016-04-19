@@ -167,9 +167,7 @@ bool Reference::operator!=(const Reference& sourceReference) const {
     return (objectPointer != sourceReference.objectPointer);
 }
 
-Object* Reference::operator->() {
-    return objectPointer;
-}
+
 
 Object *Reference::CreateByName(const char8 * const className,
                                 HeapI* const heap) const {

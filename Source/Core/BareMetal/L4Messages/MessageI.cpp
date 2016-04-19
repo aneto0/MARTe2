@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MessageI.h"
+#include "Object.h"
+#include "ObjectRegistryDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,28 +41,49 @@ namespace MARTe {
 
 ReferenceT<MessageI> MessageI::FindDestination(CCString destination){
     ReferenceT<MessageI> destinationObject_MessageI;
+    ObjectRegistryDatabase *ord = ObjectRegistryDatabase::Instance();
 
-    Reference destinationObject = ObjectRegistryDatabase::Instance()->Find(destination);
-    if (destinationObject.IsValid()){
-        ReferenceT<MessageI> destinationObject_MessageI = destinationObject;
+    if (ord != NULL_PTR(ObjectRegistryDatabase *)){
+        Reference destinationObject = ord->Find(destination);
+        if (destinationObject.IsValid()){
+            ReferenceT<MessageI> destinationObject_MessageI = destinationObject;
+        }
     }
     return destinationObject_MessageI;
 }
 
 
 bool MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
+    CCString destination = "";
     bool ret = (message.IsValid());
 
     if (ret){
+        if (message->IsReplyMessage()){
 
-        if (sender != NULL){
-            message->SetSender(sender->GetName());
+            // if it is a reply then the destination is the original sender
+            destination = message->GetSender();
+        } else {
+
+            // if it is a reply then the destination is the original sender
+            destination = message->GetDestination();
+
+            if (sender != NULL){
+                message->SetSender(sender->GetName());
+            } else {
+                // no Object ==> no reply possible
+                if (message->ReplyExpected()){
+                    // TODO produce error message
+                    ret = false;
+                }
+            }
         }
+    }
 
-        ReferenceT<MessageI> destinationObject_MessageI = FindDestination(message->GetDestination());
+    if (ret){
+        ReferenceT<MessageI> destinationObject = FindDestination(destination);
 
-        if (destinationObject_MessageI.IsValid()){
-            ret = destinationObject_MessageI->ReceiveMessage(message);
+        if (destinationObject.IsValid()){
+            ret = destinationObject->ReceiveMessage(message);
         }
     }
 
@@ -68,29 +91,26 @@ bool MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
 }
 
 
-bool MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender){
+
+bool MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender,TimeoutType maxWait){
     bool ret = (message.IsValid());
 
     if (ret){
-        message->MarkReplyExpected();
-
-        if (sender != NULL){
-            message->SetSender(sender->GetName());
-        }
-
-        ReferenceT<MessageI> destinationObject_MessageI = FindDestination(message->GetDestination());
-
-        if (destinationObject_MessageI.IsValid()){
-            ret = destinationObject_MessageI->ReceiveMessage(message);
-        }
-
-        // TODO
-        // check for isReply set.
-        if (!message->IsReplyMessage()){
+        // reply to a reply NOT possible
+        if (message->IsReplyMessage()){
+            // TODO emit error
             ret = false;
-            // TODO handle errors
         }
+    }
 
+    if (ret){
+        // true means immediate reply
+        message->MarkReplyExpected(true);
+        message->SetReplyTimeout(maxWait);
+    }
+
+    if (ret){
+        ret = SendMessage(message,sender);
     }
     return ret;
 }
@@ -102,33 +122,25 @@ bool MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,Object *send
  * Reply is expected but does not Waits for a reply and returns
  * */
 bool MessageI::SendMessageAndExpectReplyLater(ReferenceT<Message> &message,Object *sender){
-
     bool ret = (message.IsValid());
 
     if (ret){
-        message->MarkReplyExpected(true);
-
-        if (sender != NULL){
-            message->SetSender(sender->GetName());
-        }
-
-        ReferenceT<MessageI> destinationObject_MessageI = FindDestination(message->GetDestination());
-
-        if (destinationObject_MessageI.IsValid()){
-            ret = destinationObject_MessageI->ReceiveMessage(message);
-        }
-
-        // TODO
-        // check for isReply set.
-        if (!message->ReplyMessagePlanned() ){
+        // reply to a reply NOT possible
+        if (message->IsReplyMessage()){
+            // TODO emit error
             ret = false;
-            // TODO handle errors
         }
-
     }
 
-    return false;
+    if (ret){
+        // false means decoupled reply
+        message->MarkReplyExpected(false);
+    }
 
+    if (ret){
+        ret = SendMessage(message,sender);
+    }
+    return ret;
 }
 
 
@@ -148,19 +160,39 @@ bool MessageI::ReceiveMessage(ReferenceT<Message> &message) {
  * Otherwise calls HandleMessage
  * */
 bool MessageI::SortMessage(ReferenceT<Message> &message){
+    // the return of the function
+    bool ret = true;
+    // whether we found a function
+    bool done = false;
 
-    Object *this_Object = dynamic_cast<Object *> (this);
+    Object *thisAsObject = dynamic_cast<Object *> (this);
 
+    //if this is an Object derived class then we can look for a registered method to call
+    if (thisAsObject != NULL){
 
-    //TODO look for a method matching the name
-    if (this_Object != NULL){
+        // we will not emit errors here is the message is invalid.
+        if (message.IsValid()){
 
+            CCString function = message->GetFunction();
+            if (message->IsReplyMessage()){
+                function = "HandleReply";
+            }
+
+            ClassMethodReturn fret = thisAsObject->CallRegisteredMethod(function,*(message.operator->()));
+
+            done = (fret.methodFound && fret.prototypeMismatch);
+            if (done){
+                ret = fret.AllOk();
+            }
+        }
     }
 
-   //check if Object derived and look for registered method
-   //check if ..
-   //otherwise
-   return HandleMessage(message);
+    // if no registered method found
+    if (!done) {
+        ret = HandleMessage(message);
+    }
+
+    return ret;
 }
 
 bool MessageI::HandleMessage(ReferenceT<Message> &message){

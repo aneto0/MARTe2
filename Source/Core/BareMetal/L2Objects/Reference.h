@@ -148,7 +148,7 @@ public:
      * @brief Provides access to the underlying object linked by this Reference.
      * @return a pointer to the underlying object linked by this Reference.
      */
-    virtual Object* operator->();
+    inline Object* operator->();
 
 
 protected:
@@ -184,6 +184,10 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+Object* Reference::operator->(){
+    return objectPointer;
+}
 
 }
 #endif /* REFERENCE_H_ */

@@ -136,7 +136,8 @@ public:
      * @return a pointer to the element if it is found in the list, NULL otherwise.
      */
     inline LinkedListableT<T> *ListSearch(SearchFilterT<T> * const filter){
-        return static_cast<LinkedListableT<T> *>(LinkedListHolder::ListSearch(filter));
+        LinkedListable *ll = LinkedListHolder::ListSearch(filter);
+        return static_cast<LinkedListableT<T> *>(ll);
     }
 
     /**
