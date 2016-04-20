@@ -83,10 +83,9 @@ public:
      * TODO
      * */
     ObjectBuilderT(){
-        T::GetClassRegistryItem->SetObjectBuilder(this);
+        T::GetClassRegistryItem_Static()->SetObjectBuilder(this);
     }
 };
-
 
 }
 /*---------------------------------------------------------------------------*/
