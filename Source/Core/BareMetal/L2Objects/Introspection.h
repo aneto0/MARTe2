@@ -160,7 +160,7 @@ class structName ## _Registrable: public structName {                           
 public:                                                                                                                        \
     static MARTe::ClassProperties classProperties;                                                                             \
     static MARTe::ClassRegistryItem * GetClassRegistryItem_Static() {                                                          \
-        return &ClassRegistryItemT<structName ## _Registrable>::Instance();                                                    \
+        return ClassRegistryItemT<structName ## _Registrable>::Instance();                                                    \
     }                                                                                                                          \
 };                                                                                                                             \
 MARTe::ClassProperties structName ## _Registrable::classProperties                                                             \
