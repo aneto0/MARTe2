@@ -46,7 +46,7 @@ ReferenceT<MessageI> MessageI::FindDestination(CCString destination){
     if (ord != NULL_PTR(ObjectRegistryDatabase *)){
         Reference destinationObject = ord->Find(destination);
         if (destinationObject.IsValid()){
-            ReferenceT<MessageI> destinationObject_MessageI = destinationObject;
+            destinationObject_MessageI = destinationObject;
         }
     }
     return destinationObject_MessageI;
