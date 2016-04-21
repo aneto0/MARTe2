@@ -63,7 +63,7 @@ public:
     /**
      * TODO
      * */
-    ClassMethodReturn CallFunction(Object * context, const char8 *name, ReferenceContainer &ref);
+    ReturnType CallFunction(Object * context, const char8 *name, ReferenceContainer &ref);
 
 private:
 

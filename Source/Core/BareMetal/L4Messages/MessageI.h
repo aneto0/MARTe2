@@ -35,6 +35,8 @@
 #include "Message.h"
 #include "TimeoutType.h"
 #include "ReferenceT.h"
+#include "ReturnType.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -55,21 +57,31 @@ public:
      * by default: Reply is not expected here. Returns whenever possible
      * if Message::flags.expectsReply= true          - Then reply message will requested but not waited for
      * if Message::flags.expectsImmediateReply= true - Then reply message will be waited for at the destination
+     *
+     * returns AllOk() if everything went ok
+     * returns error.notUnsupportedFeature if the message was refused
+     * returns error.notTimeout if a wait for reply timesOut
+     * returns error.notCommunicationError if the reply was not produced when requested
+     * returns error.notParametersError of the message is invalid or if sender is NULL and reply was expected
+     *
      * */
-    static bool SendMessage( ReferenceT<Message> &message,Object *sender = NULL);
+    static ReturnType SendMessage( ReferenceT<Message> &message,Object *sender = NULL);
 
     /**
      * TODO
      * Sets Message::maxWait
      * Sets Message::flags.expectsImmediateReply and calls SendMessage
+     * Calls SendMessage. See SendMessage errors
+     * additional error.notCommunicationError is a reply to a reply is requested
      * */
-    static bool SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender = NULL,TimeoutType maxWait=TTInfiniteWait);
+    static ReturnType SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender = NULL,TimeoutType maxWait=TTInfiniteWait);
 
     /**
      * TODO
      * Sets Message::flags.expectsReply and calls SendMessage
+     * Calls SendMessage. See SendMessage errors
      * */
-    static bool SendMessageAndExpectReplyLater(ReferenceT<Message> &message,Object *sender = NULL);
+    static ReturnType SendMessageAndExpectReplyLater(ReferenceT<Message> &message,Object *sender = NULL);
 
 
     virtual ~MessageI(){};
@@ -84,23 +96,26 @@ protected:
       * Can be overridden to implement message Queues etc...
       * true - message is accepted
       * false - message is rejected
+      * in the case of a specialised method where queued message handling is implemented
+      * when the immediate return message is requested then the wait is performed here and a timeout+communication error may be produced here
      * */
-     virtual bool ReceiveMessage(ReferenceT<Message> &message);
+     virtual ReturnType ReceiveMessage(ReferenceT<Message> &message);
 
      /**
       * TODO
       * Default message sorting mechanism
       * By default checks if there are usable registered methods
-      * Otherwise calls HandleMessage
+      * Otherwise calls HandleMessage.
+      * in the case of delayed reply, the reply is sent from here
       * */
-     virtual bool SortMessage(ReferenceT<Message> &message);
+     virtual ReturnType SortMessage(ReferenceT<Message> &message);
 
     /**
       * TODO
       * Default message handling mechanism
       * By default refuses messages returning false
      * */
-     virtual bool HandleMessage(ReferenceT<Message> &message);
+     virtual ReturnType HandleMessage(ReferenceT<Message> &message);
 
 private:
 

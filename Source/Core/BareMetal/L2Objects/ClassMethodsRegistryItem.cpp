@@ -110,17 +110,17 @@ ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem *cri,  Clas
 /**
  * TODO
  * */
-ClassMethodReturn ClassMethodsRegistryItem::CallFunction(Object * context, const char8 *name, ReferenceContainer &ref){
-    ClassMethodReturn returnValue(true);
+ReturnType ClassMethodsRegistryItem::CallFunction(Object * context, const char8 *name, ReferenceContainer &ref){
+    ReturnType returnValue(true);
 
-    if (context == NULL)  returnValue.error = true;
-    if (name == NULL)     returnValue.error = true;
+    if (context == NULL)  returnValue.error.notParametersError = false;
+    if (name == NULL)     returnValue.error.notParametersError = false;
 
 
     ClassMethodInterfaceMapper * fmp = NULL;
     if (returnValue.AllOk()){
         fmp = FindFunction(name);
-        if (fmp == NULL) returnValue.methodFound = false;
+        if (fmp == NULL) returnValue.error.notUnsupportedFeature = false;
     }
 
     if (returnValue.AllOk()){

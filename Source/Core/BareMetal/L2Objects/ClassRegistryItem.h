@@ -38,7 +38,7 @@
 #include "FractionalInteger.h"
 #include "ObjectBuilder.h"
 #include "CString.h"
-#include "ClassMethodReturn.h"
+#include "ReturnType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -149,7 +149,7 @@ public:
     /**
      * TODO
      */
-    ClassMethodReturn CallRegisteredMethod(Object *object,CCString methodName,ReferenceContainer & parameters);
+    ReturnType CallRegisteredMethod(Object *object,CCString methodName,ReferenceContainer & parameters);
 
 protected:
     /**

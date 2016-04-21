@@ -38,7 +38,7 @@
 #include "ClassRegistryItem.h"
 #include "StructuredDataI.h"
 #include "AnyType.h"
-#include "ClassMethodReturn.h"
+#include "ReturnType.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -264,7 +264,7 @@ public:
     /**
      * TODO
      */
-    ClassMethodReturn CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters);
+    ReturnType CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters);
 
     /*
      * @brief Returns the class properties associated with this class type.

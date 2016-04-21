@@ -94,24 +94,11 @@ class DLL_API Message: public ReferenceContainer{
          * true for a reply message, false for a normal message
          * in a reply message sender and destination are implicitly flipped
          * set by the recipient:HandleMessage or by the caller of the recipient::SortMessage
+         * if this message is sent than it will call the sender.HandleReply function
         */
         bool isReply:1;
 
-        /**
-         * init:false
-         * true for a reply message that has been/ will be sent asynchronously
-         * the variable function is not used and instead HandleReply will be called on the sender to handle the reply
-         * set by recipient::ReceiveMessage
-         */
-        bool willBeAsyncReply:1;
 
-        /**
-         * init:false
-         * true if the reply is from the call mechanism and not the actual user code
-         * isReply is assumed true;
-         * set by the caller of the recipient::SortMessage
-         */
-        bool missingReply:1;
 
 
         /// default initialisation
@@ -119,8 +106,6 @@ class DLL_API Message: public ReferenceContainer{
             expectsReply          = false;
             expectsImmediateReply = false;
             isReply               = false;
-            willBeAsyncReply      = false;
-            missingReply          = false;
         }
 
        /// initialisation from string
@@ -129,8 +114,6 @@ class DLL_API Message: public ReferenceContainer{
             expectsImmediateReply = (StringHelper::Compare(asString,"ExpectsImmediateReply")==0);
             if (expectsImmediateReply) expectsReply = true;
             isReply               = false;
-            willBeAsyncReply      = false;
-            missingReply          = false;
         }
 
     } flags;
@@ -158,6 +141,14 @@ public:
 
     /**
      * TODO
+     * marked to be a reply
+     * */
+    void MarkAsReply(){
+        flags.isReply = true;
+    }
+
+    /**
+     * TODO
      * marked by send when requiring reply
      * */
     void MarkReplyExpected(bool immediate = false){
@@ -170,9 +161,24 @@ public:
      * marked by send when requiring reply
      * */
     bool ReplyExpected(){
-        return (flags.expectsReply || flags.expectsImmediateReply);
+        return (flags.expectsReply );
     }
 
+    /**
+     * TODO
+     * marked by send when requiring reply
+     * */
+    bool ImmediateReplyExpected(){
+        return (flags.expectsReply && flags.expectsImmediateReply);
+    }
+
+    /**
+     * TODO
+     * marked by send when requiring reply
+     * */
+    bool LateReplyExpected(){
+        return (flags.expectsReply && !flags.expectsImmediateReply);
+    }
 
     /**
      * TODO
@@ -181,12 +187,6 @@ public:
         return flags.isReply;
     }
 
-    /**
-     * TODO
-     * */
-    bool ReplyMessagePlanned(){
-        return flags.willBeAsyncReply;
-    }
 
     /**
      * TODO

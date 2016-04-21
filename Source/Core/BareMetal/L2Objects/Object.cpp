@@ -413,12 +413,14 @@ bool Object::IntrospectionToStructuredData(StructuredDataI & data,
     return ret;
 }
 
-ClassMethodReturn Object::CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters){
-    ClassMethodReturn ret(false);
+ReturnType Object::CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters){
+    ReturnType ret(true);
     ClassRegistryItem * cri = GetClassRegistryItem();
 
     if (cri!=NULL_PTR(ClassRegistryItem *)){
         ret = cri->CallRegisteredMethod(this,methodName,parameters);
+    } else {
+        ret.error.notInternalSetupError = false;
     }
 
     return ret;

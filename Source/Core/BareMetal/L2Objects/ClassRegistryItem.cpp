@@ -148,46 +148,46 @@ uint32 ClassRegistryItem::GetNumberOfInstances() const {
     return numberOfInstances;
 }
 
-class CallRegisteredMethodIterator : public SearchFilterT<ClassMethodsRegistryItem >{
+class CallRegisteredMethodLauncher : public SearchFilterT<ClassMethodsRegistryItem >{
     CCString methodName;
     ReferenceContainer & parameters;
     Object *object;
-    ClassMethodReturn ret;
+    ReturnType ret;
 public:
 
-
-    CallRegisteredMethodIterator(Object *objectIn,CCString methodNameIn,ReferenceContainer & parametersIn): parameters(parametersIn),ret(false){
+    CallRegisteredMethodLauncher(Object *objectIn,CCString methodNameIn,ReferenceContainer & parametersIn): parameters(parametersIn),ret(false){
         object = objectIn;
         methodName= methodNameIn;
     }
 
     virtual bool Test(ClassMethodsRegistryItem *data){
         ret = data->CallFunction(object,methodName,parameters);
-        return ret.methodFound;
+        return ret.error.notUnsupportedFeature;
     }
 
-    ClassMethodReturn GetResults(){ return ret; }
+    ReturnType GetResults(){
+        return ret;
+    }
 
 };
 
 
-ClassMethodReturn ClassRegistryItem::CallRegisteredMethod(Object *object,CCString methodName,ReferenceContainer & parameters){
-    ClassMethodReturn ret(true);
+ReturnType ClassRegistryItem::CallRegisteredMethod(Object *object,CCString methodName,ReferenceContainer & parameters){
+    ReturnType ret(true);
 
-    ret.error = ((object == NULL_PTR(Object*)) || (methodName == NULL_PTR(char8*)));
+    if (object != NULL_PTR(Object*))       ret.error.notParametersError = false;
+    if (methodName != NULL_PTR(char8*))    ret.error.notParametersError = false;
 
     if (ret.AllOk()){
-        CallRegisteredMethodIterator browser(object,methodName,parameters);
-        if (classMethods.ListSearch(&browser)){
-            ret = browser.GetResults();
+        CallRegisteredMethodLauncher launcher(object,methodName,parameters);
+        if (classMethods.ListSearch(&launcher)){
+            ret = launcher.GetResults();
         } else {
-            ret.methodFound = false;
+            ret.error.notUnsupportedFeature = false;
         }
     }
     return ret;
 }
-
-
 
 
 void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {

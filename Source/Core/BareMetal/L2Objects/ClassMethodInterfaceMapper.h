@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassMethodReturn.h"
+#include "ReturnType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -50,24 +50,24 @@ public:
      * TODO
      * To be case by case remapped by the descendant
      * */
-    virtual ClassMethodReturn Call(Object * context){
-        return ClassMethodReturn(false);
+    virtual ReturnType Call(Object * context){
+        return ReturnType(false);
     };
 
     /**
      * TODO
      * To be case by case remapped by the descendant
      * */
-    virtual ClassMethodReturn Call(Object * context,int x){
-        return ClassMethodReturn(false);
+    virtual ReturnType Call(Object * context,int x){
+        return ReturnType(false);
     };
 
     /**
      * TODO
      * To be case by case remapped by the descendant
      * */
-    virtual ClassMethodReturn Call(Object * context,ReferenceContainer & x){
-        return ClassMethodReturn(false);
+    virtual ReturnType Call(Object * context,ReferenceContainer & x){
+        return ReturnType(false);
     };
 
 };
@@ -82,16 +82,16 @@ public:
     }
 
 
-    virtual ClassMethodReturn Call(Object * context,Y ref){
-        ClassMethodReturn fr(true);
+    virtual ReturnType Call(Object * context,Y ref){
+        ReturnType fr(true);
 
         X *actualContext = dynamic_cast<X *> (context);
         if (actualContext == NULL_PTR (X *) ) {
-            fr.methodFound = false;
+            fr.error.notUnsupportedFeature = false;
         }
 
         if (fr.AllOk()){
-            fr.methodReturn = (actualContext->*pFun)(ref);
+            fr.error.functionReturn = (actualContext->*pFun)(ref);
         }
         return fr;
     }
@@ -119,9 +119,9 @@ public:
     };
 
     template <typename T>
-    ClassMethodReturn Call(Object *context,T ref){
-        ClassMethodReturn fr(true);
-        fr.methodFound = false;
+    ReturnType Call(Object *context,T ref){
+        ReturnType fr(true);
+        fr.error.notUnsupportedFeature = false;
         if (caller != NULL ) fr = caller->Call(context,ref);
         return fr;
     };
