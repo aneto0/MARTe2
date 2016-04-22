@@ -63,6 +63,7 @@ public:
      * returns error.notTimeout if a wait for reply timesOut
      * returns error.notCommunicationError if the reply was not produced when requested
      * returns error.notParametersError of the message is invalid or if sender is NULL and reply was expected
+     * returns error.notCommunicationError if trying to send an immediate reply
      *
      * */
     static ReturnType SendMessage( ReferenceT<Message> &message,Object *sender = NULL);
@@ -94,8 +95,6 @@ protected:
       * Handles the reception of a message
       * By default simply calls SortMessage
       * Can be overridden to implement message Queues etc...
-      * true - message is accepted
-      * false - message is rejected
       * in the case of a specialised method where queued message handling is implemented
       * when the immediate return message is requested then the wait is performed here and a timeout+communication error may be produced here
      * */

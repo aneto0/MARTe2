@@ -75,8 +75,7 @@ public:
      * @param[in] position the position in the container where the reference is to be inserted.
      * @return true if \a ref is valid and it can be successfully added to the container.
      */
-    bool Insert(Reference ref,
-                const int32 &position = -1);
+    bool Insert(Reference ref, const int32 &position = -1);
 
 
     /**

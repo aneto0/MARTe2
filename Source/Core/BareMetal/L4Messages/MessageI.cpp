@@ -43,12 +43,20 @@ ReferenceT<MessageI> MessageI::FindDestination(CCString destination){
     ReferenceT<MessageI> destinationObject_MessageI;
     ObjectRegistryDatabase *ord = ObjectRegistryDatabase::Instance();
 
+    // simple search for named object
     if (ord != NULL_PTR(ObjectRegistryDatabase *)){
         Reference destinationObject = ord->Find(destination);
         if (destinationObject.IsValid()){
             destinationObject_MessageI = destinationObject;
         }
     }
+
+    // if (!destinationObject_MessageI.IsValid())
+    // TODO search via brokers
+    // partial find of brokers within the specified path
+    // build and return reference to remote object handler
+
+
     return destinationObject_MessageI;
 }
 
@@ -56,6 +64,7 @@ ReferenceT<MessageI> MessageI::FindDestination(CCString destination){
 ReturnType MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
     CCString destination = "";
     ReturnType ret(true);
+
     if (!message.IsValid()){
         ret.error.notParametersError = false;
         // TODO produce error message
@@ -66,8 +75,13 @@ ReturnType MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
         // is this is a reply (must be a late reply)
         if (message->IsReplyMessage()){
 
-            // if it is a reply then the destination is the original sender
-            destination = message->GetSender();
+            if (! message->LateReplyExpected() ){
+                ret.error.notCommunicationError = false;
+                // TODO produce error message
+            } else {
+                // if it is a reply then the destination is the original sender
+                destination = message->GetSender();
+            }
 
         // not a reply
         } else {
