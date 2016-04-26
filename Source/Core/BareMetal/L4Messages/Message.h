@@ -151,9 +151,18 @@ public:
      * TODO
      * marked by send when requiring reply
      * */
-    void MarkReplyExpected(bool immediate = false){
+    void MarkImmediateReplyExpected(){
         flags.expectsReply = true;
         flags.expectsImmediateReply = true;
+    }
+
+    /**
+     * TODO
+     * marked by send when requiring reply
+     * */
+    void MarkLateReplyExpected(){
+        flags.expectsReply = true;
+        flags.expectsImmediateReply = false;
     }
 
     /**

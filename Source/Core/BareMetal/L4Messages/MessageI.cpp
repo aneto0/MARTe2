@@ -65,6 +65,16 @@ ReturnType MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
     CCString destination = "";
     ReturnType ret(true);
 
+    /*
+     * TODO: Verify all the error conditions at the beginning:
+     *
+     * !message.IsValid() => error
+     * message->IsReplyMessage() && !message->LateReplyExpected() => error
+     * !message->IsReplyMessage() && sender == NULL && message->ReplyExpected() => error
+     * !destinationObject.IsValid() => error
+     * message->ImmediateReplyExpected() && !message->IsReplyMessage() => error
+     */
+
     if (!message.IsValid()){
         ret.error.notParametersError = false;
         // TODO produce error message
@@ -79,6 +89,7 @@ ReturnType MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
                 ret.error.notCommunicationError = false;
                 // TODO produce error message
             } else {
+                //{message->IsReplyMessage() and message->LateReplyExpected()}
                 // if it is a reply then the destination is the original sender
                 destination = message->GetSender();
             }
@@ -128,6 +139,13 @@ ReturnType MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
 
 ReturnType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender,TimeoutType maxWait){
     ReturnType ret(true);
+
+    /*
+     * TODO: Verify all the error conditions at the beginning:
+     * !message.IsValid() => error
+     * message->IsReplyMessage() => error
+     */
+
     if (!message.IsValid()){
         ret.error.notParametersError = false;
         // TODO produce error message
@@ -143,7 +161,7 @@ ReturnType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,Object
 
     if (ret){
         // true means immediate reply
-        message->MarkReplyExpected(true);
+        message->MarkImmediateReplyExpected();
         message->SetReplyTimeout(maxWait);
 
         ret = SendMessage(message,sender);
@@ -159,6 +177,13 @@ ReturnType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,Object
  * */
 ReturnType MessageI::SendMessageAndExpectReplyLater(ReferenceT<Message> &message,Object *sender){
     ReturnType ret(true);
+
+    /*
+     * Verify all the error conditions at the beginning (Ivan's proposal):
+     * !message.IsValid() => error
+     * message->IsReplyMessage() => error
+     */
+
     if (!message.IsValid()){
         ret.error.notParametersError = false;
         // TODO produce error message
@@ -174,7 +199,7 @@ ReturnType MessageI::SendMessageAndExpectReplyLater(ReferenceT<Message> &message
 
     if (ret){
         // false means decoupled reply
-        message->MarkReplyExpected(false);
+        message->MarkLateReplyExpected();
 
         ret = SendMessage(message,sender);
     }
@@ -200,6 +225,13 @@ ReturnType MessageI::ReceiveMessage(ReferenceT<Message> &message) {
 ReturnType MessageI::SortMessage(ReferenceT<Message> &message){
 
     ReturnType ret(true);
+
+    /*
+     * TODO: Verify all the error conditions at the beginning:
+     * !message.IsValid() => error
+     * thisAsObject != NULL_PTR(Object *) => error
+     */
+
 
     Object *thisAsObject = dynamic_cast<Object *> (this);
 
