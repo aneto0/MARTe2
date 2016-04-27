@@ -47,7 +47,7 @@
 namespace MARTe {
 
 /**
- * @brief Buffered stream implementation (double buffer).
+ * @brief Buffered stream (double buffer version).
  * @details This class offers a buffering mechanism for character streams.
  */
 class DLL_API DoubleBufferedStream: public BufferedStreamI, public OperatingSystemCallbacksI {
@@ -150,7 +150,7 @@ public:
     /**
      * @see OperatingSystemCallbacksI::RelativeSeek
      */
-    virtual bool RelativeSeek(int32 deltaPos);
+    virtual bool RelativeSeek(const int64 deltaPos);
 
     /**
      * @see OperatingSystemCallbacksI::Position

@@ -69,5 +69,65 @@ AnyType::AnyType(const Object &obj) {
         dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
     }
 }
+
+
+AnyType AnyType::operator[](const uint32 position) const {
+
+    AnyType ret = voidAnyType;
+    if (dataPointer != NULL) {
+        uint32 size = 0u;
+        bool isStructured = dataDescriptor.isStructuredData;
+        if (isStructured) {
+            const ClassRegistryItem* item = ClassRegistryDatabase::Instance()->Peek(dataDescriptor.structuredDataIdCode);
+            if (item != NULL) {
+                const Introspection *introspection = item->GetIntrospection();
+                size = introspection->GetClassSize();
+            }
+        }
+        else {
+            size = GetByteSize();
+        }
+        if (size > 0u) {
+            if (numberOfDimensions == 2u) {
+                if (position < numberOfElements[1]) {
+                    if (staticDeclared) {
+                        uint32 index = (position * size) * numberOfElements[0];
+                        void* posPointer = &reinterpret_cast<char8*>(dataPointer)[index];
+                        ret = AnyType(dataDescriptor, bitAddress, posPointer);
+                        ret.SetNumberOfDimensions(1u);
+                        ret.SetNumberOfElements(0u, numberOfElements[1]);
+                    }
+                    else {
+                        void* posPointer = reinterpret_cast<char8**>(dataPointer)[position];
+                        ret = AnyType(dataDescriptor, bitAddress, posPointer);
+                        ret.SetNumberOfDimensions(1u);
+                        ret.SetNumberOfElements(0u, numberOfElements[1]);
+                    }
+                }
+            }
+            else if (numberOfDimensions == 1u) {
+                if (position < numberOfElements[0]) {
+                    uint32 index = position * size;
+                    char8* posPointer = NULL_PTR(char8*);
+                    if (dataDescriptor == CharString) {
+                        posPointer = reinterpret_cast<char8**>(dataPointer)[position];
+                    }
+                    else if (dataDescriptor == PointerType) {
+                        posPointer = reinterpret_cast<char8**>(dataPointer)[position];
+                    }
+                    else {
+                        posPointer = &reinterpret_cast<char8*>(dataPointer)[index];
+                    }
+                    ret = AnyType(dataDescriptor, bitAddress, reinterpret_cast<void*>(posPointer));
+                    ret.SetNumberOfDimensions(0u);
+                }
+            }
+            else {
+            }
+        }
+    }
+    return ret;
+}
+
 }
 

@@ -61,7 +61,7 @@ namespace MARTe {
  * |  1                 | 1           | 14                    |
  *
  */
-class TypeDescriptor {
+class DLL_API TypeDescriptor {
 public:
 
     /**
@@ -104,26 +104,34 @@ public:
     /**
      * @brief Constructor by 16 bit integer.
      * @param[in] x contains the type informations which must be stored into this memory area.
+     * @post x == all
      */
-    inline TypeDescriptor(const uint16 x = 0u);
+    TypeDescriptor(const uint16 x = 0u);
 
     /**
      * @brief Basic Type constructor.
      * @param[in] isConstantIn specifies if the type is constant.
      * @param[in] typeIn is the type.
      * @param[in] numberOfBitsIn the number of bits associated to the type.
+     * @post
+     *   isConstantIn == isConstant &&
+     *   typeIn == type &&
+     *   numberOfBitsIn == numberOfBits
      */
-    inline TypeDescriptor(const bool isConstantIn,
-                          const uint16 typeIn,
-                          const uint16 numberOfBitsIn);
+    TypeDescriptor(const bool isConstantIn,
+                   const uint16 typeIn,
+                   const uint16 numberOfBitsIn);
 
     /**
      * @brief Structured objects constructor.
      * @param[in] isConstantIn in specifies if the object is constant.
      * @param[in] structuredDataIdCodeIn is the 14 bit code associated to the object type.
+     * @post
+     *   isConstantIn == isConstant &&
+     *   structuredDataIdCodeIn == structuredDataIdCode
      */
-    inline TypeDescriptor(const bool isConstantIn,
-                          const ClassUID structuredDataIdCodeIn);
+    TypeDescriptor(const bool isConstantIn,
+                   const ClassUID &structuredDataIdCodeIn);
 
     /**
      * @brief Equality operator used to compare types.
@@ -132,7 +140,7 @@ public:
      * If the type is an object compares the structuredDataIdCode.
      */
     /*lint -e(1739) , operation basic_type == TypeDescriptor will not be supported*/
-    inline bool operator==(const TypeDescriptor &typeDescriptor) const;
+    bool operator==(const TypeDescriptor &typeDescriptor) const;
 
     /**
      * @brief Inequality operator used to compare types.
@@ -141,9 +149,61 @@ public:
      * If the type is an object compares the structuredDataIdCode.
      */
     /*lint -e(1739) , operation basic_type != TypeDescriptor will not be supported*/
-    inline bool operator!=(const TypeDescriptor &typeDescriptor) const;
+    bool operator!=(const TypeDescriptor &typeDescriptor) const;
+
+    /**
+     * @brief Retrieves the TypeDescriptor associated to the type name provided in input.
+     * @param[in] typeName is the type name input.
+     * @return the TypeDescriptor associated to \a typeName. If \a typeName is not matched returns InvalidType.
+     */
+    static TypeDescriptor GetTypeDescriptorFromTypeName(const char8 * const typeName);
+
+    /**
+     * @brief Retrieves the type name associated to the TypeDescriptor provided in input.
+     * @param[in] typeDescriptor is the TypeDescriptor input.
+     * @return the type name associated to \a typeDescriptor. If \a typeDescriptor is not matched returns NULL.
+     */
+    static const char8 *GetTypeNameFromTypeDescriptor(const TypeDescriptor &typeDescriptor);
+
+    /**
+     * @brief Provides direct access to the { name - TypeDescriptor } lookup table,
+     * returning the TypeDescriptor in the specified position.
+     * @details The { name - TypeDescriptor } lookup table is as follows: \n
+     * TypeDescriptor        |TypeName
+     * ----------------------|--------
+     * CharString            | "string"
+     * SignedInteger8Bit     | "int8"
+     * SignedInteger16Bit    | "int16"
+     * SignedInteger32Bit    | "int32"
+     * SignedInteger64Bit    | "int64"
+     * UnsignedInteger8Bit   | "uint8"
+     * UnsignedInteger16Bit  | "uint16"
+     * UnsignedInteger32Bit  | "uint32"
+     * UnsignedInteger64Bit  | "uint64"
+     * Float32Bit            | "float32"
+     * Float64Bit            | "float64"
+     * Character8Bit         | "char8"
+     * VoidType              | "void"
+     * InvalidType           | NULL
+     * @param[in] index is the position inside the lookup table
+     * @return the TypeDescriptor in the \a index position inside the lookup table.
+     */
+    static TypeDescriptor GetTypeDescriptorFromStaticTable(const uint32 index);
+
+    /**
+     * @brief Provides direct access to the type { name - TypeDescriptor } lookup table
+     * (see GetTypeDescriptorFromStaticTable), returning the type name in the specified position.
+     * @param[in] index is the position inside the lookup table
+     * @return the type name in the \a index position inside the lookup table.
+     */
+    static const char8 *GetTypeNameFromStaticTable(const uint32 index);
 
 };
+
+/**
+ * 8 bit Character.
+ */
+static const TypeDescriptor Character8Bit(false, CArray, 8u);
 
 /**
  * 32 bit float descriptor.
@@ -215,40 +275,24 @@ static const TypeDescriptor ConstCharString(true, CCString, sizeof(const char8*)
  */
 static const TypeDescriptor CharString(false, CCString, sizeof(char8*) * 8u);
 
+/**
+ * ConfigurationDatabase node
+ */
+static const TypeDescriptor StructuredDataInterfaceType(false, StructuredDataNode, 0u);
+
+/**
+ * Pointer descriptor
+ */
+static const TypeDescriptor PointerType(false, Pointer, sizeof(void*) * 8u);
+
+/**
+ * Invalid type descriptor
+ */
+static const TypeDescriptor InvalidType(0u);
+
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-TypeDescriptor::TypeDescriptor(const uint16 x) {
-    all = x;
-}
-
-TypeDescriptor::TypeDescriptor(const bool isConstantIn,
-                               const uint16 typeIn,
-                               const uint16 numberOfBitsIn) {
-    isStructuredData = false;
-    isConstant = isConstantIn;
-    type = typeIn;
-    numberOfBits = numberOfBitsIn;
-}
-
-TypeDescriptor::TypeDescriptor(const bool isConstantIn,
-                               const ClassUID structuredDataIdCodeIn) {
-    isStructuredData = true;
-    isConstant = isConstantIn;
-    structuredDataIdCode = structuredDataIdCodeIn;
-}
-
-bool TypeDescriptor::operator==(const TypeDescriptor &typeDescriptor) const {
-    bool ret = ((all | (0x0002u)) == (typeDescriptor.all | (0x0002u)));
-    return ret;
-}
-
-bool TypeDescriptor::operator!=(const TypeDescriptor &typeDescriptor) const {
-    bool ret = ((all | (0x0002u)) != (typeDescriptor.all | (0x0002u)));
-    return ret;
-}
-
-}
 
 #endif /* TYPEDESCRIPTOR_H_ */

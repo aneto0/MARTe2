@@ -40,7 +40,7 @@
 namespace MARTe {
 
 /**
- * @brief A Token wrapper described by an identifier and a value (description).
+ * @brief A class that describes a lexical token by identifier and description.
  */
 class DLL_API TokenInfo {
 

@@ -30,8 +30,11 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-/*lint -efile(766, FastPollingMutexSem.cpp) header not used in this cpp given that all function are static inline*/
 #include "FastPollingMutexSem.h"
+#include "ErrorType.h"
+#include "GeneralDefinitions.h"
+#include "HighResolutionTimer.h"
+#include "Atomic.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,3 +43,66 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+FastPollingMutexSem::FastPollingMutexSem() {
+    internalFlag = 0;
+    flag = &internalFlag;
+}
+
+FastPollingMutexSem::FastPollingMutexSem(volatile int32 &externalFlag) {
+    flag = &externalFlag;
+}
+
+void FastPollingMutexSem::Create(const bool locked) {
+    if (locked) {
+        *flag = 1;
+    }
+    else {
+        *flag = 0;
+    }
+}
+
+bool FastPollingMutexSem::Locked() const {
+    return *flag == 1;
+}
+
+ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msecTimeout,
+                                                         float64 sleepTime ) {
+    uint64 ticksStop = msecTimeout.HighResolutionTimerTicks();
+    ticksStop += HighResolutionTimer::Counter();
+    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+
+    // sets the default if it is negative
+    if (sleepTime < 0.0) {
+        sleepTime = 1e-3;
+    }
+    bool noSleep = IsEqual(sleepTime, 0.0);
+
+    while (!Atomic::TestAndSet(flag)) {
+        if (msecTimeout != TTInfiniteWait) {
+            uint64 ticks = HighResolutionTimer::Counter();
+            if (ticks > ticksStop) {
+                err = ErrorManagement::Timeout;
+                REPORT_ERROR(ErrorManagement::Timeout, "FastPollingMutexSem: Timeout expired");
+                break;
+            }
+        }
+
+        if (!noSleep) {
+            //Sleep::Sec(sleepTime);
+        }
+    }
+    return err;
+}
+
+bool FastPollingMutexSem::FastTryLock() {
+    return (Atomic::TestAndSet(flag));
+}
+
+void FastPollingMutexSem::FastUnLock() {
+    *flag = 0;
+}
+
+}

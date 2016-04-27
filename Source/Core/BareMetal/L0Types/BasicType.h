@@ -66,29 +66,35 @@ const BasicType Pointer = 3u;
  * The type is a C string
  * (const char *)
  */
-const BasicType CCString = 8u;
+const BasicType CCString = 4u;
 
 /**
  * The type is a pointer to a C string allocated on heap.
  * (char **)
  */
-const BasicType PCString = 9u;
+const BasicType PCString = 5u;
 
 /**
  * The type is an array of bytes with the size
  * specified in the size field.
  */
-const BasicType CArray = 10u;
+const BasicType CArray = 6u;
 
 /**
  * The type is a StreamString class.
  */
-const BasicType SString = 11u;
+const BasicType SString = 7u;
 
 /**
  * The type is a StreamInterface class.
  */
-const BasicType Stream = 12u;
+const BasicType Stream = 8u;
+
+/**
+ * The StructuredDataI type
+ */
+const BasicType StructuredDataNode = 9u;
+
 
 }
 

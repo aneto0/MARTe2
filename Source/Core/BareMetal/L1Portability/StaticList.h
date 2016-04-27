@@ -42,14 +42,18 @@
 namespace MARTe {
 
 /**
- * @brief This template class is a ADT (Abstract Data Type) for an unbounded list which allows
- * adding, inserting, removing and peeking elements at arbitrary positions
- * in a range from 0 onwards.
+ * @brief This template class is a ADT (Abstract Data Type) for an unbounded
+ * list which allows adding, inserting, removing and peeking elements at
+ * arbitrary positions in a range from 0 onwards.
  *
  * @details This class is the template version of the class StaticListHolder,
  * parameterising the elementType and listAllocationGranularity. Thus, the
  * instantiation of the template class determines automatically the size of
  * the element type and sets the allocation granularity for all the instances.
+ *
+ * @tparam elementType The type of the elements that the list will hold
+ * @tparam listAllocationGranularity The number of elements that the list must
+ * reserve as space in memory in advance, each time that needs to grow.
  *
  * @see Lists::StaticListHolder
  */
@@ -114,6 +118,11 @@ public:
      */
     bool Extract(const uint32 position,
                  elementType &value);
+
+    bool Set(const uint32 position,
+             elementType &value);
+
+    elementType operator[](uint32 pos);
 
 private:
 
@@ -188,6 +197,18 @@ template<typename elementType, uint32 listAllocationGranularity>
 bool StaticList<elementType, listAllocationGranularity>::Extract(const uint32 position,
                                                                  elementType &value) {
     return slh.Extract(position, static_cast<void *>(&value));
+}
+
+template<typename elementType, uint32 listAllocationGranularity>
+bool StaticList<elementType, listAllocationGranularity>::Set(const uint32 position,
+                                                             elementType &value) {
+    return slh.Set(position, static_cast<void *>(&value));
+}
+
+template<typename elementType, uint32 listAllocationGranularity>
+elementType StaticList<elementType, listAllocationGranularity>::operator[](uint32 pos) {
+    return (pos > (slh.GetSize() - 1u)) ?
+            (reinterpret_cast<elementType*>(slh.GetAllocatedMemory())[slh.GetSize() - 1u]) : (reinterpret_cast<elementType*>(slh.GetAllocatedMemory())[pos]);
 }
 
 }

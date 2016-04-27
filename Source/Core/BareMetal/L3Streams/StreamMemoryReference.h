@@ -199,9 +199,12 @@ public:
      * -If the final position is < 0 moves the cursor at the beginning.\n
      * -If the final position is > UsedSize moves the cursor at the end.\n
      * @param[in] deltaPos is the gap from the current position.
-     * @return false if the position falls out of bounds.
+     * @return false if the position falls out of bounds.or if \a deltaPos is outside the int32
+     * range of values (supported by IOBuffer::RelativeSeek(*)).
+     * @pre
+     *   (deltaPos <= MAX_INT32) && (deltaPos >= MIN_INT32)
      */
-    virtual bool RelativeSeek(const int32 deltaPos);
+    virtual bool RelativeSeek(const int64 deltaPos);
 
     /**
      * @brief Gets the current position.

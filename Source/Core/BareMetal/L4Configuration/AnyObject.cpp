@@ -260,25 +260,34 @@ static bool SerializeScalar(const AnyType &typeIn,
     bool isCArray = (sourceDescriptor.type == CArray);
     bool isStaticDeclared = (typeIn.IsStaticDeclared());
     bool isCArrayOnHeap = ((isCArray) && (!isStaticDeclared));
+    bool isPointer = (sourceDescriptor.type == Pointer);
 
     void* destPointer = static_cast<void *>(NULL);
 
     if ((isString) || (isCCString) || (isCArrayOnHeap)) {
         const char8 *token = static_cast<const char8 *>(NULL);
-        if(isString) {
-            token=reinterpret_cast<StreamString*>(sourcePointer)->Buffer();
+        if (isString) {
+            token = reinterpret_cast<StreamString*>(sourcePointer)->Buffer();
         }
-        if((isCCString) || (isCArrayOnHeap)) {
-            token=reinterpret_cast<const char8*>(sourcePointer);
+        if ((isCCString) || (isCArrayOnHeap)) {
+            token = reinterpret_cast<const char8*>(sourcePointer);
         }
-        uint32 tokenLength=StringHelper::Length(token)+1u;
-        destPointer=HeapManager::Malloc(tokenLength);
-        ret=MemoryOperationsHelper::Copy(destPointer, token, tokenLength);
+        uint32 tokenLength = StringHelper::Length(token) + 1u;
+        destPointer = HeapManager::Malloc(tokenLength);
+        ret = MemoryOperationsHelper::Copy(destPointer, token, tokenLength);
+    }
+    else if (isPointer) {
+        void *oldSourcePointer = sourcePointer;
+        void* newSourcePointer = reinterpret_cast<void*>(&oldSourcePointer);
+        uint32 memoryAllocationSize = typeIn.GetByteSize();
+        void* destPointerPointer = HeapManager::Malloc(memoryAllocationSize);
+        ret = MemoryOperationsHelper::Copy(destPointerPointer, newSourcePointer, memoryAllocationSize);
+        destPointer = *reinterpret_cast<void**>(destPointerPointer);
     }
     else {
-        uint32 memoryAllocationSize=typeIn.GetByteSize();
-        destPointer=HeapManager::Malloc(memoryAllocationSize);
-        ret=MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
+        uint32 memoryAllocationSize = typeIn.GetByteSize();
+        destPointer = HeapManager::Malloc(memoryAllocationSize);
+        ret = MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
     }
 
     typeOut = typeIn;
@@ -373,7 +382,7 @@ void AnyObject::CleanUp() {
                             uint32 idx = c + (r * numberOfColumns);
                             char8 **destStr = reinterpret_cast<char8 **>(typePointer);
                             void *charMem = reinterpret_cast<void *>(destStr[idx]);
-                            if(!HeapManager::Free(charMem)) {
+                            if (!HeapManager::Free(charMem)) {
                                 REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
                             }
                         }
@@ -383,9 +392,9 @@ void AnyObject::CleanUp() {
                             /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: Three pointer indirection levels required for matrices of char *. */
                             char8 ***destStr = reinterpret_cast<char8 ***>(typePointer);
                             char8 **charRow = destStr[r];
-                            if(charRow!=NULL) {
-                                void *charMem=reinterpret_cast<void*>(charRow[c]);
-                                if(!HeapManager::Free(charMem)) {
+                            if (charRow != NULL) {
+                                void *charMem = reinterpret_cast<void*>(charRow[c]);
+                                if (!HeapManager::Free(charMem)) {
                                     REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
                                 }
                             }
@@ -395,7 +404,7 @@ void AnyObject::CleanUp() {
                 if (!staticDeclared) {
                     void **destStr = reinterpret_cast<void **>(typePointer);
                     void* charMem = reinterpret_cast<void *>(destStr[r]);
-                    if(!HeapManager::Free(charMem)) {
+                    if (!HeapManager::Free(charMem)) {
                         REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
                     }
                 }
@@ -405,7 +414,7 @@ void AnyObject::CleanUp() {
         if (!HeapManager::Free(typePointer)) {
             REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
         }
-        type=voidAnyType;
+        type = voidAnyType;
     }
 }
 

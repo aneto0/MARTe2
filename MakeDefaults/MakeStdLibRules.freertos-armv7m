@@ -41,6 +41,7 @@ $(BUILD_DIR)/%.o : %.c
 	$(CCOMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
 
 $(BUILD_DIR)/%.a : $(OBJS) createLibrary
+	mkdir -p $(BUILD_DIR)
 	touch $@
 	rm -f $(BUILD_DIR)/$*.a
 	$(LINKER) -Ur $(OBJS) $(LIBRARIES_STATIC) -o $@

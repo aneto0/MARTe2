@@ -68,34 +68,66 @@ namespace MARTe {
     }Colours;
 
     /**
-     * @brief Checks if the given float is a not-a-number value.
-     */
-    static inline bool isNaN(const float32 x) {
-        /*lint -e{9137} -e{777} [MISRA C++ Rule 6-2-2]. Justification: It is a trick to detect nan floats in standard IEEE.*/
-        return (x != x);
-    }
+       * @brief Checks if the given float is a not-a-number value.
+       */
+      static inline bool IsNaN(const float32 x) {
+          /*lint -e{9137} -e{777} [MISRA C++ Rule 6-2-2]. Justification: It is a trick to detect nan floats in standard IEEE.*/
+          return (x != x);
+      }
 
-    /**
-     * @brief Checks if the given float is a not-a-number value.
-     */
-    static inline bool isNaN(const float64 x) {
-        /*lint -e{9137} -e{777} [MISRA C++ Rule 6-2-2]. Justification: It is a trick to detect nan floats in standard IEEE.*/
-        return (x != x);
-    }
+      /**
+       * @brief Checks if the given float is a not-a-number value.
+       */
+      static inline bool IsNaN(const float64 x) {
+          /*lint -e{9137} -e{777} [MISRA C++ Rule 6-2-2]. Justification: It is a trick to detect nan floats in standard IEEE.*/
+          return (x != x);
+      }
 
-    /**
-     * @brief Checks if the given float is a positive or negative infinity.
-     */
-    static inline bool isInf(const float32 x) {
-        return (!isNaN(x)) && (isNaN(x - x));
-    }
+      /**
+       * @brief Checks if the given float is a positive or negative infinity.
+       */
+      static inline bool IsInf(const float32 x) {
+          return (!IsNaN(x)) && (IsNaN(x - x));
+      }
 
-    /**
-     * @brief Checks if the given float is a positive or negative infinity
-     */
-    static inline bool isInf(const float64 x) {
-        return (!isNaN(x)) && (isNaN(x - x));
-    }
+      /**
+       * @brief Checks if the given float is a positive or negative infinity
+       */
+      static inline bool IsInf(const float64 x) {
+          return (!IsNaN(x)) && (IsNaN(x - x));
+      }
+
+      /**
+       * @brief Checks if the given float numbers are equal
+       */
+      static inline bool IsEqual(const float32 f1, const float32 f2) {
+          float32 *min=reinterpret_cast<float32*>(const_cast<uint32*>(&EPSILON_FLOAT32));
+          return ((f1-f2)<(*min)) && ((f1-f2)>-(*min));
+      }
+
+      /**
+       * @brief Checks if the given float numbers are equal
+       */
+      static inline bool IsEqual(const float64 f1, const float64 f2) {
+          float64 *min=reinterpret_cast<float64*>(const_cast<uint64*>(&EPSILON_FLOAT64));
+          return ((f1-f2)<(*min)) && ((f1-f2)>-(*min));
+      }
+
+      /**
+       * @brief Checks if the given float numbers are equal
+       */
+      static inline bool IsEqual(const float64 f1, const float32 f2) {
+          float32 *min=reinterpret_cast<float32*>(const_cast<uint32*>(&EPSILON_FLOAT32));
+          return ((f1-f2)<(*min)) && ((f1-f2)>-(*min));
+      }
+
+      /**
+       * @brief Checks if the given float numbers are equal
+       */
+      static inline bool IsEqual(const float32 f1, const float64 f2) {
+          float32 *min=reinterpret_cast<float32*>(const_cast<uint32*>(&EPSILON_FLOAT32));
+          return ((f1-f2)<(*min)) && ((f1-f2)>-(*min));
+      }
 
 }
 
