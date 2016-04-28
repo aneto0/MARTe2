@@ -55,7 +55,7 @@ namespace MARTe {
 HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
 HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
-    const int32 LINUX_CPUINFO_BUFFER_SIZE = 1023;
+    const size_t LINUX_CPUINFO_BUFFER_SIZE = 1023u;
     initialTicks = HighResolutionTimer::Counter();
     frequency = 0;
     period = 0.;
@@ -67,20 +67,20 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     initialUSecs = initTime.tv_usec;
 
     if (ret == 0) {
-        char8 buffer[LINUX_CPUINFO_BUFFER_SIZE + 1];
-        memset(&buffer[0], 0, LINUX_CPUINFO_BUFFER_SIZE + 1);
+        char8 buffer[LINUX_CPUINFO_BUFFER_SIZE + 1u];
+        memset(&buffer[0], 0, LINUX_CPUINFO_BUFFER_SIZE + 1u);
 
         FILE *f = fopen("/proc/cpuinfo", "r");
-        int32 size = LINUX_CPUINFO_BUFFER_SIZE;
+        size_t size = LINUX_CPUINFO_BUFFER_SIZE;
         if (f != NULL) {
-            size = fread(&buffer[0], size, 1, f);
+            size = fread(&buffer[0], size, static_cast<size_t>(1u), f);
             fclose(f);
         }
         else {
             REPORT_ERROR(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fopen()");
         }
 
-        if (size > 0) {
+        if (size > 0u) {
             const char8 *pattern = "MHz";
             const char8 *p = StringHelper::SearchString(&buffer[0], pattern);
             if (p != NULL) {

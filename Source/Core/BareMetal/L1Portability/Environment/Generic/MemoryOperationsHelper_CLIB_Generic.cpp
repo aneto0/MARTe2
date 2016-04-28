@@ -55,7 +55,7 @@ bool Copy(void* const destination,
 
     bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
-        ret = memcpy(destination, source, static_cast<int32>(size)) != NULL;
+        ret = memcpy(destination, source, static_cast<size_t>(size)) != NULL;
         if (!ret) {
             REPORT_ERROR(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memcpy()");
         }
@@ -75,7 +75,7 @@ int32 Compare(const void * const mem1,
     int32 ret = -1;
 
     if ((mem1 != NULL) && (mem2 != NULL)) {
-        int32 temp = memcmp(mem1, mem2, static_cast<int32>(size));
+        int32 temp = memcmp(mem1, mem2, static_cast<size_t>(size));
         if (temp < 0) {
             ret = 1; // 1 if mem1<mem2
         }
@@ -100,7 +100,7 @@ const void* Search(const void * const mem,
     const void* ret = static_cast<const void*>(NULL);
     if (mem != NULL) {
 
-        ret = memchr(mem, c, static_cast<int32>(size));
+        ret = memchr(mem, c, static_cast<size_t>(size));
 
     }
     else {
@@ -118,7 +118,7 @@ bool Move(void * const destination,
 
     if ((source != NULL) && (destination != NULL)) {
 
-        ret = memmove(destination, source, static_cast<int32>(size)) != NULL;
+        ret = memmove(destination, source, static_cast<size_t>(size)) != NULL;
         if (!ret) {
             REPORT_ERROR(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memmove()");
         }
@@ -136,7 +136,7 @@ bool Set(void * const mem,
     bool ret = false;
     if (mem != NULL) {
 
-        ret = memset(mem, c, static_cast<int32>(size)) != NULL;
+        ret = memset(mem, c, static_cast<size_t>(size)) != NULL;
         if (!ret) {
             REPORT_ERROR(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memset()");
         }

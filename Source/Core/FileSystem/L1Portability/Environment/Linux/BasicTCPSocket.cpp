@@ -326,7 +326,7 @@ bool BasicTCPSocket::Peek(char8* const buffer,
     size = 0u;
 
     if (IsValid()) {
-        ret = static_cast<int32>(recv(connectionSocket, buffer, static_cast<int32>(sizeToRead), MSG_PEEK));
+        ret = static_cast<int32>(recv(connectionSocket, buffer, static_cast<size_t>(sizeToRead), MSG_PEEK));
         if (ret > 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(ret);
@@ -344,7 +344,7 @@ bool BasicTCPSocket::Read(char8* const output,
     size = 0u;
     int32 readBytes = 0;
     if (IsValid()) {
-        readBytes = static_cast<int32>(recv(connectionSocket, output, static_cast<int32>(sizetoRead), 0));
+        readBytes = static_cast<int32>(recv(connectionSocket, output, static_cast<size_t>(sizetoRead), 0));
 
         if (readBytes >= 0) {
 
@@ -375,7 +375,7 @@ bool BasicTCPSocket::Write(const char8* const input,
     uint32 sizeToWrite = size;
     size = 0u;
     if (IsValid()) {
-        writtenBytes = static_cast<int32>(send(connectionSocket, input, static_cast<int32>(sizeToWrite), 0));
+        writtenBytes = static_cast<int32>(send(connectionSocket, input, static_cast<size_t>(sizeToWrite), 0));
         if (writtenBytes >= 0) {
 
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */

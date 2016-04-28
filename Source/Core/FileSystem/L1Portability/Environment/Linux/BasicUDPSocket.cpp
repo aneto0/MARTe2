@@ -66,7 +66,7 @@ bool BasicUDPSocket::Peek(char8* const output,
     if (IsValid()) {
         uint32 sourceSize = source.Size();
         /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
-        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<int32>(sizeToRead), MSG_PEEK,
+        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(sizeToRead), MSG_PEEK,
                                           reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<socklen_t*>(&sourceSize)));
         if (ret >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
@@ -92,7 +92,7 @@ bool BasicUDPSocket::Read(char8* const output,
     if (IsValid()) {
         uint32 sourceSize = source.Size();
         /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
-        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<int32>(sizeToRead), 0,
+        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(sizeToRead), 0,
                                           reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<socklen_t*>(&sourceSize)));
         if (ret >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
@@ -116,7 +116,7 @@ bool BasicUDPSocket::Write(const char8* const input,
     size = 0u;
     if (IsValid()) {
         /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
-        ret = static_cast<int32>(sendto(connectionSocket, input, static_cast<int32>(sizeToWrite), 0,
+        ret = static_cast<int32>(sendto(connectionSocket, input, static_cast<size_t>(sizeToWrite), 0,
                                         reinterpret_cast<struct sockaddr*>(destination.GetInternetHost()), destination.Size()));
         if (ret >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */

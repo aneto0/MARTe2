@@ -320,7 +320,7 @@ bool BasicFile::Read(char8* const output,
                      uint32 & size) {
     bool retVal = true;
     if (CanRead()) {
-        size = static_cast<uint32>(read(properties.identifier, output, static_cast<int32>(size)));
+        size = static_cast<uint32>(read(properties.identifier, output, static_cast<size_t>(size)));
         retVal = (size != 0xFFFFFFFFU);
         if (retVal == false) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Read().File cannot be read");
@@ -378,7 +378,7 @@ bool BasicFile::Write(const char8 * const input,
                       uint32 & size) {
     bool retVal = true;
     if (CanWrite()) {
-        size = static_cast<uint32>(write(properties.identifier, input, static_cast<int32>(size)));
+        size = static_cast<uint32>(write(properties.identifier, input, static_cast<size_t>(size)));
         if (size == 0xFFFFFFFFU) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Write(). File cannot be written");
             retVal = false;

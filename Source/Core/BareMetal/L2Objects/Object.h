@@ -142,9 +142,9 @@
         return className ## ClassRegistryItem_.GetClassProperties();                                                   \
     }                                                                                                                  \
     /*                                                                                                                 \
-     * e.g. void *MyClassType::operator new(const int32 t size, Heap &heap);                                            \
+     * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
      */                                                                                                                \
-    void * className::operator new(const int32 size, MARTe::HeapI* const heap) {                                             \
+    void * className::operator new(const size_t size, MARTe::HeapI* const heap) {                                             \
         void *obj = NULL_PTR(void *);                                                                                  \
         if (heap != NULL) {                                                                                            \
             obj = heap->Malloc(static_cast<uint32>(size));                                                             \
@@ -241,9 +241,9 @@
              return className ## ClassRegistryItem_.GetClassProperties();                                                   \
          }                                                                                                                  \
          /*                                                                                                                 \
-          * e.g. void *MyClassType::operator new(const int32 size, Heap &heap);                                            \
+          * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
           */                                                                                                                \
-         void * className::operator new(const int32 size, MARTe::HeapI* const heap) {                                             \
+         void * className::operator new(const size_t size, MARTe::HeapI* const heap) {                                             \
              void *obj = NULL_PTR(void *);                                                                                  \
              if (heap != NULL) {                                                                                            \
                  obj = heap->Malloc(static_cast<uint32>(size));                                                             \
