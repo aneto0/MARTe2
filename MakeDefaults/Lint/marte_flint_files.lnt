@@ -35,6 +35,7 @@ ErrorType.h
 EventSem.cpp
 ExceptionHandler.h
 FastMath.cpp
+FastPollingEventSem.cpp
 FastPollingMutexSem.cpp
 FlagsType.h
 FloatToInteger.cpp

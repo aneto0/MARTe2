@@ -46,6 +46,7 @@ FastPollingEventSem::FastPollingEventSem() {
 }
 
 FastPollingEventSem::FastPollingEventSem(volatile int32 &externalFlag) {
+    internalFlag = 0;
     flag = &externalFlag;
 }
 
@@ -59,9 +60,9 @@ void FastPollingEventSem::Create(const bool wait) {
 }
 
 ErrorManagement::ErrorType FastPollingEventSem::FastWait(const TimeoutType &timeout,
-                                                         float64 sleepTime) {
+                                                         float64 sleepTime) const {
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
-    uint64 ticksStop = timeout.HighResolutionTimerTicks();
+    int64 ticksStop = timeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
 
     // sets the default if negative
@@ -95,7 +96,7 @@ void FastPollingEventSem::Reset() {
 }
 
 ErrorManagement::ErrorType FastPollingEventSem::FastResetWait(const TimeoutType &timeout,
-                                                              float64 sleepTime) {
+                                                              const float64 &sleepTime) {
     Reset();
     return FastWait(timeout, sleepTime);
 }
