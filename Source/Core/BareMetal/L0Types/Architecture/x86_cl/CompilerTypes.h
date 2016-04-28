@@ -57,13 +57,13 @@ typedef char char8;
 
 /** Sufficiently large to hold a pointer address in the target architecture*/
 #ifdef __LP64__
-typedef uint64      uintp;
+typedef DWORD32 uintp;
 #elif defined __ILP64__
-typedef uint64      uintp;
+typedef DWORD32 uintp;
 #elif defined __LLP64__
-typedef uint64 long uintp;
+typedef DWORD64 uintp;
 #else
-typedef uint64      uintp;
+typedef DWORD32 uintp;
 #endif
 
 /** A tool to find indexes of structures fields. */
