@@ -71,7 +71,7 @@ public:
      * @param[in] ticks are the number of cpu ticks.
      */
     /*lint -e(1960) , functions should have external effects*/
-    inline void SetTimeoutHighResolutionTimerTicks(int64 ticks);
+    inline void SetTimeoutHighResolutionTimerTicks(uint64 ticks);
 
     /**
      * @brief Gets the timeout in HighResolutionTimer Ticks

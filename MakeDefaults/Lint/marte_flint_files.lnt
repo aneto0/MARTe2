@@ -94,6 +94,7 @@ Select.cpp
 SelectProperties.h
 Shift.h
 SingleBufferedStream.cpp
+Sleep.h
 Sleep.cpp
 SocketCore.h
 SortFilter.h
@@ -101,6 +102,7 @@ SortFilterT.h
 StandardHeap.h
 StandardHeap_Generic.cpp
 StandardParser.cpp
+StaticList.h
 StaticList.cpp
 StaticListHolder.cpp
 StreamI.h

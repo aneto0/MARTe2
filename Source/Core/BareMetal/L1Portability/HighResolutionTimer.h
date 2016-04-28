@@ -51,7 +51,7 @@ namespace MARTe {
          * @brief A high resolution 64-bit time counter.
          * @details Reads the cpu ticks on an 64 bits integer.
          */
-        inline int64 Counter();
+        inline uint64 Counter();
 
         /**
          * @brief A high resolution 32-bit time counter.
