@@ -70,6 +70,7 @@ LinkedListHolder.cpp
 LinkedListable.cpp
 LoadableLibrary.cpp
 Matrix.h
+MemoryArea.cpp
 MemoryCheck.h
 MemoryCheck_Generic.cpp
 MemoryOperationsHelper.h
