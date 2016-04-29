@@ -55,7 +55,7 @@ namespace MARTe {
 HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
 HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
-    const size_t LINUX_CPUINFO_BUFFER_SIZE = 1023u;
+    const uint64 LINUX_CPUINFO_BUFFER_SIZE = 1023u;
     initialTicks = HighResolutionTimer::Counter();
     frequency = 0;
     period = 0.;
@@ -105,7 +105,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
 
 bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {
 
-    int64 ticksFromStart = HighResolutionTimer::Counter() - initialTicks;
+    uint64 ticksFromStart = HighResolutionTimer::Counter() - initialTicks;
 
     //Use HRT
     float64 secondsFromStart = static_cast<float64>(ticksFromStart) * period;

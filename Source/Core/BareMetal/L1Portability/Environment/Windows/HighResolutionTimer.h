@@ -51,7 +51,7 @@ DLL_API extern HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 namespace HighResolutionTimer {
 
 
-inline int64 Frequency() {
+inline uint64 Frequency() {
     return calibratedHighResolutionTimer.GetFrequency();
 }
 

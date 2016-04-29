@@ -55,7 +55,7 @@ bool Copy(void* const destination,
 
     bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
-        ret = memcpy(destination, source, static_cast<size_t>(size)) != NULL;
+        ret = memcpy(destination, source, static_cast<osulong>(size)) != NULL;
         if (!ret) {
             REPORT_ERROR(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memcpy()");
         }

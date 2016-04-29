@@ -59,7 +59,7 @@ void AtLeast(const float64 sec) {
     float64 nsecSleep = (sec - roundValue) * 1e9;
     timesValues.tv_sec = static_cast<time_t>(roundValue);
     timesValues.tv_nsec = static_cast<oslong>(nsecSleep);
-    int64 hrtCounter = HighResolutionTimer::Counter();
+    uint64 hrtCounter = HighResolutionTimer::Counter();
     while (nsecRemainder < 0) {
         while (nanosleep(&timesValues, &remTimesValues) == -1) {
             if (errno != EINTR) {
@@ -70,7 +70,7 @@ void AtLeast(const float64 sec) {
             memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
         }
 
-        int64 reminderCounter = HighResolutionTimer::Counter() - hrtCounter;
+        uint64 reminderCounter = HighResolutionTimer::Counter() - hrtCounter;
         float64 reminderSec = (static_cast<float64>(reminderCounter) * HighResolutionTimer::Period()) - sec;
         float64 reminderNanoSec = reminderSec * 1e9;
         nsecRemainder = static_cast<int32>(reminderNanoSec);
@@ -82,11 +82,11 @@ void AtLeast(const float64 sec) {
 
 void NoMore(const float64 sec) {
     uint32 linuxSleepNoMoreMinUsecTime = 5000u;
-    int64 secCounts = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
+    uint64 secCounts = static_cast<uint64>(sec) * HighResolutionTimer::Frequency();
 
     float64 secNoMore = sec;
     secNoMore -= static_cast<float64>(linuxSleepNoMoreMinUsecTime) * 1e-6;
-    int64 start = HighResolutionTimer::Counter();
+    uint64 start = HighResolutionTimer::Counter();
     if (secNoMore > 0.) {
         struct timespec timesValues;
         struct timespec remTimesValues;
@@ -103,7 +103,7 @@ void NoMore(const float64 sec) {
             memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
         }
     }
-    int64 sleepUntil = secCounts + start;
+    uint64 sleepUntil = secCounts + start;
     while (HighResolutionTimer::Counter() < sleepUntil) {
     }
 
@@ -154,9 +154,9 @@ void MSec(const int32 msec) {
 
 void SemiBusy(const float64 totalSleepSec,
               const float64 nonBusySleepSec) {
-    int64 startCounter = HighResolutionTimer::Counter();
+    uint64 startCounter = HighResolutionTimer::Counter();
     float64 endCounterF = totalSleepSec * static_cast<float64>(HighResolutionTimer::Frequency());
-    int64 sleepUntilCounter = startCounter + static_cast<int64>(endCounterF);
+    uint64 sleepUntilCounter = startCounter + static_cast<uint64>(endCounterF);
 
     if ((nonBusySleepSec < totalSleepSec) && (nonBusySleepSec > 0.0)) {
         struct timespec timesValues;

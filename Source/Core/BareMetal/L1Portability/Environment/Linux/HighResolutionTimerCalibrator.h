@@ -100,7 +100,7 @@ private:
     /**
      * Number of elapsed ticks at the time at which a framework instance was executed.
      */
-    int64 initialTicks;
+    uint64 initialTicks;
 };
 
 }

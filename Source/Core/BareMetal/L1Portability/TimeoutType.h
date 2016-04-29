@@ -77,7 +77,7 @@ public:
      * @brief Gets the timeout in HighResolutionTimer Ticks
      * @return the number of ticks related to the timeout.
      */
-    inline int64 HighResolutionTimerTicks() const;
+    inline uint64 HighResolutionTimerTicks() const;
 
     /**
      * @brief Subtracts a number of milliseconds from the timeout.
@@ -162,7 +162,7 @@ void TimeoutType::SetTimeoutHighResolutionTimerTicks(int64 ticks) {
     msecTimeout = static_cast<uint32>(TimeoutMSecFromTicks);
 }
 
-int64 TimeoutType::HighResolutionTimerTicks() const {
+uint64 TimeoutType::HighResolutionTimerTicks() const {
     float64 deltaT = static_cast<float64>(msecTimeout);
     deltaT = deltaT * 1e-3;
     float64 frequency = static_cast<float64>(HighResolutionTimer::Frequency());

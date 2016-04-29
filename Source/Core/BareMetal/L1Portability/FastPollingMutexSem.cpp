@@ -68,7 +68,7 @@ bool FastPollingMutexSem::Locked() const {
 
 ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &timeout,
                                                          float64 sleepTime ) {
-    int64 ticksStop = timeout.HighResolutionTimerTicks();
+    uint64 ticksStop = timeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
 
@@ -80,7 +80,7 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &time
 
     while (!Atomic::TestAndSet(flag)) {
         if (timeout != TTInfiniteWait) {
-            int64 ticks = HighResolutionTimer::Counter();
+            uint64 ticks = HighResolutionTimer::Counter();
             if (ticks > ticksStop) {
                 err = ErrorManagement::Timeout;
                 REPORT_ERROR(ErrorManagement::Timeout, "FastPollingMutexSem: Timeout expired");
