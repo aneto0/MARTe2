@@ -47,7 +47,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
+namespace MARTe {
 
 namespace Sleep {
 
@@ -63,10 +63,10 @@ void AtLeast(const float64 sec) {
     while (nsecRemainder < 0) {
         while (nanosleep(&timesValues, &remTimesValues) == -1) {
             if (errno != EINTR) {
-                REPORT_ERROR(ErrorManagement::OSError,"Sleep: Failed nanosleep()");
+                REPORT_ERROR(ErrorManagement::OSError, "Sleep: Failed nanosleep()");
                 break;
             }
-            REPORT_ERROR(ErrorManagement::Warning,"Sleep: nanosleep() interrupted by signal");
+            REPORT_ERROR(ErrorManagement::Warning, "Sleep: nanosleep() interrupted by signal");
             memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
         }
 
@@ -96,10 +96,10 @@ void NoMore(const float64 sec) {
         timesValues.tv_nsec = static_cast<oslong>(nsecSleep);
         while (nanosleep(&timesValues, &remTimesValues) == -1) {
             if (errno != EINTR) {
-                REPORT_ERROR(ErrorManagement::OSError,"Sleep: Failed nanosleep()");
+                REPORT_ERROR(ErrorManagement::OSError, "Sleep: Failed nanosleep()");
                 break;
             }
-            REPORT_ERROR(ErrorManagement::Warning,"Sleep: nanosleep() interrupted by signal");
+            REPORT_ERROR(ErrorManagement::Warning, "Sleep: nanosleep() interrupted by signal");
             memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
         }
     }
@@ -110,45 +110,49 @@ void NoMore(const float64 sec) {
 }
 
 void Sec(const float64 sec) {
-    struct timespec timesValues;
-    struct timespec remTimesValues;
-    float64 roundValue = floor(sec);
-    timesValues.tv_sec = static_cast<time_t>(roundValue);
-    float64 nsec = (sec - roundValue) * 1e9;
-    /*lint -e{970} exception to Rule 3-9-2 in order to guarantee that the type of tv_nsec is always consistent with nanoSeconds in 32 and 64 bit architectures*/
-    timesValues.tv_nsec = static_cast<long>(nsec);
-    while (nanosleep(&timesValues, &remTimesValues) == -1) {
-        if (errno != EINTR) {
-            REPORT_ERROR(ErrorManagement::OSError,"Sleep: Failed nanosleep()");
-            break;
+    if (sec > 0.0) {
+        struct timespec timesValues;
+        struct timespec remTimesValues;
+        float64 roundValue = floor(sec);
+        timesValues.tv_sec = static_cast<time_t>(roundValue);
+        float64 nsec = (sec - roundValue) * 1e9;
+        /*lint -e{970} exception to Rule 3-9-2 in order to guarantee that the type of tv_nsec is always consistent with nanoSeconds in 32 and 64 bit architectures*/
+        timesValues.tv_nsec = static_cast<long>(nsec);
+        while (nanosleep(&timesValues, &remTimesValues) == -1) {
+            if (errno != EINTR) {
+                REPORT_ERROR(ErrorManagement::OSError, "Sleep: Failed nanosleep()");
+                break;
+            }
+            REPORT_ERROR(ErrorManagement::Warning, "Sleep: nanosleep() interrupted by signal");
+            memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
         }
-        REPORT_ERROR(ErrorManagement::Warning,"Sleep: nanosleep() interrupted by signal");
-        memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
     }
 }
 
 void MSec(const int32 msec) {
-    int32 sec = 0;
-    int32 nsecSleep = 0;
-    if (msec >= 1000) {
-        sec = static_cast<int32>(msec / 1000);
-        nsecSleep = (msec - (sec * 1000)) * 1000000;
-    }
-    else {
-        sec = 0;
-        nsecSleep = msec * 1000000;
-    }
-    struct timespec timesValues;
-    struct timespec remTimesValues;
-    timesValues.tv_sec = static_cast<time_t>(sec);
-    timesValues.tv_nsec = static_cast<oslong>(nsecSleep);
-    while (nanosleep(&timesValues, &remTimesValues) == -1) {
-        if (errno != EINTR) {
-            REPORT_ERROR(ErrorManagement::OSError,"Sleep: Failed nanosleep()");
-            break;
+    if (msec > 0) {
+        int32 sec = 0;
+        int32 nsecSleep = 0;
+        if (msec >= 1000) {
+            sec = static_cast<int32>(msec / 1000);
+            nsecSleep = (msec - (sec * 1000)) * 1000000;
         }
-        REPORT_ERROR(ErrorManagement::Warning,"Sleep: nanosleep() interrupted by signal");
-        memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
+        else {
+            sec = 0;
+            nsecSleep = msec * 1000000;
+        }
+        struct timespec timesValues;
+        struct timespec remTimesValues;
+        timesValues.tv_sec = static_cast<time_t>(sec);
+        timesValues.tv_nsec = static_cast<oslong>(nsecSleep);
+        while (nanosleep(&timesValues, &remTimesValues) == -1) {
+            if (errno != EINTR) {
+                REPORT_ERROR(ErrorManagement::OSError, "Sleep: Failed nanosleep()");
+                break;
+            }
+            REPORT_ERROR(ErrorManagement::Warning, "Sleep: nanosleep() interrupted by signal");
+            memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
+        }
     }
 }
 
@@ -167,10 +171,10 @@ void SemiBusy(const float64 totalSleepSec,
         timesValues.tv_nsec = static_cast<oslong>(nsecSleep);
         while (nanosleep(&timesValues, &remTimesValues) == -1) {
             if (errno != EINTR) {
-                REPORT_ERROR(ErrorManagement::OSError,"Sleep: Failed nanosleep()");
+                REPORT_ERROR(ErrorManagement::OSError, "Sleep: Failed nanosleep()");
                 break;
             }
-            REPORT_ERROR(ErrorManagement::Warning,"Sleep: nanosleep() interrupted by signal");
+            REPORT_ERROR(ErrorManagement::Warning, "Sleep: nanosleep() interrupted by signal");
             memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
         }
     }

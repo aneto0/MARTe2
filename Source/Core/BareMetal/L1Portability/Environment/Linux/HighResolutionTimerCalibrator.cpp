@@ -57,7 +57,7 @@ HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     const uint64 LINUX_CPUINFO_BUFFER_SIZE = 1023u;
     initialTicks = HighResolutionTimer::Counter();
-    frequency = 0;
+    frequency = 0u;
     period = 0.;
 
     struct timeval initTime;
@@ -90,7 +90,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
                 if (freqMHz > 0.) {
                     float64 frequencyF = freqMHz *= 1.0e6;
                     period = 1.0 / frequencyF;
-                    frequency = static_cast<int64>(frequencyF);
+                    frequency = static_cast<uint64>(frequencyF);
                 }
             }
         }
@@ -133,7 +133,7 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {
     return ret;
 }
 
-int64 HighResolutionTimerCalibrator::GetFrequency() const {
+uint64 HighResolutionTimerCalibrator::GetFrequency() const {
     return frequency;
 }
 
