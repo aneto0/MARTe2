@@ -224,6 +224,9 @@ bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFoun
              * and its size cannot be modified in runtime*/
             found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[addressNumberNodes - 1u]) == 0);
         }
+        else {
+            found=false;
+        }
     }
 
     if (found) {

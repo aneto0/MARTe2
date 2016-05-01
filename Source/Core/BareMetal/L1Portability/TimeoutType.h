@@ -153,7 +153,7 @@ void TimeoutType::SetTimeoutSec(float64 secs) {
     msecTimeout = static_cast<uint32>(secs);
 }
 
-void TimeoutType::SetTimeoutHighResolutionTimerTicks(int64 ticks) {
+void TimeoutType::SetTimeoutHighResolutionTimerTicks(uint64 ticks) {
     if (ticks < 0) {
         ticks = 0;
     }

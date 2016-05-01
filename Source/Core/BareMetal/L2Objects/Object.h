@@ -409,6 +409,22 @@ public:
      */
     bool ExportMetadata(StructuredDataI & data,
                                                const int32 level = -1);
+                                               
+    /**
+     * @brief Sets/unsets this object as a domain.
+     * @detail In a tree of objects, a domain object is a local root of a sub-tree.
+     * Domain objects are identified with a prefix $ in their name.
+     * @param[in] isDomainFlag true if the object is a domain.
+     * @post
+     *    IsDomain() == isDomainFlag
+     */
+    void SetDomain(const bool isDomainFlag);
+
+    /**
+     * @brief Returns true if this object is a domain.
+     * @return true if this object is a domain.
+     */
+    bool IsDomain() const;
 
 private:
 
@@ -493,6 +509,10 @@ private:
      * The name of this object.
      */
     char8 *name;
+    
+    
+
+    bool isDomain;
 };
 
 }

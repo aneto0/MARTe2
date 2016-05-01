@@ -45,6 +45,7 @@ namespace MARTe {
 Object::Object() {
     referenceCounter = 0u;
     name = NULL_PTR(char8 *);
+    isDomain = false;
 }
 
 /*lint -e{1551} the destructor must guarantee that the named is freed. No exception should be
@@ -384,6 +385,14 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
     }
 
     return ret;
+}
+
+void Object::SetDomain(const bool isDomainFlag) {
+    isDomain = isDomainFlag;
+}
+
+bool Object::IsDomain() const {
+    return isDomain;
 }
 
 CLASS_REGISTER(Object, "1.0")
