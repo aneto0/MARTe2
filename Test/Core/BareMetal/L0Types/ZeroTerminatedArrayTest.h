@@ -76,23 +76,30 @@ public:
 
 template<typename T>
 bool ZeroTerminatedArrayTest<T>::TestConstructor() {
+	bool result = true;
+	{
+		T array[32];
+		T value = 0;
+		for (uint32 i = 0; i < 31; i++) {
+			array[i] = value;
+			value++;
+		}
 
-    T array[32];
-    T value = 0;
-    for (uint32 i = 0; i < 31; i++) {
-        array[i] = value;
-        value++;
-    }
+		ZeroTerminatedArray<T> test(array);
 
-    ZeroTerminatedArray<T> test(array);
+		for (uint32 i = 0; i < 32; i++) {
+			if (test.GetList()[i] != array[i]) {
+				return false;
+			}
+		}
 
-    for (uint32 i = 0; i < 32; i++) {
-        if (test.GetList()[i] != array[i]) {
-            return false;
-        }
-    }
-
-    return test.GetList() == array;
+		result = (result && (test.GetList() == array));
+	}
+	{
+		ZeroTerminatedArray<T> test;
+		result = (result && (test.GetList() == NULL_PTR(T *)));
+	}
+	return result;
 }
 
 template<typename T>

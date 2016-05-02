@@ -58,7 +58,7 @@ public:
      * @pre
      *   arrayIn is zero terminated.
      */
-    ZeroTerminatedArray(T *arrayIn);
+    ZeroTerminatedArray(T *arrayIn=NULL_PTR(T *));
 
     /**
      * @brief Returns the element in the specified position.
