@@ -56,7 +56,7 @@ public:
     /**
      * @brief Checks if the [] operator returns the element in the correct position.
      */
-    bool TestPositionOperator();
+    bool TestSubscriptOperator();
 
     /**
      * @brief Checks if the function returns the array size.
@@ -94,7 +94,7 @@ bool ZeroTerminatedArrayTest<T>::TestConstructor() {
 }
 
 template<typename T>
-bool ZeroTerminatedArrayTest<T>::TestPositionOperator() {
+bool ZeroTerminatedArrayTest<T>::TestSubscriptOperator() {
     T array[32];
     for (uint32 i = 0; i < 31; i++) {
         array[i] = static_cast<T>(i);
