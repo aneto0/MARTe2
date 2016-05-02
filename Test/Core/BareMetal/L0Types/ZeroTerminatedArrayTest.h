@@ -73,7 +73,7 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-#include "stdio.h"
+
 template<typename T>
 bool ZeroTerminatedArrayTest<T>::TestConstructor() {
 
