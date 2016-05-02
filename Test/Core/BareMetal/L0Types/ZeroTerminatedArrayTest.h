@@ -78,8 +78,10 @@ template<typename T>
 bool ZeroTerminatedArrayTest<T>::TestConstructor() {
 
     T array[32];
+    T value = 0;
     for (uint32 i = 0; i < 31; i++) {
-        array[i] = static_cast<T>(i);
+        array[i] = value;
+        value++;
     }
 
     ZeroTerminatedArray<T> test(array);
@@ -96,8 +98,10 @@ bool ZeroTerminatedArrayTest<T>::TestConstructor() {
 template<typename T>
 bool ZeroTerminatedArrayTest<T>::TestSubscriptOperator() {
     T array[32];
+    T value = 0;
     for (uint32 i = 0; i < 31; i++) {
-        array[i] = static_cast<T>(i);
+        array[i] = value;
+        value++;
     }
     ZeroTerminatedArray<T> test(array);
 
