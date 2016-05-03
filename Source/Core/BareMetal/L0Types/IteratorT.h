@@ -59,7 +59,7 @@ public:
      * @brief The function performing the desired specific action on the input parameter.
      * @param[in] data is a generic template type.
      */
-    virtual void Do(T data)=0;
+    virtual void Do(T *data)=0;
 };
 }
 /*---------------------------------------------------------------------------*/
