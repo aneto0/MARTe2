@@ -121,21 +121,8 @@ bool GAM::ConfigureDataSource() {
     if (GetNumberOfSupportedStates() > 0u) {
         ret = (application != NULL);
         if (ret) {
-            ReferenceT<DataSourceContainer> dataContainer;
-            /*lint -e{613} NULL pointer checking done before entering here */
-            uint32 numberOfAppItems = application->Size();
-            ret = false;
-            for (uint32 i = 0u; (i < numberOfAppItems) && (!ret); i++) {
-                /*lint -e{613} NULL pointer checking done before entering here */
-                Reference item = application->Get(i);
-                if (item.IsValid()) {
-                    if (StringHelper::Compare(item->GetName(), "Data") == 0) {
-                        dataContainer = item;
-                        ret = dataContainer.IsValid();
-                    }
-                }
-            }
-
+            ReferenceT<DataSourceContainer> dataContainer = application->GetDataSourceContainer();
+            ret = dataContainer.IsValid();
             if (ret) {
                 ret = dataContainer->AddDataDefinition(ReferenceT<GAM>(this));
             }

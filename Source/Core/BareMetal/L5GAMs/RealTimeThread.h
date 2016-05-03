@@ -79,11 +79,11 @@ public:
     virtual ~RealTimeThread();
 
     /**
-     * @brief Maps all the declared Function (GAM, GAMGroup, ...) references to this state.
+     * @brief Maps all the declared Function references (GAM, GAMGroup, ...) to this state.
      * @param[in] rtApp is the RealTimeApplication where this thread is declared into.
      * @param[in] rtState is the RealTimeState where this thread is declared into.
-     * @return true if all the declared Function references are valid and if the thread can be
-     * successfully added to the scheduler and if all the declared GAMs support this \a rtState.
+     * @return true if all the declared Function references are valid AND if this thread can be
+     * successfully added to the scheduler AND if all the declared GAMs support this \a rtState.
      * @pre
      *   Initialise() &&
      *   GetFunctions() != NULL  &&
@@ -131,16 +131,19 @@ public:
 
     /**
      * @brief Returns the number of GAMs executed by this thread.
+     * @return the number of GAMs executed by this thread.
      */
     uint32 GetNumberOfFunctions() const;
 
     /**
-     * @brief Retrieves the accelerator to the GAMs executed in this thread.
+     * @brief Returns a pointer to the list of GAMs (aka accelerator) executed by this thread.
+     * @return the accelerator to the GAMs executed in this thread.
      */
     ReferenceT<GAM> *GetGAMs();
 
     /**
      * @brief Retrieves the number of GAMs executed in this thread.
+     * @return the number of GAMs executed in this thread.
      */
     uint32 GetNumberOfGAMs() const;
 

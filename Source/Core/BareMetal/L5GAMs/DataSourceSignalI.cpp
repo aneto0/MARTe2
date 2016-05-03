@@ -194,8 +194,8 @@ uint32 DataSourceSignalI::GetNumberOfProducers(const char8 * const stateIn) {
 bool DataSourceSignalI::Verify() {
 
     bool ret = true;
-    uint32 numberOfStates = Size();
-    for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+    uint32 numberOfRecords = Size();
+    for (uint32 i = 0u; (i < numberOfRecords) && (ret); i++) {
         ReferenceT<DataSourceSignalRecord> record = Get(i);
         if (record.IsValid()) {
             // no more than one producer for each state

@@ -326,48 +326,48 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
         // do the PrepareNextState here.
 
         uint32 numberOfContainers = Size();
-        bool found = false;
-        for (uint32 i = 0u; (i < numberOfContainers) && (!found); i++) {
+        ret = false;
+        for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
             Reference item = Get(i);
             if (item.IsValid()) {
                 if (StringHelper::Compare(item->GetName(), "States") == 0) {
                     statesContainer = item;
-                    found = statesContainer.IsValid();
+                    ret = statesContainer.IsValid();
                 }
             }
         }
         if (ret) {
-            bool found = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!found); i++) {
+            ret = false;
+            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
                 Reference container = Get(i);
                 if (container.IsValid()) {
                     if (StringHelper::Compare(container->GetName(), "Data") == 0) {
                         dataSourceContainer = container;
-                        found = dataSourceContainer.IsValid();
+                        ret = dataSourceContainer.IsValid();
                     }
                 }
             }
         }
         if (ret) {
-            bool found = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!found); i++) {
+            ret = false;
+            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
                 Reference item = Get(i);
                 if (item.IsValid()) {
                     if (StringHelper::Compare(item->GetName(), "Functions") == 0) {
                         functionsContainer = item;
-                        found = functionsContainer.IsValid();
+                        ret = functionsContainer.IsValid();
                     }
                 }
             }
         }
         if (ret) {
-            bool found = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!found); i++) {
+            ret = false;
+            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
                 Reference container = Get(i);
                 if (container.IsValid()) {
                     if (StringHelper::Compare(container->GetName(), "Scheduler") == 0) {
                         schedulerContainer = container;
-                        found = schedulerContainer.IsValid();
+                        ret = schedulerContainer.IsValid();
                     }
                 }
             }
@@ -380,6 +380,9 @@ uint8 RealTimeApplication::GetActiveBuffer() const {
     return activeBuffer;
 }
 
+ReferenceT<ReferenceContainer> RealTimeApplication::GetDataSourceContainer() {
+    return dataSourceContainer;
+}
 
 CLASS_REGISTER(RealTimeApplication, "1.0");
 }

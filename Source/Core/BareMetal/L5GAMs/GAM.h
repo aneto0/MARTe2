@@ -62,10 +62,10 @@ public:
     virtual ~GAM();
 
     /**
-     * @brief Generates the data source definitions ( in RealTimeApplication_name.+Data ) looking to the path
-     * of each GAMSignalI declared into this GAM.
-     * @details For more documentation see RealTimeDataSourceContainer::AddDataDefinition(*).
-     * @return false in case of errors, true otherwise.
+     * @brief Links the signals of this GAM to the RealTimeApplication DataSourceContainer (+Data).
+     * @details @see DataSourceContainer::AddDataDefinition(*).
+     * @return true if the RealTimeApplication where this GAM belongs to is valid and if calling
+     * DataSourceContainer.AddDataDefinition for this GAM returns true.
      */
     virtual bool ConfigureDataSource();
 

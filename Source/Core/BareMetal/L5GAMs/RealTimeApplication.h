@@ -110,7 +110,7 @@ public:
 
     /**
      * @brief Configuration of the main application environment.
-     * @details Propagates the configuration setup request to the States (RealTimeState) and Scheduler (inheriting from GAMSchedulerI) ConfigureArchitecture functions.
+     * @details Propagates the configuration setup request to the States (RealTimeState.ConfigureArchitecture) and Scheduler entries (@see Initialise).
      * @return true if all the declared States and Scheduler elements are valid, false otherwise.
      */
     bool ConfigureArchitecture();
@@ -189,12 +189,56 @@ public:
      * @details The following fields must be specified:
      *
      *   FirstState = (the name of the first state to be executed) //TODO (State Machine ?)
+     *     Class = RealTimeApplication\n
+     *     +Functions = {\n
+     *         Class = ReferenceContainer\n
+     *         GAM_name = {\n
+     *             Class = GAM\n
+     *             ...\n
+     *         }\n
+     *         GAM_Group_name = {\n
+     *             Class = GAMGroup\n
+     *             ...\n
+     *         }\n
+     *         ...\n
+     *     }\n
+     *     +States = {\n
+     *         Class = ReferenceContainer\n
+     *         State_name = {\n
+     *             Class = RealTimeState\n
+     *             +Threads = {\n
+     *                 Class = RealTimeThread\n
+     *                 ...\n
+     *             }\n
+     *             ...\n
+     *         }\n
+     *         ...\n
+     *     }\n
+     *     +Data = {\n
+     *         Class = RealTimeDataSourceContainer
+     *         IsFinal = true v false\n
+     *         DataSource_name = {\n
+     *             ...\n
+     *         }\n
+     *         ...
+     *     }\n
+     *     +Scheduler = {\n
+     *         Class = Scheduler_class_name (inherited from GAMSchedulerI)\n
+     *         ...\n
+     *     }\n
      *
      * @param[in] data contains the initialisation data.
-     * @return false if FirstState field is not specified or if the initialisation of the sub-objects fails. True otherwise.
+     * @return true if the FirstState field is specified and if the parameters +Functions, +States, +Data and +Scheduler all
+     * exist and each inherit from ReferenceContainer.
+     * TODO: FirstState is not implemented yet
      */
     virtual bool Initialise(StructuredDataI & data);
 
+    /**
+     * @brief Gets the RealTimeDataSourceContainer (initialised with +Data) of this RealTimeApplication.
+     * @return the RealTimeDataSourceContainer (initialised with +Data) of this RealTimeApplication.
+     */
+    ReferenceT<ReferenceContainer> GetDataSourceContainer();
 
 private:
 

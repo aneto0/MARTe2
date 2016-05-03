@@ -46,6 +46,11 @@
 
 namespace MARTe {
 
+/**
+ * @brief Recursively calls the Verify method on all the DataSourceSignalI.
+ * @param[in] ref ReferenceContainer to be recursively queried for DataSourceSignalI elements.
+ * @return true if all the DataSourceSignalI::Verify return true.
+ */
 static bool VerifyPrivate(ReferenceT<ReferenceContainer> ref) {
     bool ret = ref.IsValid();
     if (ret) {
@@ -74,6 +79,11 @@ static bool VerifyPrivate(ReferenceT<ReferenceContainer> ref) {
     return ret;
 }
 
+/**
+ * @brief Recursively calls the PrepareNextState method on all the DataSourceSignalI elements.
+ * @param[in] ref ReferenceContainer to be recursively queried for DataSourceSignalI elements.
+ * @return true if all the DataSourceSignalI::PrepareNextState return true.
+ */
 static bool PrepareNextStatePrivate(const RealTimeStateInfo &status,
                                     ReferenceT<ReferenceContainer> ref) {
 
@@ -108,7 +118,7 @@ bool DataSourceContainer::AddDataDefinition(ReferenceT<GAM> gam) {
     bool ret = (gam.IsValid());
     if (ret) {
 
-        // the number of definition containers (input, output, ecc)
+        // the number of definition containers (input, output, ...)
         uint32 numberOfElements = gam->Size();
         for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
             ReferenceT<GAMSignalsContainer> defContainer = gam->Get(i);
@@ -241,7 +251,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                 }
 
             }
-            // if the definition does not exist creates it
+            // if the definition does not exist, create it
             else {
                 ReferenceT<GAMSampledSignal> sampDef = definition;
                 ret = (!sampDef.IsValid());
@@ -326,6 +336,8 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                 ret = AddSingleDataDefinition(subDefinition, gam, isProducer, isConsumer, newDefaultPath);
             }
             else {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAMGenericSignal subDefinition at index %d is not valid", i);
+                ret = false;
             }
         }
     }

@@ -46,10 +46,7 @@ namespace MARTe {
  * @brief A container of DataSource objects.
  *
  * @details This object has to be inserted in the RealTimeApplication container
- * with the name "Data" and contains all the DataSource objects.
- *
- * @details Provides functions to configure the contained data sources on the base of
- * the GAM signals.
+ * with the name "Data". It is a container for all the DataSource objects.
  *
  * @details The syntax in the configuration stream must be:
  *
@@ -68,28 +65,35 @@ class DLL_API DataSourceContainer: public ReferenceContainer {
 public:
     CLASS_REGISTER_DECLARATION()
 
-
     /**
-     * @brief Constructor
+     * @brief Constructor. NOOP.
      */
     DataSourceContainer();
 
     /**
-     * @brief Adds all the GAMSignalI defined in the GAM in input.
+     * @brief Adds all the signals from a GAM GAMSignalsContainer into this container.
      *
-     * @details Explores the SignalsContainer elements of \a gam and for each specific GAMSignalI
-     * inserts an element in the path specified by the "Path" field of GAMSignalI using this object as root.
-     * The final definition is a RealTimeDataSourceDef type and this function initialises its fields "Default"
-     * and "Type" reading informations from the related GAMSignalI. Finally each RealTimeDataSourceDef
-     * will contain a list of RealTimeDataDefRecords, one for each state where the variable will be used
-     * and \a gam will be inserted as consumer or producer depending on the definition (SignalsContainer::IsInput or
-     * SignalsContainer::IsOutput respectively).
+     * @details For each GAMSignalsContainer contained inside the \a gam, loop on each
+     * GAMSignalI and retrieves the path (GAMSignalI.GetPath) of the signal. Search for this path
+     * inside each of the DataSource elements of this DataSourceContainer and checks if any of the found Reference is of type DataSourceSignalI.
+     * If so then there is a match and the GAMSignalI is added to the found DataSourceSignalI either as a consumer (DataSourceSignalI.AddConsumer if this
+     * GAMSignalI is an input to the GAM) or as a producer (DataSourceSignalI.AddProducer if this GAMSignalI is an output of the GAM). This is the typical
+     * of GAMs which share signals directly with DataSource (i.e. drivers).
      *
-     * @details If some GAMSignalI definitions does not provide the field "Path" the path will be considered
-     * equal to the name.
+     * If the path is not found and the GAMSignalI is not of type GAMSampledSignal then a new DataSourceSignal is created and added to the
+     * DataSource specified in the path. This is the typical of GAMs which share signals between them.
      *
-     * @param[in] gam is a Reference to the GAM containing all the definitions to be inserted.
-     * @return false in case of errors, true otherwise.
+     * Finally two signals are automatically added to a DataSource named GAM_Times. The first signal is named GAM_NAME.AbsoluteUsecTime and the
+     * second signal is named GAM_NAME.RelativeUsecTime, where GAM_NAME is the value returned by GAM::GetName. Both signals are of type uint64. The
+     * former contains the number of microseconds elapsed since the beggining of the real-time cycle, while the latter contains the number of
+     * microseconds from the beginning to the end of the execution of the \a gam.
+     *
+     * @param[in] gam is a Reference to the GAM containing all the data definitions to be inserted.
+     *
+     * @return true if all the GAM GAMSignalsContainer GAMSignalI elements can be successfully added either as a consumer or as a producer
+     * to an existent DataSource element of this DataSourceContainer.
+     * @pre
+     *    gam.IsValid()
      */
     bool AddDataDefinition(ReferenceT<GAM> gam);
 
@@ -104,19 +108,18 @@ public:
 
     /**
      * @brief Prepares the environment for the next state.
-     * @details Calls the function DataSourceSignalI::PrepareNextState(*) for all contained data source signal. Each specific
+     * @details Calls the function DataSourceSignalI::PrepareNextState() for all contained data source signals. Each specific
      * DataSourceSignalI can have its own implementation of the PrepareNextState(*) function.
      * @param[in] status contains information about the current and the next state.
-     * @return true if the default value (expressed in the configuration data) is compatible with the variable type, false
-     * otherwise.
+     * @return true if DataSourceSignalI::PrepareNextState() is successful for all the contained data source signals.
      */
     bool PrepareNextState(const RealTimeStateInfo &status);
 
 
     /**
-     * @brief Allocates the memory for each data source defined.
-     * @details Browses the tree and for each RealTimeDataSourceDef found allocates the memory for the specific type.
-     * @return false in case of errors, true otherwise.
+     * @brief Allocates the memory for each of the defined data sources.
+     * @details Browses the tree and for each DataSource found calls the method DatSource::Allocate.
+     * @return true if all DataSource::Allocate return true.
      */
     bool Allocate();
 
@@ -131,7 +134,8 @@ private:
      * @param[in] isProducer denotes if the GAM produces the variable.
      * @param[in] isConsumer denotes if the GAM consumes the variable.
      * @param[in] defaultPath is used when the path is not specified.
-     * @return false in case of errors, false otherwise.
+     * @return true if all the GAM GAMSignalsContainer GAMSignalI elements can be successfully added either as a consumer or as a producer
+     * to an existent DataSource element of this DataSourceContainer.
      */
     bool AddSingleDataDefinition(ReferenceT<GAMSignalI> definition,
                                  ReferenceT<GAM> gam,
@@ -147,5 +151,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_DATASOURCECONTAINER_H_ */
+#endif /* DATASOURCECONTAINER_H_ */
 

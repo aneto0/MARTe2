@@ -88,8 +88,8 @@ public:
      * @brief Propagates the configuration setup request to the declared RealTimeThreads.
      * @details Calls RealTimeThread.ConfigureArchitecture(rtApp) in each of the declared RealTimeThread elements.
      * @param[in] rtApp is the RealTimeApplication where this state is declared into.
-     * @return true if one and only one child element named "Threads" exits and is of type ReferenceContainer and
-     * if calling ConfigureArchitecture in each of the container RealTimeThread returns true.
+     * @return true if one and only one child element named "Threads" exits AND is of type ReferenceContainer AND
+     * if RealTimeThread.ConfigureArchitecture is true for all the "Threads" elements.
      */
     bool ConfigureArchitecture(RealTimeApplication & rtApp);
 
