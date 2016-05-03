@@ -31,7 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
+
+#include "SearchFilter.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -44,17 +46,16 @@ namespace MARTe {
  * SearchFilter, parameterising the type of the object that the Test method
  * will check for compliance, with respect to a given searching criteria.
  * @tparam T the type of the object which will be checked by the Test method.
+ * @warning It is expected that T be descendant of LinkedListable.
  */
 template<typename T>
-class SearchFilterT {
+class SearchFilterT: public SearchFilter {
 public:
 
     /**
      * @brief Destructor.
      */
-    virtual ~SearchFilterT() {
-
-    }
+    virtual ~SearchFilterT();
 
     /**
      * @brief LinkedListable searching callback function.
@@ -62,13 +63,37 @@ public:
      * @param[in] data the current LinkedListable element to be tested.
      * @return true if \a data meets the search criteria.
      */
-    virtual bool Test(T data)=0;
+    virtual bool Test(T *data)=0;
+
+    virtual bool Test(LinkedListable *data);
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+template<typename T>
+SearchFilterT<T>::~SearchFilterT() {
+}
+
+template<typename T>
+bool SearchFilterT<T>::Test(LinkedListable *data) {
+	bool ret;
+	T* target = dynamic_cast<T*>(data);
+	if (target == NULL_PTR(T*)) {
+		ret = false;
+	}
+	if (ret) {
+		ret = Test(static_cast<T *>(data));
+	}
+	return ret;
+}
+
+}
 
 #endif /* SEARCHFILTERT_H_ */
 
