@@ -62,8 +62,8 @@ public:
      * @param[in] data2 the second LinkedListable object pointer.
      * @return a positive value if data1 is not ordered with respect to data2, negative otherwise.
      */
-    virtual int32 Compare(T data1,
-                          T data2)=0;
+    virtual int32 Compare(T *data1,
+                          T *data2)=0;
 };
 
 }
