@@ -79,20 +79,7 @@ bool ZeroTerminatedArrayTest<T>::TestConstructor() {
 	bool result = true;
 	{
 		T array[32];
-		T value = 0;
-		for (uint32 i = 0; i < 31; i++) {
-			array[i] = value;
-			value++;
-		}
-
 		ZeroTerminatedArray<T> test(array);
-
-		for (uint32 i = 0; i < 32; i++) {
-			if (test.GetList()[i] != array[i]) {
-				return false;
-			}
-		}
-
 		result = (result && (test.GetList() == array));
 	}
 	{
@@ -110,6 +97,8 @@ bool ZeroTerminatedArrayTest<T>::TestSubscriptOperator() {
         array[i] = value;
         value++;
     }
+    array[31] = static_cast<T>(0);
+
     ZeroTerminatedArray<T> test(array);
 
     for (uint32 i = 0; i < 32; i++) {
