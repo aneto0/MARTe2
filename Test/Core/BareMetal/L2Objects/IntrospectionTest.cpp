@@ -222,7 +222,7 @@ bool IntrospectionTest::TestMacroToAddBasicInClassRegistryDatabase() {
         return false;
     }
 
-    if (member4Copy.GetMemberTypeDescriptor().type != CCString) {
+    if (member4Copy.GetMemberTypeDescriptor().type != BT_CCString) {
         return false;
     }
 

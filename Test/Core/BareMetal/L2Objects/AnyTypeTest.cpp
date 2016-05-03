@@ -463,7 +463,7 @@ bool AnyTypeTest::TestAnyType_ConstCharPointerToConst() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == CCString);
+    retVal &= (td.type == BT_CCString);
     retVal &= (td.numberOfBits == sizeof(const char *) * 8u);
 
     return retVal;
