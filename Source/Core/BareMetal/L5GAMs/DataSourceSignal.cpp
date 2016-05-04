@@ -414,7 +414,7 @@ bool DataSourceSignal::ToStructuredData(StructuredDataI& data) {
                 ret = child.IsValid();
                 if (ret) {
                     if (ret) {
-                        ret = child->ToStructuredData(data);
+                        ret = child->ExportData(data);
                     }
                 }
             }
@@ -497,7 +497,7 @@ bool DataSourceSignal::Configure(Reference gamSignalIn) {
 
 }
 
-Reference DataSourceSignal::GetInputReader(ReferenceT<GAMSignalI> signalIn,
+ReferenceT<DataSourceBrokerI>  DataSourceSignal::GetInputReader(ReferenceT<GAMSignalI> signalIn,
                                            void * varPtr) {
     ReferenceT<MemoryMapInputReader> ret;
 
@@ -528,7 +528,7 @@ Reference DataSourceSignal::GetInputReader(ReferenceT<GAMSignalI> signalIn,
     return ret;
 }
 
-Reference DataSourceSignal::GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
+ReferenceT<DataSourceBrokerI> DataSourceSignal::GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
                                             void * varPtr) {
     ReferenceT<MemoryMapOutputWriter> ret;
 

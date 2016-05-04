@@ -195,7 +195,7 @@ bool GAMSignalsContainer::ToStructuredData(StructuredDataI & data) {
                 Reference def = Get(i);
                 ret = def.IsValid();
                 if (ret) {
-                    ret = def->ToStructuredData(data);
+                    ret = def->ExportData(data);
                 }
             }
         }

@@ -61,7 +61,8 @@ public:
      */
     ClassProperties(const char8 * const cName,
                     const char8 * const typeidName,
-                    const char8 * const cVersion);
+                    const char8 * const cVersion,
+                    const uint32 cSize = 0u);
 
     /**
      * @brief Returns the name of the class.
@@ -93,6 +94,8 @@ public:
      */
     void SetUniqueIdentifier(const ClassUID &uid);
 
+    uint32 GetSize() const;
+
 private:
     /**
      * The name of the class.
@@ -113,6 +116,8 @@ private:
      * A unique identifier for this class
      */
     uint14 uniqueIdentifier;
+
+    uint32 size;
 };
 
 }

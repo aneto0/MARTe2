@@ -45,12 +45,11 @@
 namespace MARTe {
 
 /**
- * @brief A data source signal completely configurable using the GAM signals linked
- * with the latter.
+ * @brief DataSourceSignalI implementation for the exchange of signals between GAM components.
  *
- * @details If the definition is not complete in the configuration data,
- * the signal will be created automatically looking at the field "Path" of the GAM
- * signals defined in GAMs (during RealTimeApplication::ConfigureDataSource(*)).\n
+ * @details This implementation of the DataSourceSignalI interface is intend for the definition
+ *  of all the signals exchanged in real-time between GAM components. These are managed by a
+ *  single DataSource which offers the memory backend to store the signal data.
  *
  * @details The syntax in the configuration stream has to be:
  *
@@ -168,14 +167,16 @@ public:
 
     /**
      * @see DataSourceSignalI::GetInputReader(*).
-     * @details If compatible with \a defIn, returns a MemoryMapInputReader.
+     * @return a valid ReferenceT<MemoryMapInputReader> if signalIn is compatible with MemoryMapOutputWriter
+     *  (i.e. if MemoryMapInputReader::AddSignal(signalOut) == true).
      */
     virtual ReferenceT<DataSourceBrokerI> GetInputReader(ReferenceT<GAMSignalI> signalIn,
                                                          void * varPtr = NULL_PTR(void*));
 
     /**
      * @see DataSourceSignalI::GetOutputWriter(*).
-     * @details If compatible with \a defIn, returns a MemoryMapOutputWriter.
+     * @return a valid ReferenceT<MemoryMapOutputWriter> if signalOut is compatible with MemoryMapOutputWriter
+     *  (i.e. if MemoryMapOutputWriter::AddSignal(signalOut) == true).
      */
     virtual ReferenceT<DataSourceBrokerI> GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
                                                           void * varPtr = NULL_PTR(void*));

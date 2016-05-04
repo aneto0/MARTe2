@@ -38,4 +38,3 @@ all: $(OBJS) $(SUBPROJ) \
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
-

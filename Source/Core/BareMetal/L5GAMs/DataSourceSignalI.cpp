@@ -62,7 +62,7 @@ void DataSourceSignalI::SetApplication(RealTimeApplication &app) {
     application = &app;
 }
 
-bool DataSourceSignalI::AddConsumer(Reference gam) {
+bool DataSourceSignalI::AddConsumer(ReferenceT<GAM> gam) {
     uint32 index;
     bool ret = gam.IsValid();
     if (ret) {
@@ -99,7 +99,7 @@ bool DataSourceSignalI::AddConsumer(Reference gam) {
     return ret;
 }
 
-bool DataSourceSignalI::AddProducer(Reference gamIn) {
+bool DataSourceSignalI::AddProducer(ReferenceT<GAM> gamIn) {
 
     uint32 index;
 

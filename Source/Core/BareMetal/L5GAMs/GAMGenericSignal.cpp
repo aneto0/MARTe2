@@ -227,7 +227,7 @@ bool GAMGenericSignal::ToStructuredData(StructuredDataI& data) {
                 ret = child.IsValid();
                 if (ret) {
                     if (ret) {
-                        ret = child->ToStructuredData(data);
+                        ret = child->ExportData(data);
                     }
                 }
             }

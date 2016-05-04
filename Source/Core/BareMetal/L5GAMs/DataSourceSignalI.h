@@ -38,6 +38,7 @@
 #include "MemoryArea.h"
 #include "RealTimeApplication.h"
 #include "DataSourceBrokerI.h"
+#include "GAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -219,9 +220,9 @@ public:
     virtual bool Configure(Reference gamSignalIn)=0;
 
     /**
-     * @brief Retrieves the pointer to the pointer of the signal memory buffer to be used
-     * within the specified index.
-     * @param[in] bufferIndex is the index of the signal memory buffer current in use.
+     * @brief Retrieves to the memory address containing the signal data.
+     * @param[in] bufferIndex is the index of the signal memory buffer currently in use.
+     * @return pointer to the memory address containing the signal data.
      * @pre
      *   bufferIndex == 0 ||
      *   bufferIndex == 1;

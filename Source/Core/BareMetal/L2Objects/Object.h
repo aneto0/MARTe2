@@ -110,7 +110,7 @@
      * of an application or loading of a loadable library.                                                             \
      * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
      */                                                                                                                \
-    static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver);                 \
+    static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver, static_cast<uint32>(sizeof(className)));                 \
     /*                                                                                                                 \
      * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
      * of an application or loading of a loadable library. It will automatically add the class type to the             \
@@ -177,7 +177,7 @@
           * of an application or loading of a loadable library.                                                             \
           * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
           */                                                                                                                \
-         static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver);          \
+         static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver, static_cast<uint32>(sizeof(className)));          \
          /*                                                                                                                 \
           * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
           * of an application or loading of a loadable library. It will automatically add the class type to the             \

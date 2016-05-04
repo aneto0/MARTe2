@@ -263,8 +263,8 @@ bool RealTimeThread::Initialise(StructuredDataI & data) {
             functions = new StreamString[numberOfFunctions];
 
             Vector<StreamString> functionVector(functions, numberOfFunctions);
+            ret = (data.Read("Functions", functionVector));
         }
-        ret = (data.Read("Functions", functionVector));
         if (ret) {
             if (!data.Read("CPUs", cpuMask)) {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No CPUs defined for the RealTimeThread %s", GetName())
@@ -325,7 +325,7 @@ bool RealTimeThread::ToStructuredData(StructuredDataI& data) {
                 ret = child.IsValid();
                 if (ret) {
                     if (ret) {
-                        ret = child->ToStructuredData(data);
+                        ret = child->ExportData(data);
                     }
                 }
             }
