@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
+#include "Iterator.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -47,7 +47,7 @@ namespace MARTe {
  * the Do method.
  */
 template<typename T>
-class IteratorT {
+class IteratorT: public Iterator {
 public:
     /**
      * @brief Destructor.
