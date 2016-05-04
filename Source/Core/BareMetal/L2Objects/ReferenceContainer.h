@@ -73,13 +73,23 @@ public:
      * @details If \a position = -1 the reference is added to the end of the container.
      * @param[in] ref the reference to be inserted.
      * @param[in] position the position in the container where the reference is to be inserted.
-     * @return true if \a ref is valid and it can be successfully added to the container.
+     * @return true if \a ref is valid and if it can be successfully added to the container.
      */
     bool Insert(Reference ref,
                 const int32 &position = -1);
 
+
     /**
-     * @brief Removes the references from the container.
+     * @brief Inserts a new reference in the specified path.
+     * @details It the nodes in the \a path to the reference do not exist, these will be created by this method.
+     * @param[in] path is the path where \a ref must be inserted to.
+     * @param[in] ref is the Reference to be inserted in the container.
+     * @return true if \a ref is valid and if it can be successfully added to the container.
+     */
+    bool Insert(const char8 * const path, Reference ref);
+
+    /**
+     * @brief Removes a reference from the container.
      * @details This call is not recursive, i.e. if the container contains other containers, the \a ref
      * will not be recursively searched (this can be achieved with the Find method and ReferenceContainerFilterReferences filter).
      * @param[in] ref the reference to be deleted.
@@ -96,6 +106,14 @@ public:
      */
     void Find(ReferenceContainer &result,
               ReferenceContainerFilter &filter);
+
+
+    /**
+     * @brief Finds the first element identified by \a path in RECURSIVE mode.
+     * @param[in] path is the name of the element to be found or its full path.
+     * @return the element if it is found or an invalid reference if not.
+     */
+    Reference Find(const char8 * const path);
 
     /**
      * @brief Checks if \a ref holds a container.
@@ -128,6 +146,34 @@ public:
      * @param[in] timeout the timeout to be set.
      */
     void SetTimeout(const TimeoutType &timeout);
+
+    /**
+     * @brief Explores the StructuredDataI in input and builds Objects storing
+     * their References.
+     * @details The Object will be built only if the node name in the data tree
+     * has the special symbol '+' or '$' at the beginning. The symbol '$' marks the
+     * node as a domain and will be used for relative researches by path in ObjectRegistryDatabase::Find(*)
+     * @param[in] data is the StructuredData in input.
+     */
+    virtual bool Initialise(StructuredDataI &data);
+
+
+    /**
+     * @see Object::ToStructuredData(*)
+     */
+    virtual bool ToStructuredData(StructuredDataI & data);
+
+
+    /**
+     * @brief Locks the internal spin-lock mutex.
+     * @return true if the lock succeeds.
+     */
+    bool Lock();
+
+    /**
+     * @Unlocks the internal spin-lock mutex.
+     */
+    void UnLock();
 
 private:
     /**

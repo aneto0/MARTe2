@@ -113,7 +113,7 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) {
     return ret;
 }
 
-int64 HighResolutionTimerCalibrator::GetFrequency() const {
+uint64 HighResolutionTimerCalibrator::GetFrequency() const {
     return frequency;
 }
 

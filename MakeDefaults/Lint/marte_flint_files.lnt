@@ -35,6 +35,7 @@ ErrorType.h
 EventSem.cpp
 ExceptionHandler.h
 FastMath.cpp
+FastPollingEventSem.cpp
 FastPollingMutexSem.cpp
 FlagsType.h
 FloatToInteger.cpp
@@ -69,12 +70,14 @@ LinkedListHolder.cpp
 LinkedListable.cpp
 LoadableLibrary.cpp
 Matrix.h
+MemoryArea.cpp
 MemoryCheck.h
 MemoryCheck_Generic.cpp
 MemoryOperationsHelper.h
 MemoryOperationsHelper_CLIB_Generic.cpp
 MutexSem.cpp
 Object.cpp
+ObjectRegistryDatabase.cpp
 OperatingSystemCallbacksI.h
 ParserI.h
 ParserI.cpp
@@ -93,6 +96,7 @@ Select.cpp
 SelectProperties.h
 Shift.h
 SingleBufferedStream.cpp
+Sleep.h
 Sleep.cpp
 SocketCore.h
 SortFilter.h
@@ -100,6 +104,7 @@ SortFilterT.h
 StandardHeap.h
 StandardHeap_Generic.cpp
 StandardParser.cpp
+StaticList.h
 StaticList.cpp
 StaticListHolder.cpp
 StreamI.h
