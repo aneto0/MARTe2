@@ -119,6 +119,14 @@ public:
     bool Extract(const uint32 position,
                  elementType &value);
 
+    /**
+     * @see StaticListHolder::Set()
+     */
+    bool Set(const uint32 position,
+             elementType &value);
+
+    elementType operator[](uint32 pos);
+
 private:
 
     /**

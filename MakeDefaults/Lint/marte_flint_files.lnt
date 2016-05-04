@@ -22,6 +22,7 @@ ClassRegistryDatabase.cpp
 ClassRegistryItem.cpp
 CompilerTypes.h
 ConfigurationDatabase.cpp
+CString.h
 Directory.cpp
 DirectoryCore.h
 DirectoryScanner.cpp
@@ -35,6 +36,7 @@ ErrorType.h
 EventSem.cpp
 ExceptionHandler.h
 FastMath.cpp
+FastPollingEventSem.cpp
 FastPollingMutexSem.cpp
 FlagsType.h
 FloatToInteger.cpp
@@ -66,7 +68,9 @@ IteratorT.h
 JsonParser.cpp
 LexicalAnalyzer.cpp
 LinkedListHolder.cpp
+LinkedListHolderT.h
 LinkedListable.cpp
+LinkedListableT.h
 LoadableLibrary.cpp
 Matrix.h
 MemoryCheck.h
@@ -93,6 +97,7 @@ Select.cpp
 SelectProperties.h
 Shift.h
 SingleBufferedStream.cpp
+Sleep.h
 Sleep.cpp
 SocketCore.h
 SortFilter.h
@@ -100,6 +105,7 @@ SortFilterT.h
 StandardHeap.h
 StandardHeap_Generic.cpp
 StandardParser.cpp
+StaticList.h
 StaticList.cpp
 StaticListHolder.cpp
 StreamI.h
