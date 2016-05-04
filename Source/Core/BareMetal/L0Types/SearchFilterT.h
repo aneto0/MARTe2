@@ -88,7 +88,7 @@ bool SearchFilterT<T>::Test(LinkedListable *data) {
 		ret = false;
 	}
 	if (ret) {
-		ret = Test(static_cast<T *>(data));
+		ret = SearchFilterT<T>::Test(target);
 	}
 	return ret;
 }
