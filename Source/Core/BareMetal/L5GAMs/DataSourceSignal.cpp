@@ -497,12 +497,11 @@ bool DataSourceSignal::Configure(Reference gamSignalIn) {
 
 }
 
-Reference DataSourceSignal::GetInputReader(Reference defIn,
+Reference DataSourceSignal::GetInputReader(ReferenceT<GAMSignalI> signalIn,
                                            void * varPtr) {
     ReferenceT<MemoryMapInputReader> ret;
-    ReferenceT<GAMSignalI> def = defIn;
 
-    if (def.IsValid()) {
+    if (signalIn.IsValid()) {
         // try the default reader
         ReferenceT<MemoryMapInputReader> reader = ReferenceT<MemoryMapInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         if (reader.IsValid()) {
@@ -512,7 +511,7 @@ Reference DataSourceSignal::GetInputReader(Reference defIn,
                 reader->SetApplication(*application);
                 if (reader.IsValid()) {
                     // can link data source to internal static variables
-                    if (reader->AddSignal(def, varPtr)) {
+                    if (reader->AddSignal(signalIn, varPtr)) {
                         ret = reader;
                     }
                 }
@@ -529,12 +528,11 @@ Reference DataSourceSignal::GetInputReader(Reference defIn,
     return ret;
 }
 
-Reference DataSourceSignal::GetOutputWriter(Reference defIn,
+Reference DataSourceSignal::GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
                                             void * varPtr) {
     ReferenceT<MemoryMapOutputWriter> ret;
-    ReferenceT<GAMSignalI> def = defIn;
 
-    if (def.IsValid()) {
+    if (signalOut.IsValid()) {
         // try the default reader
         ReferenceT<MemoryMapOutputWriter> writer = ReferenceT<MemoryMapOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         if (writer.IsValid()) {
@@ -544,7 +542,7 @@ Reference DataSourceSignal::GetOutputWriter(Reference defIn,
                 writer->SetApplication(*application);
                 if (writer.IsValid()) {
                     // can link data source to internal static variables
-                    if (writer->AddSignal(def, varPtr)) {
+                    if (writer->AddSignal(signalOut, varPtr)) {
                         ret = writer;
                     }
                 }

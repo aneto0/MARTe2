@@ -242,7 +242,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                     if (ret) {
                         element->SetApplication(*app);
                     }
-                    else{
+                    else {
                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Application not set in GAM %s", gam->GetName())
                     }
                 }
@@ -301,7 +301,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                                     if (ret) {
                                         newElement->SetApplication(*app);
                                     }
-                                    else{
+                                    else {
                                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Application not set in GAM %s", gam->GetName())
                                     }
                                 }
@@ -366,7 +366,11 @@ bool DataSourceContainer::Allocate() {
             ret = dataSource->Allocate();
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "DataSourceContainer must contain only DataSource references");
+            ReferenceT<ReferenceContainer> container = Get(i);
+            ret = container.IsValid();
+            if (!ret) {
+                REPORT_ERROR(ErrorManagement::FatalError, "DataSourceContainer must contain only DataSource or ReferenceContainer references");
+            }
         }
     }
     return ret;

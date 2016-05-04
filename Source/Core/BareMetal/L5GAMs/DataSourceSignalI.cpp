@@ -62,12 +62,10 @@ void DataSourceSignalI::SetApplication(RealTimeApplication &app) {
     application = &app;
 }
 
-bool DataSourceSignalI::AddConsumer(Reference gamIn) {
+bool DataSourceSignalI::AddConsumer(Reference gam) {
     uint32 index;
-    ReferenceT<GAM> gam = gamIn;
     bool ret = gam.IsValid();
     if (ret) {
-
         uint32 numberOfGAMStates = gam->GetNumberOfSupportedStates();
         StreamString *stateNames = gam->GetSupportedStates();
         for (uint32 k = 0u; (k < numberOfGAMStates) && (ret); k++) {

@@ -45,11 +45,12 @@
 namespace MARTe {
 
 /**
- * @brief The interface of a data source signal shared between GAMs.
+ * @brief Interface for the signals shared between GAMs.
  *
- * @details Provides the implementation of the functions shared by all data source
- * signal types but the functions which can change between different type of signals
- * are declared pure virtual due to allow custom implementations.
+ * @details Any signal that is shared between a GAM (either as a producer or as a
+ * consumer) shall implement this interface. Note that this signal does not have
+ * to be necessarily produced/consumed by a GAM. For example, a driver is expected to
+ * implement this interface and offer/consume signal data to/from other GAMs.
  */
 class DLL_API DataSourceSignalI: public ReferenceContainer {
 public:
@@ -64,31 +65,34 @@ public:
     DataSourceSignalI();
 
     /**
-     * @brief Destructor
+     * @brief Destructor. NOOP.
      */
     virtual ~DataSourceSignalI();
 
     /**
-     * @brief Sets a pointer to the RealTimeApplication containing this signal.
+     * @brief Sets a reference to the RealTimeApplication containing this signal.
+     * @details While building the RealTimeApplication architecture this method will be called.
      * @param[in] app is the reference to the RealTimeApplication.
      */
     void SetApplication(RealTimeApplication &app);
 
     /**
-     * @brief Adds a GAM as a consumer.
-     * @param[in] stateIn the state name where \a gamIn is involved as a consumer of this signal.
-     * @param[in] gamIn is the GAM which will consume this variable in the state \a stateIn.
-     * @return false in case of errors, false otherwise.
+     * @brief Registers a GAM as a consumer for this signal in all the states supported by the \a gam.
+     * @details This function will create a DataSourceSignalRecord for each state supported by this \a gam
+     * and will add the generated record as a child of this container.
+     * @param[in] gam is the GAM which will consume this variable.
+     * @return true if the gam can be successfully registered as a consumer of this signal.
      */
-    bool AddConsumer(Reference gamIn);
+    bool AddConsumer(ReferenceT<GAM> gam);
 
     /**
-     * @brief Adds a GAM as a producer.
-     * @param[in] stateIn the state name where \a gamIn is involved as a producer of this signal.
-     * @param[in] gamIn is the GAM which will produce this variable in the state \a stateIn.
-     * @return false in case of errors, false otherwise.
+     * @brief Registers a GAM as a producer of this signal in all the states supported by the \a gam.
+     * @details This function will create a DataSourceSignalRecord for each state supported by this \a gam
+     * and will add the generated record as a child of this container.
+     * @param[in] gam is the GAM which will produce this variable.
+     * @return true if the gam can be successfully registered as a producer of this signal.
      */
-    bool AddProducer(Reference gamIn);
+    bool AddProducer(ReferenceT<GAM> gamIn);
 
     /**
      * @brief Retrieves the number of consumer GAMs of this signal in the specified state.
@@ -111,15 +115,16 @@ public:
     bool Verify();
 
     /**
-     * @brief Retrieves the signal number of elements.
-     * @details The signal can be read (write) to (from) GAMSignalsI which could be vectors or matrices.
+     * @brief Gets the signal number of elements.
+     * @details The signal can be multi-dimensional with an arbitrary number of elements (1 for scalar, n for vectors and nxm for matrices).
      * @return the number of elements.
      */
     uint32 GetNumberOfElements() const;
 
     /**
-     * @brief Retrieves the signal number of samples.
-     * @return the signal number of samples.
+     * @brief Retrieves the number of samples.
+     * @details Each signal can contain one or more samples, each with GetNumberOfElements().
+     * @return the number of samples.
      */
     uint32 GetNumberOfSamples() const;
 
@@ -131,73 +136,78 @@ public:
 
     /**
      * @brief Prepares the environment for the next state.
-     * @param[in] status contains informations about the current, the next state and the current
+     * @param[in] status contains informations about the current and the next state and about the current
      * active buffer.
-     * @return true if the default value set is compatible with the variable type, false otherwise.
+     * @return true if the state change request is admissible by this DataSourceSignalI.
      */
     virtual bool PrepareNextState(const RealTimeStateInfo &status)=0;
 
     /**
      * @brief Allocates the memory for this signal.
      * @param[in] dsMemory is the memory where this signal has to be allocated.
-     * @return false if the type name is not recognized or in case of allocation errors, true otherwise.
+     * @return true if the memory for this signal can be successfully allocated in \a dsMemory.
      */
     virtual bool Allocate(MemoryArea &dsMemory)=0;
 
     /**
-     * @brief The routine to be executed at the begin of a write operation.
+     * @brief Called before updating the value of this signal.
+     * @details This function allows to perform any activities on the signal before its value is updated.
      */
     virtual void WriteStart()=0;
 
     /**
-     * @brief The routine to be executed at the begin of a read operation.
+     * @brief Called before reading the value of this signal.
+     * @details This function allows to perform any activities on the signal before its value is read.
      */
     virtual void ReadStart()=0;
 
     /**
-     * @brief The routine to be executed at the end of a write operation
+     * @brief Called after updating the value of this signal.
+     * @details This function allows to perform any activities on the signal after its value is updated.
      */
     virtual void WriteEnd()=0;
 
     /**
-     * @brief The routine to be executed at the end of a read operation
+     * @brief Called after after reading the value of this signal.
+     * @details This function allows to perform any activities on the signal after its value is read.
      */
     virtual void ReadEnd()=0;
 
     /**
      * @brief The synchronising routine.
-     * @details If a GAMSignalI linked to this signal specifies a number of cycles
-     * different than 0, the read (write) operation will be synchronised and this function
+     * @details This function will block the execution thread until an event is generated.
+     * In particular, if a GAMSignalI linked to this signal specifies a number of cycles
+     * different from 0, the read (write) operation will be synchronised and this function
      * will be called from the broker (DataSourceBrokerI) before the read (write) operation.
-     * @return false in case of errors or timeout expire. True otherwise.
+     * @return false in case of errors or if the timeout expire.
      */
     virtual bool WaitOnEvent(const TimeoutType &timeout = TTInfiniteWait)=0;
 
     /**
-     * @brief Retrieves the reader for the signal passed in input.
-     * @details Generally a data source can supports a certain number of interfaces to interact with GAMs.
-     * This function retrieves the first input reader compatible with this data source and with the GAM
-     * signal in input, or an invalid reference if the two are incompatible. The GAM signal \a defIn in input
+     * @brief Retrieves the DataSourceBrokerI reader for the signal passed in input.
+     * @details Generally a DataSourceSignalI will support a certain number of interfaces to interact with GAMs.
+     * This function retrieves the first input reader compatible with this DataSourceSignalI and with the
+     * GAMSignalI in input, or an invalid reference if the two are incompatible. The GAM signal \a defIn in input
      * will be added to eventually generated input reader.
-     * @param[in] defIn is a GAMSignalI to be linked to this signal.
+     * @param[in] signalIn is a GAMSignalI to be linked to this signal.
      * @param[in] varPtr is the pointer of the GAMSignalI memory (if NULL the broker will allocate the memory).
-     * @return a reference to a reader compatible with \a defIn, an invalid reference in case of incompatibility.
+     * @return a reference to a reader compatible with \a signalIn, an invalid reference in case of incompatibility.
      */
-    virtual Reference GetInputReader(Reference defIn,
-                                     void * varPtr = NULL_PTR(void*))=0;
+    virtual ReferenceT<DataSourceBrokerI> GetInputReader(ReferenceT<GAMSignalI> signalIn,
+                                                         void * varPtr = NULL_PTR(void*))=0;
 
     /**
-     * @brief Retrieves the writer for the signal passed in input.
+     * @brief Retrieves the DataSourceBrokerI writer for the signal passed in input.
      * @details Generally a data source can supports a certain number of interfaces to interact with GAMs.
-     * This function retrieves the first output writer compatible with this data source and with the GAM
-     * signal in input, or an invalid reference if the two are incompatible. The GAM signal \a defIn in input
+     * This function retrieves the first output writer compatible with this DataSourceSignalI and with the
+     * GAMSignalI in output, or an invalid reference if the two are incompatible. The GAM signal \a defIn in input
      * will be added to eventually generated output writer.
-     * @param[in] defIn is a GAMSignalI to be linked to this signal.
+     * @param[in] signalOut is a GAMSignalI to be linked to this signal.
      * @param[in] varPtr is the pointer of the GAMSignalI memory (if NULL the broker will allocate the memory).
-     * @return a reference to a writer compatible with \a defIn, an invalid reference in case of incompatibility.
+     * @return a reference to a writer compatible with \a signalOut, an invalid reference in case of incompatibility.
      */
-    virtual Reference GetOutputWriter(Reference defIn,
-                                      void * varPtr = NULL_PTR(void*))=0;
+    virtual ReferenceT<DataSourceBrokerI> GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
+                                                          void * varPtr = NULL_PTR(void*))=0;
 
     /**
      * @brief Configures the signal from a GAMSignalI definition.

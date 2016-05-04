@@ -45,15 +45,12 @@ namespace MARTe{
 
 
 /**
- * @brief The memory shared between GAMs.
- * @details All the DataSources must be declared in the configuration data
- * otherwise an error will be generated in the configuration phase if the Path field of a
- * GAMSignalI links to an undeclared DataSource.
- * @details It is possible achieve a custom memory management adding previously to the HeapManager
- * a proper HeapI object. Declaring the name of the HeapI in the configuration data
- * we impose to the DataSource to use a specific HeapI and accordingly its proper
- * methods for memory management.
- * @details The syntax in the configuration stream has to be:
+ * @brief Memory container for the exchange of signal data.
+ * @details This class provides the memory area where all signals interchanged between GAMs exist.
+ * It can also be sub-classed to provide a uniform mechanism of sharing the same memory area between
+ *  DataSourceSignalI that are inserted as a child of this container.
+ *
+ * @details The syntax in the configuration stream shall be:
  *
  * +DataSource_name = {\n
  *     Class = DataSource\n
@@ -61,7 +58,7 @@ namespace MARTe{
  *     ...\n
  * }\n
  *
- * and it has to be contained in the [RealTimeApplication].+Functions.[?ReferenceContainer?].[?GAMGroup?] declaration.
+ * and it can only exist as a child of the [RealTimeApplication].+Data declaration.
  */
 class DLL_API DataSource: public ReferenceContainer {
 
@@ -69,23 +66,32 @@ public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief Constructor
+     * @brief Initialises the ReferenceContainer.
      */
     DataSource();
 
 
     /**
-     * @see Object::Initialise(*).
+     * @brief Configures the DataSource against the input configuration \a data.
      * @details The following fields can be specified in \a data:
      *
      *   HeapName = "the name of the heap memory"
      *
      * By default (if not specified) the StandardHeap will be used to manage the heap memory.
+     * @return true if the ReferenceContainer::Initialise succeeds
+     * @post
+     *    if HeapName exits:
+     *      memory.SetHeapName(heapName.Buffer())
      */
     virtual bool Initialise(StructuredDataI & data);
 
     /**
-     * @see DataSourceI::Allocate(*)
+     * @brief Recursively calls DataSourceSignalI::Allocate
+     * @details During the initialisation of a RealTimeApplication this method is called and allows
+     * to share the memory of this DataSource with all of its children (provided that they inherit from DataSourceSignalI).
+     * @return true if DataSourceSignalI::Allocate returns true for all the DataSourceSignalI in this container.
+     * @pre
+     *    All the children of this container inherit either from DataSourceSignalI or from ReferenceContainer.
      */
     virtual bool Allocate();
 
@@ -99,7 +105,7 @@ private:
     StreamString heapName;
 
     /**
-     * The memory for all the data sources.
+     * The memory of the data source.
      */
     MemoryArea memory;
 

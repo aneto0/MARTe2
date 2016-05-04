@@ -119,7 +119,8 @@ public:
     /**
      * @brief Allocates the memory for each of the defined data sources.
      * @details Browses the tree and for each DataSource found calls the method DatSource::Allocate.
-     * @return true if all DataSource::Allocate return true.
+     * @return true if all the elements in the container are ReferenceContainer or DataSource classes and if
+     *  the DataSource::Allocate function calls return true.
      */
     bool Allocate();
 

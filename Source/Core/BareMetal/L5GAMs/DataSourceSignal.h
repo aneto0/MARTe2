@@ -79,7 +79,6 @@ public:
      */
     virtual ~DataSourceSignal();
 
-
     /**
      * @see DataSourceSignalI::GetDataSourcePointer(*)
      * @details After the allocation of a double buffer memory for this signal, two
@@ -126,7 +125,6 @@ public:
      */
     virtual void ReadEnd();
 
-
     /**
      * @see ReferenceContainer::Initialise(*).
      * @details The following fields can be specified:\n
@@ -154,7 +152,6 @@ public:
      */
     virtual bool ToStructuredData(StructuredDataI & data);
 
-
     /**
      * @see DataSourceSignalI::WaitOnEvent(*)
      */
@@ -173,15 +170,15 @@ public:
      * @see DataSourceSignalI::GetInputReader(*).
      * @details If compatible with \a defIn, returns a MemoryMapInputReader.
      */
-    virtual Reference GetInputReader(Reference defIn,
-                                     void * varPtr = NULL_PTR(void*));
+    virtual ReferenceT<DataSourceBrokerI> GetInputReader(ReferenceT<GAMSignalI> signalIn,
+                                                         void * varPtr = NULL_PTR(void*));
 
     /**
      * @see DataSourceSignalI::GetOutputWriter(*).
      * @details If compatible with \a defIn, returns a MemoryMapOutputWriter.
      */
-    virtual Reference GetOutputWriter(Reference defIn,
-                                      void * varPtr = NULL_PTR(void*));
+    virtual ReferenceT<DataSourceBrokerI> GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
+                                                          void * varPtr = NULL_PTR(void*));
 
     /**
      * @see DataSourceSignalI::IsSupportedBroker(*)
@@ -211,7 +208,6 @@ protected:
      * Pointers to the buffer to be used.
      */
     void *usedBuffer[2];
-
 
     /**
      * A pointer to the global memory area.
