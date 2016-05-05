@@ -32,6 +32,11 @@
 #include "ClassRegistryItem.h"
 #include "FastPollingMutexSem.h"
 #include "ErrorManagement.h"
+#include "Introspection.h"
+#include "ClassMethodsRegistryItem.h"
+#include "ObjectBuilder.h"
+#include "SearchFilterT.h"
+
 
 namespace MARTe {
 /*---------------------------------------------------------------------------*/
@@ -45,47 +50,40 @@ static FastPollingMutexSem classRegistryItemMuxSem;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-//LCOV_EXCL_START
-ClassRegistryItem::ClassRegistryItem() :
-        classProperties() {
+// TODO remove LCOV_EXCL_START
+ClassRegistryItem::ClassRegistryItem(ClassProperties &classProperties_in) :
+        classProperties(classProperties_in) {
     numberOfInstances = 0u;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuildFn = NULL_PTR(ObjectBuildFn *);
+    objectBuilder = NULL_PTR(ObjectBuilder *);
     introspection = NULL_PTR(Introspection *);
 }
 
-//LCOV_EXCL_STOP
+ClassRegistryItem *ClassRegistryItem::Instance(ClassRegistryItem *&instance,ClassProperties &classProperties_in){
+    ClassRegistryDatabase* crd = ClassRegistryDatabase::Instance();
 
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
-                                     const ObjectBuildFn * const objBuildFn) {
-    numberOfInstances = 0u;
-    classProperties = clProperties;
-    loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuildFn = objBuildFn;
-    introspection = NULL_PTR(Introspection *);
-    ClassRegistryDatabase::Instance()->Add(this);
+    if ((crd != NULL_PTR(ClassRegistryDatabase*)) && (instance != NULL_PTR(ClassRegistryItem*))){
+
+        instance = new ClassRegistryItem(classProperties_in);
+
+        if (instance != NULL){
+            crd->Add(instance);
+        }
+    }
+
+    return instance;
 }
 
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
-                                     Introspection &introspectionIn) {
-    numberOfInstances = 0u;
-    classProperties = clProperties;
-    loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuildFn = NULL_PTR(ObjectBuildFn *);
-    introspection = &introspectionIn;
-    ClassRegistryDatabase::Instance()->Add(this);
+
+void ClassRegistryItem::SetObjectBuilder(ObjectBuilder *objectBuilderIn){
+    objectBuilder = objectBuilderIn;
 }
 
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
-                                     const ObjectBuildFn * const objBuildFn,
-                                     Introspection &introspectionIn) {
-    numberOfInstances = 0u;
-    classProperties = clProperties;
-    loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuildFn = objBuildFn;
-    introspection = &introspectionIn;
-    ClassRegistryDatabase::Instance()->Add(this);
+const ObjectBuilder *ClassRegistryItem::GetObjectBuilder() const{
+    return objectBuilder;
 }
+
+
 
 /*lint -e{1551} no exception should be thrown as loadableLibrary is properly initialised and
  * before deleting it is verified if the pointer is NULL*/
@@ -95,6 +93,7 @@ ClassRegistryItem::~ClassRegistryItem() {
     }
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     introspection = NULL_PTR(Introspection *);
+    objectBuilder = NULL_PTR(ObjectBuilder *);
 }
 
 void ClassRegistryItem::GetClassPropertiesCopy(ClassProperties &destination) const {
@@ -105,9 +104,28 @@ const ClassProperties *ClassRegistryItem::GetClassProperties() const {
     return &classProperties;
 }
 
+void ClassRegistryItem::SetIntrospection(Introspection *introspectionIn){
+    introspection = introspectionIn;
+}
+
 const Introspection * ClassRegistryItem::GetIntrospection() const {
     return introspection;
 }
+
+
+const LoadableLibrary *ClassRegistryItem::GetLoadableLibrary() const {
+    return loadableLibrary;
+}
+
+void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const loadLibrary) {
+    this->loadableLibrary = loadLibrary;
+}
+
+
+void ClassRegistryItem::RegisterMethods(ClassMethodsRegistryItem *classMethodRecord){
+    classMethods.ListAdd(static_cast<LinkedListableT<ClassMethodsRegistryItem> *>(classMethodRecord));
+}
+
 
 void ClassRegistryItem::IncrementNumberOfInstances() {
     if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
@@ -130,20 +148,52 @@ uint32 ClassRegistryItem::GetNumberOfInstances() const {
     return numberOfInstances;
 }
 
-const LoadableLibrary *ClassRegistryItem::GetLoadableLibrary() const {
-    return loadableLibrary;
+class DLL_API CallRegisteredMethodLauncher : public SearchFilterT<ClassMethodsRegistryItem >{
+    CCString methodName;
+    ReferenceContainer & parameters;
+    Object *object;
+    ReturnType ret;
+public:
+
+    CallRegisteredMethodLauncher(Object *objectIn,CCString methodNameIn,ReferenceContainer & parametersIn): parameters(parametersIn),ret(false){
+        object = objectIn;
+        methodName= methodNameIn;
+    }
+
+    virtual bool Test(ClassMethodsRegistryItem *data){
+        ret = data->CallFunction(object,methodName.GetList(),parameters);
+        return ret.error.notUnsupportedFeature;
+    }
+
+    ReturnType GetResults(){
+        return ret;
+    }
+
+};
+
+
+ReturnType ClassRegistryItem::CallRegisteredMethod(Object *object,CCString methodName,ReferenceContainer & parameters){
+    ReturnType ret(true);
+
+    if (object != NULL_PTR(Object*))       ret.error.notParametersError = false;
+    if (methodName.GetList() != NULL_PTR(char8*))    ret.error.notParametersError = false;
+
+    if (ret.AllOk()){
+        CallRegisteredMethodLauncher launcher(object,methodName,parameters);
+        if (classMethods.ListSearch(&launcher)){
+            ret = launcher.GetResults();
+        } else {
+            ret.error.notUnsupportedFeature = false;
+        }
+    }
+    return ret;
 }
 
-void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const loadLibrary) {
-    this->loadableLibrary = loadLibrary;
-}
-
-const ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
-    return objectBuildFn;
-}
 
 void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {
     classProperties.SetUniqueIdentifier(uid);
 }
+
+
 
 }

@@ -49,7 +49,7 @@ namespace MARTe {
  * @warning It is expected that T be descendant of LinkedListable.
  */
 template<typename T>
-class SearchFilterT: public SearchFilter {
+class DLL_API SearchFilterT: public SearchFilter {
 public:
 
     /**

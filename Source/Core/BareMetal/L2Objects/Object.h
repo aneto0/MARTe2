@@ -117,7 +117,7 @@
      * ClassRegistryDatabase.                                                                                          \
      * e.g. static ClassRegistryItem MyClassTypeClassRegistryItem_( MyClassTypeClassProperties_, &MyClassTypeBuildFn_);\
      */                                                                                                                \
-    static MARTe::ClassRegistryItem className ## ClassRegistryItem_( className ## ClassProperties_, & className ## BuildFn_); \
+    static MARTe::ClassRegistryItemT<className> className ## ClassRegistryItem_( className ## ClassProperties_); \
     /*                                                                                                                 \
      * @brief Function called when a new instance of this class type is to be instantiated in the provided heap.       \
      * @param[in] h the heap where the object will be instantiated.                                                    \

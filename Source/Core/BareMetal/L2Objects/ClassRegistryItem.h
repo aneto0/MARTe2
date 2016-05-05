@@ -32,11 +32,13 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "HeapI.h"
-#include "LinkedListable.h"
+#include "LinkedListHolderT.h"
 #include "LoadableLibrary.h"
 #include "ClassProperties.h"
 #include "FractionalInteger.h"
-#include "Introspection.h"
+#include "ObjectBuilder.h"
+#include "CString.h"
+#include "ReturnType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -44,15 +46,12 @@
 
 namespace MARTe {
 
+class Introspection;
+class ClassMethodsRegistryItem;
+class ReferenceContainer;
+
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
 class Object;
-/*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
-/**
- * @brief Definition of the ObjectBuildFn function type.
- * @param[in] heap the desired heap memory area where the object will be created.
- * @return a pointer to the created object.
- */
-typedef Object *(ObjectBuildFn)(HeapI* const);
 
 /**
  * @brief Descriptor of framework base classes.
@@ -63,33 +62,6 @@ typedef Object *(ObjectBuildFn)(HeapI* const);
  */
 class DLL_API ClassRegistryItem {
 public:
-
-    /**
-     * @brief Assigns the input variables to the class members and registers this item in the ClassRegistryDatabase::Instance().
-     * @param[in] clProperties the class properties associated with the class that is being registered.
-     * @param[in] objBuildFn the function that allows to instantiate a new object from the class
-     * represented by this ClassRegistryItem instance.
-     */
-    ClassRegistryItem(const ClassProperties &clProperties,
-            const ObjectBuildFn * const objBuildFn);
-
-    /**
-     * @brief Assigns the input variables to the class members and registers this item in the ClassRegistryDatabase::Instance().
-     * @param[in] clProperties the class properties associated with the class that is being registered.
-     * @param[in] introspectionIn is the Introspection structure containing the class metadata
-     * represented by this ClassRegistryItem instance.
-     */
-    ClassRegistryItem(const ClassProperties &clProperties, Introspection &introspectionIn);
-
-    /**
-     * @brief Assigns the input variables to the class members and registers this item in the ClassRegistryDatabase::Instance().
-     * @param[in] clProperties the class properties associated with the class that is being registered.
-     * @param[in] objBuildFn the function that allows to instantiate a new object from the class
-     * @param[in] introspectionIn is the Introspection structure containing the class metadata
-     * represented by this ClassRegistryItem instance.
-     */
-    ClassRegistryItem(const ClassProperties &clProperties,
-            const ObjectBuildFn * const objBuildFn, Introspection &introspectionIn);
 
 
     /**
@@ -128,6 +100,10 @@ public:
      */
     const ClassProperties *GetClassProperties() const;
 
+    /**
+     * todo
+     */
+    void SetIntrospection(Introspection *introspectionIn);
 
     /**
      * @brief Returns a pointer to the class introspection.
@@ -136,24 +112,33 @@ public:
     const Introspection * GetIntrospection() const;
 
     /**
-     * @brief Returns a pointer to the library (dll).
-     * @return a pointer to the library (dll) of the class type represented by this registry item.
-     */
-    const LoadableLibrary *GetLoadableLibrary() const;
-
-    /**
      * @brief Updates the pointer to the loadable library (dll).
      * @param[in] loadLibrary the library (dll) holding the class type represented by this registry item.
      */
     void SetLoadableLibrary(const LoadableLibrary * const loadLibrary);
 
     /**
+     * @brief Returns a pointer to the library (dll).
+     * @return a pointer to the library (dll) of the class type represented by this registry item.
+     */
+    const LoadableLibrary *GetLoadableLibrary() const;
+
+    /**
+     * todo
+     */
+    void RegisterMethods(ClassMethodsRegistryItem *classMethodRecord);
+    /**
+     * todo
+     */
+    void SetObjectBuilder(ObjectBuilder *objectBuilderIn);
+
+    /**
      * @brief Returns a pointer to object build function.
      * @details Returns a pointer to a function that allows to instantiate a new object from
      * the class represented by this registry item.
-     * @return a pointer to the function that allows to instantiate a new object.
+     * @return a pointer to the object factory.
      */
-    const ObjectBuildFn *GetObjectBuildFunction() const;
+    const ObjectBuilder *GetObjectBuilder() const;
 
     /**
      * @brief Sets the unique identifier for the class described by this ClassRegistryItem.
@@ -161,11 +146,29 @@ public:
      */
     void SetUniqueIdentifier(const ClassUID &uid);
 
+    /**
+     * TODO
+     */
+    ReturnType CallRegisteredMethod(Object *object,CCString methodName,ReferenceContainer & parameters);
+
+protected:
+    /**
+    // singleton approach - usable only by descendant methods
+     * @brief Default constructor
+     */
+    ClassRegistryItem(ClassProperties &classProperties_in);
+
+    /** singleton approach - usable only by descendant methods
+     * common code
+     * static ptr is specialised in the templetised descendant
+     */
+    static ClassRegistryItem *Instance(ClassRegistryItem *&instance,ClassProperties &classProperties_in);
+
 private:
     /**
      * The properties of the class represented by this registry item.
      */
-    ClassProperties classProperties;
+    ClassProperties &classProperties;
 
     /**
      * The number of instantiated objects of the class type represented by this registry item.
@@ -179,22 +182,51 @@ private:
     const LoadableLibrary *loadableLibrary;
 
     /**
-     * The object instantiation function.
+     * The object factory .
      */
-    const ObjectBuildFn *objectBuildFn;
+    const ObjectBuilder *objectBuilder;
+
 
     /**
      * The introspection associated to the class.
      */
-    Introspection *introspection;
+    const Introspection *introspection;
 
     /**
-     * @brief Default constructor
-     */
-    /*lint -e{1704} the default constructor is not to be used.
-     * Each ClassRegistryItem is automatically constructed (using the public constructor) by the Object macros*/
-    ClassRegistryItem();
+     * TODO
+     * */
+    LinkedListHolderT<ClassMethodsRegistryItem> classMethods;
+
 };
+
+
+
+/**
+ * TODO
+ */
+template <class T>
+class DLL_API ClassRegistryItemT: public ClassRegistryItem{
+
+public:
+
+    /**
+     * TODO
+     */
+    ClassRegistryItemT( ClassProperties &classProperties_in): ClassRegistryItem(classProperties_in){}
+
+    /**
+     * @brief Singleton access to the database.
+     * @return a reference to the database.
+     * TODO
+     */
+    static inline ClassRegistryItem *Instance(){
+        static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
+        return ClassRegistryItem::Instance(instance,T::classProperties);
+    }
+
+
+};
+
 
 }
 /*---------------------------------------------------------------------------*/

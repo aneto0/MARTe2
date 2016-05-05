@@ -452,6 +452,7 @@ public:
      */
     inline AnyType(volatile char8 * const p);
 
+
     /**
      * @brief Constructor from Object (or inherited class).
      * @param[in] obj the source Object.

@@ -32,6 +32,8 @@
 #include "FastPollingMutexSem.h"
 #include "StringHelper.h"
 #include "HeapI.h"
+#include "Introspection.h"
+#include "IntrospectionEntry.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

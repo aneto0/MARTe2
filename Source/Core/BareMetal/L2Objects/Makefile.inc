@@ -27,12 +27,14 @@ ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  AnyType.x\
+        ClassMethodsRegistryItem.x \
 		ClassProperties.x \
 		ClassRegistryDatabase.x \
 		ClassRegistryItem.x \
 		Introspection.x\
 		IntrospectionEntry.x \
 		Object.x \
+		ObjectRegistryDatabase.x \
 		Reference.x \
 		ReferenceContainer.x \
 		ReferenceContainerNode.x \
