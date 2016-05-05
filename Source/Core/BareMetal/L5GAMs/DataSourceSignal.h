@@ -47,11 +47,11 @@ namespace MARTe {
 /**
  * @brief DataSourceSignalI implementation for the exchange of signals between GAM components.
  *
- * @details This implementation of the DataSourceSignalI interface is intend for the definition
- *  of all the signals exchanged in real-time between GAM components. These are managed by a
+ * @details This implementation of the DataSourceSignalI interface is intend for interchange
+ *  of signals in real-time between GAM components. The DataSourceSignal instances are managed by a
  *  single DataSource which offers the memory backend to store the signal data.
  *
- * @details The syntax in the configuration stream has to be:
+ * @details The syntax in the input configuration stream (see Initialise) has to be:
  *
  * +DataSourceSignal_Name= {\n
  *    Class = DataSourceSignal
@@ -62,7 +62,7 @@ namespace MARTe {
  *     ...\n
  * }\n
  *
- * and it has to be contained in the [DataSource] declaration.
+ * and it has to be contained inside a [DataSource] declaration.
  */
 class DLL_API DataSourceSignal: public DataSourceSignalI {
 public:
@@ -79,19 +79,20 @@ public:
     virtual ~DataSourceSignal();
 
     /**
-     * @see DataSourceSignalI::GetDataSourcePointer(*)
-     * @details After the allocation of a double buffer memory for this signal, two
-     * attributes of this object can store the pointer to one buffer or the other. If no
-     * need to reset the variable in PrepareNextState, the pointer to the current buffer
-     * will be stored in the attribute related to the next index in order to use again the
-     * same buffer in the next state. Otherwise the attribute related to the next index
-     * will store the pointer of the currently unused buffer.
+     * @brief Retrieves to the memory address containing the signal data.
+     * @details Given that the DataSourceSignal uses a double-buffering memory, this method
+     * will return to the memory buffer for \a bufferIndex.
+     * @param[in] bufferIndex index of the buffer.
+     * @return the memory address containing the signal data for \a bufferIndex.
      */
     virtual void **GetDataSourcePointer(uint8 bufferIndex);
 
     /**
-     * @see DataSourceSignalI::PrepareNextState(*)
-     * @details If the data source signal is not used during the current state but will be used in the next, it will be
+     * @brief Prepare the DataSourceSignal for the next state.
+     * @details If this DataSourceSignal was already being used in this state and is to be used in the next state
+     *  then
+     *
+     * is not used during the current state but will be used in the next, it will be
      * reset to its default value. The value of the signal will be preserved for the next state if it is used in the
      * current one. Since this function will be executed in a low priority thread in parallel with the
      * real-time execution, the operations on the data source memory will be executed on a currently unused buffer (double
