@@ -352,33 +352,33 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
     return ok;
 }
 
-//bool ReferenceContainer::ToStructuredData(StructuredDataI & data) {
-//
-//    // no need to lock
-//    const char8 * objName = GetName();
-//    bool ret = data.CreateRelative(objName);
-//    if (ret) {
-//        const ClassProperties *properties = GetClassProperties();
-//        ret = (properties != NULL);
-//        if (ret) {
-//            ret = data.Write("Class", properties->GetName());
-//            uint32 numberOfChildren = Size();
-//            for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
-//                Reference child = Get(i);
-//                ret = child.IsValid();
-//                if (ret) {
-//                    if (ret) {
-//                        ret = child->ToStructuredData(data);
-//                    }
-//                }
-//            }
-//        }
-//        if (!data.MoveToAncestor(1u)) {
-//            ret = false;
-//        }
-//    }
-//    return ret;
-//}
+bool ReferenceContainer::ExportData(StructuredDataI & data) {
+
+    // no need to lock
+    const char8 * objName = GetName();
+    bool ret = data.CreateRelative(objName);
+    if (ret) {
+        const ClassProperties *properties = GetClassProperties();
+        ret = (properties != NULL);
+        if (ret) {
+            ret = data.Write("Class", properties->GetName());
+            uint32 numberOfChildren = Size();
+            for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
+                Reference child = Get(i);
+                ret = child.IsValid();
+                if (ret) {
+                    if (ret) {
+                        ret = child->ExportData(data);
+                    }
+                }
+            }
+        }
+        if (!data.MoveToAncestor(1u)) {
+            ret = false;
+        }
+    }
+    return ret;
+}
 
 bool ReferenceContainer::Lock() {
     return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);

@@ -159,10 +159,10 @@ public:
     virtual bool Initialise(StructuredDataI &data);
 
 
-//    /**
-//     * @see Object::ToStructuredData(*)
-//     */
-//    virtual bool ToStructuredData(StructuredDataI & data);
+    /**
+     * @see Object::ExportData(*)
+     */
+    virtual bool ExportData(StructuredDataI & data);
 
 
     /**
