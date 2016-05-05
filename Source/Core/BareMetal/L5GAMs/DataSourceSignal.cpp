@@ -47,6 +47,11 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+/**
+ * @brief Computes the dimension of the signal.
+ * @param[in] gamSignalIn the signal to be computed.
+ * @return the dimension of the signal (i.e. GetNumberOfDimensions(i) * GetNumberOfElements(j)).
+ */
 static uint32 GetDataSourceDimension(Reference gamSignalIn) {
     uint32 requiredDimension = 0u;
     ReferenceT<GAMSignalI> gamSignal = gamSignalIn;
@@ -157,9 +162,9 @@ bool DataSourceSignal::PrepareNextState(const RealTimeStateInfo &status) {
 
     if (ret) {
         // by default use the same buffer in the next state
-        uint8 nextBuffer = (status.activeBuffer + 1u) % 2u;
+        uint8 nextBufferIdx = (status.activeBuffer + 1u) % 2u;
         /*lint -e{613} NULL pointer checking done before entering here */
-        usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[status.activeBuffer]);
+        usedBuffer[nextBufferIdx] = memory->GetPointer(bufferPtrOffset[status.activeBuffer]);
 
         // search the current state
         uint32 numberOfStates = Size();
@@ -174,7 +179,7 @@ bool DataSourceSignal::PrepareNextState(const RealTimeStateInfo &status) {
                 }
             }
         }
-        // this variable was dead
+        // this variable was not being used in this state
         if (!found) {
             found = false;
             for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
@@ -284,7 +289,7 @@ bool DataSourceSignal::PrepareNextState(const RealTimeStateInfo &status) {
                     if (ret) {
                         //set the next used buffer
                         /*lint -e{613} NULL pointer checking done before entering here */
-                        usedBuffer[nextBuffer] = memory->GetPointer(bufferPtrOffset[nextBuffer]);
+                        usedBuffer[nextBufferIdx] = memory->GetPointer(bufferPtrOffset[nextBufferIdx]);
                     }
                     else {
                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Failed reset of the signal %s", GetName())
@@ -348,12 +353,15 @@ bool DataSourceSignal::Initialise(StructuredDataI & data) {
 
     bool ret = ReferenceContainer::Initialise(data);
 
+    bool atLeastOne = false;
     if (ret) {
 
-        if (!data.Read("Type", type)) {
+        if (data.Read("Type", type)) {
+            atLeastOne = true;
         }
 
-        if (!data.Read("Default", defaultValue)) {
+        if (data.Read("Default", defaultValue)) {
+            atLeastOne = true;
         }
 
         if (data.Read("Dimensions", dimensions)) {
@@ -365,17 +373,18 @@ bool DataSourceSignal::Initialise(StructuredDataI & data) {
             if (entry.GetMemberPointerLevel() > 0u) {
                 REPORT_ERROR(ErrorManagement::Warning, "Pointers not supported. The statement will be ignored");
             }
+            atLeastOne = true;
         }
 
-        if (!data.Read("Samples", numberOfSamples)) {
-
+        if (data.Read("Samples", numberOfSamples)) {
+            atLeastOne = true;
         }
-
+        ret = atLeastOne;
     }
     return ret;
 }
 
-bool DataSourceSignal::ToStructuredData(StructuredDataI& data) {
+bool DataSourceSignal::ExportData(StructuredDataI& data) {
 
     const char8 * objName = GetName();
     StreamString objNameToPrint = (IsDomain()) ? ("$") : ("+");
@@ -447,7 +456,7 @@ bool DataSourceSignal::WaitOnEvent(const TimeoutType &timeout) {
     return true;
 }
 
-bool DataSourceSignal::Configure(Reference gamSignalIn) {
+bool DataSourceSignal::Configure(ReferenceT<GAMSignalI> gamSignalIn) {
 
     ReferenceT<GAMSignalI> gamSignal = gamSignalIn;
 

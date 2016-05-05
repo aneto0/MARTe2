@@ -212,12 +212,12 @@ public:
 
     /**
      * @brief Configures the signal from a GAMSignalI definition.
-     * @details If the signal is not fully configured, this function completes the definition
-     * reading the fields of a GAMSignalI linked to this signal passed in input.
+     * @details If the signal is not fully configured (i.e. if not all the configurable fields were already specified),
+     * this function completes the definition reading the fields of a GAMSignalI linked to this signal passed in input.
      * @param[in] gamSignalIn is a GAMSignalI to be linked to this signal.
      * @return false if the current configuration is not compatible with the \a gamSignalIn one.
      */
-    virtual bool Configure(Reference gamSignalIn)=0;
+    virtual bool Configure(ReferenceT<GAMSignalI> gamSignalIn)=0;
 
     /**
      * @brief Retrieves to the memory address containing the signal data.
