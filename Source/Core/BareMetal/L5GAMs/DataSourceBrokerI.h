@@ -40,7 +40,9 @@
 namespace MARTe {
 
 /**
- * @brief The interface of the broker between GAMs and DataSource.
+ * @brief Defines the interface between DataSourceSignalI and GAMSignalI components.
+ * @details A class that implements this interface is capable of translating signals between
+ *  a DataSourceSignalI and a GAM.
  */
 class DataSourceBrokerI: public ReferenceContainer {
 
@@ -54,13 +56,14 @@ public:
 
     /**
      * @brief Links a GAM signal with a data source signal.
-     * @details If \a ptr is NULL, this function allocates memory for the GAM signal otherwise
-     * the GAM signal memory it is supposed to be associated to \a ptr then the allocation is not performed.
-     * @param[in] def is the GAM signal to be added.
+     * @details The path retrieved by GAMSignalI::GetPath must exist and
+     * the DataSourceSignalI at this path must be compatible (type, dimension, ...).
+     * Moreover DataSourceSignalI::IsSupportedBroker must support this DataSourceBrokerI.
+     * @param[in] gamSignalIn is the GAM signal to be added.
      * @param[in] ptr is the pointer to the GAM signal memory.
-     * @return false in case of errors, true otherwise.
+     * @return true if the signals can be successfully linked.
      */
-    virtual bool AddSignal(Reference def,
+    virtual bool AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
                            void * const ptr = NULL_PTR(void*))=0;
 
     /**
@@ -79,9 +82,9 @@ public:
 
     /**
      * @brief Retrieves the signal with the specified name.
-     * @details This function is slower than GetSignal(*) thus is not advisable using of it during real-time.
-     * The parameter \a index in output retrieves the position of the signal in the broker in such a way it is possible
-     * use the faster function GetSignal(\a index) to retrieve the signal memory pointer.
+     * @details This function is slower than GetSignal(*) thus it is not advisable to use in real-time.
+     * The parameter \a index in output retrieves the position of the signal in the broker. This way it is possible
+     * to use the faster function GetSignal(\a index) to retrieve the signal memory pointer.
      * @param[in] name is the name of the signal to be searched.
      * @param[in] index is the position of the signal in the broker.
      * @return a pointer to the requested signal or NULL if the signal with the specified name is not found.
@@ -97,16 +100,17 @@ public:
     virtual uint32 GetSignalNumberOfSamples(const uint32 n)=0;
 
     /**
-     * @brief Finalises the object.
-     * @details This function has to be called after all the GAM signals were added to the broker.
-     * It checks if the broker contains more than one GAM signals who wants to perform a synchronised
-     * operation.
-     * @return false if more than one GAM signal wants to perform a synchronised operation. True otherwise.
+     * @brief Finalises the interface.
+     * @details This function is called after all the GAM signals have been added to the broker and allows the
+     * final implementation of the class to perform any required actions.
+     * @return false if errors are detected after all the addition of all the GAM signals.
      */
     virtual bool Finalise()=0;
 
     /**
      * @brief Checks if the broker manages a synchronised operation.
+     * @details A synchronised operation is one where the reading of a GAMSignalI will trigger the call
+     * to a DataSourceSignalI::WaitOnEvent.
      * @return true if the broker manages a synchronised operation.
      */
     virtual bool IsSync() const=0;
@@ -114,7 +118,7 @@ public:
     /**
      * @brief Reads a signal from the data source.
      * @param[in] activeDataSourceBuffer is the current active data source buffer index (0 or 1).
-     * @param[in] timeout is the timeout in case of synchronous blocking operations.
+     * @param[in] timeout is the timeout in the case of a synchronous blocking operations.
      * @return true if the read operation succeeds, false otherwise,
      */
     virtual bool Read(const uint8 activeDataSourceBuffer,
@@ -123,7 +127,7 @@ public:
     /**
      * @brief Writes a signal to the data source.
      * @param[in] activeDataSourceBuffer is the current active data source buffer index (0 or 1).
-     * @param[in] timeout is the timeout in case of synchronous blocking operations.
+     * @param[in] timeout is the timeout in the case of synchronous blocking operations.
      * @return true if the write operation succeeds, false otherwise,
      */
     virtual bool Write(const uint8 activeDataSourceBuffer,
@@ -137,5 +141,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_DATASOURCEBROKERI_H_ */
+#endif /* DATASOURCEBROKERI_H_ */
 

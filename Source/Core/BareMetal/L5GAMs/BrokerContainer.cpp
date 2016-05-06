@@ -1,8 +1,8 @@
 /**
  * @file BrokerContainer.cpp
  * @brief Source file for class BrokerContainer
- * @date 11/apr/2016
- * @author pc
+ * @date 11/04/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

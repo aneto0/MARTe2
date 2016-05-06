@@ -196,7 +196,7 @@ bool DataSourceSignal::PrepareNextState(const RealTimeStateInfo &status) {
             if (found) {
                 // if defaultValue is not set, remain with the same buffer of the previous state
                 if (defaultValue != "") {
-                    char8* memPtr = reinterpret_cast<char8 *>(memory->GetPointer(bufferPtrOffset[nextBuffer]));
+                    char8* memPtr = reinterpret_cast<char8 *>(memory->GetPointer(bufferPtrOffset[nextBufferIdx]));
                     AnyType at;
                     TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
                     if (typeDes == InvalidType) {
