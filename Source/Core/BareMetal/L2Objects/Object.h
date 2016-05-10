@@ -38,6 +38,8 @@
 #include "ClassRegistryItem.h"
 #include "StructuredDataI.h"
 #include "AnyType.h"
+#include "ReturnType.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Macro definitions                                  */
@@ -62,23 +64,23 @@
  * 1960: lint is confused with the placement new and reporting a false alarm.
  */
 #define CLASS_REGISTER_DECLARATION()                                                                                   \
+    static ClassProperties classProperties;                                                                            \
     /*                                                                                                                 \
-     * @brief Returns a copy of the class properties associated with this class type.                                  \
-     * @param[in, out] destination the destination where to copy the class properties to.                              \
+     * TODO                                                                                                            \
      */                                                                                                                \
-     virtual void GetClassPropertiesCopy(MARTe::ClassProperties &destination) const;                                           \
+     virtual MARTe::ClassRegistryItem * GetClassRegistryItem() const ;                                                 \
     /*                                                                                                                 \
-     * @brief Returns the class properties associated with this class type.                                            \
-     * @param[in, out] destination the destination where to copy the class properties to.                              \
+     * TODO                                                                                                            \
      */                                                                                                                \
-     virtual const MARTe::ClassProperties *GetClassProperties() const;                                                         \
+     static MARTe::ClassRegistryItem * GetClassRegistryItem_Static()  ;                                                \
     /*                                                                                                                 \
      * @brief Allocates a new instance of the class type in the provided heap. Note that this                          \
      * is automatically called by the compiler (given that we use placement new).                                      \
      * Note that the selected heap might be different for each type of class.                                          \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
      */                                                                                                                \
-     static void * operator new(const MARTe::osulong size, MARTe::HeapI *heap = static_cast<MARTe::HeapI *>(NULL));\
+     /*lint -e{1511} This function will be redeclared in descendants */                                                \
+     static void * operator new(const MARTe::osulong size, MARTe::HeapI *heap = static_cast<MARTe::HeapI *>(NULL));    \
     /*                                                                                                                 \
      * @brief Delete the object.                                                                                       \
      * @details Will delegate the deleting of the object to the correct heap. Note that the delete function            \
@@ -86,6 +88,7 @@
      * scope in the unit file (but is not exported) (see CLASS_REGISTER).                                              \
      * @param[in] p the pointer to the object to be deleted.                                                           \
      */                                                                                                                \
+     /*lint -e{1511} This function will be redeclared in descendants */                                                \
       static void operator delete(void *p);
 
 /**
@@ -101,168 +104,71 @@
  */
 #define CLASS_REGISTER(className,ver)                                                                                  \
     /*                                                                                                                 \
-     * Forward declaration of function which allows to build a new instance of the object                              \
-     * e.g. Object *MyClassTypeBuildFn_(const Heap &h);                                                                \
-     */                                                                                                                \
-    MARTe::Object * className ## BuildFn_(MARTe::HeapI* const heap);                                                    \
-    /*                                                                                                                 \
      * Class properties of this class type. One instance per class type automatically instantiated at the start        \
      * of an application or loading of a loadable library.                                                             \
      * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
      */                                                                                                                \
-    static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver);                 \
-    /*                                                                                                                 \
-     * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
-     * of an application or loading of a loadable library. It will automatically add the class type to the             \
-     * ClassRegistryDatabase.                                                                                          \
-     * e.g. static ClassRegistryItem MyClassTypeClassRegistryItem_( MyClassTypeClassProperties_, &MyClassTypeBuildFn_);\
+    MARTe::ClassProperties className::classProperties( #className , typeid(className).name(), ver, static_cast<uint32>(sizeof(className)));                 \
+    /*  TODO                                                                                                           \
      */                                                                                                                \
-    static MARTe::ClassRegistryItemT<className> className ## ClassRegistryItem_( className ## ClassProperties_); \
-    /*                                                                                                                 \
-     * @brief Function called when a new instance of this class type is to be instantiated in the provided heap.       \
-     * @param[in] h the heap where the object will be instantiated.                                                    \
-     * @return a new instance of the object from the class type.                                                       \
-     * e.g. Object *MyClassTypeBuildFn_( const Heap &h);                                                               \
-     */                                                                                                                \
-    MARTe::Object * className ## BuildFn_(MARTe::HeapI* const heap){                                                    \
-        className *p = new (heap) className ();                                                                        \
-        return p;                                                                                                      \
+    MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                              \
+        return ClassRegistryItemT<className>::Instance();                                                              \
     }                                                                                                                  \
-    /*                                                                                                                 \
-     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
+    /*  TODO                                                                                                           \
      */                                                                                                                \
-    void className::GetClassPropertiesCopy(MARTe::ClassProperties &destination) const {                                       \
-        const MARTe::ClassProperties *properties = className ## ClassRegistryItem_.GetClassProperties();                      \
-        destination = *properties;                                                                                     \
-    }                                                                                                                  \
-    /*                                                                                                                 \
-     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
-     */                                                                                                                \
-    const MARTe::ClassProperties *className::GetClassProperties() const {                                                     \
-        return className ## ClassRegistryItem_.GetClassProperties();                                                   \
+    MARTe::ClassRegistryItem * className::GetClassRegistryItem() const {                                               \
+        return GetClassRegistryItem_Static();                                                                          \
     }                                                                                                                  \
     /*                                                                                                                 \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
      */                                                                                                                \
-    void * className::operator new(const size_t size, MARTe::HeapI* const heap) {                                             \
+    void * className::operator new(const size_t size, MARTe::HeapI* const heap) {                                      \
         void *obj = NULL_PTR(void *);                                                                                  \
         if (heap != NULL) {                                                                                            \
             obj = heap->Malloc(static_cast<uint32>(size));                                                             \
         } else {                                                                                                       \
-            obj = MARTe::HeapManager::Malloc(static_cast<uint32>(size));                                                      \
+            obj = MARTe::HeapManager::Malloc(static_cast<uint32>(size));                                               \
         }                                                                                                              \
-        className ## ClassRegistryItem_.IncrementNumberOfInstances();                                                  \
+        GetClassRegistryItem_Static()->IncrementNumberOfInstances();                                                   \
         return obj;                                                                                                    \
     }                                                                                                                  \
     /*                                                                                                                 \
      * e.g. void *MyClassType::operator delete(void *p);                                                               \
      */                                                                                                                \
     void className::operator delete(void *p) {                                                                         \
-        bool ok = MARTe::HeapManager::Free(p);                                                                                \
+        bool ok = MARTe::HeapManager::Free(p);                                                                         \
         if(!ok){                                                                                                       \
             /* TODO error here */                                                                                      \
         }                                                                                                              \
-        className ## ClassRegistryItem_.DecrementNumberOfInstances();                                                  \
+        GetClassRegistryItem_Static()->DecrementNumberOfInstances();                                                   \
     }
 
-/**
- * This macro has to be inserted in every unit file in order to add an introspection class to the ClassRegistryDatabase.
- * The definition of the  _## className ## ClassRegistryItem variable will
- * instantiate a new ClassRegistryItem for every unit file compiled in the application.
- * Upon instantiation each ClassRegistryItem will automatically add itself to the ClassRegistryDatabase.
- */
-#define INTROSPECTION_REGISTER(className,ver,introspection)                                                      \
-         /*                                                                                                                 \
-          * Class properties of this class type. One instance per class type automatically instantiated at the start        \
-          * of an application or loading of a loadable library.                                                             \
-          * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
-          */                                                                                                                \
-         static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver);          \
-         /*                                                                                                                 \
-          * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
-          * of an application or loading of a loadable library. It will automatically add the class type to the             \
-          * ClassRegistryDatabase.                                                                                          \
-          * e.g. static ClassRegistryItem MyClassTypeClassRegistryItem_( MyClassTypeClassProperties_, &MyClassTypeBuildFn_);\
-          */                                                                                                                \
-         static MARTe::ClassRegistryItem className ## ClassRegistryItem_( className ## ClassProperties_, introspection);
+#if 0
+    /*                                                                                                                 \
+     * @brief Returns the class properties associated with this class type.                                            \
+     * @param[in, out] destination the destination where to copy the class properties to.                              \
+     */                                                                                                                \
+     virtual const MARTe::ClassProperties *GetClassProperties() const;                                                 \
+    /*                                                                                                                 \
+     * @brief Returns the class properties associated with this class type.                                            \
+     * @param[in, out] destination the destination where to copy the class properties to.                              \
+     */                                                                                                                \
+     const MARTe::ClassProperties *GetClassProperties_Static() ;                                                       \
 
-/**
- * This macro has to be inserted in every unit file.
- * The definition of the  _## className ## ClassRegistryItem variable will
- * instantiate a new ClassRegistryItem for every unit file compiled in the application.
- * Upon instantiation each ClassRegistryItem will automatically add itself to the ClassRegistryDatabase.
- * When required the ClassRegistryItem will instantiate new objects by asking the ClassRegistryItem
- * for the build function related to the class it is representing.
- * Note that new and delete are static functions and as a consequence they cannot call member
- * functions in the class (or its derived classes). Because their implementation is specific to the final
- * class they had to be written as part of the macro as well.
- * Using this macro it is possible to register also the introspection of the class.
- */
-#define CLASS_INTROSPECTION_REGISTER(className,ver,introspection)                                                                                  \
-         /*                                                                                                                 \
-          * Forward declaration of function which allows to build a new instance of the object                              \
-          * e.g. Object *MyClassTypeBuildFn_(const Heap &h);                                                                \
-          */                                                                                                                \
-         MARTe::Object * className ## BuildFn_(MARTe::HeapI* const heap);                                                    \
-         /*                                                                                                                 \
-          * Class properties of this class type. One instance per class type automatically instantiated at the start        \
-          * of an application or loading of a loadable library.                                                             \
-          * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
-          */                                                                                                                \
-         static MARTe::ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver);                 \
-         /*                                                                                                                 \
-          * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
-          * of an application or loading of a loadable library. It will automatically add the class type to the             \
-          * ClassRegistryDatabase.                                                                                          \
-          * e.g. static ClassRegistryItem MyClassTypeClassRegistryItem_( MyClassTypeClassProperties_, &MyClassTypeBuildFn_, introspection);\
-          */                                                                                                                \
-         static MARTe::ClassRegistryItem className ## ClassRegistryItem_( className ## ClassProperties_, & className ## BuildFn_, introspection); \
-         /*                                                                                                                 \
-          * @brief Function called when a new instance of this class type is to be instantiated in the provided heap.       \
-          * @param[in] h the heap where the object will be instantiated.                                                    \
-          * @return a new instance of the object from the class type.                                                       \
-          * e.g. Object *MyClassTypeBuildFn_( const Heap &h);                                                               \
-          */                                                                                                                \
-         MARTe::Object * className ## BuildFn_(MARTe::HeapI* const heap){                                                    \
-             className *p = new (heap) className ();                                                                        \
-             return p;                                                                                                      \
-         }                                                                                                                  \
-         /*                                                                                                                 \
-          * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
-          */                                                                                                                \
-         void className::GetClassPropertiesCopy(MARTe::ClassProperties &destination) const {                                       \
-             const MARTe::ClassProperties *properties = className ## ClassRegistryItem_.GetClassProperties();                      \
-             destination = *properties;                                                                                     \
-         }                                                                                                                  \
-         /*                                                                                                                 \
-          * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
-          */                                                                                                                \
-         const MARTe::ClassProperties *className::GetClassProperties() const {                                                     \
-             return className ## ClassRegistryItem_.GetClassProperties();                                                   \
-         }                                                                                                                  \
-         /*                                                                                                                 \
-          * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
-          */                                                                                                                \
-         void * className::operator new(const size_t size, MARTe::HeapI* const heap) {                                             \
-             void *obj = NULL_PTR(void *);                                                                                  \
-             if (heap != NULL) {                                                                                            \
-                 obj = heap->Malloc(static_cast<uint32>(size));                                                             \
-             } else {                                                                                                       \
-                 obj = MARTe::HeapManager::Malloc(static_cast<uint32>(size));                                                      \
-             }                                                                                                              \
-             className ## ClassRegistryItem_.IncrementNumberOfInstances();                                                  \
-             return obj;                                                                                                    \
-         }                                                                                                                  \
-         /*                                                                                                                 \
-          * e.g. void *MyClassType::operator delete(void *p);                                                               \
-          */                                                                                                                \
-         void className::operator delete(void *p) {                                                                         \
-             bool ok = MARTe::HeapManager::Free(p);                                                                                \
-             if(!ok){                                                                                                       \
-                 /* TODO error here */                                                                                      \
-             }                                                                                                              \
-             className ## ClassRegistryItem_.DecrementNumberOfInstances();                                                  \
-         }
+
+/*                                                                                                                 \
+     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
+     */                                                                                                                \
+    const MARTe::ClassProperties *className::GetClassProperties_Static() {                                             \
+        return &classProperties;                                                                                       \
+    }                                                                                                                  \
+    /*                                                                                                                 \
+     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
+     */                                                                                                                \
+    const MARTe::ClassProperties *className::GetClassProperties() const {                                              \
+        return 0; /*className::GetClassProperties_Static();*/                                                          \
+    }
+#endif
 
 /*lint -restore */
 
@@ -288,7 +194,6 @@ class DLL_API Object {
      */
     friend class Reference;
 public:
-    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Default constructor. Sets the number of references to zero.
@@ -310,42 +215,9 @@ public:
      * @return true if all the input \a data is valid and can be successfully assigned
      * to the Object member variables.
      */
-    virtual bool Initialise(const StructuredDataI &data);
+    virtual bool Initialise(StructuredDataI &data);
 
-    /**
-     * @brief Returns the number of references.
-     * @return the number of references pointing to this object.
-     */
-    uint32 NumberOfReferences() const;
-
-    /**
-     * @brief Returns the object name.
-     * @return the object name (which might be NULL).
-     */
-    const char8 * const GetName() const;
-
-    /**
-     * @brief Returns an object name which is guaranteed to be unique.
-     * @details The object unique name is composed by the object memory
-     *  address and by the object name as returned by GetName().
-     *
-     * If GetName() returns NULL the unique name will be the object memory address.
-     * The format of the unique name is xMemoryAddress::Name. The leading zeros of the
-     * memory address are discarded.
-     * @param[in, out] destination the destination where to write the unique object to.
-     * If enough space is available the string will be zero terminated.
-     * @param[in] size the size of the \a destination input string.
-     */
-    void GetUniqueName(char8 * const destination,
-                       const uint32 &size) const;
-
-    /**
-     * @brief Sets the object name.
-     * @details If a name had already been set the object name will be updated to this name.
-     * @param newName the new name of the Object. A private copy of the \a name will be performed and managed by the Object.
-     * @pre newName != NULL
-     */
-    void SetName(const char8 * const newName);
+    //virtual bool ProcessMessage(const MessageI & message, MessageI & data);
 
     /**
      * @brief Extracts the data of the object and puts it into an object which
@@ -409,6 +281,60 @@ public:
      */
     bool ExportMetadata(StructuredDataI & data,
                                                const int32 level = -1);
+
+    /**
+     * @brief Returns the number of references.
+     * @return the number of references pointing to this object.
+     */
+    uint32 NumberOfReferences() const;
+
+    /**
+     * @brief Returns the object name.
+     * @return the object name (which might be NULL).
+     */
+    const char8 * const GetName() const;
+
+    /**
+     * @brief Returns an object name which is guaranteed to be unique.
+     * @details The object unique name is composed by the object memory
+     *  address and by the object name as returned by GetName().
+     *
+     * If GetName() returns NULL the unique name will be the object memory address.
+     * The format of the unique name is xMemoryAddress::Name. The leading zeros of the
+     * memory address are discarded.
+     * @param[in, out] destination the destination where to write the unique object to.
+     * If enough space is available the string will be zero terminated.
+     * @param[in] size the size of the \a destination input string.
+     */
+    void GetUniqueName(char8 * const destination,
+                       const uint32 &size) const;
+
+    /**
+     * @brief Sets the object name.
+     * @details If a name had already been set the object name will be updated to this name.
+     * @param newName the new name of the Object. A private copy of the \a name will be performed and managed by the Object.
+     * @pre newName != NULL
+     */
+    void SetName(const char8 * const newName);
+
+    /**
+     * TODO
+     */
+    ReturnType CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters);
+
+    /*
+     * @brief Returns the class properties associated with this class type.
+     */
+     const ClassProperties *GetClassProperties() const;
+
+#if 0
+     /*
+      * @brief Returns the record containing all class information.
+      */
+     virtual ClassRegistryItem * GetClassRegistryItem() const = 0;
+#endif
+
+     CLASS_REGISTER_DECLARATION()
 
 private:
 
