@@ -60,7 +60,7 @@ public:
      * @param[in] ptr is the pointer to the variable memory area.
      * @return false in case of errors, true otherwise.
      */
-    virtual bool AddSignal(Reference defIn,
+    virtual bool AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
                            void * const ptr = NULL_PTR(void*));
 
     /**

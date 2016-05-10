@@ -36,21 +36,20 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-#include "ReferenceContainer.h"
-#include "StreamString.h"
-#include "StandardParser.h"
 #include "ConfigurationDatabase.h"
+#include "ReferenceContainer.h"
+#include "StandardParser.h"
+#include "StreamString.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
 /**
- * @brief The definition of a GAM input and / or output variable, which has to be read and / or
- * write by the GAM to the DataSource.
+ * @brief The definition of a GAM input (output) variable, which has to be read (written)
+ * by the GAM from (to) the DataSource.
  *
- * @details Maps a GAM signal to its relative data source signals. Some methods are pure virtual
- * and must be implemented by the specific type of definitions inheriting from this class.
+ * @details A class which implements this interface knows how to map a GAM signal to its relative DataSourceSignalI signal.
  */
 class DLL_API GAMSignalI: public ReferenceContainer {
 
@@ -60,72 +59,73 @@ public:
      * @Constructor
      * @post
      *   GetType() == "" &&
-     *   GetPath() == "";
+     *   GetPath() == "" &&
+     *   GetNumberOfDimensions () == 0 &&
+     *   GetNumberOfElements(*) == 1 &&
+     *   IsSync() == false
      */
     GAMSignalI();
 
     /**
-     * @brief Merges the global definition (initialised using Initialise(*) function) with the
-     * informations stored in the local StructuredData in input. It is possible completing structured
-     * type definitions or setting from local data the Path, Type, Default and Operation fields. If
-     * a defined field in the global one is going to be overridden by a local field, the global definition
-     * will be considered valid.
+     * @brief Merges the global definition (initialised using Initialise(*) function) with external
+     * information provided with \a localData.
+     * @details During the configuration phase the GAM will call this function and provide a StructuredDataI
+     *  with extra information to be merged with any information related to this signal.
+     * This can be used, for example, to complement static information imposed by the GAM (e.g. Type) with dynamic information
+     *  which is available in the Initialise phase (e.g. number of elements)
+     * If a field was already provided during the Initialise phase this shall not be overridden by the new field value in \a localData.
      * @param[in] localData is the local StructuredData.
-     * @return true if there are not conflicts between the local and the global definitions.
+     * @return true if there are not conflicts between the local and the global definitions and if the signal allows merging.
      */
     virtual bool MergeWithLocal(StructuredDataI &localData)=0;
 
     /**
-     * @brief Checks if the definition is consistent with the introspection of a registered structure
-     * if the field type is specified.
+     * @brief Checks the type defined in GetType() is consistent with a registered introspection type.
      * @return true if the type is unspecified or if the specified type definition is consistent
      * with the introspection of a registered structure.
      */
     virtual bool Verify()=0;
 
     /**
-     * @brief retrieves the variable address in the RealTimeDataSource.
-     * @return the variable address in the RealTimeDataSource.
+     * @brief Gets the address of the DataSourceSignalI object producing/consuming this signal.
+     * @return the variable address to the DataSourceSignalI.
      */
     const char8 *GetPath();
 
     /**
-     * @brief Retrieves the variable type.
+     * @brief Gets the variable type.
      * @return the variable type.
      */
     const char8 *GetType();
 
     /**
-     * @brief Retrieves the variable default value.
+     * @brief Gets the variable default value.
      * @return the variable default value.
      */
     const char8 *GetDefaultValue();
 
-
-
     /**
-     * @brief Retrieves the string used to configure the interface of this signal with the data source.
+     * @brief Gets the string used to configure the interface of this signal with the data source.
+     * @details The "Operation" field allows to access to sub-elements of a multi-dimensional signal. Its syntax is specified
+     *  by the final class implementing this interface.
      * @return the "Operation" field.
      */
     const char8 *GetOperation();
 
-
     /**
-     * @brief Initialises the container and reads the variable address and type from the StructuredData
-     * in input.
+     * @brief Initialises the container and reads the variable address and type from the \a data.
      * @details The following fields can be specified:
      *
-     *   - Path = "the path of the variable in the RealTimeDataSource" (default "")\n
+     *   - Path = "the address of the DataSourceSignalI object producing/consuming this signal" (default "")\n
      *   - Type = "the variable type" (default "")\n
      *   - Default = "the variable default value" (default "")\n
      *   - Dimensions = "the variable dimensions" (default "")\n
      *   - Operation = "the read-write operation configuration parameters" (default "")\n
-     *   - Cycles = "how many subsequent cycles the variable must be be read or write"
+     *   - Cycles = "how many subsequent cycles the variable must read or write"
      *
      * The "Dimensions" parameter follows the same format of the operation string in IntrospectionEntry. In particular in this
      * case Dimensions = "[n]" denotes an array with n elements, "Dimensions" = "[n][m]" denotes a matrix with n rows and m columns.\n
-     * The "Operation" string will be delivered to the DataSource to make it able to provide the DataSourceBroker capable to perform
-     * the desired IO operation. The most common syntax for this variable is the expression of a nx2 matrix specifying in each row
+     * The "Operation" string allows to perform . The most common syntax for this variable is the expression of a nx2 matrix specifying in each row
      * the begin and the end indexes of the block to be read (write) from (to) the RealTimeDataSourceSignal. An example is
      *
      *     Operation = "{{0,2},{9,9}}"
@@ -213,13 +213,10 @@ protected:
      */
     uint32 numberOfElements[3];
 
-
-     /**
+    /**
      * The default value
      */
     StreamString defaultValue;
-
-
 
 };
 }
@@ -229,5 +226,5 @@ protected:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_GAMSIGNALI_H_ */
+#endif /* GAMSIGNALI_H_ */
 

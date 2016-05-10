@@ -64,12 +64,12 @@ BrokerContainer::~BrokerContainer() {
     numberOfBrokers = 0u;
 }
 
-bool BrokerContainer::AddSignal(Reference defIn,
+bool BrokerContainer::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
                                 void * const ptr) {
 
-    ReferenceT<GAMSignalI> def = defIn;
+    ReferenceT<GAMSignalI> gamSignal = gamSignalIn;
 
-    bool ret = def.IsValid();
+    bool ret = gamSignal.IsValid();
     if (ret) {
 
         ret = false;
@@ -78,7 +78,7 @@ bool BrokerContainer::AddSignal(Reference defIn,
                 // try to add the variable only to the broker belonging
                 // to the data source of the def is related to.
                 uint32 lastSignalIndex = brokers[i]->GetNumberOfSignals();
-                ret = (brokers[i]->AddSignal(def, ptr));
+                ret = (brokers[i]->AddSignal(gamSignal, ptr));
                 if (ret) {
                     ret = containerIndexer.Add(i);
                 }
@@ -92,9 +92,9 @@ bool BrokerContainer::AddSignal(Reference defIn,
         }
 
         if (!ret) {
-            uint32 numberOfSubSignals = def->Size();
+            uint32 numberOfSubSignals = gamSignal->Size();
             StreamString path = "Data.";
-            ReferenceT<GAMGenericSignal> testDef = def;
+            ReferenceT<GAMGenericSignal> testGamSignal = gamSignal;
             ret = true;
 
             // take one of the data source signals of the children
@@ -102,19 +102,19 @@ bool BrokerContainer::AddSignal(Reference defIn,
             while ((numberOfSubSignals != 0) && (ret)) {
                 // consider the GAMGenericSignal
                 // if this is false we have a not generic signal with children (not allowed)
-                ret = testDef.IsValid();
+                ret = testGamSignal.IsValid();
                 if (ret) {
-                    ReferenceT<GAMGenericSignal> subDef = testDef->Get(0);
-                    ret = subDef.IsValid();
+                    ReferenceT<GAMGenericSignal> genericSignal = testGamSignal->Get(0);
+                    ret = genericSignal.IsValid();
                     if (ret) {
-                        numberOfSubSignals = subDef->Size();
-                        testDef = subDef;
+                        numberOfSubSignals = genericSignal->Size();
+                        testGamSignal = genericSignal;
                     }
                 }
             }
 
             if (ret) {
-                path += (testDef.IsValid()) ? (testDef->GetPath()) : (def->GetPath());
+                path += (testGamSignal.IsValid()) ? (testGamSignal->GetPath()) : (gamSignal->GetPath());
                 ret = (application != NULL);
                 if (ret) {
                     ReferenceT<DataSourceSignalI> ds = application->Find(path.Buffer());
@@ -124,10 +124,10 @@ bool BrokerContainer::AddSignal(Reference defIn,
                         // it will insert the variable
                         ReferenceT<DataSourceBrokerI> newBroker;
                         if (isInput) {
-                            newBroker = ds->GetInputReader(def, ptr);
+                            newBroker = ds->GetInputReader(gamSignal, ptr);
                         }
                         else {
-                            newBroker = ds->GetOutputWriter(def, ptr);
+                            newBroker = ds->GetOutputWriter(gamSignal, ptr);
                         }
                         ret = newBroker.IsValid();
                         if (ret) {
@@ -135,7 +135,7 @@ bool BrokerContainer::AddSignal(Reference defIn,
                         }
                         else {
                             REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Invalid broker returned from the data source signal %s for the GAM signal %s",
-                                                    ds->GetName(), def->GetName())
+                                                    ds->GetName(), gamSignal->GetName())
                         }
                     }
                 }

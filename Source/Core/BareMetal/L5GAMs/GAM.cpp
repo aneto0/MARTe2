@@ -70,7 +70,7 @@ GAM::~GAM() {
         delete[] supportedThreads;
     }
 
-    application=NULL_PTR(RealTimeApplication *);
+    application = NULL_PTR(RealTimeApplication *);
     group = NULL_PTR(GAMGroup*);
 }
 
@@ -97,7 +97,7 @@ bool GAM::ConfigureFunction() {
 
             if (def.IsValid()) {
                 StreamString defName = "+";
-                defName+=def->GetName();
+                defName += def->GetName();
                 if (localData->MoveRelative(defName.Buffer())) {
                     // the partial definitions after this must become complete
                     ret = def->MergeWithLocal(*localData);

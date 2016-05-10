@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
 #include "RealTimeApplication.h"
+#include "GAMSignalI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -40,9 +41,9 @@
 namespace MARTe {
 
 /**
- * @brief Defines the interface between DataSourceSignalI and GAMSignalI components.
- * @details A class that implements this interface is capable of translating signals between
- *  a DataSourceSignalI and a GAM.
+ * @brief Defines the interface between DataSourceSignalI and GAMSignalI signals.
+ * @details A class that implements this interface is capable of connecting signals from
+ *  DataSourceSignalI with signals from GAMSignalI components.
  */
 class DataSourceBrokerI: public ReferenceContainer {
 
@@ -55,10 +56,10 @@ public:
     virtual void SetApplication(RealTimeApplication &app)=0;
 
     /**
-     * @brief Links a GAM signal with a data source signal.
+     * @brief Links a GAMSignalI with a DataSourceSigmalI (at location GAMSignalI::GetPath).
      * @details The path retrieved by GAMSignalI::GetPath must exist and
      * the DataSourceSignalI at this path must be compatible (type, dimension, ...).
-     * Moreover DataSourceSignalI::IsSupportedBroker must support this DataSourceBrokerI.
+     * Moreover, DataSourceSignalI::IsSupportedBroker must support this DataSourceBrokerI.
      * @param[in] gamSignalIn is the GAM signal to be added.
      * @param[in] ptr is the pointer to the GAM signal memory.
      * @return true if the signals can be successfully linked.
@@ -83,7 +84,7 @@ public:
     /**
      * @brief Retrieves the signal with the specified name.
      * @details This function is slower than GetSignal(*) thus it is not advisable to use in real-time.
-     * The parameter \a index in output retrieves the position of the signal in the broker. This way it is possible
+     * The parameter \a index in output retrieves the position of the signal in the broker. This allows
      * to use the faster function GetSignal(\a index) to retrieve the signal memory pointer.
      * @param[in] name is the name of the signal to be searched.
      * @param[in] index is the position of the signal in the broker.
@@ -116,7 +117,8 @@ public:
     virtual bool IsSync() const=0;
 
     /**
-     * @brief Reads a signal from the data source.
+     * @brief Copies the memory from a DataSourceSignalI into the memory of a GAMSignalI previously
+     *  added with AddSignal.
      * @param[in] activeDataSourceBuffer is the current active data source buffer index (0 or 1).
      * @param[in] timeout is the timeout in the case of a synchronous blocking operations.
      * @return true if the read operation succeeds, false otherwise,
@@ -125,7 +127,8 @@ public:
                       const TimeoutType &timeout = TTInfiniteWait)=0;
 
     /**
-     * @brief Writes a signal to the data source.
+     * @brief Copies the memory from a GAMSignalI into the memory of a DataSourceSignalI previously
+     *  added with AddSignal.
      * @param[in] activeDataSourceBuffer is the current active data source buffer index (0 or 1).
      * @param[in] timeout is the timeout in the case of synchronous blocking operations.
      * @return true if the write operation succeeds, false otherwise,

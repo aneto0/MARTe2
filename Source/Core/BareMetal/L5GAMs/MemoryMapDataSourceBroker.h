@@ -49,11 +49,11 @@
 namespace MARTe {
 
 /**
- * @brief The communication interface between GAMs and DataSource.
+ * @brief The communication interface between GAM and DataSource signals using a dual-buffer mechanism.
  * @details The configuration of this element has to be performed after the
  * RealTimeApplication::ConfigureDataSource() step. It allows to read (write) data blocks
- * of each element and blocks of samples. During the configuration two arrays of pointers
- * will be created, one for the data source signals and the other for the GAM signals.
+ * of each element and to read (write) blocks of samples. During the configuration two arrays of pointers
+ * will be created, one for the data source signals and another for the GAM signals.
  * The read - write operation will copy the memory from one pointer to the other, for each of them
  * in this two arrays.\n
  * The Accepted field "Operation" of a GAMSignalI to initialise the broker, is the expression of a
@@ -68,7 +68,9 @@ public:
      * @brief Constructor.
      * @post
      *   GetData(*) == NULL &&
-     *   GetMemoryPointer(*) == NULL
+     *   GetMemoryPointer(*) == NULL &&
+     *   GetNumberOfSignals() == 0 &&
+     *   IsSync() == false
      */
     MemoryMapDataSourceBroker();
 
@@ -85,7 +87,7 @@ public:
     /**
      * @see DataSourceBrokerI::AddSignal(*)
      */
-    virtual bool AddSignal(Reference def,
+    virtual bool AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
                            void * const ptr = NULL_PTR(void*));
 
     /**
@@ -227,14 +229,14 @@ protected:
     /**
      * @brief Links a GAM signal with a data source signal.
      * @details This function can call itself recursively if the variable to be allocated is a structure.
-     * @param[in] defIn is the GAM signal.
+     * @param[in] gamSignalIn is the GAM signal.
      * @param[in] initialOffset is the byte offset with respect the begin of memory where the signal memory
      * has to be allocated to.
      * @param[in] offset will be used in recursion to store the pointers of sub-members of structured types.
      * @param[in] allocate must be true if the GAM signal memory has to be allocated by this function, false otherwise.
      * @return false in case of errors, true otherwise.
      */
-    virtual bool AddSignalPrivate(Reference defIn,
+    virtual bool AddSignalPrivate(ReferenceT<GAMSignalI> gamSignalIn,
                                   uint32 initialOffset,
                                   uint32 offset,
                                   bool allocate);

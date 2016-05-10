@@ -1,8 +1,8 @@
 /**
  * @file MemoryMapDataSourceBroker.cpp
  * @brief Source file for class MemoryMapDataSourceBroker
- * @date 11/apr/2016
- * @author pc
+ * @date 11/04/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -93,7 +93,7 @@ void MemoryMapDataSourceBroker::SetApplication(RealTimeApplication &rtApp) {
     application = &rtApp;
 }
 
-bool MemoryMapDataSourceBroker::AddSignal(Reference def,
+bool MemoryMapDataSourceBroker::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
                                           void * const ptr) {
 
     bool ret = true;
@@ -107,80 +107,87 @@ bool MemoryMapDataSourceBroker::AddSignal(Reference def,
         // we do not know yet
         initialOffset = memory.GetMemorySize();
     }
-    if (ret) {
-        if (ret) {
-            currentSignalIndex = GAMOffsets.GetSize();
-            ret = AddSignalPrivate(def, initialOffset, 0u, allocate);
-        }
-    }
+
+    currentSignalIndex = GAMOffsets.GetSize();
+    ret = AddSignalPrivate(gamSignalIn, initialOffset, 0u, allocate);
     if (ret) {
         ret = chunkIndex.Add(currentSignalIndex);
-        printf("\nsignal index = %d\n", currentSignalIndex);
         if (ret) {
             // adds the memory start pointer
             ret = beginPointers.Add(ptr);
             if (ret) {
-                ret = Insert(def);
+                ret = Insert(gamSignalIn);
             }
         }
     }
     else {
         // error ! remove eventual added things to be consistent
         uint32 last = 0u;
+        bool ok = true;
         if (chunkIndex.GetSize() > 0u) {
             if (chunkIndex.Peek((chunkIndex.GetSize() - 1u), last)) {
-                //impossible failure (come on...)
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to chunkIndex.Peek. This will lead to inconsistencies in the broker memory");
             }
         }
 
-        while (dataSourcesVars.GetSize() > last) {
+        while ((dataSourcesVars.GetSize() > last) && (ok)) {
             if (!dataSourcesVars.Remove(dataSourcesVars.GetSize() - 1u)) {
-                //impossible failure (come on...)
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from dataSourcesVars. This will lead to inconsistencies in the broker memory");
+                ok = false;
             }
         }
-        while (GAMOffsets.GetSize() > last) {
+        while ((GAMOffsets.GetSize() > last) && (ok)) {
             if (!GAMOffsets.Remove(GAMOffsets.GetSize() - 1u)) {
-
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from GAMOffsets. This will lead to inconsistencies in the broker memory");
+                ok = false;
             }
         }
-        while (DSPointers[0].GetSize() > last) {
+        while ((DSPointers[0].GetSize() > last) && (ok)) {
             if (!DSPointers[0].Remove(DSPointers[0].GetSize() - 1u)) {
-
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from DSPointers[0]. This will lead to inconsistencies in the broker memory");
+                ok = false;
             }
         }
-        while (DSPointers[1].GetSize() > last) {
+        while ((DSPointers[1].GetSize() > last) && (ok)) {
             if (!DSPointers[1].Remove(DSPointers[1].GetSize() - 1u)) {
-
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from DSPointers[1]. This will lead to inconsistencies in the broker memory");
+                ok = false;
             }
         }
-        while (numberOfCyclesPerVar.GetSize() > last) {
+        while ((numberOfCyclesPerVar.GetSize() > last) && (ok)) {
             if (!numberOfCyclesPerVar.Remove(numberOfCyclesPerVar.GetSize() - 1u)) {
-
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from numberOfCyclesPerVar. This will lead to inconsistencies in the broker memory");
+                ok = false;
             }
         }
-        while (blockParamList.GetSize() > last) {
+        while ((blockParamList.GetSize() > last) && (ok)) {
             if (!blockParamList.Remove(blockParamList.GetSize() - 1u)) {
-
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from blockParamList. This will lead to inconsistencies in the broker memory");
+                ok = false;
             }
         }
-        while (samplesParamList.GetSize() > last) {
+        while ((samplesParamList.GetSize() > last) && (ok)) {
             if (!samplesParamList.Remove(samplesParamList.GetSize() - 1u)) {
-
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from samplesParamList. This will lead to inconsistencies in the broker memory");
+                ok = false;
             }
         }
-        while (blockParamRows.GetSize() > last) {
+        while ((blockParamRows.GetSize() > last) && (ok)) {
             if (!blockParamRows.Remove(blockParamRows.GetSize() - 1u)) {
-
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from blockParamRows. This will lead to inconsistencies in the broker memory");
+                ok = false;
             }
         }
-        while (samplesParamRows.GetSize() > last) {
+        while ((samplesParamRows.GetSize() > last) && (ok)) {
             if (!samplesParamRows.Remove(samplesParamRows.GetSize() - 1u)) {
-
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from samplesParamRows. This will lead to inconsistencies in the broker memory");
+                ok = false;
             }
         }
-        while (nSamplesList.GetSize() > last) {
+        while ((nSamplesList.GetSize() > last) && (ok)) {
             if (!nSamplesList.Remove(nSamplesList.GetSize() - 1u)) {
-
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from nSamplesList. This will lead to inconsistencies in the broker memory");
+                ok = false;
             }
         }
 
@@ -188,7 +195,7 @@ bool MemoryMapDataSourceBroker::AddSignal(Reference def,
     return ret;
 }
 
-bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
+bool MemoryMapDataSourceBroker::AddSignalPrivate(ReferenceT<GAMSignalI> gamSignalIn,
                                                  uint32 initialOffset,
                                                  uint32 offset,
                                                  bool allocate) {
@@ -196,16 +203,16 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
     bool ret = (application != NULL);
 
     if (ret) {
-        ReferenceT<GAMSignalI> def = defIn;
-        ret = def.IsValid();
+        ReferenceT<GAMSignalI> gamSignal = gamSignalIn;
+        ret = gamSignal.IsValid();
         if (ret) {
-            const char8* typeName = def->GetType();
+            const char8* typeName = gamSignal->GetType();
 
             // case structured
             TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(typeName);
 
             uint32 varSize = 0u;
-            uint32 numberOfMembers = def->Size();
+            uint32 numberOfMembers = gamSignal->Size();
 
             if (typeDes == InvalidType) {
 
@@ -219,7 +226,7 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
                         /*lint -e{613} NULL pointer checking done before entering here */
                         varSize = intro->GetClassSize();
                         // unsupported multi-dimensional
-                        ret = (def->GetNumberOfDimensions() == 0u);
+                        ret = (gamSignal->GetNumberOfDimensions() == 0u);
 
                         if (ret) {
                             // final type
@@ -233,7 +240,7 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
                                     /*lint -e{613} NULL pointer checking done before entering here */
                                     const IntrospectionEntry introEntry = (*intro)[i];
                                     for (uint32 j = 0u; (j < numberOfMembers) && (ret) && (!found); j++) {
-                                        ReferenceT<GAMGenericSignal> subDef = def->Get(j);
+                                        ReferenceT<GAMGenericSignal> subDef = gamSignal->Get(j);
                                         ret = subDef.IsValid();
                                         if (ret) {
                                             // if the member name matches
@@ -254,22 +261,22 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
                                         ret = false;
                                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
                                                                 "Member %s of %s  with type %s does not matches with the introspection data",
-                                                                introEntry.GetMemberName(), def->GetName(), def->GetType())
+                                                                introEntry.GetMemberName(), gamSignal->GetName(), gamSignal->GetType())
                                     }
                                 }
                             }
                         }
                         else {
                             // this should never happen if we call before DataSource.Allocate()
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Unsupported multi-dimensional structure %s", def->GetName())
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Unsupported multi-dimensional structure %s", gamSignal->GetName())
                         }
                     }
                     else {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s is not introspectable", def->GetType())
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s is not introspectable", gamSignal->GetType())
                     }
                 }
                 else {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s is not registered", def->GetType())
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s is not registered", gamSignal->GetType())
                 }
 
             }
@@ -282,7 +289,7 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
             if ((ret) && (numberOfMembers == 0u)) {
 
                 // the size is changed by this function (* #samples * #cycles * #dimension)
-                ReferenceT<DataSourceSignalI> dsDef = Verify(defIn, varSize);
+                ReferenceT<DataSourceSignalI> dsDef = Verify(gamSignalIn, varSize);
                 ret = dsDef.IsValid();
 
                 if (ret) {
@@ -301,7 +308,7 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
                                     // add the GAM pointer
                                     uint32 finalOffset = offset + initialOffset;
                                     ret = GAMOffsets.Add(finalOffset);
-                                    printf("\nAdded offset %d rel offset %d of %s in %s\n", finalOffset, offset, def->GetName(), def->GetPath());
+                                    printf("\nAdded offset %d rel offset %d of %s in %s\n", finalOffset, offset, gamSignal->GetName(), gamSignal->GetPath());
                                 }
                             }
                         }
@@ -316,7 +323,7 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
                 if (ret) {
                     // the last thing to be done
                     ret = memory.Add(varSize, offset);
-                    printf("\nallocated variable %s size=%d of %s\n", def->GetName(), varSize, def->GetPath());
+                    printf("\nallocated variable %s size=%d of %s\n", gamSignal->GetName(), varSize, gamSignal->GetPath());
                 }
 
             }
@@ -589,7 +596,6 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                                                 }
                                             }
                                         }
-
                                     }
                                 }
                             }
@@ -768,8 +774,8 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
     }
     else {
         // def can be added to another broker?
-        REPORT_ERROR_PARAMETERS(ErrorManagement::RecoverableError,
-                                "Trying to add the sync GAMSignal %s on a broker which already contains a sync GAMSignal", def->GetName())
+        REPORT_ERROR_PARAMETERS(ErrorManagement::RecoverableError, "Trying to add the sync GAMSignal %s on a broker which already contains a sync GAMSignal",
+                                def->GetName())
     }
     return ret;
 }

@@ -44,7 +44,7 @@ GAMSignalI::GAMSignalI() :
         ReferenceContainer() {
     numberOfDimensions = 0u;
 
-    //asynchronus!!
+    //Asynchronous
     cycles = 0u;
 
     for (uint32 i = 0u; i < 3u; i++) {
