@@ -182,7 +182,7 @@ public:
 
     /**
      * @see DataSourceSignalI::GetInputReader(*).
-     * @return a valid ReferenceT<MemoryMapInputReader> if signalIn is compatible with MemoryMapOutputWriter
+     * @return a valid ReferenceT<MemoryMapInputReader> if signalIn is compatible with MemoryMapInputReader
      *  (i.e. if MemoryMapInputReader::AddSignal(signalOut) == true).
      */
     virtual ReferenceT<DataSourceBrokerI> GetInputReader(ReferenceT<GAMSignalI> signalIn,

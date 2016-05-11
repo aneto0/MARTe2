@@ -43,9 +43,9 @@ namespace MARTe {
 /**
  * @brief Defines the interface between DataSourceSignalI and GAMSignalI signals.
  * @details A class that implements this interface is capable of connecting signals from
- *  DataSourceSignalI with signals from GAMSignalI components.
+ *  DataSourceSignalI components with signals from GAMSignalI components.
  */
-class DataSourceBrokerI: public ReferenceContainer {
+class DataSourceBrokerI : public ReferenceContainer {
 
 public:
 
@@ -135,7 +135,6 @@ public:
      */
     virtual bool Write(const uint8 activeDataSourceBuffer,
                        const TimeoutType &timeout = TTInfiniteWait)=0;
-
 };
 
 }

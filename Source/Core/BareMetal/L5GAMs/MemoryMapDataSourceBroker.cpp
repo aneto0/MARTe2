@@ -784,14 +784,5 @@ uint32 MemoryMapDataSourceBroker::GetNumberOfSignals() {
     return Size();
 }
 
-bool MemoryMapDataSourceBroker::Read(const uint8 activeDataSourceBuffer,
-                                     const TimeoutType &timeout) {
-    return false;
-}
-
-bool MemoryMapDataSourceBroker::Write(const uint8 activeDataSourceBuffer,
-                                      const TimeoutType &timeout) {
-    return false;
-}
 
 }

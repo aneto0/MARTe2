@@ -53,7 +53,7 @@ namespace MARTe {
  * to be necessarily produced/consumed by a GAM. For example, a driver is expected to
  * implement this interface and offer/consume signal data to/from other GAMs.
  */
-class DLL_API DataSourceSignalI: public ReferenceContainer {
+class DLL_API DataSourceSignalI : public ReferenceContainer {
 public:
 
     /**
@@ -220,7 +220,7 @@ public:
     virtual bool Configure(ReferenceT<GAMSignalI> gamSignalIn)=0;
 
     /**
-     * @brief Retrieves to the memory address containing the signal data.
+     * @brief Retrieves the pointer the memory address containing the signal data.
      * @param[in] bufferIndex is the index of the signal memory buffer currently in use.
      * @return pointer to the memory address containing the signal data.
      * @pre

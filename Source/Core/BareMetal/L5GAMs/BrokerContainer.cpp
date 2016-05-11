@@ -51,10 +51,9 @@ BrokerContainer::BrokerContainer() {
     brokers = NULL_PTR(ReferenceT<DataSourceBrokerI> *);
     numberOfBrokers = 0u;
     synchronized = false;
-    //reader by default
-    isInput = true;
     application = NULL_PTR(RealTimeApplication *);
     numberOfSignals = 0u;
+    isInput = true;
 }
 
 BrokerContainer::~BrokerContainer() {
@@ -264,36 +263,32 @@ bool BrokerContainer::Write(const uint8 activeDataSourceBuffer,
 bool BrokerContainer::InsertNewBroker(ReferenceT<DataSourceBrokerI> item) {
     bool ret = item.IsValid();
     if (ret) {
-        ret = Insert(item);
-        if (ret) {
-            uint32 brokerIndex = numberOfBrokers;
-            if (numberOfBrokers % brokersGranularity == 0u) {
-                uint32 newSize = (numberOfBrokers + brokersGranularity);
-                ReferenceT<DataSourceBrokerI> *temp = new ReferenceT<DataSourceBrokerI> [newSize];
-                for (uint32 i = 0u; i < numberOfBrokers; i++) {
-                    temp[i] = brokers[i];
-                }
-                if (brokers != NULL) {
-                    delete[] brokers;
-                }
-                brokers = temp;
+        uint32 brokerIndex = numberOfBrokers;
+        if (numberOfBrokers % brokersGranularity == 0u) {
+            uint32 newSize = (numberOfBrokers + brokersGranularity);
+            ReferenceT<DataSourceBrokerI> *temp = new ReferenceT<DataSourceBrokerI> [newSize];
+            for (uint32 i = 0u; i < numberOfBrokers; i++) {
+                temp[i] = brokers[i];
             }
-
-            brokers[numberOfBrokers] = item;
-            numberOfBrokers++;
-
-            uint32 brokerNSignals = item->GetNumberOfSignals();
-
-            for (uint32 i = 0u; i < brokerNSignals; i++) {
-                ret = containerIndexer.Add(brokerIndex);
-                if (ret) {
-                    ret = containerSignalIndexer.Add(i);
-                }
-                if (ret) {
-                    numberOfSignals++;
-                }
+            if (brokers != NULL) {
+                delete[] brokers;
             }
+            brokers = temp;
+        }
 
+        brokers[numberOfBrokers] = item;
+        numberOfBrokers++;
+
+        uint32 brokerNSignals = item->GetNumberOfSignals();
+
+        for (uint32 i = 0u; i < brokerNSignals; i++) {
+            ret = containerIndexer.Add(brokerIndex);
+            if (ret) {
+                ret = containerSignalIndexer.Add(i);
+            }
+            if (ret) {
+                numberOfSignals++;
+            }
         }
     }
 
@@ -309,6 +304,10 @@ void BrokerContainer::SetApplication(RealTimeApplication &app) {
 
 uint32 BrokerContainer::GetNumberOfSignals() {
     return numberOfSignals;
+}
+
+void BrokerContainer::SetInput(bool isInputIn) {
+    isInput = isInputIn;
 }
 
 CLASS_REGISTER(BrokerContainer, "1.0")

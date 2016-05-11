@@ -49,16 +49,11 @@
 namespace MARTe {
 
 /**
- * @brief The communication interface between GAM and DataSource signals using a dual-buffer mechanism.
+ * @brief The communication interface between GAM and DataSource signals.
  * @details The configuration of this element has to be performed after the
  * RealTimeApplication::ConfigureDataSource() step. It allows to read (write) data blocks
- * of each element and to read (write) blocks of samples. During the configuration two arrays of pointers
- * will be created, one for the data source signals and another for the GAM signals.
- * The read - write operation will copy the memory from one pointer to the other, for each of them
- * in this two arrays.\n
- * The Accepted field "Operation" of a GAMSignalI to initialise the broker, is the expression of a
- * nx2 matrix with the initial and final indexes for each block of data to be read (write) from (to) the
- * data source signal.
+ * of each element and to read (write) blocks of samples. It supports both single and dual buffering mechanisms
+ *  for the interconnection between the DataSourceSignalI signals and the GAMSignalI signals.
  */
 class DLL_API MemoryMapDataSourceBroker: public DataSourceBrokerI {
 
@@ -121,17 +116,6 @@ public:
      */
     virtual bool IsSync() const;
 
-    /**
-     * @see DataSourceBrokerI::Read(*)
-     */
-    virtual bool Read(const uint8 activeDataSourceBuffer,
-                      const TimeoutType &timeout = TTInfiniteWait);
-
-    /**
-     * @see DataSourceBrokerI::Write(*)
-     */
-    virtual bool Write(const uint8 activeDataSourceBuffer,
-                       const TimeoutType &timeout = TTInfiniteWait);
 
 protected:
 

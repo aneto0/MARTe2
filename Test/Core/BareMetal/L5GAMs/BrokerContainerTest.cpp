@@ -1625,7 +1625,7 @@ bool BrokerContainerTest::TestSetAsInput(bool flag) {
 
     broker->SetApplication(*rtapp.operator ->());
 
-    broker->SetAsInput(flag);
+    broker->SetInput(flag);
 
     float32 s1, s3;
     uint32 s2;
@@ -2034,7 +2034,7 @@ bool BrokerContainerTest::TestWrite() {
     ReferenceT<BrokerContainer> broker = ReferenceT<BrokerContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
     broker->SetApplication(*rtapp.operator ->());
-    broker->SetAsInput(false);
+    broker->SetInput(false);
 
     float32 s1, s3;
     uint32 s2;

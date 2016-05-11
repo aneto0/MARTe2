@@ -70,7 +70,7 @@ public:
      * @details This function starts by checking if it already contains a DataSourceBrokerI
      * which is compatible with \a gamSignalIn. It it does then it calls DataSourceBrokerI::AddSignal
      *  on this broker. If it doesn't then it looks for the DataSourceSignalI associated to \a gamSignalIn and
-     *  asks for a DataSourceBrokerI which is compatible with \a gamSignalIn.
+     *  asks for a DataSourceBrokerI (GetInputReader or GetOutputWriter) which is compatible with \a gamSignalIn.
      * @param[in] gamSignalIn the GAMSignalI to add.
      * @param[in] ptr pointer to the variable memory area of the signal.
      * @return false if \a gamSignalIn could not be added to any of the DataSourceBrokerI supported by
@@ -132,13 +132,21 @@ public:
      */
     virtual void SetApplication(RealTimeApplication &app);
 
-private:
+    /**
+     * @brief Declares that all the signals to be added are to be either Read (isInputIn = true) or Write (isInputIn = false).
+     * @param isInputIn if this parameter is true then in AddSignal the DataSourceSignalI::GetInputReader
+     *  will be used to retrieve the DataSourceBrokerI to be added to the broker list, otherwise
+     *  DataSourceBrokerI::GetOutputWriter will be called.
+     */
+    void SetInput(bool isInputIn);
 
     /**
      * @brief Inserts a new DataSourceBrokerI to the contained elements.
      * @return true if the broker is successfully added.
      */
     bool InsertNewBroker(ReferenceT<DataSourceBrokerI> item);
+
+private:
 
     /**
      * List of brokers held by this container.
@@ -175,6 +183,11 @@ private:
      */
     StaticList<uint32> containerSignalIndexer;
 
+    /**
+     * True if this BrokerContainer holds DataSourceBrokerI objects for reading (otherwise it is assumed that this
+     * BrokerContainer holds DataSourceBrokerI objects for writing).
+     */
+    bool isInput;
 };
 
 }

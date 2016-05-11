@@ -135,7 +135,7 @@ bool GAM::ConfigureDataSource() {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::Warning, "GAM %s never called in states or threads");
+        REPORT_ERROR(ErrorManagement::Warning, "GAM never called in states or threads");
     }
     return ret;
 }
@@ -148,6 +148,7 @@ bool GAM::Initialise(StructuredDataI & data) {
         StreamString irName = GetName();
         irName += "_InputReader";
         inputReaders->SetName(irName.Buffer());
+        inputReaders->SetInput(true);
     }
 
     if (ret) {
@@ -155,14 +156,15 @@ bool GAM::Initialise(StructuredDataI & data) {
         if (ret) {
             StreamString owName = GetName();
             owName += "_OutputWriter";
-            inputReaders->SetName(owName.Buffer());
+            outputWriters->SetName(owName.Buffer());
+            outputWriters->SetInput(false);
         }
         else {
-            //TODO
+            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s does not have a valid input BrokerContainer", GetName())
         }
     }
     else {
-        //TODO
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s does not have a valid output BrokerContainer", GetName())
     }
 
     if (ret) {
