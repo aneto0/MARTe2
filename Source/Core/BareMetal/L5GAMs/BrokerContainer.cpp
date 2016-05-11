@@ -94,7 +94,7 @@ bool BrokerContainer::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
         if (!ret) {
             uint32 numberOfSubSignals = gamSignal->Size();
             StreamString path = "Data.";
-            ReferenceT<GAMGenericSignal> testGamSignal = gamSignal;
+            ReferenceT<GAMSignalI> testGamSignal = gamSignal;
             ret = true;
 
             // take one of the data source signals of the children
@@ -141,7 +141,7 @@ bool BrokerContainer::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
                 }
             }
             else {
-
+                REPORT_ERROR(ErrorManagement::FatalError, "Found a non valid GAMGenericSignal");
             }
         }
     }
@@ -222,7 +222,7 @@ bool BrokerContainer::Finalise() {
     }
     if (syncBrokers > 1u) {
         ret = false;
-        //TODO Error more than one sync broker
+        REPORT_ERROR(ErrorManagement::FatalError, "Found more than one syncrhonisation broker");
     }
     else if (syncBrokers == 1u) {
         synchronized = true;
@@ -239,27 +239,22 @@ bool BrokerContainer::IsSync() const {
 
 bool BrokerContainer::Read(const uint8 activeDataSourceBuffer,
                            const TimeoutType &timeout) {
-    bool ret = isInput;
-    if (ret) {
-        for (uint32 k = 0u; (k < numberOfBrokers) && (ret); k++) {
-            if (brokers[k].IsValid()) {
-                ret = (brokers[k]->Read(activeDataSourceBuffer, timeout));
-            }
+    bool ret = true;
+    for (uint32 k = 0u; (k < numberOfBrokers) && (ret); k++) {
+        if (brokers[k].IsValid()) {
+            ret = (brokers[k]->Read(activeDataSourceBuffer, timeout));
         }
     }
-
     return ret;
 
 }
 
 bool BrokerContainer::Write(const uint8 activeDataSourceBuffer,
                             const TimeoutType &timeout) {
-    bool ret = (!isInput);
-    if (ret) {
-        for (uint32 k = 0u; (k < numberOfBrokers) && (ret); k++) {
-            if (brokers[k].IsValid()) {
-                ret = (brokers[k]->Write(activeDataSourceBuffer, timeout));
-            }
+    bool ret = true;
+    for (uint32 k = 0u; (k < numberOfBrokers) && (ret); k++) {
+        if (brokers[k].IsValid()) {
+            ret = (brokers[k]->Write(activeDataSourceBuffer, timeout));
         }
     }
 
@@ -303,10 +298,6 @@ bool BrokerContainer::InsertNewBroker(ReferenceT<DataSourceBrokerI> item) {
     }
 
     return ret;
-}
-
-void BrokerContainer::SetAsInput(bool isInputIn) {
-    isInput = isInputIn;
 }
 
 void BrokerContainer::SetApplication(RealTimeApplication &app) {

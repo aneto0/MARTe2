@@ -87,7 +87,7 @@ public:
      * The parameter \a index in output retrieves the position of the signal in the broker. This allows
      * to use the faster function GetSignal(\a index) to retrieve the signal memory pointer.
      * @param[in] name is the name of the signal to be searched.
-     * @param[in] index is the position of the signal in the broker.
+     * @param[out] index is the position of the signal in the broker.
      * @return a pointer to the requested signal or NULL if the signal with the specified name is not found.
      */
     virtual void *GetSignalByName(const char8 * name,

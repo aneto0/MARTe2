@@ -41,83 +41,138 @@
 
 namespace MARTe {
 
+/**
+ * @brief A container of DataSourceBrokerI objects.
+ * @details This class is a container of DataSourceBrokerI and implements the
+ * DataSourceBrokerI interface itself so that it queries and/or propagates
+ * all the interface function calls to all of its DataSourceBrokerI contained objects.
+ */
 class BrokerContainer: public DataSourceBrokerI {
 
 public:
     CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief Default constructor
+     * @post
+     *   GetNumberOfSignals() == 0 &&
+     *   IsSync() == false
+     */
     BrokerContainer();
 
+    /**
+     * @brief Frees allocated memory.
+     */
     ~BrokerContainer();
 
     /**
-     * @brief Links a GAM variable with the RealTimeDataSource.
-     * @details If \a ptr is null, this function allocates memory for the variable and stores the pointer
-     * in a vector. The pointer to the related variable memory, allocated in the RealTimeDataSource, will be
-     * stored into another vector. If \a ptr is not NULL, this means that the GAM provides the memory of that
-     * variable by itself, then the allocation is not performed.
-     * @param[in] def is the variable definition.
-     * @param[in] ptr is the pointer to the variable memory area.
-     * @return false in case of errors, true otherwise.
+     * @brief Calls DataSourceBrokerI::AddSignal on all the contained brokers.
+     * @details This function starts by checking if it already contains a DataSourceBrokerI
+     * which is compatible with \a gamSignalIn. It it does then it calls DataSourceBrokerI::AddSignal
+     *  on this broker. If it doesn't then it looks for the DataSourceSignalI associated to \a gamSignalIn and
+     *  asks for a DataSourceBrokerI which is compatible with \a gamSignalIn.
+     * @param[in] gamSignalIn the GAMSignalI to add.
+     * @param[in] ptr pointer to the variable memory area of the signal.
+     * @return false if \a gamSignalIn could not be added to any of the DataSourceBrokerI supported by
+     *  this \a gamSignalIn, true otherwise.
      */
     virtual bool AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
                            void * const ptr = NULL_PTR(void*));
 
     /**
-     * @brief Retrieves the pointer to the \a i-th variable.
-     * @param[in] i is the variable index.
-     * @return the pointer to the \a i-th variable. NULL if this object is not finalised (see Finalise()).
+     * @see DataSourceBrokerI::GetSignal
      */
     virtual void *GetSignal(const uint32 i);
 
+    /**
+     * @see DataSourceBrokerI::GetSignal
+     */
     virtual void *GetSignalByName(const char8 * name,
                                   uint32 &index);
 
+    /**
+     * @see DataSourceBrokerI::GetSignalNumberOfSamples
+     */
     virtual uint32 GetSignalNumberOfSamples(const uint32 n);
 
+    /**
+     * @see DataSourceBrokerI::GetNumberOfSignals
+     */
     virtual uint32 GetNumberOfSignals();
 
     /**
-     * @brief Finalises the object.
-     * @details This function has to be called after all the variables are added. No more than one data source
-     * has to be synchronizing for this link.
-     * @return false in case of errors, true otherwise.
+     * @brief Finalises all the contained DataSourceBrokerI.
+     * @details Calls DataSourceBrokerI::Finalise on all the contained DataSourceBrokerI elements.
+     * @return true if all DataSourceBrokerI::Finalise calls succeed and at most one DataSourceBrokerI::IsSync() exists.
      */
     virtual bool Finalise();
 
     /**
-     * @brief Returns true if this link is synchronized.
+     * @brief Return true if one (and only one) of the contained DataSourceBrokerI manages a synchronised operation.
+     * @return true if one (and only one) of the contained DataSourceBrokerI manages a synchronised operation (DataSourceBrokerI::IsSync())
      */
     virtual bool IsSync() const;
 
+    /**
+     * @brief Calls DataSourceBrokerI::Read on all the contained DataSourceBrokerI elements.
+     * @return true if all DataSourceBrokerI::Read calls succeed.
+     */
     virtual bool Read(const uint8 activeDataSourceBuffer,
                       const TimeoutType &timeout = TTInfiniteWait);
 
+    /**
+     * @brief Calls DataSourceBrokerI::Write on all the contained DataSourceBrokerI elements.
+     * @return true if all DataSourceBrokerI::Write calls succeed.
+     */
     virtual bool Write(const uint8 activeDataSourceBuffer,
                        const TimeoutType &timeout = TTInfiniteWait);
 
-    virtual bool InsertNewBroker(ReferenceT<DataSourceBrokerI> item);
-
-    void SetAsInput(bool isInputIn);
-
+    /**
+     * @see DataSourceBrokerI::GetSignal
+     */
     virtual void SetApplication(RealTimeApplication &app);
 
-protected:
+private:
 
+    /**
+     * @brief Inserts a new DataSourceBrokerI to the contained elements.
+     * @return true if the broker is successfully added.
+     */
+    bool InsertNewBroker(ReferenceT<DataSourceBrokerI> item);
+
+    /**
+     * List of brokers held by this container.
+     */
     ReferenceT<DataSourceBrokerI> *brokers;
 
+    /**
+     * Number of brokers held by this container.
+     */
     uint32 numberOfBrokers;
 
+    /**
+     * True if one (and only one) of the contained DataSourceBrokerI manages a synchronised operation.
+     */
     bool synchronized;
 
-    bool isInput;
-
+    /**
+     * The RealTimeApplication associated with this BrokerContainer.
+     */
     RealTimeApplication * application;
 
+    /**
+     * Total number of signals in all the contained brokers.
+     */
     uint32 numberOfSignals;
 
+    /**
+     * The index of the container (in the brokers list) where the signal i-th can be found.
+     */
     StaticList<uint32> containerIndexer;
 
+    /**
+     * The index inside brokers[containerIndexer.Get(i)] where signal i-th can be found.
+     */
     StaticList<uint32> containerSignalIndexer;
 
 };
@@ -128,5 +183,5 @@ protected:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_BROKERCONTAINER_H_ */
+#endif /* BROKERCONTAINER_H_ */
 

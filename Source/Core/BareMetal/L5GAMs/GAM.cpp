@@ -148,7 +148,6 @@ bool GAM::Initialise(StructuredDataI & data) {
         StreamString irName = GetName();
         irName += "_InputReader";
         inputReaders->SetName(irName.Buffer());
-        inputReaders->SetAsInput(true);
     }
 
     if (ret) {
@@ -157,7 +156,6 @@ bool GAM::Initialise(StructuredDataI & data) {
             StreamString owName = GetName();
             owName += "_OutputWriter";
             inputReaders->SetName(owName.Buffer());
-            outputWriters->SetAsInput(false);
         }
         else {
             //TODO
