@@ -40,7 +40,7 @@
 namespace MARTe {
 
 /**
- * @brief Reads data from the RealTimeDataSource.
+ * @brief Reads data from a collection of DataSourceSignalI and copies it to a collection of GAMSignalI signals.
  */
 class DLL_API MemoryMapInputReader: public MemoryMapDataSourceBroker {
 public:
@@ -53,15 +53,14 @@ public:
 
     /**
      * @see DataSourceBrokerI::Read(*)
-     * TODO
      */
     virtual bool Read(const uint8 activeDataSourceBuffer,
                       const TimeoutType &timeout=TTInfiniteWait);
 
 
     /**
-     * @see DataSourceBrokerI::Write(*)
-     * @details Returns false.
+     * @brief NOOP
+     * @return false.
      */
     virtual bool Write(const uint8 activeDataSourceBuffer,
                        const TimeoutType &timeout=TTInfiniteWait);

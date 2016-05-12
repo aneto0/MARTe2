@@ -84,7 +84,6 @@ bool MemoryMapInputReader::Read(const uint8 activeDataSourceBuffer,
                             for (uint32 k = 0u; (k < nRows) && (ret); k++) {
                                 uint32 beg = blockParams[k][0];
                                 uint32 size = blockParams[k][1];
-                                printf("\nread: beg=%d, size=%d, gamPtrIndex=%d, samplePtrIndex=%d\n", beg,size,gamPtrIndex,samplePtrIndex);
                                 char8 *DSptr = &(reinterpret_cast<char8*>(*DSPointer)[samplePtrIndex+beg]);
                                 // shift the pointer
                                 GAMPointer = &GAMPointerBeg[gamPtrIndex];

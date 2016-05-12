@@ -458,31 +458,36 @@ bool MemoryMapDataSourceBroker::IsSync() const {
     return synchronized;
 }
 
-Reference MemoryMapDataSourceBroker::Verify(Reference defIn,
+Reference MemoryMapDataSourceBroker::Verify(ReferenceT<GAMSignalI> gamSignal,
                                             uint32 &typeSize) {
 
-    ReferenceT<GAMSignalI> def = defIn;
     ReferenceT<DataSourceSignalI> ret;
+    const char8 *path = NULL_PTR(char8 *);
 
-    const char8 *path = def->GetPath();
-    if (path != NULL) {
-        bool ok = (application != NULL);
+    bool ok = gamSignal.IsValid();
+    if (ok) {
+        path = gamSignal->GetPath();
+        ok = (path != NULL);
+    }
+
+    if (ok) {
+        ok = (application != NULL);
+    }
+    if (ok) {
+        // find the data source signal
+        StreamString allPath = "Data.";
+        allPath += path;
+        ReferenceT<DataSourceSignalI> dsDef = application->Find(allPath.Buffer());
+        ok = dsDef.IsValid();
         if (ok) {
-            // find the data source signal
-            StreamString allPath = "Data.";
-            allPath += path;
-            ReferenceT<DataSourceSignalI> dsDef = application->Find(allPath.Buffer());
-            ok = dsDef.IsValid();
+            ok = dsDef->IsSupportedBroker(*this);
             if (ok) {
-                ok = dsDef->IsSupportedBroker(*this);
-                if (ok) {
-                    // check type compatibility
-                    ok = (StringHelper::Compare(dsDef->GetType(), def->GetType()) == 0);
+                // check type compatibility
+                ok = (StringHelper::Compare(dsDef->GetType(), gamSignal->GetType()) == 0);
 
-                    if (ok) {
-                        if (SetBlockParams(def, dsDef, typeSize)) {
-                            ret = dsDef;
-                        }
+                if (ok) {
+                    if (SetBlockParams(gamSignal, dsDef, typeSize)) {
+                        ret = dsDef;
                     }
                 }
             }
@@ -497,7 +502,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                                                Reference dsDefIn,
                                                uint32 &typeSize) {
 
-    // this function is called internally (no segmentation faults should happen)
+// this function is called internally (no segmentation faults should happen)
     ReferenceT<GAMSignalI> def = defIn;
     ReferenceT<DataSourceSignalI> dsDef = dsDefIn;
     bool ret = true;
@@ -509,7 +514,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
     int32 numberOfCycles = def->GetCycles();
     printf("\n#cycles=%d\n", numberOfCycles);
     uint32 numberOfGAMSamples = 1u;
-    // checks if it is already sync
+// checks if it is already sync
     if (synchronized) {
         ret = (numberOfCycles == 0);
     }
@@ -517,7 +522,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
         synchronized = (numberOfCycles > 0);
     }
 
-    // the number of ds elements can be different than the gam signal one
+// the number of ds elements can be different than the gam signal one
     if (ret) {
         // the minimum is one
         if (numberOfCycles == 0u) {
@@ -783,6 +788,5 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
 uint32 MemoryMapDataSourceBroker::GetNumberOfSignals() {
     return Size();
 }
-
 
 }

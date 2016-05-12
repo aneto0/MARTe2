@@ -396,6 +396,7 @@ public:
      *                         is terminated if not empty.
      * @param[out] outputBuffer is the output buffer.
      * @param[in] terminator is a list of terminator characters.
+     * @param[out] saveTerminator is the found terminator in return.
      * @param[in] skipCharacters is a list of characters to be skipped.
      * @return false if no data read, true otherwise.
      * @return true if some data was read before any error or file termination.

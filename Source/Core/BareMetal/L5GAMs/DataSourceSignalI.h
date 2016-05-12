@@ -38,6 +38,7 @@
 #include "MemoryArea.h"
 #include "RealTimeApplication.h"
 #include "DataSourceBrokerI.h"
+#include "DataSource.h"
 #include "GAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -141,38 +142,38 @@ public:
      * active buffer.
      * @return true if the state change request is admissible by this DataSourceSignalI.
      */
-    virtual bool PrepareNextState(const RealTimeStateInfo &status)=0;
+    //virtual bool PrepareNextState(const RealTimeStateInfo &status)=0;
 
     /**
      * @brief Allocates the memory for this signal.
      * @param[in] dsMemory is the memory where this signal has to be allocated.
      * @return true if the memory for this signal can be successfully allocated in \a dsMemory.
      */
-    virtual bool Allocate(MemoryArea &dsMemory)=0;
+    //virtual bool Allocate(MemoryArea &dsMemory)=0;
 
     /**
      * @brief Called before updating the value of this signal.
      * @details This function allows to perform any activities on the signal before its value is updated.
      */
-    virtual void WriteStart()=0;
+    //virtual void WriteStart()=0;
 
     /**
      * @brief Called before reading the value of this signal.
      * @details This function allows to perform any activities on the signal before its value is read.
      */
-    virtual void ReadStart()=0;
+    //virtual void ReadStart()=0;
 
     /**
      * @brief Called after updating the value of this signal.
      * @details This function allows to perform any activities on the signal after its value is updated.
      */
-    virtual void WriteEnd()=0;
+    //virtual void WriteEnd()=0;
 
     /**
      * @brief Called after after reading the value of this signal.
      * @details This function allows to perform any activities on the signal after its value is read.
      */
-    virtual void ReadEnd()=0;
+    //virtual void ReadEnd()=0;
 
     /**
      * @brief The synchronising routine.
@@ -182,7 +183,7 @@ public:
      * will be called from the broker (DataSourceBrokerI) before the read (write) operation.
      * @return false in case of errors or if the timeout expire.
      */
-    virtual bool WaitOnEvent(const TimeoutType &timeout = TTInfiniteWait)=0;
+    //virtual bool WaitOnEvent(const TimeoutType &timeout = TTInfiniteWait)=0;
 
     /**
      * @brief Retrieves the DataSourceBrokerI reader for the signal passed in input.
@@ -194,8 +195,8 @@ public:
      * @param[in] varPtr is the pointer of the GAMSignalI memory (if NULL the broker will allocate the memory).
      * @return a reference to a reader compatible with \a signalIn, an invalid reference in case of incompatibility.
      */
-    virtual ReferenceT<DataSourceBrokerI> GetInputReader(ReferenceT<GAMSignalI> signalIn,
-                                                         void * varPtr = NULL_PTR(void*))=0;
+    /*virtual ReferenceT<DataSourceBrokerI> GetInputReader(ReferenceT<GAMSignalI> signalIn,
+                                                         void * varPtr = NULL_PTR(void*))=0;*/
 
     /**
      * @brief Retrieves the DataSourceBrokerI writer for the signal passed in input.
@@ -207,8 +208,8 @@ public:
      * @param[in] varPtr is the pointer of the GAMSignalI memory (if NULL the broker will allocate the memory).
      * @return a reference to a writer compatible with \a signalOut, an invalid reference in case of incompatibility.
      */
-    virtual ReferenceT<DataSourceBrokerI> GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
-                                                          void * varPtr = NULL_PTR(void*))=0;
+    /*virtual ReferenceT<DataSourceBrokerI> GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
+                                                          void * varPtr = NULL_PTR(void*))=0;*/
 
     /**
      * @brief Configures the signal from a GAMSignalI definition.
@@ -217,7 +218,7 @@ public:
      * @param[in] gamSignalIn is a GAMSignalI to be linked to this signal.
      * @return false if the current configuration is not compatible with the \a gamSignalIn one.
      */
-    virtual bool Configure(ReferenceT<GAMSignalI> gamSignalIn)=0;
+    //virtual bool Configure(ReferenceT<GAMSignalI> gamSignalIn)=0;
 
     /**
      * @brief Retrieves the pointer the memory address containing the signal data.
@@ -227,14 +228,14 @@ public:
      *   bufferIndex == 0 ||
      *   bufferIndex == 1;
      */
-    virtual void **GetDataSourcePointer(uint8 bufferIndex)=0;
+    //virtual void **GetDataSourcePointer(uint8 bufferIndex)=0;
 
     /**
      * @brief Checks if the broker in input is compatible with this signal.
      * @param[in] testBroker is the broker to be checked.
      * @return true if \a testBroker is supported by this signal, false otherwise.
      */
-    virtual bool IsSupportedBroker(DataSourceBrokerI &testBroker)=0;
+    //virtual bool IsSupportedBroker(DataSourceBrokerI &testBroker)=0;
 
 protected:
 

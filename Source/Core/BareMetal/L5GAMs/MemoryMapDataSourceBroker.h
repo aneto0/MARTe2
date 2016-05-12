@@ -234,11 +234,11 @@ protected:
 
     /**
      * @brief Checks the GAM signal is compatible with its data source signal.
-     * @param[in] defIn is the GAM signal.
+     * @param[in] gamSignal is the GAM signal.
      * @param[in, out] typeSize is the GAM signal type size in bytes.
      * @return the DataSourceSignalI signal which \a defIn is connected to.
      */
-    virtual Reference Verify(Reference defIn,
+    virtual Reference Verify(ReferenceT<GAMSignalI> gamSignal,
                              uint32 &typeSize);
 
     /**

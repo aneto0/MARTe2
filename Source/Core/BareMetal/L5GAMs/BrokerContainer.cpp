@@ -32,6 +32,7 @@
 #include "BrokerContainer.h"
 #include "GAMSignalI.h"
 #include "DataSourceSignalI.h"
+#include "DataSource.h"
 #include "AdvancedErrorManagement.h"
 #include "GAMGenericSignal.h"
 #include "stdio.h"
@@ -113,11 +114,18 @@ bool BrokerContainer::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
             }
 
             if (ret) {
-                path += (testGamSignal.IsValid()) ? (testGamSignal->GetPath()) : (gamSignal->GetPath());
+                StreamString pathNoData = (testGamSignal.IsValid()) ? (testGamSignal->GetPath()) : (gamSignal->GetPath());
+                path += pathNoData;
+
                 ret = (application != NULL);
                 if (ret) {
-                    ReferenceT<DataSourceSignalI> ds = application->Find(path.Buffer());
+                    StreamString dataSourcePath;
+                    //The DataSource nodes are declared just under Data.
+                    char8 ignored;
+                    pathNoData.GetToken(dataSourcePath, ".", ignored, "");
+                    ReferenceT<DataSource> ds = application->Find(dataSourcePath);
                     ret = ds.IsValid();
+
                     if (ret) {
                         // get the new reader
                         // it will insert the variable
