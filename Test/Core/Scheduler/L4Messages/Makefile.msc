@@ -1,7 +1,6 @@
 #############################################################
 #
-# Copyright 2015 F4E | European Joint Undertaking for ITER 
-#  and the Development of Fusion Energy ('Fusion for Energy')
+# Copyright 2011 EFDA | European Fusion Development Agreement
 #
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
@@ -20,25 +19,10 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-OBJSX=
-SPB    = L1Portability.x L4Messages.x
-PACKAGE=Core
-MAKEDEFAULTDIR=../../../MakeDefaults
+TARGET=msc
 
-ROOT_DIR=../../..
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
-LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityTest$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L4Messages/L4MessagesTest$(LIBEXT)
-
-all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTeCoreSTest$(LIBEXT)
-	echo  $(OBJS)
-
-
-
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include Makefile.inc
 
