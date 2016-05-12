@@ -32,6 +32,7 @@
 #include "AnyTypeTest.h"
 #include "TestObjectHelper1.h"
 #include "StringHelper.h"
+#include "Introspection.h"
 #include <typeinfo>
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,12 +41,15 @@ struct TestATStructure {
     uint32 member1;
 };
 
+
 DECLARE_CLASS_MEMBER(TestATStructure, member1, uint32, "", "");
 
 static const IntrospectionEntry* fields[] = { &TestATStructure_member1_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(TestATStructure, fields);
-INTROSPECTION_REGISTER(TestATStructure, "1.0", TestATStructure_introspection)
+
+DECLARE_STRUCT_INTROSPECTION(TestATStructure, fields);
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

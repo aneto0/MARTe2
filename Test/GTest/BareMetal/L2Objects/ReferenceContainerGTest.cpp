@@ -52,9 +52,9 @@ TEST(ReferenceContainerGTest,TestConstructor) {
     ASSERT_TRUE(referenceContainerTest.TestConstructor());
 }
 
-TEST(ReferenceContainerGTest,TestGetClassPropertiesCopy) {
+TEST(ReferenceContainerGTest,TestGetClassProperties) {
     ReferenceContainerTest referenceContainerTest;
-    ASSERT_TRUE(referenceContainerTest.TestGetClassPropertiesCopy());
+    ASSERT_TRUE(referenceContainerTest.TestGetClassProperties());
 }
 
 TEST(ReferenceContainerGTest,TestGetTimeoutInfinite) {
@@ -107,6 +107,15 @@ TEST(ReferenceContainerGTest,TestFindFirstOccurrenceBranchAlwaysReferenceObject)
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceBranchAlways(filter));
 }
 
+
+/*****************************
+ * TestFind  *
+ *****************************/
+
+TEST(ReferenceContainerGTest,TestFind) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestFind());
+}
 /*****************************
  * TestFindFirstOccurrence   *
  *****************************/
@@ -396,6 +405,12 @@ TEST(ReferenceContainerGTest,TestFindRemoveAllOfMultipleInstanceObjectNameFilter
 /***************
  * TestInsert  *
  ***************/
+
+TEST(ReferenceContainerGTest,TestInsertWithPath) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestInsertWithPath());
+}
+
 TEST(ReferenceContainerGTest,TestInsertAtEnd) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestInsertAtEnd());
@@ -457,3 +472,14 @@ TEST(ReferenceContainerGTest,TestDelete) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestDelete());
 }
+
+/*******************
+ * TestInitialise *
+ *******************/
+
+TEST(ReferenceContainerGTest,TestInitialise) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestInitialise());
+}
+
+

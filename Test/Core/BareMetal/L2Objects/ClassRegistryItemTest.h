@@ -55,13 +55,13 @@ public:
      * @brief Tests the constructor with the Introspection input.
      * @return true if all the class attributes are initialised correctly.
      */
-    bool TestIntrospectionCostructor();
+    bool TestIntrospectionConstructor();
 
     /**
      * @brief Tests the full constructor.
      * @return true if all the class attributes are initialised correctly.
      */
-    bool TestFullCostructor();
+    bool TestFullConstructor();
 
     /**
      * @brief Tests destructor.
@@ -89,15 +89,6 @@ public:
      * @return true if the number of instances is incremented and decremented \a nInstances times.
      */
     bool TestGetNumberOfInstances(uint32 nInstances);
-
-    /**
-     * @brief Tests the ClassRegistryItem::GetClassPropertiesCopy.
-     * @param[in] name is the desired class name.
-     * @param[in] typeidName is the desired class name.
-     * @param[in] version is the desired class version.
-     * @return true if the ClassProperties copy has the same attributes values of the properties passed by constructor, false otherwise.
-     */
-    bool TestGetClassPropertiesCopy();
 
     /**
      * @brief Tests the ClassRegistryItem::GetClassProperties.

@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "IOBufferTest.h"
+#include "Introspection.h"
+#include "IntrospectionEntry.h"
 #include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -54,8 +56,8 @@ DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionNestedStructure, nestedMember2, st
 static const IntrospectionEntry* nestedFields[] = { &TestIOBufferIntrospectionNestedStructure_nestedMember1_introspectionEntry,
         &TestIOBufferIntrospectionNestedStructure_nestedMember2_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(TestIOBufferIntrospectionNestedStructure, nestedFields);
-INTROSPECTION_REGISTER(TestIOBufferIntrospectionNestedStructure, "1.0", TestIOBufferIntrospectionNestedStructure_introspection)
+DECLARE_STRUCT_INTROSPECTION(TestIOBufferIntrospectionNestedStructure, nestedFields);
+//INTROSPECTION_REGISTER(TestIOBufferIntrospectionNestedStructure, "1.0", TestIOBufferIntrospectionNestedStructure_introspection);
 
 static IntrospectionEntry member1Field("member1", "uint32", "", "", INTROSPECTION_MEMBER_SIZE(TestIOBufferIntrospectionStructure, member1),
                                        INTROSPECTION_MEMBER_INDEX(TestIOBufferIntrospectionStructure, member1));
@@ -72,8 +74,8 @@ static const IntrospectionEntry* fields[] = { &member1Field, &TestIOBufferIntros
         &TestIOBufferIntrospectionStructure_member3_introspectionEntry, &TestIOBufferIntrospectionStructure_member4_introspectionEntry,
         &TestIOBufferIntrospectionStructure_member5_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(TestIOBufferIntrospectionStructure, fields);
-INTROSPECTION_REGISTER(TestIOBufferIntrospectionStructure, "1.0", TestIOBufferIntrospectionStructure_introspection)
+DECLARE_STRUCT_INTROSPECTION(TestIOBufferIntrospectionStructure, fields);
+//INTROSPECTION_REGISTER(TestIOBufferIntrospectionStructure, "1.0", TestIOBufferIntrospectionStructure_introspection);
 
 struct TestIOBufferNotIntrospectable {
     uint32 member1;
@@ -82,8 +84,8 @@ struct TestIOBufferNotIntrospectable {
     const char8 * member4[2][2];
 };
 
-static ClassProperties TestIOBufferNotIntrospectable_prop("TestIOBufferNotIntrospectable", "TestIOBufferNotIntrospectable", "1.0");
-static ClassRegistryItem TestIOBufferNotIntrospectable_item(TestIOBufferNotIntrospectable_prop, (ObjectBuildFn*) NULL);
+//static ClassProperties TestIOBufferNotIntrospectable_prop("TestIOBufferNotIntrospectable", "TestIOBufferNotIntrospectable", "1.0");
+//static ClassRegistryItem TestIOBufferNotIntrospectable_item(TestIOBufferNotIntrospectable_prop, (ObjectBuildFn*) NULL);
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

@@ -606,11 +606,6 @@ TEST(AnyObjectGTest,TestGetClassProperties) {
     ASSERT_TRUE(anyObjTest.TestGetClassProperties());
 }
 
-TEST(AnyObjectGTest,TestGetClassPropertiesCopy) {
-    AnyObjectTest anyObjTest;
-    ASSERT_TRUE(anyObjTest.TestGetClassPropertiesCopy());
-}
-
 TEST(AnyObjectGTest,TestGetObjectBuildFunction) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetObjectBuildFunction());

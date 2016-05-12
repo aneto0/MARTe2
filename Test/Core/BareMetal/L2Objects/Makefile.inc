@@ -24,6 +24,7 @@
 #
 #############################################################
 
+
 OBJSX=  AnyTypeTest.x\
 		ClassPropertiesTest.x \
 		ClassRegistryDatabaseTest.x \
@@ -31,6 +32,7 @@ OBJSX=  AnyTypeTest.x\
 		IntrospectionEntryTest.x\
 		IntrospectionTest.x \
 		ObjectTest.x \
+		ObjectRegistryDatabaseTest.x \
 		ObjectTestHelper.x \
 		ReferenceContainerFilterObjectNameTest.x \
 		ReferenceContainerFilterReferencesTest.x \
@@ -39,7 +41,9 @@ OBJSX=  AnyTypeTest.x\
 		ReferenceTTest.x \
 		ReferenceTest.x \
 		TestObjectHelper1.x \
-		TestObjectHelper2.x
+		TestObjectHelper2.x \
+		TestObjectHelper3.x
+		
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

@@ -33,21 +33,28 @@
 #include "MemoryCheck.h"
 #include "StringHelper.h"
 #include "ClassRegistryDatabase.h"
+#include "IntrospectionEntry.h"
+#include "Introspection.h"
+#include "Object.h"
 #include <typeinfo>
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-Object* dummyBuildFcn(HeapI * const h) {
-    Object *p = (Object*) HeapManager::Malloc(sizeof(Object));
-    char *pp = (char*) p;
-    (*pp) = 9;
-    return p;
-}
+class DummyObjectBuilder: public ObjectBuilderT<Object> {
+    Object *Build(HeapI* const heap) const {
+        Object *p = (Object*) HeapManager::Malloc(sizeof(Object));
+        char *pp = (char*) p;
+        (*pp) = 9;
+        return p;
+    }
+};
+
+static DummyObjectBuilder dummyObjectBuilder;
 
 static ClassProperties testClassPropertiesNormal("TestNormalCRI", typeid(Object).name(), "World");
 
 //myItem cannot be destroyed until the end of the execution of the program.
-static ClassRegistryItem myItem = ClassRegistryItem(testClassPropertiesNormal, dummyBuildFcn);
+static ClassRegistryItemT<Object> myItem(testClassPropertiesNormal);
 
 static ClassProperties testClassPropertiesIntro("TestIntrospectionCRI", "TestIntrospectionCRI", "1.1");
 
@@ -56,9 +63,9 @@ static IntrospectionEntry member1Field("member1", "uint32", "", "", 4, 0);
 static const IntrospectionEntry* fields[] = { &member1Field, 0 };
 static Introspection introspectionTest(fields, 4);
 
-static ClassRegistryItem myItemIntro(testClassPropertiesIntro, introspectionTest);
+static ClassRegistryItemT<Object> myItemIntro(testClassPropertiesIntro);
 
-static ClassRegistryItem myItemFull(testClassPropertiesIntro, dummyBuildFcn, introspectionTest);
+static ClassRegistryItemT<Object> myItemFull(testClassPropertiesIntro);
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -101,7 +108,7 @@ bool ClassRegistryItemTest::TestConstructor() {
     HeapI * h = NULL;
 
     //check if the correct function is saved
-    Object *instance = myItem.GetObjectBuildFunction()(h);
+    Object *instance = myItem.GetObjectBuilder()->Build(h);
 
     if (instance == NULL) {
         return false;
@@ -114,11 +121,18 @@ bool ClassRegistryItemTest::TestConstructor() {
 
     HeapManager::Free((void*&) instance);
 
+
+    myItemIntro.SetIntrospection(&introspectionTest);
+
+    myItemFull.SetIntrospection(&introspectionTest);
+    myItemFull.SetObjectBuilder(&dummyObjectBuilder);
+
+
     return retVal;
 
 }
 
-bool ClassRegistryItemTest::TestIntrospectionCostructor() {
+bool ClassRegistryItemTest::TestIntrospectionConstructor() {
     // checks the attributes.
     if (myItemIntro.GetNumberOfInstances() != 0) {
         return false;
@@ -144,7 +158,7 @@ bool ClassRegistryItemTest::TestIntrospectionCostructor() {
         return false;
     }
 
-    if (myItemIntro.GetObjectBuildFunction() != NULL) {
+    if (myItemIntro.GetObjectBuilder() != NULL) {
         return false;
     }
     //checks if the class is in the database
@@ -156,7 +170,7 @@ bool ClassRegistryItemTest::TestIntrospectionCostructor() {
     return true;
 }
 
-bool ClassRegistryItemTest::TestFullCostructor() {
+bool ClassRegistryItemTest::TestFullConstructor() {
     // checks the attributes.
     if (myItemFull.GetNumberOfInstances() != 0) {
         return false;
@@ -182,7 +196,7 @@ bool ClassRegistryItemTest::TestFullCostructor() {
         return false;
     }
 
-    if (myItemFull.GetObjectBuildFunction() != dummyBuildFcn) {
+    if (myItemFull.GetObjectBuilder() != &dummyObjectBuilder) {
         return false;
     }
     //checks if the class is in the database
@@ -259,18 +273,6 @@ bool ClassRegistryItemTest::TestGetNumberOfInstances(uint32 nInstances) {
     return myItem.GetNumberOfInstances() == currentInstances;
 }
 
-bool ClassRegistryItemTest::TestGetClassPropertiesCopy() {
-
-    ClassProperties propertiesCopy("TestNormalCRI", "TestNormalCRI", "World");
-
-    myItem.GetClassPropertiesCopy(propertiesCopy);
-
-    bool ok = (StringHelper::Compare(propertiesCopy.GetName(), "TestNormalCRI") == 0);
-    ok &= (StringHelper::Compare(propertiesCopy.GetTypeIdName(), typeid(Object).name()) == 0);
-    ok &= (StringHelper::Compare(propertiesCopy.GetVersion(), "World") == 0);
-    return ok;
-}
-
 bool ClassRegistryItemTest::TestGetClassProperties() {
 
     const ClassProperties *propertiesCopy = myItem.GetClassProperties();
@@ -298,13 +300,13 @@ bool ClassRegistryItemTest::TestSetGetLoadableLibrary(const char8 *llname) {
 
 bool ClassRegistryItemTest::TestGetObjectBuildFunction() {
 
-    if (myItem.GetObjectBuildFunction() != dummyBuildFcn) {
+    if (myItem.GetObjectBuilder() != &dummyObjectBuilder) {
         return false;
     }
 
     HeapI * h = NULL;
     //call the function to see if it behaves as expected
-    Object* instance = myItem.GetObjectBuildFunction()(h);
+    Object* instance = myItem.GetObjectBuilder()->Build(h);
     bool retVal = true;
     if ((*((char*) instance)) != 9) {
         retVal = false;

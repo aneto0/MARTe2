@@ -47,7 +47,7 @@ TEST(ClassRegistryItemGTest,TestConstructor) {
 
 TEST(ClassRegistryItemGTest,TestIntrospectionCostructor) {
     ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestIntrospectionCostructor());
+    ASSERT_TRUE(myClassRegistryItemTest.TestIntrospectionConstructor());
 }
 
 TEST(ClassRegistryItemGTest,TestDestructor) {
@@ -70,16 +70,10 @@ TEST(ClassRegistryItemGTest,TestGetNumberOfInstances) {
     ASSERT_TRUE(myClassRegistryItemTest.TestGetNumberOfInstances(32));
 }
 
-TEST(ClassRegistryItemGTest,TestGetClassPropertiesCopy) {
-    ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestGetClassPropertiesCopy());
-}
-
 TEST(ClassRegistryItemGTest,TestGetClassProperties) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestGetClassProperties());
 }
-
 
 TEST(ClassRegistryItemGTest,TestSetGetLoadableLibrary) {
     ClassRegistryItemTest myClassRegistryItemTest;

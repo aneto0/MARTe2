@@ -212,10 +212,9 @@ bool ObjectTest::TestGetUniqueName2() {
 
 bool ObjectTest::TestGetProperties() {
     Object obj;
-    ClassProperties properties;
-    obj.GetClassPropertiesCopy(properties);
-    const char8 *name = properties.GetName();
-    const char8 *version = properties.GetVersion();
+    const ClassProperties* properties = obj.GetClassProperties();
+    const char8 *name = properties->GetName();
+    const char8 *version = properties->GetVersion();
     return (StringHelper::Compare("Object", name) == 0) && (StringHelper::Compare("1.0", version) == 0);
 }
 

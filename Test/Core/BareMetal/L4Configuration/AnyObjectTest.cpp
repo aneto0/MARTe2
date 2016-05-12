@@ -269,13 +269,6 @@ bool AnyObjectTest::TestGetClassProperties() {
     return (StringHelper::Compare("AnyObject", classProps->GetName()) == 0);
 }
 
-bool AnyObjectTest::TestGetClassPropertiesCopy() {
-    AnyObject anyObj;
-    ClassProperties classProps;
-    anyObj.GetClassPropertiesCopy(classProps);
-    return (StringHelper::Compare("AnyObject", classProps.GetName()) == 0);
-}
-
 bool AnyObjectTest::TestGetObjectBuildFunction() {
     Reference ref("AnyObject");
     return ref.IsValid();
