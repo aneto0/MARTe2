@@ -22,24 +22,41 @@
 #
 #############################################################
 
-OBJSX=
 
-SPB = L1Portability.x L4Messages.x
+OBJSX=  QueuedMessageIGTest.x
+		
 
-PACKAGE=GTest
-ROOT_DIR=../../..
+PACKAGE=GTest/Scheduler
+ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 
-LIBRARIES_STATIC=$(BUILD_DIR)/L1Portability/L1PortabilitySGTest$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L4Messages/L4MessagesSGTest$(LIBEXT)
+
+INCLUDES += -I../../../
+INCLUDES += -I../../../Core/BareMetal/L0Types
+INCLUDES += -I../../../Core/BareMetal/L1Portability
+INCLUDES += -I../../../Core/BareMetal/L2Objects
+INCLUDES += -I../../../Core/BareMetal/L3Streams
+INCLUDES += -I../../../Core/BareMetal/L4Messages
+INCLUDES += -I../../../Core/Scheduler/L1Portability
+INCLUDES += -I../../../Core/Scheduler/L4Messages
+INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
+INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
+INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
+INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Messages
+INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
+INCLUDES += -I../../../../Source/Core/Scheduler/L4Messages
 
 
-all: $(OBJS)  $(SUBPROJ)  \
-        $(BUILD_DIR)/MARTeSGTest$(LIBEXT) 
+
+all: $(OBJS)    \
+        $(BUILD_DIR)/L4MessagesSGTest$(LIBEXT) 
 	echo  $(OBJS)
+
+include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 
