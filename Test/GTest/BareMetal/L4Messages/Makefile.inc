@@ -22,29 +22,37 @@
 #
 #############################################################
 
-OBJSX=
 
-SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x L4Messages.x
+OBJSX=  MessageIGTest.x
+		 
 
-PACKAGE=GTest
-ROOT_DIR=../../..
+PACKAGE=GTest/BareMetal
+ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 
-LIBRARIES_STATIC=$(BUILD_DIR)/L0Types/L0TypesBGTest$(LIBEXT)
-LIBRARIES_STATIC+= $(BUILD_DIR)/L1Portability/L1PortabilityBGTest$(LIBEXT)
-LIBRARIES_STATIC+= $(BUILD_DIR)/L2Objects/L2ObjectsBGTest$(LIBEXT)
-LIBRARIES_STATIC+= $(BUILD_DIR)/L3Streams/L3StreamsBGTest$(LIBEXT)
-LIBRARIES_STATIC+= $(BUILD_DIR)/L4Configuration/L4ConfigurationBGTest$(LIBEXT)
-LIBRARIES_STATIC+= $(BUILD_DIR)/L4Messages/L4MessagesBGTest$(LIBEXT)
+
+INCLUDES += -I../../../
+INCLUDES += -I../../../Core/BareMetal/L0Types
+INCLUDES += -I../../../Core/BareMetal/L1Portability
+INCLUDES += -I../../../Core/BareMetal/L2Objects
+INCLUDES += -I../../../Core/BareMetal/L3Streams
+INCLUDES += -I../../../Core/BareMetal/L4Messages
+INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
+INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
+INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
+INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Messages
 
 
-all: $(OBJS)  $(SUBPROJ)  \
-        $(BUILD_DIR)/MARTeBGTest$(LIBEXT) 
+
+all: $(OBJS)    \
+        $(BUILD_DIR)/L4MessagesBGTest$(LIBEXT) 
 	echo  $(OBJS)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include depends.$(TARGET)
 
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 
