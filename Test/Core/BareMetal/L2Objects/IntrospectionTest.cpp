@@ -70,6 +70,8 @@ public:
 
 };
 
+CLASS_REGISTER(DummyObject, "1.0")
+
 DECLARE_CLASS_MEMBER(DummyObject, member, int32, "", "");
 static const IntrospectionEntry* objFields[] = { &DummyObject_member_introspectionEntry, 0 };
 DECLARE_CLASS_INTROSPECTION(DummyObject, objFields);

@@ -35,6 +35,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+CLASS_REGISTER(TestObjectHelper3, "1.0")
+
+CLASS_REGISTER(NestedObjectHelper3, "1.0")
+
 DECLARE_CLASS_MEMBER(NestedObjectHelper3, x, int32, "", "nested");
 
 static const IntrospectionEntry* nestedObj3[] = { &NestedObjectHelper3_x_introspectionEntry, 0 };
@@ -81,3 +85,6 @@ NestedObjectHelper3::NestedObjectHelper3() {
     x = 4;
 }
 
+NestedObjectHelper3::~NestedObjectHelper3() {
+
+}

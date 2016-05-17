@@ -45,6 +45,8 @@ public:
 
     NestedObjectHelper3();
 
+    virtual ~NestedObjectHelper3();
+
     int32 x;
 };
 
@@ -55,7 +57,7 @@ public:
 
     TestObjectHelper3();
 
-    ~TestObjectHelper3();
+    virtual ~TestObjectHelper3();
 
     uint32 a;
     const char8* b;

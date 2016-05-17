@@ -54,6 +54,15 @@ CLASS_REGISTER(CollectInts, "1.0")
 CLASS_REGISTER(NonIntrospectableIntegerObject, "1.0")
 
 
+CLASS_REGISTER(IntrospectableIntegerObject, "1.0")
+
+
+CLASS_REGISTER(IntrospectableObjectWith2Members, "1.0")
+
+
+CLASS_REGISTER(IntrospectableObjectWith3Members, "1.0")
+
+
 DECLARE_CLASS_MEMBER(IntrospectableIntegerObject, member, int32, "", "");
 static const IntrospectionEntry* objFields[] = { &IntrospectableIntegerObject_member_introspectionEntry, 0 };
 DECLARE_CLASS_INTROSPECTION(IntrospectableIntegerObject, objFields);
