@@ -68,7 +68,7 @@ public:
      * Destructor.
      * Responsible for destroying the assigned loadable library.
      */
-    ~ClassRegistryItem();
+    virtual ~ClassRegistryItem();
 
     /**
      * @brief Increments the number of instantiated objects of the class type represented by this registry item.
@@ -224,6 +224,9 @@ public:
         return ClassRegistryItem::Instance(instance,T::classProperties);
     }
 
+    virtual ~ClassRegistryItemT() {
+
+    }
 
 };
 
