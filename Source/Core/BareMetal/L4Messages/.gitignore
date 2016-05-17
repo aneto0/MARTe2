@@ -9,3 +9,6 @@
 /dllGenerator.def
 /dummy.cpp
 /dummy.obj
+/cov/
+/depends.cov
+/dependsRaw.cov
