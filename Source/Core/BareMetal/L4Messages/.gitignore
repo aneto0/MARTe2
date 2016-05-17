@@ -6,3 +6,6 @@
 /vc140.pdb
 /title
 /temp/
+/dllGenerator.def
+/dummy.cpp
+/dummy.obj
