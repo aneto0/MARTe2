@@ -221,7 +221,7 @@ bool ClassRegistryItemTest::TestDestructor() {
     const LoadableLibrary *dummy = new LoadableLibrary();
     myItem.SetLoadableLibrary(dummy);
 
-    myItem.~ClassRegistryItem();
+    myItem.~ClassRegistryItemT();
     dummy = myItem.GetLoadableLibrary();
 
     //checks that dummy was destructed
