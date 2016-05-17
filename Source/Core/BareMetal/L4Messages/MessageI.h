@@ -47,7 +47,7 @@ namespace MARTe {
 /**
  * TODO
  * */
-class MessageI  {
+class DLL_API MessageI  {
 public:
     /**
      * TODO

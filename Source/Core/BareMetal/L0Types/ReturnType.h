@@ -43,7 +43,7 @@ namespace MARTe {
 /**
  * TODO
  * */
-class ReturnType{
+class DLL_API ReturnType{
 public:
     /**
      * TODO
