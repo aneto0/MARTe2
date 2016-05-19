@@ -156,7 +156,7 @@ public:
     static MARTe::IntrospectionT<className> className ## _ ## introspection(introEntryArray, sizeof(className));
 
 #define DECLARE_STRUCT_INTROSPECTION(structName, introEntryArray)                                                              \
-class structName ## _Registrable: public structName {                                                                          \
+class structName ## _Registrable: public Object {                                                                          \
 public:                                                                                                                        \
     static MARTe::ClassProperties classProperties;                                                                             \
     static MARTe::ClassRegistryItem * GetClassRegistryItem_Static() {                                                          \
