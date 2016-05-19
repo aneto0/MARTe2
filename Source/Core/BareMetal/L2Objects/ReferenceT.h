@@ -308,8 +308,6 @@ ReferenceT<T>::ReferenceT(const char8* const typeName,
         if (typeTObjectPointer == NULL) {
             Reference::RemoveReference();
             typeTObjectPointer = static_cast<T *>(NULL);
-        }
-        else {
             REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
         }
     }
