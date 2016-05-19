@@ -69,7 +69,7 @@ public:
      * @brief Tests the ClassRegistryDatabase::Add function.
      * @return true if after adding a ClassRegistryItem element to the database, it can be found and the database size is incremented.
      */
-    bool TestAdd();
+//    bool TestAdd();
 
     /**
      * @brief Tests the Add function with two classes with the same name.
@@ -83,7 +83,7 @@ public:
      * @param[in] create specifies if the class should be registered or not in the database (determining the result of the find function).
      * @return true if the find on registered class names succeeds and fails if the class is not registered.
      */
-    bool TestFind();
+//    bool TestFind();
 
     /**
      * @brief Tests the Find function using a string length > 129u and the pattern dllname::name.
@@ -129,7 +129,7 @@ public:
      * @details Adds an element to the database and verifies if this element can be successfully peeked.
      * @return true if the element is added to the database and if can then be later retrieved.
      */
-    bool TestPeek();
+//    bool TestPeek();
 
     /**
      * @brief Tests if instantiating objects, the number of instances parameter is correct.

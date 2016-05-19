@@ -36,17 +36,17 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-static ClassProperties testClassProperties("TestAdd", "TestAdd", "V");
+//static ClassProperties testClassProperties("TestAdd", "TestAdd", "V");
 
 
-static ClassRegistryItemT<Object> myItem(testClassProperties);
+//static ClassRegistryItemT<Object> myItem(testClassProperties);
 
 ClassProperties testClassPropertiesLongName(
         "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf",
         "", "V");
 
 //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
-ClassRegistryItemT<Object> myItemLongName(testClassPropertiesLongName);
+//ClassRegistryItemT<Object> myItemLongName(testClassPropertiesLongName);
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -87,19 +87,19 @@ bool ClassRegistryDatabaseTest::TestInstance() {
     return ok;
 }
 
-bool ClassRegistryDatabaseTest::TestAdd() {
-
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
-
-
-
-    const ClassRegistryItem *ret = db->Find("TestAdd");
-
-    bool retVal = (StringHelper::Compare(ret->GetClassProperties()->GetName(), "TestAdd") == 0);
-    retVal &= (StringHelper::Compare(ret->GetClassProperties()->GetVersion(), "V") == 0);
-
-    return retVal;
-}
+//bool ClassRegistryDatabaseTest::TestAdd() {
+//
+//    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+//
+//
+//
+//    const ClassRegistryItem *ret = db->Find("TestAdd");
+//
+//    bool retVal = (StringHelper::Compare(ret->GetClassProperties()->GetName(), "TestAdd") == 0);
+//    retVal &= (StringHelper::Compare(ret->GetClassProperties()->GetVersion(), "V") == 0);
+//
+//    return retVal;
+//}
 
 bool ClassRegistryDatabaseTest::TestFindDLL(const MARTe::char8* dllName,
                                             const MARTe::char8* className,
@@ -115,15 +115,15 @@ bool ClassRegistryDatabaseTest::TestFindDLL(const MARTe::char8* dllName,
     return !(validName ^ (db->Find(fullName) != NULL));
 }
 
-bool ClassRegistryDatabaseTest::TestFind() {
-
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
-
-    bool found = (db->Find("TestAdd") != NULL);
-    //These are deleted by the the ClassRegistryDatabase destructor
-    return found;
-
-}
+//bool ClassRegistryDatabaseTest::TestFind() {
+//
+//    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+//
+//    bool found = (db->Find("TestAdd") != NULL);
+//    //These are deleted by the the ClassRegistryDatabase destructor
+//    return found;
+//
+//}
 
 bool ClassRegistryDatabaseTest::TestFindLongName() {
 
@@ -152,15 +152,15 @@ bool ClassRegistryDatabaseTest::TestGetSize() {
     return db->GetSize()>0u;
 }
 
-bool ClassRegistryDatabaseTest::TestPeek() {
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
-
-    const ClassRegistryItem *testItem = db->Find("TestAdd");
-
-    const ClassRegistryItem *peekedItem = db->Peek(testItem->GetClassProperties()->GetUniqueIdentifier());
-    return (peekedItem == testItem);
-
-}
+//bool ClassRegistryDatabaseTest::TestPeek() {
+//    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+//
+//    const ClassRegistryItem *testItem = db->Find("TestAdd");
+//
+//    const ClassRegistryItem *peekedItem = db->Peek(testItem->GetClassProperties()->GetUniqueIdentifier());
+//    return (peekedItem == testItem);
+//
+//}
 
 bool ClassRegistryDatabaseTest::TestCreateInstances() {
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
