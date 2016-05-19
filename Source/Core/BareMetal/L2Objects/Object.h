@@ -64,6 +64,9 @@
  * 1960: lint is confused with the placement new and reporting a false alarm.
  */
 #define CLASS_REGISTER_DECLARATION()                                                                                   \
+    /*                                                                                                                 \
+     * TODO                                                                                                            \
+     */                                                                                                                \
     static ClassProperties classProperties;                                                                            \
     /*                                                                                                                 \
      * TODO                                                                                                            \
@@ -109,6 +112,13 @@
      * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
      */                                                                                                                \
     MARTe::ClassProperties className::classProperties( #className , typeid(className).name(), ver, static_cast<uint32>(sizeof(className)));                 \
+                                                                                                                       \
+    /* The next line, i.e. the instantiation of a static ClassRegistryItem                                            \
+     * is necessary because it creates an instance of ClassRegistryItem and                                            \
+     * registers it into the ClassRegistryDatabase.                                                                    \
+     */                                                                                                                \
+    static MARTe::ClassRegistryItem* className ## _privateItem = ClassRegistryItemT<className>::Instance();            \
+                                                                                                                       \
     /*  TODO                                                                                                           \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                              \
