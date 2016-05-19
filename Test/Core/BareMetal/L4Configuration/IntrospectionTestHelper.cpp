@@ -121,4 +121,4 @@ DECLARE_STRUCT_INTROSPECTION(TestIntrospectionObjectNoCompatibility , fieldsNoCo
 
 //static const ClassProperties properties("TestNoIntrospectionObject", "TestNoIntrospectionObject", "1.0");
 //static const ClassRegistryItem item(properties, NULL);
-
+CLASS_REGISTER(TestNoIntrospectionObject, "1.0")

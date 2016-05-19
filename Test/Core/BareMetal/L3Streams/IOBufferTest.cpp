@@ -77,12 +77,16 @@ static const IntrospectionEntry* fields[] = { &member1Field, &TestIOBufferIntros
 DECLARE_STRUCT_INTROSPECTION(TestIOBufferIntrospectionStructure, fields);
 //INTROSPECTION_REGISTER(TestIOBufferIntrospectionStructure, "1.0", TestIOBufferIntrospectionStructure_introspection);
 
-struct TestIOBufferNotIntrospectable {
+class TestIOBufferNotIntrospectable: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
     uint32 member1;
     float32 *member2;
     float64 member3[32];
     const char8 * member4[2][2];
 };
+
+CLASS_REGISTER(TestIOBufferNotIntrospectable,"1.0")
 
 //static ClassProperties TestIOBufferNotIntrospectable_prop("TestIOBufferNotIntrospectable", "TestIOBufferNotIntrospectable", "1.0");
 //static ClassRegistryItem TestIOBufferNotIntrospectable_item(TestIOBufferNotIntrospectable_prop, (ObjectBuildFn*) NULL);
