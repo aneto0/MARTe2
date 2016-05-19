@@ -32,13 +32,13 @@ OBJSX=	BrokerContainer.x \
 		DataSource.x \
 		DataSourceContainer.x \
 		DataSourceSignal.x \
-		DataSourceSignalI.x \
+		DataSourceI.x \
 		DataSourceSignalRecord.x \
 		GAMGenericSignal.x \
 		GAMSampledSignal.x \
 		GAMSignalsContainer.x \
 		GAMSignalI.x \
-		MemoryMapDataSourceBroker.x \
+		MemoryMapBroker.x \
 		MemoryMapInputReader.x \
 		MemoryMapOutputWriter.x \
 		RealTimeApplication.x \
