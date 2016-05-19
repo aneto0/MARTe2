@@ -55,6 +55,13 @@ bool ReferenceContainerTest::TestConstructor() {
     return ok;
 }
 
+//bool ReferenceContainerTest::TestGetClassPropertiesCopy() {
+//    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
+//    ClassProperties cp;
+//    container->GetClassPropertiesCopy(cp);
+//    return (StringHelper::Compare(cp.GetName(), "ReferenceContainer") == 0);
+//}
+
 bool ReferenceContainerTest::TestGetClassProperties() {
     ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
     const ClassProperties* cp = container->GetClassProperties();

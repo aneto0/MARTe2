@@ -52,6 +52,11 @@ TEST(ReferenceContainerGTest,TestConstructor) {
     ASSERT_TRUE(referenceContainerTest.TestConstructor());
 }
 
+//TEST(ReferenceContainerGTest,TestGetClassPropertiesCopy) {
+//    ReferenceContainerTest referenceContainerTest;
+//    ASSERT_TRUE(referenceContainerTest.TestGetClassPropertiesCopy());
+//}
+
 TEST(ReferenceContainerGTest,TestGetClassProperties) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestGetClassProperties());

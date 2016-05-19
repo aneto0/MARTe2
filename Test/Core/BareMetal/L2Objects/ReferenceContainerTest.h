@@ -60,10 +60,17 @@ public:
      */
     bool TestConstructor();
 
+//    /**
+//     * @brief Tests the TestGetClassPropertiesCopy function.
+//     * @return true if ClassProperties::GetName == "ReferenceContainer".
+//     */
+//    bool TestGetClassPropertiesCopy();
+
     /**
      * @brief Tests the TestGetClassProperties function.
      * @return true if ClassProperties::GetName == "ReferenceContainer".
      */
+    
     bool TestGetClassProperties();
 
     /**

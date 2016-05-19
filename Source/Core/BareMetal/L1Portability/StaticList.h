@@ -125,7 +125,7 @@ public:
     bool Set(const uint32 position,
              elementType &value);
 
-    elementType operator[](uint32 pos);
+//    elementType operator[](uint32 pos);
 
 private:
 
@@ -200,6 +200,12 @@ template<typename elementType, uint32 listAllocationGranularity>
 bool StaticList<elementType, listAllocationGranularity>::Extract(const uint32 position,
                                                                  elementType &value) {
     return slh.Extract(position, static_cast<void *>(&value));
+}
+
+template<typename elementType, uint32 listAllocationGranularity>
+bool StaticList<elementType, listAllocationGranularity>::Set(const uint32 position,
+                                                             elementType &value) {
+    return slh.Set(position, static_cast<void *>(&value));
 }
 
 }

@@ -54,7 +54,7 @@ inline uint32 Counter32() {
 
 inline uint64 Counter() {
 
-    return (int64) __rdtsc();
+    return (uint64) __rdtsc();
 
 }
 

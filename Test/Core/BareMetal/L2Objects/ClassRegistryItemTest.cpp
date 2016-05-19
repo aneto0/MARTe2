@@ -280,6 +280,18 @@ bool ClassRegistryItemTest::TestGetNumberOfInstances(uint32 nInstances) {
     return myItem.GetNumberOfInstances() == currentInstances;
 }
 
+bool ClassRegistryItemTest::TestGetClassPropertiesCopy() {
+
+    ClassProperties propertiesCopy("TestNormalCRI", "TestNormalCRI", "World");
+
+    myItem.GetClassPropertiesCopy(propertiesCopy);
+
+    bool ok = (StringHelper::Compare(propertiesCopy.GetName(), "TestNormalCRI") == 0);
+    ok &= (StringHelper::Compare(propertiesCopy.GetTypeIdName(), typeid(Object).name()) == 0);
+    ok &= (StringHelper::Compare(propertiesCopy.GetVersion(), "World") == 0);
+    return ok;
+}
+
 bool ClassRegistryItemTest::TestGetClassProperties() {
 
     const ClassProperties *propertiesCopy = myItem.GetClassProperties();

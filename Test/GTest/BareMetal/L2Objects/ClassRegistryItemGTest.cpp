@@ -70,6 +70,11 @@ TEST(ClassRegistryItemGTest,TestGetNumberOfInstances) {
     ASSERT_TRUE(myClassRegistryItemTest.TestGetNumberOfInstances(32));
 }
 
+TEST(ClassRegistryItemGTest,TestGetClassPropertiesCopy) {
+    ClassRegistryItemTest myClassRegistryItemTest;
+    ASSERT_TRUE(myClassRegistryItemTest.TestGetClassPropertiesCopy());
+}
+
 TEST(ClassRegistryItemGTest,TestGetClassProperties) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestGetClassProperties());

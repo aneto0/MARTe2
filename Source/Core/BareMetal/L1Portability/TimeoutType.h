@@ -154,9 +154,6 @@ void TimeoutType::SetTimeoutSec(float64 secs) {
 }
 
 void TimeoutType::SetTimeoutHighResolutionTimerTicks(uint64 ticks) {
-    if (ticks < 0) {
-        ticks = 0;
-    }
     float64 TimeoutSecFromTicks = (static_cast<float64>(ticks) * HighResolutionTimer::Period());
     float64 TimeoutMSecFromTicks = 1000.0 * TimeoutSecFromTicks;
     msecTimeout = static_cast<uint32>(TimeoutMSecFromTicks);
@@ -167,7 +164,7 @@ uint64 TimeoutType::HighResolutionTimerTicks() const {
     deltaT = deltaT * 1e-3;
     float64 frequency = static_cast<float64>(HighResolutionTimer::Frequency());
     deltaT = deltaT * frequency;
-    int64 ticks = static_cast<int64>(deltaT);
+    uint64 ticks = static_cast<uint64>(deltaT);
     return ticks;
 }
 

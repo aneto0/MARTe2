@@ -42,11 +42,13 @@ namespace MARTe {
 CLASS_REGISTER(Object,"1.0")
 
 bool Object::ConvertDataToStructuredData(void* const ptr,
-							 const char8* const className,
-							 StructuredDataI& data,
-							 const char8* const objName) {
+					 const char8* const className,
+					 StructuredDataI& data,
+					 const char8* const objName) {
 	bool ret = false;
+	
 	const ClassRegistryItem* sourceItem = ClassRegistryDatabase::Instance()->Find(className);
+	
 	if (sourceItem != NULL) {
 		const Introspection *sourceIntrospection = sourceItem->GetIntrospection();
 		if (sourceIntrospection != NULL) {

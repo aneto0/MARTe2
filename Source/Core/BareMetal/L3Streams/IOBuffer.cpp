@@ -340,14 +340,15 @@ bool PrintStructuredDataInterface(IOBuffer &iobuff,
         if (!iobuff.PrintFormatted("%s %s", &printChildName[0])) {
             ret = false;
         }
-        char8 buffer[64];
-        if (structuredData->Read(childName, buffer)) {
-            AnyType printLeaf[] = { &buffer[0], voidAnyType };
+        AnyType toPrint=structuredData->GetType(childName);
+        if (toPrint.GetDataPointer()!=NULL) {
+            AnyType printLeaf[] = { toPrint, voidAnyType };
             if (!iobuff.PrintFormatted("%s\n", &printLeaf[0])) {
                 ret = false;
             }
         }
         else {
+            // a node
             AnyType printOpen[] = { "{", voidAnyType };
             if (!iobuff.PrintFormatted("%s\n", &printOpen[0])) {
                 ret = false;

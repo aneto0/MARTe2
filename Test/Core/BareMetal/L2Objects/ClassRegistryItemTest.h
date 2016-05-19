@@ -91,6 +91,15 @@ public:
     bool TestGetNumberOfInstances(uint32 nInstances);
 
     /**
+     * @brief Tests the ClassRegistryItem::GetClassPropertiesCopy.
+     * @param[in] name is the desired class name.
+     * @param[in] typeidName is the desired class name.
+     * @param[in] version is the desired class version.
+     * @return true if the ClassProperties copy has the same attributes values of the properties passed by constructor, false otherwise.
+     */
+    bool TestGetClassPropertiesCopy();
+
+    /**
      * @brief Tests the ClassRegistryItem::GetClassProperties.
      * @param[in] name is the desired class name.
      * @param[in] typeidName is the desired class name.
