@@ -50,23 +50,20 @@ public:
      * if allOk is false then the error.functionReturn is set to false
      * all other errors are always cleared (set to 1)
      * */
-    inline ReturnType(bool allOk=false);
+    ReturnType(bool allOk=false);
 
     /**
      * TODO
      * is no error is flagged
      * warnings maybe set
      * */
-    inline bool AllOk();
+    bool AllOk();
 
     /**
      * TODO
      * allows mixing with other booleans
      * */
-    inline operator bool(){
-        return AllOk();
-    }
-
+    operator bool();
 
     union {
 
@@ -163,7 +160,9 @@ inline bool ReturnType::AllOk(){
     return  (flags == -1);
 }
 
-
+inline ReturnType::operator bool(){
+    return AllOk();
+}
 
 }
 
