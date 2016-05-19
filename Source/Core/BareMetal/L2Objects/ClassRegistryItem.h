@@ -221,7 +221,17 @@ public:
      */
     static inline ClassRegistryItem *Instance(){
         static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
-        return ClassRegistryItem::Instance(instance,T::classProperties);
+        if (instance == NULL_PTR(ClassRegistryItem *)) {
+            ClassRegistryItem::Instance(instance,T::classProperties);
+            /* The next line, i.e. the instantiation of a static ObjectBuilderT
+             * is necessary because it registers an ObjectBuilder object with a
+             * default Build's implementation for the T class. Otherwise, it
+             * will be a NULL pointer and a segmentation fault will eventually
+             * arise when trying to use the object builder.
+             */
+            static ObjectBuilderT<T> defaultObjectBuilder;
+        }
+        return instance;
     }
 
     virtual ~ClassRegistryItemT() {
