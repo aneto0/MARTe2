@@ -40,9 +40,16 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-class DummyObjectBuilder: public ObjectBuilderT<Object> {
+
+class MyObject: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+};
+CLASS_REGISTER(MyObject, "1.0")
+
+class DummyObjectBuilder: public ObjectBuilderT<MyObject> {
     Object *Build(HeapI* const heap) const {
-        Object *p = (Object*) HeapManager::Malloc(sizeof(Object));
+        Object *p = (Object*) HeapManager::Malloc(sizeof(MyObject));
         char *pp = (char*) p;
         (*pp) = 9;
         return p;
@@ -65,7 +72,7 @@ static Introspection introspectionTest(fields, 4);
 
 static ClassRegistryItemT<Object> myItemIntro(testClassPropertiesIntro);
 
-static ClassRegistryItemT<Object> myItemFull(testClassPropertiesIntro);
+static ClassRegistryItemT<MyObject> myItemFull(testClassPropertiesIntro);
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
