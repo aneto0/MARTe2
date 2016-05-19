@@ -62,7 +62,7 @@ ClassRegistryItem::ClassRegistryItem(ClassProperties &classProperties_in) :
 ClassRegistryItem *ClassRegistryItem::Instance(ClassRegistryItem *&instance,ClassProperties &classProperties_in){
     ClassRegistryDatabase* crd = ClassRegistryDatabase::Instance();
 
-    if ((crd != NULL_PTR(ClassRegistryDatabase*)) && (instance != NULL_PTR(ClassRegistryItem*))){
+    if ((crd != NULL_PTR(ClassRegistryDatabase*)) && (instance == NULL_PTR(ClassRegistryItem*))){
 
         instance = new ClassRegistryItem(classProperties_in);
 
