@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "MemoryMapDataSourceBroker.h"
+#include "../../../../Source/Core/BareMetal/L5GAMs/MemoryMapBroker.h"
 #include "ConfigurationDatabase.h"
 
 /*---------------------------------------------------------------------------*/

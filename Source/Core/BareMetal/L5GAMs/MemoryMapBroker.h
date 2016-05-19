@@ -32,14 +32,14 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "DataSourceBrokerI.h"
+#include "BrokerI.h"
 #include "MemoryArea.h"
 #include "ReferenceT.h"
 #include "RealTimeApplication.h"
-#include "DataSourceSignalI.h"
 #include "FastPollingEventSem.h"
-#include "DataSource.h"
 #include "ConfigurationDatabase.h"
+#include "DataSourceI.h"
+#include "DataSourceSignal.h"
 #include "StandardParser.h"
 
 /*---------------------------------------------------------------------------*/
@@ -49,13 +49,13 @@
 namespace MARTe {
 
 /**
- * @brief The communication interface between GAM and DataSource signals.
+ * @brief Memory mapped Broker implementation.
  * @details The configuration of this element has to be performed after the
  * RealTimeApplication::ConfigureDataSource() step. It allows to read (write) data blocks
  * of each element and to read (write) blocks of samples. It supports both single and dual buffering mechanisms
  *  for the interconnection between the DataSourceSignalI signals and the GAMSignalI signals.
  */
-class DLL_API MemoryMapDataSourceBroker: public DataSourceBrokerI {
+class DLL_API MemoryMapBroker: public BrokerI {
 
 public:
 
@@ -67,12 +67,12 @@ public:
      *   GetNumberOfSignals() == 0 &&
      *   IsSync() == false
      */
-    MemoryMapDataSourceBroker();
+    MemoryMapBroker();
 
     /**
      * @brief Destructor
      */
-    virtual ~MemoryMapDataSourceBroker();
+    virtual ~MemoryMapBroker();
 
     /**
      * @see DataSourceBrokerI::SetApplication(*)
@@ -116,13 +116,8 @@ public:
      */
     virtual bool IsSync() const;
 
-
 protected:
 
-    /**
-     * The pointer to the RealTimeApplication
-     */
-    RealTimeApplication *application;
 
     /**
      * The memory area where variables will be allocated
@@ -131,10 +126,7 @@ protected:
     MemoryArea memory;
 
     /**
-     * Stores the indexes of the allocations
-     * in memory area.
-     */
-    StaticList<uint32> GAMOffsets;
+
 
     /**
      * Stores the pointers to the begin
@@ -157,7 +149,7 @@ protected:
     /**
      * Stores the data source signals
      */
-    StaticList<DataSourceSignalI *> dataSourcesVars;
+    StaticList<DataSourceSignal *> dataSourcesVars;
 
     /**
      * Stores the number of cycles to be performed for each operation
@@ -201,11 +193,6 @@ protected:
     StaticList<uint32> blockParamRows;
 
     /**
-     * Stores the number of samples blocks
-     */
-    StaticList<uint32> samplesParamRows;
-
-    /**
      * Stores the number of samples of each GAM signal
      */
     StaticList<uint32> nSamplesList;
@@ -222,8 +209,7 @@ protected:
      */
     virtual bool AddSignalPrivate(ReferenceT<GAMSignalI> gamSignalIn,
                                   uint32 initialOffset,
-                                  uint32 offset,
-                                  bool allocate);
+                                  uint32 offset);
 
     /**
      * @brief Retrieves the pointer at the \a n-th position before the Finalise().
@@ -236,10 +222,12 @@ protected:
      * @brief Checks the GAM signal is compatible with its data source signal.
      * @param[in] gamSignal is the GAM signal.
      * @param[in, out] typeSize is the GAM signal type size in bytes.
-     * @return the DataSourceSignalI signal which \a defIn is connected to.
+     * @return the DataSourceSignalI signal to which \a defIn is connected to.
      */
-    virtual Reference Verify(ReferenceT<GAMSignalI> gamSignal,
-                             uint32 &typeSize);
+    virtual bool Verify(ReferenceT<GAMSignalI> gamSignal,
+                        uint32 &typeSize,
+                        ReferenceT<DataSource> &dataSource,
+                        ReferenceT<DataSourceSignal> &dataSourceSignal);
 
     /**
      * @brief Stores the indexes of the element sub-blocks and the
@@ -250,8 +238,8 @@ protected:
      * @param[in] dsDefIn is the data source signal.
      * @param[in, out] typeSize is the GAM signal type size.
      */
-    virtual bool SetBlockParams(Reference defIn,
-                                Reference dsDefIn,
+    virtual bool SetBlockParams(ReferenceT<GAMSignalI> gamSignal,
+                                ReferenceT<DataSourceSignal> dataSourceSignal,
                                 uint32 &typeSize);
 
 };

@@ -31,13 +31,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "MemoryArea.h"
-#include "StaticList.h"
-#include "ReferenceContainer.h"
+#include "BrokerI.h"
 #include "GAMSignalI.h"
-#include "ReferenceT.h"
-#include "ReferenceContainer.h"
+#include "MemoryArea.h"
 #include "RealTimeStateInfo.h"
+#include "ReferenceContainer.h"
+#include "ReferenceT.h"
+#include "StaticList.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -63,7 +63,6 @@ namespace MARTe {
 class DLL_API DataSource: public ReferenceContainer {
 
 public:
-    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Initialises the ReferenceContainer.
@@ -100,15 +99,14 @@ public:
      * active buffer.
      * @return true if the state change request is admissible by this DataSourceSignalI.
      */
-    virtual bool PrepareNextState(const RealTimeStateInfo &status)=0;
+    virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
     /**
      * @brief Allocates the memory for this signal.
      * @param[in] dsMemory is the memory where this signal has to be allocated.
      * @return true if the memory for this signal can be successfully allocated in \a dsMemory.
      */
-    virtual bool Allocate(MemoryArea &dsMemory)=0;
-
+    //virtual bool Allocate(MemoryArea &dsMemory)=0;
     /**
      * @brief The synchronising routine.
      * @details This function will block the execution thread until an event is generated.
@@ -129,8 +127,8 @@ public:
      * @param[in] varPtr is the pointer of the GAMSignalI memory (if NULL the broker will allocate the memory).
      * @return a reference to a reader compatible with \a signalIn, an invalid reference in case of incompatibility.
      */
-    virtual ReferenceT<DataSourceBrokerI> GetInputReader(ReferenceT<GAMSignalI> signalIn,
-                                                         void * varPtr = NULL_PTR(void*))=0;
+    virtual ReferenceT<BrokerI> GetInputReader(ReferenceT<GAMSignalI> signalIn,
+                                               void * varPtr = NULL_PTR(void*))=0;
 
     /**
      * @brief Retrieves the DataSourceBrokerI writer for the signal passed in input.
@@ -142,8 +140,8 @@ public:
      * @param[in] varPtr is the pointer of the GAMSignalI memory (if NULL the broker will allocate the memory).
      * @return a reference to a writer compatible with \a signalOut, an invalid reference in case of incompatibility.
      */
-    virtual ReferenceT<DataSourceBrokerI> GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
-                                                          void * varPtr = NULL_PTR(void*))=0;
+    virtual ReferenceT<BrokerI> GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
+                                                void * varPtr = NULL_PTR(void*))=0;
 
     /**
      * @brief Configures the signal from a GAMSignalI definition.
@@ -162,14 +160,15 @@ public:
      *   bufferIndex == 0 ||
      *   bufferIndex == 1;
      */
-    virtual void **GetDataSourcePointer(uint8 bufferIndex)=0;
+    virtual void **GetDataSourcePointer(ReferenceT<DataSourceSignalI> signalIn,
+                                        uint8 bufferIndex)=0;
 
     /**
      * @brief Checks if the broker in input is compatible with this signal.
      * @param[in] testBroker is the broker to be checked.
      * @return true if \a testBroker is supported by this signal, false otherwise.
      */
-    virtual bool IsSupportedBroker(DataSourceBrokerI &testBroker)=0;
+    virtual bool IsSupportedBroker(BrokerI &testBroker)=0;
 
 private:
 

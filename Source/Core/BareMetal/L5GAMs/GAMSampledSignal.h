@@ -92,15 +92,13 @@ public:
      * "IsFinal" is false by default. If it is specified true, this definition is supposed to be
      * completed, otherwise can be completed merging it with local configuration data (see MergeWithLocal(*))\n
      * The field "Samples" is a string expressing a nx3 matrix and each vector defines a block of samples to be read (write).
-     * In particular in each vector "{a , b , c}" "a" is the older sample index, "b" is the more recent sample index number
-     * and "c" is the total number of samples. The indexes are relative: this means that "0" means always the last sample,
-     * "c" is always the last one. For instance if the data source produces 1000 samples and
-     *
-     *    Samples = "{{1 , 0 , 2},{10, 9, 10}}"
-     *
-     * basically you are saying you want the last half block of the total samples and after the first 1/10 of the total number. The signal
-     * returned (if the number of cycles is one) will be { S(500), S(501), ... , S(999) , S(0), ... , S(99) }, where S(i) denotes the i-th
-     * sample.\n
+     * In particular in each vector "{a , b , c}" define the following two sample fractional indexes: a/c and b/c, where a/c is the
+     * oldest sample to read and b/c is the most recent sample to read, in ascending order with zero being the most recent.
+     * Let N = DataSourceSignal::GetNumberOfSamples() be the total number of samples in a signal S, where S[N-1] is the most recent sample.
+     * Then, the following operation will be applied to access the specified samples of the S[N-(a/c)*N:N-(b/c)*N-1]\n
+     * As an example, let N = 1000 and Samples = "{{1 , 0 , 2},{10, 9, 10}}"
+     * In this case, the following signal will be read in runtime: s = { S(500), S(501), ... , S(999), S(0), ... , S(99) },
+     * where S(i) denotes the i-th sample.\n
      * By default, if this field is not specified, the last sample produced will be read (write).
      */
     virtual bool Initialise(StructuredDataI &data);

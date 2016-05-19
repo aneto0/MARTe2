@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "MemoryMapDataSourceBroker.h"
+#include "MemoryMapBroker.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -42,7 +42,7 @@ namespace MARTe {
 /**
  * @brief Reads data from a collection of DataSourceSignalI and copies it to a collection of GAMSignalI signals.
  */
-class DLL_API MemoryMapInputReader: public MemoryMapDataSourceBroker {
+class DLL_API MemoryMapInputReader: public MemoryMapBroker {
 public:
     CLASS_REGISTER_DECLARATION()
 

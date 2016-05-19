@@ -31,9 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "DataSourceBrokerI.h"
-#include "ReferenceT.h"
+#include "BrokerI.h"
 #include "RealTimeApplication.h"
+#include "ReferenceT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -47,7 +47,7 @@ namespace MARTe {
  * DataSourceBrokerI interface itself so that it queries and/or propagates
  * all the interface function calls to all of its DataSourceBrokerI contained objects.
  */
-class BrokerContainer: public DataSourceBrokerI {
+class BrokerContainer: public BrokerI {
 
 public:
     CLASS_REGISTER_DECLARATION()
@@ -144,14 +144,14 @@ public:
      * @brief Inserts a new DataSourceBrokerI to the contained elements.
      * @return true if the broker is successfully added.
      */
-    bool InsertNewBroker(ReferenceT<DataSourceBrokerI> item);
+    bool InsertNewBroker(ReferenceT<BrokerI> item);
 
 private:
 
     /**
      * List of brokers held by this container.
      */
-    ReferenceT<DataSourceBrokerI> *brokers;
+    ReferenceT<BrokerI> *brokers;
 
     /**
      * Number of brokers held by this container.

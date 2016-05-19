@@ -28,6 +28,8 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 #include <stdio.h>
+
+#include "../../../../Source/Core/BareMetal/L5GAMs/GAMDataSource.h"
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -35,7 +37,6 @@
 #include "ConfigurationDatabase.h"
 #include "GAMSchedulerI.h"
 #include "StandardParser.h"
-#include "DataSourceSignal.h"
 #include "MemoryMapInputReader.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -1062,7 +1063,7 @@ static const char8 *cdbStr5 = "\n"
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 
-class SyncDataSourceSignal: public DataSourceSignal {
+class SyncDataSourceSignal: public GAMDataSource {
 
 public:
     CLASS_REGISTER_DECLARATION()
@@ -1088,7 +1089,7 @@ private:
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 
-class WriteSyncDataSourceSignal: public DataSourceSignal {
+class WriteSyncDataSourceSignal: public GAMDataSource {
 
 public:
     CLASS_REGISTER_DECLARATION()

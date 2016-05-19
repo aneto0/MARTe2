@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "MemoryMapDataSourceBroker.h"
+#include "MemoryMapBroker.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief Writes data to the RealTimeDataSource.
  */
-class DLL_API MemoryMapOutputWriter: public MemoryMapDataSourceBroker {
+class DLL_API MemoryMapOutputWriter: public MemoryMapBroker {
 
 public:
     CLASS_REGISTER_DECLARATION()

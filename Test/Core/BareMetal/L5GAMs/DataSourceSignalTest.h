@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "DataSourceSignal.h"
+#include "../../../../Source/Core/BareMetal/L5GAMs/GAMDataSource.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

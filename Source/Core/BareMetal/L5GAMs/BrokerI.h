@@ -45,15 +45,19 @@ namespace MARTe {
  * @details A class that implements this interface is capable of connecting signals from
  *  DataSourceSignalI components with signals from GAMSignalI components.
  */
-class DataSourceBrokerI : public ReferenceContainer {
+class BrokerI: public ReferenceContainer {
 
 public:
+
+    BrokerI();
+
+    virtual ~BrokerI();
 
     /**
      * @brief Sets the application where this object is involved in.
      * @param[in] rtApp is a Reference to the application to be set.
      */
-    virtual void SetApplication(RealTimeApplication &app)=0;
+    void SetApplication(RealTimeApplication &app);
 
     /**
      * @brief Links a GAMSignalI with a DataSourceSigmalI (at location GAMSignalI::GetPath).
@@ -65,7 +69,7 @@ public:
      * @return true if the signals can be successfully linked.
      */
     virtual bool AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
-                           void * const ptr = NULL_PTR(void*))=0;
+                           void * const ptr = NULL_PTR(void*));
 
     /**
      * @brief Returns the number of signals managed by this broker.
@@ -135,6 +139,70 @@ public:
      */
     virtual bool Write(const uint8 activeDataSourceBuffer,
                        const TimeoutType &timeout = TTInfiniteWait)=0;
+
+private:
+    /**
+     * @brief Links a GAM signal with a data source signal.
+     * @details This function can call itself recursively if the variable to be allocated is a structure.
+     * @param[in] gamSignalIn is the GAM signal.
+     * @param[in] initialOffset is the byte offset with respect the begin of memory where the signal memory
+     * has to be allocated to.
+     * @param[in] offset will be used in recursion to store the pointers of sub-members of structured types.
+     * @param[in] allocate must be true if the GAM signal memory has to be allocated by this function, false otherwise.
+     * @return false in case of errors, true otherwise.
+     */
+    virtual bool AddSignalPrivate(ReferenceT<GAMSignalI> gamSignalIn,
+                                  uint32 initialOffset,
+                                  uint32 offset);
+
+    /**
+     * @brief Stores the indexes of the element sub-blocks and the
+     * indexes of the samples blocks to be read/write.
+     * @details Changes the \a typeSize to the total size of the memory which has to be
+     * allocated for the GAM signal ((type size) * #(GAM signal samples) * #(GAM signal elements))
+     * @param[in] defIn is the GAM signal.
+     * @param[in] dsDefIn is the data source signal.
+     * @param[in, out] typeSize is the GAM signal type size.
+     */
+    virtual bool SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
+                                    ReferenceT<DataSourceSignal> dataSourceSignal,
+                                    uint32 &typeSize);
+
+    /**
+     * The pointer to the RealTimeApplication
+     */
+    RealTimeApplication *application;
+
+    /**
+     * The number of samples blocks defined for each GAMSignalI
+     */
+    StaticList<uint32> nSamplesBlocksPerSignal;
+
+    /**
+     * The number of indexing blocks defined for each GAMSignalI
+     */
+    StaticList<uint32> nIndexingBlocksPerSignal;
+
+    /**
+     * Offset of a member inside a signal structure.
+     */
+    StaticList<uint32> structuredSignalOffset;
+
+    /**
+     * Unique indexes of each signal. Note that in the case of structures the same signal
+     * can add several members.
+     */
+    StaticList<uint32> uniqueSignalIndex;
+
+    /**
+     * Pointers to the begin of the GAM memory area where signal data is stored.
+     */
+    StaticList<void *> gamMemoryAreaPointer;
+
+    /**
+     * Stores the pointers to the DataSource memory area variables.
+     */
+    StaticList<void **> dataSourceSignalPointers[2];
 };
 
 }
