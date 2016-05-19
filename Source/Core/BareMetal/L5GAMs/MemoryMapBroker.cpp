@@ -31,12 +31,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "MemoryMapDataSourceBroker.h"
-#include "DataSourceContainer.h"
 #include "AdvancedErrorManagement.h"
 #include "GAMGenericSignal.h"
 #include "GAMSampledSignal.h"
-#include "stdio.h"
+#include "MemoryMapBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -48,157 +46,117 @@
 
 namespace MARTe {
 
-MemoryMapDataSourceBroker::MemoryMapDataSourceBroker() :
-        DataSourceBrokerI() {
+MemoryMapBroker::MemoryMapBroker() :
+        BrokerI() {
     application = NULL_PTR(RealTimeApplication *);
     synchronized = false;
     finalised = false;
     syncIndex = 0u;
 }
 
-MemoryMapDataSourceBroker::~MemoryMapDataSourceBroker() {
-    uint32 numberOfBlocks = blockParamList.GetSize();
-    uint32 ** element = NULL_PTR(uint32 **);
+MemoryMapBroker::~MemoryMapBroker() {
 
-    for (uint32 i = 0u; i < numberOfBlocks; i++) {
-        if (blockParamList.Peek(i, element)) {
-            if (element != NULL) {
-                uint32 nRows = 0u;
-                if (blockParamRows.Peek(i, nRows)) {
-                    for (uint32 k = 0u; k < nRows; k++) {
-                        delete[] element[k];
-                    }
-                }
-                delete[] element;
-            }
-        }
-    }
-    numberOfBlocks = samplesParamList.GetSize();
-    for (uint32 i = 0u; i < numberOfBlocks; i++) {
-        if (samplesParamList.Peek(i, element)) {
-            if (element != NULL) {
-                uint32 nRows = 0u;
-                if (samplesParamRows.Peek(i, nRows)) {
-                    for (uint32 k = 0u; k < nRows; k++) {
-                        delete[] element[k];
-                    }
-                }
-                delete[] element;
-            }
-        }
-    }
 }
 
-void MemoryMapDataSourceBroker::SetApplication(RealTimeApplication &rtApp) {
-    application = &rtApp;
-}
+bool MemoryMapBroker::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
+                                void * const ptr) {
 
-bool MemoryMapDataSourceBroker::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
-                                          void * const ptr) {
-
-    bool ret = true;
-    bool allocate = true;
-    uint32 currentSignalIndex = 0u;
-    uint32 initialOffset = 0u;
-    if (ptr != NULL) {
-        allocate = false;
-    }
-    else {
-        // we do not know yet
-        initialOffset = memory.GetMemorySize();
-    }
-
-    currentSignalIndex = GAMOffsets.GetSize();
-    ret = AddSignalPrivate(gamSignalIn, initialOffset, 0u, allocate);
+    bool ret = (ptr != NULL);
     if (ret) {
-        ret = chunkIndex.Add(currentSignalIndex);
+        uint32 currentSignalIndex = 0u;
+        uint32 initialOffset = 0u;
+
+        currentSignalIndex = GAMOffsets.GetSize();
+        ret = AddSignalPrivate(gamSignalIn, initialOffset, 0u);
         if (ret) {
-            // adds the memory start pointer
-            ret = beginPointers.Add(ptr);
+            ret = chunkIndex.Add(currentSignalIndex);
             if (ret) {
-                ret = Insert(gamSignalIn);
+                // adds the memory start pointer
+                ret = beginPointers.Add(ptr);
+                if (ret) {
+                    ret = Insert(gamSignalIn);
+                }
             }
         }
-    }
-    else {
-        // error ! remove eventual added things to be consistent
-        uint32 last = 0u;
-        bool ok = true;
-        if (chunkIndex.GetSize() > 0u) {
-            if (chunkIndex.Peek((chunkIndex.GetSize() - 1u), last)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed to chunkIndex.Peek. This will lead to inconsistencies in the broker memory");
+        else {
+            // error ! remove eventual added things to be consistent
+            uint32 last = 0u;
+            bool ok = true;
+            if (chunkIndex.GetSize() > 0u) {
+                if (chunkIndex.Peek((chunkIndex.GetSize() - 1u), last)) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Failed to chunkIndex.Peek. This will lead to inconsistencies in the broker memory");
+                }
             }
-        }
 
-        while ((dataSourcesVars.GetSize() > last) && (ok)) {
-            if (!dataSourcesVars.Remove(dataSourcesVars.GetSize() - 1u)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from dataSourcesVars. This will lead to inconsistencies in the broker memory");
-                ok = false;
+            while ((dataSourcesVars.GetSize() > last) && (ok)) {
+                if (!dataSourcesVars.Remove(dataSourcesVars.GetSize() - 1u)) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from dataSourcesVars. This will lead to inconsistencies in the broker memory");
+                    ok = false;
+                }
+            }
+            while ((GAMOffsets.GetSize() > last) && (ok)) {
+                if (!GAMOffsets.Remove(GAMOffsets.GetSize() - 1u)) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from GAMOffsets. This will lead to inconsistencies in the broker memory");
+                    ok = false;
+                }
+            }
+            while ((DSPointers[0].GetSize() > last) && (ok)) {
+                if (!DSPointers[0].Remove(DSPointers[0].GetSize() - 1u)) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from DSPointers[0]. This will lead to inconsistencies in the broker memory");
+                    ok = false;
+                }
+            }
+            while ((DSPointers[1].GetSize() > last) && (ok)) {
+                if (!DSPointers[1].Remove(DSPointers[1].GetSize() - 1u)) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from DSPointers[1]. This will lead to inconsistencies in the broker memory");
+                    ok = false;
+                }
+            }
+            while ((numberOfCyclesPerVar.GetSize() > last) && (ok)) {
+                if (!numberOfCyclesPerVar.Remove(numberOfCyclesPerVar.GetSize() - 1u)) {
+                    REPORT_ERROR(ErrorManagement::FatalError,
+                                 "Failed to remove from numberOfCyclesPerVar. This will lead to inconsistencies in the broker memory");
+                    ok = false;
+                }
+            }
+            while ((blockParamList.GetSize() > last) && (ok)) {
+                if (!blockParamList.Remove(blockParamList.GetSize() - 1u)) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from blockParamList. This will lead to inconsistencies in the broker memory");
+                    ok = false;
+                }
+            }
+            while ((samplesParamList.GetSize() > last) && (ok)) {
+                if (!samplesParamList.Remove(samplesParamList.GetSize() - 1u)) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from samplesParamList. This will lead to inconsistencies in the broker memory");
+                    ok = false;
+                }
+            }
+            while ((blockParamRows.GetSize() > last) && (ok)) {
+                if (!blockParamRows.Remove(blockParamRows.GetSize() - 1u)) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from blockParamRows. This will lead to inconsistencies in the broker memory");
+                    ok = false;
+                }
+            }
+            /*while ((samplesParamRows.GetSize() > last) && (ok)) {
+                if (!samplesParamRows.Remove(samplesParamRows.GetSize() - 1u)) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from samplesParamRows. This will lead to inconsistencies in the broker memory");
+                    ok = false;
+                }
+            }*/
+            while ((nSamplesList.GetSize() > last) && (ok)) {
+                if (!nSamplesList.Remove(nSamplesList.GetSize() - 1u)) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from nSamplesList. This will lead to inconsistencies in the broker memory");
+                    ok = false;
+                }
             }
         }
-        while ((GAMOffsets.GetSize() > last) && (ok)) {
-            if (!GAMOffsets.Remove(GAMOffsets.GetSize() - 1u)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from GAMOffsets. This will lead to inconsistencies in the broker memory");
-                ok = false;
-            }
-        }
-        while ((DSPointers[0].GetSize() > last) && (ok)) {
-            if (!DSPointers[0].Remove(DSPointers[0].GetSize() - 1u)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from DSPointers[0]. This will lead to inconsistencies in the broker memory");
-                ok = false;
-            }
-        }
-        while ((DSPointers[1].GetSize() > last) && (ok)) {
-            if (!DSPointers[1].Remove(DSPointers[1].GetSize() - 1u)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from DSPointers[1]. This will lead to inconsistencies in the broker memory");
-                ok = false;
-            }
-        }
-        while ((numberOfCyclesPerVar.GetSize() > last) && (ok)) {
-            if (!numberOfCyclesPerVar.Remove(numberOfCyclesPerVar.GetSize() - 1u)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from numberOfCyclesPerVar. This will lead to inconsistencies in the broker memory");
-                ok = false;
-            }
-        }
-        while ((blockParamList.GetSize() > last) && (ok)) {
-            if (!blockParamList.Remove(blockParamList.GetSize() - 1u)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from blockParamList. This will lead to inconsistencies in the broker memory");
-                ok = false;
-            }
-        }
-        while ((samplesParamList.GetSize() > last) && (ok)) {
-            if (!samplesParamList.Remove(samplesParamList.GetSize() - 1u)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from samplesParamList. This will lead to inconsistencies in the broker memory");
-                ok = false;
-            }
-        }
-        while ((blockParamRows.GetSize() > last) && (ok)) {
-            if (!blockParamRows.Remove(blockParamRows.GetSize() - 1u)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from blockParamRows. This will lead to inconsistencies in the broker memory");
-                ok = false;
-            }
-        }
-        while ((samplesParamRows.GetSize() > last) && (ok)) {
-            if (!samplesParamRows.Remove(samplesParamRows.GetSize() - 1u)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from samplesParamRows. This will lead to inconsistencies in the broker memory");
-                ok = false;
-            }
-        }
-        while ((nSamplesList.GetSize() > last) && (ok)) {
-            if (!nSamplesList.Remove(nSamplesList.GetSize() - 1u)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed to remove from nSamplesList. This will lead to inconsistencies in the broker memory");
-                ok = false;
-            }
-        }
-
     }
     return ret;
 }
 
-bool MemoryMapDataSourceBroker::AddSignalPrivate(ReferenceT<GAMSignalI> gamSignalIn,
-                                                 uint32 initialOffset,
-                                                 uint32 offset,
-                                                 bool allocate) {
+bool MemoryMapBroker::AddSignalPrivate(ReferenceT<GAMSignalI> gamSignalIn,
+                                       uint32 initialOffset,
+                                       uint32 offset) {
 
     bool ret = (application != NULL);
 
@@ -250,7 +208,7 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(ReferenceT<GAMSignalI> gamSigna
                                                 /*lint -e{613} NULL pointer checking done before entering here */
                                                 if (StringHelper::Compare(introEntry.GetMemberName(), defMemberName) == 0) {
                                                     /*lint -e{613} if (pointablePtr == NULL) it just returns the offset*/
-                                                    ret = AddSignalPrivate(subDef, initialOffset, introEntry.GetMemberByteOffset(), false);
+                                                    ret = AddSignalPrivate(subDef, initialOffset, introEntry.GetMemberByteOffset());
                                                     found = true;
                                                 }
                                             }
@@ -289,43 +247,35 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(ReferenceT<GAMSignalI> gamSigna
             if ((ret) && (numberOfMembers == 0u)) {
 
                 // the size is changed by this function (* #samples * #cycles * #dimension)
-                ReferenceT<DataSourceSignalI> dsDef = Verify(gamSignalIn, varSize);
-                ret = dsDef.IsValid();
-
+                ReferenceT<DataSource> dataSource;
+                ReferenceT<DataSourceSignalI> dataSourceSignal;
+                ret = Verify(gamSignalIn, varSize, dataSource, dataSourceSignal);
                 if (ret) {
-                    ret = dataSourcesVars.Add(dsDef.operator ->());
-                    if (ret) {
-                        void **dsPointer0 = dsDef->GetDataSourcePointer(0u);
-                        void **dsPointer1 = dsDef->GetDataSourcePointer(1u);
+                    ret = dataSource.IsValid();
+                }
+                if (ret) {
+                    ret = dataSourceSignal.IsValid();
+                }
+                if (ret) {
+                    ret = dataSourcesVars.Add(dataSourceSignal.operator ->());
+                    void **dsPointer0 = dataSource->GetDataSourcePointer(dataSourceSignal, 0u);
+                    void **dsPointer1 = dataSource->GetDataSourcePointer(dataSourceSignal, 1u);
 
-                        ret = ((dsPointer0 != NULL) && (dsPointer1 != NULL));
-                        if (ret) {
-                            // add the data source pointer
-                            ret = DSPointers[0].Add(dsPointer0);
-                            if (ret) {
-                                ret = DSPointers[1].Add(dsPointer1);
-                                if (ret) {
-                                    // add the GAM pointer
-                                    uint32 finalOffset = offset + initialOffset;
-                                    ret = GAMOffsets.Add(finalOffset);
-                                    printf("\nAdded offset %d rel offset %d of %s in %s\n", finalOffset, offset, gamSignal->GetName(), gamSignal->GetPath());
-                                }
-                            }
-                        }
+                    ret = ((dsPointer0 != NULL) && (dsPointer1 != NULL));
+                    if (ret) {
+                        // add the data source pointer
+                        ret = DSPointers[0].Add(dsPointer0);
+                    }
+                    if (ret) {
+                        ret = DSPointers[1].Add(dsPointer1);
+                    }
+                    if (ret) {
+                        // add the GAM pointer
+                        uint32 finalOffset = offset + initialOffset;
+                        ret = GAMOffsets.Add(finalOffset);
+                        printf("\nAdded offset %d rel offset %d of %s in %s\n", finalOffset, offset, gamSignal->GetName(), gamSignal->GetPath());
                     }
                 }
-            }
-
-            // only in the first recursion level
-            if (allocate) {
-                // allocate the memory
-                // it must be allocated only if ptr in input is NULL
-                if (ret) {
-                    // the last thing to be done
-                    ret = memory.Add(varSize, offset);
-                    printf("\nallocated variable %s size=%d of %s\n", gamSignal->GetName(), varSize, gamSignal->GetPath());
-                }
-
             }
         }
         else {
@@ -340,7 +290,7 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(ReferenceT<GAMSignalI> gamSigna
 
 }
 
-void *MemoryMapDataSourceBroker::GetSignal(const uint32 n) {
+void *MemoryMapBroker::GetSignal(const uint32 n) {
     void *ret = NULL_PTR(void*);
     void* beginPtr = NULL_PTR(void*);
     if (finalised) {
@@ -360,8 +310,8 @@ void *MemoryMapDataSourceBroker::GetSignal(const uint32 n) {
     return ret;
 }
 
-void *MemoryMapDataSourceBroker::GetSignalByName(const char8 * name,
-                                                 uint32 &index) {
+void *MemoryMapBroker::GetSignalByName(const char8 * name,
+                                       uint32 &index) {
     uint32 numberOfSignals = Size();
     bool found = false;
     void* ret = NULL_PTR(void*);
@@ -378,7 +328,7 @@ void *MemoryMapDataSourceBroker::GetSignalByName(const char8 * name,
     return ret;
 }
 
-uint32 MemoryMapDataSourceBroker::GetSignalNumberOfSamples(const uint32 n) {
+uint32 MemoryMapBroker::GetSignalNumberOfSamples(const uint32 n) {
     uint32 nSamples = 0u;
     if (nSamplesList.Peek(n, nSamples)) {
 
@@ -386,7 +336,7 @@ uint32 MemoryMapDataSourceBroker::GetSignalNumberOfSamples(const uint32 n) {
     return nSamples;
 }
 
-void *MemoryMapDataSourceBroker::GetMemoryPointerPrivate(const uint32 n) const {
+void *MemoryMapBroker::GetMemoryPointerPrivate(const uint32 n) const {
 
     void *ret = NULL_PTR(void*);
 
@@ -420,11 +370,11 @@ void *MemoryMapDataSourceBroker::GetMemoryPointerPrivate(const uint32 n) const {
     return ret;
 }
 
-bool MemoryMapDataSourceBroker::Finalise() {
+bool MemoryMapBroker::Finalise() {
 
     bool ret = true;
 
-    // refresh the pointers
+// refresh the pointers
     uint32 numberOfStructures = beginPointers.GetSize();
     for (uint32 i = 0u; (i < numberOfStructures) && (ret); i++) {
         void* ptr = NULL_PTR(void*);
@@ -449,19 +399,20 @@ bool MemoryMapDataSourceBroker::Finalise() {
         }
     }
 
-    // set as finalised
+// set as finalised
     finalised = ret;
     return ret;
 }
 
-bool MemoryMapDataSourceBroker::IsSync() const {
+bool MemoryMapBroker::IsSync() const {
     return synchronized;
 }
 
-Reference MemoryMapDataSourceBroker::Verify(ReferenceT<GAMSignalI> gamSignal,
-                                            uint32 &typeSize) {
+bool MemoryMapBroker::Verify(ReferenceT<GAMSignalI> gamSignal,
+                             uint32 &typeSize,
+                             ReferenceT<DataSource> &dataSource,
+                             ReferenceT<DataSourceSignal> &dataSourceSignal) {
 
-    ReferenceT<DataSourceSignalI> ret;
     const char8 *path = NULL_PTR(char8 *);
 
     bool ok = gamSignal.IsValid();
@@ -476,45 +427,52 @@ Reference MemoryMapDataSourceBroker::Verify(ReferenceT<GAMSignalI> gamSignal,
     if (ok) {
         // find the data source signal
         StreamString allPath = "Data.";
-        allPath += path;
-        ReferenceT<DataSourceSignalI> dsDef = application->Find(allPath.Buffer());
-        ok = dsDef.IsValid();
-        if (ok) {
-            ok = dsDef->IsSupportedBroker(*this);
-            if (ok) {
-                // check type compatibility
-                ok = (StringHelper::Compare(dsDef->GetType(), gamSignal->GetType()) == 0);
-
-                if (ok) {
-                    if (SetBlockParams(gamSignal, dsDef, typeSize)) {
-                        ret = dsDef;
-                    }
-                }
-            }
-        }
+        StreamString pathNoData = path;
+        allPath += pathNoData;
+        dataSourceSignal = application->Find(allPath.Buffer());
+        ok = dataSourceSignal.IsValid();
+    }
+    if (ok) {
+        // check type compatibility
+        ok = (StringHelper::Compare(dataSourceSignal->GetType(), gamSignal->GetType()) == 0);
     }
 
-    return ret;
+    if (ok) {
+        StreamString dataSourcePath;
+        //The DataSource nodes are declared just under Data.
+        char8 ignored;
+        pathNoData.GetToken(dataSourcePath, ".", ignored, "");
+        dataSourcePath = "Data." + dataSourcePath;
+        dataSource = application->Find(dataSourcePath.Buffer());
+        ok = dataSource.IsValid();
+    }
+
+    if (ok) {
+        ok = dataSource->IsSupportedBroker(*this);
+    }
+
+    if (ok) {
+        ok = (SetBlockParams(gamSignal, dataSourceSignal, typeSize));
+    }
+
+    return ok;
 
 }
 
-bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
-                                               Reference dsDefIn,
-                                               uint32 &typeSize) {
+bool MemoryMapBroker::SetBlockParams(ReferenceT<GAMSignalI> gamSignal,
+                                     ReferenceT<DataSourceSignal> dataSourceSignal,
+                                     uint32 &typeSize) {
 
-// this function is called internally (no segmentation faults should happen)
-    ReferenceT<GAMSignalI> def = defIn;
-    ReferenceT<DataSourceSignalI> dsDef = dsDefIn;
     bool ret = true;
 
-    uint32 nOfDSElements = 0u;
-    nOfDSElements += dsDef->GetNumberOfElements();
+    uint32 nOfDSElements = dataSourceSignal->GetNumberOfElements();
 
-    uint32 numberOfSamples = dsDef->GetNumberOfSamples();
-    int32 numberOfCycles = def->GetCycles();
+    uint32 numberOfSamples = dataSourceSignal->GetNumberOfSamples();
+    int32 numberOfCycles = gamSignal->GetCycles();
+
     printf("\n#cycles=%d\n", numberOfCycles);
     uint32 numberOfGAMSamples = 1u;
-// checks if it is already sync
+    // checks if it is already sync
     if (synchronized) {
         ret = (numberOfCycles == 0);
     }
@@ -522,36 +480,36 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
         synchronized = (numberOfCycles > 0);
     }
 
-// the number of ds elements can be different than the gam signal one
+    // the number of data source elements can be different than the gam signal one
     if (ret) {
         // the minimum is one
         if (numberOfCycles == 0u) {
             numberOfCycles++;
         }
 
-        ReferenceT<GAMSampledSignal> sampledDef = def;
+        ReferenceT<GAMSampledSignal> gamSampledSignal = gamSignal;
         uint32 **samplesM = NULL_PTR(uint32**);
         uint32 **blocksM = NULL_PTR(uint32**);
         uint32 nBlockRows = 0u;
         uint32 samplesRows = 0u;
 
-        bool init = sampledDef.IsValid();
+        bool isGAMSampledSignal = gamSampledSignal.IsValid();
 
         // check if the gam wants to read samples
-        if (init) {
+        if (isGAMSampledSignal) {
 
             StreamString confSamples = "SignalSamples=";
-            confSamples += sampledDef->GetSamples();
-            init = (confSamples != "SignalSamples=");
+            confSamples += gamSampledSignal->GetSamples();
+            bool hasSamplesDefined = (confSamples != "SignalSamples=");
 
             // if there is the field
-            if (init) {
+            if (hasSamplesDefined) {
                 confSamples.Seek(0ULL);
                 ConfigurationDatabase cdb;
                 StandardParser parser(confSamples, cdb);
-                init = parser.Parse();
+                hasSamplesDefined = parser.Parse();
                 // if not get the last sample by default
-                if (init) {
+                if (hasSamplesDefined) {
 
                     // if the node is read
                     AnyType at = cdb.GetType("SignalSamples");
@@ -607,13 +565,13 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                         }
                         if (!ret) {
                             REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                                    "The field \"Samples\" of %s must declare a nx3 matrix {{a,b,c}...} with b<=a<=c", def->GetName())
+                                                    "The field \"Samples\" of %s must be declared as a nx3 matrix {{a,b,c}...} with b<=a<=c", gamSignal->GetName())
                         }
                     }
                 }
             }
         }
-        if (!init) {
+        if (!isGAMSampledSignal) {
             // take the last sample by default
             samplesM = new uint32*;
             samplesM[0] = new uint32[3];
@@ -629,12 +587,12 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
         if (ret) {
             // calculate the number of elements to be read in GAM
             uint32 nOfGAMElements = 1u;
-            for (uint32 k = 0u; k < def->GetNumberOfDimensions(); k++) {
-                nOfGAMElements *= def->GetNumberOfElements(k);
+            for (uint32 k = 0u; k < gamSignal->GetNumberOfDimensions(); k++) {
+                nOfGAMElements *= gamSignal->GetNumberOfElements(k);
             }
 
             StreamString confString = "SignalBlocks=";
-            confString += def->GetOperation();
+            confString += gamSignal->GetOperation();
 
             init = (confString != "SignalBlocks=");
             if (init) {
@@ -687,7 +645,8 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                                     ret = (testSize <= nOfGAMElements);
                                     if (testSize != nOfGAMElements) {
                                         REPORT_ERROR_PARAMETERS(ErrorManagement::Warning,
-                                                                "The GAM signal %s has more elements than the the effective read-write ones", def->GetName())
+                                                                "The GAM signal %s has more elements than the the effective read-write ones",
+                                                                gamSignal->GetName())
                                     }
                                 }
                             }
@@ -697,7 +656,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                             REPORT_ERROR_PARAMETERS(
                                     ErrorManagement::RecoverableError,
                                     "The field \"Operation\" of %s must declare a nx2 matrix {{a,b}...} with a,b<DataSourceSignal::GetNumberOfElements(*)",
-                                    def->GetName())
+                                    gamSignal->GetName())
                         }
                     }
                 }
@@ -743,7 +702,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                 }
                 if (!ret) {
                     // def can be added to another broker?
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::RecoverableError, "Failure of StaticList::Add for GAM signal %s", def->GetName())
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::RecoverableError, "Failure of StaticList::Add for GAM signal %s", gamSignal->GetName())
                 }
 
                 printf("\n%d %d %d\n", typeSize, numberOfGAMSamples, nOfGAMElements);
@@ -780,12 +739,12 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
     else {
         // def can be added to another broker?
         REPORT_ERROR_PARAMETERS(ErrorManagement::RecoverableError, "Trying to add the sync GAMSignal %s on a broker which already contains a sync GAMSignal",
-                                def->GetName())
+                                gamSignal->GetName())
     }
     return ret;
 }
 
-uint32 MemoryMapDataSourceBroker::GetNumberOfSignals() {
+uint32 MemoryMapBroker::GetNumberOfSignals() {
     return Size();
 }
 

@@ -34,12 +34,12 @@
 #include "DataSourceContainer.h"
 #include "GAMSignalsContainer.h"
 #include "AdvancedErrorManagement.h"
-#include "DataSource.h"
-#include "DataSourceSignal.h"
+#include <DataSourceI.h>
+#include <GAMDataSource.h>
 #include "ConfigurationDatabase.h"
 #include "GAMGenericSignal.h"
 #include "GAMSampledSignal.h"
-#include "DataSource.h"
+#include <DataSourceI.h>
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -256,7 +256,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                 ReferenceT<GAMSampledSignal> sampDef = definition;
                 ret = (!sampDef.IsValid());
                 if (ret) {
-                    ReferenceT<DataSourceSignal> newElement(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                    ReferenceT<GAMDataSource> newElement(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                     if (newElement.IsValid()) {
 
                         if (isConsumer) {

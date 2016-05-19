@@ -30,12 +30,13 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RealTimeApplicationTest.h"
+
+#include <DataSourceI.h>
+#include <GAMDataSource.h>
 #include "RealTimeState.h"
 #include "RealTimeThread.h"
 #include "ObjectRegistryDatabase.h"
-#include "DataSource.h"
 #include "GAMTestHelper.h"
-#include "DataSourceSignal.h"
 #include "GAMGenericSignal.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
@@ -500,7 +501,7 @@ bool RealTimeApplicationTest::TestConfigureDataSource() {
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<DataSourceSignal> def1 = ObjectRegistryDatabase::Instance()->Find("Application1.Data.DDB1.PidError1");
+    ReferenceT<GAMDataSource> def1 = ObjectRegistryDatabase::Instance()->Find("Application1.Data.DDB1.PidError1");
     if (def1->GetNumberOfConsumers("State1") != 0 || def1->GetNumberOfProducers("State1") != 1) {
         printf("\n1 %d %d\n", def1->GetNumberOfConsumers("State1"), def1->GetNumberOfProducers("State1"));
         return false;
@@ -511,7 +512,7 @@ bool RealTimeApplicationTest::TestConfigureDataSource() {
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<DataSourceSignal> def2 = ObjectRegistryDatabase::Instance()->Find("Application1.Data.DDB1.PidError2");
+    ReferenceT<GAMDataSource> def2 = ObjectRegistryDatabase::Instance()->Find("Application1.Data.DDB1.PidError2");
     if (def2->GetNumberOfConsumers("State1") != 0 || def2->GetNumberOfProducers("State1") != 1) {
         printf("\n2 %d %d\n", def2->GetNumberOfConsumers("State1"), def2->GetNumberOfProducers("State1"));
         return false;
@@ -522,7 +523,7 @@ bool RealTimeApplicationTest::TestConfigureDataSource() {
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<DataSourceSignal> def3 = ObjectRegistryDatabase::Instance()->Find("Application1.Data.DDB2.PidControl1");
+    ReferenceT<GAMDataSource> def3 = ObjectRegistryDatabase::Instance()->Find("Application1.Data.DDB2.PidControl1");
     if (def3->GetNumberOfConsumers("State1") != 1 || def3->GetNumberOfProducers("State1") != 0) {
         printf("\n3 %d %d\n", def3->GetNumberOfConsumers("State1"), def3->GetNumberOfProducers("State1"));
         return false;
@@ -533,7 +534,7 @@ bool RealTimeApplicationTest::TestConfigureDataSource() {
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<DataSourceSignal> def4 = ObjectRegistryDatabase::Instance()->Find("Application1.Data.DDB2.PidControl2");
+    ReferenceT<GAMDataSource> def4 = ObjectRegistryDatabase::Instance()->Find("Application1.Data.DDB2.PidControl2");
     if (def4->GetNumberOfConsumers("State1") != 1 || def4->GetNumberOfProducers("State1") != 0) {
         printf("\n4 %d %d\n", def4->GetNumberOfConsumers("State1"), def4->GetNumberOfProducers("State1"));
         return false;

@@ -44,7 +44,7 @@
 namespace MARTe {
 
 MemoryMapOutputWriter::MemoryMapOutputWriter() :
-        MemoryMapDataSourceBroker() {
+        MemoryMapBroker() {
 
 }
 

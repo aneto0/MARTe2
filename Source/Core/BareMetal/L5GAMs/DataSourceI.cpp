@@ -31,21 +31,73 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "DataSource.h"
-#include "ReferenceContainerFilterObjectName.h"
-#include "GAMSignalsContainer.h"
-#include "DataSourceSignal.h"
 #include "AdvancedErrorManagement.h"
-#include "MemoryMapInputReader.h"
-#include "GAM.h"
 #include "ConfigurationDatabase.h"
-#include "StandardParser.h"
+#include <DataSourceI.h>
+#include <GAMDataSource.h>
+#include "GAM.h"
+#include "GAMSignalsContainer.h"
+#include "MemoryMapInputReader.h"
 #include "MemoryMapInputReader.h"
 #include "MemoryMapOutputWriter.h"
+#include "ReferenceContainerFilterObjectName.h"
+#include "StandardParser.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
+
+static bool Allocate(ReferenceT<DataSourceSignalI> dataSourceSignal,
+                     MemoryArea &memory) {
+    bool ret = dataSourceSignal.IsValid();
+    if (ret) {
+        TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(dataSourceSignal->GetType());
+        uint32 varSize = 0u;
+        // structured type
+        if (typeDes == InvalidType) {
+            const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(dataSourceSignal->GetType());
+            ret = (item != NULL);
+            if (ret) {
+                /*lint -e{613} NULL pointer checking done before entering here */
+                const ClassProperties *properties = item->GetClassProperties();
+                ret = (properties != NULL);
+                if (ret) {
+                    varSize = properties->GetSize();
+                }
+                else {
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s does not provide ClassProperties", dataSourceSignal->GetType())
+                }
+            }
+            else {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s is not registered", dataSourceSignal->GetType())
+            }
+        }
+        // basic type
+        else {
+            varSize = (static_cast<uint32>(typeDes.numberOfBits) + 7u) / 8u;
+            // consider the multi - dimensional
+            varSize *= dataSourceSignal->GetNumberOfElements();
+        }
+
+        // consider the number of samples per cycle
+        varSize *= dataSourceSignal->GetNumberOfSamples();
+
+        // allocate the memory
+        if (ret) {
+            /*lint -e{613} NULL pointer checking done before entering here */
+            //TODO likely that these offsets have to be set in DataSourceSignalI
+            uint32 offset = 0;
+            ret = memory.Add(varSize, offset);
+            //ret = memory->Add(varSize, dataSourceSignal->bufferPtrOffset[0]);
+            if (ret) {
+                /*lint -e{613} NULL pointer checking done before entering here */
+                ret = memory.Add(varSize, offset);
+                //ret = memory->Add(varSize, bufferPtrOffset[1]);
+            }
+        }
+    }
+    return ret;
+}
 
 static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
                             MemoryArea &memory) {
@@ -57,7 +109,7 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
         if (ret) {
             ReferenceT<DataSourceSignalI> def = subContainer;
             if (def.IsValid()) {
-                ret = def->Allocate(memory);
+                ret = Allocate(def, memory);
             }
             else {
                 ret = AllocatePrivate(subContainer, memory);
@@ -91,10 +143,5 @@ bool DataSource::Initialise(StructuredDataI & data) {
     }
     return ret;
 }
-
-
-
-
-CLASS_REGISTER(DataSource, "1.0")
 
 }

@@ -48,7 +48,7 @@
 
 bool DataSourceSignalTest::TestConstructor() {
 
-    DataSourceSignal dsSignal;
+    GAMDataSource dsSignal;
 
     for (uint32 k = 0u; k < 3u; k++) {
         if (dsSignal.GetNumberOfElements() != 1u) {
@@ -72,7 +72,7 @@ bool DataSourceSignalTest::TestInitialise() {
     cdb.Write("Dimensions", "[1][3]");
     cdb.Write("Default", "{{1,2,3}}");
 
-    DataSourceSignal signal;
+    GAMDataSource signal;
 
     if (!signal.Initialise(cdb)) {
         return false;
@@ -108,7 +108,7 @@ bool DataSourceSignalTest::TestToStructuredData() {
         return false;
     }
 
-    DataSourceSignal signal;
+    GAMDataSource signal;
     signal.SetName("MySignal");
 
     if (!signal.Initialise(cdb)) {
@@ -142,7 +142,7 @@ bool DataSourceSignalTest::TestConfigure() {
     if (!def1->Initialise(cdb1)) {
         return false;
     }
-    DataSourceSignal dsSignal;
+    GAMDataSource dsSignal;
     if (!dsSignal.Configure(def1)) {
         return false;
     }
@@ -217,7 +217,7 @@ bool DataSourceSignalTest::TestConfigureFalse_AlreadyTypeSet() {
     if (!def1->Initialise(cdb1)) {
         return false;
     }
-    DataSourceSignal dsSignal;
+    GAMDataSource dsSignal;
     if (!dsSignal.Configure(def1)) {
         return false;
     }
@@ -255,7 +255,7 @@ bool DataSourceSignalTest::TestConfigureFalse_AlreadyDefaultSet() {
     if (!def1->Initialise(cdb1)) {
         return false;
     }
-    DataSourceSignal dsSignal;
+    GAMDataSource dsSignal;
     if (!dsSignal.Configure(def1)) {
         return false;
     }
@@ -280,31 +280,31 @@ bool DataSourceSignalTest::TestConfigureFalse_AlreadyDefaultSet() {
 
 
 bool DataSourceSignalTest::TestWriteStart() {
-    DataSourceSignal signal;
+    GAMDataSource signal;
     signal.WriteStart();
     return true;
 }
 
 bool DataSourceSignalTest::TestReadStart() {
-    DataSourceSignal signal;
+    GAMDataSource signal;
     signal.ReadStart();
     return true;
 }
 
 bool DataSourceSignalTest::TestWriteEnd() {
-    DataSourceSignal signal;
+    GAMDataSource signal;
     signal.WriteEnd();
     return true;
 }
 
 bool DataSourceSignalTest::TestReadEnd() {
-    DataSourceSignal signal;
+    GAMDataSource signal;
     signal.ReadEnd();
     return true;
 }
 
 bool DataSourceSignalTest::TestWaitOnEvent() {
-    DataSourceSignal signal;
+    GAMDataSource signal;
     signal.WaitOnEvent();
     return true;
 
@@ -318,7 +318,7 @@ bool DataSourceSignalTest::TestAllocate() {
     cdb.Write("Dimensions", "[1][3]");
     cdb.Write("Default", "{{1,2,3}}");
 
-    DataSourceSignal signal;
+    GAMDataSource signal;
 
     if (!signal.Initialise(cdb)) {
         return false;
@@ -342,7 +342,7 @@ bool DataSourceSignalTest::TestAllocateStructure() {
     cdb.Write("Samples", "10");
     cdb.Write("Type", "ControlIn");
     cdb.Write("Default", "Par1=1 Par2=2");
-    DataSourceSignal signal;
+    GAMDataSource signal;
 
     if (!signal.Initialise(cdb)) {
         return false;
@@ -365,7 +365,7 @@ bool DataSourceSignalTest::TestAllocateStructureFalse_NotRegisteredType() {
     cdb.Write("Samples", "10");
     cdb.Write("Type", "Invalid");
     cdb.Write("Default", "Par1=1 Par2=2");
-    DataSourceSignal signal;
+    GAMDataSource signal;
 
     if (!signal.Initialise(cdb)) {
         return false;
@@ -382,7 +382,7 @@ bool DataSourceSignalTest::TestAllocateStructureFalse_MultiDim() {
     cdb.Write("Type", "Invalid");
     cdb.Write("Dimensions", "[2][3]");
     cdb.Write("Default", "Par1=1 Par2=2");
-    DataSourceSignal signal;
+    GAMDataSource signal;
 
     if (!signal.Initialise(cdb)) {
         return false;
@@ -400,7 +400,7 @@ bool DataSourceSignalTest::TestGetDataSourcePointer() {
     cdb.Write("Dimensions", "[1][3]");
     cdb.Write("Default", "{{1,2,3}}");
 
-    DataSourceSignal signal;
+    GAMDataSource signal;
 
     if (!signal.Initialise(cdb)) {
         return false;
@@ -429,7 +429,7 @@ bool DataSourceSignalTest::TestPrepareNextState() {
     cdb.Write("Type", "uint32");
     cdb.Write("Default", "1");
 
-    DataSourceSignal signal;
+    GAMDataSource signal;
 
     if (!signal.Initialise(cdb)) {
         return false;
@@ -464,7 +464,7 @@ bool DataSourceSignalTest::TestPrepareNextStateStructure() {
     cdb.Write("Type", "ControlIn");
     cdb.Write("Default", "Par1=1 Par2=2");
 
-    DataSourceSignal signal;
+    GAMDataSource signal;
 
     if (!signal.Initialise(cdb)) {
         return false;
@@ -500,7 +500,7 @@ bool DataSourceSignalTest::TestPrepareNextStateStructure_MultiSample() {
     cdb.Write("Default", "Par1=1 Par2=2");
     cdb.Write("Samples", "10");
 
-    DataSourceSignal signal;
+    GAMDataSource signal;
 
     if (!signal.Initialise(cdb)) {
         return false;
@@ -543,7 +543,7 @@ bool DataSourceSignalTest::TestPrepareNextState_MultiDim_MultiSample() {
     cdb.Write("Dimensions", "[1][3]");
     cdb.Write("Default", "{{1,2,3}}");
 
-    DataSourceSignal signal;
+    GAMDataSource signal;
 
     if (!signal.Initialise(cdb)) {
         return false;
@@ -614,7 +614,7 @@ bool DataSourceSignalTest::TestGetInputReader() {
         return false;
     }
 
-    ReferenceT<DataSourceSignal> dsSignal = ReferenceT<DataSourceSignal>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<GAMDataSource> dsSignal = ReferenceT<GAMDataSource>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     dsSignal->SetName("var");
     if (!dsSignal->Configure(gamSignal)) {
         return false;
@@ -683,7 +683,7 @@ bool DataSourceSignalTest::TestGetOutputWriter() {
         return false;
     }
 
-    ReferenceT<DataSourceSignal> dsSignal = ReferenceT<DataSourceSignal>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<GAMDataSource> dsSignal = ReferenceT<GAMDataSource>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     dsSignal->SetName("var");
     if (!dsSignal->Configure(gamSignal)) {
         return false;

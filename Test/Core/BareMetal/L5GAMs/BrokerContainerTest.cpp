@@ -30,9 +30,10 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BrokerContainerTest.h"
+
+#include <GAMDataSource.h>
 #include "MemoryMapInputReader.h"
 #include "MemoryMapOutputWriter.h"
-#include "DataSourceSignal.h"
 #include "GAMTestHelper.h"
 #include "GAMGenericSignal.h"
 #include "GAMSampledSignal.h"
@@ -107,7 +108,7 @@ public:
 };
 CLASS_REGISTER(DummyWriter, "1.0")
 
-class DummyDSSignal: public DataSourceSignal {
+class DummyDSSignal: public GAMDataSource {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -1000,7 +1001,7 @@ bool BrokerContainerTest::TestGetNumberOfSignals() {
         return false;
     }
 
-    ReferenceT<MemoryMapDataSourceBroker> tobeInserted = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> tobeInserted = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     tobeInserted->SetName("toBeIns");
     tobeInserted->SetApplication(*rtapp.operator ->());
 
@@ -1158,7 +1159,7 @@ bool BrokerContainerTest::TestFinalise() {
         return false;
     }
 
-    ReferenceT<MemoryMapDataSourceBroker> tobeInserted = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> tobeInserted = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     tobeInserted->SetName("toBeIns");
     tobeInserted->SetApplication(*rtapp.operator ->());
 
@@ -1328,7 +1329,7 @@ bool BrokerContainerTest::TestFinaliseFalse_MoreThanOneSync() {
         return false;
     }
 
-    ReferenceT<MemoryMapDataSourceBroker> tobeInserted = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> tobeInserted = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     tobeInserted->SetName("toBeIns");
     tobeInserted->SetApplication(*rtapp.operator ->());
 
@@ -1477,7 +1478,7 @@ bool BrokerContainerTest::TestInsertNewBroker() {
         return false;
     }
 
-    ReferenceT<MemoryMapDataSourceBroker> tobeInserted = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> tobeInserted = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     tobeInserted->SetName("toBeIns");
     tobeInserted->SetApplication(*rtapp.operator ->());
 

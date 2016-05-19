@@ -1,7 +1,7 @@
 /**
  * @file DataSourceSignal.cpp
  * @brief Source file for class DataSourceSignal
- * @date 11/apr/2016
+ * @date 18/apr/2016
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class DataSourceSignal (public, protected, and private). Be aware that some 
+ * the class DataSourceSignal (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -31,323 +31,198 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "DataSourceSignal.h"
+#include <DataSourceSignal.h>
 #include "ReferenceT.h"
 #include "DataSourceSignalRecord.h"
 #include "StandardParser.h"
 #include "ConfigurationDatabase.h"
 #include "AdvancedErrorManagement.h"
-#include "MemoryMapDataSourceBroker.h"
-#include "MemoryMapInputReader.h"
-#include "MemoryMapOutputWriter.h"
 #include "GAM.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-
-/**
- * @brief Computes the dimension of the signal.
- * @param[in] gamSignalIn the signal to be computed.
- * @return the dimension of the signal (i.e. GetNumberOfDimensions(i) * GetNumberOfElements(j)).
- */
-static uint32 GetDataSourceDimension(Reference gamSignalIn) {
-    uint32 requiredDimension = 0u;
-    ReferenceT<GAMSignalI> gamSignal = gamSignalIn;
-
-    if (gamSignal.IsValid()) {
-        bool ret = true;
-        uint32 numberOfGAMElements = 1u;
-        for (uint32 k = 0u; k < gamSignal->GetNumberOfDimensions(); k++) {
-            numberOfGAMElements *= gamSignal->GetNumberOfElements(k);
-        }
-
-        StreamString confString = "SignalBlocks=";
-        confString += gamSignal->GetOperation();
-
-        bool init = (confString != "SignalBlocks=");
-        if (init) {
-            // a set of blocks to be read
-            confString.Seek(0ULL);
-            ConfigurationDatabase cdb;
-
-            StandardParser parser(confString, cdb);
-            init = parser.Parse();
-            // the field exists
-            if (init) {
-
-                AnyType at = cdb.GetType("SignalBlocks");
-                ret = (at.GetDataPointer() != NULL);
-                if (ret) {
-                    uint32 nBlockCols = at.GetNumberOfElements(0u);
-                    ret = (nBlockCols == 2);
-                    if (ret) {
-                        uint32 nBlockRows = at.GetNumberOfElements(1u);
-                        Matrix<uint32> paramListMatrix = Matrix<uint32>(nBlockRows, nBlockCols);
-
-                        ret = (cdb.Read("SignalBlocks", paramListMatrix));
-                        if (ret) {
-                            // checks if the size in the GAM variable matches with the
-                            // sum of the block sizes
-                            uint32 maxEnd = 0u;
-                            for (uint32 i = 0u; (i < nBlockRows); i++) {
-                                uint32 end = paramListMatrix[i][1];
-                                // begin and end must be into the DS memory
-                                if (end > maxEnd) {
-                                    maxEnd = end;
-                                }
-                            }
-                            requiredDimension = maxEnd;
-                        }
-                    }
-                    else {
-                        //TODO the samples blocks matrix must have 2 columns
-                    }
-                }
-            }
-        }
-        // no blocks field
-        if (!init) {
-            requiredDimension = numberOfGAMElements;
-        }
-        // something wrong
-        if (!ret) {
-            requiredDimension = 0u;
-        }
-    }
-
-    return requiredDimension;
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 DataSourceSignal::DataSourceSignal() :
-        DataSourceSignalI() {
-
-    bufferPtrOffset[0] = 0u;
-    bufferPtrOffset[1] = 0u;
-    memory = NULL_PTR(MemoryArea *);
-    usedBuffer[0] = NULL_PTR(void *);
-    usedBuffer[1] = NULL_PTR(void *);
+        ReferenceContainer() {
+    application = NULL_PTR(RealTimeApplication *);
+    numberOfSamples = 1u;
+    numberOfElements = 1u;
 }
 
 DataSourceSignal::~DataSourceSignal() {
 
 }
 
-void **DataSourceSignal::GetDataSourcePointer(uint8 bufferIndex) {
-    if (bufferIndex > 1u) {
-        bufferIndex = bufferIndex % 2u;
-    }
-
-    void ** ret = NULL_PTR(void **);
-    if (memory != NULL) {
-        /*lint -e{613} NULL pointer checking done before entering here */
-        usedBuffer[bufferIndex] = memory->GetPointer(bufferPtrOffset[bufferIndex]);
-        ret = &usedBuffer[bufferIndex];
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "The RealTimeDataSource memory has to be allocated before calling this function");
-    }
-
-    return ret;
+void DataSourceSignal::SetApplication(RealTimeApplication &app) {
+    application = &app;
 }
 
-bool DataSourceSignal::PrepareNextState(const RealTimeStateInfo &status) {
-
-    bool ret = (memory != NULL);
-
+bool DataSourceSignal::AddConsumer(ReferenceT<GAM> gam) {
+    uint32 index;
+    bool ret = gam.IsValid();
     if (ret) {
-        // by default use the same buffer in the next state
-        uint8 nextBufferIdx = (status.activeBuffer + 1u) % 2u;
-        /*lint -e{613} NULL pointer checking done before entering here */
-        usedBuffer[nextBufferIdx] = memory->GetPointer(bufferPtrOffset[status.activeBuffer]);
+        uint32 numberOfGAMStates = gam->GetNumberOfSupportedStates();
+        StreamString *stateNames = gam->GetSupportedStates();
+        for (uint32 k = 0u; (k < numberOfGAMStates) && (ret); k++) {
+            ReferenceT<DataSourceSignalRecord> record;
+            uint32 numberOfStates = Size();
+            bool found = false;
 
-        // search the current state
-        uint32 numberOfStates = Size();
-        bool found = false;
-        ReferenceT<DataSourceSignalRecord> record;
-        for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
-            record = Get(i);
-            if (record.IsValid()) {
-                // match
-                if (StringHelper::Compare(record->GetName(), status.currentState) == 0) {
-                    found = true;
-                }
-            }
-        }
-        // this variable was not being used in this state
-        if (!found) {
-            found = false;
-            for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
-                record = Get(i);
+            for (index = 0u; (index < numberOfStates) && (!found); index++) {
+                record = Get(index);
                 if (record.IsValid()) {
-                    // match
-                    if (StringHelper::Compare(record->GetName(), status.nextState) == 0) {
+                    if (stateNames[k] == record->GetName()) {
                         found = true;
                     }
                 }
             }
-
-            // this variable will be used in the next
             if (found) {
-                // if defaultValue is not set, remain with the same buffer of the previous state
-                if (defaultValue != "") {
-                    char8* memPtr = reinterpret_cast<char8 *>(memory->GetPointer(bufferPtrOffset[nextBufferIdx]));
-                    AnyType at;
-                    TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
-                    if (typeDes == InvalidType) {
-                        const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
-                        ret = (item != NULL);
-                        if (ret) {
-                            /*lint -e{613} NULL pointer checking done before entering here */
-                            const ClassProperties *properties = item->GetClassProperties();
-                            ret = (properties != NULL);
-                            if (ret) {
-                                uint32 typeSize = properties->GetSize();
-                                typeDes = TypeDescriptor(false, properties->GetUniqueIdentifier());
-                                /*lint -e{613} NULL pointer checking done before entering here */
-                                at = AnyType(typeDes, 0u, memPtr);
-                                ConfigurationDatabase cdb;
-                                ret = defaultValue.Seek(0ull);
-                                if (ret) {
-                                    StandardParser parser(defaultValue, cdb);
-                                    ret = parser.Parse();
-                                    if (ret) {
-                                        ret = cdb.Write("Class", type.Buffer());
-                                    }
-                                    if (ret) {
-                                        for (uint32 n = 0u; (n < numberOfSamples) && (ret); n++) {
-                                            at.SetDataPointer(memPtr);
-                                            ret = TypeConvert(at, cdb);
-                                            // shift to the next sample
-                                            memPtr = &memPtr[typeSize];
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                    else {
-                        uint32 typeSize = (typeDes.numberOfBits + 7u) / 8u;
-                        at = AnyType(typeDes, 0u, memPtr);
-                        /*lint -e{613} NULL pointer checking done before entering here */
-                        if (numberOfElements > 1u) {
-                            // set the input
-                            ConfigurationDatabase cdb;
-                            // create a stream with "node = { element1, element2, ...}
-                            StreamString fakeNodeConfig = "node = ";
-                            fakeNodeConfig += defaultValue;
-                            ret = fakeNodeConfig.Seek(0ull);
-                            if (ret) {
-                                // parse it
-                                StandardParser parser(fakeNodeConfig, cdb);
-                                ret = parser.Parse();
-                                if (ret) {
-                                    // get the input
-                                    AnyType multiDim = cdb.GetType("node");
-                                    ret = (multiDim.GetDataPointer() != NULL);
-                                    if (ret) {
-                                        uint32 defaultNumberOfElements = 1u;
-                                        uint32 defaultNumberOfDimensions = multiDim.GetNumberOfDimensions();
-                                        for (uint32 k = 0u; k < defaultNumberOfDimensions; k++) {
-                                            defaultNumberOfElements *= multiDim.GetNumberOfElements(k);
-                                        }
-                                        ret = (defaultNumberOfElements == numberOfElements);
-                                        if (ret) {
-                                            // consider the multi-dimensional
-                                            // set the output
-                                            at.SetNumberOfDimensions(defaultNumberOfDimensions);
-                                            for (uint32 k = 0u; k < defaultNumberOfDimensions; k++) {
-                                                at.SetNumberOfElements(k, multiDim.GetNumberOfElements(k));
-                                                typeSize *= multiDim.GetNumberOfElements(k);
-                                            }
-                                            for (uint32 n = 0u; (n < numberOfSamples) && (ret); n++) {
-                                                at.SetDataPointer(memPtr);
-                                                ret = TypeConvert(at, multiDim);
-                                                // shift to the next sample
-                                                memPtr = &memPtr[typeSize];
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else {
-                            for (uint32 n = 0u; (n < numberOfSamples) && (ret); n++) {
-                                at.SetDataPointer(memPtr);
-                                ret = TypeConvert(at, defaultValue);
-                                // shift to the next sample
-                                memPtr = &memPtr[typeSize];
-                            }
-                        }
-                    }
-                    if (ret) {
-                        //set the next used buffer
-                        /*lint -e{613} NULL pointer checking done before entering here */
-                        usedBuffer[nextBufferIdx] = memory->GetPointer(bufferPtrOffset[nextBufferIdx]);
-                    }
-                    else {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Failed reset of the signal %s", GetName())
-                    }
-                }
-                REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "Default Value not set for the signal %s, the value will not be reset", GetName())
-            }
-        }
-    }
-    return ret;
-}
-
-bool DataSourceSignal::Allocate(MemoryArea &dsMemory) {
-
-    bool ret = true;
-    memory = &dsMemory;
-    TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
-    uint32 varSize = 0u;
-    // structured type
-    if (typeDes == InvalidType) {
-        const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
-        ret = (item != NULL);
-        if (ret) {
-            /*lint -e{613} NULL pointer checking done before entering here */
-            const ClassProperties *properties = item->GetClassProperties();
-            ret = (properties != NULL);
-            if (ret) {
-                varSize = properties->GetSize();
+                ret = record->AddConsumer(gam);
             }
             else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s does not provide ClassProperties", type.Buffer())
+                record = ReferenceT<DataSourceSignalRecord>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                if (record.IsValid()) {
+                    record->SetName(stateNames[k].Buffer());
+                    ret = record->AddConsumer(gam);
+                    if (ret) {
+                        ret = Insert(record);
+                    }
+                }
             }
-        }
-        else {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s is not registered", type.Buffer())
-        }
-    }
-    // basic type
-    else {
-        varSize = (static_cast<uint32>(typeDes.numberOfBits) + 7u) / 8u;
-        // consider the multi - dimensional
-        varSize *= numberOfElements;
-    }
-
-    // consider the number of samples per cycle
-    varSize *= numberOfSamples;
-
-    // allocate the memory
-    if (ret) {
-        /*lint -e{613} NULL pointer checking done before entering here */
-        ret = memory->Add(varSize, bufferPtrOffset[0]);
-        if (ret) {
-            /*lint -e{613} NULL pointer checking done before entering here */
-            ret = memory->Add(varSize, bufferPtrOffset[1]);
         }
     }
     return ret;
 }
+
+bool DataSourceSignal::AddProducer(ReferenceT<GAM> gamIn) {
+
+    uint32 index;
+
+    ReferenceT<GAM> gam = gamIn;
+    bool ret = gam.IsValid();
+
+    if (ret) {
+        uint32 numberOfGAMStates = gam->GetNumberOfSupportedStates();
+        StreamString *stateNames = gam->GetSupportedStates();
+        for (uint32 k = 0u; (k < numberOfGAMStates) && (ret); k++) {
+
+            ReferenceT<DataSourceSignalRecord> record;
+            uint32 numberOfStates = Size();
+            bool found = false;
+
+            for (index = 0u; (index < numberOfStates) && (!found); index++) {
+                record = Get(index);
+                if (record.IsValid()) {
+                    if (stateNames[k] == record->GetName()) {
+                        found = true;
+                    }
+                }
+            }
+            if (found) {
+                ret = record->AddProducer(gam);
+            }
+            else {
+                record = ReferenceT<DataSourceSignalRecord>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                if (record.IsValid()) {
+                    record->SetName(stateNames[k].Buffer());
+                    ret = record->AddProducer(gam);
+                    if (ret) {
+                        ret = Insert(record);
+                    }
+                }
+            }
+        }
+    }
+    return ret;
+
+}
+
+uint32 DataSourceSignal::GetNumberOfConsumers(const char8 * const stateIn) {
+    uint32 ret = 0u;
+    uint32 numberOfRecords = Size();
+    ReferenceT<DataSourceSignalRecord> record;
+    bool found = false;
+    for (uint32 i = 0u; (i < numberOfRecords) && (!found); i++) {
+        record = Get(i);
+        if (record.IsValid()) {
+            if (StringHelper::Compare(record->GetName(), stateIn) == 0) {
+                found = true;
+            }
+        }
+    }
+
+    if (found) {
+        ret = record->GetNumberOfConsumers();
+    }
+    else {
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "RealTimeState %s not configured", stateIn)
+    }
+    return ret;
+
+}
+
+uint32 DataSourceSignal::GetNumberOfProducers(const char8 * const stateIn) {
+    uint32 ret = 0u;
+    uint32 numberOfRecords = Size();
+    ReferenceT<DataSourceSignalRecord> record;
+    bool found = false;
+    for (uint32 i = 0u; (i < numberOfRecords) && (!found); i++) {
+        record = Get(i);
+        if (record.IsValid()) {
+            if (StringHelper::Compare(record->GetName(), stateIn) == 0) {
+                found = true;
+            }
+        }
+    }
+    if (found) {
+        ret = record->GetNumberOfProducers();
+    }
+    else {
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "RealTimeState %s not configured", stateIn)
+    }
+
+    return ret;
+}
+
+bool DataSourceSignal::Verify() {
+
+    bool ret = true;
+    uint32 numberOfRecords = Size();
+    for (uint32 i = 0u; (i < numberOfRecords) && (ret); i++) {
+        ReferenceT<DataSourceSignalRecord> record = Get(i);
+        if (record.IsValid()) {
+            // no more than one producer for each state
+            if (record->GetNumberOfProducers() > 1u) {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The DataSourceSignal %s has %d producers in the state %s", GetName(),
+                                        record->GetNumberOfProducers(), record->GetName())
+                ret = false;
+            }
+            if (record->GetNumberOfConsumers() == 0u) {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "The DataSourceSignal %s is not consumed in the state %s", GetName(), record->GetName())
+            }
+        }
+    }
+
+    return ret;
+}
+
+const char8 *DataSourceSignal::GetType() {
+    return type.Buffer();
+}
+
+uint32 DataSourceSignal::GetNumberOfElements() const {
+    return numberOfElements;
+}
+
+uint32 DataSourceSignal::GetNumberOfSamples() const {
+    return numberOfSamples;
+}
+
 
 bool DataSourceSignal::Initialise(StructuredDataI & data) {
 
@@ -435,148 +310,5 @@ bool DataSourceSignal::ExportData(StructuredDataI& data) {
 
     return ret;
 }
-
-void DataSourceSignal::WriteStart() {
-
-}
-
-void DataSourceSignal::ReadStart() {
-
-}
-
-void DataSourceSignal::WriteEnd() {
-
-}
-
-void DataSourceSignal::ReadEnd() {
-
-}
-
-bool DataSourceSignal::WaitOnEvent(const TimeoutType &timeout) {
-    return true;
-}
-
-bool DataSourceSignal::Configure(ReferenceT<GAMSignalI> gamSignalIn) {
-
-    ReferenceT<GAMSignalI> gamSignal = gamSignalIn;
-
-    bool ret = gamSignal.IsValid();
-    if (ret) {
-        const char8 * typeName = gamSignal->GetType();
-        if (StringHelper::Length(typeName) != 0) {
-            if (type != typeName) {
-                if (type != "") {
-                    ret = false;
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type already set to %s", type.Buffer())
-                }
-                else {
-                    type = typeName;
-                }
-            }
-        }
-    }
-    if (ret) {
-        const char8 *defaultIn = gamSignal->GetDefaultValue();
-        if (StringHelper::Length(defaultIn) != 0) {
-            if (defaultValue != defaultIn) {
-                if (defaultValue != "") {
-                    ret = false;
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "A different default value equal to \"%s\" was set. It will be refreshed by the new one",
-                                            defaultValue.Buffer())
-                }
-                else {
-                    defaultValue = defaultIn;
-                }
-            }
-        }
-    }
-
-    if (ret) {
-        MemoryMapDataSourceBroker broker;
-        uint32 requiredDimension = GetDataSourceDimension(gamSignal);
-        ret = (requiredDimension > 0u);
-        if (ret) {
-            // refresh only when the input is greater!
-            if (numberOfElements < requiredDimension) {
-                numberOfElements = requiredDimension;
-            }
-        }
-    }
-    return ret;
-
-}
-
-ReferenceT<DataSourceBrokerI>  DataSourceSignal::GetInputReader(ReferenceT<GAMSignalI> signalIn,
-                                           void * varPtr) {
-    ReferenceT<MemoryMapInputReader> ret;
-
-    if (signalIn.IsValid()) {
-        // try the default reader
-        ReferenceT<MemoryMapInputReader> reader = ReferenceT<MemoryMapInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-        if (reader.IsValid()) {
-            //  sets the same name of the data source
-            reader->SetName(GetName());
-            if (application != NULL) {
-                reader->SetApplication(*application);
-                if (reader.IsValid()) {
-                    // can link data source to internal static variables
-                    if (reader->AddSignal(signalIn, varPtr)) {
-                        ret = reader;
-                    }
-                }
-            }
-            else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Application not set in %s", GetName())
-            }
-        }
-    }
-    else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Invalid GAM signal in input in %s", GetName())
-    }
-
-    return ret;
-}
-
-ReferenceT<DataSourceBrokerI> DataSourceSignal::GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
-                                            void * varPtr) {
-    ReferenceT<MemoryMapOutputWriter> ret;
-
-    if (signalOut.IsValid()) {
-        // try the default reader
-        ReferenceT<MemoryMapOutputWriter> writer = ReferenceT<MemoryMapOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-        if (writer.IsValid()) {
-            //  sets the same name of the data source
-            writer->SetName(GetName());
-            if (application != NULL) {
-                writer->SetApplication(*application);
-                if (writer.IsValid()) {
-                    // can link data source to internal static variables
-                    if (writer->AddSignal(signalOut, varPtr)) {
-                        ret = writer;
-                    }
-                }
-            }
-            else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Application not set in %s", GetName())
-            }
-        }
-    }
-    else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Invalid GAM signal in input in %s", GetName())
-    }
-    return ret;
-}
-
-bool DataSourceSignal::IsSupportedBroker(DataSourceBrokerI &testBroker) {
-
-    // only memory map broker descendants supported
-    MemoryMapDataSourceBroker *test = dynamic_cast<MemoryMapDataSourceBroker *>(&testBroker);
-    return (test != NULL);
-
-}
-
-
-
-CLASS_REGISTER(DataSourceSignal, "1.0")
 
 }

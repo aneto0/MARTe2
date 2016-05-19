@@ -30,9 +30,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MemoryMapDataSourceBrokerTest.h"
+
+#include <DataSourceI.h>
+
 #include "GAMTestHelper.h"
 #include "GAMGenericSignal.h"
-#include "DataSource.h"
 #include "GAMSampledSignal.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
@@ -199,12 +201,12 @@ MemoryMapDataSourceBrokerTest::MemoryMapDataSourceBrokerTest() {
 }
 
 bool MemoryMapDataSourceBrokerTest::TestConstructor() {
-    MemoryMapDataSourceBroker test;
+    MemoryMapBroker test;
     return true;
 }
 
 bool MemoryMapDataSourceBrokerTest::TestSetApplication() {
-    MemoryMapDataSourceBroker test;
+    MemoryMapBroker test;
     RealTimeApplication app;
     test.SetApplication(app);
     return true;
@@ -250,7 +252,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignal_Allocation() {
 
     ReferenceT<GAMGenericSignal> def = gam->Find("Inputs.Control");
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -313,7 +315,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignal_Static() {
 
     ReferenceT<GAMGenericSignal> def = gam->Find("Inputs.Control");
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -393,7 +395,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignal_Allocation_BasicType() {
 
     ReferenceT<GAMGenericSignal> def = gam->Find("Inputs.Basic");
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -463,7 +465,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignal_Static_BasicType() {
 
     ReferenceT<GAMGenericSignal> def = gam->Find("Inputs.Basic");
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     uint32 x;
@@ -501,7 +503,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignalFalse_InvalidDef() {
     }
     ReferenceT<GAMGenericSignal> def;
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -553,7 +555,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignalFalse_NoDataSourceSet() {
 
     ReferenceT<GAMGenericSignal> def = gam->Find("Inputs.Control");
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     ControlIn output;
@@ -596,7 +598,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignalFalse_UnintrospectableType() {
         return false;
     }
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*app.operator ->());
@@ -635,7 +637,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignalFalse_UnregisteredType() {
         return false;
     }
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -685,7 +687,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignalFalse_NotInDataSource() {
         return false;
     }
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*app.operator ->());
@@ -733,7 +735,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignal_MultiDimensional_Static_Vector
 
     ReferenceT<GAMGenericSignal> def = gam->Find("Inputs.Error");
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -810,7 +812,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignal_MultiDimensional_Allocation_Ve
 
     ReferenceT<GAMGenericSignal> def = gam->Find("Inputs.Error");
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -871,7 +873,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignal_MultiDimensional_Static_Matrix
 
     ReferenceT<GAMGenericSignal> def = gam->Find("Inputs.Error");
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -966,7 +968,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignal_MultiDimensional_Allocation_Ma
 
     ReferenceT<GAMGenericSignal> def = gam->Find("Inputs.Error");
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -1055,7 +1057,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignalFalse_UnsupportedMultidimStruct
 
     ReferenceT<GAMGenericSignal> def = gam->Find("Inputs.Error");
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -1105,7 +1107,7 @@ bool MemoryMapDataSourceBrokerTest::TestAddSignalFalse_UnfoundMember() {
         return false;
     }
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -1156,7 +1158,7 @@ bool MemoryMapDataSourceBrokerTest::TestGetSignal_Allocation() {
     ReferenceT<GAMGenericSignal> def = gam->Find("Outputs.Error");
     ReferenceT<GAMGenericSignal> def2 = gam->Find("Outputs.Noise");
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -1235,7 +1237,7 @@ bool MemoryMapDataSourceBrokerTest::TestGetSignal_Static() {
     ReferenceT<GAMGenericSignal> def = gam->Find("Outputs.Error");
     ReferenceT<GAMGenericSignal> def2 = gam->Find("Outputs.Noise");
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -1312,7 +1314,7 @@ bool MemoryMapDataSourceBrokerTest::TestFinalise() {
     ReferenceT<GAMGenericSignal> def = gam->Find("Outputs.Error");
     ReferenceT<GAMGenericSignal> def2 = gam->Find("Outputs.Noise");
 
-    ReferenceT<MemoryMapDataSourceBroker> broker = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> broker = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     broker->SetName("broker");
 
     broker->SetApplication(*rtapp.operator ->());
@@ -1435,7 +1437,7 @@ bool MemoryMapDataSourceBrokerTest::TestFailureOfSampleDefinitionInGeneric() {
 
     ReferenceT<GAMGenericSignal> defIn1 = pid->Find("Input1.Error");
 
-    ReferenceT<MemoryMapDataSourceBroker> reader1 = ReferenceT<MemoryMapDataSourceBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MemoryMapBroker> reader1 = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     reader1->SetName("reader1");
 
     reader1->SetApplication(*rtapp.operator ->());

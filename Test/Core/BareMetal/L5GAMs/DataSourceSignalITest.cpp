@@ -44,7 +44,7 @@
 
 bool DataSourceSignalITest::TestConstructor() {
 
-    DataSourceSignal dsSignal;
+    GAMDataSource dsSignal;
 
     for (uint32 k = 0u; k < 3u; k++) {
         if (dsSignal.GetNumberOfElements() != 1u) {
@@ -68,7 +68,7 @@ bool DataSourceSignalITest::TestInitialise() {
     cdb.Write("Dimensions", "[1][3]");
     cdb.Write("Default", "{{1,2,3}}");
 
-    DataSourceSignal signal;
+    GAMDataSource signal;
 
     if (!signal.Initialise(cdb)) {
         return false;
@@ -96,7 +96,7 @@ bool DataSourceSignalITest::TestAddConsumer() {
 
     gam1->AddState("state1", "thread1");
 
-    DataSourceSignal dsSignal;
+    GAMDataSource dsSignal;
     if (!dsSignal.AddConsumer(gam1)) {
         return false;
     }
@@ -110,7 +110,7 @@ bool DataSourceSignalITest::TestAddProducer() {
 
     gam1->AddState("state1", "thread1");
 
-    DataSourceSignal dsSignal;
+    GAMDataSource dsSignal;
     if (!dsSignal.AddProducer(gam1)) {
         return false;
     }
@@ -120,7 +120,7 @@ bool DataSourceSignalITest::TestAddProducer() {
 
 
 bool DataSourceSignalITest::TestGetNumberOfConsumers(uint32 nConsumers) {
-    DataSourceSignal signal;
+    GAMDataSource signal;
     for (uint32 i = 0u; i < nConsumers; i++) {
         ReferenceT<PIDGAM> gamS1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         gamS1->AddState("state1", "thread1");
@@ -147,7 +147,7 @@ bool DataSourceSignalITest::TestGetNumberOfConsumers(uint32 nConsumers) {
 }
 
 bool DataSourceSignalITest::TestGetNumberOfProducers(uint32 nProducers) {
-    DataSourceSignal signal;
+    GAMDataSource signal;
     for (uint32 i = 0u; i < nProducers; i++) {
         ReferenceT<PIDGAM> gamS1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         gamS1->AddState("state1", "thread1");
@@ -173,7 +173,7 @@ bool DataSourceSignalITest::TestGetNumberOfProducers(uint32 nProducers) {
 }
 
 bool DataSourceSignalITest::TestVerify() {
-    DataSourceSignal signal;
+    GAMDataSource signal;
     uint32 nConsumers = 32;
     for (uint32 i = 0u; i < nConsumers; i++) {
         ReferenceT<PIDGAM> gamS1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -200,7 +200,7 @@ bool DataSourceSignalITest::TestVerify() {
 }
 
 bool DataSourceSignalITest::TestVerifyFalse_TwoProducers() {
-    DataSourceSignal signal;
+    GAMDataSource signal;
     uint32 nConsumers = 32;
     for (uint32 i = 0u; i < nConsumers; i++) {
         ReferenceT<PIDGAM> gamS1 = ReferenceT<PIDGAM>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -239,7 +239,7 @@ bool DataSourceSignalITest::TestGetType() {
         return false;
     }
 
-    DataSourceSignal dsSignal;
+    GAMDataSource dsSignal;
     dsSignal.Configure(def);
 
     return StringHelper::Compare("uint32", dsSignal.GetType()) == 0;
@@ -256,7 +256,7 @@ bool DataSourceSignalITest::TestGetNumberOfElements() {
         return false;
     }
 
-    DataSourceSignal dsSignal;
+    GAMDataSource dsSignal;
     dsSignal.Configure(def);
 
     return dsSignal.GetNumberOfElements() == 6;
@@ -272,7 +272,7 @@ bool DataSourceSignalITest::TestGetNumberOfElements_DifferentSizes() {
     if (!def1->Initialise(cdb1)) {
         return false;
     }
-    DataSourceSignal dsSignal;
+    GAMDataSource dsSignal;
     dsSignal.Configure(def1);
     if (dsSignal.GetNumberOfElements() != 6) {
         return false;
@@ -307,6 +307,6 @@ bool DataSourceSignalITest::TestGetNumberOfElements_DifferentSizes() {
 
 
 bool DataSourceSignalITest::TestGetNumberOfSamples() {
-    DataSourceSignal signal;
+    GAMDataSource signal;
     return signal.GetNumberOfSamples() == 1;
 }

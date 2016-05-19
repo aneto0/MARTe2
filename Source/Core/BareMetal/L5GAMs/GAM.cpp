@@ -35,8 +35,8 @@
 #include "GAMSignalsContainer.h"
 #include "DataSourceContainer.h"
 #include "AdvancedErrorManagement.h"
-#include "DataSourceBrokerI.h"
-#include "DataSource.h"
+#include <BrokerI.h>
+#include <DataSourceI.h>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

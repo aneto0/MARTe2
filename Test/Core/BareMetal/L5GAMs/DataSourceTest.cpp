@@ -30,10 +30,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "DataSourceTest.h"
+
+#include <GAMDataSource.h>
 #include "ConfigurationDatabase.h"
 #include "GAMTestHelper.h"
 #include "DataSourceContainer.h"
-#include "DataSourceSignal.h"
 #include "GAMGenericSignal.h"
 #include "MemoryMapInputReader.h"
 

@@ -35,7 +35,7 @@
 #include "ConfigurationDatabase.h"
 #include "GAMGenericSignal.h"
 #include "AdvancedErrorManagement.h"
-#include "DataSource.h"
+#include <DataSourceI.h>
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

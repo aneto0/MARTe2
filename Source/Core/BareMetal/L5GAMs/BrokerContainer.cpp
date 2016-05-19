@@ -29,10 +29,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include <DataSourceI.h>
+#include <DataSourceSignal.h>
 #include "BrokerContainer.h"
 #include "GAMSignalI.h"
-#include "DataSourceSignalI.h"
-#include "DataSource.h"
 #include "AdvancedErrorManagement.h"
 #include "GAMGenericSignal.h"
 #include "stdio.h"
@@ -49,7 +49,7 @@ static const uint32 brokersGranularity = 2u;
 /*---------------------------------------------------------------------------*/
 
 BrokerContainer::BrokerContainer() {
-    brokers = NULL_PTR(ReferenceT<DataSourceBrokerI> *);
+    brokers = NULL_PTR(ReferenceT<BrokerI> *);
     numberOfBrokers = 0u;
     synchronized = false;
     application = NULL_PTR(RealTimeApplication *);
@@ -123,13 +123,14 @@ bool BrokerContainer::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
                     //The DataSource nodes are declared just under Data.
                     char8 ignored;
                     pathNoData.GetToken(dataSourcePath, ".", ignored, "");
-                    ReferenceT<DataSource> ds = application->Find(dataSourcePath);
+                    dataSourcePath = "Data." + dataSourcePath;
+                    ReferenceT<DataSource> ds = application->Find(dataSourcePath.Buffer());
                     ret = ds.IsValid();
 
                     if (ret) {
                         // get the new reader
                         // it will insert the variable
-                        ReferenceT<DataSourceBrokerI> newBroker;
+                        ReferenceT<BrokerI> newBroker;
                         if (isInput) {
                             newBroker = ds->GetInputReader(gamSignal, ptr);
                         }
@@ -268,13 +269,13 @@ bool BrokerContainer::Write(const uint8 activeDataSourceBuffer,
     return ret;
 }
 
-bool BrokerContainer::InsertNewBroker(ReferenceT<DataSourceBrokerI> item) {
+bool BrokerContainer::InsertNewBroker(ReferenceT<BrokerI> item) {
     bool ret = item.IsValid();
     if (ret) {
         uint32 brokerIndex = numberOfBrokers;
         if (numberOfBrokers % brokersGranularity == 0u) {
             uint32 newSize = (numberOfBrokers + brokersGranularity);
-            ReferenceT<DataSourceBrokerI> *temp = new ReferenceT<DataSourceBrokerI> [newSize];
+            ReferenceT<BrokerI> *temp = new ReferenceT<BrokerI> [newSize];
             for (uint32 i = 0u; i < numberOfBrokers; i++) {
                 temp[i] = brokers[i];
             }

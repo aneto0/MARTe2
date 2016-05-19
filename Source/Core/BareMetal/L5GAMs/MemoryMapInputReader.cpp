@@ -44,7 +44,7 @@
 namespace MARTe {
 
 MemoryMapInputReader::MemoryMapInputReader() :
-        MemoryMapDataSourceBroker() {
+        MemoryMapBroker() {
 
 }
 
@@ -55,7 +55,7 @@ bool MemoryMapInputReader::Read(const uint8 activeDataSourceBuffer,
     for (uint32 i = 0u; (i < GAMOffsets.GetSize()) && (ret); i++) {
         void ** DSPointer = (DSPointers[activeDataSourceBuffer])[i];
         void * GAMPointer = GAMPointers[i];
-        DataSourceSignalI *dsDef = dataSourcesVars[i];
+        DataSourceSignal *dsDef = dataSourcesVars[i];
         uint32 sampleRows = samplesParamRows[i];
         uint32 **samplesParams = samplesParamList[i];
         uint32 nRows = blockParamRows[i];
@@ -66,7 +66,7 @@ bool MemoryMapInputReader::Read(const uint8 activeDataSourceBuffer,
             bool isTheSyncOne = ((synchronized) && (syncIndex == i));
             uint32 gamPtrIndex = 0u;
             char8* GAMPointerBeg = &(reinterpret_cast<char8*>(GAMPointer))[0];
-            // do how many read operations as the number of cycles
+            // do as many read operations as the number of cycles
             for (uint32 m = 0u; (m < nCycles) && (ret); m++) {
                 if (isTheSyncOne) {
                     ret = dsDef->WaitOnEvent(timeout);

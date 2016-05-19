@@ -30,9 +30,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAMTest.h"
+
+#include <GAMDataSource.h>
+
 #include "GAMTestHelper.h"
 #include "GAMSignalsContainer.h"
-#include "DataSourceSignal.h"
 #include "GAMGenericSignal.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
@@ -249,21 +251,21 @@ bool GAMTest::TestConfigureDataSource() {
     if (!gam->ConfigureDataSource()) {
         return false;
     }
-    ReferenceT<DataSourceSignal> def1 = rtapp->Find("Data.DDB1.PidError1");
+    ReferenceT<GAMDataSource> def1 = rtapp->Find("Data.DDB1.PidError1");
     if (def1->GetNumberOfConsumers("state1") != 1 || def1->GetNumberOfConsumers("state2") != 1) {
 
     }
 
-    ReferenceT<DataSourceSignal> def2 = rtapp->Find("Data.DDB1.PidError2");
+    ReferenceT<GAMDataSource> def2 = rtapp->Find("Data.DDB1.PidError2");
     if (def2->GetNumberOfConsumers("state1") != 1 || def2->GetNumberOfConsumers("state2") != 1) {
 
     }
 
-    ReferenceT<DataSourceSignal> def3 = rtapp->Find("Data.DDB2.PidControl1");
+    ReferenceT<GAMDataSource> def3 = rtapp->Find("Data.DDB2.PidControl1");
     if (def3->GetNumberOfProducers("state1") != 1 || def3->GetNumberOfProducers("state2") != 1) {
 
     }
-    ReferenceT<DataSourceSignal> def4 = rtapp->Find("Data.DDB2.PidControl2");
+    ReferenceT<GAMDataSource> def4 = rtapp->Find("Data.DDB2.PidControl2");
     if (def4->GetNumberOfProducers("state1") != 1 || def4->GetNumberOfProducers("state2") != 1) {
 
     }

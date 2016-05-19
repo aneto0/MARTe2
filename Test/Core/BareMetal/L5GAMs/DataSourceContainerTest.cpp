@@ -30,13 +30,15 @@
 /*---------------------------------------------------------------------------*/
 
 #include "DataSourceContainerTest.h"
+
+#include <DataSourceI.h>
+#include <GAMDataSource.h>
+
 #include "DataSourceTest.h"
 #include "ConfigurationDatabase.h"
 #include "GAMTestHelper.h"
-#include "DataSourceSignal.h"
 #include "GAMGenericSignal.h"
 #include "MemoryMapInputReader.h"
-#include "DataSource.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -406,7 +408,7 @@ bool DataSourceContainerTest::TestAddDataDefinition_AlreadyExistentLeaf() {
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<DataSourceSignal> def1 = sourceDefs->Find("DDB1.PidError1");
+    ReferenceT<GAMDataSource> def1 = sourceDefs->Find("DDB1.PidError1");
     if (def1->GetNumberOfConsumers("state1") != 1 || def1->GetNumberOfProducers("state1") != 1) {
         printf("\n%d %d\n", def1->GetNumberOfConsumers("state1"), def1->GetNumberOfProducers("state1"));
         return false;
@@ -418,7 +420,7 @@ bool DataSourceContainerTest::TestAddDataDefinition_AlreadyExistentLeaf() {
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<DataSourceSignal> def2 = sourceDefs->Find("DDB1.PidError2");
+    ReferenceT<GAMDataSource> def2 = sourceDefs->Find("DDB1.PidError2");
     if (def2->GetNumberOfConsumers("state1") != 1 || def2->GetNumberOfProducers("state1") != 1) {
         return false;
     }
@@ -427,7 +429,7 @@ bool DataSourceContainerTest::TestAddDataDefinition_AlreadyExistentLeaf() {
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<DataSourceSignal> def3 = sourceDefs->Find("DDB2.PidControl1");
+    ReferenceT<GAMDataSource> def3 = sourceDefs->Find("DDB2.PidControl1");
     if (def3->GetNumberOfConsumers("state1") != 1 || def3->GetNumberOfProducers("state1") != 1) {
         return false;
     }
@@ -436,7 +438,7 @@ bool DataSourceContainerTest::TestAddDataDefinition_AlreadyExistentLeaf() {
     }
 
     // each definition must have one producer and one consumer
-    ReferenceT<DataSourceSignal> def4 = sourceDefs->Find("DDB2.PidControl2");
+    ReferenceT<GAMDataSource> def4 = sourceDefs->Find("DDB2.PidControl2");
     if (def4->GetNumberOfConsumers("state1") != 1 || def4->GetNumberOfProducers("state1") != 1) {
         return false;
     }
