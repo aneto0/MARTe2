@@ -140,6 +140,12 @@ public:
     virtual bool Write(const uint8 activeDataSourceBuffer,
                        const TimeoutType &timeout = TTInfiniteWait)=0;
 
+    uint32 GetNumberOfSamplesBlocks(uint32 gamSignalIndex);
+
+    uint32 GetNumberOfIndexBlocks(uint32 gamSignalIndex);
+
+    uint32 GetSignalIndexOfFirstStructureMember(uint32 gamSignalIndex);
+
 private:
     /**
      * @brief Links a GAM signal with a data source signal.
@@ -179,9 +185,9 @@ private:
     StaticList<uint32> nSamplesBlocksPerSignal;
 
     /**
-     * The number of indexing blocks defined for each GAMSignalI
+     * The number of index blocks defined for each GAMSignalI
      */
-    StaticList<uint32> nIndexingBlocksPerSignal;
+    StaticList<uint32> nIndexBlocksPerSignal;
 
     /**
      * Offset of a member inside a signal structure.
@@ -189,10 +195,30 @@ private:
     StaticList<uint32> structuredSignalOffset;
 
     /**
-     * Unique indexes of each signal. Note that in the case of structures the same signal
-     * can add several members.
+     * The signal index (in this BrokerI instance) of the first structure member of a GAMSignalI.
+     * Note that in the case of structures the same GAMSignalI can add several members.
      */
-    StaticList<uint32> uniqueSignalIndex;
+    StaticList<uint32> signalIndexOfFirstStructureMember;
+
+    /**
+     * Stores the element sub-blocks indexes
+     */
+    StaticList<uint32**> indexBlocksList;
+
+    /**
+     * Stores the samples blocks indexes
+     */
+    StaticList<uint32**> samplesBlocksList;
+
+    /**
+     * Stores the number of cycles that a given GAMSignalI wants to read from a DataSourceSignal
+     */
+    StaticList<uint32> nCyclesPerGAMSignalList;
+
+    /**
+     * Stores the total number of samples per cycle (i.e. the sum of all nIndexBlocksPerSignal * indexBlocksList) that a given GAMSignalI wants to read from a DataSourceSignal.
+     */
+    StaticList<uint32> nSamplesPerGAMSignalList;
 
     /**
      * Pointers to the begin of the GAM memory area where signal data is stored.
