@@ -134,7 +134,7 @@ public:
      * @brief Provides access to the object referenced by this Reference.
      * @return a pointer to the object referenced by this Reference.
      */
-    inline  T* operator->();
+    virtual T* operator->();
 
     /**
      * @brief Creates an object from a structured list of elements.
@@ -212,7 +212,7 @@ ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
 }
 
 template<typename T>
-inline T* ReferenceT<T>::operator->() {
+T* ReferenceT<T>::operator->() {
     return typeTObjectPointer;
 }
 
