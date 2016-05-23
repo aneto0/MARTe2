@@ -50,10 +50,15 @@ TEST(ClassRegistryItemGTest,TestIntrospectionCostructor) {
     ASSERT_TRUE(myClassRegistryItemTest.TestIntrospectionConstructor());
 }
 
-TEST(ClassRegistryItemGTest,TestDestructor) {
+TEST(ClassRegistryItemGTest,TestFullConstructor) {
     ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestDestructor());
+    ASSERT_TRUE(myClassRegistryItemTest.TestFullConstructor());
 }
+
+//TEST(ClassRegistryItemGTest,TestDestructor) {
+//    ClassRegistryItemTest myClassRegistryItemTest;
+//    ASSERT_TRUE(myClassRegistryItemTest.TestDestructor());
+//}
 
 TEST(ClassRegistryItemGTest,TestIncrementNumberOfInstances) {
     ClassRegistryItemTest myClassRegistryItemTest;

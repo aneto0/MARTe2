@@ -63,11 +63,11 @@ public:
      */
     bool TestFullConstructor();
 
-    /**
-     * @brief Tests destructor.
-     * @return true if the class is deleted from the database.
-     */
-    bool TestDestructor();
+//    /**
+//     * @brief Tests destructor.
+//     * @return true if the class is deleted from the database.
+//     */
+//    bool TestDestructor();
 
     /**
      * @brief Tests ClassRegistryItem::IncrementNumberOfInstances.

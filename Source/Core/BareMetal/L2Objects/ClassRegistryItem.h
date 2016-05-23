@@ -207,13 +207,13 @@ private:
 template <class T>
 class DLL_API ClassRegistryItemT: public ClassRegistryItem{
 
-public:
 
     /**
      * TODO
      */
     ClassRegistryItemT( ClassProperties &classProperties_in): ClassRegistryItem(classProperties_in){}
 
+public:
     /**
      * @brief Singleton access to the database.
      * @return a reference to the database.
