@@ -1,8 +1,8 @@
 /**
  * @file MemoryArea.cpp
  * @brief Source file for class MemoryArea
- * @date 23/feb/2016
- * @author pc
+ * @date 23/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
