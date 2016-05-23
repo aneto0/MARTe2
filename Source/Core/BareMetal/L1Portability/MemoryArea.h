@@ -39,7 +39,8 @@
 namespace MARTe {
 
 /**
- * @brief Memory allocated area
+ * @brief Memory allocated area that behaves similarly to a StaticList with variable elements size.
+ * @detail The MemoryArea class facilitates the automatic management (allocation and freeing) of chunks of memory.
  */
 class DLL_API MemoryArea {
 
@@ -48,7 +49,7 @@ public:
      * @brief Constructor
      * @post
      *   GetMemoryStart() == NULL &&
-     *   GetMemorySize() == 0;
+     *   GetMemorySize() == 0
      */
     MemoryArea();
 
@@ -56,9 +57,24 @@ public:
      * @brief Destructor. Frees the memory.
      * @post
      *   GetMemoryStart() == NULL &&
-     *   GetMemorySize() == 0;
+     *   GetMemorySize() == 0
      */
     ~MemoryArea();
+
+    /**
+     * @brief Initialises the memory area with a specific pre-allocated memory in input.
+     * @param[in] initialMemory is the pointer a pre-allocated memory to be set
+     * @param[in] initialSize is the size of \a initialMemory
+     * @warning The memory pointed by \a initialMemory is not copied but only wrapped. Functions like
+     * MemoryArea::Add(*) and MemoryArea::Free(*) can deallocate \a initialMemory. As a consequence
+     * make sure that \a initialMemory is not used outside the scope of MemoryArea.
+     * @return true if the memory area is empty, false if it is already initialised.
+     * @pre
+     *   GetMemoryStart() == NULL &&
+     *   GetMemorySize() == 0
+     */
+    bool InitMemory(void * const initialMemory, const uint32 initialSize);
+
 
     /**
      * @brief Frees all the allocated memory.
@@ -70,26 +86,34 @@ public:
      * @param[in] heapName is the name of the heap where the memory has to be
      * allocated.
      */
-    void SetHeapName(const char8 * heapName);
+    void SetHeapName(const char8 * const name);
 
     /**
-     * @brief Copies a chunk on memory in this memory area.
-     * @param[in] element points to the memory which must be copied.
-     * @param[in] memorySize is the size of the element in bytes.
-     * @param[out] offset is the index of the allocated memory chunk with respect
-     * to the begin of this memory area.
-     * @return true if the memory will be allocated without errors, false otherwise.
+     * @brief Creates a chunk of memory into this memory area and copies existing memory.
+     * @param[in] source pointer to the memory which must be copied.
+     * @param[in] memorySize is the size of the \a source in bytes.
+     * @param[out] offset is the distance in bytes of the beginning of the
+     * allocated memory chunk with respect to the begin of this memory area.
+     * @return true if the memory is allocated without errors, false otherwise.
+     * @pre
+     *    Add(memorySize, offset) == true
+     * @post
+     *    GetMemorySize() = GetMemorySize()' + memorySize &&
+     *    offset = GetMemorySize()'
      */
-    bool Add(const void * const element,
+    bool Add(const void * const source,
              const uint32 memorySize,
-             uint32 &offsetconst);
+             uint32 &offset);
 
     /**
      * @brief Creates a chunk on memory in this memory area.
      * @param[in] memorySize is the size to be allocated in bytes.
-     * @param[out] offset is the index of the allocated memory chunk with respect
-     * to the begin of this memory area.
-     * @return true if the memory will be allocated without errors, false otherwise.
+     * @param[out] offset is the distance in bytes of the beginning of the
+     * allocated memory chunk with respect to the begin of this memory area.
+     * @return true if the memory is allocated without errors, false otherwise.
+     * @post
+     *    GetMemorySize() = GetMemorySize()' + memorySize &&
+     *    offset = GetMemorySize()'
      */
     bool Add(const uint32 memorySize,
              uint32 &offset);
@@ -109,11 +133,11 @@ public:
     /**
      * @brief Retrieves the pointer to the memory allocated
      * in a specific position.
-     * @param[in] offset is the offset of the required memory with respect
+     * @param[in] offset is the distance in byte of the required memory with respect
      * the begin of the memory area.
      * return &GetMemoryStart()[offset]
      */
-    void* GetPointer(const uint32 offset);
+    void *GetPointer(const uint32 offset);
 
 private:
 
@@ -122,6 +146,9 @@ private:
      */
     void* memory;
 
+    /**
+     * The name of the heap where the memory managed by this area belongs to.
+     */
     char8 * heapName;
 
     /**
