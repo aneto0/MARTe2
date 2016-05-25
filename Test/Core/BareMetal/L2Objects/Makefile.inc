@@ -26,9 +26,12 @@
 
 
 OBJSX=  AnyTypeTest.x\
+		ClassMethodInterfaceMapperTest.x \
+		ClassMethodsRegistryItemTest.x \
 		ClassPropertiesTest.x \
 		ClassRegistryDatabaseTest.x \
 		ClassRegistryItemTest.x \
+		ClassWithCallableMethods.x \
 		IntrospectionEntryTest.x\
 		IntrospectionTest.x \
 		ObjectTest.x \

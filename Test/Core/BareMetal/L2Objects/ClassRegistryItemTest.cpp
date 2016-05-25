@@ -37,6 +37,9 @@
 #include "Introspection.h"
 #include "Object.h"
 #include <typeinfo>
+#include "ReferenceContainer.h"
+#include "ClassWithCallableMethods.h"
+#include "ReturnType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -353,6 +356,17 @@ bool ClassRegistryItemTest::TestGetObjectBuildFunction() {
 bool ClassRegistryItemTest::TestGetIntrospection() {
 
     return myItemIntro.GetIntrospection() == &introspectionTest;
+}
+
+bool ClassRegistryItemTest::TestCallRegisteredMethod() {
+    bool result = false;
+    ClassRegistryItem target = myItem;
+    ReferenceContainer params;
+    ClassWithCallableMethods context;
+    ReturnType status;
+    status = target.CallRegisteredMethod(&context, "MethodX", params);
+    result = status;
+    return result;
 }
 
 bool ClassRegistryItemTest::TestSetUniqueIdentifier(uint32 uid) {

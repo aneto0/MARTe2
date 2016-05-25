@@ -130,6 +130,11 @@ public:
     bool TestGetIntrospection();
 
     /**
+     * TODO
+     */
+    bool TestCallRegisteredMethod();
+
+    /**
      * @brief Tests the ClassRegistryItem::SetUniqueIdentifier function.
      * @param uniqueIdentifier the unique identifier value to test.
      * @return true if after calling ClassRegistryItem::SetUniqueIdentifier(\a uniqueIdentifier),

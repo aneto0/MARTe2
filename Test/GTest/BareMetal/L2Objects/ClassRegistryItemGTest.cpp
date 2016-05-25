@@ -100,6 +100,11 @@ TEST(ClassRegistryItemGTest,TestGetIntrospection) {
     ASSERT_TRUE(myClassRegistryItemTest.TestGetIntrospection());
 }
 
+TEST(ClassRegistryItemGTest,TestCallRegisteredMethod) {
+    ClassRegistryItemTest myClassRegistryItemTest;
+    ASSERT_TRUE(myClassRegistryItemTest.TestCallRegisteredMethod());
+}
+
 TEST(ClassRegistryItemGTest,TestSetUniqueIdentifier) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestSetUniqueIdentifier(0xfffff1));
