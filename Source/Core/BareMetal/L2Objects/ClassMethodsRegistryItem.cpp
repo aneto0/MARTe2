@@ -58,11 +58,10 @@ int ClassMethodsRegistryItem::Find(const char8 *name){
 
 
         //Skipping of Class::
-        do {
-        while ((*names !=':') && (*names !=0)){
-            names++;
-        }
-        } while ((*names != ':') && (*names != 0)) ;
+       	while ((*names !=':') && (*names !=0)){
+		names++;
+       	}
+        if (*names == ':') names++;
         if (*names == ':') names++;
 
 

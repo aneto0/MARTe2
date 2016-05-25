@@ -67,7 +67,7 @@
     /*                                                                                                                 \
      * TODO                                                                                                            \
      */                                                                                                                \
-    static ClassProperties classProperties;                                                                            \
+    static MARTe::ClassProperties classProperties;                                                                            \
     /*                                                                                                                 \
      * TODO                                                                                                            \
      */                                                                                                                \
@@ -111,18 +111,18 @@
      * of an application or loading of a loadable library.                                                             \
      * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
      */                                                                                                                \
-    MARTe::ClassProperties className::classProperties( #className , typeid(className).name(), ver, static_cast<uint32>(sizeof(className)));                 \
+    MARTe::ClassProperties className::classProperties( #className , typeid(className).name(), ver, static_cast<MARTe::uint32>(sizeof(className)));                 \
                                                                                                                        \
     /* The next line, i.e. the instantiation of a static ClassRegistryItem                                            \
      * is necessary because it creates an instance of ClassRegistryItem and                                            \
      * registers it into the ClassRegistryDatabase.                                                                    \
      */                                                                                                                \
-    static MARTe::ClassRegistryItem* className ## _privateItem = ClassRegistryItemT<className>::Instance();            \
+    static MARTe::ClassRegistryItem* className ## _privateItem = MARTe::ClassRegistryItemT<className>::Instance();            \
                                                                                                                        \
     /*  TODO                                                                                                           \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                              \
-        return ClassRegistryItemT<className>::Instance();                                                              \
+        return MARTe::ClassRegistryItemT<className>::Instance();                                                              \
     }                                                                                                                  \
     /*  TODO                                                                                                           \
      */                                                                                                                \
@@ -135,9 +135,9 @@
     void * className::operator new(const size_t size, MARTe::HeapI* const heap) {                                      \
         void *obj = NULL_PTR(void *);                                                                                  \
         if (heap != NULL) {                                                                                            \
-            obj = heap->Malloc(static_cast<uint32>(size));                                                             \
+            obj = heap->Malloc(static_cast<MARTe::uint32>(size));                                                             \
         } else {                                                                                                       \
-            obj = MARTe::HeapManager::Malloc(static_cast<uint32>(size));                                               \
+            obj = MARTe::HeapManager::Malloc(static_cast<MARTe::uint32>(size));                                               \
         }                                                                                                              \
         GetClassRegistryItem_Static()->IncrementNumberOfInstances();                                                   \
         return obj;                                                                                                    \

@@ -1,8 +1,8 @@
 /**
  * @file ClassMethodInterfaceMapper.h
  * @brief Header file for class ClassMethodInterfaceMapper
- * @date Apr 11, 2016
- * @author fsartori
+ * @date 11/04/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ReturnType.h"
+#include "Object.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -129,7 +130,11 @@ public:
     /**
      * TODO
      * */
-    virtual ~ClassMethodInterfaceMapper(){};
+    virtual ~ClassMethodInterfaceMapper(){
+        if (caller != NULL) {
+            delete caller;
+        }
+    };
 
 protected:
 

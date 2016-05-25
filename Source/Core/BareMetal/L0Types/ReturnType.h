@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "CompilerTypes.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -78,58 +79,58 @@ public:
             /**
              * Initialization error
              */
-            bool notInitialisationError;
+            bool notInitialisationError:1;
 
             /**
              * TODO
              * Error due to an operating system error
              */
-            bool notOSError;
+            bool notOSError:1;
             /**
              * TODO
              * Parameters error
              * Specific to RPC applications: call parameters incompatibilities for the desired function (notPrototypeMismatch)
              */
-            bool notParametersError;
+            bool notParametersError:1;
             /**
              * Illegal operation
              */
-            bool notIllegalOperation;
+            bool notIllegalOperation:1;
             /**
              * Sharing error
              */
-            bool notErrorSharing;
+            bool notErrorSharing:1;
             /**
              * Access denied
              */
-            bool notErrorAccessDenied;
+            bool notErrorAccessDenied:1;
             /**
              * Exception
              */
-            bool notException;
+            bool notException:1;
             /**
              * Timeout occurred
              */
-            bool notTimeout; //9
+            bool notTimeout:1; //9
             /**
              * Error during communication
              */
-            bool notCommunicationError;
+            bool notCommunicationError:1;
             /**
              * Syntax error
              */
-            bool notSyntaxError;
+            bool notSyntaxError:1;
 
             /**
              * Specific to RPC applications: the desired function was not found (notMethodNotFound)
              * Unsupported feature
              */
-            bool notUnsupportedFeature;
+            bool notUnsupportedFeature:1;
 
             /**
              * unexpected inconsistencies in the internal setup of a system/object
              */
-            bool notInternalSetupError;
+            bool notInternalSetupError:1;
 
             /**
              * TODO

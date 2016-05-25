@@ -175,8 +175,13 @@ public:
 ReturnType ClassRegistryItem::CallRegisteredMethod(Object *object,CCString methodName,ReferenceContainer & parameters){
     ReturnType ret(true);
 
-    if (object != NULL_PTR(Object*))       ret.error.notParametersError = false;
-    if (methodName.GetList() != NULL_PTR(char8*))    ret.error.notParametersError = false;
+    if (object == NULL_PTR(Object*)) {
+        ret.error.notParametersError = false;
+    }
+
+    if (methodName.GetList() == NULL_PTR(char8*)) {
+        ret.error.notParametersError = false;
+    }
 
     if (ret.AllOk()){
         CallRegisteredMethodLauncher launcher(object,methodName,parameters);

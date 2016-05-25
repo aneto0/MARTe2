@@ -82,7 +82,7 @@ SearchFilterT<T>::~SearchFilterT() {
 
 template<typename T>
 bool SearchFilterT<T>::Test(LinkedListable *data) {
-	bool ret;
+	bool ret = true;
 	T* target = dynamic_cast<T*>(data);
 	if (target == NULL_PTR(T*)) {
 		ret = false;
