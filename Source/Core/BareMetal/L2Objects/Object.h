@@ -37,6 +37,7 @@
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
 #include "StructuredDataI.h"
+#include "FastPollingMutexSem.h"
 #include "AnyType.h"
 #include "MessageI.h"
 
@@ -407,6 +408,8 @@ private:
      */
     char8 *name;
 
+
+    FastPollingMutexSem refMux;
 
     bool isDomain;
 };

@@ -30,17 +30,13 @@
 /*---------------------------------------------------------------------------*/
 #include "ClassRegistryDatabase.h"
 #include "ClassRegistryItem.h"
-#include "FastPollingMutexSem.h"
 #include "ErrorManagement.h"
 
 namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-/*lint -e{9141} global declaration but only used to support the class implementation.
- * The symbol is not exported (static). This could also be replaced by an anonymous namespace.
- */
-static FastPollingMutexSem classRegistryItemMuxSem;
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

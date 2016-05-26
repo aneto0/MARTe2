@@ -37,6 +37,7 @@
 #include "ClassProperties.h"
 #include "FractionalInteger.h"
 #include "Introspection.h"
+#include "FastPollingMutexSem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -196,6 +197,9 @@ private:
     /*lint -e{1704} the default constructor is not to be used.
      * Each ClassRegistryItem is automatically constructed (using the public constructor) by the Object macros*/
     ClassRegistryItem();
+
+
+    FastPollingMutexSem classRegistryItemMuxSem;
 };
 
 }

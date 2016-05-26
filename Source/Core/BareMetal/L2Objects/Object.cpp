@@ -29,13 +29,14 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "Object.h"
-#include "FastPollingMutexSem.h"
 #include "StringHelper.h"
 #include "HeapI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+
 namespace MARTe {
 
 static bool ConvertToStructuredData(void* ptr,
@@ -236,11 +237,6 @@ Object::~Object() {
     }
 }
 
-/*lint -e{9141} global declaration but only used to support the class implementation.
- * The symbol is not exported (static). This could also be replaced by an anonymous namespace.
- */
-static FastPollingMutexSem refMux;
-
 uint32 Object::DecrementReferences() {
     uint32 ret = 0u;
     if (refMux.FastLock() == ErrorManagement::NoError) {
@@ -255,6 +251,7 @@ uint32 Object::DecrementReferences() {
 }
 
 void Object::IncrementReferences() {
+    static int32 ledidx=0;
     if (refMux.FastLock() == ErrorManagement::NoError) {
         ++referenceCounter;
     }
