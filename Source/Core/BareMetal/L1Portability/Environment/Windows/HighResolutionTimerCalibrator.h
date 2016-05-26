@@ -28,8 +28,7 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <Windows.h>
-#include <time.h>
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -69,7 +68,7 @@ public:
      * @brief Returns the calibrated CPU frequency.
      * @return the calibrated CPU frequency.
      */
-    int64 GetFrequency() const;
+    uint64 GetFrequency() const;
 
     /**
      * @brief Returns the calibrated CPU period.
@@ -82,7 +81,7 @@ private:
     /**
      * Number of cpu ticks in a second.
      */
-    int64 frequency;
+    uint64 frequency;
 
     /**
      * Time between a tick and the other in seconds.
@@ -90,9 +89,14 @@ private:
     float64 period;
 
     /**
-     * Stores the time (counting from the epoch) at which a framework instance was executed.
+     * Stores the seconds (counting from the epoch) at which a framework instance was executed.
      */
-    struct timeval initialTime;
+    oslong initialSecs;
+
+    /**
+     * Stores the microseconds (counting from the epoch) at which a framework instance was executed.
+     */
+    oslong initialUSecs;
 
     /**
      * Number of elapsed ticks at the time at which a framework instance was executed.

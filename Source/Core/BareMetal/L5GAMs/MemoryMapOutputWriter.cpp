@@ -33,6 +33,8 @@
 
 #include "MemoryMapOutputWriter.h"
 #include "stdio.h"
+#include "AdvancedErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -85,7 +87,8 @@ bool MemoryMapOutputWriter::Write(const uint8 activeDataSourceBuffer,
                             for (uint32 k = 0u; (k < nRows) && (ret); k++) {
                                 uint32 beg = blockParams[k][0];
                                 uint32 size = blockParams[k][1];
-                                printf("\nwrite: beg=%d, size=%d, gamPtrIndex=%d, samplePtrIndex=%d\n", beg,size,gamPtrIndex,samplePtrIndex);
+                          //      REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "write: beg=%d, size=%d, gamPtrIndex=%d, of %s", beg, size, gamPtrIndex,
+                           //                             dsDef->GetName())
                                 char8 *DSptr = &(reinterpret_cast<char8*>(*DSPointer)[samplePtrIndex+beg]);
                                 // shift the pointer
                                 GAMPointer = &GAMPointerBeg[gamPtrIndex];

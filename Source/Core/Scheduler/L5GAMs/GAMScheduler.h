@@ -1,8 +1,8 @@
 /**
- * @file HighResolutionTimerCalibrator.h
- * @brief Header file for class HighResolutionTimerCalibrator
- * @date 17/06/2015
- * @author Giuseppe Ferro
+ * @file GAMScheduler.h
+ * @brief Header file for class GAMScheduler
+ * @date 23/03/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HighResolutionTimerCalibrator
+ * @details This header file contains the declaration of the class GAMScheduler
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef HIGHRESOLUTIONTIMERCALIBRATOR_H_
-#define HIGHRESOLUTIONTIMERCALIBRATOR_H_
+#ifndef GAMSCHEDULER_H_
+#define GAMSCHEDULER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,96 +31,73 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "GeneralDefinitions.h"
-#include "TimeStamp.h"
-
+#include "GAMSchedulerI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
-
-
-
+struct RTThreadParam {
+    GAMSchedulerI *scheduler;
+    uint32 activeBuffer;
+    uint32 threadId;
+    volatile int32 *spinLock;
+};
 
 /**
- * @brief A class to get the period and the frequency of the cpu clock depending on the operating system.
+ * @brief The GAM scheduler
  */
-class HighResolutionTimerCalibrator {
+class GAMScheduler: public GAMSchedulerI {
 
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief Estimates the period and the frequency of the cpu clock.
-     * @details The period and frequency of the CPU clock are estimated upon
-     * construction.
-     * In the Linux implementation these values are read from the /proc/cpuinfo file.
-     * The number of elapsed cpu ticks is also stored at this moment.
+     * @brief Constructor
      */
-    HighResolutionTimerCalibrator();
+    GAMScheduler();
 
     /**
-     * @brief Get the current time stamp.
-     * @param[in] timeStamp is a structure which contains the time stamp fields.
-     * @return true if the time can be successfully retrieved from the operating system.
+     * @brief Destructor
      */
-    bool GetTimeStamp(TimeStamp &timeStamp) const;
+    virtual ~GAMScheduler();
 
     /**
-     * @brief Returns the calibrated CPU frequency.
-     * @return the calibrated CPU frequency.
+     * @brief Starts the multi-thread execution for the current state.
      */
-    uint64 GetFrequency() const;
+    virtual void StartExecution(const uint32 activeBuffer);
 
     /**
-     * @brief Returns the calibrated CPU period.
-     * @return the calibrated CPU period.
+     * @brief Stops the execution.
      */
-    float64 GetPeriod() const;
-
-
-
-    uint64 Counter();
-
-
-    uint32 Counter32();
+    virtual void StopExecution();
 
 private:
 
     /**
-     * Number of cpu ticks in a second
+     * The array of identifiers of the thread in execution.
      */
-    uint64 frequency;
+    ThreadIdentifier *tid;
 
     /**
-     * Time between two ticks in seconds
+     * The number of thread in execution.
      */
-    float64 period;
+    uint32 numberOfThreads;
+
+    /**
+     * Synchronization spin-lock
+     */
+    volatile int32 spinLock;
+
+    RTThreadParam *param;
 };
 
-
-extern HighResolutionTimerCalibrator calibratedHighResolutionTimer;
-namespace HighResolutionTimer {
-
-inline uint32 Counter32() {
-    return calibratedHighResolutionTimer.Counter32();
 }
-
-inline uint64 Counter() {
-    return calibratedHighResolutionTimer.Counter();
-}
-
-}
-
-
-
-}
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* HIGHRESOLUTIONTIMERCALIBRATOR_H_ */
+#endif /* SOURCE_CORE_SCHEDULER_L5GAMS_GAMSCHEDULER_H_ */
+

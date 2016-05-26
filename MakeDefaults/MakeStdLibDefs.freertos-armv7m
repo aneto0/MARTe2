@@ -54,12 +54,12 @@ OBJDUMP = arm-none-eabi-objdump
 NM = arm-none-eabi-nm
 MAKE     = make
 
-FREE_RTOS_DIRECTORY=$(FREE_RTOS_STM)
-PORT_MACRO_H_DIRECTORY=$(FREE_RTOS_STM)/Source/portable/GCC/ARM_CM4F
 DEBUG = -g 
 OPTIM = -Os
-FREE_RTOS_DIRECTORY=/home/pc/STM32Cube_FW_F4_V1.5.0/Middlewares/Third_Party/FreeRTOS
-PORT_MACRO_H_DIRECTORY=/home/pc/STM32Cube_FW_F4_V1.5.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
+FREE_RTOS_DIRECTORY=$(STMDIR)/Middlewares/Third_Party/FreeRTOS
+PORT_MACRO_H_DIRECTORY=$(STMDIR)/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
+#FREE_RTOS_DIRECTORY=/home/pc/STM32Cube_FW_F4_V1.5.0/Middlewares/Third_Party/FreeRTOS
+#PORT_MACRO_H_DIRECTORY=/home/pc/STM32Cube_FW_F4_V1.5.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
 
 INCLUDES=-I$(FREE_RTOS_DIRECTORY)/Source/include -I$(PORT_MACRO_H_DIRECTORY) 
 LINKER = arm-none-eabi-ld
@@ -70,8 +70,8 @@ CFLAGS =-MD -MP -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-en
 #-ffreestanding -std=gnu99 -z muldefs -fno-builtin
 CPPFLAGS = $(CFLAGS) 
 
-CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_FREERTOS -DINCLUDE_eTaskGetState=1 -DINCLUDE_pcTaskGetTaskName=1 -DUSE_THREADS_DATABASE 
-
+CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_FREERTOS   
+#-DINCLUDE_eTaskGetState=1 -DINCLUDE_pcTaskGetTaskName=1 -DUSE_THREADS_DATABASE
 LIBRARIES =  -lnosys -lm -lgcc -lc
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 

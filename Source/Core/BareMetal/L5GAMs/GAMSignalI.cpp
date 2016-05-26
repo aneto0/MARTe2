@@ -121,9 +121,6 @@ uint32 GAMSignalI::GetNumberOfElements(const uint32 dimension) const {
 }
 
 void GAMSignalI::SetPath(const char8 * const newPath) {
-    if (path != "") {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "Path already set to %s", path.Buffer())
-    }
     path = newPath;
 }
 

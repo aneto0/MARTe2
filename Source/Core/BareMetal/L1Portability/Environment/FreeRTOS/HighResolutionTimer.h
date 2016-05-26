@@ -52,7 +52,7 @@ extern HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 namespace HighResolutionTimer {
 
 
-inline int64 Frequency() {
+inline uint64 Frequency() {
     return calibratedHighResolutionTimer.GetFrequency();
 }
 
@@ -60,9 +60,9 @@ inline float64 Period() {
     return calibratedHighResolutionTimer.GetPeriod();
 }
 
-inline float64 TicksToTime(const int64 tStop,
-                           const int64 tStart) {
-    int64 dT = tStop - tStart;
+inline float64 TicksToTime(const uint64 tStop,
+                           const uint64 tStart) {
+    uint64 dT = tStop - tStart;
     return static_cast<float64>(dT) * Period();
 }
 

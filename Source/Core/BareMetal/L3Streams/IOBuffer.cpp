@@ -329,7 +329,7 @@ static bool PrintObjectIntrospection(IOBuffer & iobuff,
         if (properties != NULL) {
             data = properties->GetName();
             AnyType printClassName[] = {data, "= {", voidAnyType};
-            if (iobuff.PrintFormatted("\n%s %s\n", &printClassName[0])) {
+            if (iobuff.PrintFormatted("\r\n%s %s\r\n", &printClassName[0])) {
                 const Introspection *introspection = item->GetIntrospection();
                 if (introspection != NULL) {
                     ret = true;
@@ -338,33 +338,33 @@ static bool PrintObjectIntrospection(IOBuffer & iobuff,
                         IntrospectionEntry memberIntrospection = (*introspection)[i];
                         data = memberIntrospection.GetMemberName();
                         AnyType printMemberName[] = {data, "= {", voidAnyType};
-                        if (!iobuff.PrintFormatted("    %s %s\n", &printMemberName[0])) {
+                        if (!iobuff.PrintFormatted("    %s %s\r\n", &printMemberName[0])) {
                             ret = false;
                         }
                         if (ret) {
                             data = memberIntrospection.GetMemberTypeName();
                             AnyType printType[] = {"type =", data, voidAnyType};
-                            if (!iobuff.PrintFormatted("        %s %s\n", &printType[0])) {
+                            if (!iobuff.PrintFormatted("        %s %s\r\n", &printType[0])) {
                                 ret = false;
                             }
                         }
                         if (ret) {
                             data = memberIntrospection.GetMemberModifiers();
                             AnyType printModifiers[] = {"modifiers =", data, voidAnyType};
-                            if (!iobuff.PrintFormatted("        %s \"%s\"\n", &printModifiers[0])) {
+                            if (!iobuff.PrintFormatted("        %s \"%s\"\r\n", &printModifiers[0])) {
                                 ret = false;
                             }
                         }
                         if (ret) {
                             data = memberIntrospection.GetMemberAttributes();
                             AnyType printAttributes[] = {"attributes =", data, voidAnyType};
-                            if (!iobuff.PrintFormatted("        %s \"%s\"\n    }\n", &printAttributes[0])) {
+                            if (!iobuff.PrintFormatted("        %s \"%s\"\r\n    }\r\n", &printAttributes[0])) {
                                 ret = false;
                             }
                         }
                     }
                     AnyType printClose[] = {"}", voidAnyType};
-                    if (!iobuff.PrintFormatted("%s\n", &printClose[0])) {
+                    if (!iobuff.PrintFormatted("%s\r\n", &printClose[0])) {
                         ret = false;
                     }
                 }
@@ -401,7 +401,7 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
             ret= (iobuff.PrintFormatted("%s %s", &printLeftSide[0]));
             if(ret) {
                 AnyType printLeaf[] = {toPrint, voidAnyType};
-                ret= (iobuff.PrintFormatted("%#!\n", &printLeaf[0]));
+                ret= (iobuff.PrintFormatted("%#!\r\n", &printLeaf[0]));
             }
         }
         else {
@@ -409,12 +409,12 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
             if (structuredData->MoveRelative(childName)) {
 
                 AnyType printLeftSide[] = {childName, "= {", voidAnyType};
-                ret= (iobuff.PrintFormatted("%s %s\n", &printLeftSide[0]));
+                ret= (iobuff.PrintFormatted("%s %s\r\n", &printLeftSide[0]));
                 if(ret) {
                     ret = PrintStructuredDataInterface(iobuff, structuredData);
                     ret= (structuredData->MoveToAncestor(1u));
                     AnyType printClose[] = {"}", voidAnyType};
-                    ret= (iobuff.PrintFormatted("%s\n", &printClose[0]));
+                    ret= (iobuff.PrintFormatted("%s\r\n", &printClose[0]));
                 }
 
             }
@@ -448,7 +448,7 @@ static bool PrintObject(IOBuffer & iobuff,
         if (properties != NULL) {
             data = properties->GetName();
             AnyType printClassName[] = {"Class =", data, voidAnyType};
-            if (iobuff.PrintFormatted("\n%s %s\n", &printClassName[0])) {
+            if (iobuff.PrintFormatted("\r\n%s %s\r\n", &printClassName[0])) {
                 const Introspection *introspection = item->GetIntrospection();
                 if (introspection != NULL) {
                     ret = true;
@@ -468,7 +468,7 @@ static bool PrintObject(IOBuffer & iobuff,
                             bool isMemberStructured = memberDescriptor.isStructuredData;
                             if (isMemberStructured) {
                                 AnyType printOpen[] = {"{", voidAnyType};
-                                if (!iobuff.PrintFormatted("%s\n", &printOpen[0])) {
+                                if (!iobuff.PrintFormatted("%s\r\n", &printOpen[0])) {
                                     ret = false;
                                 }
                             }
@@ -491,11 +491,11 @@ static bool PrintObject(IOBuffer & iobuff,
                                     member.SetNumberOfElements(j, memberIntrospection.GetNumberOfElements(j));
                                 }
                                 member.SetNumberOfDimensions(memberIntrospection.GetNumberOfDimensions());
-                                ret = iobuff.PrintFormatted("%!\n", &member);
+                                ret = iobuff.PrintFormatted("%!\r\n", &member);
                             }
                             if (isMemberStructured) {
                                 AnyType printClose[] = {"}", voidAnyType};
-                                if (!iobuff.PrintFormatted("%s\n", &printClose[0])) {
+                                if (!iobuff.PrintFormatted("%s\r\n", &printClose[0])) {
                                     ret = false;
                                 }
                             }
@@ -1280,8 +1280,9 @@ void IOBuffer::SetBufferReferencedMemory(char8 * const buffer,
 void IOBuffer::SetBufferReadOnlyReferencedMemory(const char8 * const buffer,
                                                  const uint32 bufferSize,
                                                  const uint32 reservedSpaceAtEnd) {
+
     internalBuffer.SetBufferReference(buffer, bufferSize);
-    positionPtr = BufferReference();
+    positionPtr = const_cast<char8*>(Buffer());
     maxUsableAmount = GetBufferSize() - reservedSpaceAtEnd;
     Empty();
 }

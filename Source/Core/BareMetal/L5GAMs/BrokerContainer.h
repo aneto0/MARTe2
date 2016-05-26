@@ -75,6 +75,10 @@ public:
 
     virtual uint32 GetSignalNumberOfSamples(const uint32 n);
 
+
+    virtual uint32 GetSignalSize(const uint32 n);
+
+
     virtual uint32 GetNumberOfSignals();
 
     /**

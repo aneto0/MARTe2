@@ -160,7 +160,9 @@ namespace MARTe {
     static const uint32 EPSILON_FLOAT32 = 0x34000000u;
     static const uint64 EPSILON_FLOAT64 = 0x3CB0000000000000ull;
 
-
+    static float32 FloatAbs(float32 a) {
+        return (a < 0.) ? (-a) : (a);
+    }
 }
 
 #endif /* COMPILERTYPES */

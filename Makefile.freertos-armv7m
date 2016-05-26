@@ -27,7 +27,8 @@
 TARGET=freertos-armv7m
 
 OBJSX=
-SPB    = Source/Core.x GAMs.x /home/pc/Scrivania/RTConferenceProject.x
+SPB    = Source/Core.x GAMs.x $(STM_PROJ_DIR).x
+#/home/pc/Scrivania/ScortecDemo/Scortec/RTConferenceProject
 #Test/Core/BareMetal.x Test/Core/Scheduler.x Test/GTest.x Lib/EmbeddedTestEngine/STM32F4-Discovery.x Test/Core/Scheduler.x Test/Core/FileSystem.x 
 
 

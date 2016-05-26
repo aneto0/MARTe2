@@ -28,26 +28,17 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#ifndef LINT
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/time.h>
-#else
-#include "lint-linux.h"
-#endif
-
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
 #include "../../GeneralDefinitions.h"
-#include "../../TimeStamp.h"
+#include "TimeStamp.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /**
  * @brief A class to get the period and the frequency of the cpu clock depending on the operating system.
@@ -76,7 +67,7 @@ public:
      * @brief Returns the calibrated CPU frequency.
      * @return the calibrated CPU frequency.
      */
-    int64 GetFrequency() const;
+    uint64 GetFrequency() const;
 
     /**
      * @brief Returns the calibrated CPU period.
@@ -89,7 +80,7 @@ private:
     /**
      * Number of cpu ticks in a second
      */
-    int64 frequency;
+    uint64 frequency;
 
     /**
      * Time between two ticks in seconds
@@ -97,9 +88,14 @@ private:
     float64 period;
 
     /**
-     * Stores the time (counting from the epoch) at which a framework instance was executed.
+     * Stores the seconds (counting from the epoch) at which a framework instance was executed.
      */
-    struct timeval initialTime;
+    oslong initialSecs;
+
+    /**
+     * Stores the microseconds (counting from the epoch) at which a framework instance was executed.
+     */
+    oslong initialUSecs;
 
     /**
      * Number of elapsed ticks at the time at which a framework instance was executed.

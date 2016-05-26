@@ -24,9 +24,14 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
 #ifndef LINT
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/time.h>
 #include <math.h>
+#else
+#include "lint-linux.h"
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -36,7 +41,6 @@
 #include "HighResolutionTimerCalibrator.h"
 #include "HighResolutionTimer.h"
 #include "StringHelper.h"
-#include "TimeStamp.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -45,7 +49,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /*lint -e{9141} constant that can be reused by other classes*/
 HighResolutionTimerCalibrator calibratedHighResolutionTimer;
@@ -53,10 +57,15 @@ HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     const size_t LINUX_CPUINFO_BUFFER_SIZE = 1023u;
     initialTicks = HighResolutionTimer::Counter();
-    frequency = 0;
+    frequency = 0u;
     period = 0.;
 
-    int32 ret = gettimeofday(&initialTime, static_cast<struct timezone *>(NULL));
+    struct timeval initTime;
+    int32 ret = gettimeofday(&initTime, static_cast<struct timezone *>(NULL));
+
+    initialSecs = initTime.tv_sec;
+    initialUSecs = initTime.tv_usec;
+
     if (ret == 0) {
         char8 buffer[LINUX_CPUINFO_BUFFER_SIZE + 1u];
         memset(&buffer[0], 0, LINUX_CPUINFO_BUFFER_SIZE + 1u);
@@ -67,7 +76,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
             size = fread(&buffer[0], static_cast<size_t>(size), static_cast<size_t>(1u), f);
             fclose(f);
         }
-        else{
+        else {
             REPORT_ERROR(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fopen()");
         }
 
@@ -81,15 +90,15 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
                 if (freqMHz > 0.) {
                     float64 frequencyF = freqMHz *= 1.0e6;
                     period = 1.0 / frequencyF;
-                    frequency = static_cast<int64>(frequencyF);
+                    frequency = static_cast<uint64>(frequencyF);
                 }
             }
         }
-        else{
+        else {
             REPORT_ERROR(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fread()");
         }
     }
-    else{
+    else {
         REPORT_ERROR(ErrorManagement::OSError, "HighResolutionTimerCalibrator: gettimeofday()");
     }
 }
@@ -103,11 +112,10 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {
     float64 uSecondsFromStart = (secondsFromStart - floor(secondsFromStart)) * 1e6;
 
     //Add HRT to the the initial time saved in the calibration.
-    float64 secondsFromEpoch = static_cast<float64>(initialTime.tv_sec) + secondsFromStart;
-    float64 uSecondsFromEpoch = static_cast<float64>(initialTime.tv_usec) + uSecondsFromStart;
+    float64 secondsFromEpoch = static_cast<float64>(initialSecs) + secondsFromStart;
+    float64 uSecondsFromEpoch = static_cast<float64>(initialUSecs) + uSecondsFromStart;
 
-    uint32 microseconds=static_cast<uint32>(uSecondsFromEpoch);
-
+    uint32 microseconds = static_cast<uint32>(uSecondsFromEpoch);
 
     //Check the overflow
     if (microseconds >= 1000000u) {
@@ -120,12 +128,12 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {
     //fill the time structure
     time_t secondsFromEpoch32 = static_cast<time_t>(secondsFromEpoch);
 
-    bool ret=timeStamp.ConvertFromEpoch(secondsFromEpoch32);
+    bool ret = timeStamp.ConvertFromEpoch(secondsFromEpoch32);
 
     return ret;
 }
 
-int64 HighResolutionTimerCalibrator::GetFrequency() const {
+uint64 HighResolutionTimerCalibrator::GetFrequency() const {
     return frequency;
 }
 

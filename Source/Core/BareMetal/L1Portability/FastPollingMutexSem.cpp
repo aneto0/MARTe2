@@ -91,7 +91,7 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msec
         }
 
         if (!noSleep) {
-            //Sleep::Sec(sleepTime);
+           // Sleep::Sec(sleepTime);
         }
     }
     return err;

@@ -138,6 +138,7 @@ public:
     bool Product(Vector<T> factor,
                  T &result) const;
 
+
 private:
 
     /**

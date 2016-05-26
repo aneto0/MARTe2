@@ -38,8 +38,6 @@
 namespace MARTe {
 namespace Threads {
 
-
-
 /**
  * @brief The function called when a thread is created.
  * @details Adds the thread in the database and calls the thread callback function.
@@ -147,8 +145,9 @@ void SetPriority(const ThreadIdentifier &threadId,
                  const PriorityClassType &priorityClass,
                  const uint8 &priorityLevel) {
     uint8 prioLevel = priorityLevel;
-    if (prioLevel > 15u) {
-        prioLevel = 15u;
+    uint8 maxPrio = 15u;
+    if (prioLevel > maxPrio) {
+        prioLevel = maxPrio;
     }
 
     uint32 priorityClassNumber = 0u;
@@ -166,10 +165,11 @@ void SetPriority(const ThreadIdentifier &threadId,
         priorityClassNumber = 3u;
         break;
     }
-    uint32 priorityLevelToAssign = 28u * priorityClassNumber;
-    priorityLevelToAssign += (static_cast<uint32>(prioLevel));
+    uint32 chunk = 25u;
+    uint32 priorityLevelToAssign = chunk * priorityClassNumber;
+    priorityLevelToAssign += ((static_cast<uint32>(prioLevel)) * chunk) / maxPrio;
 
-    UBaseType_t priorityToSet = (priorityLevelToAssign * (configMAX_PRIORITIES - 1)) / priorityLevelToAssign;
+    UBaseType_t priorityToSet = (priorityLevelToAssign * (configMAX_PRIORITIES)) / 100;
     vTaskPrioritySet(threadId, priorityToSet);
 
 #if USE_THREADS_DATABASE
@@ -249,7 +249,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
 #if USE_THREADS_DATABASE
         ThreadInformation *threadInfo = threadInitialisationInterfaceConstructor(function, parameters, name);
         if (threadInfo != static_cast<ThreadInformation *>(NULL)) {
-            portBASE_TYPE ret = xTaskCreate(reinterpret_cast<void (*)(void *)>(SystemThreadFunction), (name==NULL)?("Unknown"):(name), (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), static_cast<void *>(threadInfo), tskIDLE_PRIORITY | portPRIVILEGE_BIT, &threadId);
+            portBASE_TYPE ret = xTaskCreate(reinterpret_cast<void (*)(void *)>(SystemThreadFunction), (name==NULL)?("Unknown"):(name), (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), static_cast<void *>(threadInfo), (tskIDLE_PRIORITY) | portPRIVILEGE_BIT, &threadId);
             bool ok = (ret == pdPASS);
             if (ok) {
                 ok = threadInfo->ThreadPost();
@@ -259,9 +259,12 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
             }
         }
 #else
-        portBASE_TYPE ret = xTaskCreate(reinterpret_cast<void (*)(void *)>(function), (name==NULL)?("Unknown"):(name), (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), const_cast<void *>(parameters), tskIDLE_PRIORITY | portPRIVILEGE_BIT, &threadId);
+        portBASE_TYPE ret = xTaskCreate(reinterpret_cast<void (*)(void *)>(function), (name==NULL)?("Unknown"):(name), (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), const_cast<void *>(parameters), (tskIDLE_PRIORITY) | portPRIVILEGE_BIT, &threadId);
         bool ok = (ret == pdPASS);
-        if (!ok) {
+        if (ok) {
+            SetPriority(threadId, Threads::NormalPriorityClass, 0u);
+        }
+        else {
             threadId = InvalidThreadIdentifier;
         }
 #endif

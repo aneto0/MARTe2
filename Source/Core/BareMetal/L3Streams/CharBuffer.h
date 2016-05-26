@@ -35,7 +35,7 @@
 
 #include "GeneralDefinitions.h"
 #include "BitBoolean.h"
-
+#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -226,11 +226,10 @@ inline const char8 *CharBuffer::Buffer() const {
 }
 
 inline char8 *CharBuffer::BufferReference() const {
-    char8 *retBuffer = buffer;
     if (readOnly) {
-        retBuffer = NULL_PTR(char8 *);
+       // REPORT_ERROR(ErrorManagement::Warning, "The buffer is Read Only");
     }
-    return retBuffer;
+    return buffer;
 }
 
 inline uint32 CharBuffer::Size() const {

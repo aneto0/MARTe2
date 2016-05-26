@@ -79,6 +79,7 @@ public:
      */
     virtual ~DataSourceSignal();
 
+    virtual bool Verify();
 
     /**
      * @see DataSourceSignalI::GetDataSourcePointer(*)
@@ -105,26 +106,6 @@ public:
      * @see DataSourceSignalI::Allocate(*)
      */
     virtual bool Allocate(MemoryArea &dsMemory);
-
-    /**
-     * @see DataSourceSignalI::WriteStart(*)
-     */
-    virtual void WriteStart();
-
-    /**
-     * @see DataSourceSignalI::ReadStart(*)
-     */
-    virtual void ReadStart();
-
-    /**
-     * @see DataSourceSignalI::WriteEnd(*)
-     */
-    virtual void WriteEnd();
-
-    /**
-     * @see DataSourceSignalI::ReadEnd(*)
-     */
-    virtual void ReadEnd();
 
 
     /**
@@ -156,11 +137,6 @@ public:
 
 
     /**
-     * @see DataSourceSignalI::WaitOnEvent(*)
-     */
-    virtual bool WaitOnEvent(const TimeoutType &timeout = TTInfiniteWait);
-
-    /**
      * @see DataSourceSignalI::Configure(*)
      * @details The function returns false if this signal is already initialised with a different
      * type name and a different default value than the one specified in \a gamSignalIn. The function
@@ -169,25 +145,6 @@ public:
      */
     virtual bool Configure(Reference gamSignalIn);
 
-    /**
-     * @see DataSourceSignalI::GetInputReader(*).
-     * @details If compatible with \a defIn, returns a MemoryMapInputReader.
-     */
-    virtual Reference GetInputReader(Reference defIn,
-                                     void * varPtr = NULL_PTR(void*));
-
-    /**
-     * @see DataSourceSignalI::GetOutputWriter(*).
-     * @details If compatible with \a defIn, returns a MemoryMapOutputWriter.
-     */
-    virtual Reference GetOutputWriter(Reference defIn,
-                                      void * varPtr = NULL_PTR(void*));
-
-    /**
-     * @see DataSourceSignalI::IsSupportedBroker(*)
-     * @details returns true if \a testBroker inherits from MemoryMapDataSourceBroker.
-     */
-    virtual bool IsSupportedBroker(DataSourceBrokerI &testBroker);
 
 protected:
 
@@ -211,7 +168,6 @@ protected:
      * Pointers to the buffer to be used.
      */
     void *usedBuffer[2];
-
 
     /**
      * A pointer to the global memory area.

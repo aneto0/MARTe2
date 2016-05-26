@@ -104,6 +104,9 @@ public:
      */
     virtual uint32 GetSignalNumberOfSamples(const uint32 n);
 
+
+    virtual uint32 GetSignalSize(const uint32 n);
+
     /**
      * @see DataSourceBrokerI::Finalise(*)
      */
@@ -223,6 +226,9 @@ protected:
      * Stores the number of samples of each GAM signal
      */
     StaticList<uint32> nSamplesList;
+
+
+    StaticList<uint32> gamSignalSizes;
 
     /**
      * @brief Links a GAM signal with a data source signal.

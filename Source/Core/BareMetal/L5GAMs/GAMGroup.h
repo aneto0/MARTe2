@@ -62,6 +62,7 @@ namespace MARTe {
  */
 class DLL_API GAMGroup: public ReferenceContainer {
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Constructor
@@ -81,8 +82,7 @@ public:
      * next state.
      * @param[in] status specifies the current and the next state.
      */
-    virtual void PrepareNextState(const RealTimeStateInfo &status)=0;
-
+    virtual void PrepareNextState(const RealTimeStateInfo &status);
 
     /**
      * @brief Initialises all the sub-nodes, then call SetUp(*) to setup the environment.
@@ -90,13 +90,14 @@ public:
      */
     virtual bool Initialise(StructuredDataI &data);
 
+
 protected:
 
     /**
      * @brief Setup the GAMGroup. This function can be custom
      * implemented to initialise the context, make accelerators, ecc.
      */
-    virtual void SetUp()=0;
+    virtual void SetUp();
 
     //? Possible specific GAMContexts
 

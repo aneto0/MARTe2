@@ -35,6 +35,7 @@ $(BUILD_DIR)/%.o : %.cpp
 	mkdir -p $(BUILD_DIR)
 	rm -f $(ROOT_DIR)/createLibrary.o	
 	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
+#$(CCOMPILER) -c $(OPTIM) $(INCLUDES) -S $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.asm
 
 $(BUILD_DIR)/%.o : %.c
 	mkdir -p $(BUILD_DIR)

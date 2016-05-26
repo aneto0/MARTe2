@@ -88,11 +88,11 @@ public:
               /**
                * @brief Creates an object from a structured list of elements.
                * @param[in] data the data to initialise the underlying object.
-               * @param[in] createOnly if true the object Initialise method is not called.
+               * @param[in] initOnly if true the object is not created.
                * @return true if the object was successfully created and initialized, false otherwise.
                */
-              virtual bool Initialise(const StructuredDataI &data,
-              const bool &createOnly);
+              virtual bool Initialise(StructuredDataI &data,
+              const bool &initOnly);
 
               /**
                * @brief Removes the reference to the underlying object.
@@ -148,7 +148,7 @@ public:
                * @brief Provides access to the underlying object linked by this Reference.
                * @return a pointer to the underlying object linked by this Reference.
                */
-              virtual Object* operator->();
+              Object* operator->();
 
           protected:
               /**

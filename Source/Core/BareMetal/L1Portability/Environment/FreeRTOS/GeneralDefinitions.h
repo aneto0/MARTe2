@@ -76,13 +76,13 @@ typedef int32 Handle;
 #endif
 
 /** Defines the default stack size for a thread. */
-#define THREADS_DEFAULT_STACKSIZE configMINIMAL_STACK_SIZE*2
+#define THREADS_DEFAULT_STACKSIZE configMINIMAL_STACK_SIZE*16
 
 /** Defines the maximum number of elements in the memory database */
 #define MAX_NO_OF_MEMORY_MONITORS 8
 
 /** In windows the newline is specified with \r\n */
-#define N_CHARS_NEWLINE 1u
+#define N_CHARS_NEWLINE 2u
 
 /*
 inline void* operator new(size_t x) {

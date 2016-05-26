@@ -2,7 +2,7 @@
 #
 # Copyright 2015 F4E | European Joint Undertaking for ITER 
 #  and the Development of Fusion Energy ('Fusion for Energy')
-#
+# 
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -20,30 +20,53 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
 
-TARGET=freertos-armv7m
+OBJSX=	BrokerContainer.x \
+		Driver.x \
+		GAM.x \
+		GAMGroup.x \
+		GAMSchedulerI.x \
+		GAMSchedulerRecord.x \
+		DataSource.x \
+		DataSourceContainer.x \
+		DataSourceSignal.x \
+		DataSourceSignalI.x \
+		DataSourceSignalRecord.x \
+		GAMGenericSignal.x \
+		GAMSampledSignal.x \
+		GAMSignalsContainer.x \
+		GAMSignalI.x \
+		MemoryMapDataSourceBroker.x \
+		MemoryMapInputReader.x \
+		MemoryMapOutputWriter.x \
+		RealTimeApplication.x \
+		RealTimeState.x \
+		RealTimeThread.x 
 
-OBJSX= 
-SPB    = L1Portability.x L5GAMs.x
+		
+		
 
-PACKAGE=Core
-MAKEDEFAULTDIR=../../../MakeDefaults
-
-ROOT_DIR=../../..
+PACKAGE=Core/BareMetal
+ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityS$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L5GAMs/L5GAMsS$(LIBEXT)
+INCLUDES += -I.
+INCLUDES += -I../L0Types
+INCLUDES += -I../L1Portability
+INCLUDES += -I../L2Objects
+INCLUDES += -I../L3Streams
+INCLUDES += -I../L4Configuration
 
-all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTeCoreS$(LIBEXT) \
-		$(BUILD_DIR)/MARTeCoreS.def
+all: $(OBJS)    \
+	        $(BUILD_DIR)/L5GAMsB$(LIBEXT) \
+	        $(BUILD_DIR)/L5GAMsB.def
 	echo  $(OBJS)
 
-
+include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

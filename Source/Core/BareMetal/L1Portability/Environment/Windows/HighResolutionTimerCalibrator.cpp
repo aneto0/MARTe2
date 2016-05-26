@@ -25,7 +25,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <Windows.h>
+#include <time.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -41,18 +42,20 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
-
+namespace MARTe {
 
 HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
 HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
+
+    struct timeval initialTime;
     time((time_t *) &initialTime.tv_sec);
 
     //The precision is at the millisecond!
     SYSTEMTIME forMs;
     GetSystemTime(&forMs);
-    initialTime.tv_usec = forMs.wMilliseconds * 1000;
+    initialSecs = initialTime.tv_sec;
+    initialUSecs = forMs.wMilliseconds * 1000;
 
     initialTicks = HighResolutionTimer::Counter();
 
@@ -94,8 +97,8 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) {
     uint32 uSecHRT = static_cast<uint32>((ticks * period - secHRT) * 1e6);
 
     //Add HRT to the the initial time saved in the calibration.
-    time_t sec = static_cast<time_t>(initialTime.tv_sec + secHRT);
-    timeStamp.SetMicroseconds(initialTime.tv_usec + uSecHRT);
+    time_t sec = static_cast<time_t>(initialSecs + secHRT);
+    timeStamp.SetMicroseconds(initialUSecs + uSecHRT);
 
     //Check the overflow
     if (timeStamp.GetMicroseconds() >= 1e6) {
@@ -105,13 +108,12 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) {
 
     time_t secondsFromEpoch32 = static_cast<time_t>(sec);
 
-    bool ret=timeStamp.ConvertFromEpoch(secondsFromEpoch32);
-
+    bool ret = timeStamp.ConvertFromEpoch(secondsFromEpoch32);
 
     return ret;
 }
 
-int64 HighResolutionTimerCalibrator::GetFrequency() const {
+uint64 HighResolutionTimerCalibrator::GetFrequency() const {
     return frequency;
 }
 

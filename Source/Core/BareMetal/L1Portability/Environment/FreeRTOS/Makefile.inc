@@ -28,7 +28,6 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  BasicConsole.x \
         ErrorManagement_Gen.x \
-    HighResolutionTimerCalibrator.x \
     LoadableLibrary.x  \
     MemoryCheck_Gen.x  \
     MemoryOperationsHelper_CLIB_Gen.x \
@@ -36,6 +35,8 @@ OBJSX=  BasicConsole.x \
     StringHelperExtras_Gen.x \
     StringHelper_CLIB_Gen.x \
     TimeStamp.x
+#HighResolutionTimerCalibrator.x 
+    
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

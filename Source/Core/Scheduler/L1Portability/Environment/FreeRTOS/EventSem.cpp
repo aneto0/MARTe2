@@ -109,7 +109,9 @@ EventSem::~EventSem() {
  * reference to handle*/
 bool EventSem::Create() {
     handle->closed = false;
-    handle->semHandle = xSemaphoreCreateMutex();
+   // handle->semHandle = xSemaphoreCreateMutex();
+    handle->semHandle = xSemaphoreCreateCounting(1,0);
+
     return (handle->semHandle != NULL);
 }
 
@@ -174,7 +176,12 @@ ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
 bool EventSem::Post() {
     bool ok = false;
     if (!handle->closed) {
-        ok = (xSemaphoreGive(handle->semHandle) == pdTRUE);
+        //    ok = (xSemaphoreGive(handle->semHandle) == pdTRUE);
+        BaseType_t xHigherPriorityTaskWoken=pdFALSE;
+        xSemaphoreGiveFromISR(handle->semHandle, &xHigherPriorityTaskWoken);
+        portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+        //portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        ok = true;//(xHigherPriorityTaskWoken == pdTRUE);
     }
     return ok;
 }

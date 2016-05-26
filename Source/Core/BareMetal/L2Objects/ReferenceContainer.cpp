@@ -62,7 +62,9 @@ Reference ReferenceContainer::Get(const uint32 idx) {
                 ref = node->GetReference();
             }
         }
-        REPORT_ERROR(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
+        else {
+            REPORT_ERROR(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
+        }
     }
     UnLock();
     return ref;
@@ -342,9 +344,16 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
                             newObject->SetName(&childName[1]);
                             ok = ReferenceContainer::Insert(newObject);
                         }
+                        else {
+                            REPORT_ERROR(ErrorManagement::FatalError, "Failed RC Init-Invalid");
+
+                        }
                         if (ok) {
                             ok = data.MoveToAncestor(1u);
                         }
+                    }
+                    else {
+                        REPORT_ERROR(ErrorManagement::FatalError, "Failed RC Init");
                     }
                 }
                 else {
