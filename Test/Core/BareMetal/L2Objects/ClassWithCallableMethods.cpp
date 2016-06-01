@@ -54,12 +54,12 @@ ClassWithCallableMethods::~ClassWithCallableMethods() {
 
 }
 
-bool ClassWithCallableMethods::MethodK(MARTe::ReferenceContainer& ref) {
-    return false;
-}
-
 bool ClassWithCallableMethods::NonRegisteredMethod(MARTe::ReferenceContainer& ref) {
     return true;
+}
+
+bool ClassWithCallableMethods::MethodK(MARTe::ReferenceContainer& ref) {
+    return false;
 }
 
 bool ClassWithCallableMethods::MethodX(MARTe::ReferenceContainer& ref) {

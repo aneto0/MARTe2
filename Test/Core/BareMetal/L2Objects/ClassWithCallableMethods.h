@@ -53,14 +53,14 @@ public:
     virtual ~ClassWithCallableMethods();
 
     /**
-     * Method which simulates an error execution (i.e. returns false)
-     */
-    bool MethodK(MARTe::ReferenceContainer& ref);
-
-    /**
      *
      */
     bool NonRegisteredMethod(MARTe::ReferenceContainer& ref);
+
+    /**
+     * Method which simulates an error execution (i.e. returns false)
+     */
+    bool MethodK(MARTe::ReferenceContainer& ref);
 
     /**
      * consumes input from a ReferenceContainer
