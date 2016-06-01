@@ -136,16 +136,6 @@ public:
                                                  MARTe::uint32 writeSize);
 
     /**
-     * @brief Tests the RelativeSeek passing an offset out of the int32 range (supported by IOBuffer)
-     */
-    bool TestRelativeSeek_OutOfInt32Range();
-
-    /**
-     * @brief Checks if the RelativeSeek returns false if the final position is negative.
-     */
-    bool TestRelativeSeek_NegativeFinalPosition();
-
-    /**
      * @brief Tests that the Position is correctly retrieved (after performing Seek operations)
      */
     bool TestPosition();

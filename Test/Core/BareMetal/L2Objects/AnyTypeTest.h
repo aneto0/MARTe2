@@ -192,11 +192,6 @@ public:
      */
     bool TestAnyType_ConstCharPointerToConst();
 
-
-    bool TestAnyType_Char8();
-
-    bool TestAnyType_ConstChar8();
-
     /**
      * @brief Tests the AnyType constructor with a BitBoolean variable.
      */
@@ -239,107 +234,6 @@ public:
      * @brief Tests the AnyType::CreateFromOtherType function with an element that is registered in the database.
      */
     bool TestCreateFromOtherConstType();
-
-    /**
-     * @brief Tests if the function sets the data pointer.
-     */
-    bool TestSetDataPointer();
-
-    /**
-     * @brief Tests if the function returns the data pointer.
-     */
-    bool TestGetDataPointer();
-
-    /**
-     * @brief Tests if the function returns the type descriptor.
-     */
-    bool TestGetTypeDescriptor();
-
-    /**
-     * @brief Tests if the function returns the bit address.
-     */
-    bool TestGetBitAddress();
-
-    /**
-     * @brief Tests if the function sets correctly the number of dimensions.
-     */
-    bool TestSetNumberOfDimensions();
-
-    /**
-     * @brief Tests if the function returns correctly the number of dimensions.
-     */
-    bool TestGetNumberOfDimensions();
-
-    /**
-     * @brief Tests if the function sets correctly the number of elements.
-     */
-    bool TestSetNumberOfElements();
-
-    /**
-     * @brief Tests if the function returns correctly the number of dimensions.
-     */
-    bool TestGetNumberOfElements();
-
-    /**
-     * @brief Tests if the function sets correctly the isDeclared flag.
-     */
-    bool TestSetStaticDeclared();
-
-    /**
-     * @brief Tests if the function returns true if AnyType is declared static and false otherwise.
-     */
-    bool TestIsStaticDeclared();
-
-    /**
-     * @brief Tests if the function returns correctly the bit size.
-     */
-    bool TestGetBitSize();
-
-    /**
-     * @brief Tests if the function returns correctly the byte size.
-     */
-    bool TestGetByteSize();
-
-    /**
-     * @brief Tests if the operator works for matrix of structures static declared
-     */
-    bool TestPositionOperator_MatrixStructuredStaticDeclared();
-
-    /**
-     * @brief Tests if the operator works for matrix of structures not static declared
-     */
-    bool TestPositionOperator_MatrixStructuredHeapDeclared();
-
-    /**
-     * @brief Tests if the operator works for matrix of basic types static declared
-     */
-    bool TestPositionOperator_MatrixBasicStaticDeclared();
-
-    /**
-     * @brief Tests if the operator works for matrix of basic types not static declared
-     */
-    bool TestPositionOperator_MatrixBasicHeapDeclared();
-
-    /**
-     * @brief Tests if the operator works for vector of structures
-     */
-    bool TestPositionOperator_VectorStructured();
-
-    /**
-     * @brief Tests if the operator works for vector of basic types
-     */
-    bool TestPositionOperator_VectorBasic();
-
-    /**
-     * @brief Tests if the operator works for vector of strings
-     */
-    bool TestPositionOperator_VectorCString();
-
-    /**
-     * @brief Tests if the operator works for vector of pointers
-     */
-    bool TestPositionOperator_VectorPointer();
-
 
 private:
 

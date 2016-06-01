@@ -32,7 +32,6 @@ OBJSX=  AnyObjectGTest.x \
 		TokenGTest.x \
 		TokenInfoGTest.x \
 		TypeConversionGTest.x\
-		ValidateBasicTypeGTest.x\
 		XMLParserGTest.x
 		 
 

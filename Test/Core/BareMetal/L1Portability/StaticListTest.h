@@ -172,16 +172,6 @@ public:
      * @brief Test peeking from invalid position.
      */
     bool TestPeekInvalidPosition();
-
-    /**
-     * @brief Tests if the [] operator returns the element at the specified position
-     */
-    bool TestSquareOperator();
-
-    /**
-     * @brief Tests if the [] operator returns the last element is the position is input is greater than the list size
-     */
-    bool TestSquareOperatorInvalidPosition();
 };
 
 }
@@ -204,8 +194,8 @@ StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestDefaultConstructor(void) {
     const uint32 MAXINDEX = TypeCharacteristics::MaxValue<uint32>();
-    const uint32 MAXCAPACITY = (((MAXINDEX / (listAllocationGranularity * sizeof(elementType))) * (listAllocationGranularity * sizeof(elementType)))
-            / sizeof(elementType));
+    const uint32 MAXCAPACITY = (((MAXINDEX / (listAllocationGranularity * sizeof(elementType)))
+            * (listAllocationGranularity * sizeof(elementType))) / sizeof(elementType));
 
     bool result = false;
     StaticList<elementType, listAllocationGranularity> targetList;
@@ -220,8 +210,8 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestConstantness(void) {
     const uint32 MAXINDEX = TypeCharacteristics::MaxValue<uint32>();
-    const uint32 MAXCAPACITY = (((MAXINDEX / (listAllocationGranularity * sizeof(elementType))) * (listAllocationGranularity * sizeof(elementType)))
-            / sizeof(elementType));
+    const uint32 MAXCAPACITY = (((MAXINDEX / (listAllocationGranularity * sizeof(elementType)))
+            * (listAllocationGranularity * sizeof(elementType))) / sizeof(elementType));
 
     bool result = true;
     StaticList<elementType, listAllocationGranularity> targetList;
@@ -449,6 +439,7 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     return result;
 }
 
+
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 template<elementType insertValueInvalidPosition>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestInsertOnNonEmptyListAtInvalidPosition(void) {
@@ -461,8 +452,8 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     }
 
     //Tests inserting a value at invalid position
-    const uint32 indexValueInvalidPosition = maxDemoValues + 5;
-    result = !targetList.Insert(indexValueInvalidPosition, insertValueInvalidPosition);
+        const uint32 indexValueInvalidPosition = maxDemoValues + 5;
+        result = !targetList.Insert(indexValueInvalidPosition, insertValueInvalidPosition);
 
     return result;
 }
@@ -702,42 +693,6 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     result = !targetList.Peek(invalidPosition, peekValue);
 
     return result;
-}
-
-template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
-bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestSquareOperator() {
-    bool result = true;
-    StaticList<elementType, listAllocationGranularity> targetList;
-
-    //Initializes the target list with the demo values:
-    for (uint32 i = 0; i < maxDemoValues; i++) {
-        targetList.Add(demoValues[i]);
-    }
-
-    //Tests peeking all the demo values from the target list:
-    for (uint32 i = 0; i < maxDemoValues; i++) {
-        result = result && (targetList[i] == demoValues[i]);
-    }
-    return result;
-}
-
-template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
-bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestSquareOperatorInvalidPosition() {
-    bool result = true;
-    StaticList<elementType, listAllocationGranularity> targetList;
-
-    //Initializes the target list with the demo values:
-    for (uint32 i = 0; i < maxDemoValues; i++) {
-        targetList.Add(demoValues[i]);
-    }
-
-    //Tests peeking from invalid position
-    elementType lastValue;
-    targetList.Peek(maxDemoValues - 1, lastValue);
-
-    uint32 invalidPosition = maxDemoValues + 5;
-
-    return targetList[invalidPosition] == lastValue;
 }
 
 }

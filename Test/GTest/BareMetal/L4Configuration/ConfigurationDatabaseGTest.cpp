@@ -159,16 +159,6 @@ TEST(ConfigurationDatabaseGTest,TestRead_Invalid) {
     ASSERT_TRUE(cdbTest.TestRead_Invalid());
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_StructuredData) {
-    ConfigurationDatabaseTest cdbTest;
-    ASSERT_TRUE(cdbTest.TestRead_StructuredData());
-}
-
-TEST(ConfigurationDatabaseGTest,TestRead_Object) {
-    ConfigurationDatabaseTest cdbTest;
-    ASSERT_TRUE(cdbTest.TestRead_Object());
-}
-
 TEST(ConfigurationDatabaseGTest,TestAddToCurrentNode) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestAddToCurrentNode());
@@ -239,16 +229,6 @@ TEST(ConfigurationDatabaseGTest,TestWrite_Invalid) {
     ASSERT_TRUE(cdbTest.TestWrite_Invalid());
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_StructuredData) {
-    ConfigurationDatabaseTest cdbTest;
-    ASSERT_TRUE(cdbTest.TestWrite_StructuredData());
-}
-
-TEST(ConfigurationDatabaseGTest,TestWrite_Object) {
-    ConfigurationDatabaseTest cdbTest;
-    ASSERT_TRUE(cdbTest.TestWrite_Object());
-}
-
 TEST(ConfigurationDatabaseGTest,TestGetType_Invalid) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Invalid());
@@ -302,20 +282,6 @@ TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Float32) {
 TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Float64) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::float64(7)));
-}
-
-TEST(ConfigurationDatabaseGTest,TestGetChildName) {
-    ConfigurationDatabaseTest cdbTest;
-    ASSERT_TRUE(cdbTest.TestGetChildName());
-}
-
-TEST(ConfigurationDatabaseGTest,TestGetName) {
-    ConfigurationDatabaseTest cdbTest;
-    ASSERT_TRUE(cdbTest.TestGetName());
-}
-TEST(ConfigurationDatabaseGTest,TestGetNumberOfChildren) {
-    ConfigurationDatabaseTest cdbTest;
-    ASSERT_TRUE(cdbTest.TestGetNumberOfChildren());
 }
 
 TEST(ConfigurationDatabaseGTest,TestCopy) {

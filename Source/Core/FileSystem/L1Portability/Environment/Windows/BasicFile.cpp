@@ -558,7 +558,7 @@ bool BasicFile::Seek(const uint64 pos) {
     return ok;
 }
 
-bool BasicFile::RelativeSeek(const int64 deltaPos) {
+bool BasicFile::RelativeSeek(const int32 deltaPos) {
     bool ok = true;
 
     if (IsOpen() && CanSeek()) {

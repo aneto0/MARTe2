@@ -24,6 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -36,16 +37,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-static ClassProperties testClassProperties("TestAdd", "TestAdd", "V");
-
-static ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, (ObjectBuildFn*)NULL);
-
-ClassProperties testClassPropertiesLongName(
-        "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf",
-        "", "V");
-
-//The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
-ClassRegistryItem myItemLongName = ClassRegistryItem(testClassPropertiesLongName, (ObjectBuildFn*)NULL);
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -90,7 +81,22 @@ bool ClassRegistryDatabaseTest::TestAdd() {
 
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
+    uint32 sizeDB = db->GetSize();
 
+    ClassProperties testClassProperties("TestAdd", "TestAdd", "V");
+
+    //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
+    ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
+
+    if (myItem == NULL) {
+        return false;
+    }
+
+    uint32 newSizeDB = db->GetSize();
+
+    if (sizeDB != (newSizeDB - 1)) {
+        return false;
+    }
 
     const ClassRegistryItem *ret = db->Find("TestAdd");
 
@@ -114,24 +120,48 @@ bool ClassRegistryDatabaseTest::TestFindDLL(const MARTe::char8* dllName,
     return !(validName ^ (db->Find(fullName) != NULL));
 }
 
-bool ClassRegistryDatabaseTest::TestFind() {
+bool ClassRegistryDatabaseTest::TestFind(const MARTe::char8 *name,
+                                         bool create) {
 
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    bool found = (db->Find("TestAdd") != NULL);
-    //These are deleted by the the ClassRegistryDatabase destructor
-    return found;
+    if (create) {
+        ClassProperties testClassProperties(name, "", "V");
+
+        //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
+        ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
+        if (myItem == NULL) {
+            return false;
+        }
+
+        bool found = (db->Find(name) != NULL);
+        //These are deleted by the the ClassRegistryDatabase destructor
+        return found;
+    }
+
+    return (db->Find(name) == NULL);
 
 }
 
-bool ClassRegistryDatabaseTest::TestFindLongName() {
+bool ClassRegistryDatabaseTest::TestFindLongName(bool create) {
 
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
     const char *name =
             "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf";
+    if (create) {
+        ClassProperties testClassProperties(name, "", "V");
 
+        //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
+        ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
+        if (myItem == NULL) {
+            return false;
+        }
+        bool found = (db->Find(name) != NULL);
+        //These are deleted by the the ClassRegistryDatabase destructor
+        return !found;
+    }
 
-    return (db->Find(name) != NULL);
+    return (db->Find(name) == NULL);
 
 }
 
@@ -146,19 +176,42 @@ bool ClassRegistryDatabaseTest::TestFindTypeIdName() {
 
 bool ClassRegistryDatabaseTest::TestGetSize() {
 
+    const char* names[] = { "1", "2", "3", "4", NULL };
+
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    return db->GetSize()>0u;
+    uint32 prevSize = db->GetSize();
+
+
+    uint32 i = 0;
+    //add the elements to the database.
+    while (names[i] != NULL) {
+        ClassProperties *testClassProperties = new ClassProperties(names[i], names[i], "V");
+        ClassRegistryItem *element = new ClassRegistryItem(*testClassProperties, NULL);
+        if (element == NULL) {
+            return false;
+        }
+        delete testClassProperties;
+
+        i++;
+    }
+
+    return ((db->GetSize() - prevSize) == 4);
 }
 
 bool ClassRegistryDatabaseTest::TestPeek() {
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+    ClassProperties testClassProperties("TestElementAt", "TestElementAt", "V");
 
-    const ClassRegistryItem *testItem = db->Find("TestAdd");
+    //the add function is called directly by the constructor. myItem cannot be deleted before the end of the program.
+    ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
+    const ClassRegistryItem *peekedItem = db->Peek(db->GetSize() - 1);
+    bool ok = (peekedItem == myItem);
 
-    const ClassRegistryItem *peekedItem = db->Peek(testItem->GetClassProperties()->GetUniqueIdentifier());
-    return (peekedItem == testItem);
+    uint32 peededItemUniqueIdentifier = peekedItem->GetClassProperties()->GetUniqueIdentifier();
+    ok &= (peededItemUniqueIdentifier == (db->GetSize() - 1));
 
+    return ok;
 }
 
 bool ClassRegistryDatabaseTest::TestCreateInstances() {

@@ -107,15 +107,6 @@ TEST(ReferenceContainerGTest,TestFindFirstOccurrenceBranchAlwaysReferenceObject)
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceBranchAlways(filter));
 }
 
-
-/*****************************
- * TestFind  *
- *****************************/
-
-TEST(ReferenceContainerGTest,TestFind) {
-    ReferenceContainerTest referenceContainerTest;
-    ASSERT_TRUE(referenceContainerTest.TestFind());
-}
 /*****************************
  * TestFindFirstOccurrence   *
  *****************************/
@@ -405,12 +396,6 @@ TEST(ReferenceContainerGTest,TestFindRemoveAllOfMultipleInstanceObjectNameFilter
 /***************
  * TestInsert  *
  ***************/
-
-TEST(ReferenceContainerGTest,TestInsertWithPath) {
-    ReferenceContainerTest referenceContainerTest;
-    ASSERT_TRUE(referenceContainerTest.TestInsertWithPath());
-}
-
 TEST(ReferenceContainerGTest,TestInsertAtEnd) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestInsertAtEnd());
@@ -472,14 +457,3 @@ TEST(ReferenceContainerGTest,TestDelete) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestDelete());
 }
-
-/*******************
- * TestInitialise *
- *******************/
-
-TEST(ReferenceContainerGTest,TestInitialise) {
-    ReferenceContainerTest referenceContainerTest;
-    ASSERT_TRUE(referenceContainerTest.TestInitialise());
-}
-
-

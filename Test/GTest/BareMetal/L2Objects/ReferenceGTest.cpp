@@ -83,25 +83,9 @@ TEST(ReferenceGTest,TestDestructor) {
     ASSERT_TRUE(referenceTest.TestDestructor());
 }
 
-TEST(ReferenceGTest,TestInitialiseCreation) {
+TEST(ReferenceGTest,TestInitialise) {
     ReferenceTest referenceTest;
-    ASSERT_TRUE(referenceTest.TestInitialiseCreation());
-}
-
-TEST(ReferenceGTest,TestInitialiseNoCreation) {
-    ReferenceTest referenceTest;
-    ASSERT_TRUE(referenceTest.TestInitialiseNoCreation());
-}
-
-
-TEST(ReferenceGTest,TestInitialiseNoObject) {
-    ReferenceTest referenceTest;
-    ASSERT_TRUE(referenceTest.TestInitialiseNoObject());
-}
-
-TEST(ReferenceGTest,TestInitialiseNoClassName) {
-    ReferenceTest referenceTest;
-    ASSERT_TRUE(referenceTest.TestInitialiseNoClassName());
+    ASSERT_TRUE(referenceTest.TestInitialise());
 }
 
 TEST(ReferenceGTest,TestRemoveReference) {

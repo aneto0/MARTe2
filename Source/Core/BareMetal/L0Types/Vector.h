@@ -44,7 +44,6 @@ namespace MARTe {
  * @brief Fixed size array of values.
  * @details The Vector can allocate and manage its own memory or it can be
  * associated to an existent memory array.
- * @tparam T the scalar type for the cells of the matrix
  */
 template<typename T>
 class Vector {
@@ -85,7 +84,6 @@ public:
 
     /**
      * @brief Constructs a new matrix from a statically declared table [].
-     * @tparam nOfElementsStatic Define nOfElementsStatic
      * @param[in] source The address of the statically declared table.
      * @post
      *   GetNumberOfElements() == nOfElementsStatic &&
@@ -139,6 +137,7 @@ public:
      */
     bool Product(Vector<T> factor,
                  T &result) const;
+
 
 private:
 

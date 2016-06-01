@@ -53,6 +53,8 @@ GAMSignalsContainer::GAMSignalsContainer() :
     isOutput = false;
 
 }
+GAMSignalsContainer::~GAMSignalsContainer() {
+}
 
 bool GAMSignalsContainer::Verify() {
 

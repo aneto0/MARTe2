@@ -280,7 +280,7 @@ bool BasicUDPSocket::Seek(const uint64 pos) {
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: sockets cannot seek. */
-bool BasicUDPSocket::RelativeSeek(const int64 deltaPos) {
+bool BasicUDPSocket::RelativeSeek(const int32 deltaPos) {
     return false;
 }
 

@@ -41,8 +41,7 @@
 namespace MARTe {
 
     /**
-     * @brief Class which describes the configuration of an internet host, like
-     * its IPv4 address, port and host name.
+     * @brief A wrapper class to store the IPv4 address, port and host name associated to a generic host.
      */
     class DLL_API InternetHost {
 

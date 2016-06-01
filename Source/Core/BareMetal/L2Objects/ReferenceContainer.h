@@ -68,6 +68,8 @@ public:
      */
     virtual ~ReferenceContainer();
 
+    void CleanUp();
+
     /**
      * @brief Inserts a new reference to the container.
      * @details If \a position = -1 the reference is added to the end of the container.

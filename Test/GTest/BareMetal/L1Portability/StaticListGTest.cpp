@@ -161,13 +161,3 @@ TEST(StaticListGTest,TestPeekInvalidPosition) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestPeekInvalidPosition());
 }
-
-TEST(StaticListGTest,TestSquareOperator) {
-    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
-    ASSERT_TRUE(tester.TestSquareOperator());
-}
-
-TEST(StaticListGTest,TestSquareOperatorInvalidPosition) {
-    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
-    ASSERT_TRUE(tester.TestSquareOperatorInvalidPosition());
-}

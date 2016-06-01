@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 #include "AnyType.h"
 #include "Object.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -38,9 +39,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
-
 AnyType::AnyType(Object &obj) {
     Init();
     dataPointer = static_cast<void *>(&obj);
@@ -49,7 +48,6 @@ AnyType::AnyType(Object &obj) {
     ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
     const char8 *className = obj.GetClassProperties()->GetName();
     const ClassRegistryItem *classItem = classDatabase->Find(className);
-
     if (classItem != NULL_PTR(ClassRegistryItem *)) {
         dataDescriptor.isStructuredData = true;
         dataDescriptor.isConstant = false;
@@ -65,13 +63,13 @@ AnyType::AnyType(const Object &obj) {
     ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
     const char8 *className = obj.GetClassProperties()->GetName();
     const ClassRegistryItem *classItem = classDatabase->Find(className);
-
     if (classItem != NULL_PTR(ClassRegistryItem *)) {
         dataDescriptor.isStructuredData = true;
         dataDescriptor.isConstant = true;
         dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
     }
 }
+
 
 AnyType AnyType::operator[](const uint32 position) const {
 

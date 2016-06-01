@@ -40,11 +40,9 @@
 namespace MARTe {
 
 /** 
- * @brief Class which acts as a wrapper to a dynamic library handle, allowing
- * to load a dynamic library into memory and execute its functions.
- * @details This class allows each of its instances to be bound to a dynamic
- * library by its filename (see the Open method). After that binding, any of
- * the functions can be called through the Function method or the [] operator.
+ * @brief This functions allows to load dinamically a library and its functions.
+ * Most of the implementation is delegated to LoadableLibrary.h which is different
+ * for each operating systems and contains the non portable system calls to load libraries.
  */
 class DLL_API LoadableLibrary {
 
@@ -63,7 +61,7 @@ public:
 
     /**
      * @brief Opens a dynamic library
-     * @param[in] dllName is the filename of the library to open.
+     * @param[in] dllName is the name of the library to open.
      * @return true if the library is opened correctly, false otherwise
      */
     bool Open(char8 const * const dllName);

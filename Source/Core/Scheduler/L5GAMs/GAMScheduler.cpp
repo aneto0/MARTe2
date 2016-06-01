@@ -33,13 +33,18 @@
 #include "Threads.h"
 #include "MemoryMapOutputWriter.h"
 #include "stdio.h"
+#include "Atomic.h"
+#include "Sleep.h"
+#include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
 static void RTThreadRoutine(RTThreadParam &par) {
-
+    while ((*par.spinLock) > 0){
+        Sleep::MSec(2);
+    }
     while ((*par.spinLock) == 0) {
         par.scheduler->ExecuteSingleCycle(par.threadId, par.activeBuffer);
     }
@@ -72,12 +77,13 @@ GAMScheduler::~GAMScheduler() {
 void GAMScheduler::StartExecution(const uint32 activeBuffer) {
 
     numberOfThreads = statesInExecution[activeBuffer]->GetNumberOfThreads();
+    spinLock = 0;
+    Atomic::Increment(&spinLock);
 
     // do always a stop execution before a start execution
     tid = new ThreadIdentifier[numberOfThreads];
     param = new RTThreadParam[numberOfThreads];
-
-    printf("\n#threads = %d\n", numberOfThreads);
+//    printf("\n#threads = %d\n", numberOfThreads);
     for (uint32 i = 0u; i < numberOfThreads; i++) {
         ReferenceT<RealTimeThread> thread = statesInExecution[activeBuffer]->Peek(i);
         if (thread.IsValid()) {
@@ -88,16 +94,23 @@ void GAMScheduler::StartExecution(const uint32 activeBuffer) {
             uint32 stackSize = thread->GetStackSize();
             tid[i] = Threads::BeginThread(reinterpret_cast<ThreadFunctionType>(RTThreadRoutine), &param[i], stackSize, thread->GetName(),
                                           ExceptionHandler::NotHandled, thread->GetCPU());
+            Threads::SetPriority(tid[i], (Threads::PriorityClassType) thread->GetPriorityClass(), thread->GetPriorityLevel());
         }
         else {
-            printf("\nInvalid thread\n");
+            //   printf("\nInvalid thread\n");
             //TODO Invalid thread?
         }
     }
+
+    Atomic::Decrement(&spinLock);
+
+    while (spinLock == 0) {
+        Sleep::Sec(1.0);
+    }
+
 }
 
 void GAMScheduler::StopExecution() {
-
     if (tid != NULL) {
         Atomic::Increment(&spinLock);
 
@@ -114,9 +127,7 @@ void GAMScheduler::StopExecution() {
             delete[] param;
             param = NULL_PTR(RTThreadParam *);
         }
-        Atomic::Decrement(&spinLock);
     }
-
 }
 
 CLASS_REGISTER(GAMScheduler, "1.0")

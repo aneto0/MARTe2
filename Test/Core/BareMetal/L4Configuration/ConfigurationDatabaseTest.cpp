@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 #include "ConfigurationDatabaseTest.h"
 #include "AnyObject.h"
-#include "IntrospectionTestHelper.h"
 
 using namespace MARTe;
 
@@ -303,91 +302,6 @@ bool ConfigurationDatabaseTest::TestRead_Invalid() {
     return ok;
 }
 
-bool ConfigurationDatabaseTest::TestRead_StructuredData() {
-    ConfigurationDatabase source;
-    source.CreateAbsolute("A.B.C");
-    int32 x = 1;
-    source.Write("x", x);
-    source.CreateAbsolute("A.B.D");
-    int32 y = 2;
-    source.Write("y", 2);
-    source.MoveToRoot();
-    ConfigurationDatabase destination;
-    destination.CreateAbsolute("root");
-    source.Read("A", destination);
-    bool ok = destination.MoveAbsolute("root.B.C");
-    ok &= destination.Read("x", y);
-    ok &= destination.MoveAbsolute("root.B.D");
-    ok &= destination.Read("y", x);
-    return (y == 1) && (x == 2);
-}
-
-bool ConfigurationDatabaseTest::TestRead_Object() {
-    ConfigurationDatabase source;
-    source.CreateAbsolute("A");
-    source.Write("Class", "TestIntrospectionObjectFrom");
-    uint32 member1 = 1;
-    source.Write("member1_from", member1);
-    float32 member2_x = 1;
-    source.Write("member2_from",  &member2_x);
-    float64 member3[32];
-    for (uint32 i = 0u; i < 32; i++) {
-        member3[i] = i;
-    }
-    source.Write("member3_from", member3);
-    const char8* member4[2][2];
-    member4[0][0] =(char8*) "1";
-    member4[0][1] =(char8*) "2";
-    member4[1][0] =(char8*) "3";
-    member4[1][1] =(char8*) "4";
-
-    source.Write("member4_from", member4);
-    uint32 member5Ref = 5;
-    uint32 *member5 = &member5Ref;
-    source.CreateRelative("member5_from");
-    source.Write("Class", "TestIntrospectionNestedStructureFrom");
-    source.Write("nestedMember1_from", member5);
-    uint32 member6 = 12345;
-    source.Write("nestedMember2_from", member6);
-
-    TestIntrospectionObjectTo testDestination;
-    // set the buffer to the pointer!
-    char8 outBuff[64];
-    testDestination.member5_to.nestedMember2_to = outBuff;
-
-    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
-    AnyType destination(destinationDes, 0u, &testDestination);
-
-    source.MoveToRoot();
-    if (!source.Read("A", destination)) {
-        return false;
-    }
-    if (StringHelper::Compare(testDestination.member1_to, "1") != 0) {
-        return false;
-    }
-    if (testDestination.member2_to != (uintp) &member2_x) {
-        return false;
-    }
-    for (uint32 i = 0; i < 32; i++) {
-        if (testDestination.member3_to[i] != i) {
-            return false;
-        }
-    }
-    bool ok = (testDestination.member4_to[0][0] == 1);
-    ok &= (testDestination.member4_to[0][1] == 2);
-    ok &= (testDestination.member4_to[1][0] == 3);
-    ok &= (testDestination.member4_to[1][1] == 4);
-
-    if (!ok) {
-        return false;
-    }
-    if (*testDestination.member5_to.nestedMember1_to != 5) {
-        return false;
-    }
-
-    return StringHelper::Compare(testDestination.member5_to.nestedMember2_to, "12345") == 0;
-}
-
 bool ConfigurationDatabaseTest::TestAddToCurrentNode() {
     ConfigurationDatabase cdb;
     ReferenceT<ReferenceContainer> obj(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -424,156 +338,6 @@ bool ConfigurationDatabaseTest::TestWrite_Invalid() {
     return ok;
 }
 
-bool ConfigurationDatabaseTest::TestWrite_StructuredData() {
-    ConfigurationDatabase source;
-    source.CreateAbsolute("A.B.C");
-    int32 x = 1;
-    source.Write("x", x);
-    source.CreateAbsolute("A.B.D");
-    int32 y = 2;
-    source.Write("y", 2);
-    source.MoveAbsolute("A");
-    ConfigurationDatabase destination;
-    destination.Write("A", source);
-    bool ok = destination.MoveAbsolute("A.B.C");
-    ok &= destination.Read("x", y);
-    ok &= destination.MoveAbsolute("A.B.D");
-    ok &= destination.Read("y", x);
-    return (y == 1) && (x == 2);
-}
-
-bool ConfigurationDatabaseTest::TestWrite_Object() {
-    TestIntrospectionObjectFrom sourceTest;
-    sourceTest.member1_from = 1;
-    float32 member2_x = 2;
-    sourceTest.member2_from = &member2_x;
-    for (uint32 i = 0; i < 32; i++) {
-        sourceTest.member3_from[i] = i;
-    }
-    sourceTest.member4_from[0][0] = (char8*) "1";
-    sourceTest.member4_from[0][1] = (char8*)"2";
-    sourceTest.member4_from[1][0] = (char8*)"3";
-    sourceTest.member4_from[1][1] = (char8*) "4";
-
-    uint32 member5Ref = 5;
-    sourceTest.member5_from.nestedMember1_from = &member5Ref;
-    sourceTest.member5_from.nestedMember2_from = 12345;
-
-    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
-    AnyType source(sourceDes, 0u, &sourceTest);
-
-    ConfigurationDatabase destination;
-    if (!destination.Write("myStruct", source)) {
-        return false;
-    }
-
-    destination.MoveAbsolute("myStruct");
-
-    char8 member1[32];
-    destination.Read("member1_from", member1);
-    if (StringHelper::Compare(member1, "1") != 0) {
-        return false;
-    }
-
-    uint64 member2;
-    destination.Read("member2_from", member2);
-    if (member2 != (uintp) sourceTest.member2_from) {
-        return false;
-    }
-
-    float32 member3[32];
-    destination.Read("member3_from", member3);
-    for (uint32 i = 0; i < 32; i++) {
-        if (member3[i] != i) {
-            return false;
-        }
-    }
-
-    uint32 member4[2][2];
-    destination.Read("member4_from", member4);
-
-    bool ok = (member4[0][0] == 1);
-    ok &= (member4[0][1] == 2);
-    ok &= (member4[1][0] == 3);
-    ok &= (member4[1][1] == 4);
-
-    destination.MoveRelative("member5_from");
-    uint32 *member5 = NULL;
-    destination.Read("nestedMember1_from", member5);
-
-    char8 member6[32];
-    destination.Read("nestedMember2_from", member6);
-
-    return StringHelper::Compare(member6, "12345") == 0;
-}
-
-bool ConfigurationDatabaseTest::TestGetNumberOfChildren() {
-    ConfigurationDatabase cdb;
-    bool ok = cdb.GetNumberOfChildren() == 0;
-    ok &= cdb.CreateAbsolute("A.B.C");
-    ok &= cdb.CreateAbsolute("A.D");
-    ok &= cdb.CreateAbsolute("A.B.E");
-    ok &= cdb.CreateAbsolute("A.B.F");
-    cdb.MoveToRoot();
-    ok &= cdb.GetNumberOfChildren() == 1;
-    cdb.MoveAbsolute("A");
-    ok &= cdb.GetNumberOfChildren() == 2;
-    cdb.MoveAbsolute("A.B");
-    ok &= cdb.GetNumberOfChildren() == 3;
-    return ok;
-}
-
-bool ConfigurationDatabaseTest::TestGetChildName() {
-    const char8 *childNames[] = { "A", "B", "C", "D", 0 };
-    const char8 *nephewNames[] = { "E", "F", "G", "H", 0 };
-    ConfigurationDatabase cdb;
-    bool ok = true;
-    uint32 i = 0u;
-    while (childNames[i] != NULL) {
-        ok &= cdb.CreateAbsolute(childNames[i]);
-        i++;
-    }
-    ok &= cdb.MoveAbsolute(childNames[0]);
-    i = 0u;
-    while (nephewNames[i] != NULL) {
-        ok &= cdb.CreateRelative(nephewNames[i]);
-        ok &= cdb.MoveToAncestor(1);
-        i++;
-    }
-    ok &= cdb.MoveToRoot();
-    i = 0u;
-    while (childNames[i] != NULL) {
-        ok &= StringHelper::Compare(childNames[i],cdb.GetChildName(i))==0;
-        i++;
-    }
-    ok &= cdb.MoveAbsolute(childNames[0]);
-    i = 0u;
-    while (nephewNames[i] != NULL) {
-        ok &= StringHelper::Compare(nephewNames[i],cdb.GetChildName(i))==0;
-        i++;
-    }
-    ok &= cdb.GetChildName(i) == NULL;
-    return ok;
-}
-
-
-bool ConfigurationDatabaseTest::TestGetName(){
-    ConfigurationDatabase cdb;
-    if(cdb.GetName()!=NULL){
-        return false;
-    }
-
-    cdb.CreateAbsolute("A.B.C");
-    cdb.MoveAbsolute("A");
-    bool ret=(StringHelper::Compare(cdb.GetName(), "A")==0);
-    cdb.MoveAbsolute("A.B");
-    ret&=(StringHelper::Compare(cdb.GetName(), "B")==0);
-    cdb.MoveAbsolute("A.B.C");
-    ret&=(StringHelper::Compare(cdb.GetName(), "C")==0);
-    return ret;
-}
-
-
 bool ConfigurationDatabaseTest::TestGetType_Invalid() {
     ConfigurationDatabase cdb;
     AnyType t = cdb.GetType("");
@@ -593,7 +357,6 @@ bool ConfigurationDatabaseTest::TestCopy() {
     sourceCDB.CreateAbsolute("A.B.D");
     ok &= sourceCDB.Write("value", 2);
     ConfigurationDatabase destinationCDB;
-    destinationCDB.CreateAbsolute("B");
     ok &= sourceCDB.MoveAbsolute("A.B");
     ok &= sourceCDB.Copy(destinationCDB);
     ok &= destinationCDB.MoveRelative("C");

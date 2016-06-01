@@ -55,7 +55,7 @@ namespace MARTe {
 
         /**
          * @brief Checks the target (i.e. of where the code is being executed) architecture endianity.
-         * @return MARTe::Endianity::ENDIANITY_LITTLE_ENDIAN if the target architecture is little endian. MARTe::Endianity::ENDIANITY_BIG_ENDIAN if the target architecture is big endian.
+         * @return LITTLE_ENDIAN if the target architecture is little endian. BIG_ENDIAN if the target architecture is big endian.
          */
         inline uint8 Type();
 

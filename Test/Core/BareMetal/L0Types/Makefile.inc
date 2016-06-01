@@ -34,8 +34,8 @@ OBJSX=  BasicTypeTest.x \
 		MatrixTest.x \
 		ShiftTest.x \
 		TypeCharacteristicsTest.x \
-		VectorTest.x \
-		ZeroTerminatedArrayTest.x
+		TypeDescriptorTest.x \
+		VectorTest.x
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

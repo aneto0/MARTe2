@@ -72,6 +72,9 @@ public:
      */
     GAMSignalsContainer();
 
+
+    virtual ~GAMSignalsContainer();
+
     /**
      * @brief Calls RealTimeDataDefI::Verify(*) for each item in the container
      */

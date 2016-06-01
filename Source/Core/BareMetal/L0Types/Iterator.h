@@ -39,12 +39,8 @@
 namespace MARTe {
 
 /**
- * @brief Interface which defines a functor responsible of doing an action on
- * a LinkedListable instance.
- * @details The classes that realise this interface will implement a specific
- * action assuming that the parameter will be an object of type LinkedListable.
- * @note In order to apply an action on all items of a list, the user will
- * have to call the Do method for each element of the list.
+ * @brief LinkedListable iterator interface.
+ * @details For each element on a LinkedListable list the function Do(LinkedListable *) is called.
  */
 class Iterator {
 public:

@@ -84,6 +84,7 @@ struct BasicConsoleProperties;
 typedef int32 Handle;
 static const char8 DIRECTORY_SEPARATOR = '/';
 
+
 }
 
 #endif /* GENERALDEFINITIONSOS_H_ */

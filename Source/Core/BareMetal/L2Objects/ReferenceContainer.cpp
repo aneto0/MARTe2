@@ -37,7 +37,6 @@
 #include "ErrorManagement.h"
 #include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
-#include <typeinfo>
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -45,7 +44,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
+
 
 ReferenceContainer::ReferenceContainer() :
         Object() {
@@ -63,7 +64,9 @@ Reference ReferenceContainer::Get(const uint32 idx) {
                 ref = node->GetReference();
             }
         }
-        REPORT_ERROR(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
+        else {
+            REPORT_ERROR(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
+        }
     }
     UnLock();
     return ref;
@@ -80,13 +83,19 @@ void ReferenceContainer::SetTimeout(const TimeoutType &timeout) {
 /*lint -e{1551} no exception should be thrown given that ReferenceContainer is
  * the sole owner of the list (LinkedListHolder)*/
 ReferenceContainer::~ReferenceContainer() {
-    LinkedListable *p = list.List();
-    list.Reset();
-    while (p != NULL) {
-        LinkedListable *q = p;
-        p = p->Next();
-        delete q;
-    }
+    CleanUp();
+}
+
+void ReferenceContainer::CleanUp() {
+
+LinkedListable *p = list.List();
+list.Reset();
+while (p != NULL) {
+    LinkedListable *q = p;
+    p = p->Next();
+    delete q;
+}
+
 }
 
 /*lint -e{593} .Justification: The node (newItem) will be deleted by the destructor. */
@@ -343,9 +352,16 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
                             newObject->SetName(&childName[1]);
                             ok = ReferenceContainer::Insert(newObject);
                         }
+                        else {
+                            REPORT_ERROR(ErrorManagement::FatalError, "Failed RC Init-Invalid");
+
+                        }
                         if (ok) {
                             ok = data.MoveToAncestor(1u);
                         }
+                    }
+                    else {
+                        REPORT_ERROR(ErrorManagement::FatalError, "Failed RC Init");
                     }
                 }
                 else {

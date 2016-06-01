@@ -22,7 +22,6 @@
 #
 #############################################################
 
-OBJSX=
 
 SPB = L1Portability.x
 
@@ -37,5 +36,7 @@ LIBRARIES_STATIC = $(BUILD_DIR)/L1Portability/L1PortabilityFGTest$(LIBEXT)
 all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/MARTeFGTest$(LIBEXT) 
 	echo  $(OBJS)
+
+include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)

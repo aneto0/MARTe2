@@ -154,11 +154,6 @@ public:
                           bool expected);
 
     /**
-     * @brief Tests the RelativeSeek passing an offset out of the int32 range (supported by IOBuffer)
-     */
-    bool TestRelativeSeek_OutOfInt32Range();
-
-    /**
      * @brief Tests if the position increase after read-write operations and if it changes after seek operations.
      */
     bool TestPosition();

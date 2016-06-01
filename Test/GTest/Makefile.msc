@@ -26,13 +26,6 @@ TARGET=msc
 
 include Makefile.inc
 
-
-OBJSO= $(shell dir $(BUILD_DIR)\BareMetal\*.obj /b/s)
-OBJSO+= $(shell dir $(BUILD_DIR)\Scheduler\*.obj /b/s)
-OBJSO+= $(shell dir $(BUILD_DIR)\FileSystem\*.obj /b/s)
-
-OBJSX=$(OBJSO:$(BUILD_DIR)\%.obj=%.x)
-
 CPPFLAGS+= -fprofile-arcs -ftest-coverage -coverage
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 
@@ -40,7 +33,9 @@ LIBRARIES   += ..\..\Build\$(TARGET)\Core\MARTe2$(LIBEXT)
 LIBRARIES   += ..\..\Build\$(TARGET)\Core\BareMetal\MARTeCoreBTest$(LIBEXT) 
 LIBRARIES   += ..\..\Build\$(TARGET)\Core\Scheduler\MARTeCoreSTest$(LIBEXT)
 LIBRARIES   += ..\..\Build\$(TARGET)\Core\FileSystem\MARTeCoreFTest$(LIBEXT)
-
+LIBRARIES   += ..\..\Build\$(TARGET)\GTest\BareMetal\MARTeBGTest$(LIBEXT)
+LIBRARIES   += ..\..\Build\$(TARGET)\GTest\Scheduler\MARTeSGTest$(LIBEXT)
+LIBRARIES   += ..\..\Build\$(TARGET)\GTest\FileSystem\MARTeFGTest$(LIBEXT)
 
 
 LIBRARIES   += ..\..\Lib\gtest-1.7.0\gtest_main-md.lib ..\..\Lib\gtest-1.7.0\gtest-md.lib 

@@ -238,6 +238,4 @@ const char8 * const ClassRegistryDatabase::GetClassName() const {
     return "ClassRegistryDatabase";
 }
 
-
-
 }

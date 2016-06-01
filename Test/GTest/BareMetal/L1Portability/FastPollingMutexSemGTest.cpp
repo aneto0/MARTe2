@@ -47,11 +47,6 @@ TEST(FastPollingMutexSemGTest,TestConstructor) {
     ASSERT_TRUE(mutextest.TestConstructor());
 }
 
-TEST(FastPollingMutexSemGTest,TestConstructorFromExternal) {
-    FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestConstructorFromExternal());
-}
-
 TEST(FastPollingMutexSemGTest,TestCreateNoLock) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestCreate(false));
@@ -60,16 +55,6 @@ TEST(FastPollingMutexSemGTest,TestCreateNoLock) {
 TEST(FastPollingMutexSemGTest,TestCreateLock) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestCreate(true));
-}
-
-TEST(FastPollingMutexSemGTest,TestCreateNoLock_External) {
-    FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestCreateExternal(false));
-}
-
-TEST(FastPollingMutexSemGTest,TestCreateLock_External) {
-    FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestCreateExternal(true));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastLock) {
@@ -82,24 +67,9 @@ TEST(FastPollingMutexSemGTest,TestFastLockWithFiniteTimeout) {
     ASSERT_TRUE(mutextest.TestFastLock(32, 10000000));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastLock_External) {
-    FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestFastLockExternal(32, TTInfiniteWait));
-}
-
-TEST(FastPollingMutexSemGTest,TestFastLockWithFiniteTimeout_External) {
-    FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestFastLockExternal(32, 10000000));
-}
-
 TEST(FastPollingMutexSemGTest,TestFastUnLock) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestFastUnLock(32, TTInfiniteWait));
-}
-
-TEST(FastPollingMutexSemGTest,TestFastUnLock_External) {
-    FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestFastUnLockExternal(32, TTInfiniteWait));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastUnLockWithFiniteTimeout) {
@@ -107,29 +77,14 @@ TEST(FastPollingMutexSemGTest,TestFastUnLockWithFiniteTimeout) {
     ASSERT_TRUE(mutextest.TestFastUnLock(32, 10000000));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastUnLockWithFiniteTimeout_External) {
-    FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestFastUnLockExternal(32, 10000000));
-}
-
 TEST(FastPollingMutexSemGTest,TestFastLockWithSmallFiniteTimeoutToFail) {
     FastPollingMutexSemTest mutextest;
     ASSERT_FALSE(mutextest.TestFastLock(32, 1));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastLockWithSmallFiniteTimeoutToFail_External) {
-    FastPollingMutexSemTest mutextest;
-    ASSERT_FALSE(mutextest.TestFastLockExternal(32, 1));
-}
-
 TEST(FastPollingMutexSemGTest,TestFastUnLockWithSmallFiniteTimeoutToFail) {
     FastPollingMutexSemTest mutextest;
     ASSERT_FALSE(mutextest.TestFastUnLock(32, 1));
-}
-
-TEST(FastPollingMutexSemGTest,TestFastUnLockWithSmallFiniteTimeoutToFail_External) {
-    FastPollingMutexSemTest mutextest;
-    ASSERT_FALSE(mutextest.TestFastUnLockExternal(32, 1));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastLockErrorCode) {
@@ -140,11 +95,6 @@ TEST(FastPollingMutexSemGTest,TestFastLockErrorCode) {
 TEST(FastPollingMutexSemGTest,TestFastTryLock) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestFastTryLock(32));
-}
-
-TEST(FastPollingMutexSemGTest,TestFastTryLock_External) {
-    FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestFastTryLockExternal(32));
 }
 
 TEST(FastPollingMutexSemGTest,TestLocked) {

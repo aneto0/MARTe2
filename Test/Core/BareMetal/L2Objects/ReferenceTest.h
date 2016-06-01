@@ -99,28 +99,8 @@ public:
      */
     bool TestDestructor();
 
-    /**
-     * @brief Tests if the function initialises an already created object
-     */
-    bool TestInitialiseNoCreation();
-
-    /**
-     * @brief Tests if the function creates and initialises the object
-     * reading the class name from the StructuredDataI in input
-     */
-    bool TestInitialiseCreation();
-
-    /**
-     * @brief Tests if the function fails trying initialise an object not created
-     */
-    bool TestInitialiseNoObject();
-
-    /**
-     * @brief Tests if the function fails creating the object without the class name
-     * specified in the StructuredDataI
-     */
-    bool TestInitialiseNoClassName();
-
+    //TODO
+    bool TestInitialise();
 
     /**
      * @brief Tests the Reference::RemoveReference function.

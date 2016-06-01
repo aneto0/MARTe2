@@ -505,7 +505,7 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
 bool LexicalAnalyzerTest::TestEscape() {
 
-    StreamString configString = "Hello\\nWorld Hello\\tWorld\nHello\\rWorld \"\\\"Hello\\\"World\\\"\" Hello\\\\World Hello\\World";
+    StreamString configString = "Hello\\nWorld Hello\\tWorld\nHello\\rWorld \"\\\"Hello\\\"World\\\"\" Hello\\World";
     configString.Seek(0);
 
     LexicalAnalyzer la(configString, "{}=", " ,\n", "//", "/*", "*/");
@@ -529,11 +529,6 @@ bool LexicalAnalyzerTest::TestEscape() {
     tok = la.GetToken();
 
     if (StringHelper::Compare("\"Hello\"World\"", tok->GetData()) != 0) {
-        return false;
-    }
-    tok = la.GetToken();
-
-    if (StringHelper::Compare("Hello\\World", tok->GetData()) != 0) {
         return false;
     }
 

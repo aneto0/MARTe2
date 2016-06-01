@@ -31,21 +31,11 @@
 
 #include "AnyTypeTest.h"
 #include "TestObjectHelper1.h"
-#include "StringHelper.h"
-#include <typeinfo>
+#include "TypeInfo.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-struct TestATStructure {
-    uint32 member1;
-};
-
-DECLARE_CLASS_MEMBER(TestATStructure, member1, uint32, "", "");
-
-static const IntrospectionEntry* fields[] = { &TestATStructure_member1_introspectionEntry, 0 };
-
-DECLARE_CLASS_INTROSPECTION(TestATStructure, fields);
-INTROSPECTION_REGISTER(TestATStructure, "1.0", TestATStructure_introspection)
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -57,13 +47,13 @@ AnyTypeTest::AnyTypeTest() :
         targetVariable(1),
         constantPtrToConstant(&targetVariable),
         constPtr(NULL) {
-            retVal = false;
-            defaultBitAddress = 1;
-            defaultDataDescription.isConstant = true;
-            defaultDataDescription.isStructuredData = false;
-            defaultDataDescription.numberOfBits = 5;
-            defaultDataDescription.type = Float;
-        }
+    retVal = false;
+    defaultBitAddress = 1;
+    defaultDataDescription.isConstant = true;
+    defaultDataDescription.isStructuredData = false;
+    defaultDataDescription.numberOfBits = 5;
+    defaultDataDescription.type = Float;
+}
 
 bool AnyTypeTest::TestAnyType_Void() {
     AnyType anytype;
@@ -73,7 +63,7 @@ bool AnyTypeTest::TestAnyType_Void() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == SignedInteger);
+    retVal &= (td.type == 0);
     retVal &= (td.numberOfBits == 0);
 
     return retVal;
@@ -88,7 +78,7 @@ bool AnyTypeTest::TestAnyType_AnyTypeVoid() {
     td = anytype1.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == SignedInteger);
+    retVal &= (td.type == 0);
     retVal &= (td.numberOfBits == 0);
 
     return retVal;
@@ -135,7 +125,7 @@ bool AnyTypeTest::TestAnyType_Int8() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == SignedInteger);
+    retVal &= (td.type == 0);
     retVal &= (td.numberOfBits == 8);
 
     return retVal;
@@ -150,7 +140,7 @@ bool AnyTypeTest::TestAnyType_UInt8() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == UnsignedInteger);
+    retVal &= (td.type == 1);
     retVal &= (td.numberOfBits == 8);
 
     return retVal;
@@ -165,7 +155,7 @@ bool AnyTypeTest::TestAnyType_ConstInt8() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == SignedInteger);
+    retVal &= (td.type == 0);
     retVal &= (td.numberOfBits == 8);
 
     return retVal;
@@ -180,7 +170,7 @@ bool AnyTypeTest::TestAnyType_ConstUInt8() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == UnsignedInteger);
+    retVal &= (td.type == 1);
     retVal &= (td.numberOfBits == 8);
 
     return retVal;
@@ -195,7 +185,7 @@ bool AnyTypeTest::TestAnyType_Int16() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == SignedInteger);
+    retVal &= (td.type == 0);
     retVal &= (td.numberOfBits == 16);
 
     return retVal;
@@ -210,7 +200,7 @@ bool AnyTypeTest::TestAnyType_UInt16() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == UnsignedInteger);
+    retVal &= (td.type == 1);
     retVal &= (td.numberOfBits == 16);
 
     return retVal;
@@ -225,7 +215,7 @@ bool AnyTypeTest::TestAnyType_ConstInt16() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == SignedInteger);
+    retVal &= (td.type == 0);
     retVal &= (td.numberOfBits == 16);
 
     return retVal;
@@ -240,7 +230,7 @@ bool AnyTypeTest::TestAnyType_ConstUInt16() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == UnsignedInteger);
+    retVal &= (td.type == 1);
     retVal &= (td.numberOfBits == 16);
 
     return retVal;
@@ -255,7 +245,7 @@ bool AnyTypeTest::TestAnyType_Int32() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == SignedInteger);
+    retVal &= (td.type == 0);
     retVal &= (td.numberOfBits == 32);
 
     return retVal;
@@ -270,7 +260,7 @@ bool AnyTypeTest::TestAnyType_UInt32() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == UnsignedInteger);
+    retVal &= (td.type == 1);
     retVal &= (td.numberOfBits == 32);
 
     return retVal;
@@ -285,7 +275,7 @@ bool AnyTypeTest::TestAnyType_ConstInt32() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == SignedInteger);
+    retVal &= (td.type == 0);
     retVal &= (td.numberOfBits == 32);
 
     return retVal;
@@ -300,7 +290,7 @@ bool AnyTypeTest::TestAnyType_ConstUInt32() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == UnsignedInteger);
+    retVal &= (td.type == 1);
     retVal &= (td.numberOfBits == 32);
 
     return retVal;
@@ -315,7 +305,7 @@ bool AnyTypeTest::TestAnyType_Int64() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == SignedInteger);
+    retVal &= (td.type == 0);
     retVal &= (td.numberOfBits == 64);
 
     return retVal;
@@ -330,7 +320,7 @@ bool AnyTypeTest::TestAnyType_UInt64() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == UnsignedInteger);
+    retVal &= (td.type == 1);
     retVal &= (td.numberOfBits == 64);
 
     return retVal;
@@ -345,7 +335,7 @@ bool AnyTypeTest::TestAnyType_ConstInt64() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == SignedInteger);
+    retVal &= (td.type == 0);
     retVal &= (td.numberOfBits == 64);
 
     return retVal;
@@ -360,7 +350,7 @@ bool AnyTypeTest::TestAnyType_ConstUInt64() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == UnsignedInteger);
+    retVal &= (td.type == 1);
     retVal &= (td.numberOfBits == 64);
 
     return retVal;
@@ -375,7 +365,7 @@ bool AnyTypeTest::TestAnyType_Float32() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == Float);
+    retVal &= (td.type == 2);
     retVal &= (td.numberOfBits == 32);
 
     return retVal;
@@ -390,7 +380,7 @@ bool AnyTypeTest::TestAnyType_ConstFloat32() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == Float);
+    retVal &= (td.type == 2);
     retVal &= (td.numberOfBits == 32);
 
     return retVal;
@@ -405,7 +395,7 @@ bool AnyTypeTest::TestAnyType_Float64() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == Float);
+    retVal &= (td.type == 2);
     retVal &= (td.numberOfBits == 64);
 
     return retVal;
@@ -420,7 +410,7 @@ bool AnyTypeTest::TestAnyType_ConstFloat64() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == Float);
+    retVal &= (td.type == 2);
     retVal &= (td.numberOfBits == 64);
 
     return retVal;
@@ -434,7 +424,7 @@ bool AnyTypeTest::TestAnyType_ConstPointerToConts() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == Pointer);
+    retVal &= (td.type == 3);
     retVal &= (td.numberOfBits == sizeof(void *) * 8u);
 
     return retVal;
@@ -448,7 +438,7 @@ bool AnyTypeTest::TestAnyType_ConstPointer() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.type == Pointer);
+    retVal &= (td.type == 3);
     retVal &= (td.numberOfBits == sizeof(void *) * 8u);
 
     return retVal;
@@ -463,38 +453,8 @@ bool AnyTypeTest::TestAnyType_ConstCharPointerToConst() {
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.type == CCString);
+    retVal &= (td.type == 8);
     retVal &= (td.numberOfBits == sizeof(const char *) * 8u);
-
-    return retVal;
-}
-
-bool AnyTypeTest::TestAnyType_Char8() {
-    char8 character = 'h';
-    AnyType anytype(character);
-
-    retVal = (((char8*) anytype.GetDataPointer())[0] == character);
-    retVal &= (anytype.GetBitAddress() == 0);
-    td = anytype.GetTypeDescriptor();
-    retVal &= (td.isStructuredData == false);
-    retVal &= (td.isConstant == false);
-    retVal &= (td.type == CArray);
-    retVal &= (td.numberOfBits == 8u);
-
-    return retVal;
-}
-
-bool AnyTypeTest::TestAnyType_ConstChar8() {
-    const char8 character = 'h';
-    AnyType anytype(character);
-
-    retVal = (((char8*) anytype.GetDataPointer())[0] == character);
-    retVal &= (anytype.GetBitAddress() == 0);
-    td = anytype.GetTypeDescriptor();
-    retVal &= (td.isStructuredData == false);
-    retVal &= (td.isConstant == true);
-    retVal &= (td.type == CArray);
-    retVal &= (td.numberOfBits == 8u);
 
     return retVal;
 }
@@ -587,328 +547,4 @@ bool AnyTypeTest::TestCreateFromOtherConstType() {
         retVal &= (structuredDataIdCode == classUniqueId);
     }
     return retVal;
-}
-
-bool AnyTypeTest::TestSetDataPointer() {
-    int32 x = 1;
-    void* ptr = (void*) &x;
-    AnyType at;
-    at.SetDataPointer(ptr);
-    return at.GetDataPointer() == ptr;
-}
-
-bool AnyTypeTest::TestGetDataPointer() {
-    return TestSetDataPointer();
-}
-
-bool AnyTypeTest::TestGetTypeDescriptor() {
-    TypeDescriptor tdes = UnsignedInteger64Bit;
-    AnyType at(tdes, 0, (void*) NULL);
-    return at.GetTypeDescriptor() == tdes;
-}
-
-bool AnyTypeTest::TestGetBitAddress() {
-    uint32 bitAddr = 10;
-    AnyType at(InvalidType, bitAddr, (void*) NULL);
-    return at.GetBitAddress() == bitAddr;
-}
-
-bool AnyTypeTest::TestSetNumberOfDimensions() {
-    AnyType at;
-    at.SetNumberOfDimensions(10);
-    return at.GetNumberOfDimensions() == 10;
-}
-
-bool AnyTypeTest::TestGetNumberOfDimensions() {
-    return TestSetNumberOfDimensions();
-}
-
-bool AnyTypeTest::TestSetNumberOfElements() {
-    AnyType at;
-    at.SetNumberOfElements(0, 1);
-    at.SetNumberOfElements(1, 2);
-    at.SetNumberOfElements(2, 3);
-
-    retVal = (at.GetNumberOfElements(0) == 1);
-    retVal &= (at.GetNumberOfElements(1) == 2);
-    retVal &= (at.GetNumberOfElements(2) == 3);
-    return retVal;
-}
-
-bool AnyTypeTest::TestGetNumberOfElements() {
-    return TestSetNumberOfElements();
-}
-
-bool AnyTypeTest::TestSetStaticDeclared() {
-    AnyType at;
-    if (!at.IsStaticDeclared()) {
-        return false;
-    }
-    at.SetStaticDeclared(false);
-    if (at.IsStaticDeclared()) {
-        return false;
-    }
-    at.SetStaticDeclared(true);
-    return at.IsStaticDeclared();
-}
-
-bool AnyTypeTest::TestIsStaticDeclared() {
-    return TestSetStaticDeclared();
-}
-
-bool AnyTypeTest::TestGetBitSize() {
-
-    for (uint32 i = 0u; i < 63; i++) {
-        uint64 x = i;
-        AnyType at(UnsignedInteger64Bit, i, &x);
-        if (at.GetBitSize() != (64 + i)) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool AnyTypeTest::TestGetByteSize() {
-
-    for (uint32 i = 0u; i < 63; i++) {
-        uint64 x = i;
-        AnyType at(UnsignedInteger64Bit, i, &x);
-        if (at.GetByteSize() != ((64 + i + 7) / 8)) {
-            return false;
-        }
-    }
-
-    return true;
-}
-#include "stdio.h"
-bool AnyTypeTest::TestPositionOperator_MatrixStructuredStaticDeclared() {
-
-    const uint32 nRows = 2;
-    const uint32 nCols = 2;
-
-    TestATStructure test[nRows][nCols];
-
-    for (uint32 i = 0; i < nRows; i++) {
-        for (uint32 j = 0; j < nCols; j++) {
-            test[i][j].member1 = (i + j);
-        }
-    }
-
-    TypeDescriptor tdes(false, ClassRegistryDatabase::Instance()->Find("TestATStructure")->GetClassProperties()->GetUniqueIdentifier());
-
-    AnyType at(tdes, 0, test);
-    at.SetNumberOfDimensions(2);
-    at.SetNumberOfElements(0, nRows);
-    at.SetNumberOfElements(1, nCols);
-
-    for (uint32 i = 0; i < nRows; i++) {
-        AnyType vector = at[i];
-        for (uint32 j = 0; j < nCols; j++) {
-            AnyType element = at[i][j];
-
-            if ((*((TestATStructure*) (vector.GetDataPointer()) + j)).member1 != (i + j)) {
-                return false;
-            }
-            if ((*(TestATStructure*) (element.GetDataPointer())).member1 != (i + j)) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-bool AnyTypeTest::TestPositionOperator_MatrixStructuredHeapDeclared() {
-
-    const uint32 nRows = 2;
-    const uint32 nCols = 2;
-
-    TestATStructure** test = (TestATStructure**) HeapManager::Malloc(nRows * sizeof(TestATStructure*));
-
-    for (uint32 i = 0; i < nRows; i++) {
-        test[i] = new TestATStructure[nCols];
-        for (uint32 j = 0; j < nCols; j++) {
-            test[i][j].member1 = (i + j);
-        }
-    }
-
-    TypeDescriptor tdes(false, ClassRegistryDatabase::Instance()->Find("TestATStructure")->GetClassProperties()->GetUniqueIdentifier());
-
-    AnyType at(tdes, 0, test);
-    at.SetNumberOfDimensions(2);
-    at.SetNumberOfElements(0, nRows);
-    at.SetNumberOfElements(1, nCols);
-    at.SetStaticDeclared(false);
-    bool ret = true;
-
-    for (uint32 i = 0; i < nRows; i++) {
-        AnyType vector = at[i];
-        for (uint32 j = 0; j < nCols; j++) {
-            AnyType element = at[i][j];
-
-            if ((*((TestATStructure*) (vector.GetDataPointer()) + j)).member1 != (i + j)) {
-                ret = false;
-            }
-            if ((*(TestATStructure*) (element.GetDataPointer())).member1 != (i + j)) {
-                ret = false;
-            }
-        }
-    }
-
-    for (uint32 i = 0; i < nRows; i++) {
-        delete test[i];
-    }
-    HeapManager::Free((void*&) test);
-
-    return ret;
-}
-
-bool AnyTypeTest::TestPositionOperator_MatrixBasicStaticDeclared() {
-
-    const uint32 nRows = 2;
-    const uint32 nCols = 2;
-
-    uint32 test[nRows][nCols];
-    for (uint32 i = 0; i < nRows; i++) {
-        for (uint32 j = 0; j < nCols; j++) {
-            test[i][j] = (i + j);
-        }
-    }
-
-    AnyType at(test);
-
-    for (uint32 i = 0; i < nRows; i++) {
-        AnyType vector = at[i];
-        for (uint32 j = 0; j < nCols; j++) {
-            AnyType element = at[i][j];
-
-            if (*((uint32*) (vector.GetDataPointer()) + j) != (i + j)) {
-                return false;
-            }
-            if (*(uint32*) (element.GetDataPointer()) != (i + j)) {
-                return false;
-            }
-        }
-    }
-    return true;
-
-}
-
-bool AnyTypeTest::TestPositionOperator_MatrixBasicHeapDeclared() {
-    const uint32 nRows = 2;
-    const uint32 nCols = 2;
-
-    uint32 **test = (uint32**) HeapManager::Malloc(sizeof(uint32*) * nRows);
-    for (uint32 i = 0; i < nRows; i++) {
-        test[i] = new uint32[nCols];
-        for (uint32 j = 0; j < nCols; j++) {
-            test[i][j] = (i + j);
-        }
-    }
-
-    AnyType at(UnsignedInteger32Bit, 0u, test);
-    at.SetNumberOfDimensions(2);
-    at.SetNumberOfElements(0, nRows);
-    at.SetNumberOfElements(1, nCols);
-    at.SetStaticDeclared(false);
-
-    bool ret = true;
-    for (uint32 i = 0; i < nRows; i++) {
-        AnyType vector = at[i];
-        for (uint32 j = 0; j < nCols; j++) {
-            AnyType element = at[i][j];
-
-            if (*((uint32*) (vector.GetDataPointer()) + j) != (i + j)) {
-                ret = false;
-            }
-            if (*(uint32*) (element.GetDataPointer()) != (i + j)) {
-                ret = false;
-            }
-        }
-    }
-
-    for (uint32 i = 0; i < nRows; i++) {
-        delete test[i];
-    }
-    HeapManager::Free((void*&) test);
-
-    return ret;
-}
-
-bool AnyTypeTest::TestPositionOperator_VectorStructured() {
-
-    const uint32 nElements = 32;
-
-    TestATStructure test[nElements];
-    for (uint32 i = 0; i < nElements; i++) {
-        test[i].member1 = i;
-    }
-
-    TypeDescriptor tdes(false, ClassRegistryDatabase::Instance()->Find("TestATStructure")->GetClassProperties()->GetUniqueIdentifier());
-
-    AnyType at(tdes, 0, test);
-    at.SetNumberOfDimensions(1);
-    at.SetNumberOfElements(0, nElements);
-
-    for (uint32 i = 0; i < nElements; i++) {
-        AnyType element = at[i];
-
-        if ((*(TestATStructure*) (element.GetDataPointer())).member1 != (i)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool AnyTypeTest::TestPositionOperator_VectorBasic() {
-    const uint32 nElements = 32;
-
-    uint32 test[nElements];
-    for (uint32 i = 0; i < nElements; i++) {
-        test[i] = i;
-    }
-    AnyType at(test);
-
-    for (uint32 i = 0; i < nElements; i++) {
-        AnyType element = at[i];
-
-        if (*(uint32*) (element.GetDataPointer()) != (i)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool AnyTypeTest::TestPositionOperator_VectorCString() {
-
-    const uint32 nElements = 3;
-
-    const char8* test[] = { "Hello", "Ciao", "Hola" };
-    AnyType at(test);
-
-    for (uint32 i = 0; i < nElements; i++) {
-        AnyType element = at[i];
-
-        if (StringHelper::Compare((const char8*) element.GetDataPointer(), test[i]) != 0) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool AnyTypeTest::TestPositionOperator_VectorPointer() {
-    const uint32 nElements = 3;
-
-    const char8* var[] = { "Hello", "Ciao", "Hola" };
-    void* test[] = { &var[0], &var[1], &var[2] };
-    AnyType at(test);
-
-    for (uint32 i = 0; i < nElements; i++) {
-        AnyType element = at[i];
-
-        if (element.GetDataPointer()!=test[i]) {
-            return false;
-        }
-    }
-    return true;
 }

@@ -32,13 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "Atomic.h"
 #include "ErrorManagement.h"
-#include "ErrorType.h"
-#include "GeneralDefinitions.h"
-#include "HighResolutionTimer.h"
 #include "TimeoutType.h"
-#include "Sleep.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/

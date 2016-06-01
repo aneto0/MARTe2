@@ -40,7 +40,6 @@ namespace MARTe {
 
 /**
  * @brief Template version of the shared pointer implementation (see Reference).
- * @tparam T the base type of the objects referenced by instances of this class
  */
 template<typename T>
 class ReferenceT: public Reference {
@@ -134,12 +133,12 @@ public:
      * @brief Provides access to the object referenced by this Reference.
      * @return a pointer to the object referenced by this Reference.
      */
-    virtual T* operator->();
+     T* operator->();
 
     /**
      * @brief Creates an object from a structured list of elements.
      * @param[in] data the data to initialise the underlying object.
-     * @param[in] initOnly if true the object is supposed to be already created.
+     * @param[in] createOnly if true the object Initialise method is not called.
      * @return true if the object was successfully created and initialized.
      */
     virtual bool Initialise(StructuredDataI &data,
@@ -204,10 +203,8 @@ ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);
         if (typeTObjectPointer == NULL) {
             RemoveReference();
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
         }
     }
-
     return *this;
 }
 
@@ -224,6 +221,7 @@ ReferenceT<T>* ReferenceT<T>::operator&() {
 template<typename T>
 bool ReferenceT<T>::Initialise(StructuredDataI &data,
                                const bool &initOnly) {
+
     bool ok = true;
     if (Reference::Initialise(data, initOnly)) {
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);

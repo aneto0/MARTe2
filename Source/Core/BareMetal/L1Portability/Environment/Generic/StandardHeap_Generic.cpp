@@ -43,7 +43,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+
+namespace MARTe{
 
 StandardHeap::StandardHeap() {
     /* initialise memory addresses to NULL as we have no way to obtain this information until malloc is called */
@@ -140,48 +141,47 @@ void *StandardHeap::Duplicate(const void * const data,
 
     void *duplicate = NULL_PTR(void *);
 
-    if (data != NULL) {
-        // check if 0 terminated copy to be done
-        if (size == 0U) {
-            const char8* inputData = static_cast<const char8 *>(data);
-            /*lint -e{586} the use of strlen is necessary because
-             * the size of the array is unknown */
-            size = static_cast<uint32>(strlen(inputData));
+    // check if 0 terminated copy to be done
+    if (size == 0U) {
+        const char8* inputData = static_cast<const char8 *>(data);
+        /*lint -e{586} the use of strlen is necessary because
+         * the size of the array is unknown */
+        size = static_cast<uint32>(strlen(inputData));
+        if (data != NULL) {
             duplicate = strdup(inputData);
-
-            if (duplicate == NULL) {
-                REPORT_ERROR(ErrorManagement::OSError, "StandardHeap: Failed strdup()");
-            }
         }
-        else { // strdup style
-            duplicate = StandardHeap::Malloc(size);
-            if (duplicate != NULL) {
-                const char8 *source = static_cast<const char8 *>(data);
-                char8 *destination = static_cast<char8 *>(duplicate);
-                uint32 i;
-                for (i = 0u; i < size; i++) {
-                    *destination = *source;
-                    destination++;
-                    source++;
-                } //copy loop
-            } //check Malloc success
-            else {
-                REPORT_ERROR(ErrorManagement::OSError, "StandardHeap: Failed malloc()");
-            }
-        } // copy bound by size
-
+        if (duplicate == NULL) {
+            REPORT_ERROR(ErrorManagement::OSError, "StandardHeap: Failed strdup()");
+        }
+    }
+    else { // strdup style
+        duplicate = StandardHeap::Malloc(size);
         if (duplicate != NULL) {
-            /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
-             * in order to be able to update the range of addresses provided by this heap
-             * uintp is an integer type that has by design the same span as a pointer in all systems*/
-            uintp address = reinterpret_cast<uintp>(duplicate);
-            if ((firstAddress > address) || (firstAddress == 0U)) {
-                firstAddress = address;
-            }
-            address += size;
-            if ((lastAddress < address) || (lastAddress == 0U)) {
-                lastAddress = address;
-            }
+            const char8 *source = static_cast<const char8 *>(data);
+            char8 *destination = static_cast<char8 *>(duplicate);
+            uint32 i;
+            for (i = 0u; i < size; i++) {
+                *destination = *source;
+                destination++;
+                source++;
+            } //copy loop
+        } //check Malloc success
+        else {
+            REPORT_ERROR(ErrorManagement::OSError, "StandardHeap: Failed malloc()");
+        }
+    } // copy bound by size
+
+    if (duplicate != NULL) {
+        /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
+         * in order to be able to update the range of addresses provided by this heap
+         * uintp is an integer type that has by design the same span as a pointer in all systems*/
+        uintp address = reinterpret_cast<uintp>(duplicate);
+        if ((firstAddress > address) || (firstAddress == 0U)) {
+            firstAddress = address;
+        }
+        address += size;
+        if ((lastAddress < address) || (lastAddress == 0U)) {
+            lastAddress = address;
         }
     }
 

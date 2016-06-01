@@ -274,16 +274,6 @@ TEST(SingleBufferedStreamGTest,TestRelativeSeek) {
     ASSERT_TRUE(streamtest.TestRelativeSeek());
 }
 
-TEST(SingleBufferedStreamGTest,TestRelativeSeek_OutOfInt32Range) {
-    SingleBufferedStreamTest streamtest;
-    ASSERT_TRUE(streamtest.TestRelativeSeek_OutOfInt32Range());
-}
-
-TEST(SingleBufferedStreamGTest,TestRelativeSeek_NegativeFinalPosition) {
-    SingleBufferedStreamTest streamtest;
-    ASSERT_TRUE(streamtest.TestRelativeSeek_NegativeFinalPosition());
-}
-
 TEST(SingleBufferedStreamGTest,TestRelativeSeek_OverflowInternalBuffer_Size) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRelativeSeek_OverflowInternalBuffer(8, 256));

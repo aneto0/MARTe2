@@ -41,8 +41,8 @@
 namespace MARTe {
 
     /**
-     * @brief Class which allows to query the system for "well-known" services
-     * by name/protocol or by port/protocol.
+     * @brief Implementation of an internet service which allows to retrieve
+     * the name, the port number and the internet protocol associated to an internet service.
      */
     class DLL_API InternetService {
 

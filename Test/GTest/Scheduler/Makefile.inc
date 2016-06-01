@@ -22,9 +22,8 @@
 #
 #############################################################
 
-OBJSX=
 
-SPB = L1Portability.x L5GAMs.x
+SPB = L1Portability.x
 
 PACKAGE=GTest
 ROOT_DIR=../../..
@@ -34,12 +33,13 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 
 LIBRARIES_STATIC=$(BUILD_DIR)/L1Portability/L1PortabilitySGTest$(LIBEXT)
-LIBRARIES_STATIC=$(BUILD_DIR)/L5GAMs/L5GAMsSGTest$(LIBEXT)
 
 
 all: $(OBJS)  $(SUBPROJ)  \
         $(BUILD_DIR)/MARTeSGTest$(LIBEXT) 
 	echo  $(OBJS)
+
+include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

@@ -42,17 +42,7 @@
 namespace MARTe {
 
 /**
- * @brief Class which represents a datagram network socket, also known as
- * connectionless socket, which use User Datagram Protocol (UDP).
- * @details The main responsibilities of this class are:
- * + Establishing a connection with a remote host.
- * + Binding the socket to a local port and begin listening from it.
- * + Allowing reading/writing using a generic stream interface approach.
- * @note Although being stated as a connection-less socket, it actually adopts
- * a connection-oriented role, because it remembers the destination host and
- * uses it each time a data packet is sent. Nevertheless, as a datagram socket,
- * the order and reliability of the data packets are not guaranteed, hence no
- * buffering of the data packets is expected to happen.
+ * @brief Unbuffered UDP socket.
  */
 class DLL_API BasicUDPSocket: public BasicSocket {
 public:
@@ -164,7 +154,7 @@ public:
      * @brief Unsupported feature.
      * @return false.
      */
-    virtual bool RelativeSeek(const int64 deltaPos);
+    virtual bool RelativeSeek(const int32 deltaPos);
 
     /**
      * @brief Unsupported feature.

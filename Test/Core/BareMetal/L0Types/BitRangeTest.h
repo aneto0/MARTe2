@@ -41,7 +41,6 @@ using namespace MARTe;
 
 /**
  * @brief Tests all the BitRange functions.
- * @tparam T TODO Define T
  */
 template<typename T>
 class BitRangeTest {
@@ -51,7 +50,6 @@ public:
     /**
      * @brief Tests the cast to the base type using for BitRange with a bit size
      * minor than the input size.
-     * @tparam T2 TODO Define T2
      * @param[in] input specifies the input type.
      * @return true if the maximum input value is saturated to the maximum BitRange value and
      * if the minimum input value is saturated to the minimum BitRange value. If this type is
@@ -63,7 +61,6 @@ public:
     /**
      * @brief Tests the cast to the base type using for BitRange a bit size
      * greater than the input size.
-     * @tparam T2 TODO Define T2
      * @param[in] input specifies the input type.
      * @return true if the BitRange value is equal to the maximum input value and
      * if the BitRange value is equal to the minimum input value is saturated to the minimum. If this type is

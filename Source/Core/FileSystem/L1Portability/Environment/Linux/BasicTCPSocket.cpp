@@ -253,8 +253,7 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
             }
         }
 
-        uint32 occasions=1u;
-        for(uint32 i=0u; (i<occasions) && (ok); i++) {
+        if(ok) {
             uint32 size = source.Size();
             /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
             int32 newSocket = accept(connectionSocket, reinterpret_cast<struct sockaddr *>(source.GetInternetHost()), reinterpret_cast<socklen_t *>(&size));
@@ -280,9 +279,7 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
                             Select sel;
                             if(sel.AddReadHandle(*this)) {
                                 if (sel.WaitUntil(timeout)>0) {
-                                    if(occasions==1u) {
-                                        occasions++;
-                                    }
+                                    ret = WaitConnection(TTDefault, client);
                                 }
                             }
 
@@ -492,7 +489,7 @@ uint64 BasicTCPSocket::Size() {
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: sockets cannot seek. */
-bool BasicTCPSocket::RelativeSeek(const int64 deltaPos) {
+bool BasicTCPSocket::RelativeSeek(const int32 deltaPos) {
     return false;
 }
 

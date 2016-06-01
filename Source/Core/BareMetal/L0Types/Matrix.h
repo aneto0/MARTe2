@@ -44,7 +44,6 @@ namespace MARTe {
  * @brief Fixed size matrix of values.
  * @details The Matrix can allocate and manage its own memory or it can be associated
  * to an existent memory table.
- * @tparam T the scalar type for the cells of the matrix
  */
 template<typename T>
 class Matrix {
@@ -106,8 +105,6 @@ public:
 
     /**
      * @brief Constructs a new matrix from a statically declared table [][].
-     * @tparam nOfRowsStatic Define nOfRowsStatic
-     * @tparam nOfColumnsStatic Define nOfColumnsStatic
      * @param[in] source The address of the statically declared table.
      * @post
      *   GetNumberOfRows() == nOfRowsStatic &&

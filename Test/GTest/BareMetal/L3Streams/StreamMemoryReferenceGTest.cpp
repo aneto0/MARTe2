@@ -209,11 +209,6 @@ TEST(StreamMemoryReferenceGTest, TestRelativeSeek_bufferSize_in_size_in_pos) {
     ASSERT_TRUE(smrTest.TestRelativeSeek(bufferSize, 14, -15, false));
 }
 
-TEST(StreamMemoryReferenceGTest, TestRelativeSeek_OutOfInt32Range) {
-    StreamMemoryReferenceTest smrTest;
-    ASSERT_TRUE(smrTest.TestRelativeSeek_OutOfInt32Range());
-}
-
 TEST(StreamMemoryReferenceGTest, TestPosition_in_range) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 16;

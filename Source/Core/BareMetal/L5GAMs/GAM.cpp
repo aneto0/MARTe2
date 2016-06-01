@@ -43,7 +43,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-static const uint32 stateNamesGranularity = 4u;
+static const uint32 stateNamesGranularity = 1u;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -54,10 +54,10 @@ GAM::GAM() :
     numberOfSupportedStates = 0u;
     supportedStates = NULL_PTR(StreamString *);
     supportedThreads = NULL_PTR(StreamString *);
-    group = NULL_PTR(GAMGroup*);
+    //  group = NULL_PTR(GAMGroup*);
     application = NULL_PTR(RealTimeApplication *);
-    inputReaders = ReferenceT<BrokerContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    outputWriters = ReferenceT<BrokerContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    inputReaders = ReferenceT < BrokerContainer > (GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    outputWriters = ReferenceT < BrokerContainer > (GlobalObjectsDatabase::Instance()->GetStandardHeap());
 }
 
 /*lint -e{1551} no exception should be thrown*/
@@ -71,7 +71,7 @@ GAM::~GAM() {
     }
 
     application=NULL_PTR(RealTimeApplication *);
-    group = NULL_PTR(GAMGroup*);
+    //group = NULL_PTR(GAMGroup*);
 }
 
 /*void GAM::SetUp() {
@@ -154,7 +154,6 @@ bool GAM::ConfigureDataSource() {
 }
 
 bool GAM::Initialise(StructuredDataI & data) {
-
     bool ret = ReferenceContainer::Initialise(data);
     ret = inputReaders.IsValid();
     if (ret) {
@@ -181,12 +180,10 @@ bool GAM::Initialise(StructuredDataI & data) {
     }
 
     if (ret) {
-        // implemented in the derived classes
-        // get the local cdb
-        SetUp();
         // merge definitions
         ret = ConfigureFunction();
     }
+
     return ret;
 }
 
@@ -197,12 +194,12 @@ void GAM::SetApplication(RealTimeApplication &rtApp) {
     inputReaders->SetApplication(rtApp);
     outputWriters->SetApplication(rtApp);
 }
-
-void GAM::SetGAMGroup(ReferenceT<GAMGroup> gamGroup) {
-    if (group == NULL) {
-        group = gamGroup.operator->();
-    }
-}
+/*
+ void GAM::SetGAMGroup(ReferenceT<GAMGroup> gamGroup) {
+ if (group == NULL) {
+ group = gamGroup.operator->();
+ }
+ }*/
 
 bool GAM::AddState(const char8 * const stateName,
                    const char8 * const threadName) {
@@ -275,28 +272,26 @@ bool GAM::ConfigureDataSourceLinks() {
     uint32 numberOfElements = Size();
 
     for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
-        ReferenceT<GAMSignalsContainer> defContainer = Get(i);
+        ReferenceT < GAMSignalsContainer > defContainer = Get(i);
         if (defContainer.IsValid()) {
             uint32 numberOfDefs = defContainer->Size();
             for (uint32 j = 0u; (j < numberOfDefs) && (ret); j++) {
-                ReferenceT<GAMSignalI> def = defContainer->Get(j);
+                ReferenceT < GAMSignalI > def = defContainer->Get(j);
                 ret = def.IsValid();
                 if (ret) {
 
                     if (defContainer->IsInput()) {
                         ret = (inputReaders->AddSignal(def));
                         if (!ret) {
-                            // TODO definition not compatible with
-                            // its data source !!!
-
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The input GAM signal %s is not compatible with its data source signal",
+                                                    def->GetName())
                         }
                     }
                     if (defContainer->IsOutput()) {
                         ret = (outputWriters->AddSignal(def));
                         if (!ret) {
-                            // TODO definition not compatible with
-                            // its data source !!!
-
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The output GAM signal %s is not compatible with its data source signal",
+                                                    def->GetName())
                         }
                     }
                 }
@@ -310,19 +305,21 @@ bool GAM::ConfigureDataSourceLinks() {
     if (ret) {
         ret = inputReaders->Finalise();
         if (!ret) {
-            //TODO Failed readers finalisation
+            REPORT_ERROR(ErrorManagement::FatalError, "Error in Finalise() of inputReaders");
         }
     }
     if (ret) {
         ret = outputWriters->Finalise();
         if (!ret) {
-            //TODO Failed readers finalisation
+            REPORT_ERROR(ErrorManagement::FatalError, "Error in Finalise() of outputWriters");
         }
     }
 
     if (ret) {
-        // not both sync!
         ret = !((inputReaders->IsSync()) && (outputWriters->IsSync()));
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::FatalError, "inputReaders and outputWriters cannot be both synchronising");
+        }
     }
 
     return ret;
@@ -342,6 +339,10 @@ Reference GAM::GetOutputWriter() {
 
 RealTimeApplication *GAM::GetApplication() {
     return application;
+}
+
+void GAM::SetContext(void * context) {
+
 }
 
 }

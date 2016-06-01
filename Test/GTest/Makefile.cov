@@ -34,8 +34,8 @@ LIBRARIES   += ../../Source/Core/Scheduler/$(TARGET)/MARTeCoreS$(LIBEXT)
 LIBRARIES   += ../../Test/Core/Scheduler/$(TARGET)/MARTeCoreSTest$(LIBEXT)
 LIBRARIES   += ../../Source/Core/FileSystem/$(TARGET)/MARTeCoreF$(LIBEXT) 
 LIBRARIES   += ../../Test/Core/FileSystem/$(TARGET)/MARTeCoreFTest$(LIBEXT)
-LIBRARIES   += BareMetal/cov/MARTeBGTest$(LIBEXT)
-LIBRARIES   += Scheduler/cov/MARTeSGTest$(LIBEXT)
-LIBRARIES   += FileSystem/cov/MARTeFGTest$(LIBEXT)
+LIBRARIES   += $(TARGET)/MARTeBGTest$(LIBEXT)
+LIBRARIES   += $(TARGET)/MARTeSGTest$(LIBEXT)
+LIBRARIES   += $(TARGET)/MARTeFGTest$(LIBEXT)
 
 LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 

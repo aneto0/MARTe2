@@ -71,13 +71,13 @@ public:
      * @param[in] ticks are the number of cpu ticks.
      */
     /*lint -e(1960) , functions should have external effects*/
-    inline void SetTimeoutHighResolutionTimerTicks(uint64 ticks);
+    inline void SetTimeoutHighResolutionTimerTicks(int64 ticks);
 
     /**
      * @brief Gets the timeout in HighResolutionTimer Ticks
      * @return the number of ticks related to the timeout.
      */
-    inline uint64 HighResolutionTimerTicks() const;
+    inline int64 HighResolutionTimerTicks() const;
 
     /**
      * @brief Subtracts a number of milliseconds from the timeout.
@@ -153,18 +153,21 @@ void TimeoutType::SetTimeoutSec(float64 secs) {
     msecTimeout = static_cast<uint32>(secs);
 }
 
-void TimeoutType::SetTimeoutHighResolutionTimerTicks(uint64 ticks) {
+void TimeoutType::SetTimeoutHighResolutionTimerTicks(int64 ticks) {
+    if (ticks < 0) {
+        ticks = 0;
+    }
     float64 TimeoutSecFromTicks = (static_cast<float64>(ticks) * HighResolutionTimer::Period());
     float64 TimeoutMSecFromTicks = 1000.0 * TimeoutSecFromTicks;
     msecTimeout = static_cast<uint32>(TimeoutMSecFromTicks);
 }
 
-uint64 TimeoutType::HighResolutionTimerTicks() const {
+int64 TimeoutType::HighResolutionTimerTicks() const {
     float64 deltaT = static_cast<float64>(msecTimeout);
     deltaT = deltaT * 1e-3;
     float64 frequency = static_cast<float64>(HighResolutionTimer::Frequency());
     deltaT = deltaT * frequency;
-    uint64 ticks = static_cast<uint64>(deltaT);
+    int64 ticks = static_cast<int64>(deltaT);
     return ticks;
 }
 

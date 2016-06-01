@@ -42,17 +42,15 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-FastPollingMutexSemTest::FastPollingMutexSemTest() :
-        extFlag(0),
-        testMutexExt(extFlag) {
+FastPollingMutexSemTest::FastPollingMutexSemTest() {
     testMutex.Create();
     synchSem.Create();
+
     sharedVariable = 0;
     nOfExecutingThreads = 0;
     testMutexTimeout = TTInfiniteWait;
     failed = true;
     stop = false;
-    external = false;
 }
 
 FastPollingMutexSemTest::~FastPollingMutexSemTest() {
@@ -61,18 +59,6 @@ FastPollingMutexSemTest::~FastPollingMutexSemTest() {
 bool FastPollingMutexSemTest::TestConstructor() {
     FastPollingMutexSem mutexSem;
     return !mutexSem.Locked();
-}
-
-bool FastPollingMutexSemTest::TestConstructorFromExternal() {
-    volatile int32 x = 0;
-    FastPollingMutexSem mutexSem(x);
-    if (mutexSem.Locked()) {
-        return false;
-    }
-
-    x++;
-    FastPollingMutexSem mutexSem1(x);
-    return (mutexSem.Locked());
 }
 
 bool FastPollingMutexSemTest::TestCreate(bool locked) {
@@ -89,25 +75,7 @@ bool FastPollingMutexSemTest::TestCreate(bool locked) {
     return test;
 }
 
-bool FastPollingMutexSemTest::TestCreateExternal(bool locked) {
-
-    volatile int32 x;
-    FastPollingMutexSem testSem(x);
-    testSem.Create(locked);
-
-    bool test = true;
-    if (locked) {
-        test = testSem.Locked();
-    }
-    else {
-        test = !testSem.Locked();
-    }
-    return test;
-}
-
-bool FastPollingMutexSemTest::GenericMutexTestCaller(int32 nOfThreads,
-                                                     TimeoutType timeout,
-                                                     ThreadFunctionType functionToTest) {
+bool FastPollingMutexSemTest::GenericMutexTestCaller(int32 nOfThreads, TimeoutType timeout, ThreadFunctionType functionToTest) {
     failed = false;
     stop = false;
     nOfExecutingThreads = 0;
@@ -132,24 +100,14 @@ void TestFastLockCallback(FastPollingMutexSemTest &mt) {
     FlagsType error;
     mt.synchSem.Wait();
     while (!mt.stop) {
-        if (mt.external) {
-            mt.failed |= !(mt.testMutexExt.FastLock(mt.testMutexTimeout) == ErrorManagement::NoError);
-        }
-        else {
-            mt.failed |= !(mt.testMutex.FastLock(mt.testMutexTimeout) == ErrorManagement::NoError);
-        }
+        mt.failed |= !(mt.testMutex.FastLock(mt.testMutexTimeout) == ErrorManagement::NoError);
         int32 state = mt.sharedVariable;
         mt.sharedVariable++;
         Sleep::MSec(10);
         if (mt.sharedVariable != (state + 1)) {
             mt.failed = true;
         }
-        if (mt.external) {
-            mt.testMutexExt.FastUnLock();
-        }
-        else {
-            mt.testMutex.FastUnLock();
-        }
+        mt.testMutex.FastUnLock();
         if (mt.failed) {
             break;
         }
@@ -160,14 +118,7 @@ void TestFastLockCallback(FastPollingMutexSemTest &mt) {
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool FastPollingMutexSemTest::TestFastLock(int32 nOfThreads,
-                                           TimeoutType timeout) {
-    return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastLockCallback);
-}
-
-bool FastPollingMutexSemTest::TestFastLockExternal(int32 nOfThreads,
-                                                   TimeoutType timeout) {
-    external = true;
+bool FastPollingMutexSemTest::TestFastLock(int32 nOfThreads, TimeoutType timeout) {
     return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastLockCallback);
 }
 
@@ -175,12 +126,7 @@ void TestFastUnLockCallback(FastPollingMutexSemTest &mt) {
     mt.synchSem.Wait();
 
     while (!mt.stop) {
-        if (mt.external) {
-            mt.testMutexExt.FastLock(mt.testMutexTimeout);
-        }
-        else {
-            mt.testMutex.FastLock(mt.testMutexTimeout);
-        }
+        mt.testMutex.FastLock(mt.testMutexTimeout);
         int32 state = mt.sharedVariable;
         mt.sharedVariable++;
         Sleep::MSec(10);
@@ -188,12 +134,7 @@ void TestFastUnLockCallback(FastPollingMutexSemTest &mt) {
             mt.failed = true;
         }
 
-        if (mt.external) {
-            mt.testMutexExt.FastUnLock();
-        }
-        else {
-            mt.testMutex.FastUnLock();
-        }
+        mt.testMutex.FastUnLock();
     }
     //Careful that without this, the threads when exiting can overwrite the
     //assignment operation and the subtraction of the value thus generating
@@ -201,14 +142,7 @@ void TestFastUnLockCallback(FastPollingMutexSemTest &mt) {
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool FastPollingMutexSemTest::TestFastUnLock(int32 nOfThreads,
-                                             TimeoutType timeout) {
-    return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastUnLockCallback);
-}
-
-bool FastPollingMutexSemTest::TestFastUnLockExternal(int32 nOfThreads,
-                                                     TimeoutType timeout) {
-    external = true;
+bool FastPollingMutexSemTest::TestFastUnLock(int32 nOfThreads, TimeoutType timeout) {
     return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastUnLockCallback);
 }
 
@@ -216,22 +150,13 @@ void TestFastTryLockCallback(FastPollingMutexSemTest &mt) {
     FlagsType error;
     mt.synchSem.Wait();
     while (!mt.stop) {
-        if (mt.external) {
-            mt.testMutexExt.FastTryLock();
-        }
-        else {
-            mt.testMutex.FastTryLock();
-        }
-        int32 state = mt.sharedVariable;
-        mt.sharedVariable++;
-        Sleep::MSec(10);
-        if (mt.sharedVariable != (state + 1)) {
-            mt.failed = true;
-        }
-        if (mt.external) {
-            mt.testMutexExt.FastUnLock();
-        }
-        else {
+        if (mt.testMutex.FastTryLock()) {
+            int32 state = mt.sharedVariable;
+            mt.sharedVariable++;
+            Sleep::MSec(10);
+            if (mt.sharedVariable != (state + 1)) {
+                mt.failed = true;
+            }
             mt.testMutex.FastUnLock();
         }
         if (mt.failed) {
@@ -245,16 +170,6 @@ void TestFastTryLockCallback(FastPollingMutexSemTest &mt) {
 }
 
 bool FastPollingMutexSemTest::TestFastTryLock(int32 nOfThreads) {
-    bool test = GenericMutexTestCaller(nOfThreads, TTInfiniteWait, (ThreadFunctionType) TestFastTryLockCallback);
-    FastPollingMutexSem sem;
-    test = sem.FastTryLock();
-    test = !sem.FastTryLock();
-    sem.FastUnLock();
-    return test;
-}
-
-bool FastPollingMutexSemTest::TestFastTryLockExternal(int32 nOfThreads) {
-    external = true;
     bool test = GenericMutexTestCaller(nOfThreads, TTInfiniteWait, (ThreadFunctionType) TestFastTryLockCallback);
     FastPollingMutexSem sem;
     test = sem.FastTryLock();

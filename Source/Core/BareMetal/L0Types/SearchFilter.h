@@ -38,14 +38,10 @@
 namespace MARTe {
 
 /**
- * @brief Interface which defines a functor responsible of answering if an
- * instance of LinkedListable meets a given criteria.
- * @details The classes that realise this interface will implement the checking
- * of the criteria into the Test method, assuming that the parameter will be
- * an object of type LinkedListable.
- * @note In order to search on all items of a list, the user will have to call
- * the Test method for each element of the list and recall which of them have
- * returned true.
+ * @brief LinkedListable search interface.
+ * @details For each element on a LinkedListable list the function Test(LinkedListable *) is called.
+ * The inherited implementation is responsible for verifying if the current element being tested meets the
+ * defined search criteria.
  */
 class SearchFilter {
 public:

@@ -55,7 +55,7 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
         ReferenceT<ReferenceContainer> subContainer = container->Get(i);
         ret = subContainer.IsValid();
         if (ret) {
-            ReferenceT<DataSourceSignal> def = subContainer;
+            ReferenceT<DataSourceSignalI> def = subContainer;
             if (def.IsValid()) {
                 ret = def->Allocate(memory);
             }
@@ -76,6 +76,9 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
 
 DataSource::DataSource() :
         ReferenceContainer() {
+}
+
+DataSource::~DataSource() {
 }
 
 bool DataSource::Allocate() {

@@ -131,7 +131,7 @@ static bool ParseCharacter(const char8 c,
 static inline int8 GetDigit(const char8 c) {
     int8 digit = static_cast<int8>(c - '0');
 
-    return ((digit <= 9) && (digit>=0)) ? (digit) : (-1);
+    return (digit <= 9) ? digit : -1;
 
 }
 

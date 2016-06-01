@@ -42,7 +42,7 @@
 namespace MARTe {
 
 /**
- * @brief Abstract class for a heap.
+ * @brief Heap interface and standard implementation.
  * @details Framework objects can be allocated in different types of heap memory.
  * This class provides the interface method definitions allowing different ways to
  * manage the heap memory.

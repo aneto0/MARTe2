@@ -78,5 +78,6 @@ struct BasicConsoleProperties;
 
 typedef HANDLE Handle;
 static const char8 DIRECTORY_SEPARATOR = '\\';
+
 }
 #endif /* GENERALDEFINITIONS_ENV_H_ */

@@ -52,18 +52,6 @@ public:
     bool TestConstructor();
 
     /**
-     * @brief Tests the constructor with the Introspection input.
-     * @return true if all the class attributes are initialised correctly.
-     */
-    bool TestIntrospectionCostructor();
-
-    /**
-     * @brief Tests the full constructor.
-     * @return true if all the class attributes are initialised correctly.
-     */
-    bool TestFullCostructor();
-
-    /**
      * @brief Tests destructor.
      * @return true if the class is deleted from the database.
      */
@@ -97,7 +85,9 @@ public:
      * @param[in] version is the desired class version.
      * @return true if the ClassProperties copy has the same attributes values of the properties passed by constructor, false otherwise.
      */
-    bool TestGetClassPropertiesCopy();
+    bool TestGetClassPropertiesCopy(const char8* name,
+                                    const char8* typeidName,
+                                    const char8* version);
 
     /**
      * @brief Tests the ClassRegistryItem::GetClassProperties.
@@ -106,7 +96,9 @@ public:
      * @param[in] version is the desired class version.
      * @return true if the ClassProperties returned has the same attributes values of the properties passed by constructor, false otherwise.
      */
-    bool TestGetClassProperties();
+    bool TestGetClassProperties(const char8* name,
+                                const char8* typeidName,
+                                const char8* version);
 
     /**
      * @brief Tests the ClassRegistryItem::SetLoadableLibrary and ClassRegistryItem::GetLoadableLibrary.
@@ -122,12 +114,6 @@ public:
      * @return true if the test explained in details section has success, false otherwise.
      */
     bool TestGetObjectBuildFunction();
-
-
-    /**
-     * @brief Checks if the function returns the pointer to the Introspection set by constructor.
-     */
-    bool TestGetIntrospection();
 
     /**
      * @brief Tests the ClassRegistryItem::SetUniqueIdentifier function.

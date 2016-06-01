@@ -212,11 +212,6 @@ TEST(StreamStringGTest, TestRelativeSeek_left_boundary) {
     ASSERT_TRUE(stringtest.TestRelativeSeek(16, -17, false));
 }
 
-TEST(StreamStringGTest, TestRelativeSeek_OutOfInt32Range) {
-    StreamStringTest stringtest;
-    ASSERT_TRUE(stringtest.TestRelativeSeek_OutOfInt32Range());
-}
-
 TEST(StreamStringGTest, TestRelativeSeek_right_boundary) {
     StreamStringTest stringtest;
     ASSERT_TRUE(stringtest.TestRelativeSeek(16, 17, false));

@@ -138,9 +138,16 @@ bool BrokerContainer::AddSignal(Reference defIn,
                                                     ds->GetName(), def->GetName())
                         }
                     }
+                    else {
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Invalid Path %s", path.Buffer());
+                    }
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Application not set");
                 }
             }
             else {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM signal %s is structured but is not a GAMGenericSignal", def->GetName())
 
             }
         }
@@ -204,6 +211,18 @@ uint32 BrokerContainer::GetSignalNumberOfSamples(const uint32 n) {
         uint32 pos = 0u;
         if (containerSignalIndexer.Peek(n, pos)) {
             ret = brokers[brokerIndex]->GetSignalNumberOfSamples(pos);
+        }
+    }
+    return ret;
+}
+
+uint32 BrokerContainer::GetSignalSize(const uint32 n) {
+    uint23 ret = 0u;
+    uint32 brokerIndex = 0u;
+    if (containerIndexer.Peek(n, brokerIndex)) {
+        uint32 pos = 0u;
+        if (containerSignalIndexer.Peek(n, pos)) {
+            ret = brokers[brokerIndex]->GetSignalSize(pos);
         }
     }
     return ret;

@@ -140,6 +140,9 @@ public:
      */
     virtual bool ToStructuredData(StructuredDataI& data);
 
+    uint32 GetPriorityClass();
+
+    uint8 GetPriorityLevel();
 private:
 
     /**
@@ -184,6 +187,17 @@ private:
      * The thread stack size.
      */
     uint32 stackSize;
+
+    /**
+     * The thread priority class.
+     */
+    uint32 priorityClass;
+
+    /**
+     * The thread priority level.
+     */
+    uint8 priorityLevel;
+
 };
 
 }

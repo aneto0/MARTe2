@@ -645,7 +645,7 @@ bool BasicConsole::Seek(uint64 pos) {
     return false;
 }
 
-bool BasicConsole::RelativeSeek(const int64 deltaPos) {
+bool BasicConsole::RelativeSeek(const int32 deltaPos) {
     return false;
 }
 

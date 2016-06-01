@@ -48,7 +48,7 @@ public:
 
     BrokerContainer();
 
-    ~BrokerContainer();
+    virtual ~BrokerContainer();
 
     /**
      * @brief Links a GAM variable with the RealTimeDataSource.
@@ -74,6 +74,10 @@ public:
                                   uint32 &index);
 
     virtual uint32 GetSignalNumberOfSamples(const uint32 n);
+
+
+    virtual uint32 GetSignalSize(const uint32 n);
+
 
     virtual uint32 GetNumberOfSignals();
 

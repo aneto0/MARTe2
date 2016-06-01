@@ -39,12 +39,11 @@
 namespace MARTe {
 
 /**
- * @brief This class is a holder for a LinkedListable node, which acts as the
- * first node of an unbounded singly linked list.
+ * @brief Implementation of a singly linked list with a well defined root .
  *
- * @details This list complements the LinkedListable class by adding the
- * concept of a first element of the list. In this way it is always possible
- * to link to a well defined item (e.g. to perform a search on the full list).
+ * @details This list complements the LinkedListable implementation by adding
+ * the concept of a root. In this way it is always possible to link to a well
+ * defined item (e.g. to perform a search on the full list).
  */
 class DLL_API LinkedListHolder {
 

@@ -31,13 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 
-/*
- * Forward declaration of MARTe::LinkedListable, which is needed in Iterator.h
- * because there is a circular dependency between this header and Iterator.h.
- */
 class LinkedListable;
 
 }
@@ -50,18 +45,11 @@ class LinkedListable;
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
-
 /**
- * @brief This class is a singly linked node which is intended to be chained
- * with other nodes, creating an unbounded singly linked list.
+ * @brief Linked list implementation.
  *
- * @details This class represents, in its broader extent, an unbounded singly
- * list ADT, i.e. a list whose nodes can only be accessed browsing from one
- * node to the next. In fact, the class itself represents an implicit single
- * node, from which the user can access the next one. So, all the operations
- * like adding, inserting, peeking, etc, are relative to this implicit node.
+ * @details Singly linked list implementation (possible to move only in the forward direction).
  */
 class DLL_API LinkedListable {
 
@@ -208,7 +196,6 @@ private:
 };
 
 }
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

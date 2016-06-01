@@ -39,7 +39,7 @@
 #include "FractionalInteger.h"
 #include "BitRange.h"
 #include "Matrix.h"
-#include <typeinfo>
+#include "TypeInfo.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -130,7 +130,7 @@ public:
      * @return true if the TypeDescriptor is VoidType.
      */
     inline bool IsVoid() const;
-
+    
     /**
      * @brief Constructor from 8 bit character.
      * @param[in] i is the 8 bit character input.
@@ -154,7 +154,6 @@ public:
      *   GetNumberOfElements(0:2) == 0
      */
     inline AnyType(const char8 &i);
-
     /**
      * @brief Constructor from signed 8 bit integer.
      * @param[in] i is the signed 8 bit integer input.
@@ -452,7 +451,6 @@ public:
      */
     inline AnyType(volatile char8 * const p);
 
-
     /**
      * @brief Constructor from Object (or inherited class).
      * @param[in] obj the source Object.
@@ -529,6 +527,7 @@ public:
      * @brief Constructor from a statically declared array [].
      * @tparam T the type of the elements in the array
      * @tparam nOfElementsStatic number of elements in the array, automatically computed by the compiler.
+     * @param[in] nOfElementsStatic number of elements in the array, automatically computed by the compiler.
      * @param[in] source address of the statically declared array.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -543,6 +542,7 @@ public:
     /**
      * @brief Constructor from a statically declared array of characters [].
      * @tparam nOfElementsStatic number of elements in the array, automatically computed by the compiler.
+     * @param[in] nOfElementsStatic number of elements in the array, automatically computed by the compiler.
      * @param[in] source address of the statically declared array.
      * @pre
      *   The C Array must be always 0 terminated like a normal C string.
@@ -559,6 +559,7 @@ public:
     /**
      * @brief Constructor from a constant statically declared array of characters [].
      * @tparam nOfElementsStatic number of elements in the array, automatically computed by the compiler.
+     * @param[in] nOfElementsStatic number of elements in the array, automatically computed by the compiler.
      * @param[in] source address of the statically declared array.
      * @pre
      *   The C Array must be always 0 terminated like a normal C string.
@@ -577,6 +578,8 @@ public:
      * @tparam T the type of the elements in the array
      * @tparam nOfRowsStatic number of rows in the table, automatically computed by the compiler.
      * @tparam nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
+     * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
+     * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
      * @param[in] source address of the statically declared table.
      * @post
      *   GetNumberOfDimensions() == 2 &&
@@ -591,8 +594,8 @@ public:
 
     /**
      * @brief Constructor from a statically declared table of characters [][].
-     * @tparam nOfRowsStatic number of rows in the table, automatically computed by the compiler.
-     * @tparam nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
+     * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
+     * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
      * @param[in] source address of the statically declared table.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -606,9 +609,8 @@ public:
 
     /**
      * @brief Constructor from a statically declared table of characters [][][].
-     * @tparam nOfRowsStatic number of rows in the table, automatically computed by the compiler.
-     * @tparam nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
-     * @tparam nOfChars number of chars in each cell of the table, automatically computed by the compiler.
+     * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
+     * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
      * @param[in] source address of the statically declared table.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -622,7 +624,6 @@ public:
 
     /**
      * @brief Constructor from an existent Matrix.
-     * @tparam T the type of the elements in the matrix
      * @param[in] mat the matrix from whose this AnyType will be constructed.
      * @post
      *   GetNumberOfDimensions() == 2 &&
@@ -649,7 +650,6 @@ public:
 
     /**
      * @brief Constructor from an existent Vector.
-     * @tparam T the type of the elements in the vector
      * @param[in] vec the vector from whose this AnyType will be constructed.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -701,7 +701,6 @@ public:
 
     /**
      * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
-     * @tparam baseType the type of the source object
      * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegisteredDatabase).
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.
@@ -712,7 +711,6 @@ public:
 
     /**
      * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
-     * @tparam baseType the type of the source object
      * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegistryDatabase).
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.
@@ -723,7 +721,7 @@ public:
 
     /**
      * @brief Gets the number of dimensions associated to this AnyType.
-     * @details GetNumberOfDimensions() == 0 => scalar, GetNumberOfDimensions() == 1 => vector
+     * @detail GetNumberOfDimensions() == 0 => scalar, GetNumberOfDimensions() == 1 => vector
      * GetNumberOfDimensions() == 2 => matrix
      * @return the number of dimensions associated to this AnyType.
      */
@@ -732,7 +730,7 @@ public:
     /**
      * @brief Sets the number of dimensions associated to this AnyType.
      * @param[in] nOfDimensions the new number of dimensions represented by this AnyType.
-     * @details nOfDimensions == 0 => scalar, nOfDimensions == 1 => vector
+     * @detail nOfDimensions == 0 => scalar, nOfDimensions == 1 => vector
      * nOfDimensions == 2 => matrix
      */
     inline void SetNumberOfDimensions(const uint8 nOfDimensions);
@@ -780,9 +778,8 @@ public:
      * @return the bit size of this type.
      */
     inline uint32 GetBitSize() const;
-
-
-    /**
+    
+        /**
      * @brief Retrieves the element in the specified position.
      * @param[in] position is the position of the required element.
      * @return voidAnyType if this AnyType is scalar or in case of errors, a scalar AnyType if this
@@ -830,8 +827,7 @@ private:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0) == 1 &&
      *   GetNumberOfElements(1) == 1 &&
-     *   GetNumberOfElements(2) == 1 &&
-     *   IsStaticDeclared() == true
+     *   GetNumberOfElements(2) == 1
      */
     inline void Init();
 };
@@ -878,7 +874,6 @@ AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,
 bool AnyType::IsVoid() const {
     return (dataDescriptor == VoidType);
 }
-
 /*---------------------------------------------------------------------------*/
 
 AnyType::AnyType(char8 &i) {
@@ -895,6 +890,7 @@ AnyType::AnyType(const char8 &i) {
     dataDescriptor = Character8Bit;
     dataDescriptor.isConstant = true;
 }
+
 
 /*---------------------------------------------------------------------------*/
 
@@ -1383,9 +1379,6 @@ uint32 AnyType::GetByteSize() const {
 uint32 AnyType::GetBitSize() const {
     return (dataDescriptor.numberOfBits + bitAddress);
 }
-
-
-
 
 /**
  * Definition of the void AnyType (empty constructor).

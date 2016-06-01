@@ -41,12 +41,12 @@
 namespace MARTe {
 
 /**
- * @brief Interface which offers access to read and write filesystem handles.
- * @details This interface offers methods for getting system dependent read
- * and write handles for device classes like files, sockets and consoles.
- * @note When the class that implements this interface has only one handle,
- * then is is expected that both methods (read and write handles) will return
- * the same handle.
+ * @brief Abstract class for classes which have a Handle
+ * @detail This class implements an interface to get the handle of the files, sockets and consoles.
+ * Due to the BasicConsol has two handles (one for read and one for write) the interface implements
+ * two get handle functions.
+ * In the case of the BasicFile and BasicSocket, which only have one handle,
+ * the two functions return the same handle and for hence they are interchangeable.
  */
 class DLL_API HandleI {
 public:
