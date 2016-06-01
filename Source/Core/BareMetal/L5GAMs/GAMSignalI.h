@@ -155,9 +155,9 @@ public:
 
     /**
      * @brief Retrieves the number of cycles such that this variable has to be read (write) from (to) a data source.
-     * @return the number of cycles.
+     * @return the number of cycles (-1 means read asynchronously).
      */
-    uint32 GetCycles() const;
+    int32 GetCycles() const;
 
 
     /**

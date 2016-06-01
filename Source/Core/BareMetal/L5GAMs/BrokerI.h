@@ -31,9 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
-#include "RealTimeApplication.h"
+#include "DataSourceI.h"
 #include "GAMSignalI.h"
+#include "RealTimeApplication.h"
+#include "ReferenceContainer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -72,20 +73,6 @@ public:
                            void * const ptr = NULL_PTR(void*));
 
     /**
-     * @brief Returns the number of signals managed by this broker.
-     * @return the number of signals managed by this broker.
-     */
-    virtual uint32 GetNumberOfSignals() =0;
-
-    /**
-     * @brief Retrieves the pointer to the \a n-th GAM signal.
-     * @param[in] n is the variable position.
-     * @return the pointer to the \a n-th GAM signal. NULL pointer is returned
-     * if this broker is not finalised (see Finalise()) or if (n > GetNumberOfSignals()).
-     */
-    virtual void *GetSignal(const uint32 n) =0;
-
-    /**
      * @brief Retrieves the signal with the specified name.
      * @details This function is slower than GetSignal(*) thus it is not advisable to use in real-time.
      * The parameter \a index in output retrieves the position of the signal in the broker. This allows
@@ -95,14 +82,7 @@ public:
      * @return a pointer to the requested signal or NULL if the signal with the specified name is not found.
      */
     virtual void *GetSignalByName(const char8 * name,
-                                  uint32 &index) =0;
-
-    /**
-     * @brief Retrieves the number of samples of a specific signal.
-     * @param[in] n is the signal position in the broker.
-     * @return The number of samples of a specific signal.
-     */
-    virtual uint32 GetSignalNumberOfSamples(const uint32 n)=0;
+                                  uint32 &index);
 
     /**
      * @brief Finalises the interface.
@@ -110,7 +90,7 @@ public:
      * final implementation of the class to perform any required actions.
      * @return false if errors are detected after all the addition of all the GAM signals.
      */
-    virtual bool Finalise()=0;
+    virtual bool Finalise();
 
     /**
      * @brief Checks if the broker manages a synchronised operation.
@@ -140,11 +120,56 @@ public:
     virtual bool Write(const uint8 activeDataSourceBuffer,
                        const TimeoutType &timeout = TTInfiniteWait)=0;
 
-    uint32 GetNumberOfSamplesBlocks(uint32 gamSignalIndex);
+    uint32 GetNumberOfSamplesBlocks(uint32 signalIndex);
 
-    uint32 GetNumberOfIndexBlocks(uint32 gamSignalIndex);
+    uint32 GetNumberOfIndexBlocks(uint32 signalIndex);
 
-    uint32 GetSignalIndexOfFirstStructureMember(uint32 gamSignalIndex);
+    uint32 GetNumberOfSignals();
+
+    void *GetDataSourcePointer(uint32 signalIndex,
+                               uint32 buffer);
+
+    void *GetDataSourceSignalPointer(uint32 signalIndex,
+                                            uint32 sampleBlockNumber,
+                                            uint32 indexBlockNumber,
+                                            uint32 buffer);
+
+    void *GetGAMSignalPointer(uint32 signalIndex);
+
+    void *GetGAMSignalPointer(uint32 signalIndex,
+                              uint32 sampleBlockNumber,
+                              uint32 indexBlockNumber);
+
+    //Start index as position in memory! (&char[startIndex])
+    bool GetIndexBlockStartIndex(uint32 signalIndex,
+                                 uint32 blockIndex,
+                                 uint32 &startIndex);
+
+    //Size of the signal in bytes!
+    bool GetIndexBlockSize(uint32 signalIndex,
+                           uint32 blockIndex,
+                           uint32 &blockSize);
+
+    //Start index as position in memory! (&char[startIndex])
+    bool GetSamplesBlockStartIndex(uint32 signalIndex,
+                                   uint32 blockIndex,
+                                   uint32 &startIndex);
+
+    //Size of the samples in bytes!
+    bool GetSamplesBlockSize(uint32 signalIndex,
+                             uint32 blockIndex,
+                             uint32 &size);
+
+    bool IsFinalised();
+
+    void SetFinalised(bool isFinalised);
+
+    uint32 GetTotalNumberOfSampleBlocks();
+
+    uint32 GetTotalNumberOfIndexBlocks();
+
+
+    ReferenceT<DataSourceSignal> BrokerI::GetDataSourceSignal(ReferenceT<GAMSignalI> gamSignal);
 
 private:
     /**
@@ -158,6 +183,7 @@ private:
      * @return false in case of errors, true otherwise.
      */
     virtual bool AddSignalPrivate(ReferenceT<GAMSignalI> gamSignalIn,
+                                  void *gamSignalMemory,
                                   uint32 initialOffset,
                                   uint32 offset);
 
@@ -190,15 +216,15 @@ private:
     StaticList<uint32> nIndexBlocksPerSignal;
 
     /**
-     * Offset of a member inside a signal structure.
+     * Offset of each signal w.r.t. to the GAMSignalI (zero if the first member or if the signal is a BasicType).
      */
-    StaticList<uint32> structuredSignalOffset;
+    StaticList<uint32> signalOffsetInsideGAMSignalI;
 
     /**
      * The signal index (in this BrokerI instance) of the first structure member of a GAMSignalI.
      * Note that in the case of structures the same GAMSignalI can add several members.
      */
-    StaticList<uint32> signalIndexOfFirstStructureMember;
+    StaticList<uint32> signalIndexOfFirstMemberInStructure;
 
     /**
      * Stores the element sub-blocks indexes
@@ -221,14 +247,24 @@ private:
     StaticList<uint32> nSamplesPerGAMSignalList;
 
     /**
-     * Pointers to the begin of the GAM memory area where signal data is stored.
+     * Pointers to each signal in the GAM memory. Note that a GAMSignal may contain a structure with several signals.
      */
-    StaticList<void *> gamMemoryAreaPointer;
+    StaticList<void *> gamSignalPointers;
 
     /**
      * Stores the pointers to the DataSource memory area variables.
      */
-    StaticList<void **> dataSourceSignalPointers[2];
+    StaticList<void *> dataSourceSignalPointers[2];
+
+    /**
+     * All the GAMSignalI that belong to this broker.
+     */
+    ReferenceContainer gamSignalList;
+
+    /**
+     * True if the method Finalise was already called.
+     */
+    bool finalised;
 };
 
 }

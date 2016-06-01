@@ -1,6 +1,6 @@
 /**
- * @file DataSource.h
- * @brief Header file for class DataSource
+ * @file DataSourceI.h
+ * @brief Header file for class DataSourceI
  * @date 18/04/2016
  * @author Giuseppe Ferrò
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DataSource
+ * @details This header file contains the declaration of the class DataSourceI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -53,24 +53,24 @@ namespace MARTe {
  * @details The syntax in the configuration stream shall be:
  *
  * +DataSource_name = {\n
- *     Class = DataSource\n
+ *     Class = DataSourceI\n
  *     HeapName = "the heap name" (default NULL, i.e StandardHeap will be used)
  *     ...\n
  * }\n
  *
  * and it can only exist as a child of the [RealTimeApplication].+Data declaration.
  */
-class DLL_API DataSource: public ReferenceContainer {
+class DLL_API DataSourceI: public ReferenceContainer {
 
 public:
 
     /**
      * @brief Initialises the ReferenceContainer.
      */
-    DataSource();
+    DataSourceI();
 
     /**
-     * @brief Configures the DataSource against the input configuration \a data.
+     * @brief Configures the DataSourceI against the input configuration \a data.
      * @details The following fields can be specified in \a data:
      *
      *   HeapName = "the name of the heap memory"
@@ -86,7 +86,7 @@ public:
     /**
      * @brief Recursively calls DataSourceSignalI::Allocate
      * @details During the initialisation of a RealTimeApplication this method is called and allows
-     * to share the memory of this DataSource with all of its children (provided that they inherit from DataSourceSignalI).
+     * to share the memory of this DataSourceI with all of its children (provided that they inherit from DataSourceSignalI).
      * @return true if DataSourceSignalI::Allocate returns true for all the DataSourceSignalI in this container.
      * @pre
      *    All the children of this container inherit either from DataSourceSignalI or from ReferenceContainer.
@@ -151,17 +151,6 @@ public:
      * @return false if the current configuration is not compatible with the \a gamSignalIn one.
      */
     virtual bool Configure(ReferenceT<GAMSignalI> gamSignalIn)=0;
-
-    /**
-     * @brief Retrieves the pointer the memory address containing the signal data.
-     * @param[in] bufferIndex is the index of the signal memory buffer currently in use.
-     * @return pointer to the memory address containing the signal data.
-     * @pre
-     *   bufferIndex == 0 ||
-     *   bufferIndex == 1;
-     */
-    virtual void **GetDataSourcePointer(ReferenceT<DataSourceSignalI> signalIn,
-                                        uint8 bufferIndex)=0;
 
     /**
      * @brief Checks if the broker in input is compatible with this signal.

@@ -127,7 +127,7 @@ void GAMSignalI::SetPath(const char8 * const newPath) {
     path = newPath;
 }
 
-uint32 GAMSignalI::GetCycles() const {
+int32 GAMSignalI::GetCycles() const {
     return cycles;
 }
 

@@ -223,7 +223,6 @@ uint32 DataSourceSignal::GetNumberOfSamples() const {
     return numberOfSamples;
 }
 
-
 bool DataSourceSignal::Initialise(StructuredDataI & data) {
 
     bool ret = ReferenceContainer::Initialise(data);
@@ -309,6 +308,24 @@ bool DataSourceSignal::ExportData(StructuredDataI& data) {
     }
 
     return ret;
+}
+
+void *DataSourceSignal::GetDataSourcePointer(uint8 bufferIndex) {
+    void *ptr = dataSourcePointer0;
+    if (bufferIndex > 0) {
+        ptr = dataSourcePointer1;
+    }
+    return ptr;
+}
+
+void DataSourceSignal::SetDataSourcePointer(void *dataSourcePointer,
+                                            uint8 bufferIndex) {
+    if (bufferIndex == 0) {
+        dataSourcePointer0 = dataSourcePointer;
+    }
+    else {
+        dataSourcePointer1 = dataSourcePointer;
+    }
 }
 
 }

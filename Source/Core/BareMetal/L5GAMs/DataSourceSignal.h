@@ -228,7 +228,9 @@ public:
      *   bufferIndex == 0 ||
      *   bufferIndex == 1;
      */
-    //virtual void **GetDataSourcePointer(uint8 bufferIndex)=0;
+    void *GetDataSourcePointer(uint8 bufferIndex);
+
+    void SetDataSourcePointer(void *dataSourcePointer, uint8 bufferIndex);
 
     /**
      * @brief Checks if the broker in input is compatible with this signal.
@@ -258,6 +260,12 @@ protected:
      * The number of samples for each cycle
      */
     uint32 numberOfSamples;
+
+    /**
+     *
+     */
+    void *dataSourcePointer0;
+    void *dataSourcePointer1;
 
 };
 

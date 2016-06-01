@@ -1,6 +1,6 @@
 /**
- * @file DataSource.cpp
- * @brief Source file for class DataSource
+ * @file DataSourceI.cpp
+ * @brief Source file for class DataSourceI
  * @date 18/04/2016
  * @author Giuseppe Ferrò
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class DataSource (public, protected, and private). Be aware that some 
+ * the class DataSourceI (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -116,7 +116,7 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "DataSource must contain an object inheriting from ReferenceContainer");
+            REPORT_ERROR(ErrorManagement::FatalError, "DataSourceI must contain an object inheriting from ReferenceContainer");
         }
     }
     return ret;
@@ -126,15 +126,15 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-DataSource::DataSource() :
+DataSourceI::DataSourceI() :
         ReferenceContainer() {
 }
 
-bool DataSource::Allocate() {
+bool DataSourceI::Allocate() {
     return AllocatePrivate(ReferenceT<ReferenceContainer>(this), memory);
 }
 
-bool DataSource::Initialise(StructuredDataI & data) {
+bool DataSourceI::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (ret) {
         if (data.Read("HeapName", heapName)) {

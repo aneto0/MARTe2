@@ -48,6 +48,13 @@
 
 namespace MARTe {
 
+struct CopyTableEntry {
+    void *gamPointer;
+    void *dataSourcePointer0;
+    void *dataSourcePointer1;
+    uint32 copySize;
+};
+
 /**
  * @brief Memory mapped Broker implementation.
  * @details The configuration of this element has to be performed after the
@@ -75,172 +82,29 @@ public:
     virtual ~MemoryMapBroker();
 
     /**
-     * @see DataSourceBrokerI::SetApplication(*)
-     */
-    virtual void SetApplication(RealTimeApplication &app);
-
-    /**
-     * @see DataSourceBrokerI::AddSignal(*)
-     */
-    virtual bool AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
-                           void * const ptr = NULL_PTR(void*));
-
-    /**
-     * @see DataSourceBrokerI::GetSignal(*)
-     */
-    virtual void *GetSignal(const uint32 n);
-
-    /**
-     * @see DataSourceBrokerI::GetSignalByName(*)
-     */
-    virtual void *GetSignalByName(const char8 * name,
-                                  uint32 &index);
-
-    /**
-     * @see DataSourceBrokerI::GetSignalNumberOfSamples(*)
-     */
-    virtual uint32 GetSignalNumberOfSamples(const uint32 n);
-
-    /**
-     * @see DataSourceBrokerI::Finalise(*)
+     *
      */
     virtual bool Finalise();
 
+    virtual bool Read(const uint8 activeDataSourceBuffer,
+                      const TimeoutType &timeout = TTInfiniteWait);
+
+    virtual bool Write(const uint8 activeDataSourceBuffer,
+                       const TimeoutType &timeout = TTInfiniteWait);
+
+private:
+
     /**
-     * @see DataSourceBrokerI::GetNumberOfSignals(*)
+     *
      */
-    virtual uint32 GetNumberOfSignals();
+    CopyTableEntry *copyTable;
 
     /**
-     * @see DataSourceBrokerI::IsSync(*)
+     * Stores the pointers to the DataSource memory area variables.
      */
-    virtual bool IsSync() const;
+    StaticList<void **> dataSourceSignalPointers[2];
 
-protected:
-
-
-    /**
-     * The memory area where variables will be allocated
-     * on.
-     */
-    MemoryArea memory;
-
-    /**
-
-
-    /**
-     * Stores the pointers to the begin
-     * of memory areas
-     */
-    StaticList<void *> beginPointers;
-
-    /**
-     * Stores the final pointers to the
-     * GAM variables.
-     */
-    StaticList<void *> GAMPointers;
-
-    /**
-     * Stores the pointers to the DataSource
-     * variables.
-     */
-    StaticList<void **> DSPointers[2];
-
-    /**
-     * Stores the data source signals
-     */
-    StaticList<DataSourceSignal *> dataSourcesVars;
-
-    /**
-     * Stores the number of cycles to be performed for each operation
-     */
-    StaticList<uint32> numberOfCyclesPerVar;
-
-    /**
-     * Stores the indexes of each variable
-     * into the GAMPointers.
-     */
-    StaticList<uint32> chunkIndex;
-
-    /**
-     * Denotes if the link is synchronized.
-     */
-    bool synchronized;
-
-    /**
-     * Specifies if Finalise() is called or not.
-     */
-    bool finalised;
-
-    /**
-     * The index of the synchronising data source
-     */
-    uint32 syncIndex;
-
-    /**
-     * Stores the element sub-blocks indexes
-     */
-    StaticList<uint32**> blockParamList;
-
-    /**
-     * Stores the samples blocks indexes
-     */
-    StaticList<uint32**> samplesParamList;
-
-    /**
-     * Stores the number of element sub-blocks
-     */
-    StaticList<uint32> blockParamRows;
-
-    /**
-     * Stores the number of samples of each GAM signal
-     */
-    StaticList<uint32> nSamplesList;
-
-    /**
-     * @brief Links a GAM signal with a data source signal.
-     * @details This function can call itself recursively if the variable to be allocated is a structure.
-     * @param[in] gamSignalIn is the GAM signal.
-     * @param[in] initialOffset is the byte offset with respect the begin of memory where the signal memory
-     * has to be allocated to.
-     * @param[in] offset will be used in recursion to store the pointers of sub-members of structured types.
-     * @param[in] allocate must be true if the GAM signal memory has to be allocated by this function, false otherwise.
-     * @return false in case of errors, true otherwise.
-     */
-    virtual bool AddSignalPrivate(ReferenceT<GAMSignalI> gamSignalIn,
-                                  uint32 initialOffset,
-                                  uint32 offset);
-
-    /**
-     * @brief Retrieves the pointer at the \a n-th position before the Finalise().
-     * @param[in] n is the index of the pointer to be returned.
-     * @return the pointer at the \a n-th position.
-     */
-    virtual void *GetMemoryPointerPrivate(const uint32 n) const;
-
-    /**
-     * @brief Checks the GAM signal is compatible with its data source signal.
-     * @param[in] gamSignal is the GAM signal.
-     * @param[in, out] typeSize is the GAM signal type size in bytes.
-     * @return the DataSourceSignalI signal to which \a defIn is connected to.
-     */
-    virtual bool Verify(ReferenceT<GAMSignalI> gamSignal,
-                        uint32 &typeSize,
-                        ReferenceT<DataSource> &dataSource,
-                        ReferenceT<DataSourceSignal> &dataSourceSignal);
-
-    /**
-     * @brief Stores the indexes of the element sub-blocks and the
-     * indexes of the samples blocks to be read/write.
-     * @details Changes the \a typeSize to the total size of the memory which has to be
-     * allocated for the GAM signal ((type size) * #(GAM signal samples) * #(GAM signal elements))
-     * @param[in] defIn is the GAM signal.
-     * @param[in] dsDefIn is the data source signal.
-     * @param[in, out] typeSize is the GAM signal type size.
-     */
-    virtual bool SetBlockParams(ReferenceT<GAMSignalI> gamSignal,
-                                ReferenceT<DataSourceSignal> dataSourceSignal,
-                                uint32 &typeSize);
+    uint32 numberOfSignalCopies;
 
 };
 
