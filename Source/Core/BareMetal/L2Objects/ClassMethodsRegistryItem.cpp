@@ -106,6 +106,12 @@ ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem *cri,  Clas
     }
 }
 
+ClassMethodsRegistryItem::~ClassMethodsRegistryItem() {
+    /*
+     * TODO
+     */
+}
+
 /**
  * TODO
  * */

@@ -62,6 +62,11 @@ public:
 
     /**
      * TODO
+     */
+    virtual ~ClassMethodsRegistryItem();
+
+    /**
+     * TODO
      * */
     ReturnType CallFunction(Object * context, const char8 *name, ReferenceContainer &ref);
 
