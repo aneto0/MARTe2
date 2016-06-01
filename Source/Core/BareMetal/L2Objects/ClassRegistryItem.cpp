@@ -160,6 +160,10 @@ public:
         methodName= methodNameIn;
     }
 
+    virtual ~CallRegisteredMethodLauncher() {
+
+    }
+
     virtual bool Test(ClassMethodsRegistryItem *data){
         ret = data->CallFunction(object,methodName.GetList(),parameters);
         return ret.error.notUnsupportedFeature;
