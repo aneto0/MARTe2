@@ -32,8 +32,6 @@
 #include "Reference.h"
 #include "ClassRegistryDatabase.h"
 #include "ErrorManagement.h"
-#include "StringHelper.h"
-#include "MemoryOperationsHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,7 +39,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 
 Reference::Reference() {
@@ -98,32 +95,17 @@ bool Reference::Initialise(StructuredDataI &data,
 
     if (!initOnly) {
         if (objectPointer == NULL_PTR(Object*)) {
-            AnyType at = data.GetType("Class");
-            void* ptr = at.GetDataPointer();
-            ok = (ptr != NULL);
+            char8 className[256] = { '\0' };
+            ok = data.Read("Class", className);
             if (ok) {
-                TypeDescriptor td = at.GetTypeDescriptor();
-                ok = (td.type == CCString);
+                Object *objPtr = CreateByName(&className[0], GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                ok = (objPtr != NULL_PTR(Object*));
                 if (ok) {
-                    uint32 len = StringHelper::Length(reinterpret_cast<const char8 *>(ptr))+1u;
-                    char8 *className = reinterpret_cast<char8 *>(HeapManager::Malloc(len * sizeof(char8)));
-                    MemoryOperationsHelper::Set(className, '\0', len);
-
-                    ok = data.Read("Class", className);
-                    if (ok) {
-                        Object *objPtr = CreateByName(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
-                        ok = (objPtr != NULL_PTR(Object*));
-                        if (ok) {
-                            objectPointer = objPtr;
-                            objectPointer->IncrementReferences();
-                        }
-                        else {
-                            REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
-                        }
-                    }
-                    if(!HeapManager::Free(reinterpret_cast<void *&>(className))){
-                        //TODO
-                    }
+                    objectPointer = objPtr;
+                    objectPointer->IncrementReferences();
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
                 }
             }
         }

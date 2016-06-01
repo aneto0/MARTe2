@@ -34,6 +34,7 @@ OBJSX=  BasicConsole.x \
 		LoadableLibrary.x  \
 		MemoryCheck_Gen.x  \
 		MemoryOperationsHelper_CLIB_Gen.x \
+		Sleep.x \
 		StandardHeap_Gen.x \
 		StringHelperExtras_Gen.x \
 		StringHelper_CLIB_Gen.x \

@@ -271,6 +271,51 @@ bool SingleBufferedStreamTest::TestRelativeSeek() {
     return ok;
 }
 
+bool SingleBufferedStreamTest::TestRelativeSeek_OutOfInt32Range() {
+    DummySingleBufferedStream stream(true);
+    stream.SetBufferSize(64);
+
+    uint32 size = 32;
+    char buffer[32];
+    uint32 i = 0;
+    for (i = 0; i < size; i++) {
+        buffer[i] = i;
+    }
+    stream.Write(buffer, size);
+
+    // go in read mode
+    stream.Seek(0);
+    uint32 sizeRead = 1;
+    stream.Read(buffer, sizeRead);
+    int64 toMuchSeek = MAX_INT32;
+    toMuchSeek++;
+    // call directly OSSeek
+    stream.RelativeSeek(toMuchSeek);
+    // this depends by OSSeek in DummySingleBufferedStream implementation
+    return stream.OSPosition()==(uint64)(toMuchSeek+sizeRead);
+}
+
+bool SingleBufferedStreamTest::TestRelativeSeek_NegativeFinalPosition() {
+    DummySingleBufferedStream stream(true);
+    stream.SetBufferSize(64);
+
+    uint32 size = 32;
+    char buffer[32];
+    uint32 i = 0;
+    for (i = 0; i < size; i++) {
+        buffer[i] = i;
+    }
+    stream.Write(buffer, size);
+
+    // go in read mode
+    stream.Seek(0);
+    uint32 sizeRead = 12;
+    stream.Read(buffer, sizeRead);
+    int32 negativeSeek=sizeRead;
+    negativeSeek++;
+    return !stream.RelativeSeek(-negativeSeek);
+}
+
 bool SingleBufferedStreamTest::TestPosition() {
     DummySingleBufferedStream stream(true);
     stream.SetBufferSize(64);

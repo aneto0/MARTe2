@@ -87,7 +87,6 @@ MemoryMapDataSourceBroker::~MemoryMapDataSourceBroker() {
             }
         }
     }
-
 }
 
 void MemoryMapDataSourceBroker::SetApplication(RealTimeApplication &rtApp) {
@@ -96,8 +95,6 @@ void MemoryMapDataSourceBroker::SetApplication(RealTimeApplication &rtApp) {
 
 bool MemoryMapDataSourceBroker::AddSignal(Reference def,
                                           void * const ptr) {
-
-    //REPORT_ERROR(ErrorManagement::FatalError, "Adding Signal To MMap");
 
     bool ret = true;
     bool allocate = true;
@@ -118,7 +115,7 @@ bool MemoryMapDataSourceBroker::AddSignal(Reference def,
     }
     if (ret) {
         ret = chunkIndex.Add(currentSignalIndex);
-        //printf("\nsignal index = %d\n", currentSignalIndex);
+        printf("\nsignal index = %d\n", currentSignalIndex);
         if (ret) {
             // adds the memory start pointer
             ret = beginPointers.Add(ptr);
@@ -187,22 +184,7 @@ bool MemoryMapDataSourceBroker::AddSignal(Reference def,
             }
         }
 
-        while (gamSignalSizes.GetSize() > last) {
-            if (!gamSignalSizes.Remove(gamSignalSizes.GetSize() - 1u)) {
-
-            }
-        }
-
     }
-    /*
-    if (ret) {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Added Signal %s To MMap", def->GetName())
-    }
-    else{
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Failed add Signal %s To MMap", def->GetName())
-
-    }
-*/
     return ret;
 }
 
@@ -214,7 +196,7 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
     bool ret = (application != NULL);
 
     if (ret) {
-        ReferenceT < GAMSignalI > def = defIn;
+        ReferenceT<GAMSignalI> def = defIn;
         ret = def.IsValid();
         if (ret) {
             const char8* typeName = def->GetType();
@@ -251,7 +233,7 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
                                     /*lint -e{613} NULL pointer checking done before entering here */
                                     const IntrospectionEntry introEntry = (*intro)[i];
                                     for (uint32 j = 0u; (j < numberOfMembers) && (ret) && (!found); j++) {
-                                        ReferenceT < GAMGenericSignal > subDef = def->Get(j);
+                                        ReferenceT<GAMGenericSignal> subDef = def->Get(j);
                                         ret = subDef.IsValid();
                                         if (ret) {
                                             // if the member name matches
@@ -300,9 +282,8 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
             if ((ret) && (numberOfMembers == 0u)) {
 
                 // the size is changed by this function (* #samples * #cycles * #dimension)
-                ReferenceT < DataSourceSignalI > dsDef = Verify(defIn, varSize);
+                ReferenceT<DataSourceSignalI> dsDef = Verify(defIn, varSize);
                 ret = dsDef.IsValid();
-              //  REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Verify = %d, varSize = %d", ret, varSize)
 
                 if (ret) {
                     ret = dataSourcesVars.Add(dsDef.operator ->());
@@ -320,10 +301,7 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
                                     // add the GAM pointer
                                     uint32 finalOffset = offset + initialOffset;
                                     ret = GAMOffsets.Add(finalOffset);
-                                    /*   REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Added offset %d rel offset %d of %s in %s", finalOffset, offset,
-                                     def->GetName(), def->GetPath())
-                                     */
-                                    //printf("\nAdded offset %d rel offset %d of %s in %s\n", finalOffset, offset, def->GetName(), def->GetPath());
+                                    printf("\nAdded offset %d rel offset %d of %s in %s\n", finalOffset, offset, def->GetName(), def->GetPath());
                                 }
                             }
                         }
@@ -333,21 +311,12 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
 
             // only in the first recursion level
             if (allocate) {
-                //              REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Allocating variable %s size=%d of %s", def->GetName(), varSize, def->GetPath())
-
                 // allocate the memory
                 // it must be allocated only if ptr in input is NULL
                 if (ret) {
-
                     // the last thing to be done
                     ret = memory.Add(varSize, offset);
-
-                    if (ret) {
-                        ret=gamSignalSizes.Add(varSize);
-                    }
-
-                    //   REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Allocated variable %s size=%d of %s", def->GetName(), varSize, def->GetPath())
-                    //printf("\nallocated variable %s size=%d of %s\n", def->GetName(), varSize, def->GetPath());
+                    printf("\nallocated variable %s size=%d of %s\n", def->GetName(), varSize, def->GetPath());
                 }
 
             }
@@ -390,7 +359,7 @@ void *MemoryMapDataSourceBroker::GetSignalByName(const char8 * name,
     bool found = false;
     void* ret = NULL_PTR(void*);
     for (uint32 i = 0u; (i < numberOfSignals) && (!found); i++) {
-        ReferenceT < GAMSignalI > def = Get(i);
+        ReferenceT<GAMSignalI> def = Get(i);
         if (def.IsValid()) {
             found = (StringHelper::Compare(name, def->GetName()) == 0);
             if (found) {
@@ -409,17 +378,6 @@ uint32 MemoryMapDataSourceBroker::GetSignalNumberOfSamples(const uint32 n) {
     }
     return nSamples;
 }
-
-uint32 MemoryMapDataSourceBroker::GetSignalSize(const uint32 n){
-
-    uint32 signalSize = 0u;
-    if (gamSignalSizes.Peek(n, signalSize)) {
-
-    }
-    return signalSize;
-}
-
-
 
 void *MemoryMapDataSourceBroker::GetMemoryPointerPrivate(const uint32 n) const {
 
@@ -496,8 +454,8 @@ bool MemoryMapDataSourceBroker::IsSync() const {
 Reference MemoryMapDataSourceBroker::Verify(Reference defIn,
                                             uint32 &typeSize) {
 
-    ReferenceT < GAMSignalI > def = defIn;
-    ReferenceT < DataSourceSignalI > ret;
+    ReferenceT<GAMSignalI> def = defIn;
+    ReferenceT<DataSourceSignalI> ret;
 
     const char8 *path = def->GetPath();
     if (path != NULL) {
@@ -506,7 +464,7 @@ Reference MemoryMapDataSourceBroker::Verify(Reference defIn,
             // find the data source signal
             StreamString allPath = "Data.";
             allPath += path;
-            ReferenceT < DataSourceSignalI > dsDef = application->Find(allPath.Buffer());
+            ReferenceT<DataSourceSignalI> dsDef = application->Find(allPath.Buffer());
             ok = dsDef.IsValid();
             if (ok) {
                 ok = dsDef->IsSupportedBroker(*this);
@@ -518,28 +476,10 @@ Reference MemoryMapDataSourceBroker::Verify(Reference defIn,
                         if (SetBlockParams(def, dsDef, typeSize)) {
                             ret = dsDef;
                         }
-                        else {
-                            REPORT_ERROR(ErrorManagement::FatalError, "Failed SetBlockParams");
-                        }
-                    }
-                    else {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "%s %s type mismatch", dsDef->GetType(), def->GetType())
-
                     }
                 }
             }
-            else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "%s not found", allPath.Buffer())
-            }
         }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "NULL App");
-
-        }
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "NULL path");
-
     }
 
     return ret;
@@ -551,8 +491,8 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                                                uint32 &typeSize) {
 
     // this function is called internally (no segmentation faults should happen)
-    ReferenceT < GAMSignalI > def = defIn;
-    ReferenceT < DataSourceSignalI > dsDef = dsDefIn;
+    ReferenceT<GAMSignalI> def = defIn;
+    ReferenceT<DataSourceSignalI> dsDef = dsDefIn;
     bool ret = true;
 
     uint32 nOfDSElements = 0u;
@@ -560,7 +500,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
 
     uint32 numberOfSamples = dsDef->GetNumberOfSamples();
     int32 numberOfCycles = def->GetCycles();
-    //printf("\n#cycles=%d\n", numberOfCycles);
+    printf("\n#cycles=%d\n", numberOfCycles);
     uint32 numberOfGAMSamples = 1u;
     // checks if it is already sync
     if (synchronized) {
@@ -577,7 +517,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
             numberOfCycles++;
         }
 
-        ReferenceT < GAMSampledSignal > sampledDef = def;
+        ReferenceT<GAMSampledSignal> sampledDef = def;
         uint32 **samplesM = NULL_PTR(uint32**);
         uint32 **blocksM = NULL_PTR(uint32**);
         uint32 nBlockRows = 0u;
@@ -614,7 +554,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                             for (uint32 i = 0u; i < samplesRows; i++) {
                                 samplesM[i] = new uint32[nCols];
                             }
-                            Matrix < uint32 > paramListMatrix(samplesM, samplesRows, nCols);
+                            Matrix<uint32> paramListMatrix(samplesM, samplesRows, nCols);
                             ret = (cdb.Read("SignalSamples", paramListMatrix));
                             if (ret) {
 
@@ -644,7 +584,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                                                     samplesM[i][2] = typeSize * nOfDSElements;
                                                     // store directly the offset in byte
                                                     samplesM[i][0] *= samplesM[i][2];
-                                                    //printf("\nsample beg=%d\n", samplesM[i][0]);
+                                                    printf("\nsample beg=%d\n", samplesM[i][0]);
                                                     numberOfGAMSamples += samplesM[i][1];
                                                 }
                                             }
@@ -662,7 +602,6 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                 }
             }
         }
-
         if (!init) {
             // take the last sample by default
             samplesM = new uint32*;
@@ -674,7 +613,6 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
             samplesM[0][2] = (typeSize * nOfDSElements);
             samplesRows = 1u;
             numberOfGAMSamples = 1u;
-
         }
 
         if (ret) {
@@ -692,6 +630,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                 // a set of blocks to be read
                 confString.Seek(0ULL);
                 ConfigurationDatabase cdb;
+
                 StandardParser parser(confString, cdb);
                 init = parser.Parse();
                 // the field exists
@@ -708,8 +647,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                             for (uint32 i = 0u; i < nBlockRows; i++) {
                                 blocksM[i] = new uint32[nCols];
                             }
-
-                            Matrix < uint32 > paramListMatrix(blocksM, nBlockRows, nCols);
+                            Matrix<uint32> paramListMatrix(blocksM, nBlockRows, nCols);
                             ret = (cdb.Read("SignalBlocks", paramListMatrix));
                             if (ret) {
                                 // checks if the size in the GAM variable matches with the
@@ -736,7 +674,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
 
                                 if (ret) {
                                     ret = (testSize <= nOfGAMElements);
-                                    if (testSize < nOfGAMElements) {
+                                    if (testSize != nOfGAMElements) {
                                         REPORT_ERROR_PARAMETERS(ErrorManagement::Warning,
                                                                 "The GAM signal %s has more elements than the the effective read-write ones", def->GetName())
                                     }
@@ -757,6 +695,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
             if (!init) {
                 // if there is not the block field read all the block
                 if (ret) {
+
                     blocksM = new uint32*;
                     blocksM[0] = new uint32[2];
 
@@ -796,7 +735,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                     REPORT_ERROR_PARAMETERS(ErrorManagement::RecoverableError, "Failure of StaticList::Add for GAM signal %s", def->GetName())
                 }
 
-                //printf("\n%d %d %d\n", typeSize, numberOfGAMSamples, nOfGAMElements);
+                printf("\n%d %d %d\n", typeSize, numberOfGAMSamples, nOfGAMElements);
 
                 // change dimension accordingly to #cycles and #samples
                 typeSize *= ((numberOfCycles * numberOfGAMSamples) * nOfGAMElements);
@@ -829,10 +768,9 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
     }
     else {
         // def can be added to another broker?
-        REPORT_ERROR_PARAMETERS(ErrorManagement::RecoverableError, "Trying to add the sync GAMSignal %s on a broker which already contains a sync GAMSignal",
-                                def->GetName())
+        REPORT_ERROR_PARAMETERS(ErrorManagement::RecoverableError,
+                                "Trying to add the sync GAMSignal %s on a broker which already contains a sync GAMSignal", def->GetName())
     }
-
     return ret;
 }
 

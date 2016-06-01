@@ -43,9 +43,13 @@
 namespace MARTe {
 
 /**
- * @brief LinkedListable sorting interface.
- * @details Sort LinkedListable list by calling the function Compare(LinkedListable *, LinkedListable *).
- * The inherited implementation is responsible for deciding how two LinkedListable objects compare to each other.
+ * @brief Interface which defines a functor responsible of answering which is
+ * the order direction of a couple of LinkedListable's instances.
+ * @details The classes that realise this interface will implement the checking
+ * of the order direction into the Compare method, assuming that the parameters
+ * will be objects of type LinkedListable.
+ * @note In order to sort all the items of a list, the user will have to call
+ * the Compare for pairs of list's elements from a sorting algorithm.
  */
 class SortFilter {
 public:

@@ -27,7 +27,6 @@
 OBJSX=  EventSemTest.x \
 		MutexSemTest.x \
 		ProcessorTest.x \
-		SleepTest.x \
 		ThreadsTest.x
 
 PACKAGE=Core/Scheduler

@@ -171,7 +171,7 @@ private:
     /**
      * The number of instantiated objects of the class type represented by this registry item.
      */
-    volatile int32 numberOfInstances;
+    uint32 numberOfInstances;
 
     /**
      * Library (dll) holding the class type represented by this registry item.
@@ -196,8 +196,6 @@ private:
     /*lint -e{1704} the default constructor is not to be used.
      * Each ClassRegistryItem is automatically constructed (using the public constructor) by the Object macros*/
     ClassRegistryItem();
-
-
 };
 
 }

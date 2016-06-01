@@ -44,31 +44,24 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-DataSourceSignalRecord::DataSourceSignalRecord() :
-        ReferenceContainer() {
+DataSourceSignalRecord::DataSourceSignalRecord(): ReferenceContainer() {
 
     // can be explored
-    producers = ReferenceT < ReferenceContainer > (GlobalObjectsDatabase::Instance()->GetStandardHeap());
-
-    if (producers.IsValid()) {
-        producers->SetName("Producers");
-        if (!Insert(producers)) {
-            //TODO
+    ReferenceT<ReferenceContainer> prod(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    prod->SetName("Producers");
+    if (prod.IsValid()) {
+        if (Insert(prod)) {
+            producers = prod;
         }
     }
 
-    consumers = ReferenceT < ReferenceContainer > (GlobalObjectsDatabase::Instance()->GetStandardHeap());
-
-    if (consumers.IsValid()) {
-        consumers->SetName("Consumers");
-        if (!Insert(consumers)) {
-            //TODO
+    ReferenceT<ReferenceContainer> cons(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    cons->SetName("Consumers");
+    if (cons.IsValid()) {
+        if (Insert(cons)) {
+            consumers = cons;
         }
     }
-}
-
-DataSourceSignalRecord::~DataSourceSignalRecord() {
-
 }
 
 bool DataSourceSignalRecord::AddConsumer(ReferenceT<GAM> gamConsumer) {

@@ -115,6 +115,8 @@ public:
      */
     virtual const char8 * const GetClassName() const;
 
+
+
 private:
 
     /**

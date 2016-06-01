@@ -32,7 +32,6 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 OBJSX=  EventSem.x \
 		MutexSem.x \
 		Processor.x \
-		Sleep.x\
 		ThreadInformation_Gen.x \
 		Threads.x \
 		ThreadsDatabase_Gen.x

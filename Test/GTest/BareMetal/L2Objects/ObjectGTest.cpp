@@ -106,3 +106,34 @@ TEST(ObjectGTest,TestGetUniqueName2) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestGetUniqueName2());
 }
+
+TEST(ObjectGTest,TestToStructuredData) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestToStructuredData());
+}
+
+TEST(ObjectGTest,TestToIntrospectionToStructuredData) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestToIntrospectionToStructuredData());
+}
+
+TEST(ObjectGTest,TestSetDomain_True) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestSetDomain(true));
+}
+
+TEST(ObjectGTest,TestSetDomain_False) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestSetDomain(false));
+}
+
+TEST(ObjectGTest,TestIsDomain_True) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestIsDomain(true));
+}
+
+TEST(ObjectGTest,TestIsDomain_False) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestIsDomain(false));
+}
+

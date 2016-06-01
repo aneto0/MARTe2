@@ -43,7 +43,12 @@
 namespace MARTe {
 
     /**
-     * @brief Implementation of the common socket functions that are shared by UDP and TCP sockets.
+     * @brief Abstract class which represents the basic configuration for any
+     * type of network socket.
+     * @details The main responsibilities of this class are:
+     * + Setting and querying the configuration of the source host.
+     * + Setting and querying the configuration of the destination host.
+     * + Setting and querying the blocking status of the socket itself.
      */
     class DLL_API BasicSocket: public StreamI, public HandleI {
     public:

@@ -97,6 +97,7 @@ TEST(ReferenceTGTest,TestBuildFakeObjectConstructor) {
     ASSERT_TRUE(referenceTTest.TestBuildFakeObjectConstructor());
 }
 
+
 TEST(ReferenceTGTest,TestCopyFromObjPtrConstructor) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyFromObjPtrConstructor());
@@ -112,9 +113,30 @@ TEST(ReferenceTGTest,TestDestructor) {
     ASSERT_TRUE(referenceTTest.TestDestructor());
 }
 
-TEST(ReferenceTGTest,TestInitialise) {
-    ReferenceTTest referenceTTest;
-    ASSERT_TRUE(referenceTTest.TestInitialise());
+TEST(ReferenceTGTest,TestInitialiseCreation) {
+    ReferenceTTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestInitialiseCreation());
+}
+
+TEST(ReferenceTGTest,TestInitialiseNoCreation) {
+    ReferenceTTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestInitialiseNoCreation());
+}
+
+
+TEST(ReferenceTGTest,TestInitialiseNoObject) {
+    ReferenceTTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestInitialiseNoObject());
+}
+
+TEST(ReferenceTGTest,TestInitialiseIncompatibleCast) {
+    ReferenceTTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestInitialiseNoObject());
+}
+
+TEST(ReferenceTGTest,TestInitialiseNoClassName) {
+    ReferenceTTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestInitialiseNoClassName());
 }
 
 TEST(ReferenceTGTest,TestRemoveReference) {

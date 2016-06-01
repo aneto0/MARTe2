@@ -33,8 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAM.h"
+#include "GAMGroup.h"
 #include "GAMSignalI.h"
-//#include "GAMGroup.h"
 #include "RealTimeApplication.h"
 #include "BrokerContainer.h"
 
@@ -79,7 +79,8 @@ public:
      * @brief Links this GAM to its GAMGroup.
      * @param[in] gamGroup is the GAMGroup involving this GAM.
      */
-    //void SetGAMGroup(ReferenceT<GAMGroup> gamGroup);
+    void SetGAMGroup(ReferenceT<GAMGroup> gamGroup);
+
     /**
      * @brief Adds the name of a RealTimeState where this GAM is declared into.
      * @param[in] stateName is the RealTimeState name.
@@ -89,7 +90,7 @@ public:
      * Returns true otherwise.
      */
     bool AddState(const char8 * const stateName,
-            const char8 * const threadName);
+                  const char8 * const threadName);
 
     /**
      * @brief The core function to be executed.
@@ -124,6 +125,7 @@ public:
      */
     uint32 GetNumberOfSupportedStates() const;
 
+
     /**
      * @brief Links the GAM with RealTimeDataSource.
      * @details Configures the input (RealTimeDataInputReader) and output interfaces (RealTimeDataOutputWriter)
@@ -149,21 +151,18 @@ public:
      * @return true if this GAM is linked to a synchronising RealTimeDataSourceDef, false otherwise.
      */
 
+
     RealTimeApplication *GetApplication();
 
     virtual bool IsSync();
 
-   virtual void SetContext(void * context);//?
-
-   /**
-    * @brief Setup the GAM.
-    * @details Initialises the local status (memory allocation
-    * of the IO structures, local configuration file, ecc)
-    */
-   virtual void SetUp(const RealTimeStateInfo &info)=0;
-
-
 protected:
+    /**
+     * @brief Setup the GAM.
+     * @details Initialises the local status (memory allocation
+     * of the IO structures, local configuration file, ecc)
+     */
+    virtual void SetUp()=0;
 
     /**
      * The input interface with the RealTimeDataSource
@@ -171,6 +170,7 @@ protected:
     ReferenceT<BrokerContainer> inputReaders;
 
     ReferenceT<BrokerContainer> outputWriters;
+
 
     /**
      * The names of the supported states
@@ -200,7 +200,8 @@ protected:
     /**
      * Link to the GAMGroup
      */
-  //     GAMGroup *group;
+    GAMGroup *group;
+
 private:
     /**
      * @brief Completes the IO structure definitions (see GAMSignalI) found in the global CDB

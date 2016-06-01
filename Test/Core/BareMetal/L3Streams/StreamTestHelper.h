@@ -73,6 +73,30 @@ public:
 };
 
 /**
+ * @brief Utility class to store the test parameters for the static tables that are used
+ * in the PrintFormatted tests.
+ */
+template<typename T, uint32 nDims>
+struct TestPrintFormattedTableVector{
+    const char8* format;
+    T vectorInput[nDims];
+    const char8* expected;
+};
+
+/**
+ * @brief Utility class to store the test parameters for the static tables that are used
+ * in the PrintFormatted tests.
+ */
+template<typename T, uint32 nRows, uint32 nCols>
+struct TestPrintFormattedTableMatrix{
+    const char8* format;
+    T matrixInput[nRows][nCols];
+    const char8* expected;
+};
+
+
+
+/**
  * @brief Minimal StreamI implementation for the Buffer and Stream tests.
  * It is implemented over a char buffer with dimension MAX_STREAM_DIMENSION
  */
@@ -114,7 +138,7 @@ public:
         return true;
     }
 
-    bool RelativeSeek(int32 delta) {
+    bool RelativeSeek(int64 delta) {
         position += delta;
         return true;
     }
@@ -217,7 +241,7 @@ public:
 
     char8 *buffer;
 
-    uint32 position;
+    uint64 position;
 
     uint32 size;
 
@@ -260,7 +284,7 @@ public:
         return DummyOSStream::Seek(seek);
     }
 
-    bool OSRelativeSeek(int32 delta) {
+    bool OSRelativeSeek(int64 delta) {
         return DummyOSStream::RelativeSeek(delta);
     }
 
@@ -313,7 +337,7 @@ public:
         return SingleBufferedStream::Seek(pos);
     }
 
-    bool RelativeSeek(const int32 deltaPos) {
+    bool RelativeSeek(const int64 deltaPos) {
         return SingleBufferedStream::RelativeSeek(deltaPos);
     }
 
@@ -376,7 +400,7 @@ public:
         return DummyOSStream::Seek(seek);
     }
 
-    bool OSRelativeSeek(int32 delta) {
+    bool OSRelativeSeek(int64 delta) {
         return DummyOSStream::RelativeSeek(delta);
     }
 
@@ -429,7 +453,7 @@ public:
         return DoubleBufferedStream::Seek(pos);
     }
 
-    bool RelativeSeek(const int32 deltaPos) {
+    bool RelativeSeek(const int64 deltaPos) {
         return DoubleBufferedStream::RelativeSeek(deltaPos);
     }
 

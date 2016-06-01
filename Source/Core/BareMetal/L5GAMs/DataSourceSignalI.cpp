@@ -37,8 +37,6 @@
 #include "StandardParser.h"
 #include "ConfigurationDatabase.h"
 #include "AdvancedErrorManagement.h"
-#include "MemoryMapInputReader.h"
-#include "MemoryMapOutputWriter.h"
 #include "GAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -66,14 +64,14 @@ void DataSourceSignalI::SetApplication(RealTimeApplication &app) {
 
 bool DataSourceSignalI::AddConsumer(Reference gamIn) {
     uint32 index;
-    ReferenceT < GAM > gam = gamIn;
+    ReferenceT<GAM> gam = gamIn;
     bool ret = gam.IsValid();
     if (ret) {
 
         uint32 numberOfGAMStates = gam->GetNumberOfSupportedStates();
         StreamString *stateNames = gam->GetSupportedStates();
         for (uint32 k = 0u; (k < numberOfGAMStates) && (ret); k++) {
-            ReferenceT < DataSourceSignalRecord > record;
+            ReferenceT<DataSourceSignalRecord> record;
             uint32 numberOfStates = Size();
             bool found = false;
 
@@ -89,7 +87,7 @@ bool DataSourceSignalI::AddConsumer(Reference gamIn) {
                 ret = record->AddConsumer(gam);
             }
             else {
-                record = ReferenceT < DataSourceSignalRecord > (GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                record = ReferenceT<DataSourceSignalRecord>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                 if (record.IsValid()) {
                     record->SetName(stateNames[k].Buffer());
                     ret = record->AddConsumer(gam);
@@ -107,7 +105,7 @@ bool DataSourceSignalI::AddProducer(Reference gamIn) {
 
     uint32 index;
 
-    ReferenceT < GAM > gam = gamIn;
+    ReferenceT<GAM> gam = gamIn;
     bool ret = gam.IsValid();
 
     if (ret) {
@@ -115,7 +113,7 @@ bool DataSourceSignalI::AddProducer(Reference gamIn) {
         StreamString *stateNames = gam->GetSupportedStates();
         for (uint32 k = 0u; (k < numberOfGAMStates) && (ret); k++) {
 
-            ReferenceT < DataSourceSignalRecord > record;
+            ReferenceT<DataSourceSignalRecord> record;
             uint32 numberOfStates = Size();
             bool found = false;
 
@@ -131,7 +129,7 @@ bool DataSourceSignalI::AddProducer(Reference gamIn) {
                 ret = record->AddProducer(gam);
             }
             else {
-                record = ReferenceT < DataSourceSignalRecord > (GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                record = ReferenceT<DataSourceSignalRecord>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                 if (record.IsValid()) {
                     record->SetName(stateNames[k].Buffer());
                     ret = record->AddProducer(gam);
@@ -149,7 +147,7 @@ bool DataSourceSignalI::AddProducer(Reference gamIn) {
 uint32 DataSourceSignalI::GetNumberOfConsumers(const char8 * const stateIn) {
     uint32 ret = 0u;
     uint32 numberOfRecords = Size();
-    ReferenceT < DataSourceSignalRecord > record;
+    ReferenceT<DataSourceSignalRecord> record;
     bool found = false;
     for (uint32 i = 0u; (i < numberOfRecords) && (!found); i++) {
         record = Get(i);
@@ -173,7 +171,7 @@ uint32 DataSourceSignalI::GetNumberOfConsumers(const char8 * const stateIn) {
 uint32 DataSourceSignalI::GetNumberOfProducers(const char8 * const stateIn) {
     uint32 ret = 0u;
     uint32 numberOfRecords = Size();
-    ReferenceT < DataSourceSignalRecord > record;
+    ReferenceT<DataSourceSignalRecord> record;
     bool found = false;
     for (uint32 i = 0u; (i < numberOfRecords) && (!found); i++) {
         record = Get(i);
@@ -193,6 +191,28 @@ uint32 DataSourceSignalI::GetNumberOfProducers(const char8 * const stateIn) {
     return ret;
 }
 
+bool DataSourceSignalI::Verify() {
+
+    bool ret = true;
+    uint32 numberOfStates = Size();
+    for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+        ReferenceT<DataSourceSignalRecord> record = Get(i);
+        if (record.IsValid()) {
+            // no more than one producer for each state
+            if (record->GetNumberOfProducers() > 1u) {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The DataSourceSignal %s has %d producers in the state %s", GetName(),
+                                        record->GetNumberOfProducers(), record->GetName())
+                ret = false;
+            }
+            if (record->GetNumberOfConsumers() == 0u) {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "The DataSourceSignal %s is not consumed in the state %s", GetName(), record->GetName())
+            }
+        }
+    }
+
+    return ret;
+}
+
 const char8 *DataSourceSignalI::GetType() {
     return type.Buffer();
 }
@@ -203,115 +223,6 @@ uint32 DataSourceSignalI::GetNumberOfElements() const {
 
 uint32 DataSourceSignalI::GetNumberOfSamples() const {
     return numberOfSamples;
-}
-
-Reference DataSourceSignalI::GetInputReader(Reference defIn,
-                                            void * varPtr) {
-    ReferenceT < MemoryMapInputReader > ret;
-    ReferenceT < GAMSignalI > def = defIn;
-
-    if (def.IsValid()) {
-        // try the default reader
-        ReferenceT < MemoryMapInputReader > reader = ReferenceT < MemoryMapInputReader > (GlobalObjectsDatabase::Instance()->GetStandardHeap());
-        if (reader.IsValid()) {
-            //  sets the same name of the data source
-            reader->SetName(GetName());
-            if (application != NULL) {
-                reader->SetApplication(*application);
-                // can link data source to internal static variables
-                if (reader->AddSignal(def, varPtr)) {
-                    ret = reader;
-                }
-            }
-            else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Application not set in %s", GetName())
-            }
-        }
-    }
-    else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Invalid GAM signal in input in %s", GetName())
-    }
-
-    return ret;
-}
-
-Reference DataSourceSignalI::GetOutputWriter(Reference defIn,
-                                             void * varPtr) {
-    ReferenceT < MemoryMapOutputWriter > ret;
-    ReferenceT < GAMSignalI > def = defIn;
-
-    if (def.IsValid()) {
-        // try the default reader
-        ReferenceT < MemoryMapOutputWriter > writer = ReferenceT < MemoryMapOutputWriter > (GlobalObjectsDatabase::Instance()->GetStandardHeap());
-        if (writer.IsValid()) {
-            //  sets the same name of the data source
-            writer->SetName(GetName());
-            if (application != NULL) {
-                writer->SetApplication(*application);
-                // can link data source to internal static variables
-                if (writer->AddSignal(def, varPtr)) {
-                    ret = writer;
-                }
-            }
-            else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Application not set in %s", GetName())
-            }
-        }
-    }
-    else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Invalid GAM signal in input in %s", GetName())
-    }
-    return ret;
-}
-
-bool DataSourceSignalI::IsSupportedBroker(DataSourceBrokerI &testBroker) {
-
-    // only memory map broker descendants supported
-    MemoryMapDataSourceBroker *test = dynamic_cast<MemoryMapDataSourceBroker *>(&testBroker);
-    return (test != NULL);
-
-}
-
-bool DataSourceSignalI::Configure(Reference gamSignalIn) {
-    return true;
-}
-
-bool DataSourceSignalI::WaitOnEvent(const TimeoutType &timeout) {
-    return true;
-}
-
-void DataSourceSignalI::WriteStart() {
-
-}
-
-void DataSourceSignalI::ReadStart() {
-
-}
-
-void DataSourceSignalI::WriteEnd() {
-
-}
-
-void DataSourceSignalI::ReadEnd() {
-
-}
-
-bool DataSourceSignalI::Verify() {
-    bool ret = true;
-    uint32 numberOfStates = Size();
-    for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-        ReferenceT < DataSourceSignalRecord > record = Get(i);
-        if (record.IsValid()) {
-            // no producers or consumers
-            if ((record->GetNumberOfConsumers() == 0u) && (record->GetNumberOfProducers() == 0u)) {
-                ret = false;
-                REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "The DataSourceSignal %s is not consumed nor produced in the state %s", GetName(),
-                                        record->GetName())
-            }
-        }
-    }
-
-    return ret;
 }
 
 }

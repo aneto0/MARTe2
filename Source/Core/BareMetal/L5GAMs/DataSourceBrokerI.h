@@ -96,8 +96,6 @@ public:
      */
     virtual uint32 GetSignalNumberOfSamples(const uint32 n)=0;
 
-    virtual uint32 GetSignalSize(const uint32 n)=0;
-
     /**
      * @brief Finalises the object.
      * @details This function has to be called after all the GAM signals were added to the broker.

@@ -45,6 +45,9 @@ namespace MARTe {
 /**
  *  @brief A number with configurable size and bit offset.
  *  @details Using these types into an union allows to have the same effect of a struct with bit fielded attributes.
+ *  @tparam baseType the standard type which is used as a base for the new type
+ *  @tparam numberOfBits the actual bit size of the new type
+ *  @tparam bitOffset the actual bit offset of the new type
  *  @warning numberOfBits + bitOffset must be minor than the bit size of baseType.
  */
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is a
@@ -63,6 +66,7 @@ public:
      * the range of bits specified leaving untouched the bits outside the range.
      * @details The input argument could be another type. If its value is greater than the maximum possible value
      * or lower than the minimum possible value, the value assigned will be saturated.
+     * @tparam inputType the actual type for input
      * @param[in] input is the desired number value.
      */
     template<typename inputType>

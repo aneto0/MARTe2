@@ -30,14 +30,17 @@
 /*---------------------------------------------------------------------------*/
 #include "ClassRegistryDatabase.h"
 #include "ClassRegistryItem.h"
+#include "FastPollingMutexSem.h"
 #include "ErrorManagement.h"
-#include "Atomic.h"
 
 namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
+/*lint -e{9141} global declaration but only used to support the class implementation.
+ * The symbol is not exported (static). This could also be replaced by an anonymous namespace.
+ */
+static FastPollingMutexSem classRegistryItemMuxSem;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -45,7 +48,7 @@ namespace MARTe {
 //LCOV_EXCL_START
 ClassRegistryItem::ClassRegistryItem() :
         classProperties() {
-    numberOfInstances = 0;
+    numberOfInstances = 0u;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
     introspection = NULL_PTR(Introspection *);
@@ -55,7 +58,7 @@ ClassRegistryItem::ClassRegistryItem() :
 
 ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
                                      const ObjectBuildFn * const objBuildFn) {
-    numberOfInstances = 0;
+    numberOfInstances = 0u;
     classProperties = clProperties;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = objBuildFn;
@@ -65,7 +68,7 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
 
 ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
                                      Introspection &introspectionIn) {
-    numberOfInstances = 0;
+    numberOfInstances = 0u;
     classProperties = clProperties;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
@@ -76,7 +79,7 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
 ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
                                      const ObjectBuildFn * const objBuildFn,
                                      Introspection &introspectionIn) {
-    numberOfInstances = 0;
+    numberOfInstances = 0u;
     classProperties = clProperties;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = objBuildFn;
@@ -108,15 +111,24 @@ const Introspection * ClassRegistryItem::GetIntrospection() const {
 }
 
 void ClassRegistryItem::IncrementNumberOfInstances() {
-        Atomic::Increment(&numberOfInstances);
+    if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
+        numberOfInstances++;
+    }
+    classRegistryItemMuxSem.FastUnLock();
 }
 
 void ClassRegistryItem::DecrementNumberOfInstances() {
-        Atomic::Decrement(&numberOfInstances);
+    if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
+        numberOfInstances--;
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryItem: Failed FastLock()");
+    }
+    classRegistryItemMuxSem.FastUnLock();
 }
 
 uint32 ClassRegistryItem::GetNumberOfInstances() const {
-    return static_cast<uint32>(numberOfInstances);
+    return numberOfInstances;
 }
 
 const LoadableLibrary *ClassRegistryItem::GetLoadableLibrary() const {

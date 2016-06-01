@@ -30,8 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "FastPollingEventSem.h"
-#include "HighResolutionTimer.h"
-#include "Atomic.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -81,7 +79,7 @@ ErrorManagement::ErrorType FastPollingEventSem::FastWait(const TimeoutType &msec
             }
         }
         if (!noSleep) {
-            //Sleep::Sec(sleepTime);
+            Sleep::Sec(sleepTime);
         }
     }
 

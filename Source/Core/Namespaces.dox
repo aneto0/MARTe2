@@ -1,130 +1,222 @@
 /**
- * @namespace MARTe 
- * @brief Root namespace for MARTe
- * @details This namespace is the root for all the namespaces and classes of MARTe.
+ * @namespace MARTe
+ * 
+ * @brief Namespace which defines the root namespace for the framework.
+ * 
+ * @details This namespace is the root for all the namespaces defined for the 
+ * framework. It also contains classes, typedefs, enumerations, functions, and 
+ * constants.
  */
 
- /**
+/**
  * @namespace MARTe::Atomic
+ * 
+ * @brief Namespace which defines functions that are executed atomically even 
+ * on multiprocessor machines.
+ * 
+ * @details The functions of this namespace are those needed for increment, 
+ * decrement, testandset, and so on.
+ * 
+ * These methods are particularly useful in the implementation of functionality
+ * that requires protected basic operations between multiple asynchronous 
+ * accesses like in a multi-thread system. These methods are also useful to 
+ * implement fast threading synchronization constructors.
  *
- * @brief A collector of functions that are executed atomically even on multiprocessor machines.
- *
- * @details The target architecture is the one of the machine where the code is being executed.
- * Most of the implementation is therefore delegated to the AtomicA.h implementation,
+ * The target architecture is the one of the machine where the code is being 
+ * executed. Most of the implementation is therefore delegated to a version 
  * which will be specific for each type of supported architecture.
- *
- * These methods are particularly useful in the implementation of functionality that requires
- * protected basic operations between multiple asynchronous accesses like in a multi-thread system.
- *
- * These methods are also used to implement fast threading synchronization constructors
- *
- * @see FastPollingMutexSem
  */
 
- /**
- * @namespace MARTe::BasicConsoleMode 
- * @brief FlagsType determining the console operating modes.\n
- * @details These are usually set when the console is constructed.
+/**
+ * @namespace MARTe::BasicConsoleMode
+ * 
+ * @brief Namespace which defines the available operating modes for a console.
+ * 
+ * @details The modes are defined as constants of type FlagsType. They are 
+ * meant to be used for configuring the operating mode of consoles.
  */
 
- /**
+/**
  * @namespace MARTe::Endianity
- * @brief Converts any basic type to (from) the target architecture, from (to)
+ * 
+ * @brief Namespace which defines a collection of functions for dealing with 
+ * endianity, taking into account the endianity of the current architecture.
+ * 
+ * @details The functions of this namespace offer 3 kinds of services: 
+ * - Querying the current target architecture (the one of the machine where 
+ * the code is being executed)
+ * - Converting any basic type to (from) the target architecture, from (to) 
  * the requested endianity.
- * @details The target architecture is the one of the machine where the code is being executed.
- * Most of the implementation is therefore delegated to the EndianityA.h implementation,
+ * - Copying blocks of memory with endianity conversion to (from) the target 
+ * architecture, from (to) the requested endianity.
+ * 
+ * These methods are particularly useful in the implementation of functionality
+ * that requires the exchange of data with external producers that might have a
+ * different endianity. Examples are drivers and network interfaces.
+ * 
+ * The target architecture is the one of the machine where the code is being 
+ * executed. Most of the implementation is therefore delegated to a version 
  * which will be specific for each type of supported architecture.
- * @details These methods are particularly useful in the implementation of functionality that requires
- * the exchange of data with external producers that might have a different endianity. Examples
- * are drivers and network interfaces.
  */
 
 /**
  * @namespace MARTe::ErrorManagement
- * @brief Collection of functions and  types to manage error reporting.
- * @details These functions allows an error reporting mechanism. The user should only pass the code of the error
- * and a description but automatically the name of the file, the line number and the function
- * are stored in the ErrorInformation structure. The user can implement a routine that will be called
- * by the report error function to manage errors in specific ways.
+ * 
+ * @brief Namespace which defines functions and types to manage error reporting.
+ * 
+ * @details This namespace supplies an error information structure and a set of
+ * related functions which provide an error reporting mechanism. The functions 
+ * offer the following services:
+ * - Reporting errors giving its code, description, file name, line number, 
+ * and function name (*).
+ * - Setting a user defined function which will be called each time an error 
+ * is reported, so extra treatments can be done.
+ * - Getting the description of errors by their code.
+ * 
+ * (*) A couple of macros are also supplied for automatically adding the file 
+ * name, the line number and the function name when reporting errors, i.e. the 
+ * user will only have to pass the code and description of the error.
  */
  
- /**
+/**
  * @namespace MARTe::FastMath
- * @brief Performs mathematical operations using fast processor instructions.
- * @details TODO TBD
+ * 
+ * @brief Namespace which defines constants and mathematical functions using 
+ * fast processor instructions.
+ * 
+ * @details The functions of this namespace are those mathematical operations
+ * that can be optimized on target architecture.
+ * 
+ * The target architecture is the one of the machine where the code is being 
+ * executed. Most of the implementation is therefore delegated to a version 
+ * which will be specific for each type of supported architecture.
  */
 
- /**
+/**
  * @namespace MARTe::HeapManager
- * @brief Implementation of functions for the heap memory management.
- * @details Using these functions is possible adding different HeapI
- * objects in a hidden static database and using their specific functions for the
- * desired heap management.
+ * 
+ * @brief Namespace which defines functions for the heap memory management.
+ * 
+ * @details The collection of functions of this namespace act as a stateful 
+ * singleton object, because they maintain an implicit database of heaps 
+ * allowing to add, remove, and find heaps. They also act as a façade for 
+ * allocating and freeing memory managed by the stored heaps.
  */
- 
- /**
+
+/**
  * @namespace MARTe::HighResolutionTimer
- * @brief This module implements useful functions for high resolution timing using the cpu clock.
- * @details These functions are used when a timeout implementation is required like for examples for semaphores.\n
- * Most of the implementation is delegated to HighResolutionTimerA.h which use very low level code (assembly)
- * for the Counter functions, while the Frequency and Period functions are delegated to HighResolutionTimerCalibratorOs.h
- * which returns the current cpu frequency.
- */
+ *
+ * @brief Namespace which defines functions for high resolution timing using 
+ * the cpu clock.
+ *
+ * @details The functions of this namespace offer 2 kind of services:
+ * - Functions for querying the current time, like a counter or a timestamp.
+ * - Functions for getting timing related properties of the processor, like 
+ * frequency and period.
+ * 
+ * These functions are particularly useful in the implementation of 
+ * functionality that require a high resolution timer precision, like 
+ * in sempahores.
+ * 
+ * The implementation of these functions can relay on services provided by 
+ * operating system or by the processor itself.
  */
 
- /**
+/**
  * @namespace MARTe::MemoryCheck
- * @brief Implementation of functions for the memory checking.
- * @details TODO TBD
- */
+ * 
+ * @brief Namespace which defines functions for memory checking.
+ * 
+ * @details The namespace supplies a single function that checks if the 
+ * process has the access to the specified memory area.
  */
 
- /**
+/**
  * @namespace MARTe::Processor
- * @brief General information about the processor executing the framework code.
- * @details This module enables the retrieval of runtime information about the
- * processor executing the framework code.
- * Based on this information framework users are allowed to take runtime decisions
- * against specific processor characteristics.
+ * 
+ * @brief Namespace which provides functions for getting general information 
+ * about the processor executing the framework code.
+ * 
+ * @details Based on this information, framework users are allowed to take 
+ * runtime decisions against specific processor characteristics.
  */
 
- /**
+/**
  * @namespace MARTe::ReferenceContainerFilterMode
- * @brief Namespace to define the possible modes of search.
- * @details TODO TBD
+ * 
+ * @brief Namespace which defines the available modes of a reference 
+ * container search.
+ * 
+ * @details The modes are defined as constants of type uint32. They are 
+ * meant to be used for configuring searches on reference containers.
  */
 
- /**
+/**
  * @namespace MARTe::Sleep
- *
- * @brief Sleep functions.
- *
- * @details This functions allows tasks to sleep for a desired time. There are functions which sleeps wasting cpu time using
- * HighResolutionTimer and functions which sleeps yielding cpu using system call functions.
- * These functions are generally used in multithreading applications for example to allows threads to wait on a
- * condition without use cpu.
- *
- * Most of the implementation is delegated to Sleep.h which provides system calls to allows sleep functions.
+ * 
+ * @brief Namespace which defines functions for sleeping the execution.
+ * 
+ * @details The functions defined by this namespace allow the code being 
+ * executed to sleep for a desired time (different timing conditions are
+ * supplied). There are functions which sleeps wasting cpu time, while 
+ * others sleeps yielding cpu using operating system services.
+ * 
+ * These functions are generally used in multithreading applications, for 
+ * example to allows threads to wait on a condition without use cpu.
  */
 
- /**
+/**
  * @namespace MARTe::StringHelper
- * @brief Implementation of functions to manipulate strings.
- * @details These methods allows the most used and basic functions to manipulate char8 *strings and
- * are particularly useful in the implementation of higher levels string and stream implementations.
+ * 
+ * @brief Namespace which defines functions for manipulating C strings.
+ * 
+ * @details These functions allows to query and manipulate C strings,
+ * i.e. null-terminated arrays of characters (char8 *).
+ * 
+ * These kind of functions are particularly useful in the implementation 
+ * of more abstract string classes, and also for stream classes which 
+ * usually need to manage buffers of chars.
  */
 
- /**
+/**
  * @namespace MARTe::Threads
- * @brief Threads management module.
- * @details These module allows to create, manage and monitor the life-cycle of any framework thread/
- * The default stack size associated to a thread THREADS_DEFAULT_STACKSIZE is defined in GeneralDefinitions.h
- * for each different operating system.
+ * 
+ * @brief Namespace which defines functions for threads management.
+
+ * @details The collection of functions of this namespace act as a stateful 
+ * singleton object, because they maintain an implicit database of thread
+ * information records, allowing to create, manage and monitor the life-cycle 
+ * of any framework thread.
+ * 
+ * The default stack size associated to a thread THREADS_DEFAULT_STACKSIZE is 
+ * defined in GeneralDefinitions.h for each different operating system.
  */
- 
- /**
- * @namespace MARTe::ThreadsDatabase
- * @brief A database of ThreadInformation objects.
- * @details TODO TBD
+
+/**
+ * @namespace MARTe::TypeCharacteristics
+ * 
+ * @brief Namespace which defines template functions for getting properties 
+ * of integer types.
+ *
+ * @details These templates, which can be parameterized with any integer type,
+ * provide means for querying about signedness, minimum, maximum, and so on.
+ * It also provides a template function for saturating values.
  */
- 
+
+/**
+ * @namespace MARTe::MemoryOperationsHelper
+ * 
+ * @brief Namespace which defines functions for managing blocks of memory.
+ * 
+ * @details The functions of this namespace allows the user to make operations 
+ * like copying, moving, etc, on memory blocks.
+ */
+
+/**
+ * @namespace MARTe::ParserConstant
+ * 
+ * @brief Namespace which defines the constants used by parsers.
+ *
+ * @details The constants are defined as uint32 values. They are meant to be 
+ * used for configuring the behavior of the parser.
+ */

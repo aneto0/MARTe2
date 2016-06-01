@@ -74,8 +74,6 @@ public:
      */
     DataSourceContainer();
 
-    ~DataSourceContainer();
-
     /**
      * @brief Adds all the GAMSignalI defined in the GAM in input.
      *

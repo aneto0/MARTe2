@@ -25,7 +25,6 @@
 #############################################################
 
 OBJSX=	BrokerContainer.x \
-		Driver.x \
 		GAM.x \
 		GAMGroup.x \
 		GAMSchedulerI.x \

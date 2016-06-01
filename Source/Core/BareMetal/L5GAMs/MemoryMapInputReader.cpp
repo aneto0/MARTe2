@@ -33,8 +33,6 @@
 
 #include "MemoryMapInputReader.h"
 #include "stdio.h"
-#include "AdvancedErrorManagement.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -86,14 +84,10 @@ bool MemoryMapInputReader::Read(const uint8 activeDataSourceBuffer,
                             for (uint32 k = 0u; (k < nRows) && (ret); k++) {
                                 uint32 beg = blockParams[k][0];
                                 uint32 size = blockParams[k][1];
-                    //            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "read: beg=%d, size=%d, gamPtrIndex=%d of %s", beg,
-                     //                                   size, gamPtrIndex, dsDef->GetName())
-                                char8 *DSptr = &(reinterpret_cast<char8*>(*DSPointer)[samplePtrIndex + beg]);
+                                printf("\nread: beg=%d, size=%d, gamPtrIndex=%d, samplePtrIndex=%d\n", beg,size,gamPtrIndex,samplePtrIndex);
+                                char8 *DSptr = &(reinterpret_cast<char8*>(*DSPointer)[samplePtrIndex+beg]);
                                 // shift the pointer
                                 GAMPointer = &GAMPointerBeg[gamPtrIndex];
-                                if (!*DSPointer) {
-                                    REPORT_ERROR(ErrorManagement::FatalError, "NULL Ds Ptr");
-                                }
                                 ret = MemoryOperationsHelper::Copy(GAMPointer, DSptr, size);
                                 gamPtrIndex += size;
                             }

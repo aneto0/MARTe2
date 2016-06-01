@@ -103,10 +103,6 @@ static bool PrepareNextStatePrivate(const RealTimeStateInfo &status,
 DataSourceContainer::DataSourceContainer() {
 }
 
-DataSourceContainer::~DataSourceContainer() {
-
-}
-
 bool DataSourceContainer::AddDataDefinition(ReferenceT<GAM> gam) {
 
     bool ret = (gam.IsValid());
@@ -115,14 +111,14 @@ bool DataSourceContainer::AddDataDefinition(ReferenceT<GAM> gam) {
         // the number of definition containers (input, output, ecc)
         uint32 numberOfElements = gam->Size();
         for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
-            ReferenceT < GAMSignalsContainer > defContainer = gam->Get(i);
+            ReferenceT<GAMSignalsContainer> defContainer = gam->Get(i);
             if (defContainer.IsValid()) {
                 bool isProducer = defContainer->IsOutput();
                 bool isConsumer = defContainer->IsInput();
 
                 uint32 numberOfDefinitions = defContainer->Size();
                 for (uint32 j = 0u; (j < numberOfDefinitions) && (ret); j++) {
-                    ReferenceT < GAMSignalI > definition = defContainer->Get(j);
+                    ReferenceT<GAMSignalI> definition = defContainer->Get(j);
                     if (definition.IsValid()) {
                         ret = AddSingleDataDefinition(definition, gam, isProducer, isConsumer);
                     }
@@ -133,7 +129,7 @@ bool DataSourceContainer::AddDataDefinition(ReferenceT<GAM> gam) {
         // Creates the definitions of the time stamps
         if (ret) {
             // Insert the GAM Times ddb
-            ReferenceT < GAMGenericSignal > absTimeDef = ReferenceT < GAMGenericSignal > (GlobalObjectsDatabase::Instance()->GetStandardHeap());
+            ReferenceT<GAMGenericSignal> absTimeDef = ReferenceT<GAMGenericSignal>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
 
             StreamString str = gam->GetName();
             str += "AbsoluteUsecTime";
@@ -158,7 +154,7 @@ bool DataSourceContainer::AddDataDefinition(ReferenceT<GAM> gam) {
             }
 
             if (ret) {
-                ReferenceT < GAMGenericSignal > relTimeDef = ReferenceT < GAMGenericSignal > (GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                ReferenceT<GAMGenericSignal> relTimeDef = ReferenceT<GAMGenericSignal>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
 
                 str = gam->GetName();
                 str += "RelativeUsecTime";
@@ -215,7 +211,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
     if (isLeaf) {
 
         if (ret) {
-            ReferenceT < DataSourceSignalI > element = Find(path.Buffer());
+            ReferenceT<DataSourceSignalI> element = Find(path.Buffer());
             if (element.IsValid()) {
 
                 // if the path exists adds only the infos
@@ -236,7 +232,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                     if (ret) {
                         element->SetApplication(*app);
                     }
-                    else {
+                    else{
                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Application not set in GAM %s", gam->GetName())
                     }
                 }
@@ -247,10 +243,10 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
             }
             // if the definition does not exist creates it
             else {
-                ReferenceT < GAMSampledSignal > sampDef = definition;
+                ReferenceT<GAMSampledSignal> sampDef = definition;
                 ret = (!sampDef.IsValid());
                 if (ret) {
-                    ReferenceT < DataSourceSignal > newElement(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                    ReferenceT<DataSourceSignal> newElement(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                     if (newElement.IsValid()) {
 
                         if (isConsumer) {
@@ -266,7 +262,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                             ret = path.GetToken(dsName, ".", terminator);
                             bool found = false;
                             uint32 numberOfDS = Size();
-                            ReferenceT < DataSource > dataSource;
+                            ReferenceT<DataSource> dataSource;
                             for (uint32 i = 0u; (i < numberOfDS) && (!found) && (ret); i++) {
                                 dataSource = Get(i);
                                 if (dataSource.IsValid()) {
@@ -276,7 +272,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                             if (!found) {
                                 // for GAMTimes create it
                                 if (dsName == "GAM_Times") {
-                                    ReferenceT < DataSource > gamTimesDS = ReferenceT < DataSource > (GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                                    ReferenceT<DataSource> gamTimesDS = ReferenceT<DataSource>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                                     gamTimesDS->SetName("GAM_Times");
                                     ret = Insert(gamTimesDS);
                                     // to insert the rest
@@ -295,7 +291,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                                     if (ret) {
                                         newElement->SetApplication(*app);
                                     }
-                                    else {
+                                    else{
                                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Application not set in GAM %s", gam->GetName())
                                     }
                                 }
@@ -325,7 +321,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
         uint32 numberOfMembers = definition->Size();
         for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
             // should be a generic one!
-            ReferenceT < GAMGenericSignal > subDefinition = definition->Get(i);
+            ReferenceT<GAMGenericSignal> subDefinition = definition->Get(i);
             if (subDefinition.IsValid()) {
                 ret = AddSingleDataDefinition(subDefinition, gam, isProducer, isConsumer, newDefaultPath);
             }
@@ -340,19 +336,19 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
 
 bool DataSourceContainer::Verify() {
 
-    return VerifyPrivate(ReferenceT < ReferenceContainer > (this));
+    return VerifyPrivate(ReferenceT<ReferenceContainer>(this));
 }
 
 bool DataSourceContainer::PrepareNextState(const RealTimeStateInfo &status) {
 
-    return PrepareNextStatePrivate(status, ReferenceT < ReferenceContainer > (this));
+    return PrepareNextStatePrivate(status, ReferenceT<ReferenceContainer>(this));
 }
 
 bool DataSourceContainer::Allocate() {
     bool ret = true;
     uint32 numberOfDS = Size();
     for (uint32 i = 0u; (i < numberOfDS) && (ret); i++) {
-        ReferenceT < DataSource > dataSource = Get(i);
+        ReferenceT<DataSource> dataSource = Get(i);
         ret = dataSource.IsValid();
         if (ret) {
             ret = dataSource->Allocate();

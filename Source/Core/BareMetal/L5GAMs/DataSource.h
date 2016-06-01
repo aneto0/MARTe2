@@ -73,7 +73,6 @@ public:
      */
     DataSource();
 
-    virtual ~DataSource();
 
     /**
      * @see Object::Initialise(*).

@@ -41,7 +41,12 @@
 namespace MARTe {
 
 /**
- * @brief Implementation of TCP socket.
+ * @brief Class which represents a stream network socket, also known as
+ * connection-oriented socket, which use Transmission Control Protocol (TCP).
+ * @details The main responsibilities of this class are:
+ * + Establishing a connection with a remote host.
+ * + Binding the socket to a local port and begin listening from it.
+ * + Allowing reading/writing using a generic stream interface approach.
  */
 class DLL_API BasicTCPSocket: public BasicSocket {
 public:
@@ -123,7 +128,7 @@ public:
      * @brief Unsupported feature.
      * @return false.
      */
-    virtual bool RelativeSeek(const int32 deltaPos);
+    virtual bool RelativeSeek(const int64 deltaPos);
 
     /**
      * @brief Unsupported feature.
@@ -209,12 +214,13 @@ public:
     BasicTCPSocket *WaitConnection(const TimeoutType &timeout = TTInfiniteWait,
                                    BasicTCPSocket *client = static_cast<BasicTCPSocket *>(NULL));
 
-                               };
-                           }
+};
 
-                           /*---------------------------------------------------------------------------*/
-                           /*                        Inline method definitions                          */
-                           /*---------------------------------------------------------------------------*/
+}
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
 #endif /* BASICTCPSOCKET_H_ */
 

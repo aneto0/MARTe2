@@ -40,8 +40,12 @@
 namespace MARTe {
 
 /**
- * @brief Given a base path and a shell wildcard pattern this class allows to scan for all
- * the directories and files inside a given directory.
+ * @brief Given a base path and a shell wildcard pattern this class allows to
+ * scan for all the directories and files inside a given directory.
+ *
+ * @details The results of the scan are stored on the implicit list of the
+ * class, because the class inherits from LinkedListHolder and is itself a
+ * list.
  */
 class DLL_API DirectoryScanner: public LinkedListHolder {
 
@@ -80,34 +84,34 @@ public:
               const char8 *fileMask = "*",
               SortFilter * const sorter = NULL);
 
-              /**
-               * @brief Gets the directory absolute path.
-               * @return the the directory absolute path.
-               */
-              const char8 *BasePath() const;
+    /**
+     * @brief Gets the directory absolute path.
+     * @return the the directory absolute path.
+     */
+    const char8 *BasePath() const;
 
-              /**
-               * @brief Removes all the elements from the list.
-               * @post
-               *   BasePath() = NULL &&
-               *   DirectorySize() = 0
-               */
-              virtual void CleanUp();
+    /**
+     * @brief Removes all the elements from the list.
+     * @post
+     *   BasePath() = NULL &&
+     *   DirectorySize() = 0
+     */
+    virtual void CleanUp();
 
-          private:
+private:
 
-              /**
-               * The directory path.
-               */
-              char8* basePath;
+    /**
+     * The directory path.
+     */
+    char8* basePath;
 
-              /**
-               * The total content size.
-               */
-              uint64 size;
+    /**
+     * The total content size.
+     */
+    uint64 size;
 
-          };
-      }
+};
+}
 
       /*---------------------------------------------------------------------------*/
       /*                        Inline method definitions                          */

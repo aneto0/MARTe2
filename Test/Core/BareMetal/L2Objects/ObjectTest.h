@@ -112,6 +112,21 @@ public:
      * @return true if the name returned by GetUniqueName is different for two objects with the same name, false otherwise.
      */
     bool TestGetUniqueName2();
+
+    /**
+     * @brief Checks if the function sets the object as a domain of the ObjectRegistryDatabase.
+     */
+    bool TestSetDomain(bool isDomain);
+
+    /**
+     * @Checks if the function returns correctly if the objet is a domain of the ObjectRegistryDatabase.
+     */
+    bool TestIsDomain(bool isDomain);
+
+
+    bool TestToStructuredData();
+    bool TestToIntrospectionToStructuredData();
+
 };
 
 /*---------------------------------------------------------------------------*/

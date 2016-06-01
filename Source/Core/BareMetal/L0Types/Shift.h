@@ -53,6 +53,7 @@ public:
 
     /**
      * @brief Implementation of a template function for safe logical right shifts.
+     * @tparam T is the integer type of the number parameter.
      * @param[in] number is the number to be shifted.
      * @param[in] shift is the number of bits shifted.
      * @return the number shifted.
@@ -63,6 +64,7 @@ public:
 
     /**
      * @brief Implementation of a template function for safe logical shifts.
+     * @tparam T is the integer type of the number parameter.
      * @param[in] number is the number to be shifted.
      * @param[in] shift is the number of bits shifted.
      * @return the number shifted.
@@ -73,6 +75,7 @@ public:
 
     /**
      * @brief Implementation of a template function for safe mathematical right shifts.
+     * @tparam T is the integer type of the number parameter.
      * @param[in] number is the number to be shifted.
      * @param[in] shift is the number of bits shifted.
      * @return the number shifted.
@@ -83,6 +86,7 @@ public:
 
     /**
      * @brief Implementation of a template function for safe mathematical left shifts.
+     * @tparam T is the integer type of the number parameter.
      * @param[in] number is the number to be shifted.
      * @param[in] shift is the number of bits shifted.
      * @return the number shifted.
@@ -167,6 +171,7 @@ private:
 
     /**
      * @brief Logical right shift for DoubleInteger.
+     * @tparam T2 is the integer type needed for building the DoubleInteger type of the number parameter.
      * @param[in] number is the number to shift.
      * @param[in] shift is the number of bits shifted.
      * @return the number right shifted.

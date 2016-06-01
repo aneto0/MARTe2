@@ -28,21 +28,26 @@ OBJSX=  AtomicGTest.x \
 		EndianityGTest.x \
 		ErrorManagementGTest.x \
 		FastMathGTest.x \
+		FastPollingEventSemGTest.x \
 		FastPollingMutexSemGTest.x \
 		FormatDescriptorGTest.x \
 		GlobalObjectsDatabaseGTest.x \
 		HeapManagerGTest.x \
 		HighResolutionTimerGTest.x \
 		LoadableLibraryGTest.x \
+		MemoryAreaGTest.x \
 		MemoryCheckGTest.x\
 		MemoryOperationsHelperGTest.x\
 		ProcessorTypeGTest.x \
+		SleepGTest.x\
 		StandardHeap_GenericGTest.x \
 		StaticListGTest.x \
 		StringHelperGTest.x \
 		StringPortableGTest.x \
 		TimeStampGTest.x \
-		TimeoutTypeGTest.x 
+		TimeoutTypeGTest.x \
+		TypeDescriptorGTest.x 
+		
 
 
 PACKAGE=GTest/BareMetal

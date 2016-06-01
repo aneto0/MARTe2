@@ -34,7 +34,6 @@
 
 #include "Threads.h"
 #include "ThreadsDatabase.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -50,7 +49,9 @@ namespace Threads {
  * @param[in,out] threadInfo the thread information structure.
  */
 static void * SystemThreadFunction(ThreadInformation * const threadInfo) {
+
     if (threadInfo != NULL) {
+
         //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
         ErrorManagement::ErrorType err = threadInfo->ThreadWait();
         //Start the user thread
@@ -289,15 +290,18 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
                 REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_attr_setstacksize()");
             }
         }
+
         else {
             REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_attr_init()");
         }
+
         if (ok) {
             /*lint -e{929} cast from pointer to pointer required in order to cast into the pthread callback required function type.*/
             ok = (pthread_create(&threadId, &stackSizeAttribute, reinterpret_cast<void *(*)(void *)>(&SystemThreadFunction), threadInfo) == 0);
             if (!ok) {
                 REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_create()");
             }
+
             if (ok) {
                 ok = ThreadsDatabase::Lock();
                 if (ok) {
@@ -311,6 +315,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
                 }
             }
         }
+
         if (ok) {
             ok = (pthread_detach(threadId) == 0);
             if (!ok) {

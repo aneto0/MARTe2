@@ -30,11 +30,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+/*lint -efile(766, FastPollingMutexSem.cpp) header not used in this cpp given that all function are static inline*/
 #include "FastPollingMutexSem.h"
-#include "ErrorType.h"
-#include "GeneralDefinitions.h"
-#include "HighResolutionTimer.h"
-#include "Atomic.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -91,7 +88,7 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msec
         }
 
         if (!noSleep) {
-           // Sleep::Sec(sleepTime);
+            Sleep::Sec(sleepTime);
         }
     }
     return err;

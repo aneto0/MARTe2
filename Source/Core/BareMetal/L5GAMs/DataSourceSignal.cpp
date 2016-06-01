@@ -93,11 +93,11 @@ static uint32 GetDataSourceDimension(Reference gamSignalIn) {
                                     maxEnd = end;
                                 }
                             }
-                            requiredDimension = maxEnd + 1u;
+                            requiredDimension = maxEnd;
                         }
                     }
                     else {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The operation field has to be a nx2 matrix in %s", gamSignalIn->GetName())
+                        //TODO the samples blocks matrix must have 2 columns
                     }
                 }
             }
@@ -133,28 +133,6 @@ DataSourceSignal::~DataSourceSignal() {
 
 }
 
-bool DataSourceSignal::Verify() {
-
-    bool ret = true;
-    uint32 numberOfStates = Size();
-    for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-        ReferenceT < DataSourceSignalRecord > record = Get(i);
-        if (record.IsValid()) {
-            // no more than one producer for each state
-            if (record->GetNumberOfProducers() > 1u) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The DataSourceSignal %s has %d producers in the state %s", GetName(),
-                                        record->GetNumberOfProducers(), record->GetName())
-                // ret = false;
-            }
-            if (record->GetNumberOfConsumers() == 0u) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "The DataSourceSignal %s is not consumed in the state %s", GetName(), record->GetName())
-            }
-        }
-    }
-
-    return ret;
-}
-
 void **DataSourceSignal::GetDataSourcePointer(uint8 bufferIndex) {
     if (bufferIndex > 1u) {
         bufferIndex = bufferIndex % 2u;
@@ -167,7 +145,7 @@ void **DataSourceSignal::GetDataSourcePointer(uint8 bufferIndex) {
         ret = &usedBuffer[bufferIndex];
     }
     else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Memory not allocated for %s", GetName());
+        REPORT_ERROR(ErrorManagement::FatalError, "The RealTimeDataSource memory has to be allocated before calling this function");
     }
 
     return ret;
@@ -186,7 +164,7 @@ bool DataSourceSignal::PrepareNextState(const RealTimeStateInfo &status) {
         // search the current state
         uint32 numberOfStates = Size();
         bool found = false;
-        ReferenceT < DataSourceSignalRecord > record;
+        ReferenceT<DataSourceSignalRecord> record;
         for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
             record = Get(i);
             if (record.IsValid()) {
@@ -312,9 +290,7 @@ bool DataSourceSignal::PrepareNextState(const RealTimeStateInfo &status) {
                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Failed reset of the signal %s", GetName())
                     }
                 }
-                else {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "Default Value not set for the signal %s, the value will not be reset", GetName())
-                }
+                REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "Default Value not set for the signal %s, the value will not be reset", GetName())
             }
         }
     }
@@ -381,7 +357,6 @@ bool DataSourceSignal::Initialise(StructuredDataI & data) {
         }
 
         if (data.Read("Dimensions", dimensions)) {
-            numberOfElements = 1;
             // use introspection entry to parse the modifiers
             IntrospectionEntry entry("", "", dimensions.Buffer(), "", 0u, 0u);
             for (uint32 i = 0u; i < 3u; i++) {
@@ -452,9 +427,29 @@ bool DataSourceSignal::ToStructuredData(StructuredDataI& data) {
     return ret;
 }
 
+void DataSourceSignal::WriteStart() {
+
+}
+
+void DataSourceSignal::ReadStart() {
+
+}
+
+void DataSourceSignal::WriteEnd() {
+
+}
+
+void DataSourceSignal::ReadEnd() {
+
+}
+
+bool DataSourceSignal::WaitOnEvent(const TimeoutType &timeout) {
+    return true;
+}
+
 bool DataSourceSignal::Configure(Reference gamSignalIn) {
 
-    ReferenceT < GAMSignalI > gamSignal = gamSignalIn;
+    ReferenceT<GAMSignalI> gamSignal = gamSignalIn;
 
     bool ret = gamSignal.IsValid();
     if (ret) {
@@ -463,7 +458,7 @@ bool DataSourceSignal::Configure(Reference gamSignalIn) {
             if (type != typeName) {
                 if (type != "") {
                     ret = false;
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type already set to %s in %s", type.Buffer(), GetName())
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Type already set to %s", type.Buffer())
                 }
                 else {
                     type = typeName;
@@ -501,6 +496,79 @@ bool DataSourceSignal::Configure(Reference gamSignalIn) {
     return ret;
 
 }
+
+Reference DataSourceSignal::GetInputReader(Reference defIn,
+                                           void * varPtr) {
+    ReferenceT<MemoryMapInputReader> ret;
+    ReferenceT<GAMSignalI> def = defIn;
+
+    if (def.IsValid()) {
+        // try the default reader
+        ReferenceT<MemoryMapInputReader> reader = ReferenceT<MemoryMapInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        if (reader.IsValid()) {
+            //  sets the same name of the data source
+            reader->SetName(GetName());
+            if (application != NULL) {
+                reader->SetApplication(*application);
+                if (reader.IsValid()) {
+                    // can link data source to internal static variables
+                    if (reader->AddSignal(def, varPtr)) {
+                        ret = reader;
+                    }
+                }
+            }
+            else {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Application not set in %s", GetName())
+            }
+        }
+    }
+    else {
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Invalid GAM signal in input in %s", GetName())
+    }
+
+    return ret;
+}
+
+Reference DataSourceSignal::GetOutputWriter(Reference defIn,
+                                            void * varPtr) {
+    ReferenceT<MemoryMapOutputWriter> ret;
+    ReferenceT<GAMSignalI> def = defIn;
+
+    if (def.IsValid()) {
+        // try the default reader
+        ReferenceT<MemoryMapOutputWriter> writer = ReferenceT<MemoryMapOutputWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        if (writer.IsValid()) {
+            //  sets the same name of the data source
+            writer->SetName(GetName());
+            if (application != NULL) {
+                writer->SetApplication(*application);
+                if (writer.IsValid()) {
+                    // can link data source to internal static variables
+                    if (writer->AddSignal(def, varPtr)) {
+                        ret = writer;
+                    }
+                }
+            }
+            else {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Application not set in %s", GetName())
+            }
+        }
+    }
+    else {
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Invalid GAM signal in input in %s", GetName())
+    }
+    return ret;
+}
+
+bool DataSourceSignal::IsSupportedBroker(DataSourceBrokerI &testBroker) {
+
+    // only memory map broker descendants supported
+    MemoryMapDataSourceBroker *test = dynamic_cast<MemoryMapDataSourceBroker *>(&testBroker);
+    return (test != NULL);
+
+}
+
+
 
 CLASS_REGISTER(DataSourceSignal, "1.0")
 

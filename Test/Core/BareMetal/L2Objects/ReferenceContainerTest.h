@@ -79,6 +79,12 @@ public:
     bool TestSetTimeout(TimeoutType timeout);
 
     /**
+     * @brief Tests the ReferenceContainer::Find function.
+     * @return true if the leaf "E" is found.
+     */
+    bool TestFind();
+
+    /**
      * @brief Tests the ReferenceContainer::Find function with a use-case that always finds an occurrence.
      * @details For all the ReferenceContainerFilterMode combinations this test will always find the leaf "B".
      * @param[in] filter The filter must be setup to look for the first occurrence of the leaf "B".
@@ -290,6 +296,13 @@ public:
     float TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
                               ReferenceContainerFilter &filter);
 
+
+    /**
+     * @brief Tests the ReferenceContainer::Insert with the full path as parameter.
+     * @return true if the function inserts the reference at the specified path
+     */
+    bool TestInsertWithPath();
+
     /**
      * @brief Tests the ReferenceContainer::Insert function.
      * @details Creates an empty container and Inserts the following nodes to the end of the container: leafB, containerC, containerD, leafH
@@ -361,6 +374,13 @@ public:
      */
     bool TestDelete();
 
+
+    /**
+     * @brief Tests if for each of the marked nodes of \a data a new Object
+     * will be created and its Reference added to the container.
+     */
+    bool TestInitialise();
+
     /**
      * List of nodes for the tree described in the GenerateTestTree function
      */
@@ -412,6 +432,9 @@ public:
      * @return the container with the generated tree, i.e. the Root
      */
     ReferenceT<ReferenceContainer> GenerateTestTreeLarge(uint32 depth);
+
+
+
 
 private:
     /**
@@ -467,6 +490,8 @@ private:
     bool GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source,
                                                                  ReferenceContainer &result,
                                                                  const char8 * const str);
+
+
 };
 
 /*---------------------------------------------------------------------------*/

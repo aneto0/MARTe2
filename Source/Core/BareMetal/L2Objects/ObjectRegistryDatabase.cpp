@@ -30,7 +30,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ErrorManagement.h"
+#include "ErrorType.h"
 #include "ObjectRegistryDatabase.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
@@ -62,16 +62,20 @@ ObjectRegistryDatabase::ObjectRegistryDatabase() :
 ObjectRegistryDatabase::~ObjectRegistryDatabase() {
     // The ReferenceContainer destructor does the work
 }
-/*
-void ObjectRegistryDatabase::CleanUp() {
-    ReferenceContainer::CleanUp();
-    REPORT_ERROR(ErrorManagement::FatalError, "CleanUp done");
 
+bool ObjectRegistryDatabase::CleanUp() {
+    bool ret = true;
+    uint32 numberOfElements = Size();
+    for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
+        Reference toBeRemoved = Get(0u);
+        ret = ReferenceContainer::Delete(toBeRemoved);
+    }
+    return ret;
 }
-*/
+
 Reference ObjectRegistryDatabase::Find(const char8 * const path,
                                        const Reference current) {
-    ReferenceT < ReferenceContainer > domain = current;
+    ReferenceT<ReferenceContainer> domain = current;
     bool isSearchDomain = current.IsValid();
     uint32 backSteps = 0u;
     bool ok = true;

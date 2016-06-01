@@ -516,9 +516,144 @@ TEST(IOBufferGTest, TestSkipToken) {
     ASSERT_TRUE(myIOBufferTest.TestSkipToken(&SkipTokensTestTable[0]));
 }
 
+TEST(IOBufferGTest, TestPrintFormattedObject) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedObject());
+}
+
+TEST(IOBufferGTest, TestPrintStructuredDataInterface) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintStructuredDataInterface());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedIntrospection) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedIntrospection());
+}
+
+TEST(IOBufferGTest, TestPrintVector_Int32) {
+    IOBufferTest myIOBufferTest;
+
+    const TestPrintFormattedTableVector<int32, 3> table[]={
+            {"%d" ,{1, 2 , 3}, "{ 1 2 3 } "},
+            {"%-#5x" ,{1, 2 , 3}, "{ 0x1   0x2   0x3   } "},
+            {0, {0}, 0},
+    };
+
+    ASSERT_TRUE(myIOBufferTest.TestPrintVector(table));
+}
 
 
+TEST(IOBufferGTest, TestPrintVector_Float32) {
+    IOBufferTest myIOBufferTest;
+
+    const TestPrintFormattedTableVector<float32, 3> table[]={
+            {"%f" ,{1.5, 2.5 , 3.25}, "{ 1.500000 2.500000 3.250000 } "},
+            {"%3f" ,{1.5, 2.5 , 3.25}, "{ 1.5 2.5 3.2 } "},
+            {0, {0}, 0},
+    };
+
+    ASSERT_TRUE(myIOBufferTest.TestPrintVector(table));
+}
 
 
+TEST(IOBufferGTest, TestPrintVector_CString) {
+    IOBufferTest myIOBufferTest;
+
+    const TestPrintFormattedTableVector<const char8*, 3> table[]={
+            {"%s" ,{"Hello", "Hola", "Ciao"}, "{ Hello Hola Ciao } "},
+            {"%-6s" ,{"laaaaaaaarge", "short", "miiiddle"}, "{ laaaaa short  miiidd } "},
+            {0, {0}, 0},
+    };
+
+    ASSERT_TRUE(myIOBufferTest.TestPrintVector(table));
+}
+
+TEST(IOBufferGTest, TestPrintVector_CArray) {
+    IOBufferTest myIOBufferTest;
+
+    const TestPrintFormattedTableVector<const char8*, 3> table[]={
+            {"%s" ,{"Hello", "Hola", "Ciao"}, "{ Hello Hola Ciao } "},
+            {"%-6s" ,{"laaaaaaaarge", "short", "miiiddle"}, "{ laaaaa short  miiidd } "},
+            {0, {0}, 0},
+    };
+
+    ASSERT_TRUE(myIOBufferTest.TestPrintCArrayVector(table));
+}
+
+
+TEST(IOBufferGTest, TestPrintMatrix_Int32) {
+    IOBufferTest myIOBufferTest;
+
+    const TestPrintFormattedTableMatrix<int32, 2, 3 > table[]={
+            {"%d" ,{{1, 2 , 3},{4, 5, 6}}, "{ { 1 2 3 } { 4 5 6 } } "},
+            {"%-#5x" ,{{1, 2 , 3},{4, 5, 6}}, "{ { 0x1   0x2   0x3   } { 0x4   0x5   0x6   } } "},
+            {0, {{0}}, 0},
+    };
+
+    ASSERT_TRUE(myIOBufferTest.TestPrintMatrix(table));
+}
+
+
+TEST(IOBufferGTest, TestPrintMatrix_Float32) {
+    IOBufferTest myIOBufferTest;
+
+    const TestPrintFormattedTableMatrix<float32, 2, 3> table[]={
+            {"%f" ,{{1.5, 2.5 , 3.25}, {0.1, 0.2 , 0.5}}, "{ { 1.500000 2.500000 3.250000 } { 0.100000 0.200000 0.500000 } } "},
+            {"%3f" ,{{1.5, 2.5 , 3.25}, {0.1, 0.2 , 0.5}}, "{ { 1.5 2.5 3.2 } { 0.1 0.2 0.5 } } "},
+            {0, {{0}}, 0},
+    };
+
+    ASSERT_TRUE(myIOBufferTest.TestPrintMatrix(table));
+}
+
+
+TEST(IOBufferGTest, TestPrintMatrix_CString) {
+    IOBufferTest myIOBufferTest;
+
+    const TestPrintFormattedTableMatrix<const char8*, 2,3> table[]={
+            {"%s" ,{{"Hello", "Hola", "Ciao"}, {"Bye", "Adieu", "Ciao"}}, "{ { Hello Hola Ciao } { Bye Adieu Ciao } } "},
+            {0, {{0}}, 0},
+    };
+
+    ASSERT_TRUE(myIOBufferTest.TestPrintMatrix(table));
+}
+
+TEST(IOBufferGTest, TestPrintMatrix_CArray) {
+    IOBufferTest myIOBufferTest;
+
+    const TestPrintFormattedTableMatrix<const char8*, 2,3> table[]={
+            {"%s" ,{{"Hello", "Hola", "Ciao"}, {"Bye", "Adieu", "Ciao"}}, "{ { Hello Hola Ciao } { Bye Adieu Ciao } } "},
+            {0, {{0}}, 0},
+    };
+
+    ASSERT_TRUE(myIOBufferTest.TestPrintCArrayMatrix(table));
+}
+
+TEST(IOBufferGTest, TestPrintTooMuchDimensions) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintTooMuchDimensions());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedIntrospection_NotIntrospectable) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedIntrospection_NotIntrospectable());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedObject_NotIntrospectable) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedObject_NotIntrospectable());
+}
+
+TEST(IOBufferGTest, TestPrintPointerVector) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintPointerVector());
+}
+
+
+TEST(IOBufferGTest, TestPrintPointerMatrix) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintPointerMatrix());
+}
 
 

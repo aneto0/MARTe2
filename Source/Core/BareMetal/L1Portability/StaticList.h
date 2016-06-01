@@ -57,7 +57,7 @@ namespace MARTe {
  *
  * @see Lists::StaticListHolder
  */
-template<typename elementType, uint32 listAllocationGranularity = 2>
+template<typename elementType, uint32 listAllocationGranularity = 10>
 class StaticList {
 public:
 

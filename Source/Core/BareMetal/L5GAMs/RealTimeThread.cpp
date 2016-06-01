@@ -58,21 +58,16 @@ RealTimeThread::RealTimeThread() :
     numberOfGAMs = 0u;
     cpuMask = ProcessorType::GetDefaultCPUs();
     stackSize = THREADS_DEFAULT_STACKSIZE;
-    //normal
-    priorityClass=2u;
-    priorityLevel=0u;
 }
 
 /*lint -e{1551} no exception should be thrown*/
 RealTimeThread::~RealTimeThread() {
-
     if (functions != NULL) {
         delete[] functions;
     }
     if (GAMs != NULL) {
         delete[] GAMs;
     }
-
 }
 
 bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
@@ -93,7 +88,7 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
             if (ret) {
                 AddGAM(subGam);
                 subGam->SetApplication(rtApp);
-             //   subGam->SetGAMGroup(functionGAMGroup);
+                subGam->SetGAMGroup(functionGAMGroup);
                 subGam->AddState(rtState.GetName(), GetName());
 
             }
@@ -114,7 +109,7 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
                 ReferenceT<GAMGroup> gamGroup = result.Get(result.Size() - 2u);
                 if (gamGroup.IsValid()) {
                     rtState.AddGAMGroup(gamGroup);
-                    //functionGAM->SetGAMGroup(gamGroup);
+                    functionGAM->SetGAMGroup(gamGroup);
                 }
                 ret = functionGAM->AddState(rtState.GetName(), GetName());
             }
@@ -276,12 +271,6 @@ bool RealTimeThread::Initialise(StructuredDataI & data) {
             if (data.Read("StackSize", stackSize)) {
 
             }
-            if (data.Read("PriorityClass", priorityClass)) {
-
-            }
-            if (data.Read("PriorityLevel", priorityLevel)) {
-
-            }
         }
 
     }
@@ -345,16 +334,6 @@ bool RealTimeThread::ToStructuredData(StructuredDataI& data) {
         }
     }
     return ret;
-}
-
-
-uint32 RealTimeThread::GetPriorityClass(){
-    return priorityClass;
-}
-
-uint8 RealTimeThread::GetPriorityLevel(){
-    return priorityLevel;
-
 }
 
 CLASS_REGISTER(RealTimeThread, "1.0");

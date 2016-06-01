@@ -108,7 +108,7 @@ public:
      * @brief Checks that for each state, at most one producer GAM is defined.
      * @return true if there is no more than one producer GAM for each state.
      */
-    virtual bool Verify();
+    bool Verify();
 
     /**
      * @brief Retrieves the signal number of elements.
@@ -147,22 +147,22 @@ public:
     /**
      * @brief The routine to be executed at the begin of a write operation.
      */
-    virtual void WriteStart();
+    virtual void WriteStart()=0;
 
     /**
      * @brief The routine to be executed at the begin of a read operation.
      */
-    virtual void ReadStart();
+    virtual void ReadStart()=0;
 
     /**
      * @brief The routine to be executed at the end of a write operation
      */
-    virtual void WriteEnd();
+    virtual void WriteEnd()=0;
 
     /**
      * @brief The routine to be executed at the end of a read operation
      */
-    virtual void ReadEnd();
+    virtual void ReadEnd()=0;
 
     /**
      * @brief The synchronising routine.
@@ -171,7 +171,7 @@ public:
      * will be called from the broker (DataSourceBrokerI) before the read (write) operation.
      * @return false in case of errors or timeout expire. True otherwise.
      */
-    virtual bool WaitOnEvent(const TimeoutType &timeout = TTInfiniteWait);
+    virtual bool WaitOnEvent(const TimeoutType &timeout = TTInfiniteWait)=0;
 
     /**
      * @brief Retrieves the reader for the signal passed in input.
@@ -184,7 +184,7 @@ public:
      * @return a reference to a reader compatible with \a defIn, an invalid reference in case of incompatibility.
      */
     virtual Reference GetInputReader(Reference defIn,
-                                     void * varPtr = NULL_PTR(void*));
+                                     void * varPtr = NULL_PTR(void*))=0;
 
     /**
      * @brief Retrieves the writer for the signal passed in input.
@@ -197,7 +197,7 @@ public:
      * @return a reference to a writer compatible with \a defIn, an invalid reference in case of incompatibility.
      */
     virtual Reference GetOutputWriter(Reference defIn,
-                                      void * varPtr = NULL_PTR(void*));
+                                      void * varPtr = NULL_PTR(void*))=0;
 
     /**
      * @brief Configures the signal from a GAMSignalI definition.
@@ -206,7 +206,7 @@ public:
      * @param[in] gamSignalIn is a GAMSignalI to be linked to this signal.
      * @return false if the current configuration is not compatible with the \a gamSignalIn one.
      */
-    virtual bool Configure(Reference gamSignalIn);
+    virtual bool Configure(Reference gamSignalIn)=0;
 
     /**
      * @brief Retrieves the pointer to the pointer of the signal memory buffer to be used
@@ -223,7 +223,7 @@ public:
      * @param[in] testBroker is the broker to be checked.
      * @return true if \a testBroker is supported by this signal, false otherwise.
      */
-    virtual bool IsSupportedBroker(DataSourceBrokerI &testBroker);
+    virtual bool IsSupportedBroker(DataSourceBrokerI &testBroker)=0;
 
 protected:
 

@@ -40,6 +40,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -65,6 +66,7 @@ GAMGroup::~GAMGroup() {
  }
  */
 
+
 bool GAMGroup::Initialise(StructuredDataI &data) {
     bool ret = ReferenceContainer::Initialise(data);
 
@@ -74,16 +76,5 @@ bool GAMGroup::Initialise(StructuredDataI &data) {
     }
     return ret;
 }
-
-
-void GAMGroup::PrepareNextState(const RealTimeStateInfo &status){
-
-}
-
-void GAMGroup::SetUp(){
-
-}
-
-CLASS_REGISTER(GAMGroup, "1.0");
 
 }

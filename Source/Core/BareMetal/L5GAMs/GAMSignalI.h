@@ -64,8 +64,6 @@ public:
      */
     GAMSignalI();
 
-    virtual ~GAMSignalI();
-
     /**
      * @brief Merges the global definition (initialised using Initialise(*) function) with the
      * informations stored in the local StructuredData in input. It is possible completing structured

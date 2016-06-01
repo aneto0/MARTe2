@@ -45,7 +45,8 @@
 namespace MARTe {
 
     /**
-     * @brief OS-independent implementation of the select() function.
+     * @brief Class for monitoring simultaneously I/O events from devices like
+     * files, sockets, console, and so on.
      * @details The Select class provides a set of functions to monitor
      * several I/O (files, sockets, console...) events at the same time.
      * The class allows to add, remove or clear handles in read, write or

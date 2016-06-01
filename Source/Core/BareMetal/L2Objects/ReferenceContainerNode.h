@@ -51,7 +51,7 @@ public:
     /**
      * @brief Destructor. NOOP.
      */
-    virtual ~ReferenceContainerNode();
+    ~ReferenceContainerNode();
 
     /**
      * @brief Returns the Reference hold by this node.
