@@ -154,7 +154,6 @@ bool GAM::ConfigureDataSource() {
 }
 
 bool GAM::Initialise(StructuredDataI & data) {
-
     bool ret = ReferenceContainer::Initialise(data);
     ret = inputReaders.IsValid();
     if (ret) {
@@ -184,6 +183,7 @@ bool GAM::Initialise(StructuredDataI & data) {
         // merge definitions
         ret = ConfigureFunction();
     }
+
     return ret;
 }
 

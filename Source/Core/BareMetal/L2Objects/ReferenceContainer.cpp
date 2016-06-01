@@ -44,7 +44,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
+
 
 ReferenceContainer::ReferenceContainer() :
         Object() {
@@ -81,13 +83,19 @@ void ReferenceContainer::SetTimeout(const TimeoutType &timeout) {
 /*lint -e{1551} no exception should be thrown given that ReferenceContainer is
  * the sole owner of the list (LinkedListHolder)*/
 ReferenceContainer::~ReferenceContainer() {
-    LinkedListable *p = list.List();
-    list.Reset();
-    while (p != NULL) {
-        LinkedListable *q = p;
-        p = p->Next();
-        delete q;
-    }
+    CleanUp();
+}
+
+void ReferenceContainer::CleanUp() {
+
+LinkedListable *p = list.List();
+list.Reset();
+while (p != NULL) {
+    LinkedListable *q = p;
+    p = p->Next();
+    delete q;
+}
+
 }
 
 /*lint -e{593} .Justification: The node (newItem) will be deleted by the destructor. */

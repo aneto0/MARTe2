@@ -52,6 +52,8 @@ GAMSignalI::GAMSignalI() :
     }
 
 }
+GAMSignalI::~GAMSignalI() {
+}
 
 const char8 *GAMSignalI::GetPath() {
     return path.Buffer();
@@ -107,6 +109,7 @@ bool GAMSignalI::Initialise(StructuredDataI &data) {
         }
 
     }
+
     return ret;
 }
 

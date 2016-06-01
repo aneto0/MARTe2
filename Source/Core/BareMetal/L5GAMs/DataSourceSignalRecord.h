@@ -53,6 +53,9 @@ public:
      */
     DataSourceSignalRecord();
 
+    virtual ~DataSourceSignalRecord();
+
+
     /**
      * @brief Inserts a GAM as a consumer.
      * @param[in] gamConsumer is the GAM consumer to be inserted.

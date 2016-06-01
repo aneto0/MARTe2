@@ -65,12 +65,14 @@ RealTimeThread::RealTimeThread() :
 
 /*lint -e{1551} no exception should be thrown*/
 RealTimeThread::~RealTimeThread() {
+
     if (functions != NULL) {
         delete[] functions;
     }
     if (GAMs != NULL) {
         delete[] GAMs;
     }
+
 }
 
 bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,

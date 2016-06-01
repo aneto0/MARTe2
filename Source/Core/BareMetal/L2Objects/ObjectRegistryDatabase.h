@@ -61,7 +61,7 @@ public:
      * @brief Deletes all the entries.
      * @return false in case of errors, true otherwise.
      */
-    virtual bool CleanUp();
+    //virtual void CleanUp();
 
     /**
      * @brief Retrieves the Reference at the given address.

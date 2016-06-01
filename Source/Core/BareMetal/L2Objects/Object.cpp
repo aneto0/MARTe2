@@ -31,11 +31,11 @@
 #include "Object.h"
 #include "StringHelper.h"
 #include "HeapI.h"
+#include "Atomic.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
 
 namespace MARTe {
 
@@ -219,7 +219,7 @@ static bool ConvertIntrospectionToStructuredData(void* ptr,
 /*---------------------------------------------------------------------------*/
 
 Object::Object() {
-    referenceCounter = 0u;
+    referenceCounter = 0;
     name = NULL_PTR(char8 *);
     isDomain = false;
 }
@@ -239,26 +239,13 @@ Object::~Object() {
 
 uint32 Object::DecrementReferences() {
     uint32 ret = 0u;
-    if (refMux.FastLock() == ErrorManagement::NoError) {
-        --referenceCounter;
-        ret = referenceCounter;
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed FastLock()");
-    }
-    refMux.FastUnLock();
+    Atomic::Decrement (&referenceCounter);
+    ret = static_cast<uint32>(referenceCounter);
     return ret;
 }
 
 void Object::IncrementReferences() {
-    static int32 ledidx=0;
-    if (refMux.FastLock() == ErrorManagement::NoError) {
-        ++referenceCounter;
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed FastLock()");
-    }
-    refMux.FastUnLock();
+    Atomic::Increment (&referenceCounter);
 }
 
 Object *Object::Clone() const {

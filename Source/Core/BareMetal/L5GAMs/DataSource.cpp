@@ -78,6 +78,9 @@ DataSource::DataSource() :
         ReferenceContainer() {
 }
 
+DataSource::~DataSource() {
+}
+
 bool DataSource::Allocate() {
     return AllocatePrivate(ReferenceT<ReferenceContainer>(this), memory);
 }

@@ -37,7 +37,6 @@
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
 #include "StructuredDataI.h"
-#include "FastPollingMutexSem.h"
 #include "AnyType.h"
 #include "MessageI.h"
 
@@ -401,7 +400,7 @@ private:
     /**
      * The number of references to this object.
      */
-    volatile uint32 referenceCounter;
+    volatile int32 referenceCounter;
 
     /**
      * The name of this object.
@@ -409,7 +408,6 @@ private:
     char8 *name;
 
 
-    FastPollingMutexSem refMux;
 
     bool isDomain;
 };

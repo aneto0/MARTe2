@@ -31,6 +31,7 @@
 #include "ClassRegistryDatabase.h"
 #include "ClassRegistryItem.h"
 #include "ErrorManagement.h"
+#include "Atomic.h"
 
 namespace MARTe {
 /*---------------------------------------------------------------------------*/
@@ -44,7 +45,7 @@ namespace MARTe {
 //LCOV_EXCL_START
 ClassRegistryItem::ClassRegistryItem() :
         classProperties() {
-    numberOfInstances = 0u;
+    numberOfInstances = 0;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
     introspection = NULL_PTR(Introspection *);
@@ -54,7 +55,7 @@ ClassRegistryItem::ClassRegistryItem() :
 
 ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
                                      const ObjectBuildFn * const objBuildFn) {
-    numberOfInstances = 0u;
+    numberOfInstances = 0;
     classProperties = clProperties;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = objBuildFn;
@@ -64,7 +65,7 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
 
 ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
                                      Introspection &introspectionIn) {
-    numberOfInstances = 0u;
+    numberOfInstances = 0;
     classProperties = clProperties;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
@@ -75,7 +76,7 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
 ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
                                      const ObjectBuildFn * const objBuildFn,
                                      Introspection &introspectionIn) {
-    numberOfInstances = 0u;
+    numberOfInstances = 0;
     classProperties = clProperties;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = objBuildFn;
@@ -107,24 +108,15 @@ const Introspection * ClassRegistryItem::GetIntrospection() const {
 }
 
 void ClassRegistryItem::IncrementNumberOfInstances() {
-    if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
-        numberOfInstances++;
-    }
-    classRegistryItemMuxSem.FastUnLock();
+        Atomic::Increment(&numberOfInstances);
 }
 
 void ClassRegistryItem::DecrementNumberOfInstances() {
-    if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
-        numberOfInstances--;
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryItem: Failed FastLock()");
-    }
-    classRegistryItemMuxSem.FastUnLock();
+        Atomic::Decrement(&numberOfInstances);
 }
 
 uint32 ClassRegistryItem::GetNumberOfInstances() const {
-    return numberOfInstances;
+    return static_cast<uint32>(numberOfInstances);
 }
 
 const LoadableLibrary *ClassRegistryItem::GetLoadableLibrary() const {

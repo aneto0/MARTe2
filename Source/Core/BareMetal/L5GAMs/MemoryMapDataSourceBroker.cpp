@@ -87,6 +87,7 @@ MemoryMapDataSourceBroker::~MemoryMapDataSourceBroker() {
             }
         }
     }
+
 }
 
 void MemoryMapDataSourceBroker::SetApplication(RealTimeApplication &rtApp) {
@@ -193,8 +194,13 @@ bool MemoryMapDataSourceBroker::AddSignal(Reference def,
         }
 
     }
-  /*  if (ret) {
+    /*
+    if (ret) {
         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Added Signal %s To MMap", def->GetName())
+    }
+    else{
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Failed add Signal %s To MMap", def->GetName())
+
     }
 */
     return ret;
@@ -339,6 +345,7 @@ bool MemoryMapDataSourceBroker::AddSignalPrivate(Reference defIn,
                     if (ret) {
                         ret=gamSignalSizes.Add(varSize);
                     }
+
                     //   REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Allocated variable %s size=%d of %s", def->GetName(), varSize, def->GetPath())
                     //printf("\nallocated variable %s size=%d of %s\n", def->GetName(), varSize, def->GetPath());
                 }
@@ -655,6 +662,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                 }
             }
         }
+
         if (!init) {
             // take the last sample by default
             samplesM = new uint32*;
@@ -666,6 +674,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
             samplesM[0][2] = (typeSize * nOfDSElements);
             samplesRows = 1u;
             numberOfGAMSamples = 1u;
+
         }
 
         if (ret) {
@@ -683,7 +692,6 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                 // a set of blocks to be read
                 confString.Seek(0ULL);
                 ConfigurationDatabase cdb;
-
                 StandardParser parser(confString, cdb);
                 init = parser.Parse();
                 // the field exists
@@ -700,6 +708,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
                             for (uint32 i = 0u; i < nBlockRows; i++) {
                                 blocksM[i] = new uint32[nCols];
                             }
+
                             Matrix < uint32 > paramListMatrix(blocksM, nBlockRows, nCols);
                             ret = (cdb.Read("SignalBlocks", paramListMatrix));
                             if (ret) {
@@ -748,7 +757,6 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
             if (!init) {
                 // if there is not the block field read all the block
                 if (ret) {
-
                     blocksM = new uint32*;
                     blocksM[0] = new uint32[2];
 
@@ -824,6 +832,7 @@ bool MemoryMapDataSourceBroker::SetBlockParams(Reference defIn,
         REPORT_ERROR_PARAMETERS(ErrorManagement::RecoverableError, "Trying to add the sync GAMSignal %s on a broker which already contains a sync GAMSignal",
                                 def->GetName())
     }
+
     return ret;
 }
 

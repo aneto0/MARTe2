@@ -386,11 +386,11 @@ bool RealTimeApplication::StopExecution() {
 }
 
 bool RealTimeApplication::Initialise(StructuredDataI & data) {
+    activeBuffer = 1u;
     bool ret = ReferenceContainer::Initialise(data);
     if (ret) {
         //TODO Read the name of the first state
         // do the PrepareNextState here.
-
         uint32 numberOfContainers = Size();
         bool found = false;
         for (uint32 i = 0u; (i < numberOfContainers) && (!found); i++) {

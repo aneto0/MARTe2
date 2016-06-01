@@ -48,7 +48,7 @@ public:
 
     BrokerContainer();
 
-    ~BrokerContainer();
+    virtual ~BrokerContainer();
 
     /**
      * @brief Links a GAM variable with the RealTimeDataSource.
