@@ -58,14 +58,6 @@ ClassMethodCallerTest::~ClassMethodCallerTest() {
 bool ClassMethodCallerTest::TestCall() {
     using namespace MARTe;
     bool result = true;
-//    {
-//        ClassMethodCallerCT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::NonRegisteredMethod);
-//        ClassWithCallableMethods context;
-//        ReferenceContainer params;
-//        ReturnType status;
-//        status = target.Call(&context, params);
-//        result &= !status.error.notUnsupportedFeature;
-//    }
     {
         ClassMethodCallerCT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodK);
         ClassWithCallableMethods context;
@@ -110,14 +102,6 @@ ClassMethodInterfaceMapperTest::~ClassMethodInterfaceMapperTest() {
 bool ClassMethodInterfaceMapperTest::TestCall() {
     using namespace MARTe;
     bool result = true;
-//    {
-//        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::NonRegisteredMethod);
-//        ClassWithCallableMethods context;
-//        ReferenceContainer params;
-//        ReturnType status;
-//        status = target.Call(&context, params);
-//        result &= !status.error.notUnsupportedFeature;
-//    }
     {
         ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodK);
         ClassWithCallableMethods context;
