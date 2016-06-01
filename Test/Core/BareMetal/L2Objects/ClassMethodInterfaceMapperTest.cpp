@@ -57,13 +57,47 @@ ClassMethodCallerTest::~ClassMethodCallerTest() {
 
 bool ClassMethodCallerTest::TestCall() {
     using namespace MARTe;
-    bool result = false;
-    ClassMethodCallerCT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodX);
-    ClassWithCallableMethods context;
-    ReferenceContainer ref;
-    ReturnType status;
-    status = target.Call(&context, ref);
-    result = status;
+    bool result = true;
+//    {
+//        ClassMethodCallerCT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::NonRegisteredMethod);
+//        ClassWithCallableMethods context;
+//        ReferenceContainer params;
+//        ReturnType status;
+//        status = target.Call(&context, params);
+//        result &= !status.error.notUnsupportedFeature;
+//    }
+    {
+        ClassMethodCallerCT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodK);
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        ReturnType status;
+        status = target.Call(&context, params);
+        result &= !status.error.functionReturn;
+    }
+    {
+        ClassMethodCallerCT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodX);
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        ReturnType status;
+        status = target.Call(&context, params);
+        result &= status;
+    }
+    {
+        ClassMethodCallerCT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodY);
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        ReturnType status;
+        status = target.Call(&context, params);
+        result &= status;
+    }
+    {
+        ClassMethodCallerCT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodZ);
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        ReturnType status;
+        status = target.Call(&context, params);
+        result &= status;
+    }
     return result;
 }
 
@@ -75,12 +109,46 @@ ClassMethodInterfaceMapperTest::~ClassMethodInterfaceMapperTest() {
 
 bool ClassMethodInterfaceMapperTest::TestCall() {
     using namespace MARTe;
-    bool result = false;
-    ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodX);
-    ClassWithCallableMethods context;
-    ReferenceContainer ref;
-    ReturnType status;
-    status = target.Call(&context, ref);
-    result = status;
+    bool result = true;
+//    {
+//        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::NonRegisteredMethod);
+//        ClassWithCallableMethods context;
+//        ReferenceContainer params;
+//        ReturnType status;
+//        status = target.Call(&context, params);
+//        result &= !status.error.notUnsupportedFeature;
+//    }
+    {
+        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodK);
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        ReturnType status;
+        status = target.Call(&context, params);
+        result &= !status.error.functionReturn;
+    }
+    {
+        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodX);
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        ReturnType status;
+        status = target.Call(&context, params);
+        result &= status;
+    }
+    {
+        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodY);
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        ReturnType status;
+        status = target.Call(&context, params);
+        result &= status;
+    }
+    {
+        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodZ);
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        ReturnType status;
+        status = target.Call(&context, params);
+        result &= status;
+    }
     return result;
 }

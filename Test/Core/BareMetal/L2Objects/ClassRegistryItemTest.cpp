@@ -359,13 +359,21 @@ bool ClassRegistryItemTest::TestGetIntrospection() {
 }
 
 bool ClassRegistryItemTest::TestCallRegisteredMethod() {
-    bool result = false;
-    ClassRegistryItem target = myItem;
+    bool result = true;
+    ClassRegistryItem* target = ClassRegistryItemT<ClassWithCallableMethods>::Instance();
     ReferenceContainer params;
     ClassWithCallableMethods context;
     ReturnType status;
-    status = target.CallRegisteredMethod(&context, "MethodX", params);
-    result = status;
+    status = target->CallRegisteredMethod(&context, "NonRegisteredMethod", params);
+    result &= !status.error.notUnsupportedFeature;
+    status = target->CallRegisteredMethod(&context, "MethodK", params);
+    result &= !status.error.functionReturn;
+    status = target->CallRegisteredMethod(&context, "MethodX", params);
+    result &= status;
+    status = target->CallRegisteredMethod(&context, "MethodY", params);
+    result &= status;
+    status = target->CallRegisteredMethod(&context, "MethodZ", params);
+    result &= status;
     return result;
 }
 
