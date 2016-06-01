@@ -479,7 +479,7 @@ bool BasicFile::Seek(const uint64 pos) {
     return retVal;
 }
 
-bool BasicFile::RelativeSeek(const int32 deltaPos) {
+bool BasicFile::RelativeSeek(const int64 deltaPos) {
     int64 retSeek;
     bool retVal = true;
     if (CanSeek()) {

@@ -400,13 +400,12 @@ private:
     /**
      * The number of references to this object.
      */
-    volatile int32 referenceCounter;
+    volatile uint32 referenceCounter;
 
     /**
      * The name of this object.
      */
     char8 *name;
-
 
 
     bool isDomain;

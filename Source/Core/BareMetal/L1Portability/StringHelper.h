@@ -32,8 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ErrorManagement.h"
 #include "GeneralDefinitions.h"
+#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
