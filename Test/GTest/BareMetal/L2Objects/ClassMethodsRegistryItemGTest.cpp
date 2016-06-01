@@ -44,6 +44,11 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+TEST(ClassMethodsRegistryItemGTest,TestConstructor) {
+    ClassMethodsRegistryItemTest target;
+    ASSERT_TRUE(target.TestConstructor());
+}
+
 TEST(ClassMethodsRegistryItemGTest,TestCallFunction) {
     ClassMethodsRegistryItemTest target;
     ASSERT_TRUE(target.TestCallFunction());
