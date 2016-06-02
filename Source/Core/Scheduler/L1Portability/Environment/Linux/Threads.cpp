@@ -240,6 +240,9 @@ bool Kill(const ThreadIdentifier &threadId) {
             if (threadInfo == NULL) {
                 ok = false;
             }
+            else{
+                delete threadInfo;
+            }
         }
         ThreadsDatabase::UnLock();
 

@@ -32,6 +32,7 @@
 #include "FastPollingMutexSem.h"
 #include "StringHelper.h"
 #include "HeapI.h"
+#include "MemoryOperationsHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -114,6 +115,8 @@ const char8 * const Object::GetName() const {
 
 void Object::GetUniqueName(char8 * const destination,
                            const uint32 &size) const {
+
+    MemoryOperationsHelper::Set(destination, '\0', size);
     /*lint -e{9091} -e{923} the casting from pointer type to integer type is required in order to be able to get a
      * numeric address of the pointer.*/
     uintp ptrHex = reinterpret_cast<uintp>(this);

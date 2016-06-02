@@ -723,7 +723,7 @@ bool AnyTypeTest::TestPositionOperator_MatrixStructuredHeapDeclared() {
     const uint32 nRows = 2;
     const uint32 nCols = 2;
 
-    TestATStructure** test = (TestATStructure**) HeapManager::Malloc(nRows * sizeof(TestATStructure*));
+    TestATStructure** test = new TestATStructure*[nRows];
 
     for (uint32 i = 0; i < nRows; i++) {
         test[i] = new TestATStructure[nCols];
@@ -756,9 +756,9 @@ bool AnyTypeTest::TestPositionOperator_MatrixStructuredHeapDeclared() {
     }
 
     for (uint32 i = 0; i < nRows; i++) {
-        delete test[i];
+        delete [] test[i];
     }
-    HeapManager::Free((void*&) test);
+    delete [] test;
 
     return ret;
 }
@@ -828,7 +828,7 @@ bool AnyTypeTest::TestPositionOperator_MatrixBasicHeapDeclared() {
     }
 
     for (uint32 i = 0; i < nRows; i++) {
-        delete test[i];
+        delete [] test[i];
     }
     HeapManager::Free((void*&) test);
 
