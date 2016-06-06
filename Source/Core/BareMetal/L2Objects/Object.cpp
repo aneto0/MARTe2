@@ -116,7 +116,9 @@ const char8 * const Object::GetName() const {
 void Object::GetUniqueName(char8 * const destination,
                            const uint32 &size) const {
 
-    MemoryOperationsHelper::Set(destination, '\0', size);
+    if(!MemoryOperationsHelper::Set(destination, '\0', size)){
+        REPORT_ERROR(ErrorManagement::Warning, "Failed initialization of the object name in output");
+    }
     /*lint -e{9091} -e{923} the casting from pointer type to integer type is required in order to be able to get a
      * numeric address of the pointer.*/
     uintp ptrHex = reinterpret_cast<uintp>(this);

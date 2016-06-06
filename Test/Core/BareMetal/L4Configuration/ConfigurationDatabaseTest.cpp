@@ -291,7 +291,7 @@ bool ConfigurationDatabaseTest::TestDelete() {
 
 bool ConfigurationDatabaseTest::TestRead_Invalid() {
     ConfigurationDatabase cdb;
-    uint32 readValue;
+    uint32 readValue=0;
     bool ok = !cdb.Read("", readValue);
     ok = !cdb.Read(NULL, readValue);
     ok = cdb.CreateAbsolute("A.B.C");

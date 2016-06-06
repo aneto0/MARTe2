@@ -96,6 +96,11 @@ ThreadInformation::~ThreadInformation() {
 void ThreadInformation::Copy(const ThreadInformation &threadInfo) {
     userThreadFunction = threadInfo.userThreadFunction;
     userData = threadInfo.userData;
+    if(name!=NULL){
+        /*lint -e{534} possible failure is not handled nor propagated.*/
+        /*lint -e{929} cast required to be able to use Memory::Free interface.*/
+        HeapManager::Free(reinterpret_cast<void *&>(name));
+    }
     name = StringHelper::StringDup(threadInfo.name);
     threadId = threadInfo.threadId;
     priorityClass = threadInfo.priorityClass;

@@ -75,7 +75,9 @@ bool FastPollingMutexSemTest::TestCreate(bool locked) {
     return test;
 }
 
-bool FastPollingMutexSemTest::GenericMutexTestCaller(int32 nOfThreads, TimeoutType timeout, ThreadFunctionType functionToTest) {
+bool FastPollingMutexSemTest::GenericMutexTestCaller(int32 nOfThreads,
+                                                     TimeoutType timeout,
+                                                     ThreadFunctionType functionToTest) {
     failed = false;
     stop = false;
     nOfExecutingThreads = 0;
@@ -97,7 +99,6 @@ bool FastPollingMutexSemTest::GenericMutexTestCaller(int32 nOfThreads, TimeoutTy
 }
 
 void TestFastLockCallback(FastPollingMutexSemTest &mt) {
-    FlagsType error;
     mt.synchSem.Wait();
     while (!mt.stop) {
         mt.failed |= !(mt.testMutex.FastLock(mt.testMutexTimeout) == ErrorManagement::NoError);
@@ -108,9 +109,7 @@ void TestFastLockCallback(FastPollingMutexSemTest &mt) {
             mt.failed = true;
         }
         mt.testMutex.FastUnLock();
-        if (mt.failed) {
-            break;
-        }
+
     }
     //Careful that without this, the threads when exiting can overwrite the
     //assignment operation and the subtraction of the value thus generating
@@ -118,7 +117,8 @@ void TestFastLockCallback(FastPollingMutexSemTest &mt) {
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool FastPollingMutexSemTest::TestFastLock(int32 nOfThreads, TimeoutType timeout) {
+bool FastPollingMutexSemTest::TestFastLock(int32 nOfThreads,
+                                           TimeoutType timeout) {
     return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastLockCallback);
 }
 
@@ -142,12 +142,12 @@ void TestFastUnLockCallback(FastPollingMutexSemTest &mt) {
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool FastPollingMutexSemTest::TestFastUnLock(int32 nOfThreads, TimeoutType timeout) {
+bool FastPollingMutexSemTest::TestFastUnLock(int32 nOfThreads,
+                                             TimeoutType timeout) {
     return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastUnLockCallback);
 }
 
 void TestFastTryLockCallback(FastPollingMutexSemTest &mt) {
-    FlagsType error;
     mt.synchSem.Wait();
     while (!mt.stop) {
         if (mt.testMutex.FastTryLock()) {
@@ -214,29 +214,29 @@ bool FastPollingMutexSemTest::TestLocked() {
 
 void TestRecursiveCallback(FastPollingMutexSemTest &mt) {
     mt.testMutex.FastLock();
-    mt.testMutex.FastLock();
+    mt.testMutex.FastLock(2000);
     mt.testMutex.FastUnLock();
     mt.testMutex.FastUnLock();
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
 bool FastPollingMutexSemTest::TestRecursive() {
-    bool test = false;
+    bool test = true;
     testMutex.Create(false);
     nOfExecutingThreads = 1;
     int32 counter = 0;
+    uint64 tic = HighResolutionTimer::Counter();
+
     ThreadIdentifier threadId = Threads::BeginThread((ThreadFunctionType) TestRecursiveCallback, this);
+
     while (nOfExecutingThreads == 1) {
-        Sleep::MSec(100);
+        Sleep::MSec(1000);
         if (counter++ > 10) {
-            test = true;
+            test = false;
             Threads::Kill(threadId);
             break;
         }
     }
-    if (nOfExecutingThreads == 0) {
-        //A fast polling mutex semaphore should have dead-locked...
-        test = false;
-    }
+    test &= (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tic) > 0.5);
     return test;
 }

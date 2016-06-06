@@ -167,6 +167,9 @@ const ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
                 if (!found) {
                     delete loader;
                 }
+                if (!HeapManager::Free(reinterpret_cast<void*&>(fullName))) {
+                    //TODO
+                }
             }
         }
     }
@@ -237,7 +240,5 @@ const ClassRegistryItem *ClassRegistryDatabase::Peek(const uint32 &idx) {
 const char8 * const ClassRegistryDatabase::GetClassName() const {
     return "ClassRegistryDatabase";
 }
-
-
 
 }

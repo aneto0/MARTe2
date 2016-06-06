@@ -77,7 +77,7 @@ public:
 template<typename T>
 bool ZeroTerminatedArrayTest<T>::TestConstructor() {
 
-    T array[32];
+    T array[32]={0};
     for (uint32 i = 0; i < 31; i++) {
         array[i] = static_cast<T>(i);
     }
@@ -95,7 +95,7 @@ bool ZeroTerminatedArrayTest<T>::TestConstructor() {
 
 template<typename T>
 bool ZeroTerminatedArrayTest<T>::TestPositionOperator() {
-    T array[32];
+    T array[32]={0};
     for (uint32 i = 0; i < 31; i++) {
         array[i] = static_cast<T>(i);
     }
@@ -112,7 +112,7 @@ bool ZeroTerminatedArrayTest<T>::TestPositionOperator() {
 
 template<typename T>
 bool ZeroTerminatedArrayTest<T>::TestGetSize() {
-    T array[32];
+    T array[32]={0};
     ZeroTerminatedArray<T> test(array);
 
     for (uint32 i = 0; i < 31; i++) {

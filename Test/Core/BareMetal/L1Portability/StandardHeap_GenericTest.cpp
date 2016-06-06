@@ -68,6 +68,7 @@ bool StandardHeap_GenericTest::TestMalloc(){
     uint32 size = 1;
     ptr = sh.Malloc(size);
     retVal = (ptr != NULL);
+    sh.Free((void*&)ptr);
     return (retVal);
 }
 
