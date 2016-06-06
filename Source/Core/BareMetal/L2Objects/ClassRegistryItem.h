@@ -170,7 +170,7 @@ private:
     /**
      * The number of instantiated objects of the class type represented by this registry item.
      */
-    uint32 numberOfInstances;
+    volatile int32 numberOfInstances;
 
     /**
      * Library (dll) holding the class type represented by this registry item.

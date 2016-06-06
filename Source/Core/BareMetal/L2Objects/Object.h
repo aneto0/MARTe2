@@ -487,7 +487,7 @@ private:
     /**
      * The number of references to this object.
      */
-    volatile uint32 referenceCounter;
+    volatile int32 referenceCounter;
 
     /**
      * The name of this object.
