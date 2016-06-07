@@ -33,13 +33,11 @@
 
 #include "AdvancedErrorManagement.h"
 #include "ConfigurationDatabase.h"
-#include <DataSourceI.h>
-#include <GAMDataSource.h>
+#include "DataSourceI.h"
+#include "GAMDataSource.h"
 #include "GAM.h"
 #include "GAMSignalsContainer.h"
-#include "MemoryMapInputReader.h"
-#include "MemoryMapInputReader.h"
-#include "MemoryMapOutputWriter.h"
+#include "MemoryMapBroker.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "StandardParser.h"
 /*---------------------------------------------------------------------------*/
@@ -47,7 +45,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-static bool Allocate(ReferenceT<DataSourceSignalI> dataSourceSignal,
+static bool Allocate(ReferenceT<DataSourceSignal> dataSourceSignal,
                      MemoryArea &memory) {
     bool ret = dataSourceSignal.IsValid();
     if (ret) {
@@ -85,7 +83,7 @@ static bool Allocate(ReferenceT<DataSourceSignalI> dataSourceSignal,
         // allocate the memory
         if (ret) {
             /*lint -e{613} NULL pointer checking done before entering here */
-            //TODO likely that these offsets have to be set in DataSourceSignalI
+            //TODO likely that these offsets have to be set in DataSourceSignal
             uint32 offset = 0;
             ret = memory.Add(varSize, offset);
             //ret = memory->Add(varSize, dataSourceSignal->bufferPtrOffset[0]);
@@ -107,7 +105,7 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
         ReferenceT<ReferenceContainer> subContainer = container->Get(i);
         ret = subContainer.IsValid();
         if (ret) {
-            ReferenceT<DataSourceSignalI> def = subContainer;
+            ReferenceT<DataSourceSignal> def = subContainer;
             if (def.IsValid()) {
                 ret = Allocate(def, memory);
             }

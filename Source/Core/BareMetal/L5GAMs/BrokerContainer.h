@@ -93,7 +93,7 @@ public:
     /**
      * @see DataSourceBrokerI::GetSignalNumberOfSamples
      */
-    virtual uint32 GetSignalNumberOfSamples(const uint32 n);
+    //virtual uint32 GetSignalNumberOfSamples(const uint32 n);
 
     /**
      * @see DataSourceBrokerI::GetNumberOfSignals

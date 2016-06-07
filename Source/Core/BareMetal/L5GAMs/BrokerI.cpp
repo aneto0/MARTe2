@@ -31,8 +31,11 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
 #include "BrokerI.h"
 #include "DataSourceI.h"
+#include "GAMGenericSignal.h"
+#include "GAMSampledSignal.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -53,7 +56,7 @@ BrokerI::~BrokerI() {
     uint32 ** element = NULL_PTR(uint32 **);
 
     for (uint32 i = 0u; i < nOfSignalsWithIndexBlocks; i++) {
-        if (nIndexBlocksPerSignal.Peek(i, element)) {
+        if (indexBlocksList.Peek(i, element)) {
             if (element != NULL) {
                 uint32 nIndexBlocks = 0u;
                 if (nIndexBlocksPerSignal.Peek(i, nIndexBlocks)) {
@@ -67,7 +70,7 @@ BrokerI::~BrokerI() {
     }
     uint32 nOfSignalsWithSampleBlocks = nSamplesBlocksPerSignal.GetSize();
     for (uint32 i = 0u; i < nOfSignalsWithSampleBlocks; i++) {
-        if (nSamplesBlocksPerSignal.Peek(i, element)) {
+        if (samplesBlocksList.Peek(i, element)) {
             if (element != NULL) {
                 uint32 nSampleBlocks = 0u;
                 if (nSamplesBlocksPerSignal.Peek(i, nSampleBlocks)) {
@@ -119,10 +122,11 @@ bool BrokerI::AddSignalPrivate(ReferenceT<GAMSignalI> gamSignal,
         if (typeDes == InvalidType) {
 
             const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(typeName);
+            const Introspection *intro = NULL_PTR(Introspection *);
             ret = (item != NULL);
             if (ret) {
                 /*lint -e{613} NULL pointer checking done before entering here */
-                const Introspection *intro = item->GetIntrospection();
+                intro = item->GetIntrospection();
             }
             else {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s is not registered", gamSignal->GetType())
@@ -351,9 +355,9 @@ bool BrokerI::SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
 //If gamSampledSignal->GetSamples() == "" => hasSamplesDefined = false
         bool hasSamplesDefined = (confSamples != "SignalSamples=");
 
+        ConfigurationDatabase cdb;
         if (hasSamplesDefined) {
             confSamples.Seek(0ULL);
-            ConfigurationDatabase cdb;
             StandardParser parser(confSamples, cdb);
             hasSamplesDefined = parser.Parse();
         }
@@ -461,15 +465,15 @@ bool BrokerI::SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
         StreamString confString = "SignalIndex=";
         confString += gamSignal->GetOperation();
         bool hasIndexDefined = (confString != "SignalIndex=");
+        ConfigurationDatabase cdb;
         if (hasIndexDefined) {
             // a set of blocks to be read
             confString.Seek(0ULL);
-            ConfigurationDatabase cdb;
 
             StandardParser parser(confString, cdb);
             hasIndexDefined = parser.Parse();
         }
-// the field exists
+        // the field exists
         if (hasIndexDefined) {
 
             AnyType at = cdb.GetType("SignalIndex");
@@ -496,10 +500,10 @@ bool BrokerI::SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
                                         "The field \"Index\" of %s must declare a nx2 matrix {{a,b}...}. Found number of columns != 2.", gamSignal->GetName())
             }
+            uint32 testSize = 0u;
             if (ret) {
                 // checks if the size in the GAM variable matches with the
                 // sum of the block sizes
-                uint32 testSize = 0u;
                 for (uint32 i = 0u; (i < nIndexBlocks) && (ret); i++) {
                     uint32 beg = indexM[i][0];
                     uint32 end = indexM[i][1];
@@ -610,14 +614,6 @@ bool BrokerI::SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
             delete[] samplesM;
             samplesM = NULL_PTR(uint32 **);
         }
-    }
-    return ret;
-}
-
-uint32 BrokerI::GetNumberOfSamplesBlocks(uint32 signalIndex) {
-    uint32 ret;
-    if (!nSamplesBlocksPerSignal.Peek(signalIndex, ret)) {
-        ret = 0;
     }
     return ret;
 }
@@ -744,7 +740,7 @@ void *BrokerI::GetGAMSignalPointer(uint32 signalIndex) {
 uint32 BrokerI::GetTotalNumberOfSampleBlocks() {
     uint32 total = 0u;
     uint32 i = 0u;
-    for (i = 0; i < nSamplesBlocksPerSignal; i++) {
+    for (i = 0; i < nSamplesBlocksPerSignal.GetSize(); i++) {
         total += nSamplesBlocksPerSignal[i];
     }
     return total;
@@ -753,7 +749,7 @@ uint32 BrokerI::GetTotalNumberOfSampleBlocks() {
 uint32 BrokerI::GetTotalNumberOfIndexBlocks() {
     uint32 total = 0u;
     uint32 i = 0u;
-    for (i = 0; i < nIndexBlocksPerSignal; i++) {
+    for (i = 0; i < nIndexBlocksPerSignal.GetSize(); i++) {
         total += nIndexBlocksPerSignal[i];
     }
     return total;

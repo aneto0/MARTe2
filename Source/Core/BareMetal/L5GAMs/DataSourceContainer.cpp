@@ -47,9 +47,9 @@
 namespace MARTe {
 
 /**
- * @brief Recursively calls the Verify method on all the DataSourceSignalI.
- * @param[in] ref ReferenceContainer to be recursively queried for DataSourceSignalI elements.
- * @return true if all the DataSourceSignalI::Verify return true.
+ * @brief Recursively calls the Verify method on all the DataSourceSignal.
+ * @param[in] ref ReferenceContainer to be recursively queried for DataSourceSignal elements.
+ * @return true if all the DataSourceSignal::Verify return true.
  */
 static bool VerifyPrivate(ReferenceT<ReferenceContainer> ref) {
     bool ret = ref.IsValid();
@@ -61,7 +61,7 @@ static bool VerifyPrivate(ReferenceT<ReferenceContainer> ref) {
             ret = ref.IsValid();
             if (ret) {
                 // case leaf
-                ReferenceT<DataSourceSignalI> rtLeaf = generic;
+                ReferenceT<DataSourceSignal> rtLeaf = generic;
                 if (rtLeaf.IsValid()) {
                     // verify the leaf
                     ret = rtLeaf->Verify();
@@ -80,9 +80,9 @@ static bool VerifyPrivate(ReferenceT<ReferenceContainer> ref) {
 }
 
 /**
- * @brief Recursively calls the PrepareNextState method on all the DataSourceSignalI elements.
- * @param[in] ref ReferenceContainer to be recursively queried for DataSourceSignalI elements.
- * @return true if all the DataSourceSignalI::PrepareNextState return true.
+ * @brief Recursively calls the PrepareNextState method on all the DataSourceSignal elements.
+ * @param[in] ref ReferenceContainer to be recursively queried for DataSourceSignal elements.
+ * @return true if all the DataSourceSignal::PrepareNextState return true.
  */
 static bool PrepareNextStatePrivate(const RealTimeStateInfo &status,
                                     ReferenceT<ReferenceContainer> ref) {
@@ -93,7 +93,7 @@ static bool PrepareNextStatePrivate(const RealTimeStateInfo &status,
     for (uint32 i = 0u; (i < numberOfContainers) && (ret); i++) {
         ReferenceT<ReferenceContainer> container = ref->Get(i);
         if (container.IsValid()) {
-            ReferenceT<DataSourceSignalI> def = container;
+            ReferenceT<DataSourceI> def = container;
             if (def.IsValid()) {
                 ret = def->PrepareNextState(status);
             }
@@ -221,7 +221,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
     if (isLeaf) {
 
         if (ret) {
-            ReferenceT<DataSourceSignalI> element = Find(path.Buffer());
+            ReferenceT<DataSourceSignal> element = Find(path.Buffer());
             if (element.IsValid()) {
 
                 // if the path exists adds only the infos
@@ -232,9 +232,9 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                     ret = element->AddProducer(gam);
                 }
 
-                if (ret) {
+                /*if (ret) {
                     ret = element->Configure(definition);
-                }
+                }*/
 
                 if (ret) {
                     RealTimeApplication *app = gam->GetApplication();
@@ -256,7 +256,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                 ReferenceT<GAMSampledSignal> sampDef = definition;
                 ret = (!sampDef.IsValid());
                 if (ret) {
-                    ReferenceT<GAMDataSource> newElement(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                    ReferenceT<DataSourceSignal> newElement(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                     if (newElement.IsValid()) {
 
                         if (isConsumer) {
@@ -272,7 +272,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                             ret = path.GetToken(dsName, ".", terminator);
                             bool found = false;
                             uint32 numberOfDS = Size();
-                            ReferenceT<DataSource> dataSource;
+                            ReferenceT<DataSourceI> dataSource;
                             for (uint32 i = 0u; (i < numberOfDS) && (!found) && (ret); i++) {
                                 dataSource = Get(i);
                                 if (dataSource.IsValid()) {
@@ -282,7 +282,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                             if (!found) {
                                 // for GAMTimes create it
                                 if (dsName == "GAM_Times") {
-                                    ReferenceT<DataSource> gamTimesDS = ReferenceT<DataSource>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                                    ReferenceT<GAMDataSource> gamTimesDS = ReferenceT<GAMDataSource>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                                     gamTimesDS->SetName("GAM_Times");
                                     ret = Insert(gamTimesDS);
                                     // to insert the rest
@@ -293,7 +293,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                             if (found) {
                                 ret = Insert(path.Buffer(), newElement);
                                 if (ret) {
-                                    ret = newElement->Configure(definition);
+                                    //ret = newElement->Configure(definition);
                                 }
                                 if (ret) {
                                     RealTimeApplication *app = gam->GetApplication();
@@ -318,7 +318,7 @@ bool DataSourceContainer::AddSingleDataDefinition(ReferenceT<GAMSignalI> definit
                     }
                 }
                 else {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAMSampledSignal %s must be linked to an existing DataSourceSignalI",
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAMSampledSignal %s must be linked to an existing DataSourceSignal",
                                             sampDef->GetName())
                 }
 
@@ -360,7 +360,7 @@ bool DataSourceContainer::Allocate() {
     bool ret = true;
     uint32 numberOfDS = Size();
     for (uint32 i = 0u; (i < numberOfDS) && (ret); i++) {
-        ReferenceT<DataSource> dataSource = Get(i);
+        ReferenceT<DataSourceI> dataSource = Get(i);
         ret = dataSource.IsValid();
         if (ret) {
             ret = dataSource->Allocate();

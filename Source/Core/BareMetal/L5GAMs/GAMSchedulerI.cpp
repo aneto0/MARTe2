@@ -48,8 +48,8 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 GAMSchedulerI::GAMSchedulerI() {
-    writer[0] = NULL_PTR(MemoryMapOutputWriter*);
-    writer[1] = NULL_PTR(MemoryMapOutputWriter*);
+    writer[0] = NULL_PTR(MemoryMapBroker*);
+    writer[1] = NULL_PTR(MemoryMapBroker*);
     application = NULL_PTR(RealTimeApplication*);
 }
 
@@ -117,13 +117,13 @@ bool GAMSchedulerI::PrepareNextState(RealTimeStateInfo info) {
         uint32 numberOfThreads = record->GetNumberOfThreads();
 
         // creates a writer for each thread
-        writer[nextBuffer] = new MemoryMapOutputWriter[numberOfThreads];
+        writer[nextBuffer] = new MemoryMapBroker[numberOfThreads];
 
         ret = (application != NULL);
         if (ret) {
             for (uint32 i = 0u; (i < numberOfThreads) && (ret); i++) {
                 const char8 *dsPath = "Data.GAM_Times";
-                ReferenceT<DataSource> timesDS = application->Find(dsPath);
+                ReferenceT<DataSourceI> timesDS = application->Find(dsPath);
                 ret = (timesDS.IsValid());
                 if (ret) {
                     (writer[nextBuffer])[i].SetApplication(*application);
@@ -227,9 +227,9 @@ void GAMSchedulerI::ExecuteSingleCycle(const uint32 threadId,
             gamArray[i]->Execute(activeBuffer);
             // writes the time stamps
             // 2*i because for each gam we have absolute and relative variable inserted
-            uint64 * relTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[threadId].GetSignal((2 * i) + 1u));
+            uint64 * relTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[threadId].GetGAMSignalPointer((2 * i) + 1u));
             *relTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), relTic) * 1e6);
-            uint64 * absTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[threadId].GetSignal(2 * i));
+            uint64 * absTime = reinterpret_cast<uint64 *>((writer[activeBuffer])[threadId].GetGAMSignalPointer(2 * i));
             *absTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), absTic) * 1e6);
             (writer[activeBuffer])[threadId].Write(activeBuffer);
         }

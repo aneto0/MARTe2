@@ -92,6 +92,9 @@ public:
     virtual bool Write(const uint8 activeDataSourceBuffer,
                        const TimeoutType &timeout = TTInfiniteWait);
 
+    virtual bool IsSync() const {
+        return false;
+    }
 private:
 
     /**

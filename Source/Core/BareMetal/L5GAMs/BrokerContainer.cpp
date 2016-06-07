@@ -119,12 +119,13 @@ bool BrokerContainer::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
 
                 ret = (application != NULL);
                 if (ret) {
-                    StreamString dataSourcePath;
+                    StreamString dataSourcePathExtracted;
                     //The DataSource nodes are declared just under Data.
                     char8 ignored;
-                    pathNoData.GetToken(dataSourcePath, ".", ignored, "");
-                    dataSourcePath = "Data." + dataSourcePath;
-                    ReferenceT<DataSource> ds = application->Find(dataSourcePath.Buffer());
+                    pathNoData.GetToken(dataSourcePathExtracted, ".", ignored, "");
+                    StreamString dataSourcePath = "Data.";
+                    dataSourcePath += dataSourcePathExtracted;
+                    ReferenceT<DataSourceI> ds = application->Find(dataSourcePath.Buffer());
                     ret = ds.IsValid();
 
                     if (ret) {
@@ -165,7 +166,7 @@ void *BrokerContainer::GetSignal(const uint32 n) {
     if (containerIndexer.Peek(n, brokerIndex)) {
         uint32 pos = 0u;
         if (containerSignalIndexer.Peek(n, pos)) {
-            ret = brokers[brokerIndex]->GetSignal(pos);
+            ret = brokers[brokerIndex]->GetGAMSignalPointer(pos);
         }
     }
 
@@ -205,7 +206,7 @@ void *BrokerContainer::GetSignalByName(const char8 * name,
     return ret;
 }
 
-uint32 BrokerContainer::GetSignalNumberOfSamples(const uint32 n) {
+/*uint32 BrokerContainer::GetSignalNumberOfSamples(const uint32 n) {
     uint23 ret = 0u;
     uint32 brokerIndex = 0u;
     if (containerIndexer.Peek(n, brokerIndex)) {
@@ -215,7 +216,7 @@ uint32 BrokerContainer::GetSignalNumberOfSamples(const uint32 n) {
         }
     }
     return ret;
-}
+}*/
 
 bool BrokerContainer::Finalise() {
     bool ret = true;

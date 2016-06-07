@@ -35,7 +35,7 @@
 #include "ReferenceT.h"
 #include "RealTimeThread.h"
 #include "GAMSchedulerRecord.h"
-#include "MemoryMapOutputWriter.h"
+#include "MemoryMapBroker.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -122,7 +122,7 @@ protected:
     /**
      * Double buffer array of writers (one for each thread).
      */
-    MemoryMapOutputWriter* writer[2];
+    MemoryMapBroker* writer[2];
 
     /**
      * The RealTimeApplication pointer.

@@ -48,7 +48,7 @@ namespace MARTe {
 
 MemoryMapBroker::MemoryMapBroker() :
         BrokerI() {
-    copyTable = NULL_PTR(void *);
+    copyTable = NULL_PTR(CopyTableEntry *);
     numberOfSignalCopies = 0u;
 }
 
@@ -119,4 +119,4 @@ bool MemoryMapBroker::Write(const uint8 activeDataSourceBuffer,
     }
     return ok;
 }
-
+}

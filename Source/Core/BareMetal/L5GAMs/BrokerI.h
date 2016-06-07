@@ -1,6 +1,6 @@
 /**
- * @file DataSourceBrokerI.h
- * @brief Header file for class DataSourceBrokerI
+ * @file BrokerI.h
+ * @brief Header file for class eBrokerI
  * @date 11/04/2016
  * @author Giuseppe Ferrò
  *
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef DATASOURCEBROKERI_H_
-#define DATASOURCEBROKERI_H_
+#ifndef BROKERI_H_
+#define BROKERI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "DataSourceI.h"
+#include "DataSourceSignal.h"
 #include "GAMSignalI.h"
 #include "RealTimeApplication.h"
 #include "ReferenceContainer.h"
@@ -169,7 +169,7 @@ public:
     uint32 GetTotalNumberOfIndexBlocks();
 
 
-    ReferenceT<DataSourceSignal> BrokerI::GetDataSourceSignal(ReferenceT<GAMSignalI> gamSignal);
+    ReferenceT<DataSourceSignal> GetDataSourceSignal(ReferenceT<GAMSignalI> gamSignal);
 
 private:
     /**

@@ -29,7 +29,6 @@
 /*---------------------------------------------------------------------------*/
 #include <stdio.h>
 
-#include "../../../../Source/Core/BareMetal/L5GAMs/GAMDataSource.h"
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -37,7 +36,7 @@
 #include "ConfigurationDatabase.h"
 #include "GAMSchedulerI.h"
 #include "StandardParser.h"
-#include "MemoryMapInputReader.h"
+#include "MemoryMapBroker.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/

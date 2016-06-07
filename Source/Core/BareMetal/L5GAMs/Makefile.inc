@@ -24,29 +24,24 @@
 #
 #############################################################
 
-OBJSX=	BrokerContainer.x \
-		GAM.x \
-		GAMGroup.x \
-		GAMSchedulerI.x \
-		GAMSchedulerRecord.x \
-		DataSource.x \
-		DataSourceContainer.x \
-		DataSourceSignal.x \
-		DataSourceI.x \
-		DataSourceSignalRecord.x \
-		GAMGenericSignal.x \
-		GAMSampledSignal.x \
-		GAMSignalsContainer.x \
-		GAMSignalI.x \
-		MemoryMapBroker.x \
-		MemoryMapInputReader.x \
-		MemoryMapOutputWriter.x \
-		RealTimeApplication.x \
-		RealTimeState.x \
-		RealTimeThread.x 
-
-		
-		
+OBJSX=BrokerI.x \
+        BrokerContainer.x \
+        DataSourceContainer.x \
+        DataSourceSignal.x \
+        DataSourceSignalRecord.x \
+        DataSourceI.x \
+        GAM.x \
+        GAMGroup.x \
+        GAMSchedulerI.x \
+        GAMSchedulerRecord.x \
+        GAMGenericSignal.x \
+        GAMSampledSignal.x \
+        GAMSignalsContainer.x \
+        GAMSignalI.x \
+        MemoryMapBroker.x \
+        RealTimeApplication.x \
+        RealTimeState.x \
+        RealTimeThread.x
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

@@ -31,9 +31,8 @@
 
 #include "BrokerContainerTest.h"
 
-#include <GAMDataSource.h>
-#include "MemoryMapInputReader.h"
-#include "MemoryMapOutputWriter.h"
+#include "GAMDataSource.h"
+#include "MemoryMapBroker.h"
 #include "GAMTestHelper.h"
 #include "GAMGenericSignal.h"
 #include "GAMSampledSignal.h"

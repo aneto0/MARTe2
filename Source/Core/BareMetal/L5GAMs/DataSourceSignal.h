@@ -32,19 +32,19 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "BrokerI.h"
 #include "DataSourceI.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 #include "RealTimeStateInfo.h"
 #include "MemoryArea.h"
 #include "RealTimeApplication.h"
-#include "GAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+class GAM;
 
 /**
  * @brief Interface for the signals shared between GAMs.
@@ -220,6 +220,9 @@ public:
      */
     //virtual bool Configure(ReferenceT<GAMSignalI> gamSignalIn)=0;
 
+    bool Initialise(StructuredDataI & data);
+    bool ExportData(StructuredDataI& data);
+
     /**
      * @brief Retrieves the pointer the memory address containing the signal data.
      * @param[in] bufferIndex is the index of the signal memory buffer currently in use.
@@ -260,6 +263,17 @@ protected:
      * The number of samples for each cycle
      */
     uint32 numberOfSamples;
+
+    /**
+     * The variable default value
+     */
+    StreamString defaultValue;
+
+    /**
+     * The variable dimensions
+     */
+    StreamString dimensions;
+
 
     /**
      *

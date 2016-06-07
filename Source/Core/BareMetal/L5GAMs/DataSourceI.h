@@ -31,7 +31,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BrokerI.h"
 #include "GAMSignalI.h"
 #include "MemoryArea.h"
 #include "RealTimeStateInfo.h"
@@ -43,6 +42,8 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+class BrokerI;
 
 /**
  * @brief Memory container for the exchange of signal data.
