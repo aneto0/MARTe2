@@ -47,7 +47,6 @@
 
 namespace MARTe {
 
-
 ClassRegistryDatabase *ClassRegistryDatabase::Instance() {
     static ClassRegistryDatabase *instance = NULL_PTR(ClassRegistryDatabase *);
     if (instance == NULL_PTR(ClassRegistryDatabase *)) {
@@ -67,17 +66,15 @@ ClassRegistryDatabase::~ClassRegistryDatabase() {
 void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
     if (mux.FastLock() == ErrorManagement::NoError) {
         p->SetUniqueIdentifier(classUniqueIdentifier);
-        if (classDatabase.Insert(classUniqueIdentifier, p)) {
-            classUniqueIdentifier = classUniqueIdentifier + 1u;
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed StaticList::Insert()");
-        }
+
+        classDatabase.ListInsert(p, classUniqueIdentifier);
+        classUniqueIdentifier = classUniqueIdentifier + 1u;
+
     }
     mux.FastUnLock();
 }
 
-ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className)  {
+ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
     ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
     if (mux.FastLock() == ErrorManagement::NoError) {
         const uint32 maxSize = 129u;
@@ -99,11 +96,12 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className)  {
         }
 
         if (className != NULL) {
-            ClassRegistryItem *p;
+
             uint32 i;
-            uint32 databaseSize = classDatabase.GetSize();
+            uint32 databaseSize = classDatabase.ListSize();
             for (i = 0u; i < databaseSize; i++) {
-                if (classDatabase.Peek(i, p)) {
+                ClassRegistryItem *p=classDatabase.ListPeek(i);
+                if (p!=NULL) {
                     const ClassProperties *classProperties = p->GetClassProperties();
                     if (classProperties != NULL_PTR(ClassProperties *)) {
                         if (StringHelper::Compare(classProperties->GetName(), className) == 0) {
@@ -149,10 +147,11 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className)  {
                 //If the dll was successfully opened than it is likely that more classes were registered
                 //in the database. Search again.
                 if (dllOpened) {
-                    ClassRegistryItem *p;
-                    uint32 databaseSize = classDatabase.GetSize();
+
+                    uint32 databaseSize = classDatabase.ListSize();
                     for (i = 0u; (i < databaseSize) && (!found); i++) {
-                        if (classDatabase.Peek(i, p)) {
+                        ClassRegistryItem *p = classDatabase.ListPeek(i);
+                        if (p != NULL) {
                             const ClassProperties *classProperties = p->GetClassProperties();
                             if (classProperties != NULL_PTR(ClassProperties *)) {
                                 if (StringHelper::Compare(classProperties->GetName(), className) == 0) {
@@ -178,16 +177,16 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className)  {
     return registryItem;
 }
 
-ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(const char8 * const typeidName)  {
+ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(const char8 * const typeidName) {
     ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
     if (mux.FastLock() == ErrorManagement::NoError) {
         bool found = false;
         if (typeidName != NULL) {
-            ClassRegistryItem *p;
             uint32 i;
-            uint32 databaseSize = classDatabase.GetSize();
+            uint32 databaseSize = classDatabase.ListSize();
             for (i = 0u; (i < databaseSize) && (!found); i++) {
-                if (classDatabase.Peek(i, p)) {
+                ClassRegistryItem *p=classDatabase.ListPeek(i);
+                if (p!=NULL) {
                     const ClassProperties *classProperties = p->GetClassProperties();
                     if (classProperties != NULL_PTR(ClassProperties *)) {
                         if (StringHelper::Compare(classProperties->GetTypeIdName(), typeidName) == 0) {
@@ -212,7 +211,7 @@ ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(const char8 * const typ
 uint32 ClassRegistryDatabase::GetSize() {
     uint32 size = 0u;
     if (mux.FastLock() == ErrorManagement::NoError) {
-        size = classDatabase.GetSize();
+        size = classDatabase.ListSize();
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
@@ -224,9 +223,7 @@ uint32 ClassRegistryDatabase::GetSize() {
 const ClassRegistryItem *ClassRegistryDatabase::Peek(const uint32 &idx) {
     ClassRegistryItem *item = NULL_PTR(ClassRegistryItem *);
     if (mux.FastLock() == ErrorManagement::NoError) {
-        if (!classDatabase.Peek(idx, item)) {
-            item = NULL_PTR(ClassRegistryItem *);
-        }
+        item = classDatabase.ListPeek(idx);
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
@@ -238,7 +235,5 @@ const ClassRegistryItem *ClassRegistryDatabase::Peek(const uint32 &idx) {
 const char8 * const ClassRegistryDatabase::GetClassName() const {
     return "ClassRegistryDatabase";
 }
-
-
 
 }

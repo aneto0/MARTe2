@@ -39,7 +39,7 @@
 #include "ObjectBuilder.h"
 #include "CString.h"
 #include "ReturnType.h"
-
+#include "LinkedListable.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -60,7 +60,7 @@ class Object;
  * Every class that inherits from Object will be described by a ClassRegistryItem and
  * automatically added to a ClassRegistryDatabase.
  */
-class DLL_API ClassRegistryItem {
+class DLL_API ClassRegistryItem: public LinkedListable {
 public:
 
 

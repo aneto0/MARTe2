@@ -123,7 +123,7 @@ void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const loadLib
 
 
 void ClassRegistryItem::RegisterMethods(ClassMethodsRegistryItem *classMethodRecord){
-    classMethods.ListAdd(static_cast<LinkedListableT<ClassMethodsRegistryItem> *>(classMethodRecord));
+    classMethods.ListAdd(classMethodRecord);
 }
 
 

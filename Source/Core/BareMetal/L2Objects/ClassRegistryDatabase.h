@@ -128,7 +128,9 @@ private:
      * The database is implemented as a StaticList.
      * The destructor of the list will clean its elements.
      */
-    StaticList<ClassRegistryItem *,512> classDatabase;
+    LinkedListHolderT<ClassRegistryItem> classDatabase;
+
+    //StaticList<ClassRegistryItem *,512> classDatabase;
 
     /**
      * Protects the concurrent access to the database

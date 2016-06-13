@@ -1772,10 +1772,11 @@ bool IOBufferTest::TestPrintFormattedObject() {
 bool IOBufferTest::TestPrintStructuredDataInterface() {
     ConfigurationDatabase cdb;
     cdb.CreateAbsolute("A.B");
-    cdb.Write("x", 1);
-    cdb.Write("y", 2);
+    int32 one = 1, two = 2, three = 3;
+    cdb.Write("x", one);
+    cdb.Write("y", two);
     cdb.CreateAbsolute("A.C");
-    cdb.Write("z", 3);
+    cdb.Write("z", three);
     cdb.MoveToRoot();
 
     IOBuffer ioBuffer;
@@ -1784,13 +1785,13 @@ bool IOBufferTest::TestPrintStructuredDataInterface() {
     Clear(ioBuffer);
     AnyType toPrint(cdb);
     ioBuffer.PrintFormatted("%s", &toPrint);
-    const char8* test = "A = {\n"
+     const char8* test = "A = {\n"
             "B = {\n"
-            "x = 1\n"
-            "y = 2\n"
+            "x = +1\n"
+            "y = +2\n"
             "}\n"
             "C = {\n"
-            "z = 3\n"
+            "z = +3\n"
             "}\n"
             "}\n";
 

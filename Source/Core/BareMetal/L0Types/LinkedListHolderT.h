@@ -32,8 +32,11 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "LinkedListableT.h"
+#include "LinkedListable.h"
 #include "LinkedListHolder.h"
+#include "SortFilterT.h"
+#include "SearchFilterT.h"
+#include "IteratorT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -58,9 +61,15 @@ public:
      * @brief Returns the first element of the list.
      * @return a pointer to the first element of the list.
      */
-    inline LinkedListableT<T> *List(){
-        return static_cast<LinkedListableT<T> *>(LinkedListHolder::List());
+    inline T *List(){
+        return static_cast<T*>(LinkedListHolder::List());
     }
+
+
+    inline uint32 ListSize() const {
+        return LinkedListHolder::ListSize();
+    }
+
 
     /**
      * @brief Inserts \p at the beginning of the list.
@@ -69,7 +78,7 @@ public:
      *      to the previous first element of the list after the execution of the function.
      *      If instead \a p is a list, this could lead to memory leaks.
      */
-    inline void FastListInsertSingle(LinkedListableT<T> &p){
+    inline void FastListInsertSingle(T &p){
         LinkedListHolder::FastListInsertSingle(p);
     }
 
@@ -77,7 +86,7 @@ public:
      * @brief Inserts at the beginning of the list \a p. \a p can be a single element or an entire list.
      * @param[in] p a pointer to the LinkedListable to insert.
      */
-    inline void ListInsert(LinkedListableT<T> * const p){
+    inline void ListInsert(T * const p){
         LinkedListHolder::ListInsert(p);
     }
 
@@ -88,7 +97,7 @@ public:
      * @param[in] p the pointer to the LinkedListable to insert.
      * @param[in] sorter implements the comparison criteria for the sorting.
      */
-    inline void ListInsert(LinkedListableT<T> * const p,SortFilterT<T> * const sorter){
+    inline void ListInsert(T * const p, SortFilterT<T> * const sorter){
         LinkedListHolder::ListInsert(p,sorter);
     }
 
@@ -98,7 +107,7 @@ public:
      * @param[in] q the pointer to the LinkedListable to be inserted.
      * @param[in] index is the position in the list where \a p must be inserted.
      */
-    inline void ListInsert(LinkedListableT<T> * const q,const uint32 index){
+    inline void ListInsert(T * const q,const uint32 index){
         LinkedListHolder::ListInsert(q,index);
     }
 
@@ -109,7 +118,7 @@ public:
      *      to NULL after the execution of the function. If instead \a p is a list, Add
      *      could lead to memory leaks.
      */
-    inline void ListAdd(LinkedListableT<T> * const p){
+    inline void ListAdd(T * const p){
         LinkedListHolder::ListAdd(p);
     }
 
@@ -117,7 +126,7 @@ public:
      * @brief Adds a LinkedListable list at the end of the list.
      * @param[in] p the pointer to the LinkedListable list to added.
      */
-    inline void ListAddL(LinkedListableT<T> * const p){
+    inline void ListAddL(T * const p){
         LinkedListHolder::ListAddL(p);
     }
 
@@ -126,7 +135,7 @@ public:
      * @param[in] p a pointer to the element to search.
      * @return true if \a p is in the list, false otherwise.
      */
-    inline bool ListSearch(const LinkedListableT<T> * const p){
+    inline bool ListSearch(const T * const p){
         return LinkedListHolder::ListSearch(p);
     }
 
@@ -135,9 +144,9 @@ public:
      * @param[in] filter defines the search criteria.
      * @return a pointer to the element if it is found in the list, NULL otherwise.
      */
-    inline LinkedListableT<T> *ListSearch(SearchFilterT<T> * const filter){
+    inline T *ListSearch(SearchFilterT<T> * const filter){
         LinkedListable *ll = LinkedListHolder::ListSearch(filter);
-        return static_cast<LinkedListableT<T> *>(ll);
+        return static_cast<T*>(ll);
     }
 
     /**
@@ -145,7 +154,7 @@ public:
      * @param[in] p the element to be removed.
      * @return true if \a p was in the list, false otherwise.
      */
-    inline bool ListExtract(LinkedListableT<T> * const p){
+    inline bool ListExtract(T * const p){
         return LinkedListHolder::ListExtract(p);
     }
 
@@ -154,8 +163,8 @@ public:
      * @param[in] filter defines the search criteria.
      * @return the extracted element, NULL if it is not found in the list.
      */
-    inline LinkedListableT<T> *ListExtract(SearchFilterT<T> * const filter){
-        return static_cast<LinkedListableT<T> *>(LinkedListHolder::ListExtract(filter));
+    inline T *ListExtract(SearchFilterT<T> * const filter){
+        return static_cast<T*>(LinkedListHolder::ListExtract(filter));
     }
 
     /**
@@ -163,7 +172,7 @@ public:
      * @param[in] p is the element which must be deleted.
      * @return true if p is in the list, false otherwise.
      */
-    inline bool ListDelete(LinkedListableT<T> * const p){
+    inline bool ListDelete(T * const p){
         return LinkedListHolder::ListDelete(p);
     }
 
@@ -199,8 +208,8 @@ public:
      * @param[in] index the position of the requested element (0 means the first element).
      * @return a pointer to the element at index position.
      */
-    inline LinkedListableT<T> *ListPeek(const uint32 index){
-        return static_cast<LinkedListableT<T>*>(LinkedListHolder::ListPeek(index));
+    inline T *ListPeek(const uint32 index){
+        return static_cast<T*>(LinkedListHolder::ListPeek(index));
     }
 
     /**
@@ -208,8 +217,8 @@ public:
      * @param[in] index the position of the requested element.
      * @return a pointer to the element at index position.
      */
-    inline LinkedListableT<T> *ListExtract(uint32 index = 0u){
-        return static_cast<LinkedListableT<T>* >(LinkedListHolder::ListExtract(index));
+    inline T *ListExtract(uint32 index = 0u){
+        return static_cast<T>(LinkedListHolder::ListExtract(index));
     }
 
     /**
