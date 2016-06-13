@@ -66,7 +66,7 @@ public:
     /**
      * @brief Constructor.
      */
-    LinkedListHolder();
+    LinkedListHolder(const bool destroyIn=true);
 
     /**
      * @brief Destructor.
@@ -221,6 +221,8 @@ private:
      * List size
      */
     uint32 llhSize;
+
+    bool destroy;
 };
 
 /*---------------------------------------------------------------------------*/

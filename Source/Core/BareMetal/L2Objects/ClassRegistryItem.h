@@ -195,7 +195,7 @@ private:
     /**
      * TODO
      * */
-    LinkedListHolderT<ClassMethodsRegistryItem> classMethods;
+    LinkedListHolderT<ClassMethodsRegistryItem, false> classMethods;
 
 };
 

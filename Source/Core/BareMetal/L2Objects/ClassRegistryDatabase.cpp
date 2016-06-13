@@ -64,14 +64,17 @@ ClassRegistryDatabase::~ClassRegistryDatabase() {
 }
 
 void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
-    if (mux.FastLock() == ErrorManagement::NoError) {
-        p->SetUniqueIdentifier(classUniqueIdentifier);
+    if (p != NULL) {
+        if (mux.FastLock() == ErrorManagement::NoError) {
 
-        classDatabase.ListInsert(p, classUniqueIdentifier);
-        classUniqueIdentifier = classUniqueIdentifier + 1u;
+            p->SetUniqueIdentifier(classUniqueIdentifier);
 
+            classDatabase.ListInsert(p, classUniqueIdentifier);
+            classUniqueIdentifier = classUniqueIdentifier + 1u;
+
+        }
+        mux.FastUnLock();
     }
-    mux.FastUnLock();
 }
 
 ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
