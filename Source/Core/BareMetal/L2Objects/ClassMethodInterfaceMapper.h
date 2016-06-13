@@ -40,113 +40,104 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+/*
+ class ClassMethodCaller {
 
+ public:
 
-class ClassMethodCaller{
+ virtual ~ClassMethodCaller() {
+ }
+ virtual ReturnType Call(Object * context) {
+ return ReturnType(false);
+ }
+ ;
+ virtual ReturnType Call(Object * context,
+ int x) {
+ return ReturnType(false);
+ }
+ ;
 
-public:
+ virtual ReturnType Call(Object * context,
+ ReferenceContainer & x) {
+ return ReturnType(false);
+ }
+ ;
 
-    virtual ~ClassMethodCaller(){}
-    /**
-     * TODO
-     * To be case by case remapped by the descendant
-     * */
-    virtual ReturnType Call(Object * context){
-        return ReturnType(false);
-    };
+ };
 
-    /**
-     * TODO
-     * To be case by case remapped by the descendant
-     * */
-    virtual ReturnType Call(Object * context,int x){
-        return ReturnType(false);
-    };
+ template<class X, class Y>
+ class ClassMethodCallerCT: public ClassMethodCaller {
+ public:
+ bool (X::*pFun)(Y ref);
 
-    /**
-     * TODO
-     * To be case by case remapped by the descendant
-     * */
-    virtual ReturnType Call(Object * context,ReferenceContainer & x){
-        return ReturnType(false);
-    };
+ ClassMethodCallerCT(bool (X::*f)(Y ref)) {
+ pFun = f;
+ }
 
-};
+ virtual ReturnType Call(Object * context,
+ Y ref) {
+ ReturnType fr(true);
 
-template <class X,class Y>
-class ClassMethodCallerCT: public ClassMethodCaller{
-public:
-    bool (X::*pFun)(Y ref);
+ X *actualContext = dynamic_cast<X *>(context);
+ if (actualContext == NULL_PTR(X *)) {
+ fr.error.notUnsupportedFeature = false;
+ }
 
-    ClassMethodCallerCT(bool (X::*f)(Y ref)){
-        pFun = f;
-    }
-
-
-    virtual ReturnType Call(Object * context,Y ref){
-        ReturnType fr(true);
-
-        X *actualContext = dynamic_cast<X *> (context);
-        if (actualContext == NULL_PTR (X *) ) {
-            fr.error.notUnsupportedFeature = false;
-        }
-
-        if (fr.AllOk()){
-            fr.error.functionReturn = (actualContext->*pFun)(ref);
-        }
-        return fr;
-    }
-};
-
-/**
+ if (fr.AllOk()) {
+ fr.error.functionReturn = (actualContext->*pFun)(ref);
+ }
+ return fr;
+ }
+ };
+ /*
+ /**
  * TODO
  * */
 class ClassMethodInterfaceMapper {
 
-        ClassMethodCaller *caller;
 
 public:
 
     /**
      * TODO
      * */
-    ClassMethodInterfaceMapper(){
-        caller = NULL;
+    ClassMethodInterfaceMapper() {
+        caller = NULL;};
+
+        template <class C,typename T>
+        ClassMethodInterfaceMapper(bool (C::*f)(T ref)) {
+            caller = new ClassMethodCallerCT<C,T>(f);
+        };
+
+        template <typename T>
+        ReturnType Call(Object *context,T ref) {
+            ReturnType fr(true);
+            fr.error.notUnsupportedFeature = false;
+            if (caller != NULL ) fr = caller->Call(context,ref);
+            return fr;
+        };
+
+        /**
+         * TODO
+         * */
+        virtual ~ClassMethodInterfaceMapper() {
+            if (caller != NULL) {
+                delete caller;
+            }
+        };
+
+    private:
+        ClassMethodCaller *caller;
+
     };
 
-    template <class C,typename T>
-    ClassMethodInterfaceMapper(bool (C::*f)(T ref)){
-        caller = new ClassMethodCallerCT<C,T>(f);
-    };
-
-    template <typename T>
-    ReturnType Call(Object *context,T ref){
-        ReturnType fr(true);
-        fr.error.notUnsupportedFeature = false;
-        if (caller != NULL ) fr = caller->Call(context,ref);
-        return fr;
-    };
-
-    /**
-     * TODO
-     * */
-    virtual ~ClassMethodInterfaceMapper(){
-        if (caller != NULL) {
-            delete caller;
-        }
-    };
-
-protected:
-
-
-};
-
-
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------*/
+    /*                        Inline method definitions                          */
+    /*---------------------------------------------------------------------------*/
 
 }
 
+class ClassMethodInterfaceMapper {
+};
 #endif /* CLASSMETHODINTERFACEMAPPER_H_ */
-	
+

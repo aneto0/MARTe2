@@ -62,58 +62,64 @@ static const ErrorType Information(2);
  * ErrorManagement::Warning
  */
 static const ErrorType Warning(1);
+
+/**
+ * Generic Error
+ */
+static const ErrorType GenericError(-1);
+
 /**
  * Fatal Error
  */
-static const ErrorType FatalError(-1);
+static const ErrorType FatalError(-2);
 /**
  * Recoverable error
  */
-static const ErrorType RecoverableError(-2);
+static const ErrorType RecoverableError(-3);
 /**
  * Initialization error
  */
-static const ErrorType InitialisationError(-3);
+static const ErrorType InitialisationError(-4);
 /**
  * Operating system error
  */
-static const ErrorType OSError(-4);
+static const ErrorType OSError(-5);
 /**
  * Parameters error
  */
-static const ErrorType ParametersError(-5);
+static const ErrorType ParametersError(-6);
 /**
  * Illegal operation
  */
-static const ErrorType IllegalOperation(-6);
+static const ErrorType IllegalOperation(-7);
 /**
  * Sharing error
  */
-static const ErrorType ErrorSharing(-7);
+static const ErrorType ErrorSharing(-8);
 /**
  * Access denied
  */
-static const ErrorType ErrorAccessDenied(-8);
+static const ErrorType ErrorAccessDenied(-9);
 /**
  * Exception
  */
-static const ErrorType Exception(-9);
+static const ErrorType Exception(-10);
 /**
  * Timeout occurred
  */
-static const ErrorType Timeout(-10);
+static const ErrorType Timeout(-11);
 /**
  * Error during comunication
  */
-static const ErrorType CommunicationError(-11);
+static const ErrorType CommunicationError(-12);
 /**
  * Syntax error
  */
-static const ErrorType SyntaxError(-12);
+static const ErrorType SyntaxError(-13);
 /**
  * Unsupported feature
  */
-static const ErrorType UnsupportedFeature(-13);
+static const ErrorType UnsupportedFeature(-14);
 
 }
 }
