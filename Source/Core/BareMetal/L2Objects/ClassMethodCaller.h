@@ -52,24 +52,24 @@ public:
      * TODO
      * To be case by case remapped by the descendant
      * */
-    virtual ErrorType Call(Object * context);
+    virtual ErrorManagement::ErrorType Call(Object * context);
 
     /**
      * TODO
      * To be case by case remapped by the descendant
      * */
-    virtual ErrorType Call(Object * context,
+    virtual ErrorManagement::ErrorType Call(Object * context,
                             int32 x);
 
     /**
      * TODO
      * To be case by case remapped by the descendant
      * */
-    virtual ErrorType Call(Object * context,
+    virtual ErrorManagement::ErrorType Call(Object * context,
                             ReferenceContainer & x);
 
 };
-
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

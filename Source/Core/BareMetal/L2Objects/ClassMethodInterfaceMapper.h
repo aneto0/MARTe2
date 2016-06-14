@@ -32,67 +32,17 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ReturnType.h"
+#include "ErrorType.h"
 #include "Object.h"
-
+#include "ClassMethodCaller.h"
+#include "ClassMethodCallerT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+
 namespace MARTe {
-/*
- class ClassMethodCaller {
 
- public:
-
- virtual ~ClassMethodCaller() {
- }
- virtual ReturnType Call(Object * context) {
- return ReturnType(false);
- }
- ;
- virtual ReturnType Call(Object * context,
- int x) {
- return ReturnType(false);
- }
- ;
-
- virtual ReturnType Call(Object * context,
- ReferenceContainer & x) {
- return ReturnType(false);
- }
- ;
-
- };
-
- template<class X, class Y>
- class ClassMethodCallerCT: public ClassMethodCaller {
- public:
- bool (X::*pFun)(Y ref);
-
- ClassMethodCallerCT(bool (X::*f)(Y ref)) {
- pFun = f;
- }
-
- virtual ReturnType Call(Object * context,
- Y ref) {
- ReturnType fr(true);
-
- X *actualContext = dynamic_cast<X *>(context);
- if (actualContext == NULL_PTR(X *)) {
- fr.error.notUnsupportedFeature = false;
- }
-
- if (fr.AllOk()) {
- fr.error.functionReturn = (actualContext->*pFun)(ref);
- }
- return fr;
- }
- };
- /*
- /**
- * TODO
- * */
 class ClassMethodInterfaceMapper {
 
 
@@ -106,15 +56,15 @@ public:
 
         template <class C,typename T>
         ClassMethodInterfaceMapper(bool (C::*f)(T ref)) {
-            caller = new ClassMethodCallerCT<C,T>(f);
+            caller = new ClassMethodCallerT<C,T>(f);
         };
 
         template <typename T>
-        ReturnType Call(Object *context,T ref) {
-            ReturnType fr(true);
-            fr.error.notUnsupportedFeature = false;
-            if (caller != NULL ) fr = caller->Call(context,ref);
-            return fr;
+        ErrorManagement::ErrorType Call(Object *context,T ref) {
+            ErrorManagement::ErrorType ret;
+            ret.unsupportedFeature = true;
+            if (caller != NULL ) ret = caller->Call(context,ref);
+            return ret;
         };
 
         /**
@@ -137,7 +87,6 @@ public:
 
 }
 
-class ClassMethodInterfaceMapper {
-};
+
 #endif /* CLASSMETHODINTERFACEMAPPER_H_ */
 

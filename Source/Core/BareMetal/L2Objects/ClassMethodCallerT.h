@@ -33,8 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassMethodCaller.h"
-#include "ErrorType.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -81,7 +79,7 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, argType>::Call(Object *
         err = ErrorManagement::UnsupportedFeature;
     }
     else {
-        (actualContext->*pFun)(ref) ? (err = ErrorManagement::NoError) : (err = ErrorManagement::GenericError);
+        (actualContext->*pFun)(ref) ? (err = ErrorManagement::NoError) : (err = ErrorManagement::FatalError);
     }
     return err;
 }

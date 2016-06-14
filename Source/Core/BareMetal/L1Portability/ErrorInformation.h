@@ -62,7 +62,7 @@ struct ErrorInformation {
         /**
          * Specified is the error is triggered within an object.
          */
-        bool isObject :1;
+        bool isObject;
 
     } header;
 

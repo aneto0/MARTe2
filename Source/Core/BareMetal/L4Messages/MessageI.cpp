@@ -63,9 +63,9 @@ ReferenceT<MessageI> MessageI::FindDestination(CCString destination){
 }
 
 
-ReturnType MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
+ErrorManagement::ErrorType MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
     CCString destination = "";
-    ReturnType ret(true);
+    ErrorManagement::ErrorType ret;
 
     /*
      * TODO: Verify all the error conditions at the beginning:
@@ -78,7 +78,7 @@ ReturnType MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
      */
 
     if (!message.IsValid()){
-        ret.error.notParametersError = false;
+        ret.parametersError = true;
         // TODO produce error message
     }
 
@@ -88,7 +88,7 @@ ReturnType MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
         if (message->IsReplyMessage()){
 
             if (! message->LateReplyExpected() ){
-                ret.error.notCommunicationError = false;
+                ret.communicationError = true;
                 // TODO produce error message
             } else {
                 //{message->IsReplyMessage() and message->LateReplyExpected()}
@@ -109,7 +109,7 @@ ReturnType MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
                 // no Object ==> no reply possible
                 if (message->ReplyExpected()){
                     // TODO produce error message
-                    ret.error.notParametersError = false;
+                    ret.parametersError = true;
                 }
             }
         }
@@ -121,7 +121,7 @@ ReturnType MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
         if (destinationObject.IsValid()){
             ret = destinationObject->ReceiveMessage(message);
         } else {
-            ret.error.notUnsupportedFeature = false;
+            ret.unsupportedFeature = true;
             // TODO produce error message
         }
     }
@@ -129,7 +129,7 @@ ReturnType MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
     if (ret){
         // if we wanted an immediate reply then we should have one
         if (message->ImmediateReplyExpected() && !message->IsReplyMessage()){
-            ret.error.notCommunicationError = false;
+            ret.communicationError = true;
             // TODO produce error message
         }
     }
@@ -139,8 +139,8 @@ ReturnType MessageI::SendMessage( ReferenceT<Message> &message,Object *sender){
 
 
 
-ReturnType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender,TimeoutType maxWait){
-    ReturnType ret(true);
+ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender,TimeoutType maxWait){
+    ErrorManagement::ErrorType ret(true);
 
     /*
      * TODO: Verify all the error conditions at the beginning:
@@ -149,7 +149,7 @@ ReturnType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,Object
      */
 
     if (!message.IsValid()){
-        ret.error.notParametersError = false;
+        ret.parametersError = true;
         // TODO produce error message
     }
 
@@ -157,7 +157,7 @@ ReturnType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,Object
         // reply to a reply NOT possible
         if (message->IsReplyMessage()){
             // TODO emit error
-            ret.error.notCommunicationError = false;
+            ret.communicationError = true;
         }
     }
 
@@ -177,8 +177,8 @@ ReturnType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,Object
  * Calls the ReceiveMessage function of the target
  * Reply is expected but does not Waits for a reply and returns
  * */
-ReturnType MessageI::SendMessageAndExpectReplyLater(ReferenceT<Message> &message,Object *sender){
-    ReturnType ret(true);
+ErrorManagement::ErrorType MessageI::SendMessageAndExpectReplyLater(ReferenceT<Message> &message,Object *sender){
+    ErrorManagement::ErrorType ret(true);
 
     /*
      * Verify all the error conditions at the beginning (Ivan's proposal):
@@ -187,7 +187,7 @@ ReturnType MessageI::SendMessageAndExpectReplyLater(ReferenceT<Message> &message
      */
 
     if (!message.IsValid()){
-        ret.error.notParametersError = false;
+        ret.parametersError = true;
         // TODO produce error message
     }
 
@@ -195,7 +195,7 @@ ReturnType MessageI::SendMessageAndExpectReplyLater(ReferenceT<Message> &message
         // reply to a reply NOT possible
         if (message->IsReplyMessage()){
             // TODO emit error
-            ret.error.notCommunicationError = false;
+            ret.communicationError = true;
         }
     }
 
@@ -214,7 +214,7 @@ ReturnType MessageI::SendMessageAndExpectReplyLater(ReferenceT<Message> &message
 /*---------------------------------------------------------------------------*/
 
 
-ReturnType MessageI::ReceiveMessage(ReferenceT<Message> &message) {
+ErrorManagement::ErrorType MessageI::ReceiveMessage(ReferenceT<Message> &message) {
     return SortMessage(message);
 }
 
@@ -224,9 +224,9 @@ ReturnType MessageI::ReceiveMessage(ReferenceT<Message> &message) {
  * By default checks if there are usable registered methods
  * Otherwise calls HandleMessage
  * */
-ReturnType MessageI::SortMessage(ReferenceT<Message> &message){
+ErrorManagement::ErrorType MessageI::SortMessage(ReferenceT<Message> &message){
 
-    ReturnType ret(true);
+    ErrorManagement::ErrorType ret;
 
     /*
      * TODO: Verify all the error conditions at the beginning:
@@ -238,13 +238,13 @@ ReturnType MessageI::SortMessage(ReferenceT<Message> &message){
     Object *thisAsObject = dynamic_cast<Object *> (this);
 
     if (!message.IsValid()){
-        ret.error.notParametersError = false;
+        ret.parametersError = true;
         // TODO produce error message
     }
 
     //if this is an Object derived class then we can look for a registered method to call
     if (thisAsObject != NULL_PTR(Object *)){
-        ret.error.notParametersError = false;
+        ret.parametersError = true;
         // TODO produce error message
     }
 
@@ -265,10 +265,10 @@ ReturnType MessageI::SortMessage(ReferenceT<Message> &message){
 
     // check if errors are only of function mismatch
     if (!ret) {
-        ReturnType saveRet = ret;
+        ErrorManagement::ErrorType saveRet = ret;
         // try resetting the "good" errors
-        ret.error.notUnsupportedFeature = true;
-        ret.error.notParametersError = true;
+        ret.unsupportedFeature = false;
+        ret.parametersError = false;
         if (ret){
             ret = HandleMessage(message);
         } else {
@@ -284,7 +284,7 @@ ReturnType MessageI::SortMessage(ReferenceT<Message> &message){
     return ret;
 }
 
-ReturnType MessageI::HandleMessage(ReferenceT<Message> &message){
+ErrorManagement::ErrorType MessageI::HandleMessage(ReferenceT<Message> &message){
     return false;
 }
 

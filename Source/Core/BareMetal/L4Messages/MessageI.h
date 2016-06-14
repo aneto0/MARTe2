@@ -35,7 +35,7 @@
 #include "Message.h"
 #include "TimeoutType.h"
 #include "ReferenceT.h"
-#include "ReturnType.h"
+#include "ErrorType.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -66,7 +66,7 @@ public:
      * returns error.notCommunicationError if trying to send an immediate reply
      *
      * */
-    static ReturnType SendMessage( ReferenceT<Message> &message,Object *sender = NULL);
+    static ErrorManagement::ErrorType SendMessage( ReferenceT<Message> &message,Object *sender = NULL);
 
     /**
      * TODO
@@ -75,14 +75,14 @@ public:
      * Calls SendMessage. See SendMessage errors
      * additional error.notCommunicationError is a reply to a reply is requested
      * */
-    static ReturnType SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender = NULL,TimeoutType maxWait=TTInfiniteWait);
+    static ErrorManagement::ErrorType SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender = NULL,TimeoutType maxWait=TTInfiniteWait);
 
     /**
      * TODO
      * Sets Message::flags.expectsReply and calls SendMessage
      * Calls SendMessage. See SendMessage errors
      * */
-    static ReturnType SendMessageAndExpectReplyLater(ReferenceT<Message> &message,Object *sender = NULL);
+    static ErrorManagement::ErrorType SendMessageAndExpectReplyLater(ReferenceT<Message> &message,Object *sender = NULL);
 
 
     virtual ~MessageI(){};
@@ -98,7 +98,7 @@ protected:
       * in the case of a specialised method where queued message handling is implemented
       * when the immediate return message is requested then the wait is performed here and a timeout+communication error may be produced here
      * */
-     virtual ReturnType ReceiveMessage(ReferenceT<Message> &message);
+     virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
 
      /**
       * TODO
@@ -107,14 +107,14 @@ protected:
       * Otherwise calls HandleMessage.
       * in the case of delayed reply, the reply is sent from here
       * */
-     virtual ReturnType SortMessage(ReferenceT<Message> &message);
+     virtual ErrorManagement::ErrorType SortMessage(ReferenceT<Message> &message);
 
     /**
       * TODO
       * Default message handling mechanism
       * By default refuses messages returning false
      * */
-     virtual ReturnType HandleMessage(ReferenceT<Message> &message);
+     virtual ErrorManagement::ErrorType HandleMessage(ReferenceT<Message> &message);
 
 private:
 

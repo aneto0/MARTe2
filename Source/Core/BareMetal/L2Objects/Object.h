@@ -38,7 +38,7 @@
 #include "ClassRegistryItem.h"
 #include "StructuredDataI.h"
 #include "AnyType.h"
-#include "ReturnType.h"
+#include "ErrorType.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -330,19 +330,12 @@ public:
     /**
      * TODO
      */
-    ReturnType CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters);
+    ErrorManagement::ErrorType CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters);
 
     /*
      * @brief Returns the class properties associated with this class type.
      */
      const ClassProperties *GetClassProperties() const;
-
-#if 0
-     /*
-      * @brief Returns the record containing all class information.
-      */
-     virtual ClassRegistryItem * GetClassRegistryItem() const = 0;
-#endif
 
      CLASS_REGISTER_DECLARATION()
 

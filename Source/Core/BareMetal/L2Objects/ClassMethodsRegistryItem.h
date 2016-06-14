@@ -37,20 +37,20 @@
 #include "ClassRegistryItem.h"
 #include "ClassMethodInterfaceMapper.h"
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 
 namespace MARTe {
 
 // forward declaration
 class ClassRegistryItem;
+class ClassMethodInterfaceMapper;
+
 /**
  * TODO
  * */
-class ClassMethodsRegistryItem: public LinkedListable{
+class ClassMethodsRegistryItem: public LinkedListable {
 
 public:
     /**
@@ -68,7 +68,9 @@ public:
     /**
      * TODO
      * */
-    ReturnType CallFunction(Object * context, const char8 *name, ReferenceContainer &ref);
+    ErrorManagement::ErrorType CallFunction(Object * context,
+                            const char8 *name,
+                            ReferenceContainer &ref);
 
 private:
 
@@ -79,7 +81,7 @@ private:
     /**
      * TODO
      * */
-     ClassMethodInterfaceMapper *FindFunction(const char8 *name);
+    ClassMethodInterfaceMapper *FindFunction(const char8 *name);
 
     /**
      * TODO
@@ -88,11 +90,9 @@ private:
     /**
      * TODO
      * */
-    const char *                      functionNames;
+    const char * functionNames;
 
 };
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
@@ -103,4 +103,4 @@ private:
     static /*const*/ MARTe::ClassMethodsRegistryItem C ## __ClassMethodsRegistryItem(C::GetClassRegistryItem_Static(),C ## __ClassMethodsInterfaceMapper,#__VA_ARGS__);
 }
 #endif /* CLASSMETHODSREGISTRYITEM_H_ */
-	
+

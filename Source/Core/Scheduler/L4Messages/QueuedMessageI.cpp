@@ -42,8 +42,8 @@
 namespace MARTe {
 
 
-ReturnType QueuedMessageI::ReceiveMessage(ReferenceT<Message> &message){
-    ReturnType ret;
+ErrorManagement::ErrorType QueuedMessageI::ReceiveMessage(ReferenceT<Message> &message){
+    ErrorManagement::ErrorType ret;
 
 
     return ret;

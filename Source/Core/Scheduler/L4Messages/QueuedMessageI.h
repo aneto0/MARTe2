@@ -58,7 +58,7 @@ public:
        * in the case of a specialised method where queued message handling is implemented
        * when the immediate return message is requested then the wait is performed here and a timeout+communication error may be produced here
       * */
-    virtual ReturnType ReceiveMessage(ReferenceT<Message> &message);
+    virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
 
 
     /**

@@ -415,14 +415,14 @@ bool Object::ExportMetadata(StructuredDataI & data,
     return ret;
 }
 
-ReturnType Object::CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters){
-    ReturnType ret(true);
+ErrorManagement::ErrorType Object::CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters){
+    ErrorManagement::ErrorType ret;
     ClassRegistryItem * cri = GetClassRegistryItem();
 
     if (cri!=NULL_PTR(ClassRegistryItem *)){
         ret = cri->CallRegisteredMethod(this,methodName,parameters);
     } else {
-        ret.error.notInternalSetupError = false;
+        ret.internalSetupError = true;
     }
 
     return ret;

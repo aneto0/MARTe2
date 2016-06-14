@@ -115,20 +115,27 @@ ClassMethodsRegistryItem::~ClassMethodsRegistryItem() {
 /**
  * TODO
  * */
-ReturnType ClassMethodsRegistryItem::CallFunction(Object * context, const char8 *name, ReferenceContainer &ref){
-    ReturnType returnValue(true);
+ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * context, const char8 *name, ReferenceContainer &ref){
+    ErrorManagement::ErrorType returnValue;
 
-    if (context == NULL)  returnValue.error.notParametersError = false;
-    if (name == NULL)     returnValue.error.notParametersError = false;
+    if (context == NULL){
+        returnValue.parametersError = true;
+    }
+    if (name == NULL){
+        returnValue.parametersError = true;
+    }
 
 
     ClassMethodInterfaceMapper * fmp = NULL;
-    if (returnValue.AllOk()){
+    if (returnValue.NoError()){
         fmp = FindFunction(name);
-        if (fmp == NULL) returnValue.error.notUnsupportedFeature = false;
+        if (fmp == NULL) {
+            returnValue.unsupportedFeature = true;
+
+        }
     }
 
-    if (returnValue.AllOk()){
+    if (returnValue.NoError()){
         returnValue = fmp->Call(context,ref);
     }
 

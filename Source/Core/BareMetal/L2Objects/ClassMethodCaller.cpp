@@ -48,13 +48,15 @@ ClassMethodCaller::ClassMethodCaller() {
 ClassMethodCaller::~ClassMethodCaller() {
 }
 
+
+//
 ErrorType ClassMethodCaller::Call(Object * context) {
     return ErrorManagement::NoError;
 }
 
 ErrorType ClassMethodCaller::Call(Object * context,
                                   int32 x) {
-    return ErrorManagement::NoError;;
+    return ErrorManagement::NoError;
 }
 
 ErrorType ClassMethodCaller::Call(Object * context,

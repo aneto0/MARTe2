@@ -147,7 +147,7 @@ class DLL_API CallRegisteredMethodLauncher : public SearchFilterT<ClassMethodsRe
     CCString methodName;
     ReferenceContainer & parameters;
     Object *object;
-    ReturnType ret;
+    ErrorManagement::ErrorType ret;
 public:
 
     CallRegisteredMethodLauncher(Object *objectIn,CCString methodNameIn,ReferenceContainer & parametersIn): parameters(parametersIn),ret(false) {
@@ -161,35 +161,35 @@ public:
 
     virtual bool Test(ClassMethodsRegistryItem *data) {
         ret = data->CallFunction(object,methodName.GetList(),parameters);
-        return ret.error.notUnsupportedFeature;
+        return !ret.unsupportedFeature;
     }
 
-    ReturnType GetResults() {
+    ErrorManagement::ErrorType GetResults() {
         return ret;
     }
 
 };
 
-ReturnType ClassRegistryItem::CallRegisteredMethod(Object *object,
+ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object *object,
                                                    CCString methodName,
                                                    ReferenceContainer & parameters) {
-    ReturnType ret(true);
+    ErrorManagement::ErrorType ret;
 
     if (object == NULL_PTR(Object*)) {
-        ret.error.notParametersError = false;
+        ret.parametersError = true;
     }
 
     if (methodName.GetList() == NULL_PTR(char8*)) {
-        ret.error.notParametersError = false;
+        ret.parametersError = true;
     }
 
-    if (ret.AllOk()) {
+    if (ret.NoError()) {
         CallRegisteredMethodLauncher launcher(object, methodName, parameters);
         if (classMethods.ListSearch(&launcher)) {
             ret = launcher.GetResults();
         }
         else {
-            ret.error.notUnsupportedFeature = false;
+            ret.unsupportedFeature = true;
         }
     }
     return ret;
