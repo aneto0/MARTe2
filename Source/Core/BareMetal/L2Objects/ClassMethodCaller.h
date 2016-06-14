@@ -32,12 +32,14 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ErrorType.h"
-#include "Object.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+class Object;
+class ReferenceContainer;
 
 /**
  * @brief Calls a class method

@@ -33,20 +33,17 @@
 /*---------------------------------------------------------------------------*/
 
 #include "LinkedListable.h"
-#include "ReferenceContainer.h"
-#include "ClassRegistryItem.h"
 #include "ClassMethodInterfaceMapper.h"
-
+#include "CString.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
-// forward declaration
-class ClassRegistryItem;
-class ClassMethodInterfaceMapper;
 
+
+class ClassRegistryItem;
 /**
  * TODO
  * */
@@ -68,9 +65,10 @@ public:
     /**
      * TODO
      * */
+    template <typename argType>
     ErrorManagement::ErrorType CallFunction(Object * context,
                             const char8 *name,
-                            ReferenceContainer &ref);
+                            argType &ref);
 
 private:
 
@@ -90,13 +88,47 @@ private:
     /**
      * TODO
      * */
-    const char * functionNames;
+    CCString functionNames;
 
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+/**
+ * TODO
+ * */
+template <typename argType>
+ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * context,
+                                                                  const char8 *name,
+                                                                  argType &ref) {
+    ErrorManagement::ErrorType returnValue;
+
+    if (context == NULL) {
+        returnValue.parametersError = true;
+    }
+    if (name == NULL) {
+        returnValue.parametersError = true;
+    }
+
+    ClassMethodInterfaceMapper * fmp = NULL;
+    if (returnValue.NoError()) {
+        fmp = FindFunction(name);
+        if (fmp == NULL) {
+            returnValue.unsupportedFeature = true;
+
+        }
+    }
+
+    if (returnValue.NoError()) {
+        returnValue = fmp->Call(context, ref);
+    }
+
+    return returnValue;
+}
+
+
 
 #define CLASS_METHOD_REGISTER(C,...)\
     static MARTe::ClassMethodInterfaceMapper C ## __ClassMethodsInterfaceMapper[] = {__VA_ARGS__}; \

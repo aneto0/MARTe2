@@ -33,7 +33,6 @@
 #include "FastPollingMutexSem.h"
 #include "ErrorManagement.h"
 #include "Introspection.h"
-#include "ClassMethodsRegistryItem.h"
 #include "ObjectBuilder.h"
 #include "SearchFilterT.h"
 
@@ -143,57 +142,7 @@ uint32 ClassRegistryItem::GetNumberOfInstances() const {
     return numberOfInstances;
 }
 
-class DLL_API CallRegisteredMethodLauncher : public SearchFilterT<ClassMethodsRegistryItem > {
-    CCString methodName;
-    ReferenceContainer & parameters;
-    Object *object;
-    ErrorManagement::ErrorType ret;
-public:
 
-    CallRegisteredMethodLauncher(Object *objectIn,CCString methodNameIn,ReferenceContainer & parametersIn): parameters(parametersIn),ret(false) {
-        object = objectIn;
-        methodName= methodNameIn;
-    }
-
-    virtual ~CallRegisteredMethodLauncher() {
-
-    }
-
-    virtual bool Test(ClassMethodsRegistryItem *data) {
-        ret = data->CallFunction(object,methodName.GetList(),parameters);
-        return !ret.unsupportedFeature;
-    }
-
-    ErrorManagement::ErrorType GetResults() {
-        return ret;
-    }
-
-};
-
-ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object *object,
-                                                   CCString methodName,
-                                                   ReferenceContainer & parameters) {
-    ErrorManagement::ErrorType ret;
-
-    if (object == NULL_PTR(Object*)) {
-        ret.parametersError = true;
-    }
-
-    if (methodName.GetList() == NULL_PTR(char8*)) {
-        ret.parametersError = true;
-    }
-
-    if (ret.NoError()) {
-        CallRegisteredMethodLauncher launcher(object, methodName, parameters);
-        if (classMethods.ListSearch(&launcher)) {
-            ret = launcher.GetResults();
-        }
-        else {
-            ret.unsupportedFeature = true;
-        }
-    }
-    return ret;
-}
 
 void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {
     classProperties.SetUniqueIdentifier(uid);

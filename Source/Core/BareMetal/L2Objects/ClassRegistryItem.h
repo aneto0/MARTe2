@@ -39,6 +39,7 @@
 #include "ObjectBuilder.h"
 #include "CString.h"
 #include "ErrorType.h"
+#include "ClassMethodsRegistryItem.h"
 #include "LinkedListable.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -46,8 +47,10 @@
 
 namespace MARTe {
 
+
+
 class Introspection;
-class ClassMethodsRegistryItem;
+//class ClassMethodsRegistryItem;
 class ReferenceContainer;
 
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
@@ -149,7 +152,8 @@ public:
     /**
      * TODO
      */
-    ErrorManagement::ErrorType CallRegisteredMethod(Object *object,CCString methodName,ReferenceContainer & parameters);
+    template <typename argType>
+    ErrorManagement::ErrorType CallRegisteredMethod(Object *object,CCString methodName,argType parameters);
 
 protected:
     /**
@@ -239,6 +243,65 @@ public:
     }
 
 };
+
+
+
+
+template <typename argType>
+class DLL_API CallRegisteredMethodLauncher : public SearchFilterT<ClassMethodsRegistryItem > {
+    CCString methodName;
+    argType & parameters;
+    Object *object;
+    ErrorManagement::ErrorType ret;
+public:
+
+    CallRegisteredMethodLauncher(Object *objectIn,CCString methodNameIn,argType &parametersIn): parameters(parametersIn) {
+        object = objectIn;
+        methodName= methodNameIn;
+    }
+
+    virtual ~CallRegisteredMethodLauncher() {
+
+    }
+
+    virtual bool Test(ClassMethodsRegistryItem *data) {
+        ret = data->CallFunction(object,methodName.GetList(),parameters);
+        // the function has been found and called
+        return !ret.unsupportedFeature;
+    }
+
+    ErrorManagement::ErrorType GetResults() {
+        return ret;
+    }
+
+};
+
+template <typename argType>
+ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object *object,
+                                                                   CCString methodName,
+                                                                   argType parameters) {
+    ErrorManagement::ErrorType ret;
+
+    if (object == NULL_PTR(Object*)) {
+        ret.parametersError = true;
+    }
+
+    if (methodName.GetList() == NULL_PTR(char8*)) {
+        ret.parametersError = true;
+    }
+
+    if (ret.NoError()) {
+        // search in the list the first function returning without unsupported feature
+        CallRegisteredMethodLauncher<argType> launcher(object, methodName, parameters);
+        if (classMethods.ListSearch(&launcher)) {
+            ret = launcher.GetResults();
+        }
+        else {
+            ret.unsupportedFeature = true;
+        }
+    }
+    return ret;
+}
 
 
 }

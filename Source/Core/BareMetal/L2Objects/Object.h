@@ -330,7 +330,8 @@ public:
     /**
      * TODO
      */
-    ErrorManagement::ErrorType CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters);
+    template <typename argType>
+    ErrorManagement::ErrorType CallRegisteredMethod(CCString methodName,argType parameters);
 
     /*
      * @brief Returns the class properties associated with this class type.
@@ -423,6 +424,22 @@ private:
      */
     char8 *name;
 };
+
+
+template <typename argType>
+ErrorManagement::ErrorType Object::CallRegisteredMethod(CCString methodName,argType parameters){
+    ErrorManagement::ErrorType ret;
+    ClassRegistryItem * cri = GetClassRegistryItem();
+
+    if (cri!=NULL_PTR(ClassRegistryItem *)){
+        ret = cri->CallRegisteredMethod(this,methodName,parameters);
+    } else {
+        ret.internalSetupError = true;
+    }
+
+    return ret;
+
+}
 
 }
 /*---------------------------------------------------------------------------*/
