@@ -49,17 +49,18 @@ ClassMethodCaller::~ClassMethodCaller() {
 }
 
 
-//
-ErrorType ClassMethodCaller::Call(Object * context) {
+//All the prototypes must be available here because this is the object in the interface-mapper then
+//the call methods should inherits by one of the following
+ErrorManagement::ErrorType ClassMethodCaller::Call(Object * context) {
     return ErrorManagement::NoError;
 }
 
-ErrorType ClassMethodCaller::Call(Object * context,
+ErrorManagement::ErrorType ClassMethodCaller::Call(Object * context,
                                   int32 x) {
     return ErrorManagement::NoError;
 }
 
-ErrorType ClassMethodCaller::Call(Object * context,
+ErrorManagement::ErrorType ClassMethodCaller::Call(Object * context,
                                   ReferenceContainer & x) {
     return ErrorManagement::NoError;
 }

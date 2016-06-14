@@ -39,3 +39,21 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+
+namespace MARTe{
+
+ClassMethodInterfaceMapper::ClassMethodInterfaceMapper() {
+        caller = NULL;
+};
+
+
+
+
+ClassMethodInterfaceMapper::~ClassMethodInterfaceMapper() {
+    if (caller != NULL) {
+        delete caller;
+    }
+};
+
+
+}

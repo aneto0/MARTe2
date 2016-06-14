@@ -40,53 +40,53 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
 namespace MARTe {
 
 class ClassMethodInterfaceMapper {
-
 
 public:
 
     /**
      * TODO
      * */
-    ClassMethodInterfaceMapper() {
-        caller = NULL;};
+    ClassMethodInterfaceMapper();
 
-        template <class C,typename T>
-        ClassMethodInterfaceMapper(bool (C::*f)(T ref)) {
-            caller = new ClassMethodCallerT<C,T>(f);
-        };
+    template<class C, typename T>
+    ClassMethodInterfaceMapper(bool (C::*f)(T ref));
 
-        template <typename T>
-        ErrorManagement::ErrorType Call(Object *context,T ref) {
-            ErrorManagement::ErrorType ret;
-            ret.unsupportedFeature = true;
-            if (caller != NULL ) ret = caller->Call(context,ref);
-            return ret;
-        };
 
-        /**
-         * TODO
-         * */
-        virtual ~ClassMethodInterfaceMapper() {
-            if (caller != NULL) {
-                delete caller;
-            }
-        };
+    template<typename T>
+    ErrorManagement::ErrorType Call(Object *context,
+                                    T ref);
 
-    private:
-        ClassMethodCaller *caller;
+    /**
+     * TODO
+     * */
+    virtual ~ClassMethodInterfaceMapper();
+private:
+    ClassMethodCaller *caller;
 
-    };
+};
 
-    /*---------------------------------------------------------------------------*/
-    /*                        Inline method definitions                          */
-    /*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
+template<class C, typename T>
+ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (C::*f)(T ref)) {
+    caller = new ClassMethodCallerT<C, T>(f);
 }
 
+template<typename T>
+ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object *context,
+                                                               T ref) {
+    ErrorManagement::ErrorType ret;
+    ret.unsupportedFeature = true;
+    if (caller != NULL ) ret = caller->Call(context,ref);
+    return ret;
+}
+
+}
 
 #endif /* CLASSMETHODINTERFACEMAPPER_H_ */
 

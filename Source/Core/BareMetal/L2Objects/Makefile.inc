@@ -28,6 +28,8 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  AnyType.x\
         ClassMethodsRegistryItem.x \
+        ClassMethodCaller.x\
+        ClassMethodInterfaceMapper.x\
 		ClassProperties.x \
 		ClassRegistryDatabase.x \
 		ClassRegistryItem.x \
