@@ -33,9 +33,10 @@
 
 #include "ClassMethodInterfaceMapperTest.h"
 #include "ClassMethodInterfaceMapper.h"
+#include "ClassMethodCallerT.h"
 #include "ClassWithCallableMethods.h"
 #include "ReferenceContainer.h"
-#include "ReturnType.h"
+#include "ErrorType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -59,34 +60,34 @@ bool ClassMethodCallerTest::TestCall() {
     using namespace MARTe;
     bool result = true;
     {
-        ClassMethodCallerCT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodK);
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodK);
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target.Call(&context, params);
-        result &= !status.error.functionReturn;
+        result &= status.functionError;
     }
     {
-        ClassMethodCallerCT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodX);
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodX);
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ReturnType status;
-        status = target.Call(&context, params);
-        result &= status;
-    }
-    {
-        ClassMethodCallerCT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodY);
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target.Call(&context, params);
         result &= status;
     }
     {
-        ClassMethodCallerCT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodZ);
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodY);
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
+        status = target.Call(&context, params);
+        result &= status;
+    }
+    {
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodZ);
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        ErrorManagement::ErrorType status;
         status = target.Call(&context, params);
         result &= status;
     }
@@ -106,15 +107,15 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodK);
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target.Call(&context, params);
-        result &= !status.error.functionReturn;
+        result &= status.functionError;
     }
     {
         ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodX);
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target.Call(&context, params);
         result &= status;
     }
@@ -122,7 +123,7 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodY);
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target.Call(&context, params);
         result &= status;
     }
@@ -130,7 +131,7 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodZ);
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target.Call(&context, params);
         result &= status;
     }
