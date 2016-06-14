@@ -31,8 +31,7 @@
 
 #include "ClassMethodsRegistryItem.h"
 #include "StringHelper.h"
-
-
+#include "ClassRegistryItem.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -46,7 +45,7 @@ namespace MARTe {
 /**
  * TODO
  * */
-int ClassMethodsRegistryItem::Find(const char8 *name){
+int ClassMethodsRegistryItem::Find(const char8 *name) {
     const char8 *names = functionNames;
 
     uint32 nameSize = StringHelper::Length(name);
@@ -54,28 +53,32 @@ int ClassMethodsRegistryItem::Find(const char8 *name){
 
     bool notFound = true;
     int functionIndex = 0;
-    while ((namesSize > nameSize) && notFound){
-
+    while ((namesSize > nameSize) && notFound) {
 
         //Skipping of Class::
-       	while ((*names !=':') && (*names !=0)){
-		names++;
-       	}
-        if (*names == ':') names++;
-        if (*names == ':') names++;
-
+        while ((*names != ':') && (*names != 0)) {
+            names++;
+        }
+        if (*names == ':') {
+            names++;
+        }
+        if (*names == ':') {
+            names++;
+        }
 
         //Matching of function,
-        notFound = (StringHelper::CompareN(names,name,nameSize)!=0) ||
-                 ((names[nameSize]!= 0) && (names[nameSize]!= ','));
-        if (notFound){
+        // the string is found if the strings are equal and the the list finishes with a "0" or a ","
+        notFound = (StringHelper::CompareN(names, name, nameSize) != 0) || ((names[nameSize] != 0) && (names[nameSize] != ','));
+        if (notFound) {
             functionIndex++;
             names += nameSize;
-            while ((names[0] != 0) && (names[0] != ',')) names++;
+            while ((names[0] != 0) && (names[0] != ',')) {
+                names++;
+            }
             namesSize = StringHelper::Length(names);
         }
     }
-    if (notFound){
+    if (notFound) {
         functionIndex = -1;
     }
     return functionIndex;
@@ -84,10 +87,10 @@ int ClassMethodsRegistryItem::Find(const char8 *name){
 /**
  * TODO
  * */
-ClassMethodInterfaceMapper *ClassMethodsRegistryItem::FindFunction(const char8 *name){
+ClassMethodInterfaceMapper *ClassMethodsRegistryItem::FindFunction(const char8 *name) {
     int functionIndex = Find(name);
     ClassMethodInterfaceMapper *fmp = NULL;
-    if (functionIndex >= 0){
+    if (functionIndex >= 0) {
         fmp = &functionTable[functionIndex];
     }
     return fmp;
@@ -96,12 +99,13 @@ ClassMethodInterfaceMapper *ClassMethodsRegistryItem::FindFunction(const char8 *
 /**
  * TODO
  * */
-ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem *cri,  ClassMethodInterfaceMapper * const functionTable_In,const char *functionNames_In):
-        functionTable(functionTable_In){
-    ;
+ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem *cri,
+                                                   ClassMethodInterfaceMapper * const functionTable_In,
+                                                   const char *functionNames_In) :
+        functionTable(functionTable_In) {
     functionNames = functionNames_In;
     // register in Object the record
-    if (cri != NULL){
+    if (cri != NULL) {
         cri->RegisterMethods(this);
     }
 }
@@ -112,35 +116,6 @@ ClassMethodsRegistryItem::~ClassMethodsRegistryItem() {
      */
 }
 
-/**
- * TODO
- * */
-ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * context, const char8 *name, ReferenceContainer &ref){
-    ErrorManagement::ErrorType returnValue;
-
-    if (context == NULL){
-        returnValue.parametersError = true;
-    }
-    if (name == NULL){
-        returnValue.parametersError = true;
-    }
-
-
-    ClassMethodInterfaceMapper * fmp = NULL;
-    if (returnValue.NoError()){
-        fmp = FindFunction(name);
-        if (fmp == NULL) {
-            returnValue.unsupportedFeature = true;
-
-        }
-    }
-
-    if (returnValue.NoError()){
-        returnValue = fmp->Call(context,ref);
-    }
-
-    return returnValue;
-}
 
 }
 
@@ -150,28 +125,27 @@ namespace MARTe {
 
 #include "Object.h"
 //#if 0
-class Dummy:public Object{
+    class Dummy:public Object {
 
-public:
+    public:
 
-    CLASS_REGISTER_DECLARATION()
+        CLASS_REGISTER_DECLARATION()
 
-    bool Test(MARTe::ReferenceContainer &ref){
-          return true;
-    }
+        bool Test(MARTe::ReferenceContainer &ref) {
+            return true;
+        }
 
-    bool Test2(int i){
-          return true;
-    }
+        bool Test2(int i) {
+            return true;
+        }
 
-};
+    };
 
-ClassMethodInterfaceMapper CMIM(&Dummy::Test);
-ClassMethodInterfaceMapper CMIMS[] = {&Dummy::Test,&Dummy::Test};
+    ClassMethodInterfaceMapper CMIM(&Dummy::Test);
+    ClassMethodInterfaceMapper CMIMS[] = {&Dummy::Test,&Dummy::Test};
 
-CLASS_METHOD_REGISTER(Dummy,&Dummy::Test)
-
+    CLASS_METHOD_REGISTER(Dummy,&Dummy::Test)
 
 }
 #endif
-	
+

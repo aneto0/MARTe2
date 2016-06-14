@@ -33,7 +33,7 @@
 #include "StringHelper.h"
 #include "HeapI.h"
 #include "Introspection.h"
-
+#include "ReferenceContainer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -415,19 +415,7 @@ bool Object::ExportMetadata(StructuredDataI & data,
     return ret;
 }
 
-ErrorManagement::ErrorType Object::CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters){
-    ErrorManagement::ErrorType ret;
-    ClassRegistryItem * cri = GetClassRegistryItem();
 
-    if (cri!=NULL_PTR(ClassRegistryItem *)){
-        ret = cri->CallRegisteredMethod(this,methodName,parameters);
-    } else {
-        ret.internalSetupError = true;
-    }
-
-    return ret;
-
-}
 
  const ClassProperties *Object::GetClassProperties() const{
      const ClassProperties *cp = NULL_PTR(ClassProperties *);

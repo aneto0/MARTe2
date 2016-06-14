@@ -43,7 +43,7 @@
 namespace MARTe{
 
 ClassMethodInterfaceMapper::ClassMethodInterfaceMapper() {
-        caller = NULL;
+        caller = NULL_PTR(ClassMethodCaller *);
 };
 
 

@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ErrorType.h"
-#include "Object.h"
 #include "ClassMethodCaller.h"
 #include "ClassMethodCallerT.h"
 /*---------------------------------------------------------------------------*/
@@ -41,6 +40,8 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+class Object;
 
 class ClassMethodInterfaceMapper {
 
@@ -53,7 +54,6 @@ public:
 
     template<class C, typename T>
     ClassMethodInterfaceMapper(bool (C::*f)(T ref));
-
 
     template<typename T>
     ErrorManagement::ErrorType Call(Object *context,
@@ -72,14 +72,14 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template<class C, typename T>
-ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (C::*f)(T ref)) {
-    caller = new ClassMethodCallerT<C, T>(f);
+template<class className, typename argType>
+ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)(argType ref)) {
+    caller = new ClassMethodCallerT<className, argType>(f);
 }
 
-template<typename T>
+template<typename argType>
 ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object *context,
-                                                               T ref) {
+                                                            argType ref) {
     ErrorManagement::ErrorType ret;
     ret.unsupportedFeature = true;
     if (caller != NULL ) ret = caller->Call(context,ref);

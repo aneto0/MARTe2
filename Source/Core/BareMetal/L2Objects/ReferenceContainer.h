@@ -63,6 +63,9 @@ public:
      */
     ReferenceContainer();
 
+    ReferenceContainer(ReferenceContainer &copy);
+
+
     /**
      * @brief Destructor. Deletes all the elements hold by the container.
      */

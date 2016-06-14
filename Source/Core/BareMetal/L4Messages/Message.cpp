@@ -70,6 +70,6 @@ bool Message::Initialise(StructuredDataI &data){
     return ret;
 }
 
-
+CLASS_REGISTER(Message,"1.0")
 	
 }

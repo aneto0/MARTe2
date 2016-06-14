@@ -53,6 +53,15 @@ ReferenceContainer::ReferenceContainer() :
     muxTimeout = TTInfiniteWait;
 }
 
+ReferenceContainer::ReferenceContainer(ReferenceContainer &copy) :
+        Object() {
+    uint32 nChildren = copy.Size();
+    for (uint32 i = 0u; i < nChildren; i++) {
+        Reference toInsert = copy.Get(i);
+        Insert(toInsert);
+    }
+}
+
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
 Reference ReferenceContainer::Get(const uint32 idx) {
     Reference ref;
@@ -117,7 +126,7 @@ bool ReferenceContainer::Insert(const char8 * const path,
         }
         else {
             bool created = false;
-            ReferenceT<ReferenceContainer> currentNode(this);
+            ReferenceContainer* currentNode = this;
             char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
             char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
 
@@ -142,9 +151,9 @@ bool ReferenceContainer::Insert(const char8 * const path,
                     toTokenize = next;
 
                     if (found) {
-                        currentNode = foundReference;
+                        currentNode = dynamic_cast<ReferenceContainer*>(foundReference.operator->());
                         // if it is a leaf exit (and return false)
-                        if (!currentNode.IsValid()) {
+                        if (currentNode == NULL) {
                             ok = false;
                         }
                     }
@@ -160,7 +169,7 @@ bool ReferenceContainer::Insert(const char8 * const path,
                             container->SetName(token);
                             ok = currentNode->Insert(container);
                             if (ok) {
-                                currentNode = container;
+                                currentNode = container.operator->();
                             }
                         }
                     }
