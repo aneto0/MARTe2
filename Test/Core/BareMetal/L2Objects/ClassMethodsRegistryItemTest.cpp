@@ -36,7 +36,7 @@
 #include "Object.h"
 #include "ReferenceContainer.h"
 #include "ClassRegistryItem.h"
-#include "ReturnType.h"
+#include "ErrorType.h"
 #include "ClassMethodsRegistryItem.h"
 #include "ClassMethodInterfaceMapper.h"
 #include "ObjectRegistryDatabase.h"
@@ -115,8 +115,6 @@ CLASS_METHOD_REGISTER(ClassWithCallableMethods2, &ClassWithCallableMethods2::Met
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
-
 ClassMethodsRegistryItemTest::ClassMethodsRegistryItemTest() {
 //Auto-generated constructor stub for ClassMethodsRegistryItemTest
 
@@ -130,6 +128,7 @@ ClassMethodsRegistryItemTest::~ClassMethodsRegistryItemTest() {
 }
 
 bool ClassMethodsRegistryItemTest::TestConstructor() {
+    using namespace MARTe;
     bool result = false;
     ClassRegistryItem* const cri = ClassRegistryItemT<ClassWithCallableMethods1>::Instance();
     ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods1::MethodM, &ClassWithCallableMethods1::MethodK, &ClassWithCallableMethods1::MethodX, &ClassWithCallableMethods1::MethodY, &ClassWithCallableMethods1::MethodZ };
@@ -140,6 +139,7 @@ bool ClassMethodsRegistryItemTest::TestConstructor() {
 }
 
 bool ClassMethodsRegistryItemTest::TestCallFunction() {
+    using namespace MARTe;
     bool result = true;
     ClassRegistryItem* const cri = ClassRegistryItemT<ClassWithCallableMethods2>::Instance();
     ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods2::MethodM, &ClassWithCallableMethods2::MethodK, &ClassWithCallableMethods2::MethodX, &ClassWithCallableMethods2::MethodY, &ClassWithCallableMethods2::MethodZ };
@@ -148,35 +148,35 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
     {
         ClassWithCallableMethods2 context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target.CallFunction(&context, "NonRegisteredMethod", params);
-        result &= !status.error.notUnsupportedFeature;
+        result &= status.unsupportedFeature;
     }
     {
         ClassWithCallableMethods2 context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target.CallFunction(&context, "MethodK", params);
-        result &= !status.error.functionReturn;
+        result &= status.functionError;
     }
     {
         ClassWithCallableMethods2 context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target.CallFunction(&context, "MethodX", params);
         result &= status;
     }
     {
         ClassWithCallableMethods2 context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target.CallFunction(&context, "MethodY", params);
         result &= status;
     }
     {
         ClassWithCallableMethods2 context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target.CallFunction(&context, "MethodZ", params);
         result &= status;
     }
@@ -184,40 +184,41 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
 }
 
 bool ClassMethodsRegistryItemTest::TestCallFunction_WithMacroSupport() {
+    using namespace MARTe;
     bool result = true;
     ClassMethodsRegistryItem* const target = &ClassWithCallableMethods__ClassMethodsRegistryItem;
     {
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target->CallFunction(&context, "NonRegisteredMethod", params);
-        result &= !status.error.notUnsupportedFeature;
+        result &= status.unsupportedFeature;
     }
     {
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target->CallFunction(&context, "MethodK", params);
-        result &= !status.error.functionReturn;
+        result &= status.functionError;
     }
     {
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target->CallFunction(&context, "MethodX", params);
         result &= status;
     }
     {
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target->CallFunction(&context, "MethodY", params);
         result &= status;
     }
     {
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ReturnType status;
+        ErrorManagement::ErrorType status;
         status = target->CallFunction(&context, "MethodZ", params);
         result &= status;
     }
@@ -225,6 +226,7 @@ bool ClassMethodsRegistryItemTest::TestCallFunction_WithMacroSupport() {
 }
 
 bool ClassMethodsRegistryItemTest::TestCallFunction2() {
+    using namespace MARTe;
     bool result = true;
     Reference target;
     ObjectRegistryDatabase* const ordb = ObjectRegistryDatabase::Instance();
@@ -238,31 +240,31 @@ bool ClassMethodsRegistryItemTest::TestCallFunction2() {
     if (target.IsValid()) {
         {
             ReferenceContainer params;
-            ReturnType status;
+            ErrorManagement::ErrorType status;
             status = target->CallRegisteredMethod("NonRegisteredMethod", params);
-            result &= !status.error.notUnsupportedFeature;
+            result &= status.unsupportedFeature;
         }
         {
             ReferenceContainer params;
-            ReturnType status;
+            ErrorManagement::ErrorType status;
             status = target->CallRegisteredMethod("MethodK", params);
-            result &= !status.error.functionReturn;
+            result &= status.functionError;
         }
         {
             ReferenceContainer params;
-            ReturnType status;
+            ErrorManagement::ErrorType status;
             status = target->CallRegisteredMethod("MethodX", params);
             result &= status;
         }
         {
             ReferenceContainer params;
-            ReturnType status;
+            ErrorManagement::ErrorType status;
             status = target->CallRegisteredMethod("MethodY", params);
             result &= status;
         }
         {
             ReferenceContainer params;
-            ReturnType status;
+            ErrorManagement::ErrorType status;
             status = target->CallRegisteredMethod("MethodZ", params);
             result &= status;
         }

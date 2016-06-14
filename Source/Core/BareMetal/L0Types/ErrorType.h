@@ -49,9 +49,8 @@ public:
      * if allOk is false then the error.functionReturn is set to false
      * all other errors are always cleared (set to 1)
      * */
-    inline ErrorType(bool allOk=true);
 
-    inline ErrorType(uint32 errorCode);
+    inline ErrorType(uint32 errorCode=0);
 
     /**
      * TODO
@@ -65,8 +64,6 @@ public:
      * allows mixing with other booleans
      * */
     inline operator bool();
-
-    inline operator uint32();
 
     inline bool operator ==(const ErrorType &in)const;
 
@@ -187,9 +184,6 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-inline ErrorType::ErrorType(bool allOk) {
-    format_as_uint32 = 0;
-}
 
 inline ErrorType::ErrorType(uint32 errorCode) {
     format_as_uint32 = errorCode;
@@ -201,10 +195,6 @@ inline bool ErrorType::NoError() {
 
 inline ErrorType::operator bool() {
     return NoError();
-}
-
-inline ErrorType::operator uint32() {
-    return format_as_uint32;
 }
 
 inline bool ErrorType::operator ==(const ErrorType &in) const {

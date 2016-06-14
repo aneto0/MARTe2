@@ -39,7 +39,7 @@
 #include <typeinfo>
 #include "ReferenceContainer.h"
 #include "ClassWithCallableMethods.h"
-#include "ReturnType.h"
+#include "ErrorType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -363,11 +363,11 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
     ClassRegistryItem* target = ClassRegistryItemT<ClassWithCallableMethods>::Instance();
     ReferenceContainer params;
     ClassWithCallableMethods context;
-    ReturnType status;
+    ErrorManagement::ErrorType status;
     status = target->CallRegisteredMethod(&context, "NonRegisteredMethod", params);
-    result &= !status.error.notUnsupportedFeature;
+    result &= status.unsupportedFeature;
     status = target->CallRegisteredMethod(&context, "MethodK", params);
-    result &= !status.error.functionReturn;
+    result &= status.functionError;
     status = target->CallRegisteredMethod(&context, "MethodX", params);
     result &= status;
     status = target->CallRegisteredMethod(&context, "MethodY", params);
