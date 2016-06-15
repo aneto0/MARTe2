@@ -25,7 +25,9 @@
 #############################################################
 
 
-OBJSX=	MessageITest.x
+OBJSX=	MessageITest.x \
+        MessageTest.x \
+        ObjectWithMessages.x
 					
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
@@ -33,11 +35,12 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-#INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
-#INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
-#INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
-#INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
-#INCLUDES += -I../../../../Source/Core/BareMetal/L4Messages
+INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
+INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
+INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
+INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Messages
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 
 all: $(OBJS) \
     $(BUILD_DIR)/L4MessagesTest$(LIBEXT)

@@ -26,6 +26,5 @@ TARGET=cov
 
 include Makefile.inc
 
-LIBRARIES_STATIC=L1Portability/cov/L1PortabilityF$(LIBEXT)
 
 LIBRARIES += -lm

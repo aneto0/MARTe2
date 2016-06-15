@@ -31,10 +31,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "MessageITest.h"
+#include "MessageI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+using namespace MARTe;
 
 /**
  * @brief Tests all the TokenInfo functions
@@ -46,6 +48,39 @@ public:
      * @brief Tests the default constructor.
      */
     bool TestDefaultConstructor();
+
+    bool TestSendMessage();
+
+    bool TestSendMessage_NULL_Source();
+
+    bool TestSendMessage_False_InvalidMessage();
+
+
+    // trying to send a reply message but the destination will not expect it!!
+    bool TestSendMessage_False_NotExpectedLateReply();
+
+    bool TestSendMessage_False_NoDestinationForReply();
+
+    bool TestSendMessage_False_NoDestinationForExpectedReply();
+
+    bool TestSendMessage_False_InvalidDestination();
+
+    bool TestSendMessage_False_InvalidFunction();
+
+    // bool TestSendMessage_False_NotReplyButImmediateReplayExpected();
+
+
+    bool TestSendMessageAndWaitReply();
+
+    bool TestSendMessageAndWaitReply_False_InvalidMessage();
+
+    bool TestSendMessageAndWaitReply_False_ReplyOfReply();
+
+    bool TestSendMessageAndExpectReplyLater();
+
+    bool TestSendMessageAndExpectReplyLater_False_InvalidMessage();
+
+    bool TestSendMessageAndExpectReplyLater_False_ReplyOfReply();
 
 };
 

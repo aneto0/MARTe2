@@ -23,8 +23,9 @@
 #############################################################
 
 
-OBJSX=  MessageIGTest.x
-		 
+OBJSX=  MessageGTest.x \
+		MessageIGTest.x
+		
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..

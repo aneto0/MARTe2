@@ -49,6 +49,13 @@ namespace MARTe {
  * */
 class DLL_API MessageI  {
 public:
+
+    MessageI();
+
+
+    virtual ~MessageI();
+
+
     /**
      * TODO
      * Finds the target object
@@ -84,8 +91,6 @@ public:
      * */
     static ErrorManagement::ErrorType SendMessageAndExpectReplyLater(ReferenceT<Message> &message,Object *sender = NULL);
 
-
-    virtual ~MessageI(){};
 
 protected:
 

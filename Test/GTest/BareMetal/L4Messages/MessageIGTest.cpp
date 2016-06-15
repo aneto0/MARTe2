@@ -45,3 +45,80 @@ TEST(MessageIGTest,TestDefaultConstructor) {
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
+TEST(MessageIGTest,TestSendMessage) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessage());
+}
+
+TEST(MessageIGTest,TestSendMessage_NULL_Source) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessage_NULL_Source());
+}
+
+TEST(MessageIGTest,TestSendMessage_False_InvalidMessage) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessage_False_InvalidMessage());
+}
+
+TEST(MessageIGTest,TestSendMessage_False_NotExpectedLateReply) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessage_False_NotExpectedLateReply());
+}
+
+TEST(MessageIGTest,TestSendMessage_False_NoDestinationForReply) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessage_False_NoDestinationForReply());
+}
+
+TEST(MessageIGTest,TestSendMessage_False_NoDestinationForExpectedReply) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessage_False_NoDestinationForExpectedReply());
+}
+
+TEST(MessageIGTest,TestSendMessage_False_InvalidDestination) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessage_False_InvalidDestination());
+}
+
+TEST(MessageIGTest,TestSendMessage_False_InvalidFunction) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessage_False_InvalidFunction());
+}
+
+/*TEST(MessageIGTest,TestSendMessage_False_NotReplyButImmediateReplayExpected) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessage_False_NotReplyButImmediateReplayExpected());
+}*/
+
+TEST(MessageIGTest,TestSendMessageAndWaitReply) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessageAndWaitReply());
+}
+
+
+TEST(MessageIGTest,TestSendMessageAndWaitReply_False_InvalidMessage) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessageAndWaitReply_False_InvalidMessage());
+}
+
+
+TEST(MessageIGTest,TestSendMessageAndWaitReply_False_ReplyOfReply) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessageAndWaitReply_False_ReplyOfReply());
+}
+
+TEST(MessageIGTest,TestSendMessageAndExpectReplyLater) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessageAndExpectReplyLater());
+}
+
+TEST(MessageIGTest,TestSendMessageAndExpectReplyLater_False_InvalidMessage) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessageAndExpectReplyLater_False_InvalidMessage());
+}
+
+TEST(MessageIGTest,TestSendMessageAndExpectReplyLater_False_ReplyOfReply) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessageAndExpectReplyLater_False_ReplyOfReply());
+}
+
