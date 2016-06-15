@@ -49,18 +49,20 @@ Message::~Message() {
 
 }
 
-void Message::MarkAsReply() {
-    flags.isReply = true;
+void Message::MarkAsReply(bool flag) {
+    flags.isReply = flag;
 }
 
-void Message::MarkImmediateReplyExpected() {
-    flags.expectsReply = true;
-    flags.expectsImmediateReply = true;
+void Message::MarkImmediateReplyExpected(bool flag) {
+    flags.expectsReply = flag;
+    flags.expectsImmediateReply = flag;
 }
 
-void Message::MarkLateReplyExpected() {
-    flags.expectsReply = true;
-    flags.expectsImmediateReply = false;
+void Message::MarkLateReplyExpected(bool flag) {
+    flags.expectsReply = flag;
+    if (flag) {
+        flags.expectsImmediateReply = !flag;
+    }
 }
 
 bool Message::ReplyExpected() {

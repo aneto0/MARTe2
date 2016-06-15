@@ -72,19 +72,19 @@ public:
      * TODO
      * marked to be a reply
      * */
-    void MarkAsReply();
+    void MarkAsReply(bool flag=true);
 
     /**
      * TODO
      * marked by send when requiring reply
      * */
-    void MarkImmediateReplyExpected();
+    void MarkImmediateReplyExpected(bool flag=true);
 
     /**
      * TODO
      * marked by send when requiring reply
      * */
-    void MarkLateReplyExpected();
+    void MarkLateReplyExpected(bool flag=true);
 
     /**
      * TODO

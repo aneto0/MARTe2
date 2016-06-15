@@ -100,6 +100,7 @@ ErrorManagement::ErrorType MessageI::SendMessage( ReferenceT<Message> &message,O
                 ret.communicationError = true;
                 // TODO produce error message
             } else {
+                message->MarkLateReplyExpected(false);
                 //{message->IsReplyMessage() and message->LateReplyExpected()}
                 // if it is a reply then the destination is the original sender
                 destination = message->GetSender();
@@ -134,6 +135,7 @@ ErrorManagement::ErrorType MessageI::SendMessage( ReferenceT<Message> &message,O
             // TODO produce error message
         }
     }
+
 
     if (ret){
         // if we wanted an immediate reply then we should have one
@@ -246,12 +248,17 @@ ErrorManagement::ErrorType MessageI::SortMessage(ReferenceT<Message> &message){
 
     Object *thisAsObject = dynamic_cast<Object *> (this);
 
+    // why? The Send already controls this-
     if (!message.IsValid()){
         ret.parametersError = true;
         // TODO produce error message
     }
 
     //if this is an Object derived class then we can look for a registered method to call
+
+
+    // why? If the Send finds in the ORD, it returns a Reference which points always to an Object, then there is
+    // no need of this check
     if (thisAsObject == NULL_PTR(Object *)){
         ret.parametersError = true;
         // TODO produce error message
@@ -294,7 +301,7 @@ ErrorManagement::ErrorType MessageI::SortMessage(ReferenceT<Message> &message){
 }
 
 ErrorManagement::ErrorType MessageI::HandleMessage(ReferenceT<Message> &message){
-    return false;
+    return ErrorManagement::UnsupportedFeature;
 }
 
 

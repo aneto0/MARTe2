@@ -67,14 +67,13 @@ bool MessageITest::TestSendMessage() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    if (sender->SendMessage(mess, sender.operator->())!=ErrorManagement::NoError) {
+    if (sender->SendMessage(mess, sender.operator->()) != ErrorManagement::NoError) {
         return false;
     }
     return (receiver->Flag() == 0);
 }
 
-
-bool TestSendMessage_NULL_Source(){
+bool MessageITest::TestSendMessage_NULL_Source() {
     ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     sender->SetName("sender");
@@ -99,3 +98,309 @@ bool TestSendMessage_NULL_Source(){
     return (receiver->Flag() == 0);
 
 }
+
+bool MessageITest::TestSendMessage_False_InvalidMessage() {
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess;
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    return (sender->SendMessage(mess, NULL)==ErrorManagement::ParametersError);
+}
+
+bool MessageITest::TestSendMessage_False_NotExpectedLateReply() {
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiver");
+    cdb.Write("Function", "ReceiverMethod");
+
+    if (!mess->Initialise(cdb)) {
+        return false;
+    }
+
+    mess->MarkAsReply();
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    return (sender->SendMessage(mess, sender.operator->()) == ErrorManagement::CommunicationError);
+}
+
+bool MessageITest::TestSendMessage_False_NoDestinationForReply() {
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiver");
+    cdb.Write("Function", "ReceiverMethod");
+
+    if (!mess->Initialise(cdb)) {
+        return false;
+    }
+
+    mess->MarkAsReply();
+    mess->MarkLateReplyExpected();
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    return (sender->SendMessage(mess, NULL)==ErrorManagement::UnsupportedFeature);
+
+}
+
+bool MessageITest::TestSendMessage_False_NoDestinationForExpectedReply() {
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiver");
+    cdb.Write("Function", "ReceiverMethod");
+
+    if (!mess->Initialise(cdb)) {
+        return false;
+    }
+
+
+    mess->MarkLateReplyExpected();
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    return (sender->SendMessage(mess, NULL)==ErrorManagement::ParametersError);
+
+}
+
+
+
+bool MessageITest::TestSendMessage_False_InvalidDestination() {
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver;
+    sender->SetName("sender");
+
+    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiver");
+    cdb.Write("Function", "ReceiverMethod");
+
+    if (!mess->Initialise(cdb)) {
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    return (sender->SendMessage(mess, sender.operator->()) == ErrorManagement::UnsupportedFeature);
+
+}
+
+bool MessageITest::TestSendMessage_False_InvalidFunction() {
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver=ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());;
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+
+    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiver");
+    cdb.Write("Function", "Invalid");
+
+    if (!mess->Initialise(cdb)) {
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    return (sender->SendMessage(mess, sender.operator->()) == ErrorManagement::UnsupportedFeature);
+
+}
+
+/*
+ bool MessageITest::TestSendMessage_False_NotReplyButImmediateReplayExpected(){
+ ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+ ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+ sender->SetName("sender");
+ receiver->SetName("receiver");
+
+ ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+ ConfigurationDatabase cdb;
+ cdb.Write("Destination", "receiver");
+ cdb.Write("Function", "ReceiverMethod");
+
+ if (!mess->Initialise(cdb)) {
+ return false;
+ }
+
+ mess->MarkImmediateReplyExpected();
+
+ ObjectRegistryDatabase::Instance()->CleanUp();
+ ObjectRegistryDatabase::Instance()->Insert(sender);
+ ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+ return (sender->SendMessage(mess, sender.operator->())==ErrorManagement::CommunicationError);
+
+ }
+ */
+
+bool MessageITest::TestSendMessageAndWaitReply() {
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiver");
+    cdb.Write("Function", "ReceiverMethod");
+
+    if (!mess->Initialise(cdb)) {
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    if (sender->SendMessageAndWaitReply(mess, sender.operator->()) != ErrorManagement::NoError) {
+        return false;
+    }
+    if (!mess->IsReplyMessage()) {
+        return false;
+    }
+    if (!mess->ImmediateReplyExpected()) {
+        return false;
+    }
+
+    return (receiver->Flag() == 0);
+}
+
+bool MessageITest::TestSendMessageAndWaitReply_False_InvalidMessage() {
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess;
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    return (sender->SendMessageAndWaitReply(mess, sender.operator->()) == ErrorManagement::ParametersError);
+}
+
+bool MessageITest::TestSendMessageAndWaitReply_False_ReplyOfReply() {
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiver");
+    cdb.Write("Function", "ReceiverMethod");
+
+    if (!mess->Initialise(cdb)) {
+        return false;
+    }
+
+    mess->MarkAsReply();
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    return (sender->SendMessageAndWaitReply(mess, sender.operator->()) == ErrorManagement::CommunicationError);
+}
+
+bool MessageITest::TestSendMessageAndExpectReplyLater() {
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiver");
+    cdb.Write("Function", "ReceiverMethod");
+
+    if (!mess->Initialise(cdb)) {
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    if (sender->SendMessageAndExpectReplyLater(mess, sender.operator->()) != ErrorManagement::NoError) {
+        return false;
+    }
+
+    return (sender->Flag() == 2) && (receiver->Flag() == 0);
+}
+
+
+bool MessageITest::TestSendMessageAndExpectReplyLater_False_InvalidMessage(){
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess;
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    return (sender->SendMessageAndExpectReplyLater(mess, sender.operator->()) == ErrorManagement::ParametersError);
+}
+
+
+
+bool MessageITest::TestSendMessageAndExpectReplyLater_False_ReplyOfReply(){
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiver");
+    cdb.Write("Function", "ReceiverMethod");
+
+    if (!mess->Initialise(cdb)) {
+        return false;
+    }
+
+    mess->MarkAsReply();
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    return (sender->SendMessageAndExpectReplyLater(mess, sender.operator->()) == ErrorManagement::CommunicationError);
+}
+
+
