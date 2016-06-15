@@ -41,35 +41,83 @@
 
 namespace MARTe {
 
-bool Message::Initialise(StructuredDataI &data){
-    bool ret = true;
+Message::Message() {
 
-    // TODO handle errors
-    ret = data.Read("Destination",destination);
+}
 
-    // TODO handle errors
-    ret &= data.Read("Function",function);
+Message::~Message() {
 
-    uint32 msecWait;
-    if (data.Read("MaxWait",msecWait)){
-        maxWait = msecWait;
-    } else {
-        maxWait = TTInfiniteWait;
-        // TODO warning about maxWait set to infinite
+}
+
+void Message::MarkAsReply() {
+    flags.isReply = true;
+}
+
+void Message::MarkImmediateReplyExpected() {
+    flags.expectsReply = true;
+    flags.expectsImmediateReply = true;
+}
+
+void Message::MarkLateReplyExpected() {
+    flags.expectsReply = true;
+    flags.expectsImmediateReply = false;
+}
+
+bool Message::ReplyExpected() {
+    return (flags.expectsReply);
+}
+
+bool Message::ImmediateReplyExpected() {
+    return (flags.expectsReply && flags.expectsImmediateReply);
+}
+
+bool Message::LateReplyExpected() {
+    return (flags.expectsReply && !flags.expectsImmediateReply);
+}
+
+bool Message::IsReplyMessage() {
+    return flags.isReply;
+}
+
+CCString Message::GetDestination() {
+    return destination.Buffer();
+}
+
+bool Message::Initialise(StructuredDataI &data) {
+    bool ret = (ReferenceContainer::Initialise(data));
+    if (ret) {
+
+        // TODO handle errors
+        ret = data.Read("Destination", destination);
+
+        if (ret) {
+            // TODO handle errors
+            ret = data.Read("Function", function);
+        }
+        if (ret) {
+            uint32 msecWait;
+            if (data.Read("MaxWait", msecWait)) {
+                maxWait = msecWait;
+            }
+            else {
+                maxWait = TTInfiniteWait;
+                // TODO warning about maxWait set to infinite
+            }
+
+            StreamString messageFlags;
+            if (data.Read("Mode", messageFlags)) {
+                flags = MessageFlags(messageFlags.Buffer());
+            }
+            else {
+                // TODO warning about flags set to default
+            }
+        }
+
     }
-
-    StreamString messageFlags;
-    if (data.Read("Mode",messageFlags)){
-        flags = MessageFlags(messageFlags.Buffer());
-    } else {
-        // TODO warning about flags set to default
-    }
-
-    ret &= ReferenceContainer::Initialise(data);
 
     return ret;
 }
 
-CLASS_REGISTER(Message,"1.0")
-	
+CLASS_REGISTER(Message, "1.0")
+
 }

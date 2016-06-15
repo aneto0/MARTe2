@@ -41,13 +41,22 @@
 
 namespace MARTe {
 
+MessageI::MessageI(){
+
+}
+
+MessageI::~MessageI(){
+
+}
+
+
 ReferenceT<MessageI> MessageI::FindDestination(CCString destination){
     ReferenceT<MessageI> destinationObject_MessageI;
     ObjectRegistryDatabase *ord = ObjectRegistryDatabase::Instance();
 
     // simple search for named object
     if (ord != NULL_PTR(ObjectRegistryDatabase *)){
-        Reference destinationObject = ord->Find(destination.GetList());
+        Reference destinationObject = ord->Find(destination);
         if (destinationObject.IsValid()){
             destinationObject_MessageI = destinationObject;
         }
@@ -231,7 +240,7 @@ ErrorManagement::ErrorType MessageI::SortMessage(ReferenceT<Message> &message){
     /*
      * TODO: Verify all the error conditions at the beginning:
      * !message.IsValid() => error
-     * thisAsObject != NULL_PTR(Object *) => error
+     * thisAsObject == NULL_PTR(Object *) => error
      */
 
 
@@ -243,7 +252,7 @@ ErrorManagement::ErrorType MessageI::SortMessage(ReferenceT<Message> &message){
     }
 
     //if this is an Object derived class then we can look for a registered method to call
-    if (thisAsObject != NULL_PTR(Object *)){
+    if (thisAsObject == NULL_PTR(Object *)){
         ret.parametersError = true;
         // TODO produce error message
     }

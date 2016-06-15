@@ -63,15 +63,6 @@ ObjectRegistryDatabase::~ObjectRegistryDatabase() {
     // The ReferenceContainer destructor does the work
 }
 
-bool ObjectRegistryDatabase::CleanUp() {
-    bool ret = true;
-    uint32 numberOfElements = Size();
-    for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
-        Reference toBeRemoved = Get(0u);
-        ret = ReferenceContainer::Delete(toBeRemoved);
-    }
-    return ret;
-}
 
 Reference ObjectRegistryDatabase::Find(const char8 * const path,
                                        const Reference current) {

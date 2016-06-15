@@ -28,7 +28,6 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -37,7 +36,8 @@
 #include "CString.h"
 #include "StreamString.h"
 #include "TimeoutType.h"
-
+#include "BitBoolean.h"
+#include "BitRange.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -48,7 +48,93 @@ namespace MARTe {
 /**
  *
  * */
-class DLL_API Message: public ReferenceContainer{
+class DLL_API Message: public ReferenceContainer {
+
+public:
+
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * TODO
+     * */
+    Message();
+    /**
+     * TODO
+     * */
+    virtual ~Message();
+    /**
+     * TODO
+     * sets payload, Destination and Function
+     * */
+    virtual bool Initialise(StructuredDataI &data);
+
+    /**
+     * TODO
+     * marked to be a reply
+     * */
+    void MarkAsReply();
+
+    /**
+     * TODO
+     * marked by send when requiring reply
+     * */
+    void MarkImmediateReplyExpected();
+
+    /**
+     * TODO
+     * marked by send when requiring reply
+     * */
+    void MarkLateReplyExpected();
+
+    /**
+     * TODO
+     * marked by send when requiring reply
+     * */
+    bool ReplyExpected();
+
+    /**
+     * TODO
+     * marked by send when requiring reply
+     * */
+    bool ImmediateReplyExpected();
+
+    /**
+     * TODO
+     * marked by send when requiring reply
+     * */
+    bool LateReplyExpected();
+
+    /**
+     * TODO
+     * */
+    bool IsReplyMessage();
+
+    /**
+     * TODO
+     * */
+    CCString GetDestination();
+
+    /**
+     * TODO
+     * */
+    inline CCString GetSender();
+
+    /**
+     * TODO
+     * */
+    inline void SetSender(CCString senderName);
+
+    /**
+     * TODO
+     * */
+    inline CCString GetFunction();
+
+    /**
+     * TODO
+     * */
+    inline void SetReplyTimeout(TimeoutType maxWaitIn);
+
+private:
 
     /**
      * who is the originator of the message
@@ -73,174 +159,92 @@ class DLL_API Message: public ReferenceContainer{
     TimeoutType maxWait;
 
     struct MessageFlags {
-        /**
-         * init:false
-         * true if reply is required
-         * set by the sender
-         */
-        bool expectsReply:1;
-
-        /**
-         * init:false
-         * true if reply is required
-         * and I am going to wait for it in the call itself
-         * set by the sender
-         */
-        bool expectsImmediateReply:1;
-
-
-        /**
-         * init:false
-         * true for a reply message, false for a normal message
-         * in a reply message sender and destination are implicitly flipped
-         * set by the recipient:HandleMessage or by the caller of the recipient::SortMessage
-         * if this message is sent than it will call the sender.HandleReply function
-        */
-        bool isReply:1;
-
-
-
 
         /// default initialisation
-        MessageFlags(){
-            expectsReply          = false;
+        MessageFlags() {
+            expectsReply = false;
             expectsImmediateReply = false;
-            isReply               = false;
+            isReply = false;
         }
 
-       /// initialisation from string
-        MessageFlags(CCString asString){
-            expectsReply          = (StringHelper::Compare(asString.GetList(),"ExpectsReply")==0);
+        /// initialisation from string
+        MessageFlags(CCString asString) {
+            expectsReply = (StringHelper::Compare(asString.GetList(),"ExpectsReply")==0);
             expectsImmediateReply = (StringHelper::Compare(asString.GetList(),"ExpectsImmediateReply")==0);
-            if (expectsImmediateReply) expectsReply = true;
-            isReply               = false;
+            if (expectsImmediateReply) {
+                expectsReply = true;
+            }
+            isReply = false;
         }
 
-    } flags;
-public:
+        union {
 
-    CLASS_REGISTER_DECLARATION()
+            /**
+             * init:false
+             * true if reply is required
+             * set by the sender
+             */
+            BitBoolean<uint8, 0u> expectsReply;
 
-    /**
-     * TODO
-     * */
-    Message(){}
+            /**
+             * init:false
+             * true if reply is required
+             * and I am going to wait for it in the call itself
+             * set by the sender
+             */
+            BitBoolean<uint8, 1u> expectsImmediateReply;
 
-    /**
-     * TODO
-     * */
-    virtual ~Message(){
+            /**
+             * init:false
+             * true for a reply message, false for a normal message
+             * in a reply message sender and destination are implicitly flipped
+             * set by the recipient:HandleMessage or by the caller of the recipient::SortMessage
+             * if this message is sent than it will call the sender.HandleReply function
+             */
+            BitBoolean<uint8, 2u> isReply;
 
-    }
+            BitRange<uint8,4u ,3u> unMapped;
 
-    /**
-     * TODO
-     * sets payload, Destination and Function
-     * */
-    virtual bool Initialise(StructuredDataI &data);
+            uint8 format_as_uint8;
+        };
 
-    /**
-     * TODO
-     * marked to be a reply
-     * */
-    void MarkAsReply(){
-        flags.isReply = true;
-    }
-
-    /**
-     * TODO
-     * marked by send when requiring reply
-     * */
-    void MarkImmediateReplyExpected(){
-        flags.expectsReply = true;
-        flags.expectsImmediateReply = true;
-    }
-
-    /**
-     * TODO
-     * marked by send when requiring reply
-     * */
-    void MarkLateReplyExpected(){
-        flags.expectsReply = true;
-        flags.expectsImmediateReply = false;
-    }
-
-    /**
-     * TODO
-     * marked by send when requiring reply
-     * */
-    bool ReplyExpected(){
-        return (flags.expectsReply );
-    }
-
-    /**
-     * TODO
-     * marked by send when requiring reply
-     * */
-    bool ImmediateReplyExpected(){
-        return (flags.expectsReply && flags.expectsImmediateReply);
-    }
-
-    /**
-     * TODO
-     * marked by send when requiring reply
-     * */
-    bool LateReplyExpected(){
-        return (flags.expectsReply && !flags.expectsImmediateReply);
-    }
-
-    /**
-     * TODO
-     * */
-    bool IsReplyMessage(){
-        return flags.isReply;
-    }
-
-
-    /**
-     * TODO
-     * */
-    CCString GetDestination(){
-        return destination.Buffer();
-    }
-
-    /**
-     * TODO
-     * */
-    inline CCString GetSender(){
-        return sender.Buffer();
-    }
-
-    /**
-     * TODO
-     * */
-    inline void SetSender(CCString senderName){
-        sender = senderName.GetList();
-    }
-
-    /**
-     * TODO
-     * */
-    inline CCString GetFunction(){
-        return function.Buffer();
-    }
-
-    /**
-     * TODO
-     * */
-    inline void SetReplyTimeout(TimeoutType maxWaitIn){
-        maxWait = maxWaitIn;
-    }
+    }flags;
 
 };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * TODO
+ * */
+CCString Message::GetSender() {
+    return sender.Buffer();
+}
 
+/**
+ * TODO
+ * */
+void Message::SetSender(CCString senderName) {
+    sender = senderName.GetList();
+}
 
+/**
+ * TODO
+ * */
+CCString Message::GetFunction() {
+    return function.Buffer();
+}
+
+/**
+ * TODO
+ * */
+void Message::SetReplyTimeout(TimeoutType maxWaitIn) {
+    maxWait = maxWaitIn;
+}
+
+}
 
 #endif /* MESSAGE_H_ */
-	
+

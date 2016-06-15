@@ -30,6 +30,10 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MessageITest.h"
+#include "ObjectWithMessages.h"
+#include "Message.h"
+#include "ConfigurationDatabase.h"
+#include "ObjectRegistryDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,7 +43,59 @@
 /*---------------------------------------------------------------------------*/
 
 //using namespace MARTe;
-
 bool MessageITest::TestDefaultConstructor() {
-    return false;
+    MessageI mess;
+    return true;
+}
+
+bool MessageITest::TestSendMessage() {
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiver");
+    cdb.Write("Function", "ReceiverMethod");
+
+    if (!mess->Initialise(cdb)) {
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    if (sender->SendMessage(mess, sender.operator->())!=ErrorManagement::NoError) {
+        return false;
+    }
+    return (receiver->Flag() == 0);
+}
+
+
+bool TestSendMessage_NULL_Source(){
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiver");
+    cdb.Write("Function", "ReceiverMethod");
+
+    if (!mess->Initialise(cdb)) {
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    if (sender->SendMessage(mess, NULL)!=ErrorManagement::NoError) {
+        return false;
+    }
+    return (receiver->Flag() == 0);
+
 }

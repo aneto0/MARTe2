@@ -31,10 +31,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "MessageITest.h"
+#include "MessageI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+using namespace MARTe;
 
 /**
  * @brief Tests all the TokenInfo functions
@@ -46,6 +48,10 @@ public:
      * @brief Tests the default constructor.
      */
     bool TestDefaultConstructor();
+
+    bool TestSendMessage();
+
+    bool TestSendMessage_NULL_Source();
 
 };
 

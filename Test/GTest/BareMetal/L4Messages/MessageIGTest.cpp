@@ -45,3 +45,12 @@ TEST(MessageIGTest,TestDefaultConstructor) {
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
+TEST(MessageIGTest,TestSendMessage) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessage());
+}
+
+TEST(MessageIGTest,TestSendMessage_NULL_Source) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessage_NULL_Source());
+}

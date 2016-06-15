@@ -58,12 +58,6 @@ public:
     virtual ~ObjectRegistryDatabase();
 
     /**
-     * @brief Deletes all the entries.
-     * @return false in case of errors, true otherwise.
-     */
-    virtual bool CleanUp();
-
-    /**
      * @brief Retrieves the Reference at the given address.
      * @param[in] path is the address of the Reference into the database. The syntax is
      * "A.B.C" where A, B and C must be replaced with the specific object names.

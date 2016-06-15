@@ -49,8 +49,9 @@ public:
      * if allOk is false then the error.functionReturn is set to false
      * all other errors are always cleared (set to 1)
      * */
+    inline ErrorType(bool allOk=true);
 
-    inline ErrorType(uint32 errorCode=0);
+    inline ErrorType(uint32 errorCode);
 
     /**
      * TODO
@@ -174,7 +175,7 @@ public:
         /**
          * unmapped
          * */
-        BitRange<uint32, 14, 17u> unmapped;
+        BitRange<uint32, 14u, 17u> unmapped;
 
     };
 
@@ -184,6 +185,10 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+inline ErrorType::ErrorType(bool allOk) {
+    format_as_uint32 = 0u;
+    functionError = !allOk;
+}
 
 inline ErrorType::ErrorType(uint32 errorCode) {
     format_as_uint32 = errorCode;
