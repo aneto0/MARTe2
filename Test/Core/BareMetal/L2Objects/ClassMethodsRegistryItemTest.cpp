@@ -251,9 +251,18 @@ bool ClassMethodsRegistryItemTest::TestCallFunction2() {
             result &= status.functionError;
         }
         {
-            ReferenceContainer params;
+//            ReferenceContainer params;
+//            ErrorManagement::ErrorType status;
+//            status = target->CallRegisteredMethod("MethodX", params);
+//            result &= status;
+            ReferenceT<ReferenceContainer> params("ReferenceContainer");
             ErrorManagement::ErrorType status;
-            status = target->CallRegisteredMethod("MethodX", params);
+            Reference ref("Object");
+            params->Insert("A.B.C.MyObject", ref);
+            if (params->Find("A.B.C.MyObject") != ref) {
+                return false;
+            }
+            status = target->CallRegisteredMethod("MethodX", *params.operator ->());
             result &= status;
         }
         {

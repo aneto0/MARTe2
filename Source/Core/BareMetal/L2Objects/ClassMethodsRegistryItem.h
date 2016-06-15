@@ -68,7 +68,7 @@ public:
     template <typename argType>
     ErrorManagement::ErrorType CallFunction(Object * context,
                             const char8 *name,
-                            argType &ref);
+                            argType ref);
 
 private:
 
@@ -102,7 +102,7 @@ private:
 template <typename argType>
 ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * context,
                                                                   const char8 *name,
-                                                                  argType &ref) {
+                                                                  argType ref) {
     ErrorManagement::ErrorType returnValue;
 
     if (context == NULL) {
@@ -122,7 +122,7 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * conte
     }
 
     if (returnValue.NoError()) {
-        returnValue = fmp->Call(context, ref);
+        returnValue = fmp->Call<argType>(context, ref);
     }
 
     return returnValue;

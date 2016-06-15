@@ -54,11 +54,11 @@ ClassWithCallableMethods::~ClassWithCallableMethods() {
 
 }
 
-bool ClassWithCallableMethods::NonRegisteredMethod(MARTe::ReferenceContainer& ref) {
+bool ClassWithCallableMethods::NonRegisteredMethod(MARTe::ReferenceContainer& data) {
     return true;
 }
 
-bool ClassWithCallableMethods::MethodK(MARTe::ReferenceContainer& ref) {
+bool ClassWithCallableMethods::MethodK(MARTe::ReferenceContainer& data) {
     return false;
 }
 
@@ -70,15 +70,15 @@ bool ClassWithCallableMethods::MethodX() {
     return true;
 }
 
-bool ClassWithCallableMethods::MethodY(MARTe::ReferenceContainer& ref) {
+bool ClassWithCallableMethods::MethodY(MARTe::ReferenceContainer& data) {
     return true;
 }
 
-bool ClassWithCallableMethods::MethodZ(MARTe::ReferenceContainer& ref) {
+bool ClassWithCallableMethods::MethodZ(MARTe::ReferenceContainer& data) {
     return true;
 }
 
-bool ClassWithCallableMethods::MethodM(int ref) {
+bool ClassWithCallableMethods::MethodM(int data) {
     return true;
 }
 

@@ -55,33 +55,33 @@ public:
     /**
      *
      */
-    bool NonRegisteredMethod(MARTe::ReferenceContainer& ref);
+    bool NonRegisteredMethod(MARTe::ReferenceContainer& data);
 
     /**
      * Method which simulates an error execution (i.e. returns false)
      */
-    bool MethodK(MARTe::ReferenceContainer& ref);
+    bool MethodK(MARTe::ReferenceContainer& data);
 
     /**
      * consumes input from a ReferenceContainer
      */
-    bool MethodX(MARTe::ReferenceContainer& ref);
+    bool MethodX(MARTe::ReferenceContainer& data);
     bool MethodX();
 
     /**
      * produces output into a ReferenceContainer
      */
-    bool MethodY(MARTe::ReferenceContainer& ref);
+    bool MethodY(MARTe::ReferenceContainer& data);
 
     /**
      * consumes/produces from/into a ReferenceContainer
      */
-    bool MethodZ(MARTe::ReferenceContainer& ref);
+    bool MethodZ(MARTe::ReferenceContainer& data);
 
     /**
      * consumes an integer
      */
-    bool MethodM(int ref);
+    bool MethodM(int data);
 };
 
 CLASS_METHOD_REGISTER(ClassWithCallableMethods, &ClassWithCallableMethods::MethodK, &ClassWithCallableMethods::MethodX, &ClassWithCallableMethods::MethodY, &ClassWithCallableMethods::MethodZ)
