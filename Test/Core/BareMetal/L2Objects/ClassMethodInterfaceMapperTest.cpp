@@ -37,6 +37,7 @@
 #include "ClassWithCallableMethods.h"
 #include "ReferenceContainer.h"
 #include "ErrorType.h"
+#include "Reference.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -69,27 +70,50 @@ bool ClassMethodCallerTest::TestCall() {
     }
     {
         ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodX);
-        ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
-        status = target.Call(&context, params);
-        result &= status;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("A.B.C.TestObject", obj);
+        if (success) {
+            ErrorManagement::ErrorType status;
+            ClassWithCallableMethods context;
+            status = target.Call(&context, params);
+            result &= status;
+        }
+        else {
+            result = false;
+        }
     }
     {
         ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodY);
+        ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
+        Reference obj;
         status = target.Call(&context, params);
         result &= status;
+        obj = params.Find("X.Y.Z.TestObject");
+        result &= obj.IsValid();
     }
     {
         ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodZ);
-        ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
-        status = target.Call(&context, params);
-        result &= status;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("A.B.C.TestObject", obj);
+        if (success) {
+            ErrorManagement::ErrorType status;
+            ClassWithCallableMethods context;
+            status = target.Call(&context, params);
+            result &= status;
+            obj = params.Find("A.B.C.TestObject");
+            result &= !obj.IsValid();
+            obj = params.Find("X.Y.Z.TestObject");
+            result &= obj.IsValid();
+        }
+        else {
+            result = false;
+        }
     }
     return result;
 }
@@ -108,32 +132,55 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         ClassWithCallableMethods context;
         ReferenceContainer params;
         ErrorManagement::ErrorType status;
-        status = target.Call(&context, params);
+        status = target.Call<ReferenceContainer&>(&context, params);
         result &= status.functionError;
     }
     {
         ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodX);
-        ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
-        status = target.Call(&context, params);
-        result &= status;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("A.B.C.TestObject", obj);
+        if (success) {
+            ErrorManagement::ErrorType status;
+            ClassWithCallableMethods context;
+            status = target.Call<ReferenceContainer&>(&context, params);
+            result &= status;
+        }
+        else {
+            result = false;
+        }
     }
     {
         ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodY);
+        ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
-        status = target.Call(&context, params);
+        Reference obj;
+        status = target.Call<ReferenceContainer&>(&context, params);
         result &= status;
+        obj = params.Find("X.Y.Z.TestObject");
+        result &= obj.IsValid();
     }
     {
         ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodZ);
-        ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
-        status = target.Call(&context, params);
-        result &= status;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("A.B.C.TestObject", obj);
+        if (success) {
+            ErrorManagement::ErrorType status;
+            ClassWithCallableMethods context;
+            status = target.Call<ReferenceContainer&>(&context, params);
+            result &= status;
+            obj = params.Find("A.B.C.TestObject");
+            result &= !obj.IsValid();
+            obj = params.Find("X.Y.Z.TestObject");
+            result &= obj.IsValid();
+        }
+        else {
+            result = false;
+        }
     }
     return result;
 }

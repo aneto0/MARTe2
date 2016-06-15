@@ -33,6 +33,7 @@
 
 #include "ClassWithCallableMethods.h"
 #include "ClassMethodsRegistryItem.h"
+#include "Reference.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -62,8 +63,11 @@ bool ClassWithCallableMethods::MethodK(MARTe::ReferenceContainer& data) {
     return false;
 }
 
-bool ClassWithCallableMethods::MethodX(MARTe::ReferenceContainer& ref) {
-    return true;
+bool ClassWithCallableMethods::MethodX(MARTe::ReferenceContainer& data) {
+    bool result= true;
+    MARTe::Reference obj = data.Find("A.B.C.TestObject");
+    result &= obj.IsValid();
+    return result;
 }
 
 bool ClassWithCallableMethods::MethodX() {
@@ -71,11 +75,30 @@ bool ClassWithCallableMethods::MethodX() {
 }
 
 bool ClassWithCallableMethods::MethodY(MARTe::ReferenceContainer& data) {
-    return true;
+    bool result= true;
+    bool status;
+    MARTe::Reference obj("Object");
+    status = data.Insert("X.Y.Z.TestObject", obj);
+    result &= status;
+    return result;
 }
 
 bool ClassWithCallableMethods::MethodZ(MARTe::ReferenceContainer& data) {
-    return true;
+    bool result= true;
+    {
+        bool status;
+        MARTe::Reference obj = data.Find("A.B.C.TestObject");
+        result &= obj.IsValid();
+        status = data.Delete(obj);
+        result &= status;
+    }
+    {
+        bool status;
+        MARTe::Reference obj("Object");
+        status = data.Insert("X.Y.Z.TestObject", obj);
+        result &= status;
+    }
+    return result;
 }
 
 bool ClassWithCallableMethods::MethodM(int data) {

@@ -160,25 +160,48 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
         result &= status.functionError;
     }
     {
-        ClassWithCallableMethods2 context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
-        status = target.CallFunction(&context, "MethodX", params);
-        result &= status;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("A.B.C.TestObject", obj);
+        if (success) {
+            ErrorManagement::ErrorType status;
+            ClassWithCallableMethods2 context;
+            status = target.CallFunction<ReferenceContainer&>(&context, "MethodX", params);
+            result &= status;
+        }
+        else {
+            result = false;
+        }
     }
     {
+        ErrorManagement::ErrorType status;
         ClassWithCallableMethods2 context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
-        status = target.CallFunction(&context, "MethodY", params);
+        Reference obj;
+        status = target.CallFunction<ReferenceContainer&>(&context, "MethodY", params);
         result &= status;
+        obj = params.Find("X.Y.Z.TestObject");
+        result &= obj.IsValid();
     }
     {
-        ClassWithCallableMethods2 context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
-        status = target.CallFunction(&context, "MethodZ", params);
-        result &= status;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("A.B.C.TestObject", obj);
+        if (success) {
+            ErrorManagement::ErrorType status;
+            ClassWithCallableMethods2 context;
+            status = target.CallFunction<ReferenceContainer&>(&context, "MethodZ", params);
+            result &= status;
+            obj = params.Find("A.B.C.TestObject");
+            result &= !obj.IsValid();
+            obj = params.Find("X.Y.Z.TestObject");
+            result &= obj.IsValid();
+        }
+        else {
+            result = false;
+        }
     }
     return result;
 }
@@ -191,36 +214,59 @@ bool ClassMethodsRegistryItemTest::TestCallFunction_WithMacroSupport() {
         ClassWithCallableMethods context;
         ReferenceContainer params;
         ErrorManagement::ErrorType status;
-        status = target->CallFunction(&context, "NonRegisteredMethod", params);
+        status = target->CallFunction<ReferenceContainer&>(&context, "NonRegisteredMethod", params);
         result &= status.unsupportedFeature;
     }
     {
         ClassWithCallableMethods context;
         ReferenceContainer params;
         ErrorManagement::ErrorType status;
-        status = target->CallFunction(&context, "MethodK", params);
+        status = target->CallFunction<ReferenceContainer&>(&context, "MethodK", params);
         result &= status.functionError;
     }
     {
-        ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
-        status = target->CallFunction(&context, "MethodX", params);
-        result &= status;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("A.B.C.TestObject", obj);
+        if (success) {
+            ErrorManagement::ErrorType status;
+            ClassWithCallableMethods context;
+            status = target->CallFunction<ReferenceContainer&>(&context, "MethodX", params);
+            result &= status;
+        }
+        else {
+            result = false;
+        }
     }
     {
+        ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
-        status = target->CallFunction(&context, "MethodY", params);
+        Reference obj;
+        status = target->CallFunction<ReferenceContainer&>(&context, "MethodY", params);
         result &= status;
+        obj = params.Find("X.Y.Z.TestObject");
+        result &= obj.IsValid();
     }
     {
-        ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
-        status = target->CallFunction(&context, "MethodZ", params);
-        result &= status;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("A.B.C.TestObject", obj);
+        if (success) {
+            ErrorManagement::ErrorType status;
+            ClassWithCallableMethods context;
+            status = target->CallFunction<ReferenceContainer&>(&context, "MethodZ", params);
+            result &= status;
+            obj = params.Find("A.B.C.TestObject");
+            result &= !obj.IsValid();
+            obj = params.Find("X.Y.Z.TestObject");
+            result &= obj.IsValid();
+        }
+        else {
+            result = false;
+        }
     }
     return result;
 }
@@ -251,31 +297,45 @@ bool ClassMethodsRegistryItemTest::TestCallFunction2() {
             result &= status.functionError;
         }
         {
-//            ReferenceContainer params;
-//            ErrorManagement::ErrorType status;
-//            status = target->CallRegisteredMethod("MethodX", params);
-//            result &= status;
-            ReferenceT<ReferenceContainer> params("ReferenceContainer");
-            ErrorManagement::ErrorType status;
-            Reference ref("Object");
-            params->Insert("A.B.C.MyObject", ref);
-            if (params->Find("A.B.C.MyObject") != ref) {
-                return false;
+            ReferenceContainer params;
+            Reference obj("Object");
+            bool success;
+            success = params.Insert("A.B.C.TestObject", obj);
+            if (success) {
+                ErrorManagement::ErrorType status;
+                status = target->CallRegisteredMethod<ReferenceContainer&>("MethodX", params);
+                result &= status;
             }
-            status = target->CallRegisteredMethod("MethodX", *params.operator ->());
+            else {
+                result = false;
+            }
+        }
+        {
+            ErrorManagement::ErrorType status;
+            ReferenceContainer params;
+            Reference obj;
+            status = target->CallRegisteredMethod<ReferenceContainer&>("MethodY", params);
             result &= status;
+            obj = params.Find("X.Y.Z.TestObject");
+            result &= obj.IsValid();
         }
         {
             ReferenceContainer params;
-            ErrorManagement::ErrorType status;
-            status = target->CallRegisteredMethod("MethodY", params);
-            result &= status;
-        }
-        {
-            ReferenceContainer params;
-            ErrorManagement::ErrorType status;
-            status = target->CallRegisteredMethod("MethodZ", params);
-            result &= status;
+            Reference obj("Object");
+            bool success;
+            success = params.Insert("A.B.C.TestObject", obj);
+            if (success) {
+                ErrorManagement::ErrorType status;
+                status = target->CallRegisteredMethod<ReferenceContainer&>("MethodZ", params);
+                result &= status;
+                obj = params.Find("A.B.C.TestObject");
+                result &= !obj.IsValid();
+                obj = params.Find("X.Y.Z.TestObject");
+                result &= obj.IsValid();
+            }
+            else {
+                result = false;
+            }
         }
     }
     return result;
