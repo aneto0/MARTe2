@@ -250,12 +250,12 @@ public:
 template <typename argType>
 class DLL_API CallRegisteredMethodLauncher : public SearchFilterT<ClassMethodsRegistryItem > {
     CCString methodName;
-    argType & parameters;
+    argType parameters;
     Object *object;
     ErrorManagement::ErrorType ret;
 public:
 
-    CallRegisteredMethodLauncher(Object *objectIn,CCString methodNameIn,argType &parametersIn): parameters(parametersIn) {
+    CallRegisteredMethodLauncher(Object *objectIn,CCString methodNameIn,argType parametersIn): parameters(parametersIn) {
         object = objectIn;
         methodName= methodNameIn;
     }
@@ -265,7 +265,7 @@ public:
     }
 
     virtual bool Test(ClassMethodsRegistryItem *data) {
-        ret = data->CallFunction(object,methodName.GetList(),parameters);
+        ret = data->CallFunction<argType>(object,methodName.GetList(),parameters);
         // the function has been found and called
         return !ret.unsupportedFeature;
     }

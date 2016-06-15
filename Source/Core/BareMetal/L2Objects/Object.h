@@ -432,7 +432,7 @@ ErrorManagement::ErrorType Object::CallRegisteredMethod(CCString methodName,argT
     ClassRegistryItem * cri = GetClassRegistryItem();
 
     if (cri!=NULL_PTR(ClassRegistryItem *)){
-        ret = cri->CallRegisteredMethod(this,methodName,parameters);
+        ret = cri->CallRegisteredMethod<argType>(this,methodName,parameters);
     } else {
         ret.internalSetupError = true;
     }
