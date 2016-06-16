@@ -73,12 +73,14 @@ LinkedListable.cpp
 LinkedListableT.h
 LoadableLibrary.cpp
 Matrix.h
+MemoryArea.cpp
 MemoryCheck.h
 MemoryCheck_Generic.cpp
 MemoryOperationsHelper.h
 MemoryOperationsHelper_CLIB_Generic.cpp
 MutexSem.cpp
 Object.cpp
+ObjectRegistryDatabase.cpp
 OperatingSystemCallbacksI.h
 ParserI.h
 ParserI.cpp

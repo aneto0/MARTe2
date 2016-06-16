@@ -107,7 +107,7 @@ private:
             ipAddress = static_cast<const char8*>(NULL);
 
             char8 hostname[128];
-            int32 ret = gethostname(&hostname[0], static_cast<osulong>(128u));
+            int32 ret = gethostname(&hostname[0], static_cast<size_t>(128u));
             struct hostent *h = static_cast<struct hostent *>(NULL);
             if (ret == 0) {
                 h = gethostbyname(&hostname[0]);

@@ -37,7 +37,10 @@
 #include "ErrorManagement.h"
 #include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
+<<<<<<< HEAD
 #include "stdio.h"
+=======
+>>>>>>> refs/remotes/origin/#306_Backport_GAMs
 #include <typeinfo>
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -153,6 +156,7 @@ bool ReferenceContainer::Insert(const char8 * const path,
         }
         else {
             bool created = false;
+<<<<<<< HEAD
             ReferenceContainer* currentNode = this;
             char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
             char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
@@ -215,6 +219,70 @@ bool ReferenceContainer::Insert(const char8 * const path,
             }
             if (HeapManager::Free(reinterpret_cast<void*&>(nextToken))) {
 
+=======
+            ReferenceT<ReferenceContainer> currentNode(this);
+            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+
+            const char8* toTokenize = path;
+            const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
+            toTokenize = next;
+
+            while ((token[0] != '\0') && (ok)) {
+                ok = (StringHelper::Length(token) > 0u);
+                if (ok) {
+                    //Check if a node with this name already exists
+                    bool found = false;
+                    Reference foundReference;
+                    uint32 i;
+                    for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
+                        foundReference = currentNode->Get(i);
+                        found = (StringHelper::Compare(foundReference->GetName(), token) == 0);
+                    }
+                    // take the next token
+
+                    next = StringHelper::TokenizeByChars(toTokenize, ".", nextToken);
+                    toTokenize = next;
+
+                    if (found) {
+                        currentNode = foundReference;
+                        // if it is a leaf exit (and return false)
+                        if (!currentNode.IsValid()) {
+                            ok = false;
+                        }
+                    }
+                    else {
+                        // insert the reference
+                        if (nextToken[0] == '\0') {
+                            ref->SetName(token);
+                            created = currentNode->Insert(ref);
+                        }
+                        // create a node
+                        else {
+                            ReferenceT<ReferenceContainer> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                            container->SetName(token);
+                            ok = currentNode->Insert(container);
+                            if (ok) {
+                                currentNode = container;
+                            }
+                        }
+                    }
+                    if (ok) {
+                        ok = StringHelper::Copy(token, nextToken);
+                    }
+                }
+            }
+
+            if (ok) {
+                ok = created;
+            }
+
+            if (!HeapManager::Free(reinterpret_cast<void*&>(token))) {
+                REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed Free(token)");
+            }
+            if (!HeapManager::Free(reinterpret_cast<void*&>(nextToken))) {
+                REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed Free(nextToken)");
+>>>>>>> refs/remotes/origin/#306_Backport_GAMs
             }
         }
     }
@@ -256,7 +324,11 @@ void ReferenceContainer::Find(ReferenceContainer &result,
         //lint -e{9007} no side-effects on the right of the && operator
         while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
+<<<<<<< HEAD
             ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
+=======
+            ReferenceContainerNode *currentNode = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(static_cast<uint32>(index)));
+>>>>>>> refs/remotes/origin/#306_Backport_GAMs
 
             Reference currentNodeReference = currentNode->GetReference();
             //Check if the current node meets the filter criteria
@@ -394,7 +466,11 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
     return ok;
 }
 
+<<<<<<< HEAD
 bool ReferenceContainer::ExportData(StructuredDataI & data) {
+=======
+bool ReferenceContainer::ToStructuredData(StructuredDataI & data) {
+>>>>>>> refs/remotes/origin/#306_Backport_GAMs
 
     // no need to lock
     const char8 * objName = GetName();

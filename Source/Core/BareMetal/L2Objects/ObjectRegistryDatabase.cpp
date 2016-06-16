@@ -60,6 +60,7 @@ ObjectRegistryDatabase::ObjectRegistryDatabase() :
 }
 
 ObjectRegistryDatabase::~ObjectRegistryDatabase() {
+<<<<<<< HEAD
     ReferenceContainer::CleanUp();
     // The ReferenceContainer destructor does the work
 }
@@ -92,6 +93,48 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
                     if (ok) {
                         /*lint -e{613} cheking of NULL pointer done before entering here. */
                         if (test->GetName()[0] == '$') {
+=======
+    // The ReferenceContainer destructor does the work
+}
+
+bool ObjectRegistryDatabase::CleanUp() {
+    bool ret = true;
+    uint32 numberOfElements = Size();
+    for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
+        Reference toBeRemoved = Get(0u);
+        ret = ReferenceContainer::Delete(toBeRemoved);
+    }
+    return ret;
+}
+
+Reference ObjectRegistryDatabase::Find(const char8 * const path,
+                                       const Reference current) {
+    ReferenceT<ReferenceContainer> domain = current;
+    bool isSearchDomain = current.IsValid();
+    uint32 backSteps = 0u;
+    bool ok = true;
+    if (isSearchDomain) {
+        while (path[backSteps] == ':') {
+            backSteps++;
+        }
+        isSearchDomain = (backSteps > 0u);
+        if (isSearchDomain) {
+            uint32 stepsCounter = backSteps;
+            // search the current remembering the path
+            ReferenceContainerFilterReferences filterRef(1, ReferenceContainerFilterMode::PATH, current);
+            ReferenceContainer resultPath;
+            ReferenceContainer::Find(resultPath, filterRef);
+            for (uint32 i = 0u; i < resultPath.Size(); i++) {
+                Reference test = resultPath.Get((resultPath.Size() - i) - 1u);
+                if (stepsCounter == 0u) {
+                    break;
+                }
+                if (test.IsValid()) {
+                    ok = Lock();
+                    if (ok) {
+                        /*lint -e{613} cheking of NULL pointer done before entering here. */
+                        if (test->IsDomain()) {
+>>>>>>> refs/remotes/origin/#306_Backport_GAMs
                             domain = test;
                             stepsCounter--;
                         }

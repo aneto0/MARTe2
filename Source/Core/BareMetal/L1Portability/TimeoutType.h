@@ -154,6 +154,12 @@ void TimeoutType::SetTimeoutSec(float64 secs) {
 }
 
 void TimeoutType::SetTimeoutHighResolutionTimerTicks(uint64 ticks) {
+<<<<<<< HEAD
+=======
+    if (ticks < 0) {
+        ticks = 0;
+    }
+>>>>>>> refs/remotes/origin/#306_Backport_GAMs
     float64 TimeoutSecFromTicks = (static_cast<float64>(ticks) * HighResolutionTimer::Period());
     float64 TimeoutMSecFromTicks = 1000.0 * TimeoutSecFromTicks;
     msecTimeout = static_cast<uint32>(TimeoutMSecFromTicks);

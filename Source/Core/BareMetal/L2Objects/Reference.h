@@ -148,7 +148,11 @@ public:
      * @brief Provides access to the underlying object linked by this Reference.
      * @return a pointer to the underlying object linked by this Reference.
      */
+<<<<<<< HEAD
     inline Object* operator->();
+=======
+    virtual Object* operator->();
+>>>>>>> refs/remotes/origin/#306_Backport_GAMs
 
 
 protected:
@@ -185,10 +189,13 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 Object* Reference::operator->(){
     return objectPointer;
 }
 
+=======
+>>>>>>> refs/remotes/origin/#306_Backport_GAMs
 }
 #endif /* REFERENCE_H_ */
 

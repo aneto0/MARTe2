@@ -439,7 +439,19 @@ bool Object::IsDomain() const {
     return isDomain;
 }
 
+<<<<<<< HEAD
 
 
+=======
+void Object::SetDomain(const bool isDomainFlag) {
+    isDomain = isDomainFlag;
+}
+
+bool Object::IsDomain() const {
+    return isDomain;
+}
+
+CLASS_REGISTER(Object, "1.0")
+>>>>>>> refs/remotes/origin/#306_Backport_GAMs
 
 }

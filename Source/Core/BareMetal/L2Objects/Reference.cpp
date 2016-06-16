@@ -168,7 +168,10 @@ bool Reference::operator!=(const Reference& sourceReference) const {
 }
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> refs/remotes/origin/#306_Backport_GAMs
 Object *Reference::CreateByName(const char8 * const className,
                                 HeapI* const heap) const {
     Object *obj = NULL_PTR(Object *);
