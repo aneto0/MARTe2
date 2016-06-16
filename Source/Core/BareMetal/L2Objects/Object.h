@@ -204,6 +204,7 @@ class DLL_API Object {
      */
     friend class Reference;
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Default constructor. Sets the number of references to zero.
@@ -307,7 +308,6 @@ public:
      * @return true if this object is a domain.
      */
     bool IsDomain() const;
-<<<<<<< HEAD
 
     /**
      * @brief Returns the number of references.
@@ -355,9 +355,6 @@ public:
      */
      const ClassProperties *GetClassProperties() const;
 
-     CLASS_REGISTER_DECLARATION()
-=======
->>>>>>> refs/remotes/origin/#306_Backport_GAMs
 
 private:
 

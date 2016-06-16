@@ -39,7 +39,6 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-CLASS_REGISTER(Object,"1.0")
 
 bool Object::ConvertDataToStructuredData(void* const ptr,
 					 const char8* const className,
@@ -439,19 +438,8 @@ bool Object::IsDomain() const {
     return isDomain;
 }
 
-<<<<<<< HEAD
+CLASS_REGISTER(Object,"1.0")
 
 
-=======
-void Object::SetDomain(const bool isDomainFlag) {
-    isDomain = isDomainFlag;
-}
-
-bool Object::IsDomain() const {
-    return isDomain;
-}
-
-CLASS_REGISTER(Object, "1.0")
->>>>>>> refs/remotes/origin/#306_Backport_GAMs
 
 }

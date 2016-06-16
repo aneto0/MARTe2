@@ -86,7 +86,6 @@ public:
 
     /**
      * @brief Inserts a new reference in the specified path.
-<<<<<<< HEAD
      * @details Creates all the nodes in the \a path if needed before adding \a ref as a leaf.
      * @param[in] path is the path where \a ref must be inserted to.
      * @param[in] red is the Reference to be inserted in the container.
@@ -94,15 +93,6 @@ public:
      */
     bool Insert(const char8 * const path, Reference ref);
 
-
-=======
-     * @details It the nodes in the \a path to the reference do not exist, these will be created by this method.
-     * @param[in] path is the path where \a ref must be inserted to.
-     * @param[in] ref is the Reference to be inserted in the container.
-     * @return true if \a ref is valid and if it can be successfully added to the container.
-     */
-    bool Insert(const char8 * const path, Reference ref);
->>>>>>> refs/remotes/origin/#306_Backport_GAMs
 
     /**
      * @brief Removes a reference from the container.
@@ -179,16 +169,9 @@ public:
 
 
     /**
-<<<<<<< HEAD
      * @see Object::ExportData(*)
      */
     virtual bool ExportData(StructuredDataI & data);
-=======
-     * @see Object::ToStructuredData(*)
-     */
-    virtual bool ToStructuredData(StructuredDataI & data);
->>>>>>> refs/remotes/origin/#306_Backport_GAMs
-
 
     /**
      * @brief Locks the internal spin-lock mutex.

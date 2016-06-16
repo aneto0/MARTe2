@@ -58,7 +58,6 @@ public:
     virtual ~ObjectRegistryDatabase();
 
     /**
-<<<<<<< HEAD
      * @brief Retrieves the Reference at the given address.
      * @param[in] path is the address of the Reference into the database. The syntax is
      * "A.B.C" where A, B and C must be replaced with the specific object names.
@@ -87,43 +86,6 @@ private:
     /**
      * @brief Default constructor.
      */
-=======
-     * @brief Removes all the references from the container.
-     * @return true if all the reference can be successfully removed.
-     */
-    virtual bool CleanUp();
-
-    /**
-     * @brief Retrieves the Reference at the given \a path address.
-     * @param[in] path is the address of the Reference into the database. The syntax is
-     * "A.B.C" where A, B and C must be replaced with the specific object names.
-     * param[in] current is the research start point. In this case we admit the syntax "::A.B.C"
-     * where the ':' symbol set the search start point to the previous domain with respect to \a current.
-     * If no ':' is found at the beginning of the path, the starting point is assumed to be the root of the ObjectRegistryDatabase.
-     * @return the reference found at the provided \a path or an invalid reference in case of failure.
-     */
-    Reference Find(const char8 * const path,
-                   const Reference current = Reference());
-
-
-    /**
-     * @see Object::GetClassName
-     * @return "ObjectRegistryDatabase".
-     */
-    virtual const char8 * const GetClassName() const;
-
-private:
-    /**
-     * @brief Disallow the usage of new.
-     * @param[in] size the size of the object.
-     */
-    static void *operator new(const osulong size) throw ();
-
-    /**
-     * @brief Default constructor.
-     */
-    /*lint -e{1704} private constructor for singleton implementation*/
->>>>>>> refs/remotes/origin/#306_Backport_GAMs
     ObjectRegistryDatabase();
 
 };
