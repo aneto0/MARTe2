@@ -68,8 +68,3 @@ TEST(ObjectRegistryDatabaseGTest,TestGetClassName) {
     ObjectRegistryDatabaseTest objRegTest;
     ASSERT_TRUE(objRegTest.TestGetClassName());
 }
-
-TEST(ObjectRegistryDatabaseGTest,TestCleanUp) {
-    ObjectRegistryDatabaseTest objRegTest;
-    ASSERT_TRUE(objRegTest.TestCleanUp());
-}

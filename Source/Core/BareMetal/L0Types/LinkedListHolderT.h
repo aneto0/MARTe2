@@ -221,7 +221,7 @@ public:
      * @return a pointer to the element at index position.
      */
     inline T *ListExtract(uint32 index = 0u) {
-        return static_cast<T>(LinkedListHolder::ListExtract(index));
+        return static_cast<T*>(LinkedListHolder::ListExtract(index));
     }
 
     /**

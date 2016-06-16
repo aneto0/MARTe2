@@ -55,6 +55,40 @@ private:
 
 };
 
+
+/*
+template<typename className>
+class ClassMethodCallerT<typename className, void>: public ClassMethodCaller {
+public:
+
+    ClassMethodCallerT(bool (className::*f)(void));
+    virtual ~ClassMethodCallerT();
+
+
+    virtual ErrorManagement::ErrorType Call(Object * context);
+
+private:
+    bool (className::*pFun)(void);
+
+};
+
+
+
+template<class className>
+ErrorManagement::ErrorType ClassMethodCallerT<className, void>::Call(Object * context) {
+    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+
+    className *actualContext = dynamic_cast<className *>(context);
+    if (actualContext == NULL_PTR(className *)) {
+        err = ErrorManagement::UnsupportedFeature;
+    }
+    else {
+        (actualContext->*pFun)() ? (err = ErrorManagement::NoError) : (err = ErrorManagement::FatalError);
+    }
+    return err;
+}
+*/
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

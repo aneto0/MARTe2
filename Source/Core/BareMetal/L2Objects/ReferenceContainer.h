@@ -103,6 +103,10 @@ public:
      */
     bool Delete(Reference ref);
 
+
+    bool Delete(const char8 * const path);
+
+
     /**
      * @brief Finds on or more elements in the container.
      * @details The container is walked and its elements are tested against a \a filter. Valid results are
@@ -185,7 +189,7 @@ private:
     /**
      * The list of references
      */
-    LinkedListHolder list;
+    LinkedListHolderT<ReferenceContainerNode> list;
 
     /**
      * Protects multiple access to the internal resources
@@ -197,8 +201,8 @@ private:
      */
     TimeoutType muxTimeout;
 
-    bool unpopulated;
 
+    LinkedListHolderT<ReferenceContainerNode> purgeList;
 };
 
 }

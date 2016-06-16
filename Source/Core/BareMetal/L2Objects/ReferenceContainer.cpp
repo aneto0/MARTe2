@@ -37,6 +37,7 @@
 #include "ErrorManagement.h"
 #include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
+#include "stdio.h"
 #include <typeinfo>
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -51,7 +52,6 @@ ReferenceContainer::ReferenceContainer() :
         Object() {
     mux.Create();
     muxTimeout = TTInfiniteWait;
-    unpopulated = false;
 }
 
 ReferenceContainer::ReferenceContainer(ReferenceContainer &copy) :
@@ -68,7 +68,7 @@ Reference ReferenceContainer::Get(const uint32 idx) {
     Reference ref;
     if (Lock()) {
         if (idx < list.ListSize()) {
-            ReferenceContainerNode *node = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(idx));
+            ReferenceContainerNode *node = (list.ListPeek(idx));
             if (node != NULL) {
                 ref = node->GetReference();
             }
@@ -90,10 +90,32 @@ void ReferenceContainer::SetTimeout(const TimeoutType &timeout) {
 /*lint -e{1551} no exception should be thrown given that ReferenceContainer is
  * the sole owner of the list (LinkedListHolder)*/
 ReferenceContainer::~ReferenceContainer() {
+
 }
 
 void ReferenceContainer::CleanUp() {
-    list.CleanUp();
+
+    uint32 numberOfElements = Size();
+    //flat recursion due to avoid stack waste!!
+    for (uint32 i = 0u; i < numberOfElements; i++) {
+        //extract the element from the list
+        Lock();
+        ReferenceContainerNode *node = list.ListExtract(0u);
+        purgeList.ListInsert(node);
+        UnLock();
+    }
+
+    for (uint32 i = 0u; i < numberOfElements; i++) {
+        Lock();
+        ReferenceContainerNode * node = purgeList.ListExtract(0u);
+        UnLock();
+        ReferenceT<ReferenceContainer> element = node->GetReference();
+        if (element.IsValid()) {
+            element->CleanUp();
+        }
+        //extract and delete the element from the list
+        delete node;
+    }
 }
 
 /*lint -e{593} .Justification: The node (newItem) will be deleted by the destructor. */
@@ -208,6 +230,14 @@ bool ReferenceContainer::Delete(Reference ref) {
     return (result.Size() > 0u);
 }
 
+bool ReferenceContainer::Delete(const char8 * const path) {
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::REMOVE | ReferenceContainerFilterMode::RECURSIVE, path);
+    ReferenceContainer result;
+    //Locking is already done inside the Find
+    Find(result, filter);
+    return (result.Size() > 0u);
+}
+
 bool ReferenceContainer::IsContainer(const Reference &ref) const {
     ReferenceT<ReferenceContainer> test = ref;
     return test.IsValid();
@@ -226,7 +256,7 @@ void ReferenceContainer::Find(ReferenceContainer &result,
         //lint -e{9007} no side-effects on the right of the && operator
         while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
-            ReferenceContainerNode *currentNode = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(static_cast<uint32>(index)));
+            ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
 
             Reference currentNodeReference = currentNode->GetReference();
             //Check if the current node meets the filter criteria
@@ -334,54 +364,71 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
     uint32 numberOfChildren = data.GetNumberOfChildren();
     for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
         const char8* childName = data.GetChildName(i);
-        // case object
-        if ((childName[0] == '+') || (childName[0] == '$')) {
-            if (data.MoveRelative(childName)) {
-                Reference newObject;
-                ok = newObject.Initialise(data, false);
-                if (ok) {
-                    ok = (newObject.IsValid());
+        ok = (childName != NULL);
+        if (ok) {
+            // case object
+            if ((childName[0] == '+') || (childName[0] == '$')) {
+                if (data.MoveRelative(childName)) {
+                    Reference newObject;
+                    ok = newObject.Initialise(data, false);
                     if (ok) {
-                        newObject->SetName(childName);
-                        ok = ReferenceContainer::Insert(newObject);
-                    }
-                    if (ok) {
-                        ok = data.MoveToAncestor(1u);
+                        ok = (newObject.IsValid());
+                        if (ok) {
+                            if (childName[0] == '$') {
+                                newObject->SetDomain(true);
+                            }
+                            newObject->SetName(&childName[1]);
+                            ok = ReferenceContainer::Insert(newObject);
+                        }
+                        if (ok) {
+                            ok = data.MoveToAncestor(1u);
+                        }
                     }
                 }
-            }
-            else {
-                //TODO error
-                ok = false;
+                else {
+                    ok = false;
+                }
             }
         }
     }
     return ok;
 }
 
-bool ReferenceContainer::ExportData(StructuredDataI & data) {
+bool ReferenceContainer::ToStructuredData(StructuredDataI & data) {
 
     // no need to lock
     const char8 * objName = GetName();
-    bool ret = data.CreateRelative(objName);
+    uint32 objNameLength = StringHelper::Length(objName);
+    //To include $ or +
+    objNameLength += 1u;
+    char8 *objNameToCreate = reinterpret_cast<char8 *>(HeapManager::Malloc(objNameLength));
+    objNameToCreate[0] = (IsDomain()) ? ('$') : ('+');
+    bool ret = StringHelper::Copy(&objNameToCreate[1], objName);
+
     if (ret) {
-        const ClassProperties *properties = GetClassProperties();
-        ret = (properties != NULL);
+        ret = data.CreateRelative(objNameToCreate);
         if (ret) {
-            ret = data.Write("Class", properties->GetName());
-            uint32 numberOfChildren = Size();
-            for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
-                Reference child = Get(i);
-                ret = child.IsValid();
+            ret = HeapManager::Free(reinterpret_cast<void*&>(objNameToCreate));
+            if (ret) {
+                const ClassProperties *properties = GetClassProperties();
+                ret = (properties != NULL);
                 if (ret) {
-                    if (ret) {
-                        ret = child->ExportData(data);
+                    ret = data.Write("Class", properties->GetName());
+                    uint32 numberOfChildren = Size();
+                    for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
+                        Reference child = Get(i);
+                        ret = child.IsValid();
+                        if (ret) {
+                            if (ret) {
+                                ret = child->ExportData(data);
+                            }
+                        }
                     }
                 }
+                if (!data.MoveToAncestor(1u)) {
+                    ret = false;
+                }
             }
-        }
-        if (!data.MoveToAncestor(1u)) {
-            ret = false;
         }
     }
     return ret;

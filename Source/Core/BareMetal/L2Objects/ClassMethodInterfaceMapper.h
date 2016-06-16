@@ -55,10 +55,23 @@ public:
     template<class C, typename T>
     ClassMethodInterfaceMapper(bool (C::*f)(T ref));
 
+/*
+    template<class C>
+    ClassMethodInterfaceMapper(bool (C::*f)());
+*/
+
+/*
+ * Can I add this??
+ * template<class C, typename T>
+    ClassMethodInterfaceMapper(bool (C::*f)(void));
+*/
+
     template<typename T>
     ErrorManagement::ErrorType Call(Object *context,
                                     T ref);
 
+
+    ErrorManagement::ErrorType Call(Object *context);
     /**
      * TODO
      * */
@@ -77,6 +90,14 @@ ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)(argT
     caller = new ClassMethodCallerT<className, argType>(f);
 }
 
+/*
+template<class className>
+ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)(void)) {
+    caller = new ClassMethodCallerT<className, void>(f);
+}
+*/
+
+
 template<typename argType>
 ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object *context,
                                                             argType ref) {
@@ -85,6 +106,15 @@ ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object *context,
     if (caller != NULL ) ret = caller->Call(context,ref);
     return ret;
 }
+
+/*
+ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object *context) {
+    ErrorManagement::ErrorType ret;
+    ret.unsupportedFeature = true;
+    if (caller != NULL ) ret = caller->Call(context);
+    return ret;
+}
+*/
 
 }
 

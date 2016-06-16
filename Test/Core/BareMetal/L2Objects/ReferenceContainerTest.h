@@ -382,13 +382,21 @@ public:
     bool TestDelete();
 
 
+    bool TestDeleteWithPath();
+
+
+
     /**
      * @brief Tests if for each of the marked nodes of \a data a new Object
      * will be created and its Reference added to the container.
      */
     bool TestInitialise();
 
-    /**
+
+
+    bool TestCleanUp();
+
+   /**
      * List of nodes for the tree described in the GenerateTestTree function
      */
     ReferenceT<ReferenceContainer> tree;

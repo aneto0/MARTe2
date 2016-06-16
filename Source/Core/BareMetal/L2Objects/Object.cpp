@@ -225,6 +225,7 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
 Object::Object() {
     referenceCounter = 0u;
     name = NULL_PTR(char8 *);
+    isDomain = false;
 }
 
 /*lint -e{1551} the destructor must guarantee that the named is freed. No exception should be
@@ -429,6 +430,14 @@ bool Object::ExportMetadata(StructuredDataI & data,
  }
 
 
+
+void Object::SetDomain(const bool isDomainFlag) {
+    isDomain = isDomainFlag;
+}
+
+bool Object::IsDomain() const {
+    return isDomain;
+}
 
 
 }

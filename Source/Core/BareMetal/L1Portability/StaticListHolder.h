@@ -244,7 +244,7 @@ public:
      * }
      * @pre Peek'pre && Remove'pre
      * @post Peek'post && Remove'post
-     * @return false if precondition is broken or memory operation fails.
+     * @return false if the precondition is broken or the memory operation fails.
      */
     bool Extract(const uint32 position,
                  void * const copyTo);

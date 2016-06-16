@@ -170,30 +170,3 @@ bool ObjectRegistryDatabaseTest::TestGetClassName() {
     return StringHelper::Compare(ObjectRegistryDatabase::Instance()->GetClassName(), "ObjectRegistryDatabase") == 0;
 }
 
-bool ObjectRegistryDatabaseTest::TestCleanUp() {
-    ObjectRegistryDatabase::Instance()->CleanUp();
-
-    ConfigurationDatabase simpleCDB;
-    simpleCDB.CreateAbsolute("+A");
-    simpleCDB.Write("Class", "ReferenceContainer");
-    simpleCDB.CreateAbsolute("+A.+B");
-    simpleCDB.Write("Class", "ReferenceContainer");
-    simpleCDB.CreateAbsolute("+A.+B.+C");
-    simpleCDB.Write("Class", "ReferenceContainer");
-    uint32 leaf = 1;
-    simpleCDB.Write("leaf", leaf);
-    simpleCDB.CreateAbsolute("+B");
-    simpleCDB.Write("Class", "ReferenceContainer");
-    simpleCDB.MoveToRoot();
-
-    ObjectRegistryDatabase::Instance()->Initialise(simpleCDB);
-    Reference toLeaf = ObjectRegistryDatabase::Instance()->Find("+A.+B.+C");
-    if (toLeaf.NumberOfReferences() != 2) {
-        return false;
-    }
-
-    ObjectRegistryDatabase::Instance()->CleanUp();
-
-    return (toLeaf.NumberOfReferences() == 1) && (ObjectRegistryDatabase::Instance()->Size() == 0);
-}
-

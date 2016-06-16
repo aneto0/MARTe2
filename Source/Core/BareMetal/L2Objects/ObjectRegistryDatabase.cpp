@@ -60,6 +60,7 @@ ObjectRegistryDatabase::ObjectRegistryDatabase() :
 }
 
 ObjectRegistryDatabase::~ObjectRegistryDatabase() {
+    ReferenceContainer::CleanUp();
     // The ReferenceContainer destructor does the work
 }
 

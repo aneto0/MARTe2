@@ -689,6 +689,51 @@ bool ReferenceContainerTest::TestInitialise() {
     return true;
 }
 
+bool ReferenceContainerTest::TestCleanUp() {
+    ReferenceContainer container;
+
+    ConfigurationDatabase simpleCDB;
+    simpleCDB.CreateAbsolute("+A");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("+A.+B");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("+A.+B.+C");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    uint32 leaf = 1;
+    simpleCDB.Write("leaf", leaf);
+    simpleCDB.CreateAbsolute("+B");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.MoveToRoot();
+
+    container.Initialise(simpleCDB);
+    Reference toLeaf = container.Find("+A.+B.+C");
+    if (toLeaf.NumberOfReferences() != 2) {
+        return false;
+    }
+
+    container.CleanUp();
+
+    if (toLeaf.NumberOfReferences() != 1) {
+        return false;
+    }
+    return (container.Size() == 0);
+}
+
+
+bool ReferenceContainerTest::TestDeleteWithPath() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+    ReferenceT<Object> ref("Object", h);
+    containerRoot->Insert("A.B.C.D", ref);
+    bool ok = (containerRoot->Delete("D"));
+
+    ReferenceT<ReferenceContainer> C = containerRoot->Find("A.B.C");
+    ok &= C->Size() == 0u;
+    ok &= (containerRoot->Delete("A.B"));
+    ReferenceT<ReferenceContainer> A = containerRoot->Get(0);
+    ok &= A->Size() == 0u;
+    return ok;
+}
+
 ReferenceT<ReferenceContainer> ReferenceContainerTest::GenerateTestTree() {
     ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
     leafH = ReferenceT<Object>("Object", h);

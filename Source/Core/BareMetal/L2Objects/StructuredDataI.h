@@ -103,6 +103,10 @@ public:
     virtual bool Write(const char8 * const name,
                        const AnyType &value) = 0;
 
+
+   // virtual bool Write(const Reference &reference)=0;
+
+
     /**
      * @brief Copies the content of the current node to the provided destination.
      * @details A deep copy of the contents is recursively performed.

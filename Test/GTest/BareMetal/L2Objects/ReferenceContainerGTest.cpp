@@ -478,6 +478,11 @@ TEST(ReferenceContainerGTest,TestDelete) {
     ASSERT_TRUE(referenceContainerTest.TestDelete());
 }
 
+TEST(ReferenceContainerGTest,TestDeleteWithPath) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestDeleteWithPath());
+}
+
 /*******************
  * TestInitialise *
  *******************/
@@ -487,4 +492,11 @@ TEST(ReferenceContainerGTest,TestInitialise) {
     ASSERT_TRUE(referenceContainerTest.TestInitialise());
 }
 
+/*******************
+ * TestCleanUp *
+ *******************/
 
+TEST(ReferenceContainerGTest,TestCleanUp) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestCleanUp());
+}
