@@ -394,7 +394,7 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
     return ok;
 }
 
-bool ReferenceContainer::ToStructuredData(StructuredDataI & data) {
+bool ReferenceContainer::ExportData(StructuredDataI & data) {
 
     // no need to lock
     const char8 * objName = GetName();
