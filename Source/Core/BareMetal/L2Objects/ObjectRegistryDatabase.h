@@ -84,6 +84,12 @@ private:
     static void *operator new(const osulong size) throw ();
 
     /**
+     * @brief Frees the memory area pointed by \a p previously allocated on the StandardHeap.
+     * @param[in] p is the pointer to be freed.
+     */
+    static void operator delete(void *p);
+
+    /**
      * @brief Default constructor.
      */
     ObjectRegistryDatabase();

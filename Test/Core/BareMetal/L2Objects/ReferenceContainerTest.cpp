@@ -663,7 +663,7 @@ bool ReferenceContainerTest::TestInitialise() {
         return false;
     }
 
-    ReferenceContainerFilterObjectName filter1(1, ReferenceContainerFilterMode::RECURSIVE, "+intObj1");
+    ReferenceContainerFilterObjectName filter1(1, ReferenceContainerFilterMode::RECURSIVE, "intObj1");
     ReferenceContainer resultSingle1;
     container.Find(resultSingle1, filter1);
     ReferenceT<IntegerObject> test1 = (resultSingle1.Get(0));
@@ -671,7 +671,7 @@ bool ReferenceContainerTest::TestInitialise() {
         return false;
     }
 
-    ReferenceContainerFilterObjectName filter2(1, ReferenceContainerFilterMode::RECURSIVE, "$container.+intObj2");
+    ReferenceContainerFilterObjectName filter2(1, ReferenceContainerFilterMode::RECURSIVE, "container.intObj2");
     ReferenceContainer resultSingle2;
     container.Find(resultSingle2, filter2);
     ReferenceT<IntegerObject> test2 = (resultSingle2.Get(1));
@@ -679,7 +679,7 @@ bool ReferenceContainerTest::TestInitialise() {
         return false;
     }
 
-    ReferenceContainerFilterObjectName filter3(1, ReferenceContainerFilterMode::RECURSIVE, "$container.+specIntObj3");
+    ReferenceContainerFilterObjectName filter3(1, ReferenceContainerFilterMode::RECURSIVE, "container.specIntObj3");
     ReferenceContainer resultSingle3;
     container.Find(resultSingle3, filter3);
     ReferenceT<SpecialIntegerObject> test3 = (resultSingle3.Get(1));
@@ -706,7 +706,7 @@ bool ReferenceContainerTest::TestCleanUp() {
     simpleCDB.MoveToRoot();
 
     container.Initialise(simpleCDB);
-    Reference toLeaf = container.Find("+A.+B.+C");
+    Reference toLeaf = container.Find("A.B.C");
     if (toLeaf.NumberOfReferences() != 2) {
         return false;
     }

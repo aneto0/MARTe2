@@ -91,7 +91,7 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
                     ok = Lock();
                     if (ok) {
                         /*lint -e{613} cheking of NULL pointer done before entering here. */
-                        if (test->GetName()[0] == '$') {
+                        if (test->IsDomain()) {
                             domain = test;
                             stepsCounter--;
                         }
@@ -143,6 +143,12 @@ const char8 * const ObjectRegistryDatabase::GetClassName() const {
 /*lint -e{1550} */
 void *ObjectRegistryDatabase::operator new(const osulong size) throw () {
     return GlobalObjectI::operator new(size);
+}
+
+
+/*lint -e{1550} */
+void ObjectRegistryDatabase::operator delete(void *p) {
+    return GlobalObjectI::operator delete(p);
 }
 
 }

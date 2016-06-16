@@ -82,7 +82,7 @@ bool ObjectRegistryDatabaseTest::TestInstance() {
 }
 
 bool ObjectRegistryDatabaseTest::TestFind() {
-    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("$A.$B.$C.+PID");
+    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
 
     if (test->Kp != 1) {
         return false;
@@ -98,9 +98,9 @@ bool ObjectRegistryDatabaseTest::TestFind() {
 }
 
 bool ObjectRegistryDatabaseTest::TestFind_Relative() {
-    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("$A.$B.$C.+PID");
+    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
 
-    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find(":::+PID", test);
+    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find(":::PID", test);
     if (test2->Kp != 7) {
         return false;
     }
@@ -111,9 +111,9 @@ bool ObjectRegistryDatabaseTest::TestFind_Relative() {
         return false;
     }
 
-    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("$A.$B");
+    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("A.B");
     // relative search
-    ReferenceT<PID> test4 = ObjectRegistryDatabase::Instance()->Find(":$C.+PID", start);
+    ReferenceT<PID> test4 = ObjectRegistryDatabase::Instance()->Find(":C.PID", start);
     if (test4->Kp != 1) {
         return false;
     }
@@ -127,10 +127,10 @@ bool ObjectRegistryDatabaseTest::TestFind_Relative() {
 }
 
 bool ObjectRegistryDatabaseTest::TestFind_Absolute() {
-    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("$A.$B");
+    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("A.B");
 
 // absolute search
-    ReferenceT<PID> test5 = ObjectRegistryDatabase::Instance()->Find("$A.$B.$C.+PID", start);
+    ReferenceT<PID> test5 = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID", start);
     if (test5->Kp != 1) {
         return false;
     }
@@ -146,13 +146,13 @@ bool ObjectRegistryDatabaseTest::TestFind_Absolute() {
 }
 
 bool ObjectRegistryDatabaseTest::TestFindTooManyBackSteps() {
-    ReferenceT<PID> start = ObjectRegistryDatabase::Instance()->Find("$A.$B.$C.+PID");
+    ReferenceT<PID> start = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
     if (!start.IsValid()) {
         return false;
     }
 
 // searches from the beginning
-    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find("::::+PID", start);
+    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find("::::PID", start);
     if (test2->Kp != 7) {
         return false;
     }
@@ -169,4 +169,6 @@ bool ObjectRegistryDatabaseTest::TestFindTooManyBackSteps() {
 bool ObjectRegistryDatabaseTest::TestGetClassName() {
     return StringHelper::Compare(ObjectRegistryDatabase::Instance()->GetClassName(), "ObjectRegistryDatabase") == 0;
 }
+
+
 
