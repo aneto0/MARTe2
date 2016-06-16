@@ -78,7 +78,7 @@ template<typename T>
 bool ZeroTerminatedArrayTest<T>::TestConstructor() {
 	bool result = true;
 	{
-		T array[32];
+		T array[32]={0};
 		ZeroTerminatedArray<T> test(array);
 		result = (result && (test.GetList() == array));
 	}
@@ -91,7 +91,7 @@ bool ZeroTerminatedArrayTest<T>::TestConstructor() {
 
 template<typename T>
 bool ZeroTerminatedArrayTest<T>::TestSubscriptOperator() {
-    T array[32];
+    T array[32]={0};
     T value = 0;
     for (uint32 i = 0; i < 31; i++) {
         array[i] = value;
@@ -112,7 +112,7 @@ bool ZeroTerminatedArrayTest<T>::TestSubscriptOperator() {
 
 template<typename T>
 bool ZeroTerminatedArrayTest<T>::TestGetSize() {
-    T array[32];
+    T array[32]={0};
     ZeroTerminatedArray<T> test(array);
 
     for (uint32 i = 0; i < 31; i++) {

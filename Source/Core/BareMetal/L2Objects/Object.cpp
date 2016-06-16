@@ -34,6 +34,8 @@
 #include "HeapI.h"
 #include "Introspection.h"
 #include "ReferenceContainer.h"
+#include "MemoryOperationsHelper.h"
+#include "Atomic.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -240,32 +242,17 @@ Object::~Object() {
     }
 }
 
-/*lint -e{9141} global declaration but only used to support the class implementation.
- * The symbol is not exported (static). This could also be replaced by an anonymous namespace.
- */
-static FastPollingMutexSem refMux;
+
 
 uint32 Object::DecrementReferences() {
-    uint32 ret = 0u;
-    if (refMux.FastLock() == ErrorManagement::NoError) {
-        --referenceCounter;
-        ret = referenceCounter;
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed FastLock()");
-    }
-    refMux.FastUnLock();
+    Atomic::Decrement (&referenceCounter);
+    uint32 ret = static_cast<uint32>(referenceCounter);
     return ret;
 }
 
 void Object::IncrementReferences() {
-    if (refMux.FastLock() == ErrorManagement::NoError) {
-        ++referenceCounter;
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed FastLock()");
-    }
-    refMux.FastUnLock();
+    Atomic::Increment (&referenceCounter);
+
 }
 
 Object *Object::Clone() const {
@@ -273,7 +260,7 @@ Object *Object::Clone() const {
 }
 
 uint32 Object::NumberOfReferences() const {
-    return referenceCounter;
+    return static_cast<uint32>(referenceCounter);
 }
 
 /*lint -e{715} data is not used as this is not implemented on purpose*/
@@ -294,6 +281,9 @@ const char8 * const Object::GetName() const {
 
 void Object::GetUniqueName(char8 * const destination,
                            const uint32 &size) const {
+    if(!MemoryOperationsHelper::Set(destination, '\0', size)){
+        REPORT_ERROR(ErrorManagement::Warning, "Failed initialization of the object name in output");
+    }
     /*lint -e{9091} -e{923} the casting from pointer type to integer type is required in order to be able to get a
      * numeric address of the pointer.*/
     uintp ptrHex = reinterpret_cast<uintp>(this);

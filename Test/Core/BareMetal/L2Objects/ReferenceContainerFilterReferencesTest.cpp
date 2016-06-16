@@ -116,7 +116,7 @@ bool ReferenceContainerFilterReferencesTest::TestTest(uint32 nRefs,
     }
 
     for (uint32 i = 0; i < nRefs; i++) {
-        HeapManager::Free((void*&) arrayRefs[i]);
+        delete arrayRefs[i];
     }
 
     HeapManager::Free((void*&) arrayRefs);

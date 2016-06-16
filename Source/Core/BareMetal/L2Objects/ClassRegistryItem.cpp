@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 #include "ClassRegistryDatabase.h"
 #include "ClassRegistryItem.h"
-#include "FastPollingMutexSem.h"
 #include "ErrorManagement.h"
 #include "Introspection.h"
 #include "ObjectBuilder.h"
@@ -40,10 +39,6 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-/*lint -e{9141} global declaration but only used to support the class implementation.
- * The symbol is not exported (static). This could also be replaced by an anonymous namespace.
- */
-static FastPollingMutexSem classRegistryItemMuxSem;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -51,7 +46,7 @@ static FastPollingMutexSem classRegistryItemMuxSem;
 // TODO remove LCOV_EXCL_START
 ClassRegistryItem::ClassRegistryItem(ClassProperties &classProperties_in) :
         classProperties(classProperties_in) {
-    numberOfInstances = 0u;
+    numberOfInstances = 0;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuilder = NULL_PTR(ObjectBuilder *);
     introspection = NULL_PTR(Introspection *);
@@ -122,24 +117,15 @@ void ClassRegistryItem::RegisterMethods(ClassMethodsRegistryItem *classMethodRec
 }
 
 void ClassRegistryItem::IncrementNumberOfInstances() {
-    if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
-        numberOfInstances++;
-    }
-    classRegistryItemMuxSem.FastUnLock();
+Atomic::Increment(&numberOfInstances);
 }
 
 void ClassRegistryItem::DecrementNumberOfInstances() {
-    if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
-        numberOfInstances--;
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryItem: Failed FastLock()");
-    }
-    classRegistryItemMuxSem.FastUnLock();
+  Atomic::Decrement(&numberOfInstances);
 }
 
 uint32 ClassRegistryItem::GetNumberOfInstances() const {
-    return numberOfInstances;
+    return static_cast<uint32>(numberOfInstances);
 }
 
 

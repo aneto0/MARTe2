@@ -170,6 +170,9 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
                 if (!found) {
                     delete loader;
                 }
+                if (!HeapManager::Free(reinterpret_cast<void*&>(fullName))) {
+                    //TODO
+                }
             }
         }
     }
