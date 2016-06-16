@@ -60,18 +60,13 @@ public:
     ClassMethodInterfaceMapper(bool (C::*f)());
 */
 
-/*
- * Can I add this??
- * template<class C, typename T>
-    ClassMethodInterfaceMapper(bool (C::*f)(void));
-*/
 
     template<typename T>
     ErrorManagement::ErrorType Call(Object *context,
                                     T ref);
 
 
-    ErrorManagement::ErrorType Call(Object *context);
+    //ErrorManagement::ErrorType Call(Object *context);
     /**
      * TODO
      * */

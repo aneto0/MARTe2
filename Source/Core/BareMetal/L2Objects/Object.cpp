@@ -29,7 +29,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "Object.h"
-#include "FastPollingMutexSem.h"
 #include "StringHelper.h"
 #include "HeapI.h"
 #include "Introspection.h"
@@ -224,7 +223,7 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
 /*---------------------------------------------------------------------------*/
 
 Object::Object() {
-    referenceCounter = 0u;
+    referenceCounter = 0;
     name = NULL_PTR(char8 *);
     isDomain = false;
 }
