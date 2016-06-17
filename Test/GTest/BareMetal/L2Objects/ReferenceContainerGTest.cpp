@@ -500,3 +500,8 @@ TEST(ReferenceContainerGTest,TestCleanUp) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestCleanUp());
 }
+
+TEST(ReferenceContainerGTest,TestCleanUp_Shared) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestCleanUp_Shared());
+}

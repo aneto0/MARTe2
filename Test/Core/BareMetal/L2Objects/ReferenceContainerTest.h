@@ -396,6 +396,9 @@ public:
 
     bool TestCleanUp();
 
+
+    bool TestCleanUp_Shared();
+
    /**
      * List of nodes for the tree described in the GenerateTestTree function
      */
@@ -449,7 +452,7 @@ public:
     ReferenceT<ReferenceContainer> GenerateTestTreeLarge(uint32 depth);
 
 
-
+    volatile int32 spinLock;
 
 private:
     /**

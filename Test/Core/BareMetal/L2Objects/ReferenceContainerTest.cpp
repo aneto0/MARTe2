@@ -37,10 +37,12 @@
 #include "MemoryOperationsHelper.h"
 #include "ConfigurationDatabase.h"
 #include "ObjectTestHelper.h"
+#include "Threads.h"
 
 ReferenceContainerTest::ReferenceContainerTest() {
     h = NULL;
     tree = GenerateTestTree();
+    spinLock=0;
 }
 
 bool ReferenceContainerTest::TestConstructor() {
@@ -691,7 +693,6 @@ bool ReferenceContainerTest::TestInitialise() {
 
 bool ReferenceContainerTest::TestCleanUp() {
     ReferenceContainer container;
-
     ConfigurationDatabase simpleCDB;
     simpleCDB.CreateAbsolute("+A");
     simpleCDB.Write("Class", "ReferenceContainer");
@@ -706,7 +707,13 @@ bool ReferenceContainerTest::TestCleanUp() {
     simpleCDB.MoveToRoot();
 
     container.Initialise(simpleCDB);
-    Reference toLeaf = container.Find("A.B.C");
+
+    Reference recursiveLeaf= container.Find("A");
+
+
+    ReferenceT<ReferenceContainer> toLeaf = container.Find("A.B.C");
+    toLeaf->Insert(recursiveLeaf);
+
     if (toLeaf.NumberOfReferences() != 2) {
         return false;
     }
@@ -718,6 +725,56 @@ bool ReferenceContainerTest::TestCleanUp() {
     }
     return (container.Size() == 0);
 }
+
+
+
+static void CleanRoutine(ReferenceContainerTest &param){
+    while(param.spinLock!=1){
+        Sleep::MSec(10);
+    }
+    param.containerU1->CleanUp();
+    Threads::EndThread();
+}
+
+
+bool ReferenceContainerTest::TestCleanUp_Shared() {
+    ReferenceT<ReferenceContainer> container=ReferenceT<ReferenceContainer>("ReferenceContainer", h);
+    containerU1= container;
+
+    ReferenceT<ReferenceContainer> nodeU1;
+    ReferenceT<ReferenceContainer> nodeU2;
+    for (uint32 i = 0; i < 100; i++) {
+        nodeU1 = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
+        nodeU2 = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
+        nodeU1->SetName("");
+        nodeU2->SetName("");
+        container->Insert(nodeU1);
+        container->Insert(nodeU2);
+        container=nodeU1;
+    }
+    //recursive assignement
+    container->Insert(containerU1);
+
+    if (containerU1->NumberOfReferences() != 2) {
+        return false;
+    }
+
+    for(uint32 i=0u; i<3u; i++){
+        Threads::BeginThread((ThreadFunctionType)CleanRoutine, this);
+    }
+
+    Atomic::Increment(&spinLock);
+
+    while(Threads::NumberOfThreads()>0u){
+        Sleep::MSec(100);
+    }
+
+    if (containerU1.NumberOfReferences() != 1) {
+        return false;
+    }
+    return (containerU1->Size() == 0);
+}
+
 
 
 bool ReferenceContainerTest::TestDeleteWithPath() {

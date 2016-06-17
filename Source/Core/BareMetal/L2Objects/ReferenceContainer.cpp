@@ -95,26 +95,48 @@ ReferenceContainer::~ReferenceContainer() {
 
 void ReferenceContainer::CleanUp() {
 
-    uint32 numberOfElements = Size();
+    uint32 numberOfElements = 0u;
+    Lock();
+    numberOfElements = list.ListSize() + purgeList.ListSize();
+    UnLock();
+
     //flat recursion due to avoid stack waste!!
     for (uint32 i = 0u; i < numberOfElements; i++) {
-        //extract the element from the list
         Lock();
+        if (purgeList.ListSize() >= numberOfElements) {
+            UnLock();
+            break;
+        }
+        //extract the element from the list
         ReferenceContainerNode *node = list.ListExtract(0u);
-        purgeList.ListInsert(node);
+        if (node != NULL) {
+            purgeList.ListInsert(node);
+        }
         UnLock();
     }
 
     for (uint32 i = 0u; i < numberOfElements; i++) {
         Lock();
+        if (purgeList.ListSize() == 0u) {
+            UnLock();
+            break;
+        }
+
         ReferenceContainerNode * node = purgeList.ListExtract(0u);
         UnLock();
-        ReferenceT<ReferenceContainer> element = node->GetReference();
+
+        ReferenceT<ReferenceContainer> element;
+        if (node != NULL) {
+            element = node->GetReference();
+        }
+
         if (element.IsValid()) {
             element->CleanUp();
         }
         //extract and delete the element from the list
-        delete node;
+        if (node != NULL) {
+            delete node;
+        }
     }
 }
 
