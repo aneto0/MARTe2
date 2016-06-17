@@ -1,7 +1,7 @@
 /**
- * @file ClassMethodInterfaceMapper.cpp
- * @brief Source file for class ClassMethodInterfaceMapper
- * @date 13/giu/2016
+ * @file ObjectBuilderT.cpp
+ * @brief Source file for class ObjectBuilderT
+ * @date 17/giu/2016
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ClassMethodInterfaceMapper (public, protected, and private). Be aware that some 
+ * the class ObjectBuilderT (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassMethodInterfaceMapper.h"
+#include "ObjectBuilderT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,31 +39,3 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-namespace MARTe{
-
-ClassMethodInterfaceMapper::ClassMethodInterfaceMapper() {
-        caller = NULL_PTR(ClassMethodCaller *);
-}
-
-
-
-
-ClassMethodInterfaceMapper::~ClassMethodInterfaceMapper() {
-    if (caller != NULL) {
-        delete caller;
-    }
-}
-
-
-ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object *context) {
-    ErrorManagement::ErrorType ret;
-    ret.unsupportedFeature = true;
-    if (caller != NULL ){
-        ret = caller->Call(context);
-    }
-    return ret;
-}
-
-
-}

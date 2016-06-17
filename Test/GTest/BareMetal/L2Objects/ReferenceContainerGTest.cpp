@@ -406,6 +406,11 @@ TEST(ReferenceContainerGTest,TestFindRemoveAllOfMultipleInstanceObjectNameFilter
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveAllOfMultipleInstance(filter));
 }
 
+TEST(ReferenceContainerGTest,TestFindWithPath) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestFindWithPath());
+}
+
 
 /***************
  * TestInsert  *
@@ -504,4 +509,9 @@ TEST(ReferenceContainerGTest,TestCleanUp) {
 TEST(ReferenceContainerGTest,TestCleanUp_Shared) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestCleanUp_Shared());
+}
+
+TEST(ReferenceContainerGTest,TestExportData) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestExportData());
 }

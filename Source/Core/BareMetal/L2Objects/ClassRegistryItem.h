@@ -47,8 +47,6 @@
 
 namespace MARTe {
 
-
-
 class Introspection;
 //class ClassMethodsRegistryItem;
 class ReferenceContainer;
@@ -65,7 +63,6 @@ class Object;
  */
 class DLL_API ClassRegistryItem: public LinkedListable {
 public:
-
 
     /**
      * Destructor.
@@ -149,15 +146,21 @@ public:
      */
     void SetUniqueIdentifier(const ClassUID &uid);
 
+
+    ErrorManagement::ErrorType CallRegisteredMethod(Object *object,
+                                                    CCString methodName);
+
     /**
      * TODO
      */
-    template <typename argType>
-    ErrorManagement::ErrorType CallRegisteredMethod(Object *object,CCString methodName,argType parameters);
+    template<typename argType>
+    ErrorManagement::ErrorType CallRegisteredMethod(Object *object,
+                                                    CCString methodName,
+                                                    argType parameters);
 
 protected:
     /**
-    // singleton approach - usable only by descendant methods
+     // singleton approach - usable only by descendant methods
      * @brief Default constructor
      */
     ClassRegistryItem(ClassProperties &classProperties_in);
@@ -166,7 +169,8 @@ protected:
      * common code
      * static ptr is specialised in the templetised descendant
      */
-    static ClassRegistryItem *Instance(ClassRegistryItem *&instance,ClassProperties &classProperties_in);
+    static ClassRegistryItem *Instance(ClassRegistryItem *&instance,
+                                       ClassProperties &classProperties_in);
 
 private:
     /**
@@ -190,7 +194,6 @@ private:
      */
     const ObjectBuilder *objectBuilder;
 
-
     /**
      * The introspection associated to the class.
      */
@@ -203,26 +206,18 @@ private:
 
 };
 
-
-
-
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+class DLL_API CallRegisteredMethodLauncher: public SearchFilterT<ClassMethodsRegistryItem> {
 
-template <typename argType>
-class DLL_API CallRegisteredMethodLauncher : public SearchFilterT<ClassMethodsRegistryItem > {
-    CCString methodName;
-    argType parameters;
-    Object *object;
-    ErrorManagement::ErrorType ret;
 public:
 
-    CallRegisteredMethodLauncher(Object *objectIn,CCString methodNameIn,argType parametersIn): parameters(parametersIn) {
+    CallRegisteredMethodLauncher(Object *objectIn,
+                                 CCString methodNameIn) {
         object = objectIn;
-        methodName= methodNameIn;
+        methodName = methodNameIn;
     }
 
     virtual ~CallRegisteredMethodLauncher() {
@@ -230,7 +225,7 @@ public:
     }
 
     virtual bool Test(ClassMethodsRegistryItem *data) {
-        ret = data->CallFunction<argType>(object,methodName.GetList(),parameters);
+        ret = data->CallFunction(object, methodName.GetList());
         // the function has been found and called
         return !ret.unsupportedFeature;
     }
@@ -238,11 +233,44 @@ public:
     ErrorManagement::ErrorType GetResults() {
         return ret;
     }
+protected:
+    CCString methodName;
+    Object *object;
+    ErrorManagement::ErrorType ret;
 
 };
 
+template<typename argType>
+class DLL_API CallRegisteredMethodLauncherT: public CallRegisteredMethodLauncher {
+public:
 
-template <typename argType>
+    CallRegisteredMethodLauncherT(Object *objectIn,
+                                  CCString methodNameIn,
+                                  argType parametersIn) :
+            CallRegisteredMethodLauncher(objectIn, methodNameIn),
+            parameters(parametersIn) {
+
+    }
+
+    virtual ~CallRegisteredMethodLauncherT() {
+
+    }
+
+    virtual bool Test(ClassMethodsRegistryItem *data) {
+        ret = data->CallFunction<argType>(object, methodName.GetList(), parameters);
+        // the function has been found and called
+        return !ret.unsupportedFeature;
+    }
+
+    ErrorManagement::ErrorType GetResults() {
+        return ret;
+    }
+protected:
+    argType parameters;
+
+};
+
+template<typename argType>
 ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object *object,
                                                                    CCString methodName,
                                                                    argType parameters) {
@@ -258,7 +286,7 @@ ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object *objec
 
     if (ret.NoError()) {
         // search in the list the first function returning without unsupported feature
-        CallRegisteredMethodLauncher<argType> launcher(object, methodName, parameters);
+        CallRegisteredMethodLauncherT<argType> launcher(object, methodName, parameters);
         if (classMethods.ListSearch(&launcher)) {
             ret = launcher.GetResults();
         }
@@ -269,11 +297,7 @@ ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object *objec
     return ret;
 }
 
-
 }
-
-
-
 
 #endif /* CLASSREGISTRYITEM_H_ */
 

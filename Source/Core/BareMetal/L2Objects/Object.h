@@ -40,7 +40,6 @@
 #include "AnyType.h"
 #include "ErrorType.h"
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Macro definitions                                  */
 /*---------------------------------------------------------------------------*/
@@ -154,30 +153,29 @@
     }
 
 #if 0
-    /*                                                                                                                 \
+/*                                                                                                                 \
      * @brief Returns the class properties associated with this class type.                                            \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
-     */                                                                                                                \
-     virtual const MARTe::ClassProperties *GetClassProperties() const;                                                 \
-    /*                                                                                                                 \
+     */
+virtual const MARTe::ClassProperties *GetClassProperties() const;
+/*                                                                                                                 \
      * @brief Returns the class properties associated with this class type.                                            \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
-     */                                                                                                                \
-     const MARTe::ClassProperties *GetClassProperties_Static() ;                                                       \
-
+     */
+const MARTe::ClassProperties *GetClassProperties_Static();
 
 /*                                                                                                                 \
      * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
-     */                                                                                                                \
-    const MARTe::ClassProperties *className::GetClassProperties_Static() {                                             \
-        return &classProperties;                                                                                       \
-    }                                                                                                                  \
-    /*                                                                                                                 \
+     */
+const MARTe::ClassProperties *className::GetClassProperties_Static() {
+    return &classProperties;
+}
+/*                                                                                                                 \
      * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
-     */                                                                                                                \
-    const MARTe::ClassProperties *className::GetClassProperties() const {                                              \
-        return 0; /*className::GetClassProperties_Static();*/                                                          \
-    }
+     */
+const MARTe::ClassProperties *className::GetClassProperties() const {
+    return 0; /*className::GetClassProperties_Static();*/
+}
 #endif
 
 /*lint -restore */
@@ -209,7 +207,7 @@ public:
     /**
      * @brief Default constructor. Sets the number of references to zero.
      */
-    Object();
+Object    ();
 
     /**
      * @brief Virtual destructor. No operation.
@@ -257,7 +255,7 @@ public:
      * @param[out] data The holder for the tree that contains the extracted
      * data of the object.
      */
-    bool ExportData(StructuredDataI & data);
+    virtual bool ExportData(StructuredDataI & data);
 
     /**
      * @brief Extracts the metadata of the object and puts it into an object
@@ -290,9 +288,9 @@ public:
      * Its values are between 0 and MAX_INT32. The -1 value means no limit,
      * so it will export recursively all the metadata.
      */
-    bool ExportMetadata(StructuredDataI & data,
-                                               const int32 level = -1);
-                                               
+    virtual bool ExportMetadata(StructuredDataI & data,
+            const int32 level = -1);
+
     /**
      * @brief Sets/unsets this object as a domain.
      * @detail In a tree of objects, a domain object is a local root of a sub-tree.
@@ -305,6 +303,8 @@ public:
 
     /**
      * @brief Returns true if this object is a domain.
+     * @details The definition of a domain is related to the ObjectRegistryDatabase. A domain object can be used as a start research point
+     * in ObjectRegistryDatabase::Find(*) to find objects in the ObjectRegistryDatabase.
      * @return true if this object is a domain.
      */
     bool IsDomain() const;
@@ -334,7 +334,7 @@ public:
      * @param[in] size the size of the \a destination input string.
      */
     void GetUniqueName(char8 * const destination,
-                       const uint32 &size) const;
+            const uint32 &size) const;
 
     /**
      * @brief Sets the object name.
@@ -350,11 +350,12 @@ public:
     template <typename argType>
     ErrorManagement::ErrorType CallRegisteredMethod(CCString methodName,argType parameters);
 
+    ErrorManagement::ErrorType CallRegisteredMethod(CCString methodName);
+
     /*
      * @brief Returns the class properties associated with this class type.
      */
-     const ClassProperties *GetClassProperties() const;
-
+    const ClassProperties *GetClassProperties() const;
 
 private:
 
@@ -403,9 +404,9 @@ private:
      * @param[in] objName The name of the object, i.e. the root's name.
      */
     bool ConvertDataToStructuredData(void* const ptr,
-                                 const char8* const className,
-                                 StructuredDataI& data,
-                                 const char8* const objName = NULL);
+            const char8* const className,
+            StructuredDataI& data,
+            const char8* const objName = NULL);
 
     /**
      * @brief Extracts the metadata of an input object and puts it into an
@@ -426,9 +427,9 @@ private:
      * @param[in] level The level of recursion, hence the depth of the tree.
      */
     bool ConvertMetadataToStructuredData(void * const ptr,
-                                              const char8 * const className,
-                                              StructuredDataI &data,
-                                              const int32 recursionLevel = -1);
+            const char8 * const className,
+            StructuredDataI &data,
+            const int32 recursionLevel = -1);
 
     /**
      * The number of references to this object.
@@ -439,21 +440,23 @@ private:
      * The name of this object.
      */
     char8 *name;
-    
-    
 
+    /**
+     * Specifies if the object is a domain
+     */
     bool isDomain;
 };
 
-
-template <typename argType>
-ErrorManagement::ErrorType Object::CallRegisteredMethod(CCString methodName,argType parameters){
+template<typename argType>
+ErrorManagement::ErrorType Object::CallRegisteredMethod(CCString methodName,
+                                                        argType parameters) {
     ErrorManagement::ErrorType ret;
     ClassRegistryItem * cri = GetClassRegistryItem();
 
-    if (cri!=NULL_PTR(ClassRegistryItem *)){
-        ret = cri->CallRegisteredMethod<argType>(this,methodName,parameters);
-    } else {
+    if (cri != NULL_PTR(ClassRegistryItem *)) {
+        ret = cri->CallRegisteredMethod<argType>(this, methodName, parameters);
+    }
+    else {
         ret.internalSetupError = true;
     }
 

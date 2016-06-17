@@ -41,8 +41,6 @@
 
 namespace MARTe {
 
-
-
 class ClassRegistryItem;
 /**
  * TODO
@@ -65,10 +63,13 @@ public:
     /**
      * TODO
      * */
-    template <typename argType>
+    template<typename argType>
     ErrorManagement::ErrorType CallFunction(Object * context,
-                            const char8 *name,
-                            argType ref);
+                                            const char8 *name,
+                                            argType ref);
+
+    ErrorManagement::ErrorType CallFunction(Object * context,
+                                            const char8 *name);
 
 private:
 
@@ -99,7 +100,7 @@ private:
 /**
  * TODO
  * */
-template <typename argType>
+template<typename argType>
 ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * context,
                                                                   const char8 *name,
                                                                   argType ref) {
@@ -127,8 +128,6 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * conte
 
     return returnValue;
 }
-
-
 
 #define CLASS_METHOD_REGISTER(C,...)\
     static MARTe::ClassMethodInterfaceMapper C ## __ClassMethodsInterfaceMapper[] = {__VA_ARGS__}; \

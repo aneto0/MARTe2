@@ -119,6 +119,11 @@ public:
 
 protected:
 
+    bool Lock();
+
+    void UnLock();
+
+
     /**
      * @brief Private Constructor.
      */

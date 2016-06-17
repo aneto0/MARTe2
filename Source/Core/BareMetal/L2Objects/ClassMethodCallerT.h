@@ -39,6 +39,8 @@
 
 namespace MARTe {
 
+
+
 template<typename className, typename argType>
 class ClassMethodCallerT: public ClassMethodCaller {
 public:
@@ -56,9 +58,9 @@ private:
 };
 
 
-/*
+// specialization to call methods without parameters
 template<typename className>
-class ClassMethodCallerT<typename className, void>: public ClassMethodCaller {
+class ClassMethodCallerT<className, void>: public ClassMethodCaller {
 public:
 
     ClassMethodCallerT(bool (className::*f)(void));
@@ -74,20 +76,8 @@ private:
 
 
 
-template<class className>
-ErrorManagement::ErrorType ClassMethodCallerT<className, void>::Call(Object * context) {
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
 
-    className *actualContext = dynamic_cast<className *>(context);
-    if (actualContext == NULL_PTR(className *)) {
-        err = ErrorManagement::UnsupportedFeature;
-    }
-    else {
-        (actualContext->*pFun)() ? (err = ErrorManagement::NoError) : (err = ErrorManagement::FatalError);
-    }
-    return err;
-}
-*/
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
@@ -117,6 +107,33 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, argType>::Call(Object *
     }
     return err;
 }
+
+
+template<class className>
+ClassMethodCallerT<className, void>::ClassMethodCallerT(bool (className::*f)(void)) {
+    pFun = f;
+}
+
+template<class className>
+ClassMethodCallerT<className, void>::~ClassMethodCallerT() {
+
+}
+
+
+template<class className>
+ErrorManagement::ErrorType ClassMethodCallerT<className, void>::Call(Object * context) {
+    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+
+    className *actualContext = dynamic_cast<className *>(context);
+    if (actualContext == NULL_PTR(className *)) {
+        err = ErrorManagement::UnsupportedFeature;
+    }
+    else {
+        (actualContext->*pFun)() ? (err = ErrorManagement::NoError) : (err = ErrorManagement::FatalError);
+    }
+    return err;
+}
+
 }
 
 #endif /* CLASSMETHODCALLERT_H_ */

@@ -304,6 +304,9 @@ public:
                               ReferenceContainerFilter &filter);
 
 
+
+    bool TestFindWithPath();
+
     /**
      * @brief Tests the ReferenceContainer::Insert with the full path as parameter.
      * @return true if the function inserts the reference at the specified path
@@ -398,6 +401,10 @@ public:
 
 
     bool TestCleanUp_Shared();
+
+
+    bool TestExportData();
+
 
    /**
      * List of nodes for the tree described in the GenerateTestTree function

@@ -39,24 +39,57 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the MemoryArea functions
+ */
 class MemoryAreaTest {
 
 public:
 
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function allocates the memory size passed in input.
+     */
     bool TestAdd_OnlySize();
 
+    /**
+     * @brief Tests if the function allocates and copies the memory passed in input.
+     */
     bool TestAdd_Element();
 
+    /**
+     * @brief Tests if the function frees the memory.
+     */
     bool TestFree();
 
+    /**
+     * @brief Tests if the function returns a pointer to the begin of the memory area.
+     */
     bool TestGetMemoryStart();
 
+    /**
+     * brief Tests if the function returns the size of the memory area.
+     */
     bool TestGetMemorySize(uint32 size);
 
+    /**
+     * @brief Tests if the function returns the pointer to the desired position.
+     */
     bool TestGetPointer();
 
+    /**
+     * @brief Tests if the function initialises the memory area correctly.
+     */
+    bool TestInitMemory();
+
+    /**
+     * @brief Tests if the function fails if the memory area is not empty.
+     */
+    bool TestInitMemoryFalse_AlreadyInit();
 
 };
 

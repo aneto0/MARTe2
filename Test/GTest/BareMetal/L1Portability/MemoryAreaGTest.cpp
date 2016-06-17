@@ -82,3 +82,12 @@ TEST(MemoryAreaGTest,TestGetPointer) {
     ASSERT_TRUE(MyMemoryAreaTest.TestGetPointer());
 }
 
+TEST(MemoryAreaGTest,TestInitMemory) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestInitMemory());
+}
+
+TEST(MemoryAreaGTest,TestInitMemoryFalse_AlreadyInit) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestInitMemoryFalse_AlreadyInit());
+}

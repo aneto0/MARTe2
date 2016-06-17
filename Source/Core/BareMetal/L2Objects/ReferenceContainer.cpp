@@ -441,9 +441,7 @@ bool ReferenceContainer::ExportData(StructuredDataI & data) {
                         Reference child = Get(i);
                         ret = child.IsValid();
                         if (ret) {
-                            if (ret) {
-                                ret = child->ExportData(data);
-                            }
+                            ret = child->ExportData(data);
                         }
                     }
                 }

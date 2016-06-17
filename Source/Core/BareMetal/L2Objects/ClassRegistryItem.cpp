@@ -117,21 +117,44 @@ void ClassRegistryItem::RegisterMethods(ClassMethodsRegistryItem *classMethodRec
 }
 
 void ClassRegistryItem::IncrementNumberOfInstances() {
-Atomic::Increment(&numberOfInstances);
+    Atomic::Increment(&numberOfInstances);
 }
 
 void ClassRegistryItem::DecrementNumberOfInstances() {
-  Atomic::Decrement(&numberOfInstances);
+    Atomic::Decrement(&numberOfInstances);
 }
 
 uint32 ClassRegistryItem::GetNumberOfInstances() const {
     return static_cast<uint32>(numberOfInstances);
 }
 
-
-
 void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {
     classProperties.SetUniqueIdentifier(uid);
+}
+
+ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object *object,
+                                                                   CCString methodName) {
+    ErrorManagement::ErrorType ret;
+
+    if (object == NULL_PTR(Object*)) {
+        ret.parametersError = true;
+    }
+
+    if (methodName.GetList() == NULL_PTR(char8*)) {
+        ret.parametersError = true;
+    }
+
+    if (ret.NoError()) {
+        // search in the list the first function returning without unsupported feature
+        CallRegisteredMethodLauncher launcher(object, methodName);
+        if (classMethods.ListSearch(&launcher)) {
+            ret = launcher.GetResults();
+        }
+        else {
+            ret.unsupportedFeature = true;
+        }
+    }
+    return ret;
 }
 
 }

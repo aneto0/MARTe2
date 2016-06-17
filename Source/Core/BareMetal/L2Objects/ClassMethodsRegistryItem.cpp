@@ -42,6 +42,12 @@
 
 namespace MARTe {
 
+ClassMethodsRegistryItem::~ClassMethodsRegistryItem() {
+    /*
+     * TODO
+     */
+}
+
 /**
  * TODO
  * */
@@ -110,12 +116,32 @@ ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem *cri,
     }
 }
 
-ClassMethodsRegistryItem::~ClassMethodsRegistryItem() {
-    /*
-     * TODO
-     */
-}
+ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * context,
+                                                                  const char8 *name) {
+    ErrorManagement::ErrorType returnValue;
 
+    if (context == NULL) {
+        returnValue.parametersError = true;
+    }
+    if (name == NULL) {
+        returnValue.parametersError = true;
+    }
+
+    ClassMethodInterfaceMapper * fmp = NULL;
+    if (returnValue.NoError()) {
+        fmp = FindFunction(name);
+        if (fmp == NULL) {
+            returnValue.unsupportedFeature = true;
+
+        }
+    }
+
+    if (returnValue.NoError()) {
+        returnValue = fmp->Call(context);
+    }
+
+    return returnValue;
+}
 
 }
 

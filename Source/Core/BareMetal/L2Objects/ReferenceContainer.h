@@ -63,6 +63,10 @@ public:
      */
     ReferenceContainer();
 
+    /**
+     * @brief Copy Constructor
+     * @details Inserts all the references contained by \a copy in this.
+     */
     ReferenceContainer(ReferenceContainer &copy);
 
 
@@ -71,6 +75,14 @@ public:
      */
     virtual ~ReferenceContainer();
 
+    /**
+     * @brief Full Destruction of the database.
+     * @details This function destroys each element of the database also in case of reference loops (the father contains a reference to the children and the
+     * children contains a reference to the father) by extracting all elements from the tree and destroying them separately.
+     * @warning This function does not perform the behavior of the ReferenceContainer destructor because if another ReferenceContainer shares some
+     * ReferenceT<ReferenceContainer> with this, this function will destroy also its sub-trees related with that shared elements. Vice versa, the
+     * destructor extracts references from the tree only if they are not referenced by someone else.
+     */
     void CleanUp();
 
     /**
@@ -103,7 +115,11 @@ public:
      */
     bool Delete(Reference ref);
 
-
+    /**
+     * @brief Delete the reference denoted by the \a path in input.
+     * @param[in] path is the path of the reference to be deleted from the database.
+     * @return false if the reference is not found in the specified path, true if it will be successfully deleted.
+     */
     bool Delete(const char8 * const path);
 
 

@@ -38,6 +38,7 @@
 #include "ConfigurationDatabase.h"
 #include "ObjectTestHelper.h"
 #include "Threads.h"
+#include "stdio.h"
 
 ReferenceContainerTest::ReferenceContainerTest() {
     h = NULL;
@@ -504,6 +505,12 @@ bool ReferenceContainerTest::TestFindFilter(ReferenceT<ReferenceContainer> tree,
     return ok;
 }
 
+
+bool ReferenceContainerTest::TestFindWithPath(){
+    return TestInsertWithPath();
+}
+
+
 bool ReferenceContainerTest::TestInsertWithPath() {
     ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
     Reference ref("Object");
@@ -790,6 +797,56 @@ bool ReferenceContainerTest::TestDeleteWithPath() {
     ok &= A->Size() == 0u;
     return ok;
 }
+
+
+bool ReferenceContainerTest::TestExportData(){
+    ReferenceContainer container;
+    ConfigurationDatabase simpleCDB;
+    simpleCDB.CreateAbsolute("+A");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("+A.+B");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("+A.+B.+C");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    uint32 leaf = 1;
+    simpleCDB.Write("leaf", leaf);
+    simpleCDB.CreateAbsolute("+B");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.MoveToRoot();
+
+    container.Initialise(simpleCDB);
+    container.SetName("root");
+    ConfigurationDatabase out;
+    if(!container.ExportData(out)){
+       // return false;
+    }
+    StreamString output;
+    output.Printf("%!",out);
+    printf("\n%s\n", output.Buffer());
+
+    const char8 *test="+root = {\r\n"
+    "Class = \"ReferenceContainer\"\r\n"
+    "+A = {\r\n"
+    "Class = \"ReferenceContainer\"\r\n"
+    "+B = {\r\n"
+    "Class = \"ReferenceContainer\"\r\n"
+    "+C = {\r\n"
+    "Class = \"ReferenceContainer\"\r\n"
+    "}\r\n"
+    "}\r\n"
+    "}\r\n"
+    "+B = {\r\n"
+    "Class = \"ReferenceContainer\"\r\n"
+    "+C = {\r\n"
+    "Class = \"ReferenceContainer\"\r\n"
+    "}\r\n"
+    "}\r\n"
+    "}\r\n";
+
+
+    return output==test;
+}
+
 
 ReferenceT<ReferenceContainer> ReferenceContainerTest::GenerateTestTree() {
     ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);

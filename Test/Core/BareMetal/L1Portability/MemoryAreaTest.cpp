@@ -124,9 +124,49 @@ bool MemoryAreaTest::TestGetMemorySize(uint32 size) {
     return memory.GetMemorySize() == size;
 }
 
-
-bool MemoryAreaTest::TestGetPointer(){
+bool MemoryAreaTest::TestGetPointer() {
     return TestAdd_OnlySize();
 }
 
+bool MemoryAreaTest::TestInitMemory() {
+    MemoryArea mem;
+    uint32 *test = new uint32;
+    *test = 1;
+    if (!mem.InitMemory(test, sizeof(uint32))) {
+        return false;
+    }
+
+    uint32 offset = 0u;
+    *test = 2;
+    if (!mem.Add(test, sizeof(uint32), offset)) {
+        return false;
+    }
+
+    if (offset != sizeof(uint32)) {
+        return false;
+    }
+
+    if (mem.GetMemorySize() != 2 * sizeof(uint32)) {
+        return false;
+    }
+    *test = 3;
+
+    if (*(uint32*) mem.GetMemoryStart() != 3) {
+        return false;
+    }
+    return ((uint32*) mem.GetMemoryStart())[1] == 2;
+}
+
+bool MemoryAreaTest::TestInitMemoryFalse_AlreadyInit() {
+    MemoryArea mem;
+    uint32 *test = new uint32;
+    *test = 1;
+
+    uint32 offset = 0u;
+    if (!mem.Add(test, sizeof(uint32), offset)) {
+        return false;
+    }
+
+    return (!mem.InitMemory(test, sizeof(uint32))) ;
+}
 
