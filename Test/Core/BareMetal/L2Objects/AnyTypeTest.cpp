@@ -32,7 +32,7 @@
 #include "AnyTypeTest.h"
 #include "TestObjectHelper1.h"
 #include "StringHelper.h"
-#include "Introspection.h"
+#include "IntrospectionT.h"
 #include <typeinfo>
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

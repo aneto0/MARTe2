@@ -35,7 +35,7 @@
 #include "HeapManager.h"
 #include "GeneralDefinitions.h"
 #include "ClassProperties.h"
-#include "ClassRegistryItem.h"
+#include "ClassRegistryItemT.h"
 #include "StructuredDataI.h"
 #include "AnyType.h"
 #include "ErrorType.h"

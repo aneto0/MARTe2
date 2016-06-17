@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "ObjectTestHelper.h"
-#include "Introspection.h"
+#include "IntrospectionT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

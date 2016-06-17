@@ -36,7 +36,7 @@
 #include "LoadableLibrary.h"
 #include "ClassProperties.h"
 #include "FractionalInteger.h"
-#include "ObjectBuilder.h"
+#include "ObjectBuilderT.h"
 #include "CString.h"
 #include "ErrorType.h"
 #include "ClassMethodsRegistryItem.h"
@@ -205,47 +205,11 @@ private:
 
 
 
-/**
- * TODO
- */
-template <class T>
-class DLL_API ClassRegistryItemT: public ClassRegistryItem{
 
 
-
-public:
-    /**
-     * @brief Singleton access to the database.
-     * @return a reference to the database.
-     * TODO
-     */
-    static inline ClassRegistryItem *Instance(){
-        static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
-        if (instance == NULL_PTR(ClassRegistryItem *)) {
-            ClassRegistryItem::Instance(instance,T::classProperties);
-            /* The next line, i.e. the instantiation of a static ObjectBuilderT
-             * is necessary because it registers an ObjectBuilder object with a
-             * default Build's implementation for the T class. Otherwise, it
-             * will be a NULL pointer and a segmentation fault will eventually
-             * arise when trying to use the object builder.
-             */
-            static ObjectBuilderT<T> defaultObjectBuilder;
-        }
-        return instance;
-    }
-
-    virtual ~ClassRegistryItemT() {
-
-    }
-private:
-    /**
-     * TODO
-     */
-    ClassRegistryItemT( ClassProperties &classProperties_in): ClassRegistryItem(classProperties_in){}
-
-};
-
-
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
 
 template <typename argType>
@@ -277,6 +241,7 @@ public:
 
 };
 
+
 template <typename argType>
 ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object *object,
                                                                    CCString methodName,
@@ -306,9 +271,9 @@ ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object *objec
 
 
 }
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+
+
+
 
 #endif /* CLASSREGISTRYITEM_H_ */
 

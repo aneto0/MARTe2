@@ -60,35 +60,6 @@ public:
     }
 };
 
-/**
- * TODO
- * */
-template<class T>
-class ObjectBuilderT: public ObjectBuilder {
-
-public:
-    /**
-     * TODO
-     * */
-    ObjectBuilderT() {
-        T::GetClassRegistryItem_Static()->SetObjectBuilder(this);
-    }
-
-    /**
-     * TODO
-     * */
-    virtual ~ObjectBuilderT() {
-    }
-
-    /**
-     * TODO
-     * */
-    Object *Build(HeapI* const heap) const {
-        T *p = new (heap) T();
-        return p;
-    }
-
-};
 
 }
 /*---------------------------------------------------------------------------*/

@@ -31,7 +31,7 @@
 
 #include "IntrospectionTestHelper.h"
 #include "Object.h"
-#include "Introspection.h"
+#include "IntrospectionT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

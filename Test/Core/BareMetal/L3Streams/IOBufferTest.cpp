@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "IOBufferTest.h"
-#include "Introspection.h"
+#include "IntrospectionT.h"
 #include "IntrospectionEntry.h"
 #include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/

@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TestObjectHelper3.h"
-#include "Introspection.h"
+#include "IntrospectionT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

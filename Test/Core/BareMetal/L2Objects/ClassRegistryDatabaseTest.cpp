@@ -294,5 +294,4 @@ bool ClassRegistryDatabaseTest::TestCleanUp() {
 
     testDB.CleanUp();
     return testDB.GetSize() == 0;
-    return true;
 }
