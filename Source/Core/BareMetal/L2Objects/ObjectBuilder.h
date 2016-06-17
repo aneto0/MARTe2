@@ -45,7 +45,7 @@ class Object;
 /**
  * TODO
  * */
-class ObjectBuilder{
+class ObjectBuilder {
 public:
 
     /**
@@ -56,35 +56,38 @@ public:
     /**
      * TODO
      * */
-    virtual ~ObjectBuilder(){}
+    virtual ~ObjectBuilder() {
+    }
 };
 
 /**
  * TODO
  * */
-template <class T>
-class ObjectBuilderT: public ObjectBuilder{
+template<class T>
+class ObjectBuilderT: public ObjectBuilder {
 
 public:
     /**
      * TODO
      * */
+    ObjectBuilderT() {
+        T::GetClassRegistryItem_Static()->SetObjectBuilder(this);
+    }
+
+    /**
+     * TODO
+     * */
+    virtual ~ObjectBuilderT() {
+    }
+
+    /**
+     * TODO
+     * */
     Object *Build(HeapI* const heap) const {
-        T *p = new (heap) T ();
+        T *p = new (heap) T();
         return p;
     }
 
-    /**
-     * TODO
-     * */
-    virtual ~ObjectBuilderT(){}
-
-    /**
-     * TODO
-     * */
-    ObjectBuilderT(){
-        T::GetClassRegistryItem_Static()->SetObjectBuilder(this);
-    }
 };
 
 }
@@ -98,6 +101,5 @@ public:
 #define ADD_OBJECTBUILDER(className) \
     static MARTe::ObjectBuilderT<className> className ## _ ## objectBuilder();
 
-
 #endif /* OBJECTBUILDER_H_ */
-	
+

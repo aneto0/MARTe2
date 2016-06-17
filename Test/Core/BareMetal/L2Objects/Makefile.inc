@@ -34,6 +34,7 @@ OBJSX=  AnyTypeTest.x\
 		ClassWithCallableMethods.x \
 		IntrospectionEntryTest.x\
 		IntrospectionTest.x \
+		ObjectBuilderTest.x \
 		ObjectTest.x \
 		ObjectRegistryDatabaseTest.x \
 		ObjectTestHelper.x \

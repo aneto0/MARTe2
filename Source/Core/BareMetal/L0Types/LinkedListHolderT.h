@@ -72,6 +72,12 @@ public:
         return LinkedListHolder::ListSize();
     }
 
+
+    inline void CleanUp() {
+        LinkedListHolder::CleanUp();
+    }
+
+
     /**
      * @brief Inserts \p at the beginning of the list.
      * @param[in] p the LinkedListable object to insert.

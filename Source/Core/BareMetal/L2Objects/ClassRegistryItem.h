@@ -212,10 +212,6 @@ template <class T>
 class DLL_API ClassRegistryItemT: public ClassRegistryItem{
 
 
-    /**
-     * TODO
-     */
-    ClassRegistryItemT( ClassProperties &classProperties_in): ClassRegistryItem(classProperties_in){}
 
 public:
     /**
@@ -241,6 +237,11 @@ public:
     virtual ~ClassRegistryItemT() {
 
     }
+private:
+    /**
+     * TODO
+     */
+    ClassRegistryItemT( ClassProperties &classProperties_in): ClassRegistryItem(classProperties_in){}
 
 };
 

@@ -37,16 +37,49 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 //static ClassProperties testClassProperties("TestAdd", "TestAdd", "V");
-
-
 //static ClassRegistryItemT<Object> myItem(testClassProperties);
-
 ClassProperties testClassPropertiesLongName(
         "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf",
         "", "V");
 
 //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
 //ClassRegistryItemT<Object> myItemLongName(testClassPropertiesLongName);
+
+class DummyClassRegistryDatabase: public ClassRegistryDatabase {
+public:
+
+
+    DummyClassRegistryDatabase() {
+
+    }
+    virtual ~DummyClassRegistryDatabase() {
+        CleanUp();
+    }
+
+};
+
+
+class DummyClassRegistryItem: public ClassRegistryItem {
+public:
+
+
+    DummyClassRegistryItem(ClassProperties &cp):ClassRegistryItem(cp) {
+
+    }
+    virtual ~DummyClassRegistryItem() {
+    }
+
+};
+
+
+class ObjToCleanUp: public Object {
+    ObjToCleanUp() {
+
+    }
+    virtual ~ObjToCleanUp() {
+
+    }
+};
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -131,7 +164,6 @@ bool ClassRegistryDatabaseTest::TestFindLongName() {
     const char *name =
             "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf";
 
-
     return (db->Find(name) != NULL);
 
 }
@@ -149,7 +181,7 @@ bool ClassRegistryDatabaseTest::TestGetSize() {
 
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    return db->GetSize()>0u;
+    return db->GetSize() > 0u;
 }
 
 //bool ClassRegistryDatabaseTest::TestPeek() {
@@ -249,4 +281,18 @@ bool ClassRegistryDatabaseTest::TestPolimorphismFather2Child() {
 bool ClassRegistryDatabaseTest::TestGetClassName() {
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
     return (StringHelper::Compare(db->GetClassName(), "ClassRegistryDatabase") == 0);
+}
+
+bool ClassRegistryDatabaseTest::TestCleanUp() {
+    DummyClassRegistryDatabase testDB;
+    ClassProperties cp;
+    ClassRegistryItem* p = new DummyClassRegistryItem(cp);
+    testDB.Add(p);
+    if (testDB.GetSize() != 1) {
+        return false;
+    }
+
+    testDB.CleanUp();
+    return testDB.GetSize() == 0;
+    return true;
 }

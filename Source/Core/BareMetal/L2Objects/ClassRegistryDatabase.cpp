@@ -61,6 +61,7 @@ ClassRegistryDatabase::ClassRegistryDatabase() {
 }
 
 ClassRegistryDatabase::~ClassRegistryDatabase() {
+    //automatic LinkedListHolder::CleanUp
 }
 
 void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
@@ -240,6 +241,10 @@ const ClassRegistryItem *ClassRegistryDatabase::Peek(const uint32 &idx) {
 
 const char8 * const ClassRegistryDatabase::GetClassName() const {
     return "ClassRegistryDatabase";
+}
+
+void ClassRegistryDatabase::CleanUp() {
+    classDatabase.CleanUp();
 }
 
 }

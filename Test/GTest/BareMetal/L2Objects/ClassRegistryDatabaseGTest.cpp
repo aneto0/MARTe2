@@ -99,3 +99,9 @@ TEST(ClassRegistryDatabaseGTest,TestGetClassName) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestGetClassName());
 }
+
+
+TEST(ClassRegistryDatabaseGTest,TestCleanUp) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestCleanUp());
+}

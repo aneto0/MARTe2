@@ -115,14 +115,17 @@ public:
     virtual const char8 * const GetClassName() const;
 
 
+    void CleanUp();
 
-private:
+protected:
 
     /**
      * @brief Private Constructor.
      */
     /*lint -e{1704} private constructor for singleton implementation*/
     ClassRegistryDatabase();
+
+private:
 
     /**
      * The database is implemented as a StaticList.
