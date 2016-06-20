@@ -73,7 +73,7 @@ public:
      * returns error.notCommunicationError if trying to send an immediate reply
      *
      * */
-    static ErrorManagement::ErrorType SendMessage( ReferenceT<Message> &message,Object *sender = NULL);
+    static ErrorManagement::ErrorType SendMessage( ReferenceT<Message> &message,const Object * const sender = NULL_PTR(Object *));
 
     /**
      * TODO
@@ -82,14 +82,14 @@ public:
      * Calls SendMessage. See SendMessage errors
      * additional error.notCommunicationError is a reply to a reply is requested
      * */
-    static ErrorManagement::ErrorType SendMessageAndWaitReply(ReferenceT<Message> &message,Object *sender = NULL,TimeoutType maxWait=TTInfiniteWait);
+    static ErrorManagement::ErrorType SendMessageAndWaitReply(ReferenceT<Message> &message,const Object * const sender = NULL_PTR(Object *), const TimeoutType &maxWait=TTInfiniteWait);
 
     /**
      * TODO
      * Sets Message::flags.expectsReply and calls SendMessage
      * Calls SendMessage. See SendMessage errors
      * */
-    static ErrorManagement::ErrorType SendMessageAndExpectReplyLater(ReferenceT<Message> &message,Object *sender = NULL);
+    static ErrorManagement::ErrorType SendMessageAndExpectReplyLater(ReferenceT<Message> &message,const Object * const sender = NULL_PTR(Object*));
 
 
 protected:

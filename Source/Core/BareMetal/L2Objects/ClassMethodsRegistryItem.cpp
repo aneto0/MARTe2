@@ -51,33 +51,33 @@ ClassMethodsRegistryItem::~ClassMethodsRegistryItem() {
 /**
  * TODO
  * */
-int ClassMethodsRegistryItem::Find(const char8 *name) {
+int32 ClassMethodsRegistryItem::Find(const char8 * const name) {
     const char8 *names = functionNames;
 
     uint32 nameSize = StringHelper::Length(name);
     uint32 namesSize = StringHelper::Length(names);
 
     bool notFound = true;
-    int functionIndex = 0;
+    int32 functionIndex = 0;
     while ((namesSize > nameSize) && notFound) {
 
         //Skipping of Class::
-        while ((*names != ':') && (*names != 0)) {
-            names++;
+        while ((names[0] != ':') && (names[0] != '\0')) {
+            names = &names[1];
         }
-        if (*names == ':') {
-            names++;
+        if (names[0] == ':') {
+            names = &names[1];
         }
-        if (*names == ':') {
-            names++;
+        if (names[0] == ':') {
+            names = &names[1];
         }
 
         //Matching of function,
         // the string is found if the strings are equal and the the list finishes with a "0" or a ","
-        notFound = (StringHelper::CompareN(names, name, nameSize) != 0) || ((names[nameSize] != 0) && (names[nameSize] != ','));
+        notFound = (StringHelper::CompareN(names, name, nameSize) != 0) || ((names[nameSize] != '\0') && (names[nameSize] != ','));
         if (notFound) {
             functionIndex++;
-            while ((names[0] != 0) && (names[0] != ',')) {
+            while ((names[0] != '\0') && (names[0] != ',')) {
                 names++;
             }
             namesSize = StringHelper::Length(names);
@@ -92,9 +92,9 @@ int ClassMethodsRegistryItem::Find(const char8 *name) {
 /**
  * TODO
  * */
-ClassMethodInterfaceMapper *ClassMethodsRegistryItem::FindFunction(const char8 *name) {
-    int functionIndex = Find(name);
-    ClassMethodInterfaceMapper *fmp = NULL;
+ClassMethodInterfaceMapper *ClassMethodsRegistryItem::FindFunction(const char8 * const name) {
+    int32 functionIndex = Find(name);
+    ClassMethodInterfaceMapper *fmp = NULL_PTR(ClassMethodInterfaceMapper *);
     if (functionIndex >= 0) {
         fmp = &functionTable[functionIndex];
     }
@@ -104,9 +104,10 @@ ClassMethodInterfaceMapper *ClassMethodsRegistryItem::FindFunction(const char8 *
 /**
  * TODO
  * */
-ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem *cri,
+ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem * const cri,
                                                    ClassMethodInterfaceMapper * const functionTable_In,
-                                                   const char *functionNames_In) :
+                                                   const char8 * const functionNames_In) :
+        LinkedListable(),
         functionTable(functionTable_In) {
     functionNames = functionNames_In;
     // register in Object the record
@@ -115,8 +116,8 @@ ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem *cri,
     }
 }
 
-ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * context,
-                                                                  const char8 *name) {
+ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * const context,
+                                                                  const char8 * const name) {
     ErrorManagement::ErrorType returnValue;
 
     if (context == NULL) {
@@ -126,7 +127,7 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * conte
         returnValue.parametersError = true;
     }
 
-    ClassMethodInterfaceMapper * fmp = NULL;
+    ClassMethodInterfaceMapper * fmp = NULL_PTR(ClassMethodInterfaceMapper *);
     if (returnValue.NoError()) {
         fmp = FindFunction(name);
         if (fmp == NULL) {
@@ -136,6 +137,7 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * conte
     }
 
     if (returnValue.NoError()) {
+        /*lint -e{613} .The NULL checking has been done before entering here*/
         returnValue = fmp->Call(context);
     }
 
@@ -160,7 +162,7 @@ namespace MARTe {
             return true;
         }
 
-        bool Test2(int i) {
+        bool Test2(int32 i) {
             return true;
         }
 

@@ -412,9 +412,13 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
                 ret= (iobuff.PrintFormatted("%s %s\r\n", &printLeftSide[0]));
                 if(ret) {
                     ret = PrintStructuredDataInterface(iobuff, structuredData);
-                    ret= (structuredData->MoveToAncestor(1u));
-                    AnyType printClose[] = {"}", voidAnyType};
-                    ret= (iobuff.PrintFormatted("%s\r\n", &printClose[0]));
+                    if(ret) {
+                        ret= (structuredData->MoveToAncestor(1u));
+                        if(ret) {
+                            AnyType printClose[] = {"}", voidAnyType};
+                            ret= (iobuff.PrintFormatted("%s\r\n", &printClose[0]));
+                        }
+                    }
                 }
 
             }
@@ -525,8 +529,7 @@ static bool PrintObject(IOBuffer & iobuff,
  */
 static bool PrintToStreamScalar(IOBuffer & iobuff,
                                 const AnyType & parIn,
-                                const FormatDescriptor &fd,
-                                bool addQuotesOnString = false) {
+                                const FormatDescriptor &fd) {
 
     bool ret = true;
     // void anytype
@@ -773,7 +776,9 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                 }
             }
             //general stream type.
-            if ((((par.GetTypeDescriptor()).type) == Stream) || ((par.GetTypeDescriptor()).type) == SString) {
+            bool isStream=(((par.GetTypeDescriptor()).type) == Stream);
+            bool isSString=(((par.GetTypeDescriptor()).type) == SString);
+            if ((isStream) || (isSString)) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Stream";
                     AnyType info = infoName;

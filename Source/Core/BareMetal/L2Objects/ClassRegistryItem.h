@@ -41,13 +41,13 @@
 #include "ErrorType.h"
 #include "ClassMethodsRegistryItem.h"
 #include "LinkedListable.h"
+#include "Introspection.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
-class Introspection;
 //class ClassMethodsRegistryItem;
 class ReferenceContainer;
 
@@ -103,7 +103,7 @@ public:
     /**
      * todo
      */
-    void SetIntrospection(Introspection *introspectionIn);
+    void SetIntrospection(const Introspection * const introspectionIn);
 
     /**
      * @brief Returns a pointer to the class introspection.
@@ -126,11 +126,11 @@ public:
     /**
      * todo
      */
-    void RegisterMethods(ClassMethodsRegistryItem *classMethodRecord);
+    void RegisterMethods(ClassMethodsRegistryItem * const classMethodRecord);
     /**
      * todo
      */
-    void SetObjectBuilder(ObjectBuilder *objectBuilderIn);
+    void SetObjectBuilder(const ObjectBuilder * const objectBuilderIn);
 
     /**
      * @brief Returns a pointer to object build function.
@@ -147,14 +147,14 @@ public:
     void SetUniqueIdentifier(const ClassUID &uid);
 
 
-    ErrorManagement::ErrorType CallRegisteredMethod(Object *object,
+    ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
                                                     CCString methodName);
 
     /**
      * TODO
      */
     template<typename argType>
-    ErrorManagement::ErrorType CallRegisteredMethod(Object *object,
+    ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
                                                     CCString methodName,
                                                     argType parameters);
 
@@ -271,7 +271,7 @@ protected:
 };
 
 template<typename argType>
-ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object *object,
+ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object * const object,
                                                                    CCString methodName,
                                                                    argType parameters) {
     ErrorManagement::ErrorType ret;

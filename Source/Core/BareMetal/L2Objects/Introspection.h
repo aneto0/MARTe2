@@ -34,7 +34,6 @@
 
 #include "IntrospectionEntry.h"
 #include "ZeroTerminatedArray.h"
-#include "ClassRegistryItem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -50,11 +49,21 @@ class DLL_API Introspection {
 public:
 
     /**
+     * @brief Default constructor
+     * @post
+     *   GetClassSize()==0u
+     */
+    Introspection();
+
+
+    /**
      * @brief Constructor.
      * @param[in] introspectionListIn contains a list of IntrospectionEntry pointers, one for each class member.
      * @param[in] classSizeIn is the class size.
      * @pre
      *   introspectionListIn must be a zero-terminated array.
+     * @post
+     *   GetClassSize()==classSizeIn
      */
     Introspection(const IntrospectionEntry ** const introspectionListIn, const uint32 classSizeIn);
 

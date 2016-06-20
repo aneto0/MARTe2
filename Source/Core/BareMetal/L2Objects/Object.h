@@ -66,14 +66,17 @@
     /*                                                                                                                 \
      * TODO                                                                                                            \
      */                                                                                                                \
-    static MARTe::ClassProperties classProperties;                                                                            \
+     /*lint -e{1516} This function will be redeclared in descendants */                                                \
+    static MARTe::ClassProperties classProperties;                                                                     \
     /*                                                                                                                 \
      * TODO                                                                                                            \
      */                                                                                                                \
+     /*lint -e{1516} This function will be redeclared in descendants */                                                \
      virtual MARTe::ClassRegistryItem * GetClassRegistryItem() const ;                                                 \
     /*                                                                                                                 \
      * TODO                                                                                                            \
      */                                                                                                                \
+     /*lint -e{1511} This function will be redeclared in descendants */                                                \
      static MARTe::ClassRegistryItem * GetClassRegistryItem_Static()  ;                                                \
     /*                                                                                                                 \
      * @brief Allocates a new instance of the class type in the provided heap. Note that this                          \
@@ -207,7 +210,11 @@ public:
     /**
      * @brief Default constructor. Sets the number of references to zero.
      */
-Object    ();
+    Object();
+
+
+    Object(const Object &copy);
+
 
     /**
      * @brief Virtual destructor. No operation.
@@ -348,9 +355,9 @@ Object    ();
      * TODO
      */
     template <typename argType>
-    ErrorManagement::ErrorType CallRegisteredMethod(CCString methodName,argType parameters);
+    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName,argType parameters);
 
-    ErrorManagement::ErrorType CallRegisteredMethod(CCString methodName);
+    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName);
 
     /*
      * @brief Returns the class properties associated with this class type.
@@ -448,7 +455,7 @@ private:
 };
 
 template<typename argType>
-ErrorManagement::ErrorType Object::CallRegisteredMethod(CCString methodName,
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName,
                                                         argType parameters) {
     ErrorManagement::ErrorType ret;
     ClassRegistryItem * cri = GetClassRegistryItem();

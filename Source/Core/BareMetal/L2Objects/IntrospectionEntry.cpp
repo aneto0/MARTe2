@@ -45,6 +45,20 @@
 
 namespace MARTe {
 
+IntrospectionEntry::IntrospectionEntry() {
+
+    memberName = NULL_PTR(const char8*);
+    typeName = NULL_PTR(const char8*);
+    modifiers = NULL_PTR(const char8*);
+    attributes = NULL_PTR(const char8*);
+    size = 0u;
+    byteOffset = 0u;
+    numberOfDimensions = 1u;
+    dimensionSize[0] = 1u;
+    dimensionSize[1] = 1u;
+    dimensionSize[2] = 1u;
+}
+
 IntrospectionEntry::IntrospectionEntry(const char8 * const memberNameIn,
                                        const char8* const typeNameIn,
                                        const char8* const modifiersIn,

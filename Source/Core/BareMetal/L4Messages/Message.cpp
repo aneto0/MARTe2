@@ -41,7 +41,7 @@
 
 namespace MARTe {
 
-Message::Message() {
+Message::Message():ReferenceContainer() {
 
 }
 
@@ -49,35 +49,39 @@ Message::~Message() {
 
 }
 
-void Message::MarkAsReply(bool flag) {
+void Message::MarkAsReply(const bool flag) {
     flags.isReply = flag;
 }
 
-void Message::MarkImmediateReplyExpected(bool flag) {
+void Message::MarkImmediateReplyExpected(const bool flag) {
     flags.expectsReply = flag;
     flags.expectsImmediateReply = flag;
 }
 
-void Message::MarkLateReplyExpected(bool flag) {
+void Message::MarkLateReplyExpected(const bool flag) {
     flags.expectsReply = flag;
     if (flag) {
-        flags.expectsImmediateReply = !flag;
+        flags.expectsImmediateReply = false;
     }
 }
 
-bool Message::ReplyExpected() {
+bool Message::ReplyExpected() const {
     return (flags.expectsReply);
 }
 
-bool Message::ImmediateReplyExpected() {
-    return (flags.expectsReply && flags.expectsImmediateReply);
+bool Message::ImmediateReplyExpected() const {
+    bool expectsReply=flags.expectsReply;
+    bool expectsImmediateReply=flags.expectsImmediateReply;
+    return (expectsReply && expectsImmediateReply);
 }
 
-bool Message::LateReplyExpected() {
-    return (flags.expectsReply && !flags.expectsImmediateReply);
+bool Message::LateReplyExpected() const {
+    bool expectsReply=flags.expectsReply;
+    bool expectsImmediateReply=flags.expectsImmediateReply;
+    return (expectsReply && (!expectsImmediateReply));
 }
 
-bool Message::IsReplyMessage() {
+bool Message::IsReplyMessage() const {
     return flags.isReply;
 }
 

@@ -43,9 +43,14 @@
 
 namespace MARTe {
 
+Introspection::Introspection() :
+        fields() {
+    classSize = 0u;
+}
+
 Introspection::Introspection(const IntrospectionEntry ** const introspectionListIn,
                              const uint32 classSizeIn) :
-    fields(introspectionListIn) {
+        fields(introspectionListIn) {
     classSize = classSizeIn;
 }
 
@@ -57,7 +62,7 @@ uint32 Introspection::GetNumberOfMembers() const {
     return fields.GetSize();
 }
 
-uint32 Introspection::GetClassSize() const{
+uint32 Introspection::GetClassSize() const {
     return classSize;
 }
 

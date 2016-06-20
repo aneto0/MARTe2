@@ -66,6 +66,7 @@ public:
      * If no ':' is found at the beginning of the path, the start point is the root.
      * @return the reference found at the provided \a path or an invalid reference in case of failure.
      */
+    /*lint -e{1511} [MISRA C++ Rule 2-10-2].*/
     Reference Find(const char8 * const path,
                    const Reference current = Reference());
 
@@ -81,17 +82,20 @@ private:
      * @brief Disallow the usage of new.
      * @param[in] size the size of the object.
      */
+    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The new operator must wrap GlobalObjectsI::new(*) */
     static void *operator new(const osulong size) throw ();
 
     /**
      * @brief Frees the memory area pointed by \a p previously allocated on the StandardHeap.
      * @param[in] p is the pointer to be freed.
      */
-    static void operator delete(void *p);
+    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The new operator must wrap GlobalObjectsI::delete(*) */
+    static void operator delete(void * const p);
 
     /**
      * @brief Default constructor.
      */
+    /*lint -e{1704} private constructor for singleton implementation*/
     ObjectRegistryDatabase();
 
 };

@@ -32,6 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Introspection.h"
+#include "ClassRegistryItem.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -68,7 +70,7 @@ public:
  * This macro retrieves the member address with respect to the class begin.
  */
 #define INTROSPECTION_MEMBER_INDEX(className, memberName) \
-    (intptr)&(((className *)0)->memberName)
+    (intptr)(&(((className *)0)->memberName))
 
 /**
  * This macro retrieves the member size.

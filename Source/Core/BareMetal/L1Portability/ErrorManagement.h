@@ -65,7 +65,7 @@ DLL_API void NullErrorProcessFunction(const ErrorInformation &errorInfo,
  * @brief Returns the name string associated to the error code.
  * @param[in] errorCode is the error code.
  */
-DLL_API const char8 *ToName(const ErrorType errorCode);
+DLL_API const char8 *ToName(const ErrorType &errorCode);
 
 /**
  * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.
@@ -77,7 +77,7 @@ DLL_API const char8 *ToName(const ErrorType errorCode);
  * @param[in] lineNumber is the line number where the error was triggered.
  * @param[in] functionName is the name of the function where the error is triggered.
  */
-DLL_API void ReportError(const ErrorType code,
+DLL_API void ReportError(const ErrorType &code,
                          const char8 * const errorDescription,
                          const char8 * const fileName = static_cast<const char8 *>(NULL),
 const int16 lineNumber = 0,
@@ -92,7 +92,7 @@ const char8 * const functionName = static_cast<const char8 *>(NULL));
  * @param[in] lineNumber is the line number where the error was triggered.
  * @param[in] functionName is the name of the function where the error is triggered.
  */
-DLL_API void ReportErrorFullContext(const ErrorType code,
+DLL_API void ReportErrorFullContext(const ErrorType &code,
                                     const char8 * const errorDescription,
                                     const char8 * const fileName = static_cast<const char8 *>(NULL),
 const int16 lineNumber = 0,

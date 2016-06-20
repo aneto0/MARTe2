@@ -37,7 +37,6 @@
 #include "ErrorManagement.h"
 #include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
-#include "stdio.h"
 #include <typeinfo>
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -55,11 +54,13 @@ ReferenceContainer::ReferenceContainer() :
 }
 
 ReferenceContainer::ReferenceContainer(ReferenceContainer &copy) :
-        Object() {
+        Object(copy) {
     uint32 nChildren = copy.Size();
     for (uint32 i = 0u; i < nChildren; i++) {
         Reference toInsert = copy.Get(i);
-        Insert(toInsert);
+        if (!Insert(toInsert)) {
+            //TODO
+        }
     }
 }
 
@@ -73,7 +74,9 @@ Reference ReferenceContainer::Get(const uint32 idx) {
                 ref = node->GetReference();
             }
         }
-        REPORT_ERROR(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
+        else {
+            REPORT_ERROR(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
+        }
     }
     UnLock();
     return ref;
@@ -95,14 +98,18 @@ ReferenceContainer::~ReferenceContainer() {
 
 void ReferenceContainer::CleanUp() {
 
-    uint32 numberOfElements = 0u;
-    Lock();
+    uint32 numberOfElements;
+    if (!Lock()) {
+        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+    }
     numberOfElements = list.ListSize() + purgeList.ListSize();
     UnLock();
 
     //flat recursion due to avoid stack waste!!
     for (uint32 i = 0u; i < numberOfElements; i++) {
-        Lock();
+        if (!Lock()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+        }
         if (purgeList.ListSize() >= numberOfElements) {
             UnLock();
             break;
@@ -116,7 +123,9 @@ void ReferenceContainer::CleanUp() {
     }
 
     for (uint32 i = 0u; i < numberOfElements; i++) {
-        Lock();
+        if (!Lock()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+        }
         if (purgeList.ListSize() == 0u) {
             UnLock();
             break;
@@ -269,88 +278,94 @@ bool ReferenceContainer::IsContainer(const Reference &ref) const {
 void ReferenceContainer::Find(ReferenceContainer &result,
                               ReferenceContainerFilter &filter) {
     int32 index = 0;
-    bool ok = (Lock());
-    if (ok && (list.ListSize() > 0u)) {
-        if (filter.IsReverse()) {
-            index = static_cast<int32>(list.ListSize()) - 1;
-        }
-        //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
-        //lint -e{9007} no side-effects on the right of the && operator
-        while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
+    bool ok = Lock();
+    if (ok) {
+        if (list.ListSize() > 0u) {
+            if (filter.IsReverse()) {
+                index = static_cast<int32>(list.ListSize()) - 1;
+            }
+            //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
+            //lint -e{9007} no side-effects on the right of the && operator
+            while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
-            ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
+                ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
 
-            Reference currentNodeReference = currentNode->GetReference();
-            //Check if the current node meets the filter criteria
-            bool found = filter.Test(result, currentNodeReference);
-            if (found) {
-                //IsSearchAll() => all found nodes should be inserted in the output list
-                //IsFinished() => that the desired occurrence of this object was found => add it to the output list
-                /*lint -e{9007} filter.IsSearchAll() has no side effects*/
-                if (filter.IsSearchAll() || filter.IsFinished()) {
-                    if (result.Insert(currentNodeReference)) {
-                        if (filter.IsRemove()) {
-                            //Only delete the exact node index
-                            if (list.ListDelete(currentNode)) {
-                                //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
-                                if (!filter.IsReverse()) {
-                                    index--;
+                Reference currentNodeReference = currentNode->GetReference();
+                //Check if the current node meets the filter criteria
+                bool found = filter.Test(result, currentNodeReference);
+                if (found) {
+                    //IsSearchAll() => all found nodes should be inserted in the output list
+                    //IsFinished() => that the desired occurrence of this object was found => add it to the output list
+                    /*lint -e{9007} filter.IsSearchAll() has no side effects*/
+                    if (filter.IsSearchAll() || filter.IsFinished()) {
+                        if (result.Insert(currentNodeReference)) {
+                            if (filter.IsRemove()) {
+                                //Only delete the exact node index
+                                if (list.ListDelete(currentNode)) {
+                                    //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
+                                    if (!filter.IsReverse()) {
+                                        index--;
+                                    }
+                                }
+                                else {
+                                    REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Delete()");
                                 }
                             }
-                            else {
-                                REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Delete()");
+                        }
+                        else {
+                            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
+                        }
+                    }
+                }
+
+                // no other stack waste!!
+                if (filter.IsFinished()) {
+                    break;
+                }
+
+                /*lint -e{9007} filter.IsRecursive() has no side effects*/
+                if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
+                    ok = true;
+                    if (filter.IsStorePath()) {
+                        ok = result.Insert(currentNodeReference);
+                    }
+
+                    if (ok) {
+                        ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
+                        uint32 sizeBeforeBranching = result.list.ListSize();
+                        UnLock();
+                        currentNodeContainer->Find(result, filter);
+                        if (Lock()) {
+                            //Something was found if the result size has changed
+                            if (sizeBeforeBranching == result.list.ListSize()) {
+                                //Nothing found. Remove the stored path (which led to nowhere).
+                                if (filter.IsStorePath()) {
+                                    LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1u);
+                                    delete node;
+                                }
                             }
+                        }
+                        else {
+                            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
                         }
                     }
                     else {
                         REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                     }
                 }
-            }
-
-            // no other stack waste!!
-            if (filter.IsFinished()) {
-                break;
-            }
-
-            /*lint -e{9007} filter.IsRecursive() has no side effects*/
-            if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
-                ok = true;
-                if (filter.IsStorePath()) {
-                    ok = result.Insert(currentNodeReference);
-                }
-
-                if (ok) {
-                    ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
-                    uint32 sizeBeforeBranching = result.list.ListSize();
-                    UnLock();
-                    currentNodeContainer->Find(result, filter);
-                    if (Lock()) {
-                        //Something was found if the result size has changed
-                        if (sizeBeforeBranching == result.list.ListSize()) {
-                            //Nothing found. Remove the stored path (which led to nowhere).
-                            if (filter.IsStorePath()) {
-                                LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1u);
-                                delete node;
-                            }
-                        }
-                    }
-                    else {
-                        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
-                    }
+                if (!filter.IsReverse()) {
+                    index++;
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
+                    index--;
                 }
-            }
-            if (!filter.IsReverse()) {
-                index++;
-            }
-            else {
-                index--;
             }
         }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+    }
+
     UnLock();
 }
 
@@ -376,6 +391,9 @@ uint32 ReferenceContainer::Size() {
     UnLock();
     return size;
 }
+
+
+
 
 bool ReferenceContainer::Initialise(StructuredDataI &data) {
 

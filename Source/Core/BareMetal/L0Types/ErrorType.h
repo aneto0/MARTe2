@@ -51,14 +51,14 @@ public:
      * */
     inline ErrorType(bool allOk=true);
 
-    inline ErrorType(uint32 errorCode);
+    inline ErrorType(const uint32 errorCode);
 
     /**
      * TODO
      * is no error is flagged
      * warnings maybe set
      * */
-    inline bool NoError();
+    inline bool NoError() const ;
 
     /**
      * TODO
@@ -70,9 +70,9 @@ public:
 
     inline bool operator !=(const ErrorType &in) const;
 
-    inline void SetError(uint32 mask);
+    inline void SetError(const uint32 mask);
 
-    inline void ClearError(uint32 mask);
+    inline void ClearError(const uint32 mask);
 
     /*lint -e{9018} Use of union allows to use this memory to describe both objects and basic types.*/
     union {
@@ -190,11 +190,11 @@ inline ErrorType::ErrorType(bool allOk) {
     functionError = !allOk;
 }
 
-inline ErrorType::ErrorType(uint32 errorCode) {
+inline ErrorType::ErrorType(const uint32 errorCode) {
     format_as_uint32 = errorCode;
 }
 
-inline bool ErrorType::NoError() {
+inline bool ErrorType::NoError() const {
     return (format_as_uint32 == 0);
 }
 
@@ -210,12 +210,12 @@ inline bool ErrorType::operator !=(const ErrorType &in) const {
     return format_as_uint32 != in.format_as_uint32;
 }
 
-inline void ErrorType::SetError(uint32 mask) {
+inline void ErrorType::SetError(const uint32 mask) {
     format_as_uint32 |= mask;
 
 }
 
-inline void ErrorType::ClearError(uint32 mask) {
+inline void ErrorType::ClearError(const uint32 mask) {
     format_as_uint32 &= ~mask;
 }
 
