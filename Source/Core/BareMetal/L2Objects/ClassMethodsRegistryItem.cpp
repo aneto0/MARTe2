@@ -77,7 +77,6 @@ int ClassMethodsRegistryItem::Find(const char8 *name) {
         notFound = (StringHelper::CompareN(names, name, nameSize) != 0) || ((names[nameSize] != 0) && (names[nameSize] != ','));
         if (notFound) {
             functionIndex++;
-            names += nameSize;
             while ((names[0] != 0) && (names[0] != ',')) {
                 names++;
             }
