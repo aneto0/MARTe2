@@ -62,7 +62,7 @@ public:
      * To be case by case remapped by the descendant
      * */
     virtual ErrorManagement::ErrorType Call(Object * const context,
-                            int32 x);
+                            int32& x);
 
     /**
      * TODO

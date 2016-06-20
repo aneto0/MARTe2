@@ -73,7 +73,7 @@ bool ClassMethodCallerTest::TestCall() {
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
-        success = params.Insert("A.B.C.TestObject", obj);
+        success = params.Insert("TestObject", obj);
         if (success) {
             ErrorManagement::ErrorType status;
             ClassWithCallableMethods context;
@@ -92,7 +92,7 @@ bool ClassMethodCallerTest::TestCall() {
         Reference obj;
         status = target.Call(&context, params);
         result &= status;
-        obj = params.Find("X.Y.Z.TestObject");
+        obj = params.Find("TestObject2");
         result &= obj.IsValid();
     }
     {
@@ -100,15 +100,15 @@ bool ClassMethodCallerTest::TestCall() {
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
-        success = params.Insert("A.B.C.TestObject", obj);
+        success = params.Insert("TestObject", obj);
         if (success) {
             ErrorManagement::ErrorType status;
             ClassWithCallableMethods context;
             status = target.Call(&context, params);
             result &= status;
-            obj = params.Find("A.B.C.TestObject");
+            obj = params.Find("TestObject");
             result &= !obj.IsValid();
-            obj = params.Find("X.Y.Z.TestObject");
+            obj = params.Find("TestObject2");
             result &= obj.IsValid();
         }
         else {
@@ -136,11 +136,38 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         result &= status.functionError;
     }
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodX);
+        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputInteger);
+        int params;
+        params = 10;
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        status = target.Call<int&>(&context, params);
+        result &= status;
+    }
+    {
+        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithOutputInteger);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params;
+        status = target.Call<int&>(&context, params);
+        result &= status;
+        result &= (params == 20);
+    }
+    {
+        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputOutputInteger);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 30;
+        status = target.Call<int&>(&context, params);
+        result &= status;
+        result &= (params == (30 + 5));
+    }
+    {
+        ClassMethodInterfaceMapper target((bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))(&ClassWithCallableMethods::MethodX));
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
-        success = params.Insert("A.B.C.TestObject", obj);
+        success = params.Insert("TestObject", obj);
         if (success) {
             ErrorManagement::ErrorType status;
             ClassWithCallableMethods context;
@@ -159,7 +186,7 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         Reference obj;
         status = target.Call<ReferenceContainer&>(&context, params);
         result &= status;
-        obj = params.Find("X.Y.Z.TestObject");
+        obj = params.Find("TestObject2");
         result &= obj.IsValid();
     }
     {
@@ -167,15 +194,15 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
-        success = params.Insert("A.B.C.TestObject", obj);
+        success = params.Insert("TestObject", obj);
         if (success) {
             ErrorManagement::ErrorType status;
             ClassWithCallableMethods context;
             status = target.Call<ReferenceContainer&>(&context, params);
             result &= status;
-            obj = params.Find("A.B.C.TestObject");
+            obj = params.Find("TestObject");
             result &= !obj.IsValid();
-            obj = params.Find("X.Y.Z.TestObject");
+            obj = params.Find("TestObject2");
             result &= obj.IsValid();
         }
         else {

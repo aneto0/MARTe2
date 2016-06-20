@@ -106,8 +106,8 @@ namespace {
 class ClassWithCallableMethods1: public ClassWithCallableMethods {};
 class ClassWithCallableMethods2: public ClassWithCallableMethods {};
 
-CLASS_METHOD_REGISTER(ClassWithCallableMethods1, &ClassWithCallableMethods1::MethodK, &ClassWithCallableMethods1::MethodX, &ClassWithCallableMethods1::MethodY, &ClassWithCallableMethods1::MethodZ)
-CLASS_METHOD_REGISTER(ClassWithCallableMethods2, &ClassWithCallableMethods2::MethodK, &ClassWithCallableMethods2::MethodX, &ClassWithCallableMethods2::MethodY, &ClassWithCallableMethods2::MethodZ)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods1, &ClassWithCallableMethods1::MethodK, (bool (ClassWithCallableMethods1::*)(MARTe::ReferenceContainer&))(&ClassWithCallableMethods1::MethodX), &ClassWithCallableMethods1::MethodY, &ClassWithCallableMethods1::MethodZ)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods2, &ClassWithCallableMethods2::MethodK, (bool (ClassWithCallableMethods2::*)(MARTe::ReferenceContainer&))(&ClassWithCallableMethods2::MethodX), &ClassWithCallableMethods2::MethodY, &ClassWithCallableMethods2::MethodZ)
 
 }
 
@@ -131,8 +131,8 @@ bool ClassMethodsRegistryItemTest::TestConstructor() {
     using namespace MARTe;
     bool result = false;
     ClassRegistryItem* const cri = ClassRegistryItemT<ClassWithCallableMethods1>::Instance();
-    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods1::MethodM, &ClassWithCallableMethods1::MethodK, &ClassWithCallableMethods1::MethodX, &ClassWithCallableMethods1::MethodY, &ClassWithCallableMethods1::MethodZ };
-    const char* names = "ClassWithCallableMethods1::MethodM, ClassWithCallableMethods1::MethodK, ClassWithCallableMethods1::MethodX, ClassWithCallableMethods1::MethodY, ClassWithCallableMethods1::MethodZ";
+    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods1::MethodWithInputInteger, &ClassWithCallableMethods1::MethodK, (bool (ClassWithCallableMethods1::*)(MARTe::ReferenceContainer&))(&ClassWithCallableMethods1::MethodX), &ClassWithCallableMethods1::MethodY, &ClassWithCallableMethods1::MethodZ };
+    const char* names = "ClassWithCallableMethods1::MethodWithInputInteger, ClassWithCallableMethods1::MethodK, ClassWithCallableMethods1::MethodX, ClassWithCallableMethods1::MethodY, ClassWithCallableMethods1::MethodZ";
     ClassMethodsRegistryItem target(cri, cmim, names);
     result = (target.Size() > 0);
     return result;
@@ -142,8 +142,8 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
     using namespace MARTe;
     bool result = true;
     ClassRegistryItem* const cri = ClassRegistryItemT<ClassWithCallableMethods2>::Instance();
-    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods2::MethodM, &ClassWithCallableMethods2::MethodK, &ClassWithCallableMethods2::MethodX, &ClassWithCallableMethods2::MethodY, &ClassWithCallableMethods2::MethodZ };
-    const char* names = "ClassWithCallableMethods2::MethodM, ClassWithCallableMethods2::MethodK, ClassWithCallableMethods2::MethodX, ClassWithCallableMethods2::MethodY, ClassWithCallableMethods2::MethodZ";
+    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods2::MethodWithInputInteger, &ClassWithCallableMethods2::MethodWithOutputInteger, &ClassWithCallableMethods2::MethodWithInputOutputInteger, &ClassWithCallableMethods2::MethodK, (bool (ClassWithCallableMethods2::*)(MARTe::ReferenceContainer&))(&ClassWithCallableMethods2::MethodX), &ClassWithCallableMethods2::MethodY, &ClassWithCallableMethods2::MethodZ };
+    const char* names = "ClassWithCallableMethods2::MethodWithInputInteger, ClassWithCallableMethods2::MethodWithOutputInteger, ClassWithCallableMethods2::MethodWithInputOutputInteger, ClassWithCallableMethods2::MethodK, ClassWithCallableMethods2::MethodX, ClassWithCallableMethods2::MethodY, ClassWithCallableMethods2::MethodZ";
     ClassMethodsRegistryItem target(cri, cmim, names);
     {
         ClassWithCallableMethods2 context;
@@ -160,10 +160,33 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
         result &= status.functionError;
     }
     {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods2 context;
+        int params = 10;
+        status = target.CallFunction<int&>(&context, "MethodWithInputInteger", params);
+        result &= status;
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods2 context;
+        int params;
+        status = target.CallFunction<int&>(&context, "MethodWithOutputInteger", params);
+        result &= status;
+        result &= (params == 20);
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods2 context;
+        int params = 30;
+        status = target.CallFunction<int&>(&context, "MethodWithInputOutputInteger", params);
+        result &= status;
+        result &= (params == (30 + 5));
+    }
+    {
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
-        success = params.Insert("A.B.C.TestObject", obj);
+        success = params.Insert("TestObject", obj);
         if (success) {
             ErrorManagement::ErrorType status;
             ClassWithCallableMethods2 context;
@@ -181,22 +204,22 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
         Reference obj;
         status = target.CallFunction<ReferenceContainer&>(&context, "MethodY", params);
         result &= status;
-        obj = params.Find("X.Y.Z.TestObject");
+        obj = params.Find("TestObject2");
         result &= obj.IsValid();
     }
     {
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
-        success = params.Insert("A.B.C.TestObject", obj);
+        success = params.Insert("TestObject", obj);
         if (success) {
             ErrorManagement::ErrorType status;
             ClassWithCallableMethods2 context;
             status = target.CallFunction<ReferenceContainer&>(&context, "MethodZ", params);
             result &= status;
-            obj = params.Find("A.B.C.TestObject");
+            obj = params.Find("TestObject");
             result &= !obj.IsValid();
-            obj = params.Find("X.Y.Z.TestObject");
+            obj = params.Find("TestObject2");
             result &= obj.IsValid();
         }
         else {
@@ -228,7 +251,7 @@ bool ClassMethodsRegistryItemTest::TestCallFunction_WithMacroSupport() {
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
-        success = params.Insert("A.B.C.TestObject", obj);
+        success = params.Insert("TestObject", obj);
         if (success) {
             ErrorManagement::ErrorType status;
             ClassWithCallableMethods context;
@@ -246,22 +269,22 @@ bool ClassMethodsRegistryItemTest::TestCallFunction_WithMacroSupport() {
         Reference obj;
         status = target->CallFunction<ReferenceContainer&>(&context, "MethodY", params);
         result &= status;
-        obj = params.Find("X.Y.Z.TestObject");
+        obj = params.Find("TestObject2");
         result &= obj.IsValid();
     }
     {
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
-        success = params.Insert("A.B.C.TestObject", obj);
+        success = params.Insert("TestObject", obj);
         if (success) {
             ErrorManagement::ErrorType status;
             ClassWithCallableMethods context;
             status = target->CallFunction<ReferenceContainer&>(&context, "MethodZ", params);
             result &= status;
-            obj = params.Find("A.B.C.TestObject");
+            obj = params.Find("TestObject");
             result &= !obj.IsValid();
-            obj = params.Find("X.Y.Z.TestObject");
+            obj = params.Find("TestObject2");
             result &= obj.IsValid();
         }
         else {
@@ -300,7 +323,7 @@ bool ClassMethodsRegistryItemTest::TestCallFunction2() {
             ReferenceContainer params;
             Reference obj("Object");
             bool success;
-            success = params.Insert("A.B.C.TestObject", obj);
+            success = params.Insert("TestObject", obj);
             if (success) {
                 ErrorManagement::ErrorType status;
                 status = target->CallRegisteredMethod<ReferenceContainer&>("MethodX", params);
@@ -316,21 +339,21 @@ bool ClassMethodsRegistryItemTest::TestCallFunction2() {
             Reference obj;
             status = target->CallRegisteredMethod<ReferenceContainer&>("MethodY", params);
             result &= status;
-            obj = params.Find("X.Y.Z.TestObject");
+            obj = params.Find("TestObject2");
             result &= obj.IsValid();
         }
         {
             ReferenceContainer params;
             Reference obj("Object");
             bool success;
-            success = params.Insert("A.B.C.TestObject", obj);
+            success = params.Insert("TestObject", obj);
             if (success) {
                 ErrorManagement::ErrorType status;
                 status = target->CallRegisteredMethod<ReferenceContainer&>("MethodZ", params);
                 result &= status;
-                obj = params.Find("A.B.C.TestObject");
+                obj = params.Find("TestObject");
                 result &= !obj.IsValid();
-                obj = params.Find("X.Y.Z.TestObject");
+                obj = params.Find("TestObject2");
                 result &= obj.IsValid();
             }
             else {

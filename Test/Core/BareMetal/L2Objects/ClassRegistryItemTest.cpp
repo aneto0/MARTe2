@@ -377,10 +377,34 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         result &= status.functionError;
     }
     {
+        int params;
+        params = 10;
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        status = target->CallRegisteredMethod<int&>(&context, "MethodWithInputInteger", params);
+        result &= status;
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params;
+        status = target->CallRegisteredMethod<int&>(&context, "MethodWithOutputInteger", params);
+        result &= status;
+        result &= (params == 20);
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 30;
+        status = target->CallRegisteredMethod<int&>(&context, "MethodWithInputOutputInteger", params);
+        result &= status;
+        result &= (params == (30 + 5));
+    }
+    {
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
-        success = params.Insert("A.B.C.TestObject", obj);
+        success = params.Insert("TestObject", obj);
         if (success) {
             ErrorManagement::ErrorType status;
             ClassWithCallableMethods context;
@@ -398,23 +422,25 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         Reference obj;
         status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodY", params);
         result &= status;
-        obj = params.Find("X.Y.Z.TestObject");
+        obj = params.Find("TestObject2");
         result &= obj.IsValid();
     }
     {
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
-        success = params.Insert("A.B.C.TestObject", obj);
+        success = params.Insert("TestObject", obj);
         if (success) {
             ErrorManagement::ErrorType status;
             ClassWithCallableMethods context;
+            Reference objDel;
+            Reference objNew;
             status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodZ", params);
             result &= status;
-            obj = params.Find("A.B.C.TestObject");
-            result &= !obj.IsValid();
-            obj = params.Find("X.Y.Z.TestObject");
-            result &= obj.IsValid();
+            objDel = params.Find("TestObject");
+            result &= !objDel.IsValid();
+            objNew = params.Find("TestObject2");
+            result &= objNew.IsValid();
         }
         else {
             result = false;

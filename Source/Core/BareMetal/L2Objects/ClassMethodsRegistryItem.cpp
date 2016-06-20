@@ -52,28 +52,30 @@ ClassMethodsRegistryItem::~ClassMethodsRegistryItem() {
  * TODO
  * */
 int32 ClassMethodsRegistryItem::Find(const char8 * const name) {
-    const char8 *names = functionNames;
+    const char8 *list = functionNames;
 
     uint32 nameSize = StringHelper::Length(name);
-    uint32 namesSize = StringHelper::Length(names);
+    uint32 listSize = StringHelper::Length(list);
 
     bool notFound = true;
     int32 functionIndex = 0;
-    while ((namesSize > nameSize) && notFound) {
-
+    while ((listSize > nameSize) && notFound) {
+        char8 first;
         //Skipping until nameSize characters forward there is a comma
-        while ((names[nameSize] != ',') && (names[0] != '\0')) {
-            names = &names[1];
+        do {
+            first = list[0];
+            list = &list[1];
         }
+        while ((list[nameSize] != ',') && (list[nameSize] != '\0'));
 
         //Matching of function,
         // the string is found if the strings are equal and the the list finishes with a "0" or a ","
-        notFound = (StringHelper::CompareN(names, name, nameSize) != 0);
+        notFound = (StringHelper::CompareN(list, name, nameSize) != 0) || (first != ':');
 
         if (notFound) {
             functionIndex++;
-            names=&names[nameSize];
-            namesSize = StringHelper::Length(names);
+            list = &list[nameSize];
+            listSize = StringHelper::Length(list);
         }
     }
     if (notFound) {

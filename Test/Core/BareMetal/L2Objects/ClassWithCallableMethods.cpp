@@ -65,7 +65,7 @@ bool ClassWithCallableMethods::MethodK(MARTe::ReferenceContainer& data) {
 
 bool ClassWithCallableMethods::MethodX(MARTe::ReferenceContainer& data) {
     bool result= true;
-    MARTe::Reference obj = data.Find("A.B.C.TestObject");
+    MARTe::Reference obj = data.Find("TestObject");
     result &= obj.IsValid();
     return result;
 }
@@ -78,7 +78,7 @@ bool ClassWithCallableMethods::MethodY(MARTe::ReferenceContainer& data) {
     bool result= true;
     bool status;
     MARTe::Reference obj("Object");
-    status = data.Insert("X.Y.Z.TestObject", obj);
+    status = data.Insert("TestObject2", obj);
     result &= status;
     return result;
 }
@@ -87,7 +87,7 @@ bool ClassWithCallableMethods::MethodZ(MARTe::ReferenceContainer& data) {
     bool result= true;
     {
         bool status;
-        MARTe::Reference obj = data.Find("A.B.C.TestObject");
+        MARTe::Reference obj = data.Find("TestObject");
         result &= obj.IsValid();
         status = data.Delete(obj);
         result &= status;
@@ -95,13 +95,23 @@ bool ClassWithCallableMethods::MethodZ(MARTe::ReferenceContainer& data) {
     {
         bool status;
         MARTe::Reference obj("Object");
-        status = data.Insert("X.Y.Z.TestObject", obj);
+        status = data.Insert("TestObject2", obj);
         result &= status;
     }
     return result;
 }
 
-bool ClassWithCallableMethods::MethodM(int data) {
+bool ClassWithCallableMethods::MethodWithInputInteger(int& data) {
+    return (data == 10);
+}
+
+bool ClassWithCallableMethods::MethodWithOutputInteger(int& data) {
+    data = 20;
+    return true;
+}
+
+bool ClassWithCallableMethods::MethodWithInputOutputInteger(int& data) {
+    data = data + 5;
     return true;
 }
 
