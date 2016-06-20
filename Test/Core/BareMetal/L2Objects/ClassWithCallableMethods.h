@@ -79,9 +79,19 @@ public:
     bool MethodZ(MARTe::ReferenceContainer& data);
 
     /**
-     * consumes an integer
+     * consumes input from an integer
      */
-    bool MethodM(int data);
+    bool MethodWithInputInteger(int& data);
+
+    /**
+     * produces output into an integer
+     */
+    bool MethodWithOutputInteger(int& data);
+
+    /**
+     * consumes/produces from/into an integer
+     */
+    bool MethodWithInputOutputInteger(int& data);
 };
 
 CLASS_METHOD_REGISTER(ClassWithCallableMethods, &ClassWithCallableMethods::MethodK, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))(&ClassWithCallableMethods::MethodX), &ClassWithCallableMethods::MethodY, &ClassWithCallableMethods::MethodZ)
