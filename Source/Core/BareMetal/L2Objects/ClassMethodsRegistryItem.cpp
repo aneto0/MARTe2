@@ -60,7 +60,6 @@ int32 ClassMethodsRegistryItem::Find(const char8 * const name) {
     bool notFound = true;
     int32 functionIndex = 0;
     while ((namesSize > nameSize) && notFound) {
-
         //Skipping until nameSize characters forward there is a comma
         while ((names[nameSize] != ',') && (names[0] != '\0')) {
             names = &names[1];

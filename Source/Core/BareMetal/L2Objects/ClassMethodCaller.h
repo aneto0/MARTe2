@@ -43,31 +43,44 @@ class ReferenceContainer;
 
 /**
  * @brief Calls a class method
+ * @details All the prototypes of the callable functions must be declared here.
  */
 class ClassMethodCaller {
 
 public:
 
+    /**
+     * @brief Default Constructor.
+     */
     ClassMethodCaller();
 
-    virtual ~ClassMethodCaller();
     /**
-     * TODO
-     * To be case by case remapped by the descendant
-     * */
+     * @brief Destructor.
+     */
+    virtual ~ClassMethodCaller();
+
+    /**
+     * @brief Calls a class method without parameters.
+     * @param[in] context is the objects owning the method.
+     * @return ErrorManagement::FatalError if the registered function returns false, ErrorManagement::NoError if it returns true.
+     */
     virtual ErrorManagement::ErrorType Call(Object * const context);
 
     /**
-     * TODO
-     * To be case by case remapped by the descendant
-     * */
+     * @brief Calls a class method with an integer in input.
+     * @param[in] context is the objects owning the method.
+     * @param[in, out] x is the integer in input.
+     * @return ErrorManagement::FatalError if the registered function returns false, ErrorManagement::NoError if it returns true.
+     */
     virtual ErrorManagement::ErrorType Call(Object * const context,
-                            int32 x);
+                            int32 &x);
 
     /**
-     * TODO
-     * To be case by case remapped by the descendant
-     * */
+     * @brief Calls a class method with a ReferenceContainer in input.
+     * @param[in] context is the objects owning the method.
+     * @param[in, out] x is the ReferenceContainer in input.
+     * @return ErrorManagement::FatalError if the registered function returns false, ErrorManagement::NoError if it returns true.
+     */
     virtual ErrorManagement::ErrorType Call(Object * const context,
                             ReferenceContainer & x);
 

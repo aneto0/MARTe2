@@ -39,6 +39,10 @@
 
 namespace MARTe {
 
+
+/**
+ * @brief
+ */
 template<typename className, typename argType1 = void>
 class ClassMethodCallerT: public ClassMethodCaller {
 public:
