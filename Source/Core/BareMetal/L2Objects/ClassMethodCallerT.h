@@ -39,89 +39,56 @@
 
 namespace MARTe {
 
-
-
-template<typename className, typename argType>
+template<typename className, typename argType1 = void>
 class ClassMethodCallerT: public ClassMethodCaller {
 public:
 
-    ClassMethodCallerT(bool (className::*f)(argType ref));
+    ClassMethodCallerT(bool (className::*f)(argType1));
+
     virtual ~ClassMethodCallerT();
 
-
     virtual ErrorManagement::ErrorType Call(Object * context,
-                                            argType ref);
+                                            argType1 ref);
 
 private:
-    bool (className::*pFun)(argType ref);
+    bool (className::*pFun)(argType1);
 
 };
 
-
 // specialization to call methods without parameters
 template<typename className>
-class ClassMethodCallerT<className, void>: public ClassMethodCaller {
+class ClassMethodCallerT<className> : public ClassMethodCaller {
 public:
 
-    ClassMethodCallerT(bool (className::*f)(void));
+    ClassMethodCallerT(bool (className::*f)());
 
     virtual ~ClassMethodCallerT();
-
 
     virtual ErrorManagement::ErrorType Call(Object * context);
 
 private:
-    bool (className::*pFun)(void);
+    bool (className::*pFun)();
 
 };
-
-
-
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template<class className, class argType>
-ClassMethodCallerT<className, argType>::ClassMethodCallerT(bool (className::*f)(argType ref)) {
-    pFun = f;
-}
-
-template<class className, class argType>
-ClassMethodCallerT<className, argType>::~ClassMethodCallerT() {
-
-}
-
-template<class className, class argType>
-ErrorManagement::ErrorType ClassMethodCallerT<className, argType>::Call(Object * context,
-                                                          argType ref) {
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
-
-    className *actualContext = dynamic_cast<className *>(context);
-    if (actualContext == NULL_PTR(className *)) {
-        err = ErrorManagement::UnsupportedFeature;
-    }
-    else {
-        (actualContext->*pFun)(ref) ? (err = ErrorManagement::NoError) : (err = ErrorManagement::FatalError);
-    }
-    return err;
-}
-
-
-template<class className>
+/***************
+ * 0 arguments *
+ ***************/
+template<typename className>
 ClassMethodCallerT<className, void>::ClassMethodCallerT(bool (className::*f)(void)) {
     pFun = f;
 }
 
-template<class className>
+template<typename className>
 ClassMethodCallerT<className, void>::~ClassMethodCallerT() {
 
 }
 
-
-template<class className>
+template<typename className>
 ErrorManagement::ErrorType ClassMethodCallerT<className, void>::Call(Object * context) {
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
 
@@ -134,6 +101,35 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, void>::Call(Object * co
     }
     return err;
 }
+
+/***************
+ * 1 argument  *
+ ***************/
+template<typename className, typename argType1>
+ClassMethodCallerT<className, argType1>::ClassMethodCallerT(bool (className::*f)(argType1 ref)) {
+    pFun = f;
+}
+
+template<typename className, typename argType1>
+ClassMethodCallerT<className, argType1>::~ClassMethodCallerT() {
+
+}
+
+template<typename className, typename argType1>
+ErrorManagement::ErrorType ClassMethodCallerT<className, argType1>::Call(Object * context,
+                                                                         argType1 ref) {
+    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+
+    className *actualContext = dynamic_cast<className *>(context);
+    if (actualContext == NULL_PTR(className *)) {
+        err = ErrorManagement::UnsupportedFeature;
+    }
+    else {
+        (actualContext->*pFun)(ref) ? (err = ErrorManagement::NoError) : (err = ErrorManagement::FatalError);
+    }
+    return err;
+}
+
 
 }
 

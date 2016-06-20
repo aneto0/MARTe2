@@ -52,16 +52,20 @@ public:
      * */
     ClassMethodInterfaceMapper();
 
-    template<typename C, typename T>
-    ClassMethodInterfaceMapper(bool (C::*f)(T ref));
+    template<typename C>
+    ClassMethodInterfaceMapper(bool (C::*f)());
 
+
+    template<typename C, typename T>
+    ClassMethodInterfaceMapper(bool (C::*f)(T));
+
+
+    ErrorManagement::ErrorType Call(Object * const context);
 
     template<typename T>
     ErrorManagement::ErrorType Call(Object * const context,
                                     T ref);
 
-
-    ErrorManagement::ErrorType Call(Object * const context);
     /**
      * TODO
      * */
@@ -75,16 +79,21 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-// should call the specialization of ClassMethodCallerT if argType is void
-template<typename className, typename argType>
-ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)(argType)) {
-    caller = new ClassMethodCallerT<className, argType>(f);
+
+template<typename className>
+ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)()) {
+    caller = new ClassMethodCallerT<className>(f);
 }
 
 
-template<typename argType>
+template<typename className, typename T>
+ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)(T)) {
+    caller = new ClassMethodCallerT<className, T>(f);
+}
+
+template<typename T>
 ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object *context,
-                                                            argType ref) {
+                                                            T ref) {
     ErrorManagement::ErrorType ret;
     ret.unsupportedFeature = true;
     if (caller != NULL ) {
@@ -92,10 +101,6 @@ ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object *context,
     }
     return ret;
 }
-
-
-
-
 
 }
 

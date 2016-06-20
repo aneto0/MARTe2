@@ -84,7 +84,7 @@ public:
     bool MethodM(int data);
 };
 
-CLASS_METHOD_REGISTER(ClassWithCallableMethods, &ClassWithCallableMethods::MethodK, &ClassWithCallableMethods::MethodX, &ClassWithCallableMethods::MethodY, &ClassWithCallableMethods::MethodZ)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, &ClassWithCallableMethods::MethodK, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))(&ClassWithCallableMethods::MethodX), &ClassWithCallableMethods::MethodY, &ClassWithCallableMethods::MethodZ)
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
