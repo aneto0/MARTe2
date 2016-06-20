@@ -61,26 +61,18 @@ int32 ClassMethodsRegistryItem::Find(const char8 * const name) {
     int32 functionIndex = 0;
     while ((namesSize > nameSize) && notFound) {
 
-        //Skipping of Class::
-        while ((names[0] != ':') && (names[0] != '\0')) {
-            names = &names[1];
-        }
-        if (names[0] == ':') {
-            names = &names[1];
-        }
-        if (names[0] == ':') {
+        //Skipping until nameSize characters forward there is a comma
+        while ((names[nameSize] != ',') && (names[0] != '\0')) {
             names = &names[1];
         }
 
         //Matching of function,
         // the string is found if the strings are equal and the the list finishes with a "0" or a ","
-        notFound = (StringHelper::CompareN(names, name, nameSize) != 0) || ((names[nameSize] != '\0') && (names[nameSize] != ','));
+        notFound = (StringHelper::CompareN(names, name, nameSize) != 0);
+
         if (notFound) {
             functionIndex++;
-            names = &names[nameSize];
-            while ((names[0] != '\0') && (names[0] != ',')) {
-                names++;
-            }
+            names=&names[nameSize];
             namesSize = StringHelper::Length(names);
         }
     }
