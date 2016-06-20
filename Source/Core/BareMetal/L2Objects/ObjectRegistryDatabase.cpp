@@ -59,6 +59,7 @@ ObjectRegistryDatabase::ObjectRegistryDatabase() :
         ReferenceContainer() {
 }
 
+/*lint -e{1551} .*/
 ObjectRegistryDatabase::~ObjectRegistryDatabase() {
     ReferenceContainer::CleanUp();
     // The ReferenceContainer destructor does the work
@@ -147,7 +148,7 @@ void *ObjectRegistryDatabase::operator new(const osulong size) throw () {
 
 
 /*lint -e{1550} */
-void ObjectRegistryDatabase::operator delete(void *p) {
+void ObjectRegistryDatabase::operator delete(void * const p) {
     return GlobalObjectI::operator delete(p);
 }
 

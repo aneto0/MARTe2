@@ -95,7 +95,6 @@ bool Reference::Initialise(StructuredDataI &data,
 
     bool ok = (objectPointer != NULL_PTR(Object*));
 
- 
     if (!initOnly) {
         if (objectPointer == NULL_PTR(Object*)) {
             AnyType at = data.GetType("Class");
@@ -103,26 +102,30 @@ bool Reference::Initialise(StructuredDataI &data,
             ok = (ptr != NULL);
             if (ok) {
                 TypeDescriptor td = at.GetTypeDescriptor();
-                ok = (td.type == BT_CCString)||(td.type == CArray)||(td.type == PCString);
+                bool isCCString = (td.type == BT_CCString);
+                bool isCArray = (td.type == CArray);
+                bool isPCString = (td.type == PCString);
+                ok = (isCCString) || (isCArray) || (isPCString);
                 if (ok) {
-                    uint32 len = StringHelper::Length(reinterpret_cast<const char8 *>(ptr))+1u;
-                    char8 *className = reinterpret_cast<char8 *>(HeapManager::Malloc(len * sizeof(char8)));
-                    MemoryOperationsHelper::Set(className, '\0', len);
-
-                    ok = data.Read("Class", className);
+                    uint32 len = StringHelper::Length(reinterpret_cast<const char8 *>(ptr)) + 1u;
+                    char8 *className = reinterpret_cast<char8 *>(HeapManager::Malloc(len * static_cast<uint32>(sizeof(char8))));
+                    ok = MemoryOperationsHelper::Set(className, '\0', len);
                     if (ok) {
-                        Object *objPtr = CreateByName(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
-                        ok = (objPtr != NULL_PTR(Object*));
+                        ok = data.Read("Class", className);
                         if (ok) {
-                            objectPointer = objPtr;
-                            objectPointer->IncrementReferences();
+                            Object *objPtr = CreateByName(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                            ok = (objPtr != NULL_PTR(Object*));
+                            if (ok) {
+                                objectPointer = objPtr;
+                                objectPointer->IncrementReferences();
+                            }
+                            else {
+                                REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
+                            }
                         }
-                        else {
-                            REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
+                        if (!HeapManager::Free(reinterpret_cast<void *&>(className))) {
+                            //TODO
                         }
-                    }
-                    if(!HeapManager::Free(reinterpret_cast<void *&>(className))){
-                        //TODO
                     }
                 }
             }
@@ -184,7 +187,6 @@ bool Reference::operator==(const Reference& sourceReference) const {
 bool Reference::operator!=(const Reference& sourceReference) const {
     return (objectPointer != sourceReference.objectPointer);
 }
-
 
 Object *Reference::CreateByName(const char8 * const className,
                                 HeapI* const heap) const {

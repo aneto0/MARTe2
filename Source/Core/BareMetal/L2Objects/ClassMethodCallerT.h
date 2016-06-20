@@ -64,6 +64,7 @@ class ClassMethodCallerT<className, void>: public ClassMethodCaller {
 public:
 
     ClassMethodCallerT(bool (className::*f)(void));
+
     virtual ~ClassMethodCallerT();
 
 

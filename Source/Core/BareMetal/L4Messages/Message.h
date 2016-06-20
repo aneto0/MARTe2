@@ -57,7 +57,7 @@ public:
     /**
      * TODO
      * */
-    Message();
+Message    ();
     /**
      * TODO
      * */
@@ -72,42 +72,42 @@ public:
      * TODO
      * marked to be a reply
      * */
-    void MarkAsReply(bool flag=true);
+    void MarkAsReply(const bool flag=true);
 
     /**
      * TODO
      * marked by send when requiring reply
      * */
-    void MarkImmediateReplyExpected(bool flag=true);
+    void MarkImmediateReplyExpected(const bool flag=true);
 
     /**
      * TODO
      * marked by send when requiring reply
      * */
-    void MarkLateReplyExpected(bool flag=true);
+    void MarkLateReplyExpected(const bool flag=true);
 
     /**
      * TODO
      * marked by send when requiring reply
      * */
-    bool ReplyExpected();
+    bool ReplyExpected() const;
 
     /**
      * TODO
      * marked by send when requiring reply
      * */
-    bool ImmediateReplyExpected();
+    bool ImmediateReplyExpected()const;
 
     /**
      * TODO
      * marked by send when requiring reply
      * */
-    bool LateReplyExpected();
+    bool LateReplyExpected()const;
 
     /**
      * TODO
      * */
-    bool IsReplyMessage();
+    bool IsReplyMessage()const;
 
     /**
      * TODO
@@ -132,7 +132,7 @@ public:
     /**
      * TODO
      * */
-    inline void SetReplyTimeout(TimeoutType maxWaitIn);
+    inline void SetReplyTimeout(const TimeoutType &maxWaitIn);
 
 private:
 
@@ -171,12 +171,13 @@ private:
         MessageFlags(CCString asString) {
             expectsReply = (StringHelper::Compare(asString.GetList(),"ExpectsReply")==0);
             expectsImmediateReply = (StringHelper::Compare(asString.GetList(),"ExpectsImmediateReply")==0);
-            if (expectsImmediateReply) {
+            if (expectsImmediateReply==true) {
                 expectsReply = true;
             }
             isReply = false;
         }
 
+        /*lint -e{9018} Use of union allows to use this memory to describe both objects and basic types.*/
         union {
 
             /**
@@ -240,7 +241,7 @@ CCString Message::GetFunction() {
 /**
  * TODO
  * */
-void Message::SetReplyTimeout(TimeoutType maxWaitIn) {
+void Message::SetReplyTimeout(const TimeoutType &maxWaitIn) {
     maxWait = maxWaitIn;
 }
 

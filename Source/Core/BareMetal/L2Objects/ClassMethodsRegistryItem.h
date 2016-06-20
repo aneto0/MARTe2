@@ -51,9 +51,9 @@ public:
     /**
      * TODO
      * */
-    ClassMethodsRegistryItem(ClassRegistryItem *cri,
+    ClassMethodsRegistryItem(ClassRegistryItem * const cri,
                              ClassMethodInterfaceMapper * const functionTable_In,
-                             const char *functionNames_In);
+                             const char8 * const functionNames_In);
 
     /**
      * TODO
@@ -64,12 +64,12 @@ public:
      * TODO
      * */
     template<typename argType>
-    ErrorManagement::ErrorType CallFunction(Object * context,
-                                            const char8 *name,
+    ErrorManagement::ErrorType CallFunction(Object * const context,
+                                            const char8 * const name,
                                             argType ref);
 
-    ErrorManagement::ErrorType CallFunction(Object * context,
-                                            const char8 *name);
+    ErrorManagement::ErrorType CallFunction(Object * const context,
+                                            const char8 * const name);
 
 private:
 

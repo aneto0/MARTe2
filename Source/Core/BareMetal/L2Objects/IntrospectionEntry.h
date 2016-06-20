@@ -48,6 +48,18 @@ class DLL_API IntrospectionEntry {
 public:
 
     /**
+     * @brief Default constructor
+     * @post
+     *   GetMemberName() == NULL &&
+     *   GetMemberTypeName() == NULL &&
+     *   GetMemberModifiers() == NULL &&
+     *   GetMemberAttributes() == NULL &&
+     *   GetMemberSize() == 0 &&
+     *   GetMemberByteOffset() == 0
+     */
+    IntrospectionEntry();
+
+    /**
      * @brief Constructor.
      * @param[in] memberNameIn is the member name.
      * @param[in] typeNameIn is the member type name.

@@ -45,7 +45,9 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 // TODO remove LCOV_EXCL_START
 ClassRegistryItem::ClassRegistryItem(ClassProperties &classProperties_in) :
-        classProperties(classProperties_in) {
+        LinkedListable(),
+        classProperties(classProperties_in),
+        classMethods() {
     numberOfInstances = 0;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuilder = NULL_PTR(ObjectBuilder *);
@@ -59,16 +61,13 @@ ClassRegistryItem *ClassRegistryItem::Instance(ClassRegistryItem *&instance,
     if ((crd != NULL_PTR(ClassRegistryDatabase*)) && (instance == NULL_PTR(ClassRegistryItem*))) {
 
         instance = new ClassRegistryItem(classProperties_in);
-
-        if (instance != NULL) {
-            crd->Add(instance);
-        }
+        crd->Add(instance);
     }
 
     return instance;
 }
 
-void ClassRegistryItem::SetObjectBuilder(ObjectBuilder *objectBuilderIn) {
+void ClassRegistryItem::SetObjectBuilder(const ObjectBuilder * const objectBuilderIn) {
     objectBuilder = objectBuilderIn;
 }
 
@@ -96,7 +95,7 @@ const ClassProperties *ClassRegistryItem::GetClassProperties() const {
     return &classProperties;
 }
 
-void ClassRegistryItem::SetIntrospection(Introspection *introspectionIn) {
+void ClassRegistryItem::SetIntrospection(const Introspection * const introspectionIn) {
     introspection = introspectionIn;
 }
 
@@ -112,7 +111,7 @@ void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const loadLib
     this->loadableLibrary = loadLibrary;
 }
 
-void ClassRegistryItem::RegisterMethods(ClassMethodsRegistryItem *classMethodRecord) {
+void ClassRegistryItem::RegisterMethods(ClassMethodsRegistryItem * const classMethodRecord) {
     classMethods.ListAdd(classMethodRecord);
 }
 
@@ -132,7 +131,7 @@ void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {
     classProperties.SetUniqueIdentifier(uid);
 }
 
-ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object *object,
+ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object * const object,
                                                                    CCString methodName) {
     ErrorManagement::ErrorType ret;
 
@@ -147,7 +146,7 @@ ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object *objec
     if (ret.NoError()) {
         // search in the list the first function returning without unsupported feature
         CallRegisteredMethodLauncher launcher(object, methodName);
-        if (classMethods.ListSearch(&launcher)) {
+        if (classMethods.ListSearch(&launcher) != NULL) {
             ret = launcher.GetResults();
         }
         else {

@@ -227,6 +227,14 @@ Object::Object() {
     isDomain = false;
 }
 
+
+Object::Object(const Object &copy){
+    referenceCounter = 0;
+    name =  StringHelper::StringDup(copy.name);
+    isDomain = false;
+}
+
+
 /*lint -e{1551} the destructor must guarantee that the named is freed. No exception should be
  * thrown given that name always points to a valid memory address and thus Memory::Free
  * should not raise exceptions.*/
@@ -421,7 +429,7 @@ bool Object::IsDomain() const {
 }
 
 
-ErrorManagement::ErrorType Object::CallRegisteredMethod(CCString methodName){
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName){
     ErrorManagement::ErrorType ret;
     ClassRegistryItem * cri = GetClassRegistryItem();
 

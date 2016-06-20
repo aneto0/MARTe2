@@ -57,11 +57,11 @@ public:
 
 
     template<typename T>
-    ErrorManagement::ErrorType Call(Object *context,
+    ErrorManagement::ErrorType Call(Object * const context,
                                     T ref);
 
 
-    ErrorManagement::ErrorType Call(Object *context);
+    ErrorManagement::ErrorType Call(Object * const context);
     /**
      * TODO
      * */

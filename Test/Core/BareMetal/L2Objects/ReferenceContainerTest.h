@@ -70,7 +70,7 @@ public:
      * @brief Tests the TestGetClassProperties function.
      * @return true if ClassProperties::GetName == "ReferenceContainer".
      */
-    
+
     bool TestGetClassProperties();
 
     /**

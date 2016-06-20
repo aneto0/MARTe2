@@ -51,7 +51,7 @@ void * GlobalObjectI::operator new(const osulong size) {
 }
 
 
-void GlobalObjectI::operator delete(void *p) {
+void GlobalObjectI::operator delete(void * p) {
     GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(p);
 }
 
