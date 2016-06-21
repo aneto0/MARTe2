@@ -83,13 +83,13 @@ int32 ClassMethodsRegistryItem::FindFunction(const char8 * const name,
         }
 
         //must include the "::" before the class name
-        bool found = (tokenSize >= (nameSize + 2u));
+        found = (tokenSize >= (nameSize + 2u));
         if (found) {
             cursor = &list[(tokenSize - nameSize) - 2u];
             found = (cursor[0] == ':') && (cursor[1] == ':');
             cursor = &cursor[2];
             if (found) {
-                found = (functionIndex < minIndex) ? (false) : (StringHelper::CompareN(cursor, name, nameSize) == 0);
+                found = (functionIndex >= minIndex) && (StringHelper::CompareN(cursor, name, nameSize) == 0);
             }
         }
 
@@ -98,7 +98,7 @@ int32 ClassMethodsRegistryItem::FindFunction(const char8 * const name,
 
         if (!found) {
             functionIndex++;
-            list = &list[tokenSize];
+            list = &list[tokenSize+1];
             listSize = StringHelper::Length(list);
         }
     }
