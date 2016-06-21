@@ -39,8 +39,34 @@ namespace MARTe {
 /**
  * @brief Template version of ClassRegistryItem.
  */
-template<typename T>
+template<typename T, bool AddDefaultObjectBuilder=true>
 class DLL_API ClassRegistryItemT: public ClassRegistryItem {
+
+public:
+    /**
+     * @brief Singleton access to the database.
+     * @return a reference to the database.
+     */
+    static inline ClassRegistryItem *Instance();
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~ClassRegistryItemT();
+private:
+    /**
+     * @brief Constructor.
+     */
+    ClassRegistryItemT(ClassProperties &classProperties_in);
+};
+
+
+
+/**
+ * @brief Template version of ClassRegistryItem.
+ */
+template<typename T>
+class DLL_API ClassRegistryItemT<T, false>: public ClassRegistryItem {
 
 public:
     /**
@@ -64,8 +90,8 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template<typename T>
-ClassRegistryItem *ClassRegistryItemT<T>::Instance() {
+template<typename T, bool AddDefaultObjectBuilder>
+ClassRegistryItem *ClassRegistryItemT<T, AddDefaultObjectBuilder>::Instance() {
     static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
     if (instance == NULL_PTR(ClassRegistryItem *)) {
         ClassRegistryItem::Instance(instance, T::classProperties);
@@ -81,12 +107,29 @@ ClassRegistryItem *ClassRegistryItemT<T>::Instance() {
 }
 
 template<typename T>
-ClassRegistryItemT<T>::~ClassRegistryItemT() {
+ClassRegistryItem *ClassRegistryItemT<T, false>::Instance() {
+    static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
+    if (instance == NULL_PTR(ClassRegistryItem *)) {
+        ClassRegistryItem::Instance(instance, T::classProperties);
+        /* The next line, i.e. the instantiation of a static ObjectBuilderT
+         * is necessary to check if only the introspection has been registered
+         * for a class that could not inherit from Object.
+         */
+        static ObjectBuilder invalidObjectBuilder;
+        instance->SetObjectBuilder(&invalidObjectBuilder);
+    }
+    return instance;
+}
+
+
+
+template<typename T, bool AddDefaultObjectBuilder>
+ClassRegistryItemT<T, AddDefaultObjectBuilder>::~ClassRegistryItemT() {
 
 }
 
-template<typename T>
-ClassRegistryItemT<T>::ClassRegistryItemT(ClassProperties &classProperties_in) :
+template<typename T, bool AddDefaultObjectBuilder>
+ClassRegistryItemT<T, AddDefaultObjectBuilder>::ClassRegistryItemT(ClassProperties &classProperties_in) :
         ClassRegistryItem(classProperties_in) {
 }
 

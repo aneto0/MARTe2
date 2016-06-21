@@ -38,23 +38,27 @@
 
 namespace MARTe {
 /**
- * TODO
- * */
+ * @brief Template of ObjectBuilder implementing a default memory allocation for
+ * the new instance of a MARTe::Object descendant.
+ * @tparam T is a descendant of MARTe::Object.
+ */
 template<typename T>
 class ObjectBuilderT: public ObjectBuilder {
 
 public:
     /**
-     * TODO
-     * */
+     * @brief Constructor. Registers itself in the ClassRegistryItem if the registered class.
+     */
     ObjectBuilderT();
     /**
-     * TODO
-     * */
+     * @brief Destructor.
+     */
     virtual ~ObjectBuilderT();
     /**
-     * TODO
-     * */
+     * @brief Creates a new instance of the template type inheriting from MARTe::Object.
+     * @param[in] heap is the heap where the memory for the new instance must be allocated.
+     * @return a NULL pointer to the new created instance.
+     */
     Object *Build(HeapI* const heap) const;
 
 };

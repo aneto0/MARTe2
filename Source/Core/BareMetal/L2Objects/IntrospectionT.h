@@ -73,15 +73,15 @@ public:
 #define INTROSPECTION_MEMBER_INDEX(className, memberName) \
     (intptr)(&(((className *)0)->memberName))
 
-/**
- * @brief Retrieves the member size.
- */
+                /**
+                 * @brief Retrieves the member size.
+                 */
 #define INTROSPECTION_MEMBER_SIZE(className, memberName) \
     sizeof(((className *)0)->memberName)
 
- /**
-  * @brief Creates a static instance of IntrospectionEntry with the provided inputs.
-  */
+                /**
+                 * @brief Creates a static instance of IntrospectionEntry with the provided inputs.
+                 */
 #define DECLARE_CLASS_MEMBER(className, memberName, type, modifierString, attributeString ) \
     static const MARTe::IntrospectionEntry className ## _ ## memberName ## _introspectionEntry =   \
     MARTe::IntrospectionEntry(                                                                     \
@@ -93,22 +93,23 @@ public:
         INTROSPECTION_MEMBER_INDEX(className, memberName)                                   \
     )
 
-/**
- * @brief Creates a static instance of Introspection with the provided inputs.
- */
+                /**
+                 * @brief Creates a static instance of Introspection with the provided inputs.
+                 */
 #define DECLARE_CLASS_INTROSPECTION(className, introEntryArray) \
     static MARTe::IntrospectionT<className> className ## _ ## introspection(introEntryArray, sizeof(className));
 
-
-/**
- * @brief Registers the introspection for a struct or a class not inheriting from Object.
- */
+                /**
+                 * @brief Registers the introspection for a struct or a class not inheriting from Object.
+                 * @details It is no possible build the registered class by name finding it in the ClassRegistryDatabase
+                 * because the ObjectBuilder will return a null pointer (the class or struct is not inheriting from Object)
+                 */
 #define DECLARE_STRUCT_INTROSPECTION(structName, introEntryArray)                                                              \
-class structName ## _Registrable: public Object {                                                                              \
+class structName ## _Registrable {                                                                              \
 public:                                                                                                                        \
     static MARTe::ClassProperties classProperties;                                                                             \
     static MARTe::ClassRegistryItem * GetClassRegistryItem_Static() {                                                          \
-        return ClassRegistryItemT<structName ## _Registrable>::Instance();                                                    \
+        return ClassRegistryItemT<structName ## _Registrable, false>::Instance();                                                    \
     }                                                                                                                          \
 };                                                                                                                             \
 MARTe::ClassProperties structName ## _Registrable::classProperties                                                             \
