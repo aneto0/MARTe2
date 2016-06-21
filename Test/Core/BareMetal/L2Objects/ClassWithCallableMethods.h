@@ -65,18 +65,18 @@ public:
     /**
      * consumes input from a ReferenceContainer
      */
-    bool MethodX(MARTe::ReferenceContainer& data);
-    bool MethodX();
+    bool MethodWithInputReferenceContainer(MARTe::ReferenceContainer& data);
+    bool MethodWithInputReferenceContainer();
 
     /**
      * produces output into a ReferenceContainer
      */
-    bool MethodY(MARTe::ReferenceContainer& data);
+    bool MethodWithOutputReferenceContainer(MARTe::ReferenceContainer& data);
 
     /**
      * consumes/produces from/into a ReferenceContainer
      */
-    bool MethodZ(MARTe::ReferenceContainer& data);
+    bool MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer& data);
 
     /**
      * consumes input from an integer
@@ -94,7 +94,7 @@ public:
     bool MethodWithInputOutputInteger(int& data);
 };
 
-CLASS_METHOD_REGISTER(ClassWithCallableMethods, &ClassWithCallableMethods::MethodK, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))(&ClassWithCallableMethods::MethodX), &ClassWithCallableMethods::MethodY, &ClassWithCallableMethods::MethodZ)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, &ClassWithCallableMethods::MethodWithInputInteger, &ClassWithCallableMethods::MethodWithOutputInteger, &ClassWithCallableMethods::MethodWithInputOutputInteger, &ClassWithCallableMethods::MethodK, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods::MethodWithInputReferenceContainer, &ClassWithCallableMethods::MethodWithOutputReferenceContainer, &ClassWithCallableMethods::MethodWithInputOutputReferenceContainer)
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

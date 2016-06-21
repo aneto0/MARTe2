@@ -63,18 +63,18 @@ bool ClassWithCallableMethods::MethodK(MARTe::ReferenceContainer& data) {
     return false;
 }
 
-bool ClassWithCallableMethods::MethodX(MARTe::ReferenceContainer& data) {
+bool ClassWithCallableMethods::MethodWithInputReferenceContainer(MARTe::ReferenceContainer& data) {
     bool result= true;
     MARTe::Reference obj = data.Find("TestObject");
     result &= obj.IsValid();
     return result;
 }
 
-bool ClassWithCallableMethods::MethodX() {
-    return true;
+bool ClassWithCallableMethods::MethodWithInputReferenceContainer() {
+    return false;
 }
 
-bool ClassWithCallableMethods::MethodY(MARTe::ReferenceContainer& data) {
+bool ClassWithCallableMethods::MethodWithOutputReferenceContainer(MARTe::ReferenceContainer& data) {
     bool result= true;
     bool status;
     MARTe::Reference obj("Object");
@@ -83,7 +83,7 @@ bool ClassWithCallableMethods::MethodY(MARTe::ReferenceContainer& data) {
     return result;
 }
 
-bool ClassWithCallableMethods::MethodZ(MARTe::ReferenceContainer& data) {
+bool ClassWithCallableMethods::MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer& data) {
     bool result= true;
     {
         bool status;

@@ -408,7 +408,7 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         if (success) {
             ErrorManagement::ErrorType status;
             ClassWithCallableMethods context;
-            status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodX", params);
+            status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodWithInputReferenceContainer", params);
             result &= status;
         }
         else {
@@ -420,7 +420,7 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         ClassWithCallableMethods context;
         ReferenceContainer params;
         Reference obj;
-        status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodY", params);
+        status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodWithOutputReferenceContainer", params);
         result &= status;
         obj = params.Find("TestObject2");
         result &= obj.IsValid();
@@ -435,7 +435,7 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
             ClassWithCallableMethods context;
             Reference objDel;
             Reference objNew;
-            status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodZ", params);
+            status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodWithInputOutputReferenceContainer", params);
             result &= status;
             objDel = params.Find("TestObject");
             result &= !objDel.IsValid();
