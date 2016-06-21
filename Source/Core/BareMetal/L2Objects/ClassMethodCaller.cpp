@@ -54,19 +54,19 @@ ClassMethodCaller::~ClassMethodCaller() {
 //the call methods should inherits by one of the following
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object * const context) {
-    return ErrorManagement::NoError;
+    return ErrorManagement::UnsupportedFeature;
 }
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object * const context,
                                   int32& x) {
-    return ErrorManagement::NoError;
+    return ErrorManagement::UnsupportedFeature;
 }
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object * const context,
                                   ReferenceContainer & x) {
-    return ErrorManagement::NoError;
+    return ErrorManagement::UnsupportedFeature;
 }
 
 }

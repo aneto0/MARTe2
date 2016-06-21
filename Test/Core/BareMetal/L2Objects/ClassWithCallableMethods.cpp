@@ -34,7 +34,6 @@
 #include "ClassWithCallableMethods.h"
 #include "ClassMethodsRegistryItem.h"
 #include "Reference.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

@@ -39,38 +39,78 @@
 
 namespace MARTe {
 
-
 /**
- * @brief
+ * @brief Automatic overload of ClassMethodCaller methods using templates.
+ *
+ * @details Registers and calls a class method taking one parameter.
+ * @tparam className is the class owning the registered method.
+ * @tparam argType1 is the type of the input parameter to be passed as the class method argument
  */
 template<typename className, typename argType1 = void>
 class ClassMethodCallerT: public ClassMethodCaller {
 public:
 
+    /**
+     * @brief Constructor from a class method with one input parameter.
+     * @param[in] f is a pointer to the class method.
+     */
     ClassMethodCallerT(bool (className::*f)(argType1));
 
+    /**
+     * @brief Destructor.
+     */
     virtual ~ClassMethodCallerT();
 
+    /**
+     * @brief Calls the class method.
+     * @param[in] context is the object which must call the method.
+     * @param[in] ref is the class method argument.
+     * @return ErrorManagement::FatalError if the class method returns false, ErrorManagement::NoError if it returns true.
+     */
     virtual ErrorManagement::ErrorType Call(Object * context,
                                             argType1 ref);
 
 private:
+
+    /**
+     * Pointer to the class method
+     */
     bool (className::*pFun)(argType1);
 
 };
 
-// specialization to call methods without parameters
+/**
+ * @brief Automatic overload of ClassMethodCaller methods using templates.
+ *
+ * @details Registers and calls a class method without arguments
+ * @tparam className is the class owning the registered method.
+ */
 template<typename className>
 class ClassMethodCallerT<className> : public ClassMethodCaller {
 public:
 
+    /**
+     * @brief Constructor from a class method without arguments.
+     * @param[in] f is a pointer to the class method.
+     */
     ClassMethodCallerT(bool (className::*f)());
 
+    /**
+     * @brief Destructor.
+     */
     virtual ~ClassMethodCallerT();
 
+    /**
+     * @brief Calls the class method.
+     * @param[in] context is the object which must call the method.
+     * @return ErrorManagement::FatalError if the class method returns false, ErrorManagement::NoError if it returns true.
+     */
     virtual ErrorManagement::ErrorType Call(Object * context);
 
 private:
+    /**
+     * Pointer to the class method
+     */
     bool (className::*pFun)();
 
 };
@@ -133,7 +173,6 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, argType1>::Call(Object 
     }
     return err;
 }
-
 
 }
 

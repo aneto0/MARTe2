@@ -37,7 +37,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 /**
- * TODO
+ * @brief Template version of ClassRegistryItem.
  */
 template<typename T>
 class DLL_API ClassRegistryItemT: public ClassRegistryItem {
@@ -46,14 +46,16 @@ public:
     /**
      * @brief Singleton access to the database.
      * @return a reference to the database.
-     * TODO
      */
     static inline ClassRegistryItem *Instance();
 
+    /**
+     * @brief Destructor.
+     */
     virtual ~ClassRegistryItemT();
 private:
     /**
-     * TODO
+     * @brief Constructor.
      */
     ClassRegistryItemT(ClassProperties &classProperties_in);
 };

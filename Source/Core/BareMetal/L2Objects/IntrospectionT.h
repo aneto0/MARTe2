@@ -40,14 +40,14 @@
 
 namespace MARTe {
 /**
- * TODO
+ * @brief Template version of Introspection.
  */
 template<class T>
 class IntrospectionT: public Introspection {
 public:
 
     /**
-     * TODO
+     * @brief
      */
     IntrospectionT(const IntrospectionEntry ** const introspectionListIn,
                    const uint32 classSizeIn) :
@@ -55,8 +55,9 @@ public:
 
         ClassRegistryItem *cri;
         cri = T::GetClassRegistryItem_Static();
-        if (cri != NULL)
+        if (cri != NULL) {
             cri->SetIntrospection(this);
+        }
 
     }
 };
@@ -67,20 +68,20 @@ public:
 /*---------------------------------------------------------------------------*/
 
 /**
- * This macro retrieves the member address with respect to the class begin.
+ * @brief Retrieves the member address with respect to the class begin.
  */
 #define INTROSPECTION_MEMBER_INDEX(className, memberName) \
     (intptr)(&(((className *)0)->memberName))
 
 /**
- * This macro retrieves the member size.
+ * @brief Retrieves the member size.
  */
 #define INTROSPECTION_MEMBER_SIZE(className, memberName) \
     sizeof(((className *)0)->memberName)
 
-/**
- * This macro creates a static instance of IntrospectionEntry with the provided inputs.
- */
+ /**
+  * @brief Creates a static instance of IntrospectionEntry with the provided inputs.
+  */
 #define DECLARE_CLASS_MEMBER(className, memberName, type, modifierString, attributeString ) \
     static const MARTe::IntrospectionEntry className ## _ ## memberName ## _introspectionEntry =   \
     MARTe::IntrospectionEntry(                                                                     \
@@ -93,13 +94,17 @@ public:
     )
 
 /**
- * This macro creates a static instance of Introspection with the provided inputs.
+ * @brief Creates a static instance of Introspection with the provided inputs.
  */
 #define DECLARE_CLASS_INTROSPECTION(className, introEntryArray) \
     static MARTe::IntrospectionT<className> className ## _ ## introspection(introEntryArray, sizeof(className));
 
+
+/**
+ * @brief Registers the introspection for a struct or a class not inheriting from Object.
+ */
 #define DECLARE_STRUCT_INTROSPECTION(structName, introEntryArray)                                                              \
-class structName ## _Registrable: public Object {                                                                          \
+class structName ## _Registrable: public Object {                                                                              \
 public:                                                                                                                        \
     static MARTe::ClassProperties classProperties;                                                                             \
     static MARTe::ClassRegistryItem * GetClassRegistryItem_Static() {                                                          \

@@ -42,53 +42,95 @@
 namespace MARTe {
 
 class ClassRegistryItem;
+
 /**
- * TODO
- * */
+ * @brief A list of a class callable methods.
+ */
 class ClassMethodsRegistryItem: public LinkedListable {
 
 public:
+
     /**
-     * TODO
-     * */
+     * @brief Constructor.
+     * @details Passing a list of class methods, the ClassMethodInterfaceMapper array will be automatically built
+     * and passed as the constructor input. The constructor adds this object in ClassRegistryItem passed in input.
+     * All the methods have to belong to the class we want to register, otherwise at the moment of calling the function
+     * the CallFunction(*) will return ErrorManagement::UnsupportedFeature.
+     * @param[in] cri is the ClassRegistryItem where this object has to be added to.
+     * @param[in] functionTable_in is the list of ClassMethodInterfaceMapper, each one capable to store and call one
+     * class method.
+     * @param[in] functionNames_in is a string containing all the class methods names. The syntax for this string
+     * has to be "ClassName::FunctionName1, ClassName::FunctionName2, ...". ClassName it is not forced to be the same
+     * name of the class to be registered because can be also the name of an ancestor of this class.
+     * Example (registering virtual function):\n
+     * Assume we have the inheritance chain A<--B<--C and the virtual function A::f() reimplemented in B::f() but not in C.
+     * Registering A::f() in the ClassRegistryItem of the class C, means that when calling CallFunction(C* x) the implementation will be
+     * the one defined in B, namely B::f() will be called because of the polimorphism.
+     * Example (registering non virtual function):\n
+     * Assume we have the inheritance chain A<--B<--C and the non-virtual function A::f() implemented also in B::f() but not in C.
+     * Registering A::f() in the ClassRegistryItem of the class C, means that when calling CallFunction(C* x) the implementation will be
+     * the one defined in A, namely A::f(). Registering B::f() in the ClassRegistryItem of C, the implementation will be the one defined
+     * in B::f() also passing a pointer to C in the CallFunction. At last, registering C::f(), CallFunction(C* x) will return UnsupportedFeature
+     * because C::f() it has not been defined.
+     */
     ClassMethodsRegistryItem(ClassRegistryItem * const cri,
                              ClassMethodInterfaceMapper * const functionTable_In,
                              const char8 * const functionNames_In);
 
     /**
-     * TODO
+     * @brief Destructor.
      */
     virtual ~ClassMethodsRegistryItem();
 
     /**
-     * TODO
-     * */
+     * @brief Calls the function with one argument.
+     * @param[in] context is the object which must call the class method.
+     * @param[in] name is the name of the class method to be called. The name has to be
+     * only the name of the function without any extra mangling.
+     * @param[in,out] is the class method argument.
+     * @return ErrorManagement::UnsupportedFeature if \a name does not match with any of the names in the
+     * function names list or if the class method does not belong to \a context. ErrorManagement::FatalError
+     * will be returned if the class method returns false, ErrorManagemenr::NoError if it returns true.
+     */
+    ErrorManagement::ErrorType CallFunction(Object * const context,
+                                            const char8 * const name);
+
+    /**
+     * @brief Calls the function with one argument.
+     * @param[in] context is the object which must call the class method.
+     * @param[in] name is the name of the class method to be called. The name has to be
+     * only the name of the function without any extra mangling.
+     * @param[in,out] is the class method argument.
+     * @return ErrorManagement::UnsupportedFeature if \a name does not match with any of the names in the
+     * function names list or if the class method does not belong to \a context. ErrorManagement::FatalError
+     * will be returned if the class method returns false, ErrorManagemenr::NoError if it returns true.
+     * @tparam argType is the type of the argument to pass to the class method.
+     */
     template<typename argType>
     ErrorManagement::ErrorType CallFunction(Object * const context,
                                             const char8 * const name,
                                             argType ref);
 
-    ErrorManagement::ErrorType CallFunction(Object * const context,
-                                            const char8 * const name);
-
 private:
 
     /**
-     * TODO
-     * */
-    int Find(const char8 *name);
-    /**
-     * TODO
-     * */
-    ClassMethodInterfaceMapper *FindFunction(const char8 *name);
+     * @brief Finds the class method name in input in the class method names list.
+     * @param[in] name is the name of the class method (without any mangling)
+     * to be searched in the names list.
+     * @return the index of the class method pointer in the table if \a name is found in the list,
+     * -1 otherwise.
+     */
+    int32 FindFunction(const char8 * const name,
+                       int32 minIndex);
 
     /**
-     * TODO
-     * */
+     * The array of objects used to call the class methods.
+     */
     ClassMethodInterfaceMapper * const functionTable;
+
     /**
-     * TODO
-     * */
+     * The class method names list.
+     */
     CCString functionNames;
 
 };
@@ -97,9 +139,6 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * TODO
- * */
 template<typename argType>
 ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * context,
                                                                   const char8 *name,
@@ -113,22 +152,45 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * conte
         returnValue.parametersError = true;
     }
 
-    ClassMethodInterfaceMapper * fmp = NULL;
-    if (returnValue.NoError()) {
-        fmp = FindFunction(name);
-        if (fmp == NULL) {
-            returnValue.unsupportedFeature = true;
+    ClassMethodInterfaceMapper * fmp = NULL_PTR(ClassMethodInterfaceMapper *);
+    int32 minIndex = 0;
+    int32 functionIndex = 0;
+    while (functionIndex >= 0) {
+        if (returnValue.NoError()) {
+            functionIndex = FindFunction(name, minIndex);
+            if (functionIndex >= 0) {
+                fmp = &functionTable[functionIndex];
+            }
+            else {
+                returnValue.unsupportedFeature = true;
+            }
+        }
 
+        if (returnValue.NoError()) {
+            /*lint -e{613} .The NULL checking has been done before entering here*/
+            returnValue = fmp->Call<argType>(context, ref);
+            if (returnValue.unsupportedFeature == true) {
+                // allow function overload, try again to search!!
+                minIndex = functionIndex + 1;
+            }
+            else {
+                //the function has been executed.. exit
+                functionIndex = -1;
+            }
         }
     }
-
-    if (returnValue.NoError()) {
-        returnValue = fmp->Call<argType>(context, ref);
-    }
-
     return returnValue;
 }
 
+/**
+ * @brief Macro used to register automatically a list of class methods in the ClassRegistryItem (and in the ClassRegistryDatabase).
+ * @details Passing a list of class method pointers, this macro automatically creates the list of function names. To find the function
+ * in the list it is only necessary that the function name (without mangling) is enclosed between a ':' and a ',' or '\0'. For instance
+ * putting "(bool (*)())A::f1(),B::f2()" the find function will match the functions f1 and f2. It is possible to register two different
+ * functions with the same name (if a class overloads a method).
+ * @param[in] C is the class name.
+ * @param[in] ... list of class methods.
+ */
 #define CLASS_METHOD_REGISTER(C,...)\
     static MARTe::ClassMethodInterfaceMapper C ## __ClassMethodsInterfaceMapper[] = {__VA_ARGS__}; \
     static /*const*/ MARTe::ClassMethodsRegistryItem C ## __ClassMethodsRegistryItem(C::GetClassRegistryItem_Static(),C ## __ClassMethodsInterfaceMapper,#__VA_ARGS__);

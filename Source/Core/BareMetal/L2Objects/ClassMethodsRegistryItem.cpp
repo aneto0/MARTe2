@@ -42,60 +42,6 @@
 
 namespace MARTe {
 
-ClassMethodsRegistryItem::~ClassMethodsRegistryItem() {
-    /*
-     * TODO
-     */
-}
-
-/**
- * TODO
- * */
-int32 ClassMethodsRegistryItem::Find(const char8 * const name) {
-    const char8 *list = functionNames;
-
-    uint32 nameSize = StringHelper::Length(name);
-    uint32 listSize = StringHelper::Length(list);
-
-    bool notFound = true;
-    int32 functionIndex = 0;
-    while ((listSize > nameSize) && notFound) {
-        char8 first;
-        //Skipping until nameSize characters forward there is a comma
-        do {
-            first = list[0];
-            list = &list[1];
-        }
-        while ((list[nameSize] != ',') && (list[nameSize] != '\0'));
-
-        //Matching of function,
-        // the string is found if the strings are equal and the the list finishes with a "0" or a ","
-        notFound = (StringHelper::CompareN(list, name, nameSize) != 0) || (first != ':');
-
-        if (notFound) {
-            functionIndex++;
-            list = &list[nameSize];
-            listSize = StringHelper::Length(list);
-        }
-    }
-    if (notFound) {
-        functionIndex = -1;
-    }
-    return functionIndex;
-}
-
-/**
- * TODO
- * */
-ClassMethodInterfaceMapper *ClassMethodsRegistryItem::FindFunction(const char8 * const name) {
-    int32 functionIndex = Find(name);
-    ClassMethodInterfaceMapper *fmp = NULL_PTR(ClassMethodInterfaceMapper *);
-    if (functionIndex >= 0) {
-        fmp = &functionTable[functionIndex];
-    }
-    return fmp;
-}
-
 /**
  * TODO
  * */
@@ -111,6 +57,57 @@ ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem * const cri
     }
 }
 
+ClassMethodsRegistryItem::~ClassMethodsRegistryItem() {
+    /*
+     * TODO
+     */
+}
+
+int32 ClassMethodsRegistryItem::FindFunction(const char8 * const name,
+                                             int32 minIndex) {
+
+    const char8 *list = functionNames;
+
+    uint32 nameSize = StringHelper::Length(name);
+    uint32 listSize = StringHelper::Length(list);
+
+    bool found = false;
+    int32 functionIndex = 0;
+    while ((listSize > nameSize) && (!found)) {
+        //Skipping until nameSize characters forward there is a comma
+        uint32 tokenSize = 0u;
+        const char8 *cursor = list;
+        while ((cursor[0] != ',') && (cursor[0] != '\0')) {
+            cursor = &cursor[1];
+            tokenSize++;
+        }
+
+        //must include the "::" before the class name
+        bool found = (tokenSize >= (nameSize + 2u));
+        if (found) {
+            cursor = &list[(tokenSize - nameSize) - 2u];
+            found = (cursor[0] == ':') && (cursor[1] == ':');
+            cursor = &cursor[2];
+            if (found) {
+                found = (functionIndex < minIndex) ? (false) : (StringHelper::CompareN(cursor, name, nameSize) == 0);
+            }
+        }
+
+        //Matching of function,
+        // the string is found if the strings are equal and the the list finishes with a "0" or a ","
+
+        if (!found) {
+            functionIndex++;
+            list = &list[tokenSize];
+            listSize = StringHelper::Length(list);
+        }
+    }
+    if (!found) {
+        functionIndex = -1;
+    }
+    return functionIndex;
+}
+
 ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * const context,
                                                                   const char8 * const name) {
     ErrorManagement::ErrorType returnValue;
@@ -123,19 +120,32 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * const
     }
 
     ClassMethodInterfaceMapper * fmp = NULL_PTR(ClassMethodInterfaceMapper *);
-    if (returnValue.NoError()) {
-        fmp = FindFunction(name);
-        if (fmp == NULL) {
-            returnValue.unsupportedFeature = true;
+    int32 minIndex = 0;
+    int32 functionIndex = 0;
+    while (functionIndex >= 0) {
+        if (returnValue.NoError()) {
+            functionIndex = FindFunction(name, minIndex);
+            if (functionIndex >= 0) {
+                fmp = &functionTable[functionIndex];
+            }
+            else {
+                returnValue.unsupportedFeature = true;
+            }
+        }
 
+        if (returnValue.NoError()) {
+            /*lint -e{613} .The NULL checking has been done before entering here*/
+            returnValue = fmp->Call(context);
+            if (returnValue.unsupportedFeature == true) {
+                // allow function overload, try again to search!!
+                minIndex = functionIndex + 1;
+            }
+            else {
+                //the function has been executed.. exit
+                functionIndex = -1;
+            }
         }
     }
-
-    if (returnValue.NoError()) {
-        /*lint -e{613} .The NULL checking has been done before entering here*/
-        returnValue = fmp->Call(context);
-    }
-
     return returnValue;
 }
 
