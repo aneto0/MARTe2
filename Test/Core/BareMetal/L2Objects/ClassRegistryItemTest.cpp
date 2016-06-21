@@ -373,7 +373,7 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         ClassWithCallableMethods context;
         ReferenceContainer params;
         ErrorManagement::ErrorType status;
-        status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodK", params);
+        status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "FaultyMethod", params);
         result &= status.functionError;
     }
     {

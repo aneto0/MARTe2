@@ -60,13 +60,13 @@ public:
     /**
      * Method which simulates an error execution (i.e. returns false)
      */
-    bool MethodK(MARTe::ReferenceContainer& data);
+    bool FaultyMethod(MARTe::ReferenceContainer& data);
 
     /**
      * consumes input from a ReferenceContainer
      */
     bool MethodWithInputReferenceContainer(MARTe::ReferenceContainer& data);
-    bool MethodWithInputReferenceContainer();
+//    bool MethodWithInputReferenceContainer();
 
     /**
      * produces output into a ReferenceContainer
@@ -94,7 +94,7 @@ public:
     bool MethodWithInputOutputInteger(int& data);
 };
 
-CLASS_METHOD_REGISTER(ClassWithCallableMethods, &ClassWithCallableMethods::MethodWithInputInteger, &ClassWithCallableMethods::MethodWithOutputInteger, &ClassWithCallableMethods::MethodWithInputOutputInteger, &ClassWithCallableMethods::MethodK, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods::MethodWithInputReferenceContainer, &ClassWithCallableMethods::MethodWithOutputReferenceContainer, &ClassWithCallableMethods::MethodWithInputOutputReferenceContainer)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, &ClassWithCallableMethods::MethodWithInputInteger, &ClassWithCallableMethods::MethodWithOutputInteger, &ClassWithCallableMethods::MethodWithInputOutputInteger, &ClassWithCallableMethods::FaultyMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods::MethodWithInputReferenceContainer, &ClassWithCallableMethods::MethodWithOutputReferenceContainer, &ClassWithCallableMethods::MethodWithInputOutputReferenceContainer)
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

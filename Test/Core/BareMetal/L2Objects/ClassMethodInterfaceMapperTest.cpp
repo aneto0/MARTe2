@@ -61,7 +61,7 @@ bool ClassMethodCallerTest::TestCall() {
     using namespace MARTe;
     bool result = true;
     {
-        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodK);
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::FaultyMethod);
         ClassWithCallableMethods context;
         ReferenceContainer params;
         ErrorManagement::ErrorType status;
@@ -128,7 +128,7 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
     using namespace MARTe;
     bool result = true;
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodK);
+        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::FaultyMethod);
         ClassWithCallableMethods context;
         ReferenceContainer params;
         ErrorManagement::ErrorType status;
