@@ -69,7 +69,7 @@ bool ClassMethodCallerTest::TestCall() {
         result &= status.functionError;
     }
     {
-        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodX);
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodWithInputReferenceContainer);
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
@@ -85,7 +85,7 @@ bool ClassMethodCallerTest::TestCall() {
         }
     }
     {
-        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodY);
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodWithOutputReferenceContainer);
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
@@ -96,7 +96,7 @@ bool ClassMethodCallerTest::TestCall() {
         result &= obj.IsValid();
     }
     {
-        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodZ);
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodWithInputOutputReferenceContainer);
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
@@ -163,7 +163,7 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         result &= (params == (30 + 5));
     }
     {
-        ClassMethodInterfaceMapper target((bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))(&ClassWithCallableMethods::MethodX));
+        ClassMethodInterfaceMapper target((bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))(&ClassWithCallableMethods::MethodWithInputReferenceContainer));
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
@@ -179,7 +179,7 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         }
     }
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodY);
+        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithOutputReferenceContainer);
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
@@ -190,7 +190,7 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         result &= obj.IsValid();
     }
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodZ);
+        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputOutputReferenceContainer);
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
