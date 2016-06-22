@@ -106,8 +106,8 @@ namespace {
 class ClassWithCallableMethods1: public ClassWithCallableMethods {};
 class ClassWithCallableMethods2: public ClassWithCallableMethods {};
 
-CLASS_METHOD_REGISTER(ClassWithCallableMethods1, &ClassWithCallableMethods1::FaultyMethod, (bool (ClassWithCallableMethods1::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods1::MethodWithInputReferenceContainer, &ClassWithCallableMethods1::MethodWithOutputReferenceContainer, &ClassWithCallableMethods1::MethodWithInputOutputReferenceContainer)
-CLASS_METHOD_REGISTER(ClassWithCallableMethods2, &ClassWithCallableMethods2::FaultyMethod, (bool (ClassWithCallableMethods2::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::MethodWithInputReferenceContainer, &ClassWithCallableMethods2::MethodWithOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer)
+//CLASS_METHOD_REGISTER(ClassWithCallableMethods1, &ClassWithCallableMethods1::FaultyMethod, (bool (ClassWithCallableMethods1::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods1::MethodWithInputReferenceContainer, &ClassWithCallableMethods1::MethodWithOutputReferenceContainer, &ClassWithCallableMethods1::MethodWithInputOutputReferenceContainer)
+//CLASS_METHOD_REGISTER(ClassWithCallableMethods2, &ClassWithCallableMethods2::FaultyMethod, (bool (ClassWithCallableMethods2::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::MethodWithInputReferenceContainer, &ClassWithCallableMethods2::MethodWithOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer)
 
 }
 
@@ -131,8 +131,8 @@ bool ClassMethodsRegistryItemTest::TestConstructor() {
     using namespace MARTe;
     bool result = false;
     ClassRegistryItem* const cri = ClassRegistryItemT<ClassWithCallableMethods1>::Instance();
-    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods2::MethodWithInputInteger, &ClassWithCallableMethods2::MethodWithOutputInteger, &ClassWithCallableMethods2::MethodWithInputOutputInteger, &ClassWithCallableMethods2::FaultyMethod, &ClassWithCallableMethods2::MethodWithInputReferenceContainer, &ClassWithCallableMethods2::MethodWithOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::OverloadedMethod };
-    const char* names = "ClassWithCallableMethods2::MethodWithInputInteger, ClassWithCallableMethods2::MethodWithOutputInteger, ClassWithCallableMethods2::MethodWithInputOutputInteger, ClassWithCallableMethods2::FaultyMethod, ClassWithCallableMethods2::MethodWithInputReferenceContainer, ClassWithCallableMethods2::MethodWithOutputReferenceContainer, ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::OverloadedMethod";
+    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods2::MethodWithInputInteger, &ClassWithCallableMethods2::MethodWithOutputInteger, &ClassWithCallableMethods2::MethodWithInputOutputInteger, &ClassWithCallableMethods2::FaultyMethod, &ClassWithCallableMethods2::MethodWithInputReferenceContainer, &ClassWithCallableMethods2::MethodWithOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputIntegerByCopy, &ClassWithCallableMethods2::MethodWithInputReferenceContainerByCopy, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::OverloadedMethod };
+    const char* names = "&ClassWithCallableMethods2::MethodWithInputInteger, &ClassWithCallableMethods2::MethodWithOutputInteger, &ClassWithCallableMethods2::MethodWithInputOutputInteger, &ClassWithCallableMethods2::FaultyMethod, &ClassWithCallableMethods2::MethodWithInputReferenceContainer, &ClassWithCallableMethods2::MethodWithOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputIntegerByCopy, &ClassWithCallableMethods2::MethodWithInputReferenceContainerByCopy, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::OverloadedMethod";
     ClassMethodsRegistryItem target(cri, cmim, names);
     result = (target.Size() > 0);
     return result;
@@ -142,8 +142,8 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
     using namespace MARTe;
     bool result = true;
     ClassRegistryItem* const cri = ClassRegistryItemT<ClassWithCallableMethods2>::Instance();
-    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods2::MethodWithInputInteger, &ClassWithCallableMethods2::MethodWithOutputInteger, &ClassWithCallableMethods2::MethodWithInputOutputInteger, &ClassWithCallableMethods2::FaultyMethod, &ClassWithCallableMethods2::MethodWithInputReferenceContainer, &ClassWithCallableMethods2::MethodWithOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::OverloadedMethod };
-    const char* names = "ClassWithCallableMethods2::MethodWithInputInteger, ClassWithCallableMethods2::MethodWithOutputInteger, ClassWithCallableMethods2::MethodWithInputOutputInteger, ClassWithCallableMethods2::FaultyMethod, ClassWithCallableMethods2::MethodWithInputReferenceContainer, ClassWithCallableMethods2::MethodWithOutputReferenceContainer, ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::OverloadedMethod";
+    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods2::MethodWithInputInteger, &ClassWithCallableMethods2::MethodWithOutputInteger, &ClassWithCallableMethods2::MethodWithInputOutputInteger, &ClassWithCallableMethods2::FaultyMethod, &ClassWithCallableMethods2::MethodWithInputReferenceContainer, &ClassWithCallableMethods2::MethodWithOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputIntegerByCopy, &ClassWithCallableMethods2::MethodWithInputReferenceContainerByCopy, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::OverloadedMethod };
+    const char* names = "&ClassWithCallableMethods2::MethodWithInputInteger, &ClassWithCallableMethods2::MethodWithOutputInteger, &ClassWithCallableMethods2::MethodWithInputOutputInteger, &ClassWithCallableMethods2::FaultyMethod, &ClassWithCallableMethods2::MethodWithInputReferenceContainer, &ClassWithCallableMethods2::MethodWithOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputIntegerByCopy, &ClassWithCallableMethods2::MethodWithInputReferenceContainerByCopy, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::OverloadedMethod";
 
     /*
      * Warning about the registered methods with a cast like:
@@ -253,6 +253,28 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
             result &= !obj.IsValid();
             obj = params.Find("TestObject2");
             result &= obj.IsValid();
+        }
+        else {
+            result = false;
+        }
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods2 context;
+        int params = 80;
+        status = target.CallFunction<int>(&context, "MethodWithInputIntegerByCopy", params);
+        result &= status;
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods2 context;
+        ReferenceContainer params;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
+        if (success) {
+            status = target.CallFunction<ReferenceContainer>(&context, "MethodWithInputReferenceContainerByCopy", params);
+            result &= status;
         }
         else {
             result = false;
@@ -369,6 +391,28 @@ bool ClassMethodsRegistryItemTest::TestCallFunction_WithMacroSupport() {
             result = false;
         }
     }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 80;
+        status = target->CallFunction<int>(&context, "MethodWithInputIntegerByCopy", params);
+        result &= status;
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
+        if (success) {
+            status = target->CallFunction<ReferenceContainer>(&context, "MethodWithInputReferenceContainerByCopy", params);
+            result &= status;
+        }
+        else {
+            result = false;
+        }
+    }
     return result;
 }
 
@@ -480,6 +524,28 @@ bool ClassMethodsRegistryItemTest::TestCallFunction2() {
                 result &= !obj.IsValid();
                 obj = params.Find("TestObject2");
                 result &= obj.IsValid();
+            }
+            else {
+                result = false;
+            }
+        }
+        {
+            ErrorManagement::ErrorType status;
+            ClassWithCallableMethods context;
+            int params = 80;
+            status = target->CallRegisteredMethod<int>("MethodWithInputIntegerByCopy", params);
+            result &= status;
+        }
+        {
+            ErrorManagement::ErrorType status;
+            ClassWithCallableMethods context;
+            ReferenceContainer params;
+            Reference obj("Object");
+            bool success;
+            success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
+            if (success) {
+                status = target->CallRegisteredMethod<ReferenceContainer>("MethodWithInputReferenceContainerByCopy", params);
+                result &= status;
             }
             else {
                 result = false;

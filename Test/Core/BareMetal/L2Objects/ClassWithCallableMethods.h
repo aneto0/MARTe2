@@ -108,6 +108,19 @@ public:
      */
     bool MethodWithInputOutputInteger(int& data);
 
+    /**
+     * consumes input from an integer
+     */
+    bool MethodWithInputIntegerByCopy(int data);
+
+    /**
+     * consumes input from a ReferenceContainer
+     */
+    bool MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer data);
+
+    /**
+     * Returns a string with the name and signature of the last executed method
+     */
     MARTe::StreamString GetLastMethodExecuted();
 
 private:
@@ -115,7 +128,7 @@ private:
     MARTe::StreamString lastMethodExecuted;
 };
 
-CLASS_METHOD_REGISTER(ClassWithCallableMethods, &ClassWithCallableMethods::MethodWithInputInteger, &ClassWithCallableMethods::MethodWithOutputInteger, &ClassWithCallableMethods::MethodWithInputOutputInteger, &ClassWithCallableMethods::FaultyMethod, &ClassWithCallableMethods::MethodWithInputReferenceContainer, &ClassWithCallableMethods::MethodWithOutputReferenceContainer, &ClassWithCallableMethods::MethodWithInputOutputReferenceContainer, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods::OverloadedMethod)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, &ClassWithCallableMethods::MethodWithInputInteger, &ClassWithCallableMethods::MethodWithOutputInteger, &ClassWithCallableMethods::MethodWithInputOutputInteger, &ClassWithCallableMethods::FaultyMethod, &ClassWithCallableMethods::MethodWithInputReferenceContainer, &ClassWithCallableMethods::MethodWithOutputReferenceContainer, &ClassWithCallableMethods::MethodWithInputOutputReferenceContainer, &ClassWithCallableMethods::MethodWithInputIntegerByCopy, &ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods::OverloadedMethod)
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

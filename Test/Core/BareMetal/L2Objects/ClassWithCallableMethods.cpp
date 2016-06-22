@@ -125,6 +125,17 @@ bool ClassWithCallableMethods::MethodWithInputOutputInteger(int& data) {
     return true;
 }
 
+bool ClassWithCallableMethods::MethodWithInputIntegerByCopy(int data) {
+    return (data == 80);
+}
+
+bool ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer data) {
+    bool result= true;
+    MARTe::Reference obj = data.Find("TestObjectIntoReferenceContainerByCopy");
+    result &= obj.IsValid();
+    return result;
+}
+
 MARTe::StreamString ClassWithCallableMethods::GetLastMethodExecuted() {
     return lastMethodExecuted;
 }

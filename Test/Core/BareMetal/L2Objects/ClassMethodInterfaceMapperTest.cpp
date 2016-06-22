@@ -62,21 +62,73 @@ bool ClassMethodCallerTest::TestCall() {
     bool result = true;
     {
         ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::FaultyMethod);
+        ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
         status = target.Call(&context, params);
         result &= status.functionError;
     }
     {
+        ClassMethodCallerT<ClassWithCallableMethods> target((bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods::OverloadedMethod);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        status = target.Call(&context);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod()");
+    }
+    {
+        ClassMethodCallerT<ClassWithCallableMethods, int&> target((bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods::OverloadedMethod);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 0;
+        status = target.Call(&context, params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(int&)");
+    }
+    {
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target((bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods::OverloadedMethod);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        status = target.Call(&context, params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
+    }
+    {
+        ClassMethodCallerT<ClassWithCallableMethods, int&> target(&ClassWithCallableMethods::MethodWithInputInteger);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 10;
+        status = target.Call(&context, params);
+        result &= status;
+    }
+    {
+        ClassMethodCallerT<ClassWithCallableMethods, int&> target(&ClassWithCallableMethods::MethodWithOutputInteger);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 0;
+        status = target.Call(&context, params);
+        result &= status;
+        result &= (params == 20);
+    }
+    {
+        ClassMethodCallerT<ClassWithCallableMethods, int&> target(&ClassWithCallableMethods::MethodWithInputOutputInteger);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 30;
+        status = target.Call(&context, params);
+        result &= status;
+        result &= (params == (30 + 5));
+    }
+    {
         ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodWithInputReferenceContainer);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
         success = params.Insert("TestObject", obj);
         if (success) {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
             status = target.Call(&context, params);
             result &= status;
         }
@@ -97,19 +149,43 @@ bool ClassMethodCallerTest::TestCall() {
     }
     {
         ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodWithInputOutputReferenceContainer);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
         success = params.Insert("TestObject", obj);
         if (success) {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
             status = target.Call(&context, params);
             result &= status;
             obj = params.Find("TestObject");
             result &= !obj.IsValid();
             obj = params.Find("TestObject2");
             result &= obj.IsValid();
+        }
+        else {
+            result = false;
+        }
+    }
+    {
+        ClassMethodCallerT<ClassWithCallableMethods, int> target(&ClassWithCallableMethods::MethodWithInputIntegerByCopy);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 80;
+        status = target.Call(&context, params);
+        result &= status;
+    }
+    {
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer> target(&ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
+        if (success) {
+            status = target.Call(&context, params);
+            result &= status;
         }
         else {
             result = false;
@@ -229,6 +305,30 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
             result &= !obj.IsValid();
             obj = params.Find("TestObject2");
             result &= obj.IsValid();
+        }
+        else {
+            result = false;
+        }
+    }
+    {
+        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputIntegerByCopy);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 80;
+        status = target.Call<int>(&context, params);
+        result &= status;
+    }
+    {
+        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy);
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
+        if (success) {
+            status = target.Call<ReferenceContainer>(&context, params);
+            result &= status;
         }
         else {
             result = false;

@@ -468,6 +468,28 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
             result = false;
         }
     }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 80;
+        status = target->CallRegisteredMethod<int>(&context, "MethodWithInputIntegerByCopy", params);
+        result &= status;
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
+        if (success) {
+            status = target->CallRegisteredMethod<ReferenceContainer>(&context, "MethodWithInputReferenceContainerByCopy", params);
+            result &= status;
+        }
+        else {
+            result = false;
+        }
+    }
     return result;
 }
 
