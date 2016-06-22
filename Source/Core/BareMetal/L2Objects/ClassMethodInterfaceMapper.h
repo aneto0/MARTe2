@@ -43,34 +43,67 @@ namespace MARTe {
 
 class Object;
 
+
+/**
+ * @brief Implementation of an object which stores and calls a class method.
+ * @details The supported class methods to be registered can be without arguments or
+ * with one argument.
+ */
 class ClassMethodInterfaceMapper {
 
 public:
 
     /**
-     * TODO
-     * */
+     * @brief Default constructor.
+     * @post
+     *   Call() == ErrorManagement::UnsupportedFeature.
+     */
     ClassMethodInterfaceMapper();
 
+    /**
+     * @brief Constructor by a class method with no arguments.
+     * @tparam C is the class name.
+     */
     template<typename C>
     ClassMethodInterfaceMapper(bool (C::*f)());
 
-
+    /**
+     * @brief Constructor by a class method with one argument.
+     * @tparam C is the class name.
+     * @tparam T is the type name of the class method argument.
+     */
     template<typename C, typename T>
     ClassMethodInterfaceMapper(bool (C::*f)(T));
 
-
+    /**
+     * @brief Calls the function with no arguments.
+     * @param[in] context is the object which must call the function.
+     * @return ErrorManagement::UnsupportedFeature if no function has been registered, ErrorManagement::FatalError
+     * if the class method returns false, ErrorManagement::NoError if it returns true.
+     */
     ErrorManagement::ErrorType Call(Object * const context);
 
+    /**
+     * @brief Calls the function with one argument.
+     * @tparam T is the type name of the class method argument.
+     * @param[in] context is the object which must call the function.
+     * @param[in,out] ref is the class method argument.
+     * @return ErrorManagement::UnsupportedFeature if no function has been registered, ErrorManagement::FatalError
+     * if the class method returns false, ErrorManagement::NoError if it returns true.
+     */
     template<typename T>
     ErrorManagement::ErrorType Call(Object * const context,
                                     T ref);
 
     /**
-     * TODO
-     * */
+     * @brief Destructor
+     */
     virtual ~ClassMethodInterfaceMapper();
 private:
+
+    /**
+     * The class method caller
+     */
     ClassMethodCaller *caller;
 
 };

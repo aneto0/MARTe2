@@ -94,6 +94,11 @@ public:
      */
     void SetUniqueIdentifier(const ClassUID &uid);
 
+
+    /**
+     * @brief Retrieves the class size.
+     * @return the class size (number of bytes).
+     */
     uint32 GetSize() const;
 
 private:

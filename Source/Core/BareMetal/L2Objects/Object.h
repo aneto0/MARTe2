@@ -39,7 +39,7 @@
 #include "StructuredDataI.h"
 #include "AnyType.h"
 #include "ErrorType.h"
-
+#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                        Macro definitions                                  */
 /*---------------------------------------------------------------------------*/
@@ -119,17 +119,22 @@
      * is necessary because it creates an instance of ClassRegistryItem and                                            \
      * registers it into the ClassRegistryDatabase.                                                                    \
      */                                                                                                                \
-    static MARTe::ClassRegistryItem* className ## _privateItem = MARTe::ClassRegistryItemT<className>::Instance();            \
+    static MARTe::ClassRegistryItem* className ## _privateItem = MARTe::ClassRegistryItemT<className>::Instance();     \
                                                                                                                        \
     /*  TODO                                                                                                           \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                              \
-        return MARTe::ClassRegistryItemT<className>::Instance();                                                              \
+        return MARTe::ClassRegistryItemT<className>::Instance();                                                       \
     }                                                                                                                  \
     /*  TODO                                                                                                           \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem() const {                                               \
-        return GetClassRegistryItem_Static();                                                                          \
+        className x;                                                                                                   \
+        MARTe::ClassRegistryItem *ret=NULL_PTR(MARTe::ClassRegistryItem *);                                            \
+        if(MARTe::StringHelper::Compare(typeid(x).name(), typeid(*this).name())==0){                                   \
+            ret= GetClassRegistryItem_Static();                                                                        \
+        }                                                                                                              \
+        return ret;                                                                                                    \
     }                                                                                                                  \
     /*                                                                                                                 \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
@@ -137,9 +142,9 @@
     void * className::operator new(const size_t size, MARTe::HeapI* const heap) {                                      \
         void *obj = NULL_PTR(void *);                                                                                  \
         if (heap != NULL) {                                                                                            \
-            obj = heap->Malloc(static_cast<MARTe::uint32>(size));                                                             \
+            obj = heap->Malloc(static_cast<MARTe::uint32>(size));                                                      \
         } else {                                                                                                       \
-            obj = MARTe::HeapManager::Malloc(static_cast<MARTe::uint32>(size));                                               \
+            obj = MARTe::HeapManager::Malloc(static_cast<MARTe::uint32>(size));                                        \
         }                                                                                                              \
         GetClassRegistryItem_Static()->IncrementNumberOfInstances();                                                   \
         return obj;                                                                                                    \

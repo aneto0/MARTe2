@@ -114,13 +114,21 @@ public:
      */
     virtual const char8 * const GetClassName() const;
 
-
+    /**
+     * @brief Cleanup the database.
+     */
     void CleanUp();
 
 protected:
 
+    /**
+     * @brief Locks the internal spin-lock mutex semaphore.
+     */
     bool Lock();
 
+    /**
+     * @brief Unlocks the internal spin-lock mutex semaphore.
+     */
     void UnLock();
 
 
@@ -138,7 +146,6 @@ private:
      */
     LinkedListHolderT<ClassRegistryItem> classDatabase;
 
-    //StaticList<ClassRegistryItem *,512> classDatabase;
 
     /**
      * Protects the concurrent access to the database

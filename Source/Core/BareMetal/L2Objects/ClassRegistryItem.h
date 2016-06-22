@@ -101,7 +101,9 @@ public:
     const ClassProperties *GetClassProperties() const;
 
     /**
-     * todo
+     * @brief Adds the introspection data.
+     * @param[in] introspectioIn is the pointer to the object containing the informations
+     * about the registered class attributes.
      */
     void SetIntrospection(const Introspection * const introspectionIn);
 
@@ -124,11 +126,16 @@ public:
     const LoadableLibrary *GetLoadableLibrary() const;
 
     /**
-     * todo
+     * @brief Adds a list of registered class methods.
+     * @param[in] classMethodRecord contains a list of registered class methods.
      */
     void RegisterMethods(ClassMethodsRegistryItem * const classMethodRecord);
+
     /**
-     * todo
+     * @brief Sets the object builder defining the way to allocate the memory when creating a new
+     * instance of the registered class.
+     * @param[in] objectBuilderIn is the object builder to be used to build new instances of the
+     * registered class.
      */
     void SetObjectBuilder(const ObjectBuilder * const objectBuilderIn);
 
@@ -147,11 +154,26 @@ public:
     void SetUniqueIdentifier(const ClassUID &uid);
 
 
+    /**
+     * @brief Calls a registered method of the registered class without arguments.
+     * @param[in] object is the object which must call the method.
+     * @param[in] methodName is the name of the class method to be called.
+     * @return ErrorManagement::UnsupportedFeature if \a methodName is not registered or
+     * the class has not declared the method. ErrorManagement::FatalError if the class method
+     * returns false, ErrorManagement::NoError if it returns true.
+     */
     ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
                                                     CCString methodName);
 
     /**
-     * TODO
+     * @brief Calls a registered method of the registered class with one argument.
+     * @param[in] object is the object which must call the method.
+     * @param[in] methodName is the name of the class method to be called.
+     * @param[in] parameters is the class method argument.
+     * @return ErrorManagement::UnsupportedFeature if \a methodName is not registered or
+     * the class has not declared the method. ErrorManagement::FatalError if the class method
+     * returns false, ErrorManagement::NoError if it returns true.
+     * @tparam argType is the type of the class method argument.
      */
     template<typename argType>
     ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
@@ -200,8 +222,8 @@ private:
     const Introspection *introspection;
 
     /**
-     * TODO
-     * */
+     * A list of lists of registered class methods.
+     */
     LinkedListHolderT<ClassMethodsRegistryItem, false> classMethods;
 
 };
