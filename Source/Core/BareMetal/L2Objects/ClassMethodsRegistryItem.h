@@ -152,11 +152,12 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * conte
         returnValue.parametersError = true;
     }
 
-    ClassMethodInterfaceMapper * fmp = NULL_PTR(ClassMethodInterfaceMapper *);
-    int32 minIndex = 0;
-    int32 functionIndex = 0;
-    while (functionIndex >= 0) {
-        if (returnValue.NoError()) {
+    if (returnValue.NoError()) {
+        ClassMethodInterfaceMapper * fmp = NULL_PTR(ClassMethodInterfaceMapper *);
+        int32 minIndex = 0;
+        int32 functionIndex = 0;
+        while (functionIndex >= 0) {
+            returnValue=true;
             functionIndex = FindFunction(name, minIndex);
             if (functionIndex >= 0) {
                 fmp = &functionTable[functionIndex];
@@ -164,21 +165,22 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * conte
             else {
                 returnValue.unsupportedFeature = true;
             }
-        }
 
-        if (returnValue.NoError()) {
-            /*lint -e{613} .The NULL checking has been done before entering here*/
-            returnValue = fmp->Call<argType>(context, ref);
-            if (returnValue.unsupportedFeature == true) {
-                // allow function overload, try again to search!!
-                minIndex = functionIndex + 1;
-            }
-            else {
-                //the function has been executed.. exit
-                functionIndex = -1;
+            if (returnValue.NoError()) {
+                /*lint -e{613} .The NULL checking has been done before entering here*/
+                returnValue = fmp->Call<argType>(context, ref);
+                if (returnValue.unsupportedFeature == true) {
+                    // allow function overload, try again to search!!
+                    minIndex = functionIndex + 1;
+                }
+                else {
+                    //the function has been executed.. exit
+                    functionIndex = -1;
+                }
             }
         }
     }
+
     return returnValue;
 }
 
