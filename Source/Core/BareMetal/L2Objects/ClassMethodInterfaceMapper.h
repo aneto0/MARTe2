@@ -43,7 +43,6 @@ namespace MARTe {
 
 class Object;
 
-
 /**
  * @brief Implementation of an object which stores and calls a class method.
  * @details The supported class methods to be registered can be without arguments or
@@ -68,12 +67,22 @@ public:
     ClassMethodInterfaceMapper(bool (C::*f)());
 
     /**
-     * @brief Constructor by a class method with one argument.
+     * @brief Constructor by a class method with one argument passed by copy.
+     * @param[in] f is a pointer to the class method to be registered.
      * @tparam C is the class name.
      * @tparam T is the type name of the class method argument.
      */
     template<typename C, typename T>
     ClassMethodInterfaceMapper(bool (C::*f)(T));
+
+    /**
+     * @brief Constructor by a class method with one argument passed by reference.
+     * @param[in] f is a pointer to the class method to be registered.
+     * @tparam C is the class name.
+     * @tparam T is the type name of the class method argument.
+     */
+    template<typename C, typename T>
+    ClassMethodInterfaceMapper(bool (C::*f)(T&));
 
     /**
      * @brief Calls the function with no arguments.
@@ -106,22 +115,33 @@ private:
      */
     ClassMethodCaller *caller;
 
+    /**
+     * Specify if the method argument is passed by copy
+     */
+    bool byCopy;
+
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
 template<typename className>
 ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)()) {
     caller = new ClassMethodCallerT<className>(f);
+    byCopy = false;
 }
-
 
 template<typename className, typename T>
 ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)(T)) {
     caller = new ClassMethodCallerT<className, T>(f);
+    byCopy = true;
+}
+
+template<typename className, typename T>
+ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)(T&)) {
+    caller = new ClassMethodCallerT<className, T&>(f);
+    byCopy = false;
 }
 
 template<typename T>
@@ -130,7 +150,12 @@ ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object *context,
     ErrorManagement::ErrorType ret;
     ret.unsupportedFeature = true;
     if (caller != NULL ) {
-        ret = caller->Call(context,ref);
+        if(byCopy) {
+            ret = caller->Call(context,ref, byCopy);
+        }
+        else{
+            ret = caller->Call(context,ref);
+        }
     }
     return ret;
 }

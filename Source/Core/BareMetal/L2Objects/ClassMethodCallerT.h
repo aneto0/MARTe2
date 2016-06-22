@@ -62,13 +62,23 @@ public:
     virtual ~ClassMethodCallerT();
 
     /**
-     * @brief Calls the class method.
+     * @brief Calls the class method with one argument passed by reference.
      * @param[in] context is the object which must call the method.
      * @param[in] ref is the class method argument.
      * @return ErrorManagement::FatalError if the class method returns false, ErrorManagement::NoError if it returns true.
      */
     virtual ErrorManagement::ErrorType Call(Object * context,
                                             argType1 ref);
+
+    /**
+     * @brief Calls the class method with one argument passed by copy.
+     * @param[in] context is the object which must call the method.
+     * @param[in] ref is the class method argument.
+     * @return ErrorManagement::FatalError if the class method returns false, ErrorManagement::NoError if it returns true.
+     */
+    virtual ErrorManagement::ErrorType Call(Object * context,
+                                            argType1 ref,
+                                            bool ByCopy);
 
 private:
 
@@ -162,6 +172,22 @@ ClassMethodCallerT<className, argType1>::~ClassMethodCallerT() {
 template<typename className, typename argType1>
 ErrorManagement::ErrorType ClassMethodCallerT<className, argType1>::Call(Object * context,
                                                                          argType1 ref) {
+    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+
+    className *actualContext = dynamic_cast<className *>(context);
+    if (actualContext == NULL_PTR(className *)) {
+        err = ErrorManagement::UnsupportedFeature;
+    }
+    else {
+        (actualContext->*pFun)(ref) ? (err = ErrorManagement::NoError) : (err = ErrorManagement::FatalError);
+    }
+    return err;
+}
+
+template<typename className, typename argType1>
+ErrorManagement::ErrorType ClassMethodCallerT<className, argType1>::Call(Object * context,
+                                                                         argType1 ref,
+                                                                         bool ByCopy) {
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
 
     className *actualContext = dynamic_cast<className *>(context);

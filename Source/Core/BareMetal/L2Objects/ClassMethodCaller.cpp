@@ -31,7 +31,7 @@
 
 #include "ClassMethodCaller.h"
 #include "Object.h"
-
+#include "ReferenceContainer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -49,7 +49,6 @@ ClassMethodCaller::ClassMethodCaller() {
 ClassMethodCaller::~ClassMethodCaller() {
 }
 
-
 //All the prototypes must be available here because this is the object in the interface-mapper then
 //the call methods should inherits by one of the following
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
@@ -59,13 +58,27 @@ ErrorManagement::ErrorType ClassMethodCaller::Call(Object * const context) {
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object * const context,
-                                  int32& x) {
+                                                   int32& x) {
     return ErrorManagement::UnsupportedFeature;
 }
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object * const context,
-                                  ReferenceContainer & x) {
+                                                   ReferenceContainer & x) {
+    return ErrorManagement::UnsupportedFeature;
+}
+
+/*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
+ErrorManagement::ErrorType ClassMethodCaller::Call(Object * const context,
+                                                   int32 x,
+                                                   bool byCopy) {
+    return ErrorManagement::UnsupportedFeature;
+}
+
+/*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
+ErrorManagement::ErrorType ClassMethodCaller::Call(Object * const context,
+                                                   ReferenceContainer x,
+                                                   bool byCopy) {
     return ErrorManagement::UnsupportedFeature;
 }
 
