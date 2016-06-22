@@ -63,16 +63,27 @@ bool ClassWithCallableMethods::FaultyMethod(MARTe::ReferenceContainer& data) {
     return false;
 }
 
+bool ClassWithCallableMethods::OverloadedMethod() {
+    lastMethodExecuted = "OverloadedMethod()";
+    return true;
+}
+
+bool ClassWithCallableMethods::OverloadedMethod(int& data) {
+    lastMethodExecuted = "OverloadedMethod(int&)";
+    return true;
+}
+
+bool ClassWithCallableMethods::OverloadedMethod(MARTe::ReferenceContainer& data) {
+    lastMethodExecuted = "OverloadedMethod(MARTe::ReferenceContainer&)";
+    return true;
+}
+
 bool ClassWithCallableMethods::MethodWithInputReferenceContainer(MARTe::ReferenceContainer& data) {
     bool result= true;
     MARTe::Reference obj = data.Find("TestObject");
     result &= obj.IsValid();
     return result;
 }
-
-//bool ClassWithCallableMethods::MethodWithInputReferenceContainer() {
-//    return false;
-//}
 
 bool ClassWithCallableMethods::MethodWithOutputReferenceContainer(MARTe::ReferenceContainer& data) {
     bool result= true;
@@ -113,6 +124,10 @@ bool ClassWithCallableMethods::MethodWithOutputInteger(int& data) {
 bool ClassWithCallableMethods::MethodWithInputOutputInteger(int& data) {
     data = data + 5;
     return true;
+}
+
+MARTe::StreamString ClassWithCallableMethods::GetLastMethodExecuted() {
+    return lastMethodExecuted;
 }
 
 CLASS_REGISTER(ClassWithCallableMethods,"1.0")

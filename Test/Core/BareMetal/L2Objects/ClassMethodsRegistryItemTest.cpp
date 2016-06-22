@@ -248,6 +248,29 @@ bool ClassMethodsRegistryItemTest::TestCallFunction_WithMacroSupport() {
         result &= status.functionError;
     }
     {
+        ClassWithCallableMethods context;
+        ErrorManagement::ErrorType status;
+        status = target->CallFunction(&context, "OverloadedMethod");
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod()");
+    }
+    {
+        ClassWithCallableMethods context;
+        int params;
+        ErrorManagement::ErrorType status;
+        status = target->CallFunction<int&>(&context, "OverloadedMethod", params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(int&)");
+    }
+    {
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        ErrorManagement::ErrorType status;
+        status = target->CallFunction<ReferenceContainer&>(&context, "OverloadedMethod", params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
+    }
+    {
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         int params;
