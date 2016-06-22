@@ -43,19 +43,23 @@ namespace MARTe {
 class Object;
 
 /**
- * TODO
- * */
+ * @brief Implements an invalid object builder that can be re-implemented by descendants.
+ */
 class ObjectBuilder {
 public:
 
     /**
-     * TODO
-     * */
-    virtual Object *Build(HeapI* const heap) const = 0;
+     * @brief invalid object builder function.
+     * @param[in] heap is the heap where the memory for the new instance must be allocated.
+     * @return a NULL pointer to MARTe::Object.
+     */
+    virtual Object *Build(HeapI* const heap) const {
+        return NULL_PTR(Object *);
+    }
 
     /**
-     * TODO
-     * */
+     * @brief Destructor.
+     */
     virtual ~ObjectBuilder() {
     }
 };

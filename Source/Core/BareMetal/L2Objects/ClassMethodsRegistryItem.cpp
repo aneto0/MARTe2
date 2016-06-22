@@ -98,8 +98,10 @@ int32 ClassMethodsRegistryItem::FindFunction(const char8 * const name,
 
         if (!found) {
             functionIndex++;
-            list = &list[tokenSize+1];
-            listSize = StringHelper::Length(list);
+            if (list[tokenSize] != '\0') {
+                list = &list[tokenSize + 1];
+                listSize = StringHelper::Length(list);
+            }
         }
     }
     if (!found) {

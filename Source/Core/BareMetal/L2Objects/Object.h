@@ -64,17 +64,18 @@
  */
 #define CLASS_REGISTER_DECLARATION()                                                                                   \
     /*                                                                                                                 \
-     * TODO                                                                                                            \
+     * Contains the class basic informations (name, version, ...)                                                                                                            \
      */                                                                                                                \
      /*lint -e{1516} This function will be redeclared in descendants */                                                \
     static MARTe::ClassProperties classProperties;                                                                     \
     /*                                                                                                                 \
-     * TODO                                                                                                            \
+     * Collects all the class informations (Introspection, ClassProperties, ...) and the build function due to         \
+     * make new instances of the class in runtime                                                                      \
      */                                                                                                                \
      /*lint -e{1516} This function will be redeclared in descendants */                                                \
      virtual MARTe::ClassRegistryItem * GetClassRegistryItem() const ;                                                 \
     /*                                                                                                                 \
-     * TODO                                                                                                            \
+     * Retrieves the ClassRegistryItem static attribute                                                                \
      */                                                                                                                \
      /*lint -e{1511} This function will be redeclared in descendants */                                                \
      static MARTe::ClassRegistryItem * GetClassRegistryItem_Static()  ;                                                \
@@ -121,12 +122,12 @@
      */                                                                                                                \
     static MARTe::ClassRegistryItem* className ## _privateItem = MARTe::ClassRegistryItemT<className>::Instance();     \
                                                                                                                        \
-    /*  TODO                                                                                                           \
+    /*                                                                                                                 \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                              \
         return MARTe::ClassRegistryItemT<className>::Instance();                                                       \
     }                                                                                                                  \
-    /*  TODO                                                                                                           \
+    /*                                                                                                                 \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem() const {                                               \
         className x;                                                                                                   \
@@ -214,10 +215,21 @@ public:
 
     /**
      * @brief Default constructor. Sets the number of references to zero.
+     * @post
+     *   GetName() == copy.GetName()
+     *   NumberOfReference() == 0
+     *   IsDomain() == false
      */
     Object();
 
-
+    /**
+     * @brief Copy constructor.
+     * @param[in] copy is the Object to be copied.
+     * @post
+     *   GetName() == copy.GetName()
+     *   NumberOfReference() == 0
+     *   IsDomain() == false
+     */
     Object(const Object &copy);
 
 
@@ -356,13 +368,27 @@ public:
      */
     void SetName(const char8 * const newName);
 
+
     /**
-     * TODO
+     * @brief Calls a registered method without arguments.
+     * @param[in] methodName is the method name.
+     * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
+     * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
+     */
+    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName);
+
+
+    /**
+     * @brief Calls a registered method with one argument.
+     * @param[in] methodName is the method name.
+     * @param[in] parameters is the method argument
+     * @tparam argType is the method argument type
+     * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
+     * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
     template <typename argType>
     ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName,argType parameters);
 
-    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName);
 
     /*
      * @brief Returns the class properties associated with this class type.
