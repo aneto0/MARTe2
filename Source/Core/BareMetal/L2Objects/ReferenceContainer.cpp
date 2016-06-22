@@ -262,7 +262,7 @@ bool ReferenceContainer::Delete(Reference ref) {
 }
 
 bool ReferenceContainer::Delete(const char8 * const path) {
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::REMOVE | ReferenceContainerFilterMode::RECURSIVE, path);
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::REMOVE, path);
     ReferenceContainer result;
     //Locking is already done inside the Find
     Find(result, filter);
@@ -371,7 +371,7 @@ void ReferenceContainer::Find(ReferenceContainer &result,
 
 Reference ReferenceContainer::Find(const char8 * const path) {
     Reference ret;
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::SHALLOW, path);
     ReferenceContainer resultSingle;
     Find(resultSingle, filter);
     if (resultSingle.Size() > 0u) {

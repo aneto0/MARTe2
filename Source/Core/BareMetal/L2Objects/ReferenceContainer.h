@@ -216,7 +216,9 @@ private:
      */
     TimeoutType muxTimeout;
 
-
+    /**
+     * List used to destroy the database.
+     */
     LinkedListHolderT<ReferenceContainerNode> purgeList;
 };
 

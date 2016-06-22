@@ -67,23 +67,41 @@ public:
     virtual ErrorManagement::ErrorType Call(Object * const context);
 
     /**
-     * @brief Calls a class method with an integer in input.
+     * @brief Calls a class method with an integer in input passed by reference.
      * @param[in] context is the objects owning the method.
      * @param[in, out] x is the integer in input.
      * @return ErrorManagement::FatalError if the registered function returns false, ErrorManagement::NoError if it returns true.
      */
     virtual ErrorManagement::ErrorType Call(Object * const context,
-                            int32 &x);
+                                            int32 &x);
 
     /**
-     * @brief Calls a class method with a ReferenceContainer in input.
+     * @brief Calls a class method with a ReferenceContainer in input passed by reference.
      * @param[in] context is the objects owning the method.
      * @param[in, out] x is the ReferenceContainer in input.
      * @return ErrorManagement::FatalError if the registered function returns false, ErrorManagement::NoError if it returns true.
      */
     virtual ErrorManagement::ErrorType Call(Object * const context,
-                            ReferenceContainer & x);
+                                            ReferenceContainer & x);
 
+    /**
+     * @brief Calls a class method with an integer in input passed by copy.
+     * @param[in] context is the objects owning the method.
+     * @param[in, out] x is the integer in input.
+     * @return ErrorManagement::FatalError if the registered function returns false, ErrorManagement::NoError if it returns true.
+     */
+    virtual ErrorManagement::ErrorType Call(Object * const context,
+                                            int32 x,
+                                            bool byCopy);
+    /**
+     * @brief Calls a class method with a ReferenceContainer in input passed by copy.
+     * @param[in] context is the objects owning the method.
+     * @param[in, out] x is the ReferenceContainer in input.
+     * @return ErrorManagement::FatalError if the registered function returns false, ErrorManagement::NoError if it returns true.
+     */
+    virtual ErrorManagement::ErrorType Call(Object * const context,
+                                            ReferenceContainer x,
+                                            bool byCopy);
 };
 }
 /*---------------------------------------------------------------------------*/

@@ -41,13 +41,14 @@
 namespace MARTe {
 /**
  * @brief Template version of Introspection.
+ * @tparam T is the class described by this Introspection.
  */
 template<class T>
 class IntrospectionT: public Introspection {
 public:
 
     /**
-     * @brief
+     * @brief Constructor. Registers itself in the ClassRegistryItem.
      */
     IntrospectionT(const IntrospectionEntry ** const introspectionListIn,
                    const uint32 classSizeIn) :

@@ -39,7 +39,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 ReferenceContainerFilter::ReferenceContainerFilter() {
     occurrence = 0;
@@ -84,7 +84,7 @@ bool ReferenceContainerFilter::IsRecursive() const {
 }
 
 bool ReferenceContainerFilter::IsSearchAll() const {
-    return (occurrence == -1);
+    return (originallySetOccurrence == -1);
 }
 
 bool ReferenceContainerFilter::IsStorePath() const {
@@ -116,13 +116,12 @@ void ReferenceContainerFilter::SetOriginalSetOccurrence(const int32 occurrenceTo
 void ReferenceContainerFilter::SetMode(const uint32& modeToSet) {
     mode = modeToSet;
 
-    // unset the path bit
-    if (IsSearchAll()) {
-        mode &= ~(ReferenceContainerFilterMode::PATH);
-    }
-
     //set the recursive bit
     if (IsStorePath()) {
+        if (IsSearchAll()) {
+            REPORT_ERROR(ErrorManagement::Warning, "Cannot use PATH mode to search more than one reference. The filter will match the first occurrence");
+            originallySetOccurrence = 1;
+        }
         mode |= ReferenceContainerFilterMode::RECURSIVE;
     }
 }

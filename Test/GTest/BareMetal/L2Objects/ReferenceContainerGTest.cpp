@@ -85,11 +85,11 @@ TEST(ReferenceContainerGTest,TestSetTimeoutFinite) {
 /***********************************
  * TestFindFirstOccurrenceAlways   *
  ***********************************/
-TEST(ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceFilter) {
+/*TEST(ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(1, 0u, referenceContainerTest.leafB);
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceAlways(filter));
-}
+}*/
 
 TEST(ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceObject) {
     ReferenceContainerTest referenceContainerTest;
