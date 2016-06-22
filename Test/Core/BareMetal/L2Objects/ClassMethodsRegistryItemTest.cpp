@@ -131,8 +131,8 @@ bool ClassMethodsRegistryItemTest::TestConstructor() {
     using namespace MARTe;
     bool result = false;
     ClassRegistryItem* const cri = ClassRegistryItemT<ClassWithCallableMethods1>::Instance();
-    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods1::MethodWithInputInteger, &ClassWithCallableMethods1::FaultyMethod, (bool (ClassWithCallableMethods1::*)(MARTe::ReferenceContainer&))(&ClassWithCallableMethods1::MethodWithInputReferenceContainer), &ClassWithCallableMethods1::MethodWithOutputReferenceContainer, &ClassWithCallableMethods1::MethodWithInputOutputReferenceContainer };
-    const char* names = "ClassWithCallableMethods1::MethodWithInputInteger, ClassWithCallableMethods1::FaultyMethod, ClassWithCallableMethods1::MethodWithInputReferenceContainer, ClassWithCallableMethods1::MethodWithOutputReferenceContainer, ClassWithCallableMethods1::MethodWithInputOutputReferenceContainer";
+    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods2::MethodWithInputInteger, &ClassWithCallableMethods2::MethodWithOutputInteger, &ClassWithCallableMethods2::MethodWithInputOutputInteger, &ClassWithCallableMethods2::FaultyMethod, &ClassWithCallableMethods2::MethodWithInputReferenceContainer, &ClassWithCallableMethods2::MethodWithOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::OverloadedMethod };
+    const char* names = "ClassWithCallableMethods2::MethodWithInputInteger, ClassWithCallableMethods2::MethodWithOutputInteger, ClassWithCallableMethods2::MethodWithInputOutputInteger, ClassWithCallableMethods2::FaultyMethod, ClassWithCallableMethods2::MethodWithInputReferenceContainer, ClassWithCallableMethods2::MethodWithOutputReferenceContainer, ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::OverloadedMethod";
     ClassMethodsRegistryItem target(cri, cmim, names);
     result = (target.Size() > 0);
     return result;
@@ -142,22 +142,54 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
     using namespace MARTe;
     bool result = true;
     ClassRegistryItem* const cri = ClassRegistryItemT<ClassWithCallableMethods2>::Instance();
-    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods2::MethodWithInputInteger, &ClassWithCallableMethods2::MethodWithOutputInteger, &ClassWithCallableMethods2::MethodWithInputOutputInteger, &ClassWithCallableMethods2::FaultyMethod, (bool (ClassWithCallableMethods2::*)(MARTe::ReferenceContainer&))(&ClassWithCallableMethods2::MethodWithInputReferenceContainer), &ClassWithCallableMethods2::MethodWithOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer };
-    const char* names = "ClassWithCallableMethods2::MethodWithInputInteger, ClassWithCallableMethods2::MethodWithOutputInteger, ClassWithCallableMethods2::MethodWithInputOutputInteger, ClassWithCallableMethods2::FaultyMethod, ClassWithCallableMethods2::MethodWithInputReferenceContainer, ClassWithCallableMethods2::MethodWithOutputReferenceContainer, ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer";
+    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods2::MethodWithInputInteger, &ClassWithCallableMethods2::MethodWithOutputInteger, &ClassWithCallableMethods2::MethodWithInputOutputInteger, &ClassWithCallableMethods2::FaultyMethod, &ClassWithCallableMethods2::MethodWithInputReferenceContainer, &ClassWithCallableMethods2::MethodWithOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::OverloadedMethod };
+    const char* names = "ClassWithCallableMethods2::MethodWithInputInteger, ClassWithCallableMethods2::MethodWithOutputInteger, ClassWithCallableMethods2::MethodWithInputOutputInteger, ClassWithCallableMethods2::FaultyMethod, ClassWithCallableMethods2::MethodWithInputReferenceContainer, ClassWithCallableMethods2::MethodWithOutputReferenceContainer, ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods2::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::OverloadedMethod";
+
+    /*
+     * Warning about the registered methods with a cast like:
+     *
+     *   (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod
+     *
+     * If the method does not exist in the derived class, the cast must be refered to the base class, while the method to the derived one.
+     */
+
     ClassMethodsRegistryItem target(cri, cmim, names);
     {
+        ErrorManagement::ErrorType status;
         ClassWithCallableMethods2 context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
         status = target.CallFunction(&context, "NonRegisteredMethod", params);
         result &= status.unsupportedFeature;
     }
     {
+        ErrorManagement::ErrorType status;
         ClassWithCallableMethods2 context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
         status = target.CallFunction(&context, "FaultyMethod", params);
         result &= status.functionError;
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        status = target.CallFunction(&context, "OverloadedMethod");
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod()");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 0;
+        status = target.CallFunction<int&>(&context, "OverloadedMethod", params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(int&)");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        status = target.CallFunction<ReferenceContainer&>(&context, "OverloadedMethod", params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
     }
     {
         ErrorManagement::ErrorType status;
@@ -169,7 +201,7 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
     {
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods2 context;
-        int params;
+        int params = 0;
         status = target.CallFunction<int&>(&context, "MethodWithOutputInteger", params);
         result &= status;
         result &= (params == 20);
@@ -183,13 +215,13 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
         result &= (params == (30 + 5));
     }
     {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods2 context;
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
         success = params.Insert("TestObject", obj);
         if (success) {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods2 context;
             status = target.CallFunction<ReferenceContainer&>(&context, "MethodWithInputReferenceContainer", params);
             result &= status;
         }
@@ -208,13 +240,13 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
         result &= obj.IsValid();
     }
     {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods2 context;
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
         success = params.Insert("TestObject", obj);
         if (success) {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods2 context;
             status = target.CallFunction<ReferenceContainer&>(&context, "MethodWithInputOutputReferenceContainer", params);
             result &= status;
             obj = params.Find("TestObject");
@@ -234,38 +266,38 @@ bool ClassMethodsRegistryItemTest::TestCallFunction_WithMacroSupport() {
     bool result = true;
     ClassMethodsRegistryItem* const target = &ClassWithCallableMethods__ClassMethodsRegistryItem;
     {
+        ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
         status = target->CallFunction<ReferenceContainer&>(&context, "NonRegisteredMethod", params);
         result &= status.unsupportedFeature;
     }
     {
+        ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
         status = target->CallFunction<ReferenceContainer&>(&context, "FaultyMethod", params);
         result &= status.functionError;
     }
     {
-        ClassWithCallableMethods context;
         ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
         status = target->CallFunction(&context, "OverloadedMethod");
         result &= status;
         result &= (context.GetLastMethodExecuted() == "OverloadedMethod()");
     }
     {
-        ClassWithCallableMethods context;
-        int params;
         ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 0;
         status = target->CallFunction<int&>(&context, "OverloadedMethod", params);
         result &= status;
         result &= (context.GetLastMethodExecuted() == "OverloadedMethod(int&)");
     }
     {
+        ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
         status = target->CallFunction<ReferenceContainer&>(&context, "OverloadedMethod", params);
         result &= status;
         result &= (context.GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
@@ -273,15 +305,14 @@ bool ClassMethodsRegistryItemTest::TestCallFunction_WithMacroSupport() {
     {
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
-        int params;
-        params = 10;
+        int params = 10;
         status = target->CallFunction<int&>(&context, "MethodWithInputInteger", params);
         result &= status;
     }
     {
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
-        int params;
+        int params = 0;
         status = target->CallFunction<int&>(&context, "MethodWithOutputInteger", params);
         result &= status;
         result &= (params == 20);
@@ -295,13 +326,13 @@ bool ClassMethodsRegistryItemTest::TestCallFunction_WithMacroSupport() {
         result &= (params == (30 + 5));
     }
     {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
         success = params.Insert("TestObject", obj);
         if (success) {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
             status = target->CallFunction<ReferenceContainer&>(&context, "MethodWithInputReferenceContainer", params);
             result &= status;
         }
@@ -320,13 +351,13 @@ bool ClassMethodsRegistryItemTest::TestCallFunction_WithMacroSupport() {
         result &= obj.IsValid();
     }
     {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
         success = params.Insert("TestObject", obj);
         if (success) {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
             status = target->CallFunction<ReferenceContainer&>(&context, "MethodWithInputOutputReferenceContainer", params);
             result &= status;
             obj = params.Find("TestObject");
@@ -355,16 +386,39 @@ bool ClassMethodsRegistryItemTest::TestCallFunction2() {
     target = ordb->Find("+context");
     if (target.IsValid()) {
         {
-            ReferenceContainer params;
             ErrorManagement::ErrorType status;
+            ReferenceContainer params;
             status = target->CallRegisteredMethod("NonRegisteredMethod", params);
             result &= status.unsupportedFeature;
         }
         {
-            ReferenceContainer params;
             ErrorManagement::ErrorType status;
+            ReferenceContainer params;
             status = target->CallRegisteredMethod("FaultyMethod", params);
             result &= status.functionError;
+        }
+        {
+            ErrorManagement::ErrorType status;
+            ClassWithCallableMethods context;
+            status = target->CallRegisteredMethod("OverloadedMethod");
+            result &= status;
+            result &= (context.GetLastMethodExecuted() == "OverloadedMethod()");
+        }
+        {
+            ErrorManagement::ErrorType status;
+            ClassWithCallableMethods context;
+            int params = 0;
+            status = target->CallRegisteredMethod<int&>("OverloadedMethod", params);
+            result &= status;
+            result &= (context.GetLastMethodExecuted() == "OverloadedMethod(int&)");
+        }
+        {
+            ErrorManagement::ErrorType status;
+            ClassWithCallableMethods context;
+            ReferenceContainer params;
+            status = target->CallRegisteredMethod<ReferenceContainer&>("OverloadedMethod", params);
+            result &= status;
+            result &= (context.GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
         }
         {
             ErrorManagement::ErrorType status;
@@ -391,12 +445,12 @@ bool ClassMethodsRegistryItemTest::TestCallFunction2() {
             result &= (params == (30 + 5));
         }
         {
+            ErrorManagement::ErrorType status;
             ReferenceContainer params;
             Reference obj("Object");
             bool success;
             success = params.Insert("TestObject", obj);
             if (success) {
-                ErrorManagement::ErrorType status;
                 status = target->CallRegisteredMethod<ReferenceContainer&>("MethodWithInputReferenceContainer", params);
                 result &= status;
             }
@@ -414,12 +468,12 @@ bool ClassMethodsRegistryItemTest::TestCallFunction2() {
             result &= obj.IsValid();
         }
         {
+            ErrorManagement::ErrorType status;
             ReferenceContainer params;
             Reference obj("Object");
             bool success;
             success = params.Insert("TestObject", obj);
             if (success) {
-                ErrorManagement::ErrorType status;
                 status = target->CallRegisteredMethod<ReferenceContainer&>("MethodWithInputOutputReferenceContainer", params);
                 result &= status;
                 obj = params.Find("TestObject");

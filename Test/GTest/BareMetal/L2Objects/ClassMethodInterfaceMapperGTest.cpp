@@ -44,12 +44,12 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ClassMethodInterfaceMapperGTest,ClassMethodCallerTest__TestCallFunction) {
+TEST(ClassMethodInterfaceMapperGTest,ClassMethodCallerTest__TestCall) {
     ClassMethodCallerTest target;
     ASSERT_TRUE(target.TestCall());
 }
 
-TEST(ClassMethodInterfaceMapperGTest,ClassMethodInterfaceMapperTest__TestCallFunction) {
+TEST(ClassMethodInterfaceMapperGTest,ClassMethodInterfaceMapperTest__TestCall) {
     ClassMethodInterfaceMapperTest target;
     ASSERT_TRUE(target.TestCall());
 }

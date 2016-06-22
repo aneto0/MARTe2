@@ -363,31 +363,53 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
     bool result = true;
     ClassRegistryItem* target = ClassRegistryItemT<ClassWithCallableMethods>::Instance();
     {
+        ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
         status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "NonRegisteredMethod", params);
         result &= status.unsupportedFeature;
     }
     {
+        ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
         status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "FaultyMethod", params);
         result &= status.functionError;
     }
     {
-        int params;
-        params = 10;
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
+        status = target->CallRegisteredMethod(&context, "OverloadedMethod");
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod()");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 0;
+        status = target->CallRegisteredMethod<int&>(&context, "OverloadedMethod", params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(int&)");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "OverloadedMethod", params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 10;
         status = target->CallRegisteredMethod<int&>(&context, "MethodWithInputInteger", params);
         result &= status;
     }
     {
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
-        int params;
+        int params = 0;
         status = target->CallRegisteredMethod<int&>(&context, "MethodWithOutputInteger", params);
         result &= status;
         result &= (params == 20);
@@ -401,13 +423,13 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         result &= (params == (30 + 5));
     }
     {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
         success = params.Insert("TestObject", obj);
         if (success) {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
             status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodWithInputReferenceContainer", params);
             result &= status;
         }
@@ -426,13 +448,13 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         result &= obj.IsValid();
     }
     {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
         ReferenceContainer params;
         Reference obj("Object");
         bool success;
         success = params.Insert("TestObject", obj);
         if (success) {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
             Reference objDel;
             Reference objNew;
             status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodWithInputOutputReferenceContainer", params);
