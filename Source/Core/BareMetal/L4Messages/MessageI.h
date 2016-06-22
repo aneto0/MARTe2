@@ -37,7 +37,6 @@
 #include "ReferenceT.h"
 #include "ErrorType.h"
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -45,86 +44,94 @@
 namespace MARTe {
 
 /**
- * TODO
- * */
-class DLL_API MessageI  {
+ * @brief The interface which has to be injected in an Object giving it the skills for sending and receiving
+ * Messages.
+ * @details To implement a new MARTe::Object able to send and receive messages, it is necessary a declare a class which inherits from both
+ * Object and MessageI.
+ */
+class DLL_API MessageI {
 public:
 
+    /**
+     * @brief Constructor.
+     */
     MessageI();
 
-
+    /**
+     * @brief Destructor.
+     */
     virtual ~MessageI();
 
+    /**
+     * @brief Sends a Message to the destination (specified in Message).
+     * @details Depending on the flags to be read from \a message, this function can behave in synchronous or asynchronous mode,
+     * wait or not for a reply, ecc.
+     * If Message::ExpectsReply() == true then reply message will requested but not waited for
+     * if Message::ExpectsImmediateReply() == true then reply message will be waited for at the destination
+     * @param[in,out] message is the message to be sent. It can be modified if the destination re-sends it to the sender as a reply.
+     * @param[in] sender is the Object sending the message.
+
+     * @return
+     *   ErrorManagement::NoError() if the destination object is found and the called function returns true.
+     *   ErrorManagement::FatalError if the function to be called returns false.
+     *   ErrorManagement::UnsupportedFeature if the message was refused
+     *   ErrorManagement::Timeout if a wait for reply timesOut
+     *   ErrorManagement::CommunicationError if the reply was not produced when requested
+     *   ErrorManagement::ParametersError if the message is invalid or if sender is NULL and reply was expected
+     */
+    static ErrorManagement::ErrorType SendMessage(ReferenceT<Message> &message,
+                                                  const Object * const sender = NULL_PTR(Object *));
 
     /**
-     * TODO
-     * Finds the target object
-     * Calls the ReceiveMessage function of the target
-     * The sync/async behaviour depends on the flags set in the message
-     * by default: Reply is not expected here. Returns whenever possible
-     * if Message::flags.expectsReply= true          - Then reply message will requested but not waited for
-     * if Message::flags.expectsImmediateReply= true - Then reply message will be waited for at the destination
-     *
-     * returns AllOk() if everything went ok
-     * returns error.notUnsupportedFeature if the message was refused
-     * returns error.notTimeout if a wait for reply timesOut
-     * returns error.notCommunicationError if the reply was not produced when requested
-     * returns error.notParametersError of the message is invalid or if sender is NULL and reply was expected
-     * returns error.notCommunicationError if trying to send an immediate reply
-     *
-     * */
-    static ErrorManagement::ErrorType SendMessage( ReferenceT<Message> &message,const Object * const sender = NULL_PTR(Object *));
+     * @brief Marks the message to be sent requiring an immediate reply before sending it.
+     * @param[in,out] message is the message to be sent. It can be modified if the destination re-sends it to the sender as a reply.
+     * @param[in] sender is the Object sending the message.
+     * @param[in] maxWait is the maximum time allowed waiting the message reply.
+     */
+    static ErrorManagement::ErrorType SendMessageAndWaitReply(ReferenceT<Message> &message,
+                                                              const Object * const sender = NULL_PTR(Object *),
+                                                              const TimeoutType &maxWait = TTInfiniteWait);
 
     /**
-     * TODO
-     * Sets Message::maxWait
-     * Sets Message::flags.expectsImmediateReply and calls SendMessage
-     * Calls SendMessage. See SendMessage errors
-     * additional error.notCommunicationError is a reply to a reply is requested
-     * */
-    static ErrorManagement::ErrorType SendMessageAndWaitReply(ReferenceT<Message> &message,const Object * const sender = NULL_PTR(Object *), const TimeoutType &maxWait=TTInfiniteWait);
-
-    /**
-     * TODO
-     * Sets Message::flags.expectsReply and calls SendMessage
-     * Calls SendMessage. See SendMessage errors
-     * */
-    static ErrorManagement::ErrorType SendMessageAndExpectReplyLater(ReferenceT<Message> &message,const Object * const sender = NULL_PTR(Object*));
-
+     * @brief Marks the message to be sent requiring a late reply before sending it.
+     * @param[in,out] message is the message to be sent. It can be modified if the destination re-sends it to the sender as a reply.
+     * @param[in] sender is the Object sending the message.
+     */
+    static ErrorManagement::ErrorType SendMessageAndExpectReplyLater(ReferenceT<Message> &message,
+                                                                     const Object * const sender = NULL_PTR(Object*));
 
 protected:
 
     /**
-      * TODO
-      * Default message handling mechanism
-      * Handles the reception of a message
-      * By default simply calls SortMessage
-      * Can be overridden to implement message Queues etc...
-      * in the case of a specialised method where queued message handling is implemented
-      * when the immediate return message is requested then the wait is performed here and a timeout+communication error may be produced here
-     * */
-     virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
-
-     /**
-      * TODO
-      * Default message sorting mechanism
-      * By default checks if there are usable registered methods
-      * Otherwise calls HandleMessage.
-      * in the case of delayed reply, the reply is sent from here
-      * */
-     virtual ErrorManagement::ErrorType SortMessage(ReferenceT<Message> &message);
+     * @brief Default message handling mechanism.
+     * @details Handles the reception of a message and by default simply calls SortMessage(). Can be overridden to implement message Queues etc...
+     * @param[in,out] message is the received to be received.
+     * @return
+     *   ErrorManagement::NoError if the function specified in \a message is called correctly and returns true.
+     *   ErrorManagement::UnsupportedFeature if something goes wrong trying to call the registered function.
+     *
+     */
+    virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
 
     /**
-      * TODO
-      * Default message handling mechanism
-      * By default refuses messages returning false
+     * TODO
+     * Default message sorting mechanism
+     * By default checks if there are usable registered methods
+     * Otherwise calls HandleMessage.
+     * in the case of delayed reply, the reply is sent from here
      * */
-     virtual ErrorManagement::ErrorType HandleMessage(ReferenceT<Message> &message);
+    virtual ErrorManagement::ErrorType SortMessage(ReferenceT<Message> &message);
+
+    /**
+     * TODO
+     * Default message handling mechanism
+     * By default refuses messages returning false
+     * */
+    virtual ErrorManagement::ErrorType HandleMessage(ReferenceT<Message> &message);
 
 private:
 
-     static ReferenceT<MessageI> FindDestination(CCString destination);
-
+    static ReferenceT<MessageI> FindDestination(CCString destination);
 
 };
 
@@ -133,7 +140,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-
 #endif /* MESSAGEI_H_ */
-	
+

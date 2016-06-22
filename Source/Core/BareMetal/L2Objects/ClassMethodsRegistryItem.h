@@ -71,7 +71,7 @@ public:
      * Registering A::f() in the ClassRegistryItem of the class C, means that when calling CallFunction(C* x) the implementation will be
      * the one defined in A, namely A::f(). Registering B::f() in the ClassRegistryItem of C, the implementation will be the one defined
      * in B::f() also passing a pointer to C in the CallFunction. At last, registering C::f(), CallFunction(C* x) will return UnsupportedFeature
-     * because C::f() it has not been defined.
+     * because C::f() has not been defined.
      */
     ClassMethodsRegistryItem(ClassRegistryItem * const cri,
                              ClassMethodInterfaceMapper * const functionTable_In,

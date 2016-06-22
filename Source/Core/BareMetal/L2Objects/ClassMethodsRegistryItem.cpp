@@ -75,11 +75,28 @@ int32 ClassMethodsRegistryItem::FindFunction(const char8 * const name,
     int32 functionIndex = 0;
     while ((listSize > nameSize) && (!found)) {
         //Skipping until nameSize characters forward there is a comma
-        uint32 tokenSize = 0u;
+        uint32 fullTokenSize = 0u;
         const char8 *cursor = list;
+        //Matching of function,
+        // the string is found if the strings are equal and the the list finishes with a "0" or a ","
         while ((cursor[0] != ',') && (cursor[0] != '\0')) {
             cursor = &cursor[1];
-            tokenSize++;
+            fullTokenSize++;
+        }
+
+        //skip the ')' and the ' ' before the ','
+        uint32 tokenSize = fullTokenSize;
+        if (fullTokenSize > 0u) {
+            tokenSize--;
+            while (tokenSize > 0u) {
+                if ((list[tokenSize] == ')') || (list[tokenSize] == ' ')) {
+                    tokenSize--;
+                }
+                else {
+                    tokenSize++;
+                    break;
+                }
+            }
         }
 
         //must include the "::" before the class name
@@ -93,16 +110,13 @@ int32 ClassMethodsRegistryItem::FindFunction(const char8 * const name,
             }
         }
 
-        //Matching of function,
-        // the string is found if the strings are equal and the the list finishes with a "0" or a ","
-
         if (!found) {
             functionIndex++;
-            if (list[tokenSize] != '\0') {
-                list = &list[tokenSize + 1];
+            if (list[fullTokenSize] != '\0') {
+                list = &list[fullTokenSize + 1];
             }
             else {
-                list = &list[tokenSize];
+                list = &list[fullTokenSize];
             }
             listSize = StringHelper::Length(list);
         }
@@ -129,7 +143,7 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * const
         int32 minIndex = 0;
         int32 functionIndex = 0;
         while (functionIndex >= 0) {
-            returnValue=true;
+            returnValue = true;
             functionIndex = FindFunction(name, minIndex);
             if (functionIndex >= 0) {
                 fmp = &functionTable[functionIndex];
