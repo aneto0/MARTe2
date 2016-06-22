@@ -84,6 +84,9 @@ bool ObjectRegistryDatabaseTest::TestInstance() {
 bool ObjectRegistryDatabaseTest::TestFind() {
     ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
 
+    if (!test.IsValid()) {
+        return false;
+    }
     if (test->Kp != 1) {
         return false;
     }
@@ -100,7 +103,13 @@ bool ObjectRegistryDatabaseTest::TestFind() {
 bool ObjectRegistryDatabaseTest::TestFind_Relative() {
     ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
 
+    if (!test.IsValid()) {
+        return false;
+    }
     ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find(":::PID", test);
+    if (!test2.IsValid()) {
+        return false;
+    }
     if (test2->Kp != 7) {
         return false;
     }
@@ -112,8 +121,14 @@ bool ObjectRegistryDatabaseTest::TestFind_Relative() {
     }
 
     ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("A.B");
+    if (!start.IsValid()) {
+        return false;
+    }
     // relative search
     ReferenceT<PID> test4 = ObjectRegistryDatabase::Instance()->Find(":C.PID", start);
+    if (!test4.IsValid()) {
+        return false;
+    }
     if (test4->Kp != 1) {
         return false;
     }
@@ -128,9 +143,14 @@ bool ObjectRegistryDatabaseTest::TestFind_Relative() {
 
 bool ObjectRegistryDatabaseTest::TestFind_Absolute() {
     ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("A.B");
-
+    if (!start.IsValid()) {
+        return false;
+    }
 // absolute search
     ReferenceT<PID> test5 = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID", start);
+    if (!test5.IsValid()) {
+        return false;
+    }
     if (test5->Kp != 1) {
         return false;
     }
@@ -152,7 +172,10 @@ bool ObjectRegistryDatabaseTest::TestFindTooManyBackSteps() {
     }
 
 // searches from the beginning
-    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find("::::PID", start);
+    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find(":::::A.PID", start);
+    if (!test2.IsValid()) {
+        return false;
+    }
     if (test2->Kp != 7) {
         return false;
     }
@@ -169,6 +192,4 @@ bool ObjectRegistryDatabaseTest::TestFindTooManyBackSteps() {
 bool ObjectRegistryDatabaseTest::TestGetClassName() {
     return StringHelper::Compare(ObjectRegistryDatabase::Instance()->GetClassName(), "ObjectRegistryDatabase") == 0;
 }
-
-
 

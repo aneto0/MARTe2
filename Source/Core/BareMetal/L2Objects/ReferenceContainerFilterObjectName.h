@@ -57,7 +57,7 @@ public:
      * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
      * @param[in] address a string with the name of the object to find or with the full path (from the root) to the object.
      * A full path is specified by separating with dots the path (e.g. A.B.C). If a full path is specified only the first
-     * occurrence can be searched and the mode will be set to ReferenceContainerFilterMode::RECURSIVE and ReferenceContainerFilterMode::PATH.
+     * occurrence can be searched and the mode will be set to ReferenceContainerFilterMode::PATH.
      */
     ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
                                        const uint32 &modeToSet,

@@ -119,8 +119,6 @@ void ReferenceContainerFilterObjectName::SetAddress(const char8 * const address)
     // and the path mode must be enabled (and it automatically enables the recursive mode)
     // So, if you want to search a path you have to be in path mode and you cannot search more than one path.
     if (addressNumberNodes > 1u) {
-        //Look for the first occurrence of the path
-        occurrence = 1;
         //Note: in this case IsSearchAll returns false
         // IsRecursive returns true
         // IsStorePath returns true

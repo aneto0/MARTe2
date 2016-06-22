@@ -172,13 +172,10 @@ bool ReferenceContainerFilterReferencesTest::TestIncrementFound() {
 
 bool ReferenceContainerFilterReferencesTest::TestIsRemove() {
     Reference dummyRef;
-    ReferenceContainerFilterReferences myRefFilter(-1, 0, dummyRef);
-
-    if (myRefFilter.IsRemove()) {
-        return false;
-    }
 
     for (uint32 i = 0; i < 8u; i++) {
+        ReferenceContainerFilterReferences myRefFilter(-1, 0, dummyRef);
+
         uint32 mode = i | (ReferenceContainerFilterMode::REMOVE);
 
         myRefFilter.SetMode(mode);
@@ -186,9 +183,11 @@ bool ReferenceContainerFilterReferencesTest::TestIsRemove() {
         if (!myRefFilter.IsRemove()) {
             return false;
         }
-
-        if (!myRefFilter.IsSearchAll()) {
-            return false;
+        // path removes the search all
+        if (!myRefFilter.IsStorePath()) {
+            if (!myRefFilter.IsSearchAll()) {
+                return false;
+            }
         }
     }
     return true;
@@ -198,54 +197,46 @@ bool ReferenceContainerFilterReferencesTest::TestIsSearchAll() {
 
     Reference dummyRef;
 
-    ReferenceContainerFilterReferences myRefFilter(-1, 0, dummyRef);
+    for (uint32 i = 0; i < 8u; i++) {
+        ReferenceContainerFilterReferences myRefFilter(-1, 0, dummyRef);
 
-    for (uint32 i = 8; i < 8u; i++) {
         uint32 mode = i;
-
         myRefFilter.SetMode(mode);
-
-        if (mode != myRefFilter.GetMode()) {
-            return false;
+        if (!myRefFilter.IsStorePath()) {
+            if (!myRefFilter.IsSearchAll()) {
+                return false;
+            }
         }
-
-        if (!myRefFilter.IsSearchAll()) {
-            return false;
+        else {
+            if (myRefFilter.IsSearchAll()) {
+                return false;
+            }
         }
     }
 
-    //for 0x1=PATH the SearchAll condition is exclusive so it is not enabled
-    myRefFilter.SetMode(ReferenceContainerFilterMode::PATH);
-
-    return (myRefFilter.IsSearchAll()) && (!myRefFilter.IsStorePath()) && (myRefFilter.GetMode() == 0u);
+    return true;
 }
 
 bool ReferenceContainerFilterReferencesTest::TestIsStorePath() {
 
     Reference dummyRef;
-    ReferenceContainerFilterReferences myRefFilter(1, 0, dummyRef);
-
-    if (myRefFilter.IsStorePath()) {
-        return false;
-    }
 
     for (uint32 i = 0u; i < 8u; i++) {
+        ReferenceContainerFilterReferences myRefFilter(1, 0, dummyRef);
         uint32 mode = i | (ReferenceContainerFilterMode::PATH);
-
         myRefFilter.SetMode(mode);
-
         if (!myRefFilter.IsStorePath()) {
             return false;
         }
-
     }
 
+    ReferenceContainerFilterReferences myRefFilter(1, 0, dummyRef);
     myRefFilter.SetOriginalSetOccurrence(-1);
     myRefFilter.Reset();
 
     myRefFilter.SetMode(ReferenceContainerFilterMode::PATH);
 
-    return (myRefFilter.IsSearchAll()) && (myRefFilter.GetMode() == 0u);
+    return (!myRefFilter.IsSearchAll());
 
 }
 
@@ -330,9 +321,6 @@ bool ReferenceContainerFilterReferencesTest::TestSetGetMode(int32 occurrence) {
         uint32 mode = i;
 
         myRefFilter.SetMode(mode);
-        if (occurrence == -1) {
-            mode &= ~(ReferenceContainerFilterMode::PATH);
-        }
 
         if ((mode & ReferenceContainerFilterMode::PATH) == ReferenceContainerFilterMode::PATH) {
             mode |= ReferenceContainerFilterMode::RECURSIVE;
@@ -399,16 +387,10 @@ bool ReferenceContainerFilterReferencesTest::TestSetGetOriginalSetOccurrence(int
     }
 
     if (initialOccurrence == -1) {
-        if (myRefFilter.IsStorePath()) {
-            return false;
-        }
-        cnt = initialOccurrence;
+        cnt = 1;
+        initialOccurrence = 1;
     }
     else {
-        if (!myRefFilter.IsStorePath()) {
-            return false;
-        }
-
         while (!myRefFilter.IsFinished()) {
 
             if (!myRefFilter.Test(myTree, testRef)) {
@@ -427,25 +409,13 @@ bool ReferenceContainerFilterReferencesTest::TestSetGetOriginalSetOccurrence(int
         return false;
     }
     myRefFilter.SetOriginalSetOccurrence(finalOccurrence);
-    if (myRefFilter.GetOriginalSetOccurrence() != (int32) finalOccurrence) {
-        return false;
-    }
 
     cnt = 0;
     if (finalOccurrence == -1) {
-
-        // the mode must be refreshed.
-        if (myRefFilter.IsStorePath()) {
-            return false;
-        }
-        cnt = finalOccurrence;
+        cnt = 1;
+        finalOccurrence = 1;
     }
     else {
-
-        //if also the initial occurrence was >= 0 the mode should be the same
-        if ((initialOccurrence >= 0) && (!myRefFilter.IsStorePath())) {
-            return false;
-        }
 
         while (!myRefFilter.IsFinished()) {
 

@@ -42,27 +42,29 @@ namespace MARTe {
 namespace ReferenceContainerFilterMode {
 
 /**
- * @brief Store all the nodes leading to a given occurrence.
- * @details Only valid if \a occurrence != -1 in the constructor of ReferenceContainerSearchMode.
+ * @brief Default mode: the search is performed in the root tree level.
  */
-const uint32 PATH = 0x1u;
+const uint32 SHALLOW = 0x0u;
 
 /**
  * @brief Search recursively in all the tree nodes.
  */
-const uint32 RECURSIVE = 0x2u;
+const uint32 RECURSIVE = 0x1u;
 
 /**
  * @brief If set, the search is performed from left to right, otherwise from right to left.
- * @details Note that to search he last occurrence of a given node it is sufficient to set
- * ReferenceContainerSearchMode(1, RECURSIVE | REVERSE)
  */
-const uint32 REVERSE = 0x4u;
+const uint32 REVERSE = 0x2u;
+
+/**
+ * @brief Store all the nodes leading to a given occurrence.
+ * @details if SearchAll mode (occurrence = -1) a warning will be generated and the the filter will match the first occurrence (occurrence = 1).
+ */
+const uint32 PATH = 0x4u;
 
 /**
  * @brief If set the nodes that are found are deleted.
  * @details To destroy all occurrences \a occurrence must be set to -1 in the constructor of ReferenceContainerSearchMode.
- * If REMOVE is set, PATH will be automatically unset.
  */
 const uint32 REMOVE = 0x8u;
 

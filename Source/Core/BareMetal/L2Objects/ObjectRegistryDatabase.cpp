@@ -111,7 +111,7 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
     // now search from the domain forward
     Reference ret;
     if (ok) {
-        ReferenceContainerFilterObjectName filterName(1, ReferenceContainerFilterMode::RECURSIVE, &path[backSteps]);
+        ReferenceContainerFilterObjectName filterName(1, ReferenceContainerFilterMode::SHALLOW, &path[backSteps]);
         ReferenceContainer resultSingle;
 
         if (isSearchDomain) {
