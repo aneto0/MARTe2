@@ -84,6 +84,9 @@ public:
      */
     virtual bool Initialise(StructuredDataI & data);
 
+
+    bool AddSignals(StructuredDataI & data);
+#if 0
     /**
      * @brief Recursively calls DataSourceSignalI::Allocate
      * @details During the initialisation of a RealTimeApplication this method is called and allows
@@ -171,6 +174,8 @@ private:
      * The memory of the data source.
      */
     MemoryArea memory;
+#endif
+    ConfigurationDatabase signalsDatabase;
 
 };
 

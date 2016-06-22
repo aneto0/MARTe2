@@ -83,7 +83,7 @@ public:
      *   GetStatefulGAMGroups() = NULL
      */
     virtual ~RealTimeState();
-
+#if 0
     /**
      * @brief Propagates the configuration setup request to the declared RealTimeThreads.
      * @details Calls RealTimeThread.ConfigureArchitecture(rtApp) in each of the declared RealTimeThread elements.
@@ -142,6 +142,7 @@ private:
      * The number of stateful GAMGroups registered.
      */
     uint32 numberOfGAMGroups;
+#endif
 
 };
 

@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "ConfigurationDatabase.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 #include "RealTimeStateInfo.h"
@@ -109,6 +110,59 @@ public:
     virtual ~RealTimeApplication();
 
     /**
+     * @brief Initialises the application from a StructuredDataI in input.
+     * @details The following fields must be specified:
+     *
+     *   FirstState = (the name of the first state to be executed) //TODO (State Machine ?)
+     *     Class = RealTimeApplication\n
+     *     +Functions = {\n
+     *         Class = ReferenceContainer\n
+     *         GAM_name = {\n
+     *             Class = GAM\n
+     *             ...\n
+     *         }\n
+     *         GAM_Group_name = {\n
+     *             Class = GAMGroup\n
+     *             ...\n
+     *         }\n
+     *         ...\n
+     *     }\n
+     *     +States = {\n
+     *         Class = ReferenceContainer\n
+     *         State_name = {\n
+     *             Class = RealTimeState\n
+     *             +Threads = {\n
+     *                 Class = RealTimeThread\n
+     *                 ...\n
+     *             }\n
+     *             ...\n
+     *         }\n
+     *         ...\n
+     *     }\n
+     *     +Data = {\n
+     *         Class = RealTimeDataSourceContainer
+     *         IsFinal = true v false\n
+     *         DataSource_name = {\n
+     *             ...\n
+     *         }\n
+     *         ...
+     *     }\n
+     *     +Scheduler = {\n
+     *         Class = Scheduler_class_name (inherited from GAMSchedulerI)\n
+     *         ...\n
+     *     }\n
+     *
+     * @param[in] data contains the initialisation data.
+     * @return true if the FirstState field is specified and if the parameters +Functions, +States, +Data and +Scheduler all
+     * exist and each inherit from ReferenceContainer.
+     * TODO: FirstState is not implemented yet
+     */
+    virtual bool Initialise(StructuredDataI & data);
+
+    bool ConfigureApplication();
+
+#if 0
+    /**
      * @brief Configuration of the main application environment.
      * @details Propagates the configuration setup request to the States (RealTimeState.ConfigureArchitecture) and Scheduler entries (@see Initialise).
      * @return true if all the declared States and Scheduler elements are valid, false otherwise.
@@ -185,56 +239,6 @@ public:
     uint8 GetActiveBuffer() const;
 
     /**
-     * @brief Initialises the application from a StructuredDataI in input.
-     * @details The following fields must be specified:
-     *
-     *   FirstState = (the name of the first state to be executed) //TODO (State Machine ?)
-     *     Class = RealTimeApplication\n
-     *     +Functions = {\n
-     *         Class = ReferenceContainer\n
-     *         GAM_name = {\n
-     *             Class = GAM\n
-     *             ...\n
-     *         }\n
-     *         GAM_Group_name = {\n
-     *             Class = GAMGroup\n
-     *             ...\n
-     *         }\n
-     *         ...\n
-     *     }\n
-     *     +States = {\n
-     *         Class = ReferenceContainer\n
-     *         State_name = {\n
-     *             Class = RealTimeState\n
-     *             +Threads = {\n
-     *                 Class = RealTimeThread\n
-     *                 ...\n
-     *             }\n
-     *             ...\n
-     *         }\n
-     *         ...\n
-     *     }\n
-     *     +Data = {\n
-     *         Class = RealTimeDataSourceContainer
-     *         IsFinal = true v false\n
-     *         DataSource_name = {\n
-     *             ...\n
-     *         }\n
-     *         ...
-     *     }\n
-     *     +Scheduler = {\n
-     *         Class = Scheduler_class_name (inherited from GAMSchedulerI)\n
-     *         ...\n
-     *     }\n
-     *
-     * @param[in] data contains the initialisation data.
-     * @return true if the FirstState field is specified and if the parameters +Functions, +States, +Data and +Scheduler all
-     * exist and each inherit from ReferenceContainer.
-     * TODO: FirstState is not implemented yet
-     */
-    virtual bool Initialise(StructuredDataI & data);
-
-    /**
      * @brief Gets the RealTimeDataSourceContainer (initialised with +Data) of this RealTimeApplication.
      * @return the RealTimeDataSourceContainer (initialised with +Data) of this RealTimeApplication.
      */
@@ -271,7 +275,77 @@ private:
      * The +Data container
      */
     ReferenceT<ReferenceContainer> dataSourceContainer;
+#endif
 
+    bool InitialiseSignalsDatabase();
+
+    bool FlattenSignal(ConfigurationDatabase &signalDatabase,
+                       StreamString signalName,
+                       ConfigurationDatabase &resolvedSignal,
+                       uint32 &signalNumber,
+                       bool forceWriteDataSource);
+
+    bool FlattenSignalsDatabase(ConfigurationDatabase &signalDatabase,
+                                const char8 *signalDirection,
+                                bool isDataSource);
+
+    bool ResolveIntrospectionInDataSources();
+
+    bool FindFunctionNumber(StreamString functionName,
+                            StreamString &functionNumber);
+
+    bool FindDataSourceNumber(StreamString dataSourceName,
+                              StreamString &dataSourceNumber);
+
+    bool FindSignalName(StreamString signalName,
+                        ConfigurationDatabase &database);
+
+    bool SignalIntrospectionToStructuredData(StreamString typeName,
+                                             StreamString signalname,
+                                             StreamString alias,
+                                             StreamString dataSourceName,
+                                             AnyType ranges,
+                                             StructuredDataI & data,
+                                             uint32 &signalNumber);
+
+    bool LinkGAMToState(StreamString functionName,
+                        StreamString stateName,
+                        StreamString threadName);
+
+    bool ResolveDataSources(const char *signalDirection);
+
+    bool AddSignalToDataSource(StreamString gamName,
+                               StreamString dataSourceName);
+
+    bool VerifyDataSource(StreamString dataSourceName);
+
+    bool ResolveStates();
+
+    bool VerifyDataSourcesSignals();
+
+    bool ResolveFunctionSignal(StreamString signalName,
+                               StreamString functionName,
+                               StreamString dataSourceName,
+                               uint32 numberOfFunctionSignals);
+
+    bool ResolveConsumersAndProducers(bool consumers);
+
+    bool ResolveFunctionSignals(const char *signalDirection);
+
+    bool VerifyFunctionSignals(const char *signalDirection);
+
+    bool FlattenDatabase(const char *signalDirection);
+
+    bool ResolveFunctionSignalsMemorySize(const char *signalDirection);
+
+    bool ResolveFunctionsMemory(const char *signalDirection);
+
+    bool AllocateFunctionsMemory(const char *signalDirection);
+
+    ConfigurationDatabase functionsDatabase;
+    ConfigurationDatabase dataSourceDatabase;
+
+    StreamString defaultDataSourceName;
 };
 
 }

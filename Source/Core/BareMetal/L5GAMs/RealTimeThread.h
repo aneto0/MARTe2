@@ -79,28 +79,6 @@ public:
     virtual ~RealTimeThread();
 
     /**
-     * @brief Maps all the declared Function references (GAM, GAMGroup, ...) to this state.
-     * @param[in] rtApp is the RealTimeApplication where this thread is declared into.
-     * @param[in] rtState is the RealTimeState where this thread is declared into.
-     * @return true if all the declared Function references are valid AND if this thread can be
-     * successfully added to the scheduler AND if all the declared GAMs support this \a rtState.
-     * @pre
-     *   Initialise() &&
-     *   GetFunctions() != NULL  &&
-     *   GetNumberOfFunctions() > 0
-     * @post
-     *   GetGAMs() != NULL &&
-     *   GetNumberOfGAMs() != 0
-     */
-    bool ConfigureArchitecture(RealTimeApplication &rtApp,
-                               RealTimeState &rtState);
-
-    /**
-     * @see RealTimeApplication::ValidateDataSourceLinks()
-     */
-    bool ValidateDataSourceLinks();
-
-    /**
      * @brief Reads the array with the GAM names to be executed by this thread.
      * @details The following fields must be defined:
      *
@@ -123,6 +101,34 @@ public:
      *   GetNumberOfFunctions() > 0
      */
     virtual bool Initialise(StructuredDataI & data);
+
+
+#if 0
+    /**
+     * @brief Maps all the declared Function references (GAM, GAMGroup, ...) to this state.
+     * @param[in] rtApp is the RealTimeApplication where this thread is declared into.
+     * @param[in] rtState is the RealTimeState where this thread is declared into.
+     * @return true if all the declared Function references are valid AND if this thread can be
+     * successfully added to the scheduler AND if all the declared GAMs support this \a rtState.
+     * @pre
+     *   Initialise() &&
+     *   GetFunctions() != NULL  &&
+     *   GetNumberOfFunctions() > 0
+     * @post
+     *   GetGAMs() != NULL &&
+     *   GetNumberOfGAMs() != 0
+     */
+    bool ConfigureArchitecture(RealTimeApplication &rtApp,
+                               RealTimeState &rtState);
+
+    /**
+     * @see RealTimeApplication::ValidateDataSourceLinks()
+     */
+    bool ValidateDataSourceLinks();
+#endif
+
+    //TODO
+    bool ConfigureArchitecture();
 
     /**
      * @brief Returns the array with the name of the Functions (GAM, GAMGroup, ...) executed by this thread.
@@ -175,9 +181,7 @@ private:
      * @post
      *   GetNumberOfGAMs() > GetNumberOfGAMs()'
      */
-    bool ConfigureArchitecturePrivate(Reference functionGeneric,
-                                      RealTimeApplication &rtApp,
-                                      RealTimeState &rtState);
+    bool ConfigureArchitecturePrivate(Reference functionGeneric);
 
     /**
      * @brief Adds a GAM reference into the accelerator array.
@@ -214,6 +218,11 @@ private:
      * The thread stack size.
      */
     uint32 stackSize;
+
+    /**
+     * Set to true after ConfigureArchitecture has been called at least once
+     */
+    bool configured;
 };
 
 }

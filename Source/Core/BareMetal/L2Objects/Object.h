@@ -310,7 +310,7 @@ public:
      * @return true if all the input \a data is valid and can be successfully assigned
      * to the Object member variables.
      */
-    virtual bool Initialise(const StructuredDataI &data);
+    virtual bool Initialise(StructuredDataI &data);
 
     /**
      * @brief Returns the number of references.

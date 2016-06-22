@@ -62,6 +62,17 @@ public:
     virtual ~GAM();
 
     /**
+     * @brief calls the Initialise(*) function for each sub-node, then calls the functions
+     * SetUp(*) and ConfigureFunction(*) due to initialise the local environment.
+     * @param[in] data contains the initialisation data.
+     * @brief returns false if the eventual merge with the local configuration data fails, true otherwise.
+     */
+    virtual bool Initialise(StructuredDataI & data);
+
+    bool AddSignals(StructuredDataI & data);
+
+#if 0
+    /**
      * @brief Links the signals of this GAM to the RealTimeApplication DataSourceContainer (+Data).
      * @details @see DataSourceContainer::AddDataDefinition(*).
      * @return true if the RealTimeApplication where this GAM belongs to is valid and if calling
@@ -98,13 +109,6 @@ public:
      */
     virtual void Execute(uint8 activeBuffer)=0;
 
-    /**
-     * @brief calls the Initialise(*) function for each sub-node, then calls the functions
-     * SetUp(*) and ConfigureFunction(*) due to initialise the local environment.
-     * @param[in] data contains the initialisation data.
-     * @brief returns false if the eventual merge with the local configuration data fails, true otherwise.
-     */
-    virtual bool Initialise(StructuredDataI & data);
 
     /**
      * @brief Retrieves the states names where this class is declared into.
@@ -211,6 +215,8 @@ private:
      * if the definitions are inconsistent with registered types. True otherwise.
      */
     bool ConfigureFunction();
+#endif
+    ConfigurationDatabase signalsDatabase;
 };
 
 }
