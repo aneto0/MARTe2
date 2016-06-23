@@ -24,7 +24,8 @@
 #
 #############################################################
 OBJSX=
-SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x L5GAMs.x
+SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x
+#L5GAMs.x
 PACKAGE=Core
 MAKEDEFAULTDIR=../../../MakeDefaults
 
@@ -36,7 +37,7 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityTest$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L2Objects/L2ObjectsTest$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L3Streams/L3StreamsTest$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L4Configuration/L4ConfigurationTest$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L5GAMs/L5GAMsTest$(LIBEXT)
+#LIBRARIES_STATIC+=$(BUILD_DIR)/L5GAMs/L5GAMsTest$(LIBEXT)
 
 
 all: $(OBJS) $(SUBPROJ) \

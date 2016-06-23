@@ -29,12 +29,12 @@ include Makefile.inc
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 LIBRARIES   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreBTest$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreSTest$(LIBEXT)
-LIBRARIES   += ../../Build/$(TARGET)/Core/FileSystem/MARTeCoreF$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/FileSystem/MARTeCoreFTest$(LIBEXT)
-LIBRARIES   += ../../Build/$(TARGET)/GTest/BareMetal/MARTeBGTest$(LIBEXT)
-LIBRARIES   += ../../Build/$(TARGET)/GTest/Scheduler/MARTeSGTest$(LIBEXT)
-LIBRARIES   += ../../Build/$(TARGET)/GTest/FileSystem/MARTeFGTest$(LIBEXT)
+#LIBRARIES   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreBTest$(LIBEXT) 
+#LIBRARIES   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT) 
+#LIBRARIES   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreSTest$(LIBEXT)
+#LIBRARIES   += ../../Build/$(TARGET)/Core/FileSystem/MARTeCoreF$(LIBEXT) 
+#LIBRARIES   += ../../Build/$(TARGET)/Core/FileSystem/MARTeCoreFTest$(LIBEXT)
+#LIBRARIES   += ../../Build/$(TARGET)/GTest/BareMetal/MARTeBGTest$(LIBEXT)
+#LIBRARIES   += ../../Build/$(TARGET)/GTest/Scheduler/MARTeSGTest$(LIBEXT)
+#LIBRARIES   += ../../Build/$(TARGET)/GTest/FileSystem/MARTeFGTest$(LIBEXT)
 LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
