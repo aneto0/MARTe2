@@ -286,8 +286,7 @@ private:
                        bool forceWriteDataSource);
 
     bool FlattenSignalsDatabase(ConfigurationDatabase &signalDatabase,
-                                const char8 *signalDirection,
-                                bool isDataSource);
+                                const char8 *signalDirection);
 
     bool ResolveIntrospectionInDataSources();
 
@@ -343,7 +342,7 @@ private:
     bool AllocateFunctionsMemory(const char *signalDirection);
 
     ConfigurationDatabase functionsDatabase;
-    ConfigurationDatabase dataSourceDatabase;
+    ConfigurationDatabase dataSourcesDatabase;
 
     StreamString defaultDataSourceName;
 };
