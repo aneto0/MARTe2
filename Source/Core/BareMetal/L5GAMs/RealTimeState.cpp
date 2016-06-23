@@ -48,17 +48,17 @@ static const uint32 functionArrayGranularity = 8u;
 
 RealTimeState::RealTimeState() :
         ReferenceContainer() {
-    statefulGAMGroups = reinterpret_cast<ReferenceT<GAMGroup>*>(NULL);
-    numberOfGAMGroups = 0u;
+   // statefulGAMGroups = reinterpret_cast<ReferenceT<GAMGroup>*>(NULL);
+   // numberOfGAMGroups = 0u;
 }
 
 /*lint -e{1551} no exception should be thrown*/
 RealTimeState::~RealTimeState() {
-    if (statefulGAMGroups != NULL) {
+   /* if (statefulGAMGroups != NULL) {
         delete[] statefulGAMGroups;
-    }
+    }*/
 }
-
+#if 0
 bool RealTimeState::ConfigureArchitecture(RealTimeApplication & rtApp) {
 
     // there must be a container called Threads
@@ -202,7 +202,7 @@ ReferenceT<GAMGroup> * RealTimeState::GetGAMGroups() {
 uint32 RealTimeState::GetNumberOfGAMGroups() const {
     return numberOfGAMGroups;
 }
-
+#endif
 CLASS_REGISTER(RealTimeState, "1.0");
 
 }

@@ -34,8 +34,8 @@
 #include "AdvancedErrorManagement.h"
 #include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
-#include "GAMDataSource.h"
 #include "GAM.h"
+#include "GAMDataSource.h"
 #include "GAMSignalsContainer.h"
 #include "MemoryMapBroker.h"
 #include "ReferenceContainerFilterObjectName.h"
@@ -44,9 +44,9 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-
+#if 0
 static bool Allocate(ReferenceT<DataSourceSignal> dataSourceSignal,
-                     MemoryArea &memory) {
+        MemoryArea &memory) {
     bool ret = dataSourceSignal.IsValid();
     if (ret) {
         TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(dataSourceSignal->GetType());
@@ -98,7 +98,7 @@ static bool Allocate(ReferenceT<DataSourceSignal> dataSourceSignal,
 }
 
 static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
-                            MemoryArea &memory) {
+        MemoryArea &memory) {
     bool ret = true;
     uint32 numberOfNodes = container->Size();
     for (uint32 i = 0u; (i < numberOfNodes) && (ret); i++) {
@@ -119,7 +119,7 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
     }
     return ret;
 }
-
+#endif
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -127,19 +127,32 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
 DataSourceI::DataSourceI() :
         ReferenceContainer() {
 }
-
+#if 0
 bool DataSourceI::Allocate() {
     return AllocatePrivate(ReferenceT<ReferenceContainer>(this), memory);
 }
-
+#endif
 bool DataSourceI::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
+    if (data.MoveRelative("Signals")) {
+        signalsDatabase.Write("Signals", data);
+        ret = data.MoveToAncestor(1);
+    }
+    signalsDatabase.MoveToRoot();
+
+#if 0
     if (ret) {
         if (data.Read("HeapName", heapName)) {
             memory.SetHeapName(heapName.Buffer());
         }
     }
+#endif
     return ret;
+}
+
+bool DataSourceI::AddSignals(StructuredDataI &data){
+    signalsDatabase.MoveAbsolute("Signals");
+    return data.Write("Signals", signalsDatabase);
 }
 
 }

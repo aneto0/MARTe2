@@ -37,8 +37,6 @@
 #include "DataSourceSignalRecord.h"
 #include "GAM.h"
 #include "MemoryMapBroker.h"
-#include "MemoryMapInputReader.h"
-#include "MemoryMapWriter.h"
 #include "ReferenceT.h"
 #include "StandardParser.h"
 #include "stdio.h"
@@ -358,11 +356,11 @@ bool GAMDataSource::Configure(ReferenceT<GAMSignalI> gamSignalIn) {
 
 ReferenceT<BrokerI>  GAMDataSource::GetInputReader(ReferenceT<GAMSignalI> signalIn,
                                            void * varPtr) {
-    ReferenceT<MemoryMapInputReader> ret;
+    ReferenceT<MemoryMapBroker> ret;
 
     if (signalIn.IsValid()) {
         // try the default reader
-        ReferenceT<MemoryMapInputReader> reader = ReferenceT<MemoryMapInputReader>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<MemoryMapBroker> reader = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         if (reader.IsValid()) {
             //  sets the same name of the data source
             reader->SetName(GetName());
@@ -389,11 +387,11 @@ ReferenceT<BrokerI>  GAMDataSource::GetInputReader(ReferenceT<GAMSignalI> signal
 
 ReferenceT<BrokerI> GAMDataSource::GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
                                             void * varPtr) {
-    ReferenceT<MemoryMapWriter> ret;
+    ReferenceT<MemoryMapBroker> ret;
 
     if (signalOut.IsValid()) {
         // try the default reader
-        ReferenceT<MemoryMapWriter> writer = ReferenceT<MemoryMapWriter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<MemoryMapBroker> writer = ReferenceT<MemoryMapBroker>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         if (writer.IsValid()) {
             //  sets the same name of the data source
             writer->SetName(GetName());

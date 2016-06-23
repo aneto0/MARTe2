@@ -204,7 +204,7 @@ bool ConfigurationDatabase::Read(const char8 * const name,
 
 bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
 
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
+    ReferenceContainerFilterObjectName filter(1, 0u, path);
     ReferenceContainer resultSingle;
     rootNode->Find(resultSingle, filter);
 
@@ -222,7 +222,7 @@ bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
 
 bool ConfigurationDatabase::MoveRelative(const char8 * const path) {
 
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
+    ReferenceContainerFilterObjectName filter(1, 0u, path);
     ReferenceContainer resultSingle;
     currentNode->Find(resultSingle, filter);
 

@@ -50,6 +50,7 @@ static const uint32 stateNamesGranularity = 4u;
 
 GAM::GAM() :
         ReferenceContainer() {
+#if 0
     localData = NULL_PTR(StructuredDataI*);
     numberOfSupportedStates = 0u;
     supportedStates = NULL_PTR(StreamString *);
@@ -58,10 +59,12 @@ GAM::GAM() :
     application = NULL_PTR(RealTimeApplication *);
     inputReaders = ReferenceT<BrokerContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     outputWriters = ReferenceT<BrokerContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+#endif
 }
 
 /*lint -e{1551} no exception should be thrown*/
 GAM::~GAM() {
+#if 0
     if (supportedStates != NULL) {
         delete[] supportedStates;
     }
@@ -72,8 +75,74 @@ GAM::~GAM() {
 
     application = NULL_PTR(RealTimeApplication *);
     group = NULL_PTR(GAMGroup*);
+#endif
 }
 
+#include <stdio.h>
+bool GAM::Initialise(StructuredDataI & data) {
+
+    bool ret = ReferenceContainer::Initialise(data);
+    if (data.MoveRelative("InputSignals")) {
+        ret = signalsDatabase.Write("InputSignals", data);
+        if (ret) {
+            ret = data.MoveToAncestor(1u);
+        }
+    }
+    if (ret) {
+        ret = signalsDatabase.MoveToRoot();
+    }
+    if (ret) {
+        if (data.MoveRelative("OutputSignals")) {
+            ret = signalsDatabase.Write("OutputSignals", data);
+            if (ret) {
+                ret = data.MoveToAncestor(1u);
+            }
+        }
+    }
+    if (ret) {
+        ret = signalsDatabase.MoveToRoot();
+    }
+#if 0
+    ret = inputReaders.IsValid();
+    if (ret) {
+        StreamString irName = GetName();
+        irName += "_InputReader";
+        inputReaders->SetName(irName.Buffer());
+        inputReaders->SetInput(true);
+    }
+
+    if (ret) {
+        ret = outputWriters.IsValid();
+        if (ret) {
+            StreamString owName = GetName();
+            owName += "_OutputWriter";
+            outputWriters->SetName(owName.Buffer());
+            outputWriters->SetInput(false);
+        }
+        else {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s does not have a valid input BrokerContainer", GetName())
+        }
+    }
+    else {
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s does not have a valid output BrokerContainer", GetName())
+    }
+
+    if (ret) {
+        // implemented in the derived classes
+        // get the local cdb
+        SetUp();
+        // merge definitions
+        ret = ConfigureFunction();
+    }
+#endif
+    return ret;
+}
+
+bool GAM::AddSignals(StructuredDataI &data) {
+    return data.Write("Signals", signalsDatabase);
+}
+
+#if 0
 /*void GAM::SetUp() {
  // initialises the local status
  }*/
@@ -140,43 +209,6 @@ bool GAM::ConfigureDataSource() {
     return ret;
 }
 
-bool GAM::Initialise(StructuredDataI & data) {
-
-    bool ret = ReferenceContainer::Initialise(data);
-    ret = inputReaders.IsValid();
-    if (ret) {
-        StreamString irName = GetName();
-        irName += "_InputReader";
-        inputReaders->SetName(irName.Buffer());
-        inputReaders->SetInput(true);
-    }
-
-    if (ret) {
-        ret = outputWriters.IsValid();
-        if (ret) {
-            StreamString owName = GetName();
-            owName += "_OutputWriter";
-            outputWriters->SetName(owName.Buffer());
-            outputWriters->SetInput(false);
-        }
-        else {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s does not have a valid input BrokerContainer", GetName())
-        }
-    }
-    else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s does not have a valid output BrokerContainer", GetName())
-    }
-
-    if (ret) {
-        // implemented in the derived classes
-        // get the local cdb
-        SetUp();
-        // merge definitions
-        ret = ConfigureFunction();
-    }
-    return ret;
-}
-
 void GAM::SetApplication(RealTimeApplication &rtApp) {
     if (application == NULL) {
         application = &rtApp;
@@ -192,7 +224,7 @@ void GAM::SetGAMGroup(ReferenceT<GAMGroup> gamGroup) {
 }
 
 bool GAM::AddState(const char8 * const stateName,
-                   const char8 * const threadName) {
+        const char8 * const threadName) {
 
     bool ret = true;
     bool found = false;
@@ -204,7 +236,7 @@ bool GAM::AddState(const char8 * const stateName,
             ret = (supportedThreads[i] == threadName);
             if (!ret) {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s cannot be in both %s and %s threads into the state %s", GetName(),
-                                        supportedThreads[i].Buffer(), threadName, stateName)
+                        supportedThreads[i].Buffer(), threadName, stateName)
                 //TODO same gam in two different threads!
             }
         }
@@ -330,5 +362,5 @@ Reference GAM::GetOutputWriter() {
 RealTimeApplication *GAM::GetApplication() {
     return application;
 }
-
+#endif
 }
