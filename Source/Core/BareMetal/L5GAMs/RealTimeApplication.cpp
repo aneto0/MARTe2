@@ -42,6 +42,8 @@
 #include "DataSourceContainer.h"
 #include "AdvancedErrorManagement.h"
 #include "Matrix.h"
+#include "RealTimeApplicationConfigurationBuilder.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -2085,7 +2087,69 @@ bool RealTimeApplication::AllocateFunctionsMemory(const char *signalDirection) {
 
 }
 
+static void PrintDatabases(RealTimeApplicationConfigurationBuilder &rtAppBuilder) {
+    static uint32 i = 0u;
+    static uint32 j = 1u;
+    ConfigurationDatabase fdb;
+    ConfigurationDatabase dsdb;
+    rtAppBuilder.Copy(fdb, dsdb);
+
+    StreamString temp;
+    temp.Printf("[%d]\n%s%s[%d]\n", i, fdb, dsdb, j);
+    i += 2;
+    j += 2;
+    temp.Seek(0);
+    printf("%s", temp.Buffer());
+}
+
 bool RealTimeApplication::ConfigureApplication() {
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(this, "DDB1");
+    bool ret = rtAppBuilder.InitialiseSignalsDatabase();
+    if (ret) {
+        PrintDatabases(rtAppBuilder);
+    }
+    if (ret) {
+        ret = rtAppBuilder.FlattenSignalsDatabases();
+        PrintDatabases(rtAppBuilder);
+    }
+    if (ret) {
+        ret = rtAppBuilder.ResolveDataSources();
+        PrintDatabases(rtAppBuilder);
+    }
+    if (ret) {
+        ret = rtAppBuilder.VerifyDataSourcesSignals();
+        PrintDatabases(rtAppBuilder);
+    }
+    if (ret) {
+        ret = rtAppBuilder.ResolveFunctionSignals();
+        PrintDatabases(rtAppBuilder);
+    }
+    if (ret) {
+        ret = rtAppBuilder.VerifyFunctionSignals();
+        PrintDatabases(rtAppBuilder);
+    }
+    if (ret) {
+        ret = rtAppBuilder.ResolveStates();
+        PrintDatabases(rtAppBuilder);
+    }
+    if (ret) {
+        ret = rtAppBuilder.ResolveConsumersAndProducers();
+        PrintDatabases(rtAppBuilder);
+    }
+    if (ret) {
+        ret = rtAppBuilder.ResolveFunctionSignalsMemorySize();
+        PrintDatabases(rtAppBuilder);
+    }
+    if (ret) {
+        ret = rtAppBuilder.ResolveFunctionsMemory();
+        PrintDatabases(rtAppBuilder);
+    }
+    if (ret) {
+        ret = rtAppBuilder.AllocateFunctionsMemory();
+        PrintDatabases(rtAppBuilder);
+    }
+    return ret;
+#if 0
 //Create the Function and the Data nodes. Add all the signals by querying the GAMs and the DataSourceI
     bool ret = InitialiseSignalsDatabase();
     if (ret) {
@@ -2309,8 +2373,8 @@ bool RealTimeApplication::ConfigureApplication() {
         ret = dataSourcesDatabase.MoveToRoot();
     }
 
-
     return ret;
+#endif
 }
 
 bool RealTimeApplication::Initialise(StructuredDataI & data) {

@@ -28,6 +28,7 @@ OBJSX=GAM.x \
     GAMGroup.x \
     DataSourceI.x \
     RealTimeApplication.x \
+    RealTimeApplicationConfigurationBuilder.x \
     RealTimeState.x \
     RealTimeThread.x
 
