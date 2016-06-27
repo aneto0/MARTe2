@@ -441,10 +441,11 @@ bool ClassMethodsRegistryItemTest::TestCallFunction2() {
     StreamString definition("+context={Class=ClassWithCallableMethods}");
     ConfigurationDatabase cdb;
     StandardParser parser(definition, cdb);
-    definition.Seek(0);
-    parser.Parse();
-    ordb->Initialise(cdb);
-    target = ordb->Find("+context");
+    result &= definition.Seek(0);
+    result &= parser.Parse();
+    result &= ordb->Initialise(cdb);
+    target = ordb->Find("context");
+    result &= target.IsValid();
     if (target.IsValid()) {
         {
             ErrorManagement::ErrorType status;
