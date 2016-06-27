@@ -55,10 +55,12 @@ ClassWithCallableMethods::~ClassWithCallableMethods() {
 }
 
 bool ClassWithCallableMethods::NonRegisteredMethod(MARTe::ReferenceContainer& data) {
+    lastMethodExecuted = "NonRegisteredMethod(MARTe::ReferenceContainer&)";
     return true;
 }
 
 bool ClassWithCallableMethods::FaultyMethod(MARTe::ReferenceContainer& data) {
+    lastMethodExecuted = "FaultyMethod(MARTe::ReferenceContainer&)";
     return false;
 }
 
@@ -81,6 +83,7 @@ bool ClassWithCallableMethods::MethodWithInputReferenceContainer(MARTe::Referenc
     bool result= true;
     MARTe::Reference obj = data.Find("TestObject");
     result &= obj.IsValid();
+    lastMethodExecuted = "MethodWithInputReferenceContainer(MARTe::ReferenceContainer&)";
     return result;
 }
 
@@ -90,6 +93,7 @@ bool ClassWithCallableMethods::MethodWithOutputReferenceContainer(MARTe::Referen
     MARTe::Reference obj("Object");
     status = data.Insert("TestObject2", obj);
     result &= status;
+    lastMethodExecuted = "MethodWithOutputReferenceContainer(MARTe::ReferenceContainer&)";
     return result;
 }
 
@@ -108,31 +112,39 @@ bool ClassWithCallableMethods::MethodWithInputOutputReferenceContainer(MARTe::Re
         status = data.Insert("TestObject2", obj);
         result &= status;
     }
+    lastMethodExecuted = "MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer&)";
     return result;
 }
 
 bool ClassWithCallableMethods::MethodWithInputInteger(int& data) {
-    return (data == 10);
+    bool result= (data == 10);
+    lastMethodExecuted = "MethodWithInputInteger(int&)";
+    return result;
 }
 
 bool ClassWithCallableMethods::MethodWithOutputInteger(int& data) {
     data = 20;
+    lastMethodExecuted = "MethodWithOutputInteger(int&)";
     return true;
 }
 
 bool ClassWithCallableMethods::MethodWithInputOutputInteger(int& data) {
     data = data + 5;
+    lastMethodExecuted = "MethodWithInputOutputInteger(int&)";
     return true;
 }
 
 bool ClassWithCallableMethods::MethodWithInputIntegerByCopy(int data) {
-    return (data == 80);
+    bool result= (data == 80);
+    lastMethodExecuted = "MethodWithInputIntegerByCopy(int)";
+    return result;
 }
 
 bool ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer data) {
     bool result= true;
     MARTe::Reference obj = data.Find("TestObjectIntoReferenceContainerByCopy");
     result &= obj.IsValid();
+    lastMethodExecuted = "MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer)";
     return result;
 }
 

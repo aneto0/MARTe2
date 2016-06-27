@@ -375,6 +375,7 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         ReferenceContainer params;
         status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "FaultyMethod", params);
         result &= status.functionError;
+        result &= (context.GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
     }
     {
         ErrorManagement::ErrorType status;
@@ -405,6 +406,7 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         int params = 10;
         status = target->CallRegisteredMethod<int&>(&context, "MethodWithInputInteger", params);
         result &= status;
+        result &= (context.GetLastMethodExecuted() == "MethodWithInputInteger(int&)");
     }
     {
         ErrorManagement::ErrorType status;
@@ -413,6 +415,7 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         status = target->CallRegisteredMethod<int&>(&context, "MethodWithOutputInteger", params);
         result &= status;
         result &= (params == 20);
+        result &= (context.GetLastMethodExecuted() == "MethodWithOutputInteger(int&)");
     }
     {
         ErrorManagement::ErrorType status;
@@ -421,6 +424,7 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         status = target->CallRegisteredMethod<int&>(&context, "MethodWithInputOutputInteger", params);
         result &= status;
         result &= (params == (30 + 5));
+        result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputInteger(int&)");
     }
     {
         ErrorManagement::ErrorType status;
@@ -432,6 +436,7 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         if (success) {
             status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodWithInputReferenceContainer", params);
             result &= status;
+            result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainer(MARTe::ReferenceContainer&)");
         }
         else {
             result = false;
@@ -446,6 +451,7 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         result &= status;
         obj = params.Find("TestObject2");
         result &= obj.IsValid();
+        result &= (context.GetLastMethodExecuted() == "MethodWithOutputReferenceContainer(MARTe::ReferenceContainer&)");
     }
     {
         ErrorManagement::ErrorType status;
@@ -463,6 +469,7 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
             result &= !objDel.IsValid();
             objNew = params.Find("TestObject2");
             result &= objNew.IsValid();
+            result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer&)");
         }
         else {
             result = false;
@@ -474,6 +481,7 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         int params = 80;
         status = target->CallRegisteredMethod<int>(&context, "MethodWithInputIntegerByCopy", params);
         result &= status;
+        result &= (context.GetLastMethodExecuted() == "MethodWithInputIntegerByCopy(int)");
     }
     {
         ErrorManagement::ErrorType status;
@@ -485,6 +493,7 @@ bool ClassRegistryItemTest::TestCallRegisteredMethod() {
         if (success) {
             status = target->CallRegisteredMethod<ReferenceContainer>(&context, "MethodWithInputReferenceContainerByCopy", params);
             result &= status;
+            result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer)");
         }
         else {
             result = false;
