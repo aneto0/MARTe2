@@ -1431,7 +1431,7 @@ bool RealTimeApplication::FlattenSignal(ConfigurationDatabase &signalDatabase,
     if (signalTypeDefined) {
         signalTypeDefined = (signalType.Size() > 0u);
     }
-//Check if it is a pure node (i.e. a namespace which contains other signals)
+    //Check if it is a pure node (i.e. a namespace which contains other signals)
     bool isNode = false;
     if (!signalTypeDefined) {
         ret = true;
@@ -1453,7 +1453,8 @@ bool RealTimeApplication::FlattenSignal(ConfigurationDatabase &signalDatabase,
         StreamString dataSourceName;
         if (forceWriteDataSource) {
             if (!signalDatabase.Read("DataSource", dataSourceName)) {
-                if (defaultDataSourceName.Size() > 0u) {
+                ret = (defaultDataSourceName.Size() > 0u);
+                if (ret) {
                     dataSourceName = defaultDataSourceName;
                     ret = signalDatabase.Write("DataSource", dataSourceName);
                 }
@@ -1483,7 +1484,7 @@ bool RealTimeApplication::FlattenSignal(ConfigurationDatabase &signalDatabase,
                 }
             }
         }
-//BasicType. Write all the known signal properties
+        //BasicType. Write all the known signal properties
         if (!isStructuredData) {
             StreamString property;
             StreamString signalNumberStr;

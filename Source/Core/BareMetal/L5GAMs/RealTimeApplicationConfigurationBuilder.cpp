@@ -653,7 +653,9 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                 }
                 if (ret) {
                     if (dataSourceName != NULL_PTR(const char8 *)) {
-                        ret = data.Write("DataSource", dataSourceName);
+                        if(StringHelper::Length(dataSourceName) > 0u){
+                            ret = data.Write("DataSource", dataSourceName);
+                        }
                     }
                 }
                 if (ret) {
