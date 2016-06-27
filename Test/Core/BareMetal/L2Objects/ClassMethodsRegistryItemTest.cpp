@@ -32,17 +32,15 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassMethodsRegistryItemTest.h"
+
+#include "ClassMethodInterfaceMapper.h"
+#include "ClassMethodsRegistryItem.h"
+#include "ClassRegistryItem.h"
 #include "ClassWithCallableMethods.h"
+#include "ConfigurationDatabase.h"
+#include "ErrorType.h"
 #include "Object.h"
 #include "ReferenceContainer.h"
-#include "ClassRegistryItem.h"
-#include "ErrorType.h"
-#include "ClassMethodsRegistryItem.h"
-#include "ClassMethodInterfaceMapper.h"
-#include "ObjectRegistryDatabase.h"
-#include "ConfigurationDatabase.h"
-#include "StandardParser.h"
-#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -150,7 +148,7 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
      *
      *   (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods2::OverloadedMethod
      *
-     * If the method does not exist in the derived class, the cast must be refered to the base class, while the method to the derived one.
+     * If the method does not exist in the derived class, the cast must be referred to the base class, while the method must be to the derived one.
      */
 
     ClassMethodsRegistryItem target(cri, cmim, names);
@@ -428,159 +426,6 @@ bool ClassMethodsRegistryItemTest::TestCallFunction_WithMacroSupport() {
         }
         else {
             result = false;
-        }
-    }
-    return result;
-}
-
-bool ClassMethodsRegistryItemTest::TestCallFunction2() {
-    using namespace MARTe;
-    bool result = true;
-    Reference target;
-    ObjectRegistryDatabase* const ordb = ObjectRegistryDatabase::Instance();
-    StreamString definition("+context={Class=ClassWithCallableMethods}");
-    ConfigurationDatabase cdb;
-    StandardParser parser(definition, cdb);
-    result &= definition.Seek(0);
-    result &= parser.Parse();
-    result &= ordb->Initialise(cdb);
-    target = ordb->Find("context");
-    result &= target.IsValid();
-    if (target.IsValid()) {
-        {
-            ErrorManagement::ErrorType status;
-            ReferenceContainer params;
-            status = target->CallRegisteredMethod("NonRegisteredMethod", params);
-            result &= status.unsupportedFeature;
-        }
-        {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
-            ReferenceContainer params;
-            status = target->CallRegisteredMethod("FaultyMethod", params);
-            result &= status.functionError;
-            result &= (context.GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
-        }
-        {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
-            status = target->CallRegisteredMethod("OverloadedMethod");
-            result &= status;
-            result &= (context.GetLastMethodExecuted() == "OverloadedMethod()");
-        }
-        {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
-            int params = 0;
-            status = target->CallRegisteredMethod<int&>("OverloadedMethod", params);
-            result &= status;
-            result &= (context.GetLastMethodExecuted() == "OverloadedMethod(int&)");
-        }
-        {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
-            ReferenceContainer params;
-            status = target->CallRegisteredMethod<ReferenceContainer&>("OverloadedMethod", params);
-            result &= status;
-            result &= (context.GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
-        }
-        {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
-            int params;
-            params = 10;
-            status = target->CallRegisteredMethod<int&>("MethodWithInputInteger", params);
-            result &= status;
-            result &= (context.GetLastMethodExecuted() == "MethodWithInputInteger(int&)");
-        }
-        {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
-            int params;
-            status = target->CallRegisteredMethod<int&>( "MethodWithOutputInteger", params);
-            result &= status;
-            result &= (params == 20);
-            result &= (context.GetLastMethodExecuted() == "MethodWithOutputInteger(int&)");
-        }
-        {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
-            int params = 30;
-            status = target->CallRegisteredMethod<int&>("MethodWithInputOutputInteger", params);
-            result &= status;
-            result &= (params == (30 + 5));
-            result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputInteger(int&)");
-        }
-        {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
-            ReferenceContainer params;
-            Reference obj("Object");
-            bool success;
-            success = params.Insert("TestObject", obj);
-            if (success) {
-                status = target->CallRegisteredMethod<ReferenceContainer&>("MethodWithInputReferenceContainer", params);
-                result &= status;
-                result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainer(MARTe::ReferenceContainer&)");
-            }
-            else {
-                result = false;
-            }
-        }
-        {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
-            ReferenceContainer params;
-            Reference obj;
-            status = target->CallRegisteredMethod<ReferenceContainer&>("MethodWithOutputReferenceContainer", params);
-            result &= status;
-            obj = params.Find("TestObject2");
-            result &= obj.IsValid();
-            result &= (context.GetLastMethodExecuted() == "MethodWithOutputReferenceContainer(MARTe::ReferenceContainer&)");
-        }
-        {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
-            ReferenceContainer params;
-            Reference obj("Object");
-            bool success;
-            success = params.Insert("TestObject", obj);
-            if (success) {
-                status = target->CallRegisteredMethod<ReferenceContainer&>("MethodWithInputOutputReferenceContainer", params);
-                result &= status;
-                obj = params.Find("TestObject");
-                result &= !obj.IsValid();
-                obj = params.Find("TestObject2");
-                result &= obj.IsValid();
-                result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer&)");
-            }
-            else {
-                result = false;
-            }
-        }
-        {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
-            int params = 80;
-            status = target->CallRegisteredMethod<int>("MethodWithInputIntegerByCopy", params);
-            result &= status;
-            result &= (context.GetLastMethodExecuted() == "MethodWithInputIntegerByCopy(int)");
-        }
-        {
-            ErrorManagement::ErrorType status;
-            ClassWithCallableMethods context;
-            ReferenceContainer params;
-            Reference obj("Object");
-            bool success;
-            success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
-            if (success) {
-                status = target->CallRegisteredMethod<ReferenceContainer>("MethodWithInputReferenceContainerByCopy", params);
-                result &= status;
-                result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer)");
-            }
-            else {
-                result = false;
-            }
         }
     }
     return result;

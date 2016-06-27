@@ -47,8 +47,6 @@ public:
     bool TestCallFunction();
 
     bool TestCallFunction_WithMacroSupport();
-
-    bool TestCallFunction2();
 };
 
 /*---------------------------------------------------------------------------*/

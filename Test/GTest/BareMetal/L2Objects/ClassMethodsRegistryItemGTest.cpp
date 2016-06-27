@@ -58,8 +58,3 @@ TEST(ClassMethodsRegistryItemGTest,TestCallFunction_WithMacroSupport) {
     ClassMethodsRegistryItemTest target;
     ASSERT_TRUE(target.TestCallFunction_WithMacroSupport());
 }
-
-TEST(ClassMethodsRegistryItemGTest,TestCallFunction2) {
-    ClassMethodsRegistryItemTest target;
-    ASSERT_TRUE(target.TestCallFunction2());
-}

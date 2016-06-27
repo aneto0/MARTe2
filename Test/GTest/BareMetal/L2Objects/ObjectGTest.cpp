@@ -116,3 +116,8 @@ TEST(ObjectGTest,TestExportMetadata) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestExportMetadata());
 }
+
+TEST(ObjectGTest,TestCallRegisteredMethod) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestCallRegisteredMethod());
+}
