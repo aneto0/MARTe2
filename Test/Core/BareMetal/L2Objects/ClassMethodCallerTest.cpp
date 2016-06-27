@@ -1,7 +1,7 @@
 /**
- * @file ClassMethodInterfaceMapperTest.cpp
- * @brief Source file for class ClassMethodInterfaceMapperTest
- * @date 24/06/2016
+ * @file ClassMethodCallerTest.cpp
+ * @brief Source file for class ClassMethodCallerTest
+ * @date 27/06/2016
  * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ClassMethodInterfaceMapperTest (public, protected, and private). Be aware that some
+ * the class ClassMethodCallerTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -31,11 +31,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassMethodInterfaceMapperTest.h"
-#include "ClassMethodInterfaceMapper.h"
+#include "ClassMethodCallerTest.h"
+#include "ClassMethodCallerT.h"
 #include "ClassWithCallableMethods.h"
 #include "ErrorType.h"
-#include "Reference.h"
 #include "ReferenceContainer.h"
 
 /*---------------------------------------------------------------------------*/
@@ -50,26 +49,26 @@ namespace {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ClassMethodInterfaceMapperTest::ClassMethodInterfaceMapperTest() {
+ClassMethodCallerTest::ClassMethodCallerTest() {
 }
 
-ClassMethodInterfaceMapperTest::~ClassMethodInterfaceMapperTest() {
+ClassMethodCallerTest::~ClassMethodCallerTest() {
 }
 
-bool ClassMethodInterfaceMapperTest::TestCall() {
+bool ClassMethodCallerTest::TestCall() {
     using namespace MARTe;
     bool result = true;
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::FaultyMethod);
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::FaultyMethod);
+        ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        ErrorManagement::ErrorType status;
-        status = target.Call<ReferenceContainer&>(&context, params);
+        status = target.Call(&context, params);
         result &= status.functionError;
         result &= (context.GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
     }
     {
-        ClassMethodInterfaceMapper target((bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods::OverloadedMethod);
+        ClassMethodCallerT<ClassWithCallableMethods> target((bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods::OverloadedMethod);
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         status = target.Call(&context);
@@ -77,54 +76,54 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         result &= (context.GetLastMethodExecuted() == "OverloadedMethod()");
     }
     {
-        ClassMethodInterfaceMapper target((bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods::OverloadedMethod);
+        ClassMethodCallerT<ClassWithCallableMethods, int&> target((bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods::OverloadedMethod);
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         int params = 0;
-        status = target.Call<int&>(&context, params);
+        status = target.Call(&context, params);
         result &= status;
         result &= (context.GetLastMethodExecuted() == "OverloadedMethod(int&)");
     }
     {
-        ClassMethodInterfaceMapper target((bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods::OverloadedMethod);
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target((bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods::OverloadedMethod);
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
-        status = target.Call<ReferenceContainer&>(&context, params);
+        status = target.Call(&context, params);
         result &= status;
         result &= (context.GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
     }
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputInteger);
+        ClassMethodCallerT<ClassWithCallableMethods, int&> target(&ClassWithCallableMethods::MethodWithInputInteger);
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         int params = 10;
-        status = target.Call<int&>(&context, params);
+        status = target.Call(&context, params);
         result &= status;
         result &= (context.GetLastMethodExecuted() == "MethodWithInputInteger(int&)");
     }
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithOutputInteger);
+        ClassMethodCallerT<ClassWithCallableMethods, int&> target(&ClassWithCallableMethods::MethodWithOutputInteger);
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         int params = 0;
-        status = target.Call<int&>(&context, params);
+        status = target.Call(&context, params);
         result &= status;
         result &= (params == 20);
         result &= (context.GetLastMethodExecuted() == "MethodWithOutputInteger(int&)");
     }
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputOutputInteger);
+        ClassMethodCallerT<ClassWithCallableMethods, int&> target(&ClassWithCallableMethods::MethodWithInputOutputInteger);
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         int params = 30;
-        status = target.Call<int&>(&context, params);
+        status = target.Call(&context, params);
         result &= status;
         result &= (params == (30 + 5));
         result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputInteger(int&)");
     }
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputReferenceContainer);
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodWithInputReferenceContainer);
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
@@ -132,7 +131,7 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         bool success;
         success = params.Insert("TestObject", obj);
         if (success) {
-            status = target.Call<ReferenceContainer&>(&context, params);
+            status = target.Call(&context, params);
             result &= status;
             result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainer(MARTe::ReferenceContainer&)");
         }
@@ -141,19 +140,19 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         }
     }
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithOutputReferenceContainer);
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodWithOutputReferenceContainer);
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
         Reference obj;
-        status = target.Call<ReferenceContainer&>(&context, params);
+        status = target.Call(&context, params);
         result &= status;
         obj = params.Find("TestObject2");
         result &= obj.IsValid();
         result &= (context.GetLastMethodExecuted() == "MethodWithOutputReferenceContainer(MARTe::ReferenceContainer&)");
     }
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputOutputReferenceContainer);
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodWithInputOutputReferenceContainer);
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
@@ -161,7 +160,7 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         bool success;
         success = params.Insert("TestObject", obj);
         if (success) {
-            status = target.Call<ReferenceContainer&>(&context, params);
+            status = target.Call(&context, params);
             result &= status;
             obj = params.Find("TestObject");
             result &= !obj.IsValid();
@@ -174,16 +173,16 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         }
     }
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputIntegerByCopy);
+        ClassMethodCallerT<ClassWithCallableMethods, int> target(&ClassWithCallableMethods::MethodWithInputIntegerByCopy);
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         int params = 80;
-        status = target.Call<int>(&context, params);
+        status = target.Call(&context, params);
         result &= status;
         result &= (context.GetLastMethodExecuted() == "MethodWithInputIntegerByCopy(int)");
     }
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy);
+        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer> target(&ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy);
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
@@ -191,7 +190,7 @@ bool ClassMethodInterfaceMapperTest::TestCall() {
         bool success;
         success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
         if (success) {
-            status = target.Call<ReferenceContainer>(&context, params);
+            status = target.Call(&context, params);
             result &= status;
             result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer)");
         }

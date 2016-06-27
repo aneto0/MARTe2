@@ -24,6 +24,7 @@
 
 
 OBJSX=  AnyTypeGTest.x \
+		ClassMethodCallerGTest.x \
 		ClassMethodInterfaceMapperGTest.x \
 		ClassMethodsRegistryItemGTest.x \
 		ClassPropertiesGTest.x \

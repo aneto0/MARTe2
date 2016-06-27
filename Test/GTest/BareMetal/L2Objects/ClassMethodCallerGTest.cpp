@@ -1,7 +1,7 @@
 /**
- * @file ClassMethodInterfaceMapperGTest.cpp
- * @brief Source file for class ClassMethodInterfaceMapperGTest
- * @date 25/05/2016
+ * @file ClassMethodCallerGTest.cpp
+ * @brief Source file for class ClassMethodCallerGTest
+ * @date 27/06/2016
  * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ClassMethodInterfaceMapperGTest (public, protected, and private). Be aware that some
+ * the class ClassMethodCallerGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -33,7 +33,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassMethodInterfaceMapperTest.h"
+#include "ClassMethodCallerTest.h"
 #include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -44,7 +44,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ClassMethodInterfaceMapperGTest,TestCall) {
-    ClassMethodInterfaceMapperTest target;
+TEST(ClassMethodCallerGTest,TestCall) {
+    ClassMethodCallerTest target;
     ASSERT_TRUE(target.TestCall());
 }
