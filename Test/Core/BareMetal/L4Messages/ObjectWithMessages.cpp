@@ -46,11 +46,8 @@ ObjectWithMessages::ObjectWithMessages(){
     flag=-1;
 }
 
-
 bool ObjectWithMessages::ReceiverMethod(ReferenceContainer& ref) {
-
     flag = 0;
-    printf("\nflag=%d\n", flag);
     return true;
 }
 
@@ -60,7 +57,6 @@ bool ObjectWithMessages::SenderMethod(ReferenceContainer& ref) {
 }
 
 int32 ObjectWithMessages::Flag() {
-    printf("\nflag=%d\n", flag);
     return flag;
 }
 
