@@ -44,6 +44,11 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+TEST(ClassMethodCallerGTest,TestDefaultConstructor) {
+    ClassMethodCallerTest target;
+    ASSERT_TRUE(target.TestDefaultConstructor());
+}
+
 TEST(ClassMethodCallerGTest,TestCall) {
     ClassMethodCallerTest target;
     ASSERT_TRUE(target.TestCall());

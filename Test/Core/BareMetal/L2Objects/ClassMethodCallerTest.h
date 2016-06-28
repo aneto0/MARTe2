@@ -41,6 +41,7 @@ class ClassMethodCallerTest {
 public:
     ClassMethodCallerTest();
     virtual ~ClassMethodCallerTest();
+    bool TestDefaultConstructor();
     bool TestCall();
 };
 

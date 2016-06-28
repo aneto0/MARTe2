@@ -55,6 +55,10 @@ ClassMethodCallerTest::ClassMethodCallerTest() {
 ClassMethodCallerTest::~ClassMethodCallerTest() {
 }
 
+bool ClassMethodCallerTest::TestDefaultConstructor() {
+    return false;
+}
+
 bool ClassMethodCallerTest::TestCall() {
     using namespace MARTe;
     bool result = true;
