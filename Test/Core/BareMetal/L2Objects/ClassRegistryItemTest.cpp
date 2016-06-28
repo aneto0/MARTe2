@@ -253,6 +253,10 @@ bool ClassRegistryItemTest::TestFullConstructor() {
 //    return (dummy == NULL);
 //}
 
+bool ClassRegistryItemTest::TestRegisterMethods() {
+    return false;
+}
+
 bool ClassRegistryItemTest::TestIncrementNumberOfInstances() {
 
     if (myItem.GetNumberOfInstances() != 0) {

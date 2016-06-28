@@ -60,6 +60,11 @@ TEST(ClassRegistryItemGTest,TestFullConstructor) {
 //    ASSERT_TRUE(myClassRegistryItemTest.TestDestructor());
 //}
 
+TEST(ClassRegistryItemGTest,TestRegisterMethods) {
+    ClassRegistryItemTest myClassRegistryItemTest;
+    ASSERT_TRUE(myClassRegistryItemTest.TestRegisterMethods());
+}
+
 TEST(ClassRegistryItemGTest,TestIncrementNumberOfInstances) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestIncrementNumberOfInstances());

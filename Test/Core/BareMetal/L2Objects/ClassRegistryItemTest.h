@@ -70,6 +70,11 @@ public:
 //    bool TestDestructor();
 
     /**
+     * TODO
+     */
+    bool TestRegisterMethods();
+
+    /**
      * @brief Tests ClassRegistryItem::IncrementNumberOfInstances.
      * @return true if after the function call the number of instances variable is incremented.
      */
