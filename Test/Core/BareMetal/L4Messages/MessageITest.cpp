@@ -67,7 +67,7 @@ bool MessageITest::TestSendMessage() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    if (sender->SendMessage(mess, sender.operator->()) != ErrorManagement::NoError) {
+    if (MessageI::SendMessage(mess, sender.operator->()) != ErrorManagement::NoError) {
         return false;
     }
     return (receiver->Flag() == 0);
@@ -92,7 +92,7 @@ bool MessageITest::TestSendMessage_NULL_Source() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    if (sender->SendMessage(mess, NULL)!=ErrorManagement::NoError) {
+    if (MessageI::SendMessage(mess, NULL)!=ErrorManagement::NoError) {
         return false;
     }
     return (receiver->Flag() == 0);
@@ -110,7 +110,7 @@ bool MessageITest::TestSendMessage_False_InvalidMessage() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    return (sender->SendMessage(mess, NULL)==ErrorManagement::ParametersError);
+    return (MessageI::SendMessage(mess, NULL)==ErrorManagement::ParametersError);
 }
 
 bool MessageITest::TestSendMessage_False_NotExpectedLateReply() {
@@ -134,7 +134,7 @@ bool MessageITest::TestSendMessage_False_NotExpectedLateReply() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    return (sender->SendMessage(mess, sender.operator->()) == ErrorManagement::CommunicationError);
+    return (MessageI::SendMessage(mess, sender.operator->()) == ErrorManagement::CommunicationError);
 }
 
 bool MessageITest::TestSendMessage_False_NoDestinationForReply() {
@@ -159,7 +159,7 @@ bool MessageITest::TestSendMessage_False_NoDestinationForReply() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    return (sender->SendMessage(mess, NULL)==ErrorManagement::UnsupportedFeature);
+    return (MessageI::SendMessage(mess, NULL)==ErrorManagement::UnsupportedFeature);
 
 }
 
@@ -185,7 +185,7 @@ bool MessageITest::TestSendMessage_False_NoDestinationForExpectedReply() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    return (sender->SendMessage(mess, NULL)==ErrorManagement::ParametersError);
+    return (MessageI::SendMessage(mess, NULL)==ErrorManagement::ParametersError);
 
 }
 
@@ -209,7 +209,7 @@ bool MessageITest::TestSendMessage_False_InvalidDestination() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    return (sender->SendMessage(mess, sender.operator->()) == ErrorManagement::UnsupportedFeature);
+    return (MessageI::SendMessage(mess, sender.operator->()) == ErrorManagement::UnsupportedFeature);
 
 }
 
@@ -233,7 +233,7 @@ bool MessageITest::TestSendMessage_False_InvalidFunction() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    return (sender->SendMessage(mess, sender.operator->()) == ErrorManagement::UnsupportedFeature);
+    return (MessageI::SendMessage(mess, sender.operator->()) == ErrorManagement::UnsupportedFeature);
 
 }
 
@@ -259,7 +259,7 @@ bool MessageITest::TestSendMessage_False_InvalidFunction() {
  ObjectRegistryDatabase::Instance()->Insert(sender);
  ObjectRegistryDatabase::Instance()->Insert(receiver);
 
- return (sender->SendMessage(mess, sender.operator->())==ErrorManagement::CommunicationError);
+ return (MessageI::SendMessage(mess, sender.operator->())==ErrorManagement::CommunicationError);
 
  }
  */
@@ -283,7 +283,7 @@ bool MessageITest::TestSendMessageAndWaitReply() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    if (sender->SendMessageAndWaitReply(mess, sender.operator->()) != ErrorManagement::NoError) {
+    if (MessageI::SendMessageAndWaitReply(mess, sender.operator->()) != ErrorManagement::NoError) {
         return false;
     }
     if (!mess->IsReplyMessage()) {
@@ -308,7 +308,7 @@ bool MessageITest::TestSendMessageAndWaitReply_False_InvalidMessage() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    return (sender->SendMessageAndWaitReply(mess, sender.operator->()) == ErrorManagement::ParametersError);
+    return (MessageI::SendMessageAndWaitReply(mess, sender.operator->()) == ErrorManagement::ParametersError);
 }
 
 bool MessageITest::TestSendMessageAndWaitReply_False_ReplyOfReply() {
@@ -332,7 +332,7 @@ bool MessageITest::TestSendMessageAndWaitReply_False_ReplyOfReply() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    return (sender->SendMessageAndWaitReply(mess, sender.operator->()) == ErrorManagement::CommunicationError);
+    return (MessageI::SendMessageAndWaitReply(mess, sender.operator->()) == ErrorManagement::CommunicationError);
 }
 
 bool MessageITest::TestSendMessageAndExpectReplyLater() {
@@ -354,7 +354,7 @@ bool MessageITest::TestSendMessageAndExpectReplyLater() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    if (sender->SendMessageAndExpectReplyLater(mess, sender.operator->()) != ErrorManagement::NoError) {
+    if (MessageI::SendMessageAndExpectReplyLater(mess, sender.operator->()) != ErrorManagement::NoError) {
         return false;
     }
 
@@ -374,7 +374,7 @@ bool MessageITest::TestSendMessageAndExpectReplyLater_False_InvalidMessage(){
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    return (sender->SendMessageAndExpectReplyLater(mess, sender.operator->()) == ErrorManagement::ParametersError);
+    return (MessageI::SendMessageAndExpectReplyLater(mess, sender.operator->()) == ErrorManagement::ParametersError);
 }
 
 
@@ -400,7 +400,7 @@ bool MessageITest::TestSendMessageAndExpectReplyLater_False_ReplyOfReply(){
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    return (sender->SendMessageAndExpectReplyLater(mess, sender.operator->()) == ErrorManagement::CommunicationError);
+    return (MessageI::SendMessageAndExpectReplyLater(mess, sender.operator->()) == ErrorManagement::CommunicationError);
 }
 
 
