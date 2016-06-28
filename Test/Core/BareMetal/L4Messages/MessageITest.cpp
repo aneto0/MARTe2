@@ -85,9 +85,7 @@ bool MessageITest::TestSendMessage_NULL_Source() {
     using namespace MARTe;
     bool result = false;
     ErrorManagement::ErrorType status;
-    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    sender->SetName("sender");
     receiver->SetName("receiver");
 
     ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -100,7 +98,6 @@ bool MessageITest::TestSendMessage_NULL_Source() {
     }
 
     ObjectRegistryDatabase::Instance()->CleanUp();
-    ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessage(mess, NULL);
@@ -118,14 +115,11 @@ bool MessageITest::TestSendMessage_False_InvalidMessage() {
     using namespace MARTe;
     bool result = false;
     ErrorManagement::ErrorType status;
-    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    sender->SetName("sender");
     receiver->SetName("receiver");
 
     ReferenceT<Message> mess;
     ObjectRegistryDatabase::Instance()->CleanUp();
-    ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessage(mess, NULL);
@@ -170,9 +164,7 @@ bool MessageITest::TestSendMessage_False_NoDestinationForReply() {
     using namespace MARTe;
     bool result = false;
     ErrorManagement::ErrorType status;
-    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    sender->SetName("sender");
     receiver->SetName("receiver");
 
     ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -188,7 +180,6 @@ bool MessageITest::TestSendMessage_False_NoDestinationForReply() {
     mess->MarkLateReplyExpected();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
-    ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessage(mess, NULL);
@@ -203,9 +194,7 @@ bool MessageITest::TestSendMessage_False_NoDestinationForExpectedReply() {
     using namespace MARTe;
     bool result = false;
     ErrorManagement::ErrorType status;
-    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    sender->SetName("sender");
     receiver->SetName("receiver");
 
     ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -221,7 +210,6 @@ bool MessageITest::TestSendMessage_False_NoDestinationForExpectedReply() {
     mess->MarkLateReplyExpected();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
-    ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessage(mess, NULL);
