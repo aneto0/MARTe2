@@ -44,6 +44,26 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+TEST(ClassMethodInterfaceMapperGTest,TestDefaultConstructor) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestDefaultConstructor());
+}
+
+TEST(ClassMethodInterfaceMapperGTest,TestConstructorForMethodWithNoArguments) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructorForMethodWithNoArguments());
+}
+
+TEST(ClassMethodInterfaceMapperGTest,TestConstructorForMethodWith1ArgumentByCopy) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructorForMethodWith1ArgumentByCopy());
+}
+
+TEST(ClassMethodInterfaceMapperGTest,TestConstructorForMethodWith1ArgumentByRef) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructorForMethodWith1ArgumentByRef());
+}
+
 TEST(ClassMethodInterfaceMapperGTest,TestCall) {
     ClassMethodInterfaceMapperTest target;
     ASSERT_TRUE(target.TestCall());

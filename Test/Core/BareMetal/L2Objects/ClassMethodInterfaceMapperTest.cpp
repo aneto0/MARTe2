@@ -56,6 +56,22 @@ ClassMethodInterfaceMapperTest::ClassMethodInterfaceMapperTest() {
 ClassMethodInterfaceMapperTest::~ClassMethodInterfaceMapperTest() {
 }
 
+bool ClassMethodInterfaceMapperTest::TestDefaultConstructor() {
+    return false;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructorForMethodWithNoArguments() {
+    return false;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructorForMethodWith1ArgumentByCopy() {
+    return false;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructorForMethodWith1ArgumentByRef() {
+    return false;
+}
+
 bool ClassMethodInterfaceMapperTest::TestCall() {
     using namespace MARTe;
     bool result = true;

@@ -41,6 +41,10 @@ class ClassMethodInterfaceMapperTest {
 public:
     ClassMethodInterfaceMapperTest();
     virtual ~ClassMethodInterfaceMapperTest();
+    bool TestDefaultConstructor();
+    bool TestConstructorForMethodWithNoArguments();
+    bool TestConstructorForMethodWith1ArgumentByCopy();
+    bool TestConstructorForMethodWith1ArgumentByRef();
     bool TestCall();
 };
 
