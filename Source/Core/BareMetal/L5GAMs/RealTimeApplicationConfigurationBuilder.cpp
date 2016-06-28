@@ -244,19 +244,33 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                     }
                 }
 
+                uint32 numberOfElements = 0u;
                 if (ret) {
-                    uint32 numberOfElements = 0u;
                     if (!dataSourcesDatabase.Read("NumberOfElements", numberOfElements)) {
                         if (numberOfDimensions > 0u) {
                             REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "NumberOfElements was not defined for signal: %s in %s",
                                                     signalName.Buffer(), dataSourceName.Buffer())
                         }
                         else {
-                            ret = dataSourcesDatabase.Write("NumberOfElements", 1u);
+                            numberOfElements = 1u;
+                            ret = dataSourcesDatabase.Write("NumberOfElements", numberOfElements);
                         }
                     }
                 }
 
+                //Compute the byte size
+                TypeDescriptor signalTypeDescriptor;
+                if (ret) {
+                    signalTypeDescriptor = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
+                    ret = (signalTypeDescriptor != InvalidType);
+                }
+                uint32 signalNumberOfBytes = 0u;
+                if (ret) {
+                    signalNumberOfBytes = numberOfElements * signalTypeDescriptor.numberOfBits / 8u;
+                }
+                if (ret) {
+                    ret = dataSourcesDatabase.Write("ByteSize", signalNumberOfBytes);
+                }
                 if (ret) {
                     ret = dataSourcesDatabase.MoveToAncestor(1u);
                 }
@@ -412,6 +426,41 @@ bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory() {
     return ret;
 }
 
+bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
+    bool ret = dataSourcesDatabase.MoveToRoot();
+    uint32 numberOfDataSources = 0u;
+    if (ret) {
+        ret = dataSourcesDatabase.MoveRelative("Data");
+    }
+    if (ret) {
+        numberOfDataSources = dataSourcesDatabase.GetNumberOfChildren();
+    }
+    if (ret) {
+        uint32 n;
+        for (n = 0u; (n < numberOfDataSources) && (ret); n++) {
+            StreamString qualifiedName;
+            StreamString dataSourceIdx;
+            dataSourceIdx.Printf("%d", n);
+            ret = dataSourcesDatabase.MoveRelative(dataSourceIdx.Buffer());
+            if (ret) {
+                ret = dataSourcesDatabase.Read("QualifiedName", qualifiedName);
+            }
+            ReferenceT<DataSourceI> dataSource;
+            if (ret) {
+                dataSource = realTimeApplication->Find(qualifiedName.Buffer());
+                ret = dataSource.IsValid();
+            }
+            if (ret) {
+                ret = dataSource->SetConfiguredDatabase(dataSourcesDatabase);
+            }
+            if (ret) {
+                ret = dataSourcesDatabase.MoveToAncestor(1u);
+            }
+        }
+    }
+    return ret;
+}
+
 bool RealTimeApplicationConfigurationBuilder::Copy(ConfigurationDatabase &functionsDatabaseOut,
                                                    ConfigurationDatabase &dataSourcesDatabaseOut) {
     bool ret = functionsDatabase.MoveToRoot();
@@ -560,8 +609,9 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(ConfigurationDatabas
                     }
 
                     AnyType ranges = signalDatabase.GetType("Ranges");
-                    ret = SignalIntrospectionToStructuredData(signalType.Buffer(), signalName, alias.Buffer(), dataSourceName.Buffer(), ranges, resolvedSignal,
-                                                              signalNumber);
+                    AnyType timeCyclesSamples = signalDatabase.GetType("TimeCyclesSamples");
+                    ret = SignalIntrospectionToStructuredData(signalType.Buffer(), signalName, alias.Buffer(), dataSourceName.Buffer(), ranges,
+                                                              timeCyclesSamples, resolvedSignal, signalNumber);
                 }
                 if (ret) {
                     //The original structured type is no longer needed
@@ -579,7 +629,8 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(ConfigurationDatabas
                 ret = resolvedSignal.Write("QualifiedName", signalName);
             }
             //Loop and copy all known properties at this time.
-            const char8 *properties[] = { "Type", "NumberOfDimensions", "NumberOfElements", "Alias", "Ranges", "DataSource", NULL_PTR(char8 *) };
+            const char8 *properties[] = { "Type", "NumberOfDimensions", "NumberOfElements", "Alias", "Ranges", "DataSource", "TimeCyclesSamples", NULL_PTR(
+                    char8 *) };
             uint32 p = 0u;
             while ((properties[p] != NULL_PTR(char8 *)) && (ret)) {
                 AnyType element = signalDatabase.GetType(properties[p]);
@@ -601,6 +652,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                                                                                   const char8 * const alias,
                                                                                   const char8 * const dataSourceName,
                                                                                   AnyType ranges,
+                                                                                  AnyType timeCyclesSamples,
                                                                                   StructuredDataI & data,
                                                                                   uint32 &signalNumber) {
     //Try to find the registered type in the ClassRegistryDatabase
@@ -634,7 +686,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
             //If the member is still structured data, continue to discombobulate
             if (entry.GetMemberTypeDescriptor().isStructuredData) {
                 ret = SignalIntrospectionToStructuredData(entry.GetMemberTypeName(), fullSignalName.Buffer(), fullAliasName.Buffer(), dataSourceName, ranges,
-                                                          data, signalNumber);
+                                                          timeCyclesSamples, data, signalNumber);
             }
             else {
                 //Got to the final BasicType. Add a node with the signal number as the name...
@@ -651,9 +703,12 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                 if (ranges.GetTypeDescriptor() != VoidType) {
                     ret = data.Write("Ranges", ranges);
                 }
+                if (timeCyclesSamples.GetTypeDescriptor() != VoidType) {
+                    ret = data.Write("TimeCyclesSamples", timeCyclesSamples);
+                }
                 if (ret) {
                     if (dataSourceName != NULL_PTR(const char8 *)) {
-                        if(StringHelper::Length(dataSourceName) > 0u){
+                        if (StringHelper::Length(dataSourceName) > 0u) {
                             ret = data.Write("DataSource", dataSourceName);
                         }
                     }
@@ -1562,7 +1617,9 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const char 
                     StreamString alias;
                     StreamString dataSourceName;
                     uint32 numberOfOffsetElements = 0u;
+                    uint32 numberOfTimeCyclesSamplesElements = 0u;
                     uint32 *offsetMatrixBackend = NULL_PTR(uint32 *);
+                    uint32 *timeCyclesSamplesVectorBackend = NULL_PTR(uint32 *);
                     uint32 byteSize = 0u;
 
                     signalId = functionsDatabase.GetChildName(s);
@@ -1582,12 +1639,19 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const char 
                         ret = functionsDatabase.Read("ByteSize", byteSize);
                     }
 
-                    AnyType existentArray = functionsDatabase.GetType("ByteOffset");
-                    if (existentArray.GetDataPointer() != NULL_PTR(void *)) {
-                        numberOfOffsetElements = existentArray.GetNumberOfElements(1u);
+                    AnyType existentByteOffset = functionsDatabase.GetType("ByteOffset");
+                    if (existentByteOffset.GetDataPointer() != NULL_PTR(void *)) {
+                        numberOfOffsetElements = existentByteOffset.GetNumberOfElements(1u);
                         offsetMatrixBackend = new uint32[numberOfOffsetElements * 2u];
                         Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
                         ret = functionsDatabase.Read("ByteOffset", offsetMat);
+                    }
+                    AnyType existentTimeCyclesSamples = functionsDatabase.GetType("TimeCyclesSamples");
+                    if (existentTimeCyclesSamples.GetDataPointer() != NULL_PTR(void *)) {
+                        numberOfTimeCyclesSamplesElements = existentTimeCyclesSamples.GetNumberOfElements(0u);
+                        timeCyclesSamplesVectorBackend = new uint32[numberOfTimeCyclesSamplesElements];
+                        Vector<uint32> timeCyclesSamplesVec(timeCyclesSamplesVectorBackend, numberOfTimeCyclesSamplesElements);
+                        ret = functionsDatabase.Read("TimeCyclesSamples", timeCyclesSamplesVec);
                     }
                     //Move to the function level
                     if (ret) {
@@ -1652,6 +1716,14 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const char 
                                 delete[] offsetMatrixBackend;
                             }
                         }
+                        if (ret) {
+                            if (timeCyclesSamplesVectorBackend != NULL_PTR(void *)) {
+                                Vector<uint32> timeCyclesSamplesVec(timeCyclesSamplesVectorBackend, numberOfTimeCyclesSamplesElements);
+                                ret = functionsDatabase.Write("TimeCyclesSamples", timeCyclesSamplesVec);
+                                delete[] timeCyclesSamplesVectorBackend;
+                            }
+                        }
+
                         if (ret) {
                             ret = functionsDatabase.MoveToAncestor(2u);
                         }

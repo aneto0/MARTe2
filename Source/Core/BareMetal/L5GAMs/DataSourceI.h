@@ -86,6 +86,35 @@ public:
 
 
     bool AddSignals(StructuredDataI & data);
+
+    bool SetConfiguredDatabase(StructuredDataI & data);
+
+    uint32 GetNumberOfSignals();
+
+    bool GetSignalName(uint32 signalIdx, StreamString &signalName);
+
+    bool GetSignalIndex(uint32 &signalIdx, const char8*  const signalName);
+
+    TypeDescriptor GetSignalType(uint32 signalIdx);
+
+    bool GetSignalNumberOfDimensions(uint32 signalIdx, uint32 &numberOfDimensions);
+
+    bool GetSignalNumberElements(uint32 signalIdx, uint32 &numberOfElements);
+
+    bool GetSignalByteSize(uint32 signalIdx, uint32 &byteSize);
+
+    bool GetSignalNumberOfStates(uint32 signalIdx, uint32 &numberOfStates);
+
+    bool GetSignalStateName(uint32 signalIdx, uint32 stateIdx, StreamString &stateName);
+
+    bool GetSignalNumberOfConsumers(uint32 signalIdx, const char8 *stateName, uint32 &numberOfConsumers);
+
+    bool GetSignalNumberOfProducers(uint32 signalIdx, const char8 *stateName, uint32 &numberOfProducers);
+
+    bool GetSignalConsumerName(uint32 signalIdx, const char8 *stateName, uint32 consumerIdx, StreamString &consumerName);
+
+    bool GetSignalProducerName(uint32 signalIdx, const char8 *stateName, uint32 producerIdx, StreamString &producerName);
+
 #if 0
     /**
      * @brief Recursively calls DataSourceSignalI::Allocate
@@ -177,6 +206,11 @@ private:
 #endif
     ConfigurationDatabase signalsDatabase;
 
+    ConfigurationDatabase configuredDatabase;
+
+    uint32 numberOfSignals;
+
+    bool MoveToSignalIndex(uint32 signalIdx);
 };
 
 }

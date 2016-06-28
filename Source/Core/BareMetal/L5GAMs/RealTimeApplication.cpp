@@ -2149,6 +2149,39 @@ bool RealTimeApplication::ConfigureApplication() {
         ret = rtAppBuilder.AllocateFunctionsMemory();
         PrintDatabases(rtAppBuilder);
     }
+    if (ret) {
+        ret = rtAppBuilder.PostConfigureDataSources();
+        PrintDatabases(rtAppBuilder);
+    }
+    if (ret) {
+        ReferenceContainer dataSourcesFound;
+        //Look for all the DataSources
+        ReferenceContainerFilterReferencesTemplate<DataSourceI> dataSourceFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+        Find(dataSourcesFound, dataSourceFilter);
+        uint32 numberOfDataSources = dataSourcesFound.Size();
+        uint32 i;
+        for (i = 0u; i < numberOfDataSources; i++) {
+            ReferenceT<DataSourceI> dataSource = dataSourcesFound.Get(i);
+            printf("[%s]\n", dataSource->GetName());
+
+            uint32 numberOfSignals = dataSource->GetNumberOfSignals();
+            printf("Number of signals: %d\n", numberOfSignals);
+            uint32 s;
+            for (s = 0u; s < numberOfSignals; s++) {
+                StreamString signalName;
+                dataSource->GetSignalName(s, signalName);
+                printf("  Signal: %s\n", signalName.Buffer());
+                TypeDescriptor type = dataSource->GetSignalType(s);
+                printf("    Type: %s\n", TypeDescriptor::GetTypeNameFromTypeDescriptor(type));
+                uint32 n;
+                dataSource->GetSignalNumberOfDimensions(s, n);
+                printf("    NumberOfDimensions: %d\n", n);
+                dataSource->GetSignalNumberElements(s, n);
+                printf("    NumberOfElements: %d\n", n);
+            }
+        }
+    }
+
     return ret;
 #if 0
 //Create the Function and the Data nodes. Add all the signals by querying the GAMs and the DataSourceI
@@ -2348,7 +2381,7 @@ bool RealTimeApplication::ConfigureApplication() {
         ret = dataSourcesDatabase.MoveToRoot();
     }
 
-    //Write the GAM memory information in each DataSource
+//Write the GAM memory information in each DataSource
     if (ret) {
         ret = AllocateFunctionsMemory("InputSignals");
     }

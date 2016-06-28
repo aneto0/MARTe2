@@ -99,6 +99,9 @@ public:
      *                 +NumberOfDimensions = 0|1|2
      *                 +NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
+     *                 +TimeCyclesSamples = {x y}, where x is the number o samples for each cycle and y the number of cycles covered by the data
+     *                                      {1,1} => same as cycle time, {1,>1} => over-sampling, {>1,1) => sub-sampling, {-1,1} => asynchronous (i.e.
+     *                                      not related to cycle time), {N,N>1} => N history samples, {-1,N} => history of asynchronous data
      *               }
      *            }
      *         }
@@ -143,6 +146,7 @@ public:
      *                 +NumberOfDimensions = 0|1|2
      *                 +NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
+     *                 +TimeCyclesSamples = {x y}
      *               }
      *            }
      *         }
@@ -189,6 +193,7 @@ public:
      *                 +NumberOfDimensions = 0|1|2
      *                 +NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
+     *                 +TimeCyclesSamples = {x y}
      *               }
      *            }
      *         }
@@ -232,6 +237,7 @@ public:
      *                 +NumberOfDimensions = 0|1|2
      *                 +NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
+     *                 +TimeCyclesSamples = {x y}
      *               }
      *            }
      *         }
@@ -247,6 +253,7 @@ public:
      *              Type = BasicType
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
+     *              ByteSize = NUMBER > 0
      *            }
      *          }
      *        }
@@ -279,6 +286,7 @@ public:
      *                 NumberOfDimensions = 0|1|2
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
+     *                 +TimeCyclesSamples = {x y}
      *               }
      *            }
      *         }
@@ -321,6 +329,7 @@ public:
      *                 NumberOfDimensions = 0|1|2
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
+     *                 +TimeCyclesSamples = {x y}
      *               }
      *            }
      *         }
@@ -364,6 +373,7 @@ public:
      *                 NumberOfDimensions = 0|1|2
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
+     *                 +TimeCyclesSamples = {x y}
      *               }
      *            }
      *         }
@@ -409,6 +419,7 @@ public:
      *                 NumberOfDimensions = 0|1|2
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
+     *                 +TimeCyclesSamples = {x y}
      *               }
      *            }
      *         }
@@ -463,8 +474,9 @@ public:
      *                 NumberOfDimensions = 0|1|2
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
-     *                 ByteSize = NUMBER
-     *                 ByteOffset = { { min_idx_bytes max_idx_bytes } { min_idx_bytes max_idx_bytes } ...}
+     *                 ByteSize = NUMBER > 0
+     *                 +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
+     *                 +TimeCyclesSamples = {x y}
      *               }
      *            }
      *         }
@@ -518,7 +530,8 @@ public:
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
      *                 ByteSize = NUMBER>0
-     *                 ByteOffset = { { min_idx_bytes max_idx_bytes } { min_idx_bytes max_idx_bytes } ...}
+     *                 +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
+     *                 +TimeCyclesSamples = {x y}
      *               }
      *            }
      *         }
@@ -533,7 +546,8 @@ public:
      *               Signals = {
      *                 *NUMBER = {
      *                   QualifiedName = "QualifiedName of the Signal"
-     *                   ByteOffset = { { min_idx_bytes max_idx_bytes } { min_idx_bytes max_idx_bytes } ... }
+     *                   +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
+     *                   +TimeCyclesSamples = {x y}
      *                 }
      *               }
      *             }
@@ -585,7 +599,8 @@ public:
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
      *                 ByteSize = NUMBER>0
-     *                 ByteOffset = { { min_idx_bytes max_idx_bytes } { min_idx_bytes max_idx_bytes } ...}
+     *                 ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
+     *                 +TimeCyclesSamples = {x y}
      *               }
      *            }
      *         }
@@ -600,7 +615,7 @@ public:
      *               Signals = {
      *                 *NUMBER = {
      *                   QualifiedName = "QualifiedName of the Signal"
-     *                   +ByteOffset = { { min_idx_bytes max_idx_bytes } { min_idx_bytes max_idx_bytes } ... }
+     *                   +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
      *                 }
      *               }
      *             }
@@ -631,7 +646,8 @@ public:
      *                  Signals = {
      *                    *NUMBER = {
      *                      QualifiedName = "QualifiedName of the Signal"
-     *                      +ByteOffset = { { min_idx_bytes max_idx_bytes } { min_idx_bytes max_idx_bytes } ... }
+     *                      +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
+     *                      +TimeCyclesSamples = {x y}
      *                    }
      *                 }
      *               }
@@ -641,6 +657,13 @@ public:
      *     }
      */
     bool AllocateFunctionsMemory();
+
+    /**
+     * @brief For each DataSource call DataSourceI::SetConfiguredDatabase.
+     * @details Calls DataSourceI::SetConfiguredDatabase on each DataSource under Data, passing the Signals{} and Functions{} branches.
+     * @return true if DataSourceI::SetConfiguredDatabase returns true for all DataSources.
+     */
+    bool PostConfigureDataSources();
 
     /**
      * @brief Copies the Function and DataSource databases.
@@ -661,10 +684,6 @@ private:
      * ConfigurationDatabase with all the DataSource information.
      */
     ConfigurationDatabase dataSourcesDatabase;
-
-    /**
-     * ConfigurationDatabase realTimeApplicationConfigurationIn
-     */
 
     /**
      * The default DataSource name to be used if this is not defined in any of the signals.
@@ -721,6 +740,7 @@ private:
      * @param[in] alias where can this signal be found in the DataSource. If this parameter is defined, the qualified alias will be prefixed by this value.
      * @param[in] dataSourceName the qualified name of the DataSource where this signal can be found.
      * @param[in] ranges if this parameter is defined, the same ranges will be applied to all the nested signals.
+     * @param[in] timeCyclesSamples if this parameter is defined, the same TimeCyclesSamples definition will be applied to all the nested signals.
      * @param[in] data target database where to write the flatten nested signals.
      * @param[out] signalNumber is incremented every time a new signal is added to \a data.
      * @return true if the typeName exists in the ClassRegistryDatabase and if all the signal properties can be successfully written to \a data.
@@ -730,6 +750,7 @@ private:
                                              const char8 * const alias,
                                              const char8 * const dataSourceName,
                                              AnyType ranges,
+                                             AnyType timeCyclesSamples,
                                              StructuredDataI & data,
                                              uint32 &signalNumber);
 

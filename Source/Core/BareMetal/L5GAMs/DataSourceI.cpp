@@ -150,9 +150,242 @@ bool DataSourceI::Initialise(StructuredDataI & data) {
     return ret;
 }
 
-bool DataSourceI::AddSignals(StructuredDataI &data){
+bool DataSourceI::AddSignals(StructuredDataI &data) {
     signalsDatabase.MoveAbsolute("Signals");
     return data.Write("Signals", signalsDatabase);
 }
 
+bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
+    bool ret = data.Copy(configuredDatabase);
+    return ret;
+}
+
+uint32 DataSourceI::GetNumberOfSignals() {
+    bool ret = configuredDatabase.MoveToRoot();
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("Signals");
+    }
+    uint32 numberOfSignals = 0u;
+    if (ret) {
+        numberOfSignals = configuredDatabase.GetNumberOfChildren();
+    }
+    return numberOfSignals;
+}
+
+bool DataSourceI::GetSignalName(uint32 signalIdx,
+                                StreamString &signalName) {
+    bool ret = MoveToSignalIndex(signalIdx);
+    if (ret) {
+        ret = configuredDatabase.Read("QualifiedName", signalName);
+    }
+    return ret;
+}
+
+bool DataSourceI::GetSignalIndex(uint32 &signalIdx,
+                                 const char8* const signalName) {
+
+    uint32 numberOfSignals = GetNumberOfSignals();
+    uint32 n;
+    bool ret = true;
+    bool found = false;
+    for (n = 0u; (n < numberOfSignals) && ret && (!found); n++) {
+        StreamString searchName;
+        ret = GetSignalName(n, searchName);
+        if (ret) {
+            found = (StringHelper::Compare(signalName, searchName.Buffer()) == 0u);
+        }
+    }
+    if (ret) {
+        ret = found;
+    }
+    return ret;
+}
+
+TypeDescriptor DataSourceI::GetSignalType(uint32 signalIdx) {
+    TypeDescriptor signalTypeDescriptor = InvalidType;
+    bool ret = MoveToSignalIndex(signalIdx);
+    StreamString signalType;
+    if (ret) {
+        ret = configuredDatabase.Read("Type", signalType);
+    }
+    if (ret) {
+        signalTypeDescriptor = TypeDescriptor::GetTypeDescriptorFromTypeName(signalType.Buffer());
+    }
+    return signalTypeDescriptor;
+}
+
+bool DataSourceI::GetSignalNumberOfDimensions(uint32 signalIdx,
+                                              uint32 &numberOfDimensions) {
+    bool ret = MoveToSignalIndex(signalIdx);
+    if (ret) {
+        ret = configuredDatabase.Read("NumberOfDimensions", numberOfDimensions);
+    }
+    return ret;
+}
+
+bool DataSourceI::GetSignalNumberElements(uint32 signalIdx,
+                                          uint32 &numberOfElements) {
+    bool ret = MoveToSignalIndex(signalIdx);
+    if (ret) {
+        ret = configuredDatabase.Read("NumberOfElements", numberOfElements);
+    }
+    return ret;
+}
+
+bool DataSourceI::GetSignalByteSize(uint32 signalIdx,
+                                    uint32 &byteSize) {
+    bool ret = MoveToSignalIndex(signalIdx);
+    if (ret) {
+        ret = configuredDatabase.Read("ByteSize", byteSize);
+    }
+    return ret;
+}
+
+bool DataSourceI::GetSignalNumberOfStates(uint32 signalIdx,
+                                          uint32 &numberOfStates) {
+    bool ret = MoveToSignalIndex(signalIdx);
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("States");
+    }
+    if (ret) {
+        numberOfStates = configuredDatabase.GetNumberOfChildren();
+    }
+    return ret;
+}
+
+bool DataSourceI::GetSignalStateName(uint32 signalIdx,
+                                     uint32 stateIdx,
+                                     StreamString &stateName) {
+    bool ret = MoveToSignalIndex(signalIdx);
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("States");
+    }
+    uint32 numberOfStates = 0u;
+    if (ret) {
+        ret = GetSignalNumberOfStates(signalIdx, numberOfStates);
+    }
+    if (ret) {
+        ret = (stateIdx < numberOfStates);
+    }
+    if (ret) {
+        ret = MoveToSignalIndex(signalIdx);
+    }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("States");
+    }
+    if (ret) {
+        stateName = configuredDatabase.GetChildName(stateIdx);
+    }
+
+    return ret;
+}
+
+bool DataSourceI::GetSignalNumberOfConsumers(uint32 signalIdx,
+                                             const char8 *stateName,
+                                             uint32 &numberOfConsumers) {
+    bool ret = MoveToSignalIndex(signalIdx);
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("States");
+    }
+    AnyType consumers;
+    if (ret) {
+        ret = configuredDatabase.Read("Consumers", consumers);
+    }
+    if (ret) {
+        numberOfConsumers = consumers.GetNumberOfElements(0u);
+    }
+    return ret;
+}
+
+bool DataSourceI::GetSignalNumberOfProducers(uint32 signalIdx,
+                                             const char8 *stateName,
+                                             uint32 &numberOfProducers) {
+    bool ret = MoveToSignalIndex(signalIdx);
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("States");
+    }
+    AnyType producers;
+    if (ret) {
+        ret = configuredDatabase.Read("Producers", producers);
+    }
+    if (ret) {
+        numberOfProducers = producers.GetNumberOfElements(0u);
+    }
+    return ret;
+}
+
+bool DataSourceI::GetSignalConsumerName(uint32 signalIdx,
+                                        const char8 *stateName,
+                                        uint32 consumerIdx,
+                                        StreamString &consumerName) {
+    bool ret = MoveToSignalIndex(signalIdx);
+    uint32 numberOfConsumers;
+    if (ret) {
+        ret = GetSignalNumberOfConsumers(signalIdx, stateName, numberOfConsumers);
+    }
+    if (ret) {
+        ret = (consumerIdx < numberOfConsumers);
+    }
+    if (ret) {
+        ret = MoveToSignalIndex(signalIdx);
+    }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("States");
+    }
+    if (ret) {
+        StreamString *consumerArray = new StreamString[numberOfConsumers];
+        Vector<StreamString> consumerVector(consumerArray, numberOfConsumers);
+        ret = configuredDatabase.Read("Consumers", consumerVector);
+        if (ret) {
+            consumerName = consumerVector[consumerIdx];
+        }
+        delete[] consumerArray;
+    }
+
+    return ret;
+}
+
+bool DataSourceI::GetSignalProducerName(uint32 signalIdx,
+                                        const char8 *stateName,
+                                        uint32 producerIdx,
+                                        StreamString &producerName) {
+    bool ret = MoveToSignalIndex(signalIdx);
+    uint32 numberOfProducers;
+    if (ret) {
+        ret = GetSignalNumberOfProducers(signalIdx, stateName, numberOfProducers);
+    }
+    if (ret) {
+        ret = (producerIdx < numberOfProducers);
+    }
+    if (ret) {
+        ret = MoveToSignalIndex(signalIdx);
+    }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("States");
+    }
+    if (ret) {
+        StreamString *producerArray = new StreamString[numberOfProducers];
+        Vector<StreamString> producerVector(producerArray, numberOfProducers);
+        ret = configuredDatabase.Read("Producers", producerVector);
+        if (ret) {
+            producerName = producerVector[producerIdx];
+        }
+        delete[] producerArray;
+    }
+
+    return ret;
+}
+
+bool DataSourceI::MoveToSignalIndex(uint32 signalIdx) {
+    bool ret = configuredDatabase.MoveToRoot();
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("Signals");
+    }
+    StreamString signalIdxStr;
+    signalIdxStr.Printf("%d", signalIdx);
+    if (ret) {
+        ret = configuredDatabase.MoveRelative(signalIdxStr.Buffer());
+    }
+    return ret;
+}
 }

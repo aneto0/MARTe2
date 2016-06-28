@@ -185,7 +185,7 @@ public:
      * @pre
      *   (deltaPos <= MAX_INT32) && (deltaPos >= MIN_INT32)
      */
-    bool RelativeSeek(const int64 deltaPos);
+    virtual bool RelativeSeek(const int64 deltaPos);
 
     /**
      * @brief Gets the current position.
