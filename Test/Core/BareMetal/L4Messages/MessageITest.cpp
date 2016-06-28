@@ -227,12 +227,13 @@ bool MessageITest::TestSendMessage_False_InvalidDestination() {
     bool result = false;
     ErrorManagement::ErrorType status;
     ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    ReferenceT<ObjectWithMessages> receiver;
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     sender->SetName("sender");
+    receiver->SetName("receiver");
 
     ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ConfigurationDatabase cdb;
-    cdb.Write("Destination", "receiver");
+    cdb.Write("Destination", "invalid");
     cdb.Write("Function", "ReceiverMethod");
 
     if (!mess->Initialise(cdb)) {
