@@ -287,10 +287,15 @@ bool DataSourceI::GetSignalNumberOfConsumers(uint32 signalIdx,
     if (ret) {
         ret = configuredDatabase.MoveRelative("States");
     }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative(stateName);
+    }
     AnyType consumers;
     if (ret) {
-        ret = configuredDatabase.Read("Consumers", consumers);
+        consumers = configuredDatabase.GetType("Consumers");
+        ret = (consumers.GetDataPointer() != NULL_PTR(void *));
     }
+    numberOfConsumers = 0u;
     if (ret) {
         numberOfConsumers = consumers.GetNumberOfElements(0u);
     }
@@ -304,10 +309,15 @@ bool DataSourceI::GetSignalNumberOfProducers(uint32 signalIdx,
     if (ret) {
         ret = configuredDatabase.MoveRelative("States");
     }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative(stateName);
+    }
     AnyType producers;
     if (ret) {
-        ret = configuredDatabase.Read("Producers", producers);
+        producers = configuredDatabase.GetType("Producers");
+        ret = (producers.GetDataPointer() != NULL_PTR(void *));
     }
+    numberOfProducers = 0u;
     if (ret) {
         numberOfProducers = producers.GetNumberOfElements(0u);
     }
@@ -331,6 +341,9 @@ bool DataSourceI::GetSignalConsumerName(uint32 signalIdx,
     }
     if (ret) {
         ret = configuredDatabase.MoveRelative("States");
+    }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative(stateName);
     }
     if (ret) {
         StreamString *consumerArray = new StreamString[numberOfConsumers];
@@ -362,6 +375,9 @@ bool DataSourceI::GetSignalProducerName(uint32 signalIdx,
     }
     if (ret) {
         ret = configuredDatabase.MoveRelative("States");
+    }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative(stateName);
     }
     if (ret) {
         StreamString *producerArray = new StreamString[numberOfProducers];

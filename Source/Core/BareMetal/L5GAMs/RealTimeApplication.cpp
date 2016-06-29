@@ -2178,6 +2178,34 @@ bool RealTimeApplication::ConfigureApplication() {
                 printf("    NumberOfDimensions: %d\n", n);
                 dataSource->GetSignalNumberElements(s, n);
                 printf("    NumberOfElements: %d\n", n);
+                dataSource->GetSignalByteSize(s, n);
+                printf("    ByteSize: %d\n", n);
+                uint32 numberOfStates;
+                dataSource->GetSignalNumberOfStates(s, numberOfStates);
+                printf("    Number of states: %d\n", numberOfStates);
+                for (n = 0u; n < numberOfStates; n++) {
+                    StreamString stateName;
+                    dataSource->GetSignalStateName(s, n, stateName);
+                    printf("      State: %s\n", stateName.Buffer());
+                    uint32 numberOfConsumers;
+                    dataSource->GetSignalNumberOfConsumers(s, stateName.Buffer(), numberOfConsumers);
+                    printf("      Number of consumers: %d\n", numberOfConsumers);
+                    uint32 c;
+                    for (c = 0u; c < numberOfConsumers; c++) {
+                        StreamString consumerName;
+                        dataSource->GetSignalConsumerName(s, stateName.Buffer(), c, consumerName);
+                        printf("        %s\n", consumerName.Buffer());
+                    }
+                    uint32 numberOfProducers;
+                    dataSource->GetSignalNumberOfProducers(s, stateName.Buffer(), numberOfProducers);
+                    printf("      Number of producers: %d\n", numberOfProducers);
+                    uint32 p;
+                    for (p = 0u; p < numberOfProducers; p++) {
+                        StreamString producerName;
+                        dataSource->GetSignalProducerName(s, stateName.Buffer(), p, producerName);
+                        printf("        %s\n", producerName.Buffer());
+                    }
+                }
             }
         }
     }
