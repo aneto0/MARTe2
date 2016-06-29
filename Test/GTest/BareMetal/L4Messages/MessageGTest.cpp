@@ -49,16 +49,7 @@ TEST(MessageGTest,TestConstructor) {
 
 TEST(MessageGTest,TestInitialise) {
     MessageTest target;
-    const MessageInitTableTest table[]={
-            {"Destination=A\n Function=f\n MaxWait=1000\n Mode=ExpectsReply\n", true},
-            {"Destination=A\n Function=f\n MaxWait=1000\n ", true},
-            {"Destination=A\n Function=f\n  Mode=ExpectsImmediateReply\n", true},
-            {"Destination=A\n Function=f\n ", true},
-            {"Destination=A\n ", false},
-            {"Function=f\n ", false},
-            {0, 0}
-       };
-    ASSERT_TRUE(target.TestInitialise(table));
+    ASSERT_TRUE(target.TestInitialise());
 }
 
 

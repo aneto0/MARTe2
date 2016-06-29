@@ -1,8 +1,9 @@
 /**
  * @file MessageTest.cpp
  * @brief Source file for class MessageTest
- * @date 14/giu/2016
- * @author pc
+ * @date 14/06/2016
+ * @author Giuseppe Ferrò
+ * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -32,6 +33,7 @@
 #include "MessageTest.h"
 #include "ConfigurationDatabase.h"
 #include "StandardParser.h"
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -48,148 +50,197 @@ bool MessageTest::TestConstructor() {
 
 }
 
+bool MessageTest::TestInitialise() {
+    bool result = false;
+    const MessageTest::MessageInitTableTest table[]={
+            {"dummyDestination", "dummyFunction", 1000,           "ExpectsReply",          "Destination=dummyDestination\n Function=dummyFunction\n MaxWait=1000\n Mode=ExpectsReply\n", true},
+            {"dummyDestination", "dummyFunction", 1000,           "",                      "Destination=dummyDestination\n Function=dummyFunction\n MaxWait=1000\n ", true},
+            {"dummyDestination", "dummyFunction", TTInfiniteWait, "ExpectsImmediateReply", "Destination=dummyDestination\n Function=dummyFunction\n Mode=ExpectsImmediateReply\n", true},
+            {"dummyDestination", "dummyFunction", TTInfiniteWait, "",                      "Destination=dummyDestination\n Function=dummyFunction\n ", true},
+            {"dummyDestination", "",              TTInfiniteWait, "",                      "Destination=dummyDestination\n ", false},
+            {"",                 "dummyFunction", TTInfiniteWait, "",                      "Function=dummyFunction\n ", false},
+            {NULL, NULL, 0, NULL, NULL, false}
+       };
+    result = TestInitialise(table);
+    return result;
+}
+
 bool MessageTest::TestInitialise(const MessageInitTableTest * table) {
 
-    Message mess;
+    bool result = true;
 
     uint32 i = 0u;
 
-    while (table[i].conf != NULL) {
-        ConfigurationDatabase cdb;
-        StreamString confStr=table[i].conf;
-        confStr.Seek(0ll);
-        StandardParser parser(confStr, cdb);
-        if(!parser.Parse()) {
-            return false;
+    while (table[i].configuration != NULL) {
+
+        Message mess;
+        bool initOK = false;
+
+        //Initialise data:
+        {
+            bool status;
+            ConfigurationDatabase cdb;
+            StreamString confStr=table[i].configuration;
+            confStr.Seek(0ll);
+            StandardParser parser(confStr, cdb);
+            status = parser.Parse();
+            if (status) {
+                status = mess.Initialise(cdb);
+                initOK = status;
+                result &= (status == table[i].expected);
+            }
+            else {
+                initOK = false;
+                result = false;
+            }
         }
 
-        if(mess.Initialise(cdb)!=table[i].expected) {
-            return false;
+        //Verify data
+        if (initOK) {
+            result &= (StringHelper::Compare(mess.GetDestination(),table[i].destination)==0);
+            result &= (StringHelper::Compare(mess.GetFunction(),table[i].function) == 0);
+            result &= (StringHelper::Compare(mess.GetSender(),"") == 0);
+            result &= (mess.GetReplyTimeout() == table[i].maxwait);
+            if (StringHelper::Compare(table[i].mode,"ExpectsReply")==0) {
+                result &= mess.ReplyExpected();
+            }
+            if (StringHelper::Compare(table[i].mode,"ExpectsImmediateReply")==0) {
+                result &= !mess.LateReplyExpected();
+            }
+            result &= !mess.IsReplyMessage();
         }
 
-        mess.CleanUp();
+        mess.CleanUp(); //??
         i++;
     }
 
-    return true;
+    return result;
 }
 
 bool MessageTest::TestMarkAsReply() {
+    bool result = true;
     Message mess;
     mess.MarkAsReply();
-    if (!mess.IsReplyMessage()) {
-        return false;
-    }
+    result &= mess.IsReplyMessage();
+    mess.MarkAsReply(true);
+    result &= mess.IsReplyMessage();
     mess.MarkAsReply(false);
-    return (!mess.IsReplyMessage());
+    result &= !mess.IsReplyMessage();
+    return (result);
 }
 
 bool MessageTest::TestIsReplyMessage() {
-    return TestMarkAsReply();
+    bool result;
+    result = TestMarkAsReply();
+    return result;
 }
 
 bool MessageTest::TestMarkImmediateReplyExpected() {
+    bool result = true;
     Message mess;
     mess.MarkImmediateReplyExpected();
-    if ((!mess.ReplyExpected()) || (!mess.ImmediateReplyExpected())) {
-        return false;
-    }
+    result &= mess.ImmediateReplyExpected();
+    mess.MarkImmediateReplyExpected(true);
+    result &= mess.ImmediateReplyExpected();
     mess.MarkImmediateReplyExpected(false);
-    return ((!mess.ReplyExpected()) && (!mess.ImmediateReplyExpected()));
+    result &= !mess.ImmediateReplyExpected();
+    return result;
 }
 
 bool MessageTest::TestMarkLateReplyExpected() {
+    bool result = true;
     Message mess;
     mess.MarkLateReplyExpected();
-    if((!mess.ReplyExpected()) || (!mess.LateReplyExpected())){
-        return false;
-    }
+    result &= mess.LateReplyExpected();
+    mess.MarkLateReplyExpected(true);
+    result &= mess.LateReplyExpected();
     mess.MarkLateReplyExpected(false);
-    return ((!mess.ReplyExpected()) && (!mess.LateReplyExpected()));
+    result &= !mess.LateReplyExpected(); //!!
+    return result;
 }
 
 bool MessageTest::TestReplyExpected() {
+    bool result = true;
     Message mess;
-    if (mess.ReplyExpected()) {
-        return false;
-    }
-    mess.MarkImmediateReplyExpected();
-    if (!mess.ReplyExpected()) {
-        return false;
-    }
-    mess.MarkLateReplyExpected();
+    result &= !mess.ReplyExpected();
 
-    return mess.ReplyExpected();
+    mess.MarkImmediateReplyExpected();
+    result &= mess.ReplyExpected();
+
+    mess.MarkLateReplyExpected();
+    result &= mess.ReplyExpected();
+
+    return result;
 }
 
 bool MessageTest::TestImmediateReplyExpected() {
+    bool result = true;
     Message mess;
-    if (mess.ImmediateReplyExpected()) {
-        return false;
-    }
+    result &= !mess.ImmediateReplyExpected();
 
     mess.MarkLateReplyExpected();
-    if (mess.ImmediateReplyExpected()) {
-        return false;
-    }
-    mess.MarkImmediateReplyExpected();
-    return mess.ImmediateReplyExpected();
+    result &= !mess.ImmediateReplyExpected();
 
+    mess.MarkImmediateReplyExpected();
+    result &= mess.ImmediateReplyExpected();
+
+    return result;
 }
 
 bool MessageTest::TestLateReplyExpected() {
+    bool result = true;
     Message mess;
-    if (mess.LateReplyExpected()) {
-        return false;
-    }
-    mess.MarkImmediateReplyExpected();
-    if (mess.LateReplyExpected()) {
-        return false;
-    }
-    mess.MarkLateReplyExpected();
-    return mess.LateReplyExpected();
+    result &= !mess.LateReplyExpected();
 
+    mess.MarkImmediateReplyExpected();
+    result &= !mess.LateReplyExpected();
+
+    mess.MarkLateReplyExpected();
+    result &= mess.LateReplyExpected();
+
+    return result;
 }
 
 bool MessageTest::TestGetDestination() {
+    bool result = true;
     ConfigurationDatabase cdb;
-    cdb.Write("Destination", "A");
-    cdb.Write("Function", "f");
+    result &= cdb.Write("Destination", "dummyDestination");
+    result &= cdb.Write("Function", "dummyFunction");
     Message mess;
-    if (!mess.Initialise(cdb)) {
-        return false;
-    }
-
-    return StringHelper::Compare(mess.GetDestination(), "A") == 0;
+    result &= mess.Initialise(cdb);
+    result &= (StringHelper::Compare(mess.GetDestination(), "dummyDestination") == 0);
+    return result;
 }
 
 bool MessageTest::TestSetSender() {
+    bool result = true;
     Message mess;
     mess.SetSender("sender");
-    return StringHelper::Compare(mess.GetSender(), "sender") == 0;
+    result &= (StringHelper::Compare(mess.GetSender(), "sender") == 0);
+    return result;
 }
 
 bool MessageTest::TestGetSender() {
-    return TestSetSender();
+    bool result;
+    result = TestSetSender();
+    return result;
 }
 
 bool MessageTest::TestGetFunction() {
+    bool result = true;
     ConfigurationDatabase cdb;
-    cdb.Write("Destination", "A");
-    cdb.Write("Function", "f");
+    result &= cdb.Write("Destination", "dummyDestination");
+    result &= cdb.Write("Function", "dummyFunction");
     Message mess;
-    if (!mess.Initialise(cdb)) {
-        return false;
-    }
-
-    return StringHelper::Compare(mess.GetFunction(), "f") == 0;
-
+    result &= mess.Initialise(cdb);
+    result &= (StringHelper::Compare(mess.GetFunction(), "dummyFunction") == 0);
+    return result;
 }
 
 bool MessageTest::TestSetReplyTimeout() {
     TimeoutType maxWaitIn = 1000;
     Message mess;
     mess.SetReplyTimeout(maxWaitIn);
-    return true;
+    return false;
 }
 

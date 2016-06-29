@@ -1,8 +1,9 @@
 /**
  * @file MessageTest.h
  * @brief Header file for class MessageTest
- * @date 14/giu/2016
- * @author pc
+ * @date 14/06/2016
+ * @author Giuseppe Ferrò
+ * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,16 +41,11 @@
 
 using namespace MARTe;
 
-struct MessageInitTableTest {
-    const char8 * conf;
-    bool expected;
-};
-
 class MessageTest {
 public:
     bool TestConstructor();
 
-    bool TestInitialise(const MessageInitTableTest * table);
+    bool TestInitialise();
 
     bool TestMarkAsReply();
 
@@ -75,6 +71,18 @@ public:
 
     bool TestSetReplyTimeout();
 
+private:
+
+    struct MessageInitTableTest {
+        const char8* destination;
+        const char8* function;
+        const TimeoutType maxwait;
+        const char8* mode;
+        const char8* configuration;
+        bool expected;
+    };
+
+    bool TestInitialise(const MessageInitTableTest * table);
 };
 
 /*---------------------------------------------------------------------------*/

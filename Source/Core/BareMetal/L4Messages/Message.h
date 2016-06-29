@@ -154,6 +154,8 @@ Message    ();
      */
     inline void SetReplyTimeout(const TimeoutType &maxWaitIn);
 
+    inline TimeoutType GetReplyTimeout();
+
 private:
 
     /**
@@ -277,6 +279,10 @@ CCString Message::GetFunction() {
 
 void Message::SetReplyTimeout(const TimeoutType &maxWaitIn) {
     maxWait = maxWaitIn;
+}
+
+TimeoutType Message::GetReplyTimeout() {
+    return maxWait;
 }
 
 }
