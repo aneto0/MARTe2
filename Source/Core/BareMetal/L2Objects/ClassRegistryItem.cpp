@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "CallRegisteredMethodLauncher.h"
 #include "ClassRegistryDatabase.h"
 #include "ClassRegistryItem.h"
 #include "ErrorManagement.h"

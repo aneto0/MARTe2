@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "CallRegisteredMethodLauncher.h"
 #include "HeapI.h"
 #include "LinkedListHolderT.h"
 #include "LoadableLibrary.h"
@@ -231,66 +232,6 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-class DLL_API CallRegisteredMethodLauncher: public SearchFilterT<ClassMethodsRegistryItem> {
-
-public:
-
-    CallRegisteredMethodLauncher(Object *objectIn,
-                                 CCString methodNameIn) {
-        object = objectIn;
-        methodName = methodNameIn;
-    }
-
-    virtual ~CallRegisteredMethodLauncher() {
-
-    }
-
-    virtual bool Test(ClassMethodsRegistryItem *data) {
-        ret = data->CallFunction(object, methodName.GetList());
-        // the function has been found and called
-        return !ret.unsupportedFeature;
-    }
-
-    ErrorManagement::ErrorType GetResults() {
-        return ret;
-    }
-protected:
-    CCString methodName;
-    Object *object;
-    ErrorManagement::ErrorType ret;
-
-};
-
-template<typename argType>
-class DLL_API CallRegisteredMethodLauncherT: public CallRegisteredMethodLauncher {
-public:
-
-    CallRegisteredMethodLauncherT(Object *objectIn,
-                                  CCString methodNameIn,
-                                  argType parametersIn) :
-            CallRegisteredMethodLauncher(objectIn, methodNameIn),
-            parameters(parametersIn) {
-
-    }
-
-    virtual ~CallRegisteredMethodLauncherT() {
-
-    }
-
-    virtual bool Test(ClassMethodsRegistryItem *data) {
-        ret = data->CallFunction<argType>(object, methodName.GetList(), parameters);
-        // the function has been found and called
-        return !ret.unsupportedFeature;
-    }
-
-    ErrorManagement::ErrorType GetResults() {
-        return ret;
-    }
-protected:
-    argType parameters;
-
-};
 
 template<typename argType>
 ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object * const object,
