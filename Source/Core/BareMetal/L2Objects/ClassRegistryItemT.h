@@ -31,15 +31,23 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ClassRegistryItem.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
+
 /**
  * @brief Template version of ClassRegistryItem.
+ * @tparam T The type of the class to register. It is expected that will have
+ * a public attribute named classProperties of type ClassProperties.
+ * @tparam AddDefaultObjectBuilder A boolean which states if a default object
+ * must be created.
  */
-template<typename T, bool AddDefaultObjectBuilder=true>
+template<typename T, bool AddDefaultObjectBuilder = true>
 class DLL_API ClassRegistryItemT: public ClassRegistryItem {
 
 public:
@@ -60,13 +68,12 @@ private:
     ClassRegistryItemT(ClassProperties &classProperties_in);
 };
 
-
-
 /**
  * @brief Template version of ClassRegistryItem.
+ * @tparam T
  */
 template<typename T>
-class DLL_API ClassRegistryItemT<T, false>: public ClassRegistryItem {
+class DLL_API ClassRegistryItemT<T, false> : public ClassRegistryItem {
 
 public:
     /**
@@ -86,9 +93,13 @@ private:
     ClassRegistryItemT(ClassProperties &classProperties_in);
 };
 
+}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 template<typename T, bool AddDefaultObjectBuilder>
 ClassRegistryItem *ClassRegistryItemT<T, AddDefaultObjectBuilder>::Instance() {
@@ -121,8 +132,6 @@ ClassRegistryItem *ClassRegistryItemT<T, false>::Instance() {
     return instance;
 }
 
-
-
 template<typename T, bool AddDefaultObjectBuilder>
 ClassRegistryItemT<T, AddDefaultObjectBuilder>::~ClassRegistryItemT() {
 
@@ -134,5 +143,6 @@ ClassRegistryItemT<T, AddDefaultObjectBuilder>::ClassRegistryItemT(ClassProperti
 }
 
 }
+
 #endif /* CLASSREGISTRYITEMT_H_ */
 

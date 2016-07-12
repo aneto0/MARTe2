@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "CallRegisteredMethodLauncher.h"
 #include "HeapI.h"
 #include "LinkedListHolderT.h"
@@ -43,6 +44,7 @@
 #include "ClassMethodsRegistryItem.h"
 #include "LinkedListable.h"
 #include "Introspection.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -154,27 +156,30 @@ public:
      */
     void SetUniqueIdentifier(const ClassUID &uid);
 
-
     /**
      * @brief Calls a registered method of the registered class without arguments.
      * @param[in] object is the object which must call the method.
      * @param[in] methodName is the name of the class method to be called.
-     * @return ErrorManagement::UnsupportedFeature if \a methodName is not registered or
-     * the class has not declared the method. ErrorManagement::FatalError if the class method
-     * returns false, ErrorManagement::NoError if it returns true.
+     * @return the status value of the execution, being one of the following:
+     *     ErrorManagement::UnsupportedFeature if \a methodName is not
+     *     registered or the class has not declared the method;
+     *     ErrorManagement::FatalError if the class method returns false;
+     *     ErrorManagement::NoError if the class method returns true.
      */
     ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
                                                     CCString methodName);
 
     /**
      * @brief Calls a registered method of the registered class with one argument.
+     * @tparam argType is the type of the class method argument.
      * @param[in] object is the object which must call the method.
      * @param[in] methodName is the name of the class method to be called.
      * @param[in] parameters is the class method argument.
-     * @return ErrorManagement::UnsupportedFeature if \a methodName is not registered or
-     * the class has not declared the method. ErrorManagement::FatalError if the class method
-     * returns false, ErrorManagement::NoError if it returns true.
-     * @tparam argType is the type of the class method argument.
+     * @return the status value of the execution, being one of the following:
+     *     ErrorManagement::UnsupportedFeature if \a methodName is not
+     *     registered or the class has not declared the method;
+     *     ErrorManagement::FatalError if the class method returns false;
+     *     ErrorManagement::NoError if the class method returns true.
      */
     template<typename argType>
     ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
@@ -229,9 +234,13 @@ private:
 
 };
 
+}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 template<typename argType>
 ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object * const object,

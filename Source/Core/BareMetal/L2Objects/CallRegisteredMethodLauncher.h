@@ -42,25 +42,67 @@
 
 namespace MARTe {
 
+/**
+ * @brief Call registered method launcher
+ *
+ * @details This class represents an object that behaves as a launcher for
+ * calling registered methods of a target object. It needs to be bound with
+ * a target object of class Object and it also needs the name of the
+ * registered method to be called on that object. It must be noted that the
+ * registered method has to be one without arguments.
+ *
+ * This class is also a filter and is expected to be used like that, i.e. the
+ * only way to actually call the registered method is indirectly through the
+ * Test method. In other words, each time that an iterator calls the Test
+ * method, it will try to call the registered method, storing the status of
+ * the call which will be available through the method GetResults.
+ */
 class DLL_API CallRegisteredMethodLauncher: public SearchFilterT<ClassMethodsRegistryItem> {
 
 public:
 
+    /**
+     * @brief Constructor
+     * @param[in] objectIn The target object of the call
+     * @param[in] methodNameIn The name of the registered method to call
+     */
     CallRegisteredMethodLauncher(Object *objectIn,
                                  CCString methodNameIn);
 
+    /**
+     * @brief Destructor
+     */
     virtual ~CallRegisteredMethodLauncher();
 
+    /**
+     * @brief LinkedListable searching callback function.
+     * @details This function is called for every element in the list being searched (i.e. traversed).
+     * @param[in] data the current LinkedListable element to be tested.
+     * @return true if \a data meets the search criteria.
+     */
     virtual bool Test(ClassMethodsRegistryItem *data);
 
+    /**
+     * @brief Gets the status of the last call
+     * @return An ErrorType value with the status of the last call
+     */
     ErrorManagement::ErrorType GetResults();
 
 protected:
 
+    /**
+     * The name of the registered method to call
+     */
     CCString methodName;
 
+    /**
+     * The pointer to the target object of the call
+     */
     Object *object;
 
+    /**
+     * The status of the last call
+     */
     ErrorManagement::ErrorType ret;
 };
 

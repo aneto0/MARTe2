@@ -1,8 +1,8 @@
 /**
  * @file ClassMethodsRegistryItem.h
  * @brief Header file for class ClassMethodsRegistryItem
- * @date Apr 7, 2016
- * @author fsartori
+ * @date 07/04/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -35,6 +35,7 @@
 #include "LinkedListable.h"
 #include "ClassMethodInterfaceMapper.h"
 #include "CString.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -135,9 +136,13 @@ private:
 
 };
 
+}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 template<typename argType>
 ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * context,
@@ -157,7 +162,7 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * conte
         int32 minIndex = 0;
         int32 functionIndex = 0;
         while (functionIndex >= 0) {
-            returnValue=true;
+            returnValue = true;
             functionIndex = FindFunction(name, minIndex);
             if (functionIndex >= 0) {
                 fmp = &functionTable[functionIndex];
@@ -184,6 +189,8 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * conte
     return returnValue;
 }
 
+}
+
 /**
  * @brief Macro used to register automatically a list of class methods in the ClassRegistryItem (and in the ClassRegistryDatabase).
  * @details Passing a list of class method pointers, this macro automatically creates the list of function names. To find the function
@@ -196,6 +203,6 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * conte
 #define CLASS_METHOD_REGISTER(C,...)\
     static MARTe::ClassMethodInterfaceMapper C ## __ClassMethodsInterfaceMapper[] = {__VA_ARGS__}; \
     static /*const*/ MARTe::ClassMethodsRegistryItem C ## __ClassMethodsRegistryItem(C::GetClassRegistryItem_Static(),C ## __ClassMethodsInterfaceMapper,#__VA_ARGS__);
-}
+
 #endif /* CLASSMETHODSREGISTRYITEM_H_ */
 

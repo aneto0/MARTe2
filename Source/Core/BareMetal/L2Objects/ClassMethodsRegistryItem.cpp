@@ -1,8 +1,8 @@
 /**
  * @file ClassMethodsRegistryItem.cpp
  * @brief Source file for class ClassMethodsRegistryItem
- * @date Apr 12, 2016
- * @author fsartori
+ * @date 12/04/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -32,6 +32,7 @@
 #include "ClassMethodsRegistryItem.h"
 #include "StringHelper.h"
 #include "ClassRegistryItem.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -42,9 +43,6 @@
 
 namespace MARTe {
 
-/**
- * TODO
- * */
 ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem * const cri,
                                                    ClassMethodInterfaceMapper * const functionTable_In,
                                                    const char8 * const functionNames_In) :

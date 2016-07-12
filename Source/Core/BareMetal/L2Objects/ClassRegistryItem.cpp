@@ -20,7 +20,9 @@
  * the class ClassRegistryItem (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -28,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "CallRegisteredMethodLauncher.h"
 #include "ClassRegistryDatabase.h"
 #include "ClassRegistryItem.h"
@@ -36,7 +39,6 @@
 #include "ObjectBuilder.h"
 #include "SearchFilterT.h"
 
-namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -44,6 +46,9 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
 // TODO remove LCOV_EXCL_START
 ClassRegistryItem::ClassRegistryItem(ClassProperties &classProperties_in) :
         LinkedListable(),
@@ -145,7 +150,15 @@ ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object * cons
     }
 
     if (ret.NoError()) {
-        // search in the list the first function returning without unsupported feature
+        /*
+         * The launcher is passed as a filter to the ListSearch method of the
+         * classMethods list, which will execute the Test method of the launcher
+         * for each registered class method available in classMethods. Assuming
+         * that the launcher's Test method will try, each time it is executed,
+         * to call the target method methodName, the ListSearch method will
+         * finish as soon as a successful call happens, or it will return an
+         * unsupported feature error.
+         */
         CallRegisteredMethodLauncher launcher(object, methodName);
         if (classMethods.ListSearch(&launcher) != NULL) {
             ret = launcher.GetResults();
