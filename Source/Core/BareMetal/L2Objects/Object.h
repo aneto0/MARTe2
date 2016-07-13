@@ -168,32 +168,6 @@ namespace MARTe {
         GetClassRegistryItem_Static()->DecrementNumberOfInstances();                                                   \
     }
 
-#if 0
-/*                                                                                                                 \
-     * @brief Returns the class properties associated with this class type.                                            \
-     * @param[in, out] destination the destination where to copy the class properties to.                              \
-     */
-virtual const MARTe::ClassProperties *GetClassProperties() const;
-/*                                                                                                                 \
-     * @brief Returns the class properties associated with this class type.                                            \
-     * @param[in, out] destination the destination where to copy the class properties to.                              \
-     */
-const MARTe::ClassProperties *GetClassProperties_Static();
-
-/*                                                                                                                 \
-     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
-     */
-const MARTe::ClassProperties *className::GetClassProperties_Static() {
-    return &classProperties;
-}
-/*                                                                                                                 \
-     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
-     */
-const MARTe::ClassProperties *className::GetClassProperties() const {
-    return 0; /*className::GetClassProperties_Static();*/
-}
-#endif
-
 /*lint -restore */
 
 /*---------------------------------------------------------------------------*/

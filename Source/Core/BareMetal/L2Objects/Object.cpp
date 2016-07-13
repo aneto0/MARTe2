@@ -362,30 +362,6 @@ void Object::SetName(const char8 * const newName) {
     }
     name = StringHelper::StringDup(newName);
 }
-#if 0
-bool Object::ProcessMessage(const MessageI & message, MessageI & data) {
-
-    bool ret = false;
-    uint32 code = message.GetRequestCode();
-    const char8* className = NULL_PTR(const char8*);
-    const ClassProperties *myProperties = GetClassProperties();
-    if (myProperties != NULL) {
-        className=myProperties->GetName();
-    }
-
-    if (code == InformationRequest) {
-        // get only the first level
-        ret = ConvertIntrospectionToStructuredData(reinterpret_cast<void*>(this), className, *data.GetContent(), 0);
-    }
-    else if (code == DataRequest) {
-        ret = ConvertToStructuredData(reinterpret_cast<void*>(this), myProperties->GetName(), *data.GetContent(), GetName());
-    }
-    else {
-        //TODO Warning unexpected code
-    }
-    return ret;
-}
-#endif
 
 bool Object::ExportData(StructuredDataI & data) {
     bool ret = false;

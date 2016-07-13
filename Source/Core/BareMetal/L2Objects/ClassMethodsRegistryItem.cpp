@@ -168,34 +168,3 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * const
 }
 
 }
-
-#if 0
-
-namespace MARTe {
-
-#include "Object.h"
-//#if 0
-    class Dummy:public Object {
-
-    public:
-
-        CLASS_REGISTER_DECLARATION()
-
-        bool Test(MARTe::ReferenceContainer &ref) {
-            return true;
-        }
-
-        bool Test2(int32 i) {
-            return true;
-        }
-
-    };
-
-    ClassMethodInterfaceMapper CMIM(&Dummy::Test);
-    ClassMethodInterfaceMapper CMIMS[] = {&Dummy::Test,&Dummy::Test};
-
-    CLASS_METHOD_REGISTER(Dummy,&Dummy::Test)
-
-}
-#endif
-
