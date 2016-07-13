@@ -2150,6 +2150,10 @@ bool RealTimeApplication::ConfigureApplication() {
         PrintDatabases(rtAppBuilder);
     }
     if (ret) {
+        ret = rtAppBuilder.AssignFunctionsMemoryToDataSource();
+        PrintDatabases(rtAppBuilder);
+    }
+    if (ret) {
         ret = rtAppBuilder.PostConfigureDataSources();
         PrintDatabases(rtAppBuilder);
     }
@@ -2411,10 +2415,10 @@ bool RealTimeApplication::ConfigureApplication() {
 
 //Write the GAM memory information in each DataSource
     if (ret) {
-        ret = AllocateFunctionsMemory("InputSignals");
+        ret = AssignFunctionsMemoryToDataSource("InputSignals");
     }
     if (ret) {
-        ret = AllocateFunctionsMemory("OutputSignals");
+        ret = AssignFunctionsMemoryToDataSource("OutputSignals");
     }
 
     if (ret) {

@@ -50,6 +50,9 @@ static const uint32 stateNamesGranularity = 4u;
 
 GAM::GAM() :
         ReferenceContainer() {
+    numberOfSignalsMemoryBlocks = 0u;
+    signalsMemoryBlocks = NULL_PTR(void **);
+    heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
 #if 0
     localData = NULL_PTR(StructuredDataI*);
     numberOfSupportedStates = 0u;
@@ -64,6 +67,14 @@ GAM::GAM() :
 
 /*lint -e{1551} no exception should be thrown*/
 GAM::~GAM() {
+    if (signalsMemoryBlocks != NULL_PTR(void **)) {
+        uint32 n;
+        for (n = 0u; n < numberOfSignalsMemoryBlocks; n++) {
+            heap->Free(signalsMemoryBlocks[n]);
+        }
+        delete[] signalsMemoryBlocks;
+    }
+
 #if 0
     if (supportedStates != NULL) {
         delete[] supportedStates;
@@ -140,6 +151,29 @@ bool GAM::Initialise(StructuredDataI & data) {
 
 bool GAM::AddSignals(StructuredDataI &data) {
     return data.Write("Signals", signalsDatabase);
+}
+
+void * GAM::AllocateSignalsMemory(uint32 numberOfBytes) {
+    void **tempSignalsMemoryBlocks = NULL_PTR(void **);
+    uint32 n;
+
+    if (numberOfSignalsMemoryBlocks > 0u) {
+        tempSignalsMemoryBlocks = new void*[numberOfSignalsMemoryBlocks];
+
+        for (n = 0u; n < numberOfSignalsMemoryBlocks; n++) {
+            tempSignalsMemoryBlocks[n] = signalsMemoryBlocks[n];
+        }
+        delete[] signalsMemoryBlocks;
+    }
+
+    signalsMemoryBlocks = new void*[numberOfSignalsMemoryBlocks + 1u];
+    for (n = 0u; n < numberOfSignalsMemoryBlocks; n++) {
+        signalsMemoryBlocks[n] = tempSignalsMemoryBlocks[n];
+    }
+    delete[] tempSignalsMemoryBlocks;
+
+    signalsMemoryBlocks[n] = heap->Malloc(numberOfBytes);
+    return signalsMemoryBlocks[n];
 }
 
 #if 0

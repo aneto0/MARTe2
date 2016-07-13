@@ -578,8 +578,10 @@ public:
      */
     bool ResolveFunctionsMemory();
 
+    bool AllocateFunctionsMemory();
+
     /**
-     * @brief For every DataSource add the memory information about each Function interacts with the DataSource.
+     * @brief For every DataSource add the memory information about each Function that interacts with the DataSource.
      * @return true if the memory information can be successfully added to each DataSource definition.
      * @pre
      *   ResolveFunctionsMemory()
@@ -656,7 +658,7 @@ public:
      *        }
      *     }
      */
-    bool AllocateFunctionsMemory();
+    bool AssignFunctionsMemoryToDataSource();
 
     /**
      * @brief For each DataSource call DataSourceI::SetConfiguredDatabase.
@@ -832,6 +834,13 @@ private:
      * @return @see AllocateFunctionsMemory()
      */
     bool AllocateFunctionsMemory(const char *signalDirection);
+
+    /**
+     * @brief @see AssignFunctionsMemoryToDataSource()
+     * @param[in] signalDirection can be either InputSignals or OutputSignals
+     * @return @see AssignFunctionsMemoryToDataSource()
+     */
+    bool AssignFunctionsMemoryToDataSource(const char *signalDirection);
 
     /**
      * @brief Finds a signal with the name \a signalName in \a database.

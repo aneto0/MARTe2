@@ -71,6 +71,8 @@ public:
 
     bool AddSignals(StructuredDataI & data);
 
+    void * AllocateSignalsMemory(uint32 numberOfBytes);
+
 #if 0
     /**
      * @brief Links the signals of this GAM to the RealTimeApplication DataSourceContainer (+Data).
@@ -217,6 +219,12 @@ private:
     bool ConfigureFunction();
 #endif
     ConfigurationDatabase signalsDatabase;
+
+    void **signalsMemoryBlocks;
+
+    uint32 numberOfSignalsMemoryBlocks;
+
+    HeapI *heap;
 };
 
 }

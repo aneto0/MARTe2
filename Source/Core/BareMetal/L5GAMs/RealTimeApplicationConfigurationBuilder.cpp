@@ -426,6 +426,14 @@ bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory() {
     return ret;
 }
 
+bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource() {
+    bool ret = AssignFunctionsMemoryToDataSource("InputSignals");
+    if (ret) {
+        ret = AssignFunctionsMemoryToDataSource("OutputSignals");
+    }
+    return ret;
+}
+
 bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
     bool ret = dataSourcesDatabase.MoveToRoot();
     uint32 numberOfDataSources = 0u;
@@ -1765,6 +1773,81 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const char 
 }
 
 bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory(const char *signalDirection) {
+    bool ret = functionsDatabase.MoveAbsolute("Functions");
+    uint32 numberOfFunctions = 0u;
+    if (ret) {
+        numberOfFunctions = functionsDatabase.GetNumberOfChildren();
+    }
+    if (ret) {
+        uint32 i;
+        //For every function
+        for (i = 0; (i < numberOfFunctions) && (ret); i++) {
+            StreamString functionNumber = functionsDatabase.GetChildName(i);
+            ret = functionsDatabase.MoveRelative(functionNumber.Buffer());
+            StreamString functionName;
+            if (ret) {
+                ret = functionsDatabase.Read("QualifiedName", functionName);
+            }
+            //Allocate the memory
+            ReferenceT<GAM> gam;
+            if (ret) {
+                gam = realTimeApplication->Find(functionName.Buffer());
+            }
+            if (ret) {
+                ret = gam.IsValid();
+            }
+            if (ret) {
+                ret = functionsDatabase.MoveRelative("Memory");
+            }
+            bool exists = false;
+            if (ret) {
+                exists = functionsDatabase.MoveRelative(signalDirection);
+            }
+            if (exists) {
+                uint32 numberOfDataSources = 0u;
+                if (ret) {
+                    numberOfDataSources = functionsDatabase.GetNumberOfChildren();
+                }
+                uint32 d;
+                //For every DataSource in this function
+                for (d = 0u; (d < numberOfDataSources) && (ret); d++) {
+                    uint32 byteSize = 0u;
+                    StreamString dataSourceName;
+                    StreamString dataSourceId = functionsDatabase.GetChildName(d);
+                    ret = functionsDatabase.MoveRelative(dataSourceId.Buffer());
+                    if (ret) {
+                        ret = functionsDatabase.Read("DataSource", dataSourceName);
+                    }
+                    if (ret) {
+                        ret = functionsDatabase.Read("ByteSize", byteSize);
+                    }
+                    //Allocate the memory
+                    void *signalBlockMemory = NULL_PTR(void *);
+                    if (ret) {
+                        signalBlockMemory = gam->AllocateSignalsMemory(byteSize);
+                        ret = functionsDatabase.Write("Address", signalBlockMemory);
+                    }
+                    if (ret) {
+                        //Move to SignalDirection level
+                        ret = functionsDatabase.MoveToAncestor(1u);
+                    }
+                }
+                if (ret) {
+                    //Move to Memory level
+                    ret = functionsDatabase.MoveToAncestor(1u);
+                }
+            }
+            if (ret) {
+                //Move to next Function
+                ret = functionsDatabase.MoveToAncestor(2u);
+            }
+
+        }
+    }
+    return ret;
+}
+
+bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(const char *signalDirection) {
     bool ret = functionsDatabase.MoveAbsolute("Functions");
     uint32 numberOfFunctions = 0u;
     if (ret) {

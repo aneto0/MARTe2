@@ -255,8 +255,8 @@ int main(int argc,
          char **argv) {
     SetErrorProcessFunction(&MyErrorProcessFunction);
     ConfigurationDatabase cdb;
-    config1.Seek(0);
-    StandardParser parser(config1, cdb);
+    config2.Seek(0);
+    StandardParser parser(config2, cdb);
     if (!parser.Parse()) {
         printf("Parser failed!\n");
         return false;
