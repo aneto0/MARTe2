@@ -32,30 +32,33 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "CallRegisteredMethodLauncher.h"
-#include "HeapI.h"
+#include "CallRegisteredMethodLauncherT.h"
 #include "LinkedListHolderT.h"
-#include "LoadableLibrary.h"
-#include "ClassProperties.h"
-#include "FractionalInteger.h"
-#include "ObjectBuilderT.h"
+#include "FractionalInteger.h"    //using ClassUID typedef
 #include "CString.h"
-#include "ErrorType.h"
-#include "ClassMethodsRegistryItem.h"
 #include "LinkedListable.h"
-#include "Introspection.h"
+
+/*---------------------------------------------------------------------------*/
+/*                         Forward declarations                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+    /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
+    class Object;
+
+    class ClassMethodsRegistryItem;
+    class ClassProperties;
+    class Introspection;
+    class LoadableLibrary;
+    class ObjectBuilder;
+    class ReferenceContainer;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-//class ClassMethodsRegistryItem;
-class ReferenceContainer;
-
-/*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
-class Object;
 
 /**
  * @brief Descriptor of framework base classes.

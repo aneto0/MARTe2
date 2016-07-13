@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "ClassRegistryItemT.h"
 #include "ReferenceContainer.h"
 #include "ReferenceContainerNode.h"
 #include "ReferenceContainerFilterReferences.h"

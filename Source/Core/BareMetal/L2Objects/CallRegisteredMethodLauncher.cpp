@@ -47,5 +47,21 @@ namespace {
 
 namespace MARTe {
 
+CallRegisteredMethodLauncher::CallRegisteredMethodLauncher(Object *objectIn,
+                                                                  CCString methodNameIn) {
+    object = objectIn;
+    methodName = methodNameIn;
+}
+
+CallRegisteredMethodLauncher::~CallRegisteredMethodLauncher() {
+
+}
+
+bool CallRegisteredMethodLauncher::Test(ClassMethodsRegistryItem *data) {
+    ret = data->CallFunction(object, methodName.GetList());
+    // the function has been found and called
+    return !ret.unsupportedFeature;
+}
+
 }
 

@@ -30,11 +30,13 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassRegistryItemTest.h"
+#include "ClassRegistryItemT.h"
 #include "MemoryCheck.h"
 #include "StringHelper.h"
 #include "ClassRegistryDatabase.h"
 #include "IntrospectionEntry.h"
 #include "Introspection.h"
+#include "LoadableLibrary.h"
 #include "Object.h"
 #include <typeinfo>
 #include "ReferenceContainer.h"

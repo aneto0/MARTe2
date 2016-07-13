@@ -28,18 +28,25 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include <typeinfo>
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
+#include "ClassProperties.h"
 #include "ClassRegistryDatabase.h"
-#include "TypeDescriptor.h"
-#include "BitBoolean.h"
-#include "FractionalInteger.h"
-#include "BitRange.h"
 #include "Matrix.h"
-#include <typeinfo>
+#include "TypeDescriptor.h"
+
+/*---------------------------------------------------------------------------*/
+/*                         Forward declarations                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+    class Object;
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/

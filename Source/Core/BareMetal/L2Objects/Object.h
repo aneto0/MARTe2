@@ -33,13 +33,20 @@
 /*---------------------------------------------------------------------------*/
 #include "HeapI.h"
 #include "HeapManager.h"
-#include "GeneralDefinitions.h"
 #include "ClassProperties.h"
-#include "ClassRegistryItemT.h"
-#include "StructuredDataI.h"
-#include "AnyType.h"
+#include "ClassRegistryItem.h"
 #include "ErrorType.h"
 #include "StringHelper.h"
+
+/*---------------------------------------------------------------------------*/
+/*                         Forward declarations                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+//    class HeapI;
+    class StructuredDataI;
+}
+
 /*---------------------------------------------------------------------------*/
 /*                        Macro definitions                                  */
 /*---------------------------------------------------------------------------*/

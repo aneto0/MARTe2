@@ -32,9 +32,18 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassMethodsRegistryItem.h"
 #include "CString.h"
-#include "Object.h"
+#include "ErrorType.h"
 #include "SearchFilterT.h"
+
+/*---------------------------------------------------------------------------*/
+/*                         Forward declarations                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+    class Object;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -113,22 +122,6 @@ protected:
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-inline CallRegisteredMethodLauncher::CallRegisteredMethodLauncher(Object *objectIn,
-                                                                  CCString methodNameIn) {
-    object = objectIn;
-    methodName = methodNameIn;
-}
-
-inline CallRegisteredMethodLauncher::~CallRegisteredMethodLauncher() {
-
-}
-
-inline bool CallRegisteredMethodLauncher::Test(ClassMethodsRegistryItem *data) {
-    ret = data->CallFunction(object, methodName.GetList());
-    // the function has been found and called
-    return !ret.unsupportedFeature;
-}
 
 inline ErrorManagement::ErrorType CallRegisteredMethodLauncher::GetResults() {
     return ret;

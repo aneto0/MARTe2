@@ -32,10 +32,12 @@
 /*---------------------------------------------------------------------------*/
 
 #include "CallRegisteredMethodLauncher.h"
+#include "ClassProperties.h"
 #include "ClassRegistryDatabase.h"
 #include "ClassRegistryItem.h"
 #include "ErrorManagement.h"
 #include "Introspection.h"
+#include "LoadableLibrary.h"
 #include "ObjectBuilder.h"
 #include "SearchFilterT.h"
 

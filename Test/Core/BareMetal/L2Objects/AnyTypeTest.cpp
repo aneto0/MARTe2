@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AnyTypeTest.h"
+#include "ClassRegistryItemT.h"
 #include "TestObjectHelper1.h"
 #include "StringHelper.h"
 #include "IntrospectionT.h"

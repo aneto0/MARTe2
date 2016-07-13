@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "ClassRegistryItemT.h"
 #include "Object.h"
 #include "StringHelper.h"
 #include "HeapI.h"

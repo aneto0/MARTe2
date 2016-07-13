@@ -32,9 +32,17 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "CString.h"
-#include "Object.h"
 #include "CallRegisteredMethodLauncher.h"
+#include "CString.h"
+
+/*---------------------------------------------------------------------------*/
+/*                         Forward declarations                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+    class ClassMethodsRegistryItem;
+    class Object;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -115,24 +123,28 @@ protected:
 
 namespace MARTe {
 
-inline CallRegisteredMethodLauncherT::CallRegisteredMethodLauncherT(Object *objectIn,
+template<typename argType>
+inline CallRegisteredMethodLauncherT<argType>::CallRegisteredMethodLauncherT(Object *objectIn,
                                                                     CCString methodNameIn,
                                                                     argType parametersIn) :
         CallRegisteredMethodLauncher(objectIn, methodNameIn),
         parameters(parametersIn) {
 }
 
-inline CallRegisteredMethodLauncherT::~CallRegisteredMethodLauncherT() {
+template<typename argType>
+inline CallRegisteredMethodLauncherT<argType>::~CallRegisteredMethodLauncherT() {
 
 }
 
-inline bool CallRegisteredMethodLauncherT::Test(ClassMethodsRegistryItem *data) {
+template<typename argType>
+inline bool CallRegisteredMethodLauncherT<argType>::Test(ClassMethodsRegistryItem *data) {
     ret = data->CallFunction<argType>(object, methodName.GetList(), parameters);
     // the function has been found and called
     return !ret.unsupportedFeature;
 }
 
-inline ErrorManagement::ErrorType CallRegisteredMethodLauncherT::GetResults() {
+template<typename argType>
+inline ErrorManagement::ErrorType CallRegisteredMethodLauncherT<argType>::GetResults() {
     return ret;
 }
 

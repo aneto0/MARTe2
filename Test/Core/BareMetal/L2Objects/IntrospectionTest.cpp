@@ -25,10 +25,14 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <typeinfo>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassRegistryItemT.h"
+#include "HeapManager.h"
 #include "IntrospectionTest.h"
 #include "StringHelper.h"
 #include "Object.h"
