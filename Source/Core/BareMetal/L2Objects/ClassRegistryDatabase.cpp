@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassRegistryItem.h"
+#include "HeapManager.h"
 #include "Object.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"

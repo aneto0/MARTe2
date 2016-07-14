@@ -26,7 +26,8 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  AnyType.x\
+OBJSX=  AnyType.x \
+		CallRegisteredMethodLauncher.x \
         ClassMethodsRegistryItem.x \
         ClassMethodCaller.x\
         ClassMethodInterfaceMapper.x\

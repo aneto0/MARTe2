@@ -32,6 +32,7 @@
 #include "Reference.h"
 #include "ClassRegistryDatabase.h"
 #include "ErrorManagement.h"
+#include "ObjectBuilder.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
 /*---------------------------------------------------------------------------*/

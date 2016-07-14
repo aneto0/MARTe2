@@ -70,11 +70,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * TODO
- */
-#define ADD_OBJECTBUILDER(className) \
-    static MARTe::ObjectBuilderT<className> className ## _ ## objectBuilder();
-
 #endif /* OBJECTBUILDER_H_ */
 

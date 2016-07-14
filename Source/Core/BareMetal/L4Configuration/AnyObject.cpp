@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 #define DLL_API
 
+#include "ClassRegistryItemT.h"
 #include "AnyObject.h"
 #include "Vector.h"
 #include "Matrix.h"

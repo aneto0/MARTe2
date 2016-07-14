@@ -31,6 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassRegistryItemT.h"
 #include "ClassWithCallableMethods.h"
 #include "ClassMethodsRegistryItem.h"
 #include "Reference.h"

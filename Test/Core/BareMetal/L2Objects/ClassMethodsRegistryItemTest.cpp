@@ -36,6 +36,7 @@
 #include "ClassMethodInterfaceMapper.h"
 #include "ClassMethodsRegistryItem.h"
 #include "ClassRegistryItem.h"
+#include "ClassRegistryItemT.h"
 #include "ClassWithCallableMethods.h"
 #include "ConfigurationDatabase.h"
 #include "ErrorType.h"

@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassRegistryItemT.h"
 #include "ObjectRegistryDatabaseTest.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/

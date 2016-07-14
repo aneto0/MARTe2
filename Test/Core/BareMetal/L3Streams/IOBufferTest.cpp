@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassRegistryItemT.h"
 #include "IOBufferTest.h"
 #include "IntrospectionT.h"
 #include "IntrospectionEntry.h"
