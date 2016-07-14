@@ -404,4 +404,6 @@ bool DataSourceI::MoveToSignalIndex(uint32 signalIdx) {
     }
     return ret;
 }
+CLASS_REGISTER(DataSourceI, "1.0");
+
 }

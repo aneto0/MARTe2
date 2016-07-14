@@ -35,6 +35,52 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+
+
+DECLARE_CLASS_MEMBER(B, b1, int32, "", "");
+
+DECLARE_CLASS_MEMBER(B, b2, int32, "", "");
+
+static const IntrospectionEntry* BEntries[] = { &B_b1_introspectionEntry, &B_b2_introspectionEntry, 0 };
+
+DECLARE_CLASS_INTROSPECTION(B, BEntries);
+INTROSPECTION_REGISTER(B, "1.0", B_introspection)
+
+DECLARE_CLASS_MEMBER(A, a1, B, "", "");
+
+DECLARE_CLASS_MEMBER(A, a2, float32, "", "");
+
+static const IntrospectionEntry* AEntries[] = { &A_a1_introspectionEntry, &A_a2_introspectionEntry, 0 };
+
+DECLARE_CLASS_INTROSPECTION(A, AEntries);
+INTROSPECTION_REGISTER(A, "1.0", A_introspection)
+
+
+
+
+
+
+
+
+
+GAM1::GAM1() :
+        GAM() {
+
+}
+
+GAM1::~GAM1() {
+
+}
+
+bool GAM1::Initialise(StructuredDataI & data) {
+    return GAM::Initialise(data);
+}
+
+CLASS_REGISTER(GAM1, "1.0");
+
+#if 0
+
 DECLARE_CLASS_MEMBER(TrackError, Par1, uint32, "", "");
 
 DECLARE_CLASS_MEMBER(TrackError, Par2, uint32, "", "");
@@ -375,4 +421,4 @@ void DummyScheduler::StopExecution() {
 }
 
 CLASS_REGISTER(DummyScheduler, "1.0")
-
+#endif

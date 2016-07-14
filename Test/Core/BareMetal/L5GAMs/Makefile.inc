@@ -25,7 +25,10 @@
 #############################################################
 
 
-OBJSX=  BrokerContainerTest.x \
+OBJSX= RealTimeApplicationConfigurationBuilderTest.x\
+       GAMTestHelper.x 
+
+#BrokerContainerTest.x \
 		DataSourceContainerTest.x \
 		DataSourceSignalRecordTest.x \
 		DataSourceSignalTest.x \
@@ -39,7 +42,6 @@ OBJSX=  BrokerContainerTest.x \
 		GAMSignalsContainerTest.x \
 		GAMSignalITest.x \
 		GAMTest.x \
-		GAMTestHelper.x \
 		MemoryMapDataSourceBrokerTest.x \
 		MemoryMapInputReaderTest.x \
 		MemoryMapOutputWriterTest.x \

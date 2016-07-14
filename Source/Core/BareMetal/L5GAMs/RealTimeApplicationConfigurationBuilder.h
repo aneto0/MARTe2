@@ -747,7 +747,8 @@ private:
      * @param[out] signalNumber is incremented every time a new signal is added to \a data.
      * @return true if the typeName exists in the ClassRegistryDatabase and if all the signal properties can be successfully written to \a data.
      */
-    bool SignalIntrospectionToStructuredData(const char8 * const typeName,
+    bool SignalIntrospectionToStructuredData(ConfigurationDatabase &signalDatabase,
+                                             const char8 * const typeName,
                                              const char8 * const signalName,
                                              const char8 * const alias,
                                              const char8 * const dataSourceName,
