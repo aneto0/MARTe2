@@ -1,8 +1,8 @@
 /**
  * @file ClassMethodCallerT.h
  * @brief Header file for class ClassMethodCallerT
- * @date 13/giu/2016
- * @author pc
+ * @date 13/06/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassMethodCaller.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -43,6 +44,7 @@ namespace MARTe {
  * @brief Automatic overload of ClassMethodCaller methods using templates.
  *
  * @details Registers and calls a class method taking one parameter.
+ *
  * @tparam className is the class owning the registered method.
  * @tparam argType1 is the type of the input parameter to be passed as the class method argument
  */
