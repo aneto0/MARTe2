@@ -93,6 +93,8 @@ static ClassRegistryItem myItemIntro = *(ClassRegistryItemT<TestIntrospectionCRI
 
 static ClassRegistryItem myItemFull = *(ClassRegistryItemT<MyObject>::Instance());
 
+class ClassWithCallableMethods3: public ClassWithCallableMethods {};
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -256,7 +258,30 @@ bool ClassRegistryItemTest::TestFullConstructor() {
 //}
 
 bool ClassRegistryItemTest::TestRegisterMethods() {
-    return false;
+    bool result = true;
+
+    //Sets the target of this test to the global ClassRegistryItem of ClassWithCallableMethods3
+    ClassRegistryItem* const target = ClassRegistryItemT<ClassWithCallableMethods3>::Instance();
+
+    //Specifies the methods to be registered
+    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods3::MethodWithInputInteger };
+    const char* names = "&ClassWithCallableMethods3::MethodWithInputInteger";
+    ClassMethodsRegistryItem cmri(NULL, cmim, names);
+
+    //Registers the methods specified in cmri to be registered
+    target->RegisterMethods(&cmri);
+
+    //Check if the method has been registered (calling it)
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 10;
+        status = target->CallRegisteredMethod<int&>(&context, "MethodWithInputInteger", params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "MethodWithInputInteger(int&)");
+    }
+
+    return result;
 }
 
 bool ClassRegistryItemTest::TestIncrementNumberOfInstances() {
