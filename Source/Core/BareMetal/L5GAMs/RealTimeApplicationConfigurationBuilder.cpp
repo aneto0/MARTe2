@@ -1879,6 +1879,7 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                 //For every DataSource in this function
                 for (d = 0u; (d < numberOfDataSources) && (ret); d++) {
                     uint32 byteSize = 0u;
+                    uint64 address = 0u;
                     StreamString dataSourceName;
                     StreamString dataSourceId = functionsDatabase.GetChildName(d);
                     ret = functionsDatabase.MoveRelative(dataSourceId.Buffer());
@@ -1887,6 +1888,9 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                     }
                     if (ret) {
                         ret = functionsDatabase.Read("ByteSize", byteSize);
+                    }
+                    if (ret) {
+                        ret = functionsDatabase.Read("Address", address);
                     }
                     //Find the DataSource
                     StreamString dataSourceIdInDataSourceDatabase;
@@ -1932,11 +1936,8 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                         }
                     }
                     if (ret) {
-                        ret = dataSourcesDatabase.Write("ByteSize", byteSize);
-                    }
-                    if (ret) {
-                        if (!dataSourcesDatabase.MoveRelative("Signals")) {
-                            ret = dataSourcesDatabase.CreateRelative("Signals");
+                        if (!dataSourcesDatabase.MoveRelative(signalDirection)) {
+                            ret = dataSourcesDatabase.CreateRelative(signalDirection);
                         }
                     }
                     if (ret) {
@@ -1966,6 +1967,12 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                                 ret = dataSourcesDatabase.MoveToAncestor(1u);
                             }
                         }
+                    }
+                    if (ret) {
+                        ret = dataSourcesDatabase.Write("Address", reinterpret_cast<void *>(address));
+                    }
+                    if (ret) {
+                        ret = dataSourcesDatabase.Write("ByteSize", byteSize);
                     }
                     //Move back to the DataSource level
                     if (ret) {

@@ -54,6 +54,7 @@ public:
 
     virtual ~BrokerI();
 
+#if 0
     /**
      * @brief Sets the application where this object is involved in.
      * @param[in] rtApp is a Reference to the application to be set.
@@ -265,6 +266,7 @@ private:
      * True if the method Finalise was already called.
      */
     bool finalised;
+#endif
 };
 
 }

@@ -45,6 +45,10 @@ namespace MARTe {
 
 class BrokerI;
 
+enum SignalDirection {
+    InputSignals, OutputSignals
+};
+
 /**
  * @brief Memory container for the exchange of signal data.
  * @details This class provides the memory area where all signals interchanged between GAMs exist.
@@ -84,36 +88,101 @@ public:
      */
     virtual bool Initialise(StructuredDataI & data);
 
-
     bool AddSignals(StructuredDataI & data);
 
     bool SetConfiguredDatabase(StructuredDataI & data);
 
     uint32 GetNumberOfSignals();
 
-    bool GetSignalName(uint32 signalIdx, StreamString &signalName);
+    bool GetSignalName(uint32 signalIdx,
+                       StreamString &signalName);
 
-    bool GetSignalIndex(uint32 &signalIdx, const char8*  const signalName);
+    bool GetSignalIndex(uint32 &signalIdx,
+                        const char8* const signalName);
 
     TypeDescriptor GetSignalType(uint32 signalIdx);
 
-    bool GetSignalNumberOfDimensions(uint32 signalIdx, uint32 &numberOfDimensions);
+    bool GetSignalNumberOfDimensions(uint32 signalIdx,
+                                     uint32 &numberOfDimensions);
 
-    bool GetSignalNumberElements(uint32 signalIdx, uint32 &numberOfElements);
+    bool GetSignalNumberElements(uint32 signalIdx,
+                                 uint32 &numberOfElements);
 
-    bool GetSignalByteSize(uint32 signalIdx, uint32 &byteSize);
+    bool GetSignalByteSize(uint32 signalIdx,
+                           uint32 &byteSize);
 
-    bool GetSignalNumberOfStates(uint32 signalIdx, uint32 &numberOfStates);
+    bool GetSignalNumberOfStates(uint32 signalIdx,
+                                 uint32 &numberOfStates);
 
-    bool GetSignalStateName(uint32 signalIdx, uint32 stateIdx, StreamString &stateName);
+    bool GetSignalStateName(uint32 signalIdx,
+                            uint32 stateIdx,
+                            StreamString &stateName);
 
-    bool GetSignalNumberOfConsumers(uint32 signalIdx, const char8 *stateName, uint32 &numberOfConsumers);
+    bool GetSignalNumberOfConsumers(uint32 signalIdx,
+                                    const char8 *stateName,
+                                    uint32 &numberOfConsumers);
 
-    bool GetSignalNumberOfProducers(uint32 signalIdx, const char8 *stateName, uint32 &numberOfProducers);
+    bool GetSignalNumberOfProducers(uint32 signalIdx,
+                                    const char8 *stateName,
+                                    uint32 &numberOfProducers);
 
-    bool GetSignalConsumerName(uint32 signalIdx, const char8 *stateName, uint32 consumerIdx, StreamString &consumerName);
+    bool GetSignalConsumerName(uint32 signalIdx,
+                               const char8 *stateName,
+                               uint32 consumerIdx,
+                               StreamString &consumerName);
 
-    bool GetSignalProducerName(uint32 signalIdx, const char8 *stateName, uint32 producerIdx, StreamString &producerName);
+    bool GetSignalProducerName(uint32 signalIdx,
+                               const char8 *stateName,
+                               uint32 producerIdx,
+                               StreamString &producerName);
+
+    uint32 GetNumberOfFunctions();
+
+    bool GetFunctionName(uint32 functionIdx,
+                         StreamString &functionName);
+
+    bool GetFunctionIndex(uint32 &functionIdx,
+                          const char8* const functionName);
+
+    bool GetFunctionNumberOfSignals(SignalDirection direction,
+                                    uint32 functionIdx,
+                                    uint32 &numberOfSignals);
+
+    bool GetFunctionSignalsByteSize(SignalDirection direction,
+                                    uint32 functionIdx,
+                                    uint32 &byteSize);
+
+    bool GetFunctionSignalsAddress(SignalDirection direction,
+                                   uint32 functionIdx,
+                                   void *&address);
+
+    bool GetFunctionSignalName(SignalDirection direction,
+                               uint32 functionIdx,
+                               uint32 functionSignalIdx,
+                               StreamString &functioSignalName);
+
+    bool GetFunctionSignalIndex(SignalDirection direction,
+                                uint32 functionIdx,
+                                uint32 &functionSignalIdx,
+                                const char8* const functionSignalName);
+
+    bool GetFunctionSignalNumberOfByteOffsets(SignalDirection direction,
+                                              uint32 functionIdx,
+                                              uint32 functionSignalIdx,
+                                              uint32 &numberOfByteOffsets);
+
+    bool GetFunctionSignalByteOffsetInfo(SignalDirection direction,
+                                         uint32 functionIdx,
+                                         uint32 functionSignalIdx,
+                                         uint32 byteOffsetIndex,
+                                         uint32 &byteOffsetStart,
+                                         uint32 &byteOffsetSize);
+
+    bool GetFunctionSignalTimeCyclesInfo(SignalDirection direction,
+                                         uint32 functionIdx,
+                                         uint32 functionSignalIdx,
+                                         uint32 &timeCycles,
+                                         uint32 &timeSamples);
 
 #if 0
     /**
@@ -161,7 +230,7 @@ public:
      * @return a reference to a reader compatible with \a signalIn, an invalid reference in case of incompatibility.
      */
     virtual ReferenceT<BrokerI> GetInputReader(ReferenceT<GAMSignalI> signalIn,
-                                               void * varPtr = NULL_PTR(void*))=0;
+            void * varPtr = NULL_PTR(void*))=0;
 
     /**
      * @brief Retrieves the DataSourceBrokerI writer for the signal passed in input.
@@ -174,7 +243,7 @@ public:
      * @return a reference to a writer compatible with \a signalOut, an invalid reference in case of incompatibility.
      */
     virtual ReferenceT<BrokerI> GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
-                                                void * varPtr = NULL_PTR(void*))=0;
+            void * varPtr = NULL_PTR(void*))=0;
 
     /**
      * @brief Configures the signal from a GAMSignalI definition.
@@ -211,6 +280,12 @@ private:
     uint32 numberOfSignals;
 
     bool MoveToSignalIndex(uint32 signalIdx);
+
+    bool MoveToFunctionIndex(uint32 functionIdx);
+
+    bool MoveToFunctionSignalIndex(SignalDirection direction,
+                                   uint32 functionIdx,
+                                   uint32 functionSignalIdx);
 };
 
 }

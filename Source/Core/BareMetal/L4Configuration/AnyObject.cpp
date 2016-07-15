@@ -277,12 +277,7 @@ static bool SerializeScalar(const AnyType &typeIn,
         ret = MemoryOperationsHelper::Copy(destPointer, token, tokenLength);
     }
     else if (isPointer) {
-        void *oldSourcePointer = sourcePointer;
-        void* newSourcePointer = reinterpret_cast<void*>(&oldSourcePointer);
-        uint32 memoryAllocationSize = typeIn.GetByteSize();
-        void* destPointerPointer = HeapManager::Malloc(memoryAllocationSize);
-        ret = MemoryOperationsHelper::Copy(destPointerPointer, newSourcePointer, memoryAllocationSize);
-        destPointer = *reinterpret_cast<void**>(destPointerPointer);
+        destPointer = sourcePointer;
     }
     else {
         uint32 memoryAllocationSize = typeIn.GetByteSize();
@@ -356,6 +351,7 @@ void AnyObject::CleanUp() {
     bool cArray = (type.GetTypeDescriptor().type == CArray);
     bool staticDeclared = type.IsStaticDeclared();
     bool cArrayOnHeap = ((cArray) && (!staticDeclared));
+    bool isPointer = (type.GetTypeDescriptor().type == Pointer);
 
     if (typePointer != NULL) {
         if (type.GetNumberOfDimensions() == 1u) {
@@ -410,9 +406,10 @@ void AnyObject::CleanUp() {
                 }
             }
         }
-
-        if (!HeapManager::Free(typePointer)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
+        if(!isPointer) {
+            if (!HeapManager::Free(typePointer)) {
+                REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
+            }
         }
         type = voidAnyType;
     }

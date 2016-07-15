@@ -2211,6 +2211,42 @@ bool RealTimeApplication::ConfigureApplication() {
                     }
                 }
             }
+
+            uint32 numberOfFunctions = dataSource->GetNumberOfFunctions();
+            printf("Number of functions: %d\n", numberOfFunctions);
+            uint32 f;
+            for (f = 0u; f < numberOfFunctions; f++) {
+                StreamString functionName;
+                dataSource->GetFunctionName(f, functionName);
+                printf("  Function: %s\n", functionName.Buffer());
+                printf("    InputSignals: \n");
+                uint32 byteSize;
+                dataSource->GetFunctionSignalsByteSize(InputSignals, f, byteSize);
+                printf("      ByteSize: %d\n", byteSize);
+                void *address;
+                dataSource->GetFunctionSignalsAddress(InputSignals, f, address);
+                printf("      Address: %p\n", address);
+                uint32 numberOfFunctionSignals = 0u;
+                dataSource->GetFunctionNumberOfSignals(InputSignals, f, numberOfFunctionSignals);
+                for (s = 0u; s < numberOfFunctionSignals; s++) {
+                    StreamString functionSignalName;
+                    dataSource->GetFunctionSignalName(InputSignals, f, s, functionSignalName);
+                    printf("      Signal: %s\n", functionSignalName.Buffer());
+                    uint32 numberOfByteOffsets = 0u;
+                    dataSource->GetFunctionSignalNumberOfByteOffsets(InputSignals, f, s, numberOfByteOffsets);
+                    uint32 b;
+                    for (b = 0u; b < numberOfByteOffsets; b++) {
+                        uint32 start;
+                        uint32 size;
+                        dataSource->GetFunctionSignalByteOffsetInfo(InputSignals, f, s, b, start, size);
+                        printf("        Offset[%d]: [%d %d]\n", b, start, size);
+                    }
+                    uint32 timeCycles;
+                    uint32 timeSamples;
+                    dataSource->GetFunctionSignalTimeCyclesInfo(InputSignals, f, s, timeCycles, timeSamples);
+                    printf("        TimeCyclesSamples: [%d %d]\n", timeCycles, timeSamples);
+                }
+            }
         }
     }
 

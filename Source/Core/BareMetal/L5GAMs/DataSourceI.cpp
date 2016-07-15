@@ -185,12 +185,11 @@ bool DataSourceI::GetSignalIndex(uint32 &signalIdx,
                                  const char8* const signalName) {
 
     uint32 numberOfSignals = GetNumberOfSignals();
-    uint32 n;
     bool ret = true;
     bool found = false;
-    for (n = 0u; (n < numberOfSignals) && ret && (!found); n++) {
+    for (signalIdx = 0u; (signalIdx < numberOfSignals) && ret && (!found); signalIdx++) {
         StreamString searchName;
-        ret = GetSignalName(n, searchName);
+        ret = GetSignalName(signalIdx, searchName);
         if (ret) {
             found = (StringHelper::Compare(signalName, searchName.Buffer()) == 0u);
         }
@@ -404,4 +403,235 @@ bool DataSourceI::MoveToSignalIndex(uint32 signalIdx) {
     }
     return ret;
 }
+
+uint32 DataSourceI::GetNumberOfFunctions() {
+    bool ret = configuredDatabase.MoveToRoot();
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("Functions");
+    }
+    uint32 numberOfFunctions = 0u;
+    if (ret) {
+        numberOfFunctions = configuredDatabase.GetNumberOfChildren();
+    }
+    return numberOfFunctions;
+}
+
+bool DataSourceI::GetFunctionName(uint32 functionIdx,
+                                  StreamString &functionName) {
+    bool ret = MoveToFunctionIndex(functionIdx);
+    if (ret) {
+        ret = configuredDatabase.Read("QualifiedName", functionName);
+    }
+    return ret;
+}
+
+bool DataSourceI::GetFunctionIndex(uint32 &functionIdx,
+                                   const char8* const functionName) {
+
+    uint32 numberOfFunctions = GetNumberOfFunctions();
+    bool ret = true;
+    bool found = false;
+    for (functionIdx = 0u; (functionIdx < numberOfFunctions) && ret && (!found); functionIdx++) {
+        StreamString searchName;
+        ret = GetFunctionName(functionIdx, searchName);
+        if (ret) {
+            found = (StringHelper::Compare(functionName, searchName.Buffer()) == 0u);
+        }
+    }
+    if (ret) {
+        ret = found;
+    }
+    return ret;
+}
+
+bool DataSourceI::GetFunctionNumberOfSignals(SignalDirection direction,
+                                             uint32 functionIdx,
+                                             uint32 &numberOfSignals) {
+    const char8 *signalDirection = "InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "OutputSignals";
+    }
+    bool ret = MoveToFunctionIndex(functionIdx);
+    if (ret) {
+        if (configuredDatabase.MoveRelative(signalDirection)) {
+            //Ignore the ByteSize and the Address
+            ret = (configuredDatabase.GetNumberOfChildren() > 2u);
+        }
+        if (ret) {
+            numberOfSignals = configuredDatabase.GetNumberOfChildren() - 2u;
+        }
+    }
+    return ret;
+}
+
+bool DataSourceI::GetFunctionSignalsByteSize(SignalDirection direction,
+                                             uint32 functionIdx,
+                                             uint32 &byteSize) {
+    const char8 *signalDirection = "InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "OutputSignals";
+    }
+    bool ret = MoveToFunctionIndex(functionIdx);
+    if (ret) {
+        ret = configuredDatabase.MoveRelative(signalDirection);
+    }
+    if (ret) {
+        ret = configuredDatabase.Read("ByteSize", byteSize);
+    }
+
+    return ret;
+}
+
+bool DataSourceI::GetFunctionSignalsAddress(SignalDirection direction,
+                                            uint32 functionIdx,
+                                            void *&address) {
+    const char8 *signalDirection = "InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "OutputSignals";
+    }
+    bool ret = MoveToFunctionIndex(functionIdx);
+    if (ret) {
+        ret = configuredDatabase.MoveRelative(signalDirection);
+    }
+    uint64 temp = 0u;
+    if (ret) {
+        ret = configuredDatabase.Read("Address", temp);
+    }
+    if (ret) {
+        address = reinterpret_cast<void *>(temp);
+    }
+
+    return ret;
+}
+
+bool DataSourceI::GetFunctionSignalName(SignalDirection direction,
+                                        uint32 functionIdx,
+                                        uint32 functionSignalIdx,
+                                        StreamString &functionSignalName) {
+
+    bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
+    if (ret) {
+        ret = configuredDatabase.Read("QualifiedName", functionSignalName);
+    }
+    return ret;
+}
+
+bool DataSourceI::GetFunctionSignalIndex(SignalDirection direction,
+                                         uint32 functionIdx,
+                                         uint32 &functionSignalIdx,
+                                         const char8* const functionSignalName) {
+    uint32 numberOfFunctionSignals = 0u;
+    bool ret = GetFunctionNumberOfSignals(direction, functionIdx, numberOfFunctionSignals);
+    bool found = false;
+    for (functionSignalIdx = 0u; (functionSignalIdx < numberOfFunctionSignals) && ret && (!found); functionSignalIdx++) {
+        StreamString searchName;
+        ret = GetFunctionName(functionSignalIdx, searchName);
+        if (ret) {
+            found = (StringHelper::Compare(functionSignalName, searchName.Buffer()) == 0u);
+        }
+    }
+    if (ret) {
+        ret = found;
+    }
+    return ret;
+}
+
+bool DataSourceI::GetFunctionSignalNumberOfByteOffsets(SignalDirection direction,
+                                                       uint32 functionIdx,
+                                                       uint32 functionSignalIdx,
+                                                       uint32 &numberOfByteOffsets) {
+    bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
+    AnyType byteOffset;
+    if (ret) {
+        byteOffset = configuredDatabase.GetType("ByteOffset");
+        ret = (byteOffset.GetDataPointer() != NULL_PTR(void *));
+    }
+    numberOfByteOffsets = 0u;
+    if (ret) {
+        numberOfByteOffsets = byteOffset.GetNumberOfElements(1u);
+    }
+    return ret;
+}
+
+bool DataSourceI::GetFunctionSignalByteOffsetInfo(SignalDirection direction,
+                                                  uint32 functionIdx,
+                                                  uint32 functionSignalIdx,
+                                                  uint32 byteOffsetIndex,
+                                                  uint32 &byteOffsetStart,
+                                                  uint32 &byteOffsetSize) {
+    uint32 numberOfByteOffsets = 0u;
+    bool ret = GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, functionSignalIdx, numberOfByteOffsets);
+    if (ret) {
+        ret = (numberOfByteOffsets > 0u);
+    }
+    if (ret) {
+        ret = (numberOfByteOffsets > byteOffsetIndex);
+    }
+    if (ret) {
+        ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
+    }
+
+    Matrix<uint32> byteOffsetMat(numberOfByteOffsets, 2u);
+    if (ret) {
+        ret = configuredDatabase.Read("ByteOffset", byteOffsetMat);
+    }
+    if (ret) {
+        byteOffsetStart = byteOffsetMat[byteOffsetIndex][0u];
+        byteOffsetSize = byteOffsetMat[byteOffsetIndex][1u];
+    }
+
+    return ret;
+}
+
+bool DataSourceI::GetFunctionSignalTimeCyclesInfo(SignalDirection direction,
+                                                  uint32 functionIdx,
+                                                  uint32 functionSignalIdx,
+                                                  uint32 &timeCycles,
+                                                  uint32 &timeSamples) {
+
+    Vector<uint32> timeCyclesSamplesVec(2u);
+    bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
+    if (configuredDatabase.Read("TimeCyclesSamples", timeCyclesSamplesVec)) {
+        timeCycles = timeCyclesSamplesVec[0u];
+        timeSamples = timeCyclesSamplesVec[1u];
+    }
+    else {
+        timeCycles = 1u;
+        timeSamples = 1u;
+    }
+    return ret;
+}
+
+bool DataSourceI::MoveToFunctionIndex(uint32 functionIdx) {
+    bool ret = configuredDatabase.MoveToRoot();
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("Functions");
+    }
+    StreamString functionIdxStr;
+    functionIdxStr.Printf("%d", functionIdx);
+    if (ret) {
+        ret = configuredDatabase.MoveRelative(functionIdxStr.Buffer());
+    }
+    return ret;
+}
+
+bool DataSourceI::MoveToFunctionSignalIndex(SignalDirection direction,
+                                            uint32 functionIdx,
+                                            uint32 functionSignalIdx) {
+    const char8 *signalDirection = "InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "OutputSignals";
+    }
+    bool ret = MoveToFunctionIndex(functionIdx);
+    if (ret) {
+        ret = configuredDatabase.MoveRelative(signalDirection);
+    }
+    StreamString functionSignalIdxStr;
+    functionSignalIdxStr.Printf("%d", functionSignalIdx);
+    if (ret) {
+        ret = configuredDatabase.MoveRelative(functionSignalIdxStr.Buffer());
+    }
+    return ret;
+}
+
 }
