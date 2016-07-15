@@ -50,13 +50,17 @@ namespace MARTe {
  */
 template<typename className, typename argType1 = void>
 class ClassMethodCallerT: public ClassMethodCaller {
+
 public:
+
+    typedef bool (className::*MethodPointer)(argType1);
 
     /**
      * @brief Constructor from a class method with one input parameter.
      * @param[in] f is a pointer to the class method.
+     * @post f == GetMethodPointer()
      */
-    ClassMethodCallerT(bool (className::*f)(argType1));
+    ClassMethodCallerT(MethodPointer f);
 
     /**
      * @brief Destructor.
@@ -82,12 +86,14 @@ public:
                                             argType1 ref,
                                             bool ByCopy);
 
+    MethodPointer GetMethodPointer();
+
 private:
 
     /**
      * Pointer to the class method
      */
-    bool (className::*pFun)(argType1);
+    MethodPointer pFun;
 
 };
 
@@ -99,13 +105,17 @@ private:
  */
 template<typename className>
 class ClassMethodCallerT<className> : public ClassMethodCaller {
+
 public:
+
+    typedef bool (className::*MethodPointer)();
 
     /**
      * @brief Constructor from a class method without arguments.
      * @param[in] f is a pointer to the class method.
+     * @post f == GetMethodPointer()
      */
-    ClassMethodCallerT(bool (className::*f)());
+    ClassMethodCallerT(MethodPointer f);
 
     /**
      * @brief Destructor.
@@ -119,7 +129,10 @@ public:
      */
     virtual ErrorManagement::ErrorType Call(Object * context);
 
+    MethodPointer GetMethodPointer();
+
 private:
+
     /**
      * Pointer to the class method
      */
@@ -135,7 +148,7 @@ private:
  * 0 arguments *
  ***************/
 template<typename className>
-ClassMethodCallerT<className, void>::ClassMethodCallerT(bool (className::*f)(void)) {
+ClassMethodCallerT<className, void>::ClassMethodCallerT(MethodPointer f) {
     pFun = f;
 }
 
@@ -158,11 +171,16 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, void>::Call(Object * co
     return err;
 }
 
+template<typename className>
+typename ClassMethodCallerT<className, void>::MethodPointer ClassMethodCallerT<className, void>::GetMethodPointer() {
+    return pFun;
+}
+
 /***************
  * 1 argument  *
  ***************/
 template<typename className, typename argType1>
-ClassMethodCallerT<className, argType1>::ClassMethodCallerT(bool (className::*f)(argType1 ref)) {
+ClassMethodCallerT<className, argType1>::ClassMethodCallerT(MethodPointer f) {
     pFun = f;
 }
 
@@ -200,6 +218,11 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, argType1>::Call(Object 
         (actualContext->*pFun)(ref) ? (err = ErrorManagement::NoError) : (err = ErrorManagement::FatalError);
     }
     return err;
+}
+
+template<typename className, typename argType1>
+typename ClassMethodCallerT<className, argType1>::MethodPointer ClassMethodCallerT<className, argType1>::GetMethodPointer() {
+    return pFun;
 }
 
 }
