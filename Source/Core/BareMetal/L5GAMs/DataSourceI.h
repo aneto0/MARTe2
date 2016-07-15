@@ -68,6 +68,7 @@ enum SignalDirection {
 class DLL_API DataSourceI: public ReferenceContainer {
 
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Initialises the ReferenceContainer.

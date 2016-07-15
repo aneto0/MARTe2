@@ -399,6 +399,11 @@ public:
      */
     bool ResolveStates();
 
+
+    // Checks that each GAM has been called in at least one thread
+    bool VerifyStates();
+
+
     /**
      * @brief For every signal in every DataSource set the Consumer and Producer Functions.
      * @return true if for every signal in every DataSource the Consumer and Producer Functions can be successfully added.
@@ -450,6 +455,10 @@ public:
      *      }
      */
     bool ResolveConsumersAndProducers();
+
+
+    bool VerifyConsumersAndProducers();
+
 
     /**
      * @brief For every signal in every Function compute the memory size and the memory offset (if Ranges are defined).
@@ -747,7 +756,8 @@ private:
      * @param[out] signalNumber is incremented every time a new signal is added to \a data.
      * @return true if the typeName exists in the ClassRegistryDatabase and if all the signal properties can be successfully written to \a data.
      */
-    bool SignalIntrospectionToStructuredData(const char8 * const typeName,
+    bool SignalIntrospectionToStructuredData(ConfigurationDatabase &signalDatabase,
+                                             const char8 * const typeName,
                                              const char8 * const signalName,
                                              const char8 * const alias,
                                              const char8 * const dataSourceName,

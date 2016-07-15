@@ -72,12 +72,9 @@ bool ConfigurationDatabase::Write(const char8 * const name,
         currentNode = storeCurrentNode;
     }
     else {
-        ok = (name != NULL_PTR(const char8 *));
-        AnyType existentType = GetType(name);
+        ok = (StringHelper::Length(name) > 0u);
         if (ok) {
-            ok = (StringHelper::Length(name) > 0u);
-        }
-        if (ok) {
+            AnyType existentType = GetType(name);
             if (existentType.GetTypeDescriptor().type != VoidType.type) {
                 ok = Delete(name);
             }
