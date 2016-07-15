@@ -309,7 +309,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                 if (ret) {
                     if (!dataSourcesDatabase.Read("NumberOfElements", numberOfElements)) {
                         if (numberOfDimensions > 0u) {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "NumberOfElements was not defined for signal: %s in %s, assume it as 1",
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "NumberOfElements is not defined for signal: %s in %s, assume it as 1",
                                                     signalName.Buffer(), dataSourceName.Buffer())
                         }
                         numberOfElements = 1u;
@@ -330,6 +330,42 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                 if (ret) {
                     ret = dataSourcesDatabase.Write("ByteSize", signalNumberOfBytes);
                 }
+
+                if (ret) {
+                    StreamString defaultVal;
+                    if (!dataSourcesDatabase.Read("Default", defaultVal)) {
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "Default value is not defined for signal: %s in %s, by default it will be zeroed",
+                                                signalName.Buffer(), dataSourceName.Buffer())
+                    }
+                    // check validity of the default value
+                    else {
+                        //TODO
+                        // parse the DefaultValue
+                        // check its compatibility with the type
+                        StreamString defValConfig = "Default=";
+                        defValConfig += defaultVal;
+                        defValConfig.Seek(0u);
+                        ConfigurationDatabase cdb;
+                        StandardParser parser(defValConfig, cdb);
+                        void *ptr = HeapManager::Malloc(signalNumberOfBytes);
+                        if (ptr != NULL) {
+                            AnyType at = AnyType(signalTypeDescriptor, 0u, ptr);
+                            uint32 usedDimensions=numberOfDimensions;
+                            if(numberOfDimensions>1u){
+                                usedDimensions=1u;
+                            }
+                            at.SetNumberOfDimensions(usedDimensions);
+                            at.SetNumberOfElements(0u,numberOfElements);
+
+                            ret = parser.Parse();
+                            if (ret) {
+                                ret = cdb.Read("Default", at);
+                            }
+                            ret=HeapManager::Free(reinterpret_cast<void*&>(ptr));
+                        }
+                    }
+                }
+
                 if (ret) {
                     ret = dataSourcesDatabase.MoveToAncestor(1u);
                 }
@@ -472,9 +508,9 @@ bool RealTimeApplicationConfigurationBuilder::VerifyStates() {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM with id %s is never called", functionsDatabase.GetChildName(i))
             }
         }
-        if(ret){
+        if (ret) {
             //return to Functions level
-            ret=functionsDatabase.MoveToAncestor(2u);
+            ret = functionsDatabase.MoveToAncestor(2u);
         }
     }
     return ret;
@@ -488,18 +524,55 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers() {
     return ret;
 }
 
+bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
 
-bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers(){
+    bool ret = dataSourcesDatabase.MoveAbsolute("Data");
+    uint32 numberOfDS = dataSourcesDatabase.GetNumberOfChildren();
+    for (uint32 i = 0u; (i < numberOfDS) && (ret); i++) {
 
-
-
-    //TODO
-    //-Follow the State Machine State execution order
-    //-See For each thread the first GAM to be executed.
-    //-if the consumed signal was not produced in the prev state, see if the ds has a default value
-
+        ret = dataSourcesDatabase.MoveRelative(dataSourcesDatabase.GetChildName(i));
+        if (ret) {
+            ret = dataSourcesDatabase.MoveRelative("Signals");
+        }
+        if (ret) {
+            uint32 numberOfSignals = dataSourcesDatabase.GetNumberOfChildren();
+            for (uint32 j = 0u; (j < numberOfSignals) && (ret); j++) {
+                ret = dataSourcesDatabase.MoveRelative(dataSourcesDatabase.GetChildName(j));
+                if (ret) {
+                    ret = dataSourcesDatabase.MoveRelative("States");
+                }
+                if (ret) {
+                    uint32 numberOfStates = dataSourcesDatabase.GetNumberOfChildren();
+                    for (uint32 k = 0u; (k < numberOfStates) && (ret); k++) {
+                        ret = dataSourcesDatabase.MoveRelative(dataSourcesDatabase.GetChildName(k));
+                        if (ret) {
+                            // no Producers found... in this case the default value must be declared
+                            AnyType prods = dataSourcesDatabase.GetType("Producers");
+                            ret = (prods.GetNumberOfElements(0u) > 1u);
+                            if (!ret) {
+                                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "More than one producer of signal %s in state %s",
+                                                        functionsDatabase.GetChildName(i))
+                            }
+                        }
+                        if (ret) {
+                            // to States
+                            ret = dataSourcesDatabase.MoveToAncestor(1u);
+                        }
+                    }
+                }
+                if (ret) {
+                    // to Signals
+                    ret = dataSourcesDatabase.MoveToAncestor(2u);
+                }
+            }
+        }
+        if (ret) {
+            // to Data
+            ret = dataSourcesDatabase.MoveToAncestor(2u);
+        }
+    }
+    return ret;
 }
-
 
 bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize() {
     bool ret = ResolveFunctionSignalsMemorySize("InputSignals");
