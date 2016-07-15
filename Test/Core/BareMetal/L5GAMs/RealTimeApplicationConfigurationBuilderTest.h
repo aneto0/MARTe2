@@ -59,7 +59,11 @@ public:
 
     bool TestVerifyDataSourcesSignals();
 
+    bool TestVerifyDataSourcesSignals_PartialInPredefinedDsNoType();
+
     bool TestVerifyDataSourcesSignalsFalse_NoTypeInPredefinedDs();
+
+    bool TestVerifyDataSourcesSignalsFalse_PartialInPredefinedDsWithType();
 
     bool TestResolveFunctionSignals();
 
@@ -68,6 +72,11 @@ public:
     bool TestResolveFunctionSignalsFalse_NoTypeInGAMSignal();
 
     bool TestVerifyFunctionSignals();
+
+    bool TestResolveStates();
+
+    bool TestResolveStatesFalse_SameGAMIn2Threads();
+
 };
 
 /*---------------------------------------------------------------------------*/

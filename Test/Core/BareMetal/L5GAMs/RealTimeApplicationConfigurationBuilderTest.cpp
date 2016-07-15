@@ -554,7 +554,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals()
     return true;
 }
 
-bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFalse_NoTypeInPredefinedDs() {
+bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_PartialInPredefinedDsNoType() {
 
     static StreamString configLocal = ""
             "$Application1 = {"
@@ -592,6 +592,215 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFa
             "                    NumberOfElements = 3"
             "                }"
             "            }"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA, :Functions.GAMB}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    ConfigurationDatabase cdb;
+    configLocal.Seek(0);
+    StandardParser parser(configLocal, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+    return true; //
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFalse_NoTypeInPredefinedDs() {
+    static StreamString configLocal = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = A"
+            "                    Alias = Predefined"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            OutputSignals = {"
+            "                Signal2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = A"
+            "                    Alias = Predefined"
+            "                } "
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = DataSourceI"
+            "            Signals = {"
+            "                Empty = {"
+            "                    NumberOfElements = 3"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA, :Functions.GAMB}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    ConfigurationDatabase cdb;
+    configLocal.Seek(0);
+    StandardParser parser(configLocal, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+    return (!rtAppBuilder.VerifyDataSourcesSignals());
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFalse_PartialInPredefinedDsWithType() {
+    static StreamString configLocal = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = A"
+            "                    Alias = Shared"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            OutputSignals = {"
+            "                Signal2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = Shared"
+            "                } "
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = DataSourceI"
             "        }"
             "    }"
             "    +States = {"
@@ -849,6 +1058,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsFals
             "            Class = GAM1"
             "            OutputSignals = {"
             "                Signal2 = {"
+            // no add in resolveds phase then in resolvefn the signal is not found
             "                    DataSource = DDB1"
             "                    Alias = SharedVar"
             "                }"
@@ -996,3 +1206,181 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyFunctionSignals() {
 
     return true;
 }
+
+bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates() {
+    ConfigurationDatabase cdb;
+    config1.Seek(0);
+    StandardParser parser(config1, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveStates()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return true;
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_SameGAMIn2Threads() {
+
+    static StreamString configLocal = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Alias = X"
+            "                    Type = int32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = DataSourceI"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA}"
+            "                }"
+            "                +Thread2 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    ConfigurationDatabase cdb;
+    configLocal.Seek(0);
+    StandardParser parser(configLocal, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return (!rtAppBuilder.ResolveStates());
+}
+

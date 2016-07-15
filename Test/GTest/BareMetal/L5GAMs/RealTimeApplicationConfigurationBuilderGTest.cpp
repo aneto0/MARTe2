@@ -40,7 +40,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-/*
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestInitialiseSignalsDatabase) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestInitialiseSignalsDatabase());
@@ -75,12 +75,23 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignals) 
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestVerifyDataSourcesSignals());
 }
-*/
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignals_PartialInPredefinedDsNoType) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyDataSourcesSignals_PartialInPredefinedDsNoType());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignalsFalse_NoTypeInPredefinedDs) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestVerifyDataSourcesSignalsFalse_NoTypeInPredefinedDs());
 }
-/*
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignalsFalse_PartialInPredefinedDsWithType) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyDataSourcesSignalsFalse_PartialInPredefinedDsWithType());
+}
+
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveFunctionSignals());
@@ -99,4 +110,15 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsFals
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyFunctionSignals) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestVerifyFunctionSignals());
-}*/
+}
+
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveStates) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStates());
+}
+
+ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_SameGAMIn2Threads) {
+     RealTimeApplicationConfigurationBuilderTest test;
+     ASSERT_TRUE(test.TestResolveStatesFalse_SameGAMIn2Threads());
+ }
