@@ -80,6 +80,15 @@ public:
      */
     virtual ~GAMDataSource();
 
+    virtual uint32 GetCurrentBufferIndex();
+
+    virtual uint32 GetNumberOfMemoryBuffers();
+
+    virtual bool GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress);
+
+    virtual bool AllocateMemory();
+
+#if 0
     /**
      * @brief Retrieves to the memory address containing the signal data.
      * @details Given that the DataSourceSignal uses a double-buffering memory, this method
@@ -209,7 +218,11 @@ protected:
      * A pointer to the global memory area.
      */
     MemoryArea *memory;
+#endif
 
+    void **signalMemory[2];
+
+    HeapI *heap;
 };
 
 }

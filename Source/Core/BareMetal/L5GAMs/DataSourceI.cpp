@@ -634,4 +634,11 @@ bool DataSourceI::MoveToFunctionSignalIndex(SignalDirection direction,
     return ret;
 }
 
+ReferenceT<BrokerI> DataSourceI::GetInputReader(const char8 * const functionName){
+    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
+    broker->InitFromDataSource(this, InputSignals, functionName);
+    return broker;
+}
+
+
 }

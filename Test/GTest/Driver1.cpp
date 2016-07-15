@@ -52,5 +52,25 @@ bool Driver1::Initialise(StructuredDataI & data) {
     return DataSourceI::Initialise(data);
 }
 
+uint32 Driver1::GetCurrentBufferIndex(){
+    return 0u;
+}
+
+uint32 Driver1::GetNumberOfMemoryBuffers(){
+    return 1u;
+}
+
+bool Driver1::GetSignalMemoryBuffer(uint32 functionIdx, uint32 functionSignalIdx, uint32 bufferIdx, void *&signalAddress){
+    return true;
+}
+
+bool Driver1::AllocateMemory() {
+    return false;
+}
+
+bool Driver1::GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress){
+    return true;
+}
+
 CLASS_REGISTER(Driver1, "1.0");
 }

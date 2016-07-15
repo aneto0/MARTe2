@@ -52,5 +52,21 @@ bool DataSource1::Initialise(StructuredDataI & data) {
     return DataSourceI::Initialise(data);
 }
 
+
+uint32 DataSource1::GetCurrentBufferIndex(){
+    return 0u;
+}
+
+uint32 DataSource1::GetNumberOfMemoryBuffers(){
+    return 2u;
+}
+
+bool DataSource1::AllocateMemory() {
+    return false;
+}
+
+bool DataSource1::GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress){
+    return true;
+}
 CLASS_REGISTER(DataSource1, "1.0");
 }

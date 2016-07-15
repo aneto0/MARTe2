@@ -46,13 +46,15 @@ namespace MARTe {
  * @details A class that implements this interface is capable of connecting signals from
  *  DataSourceSignalI components with signals from GAMSignalI components.
  */
-class BrokerI: public ReferenceContainer {
+class BrokerI : public ReferenceContainer {
 
 public:
 
     BrokerI();
 
     virtual ~BrokerI();
+
+    virtual bool InitFromDataSource(ReferenceT<DataSourceI> dataSourceIn, SignalDirection direction, const char8 * const functionName) = 0;
 
 #if 0
     /**
@@ -267,6 +269,8 @@ private:
      */
     bool finalised;
 #endif
+
+
 };
 
 }

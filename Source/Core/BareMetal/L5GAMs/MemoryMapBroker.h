@@ -50,8 +50,7 @@ namespace MARTe {
 
 struct CopyTableEntry {
     void *gamPointer;
-    void *dataSourcePointer0;
-    void *dataSourcePointer1;
+    void **dataSourcePointers;
     uint32 copySize;
 };
 
@@ -84,6 +83,9 @@ public:
     /**
      *
      */
+    virtual bool InitFromDataSource(ReferenceT<DataSourceI> dataSourceIn, SignalDirection direction, const char8 * const functionName);
+
+#if 0
     virtual bool Finalise();
 
     virtual bool Read(const uint8 activeDataSourceBuffer,
@@ -95,19 +97,16 @@ public:
     virtual bool IsSync() const {
         return false;
     }
+#endif
 private:
 
-    /**
-     *
-     */
     CopyTableEntry *copyTable;
 
-    /**
-     * Stores the pointers to the DataSource memory area variables.
-     */
-    StaticList<void **> dataSourceSignalPointers[2];
+    uint32 numberOfDataSourceSignalBuffers;
 
-    uint32 numberOfSignalCopies;
+    uint32 numberOfCopies;
+
+    ReferenceT<DataSourceI> dataSource;
 
 };
 

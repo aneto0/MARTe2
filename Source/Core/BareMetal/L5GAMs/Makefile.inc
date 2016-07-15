@@ -24,9 +24,12 @@
 #
 #############################################################
 
-OBJSX=GAM.x \
+OBJSX=BrokerI.x \
+    GAM.x \
     GAMGroup.x \
     DataSourceI.x \
+    GAMDataSource.x \
+    MemoryMapBroker.x \
     RealTimeApplication.x \
     RealTimeApplicationConfigurationBuilder.x \
     RealTimeState.x \
@@ -39,7 +42,6 @@ OBJSX=GAM.x \
         DataSourceSignal.x \
         DataSourceSignalRecord.x \
         GAM.x \
-        GAMDataSource.x \
         GAMGenericSignal.x \
         GAMGroup.x \
         GAMSampledSignal.x \

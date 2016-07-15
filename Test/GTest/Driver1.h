@@ -47,6 +47,18 @@ public:
 
     virtual bool Initialise(StructuredDataI & data);
 
+    virtual uint32 GetCurrentBufferIndex();
+
+    virtual uint32 GetNumberOfMemoryBuffers();
+
+    virtual bool GetSignalMemoryBuffer(uint32 functionIdx,
+                                       uint32 functionSignalIdx,
+                                       uint32 bufferIdx,
+                                       void *&signalAddress);
+
+    virtual bool GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress);
+
+    virtual bool AllocateMemory();
 };
 }
 

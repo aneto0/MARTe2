@@ -47,11 +47,14 @@
 
 namespace MARTe {
 BrokerI::BrokerI() {
+#if 0
     application = NULL_PTR(RealTimeApplication *);
     finalised = false;
+#endif
 }
 
 BrokerI::~BrokerI() {
+#if 0
     uint32 nOfSignalsWithIndexBlocks = nIndexBlocksPerSignal.GetSize();
     uint32 ** element = NULL_PTR(uint32 **);
 
@@ -82,8 +85,10 @@ BrokerI::~BrokerI() {
             }
         }
     }
+#endif
 }
 
+#if 0
 void BrokerI::SetApplication(RealTimeApplication &rtApp) {
     application = &rtApp;
 }
@@ -808,5 +813,6 @@ void *BrokerI::GetSignalByName(const char8 * name,
     }
     return ret;
 }
+#endif
 
 }

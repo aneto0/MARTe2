@@ -45,6 +45,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+#if 0
 /**
  * @brief Computes the dimension of the signal.
  * @param[in] gamSignalIn the signal to be computed.
@@ -117,25 +118,73 @@ static uint32 GetDataSourceDimension(Reference gamSignalIn) {
 
     return requiredDimension;
 }
-
+#endif
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 GAMDataSource::GAMDataSource() :
         DataSourceI() {
-
+    signalMemory[0] = NULL_PTR(void **);
+    signalMemory[1] = NULL_PTR(void **);
+    heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
+#if 0
     bufferPtrOffset[0] = 0u;
     bufferPtrOffset[1] = 0u;
     memory = NULL_PTR(MemoryArea *);
     usedBuffer[0] = NULL_PTR(void *);
-    usedBuffer[1] = NULL_PTR(void *);
+    usedBuffer[1] = NULL_PTR(void **);
+#endif
 }
 
 GAMDataSource::~GAMDataSource() {
-
+    if (signalMemory[0] != NULL_PTR(void **)) {
+        delete[] signalMemory[0];
+    }
+    if (signalMemory[1] != NULL_PTR(void **)) {
+        delete[] signalMemory[1];
+    }
 }
 
+uint32 GAMDataSource::GetCurrentBufferIndex() {
+    return 0u;
+}
+
+uint32 GAMDataSource::GetNumberOfMemoryBuffers() {
+    return 2u;
+}
+
+bool GAMDataSource::GetSignalMemoryBuffer(uint32 signalIdx,
+                                          uint32 bufferIdx,
+                                          void *&signalAddress) {
+    StreamString signalName;
+    bool ret = (bufferIdx < 2u);
+    signalAddress = signalMemory[bufferIdx][signalIdx];
+
+    return ret;
+}
+
+bool GAMDataSource::AllocateMemory() {
+    uint32 numberOfSignals = GetNumberOfSignals();
+    uint32 s;
+    bool ret = true;
+    signalMemory[0] = new void*[numberOfSignals];
+    signalMemory[1] = new void*[numberOfSignals];
+    for (s = 0u; (s < numberOfSignals) && (ret); s++) {
+        uint32 memorySize;
+        ret = GetSignalByteSize(s, memorySize);
+        if (ret) {
+            ret = (memorySize > 0u);
+        }
+        if (ret) {
+            signalMemory[0][s] = heap->Malloc(memorySize);
+            signalMemory[1][s] = heap->Malloc(memorySize);
+        }
+    }
+    return ret;
+}
+
+#if 0
 void **GAMDataSource::GetDataSourcePointer(uint8 bufferIndex) {
     if (bufferIndex > 1u) {
         bufferIndex = bufferIndex % 2u;
@@ -300,7 +349,6 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
     return ret;
 }
 
-
 bool GAMDataSource::WaitOnEvent(const TimeoutType &timeout) {
     return true;
 }
@@ -331,7 +379,7 @@ bool GAMDataSource::Configure(ReferenceT<GAMSignalI> gamSignalIn) {
                 if (defaultValue != "") {
                     ret = false;
                     REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "A different default value equal to \"%s\" was set. It will be refreshed by the new one",
-                                            defaultValue.Buffer())
+                            defaultValue.Buffer())
                 }
                 else {
                     defaultValue = defaultIn;
@@ -354,8 +402,8 @@ bool GAMDataSource::Configure(ReferenceT<GAMSignalI> gamSignalIn) {
 
 }
 
-ReferenceT<BrokerI>  GAMDataSource::GetInputReader(ReferenceT<GAMSignalI> signalIn,
-                                           void * varPtr) {
+ReferenceT<BrokerI> GAMDataSource::GetInputReader(ReferenceT<GAMSignalI> signalIn,
+        void * varPtr) {
     ReferenceT<MemoryMapBroker> ret;
 
     if (signalIn.IsValid()) {
@@ -386,7 +434,7 @@ ReferenceT<BrokerI>  GAMDataSource::GetInputReader(ReferenceT<GAMSignalI> signal
 }
 
 ReferenceT<BrokerI> GAMDataSource::GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
-                                            void * varPtr) {
+        void * varPtr) {
     ReferenceT<MemoryMapBroker> ret;
 
     if (signalOut.IsValid()) {
@@ -422,8 +470,7 @@ bool GAMDataSource::IsSupportedBroker(BrokerI &testBroker) {
     return test.IsValid();
 
 }
-
-
+#endif
 
 CLASS_REGISTER(GAMDataSource, "1.0")
 

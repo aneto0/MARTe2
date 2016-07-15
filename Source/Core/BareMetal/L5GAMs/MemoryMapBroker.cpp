@@ -49,15 +49,20 @@ namespace MARTe {
 MemoryMapBroker::MemoryMapBroker() :
         BrokerI() {
     copyTable = NULL_PTR(CopyTableEntry *);
-    numberOfSignalCopies = 0u;
+    numberOfCopies = 0u;
+    numberOfDataSourceSignalBuffers = 0u;
 }
 
 MemoryMapBroker::~MemoryMapBroker() {
+    uint32 n;
+    for (n = 0u; n < numberOfCopies; n++) {
+        delete[] copyTable[n].dataSourcePointers;
+    }
     if (copyTable != NULL_PTR(void *)) {
         delete[] copyTable;
     }
 }
-
+#if 0
 bool MemoryMapBroker::Finalise() {
     bool ok = true;
     uint32 i = 0;
@@ -91,7 +96,7 @@ bool MemoryMapBroker::Finalise() {
 }
 
 bool MemoryMapBroker::Read(const uint8 activeDataSourceBuffer,
-                           const TimeoutType &timeout) {
+        const TimeoutType &timeout) {
 
     bool ok = IsFinalised();
     for (uint32 i = 0u; (i < numberOfSignalCopies) && (ok); i++) {
@@ -106,7 +111,7 @@ bool MemoryMapBroker::Read(const uint8 activeDataSourceBuffer,
 }
 
 bool MemoryMapBroker::Write(const uint8 activeDataSourceBuffer,
-                           const TimeoutType &timeout) {
+        const TimeoutType &timeout) {
 
     bool ok = IsFinalised();
     for (uint32 i = 0u; (i < numberOfSignalCopies) && (ok); i++) {
@@ -119,4 +124,80 @@ bool MemoryMapBroker::Write(const uint8 activeDataSourceBuffer,
     }
     return ok;
 }
+#endif
+bool MemoryMapBroker::InitFromDataSource(ReferenceT<DataSourceI> dataSourceIn,
+                                         SignalDirection direction,
+                                         const char8 * const functionName) {
+    dataSource = dataSourceIn;
+    //Find the function
+    uint32 functionIdx;
+    bool ret = dataSource->GetFunctionIndex(functionIdx, functionName);
+    //For this function, how many input signals
+    uint32 numberOfInputSignals = 0u;
+    if (ret) {
+        ret = dataSource->GetFunctionNumberOfSignals(direction, functionIdx, numberOfInputSignals);
+    }
+    numberOfCopies = 0u;
+    uint32 numberOfByteOffsets = 0u;
+    uint32 n;
+    for (n = 0u; (n < numberOfInputSignals) && (ret); n++) {
+        if (ret) {
+            ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, n, numberOfByteOffsets);
+        }
+        if (ret) {
+            //One copy for each signal but each signal might want to copy several pieces (i.e. offsets)
+            numberOfCopies += numberOfByteOffsets;
+        }
+    }
+    if (numberOfCopies > 0u) {
+        copyTable = new CopyTableEntry[numberOfCopies];
+        uint32 memoryOffset = 0u;
+        uint32 c = 0u;
+        numberOfDataSourceSignalBuffers = dataSource->GetNumberOfMemoryBuffers();
+        for (n = 0u; (n < numberOfInputSignals) && (ret); n++) {
+            void *gamMemoryAddress = NULL_PTR(void *);
+            ret = dataSource->GetFunctionSignalsAddress(direction, functionIdx, gamMemoryAddress);
+            if (ret) {
+                ret = (gamMemoryAddress != NULL_PTR(void *));
+            }
+            uint32 b;
+            for (b = 0u; (b < numberOfByteOffsets) && (ret); b++) {
+                uint32 offsetStart;
+                uint32 copySize;
+                ret = dataSource->GetFunctionSignalByteOffsetInfo(direction, functionIdx, n, b, offsetStart, copySize);
+                if (ret) {
+                    copyTable[c].copySize = copySize;
+
+                    char8 *gamMemoryCharAddress = reinterpret_cast<char8 *>(gamMemoryAddress);
+                    gamMemoryCharAddress += memoryOffset;
+                    copyTable[c].gamPointer = reinterpret_cast<void *>(gamMemoryCharAddress);
+                    memoryOffset += copySize;
+
+                    copyTable[c].dataSourcePointers = new void*[numberOfDataSourceSignalBuffers];
+                }
+                if (ret) {
+                    uint32 s;
+                    StreamString functionSignalName;
+                    ret = dataSource->GetFunctionSignalName(direction, functionIdx, n, functionSignalName);
+                    uint32 signalIdx;
+                    if (ret) {
+                        ret = dataSource->GetSignalIndex(signalIdx, functionSignalName.Buffer());
+                    }
+                    for (s = 0u; (s < numberOfDataSourceSignalBuffers) && (ret); s++) {
+                        void *dataSourceSignalAddress;
+                        ret = dataSource->GetSignalMemoryBuffer(direction, functionIdx, dataSourceSignalAddress);
+                        if (ret) {
+                            char8 *dataSourceSignalCharAddress = reinterpret_cast<char8 *>(dataSourceSignalAddress);
+                            dataSourceSignalCharAddress += offsetStart;
+                            copyTable[c].dataSourcePointers[s] = reinterpret_cast<void *>(dataSourceSignalCharAddress);
+                        }
+                    }
+                }
+                c++;
+            }
+        }
+    }
+    return ret;
+}
+
 }
