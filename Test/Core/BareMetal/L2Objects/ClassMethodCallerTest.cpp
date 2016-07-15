@@ -32,8 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassMethodCallerTest.h"
-#include "ClassMethodCallerT.h"
-#include "ClassWithCallableMethods.h"
+#include "ClassMethodCaller.h"
 #include "ErrorType.h"
 #include "ReferenceContainer.h"
 
@@ -56,151 +55,54 @@ ClassMethodCallerTest::~ClassMethodCallerTest() {
 }
 
 bool ClassMethodCallerTest::TestDefaultConstructor() {
-    return false;
+    return true;
 }
 
 bool ClassMethodCallerTest::TestCall() {
     using namespace MARTe;
     bool result = true;
     {
-        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::FaultyMethod);
+        ClassMethodCaller target;
         ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        status = target.Call(&context, params);
-        result &= status.functionError;
-        result &= (context.GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
-    }
-    {
-        ClassMethodCallerT<ClassWithCallableMethods> target((bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods::OverloadedMethod);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
+        Object context;
         status = target.Call(&context);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "OverloadedMethod()");
+        result &= (status == ErrorManagement::UnsupportedFeature);
     }
     {
-        ClassMethodCallerT<ClassWithCallableMethods, int&> target((bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods::OverloadedMethod);
+        ClassMethodCaller target;
         ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 0;
-        status = target.Call(&context, params);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(int&)");
+        Object context;
+        int32 param = 0;
+        status = target.Call(&context, param);
+        result &= (status == ErrorManagement::UnsupportedFeature);
     }
     {
-        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target((bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods::OverloadedMethod);
+        ClassMethodCaller target;
         ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        status = target.Call(&context, params);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
+        Object context;
+        ReferenceContainer param;
+        status = target.Call(&context, param);
+        result &= (status == ErrorManagement::UnsupportedFeature);
     }
     {
-        ClassMethodCallerT<ClassWithCallableMethods, int&> target(&ClassWithCallableMethods::MethodWithInputInteger);
+        ClassMethodCaller target;
         ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 10;
-        status = target.Call(&context, params);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "MethodWithInputInteger(int&)");
+        Object context;
+        int32 param = 0;
+        status = target.Call(&context, param, true);
+        result &= (status == ErrorManagement::UnsupportedFeature);
+        status = target.Call(&context, param, false);
+        result &= (status == ErrorManagement::UnsupportedFeature);
     }
     {
-        ClassMethodCallerT<ClassWithCallableMethods, int&> target(&ClassWithCallableMethods::MethodWithOutputInteger);
+        ClassMethodCaller target;
         ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 0;
-        status = target.Call(&context, params);
-        result &= status;
-        result &= (params == 20);
-        result &= (context.GetLastMethodExecuted() == "MethodWithOutputInteger(int&)");
-    }
-    {
-        ClassMethodCallerT<ClassWithCallableMethods, int&> target(&ClassWithCallableMethods::MethodWithInputOutputInteger);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 30;
-        status = target.Call(&context, params);
-        result &= status;
-        result &= (params == (30 + 5));
-        result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputInteger(int&)");
-    }
-    {
-        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodWithInputReferenceContainer);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        Reference obj("Object");
-        bool success;
-        success = params.Insert("TestObject", obj);
-        if (success) {
-            status = target.Call(&context, params);
-            result &= status;
-            result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainer(MARTe::ReferenceContainer&)");
-        }
-        else {
-            result = false;
-        }
-    }
-    {
-        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodWithOutputReferenceContainer);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        Reference obj;
-        status = target.Call(&context, params);
-        result &= status;
-        obj = params.Find("TestObject2");
-        result &= obj.IsValid();
-        result &= (context.GetLastMethodExecuted() == "MethodWithOutputReferenceContainer(MARTe::ReferenceContainer&)");
-    }
-    {
-        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer&> target(&ClassWithCallableMethods::MethodWithInputOutputReferenceContainer);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        Reference obj("Object");
-        bool success;
-        success = params.Insert("TestObject", obj);
-        if (success) {
-            status = target.Call(&context, params);
-            result &= status;
-            obj = params.Find("TestObject");
-            result &= !obj.IsValid();
-            obj = params.Find("TestObject2");
-            result &= obj.IsValid();
-            result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer&)");
-        }
-        else {
-            result = false;
-        }
-    }
-    {
-        ClassMethodCallerT<ClassWithCallableMethods, int> target(&ClassWithCallableMethods::MethodWithInputIntegerByCopy);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 80;
-        status = target.Call(&context, params);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "MethodWithInputIntegerByCopy(int)");
-    }
-    {
-        ClassMethodCallerT<ClassWithCallableMethods, ReferenceContainer> target(&ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        Reference obj("Object");
-        bool success;
-        success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
-        if (success) {
-            status = target.Call(&context, params);
-            result &= status;
-            result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer)");
-        }
-        else {
-            result = false;
-        }
+        Object context;
+        ReferenceContainer param;
+        status = target.Call(&context, param, true);
+        result &= (status == ErrorManagement::UnsupportedFeature);
+        status = target.Call(&context, param, false);
+        result &= (status == ErrorManagement::UnsupportedFeature);
     }
     return result;
 }

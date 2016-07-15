@@ -25,6 +25,7 @@
 
 OBJSX=  AnyTypeGTest.x \
 		ClassMethodCallerGTest.x \
+		ClassMethodCallerTGTest.x \
 		ClassMethodInterfaceMapperGTest.x \
 		ClassMethodsRegistryItemGTest.x \
 		ClassPropertiesGTest.x \
