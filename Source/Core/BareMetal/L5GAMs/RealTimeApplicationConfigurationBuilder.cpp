@@ -167,19 +167,19 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabases() {
     bool ret = functionsDatabase.MoveAbsolute("Functions");
 
     if (ret) {
-        ret = FlattenSignalsDatabase(functionsDatabase, "InputSignals");
+        ret = FlattenSignalsDatabase(functionsDatabase, InputSignals);
     }
     if (ret) {
         ret = functionsDatabase.MoveAbsolute("Functions");
     }
     if (ret) {
-        ret = FlattenSignalsDatabase(functionsDatabase, "OutputSignals");
+        ret = FlattenSignalsDatabase(functionsDatabase, OutputSignals);
     }
     if (ret) {
         ret = dataSourcesDatabase.MoveAbsolute("Data");
     }
     if (ret) {
-        ret = FlattenSignalsDatabase(dataSourcesDatabase, "Signals");
+        ret = FlattenSignalsDatabase(dataSourcesDatabase, None);
     }
     return ret;
 }
@@ -350,18 +350,18 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                         void *ptr = HeapManager::Malloc(signalNumberOfBytes);
                         if (ptr != NULL) {
                             AnyType at = AnyType(signalTypeDescriptor, 0u, ptr);
-                            uint32 usedDimensions=numberOfDimensions;
-                            if(numberOfDimensions>1u){
-                                usedDimensions=1u;
+                            uint32 usedDimensions = numberOfDimensions;
+                            if (numberOfDimensions > 1u) {
+                                usedDimensions = 1u;
                             }
                             at.SetNumberOfDimensions(usedDimensions);
-                            at.SetNumberOfElements(0u,numberOfElements);
+                            at.SetNumberOfElements(0u, numberOfElements);
 
                             ret = parser.Parse();
                             if (ret) {
                                 ret = cdb.Read("Default", at);
                             }
-                            ret=HeapManager::Free(reinterpret_cast<void*&>(ptr));
+                            ret = HeapManager::Free(reinterpret_cast<void*&>(ptr));
                         }
                     }
                 }
@@ -380,25 +380,25 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
 }
 
 bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignals() {
-    bool ret = ResolveFunctionSignals("InputSignals");
+    bool ret = ResolveFunctionSignals(InputSignals);
     if (ret) {
-        ret = ResolveFunctionSignals("OutputSignals");
+        ret = ResolveFunctionSignals(OutputSignals);
     }
     return ret;
 }
 
 bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
-    bool ret = ResolveDataSources("InputSignals");
+    bool ret = ResolveDataSources(InputSignals);
     if (ret) {
-        ret = ResolveDataSources("OutputSignals");
+        ret = ResolveDataSources(OutputSignals);
     }
     return ret;
 }
 
 bool RealTimeApplicationConfigurationBuilder::VerifyFunctionSignals() {
-    bool ret = VerifyFunctionSignals("InputSignals");
+    bool ret = VerifyFunctionSignals(InputSignals);
     if (ret) {
-        ret = VerifyFunctionSignals("OutputSignals");
+        ret = VerifyFunctionSignals(OutputSignals);
     }
     return ret;
 }
@@ -575,33 +575,33 @@ bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
 }
 
 bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize() {
-    bool ret = ResolveFunctionSignalsMemorySize("InputSignals");
+    bool ret = ResolveFunctionSignalsMemorySize(InputSignals);
     if (ret) {
-        ret = ResolveFunctionSignalsMemorySize("OutputSignals");
+        ret = ResolveFunctionSignalsMemorySize(OutputSignals);
     }
     return ret;
 }
 
 bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory() {
-    bool ret = ResolveFunctionsMemory("InputSignals");
+    bool ret = ResolveFunctionsMemory(InputSignals);
     if (ret) {
-        ret = ResolveFunctionsMemory("OutputSignals");
+        ret = ResolveFunctionsMemory(OutputSignals);
     }
     return ret;
 }
 
 bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory() {
-    bool ret = AllocateFunctionsMemory("InputSignals");
+    bool ret = AllocateFunctionsMemory(InputSignals);
     if (ret) {
-        ret = AllocateFunctionsMemory("OutputSignals");
+        ret = AllocateFunctionsMemory(OutputSignals);
     }
     return ret;
 }
 
 bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource() {
-    bool ret = AssignFunctionsMemoryToDataSource("InputSignals");
+    bool ret = AssignFunctionsMemoryToDataSource(InputSignals);
     if (ret) {
-        ret = AssignFunctionsMemoryToDataSource("OutputSignals");
+        ret = AssignFunctionsMemoryToDataSource(OutputSignals);
     }
     return ret;
 }
@@ -634,9 +634,55 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
                 ret = dataSource->SetConfiguredDatabase(dataSourcesDatabase);
             }
             if (ret) {
+                ret = dataSource->AllocateMemory();
+            }
+            if (ret) {
                 ret = dataSourcesDatabase.MoveToAncestor(1u);
             }
         }
+    }
+    return ret;
+}
+
+bool RealTimeApplicationConfigurationBuilder::PostConfigureFunctions() {
+    bool ret = functionsDatabase.MoveToRoot();
+    uint32 numberOfFunctions = 0u;
+    if (ret) {
+        ret = functionsDatabase.MoveRelative("Functions");
+    }
+    if (ret) {
+        numberOfFunctions = functionsDatabase.GetNumberOfChildren();
+    }
+    if (ret) {
+        uint32 n;
+        for (n = 0u; (n < numberOfFunctions) && (ret); n++) {
+            StreamString qualifiedName;
+            StreamString functionIdx;
+            functionIdx.Printf("%d", n);
+            ret = functionsDatabase.MoveRelative(functionIdx.Buffer());
+            if (ret) {
+                ret = functionsDatabase.Read("QualifiedName", qualifiedName);
+            }
+            ReferenceT<GAM> gam;
+            if (ret) {
+                gam = realTimeApplication->Find(qualifiedName.Buffer());
+                ret = gam.IsValid();
+            }
+            if (ret) {
+                ret = gam->SetConfiguredDatabase(functionsDatabase);
+            }
+            if (ret) {
+                ret = functionsDatabase.MoveToAncestor(1u);
+            }
+        }
+    }
+    return ret;
+}
+
+bool RealTimeApplicationConfigurationBuilder::AddBrokersToFunctions() {
+    bool ret = AddBrokersToFunctions(InputSignals);
+    if (ret) {
+        ret = AddBrokersToFunctions(OutputSignals);
     }
     return ret;
 }
@@ -657,7 +703,15 @@ bool RealTimeApplicationConfigurationBuilder::Copy(ConfigurationDatabase &functi
 }
 
 bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabase(ConfigurationDatabase &signalDatabase,
-                                                                     const char8 * const signalDirection) {
+                                                                     SignalDirection direction) {
+    const char8 *signalDirection = "Signals";
+    if (direction == InputSignals) {
+        signalDirection = "InputSignals";
+    }
+    else if (direction == OutputSignals) {
+        signalDirection = "OutputSignals";
+    }
+
     bool isDataSource = (&signalDatabase == &dataSourcesDatabase);
     uint32 signalNumber;
     bool ret = true;
@@ -938,7 +992,12 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignals(const char8 *signalDirection) {
+bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignals(SignalDirection direction) {
+    const char8 *signalDirection = "InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "OutputSignals";
+    }
+
     bool ret = functionsDatabase.MoveAbsolute("Functions");
     uint32 numberOfFunctions = 0u;
     if (ret) {
@@ -1037,7 +1096,11 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignals(const char8
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::ResolveDataSources(const char8 * const signalDirection) {
+bool RealTimeApplicationConfigurationBuilder::ResolveDataSources(SignalDirection direction) {
+    const char8 *signalDirection = "InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "OutputSignals";
+    }
     bool ret = functionsDatabase.MoveAbsolute("Functions");
 
     if (ret) {
@@ -1354,14 +1417,19 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignal(const char8 
         ret = functionsDatabase.MoveToAncestor(1u);
         if (ret) {
             if (signalToDeleteName != NULL) {
-                ret=functionsDatabase.Delete(signalToDeleteName);
+                ret = functionsDatabase.Delete(signalToDeleteName);
             }
         }
     }
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::VerifyFunctionSignals(const char *signalDirection) {
+bool RealTimeApplicationConfigurationBuilder::VerifyFunctionSignals(SignalDirection direction) {
+    const char8 *signalDirection = "InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "OutputSignals";
+    }
+
     bool ret = functionsDatabase.MoveAbsolute("Functions");
     uint32 numberOfFunctions = 0u;
     StreamString functionName;
@@ -1608,7 +1676,12 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(bool 
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(const char *signalDirection) {
+bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(SignalDirection direction) {
+    const char8 *signalDirection = "InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "OutputSignals";
+    }
+
     bool ret = functionsDatabase.MoveAbsolute("Functions");
     uint32 numberOfFunctions = 0u;
     if (ret) {
@@ -1760,7 +1833,12 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(c
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const char *signalDirection) {
+bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(SignalDirection direction) {
+    const char8 *signalDirection = "InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "OutputSignals";
+    }
+
     bool ret = functionsDatabase.MoveAbsolute("Functions");
     uint32 numberOfFunctions = 0u;
     if (ret) {
@@ -1944,7 +2022,12 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const char 
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory(const char *signalDirection) {
+bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory(SignalDirection direction) {
+    const char8 *signalDirection = "InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "OutputSignals";
+    }
+
     bool ret = functionsDatabase.MoveAbsolute("Functions");
     uint32 numberOfFunctions = 0u;
     if (ret) {
@@ -1996,7 +2079,12 @@ bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory(const char
                     //Allocate the memory
                     void *signalBlockMemory = NULL_PTR(void *);
                     if (ret) {
-                        signalBlockMemory = gam->AllocateSignalsMemory(byteSize);
+                        if (direction == InputSignals) {
+                            signalBlockMemory = gam->AllocateInputSignalsMemory(byteSize);
+                        }
+                        else {
+                            signalBlockMemory = gam->AllocateOutputSignalsMemory(byteSize);
+                        }
                         ret = functionsDatabase.Write("Address", signalBlockMemory);
                     }
                     if (ret) {
@@ -2019,7 +2107,12 @@ bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory(const char
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(const char *signalDirection) {
+bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(SignalDirection direction) {
+    const char8 *signalDirection = "InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "OutputSignals";
+    }
+
     bool ret = functionsDatabase.MoveAbsolute("Functions");
     uint32 numberOfFunctions = 0u;
     if (ret) {
@@ -2165,6 +2258,71 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                 ret = functionsDatabase.MoveToAncestor(2u);
             }
 
+        }
+    }
+    return ret;
+}
+
+bool RealTimeApplicationConfigurationBuilder::AddBrokersToFunctions(SignalDirection direction) {
+    bool ret = dataSourcesDatabase.MoveToRoot();
+    uint32 numberOfDataSources = 0u;
+    if (ret) {
+        ret = dataSourcesDatabase.MoveRelative("Data");
+    }
+    if (ret) {
+        numberOfDataSources = dataSourcesDatabase.GetNumberOfChildren();
+    }
+    if (ret) {
+        uint32 n;
+        for (n = 0u; (n < numberOfDataSources) && (ret); n++) {
+            StreamString qualifiedName;
+            StreamString dataSourceIdx;
+            dataSourceIdx.Printf("%d", n);
+            ret = dataSourcesDatabase.MoveRelative(dataSourceIdx.Buffer());
+            if (ret) {
+                ret = dataSourcesDatabase.Read("QualifiedName", qualifiedName);
+            }
+            ReferenceT<DataSourceI> dataSource;
+            if (ret) {
+                dataSource = realTimeApplication->Find(qualifiedName.Buffer());
+                ret = dataSource.IsValid();
+            }
+            uint32 numberOfFunctions = 0u;
+            if (ret) {
+                numberOfFunctions = dataSource->GetNumberOfFunctions();
+            }
+
+            uint32 k;
+            for (k = 0u; (k < numberOfFunctions) && (ret); k++) {
+                StreamString gamQualifiedName;
+                ret = dataSource->GetFunctionName(k, gamQualifiedName);
+                ReferenceT<GAM> gam;
+                if (ret) {
+                    gam = realTimeApplication->Find(gamQualifiedName.Buffer());
+                    ret = gam.IsValid();
+                }
+                ReferenceT<BrokerI> broker;
+                if (ret) {
+                    if (direction == InputSignals) {
+                        broker = dataSource->GetInputReader(gamQualifiedName.Buffer());
+                    }
+                    else {
+                        broker = dataSource->GetOutputWriter(gamQualifiedName.Buffer());
+                    }
+                    ret = broker.IsValid();
+                }
+                if (ret) {
+                    if (direction == InputSignals) {
+                        gam->AddInputBroker(broker);
+                    }
+                    else {
+                        gam->AddOutputBroker(broker);
+                    }
+                }
+            }
+            if (ret) {
+                ret = dataSourcesDatabase.MoveToAncestor(1u);
+            }
         }
     }
     return ret;

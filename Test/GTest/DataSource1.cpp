@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "DataSource1.h"
+#include "MemoryMapBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -52,12 +53,11 @@ bool DataSource1::Initialise(StructuredDataI & data) {
     return DataSourceI::Initialise(data);
 }
 
-
-uint32 DataSource1::GetCurrentBufferIndex(){
+uint32 DataSource1::GetCurrentBufferIndex() {
     return 0u;
 }
 
-uint32 DataSource1::GetNumberOfMemoryBuffers(){
+uint32 DataSource1::GetNumberOfMemoryBuffers() {
     return 2u;
 }
 
@@ -65,8 +65,21 @@ bool DataSource1::AllocateMemory() {
     return false;
 }
 
-bool DataSource1::GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress){
+bool DataSource1::GetSignalMemoryBuffer(uint32 signalIdx,
+                                        uint32 bufferIdx,
+                                        void *&signalAddress) {
     return true;
 }
+
+ReferenceT<BrokerI> DataSource1::GetInputReader(const char8 * const functionName) {
+    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
+    return broker;
+}
+
+ReferenceT<BrokerI> DataSource1::GetOutputWriter(const char8 * const functionName) {
+    ReferenceT < MemoryMapBroker > broker("MemoryMapBroker");
+    return broker;
+}
+
 CLASS_REGISTER(DataSource1, "1.0");
 }

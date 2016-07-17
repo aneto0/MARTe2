@@ -36,8 +36,6 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-
 DECLARE_CLASS_MEMBER(B, b1, int32, "", "");
 
 DECLARE_CLASS_MEMBER(B, b2, int32, "", "");
@@ -56,14 +54,6 @@ static const IntrospectionEntry* AEntries[] = { &A_a1_introspectionEntry, &A_a2_
 DECLARE_CLASS_INTROSPECTION(A, AEntries);
 INTROSPECTION_REGISTER(A, "1.0", A_introspection)
 
-
-
-
-
-
-
-
-
 GAM1::GAM1() :
         GAM() {
 
@@ -77,6 +67,10 @@ bool GAM1::Initialise(StructuredDataI & data) {
     return GAM::Initialise(data);
 }
 
+bool GAM1::Execute() {
+    return true;
+}
+
 CLASS_REGISTER(GAM1, "1.0");
 
 #if 0
@@ -85,7 +79,7 @@ DECLARE_CLASS_MEMBER(TrackError, Par1, uint32, "", "");
 
 DECLARE_CLASS_MEMBER(TrackError, Par2, uint32, "", "");
 
-static const IntrospectionEntry* TrackErrorEntries[] = { &TrackError_Par1_introspectionEntry, &TrackError_Par2_introspectionEntry, 0 };
+static const IntrospectionEntry* TrackErrorEntries[] = {&TrackError_Par1_introspectionEntry, &TrackError_Par2_introspectionEntry, 0};
 
 DECLARE_CLASS_INTROSPECTION(TrackError, TrackErrorEntries);
 INTROSPECTION_REGISTER(TrackError, "1.0", TrackError_introspection)
@@ -94,33 +88,33 @@ DECLARE_CLASS_MEMBER(ControlIn, Par1, uint32, "", "");
 
 DECLARE_CLASS_MEMBER(ControlIn, Par2, uint32, "", "");
 
-static const IntrospectionEntry* ControlInEntries[] = { &ControlIn_Par1_introspectionEntry, &ControlIn_Par2_introspectionEntry, 0 };
+static const IntrospectionEntry* ControlInEntries[] = {&ControlIn_Par1_introspectionEntry, &ControlIn_Par2_introspectionEntry, 0};
 
 DECLARE_CLASS_INTROSPECTION(ControlIn, ControlInEntries);
 INTROSPECTION_REGISTER(ControlIn, "1.0", ControlIn_introspection)
 
 DECLARE_CLASS_MEMBER(ControlNoise, noiseValue, float32, "", "");
-static const IntrospectionEntry* ControlNoiseEntries[] = { &ControlNoise_noiseValue_introspectionEntry, 0 };
+static const IntrospectionEntry* ControlNoiseEntries[] = {&ControlNoise_noiseValue_introspectionEntry, 0};
 DECLARE_CLASS_INTROSPECTION(ControlNoise, ControlNoiseEntries);
 INTROSPECTION_REGISTER(ControlNoise, "1.0", ControlNoise_introspection)
 
 DECLARE_CLASS_MEMBER(TrackErrorArray, Pars, uint32, "[2]", "");
-static const IntrospectionEntry* TrackErrorArrayEntries[] = { &TrackErrorArray_Pars_introspectionEntry, 0 };
+static const IntrospectionEntry* TrackErrorArrayEntries[] = {&TrackErrorArray_Pars_introspectionEntry, 0};
 DECLARE_CLASS_INTROSPECTION(TrackErrorArray, TrackErrorArrayEntries);
 INTROSPECTION_REGISTER(TrackErrorArray, "1.0", TrackErrorArray_introspection)
 
 DECLARE_CLASS_MEMBER(ControlInArray, Pars, uint32, "[2]", "");
-static const IntrospectionEntry* ControlInArrayEntries[] = { &ControlInArray_Pars_introspectionEntry, 0 };
+static const IntrospectionEntry* ControlInArrayEntries[] = {&ControlInArray_Pars_introspectionEntry, 0};
 DECLARE_CLASS_INTROSPECTION(ControlInArray, ControlInArrayEntries);
 INTROSPECTION_REGISTER(ControlInArray, "1.0", ControlInArray_introspection)
 
 DECLARE_CLASS_MEMBER(TrackErrorMatrix, Pars, uint32, "[3][2]", "");
-static const IntrospectionEntry* TrackErrorMatrixEntries[] = { &TrackErrorMatrix_Pars_introspectionEntry, 0 };
+static const IntrospectionEntry* TrackErrorMatrixEntries[] = {&TrackErrorMatrix_Pars_introspectionEntry, 0};
 DECLARE_CLASS_INTROSPECTION(TrackErrorMatrix, TrackErrorMatrixEntries);
 INTROSPECTION_REGISTER(TrackErrorMatrix, "1.0", TrackErrorMatrix_introspection)
 
 DECLARE_CLASS_MEMBER(ControlInMatrix, Pars, uint32, "[3][2]", "");
-static const IntrospectionEntry* ControlInMatrixEntries[] = { &ControlInMatrix_Pars_introspectionEntry, 0 };
+static const IntrospectionEntry* ControlInMatrixEntries[] = {&ControlInMatrix_Pars_introspectionEntry, 0};
 DECLARE_CLASS_INTROSPECTION(ControlInMatrix, ControlInMatrixEntries);
 INTROSPECTION_REGISTER(ControlInMatrix, "1.0", ControlInMatrix_introspection)
 
@@ -129,7 +123,7 @@ INTROSPECTION_REGISTER(ControlInMatrix, "1.0", ControlInMatrix_introspection)
 /*---------------------------------------------------------------------------*/
 
 PIDGAM::PIDGAM() :
-        GAM() {
+GAM() {
 
 }
 
@@ -394,14 +388,14 @@ void DummyGAM::Execute(uint8 activeContextBuffer) {
     printf("\nExecute: Input=%d, Output=%d\n", *counterIn, *counterOut);
     flag = *counterOut;
 
-   /* uint64 absTime = *(uint64*) inputReaders->GetSignal(1);
-    uint64 relTime = *(uint64*) inputReaders->GetSignal(2);
+    /* uint64 absTime = *(uint64*) inputReaders->GetSignal(1);
+     uint64 relTime = *(uint64*) inputReaders->GetSignal(2);
 
-    // the time is about the previous cycle !!
-    printf("\nAbsTime=%d, RelTime=%d\n", absTime, relTime);
+     // the time is about the previous cycle !!
+     printf("\nAbsTime=%d, RelTime=%d\n", absTime, relTime);
 
-    Sleep::MSec(10);
-*/
+     Sleep::MSec(10);
+     */
     outputWriters->Write(activeContextBuffer);
 }
 

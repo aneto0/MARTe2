@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ConfigurationDatabase.h"
-
+#include "DataSourceI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -399,10 +399,8 @@ public:
      */
     bool ResolveStates();
 
-
     // Checks that each GAM has been called in at least one thread
     bool VerifyStates();
-
 
     /**
      * @brief For every signal in every DataSource set the Consumer and Producer Functions.
@@ -456,9 +454,7 @@ public:
      */
     bool ResolveConsumersAndProducers();
 
-
     bool VerifyConsumersAndProducers();
-
 
     /**
      * @brief For every signal in every Function compute the memory size and the memory offset (if Ranges are defined).
@@ -587,6 +583,7 @@ public:
      */
     bool ResolveFunctionsMemory();
 
+    //TODO allocate memory
     bool AllocateFunctionsMemory();
 
     /**
@@ -670,11 +667,29 @@ public:
     bool AssignFunctionsMemoryToDataSource();
 
     /**
-     * @brief For each DataSource call DataSourceI::SetConfiguredDatabase.
+     * @brief For each DataSource calls DataSourceI::SetConfiguredDatabase followed by DataSourceI::AllocateMemory.
      * @details Calls DataSourceI::SetConfiguredDatabase on each DataSource under Data, passing the Signals{} and Functions{} branches.
      * @return true if DataSourceI::SetConfiguredDatabase returns true for all DataSources.
      */
     bool PostConfigureDataSources();
+
+    /**
+     * @brief For each GAM calls GAM::SetConfiguredDatabase
+     * TODO
+     */
+    bool PostConfigureFunctions();
+
+    /**
+     * @brief For each GAM and for each Input Broker used by this GAM in all DataSources, calls GAM::AddInputBroker/GAM::AddOutputBroker
+     * TODO
+     */
+    bool AddBrokersToFunctions();
+
+    /**
+     * @brief Informs every GAM that the configuration phase is terminated by calling GAM::Finalise
+     * TODO
+     */
+    bool FinaliseFunctions();
 
     /**
      * @brief Copies the Function and DataSource databases.
@@ -715,12 +730,12 @@ private:
      * The original signal definition will then be deleted.
      *
      * @param[in] signalDatabase the database to flatten.
-     * @param[in] signalDirection if signalDatabase = functionsDatabase this can be either "InputSignals" or "OutputSignals",
-     * otherwise it shall have the value "Signals".
+     * @param[in] direction if signalDatabase = functionsDatabase this can be either InputSignals or OutputSignals,
+     * otherwise it shall have the value None.
      * @return true if FlattenSignal returns true for all signals in the functionsDatabase and in the dataSourcesDatabase tree.
      */
     bool FlattenSignalsDatabase(ConfigurationDatabase &signalDatabase,
-                                const char8 * const signalDirection);
+                                SignalDirection direction);
 
     /**
      * @brief Flattens a signal from the \a signalDatabase and stores it in the \a resolvedSignal database.
@@ -782,17 +797,17 @@ private:
     /**
      * @brief Merge signals from the Functions to the corresponding DataSources.
      * @details For each signal (where the Type is defined!) in each function call AddSignalToDataSource.
-     * @param[in] signalDirection can be either InputSignals or OutputSignals
+     * @param[in] direction can be either InputSignals or OutputSignals
      * @return true if all the calls to AddSignalToDataSource are successful.
      */
-    bool ResolveDataSources(const char8 * const signalDirection);
+    bool ResolveDataSources(SignalDirection direction);
 
     /**
      * @brief @see ResolveFunctionSignals()
-     * @param[in] signalDirection can be either InputSignals or OutputSignals.
+     * @param[in] direction can be either InputSignals or OutputSignals.
      * @return @see ResolveFunctionSignals()
      */
-    bool ResolveFunctionSignals(const char8 * const signalDirection);
+    bool ResolveFunctionSignals(SignalDirection direction);
 
     /**
      * @brief Recursively adds a signal with an unknown type in the Function definition
@@ -812,10 +827,10 @@ private:
      * @details For every signal in every Function merge with the corresponding DataSource signal.
      * If the signal type was not originally defined in the Function it will get defined by the DataSource.
      * If incompatibilities are found in the signal definition in the DataSource or in the Function an error will be returned.
-     * @param[in] signalDirection can be either InputSignals or OutputSignals
+     * @param[in] direction can be either InputSignals or OutputSignals
      * @return true if all the signals can be successfully merged.
      */
-    bool VerifyFunctionSignals(const char8 * const signalDirection);
+    bool VerifyFunctionSignals(SignalDirection direction);
 
     /**
      * @brief @see ResolveConsumersAndProducers()
@@ -826,31 +841,38 @@ private:
 
     /**
      * @brief @see ResolveFunctionSignalsMemorySize()
-     * @param[in] signalDirection can be either InputSignals or OutputSignals
+     * @param[in] direction can be either InputSignals or OutputSignals
      * @return @see ResolveFunctionSignalsMemorySize()
      */
-    bool ResolveFunctionSignalsMemorySize(const char *signalDirection);
+    bool ResolveFunctionSignalsMemorySize(SignalDirection direction);
 
     /**
      * @brief @see ResolveFunctionsMemory()
-     * @param[in] signalDirection can be either InputSignals or OutputSignals
+     * @param[in] direction can be either InputSignals or OutputSignals
      * @return @see ResolveFunctionsMemory()
      */
-    bool ResolveFunctionsMemory(const char *signalDirection);
+    bool ResolveFunctionsMemory(SignalDirection direction);
 
     /**
      * @brief @see AllocateFunctionsMemory()
-     * @param[in] signalDirection can be either InputSignals or OutputSignals
+     * @param[in] direction can be either InputSignals or OutputSignals
      * @return @see AllocateFunctionsMemory()
      */
-    bool AllocateFunctionsMemory(const char *signalDirection);
+    bool AllocateFunctionsMemory(SignalDirection direction);
 
     /**
      * @brief @see AssignFunctionsMemoryToDataSource()
-     * @param[in] signalDirection can be either InputSignals or OutputSignals
+     * @param[in] direction can be either InputSignals or OutputSignals
      * @return @see AssignFunctionsMemoryToDataSource()
      */
-    bool AssignFunctionsMemoryToDataSource(const char *signalDirection);
+    bool AssignFunctionsMemoryToDataSource(SignalDirection direction);
+
+    /**
+     * @brief @see AddBrokersToFunctions()
+     * @param[in] direction can be either InputSignals or OutputSignals
+     * @return @see AddBrokersToFunctions()
+     */
+    bool AddBrokersToFunctions(SignalDirection direction);
 
     /**
      * @brief Finds a signal with the name \a signalName in \a database.

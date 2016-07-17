@@ -51,9 +51,15 @@ public:
 
     virtual uint32 GetNumberOfMemoryBuffers();
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress);
+    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
+                                       uint32 bufferIdx,
+                                       void *&signalAddress);
 
     virtual bool AllocateMemory();
+
+    virtual ReferenceT<BrokerI> GetInputReader(const char8 * const functionName);
+
+    virtual ReferenceT<BrokerI> GetOutputWriter(const char8 * const functionName);
 };
 }
 

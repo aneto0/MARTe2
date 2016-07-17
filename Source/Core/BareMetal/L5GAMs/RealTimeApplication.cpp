@@ -2158,6 +2158,12 @@ bool RealTimeApplication::ConfigureApplication() {
         PrintDatabases(rtAppBuilder);
     }
     if (ret) {
+        ret = rtAppBuilder.PostConfigureFunctions();
+    }
+    if (ret) {
+        ret = rtAppBuilder.AddBrokersToFunctions();
+    }
+    if (ret) {
         ReferenceContainer dataSourcesFound;
         //Look for all the DataSources
         ReferenceContainerFilterReferencesTemplate<DataSourceI> dataSourceFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
@@ -2250,6 +2256,21 @@ bool RealTimeApplication::ConfigureApplication() {
         }
     }
 
+    if (ret) {
+        ReferenceContainer gamsFound;
+        ReferenceContainerFilterReferencesTemplate<GAM> gamsFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+        Find(gamsFound, gamsFilter);
+        uint32 numberOfGAMs = gamsFound.Size();
+        uint32 i;
+        for (i = 0u; i < numberOfGAMs; i++) {
+            ReferenceT<GAM> gam = gamsFound.Get(i);
+            gam->Execute();
+        }
+        for (i = 0u; i < numberOfGAMs; i++) {
+            ReferenceT<GAM> gam = gamsFound.Get(i);
+            gam->Execute();
+        }
+    }
     return ret;
 #if 0
 //Create the Function and the Data nodes. Add all the signals by querying the GAMs and the DataSourceI

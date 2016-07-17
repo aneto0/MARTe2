@@ -46,7 +46,7 @@ namespace MARTe {
  * @details A class that implements this interface is capable of connecting signals from
  *  DataSourceSignalI components with signals from GAMSignalI components.
  */
-class BrokerI : public ReferenceContainer {
+class BrokerI: public ReferenceContainer {
 
 public:
 
@@ -54,7 +54,12 @@ public:
 
     virtual ~BrokerI();
 
-    virtual bool InitFromDataSource(ReferenceT<DataSourceI> dataSourceIn, SignalDirection direction, const char8 * const functionName) = 0;
+    virtual bool Init(SignalDirection direction,
+                      ReferenceT<DataSourceI> dataSourceIn,
+                      const char8 * const functionName) = 0;
+
+    virtual bool Read(const TimeoutType &timeout = TTInfiniteWait) = 0;
+    virtual bool Write(const TimeoutType &timeout = TTInfiniteWait) = 0;
 
 #if 0
     /**
@@ -73,7 +78,7 @@ public:
      * @return true if the signals can be successfully linked.
      */
     virtual bool AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
-                           void * const ptr = NULL_PTR(void*));
+            void * const ptr = NULL_PTR(void*));
 
     /**
      * @brief Retrieves the signal with the specified name.
@@ -85,7 +90,7 @@ public:
      * @return a pointer to the requested signal or NULL if the signal with the specified name is not found.
      */
     virtual void *GetSignalByName(const char8 * name,
-                                  uint32 &index);
+            uint32 &index);
 
     /**
      * @brief Finalises the interface.
@@ -111,7 +116,7 @@ public:
      * @return true if the read operation succeeds, false otherwise,
      */
     virtual bool Read(const uint8 activeDataSourceBuffer,
-                      const TimeoutType &timeout = TTInfiniteWait)=0;
+            const TimeoutType &timeout = TTInfiniteWait)=0;
 
     /**
      * @brief Copies the memory from a GAMSignalI into the memory of a DataSourceSignalI previously
@@ -121,7 +126,7 @@ public:
      * @return true if the write operation succeeds, false otherwise,
      */
     virtual bool Write(const uint8 activeDataSourceBuffer,
-                       const TimeoutType &timeout = TTInfiniteWait)=0;
+            const TimeoutType &timeout = TTInfiniteWait)=0;
 
     uint32 GetNumberOfSamplesBlocks(uint32 signalIndex);
 
@@ -130,38 +135,38 @@ public:
     uint32 GetNumberOfSignals();
 
     void *GetDataSourcePointer(uint32 signalIndex,
-                               uint32 buffer);
+            uint32 buffer);
 
     void *GetDataSourceSignalPointer(uint32 signalIndex,
-                                            uint32 sampleBlockNumber,
-                                            uint32 indexBlockNumber,
-                                            uint32 buffer);
+            uint32 sampleBlockNumber,
+            uint32 indexBlockNumber,
+            uint32 buffer);
 
     void *GetGAMSignalPointer(uint32 signalIndex);
 
     void *GetGAMSignalPointer(uint32 signalIndex,
-                              uint32 sampleBlockNumber,
-                              uint32 indexBlockNumber);
+            uint32 sampleBlockNumber,
+            uint32 indexBlockNumber);
 
     //Start index as position in memory! (&char[startIndex])
     bool GetIndexBlockStartIndex(uint32 signalIndex,
-                                 uint32 blockIndex,
-                                 uint32 &startIndex);
+            uint32 blockIndex,
+            uint32 &startIndex);
 
     //Size of the signal in bytes!
     bool GetIndexBlockSize(uint32 signalIndex,
-                           uint32 blockIndex,
-                           uint32 &blockSize);
+            uint32 blockIndex,
+            uint32 &blockSize);
 
     //Start index as position in memory! (&char[startIndex])
     bool GetSamplesBlockStartIndex(uint32 signalIndex,
-                                   uint32 blockIndex,
-                                   uint32 &startIndex);
+            uint32 blockIndex,
+            uint32 &startIndex);
 
     //Size of the samples in bytes!
     bool GetSamplesBlockSize(uint32 signalIndex,
-                             uint32 blockIndex,
-                             uint32 &size);
+            uint32 blockIndex,
+            uint32 &size);
 
     bool IsFinalised();
 
@@ -170,7 +175,6 @@ public:
     uint32 GetTotalNumberOfSampleBlocks();
 
     uint32 GetTotalNumberOfIndexBlocks();
-
 
     ReferenceT<DataSourceSignal> GetDataSourceSignal(ReferenceT<GAMSignalI> gamSignal);
 
@@ -186,9 +190,9 @@ private:
      * @return false in case of errors, true otherwise.
      */
     virtual bool AddSignalPrivate(ReferenceT<GAMSignalI> gamSignalIn,
-                                  void *gamSignalMemory,
-                                  uint32 initialOffset,
-                                  uint32 offset);
+            void *gamSignalMemory,
+            uint32 initialOffset,
+            uint32 offset);
 
     /**
      * @brief Stores the indexes of the element sub-blocks and the
@@ -200,8 +204,8 @@ private:
      * @param[in, out] typeSize is the GAM signal type size.
      */
     virtual bool SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
-                                    ReferenceT<DataSourceSignal> dataSourceSignal,
-                                    uint32 &typeSize);
+            ReferenceT<DataSourceSignal> dataSourceSignal,
+            uint32 &typeSize);
 
     /**
      * The pointer to the RealTimeApplication
@@ -269,7 +273,6 @@ private:
      */
     bool finalised;
 #endif
-
 
 };
 

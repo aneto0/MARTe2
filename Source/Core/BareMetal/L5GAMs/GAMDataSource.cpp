@@ -147,6 +147,7 @@ GAMDataSource::~GAMDataSource() {
 }
 
 uint32 GAMDataSource::GetCurrentBufferIndex() {
+    //TODO
     return 0u;
 }
 
@@ -159,7 +160,9 @@ bool GAMDataSource::GetSignalMemoryBuffer(uint32 signalIdx,
                                           void *&signalAddress) {
     StreamString signalName;
     bool ret = (bufferIdx < 2u);
-    signalAddress = signalMemory[bufferIdx][signalIdx];
+    if (ret) {
+        signalAddress = signalMemory[bufferIdx][signalIdx];
+    }
 
     return ret;
 }
@@ -182,6 +185,18 @@ bool GAMDataSource::AllocateMemory() {
         }
     }
     return ret;
+}
+
+ReferenceT<BrokerI> GAMDataSource::GetInputReader(const char8 * const functionName) {
+    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
+    broker->Init(InputSignals, this, functionName);
+    return broker;
+}
+
+ReferenceT<BrokerI> GAMDataSource::GetOutputWriter(const char8 * const functionName) {
+    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
+    broker->Init(OutputSignals, this, functionName);
+    return broker;
 }
 
 #if 0

@@ -127,6 +127,11 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
 DataSourceI::DataSourceI() :
         ReferenceContainer() {
 }
+
+DataSourceI::~DataSourceI() {
+
+}
+
 #if 0
 bool DataSourceI::Allocate() {
     return AllocatePrivate(ReferenceT<ReferenceContainer>(this), memory);
@@ -187,11 +192,13 @@ bool DataSourceI::GetSignalIndex(uint32 &signalIdx,
     uint32 numberOfSignals = GetNumberOfSignals();
     bool ret = true;
     bool found = false;
-    for (signalIdx = 0u; (signalIdx < numberOfSignals) && ret && (!found); signalIdx++) {
+    uint32 i;
+    for (i = 0u; (i < numberOfSignals) && (ret) && (!found); i++) {
         StreamString searchName;
-        ret = GetSignalName(signalIdx, searchName);
+        ret = GetSignalName(i, searchName);
         if (ret) {
             found = (StringHelper::Compare(signalName, searchName.Buffer()) == 0u);
+            signalIdx = i;
         }
     }
     if (ret) {
@@ -431,11 +438,13 @@ bool DataSourceI::GetFunctionIndex(uint32 &functionIdx,
     uint32 numberOfFunctions = GetNumberOfFunctions();
     bool ret = true;
     bool found = false;
-    for (functionIdx = 0u; (functionIdx < numberOfFunctions) && ret && (!found); functionIdx++) {
+    uint32 i;
+    for (i = 0u; (i < numberOfFunctions) && (ret) && (!found); i++) {
         StreamString searchName;
-        ret = GetFunctionName(functionIdx, searchName);
+        ret = GetFunctionName(i, searchName);
         if (ret) {
             found = (StringHelper::Compare(functionName, searchName.Buffer()) == 0u);
+            functionIdx = i;
         }
     }
     if (ret) {
@@ -523,11 +532,13 @@ bool DataSourceI::GetFunctionSignalIndex(SignalDirection direction,
     uint32 numberOfFunctionSignals = 0u;
     bool ret = GetFunctionNumberOfSignals(direction, functionIdx, numberOfFunctionSignals);
     bool found = false;
-    for (functionSignalIdx = 0u; (functionSignalIdx < numberOfFunctionSignals) && ret && (!found); functionSignalIdx++) {
+    uint32 i;
+    for (i = 0u; (i < numberOfFunctionSignals) && (ret) && (!found); i++) {
         StreamString searchName;
-        ret = GetFunctionName(functionSignalIdx, searchName);
+        ret = GetFunctionName(i, searchName);
         if (ret) {
             found = (StringHelper::Compare(functionSignalName, searchName.Buffer()) == 0u);
+            functionSignalIdx = i;
         }
     }
     if (ret) {
@@ -633,12 +644,5 @@ bool DataSourceI::MoveToFunctionSignalIndex(SignalDirection direction,
     }
     return ret;
 }
-
-ReferenceT<BrokerI> DataSourceI::GetInputReader(const char8 * const functionName){
-    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
-    broker->InitFromDataSource(this, InputSignals, functionName);
-    return broker;
-}
- 
 
 }

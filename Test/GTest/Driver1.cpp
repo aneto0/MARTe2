@@ -52,15 +52,18 @@ bool Driver1::Initialise(StructuredDataI & data) {
     return DataSourceI::Initialise(data);
 }
 
-uint32 Driver1::GetCurrentBufferIndex(){
+uint32 Driver1::GetCurrentBufferIndex() {
     return 0u;
 }
 
-uint32 Driver1::GetNumberOfMemoryBuffers(){
+uint32 Driver1::GetNumberOfMemoryBuffers() {
     return 1u;
 }
 
-bool Driver1::GetSignalMemoryBuffer(uint32 functionIdx, uint32 functionSignalIdx, uint32 bufferIdx, void *&signalAddress){
+bool Driver1::GetSignalMemoryBuffer(uint32 functionIdx,
+                                    uint32 functionSignalIdx,
+                                    uint32 bufferIdx,
+                                    void *&signalAddress) {
     return true;
 }
 
@@ -68,8 +71,20 @@ bool Driver1::AllocateMemory() {
     return false;
 }
 
-bool Driver1::GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress){
+bool Driver1::GetSignalMemoryBuffer(uint32 signalIdx,
+                                    uint32 bufferIdx,
+                                    void *&signalAddress) {
     return true;
+}
+
+ReferenceT<BrokerI> Driver1::GetInputReader(const char8 * const functionName) {
+    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
+    return broker;
+}
+
+ReferenceT<BrokerI> Driver1::GetOutputWriter(const char8 * const functionName) {
+    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
+    return broker;
 }
 
 CLASS_REGISTER(Driver1, "1.0");

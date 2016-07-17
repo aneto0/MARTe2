@@ -1,6 +1,6 @@
 /**
- * @file GAM1.h
- * @brief Header file for class GAM1
+ * @file AndreGAM1.h
+ * @brief Header file for class AndreGAM1
  * @date Jun 8, 2016
  * @author aneto
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAM1
+ * @details This header file contains the declaration of the class AndreGAM1
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TEST_GTEST_GAM1_H_
-#define 		TEST_GTEST_GAM1_H_
+#ifndef TEST_GTEST_AndreGAM1_H_
+#define 		TEST_GTEST_AndreGAM1_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -37,15 +37,17 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-class GAM1: public GAM {
+class AndreGAM1: public GAM {
 public:
     CLASS_REGISTER_DECLARATION()
 
-    GAM1();
+    AndreGAM1();
 
-    virtual ~GAM1();
+    virtual ~AndreGAM1();
 
     virtual bool Initialise(StructuredDataI & data);
+
+    virtual bool Execute();
 
 };
 }
@@ -54,5 +56,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_GTEST_GAM1_H_ */
+#endif /* TEST_GTEST_AndreGAM1_H_ */
 

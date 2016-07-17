@@ -88,6 +88,10 @@ public:
 
     virtual bool AllocateMemory();
 
+    virtual ReferenceT<BrokerI> GetInputReader(const char8 * const functionName);
+
+    virtual ReferenceT<BrokerI> GetOutputWriter(const char8 * const functionName);
+
 #if 0
     /**
      * @brief Retrieves to the memory address containing the signal data.

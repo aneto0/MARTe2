@@ -46,7 +46,7 @@ namespace MARTe {
 class BrokerI;
 
 enum SignalDirection {
-    InputSignals, OutputSignals
+    InputSignals, OutputSignals, None
 };
 
 /**
@@ -68,12 +68,12 @@ enum SignalDirection {
 class DLL_API DataSourceI: public ReferenceContainer {
 
 public:
-    CLASS_REGISTER_DECLARATION()
-
     /**
      * @brief Initialises the ReferenceContainer.
      */
     DataSourceI();
+
+    virtual ~DataSourceI();
 
     /**
      * @brief Configures the DataSourceI against the input configuration \a data.
@@ -193,9 +193,9 @@ public:
 
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress) = 0;
 
-    virtual ReferenceT<BrokerI> GetInputReader(const char8 * const functionName);
+    virtual ReferenceT<BrokerI> GetInputReader(const char8 * const functionName) = 0;
 
-    //virtual ReferenceT<BrokerI> GetOutputWriter(const char8 * const functionName);
+    virtual ReferenceT<BrokerI> GetOutputWriter(const char8 * const functionName) = 0;
 
 #if 0
     /**

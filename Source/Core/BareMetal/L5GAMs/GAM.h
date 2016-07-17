@@ -69,9 +69,94 @@ public:
      */
     virtual bool Initialise(StructuredDataI & data);
 
+    virtual bool Finalise();
+
     bool AddSignals(StructuredDataI & data);
 
-    void * AllocateSignalsMemory(uint32 numberOfBytes);
+    /**
+     * This function can only be called once per DataSource!
+     */
+    void * AllocateInputSignalsMemory(uint32 numberOfBytes);
+
+    /**
+     * This function can only be called once per DataSource!
+     */
+    void * AllocateOutputSignalsMemory(uint32 numberOfBytes);
+
+    void * GetInputSignalAddress(uint32 signalIdx);
+
+    void * GetOutputSignalAddress(uint32 signalIdx);
+
+    bool SetConfiguredDatabase(StructuredDataI & data);
+
+    uint32 GetNumberOfInputSignals();
+
+    uint32 GetNumberOfOutputSignals();
+
+    bool GetSignalName(SignalDirection direction,
+                       uint32 signalIdx,
+                       StreamString &signalName);
+
+    bool GetSignalIndex(SignalDirection direction,
+                        uint32 &signalIdx,
+                        const char8* const signalName);
+
+    bool GetSignalDataSourceName(SignalDirection direction,
+                                 uint32 signalIdx,
+                                 StreamString &dataSourceName);
+
+    TypeDescriptor GetSignalType(SignalDirection direction,
+                                 uint32 signalIdx);
+
+    bool GetSignalNumberOfDimensions(SignalDirection direction,
+                                     uint32 signalIdx,
+                                     uint32 &numberOfDimensions);
+
+    bool GetSignalNumberElements(SignalDirection direction,
+                                 uint32 signalIdx,
+                                 uint32 &numberOfElements);
+
+    bool GetSignalByteSize(SignalDirection direction,
+                           uint32 signalIdx,
+                           uint32 &byteSize);
+
+    bool GetSignalNumberOfByteOffsets(SignalDirection direction,
+                                      uint32 signalIdx,
+                                      uint32 &numberOfByteOffsets);
+
+    bool GetSignalByteOffsetInfo(SignalDirection direction,
+                                 uint32 signalIdx,
+                                 uint32 byteOffsetIndex,
+                                 uint32 &byteOffsetStart,
+                                 uint32 &byteOffsetSize);
+
+    bool GetSignalNumberOfRanges(SignalDirection direction,
+                                 uint32 signalIdx,
+                                 uint32 &numberOfRanges);
+
+    bool GetSignalRangesInfo(SignalDirection direction,
+                             uint32 signalIdx,
+                             uint32 rangeIndex,
+                             uint32 &rangeStart,
+                             uint32 &rangeEnd);
+
+    bool GetSignalTimeCyclesInfo(SignalDirection direction,
+                                 uint32 signalIdx,
+                                 uint32 &timeCycles,
+                                 uint32 &timeSamples);
+
+    void AddInputBroker(ReferenceT<BrokerI> broker);
+
+    void AddOutputBroker(ReferenceT<BrokerI> broker);
+
+    /**
+     * TODO
+     */
+    virtual bool Execute() = 0;
+
+protected:
+    bool Read();
+    bool Write();
 
 #if 0
     /**
@@ -103,14 +188,7 @@ public:
      * Returns true otherwise.
      */
     bool AddState(const char8 * const stateName,
-                  const char8 * const threadName);
-
-    /**
-     * @brief The core function to be executed.
-     * @param[in] activeBuffer is the context buffer currently active.
-     */
-    virtual void Execute(uint8 activeBuffer)=0;
-
+            const char8 * const threadName);
 
     /**
      * @brief Retrieves the states names where this class is declared into.
@@ -130,7 +208,6 @@ public:
      * @return the number of the supported states.
      */
     uint32 GetNumberOfSupportedStates() const;
-
 
     /**
      * @brief Links the GAM with RealTimeDataSource.
@@ -157,7 +234,6 @@ public:
      * @return true if this GAM is linked to a synchronising RealTimeDataSourceDef, false otherwise.
      */
 
-
     RealTimeApplication *GetApplication();
 
     virtual bool IsSync();
@@ -176,7 +252,6 @@ protected:
     ReferenceT<BrokerContainer> inputReaders;
 
     ReferenceT<BrokerContainer> outputWriters;
-
 
     /**
      * The names of the supported states
@@ -220,9 +295,35 @@ private:
 #endif
     ConfigurationDatabase signalsDatabase;
 
-    void **signalsMemoryBlocks;
+    void **inputSignalsMemoryBlocks;
 
-    uint32 numberOfSignalsMemoryBlocks;
+    void **outputSignalsMemoryBlocks;
+
+    //Address irrespective of the DataSource
+    void **inputSignalsAbsoluteAddress;
+
+    void **outputSignalsAbsoluteAddress;
+
+    uint32 numberOfInputSignalsMemoryBlocks;
+
+    uint32 numberOfOutputSignalsMemoryBlocks;
+
+    uint32 numberOfInputSignals;
+
+    uint32 numberOfOutputSignals;
+
+    ConfigurationDatabase configuredDatabase;
+
+    bool MoveToSignalIndex(SignalDirection direction,
+                           uint32 signalIdx);
+
+    uint32 numberOfInputBrokers;
+
+    uint32 numberOfOutputBrokers;
+
+    ReferenceT<BrokerI> *inputBrokers;
+
+    ReferenceT<BrokerI> *outputBrokers;
 
     HeapI *heap;
 };
