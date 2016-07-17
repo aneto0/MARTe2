@@ -74,12 +74,12 @@ public:
     bool AddSignals(StructuredDataI & data);
 
     /**
-     * This function can only be called once per DataSource!
+     * This function will be called once per DataSource!
      */
     void * AllocateInputSignalsMemory(uint32 numberOfBytes);
 
     /**
-     * This function can only be called once per DataSource!
+     * This function will be called once per DataSource!
      */
     void * AllocateOutputSignalsMemory(uint32 numberOfBytes);
 

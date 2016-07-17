@@ -1897,19 +1897,35 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(SignalDirec
                         ret = functionsDatabase.Read("ByteSize", byteSize);
                     }
 
-                    AnyType existentByteOffset = functionsDatabase.GetType("ByteOffset");
-                    if (existentByteOffset.GetDataPointer() != NULL_PTR(void *)) {
-                        numberOfOffsetElements = existentByteOffset.GetNumberOfElements(1u);
-                        offsetMatrixBackend = new uint32[numberOfOffsetElements * 2u];
-                        Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
-                        ret = functionsDatabase.Read("ByteOffset", offsetMat);
+                    if (ret) {
+                        AnyType existentByteOffset = functionsDatabase.GetType("ByteOffset");
+                        if (existentByteOffset.GetDataPointer() != NULL_PTR(void *)) {
+                            numberOfOffsetElements = existentByteOffset.GetNumberOfElements(1u);
+                            offsetMatrixBackend = new uint32[numberOfOffsetElements * 2u];
+                            Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
+                            ret = functionsDatabase.Read("ByteOffset", offsetMat);
+                        }
+                        else {
+                            numberOfOffsetElements = 1u;
+                            offsetMatrixBackend = new uint32[2u];
+                            offsetMatrixBackend[0] = 0u;
+                            offsetMatrixBackend[1] = byteSize;
+                        }
                     }
-                    AnyType existentTimeCyclesSamples = functionsDatabase.GetType("TimeCyclesSamples");
-                    if (existentTimeCyclesSamples.GetDataPointer() != NULL_PTR(void *)) {
-                        numberOfTimeCyclesSamplesElements = existentTimeCyclesSamples.GetNumberOfElements(0u);
-                        timeCyclesSamplesVectorBackend = new uint32[numberOfTimeCyclesSamplesElements];
-                        Vector<uint32> timeCyclesSamplesVec(timeCyclesSamplesVectorBackend, numberOfTimeCyclesSamplesElements);
-                        ret = functionsDatabase.Read("TimeCyclesSamples", timeCyclesSamplesVec);
+                    if (ret) {
+                        AnyType existentTimeCyclesSamples = functionsDatabase.GetType("TimeCyclesSamples");
+                        if (existentTimeCyclesSamples.GetDataPointer() != NULL_PTR(void *)) {
+                            numberOfTimeCyclesSamplesElements = existentTimeCyclesSamples.GetNumberOfElements(0u);
+                            timeCyclesSamplesVectorBackend = new uint32[numberOfTimeCyclesSamplesElements];
+                            Vector<uint32> timeCyclesSamplesVec(timeCyclesSamplesVectorBackend, numberOfTimeCyclesSamplesElements);
+                            ret = functionsDatabase.Read("TimeCyclesSamples", timeCyclesSamplesVec);
+                        }
+                        else {
+                            numberOfTimeCyclesSamplesElements = 2u;
+                            timeCyclesSamplesVectorBackend = new uint32[numberOfTimeCyclesSamplesElements];
+                            timeCyclesSamplesVectorBackend[0u] = 1;
+                            timeCyclesSamplesVectorBackend[1u] = 1;
+                        }
                     }
                     //Move to the function level
                     if (ret) {
