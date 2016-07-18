@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class ObjectBuilderT
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -39,13 +39,14 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 /**
  * @brief Template of ObjectBuilder implementing a default memory allocation for
  * the new instance of a MARTe::Object descendant.
  * @tparam T is a descendant of MARTe::Object.
  */
 template<typename T>
-class ObjectBuilderT: public ObjectBuilder {
+class DLL_API ObjectBuilderT: public ObjectBuilder {
 
 public:
     /**

@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class ClassMethodCaller
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -69,7 +69,7 @@ namespace MARTe {
  * specific method of target object's class, but this is left to its derived
  * classes (e.g. passing to it through the constructor of a derived class).
  */
-class ClassMethodCaller {
+class DLL_API ClassMethodCaller {
 
 public:
 

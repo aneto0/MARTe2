@@ -44,14 +44,16 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-    class Object;
+class Object;
 }
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /*lint -sem(MARTe::AnyType::Init,initializer)*/
 namespace MARTe {
+
 /**
  * @brief Class which provides a smart mechanism for the generic representation
  * of types.
@@ -459,7 +461,6 @@ public:
      */
     inline AnyType(volatile char8 * const p);
 
-
     /**
      * @brief Constructor from Object (or inherited class).
      * @param[in] obj the source Object.
@@ -787,7 +788,6 @@ public:
      * @return the bit size of this type.
      */
     inline uint32 GetBitSize() const;
-
 
     /**
      * @brief Retrieves the element in the specified position.
@@ -1390,9 +1390,6 @@ uint32 AnyType::GetByteSize() const {
 uint32 AnyType::GetBitSize() const {
     return (dataDescriptor.numberOfBits + bitAddress);
 }
-
-
-
 
 /**
  * Definition of the void AnyType (empty constructor).

@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class ClassMethodInterfaceMapper
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -49,7 +49,7 @@ class Object;
  * @details The supported class methods to be registered can be without arguments or
  * with one argument.
  */
-class ClassMethodInterfaceMapper {
+class DLL_API ClassMethodInterfaceMapper {
 
 public:
 

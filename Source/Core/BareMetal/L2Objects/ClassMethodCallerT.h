@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANargType KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class ClassMethodCallerT
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -49,7 +49,7 @@ namespace MARTe {
  * @tparam argType1 is the type of the input parameter to be passed as the class method argument
  */
 template<typename className, typename argType1 = void>
-class ClassMethodCallerT: public ClassMethodCaller {
+class DLL_API ClassMethodCallerT: public ClassMethodCaller {
 
 public:
 
@@ -104,7 +104,7 @@ private:
  * @tparam className is the class owning the registered method.
  */
 template<typename className>
-class ClassMethodCallerT<className> : public ClassMethodCaller {
+class DLL_API ClassMethodCallerT<className> : public ClassMethodCaller {
 
 public:
 

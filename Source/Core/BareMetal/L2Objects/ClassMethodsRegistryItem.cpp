@@ -15,11 +15,13 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This source file contains the definition of all the methods for
  * the class ClassMethodsRegistryItem (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
+
+#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -45,8 +47,8 @@ namespace MARTe {
 ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem * const cri,
                                                    ClassMethodInterfaceMapper * const functionTable_In,
                                                    const char8 * const functionNames_In) :
-        LinkedListable(),
-        functionTable(functionTable_In) {
+    LinkedListable(),
+    functionTable(functionTable_In) {
     functionNames = functionNames_In;
     // register in Object the record
     if (cri != NULL) {
