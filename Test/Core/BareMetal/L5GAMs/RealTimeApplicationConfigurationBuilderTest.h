@@ -77,7 +77,22 @@ public:
 
     bool TestResolveStatesFalse_SameGAMIn2Threads();
 
+    bool TestResolveConsumersAndProducers();
+
+    bool TestVerifyConsumersAndProducers();
+
+    bool TestVerifyConsumersAndProducersFalse_TwoProducers();
+
+    bool TestVerifyConsumersAndProducersFalse_MemoryOverlap();
+
+    bool TestResolveFunctionSignalsMemorySize();
+
+    bool TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxMin();
+
+    bool TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxNElements();
+
 };
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

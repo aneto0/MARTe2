@@ -53,6 +53,10 @@ static const IntrospectionEntry* AEntries[] = { &A_a1_introspectionEntry, &A_a2_
 
 DECLARE_CLASS_INTROSPECTION(A, AEntries);
 INTROSPECTION_REGISTER(A, "1.0", A_introspection)
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
 
 GAM1::GAM1() :
         GAM() {
@@ -72,6 +76,70 @@ bool GAM1::Execute() {
 }
 
 CLASS_REGISTER(GAM1, "1.0");
+
+
+
+
+
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+
+
+
+
+DS1::DS1() :
+        DataSourceI() {
+
+}
+
+DS1::~DS1() {
+
+}
+
+bool DS1::Initialise(StructuredDataI & data) {
+    return DataSourceI::Initialise(data);
+}
+
+uint32 DS1::GetCurrentBufferIndex() {
+    return 0u;
+}
+
+uint32 DS1::GetNumberOfMemoryBuffers() {
+    return 1u;
+}
+
+bool DS1::GetSignalMemoryBuffer(uint32 functionIdx,
+                                    uint32 functionSignalIdx,
+                                    uint32 bufferIdx,
+                                    void *&signalAddress) {
+    return true;
+}
+
+bool DS1::AllocateMemory() {
+    return false;
+}
+
+bool DS1::GetSignalMemoryBuffer(uint32 signalIdx,
+                                    uint32 bufferIdx,
+                                    void *&signalAddress) {
+    return true;
+}
+
+ReferenceT<BrokerI> DS1::GetInputReader(const char8 * const functionName) {
+    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
+    return broker;
+}
+
+ReferenceT<BrokerI> DS1::GetOutputWriter(const char8 * const functionName) {
+    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
+    return broker;
+}
+
+CLASS_REGISTER(DS1, "1.0");
+
+
 
 #if 0
 

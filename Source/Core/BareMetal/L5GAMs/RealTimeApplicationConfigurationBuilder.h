@@ -821,7 +821,8 @@ private:
     bool ResolveFunctionSignal(const char8 * const signalName,
                                const char8 * const functionName,
                                const char8 * const dataSourceName,
-                               uint32 numberOfFunctionSignals);
+                               uint32 &numberOfFunctionSignals,
+                               uint32 & index);
     /**
      * @brief Final merge of signals from the DataSources to the Functions.
      * @details For every signal in every Function merge with the corresponding DataSource signal.
@@ -839,6 +840,10 @@ private:
      */
     bool ResolveConsumersAndProducers(bool consumers);
 
+    bool BuildProducersRanges();
+
+    bool CheckProducersRanges(uint32 *rangesArray,
+                              uint32 numberOfElements);
     /**
      * @brief @see ResolveFunctionSignalsMemorySize()
      * @param[in] direction can be either InputSignals or OutputSignals
