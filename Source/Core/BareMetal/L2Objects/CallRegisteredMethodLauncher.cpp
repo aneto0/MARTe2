@@ -48,7 +48,7 @@ namespace {
 namespace MARTe {
 
 CallRegisteredMethodLauncher::CallRegisteredMethodLauncher(Object *objectIn,
-                                                                  CCString methodNameIn) {
+                                                           CCString methodNameIn) {
     object = objectIn;
     methodName = methodNameIn;
 }

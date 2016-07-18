@@ -20,7 +20,9 @@
  * the class ReferenceContainerFilterObjectName (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -28,10 +30,12 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "HeapManager.h"
 #include "MemoryOperationsHelper.h"
 #include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,6 +43,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName() :
@@ -223,7 +228,7 @@ bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFoun
             found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[addressNumberNodes - 1u]) == 0);
         }
         else {
-            found=false;
+            found = false;
         }
     }
 

@@ -94,7 +94,6 @@ public:
      */
     const char8 *GetMemberTypeName() const;
 
-
     /**
      * @brief Retrieves the TypeDescriptor associated to the member type.
      * @return the TypeDescriptor associated to the member type.
@@ -124,7 +123,6 @@ public:
      *   @return the member modifiers.
      */
     const char8 * GetMemberModifiers() const;
-
 
     /**
      * @brief Retrieves the member attributes.

@@ -38,12 +38,12 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
  * @brief Groups the information about each member of a class or a structure.
  */
-
 class DLL_API Introspection {
 
 public:
@@ -55,7 +55,6 @@ public:
      */
     Introspection();
 
-
     /**
      * @brief Constructor.
      * @param[in] introspectionListIn contains a list of IntrospectionEntry pointers, one for each class member.
@@ -65,7 +64,8 @@ public:
      * @post
      *   GetClassSize()==classSizeIn
      */
-    Introspection(const IntrospectionEntry ** const introspectionListIn, const uint32 classSizeIn);
+    Introspection(const IntrospectionEntry ** const introspectionListIn,
+                  const uint32 classSizeIn);
 
     /**
      * @brief Retrieves the information about a specific member.
@@ -101,7 +101,6 @@ private:
     uint32 classSize;
 
 };
-
 
 }
 

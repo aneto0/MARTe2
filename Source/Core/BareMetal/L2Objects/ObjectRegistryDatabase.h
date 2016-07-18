@@ -31,8 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -69,7 +71,6 @@ public:
     /*lint -e{1511} [MISRA C++ Rule 2-10-2].*/
     Reference Find(const char8 * const path,
                    const Reference current = Reference());
-
 
     /**
      * @see Object::GetClassName

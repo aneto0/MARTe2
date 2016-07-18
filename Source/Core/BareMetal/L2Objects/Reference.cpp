@@ -20,7 +20,9 @@
  * the class Reference (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -28,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "ClassRegistryItem.h"
 #include "Reference.h"
 #include "ClassRegistryDatabase.h"
@@ -35,6 +38,7 @@
 #include "ObjectBuilder.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -42,6 +46,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 Reference::Reference() {

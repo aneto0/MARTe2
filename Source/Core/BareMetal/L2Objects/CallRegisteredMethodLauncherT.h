@@ -40,8 +40,8 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-    class ClassMethodsRegistryItem;
-    class Object;
+class ClassMethodsRegistryItem;
+class Object;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -125,8 +125,8 @@ namespace MARTe {
 
 template<typename argType>
 inline CallRegisteredMethodLauncherT<argType>::CallRegisteredMethodLauncherT(Object *objectIn,
-                                                                    CCString methodNameIn,
-                                                                    argType parametersIn) :
+                                                                             CCString methodNameIn,
+                                                                             argType parametersIn) :
         CallRegisteredMethodLauncher(objectIn, methodNameIn),
         parameters(parametersIn) {
 }

@@ -20,6 +20,7 @@
  * the class ObjectRegistryDatabase (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
 
 /*---------------------------------------------------------------------------*/
@@ -49,7 +50,7 @@ ObjectRegistryDatabase *ObjectRegistryDatabase::Instance() {
 
     static ObjectRegistryDatabase *instance = NULL_PTR(ObjectRegistryDatabase *);
     if (instance == NULL) {
-        instance=new ObjectRegistryDatabase(); //dynamic_cast<ObjectRegistryDatabase*>(ObjectRegistryDatabase_BuildFn());
+        instance = new ObjectRegistryDatabase(); //dynamic_cast<ObjectRegistryDatabase*>(ObjectRegistryDatabase_BuildFn());
         GlobalObjectsDatabase::Instance()->Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 3u);
     }
     return instance;
@@ -64,7 +65,6 @@ ObjectRegistryDatabase::~ObjectRegistryDatabase() {
     ReferenceContainer::CleanUp();
     // The ReferenceContainer destructor does the work
 }
-
 
 Reference ObjectRegistryDatabase::Find(const char8 * const path,
                                        const Reference current) {
@@ -145,7 +145,6 @@ const char8 * const ObjectRegistryDatabase::GetClassName() const {
 void *ObjectRegistryDatabase::operator new(const osulong size) throw () {
     return GlobalObjectI::operator new(size);
 }
-
 
 /*lint -e{1550} */
 void ObjectRegistryDatabase::operator delete(void * const p) {

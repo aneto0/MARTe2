@@ -39,8 +39,8 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-    class Object;
-    class ReferenceContainer;
+class Object;
+class ReferenceContainer;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -87,7 +87,6 @@ public:
      * @brief Calls a class method without parameters.
      * @param[in] context is the objects owning the method.
      * @return ErrorManagement::FatalError if the registered function returns false, ErrorManagement::NoError if it returns true, or ErrorManagement::UnsupportedFeature if the call is not registered.
-     *
      */
     virtual ErrorManagement::ErrorType Call(Object * const context);
 

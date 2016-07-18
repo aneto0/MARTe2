@@ -83,7 +83,7 @@ public:
      * @param[in] className the name of the class to be searched.
      * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
-    ClassRegistryItem *Find(const char8 *className)  ;
+    ClassRegistryItem *Find(const char8 *className);
 
     /**
      * @brief Returns the ClassRegistryItem associated to the class with typeid(class).name() equal to \a typeidName.
@@ -91,7 +91,7 @@ public:
      * @param[in] typeidName the typeid().name() of the class to be searched.
      * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
-    ClassRegistryItem *FindTypeIdName(const char8 * const typeidName)  ;
+    ClassRegistryItem *FindTypeIdName(const char8 * const typeidName);
 
     /**
      * @brief Returns the number of classes registered in the database.
@@ -131,7 +131,6 @@ protected:
      */
     void UnLock();
 
-
     /**
      * @brief Private Constructor.
      */
@@ -145,7 +144,6 @@ private:
      * The destructor of the list will clean its elements.
      */
     LinkedListHolderT<ClassRegistryItem> classDatabase;
-
 
     /**
      * Protects the concurrent access to the database

@@ -20,7 +20,9 @@
  * the class ClassRegistryDatabase (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -38,6 +40,7 @@
 #include "ClassRegistryItem.h"
 #include "ClassRegistryDatabase.h"
 #include "ErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -110,8 +113,8 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
         uint32 i;
         uint32 databaseSize = classDatabase.ListSize();
         for (i = 0u; i < databaseSize; i++) {
-            ClassRegistryItem *p=classDatabase.ListPeek(i);
-            if (p!=NULL) {
+            ClassRegistryItem *p = classDatabase.ListPeek(i);
+            if (p != NULL) {
                 const ClassProperties *classProperties = p->GetClassProperties();
                 if (classProperties != NULL_PTR(ClassProperties *)) {
                     if (StringHelper::Compare(classProperties->GetName(), className) == 0) {
@@ -197,8 +200,8 @@ ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(const char8 * const typ
         uint32 i;
         uint32 databaseSize = classDatabase.ListSize();
         for (i = 0u; (i < databaseSize) && (!found); i++) {
-            ClassRegistryItem *p=classDatabase.ListPeek(i);
-            if (p!=NULL) {
+            ClassRegistryItem *p = classDatabase.ListPeek(i);
+            if (p != NULL) {
                 const ClassProperties *classProperties = p->GetClassProperties();
                 if (classProperties != NULL_PTR(ClassProperties *)) {
                     if (StringHelper::Compare(classProperties->GetTypeIdName(), typeidName) == 0) {

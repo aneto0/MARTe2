@@ -43,15 +43,14 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-    /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
-    class Object;
-
-    class ClassMethodsRegistryItem;
-    class ClassProperties;
-    class Introspection;
-    class LoadableLibrary;
-    class ObjectBuilder;
-    class ReferenceContainer;
+/*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
+class Object;
+class ClassMethodsRegistryItem;
+class ClassProperties;
+class Introspection;
+class LoadableLibrary;
+class ObjectBuilder;
+class ReferenceContainer;
 }
 
 /*---------------------------------------------------------------------------*/

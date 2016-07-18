@@ -42,7 +42,6 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
 ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem * const cri,
                                                    ClassMethodInterfaceMapper * const functionTable_In,
                                                    const char8 * const functionNames_In) :

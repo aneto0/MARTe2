@@ -31,12 +31,14 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "LinkedListable.h"
 #include "Reference.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
@@ -44,6 +46,7 @@ namespace MARTe {
  */
 class DLL_API ReferenceContainerNode: public LinkedListable {
 public:
+
     /**
      * @brief Constructor. NOOP.
      */
@@ -67,6 +70,7 @@ public:
     bool SetReference(Reference newReference);
 
 private:
+
     /**
      * Reference hold by node.
      */
@@ -74,6 +78,7 @@ private:
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

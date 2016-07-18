@@ -20,7 +20,9 @@
  * the class ClassProperties (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -45,7 +47,7 @@ ClassProperties::ClassProperties() {
     typeidClassName = static_cast<const char8 *>(NULL);
     classVersion = static_cast<const char8 *>(NULL);
     uniqueIdentifier = 0u;
-    size=0u;
+    size = 0u;
 }
 
 ClassProperties::ClassProperties(const char8 * const cName,

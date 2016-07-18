@@ -32,6 +32,7 @@
 #include "ClassMethodCaller.h"
 #include "Object.h"
 #include "ReferenceContainer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

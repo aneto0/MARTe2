@@ -44,6 +44,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
@@ -69,7 +70,6 @@ public:
      */
     ReferenceContainer(ReferenceContainer &copy);
 
-
     /**
      * @brief Destructor. Deletes all the elements hold by the container.
      */
@@ -94,8 +94,6 @@ public:
      */
     bool Insert(Reference ref, const int32 &position = -1);
 
-
-
     /**
      * @brief Inserts a new reference in the specified path.
      * @details Creates all the nodes in the \a path if needed before adding \a ref as a leaf.
@@ -104,7 +102,6 @@ public:
      * @return false if \a ref is not valid or in case of errors, true otherwise.
      */
     bool Insert(const char8 * const path, Reference ref);
-
 
     /**
      * @brief Removes a reference from the container.
@@ -122,7 +119,6 @@ public:
      */
     bool Delete(const char8 * const path);
 
-
     /**
      * @brief Finds on or more elements in the container.
      * @details The container is walked and its elements are tested against a \a filter. Valid results are
@@ -131,8 +127,7 @@ public:
      * @param[in,out] filter the searching criteria to be applied.
      */
     void Find(ReferenceContainer &result,
-              ReferenceContainerFilter &filter);
-
+            ReferenceContainerFilter &filter);
 
     /**
      * @brief Finds the first element identified by \a path in RECURSIVE mode.
@@ -183,7 +178,6 @@ public:
      */
     virtual bool Initialise(StructuredDataI &data);
 
-
     /**
      * @see Object::ExportData(*)
      */
@@ -201,6 +195,7 @@ public:
     void UnLock();
 
 private:
+
     /**
      * The list of references
      */
@@ -223,6 +218,7 @@ private:
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

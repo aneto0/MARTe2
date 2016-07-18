@@ -31,12 +31,14 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ReferenceContainerFilter.h"
 #include "ReferenceContainer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
@@ -103,6 +105,7 @@ public:
     void SetAddress(const char8 * const address);
 
 private:
+
     /**
      * Broken-down list of the address to search.
      */
@@ -120,10 +123,10 @@ private:
      * the address parameter of the constructor.
      */
     bool TestPath(ReferenceContainer &previouslyFound) const;
-
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

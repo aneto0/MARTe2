@@ -35,6 +35,7 @@
 #include "ErrorType.h"
 #include "ClassMethodCaller.h"
 #include "ClassMethodCallerT.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -108,6 +109,7 @@ public:
      * @brief Destructor
      */
     virtual ~ClassMethodInterfaceMapper();
+
 private:
 
     /**
@@ -153,7 +155,7 @@ ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object *context,
         if(byCopy) {
             ret = caller->Call(context,ref, byCopy);
         }
-        else{
+        else {
             ret = caller->Call(context,ref);
         }
     }

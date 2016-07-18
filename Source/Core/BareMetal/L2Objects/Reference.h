@@ -38,7 +38,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
+
 /**
  * @brief Shared pointer implementation.
  * @details The Reference class is a smart pointer implementation where the shared
@@ -92,7 +94,7 @@ public:
      * @return true if the object was successfully created and initialized, false otherwise.
      */
     virtual bool Initialise(StructuredDataI &data,
-    const bool &initOnly);
+                            const bool &initOnly);
 
     /**
      * @brief Removes the reference to the underlying object.
@@ -150,8 +152,8 @@ public:
      */
     inline Object* operator->();
 
-
 protected:
+
     /**
      * The pointer to the referenced object.
      */
@@ -160,6 +162,7 @@ protected:
     Object* objectPointer;
 
 private:
+
     /**
      * @brief Prevents the copying of a reference by taking its address.
      * @return a copy of this reference.
@@ -177,15 +180,14 @@ private:
      * @return a new object of the specified class or NULL if the \a className does not exist.
      */
     Object *CreateByName(const char8 * const className,
-    HeapI* const heap) const;
-
+                         HeapI* const heap) const;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-Object* Reference::operator->(){
+Object* Reference::operator->() {
     return objectPointer;
 }
 

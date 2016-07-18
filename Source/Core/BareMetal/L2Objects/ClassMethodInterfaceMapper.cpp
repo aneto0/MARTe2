@@ -39,14 +39,11 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-namespace MARTe{
+namespace MARTe {
 
 ClassMethodInterfaceMapper::ClassMethodInterfaceMapper() {
-        caller = NULL_PTR(ClassMethodCaller *);
+    caller = NULL_PTR(ClassMethodCaller *);
 }
-
-
 
 /*lint -e {1551} */
 ClassMethodInterfaceMapper::~ClassMethodInterfaceMapper() {
@@ -58,11 +55,10 @@ ClassMethodInterfaceMapper::~ClassMethodInterfaceMapper() {
 ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object * const context) {
     ErrorManagement::ErrorType ret;
     ret.unsupportedFeature = true;
-    if (caller != NULL ){
+    if (caller != NULL ) {
         ret = caller->Call(context);
     }
     return ret;
 }
-
 
 }

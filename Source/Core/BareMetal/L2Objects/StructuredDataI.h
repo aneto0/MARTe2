@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "AnyType.h"
 
 /*---------------------------------------------------------------------------*/
@@ -38,7 +39,9 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 class DLL_API Reference;
+
 /**
  * @brief Interface definition for any database that can store and retrieve AnyType values.
  * @details Classes that implement this interface are capable of storing and retrieving,
@@ -103,9 +106,7 @@ public:
     virtual bool Write(const char8 * const name,
                        const AnyType &value) = 0;
 
-
-   // virtual bool Write(const Reference &reference)=0;
-
+    // virtual bool Write(const Reference &reference)=0;
 
     /**
      * @brief Copies the content of the current node to the provided destination.

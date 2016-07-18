@@ -45,7 +45,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-    class StructuredDataI;
+class StructuredDataI;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -80,7 +80,7 @@ public:
      *   NumberOfReference() == 0
      *   IsDomain() == false
      */
-    Object();
+Object    ();
 
     /**
      * @brief Copy constructor.
@@ -91,7 +91,6 @@ public:
      *   IsDomain() == false
      */
     Object(const Object &copy);
-
 
     /**
      * @brief Virtual destructor. No operation.
@@ -228,7 +227,6 @@ public:
      */
     void SetName(const char8 * const newName);
 
-
     /**
      * @brief Calls a registered method without arguments.
      * @param[in] methodName is the method name.
@@ -236,7 +234,6 @@ public:
      * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
     ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName);
-
 
     /**
      * @brief Calls a registered method with one argument.
@@ -248,7 +245,6 @@ public:
      */
     template <typename argType>
     ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName,argType parameters);
-
 
     /*
      * @brief Returns the class properties associated with this class type.
@@ -356,17 +352,17 @@ namespace MARTe {
 template<typename argType>
 ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName,
                                                         argType parameters) {
-    ErrorManagement::ErrorType ret;
-    ClassRegistryItem * cri = GetClassRegistryItem();
+ErrorManagement::ErrorType ret;
+ClassRegistryItem * cri = GetClassRegistryItem();
 
-    if (cri != NULL_PTR(ClassRegistryItem *)) {
-        ret = cri->CallRegisteredMethod<argType>(this, methodName, parameters);
-    }
-    else {
-        ret.internalSetupError = true;
-    }
+if (cri != NULL_PTR(ClassRegistryItem *)) {
+    ret = cri->CallRegisteredMethod<argType>(this, methodName, parameters);
+}
+else {
+    ret.internalSetupError = true;
+}
 
-    return ret;
+return ret;
 
 }
 

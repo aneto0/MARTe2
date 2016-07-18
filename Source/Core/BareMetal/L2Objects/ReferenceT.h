@@ -31,11 +31,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Reference.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
@@ -143,7 +145,7 @@ public:
      * @return true if the object was successfully created and initialized.
      */
     virtual bool Initialise(StructuredDataI &data,
-    const bool &initOnly);
+                            const bool &initOnly);
 
 private:
 
@@ -162,7 +164,6 @@ private:
      * The pointer to the referenced object.
      */
     T* typeTObjectPointer;
-
 };
 
 /*---------------------------------------------------------------------------*/
@@ -189,7 +190,6 @@ ReferenceT<T>::ReferenceT() :
         Reference() {
     Init();
 }
-
 
 /*lint -e{1566} Init function initializes members */
 /*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
@@ -274,10 +274,6 @@ bool ReferenceT<T>::Initialise(StructuredDataI &data,
     }
     return ok;
 }
-
-
-
-
 
 /*lint -e{1566} Init function initializes members */
 /*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting

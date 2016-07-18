@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "ClassRegistryItemT.h"
 #include "ReferenceContainer.h"
 #include "ReferenceContainerNode.h"
@@ -39,6 +40,7 @@
 #include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include <typeinfo>
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -46,6 +48,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 ReferenceContainer::ReferenceContainer() :
@@ -392,9 +395,6 @@ uint32 ReferenceContainer::Size() {
     UnLock();
     return size;
 }
-
-
-
 
 bool ReferenceContainer::Initialise(StructuredDataI &data) {
 
