@@ -57,19 +57,46 @@ ClassMethodInterfaceMapperTest::~ClassMethodInterfaceMapperTest() {
 }
 
 bool ClassMethodInterfaceMapperTest::TestDefaultConstructor() {
-    return false;
+    /* Warning: It is not possible to query the target about the address
+     * actually set as the callable method, so it is not possible to check
+     * if it has been set to NULL.
+     */
+    using namespace MARTe;
+    ClassMethodInterfaceMapper target();
+    return true;
 }
 
 bool ClassMethodInterfaceMapperTest::TestConstructorForMethodWithNoArguments() {
-    return false;
+    /* Warning: It is not possible to query the target about the address
+     * actually set as the callable method, so it is not possible to check
+     * if it has been set to method.
+     */
+    using namespace MARTe;
+    bool (ClassWithCallableMethods::*method)() = &ClassWithCallableMethods::OverloadedMethod;
+    ClassMethodInterfaceMapper target(method);
+    return true;
 }
 
 bool ClassMethodInterfaceMapperTest::TestConstructorForMethodWith1ArgumentByCopy() {
-    return false;
+    /* Warning: It is not possible to query the target about the address
+     * actually set as the callable method, so it is not possible to check
+     * if it has been set to method.
+     */
+    using namespace MARTe;
+    bool (ClassWithCallableMethods::*method)(int) = &ClassWithCallableMethods::MethodWithInputIntegerByCopy;
+    ClassMethodInterfaceMapper target(method);
+    return true;
 }
 
 bool ClassMethodInterfaceMapperTest::TestConstructorForMethodWith1ArgumentByRef() {
-    return false;
+    /* Warning: It is not possible to query the target about the address
+     * actually set as the callable method, so it is not possible to check
+     * if it has been set to method.
+     */
+    using namespace MARTe;
+    bool (ClassWithCallableMethods::*method)(int&) = &ClassWithCallableMethods::MethodWithOutputInteger;
+    ClassMethodInterfaceMapper target(method);
+    return true;
 }
 
 bool ClassMethodInterfaceMapperTest::TestCall() {
