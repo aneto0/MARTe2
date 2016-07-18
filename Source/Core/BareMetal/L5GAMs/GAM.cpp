@@ -43,7 +43,6 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-static const uint32 stateNamesGranularity = 4u;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -54,12 +53,8 @@ GAM::GAM() :
     numberOfOutputBrokers = 0u;
     numberOfInputSignals = 0u;
     numberOfOutputSignals = 0u;
-    numberOfInputSignalsMemoryBlocks = 0u;
-    numberOfOutputSignalsMemoryBlocks = 0u;
-    inputSignalsMemoryBlocks = NULL_PTR(void **);
-    outputSignalsMemoryBlocks = NULL_PTR(void **);
-    inputSignalsAbsoluteAddress = NULL_PTR(void **);
-    outputSignalsAbsoluteAddress = NULL_PTR(void **);
+    inputSignalsMemory = NULL_PTR(void **);
+    outputSignalsMemory = NULL_PTR(void **);
     inputBrokers = NULL_PTR(ReferenceT<BrokerI> *);
     outputBrokers = NULL_PTR(ReferenceT<BrokerI> *);
 
@@ -78,25 +73,11 @@ GAM::GAM() :
 
 /*lint -e{1551} no exception should be thrown*/
 GAM::~GAM() {
-    if (inputSignalsMemoryBlocks != NULL_PTR(void **)) {
-        uint32 n;
-        for (n = 0u; n < numberOfInputSignalsMemoryBlocks; n++) {
-            heap->Free(inputSignalsMemoryBlocks[n]);
-        }
-        delete[] inputSignalsMemoryBlocks;
+    if (inputSignalsMemory != NULL_PTR(void **)) {
+        heap->Free(inputSignalsMemory);
     }
-    if (outputSignalsMemoryBlocks != NULL_PTR(void **)) {
-        uint32 n;
-        for (n = 0u; n < numberOfOutputSignalsMemoryBlocks; n++) {
-            heap->Free(outputSignalsMemoryBlocks[n]);
-        }
-        delete[] outputSignalsMemoryBlocks;
-    }
-    if (inputSignalsAbsoluteAddress != NULL_PTR(void **)) {
-        delete[] inputSignalsAbsoluteAddress;
-    }
-    if (outputSignalsAbsoluteAddress != NULL_PTR(void **)) {
-        delete[] outputSignalsAbsoluteAddress;
+    if (outputSignalsMemory != NULL_PTR(void **)) {
+        heap->Free(outputSignalsMemory);
     }
     if (inputBrokers != NULL_PTR(ReferenceT<BrokerI> *)) {
         delete[] inputBrokers;
@@ -188,38 +169,14 @@ bool GAM::Finalise() {
 }
 
 void * GAM::AllocateInputSignalsMemory(uint32 numberOfBytes) {
-    void **tempSignalsMemoryBlocks = new void*[numberOfInputSignalsMemoryBlocks + 1u];
-    if (numberOfInputSignalsMemoryBlocks > 0u) {
-        uint32 n;
-        for (n = 0u; n < numberOfInputSignalsMemoryBlocks; n++) {
-            tempSignalsMemoryBlocks[n] = inputSignalsMemoryBlocks[n];
-        }
-        delete[] inputSignalsMemoryBlocks;
-    }
+    inputSignalsMemory = heap->Malloc(numberOfBytes);
 
-    inputSignalsMemoryBlocks = tempSignalsMemoryBlocks;
-
-    inputSignalsMemoryBlocks[numberOfInputSignalsMemoryBlocks] = heap->Malloc(numberOfBytes);
-    numberOfInputSignalsMemoryBlocks++;
-    return inputSignalsMemoryBlocks[numberOfInputSignalsMemoryBlocks - 1u];
+    return inputSignalsMemory;
 }
 
 void * GAM::AllocateOutputSignalsMemory(uint32 numberOfBytes) {
-    void **tempSignalsMemoryBlocks = new void*[numberOfOutputSignalsMemoryBlocks + 1u];
-
-    if (numberOfOutputSignalsMemoryBlocks > 0u) {
-        uint32 n;
-        for (n = 0u; n < numberOfOutputSignalsMemoryBlocks; n++) {
-            tempSignalsMemoryBlocks[n] = outputSignalsMemoryBlocks[n];
-        }
-        delete[] outputSignalsMemoryBlocks;
-    }
-
-    outputSignalsMemoryBlocks = tempSignalsMemoryBlocks;
-
-    outputSignalsMemoryBlocks[numberOfOutputSignalsMemoryBlocks] = heap->Malloc(numberOfBytes);
-    numberOfOutputSignalsMemoryBlocks++;
-    return outputSignalsMemoryBlocks[numberOfOutputSignalsMemoryBlocks - 1u];
+    outputSignalsMemory = heap->Malloc(numberOfBytes);
+    return outputSignalsMemory;
 }
 
 bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
@@ -233,124 +190,8 @@ bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
     if (configuredDatabase.MoveAbsolute("Signals.OutputSignals")) {
         numberOfOutputSignals = configuredDatabase.GetNumberOfChildren();
     }
-    if (ret) {
-        inputSignalsAbsoluteAddress = new void*[numberOfInputSignals];
-        outputSignalsAbsoluteAddress = new void*[numberOfOutputSignals];
-    }
-    uint32 k;
 
-    //Compute the DataSource indexes
-    const char8 **inputDataSourceIndexes = NULL_PTR(const char8 **);
-    uint32 *inputDataSourceOffsets = NULL_PTR(uint32 *);
-    if (numberOfInputSignalsMemoryBlocks > 0u) {
-        inputDataSourceOffsets = new uint32[numberOfInputSignalsMemoryBlocks];
-        inputDataSourceIndexes = new const char8*[numberOfInputSignalsMemoryBlocks];
-        for (k = 0u; k < numberOfInputSignalsMemoryBlocks; k++) {
-            inputDataSourceIndexes[k] = NULL_PTR(const char8 *);
-            inputDataSourceOffsets[k] = 0u;
-        }
-    }
-    const char8 **outputDataSourceIndexes = NULL_PTR(const char8 **);
-    uint32 *outputDataSourceOffsets = NULL_PTR(uint32 *);
-    if (numberOfOutputSignalsMemoryBlocks > 0u) {
-        outputDataSourceOffsets = new uint32[numberOfOutputSignalsMemoryBlocks];
-        outputDataSourceIndexes = new const char8*[numberOfOutputSignalsMemoryBlocks];
-        for (k = 0u; k < numberOfOutputSignalsMemoryBlocks; k++) {
-            outputDataSourceIndexes[k] = NULL_PTR(const char8 *);
-            outputDataSourceOffsets[k] = 0u;
-        }
-    }
-
-    if (numberOfInputSignals > 0u) {
-        ret = (inputDataSourceIndexes != NULL_PTR(const char8 **));
-    }
-
-    if (numberOfOutputSignals > 0u) {
-        ret = (outputDataSourceIndexes != NULL_PTR(const char8 **));
-    }
-    uint32 n;
-
-    for (n = 0u; (n < numberOfInputSignals) && (ret); n++) {
-        //Look for the DataSource (remember that the signals can be interleaved between different DataSources)
-        StreamString dataSourceName;
-        ret = GetSignalDataSourceName(InputSignals, n, dataSourceName);
-        bool found = false;
-        uint32 idx;
-        for (k = 0u; (k < numberOfInputSignalsMemoryBlocks) && (ret) && (!found); k++) {
-            if (inputDataSourceIndexes[k] == NULL_PTR(const char8 *)) {
-                //First instance of this DataSource name
-                found = true;
-                inputDataSourceIndexes[k] = dataSourceName.Buffer();
-            }
-            else {
-                found = (StringHelper::Compare(inputDataSourceIndexes[k], dataSourceName.Buffer()) == 0);
-            }
-            idx = k;
-        }
-        //We know the index of the DataSource in the inputSignalsMemoryBlocks
-        ret = found;
-        uint32 signalByteSize = 0u;
-        if (ret) {
-            //Assign the absolute addresses
-            char8 *signalAddress = reinterpret_cast<char8 *>(inputSignalsMemoryBlocks[idx]);
-            signalAddress += inputDataSourceOffsets[idx];
-            inputSignalsAbsoluteAddress[n] = reinterpret_cast<void *>(signalAddress);
-            ret = GetSignalByteSize(InputSignals, n, signalByteSize);
-        }
-        if (ret) {
-            inputDataSourceOffsets[idx] += signalByteSize;
-        }
-    }
-    for (n = 0u; (n < numberOfOutputSignals) && (ret); n++) {
-        //Look for the DataSource (remember that the signals can be interleaved between different DataSources)
-        StreamString dataSourceName;
-        ret = GetSignalDataSourceName(OutputSignals, n, dataSourceName);
-        bool found = false;
-        uint32 idx;
-        for (k = 0u; (k < numberOfOutputSignalsMemoryBlocks) && (ret) && (!found); k++) {
-            if (outputDataSourceIndexes[k] == NULL_PTR(const char8 *)) {
-                //First instance of this DataSource name
-                found = true;
-                outputDataSourceIndexes[k] = dataSourceName.Buffer();
-            }
-            else {
-                found = (StringHelper::Compare(outputDataSourceIndexes[k], dataSourceName.Buffer()) == 0);
-            }
-            idx = k;
-
-        }
-        //We know the index of the DataSource in the outputSignalsMemoryBlocks
-        ret = found;
-        uint32 signalByteSize = 0u;
-        if (ret) {
-            //Assign the absolute addresses
-            char8 *signalAddress = reinterpret_cast<char8 *>(outputSignalsMemoryBlocks[idx]);
-            signalAddress += outputDataSourceOffsets[idx];
-            outputSignalsAbsoluteAddress[n] = reinterpret_cast<void *>(signalAddress);
-            ret = GetSignalByteSize(OutputSignals, n, signalByteSize);
-        }
-        if (ret) {
-            outputDataSourceOffsets[idx] += signalByteSize;
-        }
-    }
-
-    if (inputDataSourceIndexes != NULL_PTR(const char8 **)) {
-        delete[] inputDataSourceIndexes;
-        delete[] inputDataSourceOffsets;
-    }
-    if (outputDataSourceIndexes != NULL_PTR(const char8 **)) {
-        delete[] outputDataSourceIndexes;
-        delete[] outputDataSourceOffsets;
-    }
     return ret;
-}
-
-void * GAM::GetInputSignalAddress(uint32 signalIdx) {
-    return inputSignalsAbsoluteAddress[signalIdx];
-}
-
-void * GAM::GetOutputSignalAddress(uint32 signalIdx) {
-    return outputSignalsAbsoluteAddress[signalIdx];
 }
 
 uint32 GAM::GetNumberOfInputSignals() {
@@ -611,11 +452,19 @@ void GAM::AddOutputBroker(ReferenceT<BrokerI> broker) {
     numberOfOutputBrokers++;
 }
 
+const void * GAM::GetInputSignalsBuffer() {
+    return inputSignalsMemory;
+}
+
+void * GAM::GetOutputSignalsBuffer(){
+    return outputSignalsMemory;
+}
+
 bool GAM::Read() {
     uint32 b;
     bool ret = true;
     for (b = 0u; (b < numberOfInputBrokers) && (ret); b++) {
-        ret = inputBrokers[b]->Read();
+        ret = inputBrokers[b]->Execute();
     }
     return ret;
 }
@@ -624,7 +473,7 @@ bool GAM::Write() {
     uint32 b;
     bool ret = true;
     for (b = 0u; (b < numberOfOutputBrokers) && (ret); b++) {
-        ret = outputBrokers[b]->Write();
+        ret = outputBrokers[b]->Execute();
     }
     return ret;
 }

@@ -64,8 +64,6 @@ struct CopyTableEntry {
 class DLL_API MemoryMapBroker: public BrokerI {
 
 public:
-    CLASS_REGISTER_DECLARATION()
-    ;
 
     /**
      * @brief Constructor.
@@ -89,33 +87,11 @@ public:
                       ReferenceT<DataSourceI> dataSourceIn,
                       const char8 * const functionName);
 
-    virtual bool Read(const TimeoutType &timeout = TTInfiniteWait);
+protected:
 
-    virtual bool Write(const TimeoutType &timeout = TTInfiniteWait);
-
-#if 0
-    virtual bool Finalise();
-
-    virtual bool Read(const uint8 activeDataSourceBuffer,
-            const TimeoutType &timeout = TTInfiniteWait);
-
-    virtual bool Write(const uint8 activeDataSourceBuffer,
-            const TimeoutType &timeout = TTInfiniteWait);
-
-    virtual bool IsSync() const {
-        return false;
-    }
-#endif
-private:
-
-    CopyTableEntry *inputCopyTable;
-    CopyTableEntry *outputCopyTable;
+    CopyTableEntry *copyTable;
 
     uint32 numberOfDataSourceSignalBuffers;
-
-    uint32 numberOfInputCopies;
-
-    uint32 numberOfOutputCopies;
 
     ReferenceT<DataSourceI> dataSource;
 

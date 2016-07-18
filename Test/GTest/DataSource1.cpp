@@ -77,8 +77,16 @@ ReferenceT<BrokerI> DataSource1::GetInputReader(const char8 * const functionName
 }
 
 ReferenceT<BrokerI> DataSource1::GetOutputWriter(const char8 * const functionName) {
-    ReferenceT < MemoryMapBroker > broker("MemoryMapBroker");
+    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
     return broker;
+}
+
+bool DataSource1::PrepareNextState(const RealTimeStateInfo &status) {
+    return true;
+}
+
+bool DataSource1::ChangeState() {
+    return true;
 }
 
 CLASS_REGISTER(DataSource1, "1.0");

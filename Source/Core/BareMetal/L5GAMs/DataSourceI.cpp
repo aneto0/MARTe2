@@ -398,6 +398,15 @@ bool DataSourceI::GetSignalProducerName(uint32 signalIdx,
     return ret;
 }
 
+bool DataSourceI::GetSignalDefaultValue(uint32 signalIdx,
+                                        StreamString &defaultValue) {
+    bool ret = MoveToSignalIndex(signalIdx);
+    if (!configuredDatabase.Read("Default", defaultValue)) {
+        defaultValue = "";
+    }
+    return ret;
+}
+
 bool DataSourceI::MoveToSignalIndex(uint32 signalIdx) {
     bool ret = configuredDatabase.MoveToRoot();
     if (ret) {

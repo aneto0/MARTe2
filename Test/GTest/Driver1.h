@@ -67,6 +67,9 @@ public:
 
     virtual ReferenceT<BrokerI> GetOutputWriter(const char8 * const functionName);
 
+    virtual bool PrepareNextState(const RealTimeStateInfo &status);
+
+    virtual bool ChangeState();
 };
 }
 

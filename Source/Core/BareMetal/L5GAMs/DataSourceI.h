@@ -137,6 +137,9 @@ public:
                                uint32 producerIdx,
                                StreamString &producerName);
 
+    bool GetSignalDefaultValue(uint32 signalIdx,
+                               StreamString &defaultValue);
+
     uint32 GetNumberOfFunctions();
 
     bool GetFunctionName(uint32 functionIdx,
@@ -191,11 +194,17 @@ public:
 
     virtual uint32 GetNumberOfMemoryBuffers() = 0;
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress) = 0;
+    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
+                                       uint32 bufferIdx,
+                                       void *&signalAddress) = 0;
 
     virtual ReferenceT<BrokerI> GetInputReader(const char8 * const functionName) = 0;
 
     virtual ReferenceT<BrokerI> GetOutputWriter(const char8 * const functionName) = 0;
+
+    virtual bool PrepareNextState(const RealTimeStateInfo &status) = 0;
+
+    virtual bool ChangeState() = 0;
 
 #if 0
     /**

@@ -2059,53 +2059,87 @@ bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory(SignalDire
             if (ret) {
                 ret = functionsDatabase.Read("QualifiedName", functionName);
             }
-            //Allocate the memory
-            ReferenceT<GAM> gam;
+            //Compute the total amount of memory
             if (ret) {
-                gam = realTimeApplication->Find(functionName.Buffer());
-            }
-            if (ret) {
-                ret = gam.IsValid();
-            }
-            if (ret) {
-                ret = functionsDatabase.MoveRelative("Memory");
+                ret = functionsDatabase.MoveRelative("Signals");
             }
             bool exists = false;
             if (ret) {
                 exists = functionsDatabase.MoveRelative(signalDirection);
             }
             if (exists) {
-                uint32 numberOfDataSources = 0u;
-                if (ret) {
-                    numberOfDataSources = functionsDatabase.GetNumberOfChildren();
-                }
-                uint32 d;
-                //For every DataSource in this function
-                for (d = 0u; (d < numberOfDataSources) && (ret); d++) {
-                    uint32 byteSize = 0u;
-                    StreamString dataSourceName;
-                    StreamString dataSourceId = functionsDatabase.GetChildName(d);
-                    ret = functionsDatabase.MoveRelative(dataSourceId.Buffer());
+                uint32 numberOfSignals = functionsDatabase.GetNumberOfChildren();
+                uint32 s;
+                uint32 totalByteSize = 0u;
+                for (s = 0u; (s < numberOfSignals) && (ret); s++) {
+                    ret = functionsDatabase.MoveRelative(functionsDatabase.GetChildName(s));
                     if (ret) {
-                        ret = functionsDatabase.Read("DataSource", dataSourceName);
-                    }
-                    if (ret) {
+                        uint32 byteSize = 0u;
                         ret = functionsDatabase.Read("ByteSize", byteSize);
-                    }
-                    //Allocate the memory
-                    void *signalBlockMemory = NULL_PTR(void *);
-                    if (ret) {
-                        if (direction == InputSignals) {
-                            signalBlockMemory = gam->AllocateInputSignalsMemory(byteSize);
-                        }
-                        else {
-                            signalBlockMemory = gam->AllocateOutputSignalsMemory(byteSize);
-                        }
-                        ret = functionsDatabase.Write("Address", signalBlockMemory);
+                        totalByteSize += byteSize;
                     }
                     if (ret) {
-                        //Move to SignalDirection level
-                        ret = functionsDatabase.MoveToAncestor(1u);
+                        functionsDatabase.MoveToAncestor(1u);
+                    }
+                }
+                //Move back to the Function level
+                functionsDatabase.MoveToAncestor(2u);
+                //Allocate the memory
+                ReferenceT<GAM> gam;
+                if (ret) {
+                    gam = realTimeApplication->Find(functionName.Buffer());
+                }
+                if (ret) {
+                    ret = gam.IsValid();
+                }
+                void *signalsMemory = NULL_PTR(void *);
+                if (ret) {
+                    if (direction == InputSignals) {
+                        signalsMemory = gam->AllocateInputSignalsMemory(totalByteSize);
+                    }
+                    else {
+                        signalsMemory = gam->AllocateOutputSignalsMemory(totalByteSize);
+                    }
+                }
+
+                if (ret) {
+                    ret = functionsDatabase.MoveRelative("Memory");
+                }
+                bool exists = false;
+                if (ret) {
+                    exists = functionsDatabase.MoveRelative(signalDirection);
+                }
+                if (exists) {
+                    uint32 numberOfDataSources = 0u;
+                    if (ret) {
+                        numberOfDataSources = functionsDatabase.GetNumberOfChildren();
+                    }
+
+                    uint32 allocatedBytes = 0u;
+                    uint32 d;
+                    //For every DataSource in this function
+                    for (d = 0u; (d < numberOfDataSources) && (ret); d++) {
+                        uint32 byteSize = 0u;
+                        StreamString dataSourceName;
+                        StreamString dataSourceId = functionsDatabase.GetChildName(d);
+                        ret = functionsDatabase.MoveRelative(dataSourceId.Buffer());
+                        if (ret) {
+                            ret = functionsDatabase.Read("DataSource", dataSourceName);
+                        }
+                        if (ret) {
+                            ret = functionsDatabase.Read("ByteSize", byteSize);
+                        }
+                        //Allocate the memory
+                        if (ret) {
+                            char8 *signalBlockMemoryChar = reinterpret_cast<char8 *>(signalsMemory);
+                            signalBlockMemoryChar += allocatedBytes;
+                            ret = functionsDatabase.Write("Address", reinterpret_cast<void *>(signalBlockMemoryChar));
+                            allocatedBytes += byteSize;
+                        }
+                        if (ret) {
+                            //Move to SignalDirection level
+                            ret = functionsDatabase.MoveToAncestor(1u);
+                        }
                     }
                 }
                 if (ret) {

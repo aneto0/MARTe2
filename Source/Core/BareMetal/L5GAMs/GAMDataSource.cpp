@@ -36,7 +36,8 @@
 #include <GAMDataSource.h>
 #include "DataSourceSignalRecord.h"
 #include "GAM.h"
-#include "MemoryMapBroker.h"
+#include "MemoryMapInputBroker.h"
+#include "MemoryMapOutputBroker.h"
 #include "ReferenceT.h"
 #include "StandardParser.h"
 #include "stdio.h"
@@ -125,6 +126,7 @@ static uint32 GetDataSourceDimension(Reference gamSignalIn) {
 
 GAMDataSource::GAMDataSource() :
         DataSourceI() {
+    currentBufferIndex = 0u;
     signalMemory[0] = NULL_PTR(void **);
     signalMemory[1] = NULL_PTR(void **);
     heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
@@ -147,8 +149,7 @@ GAMDataSource::~GAMDataSource() {
 }
 
 uint32 GAMDataSource::GetCurrentBufferIndex() {
-    //TODO
-    return 0u;
+    return currentBufferIndex;
 }
 
 uint32 GAMDataSource::GetNumberOfMemoryBuffers() {
@@ -188,15 +189,70 @@ bool GAMDataSource::AllocateMemory() {
 }
 
 ReferenceT<BrokerI> GAMDataSource::GetInputReader(const char8 * const functionName) {
-    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
+    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
     broker->Init(InputSignals, this, functionName);
     return broker;
 }
 
 ReferenceT<BrokerI> GAMDataSource::GetOutputWriter(const char8 * const functionName) {
-    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
+    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
     broker->Init(OutputSignals, this, functionName);
     return broker;
+}
+
+bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
+    uint32 nextBufferIndex = ((currentBufferIndex + 1u) % 2u);
+    //Set the default value for all the input signals
+    uint32 numberOfFunctions = GetNumberOfFunctions();
+    uint32 n;
+    bool ret = true;
+
+    for (n = 0u; (n < numberOfFunctions) && (ret); n++) {
+        uint32 numberOfFunctionInputSignals;
+        ret = GetFunctionNumberOfSignals(InputSignals, n, numberOfFunctionInputSignals);
+        uint32 i;
+        for (i = 0u; (i < numberOfFunctionInputSignals) && (ret); i++) {
+            StreamString functionSignalName;
+            if (ret) {
+                ret = GetFunctionSignalName(InputSignals, n, i, functionSignalName);
+            }
+            uint32 signalIdx;
+            if (ret) {
+                ret = GetSignalIndex(signalIdx, functionSignalName.Buffer());
+            }
+            StreamString defaultValueStr = "";
+            if (ret) {
+                ret = GetSignalDefaultValue(i, defaultValueStr);
+            }
+            bool update = (defaultValueStr.Size() > 0u);
+            //Variable used in the current state?
+            if (update && ret) {
+                uint32 numberOfProducersCurrentState;
+                if (!GetSignalNumberOfProducers(i, status.currentState, numberOfProducersCurrentState)) {
+                    numberOfProducersCurrentState = 0u;
+                }
+                //If the variable was not used update!
+                update = (numberOfProducersCurrentState == 0u);
+            }
+            TypeDescriptor typeDesc;
+            if (update && ret) {
+                typeDesc = GetSignalType(signalIdx);
+                ret = (typeDesc != InvalidType);
+            }
+            if (update && ret) {
+                AnyType defaultValue(typeDesc, 0u, signalMemory[nextBufferIndex][signalIdx]);
+                ret = TypeConvert(defaultValue, defaultValueStr);
+            }
+        }
+
+    }
+    return ret;
+}
+
+bool GAMDataSource::ChangeState() {
+    uint32 nextBufferIndex = ((currentBufferIndex + 1u) % 2u);
+    currentBufferIndex = nextBufferIndex;
+    return true;
 }
 
 #if 0
@@ -480,7 +536,7 @@ ReferenceT<BrokerI> GAMDataSource::GetOutputWriter(ReferenceT<GAMSignalI> signal
 
 bool GAMDataSource::IsSupportedBroker(BrokerI &testBroker) {
 
-    // only memory map broker descendants supported
+// only memory map broker descendants supported
     ReferenceT<MemoryMapBroker> test = testBroker;
     return test.IsValid();
 

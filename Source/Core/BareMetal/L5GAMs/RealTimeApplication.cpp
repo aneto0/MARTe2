@@ -2170,9 +2170,15 @@ bool RealTimeApplication::ConfigureApplication() {
         Find(dataSourcesFound, dataSourceFilter);
         uint32 numberOfDataSources = dataSourcesFound.Size();
         uint32 i;
+        RealTimeStateInfo stateInfo;
+        stateInfo.currentState = "";
+        stateInfo.nextState = "State1";
+
         for (i = 0u; i < numberOfDataSources; i++) {
             ReferenceT<DataSourceI> dataSource = dataSourcesFound.Get(i);
+            dataSource->PrepareNextState(stateInfo);
             printf("[%s]\n", dataSource->GetName());
+            dataSource->ChangeState();
 
             uint32 numberOfSignals = dataSource->GetNumberOfSignals();
             printf("Number of signals: %d\n", numberOfSignals);

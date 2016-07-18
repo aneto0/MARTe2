@@ -92,6 +92,10 @@ public:
 
     virtual ReferenceT<BrokerI> GetOutputWriter(const char8 * const functionName);
 
+    virtual bool PrepareNextState(const RealTimeStateInfo &status);
+
+    virtual bool ChangeState();
+
 #if 0
     /**
      * @brief Retrieves to the memory address containing the signal data.
@@ -225,6 +229,8 @@ protected:
 #endif
 
     void **signalMemory[2];
+
+    uint32 currentBufferIndex;
 
     HeapI *heap;
 };

@@ -83,9 +83,9 @@ public:
      */
     void * AllocateOutputSignalsMemory(uint32 numberOfBytes);
 
-    void * GetInputSignalAddress(uint32 signalIdx);
+    const void * GetInputSignalsBuffer();
 
-    void * GetOutputSignalAddress(uint32 signalIdx);
+    void * GetOutputSignalsBuffer();
 
     bool SetConfiguredDatabase(StructuredDataI & data);
 
@@ -154,7 +154,6 @@ public:
      */
     virtual bool Execute() = 0;
 
-protected:
     bool Read();
     bool Write();
 
@@ -295,18 +294,9 @@ private:
 #endif
     ConfigurationDatabase signalsDatabase;
 
-    void **inputSignalsMemoryBlocks;
+    void *inputSignalsMemory;
 
-    void **outputSignalsMemoryBlocks;
-
-    //Address irrespective of the DataSource
-    void **inputSignalsAbsoluteAddress;
-
-    void **outputSignalsAbsoluteAddress;
-
-    uint32 numberOfInputSignalsMemoryBlocks;
-
-    uint32 numberOfOutputSignalsMemoryBlocks;
+    void *outputSignalsMemory;
 
     uint32 numberOfInputSignals;
 

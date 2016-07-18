@@ -47,6 +47,11 @@
 
 namespace MARTe {
 BrokerI::BrokerI() {
+
+    numberOfCopies = 0u;
+    functionSignalPointers = NULL_PTR(void **);
+    copyByteSize = NULL_PTR(uint32 *);
+    copyOffset = NULL_PTR(uint32 *);
 #if 0
     application = NULL_PTR(RealTimeApplication *);
     finalised = false;
@@ -54,6 +59,16 @@ BrokerI::BrokerI() {
 }
 
 BrokerI::~BrokerI() {
+    if (functionSignalPointers != NULL_PTR(void **)) {
+        delete[] functionSignalPointers;
+    }
+    if (copyByteSize != NULL_PTR(uint32 *)) {
+        delete[] copyByteSize;
+    }
+    if (copyOffset != NULL_PTR(uint32 *)) {
+        delete[] copyOffset;
+    }
+
 #if 0
     uint32 nOfSignalsWithIndexBlocks = nIndexBlocksPerSignal.GetSize();
     uint32 ** element = NULL_PTR(uint32 **);
@@ -98,14 +113,14 @@ bool BrokerI::Finalise() {
     return IsFinalised();
 }
 
-void BrokerI::SetFinalised(bool isFinalised){
+void BrokerI::SetFinalised(bool isFinalised) {
     finalised = isFinalised;
 }
 
 bool BrokerI::AddSignalPrivate(ReferenceT<GAMSignalI> gamSignal,
-                               void *gamSignalMemory,
-                               uint32 initialOffset,
-                               uint32 offset) {
+        void *gamSignalMemory,
+        uint32 initialOffset,
+        uint32 offset) {
 
     bool ret = (application != NULL);
     if (ret) {
@@ -180,7 +195,7 @@ bool BrokerI::AddSignalPrivate(ReferenceT<GAMSignalI> gamSignal,
                         if (!found) {
                             ret = false;
                             REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Member %s of %s  with type %s does not matches with the introspection data",
-                                                    introEntry.GetMemberName(), gamSignal->GetName(), gamSignal->GetType())
+                                    introEntry.GetMemberName(), gamSignal->GetName(), gamSignal->GetType())
                         }
                     }
                 }
@@ -237,7 +252,7 @@ bool BrokerI::AddSignalPrivate(ReferenceT<GAMSignalI> gamSignal,
 }
 
 bool BrokerI::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
-                        void * const ptr) {
+        void * const ptr) {
 
     bool ret = (ptr != NULL);
     if (ret) {
@@ -255,14 +270,14 @@ bool BrokerI::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
             while ((dataSourceSignalPointers[0].GetSize() > last) && (ok)) {
                 if (!dataSourceSignalPointers[0].Remove(dataSourceSignalPointers[0].GetSize() - 1u)) {
                     REPORT_ERROR(ErrorManagement::FatalError,
-                                 "Failed to remove from dataSourceMemory[0]. This will lead to inconsistencies in the broker memory");
+                            "Failed to remove from dataSourceMemory[0]. This will lead to inconsistencies in the broker memory");
                     ok = false;
                 }
             }
             while ((dataSourceSignalPointers[1].GetSize() > last) && (ok)) {
                 if (!dataSourceSignalPointers[1].Remove(dataSourceSignalPointers[1].GetSize() - 1u)) {
                     REPORT_ERROR(ErrorManagement::FatalError,
-                                 "Failed to remove from dataSourceMemory[1]. This will lead to inconsistencies in the broker memory");
+                            "Failed to remove from dataSourceMemory[1]. This will lead to inconsistencies in the broker memory");
                     ok = false;
                 }
             }
@@ -275,28 +290,28 @@ bool BrokerI::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
             while ((samplesBlocksList.GetSize() > last) && (ok)) {
                 if (!samplesBlocksList.Remove(samplesBlocksList.GetSize() - 1u)) {
                     REPORT_ERROR(ErrorManagement::FatalError,
-                                 "Failed to remove from samplesBlocksList. This will lead to inconsistencies in the broker memory");
+                            "Failed to remove from samplesBlocksList. This will lead to inconsistencies in the broker memory");
                     ok = false;
                 }
             }
             while ((nIndexBlocksPerSignal.GetSize() > last) && (ok)) {
                 if (!nIndexBlocksPerSignal.Remove(nIndexBlocksPerSignal.GetSize() - 1u)) {
                     REPORT_ERROR(ErrorManagement::FatalError,
-                                 "Failed to remove from nIndexBlocksPerSignal. This will lead to inconsistencies in the broker memory");
+                            "Failed to remove from nIndexBlocksPerSignal. This will lead to inconsistencies in the broker memory");
                     ok = false;
                 }
             }
             while ((nSamplesBlocksPerSignal.GetSize() > last) && (ok)) {
                 if (!nSamplesBlocksPerSignal.Remove(nSamplesBlocksPerSignal.GetSize() - 1u)) {
                     REPORT_ERROR(ErrorManagement::FatalError,
-                                 "Failed to remove from nSamplesBlocksPerSignal. This will lead to inconsistencies in the broker memory");
+                            "Failed to remove from nSamplesBlocksPerSignal. This will lead to inconsistencies in the broker memory");
                     ok = false;
                 }
             }
             while ((nSamplesPerGAMSignalList.GetSize() > last) && (ok)) {
                 if (!nSamplesPerGAMSignalList.Remove(nSamplesPerGAMSignalList.GetSize() - 1u)) {
                     REPORT_ERROR(ErrorManagement::FatalError,
-                                 "Failed to remove from nSamplesPerGAMSignalList. This will lead to inconsistencies in the broker memory");
+                            "Failed to remove from nSamplesPerGAMSignalList. This will lead to inconsistencies in the broker memory");
                     ok = false;
                 }
             }
@@ -329,10 +344,9 @@ ReferenceT<DataSourceSignal> BrokerI::GetDataSourceSignal(ReferenceT<GAMSignalI>
     return dataSourceSignal;
 }
 
-
 bool BrokerI::SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
-                                 ReferenceT<DataSourceSignal> dataSourceSignal,
-                                 uint32 &typeSize) {
+        ReferenceT<DataSourceSignal> dataSourceSignal,
+        uint32 &typeSize) {
 
     bool ret = true;
 
@@ -378,7 +392,7 @@ bool BrokerI::SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
             }
             else {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Failed parsing the \"Samples\" field of %s. GetDataPointer() == NULL",
-                                        gamSignal->GetName())
+                        gamSignal->GetName())
             }
             if (ret) {
                 nSamplesBlocks = at.GetNumberOfElements(1u);
@@ -393,8 +407,8 @@ bool BrokerI::SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
             }
             else {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                        "The field \"Samples\" of %s must be declared as a nx3 matrix {{a,b,c}...} with a<=b<=c. Found number of columns != 3",
-                                        gamSignal->GetName())
+                        "The field \"Samples\" of %s must be declared as a nx3 matrix {{a,b,c}...} with a<=b<=c. Found number of columns != 3",
+                        gamSignal->GetName())
             }
             if (ret) {
                 // save begin index and size
@@ -409,8 +423,8 @@ bool BrokerI::SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
                     }
                     else {
                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                                "The field \"Samples\" of %s must be declared as a nx3 matrix {{a,b,c}...} with a<=b<c. Found a > c",
-                                                gamSignal->GetName())
+                                "The field \"Samples\" of %s must be declared as a nx3 matrix {{a,b,c}...} with a<=b<c. Found a > c",
+                                gamSignal->GetName())
                     }
                     if (ret) {
                         //check that the oldest index a is smaller than the total number of samples index
@@ -418,8 +432,8 @@ bool BrokerI::SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
                     }
                     else {
                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                                "The field \"Samples\" of %s must be declared as a nx3 matrix {{a,b,c}...} with a<=b<c. Found b > c",
-                                                gamSignal->GetName())
+                                "The field \"Samples\" of %s must be declared as a nx3 matrix {{a,b,c}...} with a<=b<c. Found b > c",
+                                gamSignal->GetName())
                     }
                     if (ret) {
                         // check that the newest index is greater than the oldest index
@@ -427,8 +441,8 @@ bool BrokerI::SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
                     }
                     else {
                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                                "The field \"Samples\" of %s must be declared as a nx3 matrix {{a,b,c}...} with a<=b<=c. Found a > b",
-                                                gamSignal->GetName())
+                                "The field \"Samples\" of %s must be declared as a nx3 matrix {{a,b,c}...} with a<=b<=c. Found a > b",
+                                gamSignal->GetName())
                     }
                     if (ret) {
                         // the size of the sample block in bytes
@@ -439,14 +453,14 @@ bool BrokerI::SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
                     }
                     else {
                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                                "The field \"Samples\" of %s must be declared as a nx3 matrix {{a,b,c}...} with b<=a<=c. Found b > a",
-                                                gamSignal->GetName())
+                                "The field \"Samples\" of %s must be declared as a nx3 matrix {{a,b,c}...} with b<=a<=c. Found b > a",
+                                gamSignal->GetName())
                     }
                 }
             }
             else {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The field \"Samples\" of %s must be declared as a nx3 matrix {{a,b,c}...} with b<=a<=c",
-                                        gamSignal->GetName())
+                        gamSignal->GetName())
             }
         }
         else {
@@ -503,7 +517,7 @@ bool BrokerI::SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
             }
             else {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                        "The field \"Index\" of %s must declare a nx2 matrix {{a,b}...}. Found number of columns != 2.", gamSignal->GetName())
+                        "The field \"Index\" of %s must declare a nx2 matrix {{a,b}...}. Found number of columns != 2.", gamSignal->GetName())
             }
             uint32 testSize = 0u;
             if (ret) {
@@ -528,27 +542,27 @@ bool BrokerI::SetBlockParameters(ReferenceT<GAMSignalI> gamSignal,
                     }
                     else {
                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Defined indexes do not fit in the DataSourceSignal memory!.",
-                                                gamSignal->GetName())
+                                gamSignal->GetName())
                     }
                 }
             }
             else {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                        "The field \"Index\" of %s must declare a nx2 matrix {{a,b}...}. Failed to parse \"Index\" field.",
-                                        gamSignal->GetName())
+                        "The field \"Index\" of %s must declare a nx2 matrix {{a,b}...}. Failed to parse \"Index\" field.",
+                        gamSignal->GetName())
             }
             if (ret) {
                 ret = (testSize <= nOfGAMElements);
                 if (testSize != nOfGAMElements) {
                     REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "The GAM signal %s has more elements than the the effective read-write ones",
-                                            gamSignal->GetName())
+                            gamSignal->GetName())
                 }
             }
             else {
                 // def can be added to another broker?
                 REPORT_ERROR_PARAMETERS(ErrorManagement::RecoverableError,
-                                        "The field \"Index\" of %s must declare a nx2 matrix {{a,b}...} with a,b<DataSourceSignal::GetNumberOfElements(*)",
-                                        gamSignal->GetName())
+                        "The field \"Index\" of %s must declare a nx2 matrix {{a,b}...} with a,b<DataSourceSignal::GetNumberOfElements(*)",
+                        gamSignal->GetName())
 
             }
         }
@@ -640,8 +654,8 @@ uint32 BrokerI::GetNumberOfIndexBlocks(uint32 signalIndex) {
 }
 
 bool BrokerI::GetIndexBlockStartIndex(uint32 signalIndex,
-                                      uint32 blockIndex,
-                                      uint32 &startIndex) {
+        uint32 blockIndex,
+        uint32 &startIndex) {
     bool ok = false;
     uint32 nIndexBlocksSignal;
     if (!nIndexBlocksPerSignal.Peek(signalIndex, nIndexBlocksSignal)) {
@@ -655,8 +669,8 @@ bool BrokerI::GetIndexBlockStartIndex(uint32 signalIndex,
 }
 
 bool BrokerI::GetIndexBlockSize(uint32 signalIndex,
-                                uint32 blockIndex,
-                                uint32 &size) {
+        uint32 blockIndex,
+        uint32 &size) {
     bool ok = false;
     uint32 nIndexBlocksSignal;
     if (!nIndexBlocksPerSignal.Peek(signalIndex, nIndexBlocksSignal)) {
@@ -670,8 +684,8 @@ bool BrokerI::GetIndexBlockSize(uint32 signalIndex,
 }
 
 bool BrokerI::GetSamplesBlockStartIndex(uint32 signalIndex,
-                                        uint32 blockIndex,
-                                        uint32 &startIndex) {
+        uint32 blockIndex,
+        uint32 &startIndex) {
     bool ok = false;
     uint32 nSamplesBlocksSignal;
     if (!nSamplesBlocksPerSignal.Peek(signalIndex, nSamplesBlocksSignal)) {
@@ -685,8 +699,8 @@ bool BrokerI::GetSamplesBlockStartIndex(uint32 signalIndex,
 }
 
 bool BrokerI::GetSamplesBlockSize(uint32 signalIndex,
-                                  uint32 blockIndex,
-                                  uint32 &size) {
+        uint32 blockIndex,
+        uint32 &size) {
     bool ok = false;
     uint32 nSamplesBlocksSignal;
     if (!nSamplesBlocksPerSignal.Peek(signalIndex, nSamplesBlocksSignal)) {
@@ -704,7 +718,7 @@ uint32 BrokerI::GetNumberOfSignals() {
 }
 
 void *BrokerI::GetDataSourcePointer(uint32 signalIndex,
-                                    uint32 buffer) {
+        uint32 buffer) {
     return (dataSourceSignalPointers[buffer])[signalIndex];
 }
 
@@ -761,8 +775,8 @@ uint32 BrokerI::GetTotalNumberOfIndexBlocks() {
 }
 
 void *BrokerI::GetGAMSignalPointer(uint32 signalIndex,
-                                   uint32 sampleBlockNumber,
-                                   uint32 indexBlockNumber) {
+        uint32 sampleBlockNumber,
+        uint32 indexBlockNumber) {
     uint32 indexBlockSize = 0u;
     void *gamSignalPointer = NULL_PTR(void *);
     bool ok = GetIndexBlockSize(signalIndex, indexBlockNumber, indexBlockSize);
@@ -775,9 +789,9 @@ void *BrokerI::GetGAMSignalPointer(uint32 signalIndex,
 }
 
 void *BrokerI::GetDataSourceSignalPointer(uint32 signalIndex,
-                                          uint32 sampleBlockNumber,
-                                          uint32 indexBlockNumber,
-                                          uint32 buffer) {
+        uint32 sampleBlockNumber,
+        uint32 indexBlockNumber,
+        uint32 buffer) {
     uint32 indexBlockStart = 0u;
     uint32 sampleBlockSize = 0u;
 
@@ -797,7 +811,7 @@ void *BrokerI::GetDataSourceSignalPointer(uint32 signalIndex,
 }
 
 void *BrokerI::GetSignalByName(const char8 * name,
-                               uint32 &index) {
+        uint32 &index) {
     uint32 numberOfSignals = Size();
     bool found = false;
     void* ret = NULL_PTR(void*);
@@ -814,5 +828,84 @@ void *BrokerI::GetSignalByName(const char8 * name,
     return ret;
 }
 #endif
+
+uint32 BrokerI::GetNumberOfCopies() {
+    return numberOfCopies;
+}
+
+uint32 BrokerI::GetCopyByteSize(uint32 copyIdx) {
+    return copyByteSize[copyIdx];
+}
+
+uint32 BrokerI::GetCopyOffset(uint32 copyIdx) {
+    return copyOffset[copyIdx];
+}
+
+void *BrokerI::GetFunctionPointer(uint32 copyIdx) {
+    return functionSignalPointers[copyIdx];
+}
+
+bool BrokerI::InitFunctionPointers(SignalDirection direction,
+                                   ReferenceT<DataSourceI> dataSource,
+                                   const char8 * const functionName) {
+    //Find the function
+    uint32 functionIdx;
+    bool ret = dataSource->GetFunctionIndex(functionIdx, functionName);
+    //For this function, how many signals in this direction
+    uint32 functionNumberOfSignals = 0u;
+    if (ret) {
+        ret = dataSource->GetFunctionNumberOfSignals(direction, functionIdx, functionNumberOfSignals);
+    }
+    numberOfCopies = 0u;
+    uint32 numberOfByteOffsets = 0u;
+    uint32 n;
+    for (n = 0u; (n < functionNumberOfSignals) && (ret); n++) {
+        if (ret) {
+            ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, n, numberOfByteOffsets);
+        }
+        if (ret) {
+            //One copy for each signal but each signal might want to copy several pieces (i.e. offsets)
+            numberOfCopies += numberOfByteOffsets;
+        }
+    }
+    if (numberOfCopies > 0u) {
+        functionSignalPointers = new void*[numberOfCopies];
+        copyByteSize = new uint32[numberOfCopies];
+        copyOffset = new uint32[numberOfCopies];
+
+        uint32 memoryOffset = 0u;
+        uint32 c = 0u;
+        //The same signal can be copied from different ranges. A CopyTableEntry is added for each signal range.
+        for (n = 0u; (n < functionNumberOfSignals) && (ret); n++) {
+            void *gamMemoryAddress = NULL_PTR(void *);
+            ret = dataSource->GetFunctionSignalsAddress(direction, functionIdx, gamMemoryAddress);
+            if (ret) {
+                ret = (gamMemoryAddress != NULL_PTR(void *));
+            }
+            if (ret) {
+                ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, n, numberOfByteOffsets);
+            }
+
+            uint32 bo;
+            //Take into account  different ranges for the same signal
+            for (bo = 0u; (bo < numberOfByteOffsets) && (ret); bo++) {
+                uint32 offsetStart;
+                uint32 copySize;
+                ret = dataSource->GetFunctionSignalByteOffsetInfo(direction, functionIdx, n, bo, offsetStart, copySize);
+                if (ret) {
+                    copyByteSize[c] = copySize;
+                    copyOffset[c] = offsetStart;
+
+                    char8 *gamMemoryCharAddress = reinterpret_cast<char8 *>(gamMemoryAddress);
+                    gamMemoryCharAddress += memoryOffset;
+                    functionSignalPointers[c] = reinterpret_cast<void *>(gamMemoryCharAddress);
+                    memoryOffset += copySize;
+                }
+                c++;
+            }
+        }
+    }
+    return ret;
+}
 
 }

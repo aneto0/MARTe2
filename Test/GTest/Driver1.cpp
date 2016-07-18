@@ -87,5 +87,13 @@ ReferenceT<BrokerI> Driver1::GetOutputWriter(const char8 * const functionName) {
     return broker;
 }
 
+bool Driver1::PrepareNextState(const RealTimeStateInfo &status) {
+    return true;
+}
+
+bool Driver1::ChangeState() {
+    return true;
+}
+
 CLASS_REGISTER(Driver1, "1.0");
 }

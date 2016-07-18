@@ -61,21 +61,23 @@ bool AndreGAM1::Execute() {
     uint32 numberOfOutputSignals = GetNumberOfOutputSignals();
     printf("Inputs\n");
     uint32 n;
+    uint32 *inputBuffer = (uint32 *) GetInputSignalsBuffer();
     for (n = 0u; n < numberOfInputSignals; n++) {
         StreamString signalName;
         GetSignalName(InputSignals, n, signalName);
-        uint32 signalValue = *((uint32 *) GetInputSignalAddress(n));
+        uint32 signalValue = *(inputBuffer + n);
         printf("  %s = %u\n", signalName.Buffer(), signalValue);
     }
+    uint32 *outputBuffer = (uint32 *) GetOutputSignalsBuffer();
     for (n = 0u; n < numberOfOutputSignals; n++) {
-        *((uint32 *) GetOutputSignalAddress(n)) = aaa * (n + 1) * 100;
+        *(outputBuffer + n) = aaa * (n + 1) * 100;
     }
     printf("Outputs\n");
     Write();
     for (n = 0u; n < numberOfOutputSignals; n++) {
         StreamString signalName;
         GetSignalName(OutputSignals, n, signalName);
-        uint32 signalValue = *((uint32 *) GetOutputSignalAddress(n));
+        uint32 signalValue = *(outputBuffer + n);
         printf("  %s = %u\n", signalName.Buffer(), signalValue);
     }
     aaa++;
