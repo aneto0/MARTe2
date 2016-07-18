@@ -39,7 +39,7 @@
 /*---------------------------------------------------------------------------*/
 static void MyErrorProcessFunction(const ErrorManagement::ErrorInformation &errorInfo,
                                    const char8 * const errorDescription) {
-//    printf("---->>%s\n", errorDescription);
+    printf("---->>%s\n", errorDescription);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -231,7 +231,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_Typ
             "        Class = ReferenceContainer"
             "        DefaultDataSource = DDB1"
             "        +DDB1 = {"
-            "            Class = DataSourceI"
+            "            Class = DS1"
             "        }"
             "    }"
             "    +States = {"
@@ -333,7 +333,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NEl
             "        Class = ReferenceContainer"
             "        DefaultDataSource = DDB1"
             "        +DDB1 = {"
-            "            Class = DataSourceI"
+            "            Class = DS1"
             "        }"
             "    }"
             "    +States = {"
@@ -432,7 +432,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NDi
             "        Class = ReferenceContainer"
             "        DefaultDataSource = DDB1"
             "        +DDB1 = {"
-            "            Class = DataSourceI"
+            "            Class = DS1"
             "        }"
             "    }"
             "    +States = {"
@@ -586,7 +586,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_P
             "        Class = ReferenceContainer"
             "        DefaultDataSource = DDB1"
             "        +DDB1 = {"
-            "            Class = DataSourceI"
+            "            Class = DS1"
             "            Signals = {"
             "                Predefined = {"
             "                    NumberOfElements = 3"
@@ -695,7 +695,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFa
             "        Class = ReferenceContainer"
             "        DefaultDataSource = DDB1"
             "        +DDB1 = {"
-            "            Class = DataSourceI"
+            "            Class = DS1"
             "            Signals = {"
             "                Empty = {"
             "                    NumberOfElements = 3"
@@ -800,7 +800,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFa
             "        Class = ReferenceContainer"
             "        DefaultDataSource = DDB1"
             "        +DDB1 = {"
-            "            Class = DataSourceI"
+            "            Class = DS1"
             "        }"
             "    }"
             "    +States = {"
@@ -960,7 +960,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignals2() 
             "        Class = ReferenceContainer"
             "        DefaultDataSource = DDB1"
             "        +DDB1 = {"
-            "            Class = DataSourceI"
+            "            Class = DS1"
             "        }"
             "    }"
             "    +States = {"
@@ -1069,7 +1069,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsFals
             "        Class = ReferenceContainer"
             "        DefaultDataSource = DDB1"
             "        +DDB1 = {"
-            "            Class = DataSourceI"
+            "            Class = DS1"
             "        }"
             "    }"
             "    +States = {"
@@ -1298,7 +1298,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_SameGAM
             "        Class = ReferenceContainer"
             "        DefaultDataSource = DDB1"
             "        +DDB1 = {"
-            "            Class = DataSourceI"
+            "            Class = DS1"
             "        }"
             "    }"
             "    +States = {"
@@ -1384,3 +1384,749 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_SameGAM
     return (!rtAppBuilder.ResolveStates());
 }
 
+bool RealTimeApplicationConfigurationBuilderTest::TestResolveConsumersAndProducers() {
+    ConfigurationDatabase cdb;
+    config1.Seek(0);
+    StandardParser parser(config1, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveStates()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return true;
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducers() {
+    ConfigurationDatabase cdb;
+    config1.Seek(0);
+    StandardParser parser(config1, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveStates()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyConsumersAndProducers()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return true;
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducersFalse_TwoProducers() {
+
+    static StreamString configLocal = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = int32"
+            "                    Alias = SharedVar"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            OutputSignals = {"
+            "                Signal2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = int32"
+            "                    Alias = SharedVar"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = DS1"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA, :Functions.GAMB}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    ConfigurationDatabase cdb;
+    configLocal.Seek(0);
+    StandardParser parser(configLocal, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveStates()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return (!rtAppBuilder.VerifyConsumersAndProducers());
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducersFalse_MemoryOverlap() {
+
+    static StreamString configLocal = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = int32"
+            "                    Alias = SharedVar"
+            "                    NumberOfDimensions = 1"
+            "                    NumberOfElements = 32"
+            "                    Ranges = {{0 10}{15 20}}"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            OutputSignals = {"
+            "                Signal2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = int32"
+            "                    Alias = SharedVar"
+            "                    NumberOfDimensions = 1"
+            "                    NumberOfElements = 32"
+            "                    Ranges = {{11 14}{20 31}}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = DS1"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA, :Functions.GAMB}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    ConfigurationDatabase cdb;
+    configLocal.Seek(0);
+    StandardParser parser(configLocal, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveStates()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return (!rtAppBuilder.VerifyConsumersAndProducers());
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemorySize() {
+    ConfigurationDatabase cdb;
+    config1.Seek(0);
+    StandardParser parser(config1, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveStates()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignalsMemorySize()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return true;
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxMin() {
+
+    static StreamString configLocal = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = int32"
+            "                    Alias = SharedVar"
+            "                    NumberOfDimensions = 1"
+            "                    NumberOfElements = 32"
+            "                    Ranges = {{0 10}{15 20}}"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            OutputSignals = {"
+            "                Signal2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = int32"
+            "                    Alias = SharedVar"
+            "                    NumberOfDimensions = 1"
+            "                    NumberOfElements = 32"
+            "                    Ranges = {{14 11}{21 31}}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = DS1"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA, :Functions.GAMB}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    ConfigurationDatabase cdb;
+    configLocal.Seek(0);
+    StandardParser parser(configLocal, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveStates()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyConsumersAndProducers()) {
+        return false;
+    }
+
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return !rtAppBuilder.ResolveFunctionSignalsMemorySize();
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxNElements() {
+
+    static StreamString configLocal = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = int32"
+            "                    Alias = SharedVar"
+            "                    NumberOfDimensions = 1"
+            "                    NumberOfElements = 32"
+            "                    Ranges = {{0 10}{15 20}}"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            OutputSignals = {"
+            "                Signal2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = int32"
+            "                    Alias = SharedVar"
+            "                    NumberOfDimensions = 1"
+            "                    NumberOfElements = 32"
+            "                    Ranges = {{11 14}{21 32}}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = DS1"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA, :Functions.GAMB}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    ConfigurationDatabase cdb;
+    configLocal.Seek(0);
+    StandardParser parser(configLocal, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveStates()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyConsumersAndProducers()) {
+        return false;
+    }
+
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return !rtAppBuilder.ResolveFunctionSignalsMemorySize();
+}

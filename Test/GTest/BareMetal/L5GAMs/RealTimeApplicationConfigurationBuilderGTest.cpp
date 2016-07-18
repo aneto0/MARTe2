@@ -91,7 +91,6 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignalsFa
     ASSERT_TRUE(test.TestVerifyDataSourcesSignalsFalse_PartialInPredefinedDsWithType());
 }
 
-
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveFunctionSignals());
@@ -112,13 +111,47 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyFunctionSignals) {
     ASSERT_TRUE(test.TestVerifyFunctionSignals());
 }
 
-
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveStates) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveStates());
 }
 
- TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_SameGAMIn2Threads) {
-     RealTimeApplicationConfigurationBuilderTest test;
-     ASSERT_TRUE(test.TestResolveStatesFalse_SameGAMIn2Threads());
- }
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_SameGAMIn2Threads) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStatesFalse_SameGAMIn2Threads());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveConsumersAndProducers) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveConsumersAndProducers());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyConsumersAndProducers());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducersFalse_TwoProducers) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_TwoProducers());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducersFalse_MemoryOverlap) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_MemoryOverlap());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySize) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySize());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxMin) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxMin());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxNElements) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxNElements());
+}

@@ -77,23 +77,25 @@ static StreamString config1 = ""
         "                        Type = uint32"
         "                        Alias = SharedVar"
         "                        NumberOfDimensions = 2"
-        "                        NumberOfElements = 2"
-        "                        Ranges = {{0 0}}"
+        "                        NumberOfElements = 32"
+        "                        Ranges = {{0 0},{3 5}}"
         "                    }"
         "                }"
         "            }"
         "            +GAMA = {"
         "                Class = GAM1"
-        "                InputSignals = {"
+        "                OutputSignals = {"
         "                    Signal1 = {"
         "                        DataSource = DDB1"
         "                        Type = uint32"
         "                        Alias = SharedVar"
         "                        NumberOfDimensions = 2"
-        "                        NumberOfElements = 2"
-        "                        Ranges = {{0 0}}"
+        "                        NumberOfElements = 32"
+        "                        Ranges = {{1 2},{6 31}}"
         "                        TimeCyclesSamples = {1 1}"
         "                    }"
+        "                }"
+        "                InputSignals = {"
         "                    Signal2 = {"
         "                        DataSource = DDB2"
         "                        Alias = PredefinedSignal"
@@ -114,12 +116,12 @@ static StreamString config1 = ""
         "        Class = ReferenceContainer"
         "        DefaultDataSource = DDB1"
         "        +DDB1 = {"
-        "            Class = DataSourceI"
+        "            Class = DS1"
         "        }"
         "        +DDB2 = {"
-        "            Class = DataSourceI"
+        "            Class = DS1"
         "            +DDB1 = {"
-        "                Class = DataSourceI"
+        "                Class = DS1"
         "                Signals = {"
         "                    Signal1 = {"
         "                        Type = int32"
@@ -168,6 +170,10 @@ static StreamString config1 = ""
         "    }"
         "}";
 
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
 class GAM1: public GAM {
 public:
     CLASS_REGISTER_DECLARATION()
@@ -192,6 +198,43 @@ struct A {
     float32 a2;
 };
 
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+
+namespace MARTe {
+class DS1: public DataSourceI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    DS1();
+
+    virtual ~DS1();
+
+    virtual bool Initialise(StructuredDataI & data);
+
+    virtual uint32 GetCurrentBufferIndex();
+
+    virtual uint32 GetNumberOfMemoryBuffers();
+
+    virtual bool GetSignalMemoryBuffer(uint32 functionIdx,
+                                       uint32 functionSignalIdx,
+                                       uint32 bufferIdx,
+                                       void *&signalAddress);
+
+    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
+                                       uint32 bufferIdx,
+                                       void *&signalAddress);
+
+    virtual bool AllocateMemory();
+
+    virtual ReferenceT<BrokerI> GetInputReader(const char8 * const functionName);
+
+    virtual ReferenceT<BrokerI> GetOutputWriter(const char8 * const functionName);
+
+};
+}
 
 
 #if 0

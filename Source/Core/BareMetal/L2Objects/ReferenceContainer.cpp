@@ -63,7 +63,9 @@ Reference ReferenceContainer::Get(const uint32 idx) {
                 ref = node->GetReference();
             }
         }
-        REPORT_ERROR(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
+        else {
+            REPORT_ERROR(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
+        }
     }
     UnLock();
     return ref;

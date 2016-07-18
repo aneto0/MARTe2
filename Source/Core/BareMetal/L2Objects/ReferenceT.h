@@ -168,12 +168,48 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+template<typename T>
+void ReferenceT<T>::Init() {
+    objectPointer = static_cast<Object *>(NULL);
+    typeTObjectPointer = static_cast<T *>(NULL);
+}
+
 /*lint -e{1566} Init function initializes members */
 template<typename T>
 ReferenceT<T>::ReferenceT(const Reference& sourceReference) :
         Reference(sourceReference) {
     //use operator =
     (*this) = sourceReference;
+}
+
+/*lint -e{1566} Init function initializes members */
+template<typename T>
+ReferenceT<T>::ReferenceT() :
+        Reference() {
+    Init();
+}
+
+
+/*lint -e{1566} Init function initializes members */
+/*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
+ * i.e. downcasting is necessary.*/
+template<typename T>
+ReferenceT<T>::ReferenceT(HeapI* const heap) :
+        Reference() {
+    Init();
+    T *p = new (heap) T;
+    if (p != NULL) {
+        Object *obj;
+        obj = dynamic_cast<Object *>(p);
+        if (obj != NULL) {
+            Reference::operator=(obj);
+            typeTObjectPointer = p;
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
+        }
+    }
 }
 
 template<typename T>
@@ -204,7 +240,6 @@ ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);
         if (typeTObjectPointer == NULL) {
             RemoveReference();
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
         }
     }
 
@@ -239,39 +274,9 @@ bool ReferenceT<T>::Initialise(StructuredDataI &data,
     return ok;
 }
 
-template<typename T>
-void ReferenceT<T>::Init() {
-    objectPointer = static_cast<Object *>(NULL);
-    typeTObjectPointer = static_cast<T *>(NULL);
-}
 
-/*lint -e{1566} Init function initializes members */
-template<typename T>
-ReferenceT<T>::ReferenceT() :
-        Reference() {
-    Init();
-}
 
-/*lint -e{1566} Init function initializes members */
-/*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
- * i.e. downcasting is necessary.*/
-template<typename T>
-ReferenceT<T>::ReferenceT(HeapI* const heap) :
-        Reference() {
-    Init();
-    T *p = new (heap) T;
-    if (p != NULL) {
-        Object *obj;
-        obj = dynamic_cast<Object *>(p);
-        if (obj != NULL) {
-            Reference::operator=(obj);
-            typeTObjectPointer = p;
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
-        }
-    }
-}
+
 
 /*lint -e{1566} Init function initializes members */
 /*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
@@ -308,8 +313,6 @@ ReferenceT<T>::ReferenceT(const char8* const typeName,
         if (typeTObjectPointer == NULL) {
             Reference::RemoveReference();
             typeTObjectPointer = static_cast<T *>(NULL);
-        }
-        else {
             REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
         }
     }
