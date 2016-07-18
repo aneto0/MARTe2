@@ -38,15 +38,21 @@
 #include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                          Forward declarations                             */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
 
+namespace MARTe {
 /**
  * Forward declaration of the operating system specific properties (defined in the operating system
  * specific unit file).
  */
 struct EventSemProperties;
+}
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+namespace MARTe {
 
 /**
  * @brief Event semaphore.
