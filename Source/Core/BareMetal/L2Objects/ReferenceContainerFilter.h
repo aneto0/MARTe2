@@ -35,6 +35,14 @@
 #include "Reference.h"
 
 /*---------------------------------------------------------------------------*/
+/*                          Forward declarations                             */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+class ReferenceContainer;
+}
+
+/*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
@@ -70,8 +78,6 @@ const uint32 PATH = 0x4u;
 const uint32 REMOVE = 0x8u;
 
 }
-
-class ReferenceContainer;
 
 /**
  * @brief Defines the filtering criteria for the ReferenceContainer searches.

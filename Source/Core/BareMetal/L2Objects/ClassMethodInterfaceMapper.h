@@ -37,12 +37,18 @@
 #include "ClassMethodCallerT.h"
 
 /*---------------------------------------------------------------------------*/
+/*                          Forward declarations                             */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+class Object;
+}
+
+/*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-class Object;
 
 /**
  * @brief Implementation of an object which stores and calls a class method.

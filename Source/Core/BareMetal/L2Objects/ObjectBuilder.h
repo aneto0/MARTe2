@@ -35,12 +35,18 @@
 #include "HeapI.h"
 
 /*---------------------------------------------------------------------------*/
+/*                          Forward declarations                             */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+class Object;
+}
+
+/*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-class Object;
 
 /**
  * @brief Implements an invalid object builder that can be re-implemented by descendants.

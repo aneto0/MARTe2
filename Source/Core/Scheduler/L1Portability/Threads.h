@@ -38,14 +38,20 @@
 #include "Threads.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Module declaration                               */
+/*                          Forward declarations                             */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
 
+namespace MARTe {
 /**
  * Forward declaration of a thread information database.
  */
 class ThreadInformation;
+}
+
+/*---------------------------------------------------------------------------*/
+/*                           Module declaration                               */
+/*---------------------------------------------------------------------------*/
+namespace MARTe {
 
 /**
  * Definition of the thread callback function.
