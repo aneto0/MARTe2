@@ -233,6 +233,10 @@ public:
 
     virtual ReferenceT<BrokerI> GetOutputWriter(const char8 * const functionName);
 
+    virtual bool PrepareNextState(const MARTe::RealTimeStateInfo&);
+
+    virtual bool ChangeState();
+
 };
 }
 

@@ -31,6 +31,8 @@
 
 #include "GAMTestHelper.h"
 #include "ConfigurationDatabase.h"
+#include "MemoryMapInputBroker.h"
+#include "MemoryMapOutputBroker.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -77,17 +79,10 @@ bool GAM1::Execute() {
 
 CLASS_REGISTER(GAM1, "1.0");
 
-
-
-
-
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
-
-
-
 
 DS1::DS1() :
         DataSourceI() {
@@ -111,9 +106,9 @@ uint32 DS1::GetNumberOfMemoryBuffers() {
 }
 
 bool DS1::GetSignalMemoryBuffer(uint32 functionIdx,
-                                    uint32 functionSignalIdx,
-                                    uint32 bufferIdx,
-                                    void *&signalAddress) {
+                                uint32 functionSignalIdx,
+                                uint32 bufferIdx,
+                                void *&signalAddress) {
     return true;
 }
 
@@ -122,24 +117,30 @@ bool DS1::AllocateMemory() {
 }
 
 bool DS1::GetSignalMemoryBuffer(uint32 signalIdx,
-                                    uint32 bufferIdx,
-                                    void *&signalAddress) {
+                                uint32 bufferIdx,
+                                void *&signalAddress) {
     return true;
 }
 
 ReferenceT<BrokerI> DS1::GetInputReader(const char8 * const functionName) {
-    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
+    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
     return broker;
 }
 
 ReferenceT<BrokerI> DS1::GetOutputWriter(const char8 * const functionName) {
-    ReferenceT<MemoryMapBroker> broker("MemoryMapBroker");
+    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
     return broker;
 }
 
+bool DS1::PrepareNextState(const MARTe::RealTimeStateInfo&) {
+    return true;
+}
+
+bool DS1::ChangeState() {
+    return true;
+}
+
 CLASS_REGISTER(DS1, "1.0");
-
-
 
 #if 0
 
