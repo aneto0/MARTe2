@@ -122,14 +122,18 @@ bool DS1::GetSignalMemoryBuffer(uint32 signalIdx,
     return true;
 }
 
-ReferenceT<BrokerI> DS1::GetInputReader(const char8 * const functionName) {
+ReferenceContainer DS1::GetInputReaders(const char8 * const functionName) {
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
-    return broker;
+    ReferenceContainer brokers;
+    brokers.Insert(broker);
+    return brokers;
 }
 
-ReferenceT<BrokerI> DS1::GetOutputWriter(const char8 * const functionName) {
+ReferenceContainer DS1::GetOutputWriters(const char8 * const functionName) {
     ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
-    return broker;
+    ReferenceContainer brokers;
+    brokers.Insert(broker);
+    return brokers;
 }
 
 bool DS1::PrepareNextState(const MARTe::RealTimeStateInfo&) {

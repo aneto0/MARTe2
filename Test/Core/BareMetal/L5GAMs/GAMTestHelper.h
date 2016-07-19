@@ -229,9 +229,9 @@ public:
 
     virtual bool AllocateMemory();
 
-    virtual ReferenceT<BrokerI> GetInputReader(const char8 * const functionName);
+    virtual ReferenceContainer GetInputReaders(const char8 * const functionName);
 
-    virtual ReferenceT<BrokerI> GetOutputWriter(const char8 * const functionName);
+    virtual ReferenceContainer GetOutputWriters(const char8 * const functionName);
 
     virtual bool PrepareNextState(const MARTe::RealTimeStateInfo&);
 

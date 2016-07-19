@@ -35,6 +35,7 @@
 #include "GAMSignalI.h"
 #include "RealTimeApplication.h"
 #include "ReferenceContainer.h"
+#include "ExecutableI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -46,7 +47,7 @@ namespace MARTe {
  * @details A class that implements this interface is capable of connecting signals from
  *  DataSourceSignalI components with signals from GAMSignalI components.
  */
-class BrokerI: public ReferenceContainer {
+class BrokerI: public ExecutableI {
 
 public:
 
@@ -57,8 +58,6 @@ public:
     virtual bool Init(SignalDirection direction,
                       ReferenceT<DataSourceI> dataSourceIn,
                       const char8 * const functionName) = 0;
-
-    virtual bool Execute(const TimeoutType &timeout = TTInfiniteWait) = 0;
 
     uint32 GetNumberOfCopies();
 

@@ -1702,7 +1702,7 @@ bool RealTimeApplicationConfigurationBuilder::BuildProducersRanges() {
                     for (uint32 k = 0u; (k < rangeRows) && (ret); k++) {
                         // allocate new memory if needed
                         if (reachSignalRanges >= minNumberOfSignalRanges) {
-                            uint32 newSize=reachSignalRanges + 2u;
+                            uint32 newSize = reachSignalRanges + 2u;
                             uint32 *temp = new uint32[newSize];
                             ret = MemoryOperationsHelper::Copy(temp, signalRanges, (minNumberOfSignalRanges * sizeof(uint32)));
                             minNumberOfSignalRanges = newSize;
@@ -1751,13 +1751,11 @@ bool RealTimeApplicationConfigurationBuilder::CheckProducersRanges(uint32 *range
     return ret;
 }
 
-
 ////////////////////////////////
 ////////////////////////////////
 // ResolveFunctionSignalsMemorySize
 ////////////////////////////////
 ////////////////////////////////
-
 
 bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize() {
     bool ret = ResolveFunctionSignalsMemorySize(InputSignals);
@@ -1766,8 +1764,6 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize()
     }
     return ret;
 }
-
-
 
 bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(SignalDirection direction) {
     const char8 *signalDirection = "InputSignals";
@@ -1864,19 +1860,19 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(S
                                                                         signalName.Buffer(), functionName.Buffer())
                                             }
                                         }/*
-                                        if (ret) {
-                                            if (n > 0u) {
-                                                //Do not allow overlapping arrays!
-                                                // works only in case ranges are defined in crescent order
-                                                // this check is already done in VerifyConsumersAndProducers
-                                                if (lastMaxIdx > minIdx) {
-                                                    ret = false;
-                                                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
-                                                                            "Illegal Ranges for signal %s in %s: overlapping Ranges are not allowed",
-                                                                            signalName.Buffer(), functionName.Buffer())
-                                                }
-                                            }
-                                        }*/
+                                         if (ret) {
+                                         if (n > 0u) {
+                                         //Do not allow overlapping arrays!
+                                         // works only in case ranges are defined in crescent order
+                                         // this check is already done in VerifyConsumersAndProducers
+                                         if (lastMaxIdx > minIdx) {
+                                         ret = false;
+                                         REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
+                                         "Illegal Ranges for signal %s in %s: overlapping Ranges are not allowed",
+                                         signalName.Buffer(), functionName.Buffer())
+                                         }
+                                         }
+                                         }*/
                                         if (ret) {
                                             uint32 rangeByteSize = (maxIdx - minIdx + 1u) * signalTypeDescriptor.numberOfBits / 8u;
                                             signalNumberOfBytes += rangeByteSize;
@@ -1924,13 +1920,6 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(S
     }
     return ret;
 }
-
-
-
-
-
-
-
 
 bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory() {
     bool ret = ResolveFunctionsMemory(InputSignals);
@@ -2570,22 +2559,30 @@ bool RealTimeApplicationConfigurationBuilder::AddBrokersToFunctions(SignalDirect
                     gam = realTimeApplication->Find(gamQualifiedName.Buffer());
                     ret = gam.IsValid();
                 }
-                ReferenceT<BrokerI> broker;
+                ReferenceContainer brokers;
                 if (ret) {
                     if (direction == InputSignals) {
-                        broker = dataSource->GetInputReader(gamQualifiedName.Buffer());
+                        brokers = dataSource->GetInputReaders(gamQualifiedName.Buffer());
                     }
                     else {
-                        broker = dataSource->GetOutputWriter(gamQualifiedName.Buffer());
+                        brokers = dataSource->GetOutputWriters(gamQualifiedName.Buffer());
                     }
-                    ret = broker.IsValid();
+                    uint32 nb;
+                    for (nb = 0u; (nb < brokers.Size()) && (ret); nb++) {
+                        ReferenceT<BrokerI> broker = brokers.Get(nb);
+                        ret = broker.IsValid();
+                        if (!ret) {
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Invalid BrokerI returned by DataSource with name %s ",
+                                                    dataSource->GetName())
+                        }
+                    }
                 }
                 if (ret) {
                     if (direction == InputSignals) {
-                        gam->AddInputBroker(broker);
+                        gam->AddInputBrokers(brokers);
                     }
                     else {
-                        gam->AddOutputBroker(broker);
+                        gam->AddOutputBrokers(brokers);
                     }
                 }
             }

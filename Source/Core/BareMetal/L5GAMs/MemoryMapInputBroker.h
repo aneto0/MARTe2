@@ -1,8 +1,8 @@
 /**
- * @file DataSource1.h
- * @brief Header file for class DataSource1
- * @date Jun 8, 2016
- * @author aneto
+ * @file MemoryMapInputBroker.h
+ * @brief Header file for class MemoryMapInputBroker
+ * @date 18/07/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,12 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DataSource1
+ * @details This header file contains the declaration of the class MemoryMapInputBroker
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
-
-#ifndef TEST_GTEST_DataSource1_H_
-#define 		TEST_GTEST_DataSource1_H_
+#ifndef MEMORYMAPINPUTBROKER_H_
+#define MEMORYMAPINPUTBROKER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,45 +30,27 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "DataSourceI.h"
+#include "MemoryMapBroker.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
-class DataSource1: public DataSourceI {
+
+
+class MemoryMapInputBroker: public MemoryMapBroker {
 public:
-    CLASS_REGISTER_DECLARATION()
-
-    DataSource1();
-
-    virtual ~DataSource1();
-
-    virtual bool Initialise(StructuredDataI & data);
-
-    virtual uint32 GetCurrentBufferIndex();
-
-    virtual uint32 GetNumberOfMemoryBuffers();
-
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-                                       uint32 bufferIdx,
-                                       void *&signalAddress);
-
-    virtual bool AllocateMemory();
-
-    virtual ReferenceContainer GetInputReaders(const char8 * const functionName);
-
-    virtual ReferenceContainer GetOutputWriters(const char8 * const functionName);
-
-    virtual bool PrepareNextState(const RealTimeStateInfo &status);
-
-    virtual bool ChangeState();
+CLASS_REGISTER_DECLARATION()
+    MemoryMapInputBroker();
+    virtual ~MemoryMapInputBroker();
+    virtual bool Execute();
 };
+
 }
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_GTEST_DataSource1_H_ */
-
+#endif /* MEMORYMAPINPUTBROKER_H_ */
+	

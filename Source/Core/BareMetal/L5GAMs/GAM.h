@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAM.h"
+#include "ExecutableI.h"
 #include "GAMGroup.h"
 #include "GAMSignalI.h"
 #include "RealTimeApplication.h"
@@ -48,7 +49,7 @@ namespace MARTe {
  * @brief Implementation of GAM with BasicInputReader and BasicOutputWriter
  * used to link the GAM with the RealTimeDataSource.
  */
-class DLL_API GAM: public ReferenceContainer {
+class DLL_API GAM: public ExecutableI {
 public:
     /**
      * @brief Constructor
@@ -145,17 +146,13 @@ public:
                                  uint32 &timeCycles,
                                  uint32 &timeSamples);
 
-    void AddInputBroker(ReferenceT<BrokerI> broker);
+    void AddInputBrokers(ReferenceContainer brokers);
 
-    void AddOutputBroker(ReferenceT<BrokerI> broker);
+    void AddOutputBrokers(ReferenceContainer brokers);
 
-    /**
-     * TODO
-     */
-    virtual bool Execute() = 0;
+    ReferenceContainer GetInputBrokers();
 
-    bool Read();
-    bool Write();
+    ReferenceContainer GetOutputBrokers();
 
 #if 0
     /**
@@ -307,13 +304,9 @@ private:
     bool MoveToSignalIndex(SignalDirection direction,
                            uint32 signalIdx);
 
-    uint32 numberOfInputBrokers;
+    ReferenceContainer inputBrokers;
 
-    uint32 numberOfOutputBrokers;
-
-    ReferenceT<BrokerI> *inputBrokers;
-
-    ReferenceT<BrokerI> *outputBrokers;
+    ReferenceContainer outputBrokers;
 
     HeapI *heap;
 };

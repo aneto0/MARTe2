@@ -1,8 +1,8 @@
 /**
- * @file AndreGAM1.cpp
- * @brief Source file for class AndreGAM1
- * @date Jun 8, 2016
- * @author aneto
+ * @file MemoryMapOutputBroker.cpp
+ * @brief Source file for class MemoryMapOutputBroker
+ * @date 18/07/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class AndreGAM1 (public, protected, and private). Be aware that some
+ * the class MemoryMapOutputBroker (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "GAM1.h"
+#include "MemoryMapOutputBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,61 +38,23 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-
-AndreGAM1::AndreGAM1() :
-        GAM() {
+MemoryMapOutputBroker::MemoryMapOutputBroker() {
 
 }
 
-AndreGAM1::~AndreGAM1() {
+MemoryMapOutputBroker::~MemoryMapOutputBroker() {
 
 }
 
-bool AndreGAM1::Initialise(StructuredDataI & data) {
-    return GAM::Initialise(data);
-}
-#include <stdio.h>
-static int aaa = 1;
-bool AndreGAM1::Execute() {
-    ReferenceContainer inputBrokers;// = GetInputBrokers();
-    uint32 b;
-    for (b = 0u; b < inputBrokers.Size(); b++) {
-        ReferenceT<ExecutableI> broker = inputBrokers.Get(b);
-        broker->Execute();
-    }
-    const char8 *name = GetName();
-    printf("%s:\n", name);
-    uint32 numberOfInputSignals = GetNumberOfInputSignals();
-    uint32 numberOfOutputSignals = GetNumberOfOutputSignals();
-    printf("Inputs\n");
+bool MemoryMapOutputBroker::Execute() {
     uint32 n;
-    uint32 *inputBuffer = (uint32 *) GetInputSignalsBuffer();
-    for (n = 0u; n < numberOfInputSignals; n++) {
-        StreamString signalName;
-        GetSignalName(InputSignals, n, signalName);
-        uint32 signalValue = *(inputBuffer + n);
-        printf("  %s = %u\n", signalName.Buffer(), signalValue);
+    uint32 dataSourceIdx = dataSource->GetCurrentBufferIndex();
+    for (n = 0u; n < numberOfCopies; n++) {
+        MemoryOperationsHelper::Copy(copyTable[n].dataSourcePointers[dataSourceIdx], copyTable[n].gamPointer, copyTable[n].copySize);
     }
-    uint32 *outputBuffer = (uint32 *) GetOutputSignalsBuffer();
-    for (n = 0u; n < numberOfOutputSignals; n++) {
-        *(outputBuffer + n) = aaa * (n + 1) * 100;
-    }
-    printf("Outputs\n");
-    ReferenceContainer outputBrokers;// = GetOutputBrokers();
-
-    for (b = 0u; b < outputBrokers.Size(); b++) {
-        ReferenceT<ExecutableI> broker = outputBrokers.Get(n);
-        broker->Execute();
-    }
-    for (n = 0u; n < numberOfOutputSignals; n++) {
-        StreamString signalName;
-        GetSignalName(OutputSignals, n, signalName);
-        uint32 signalValue = *(outputBuffer + n);
-        printf("  %s = %u\n", signalName.Buffer(), signalValue);
-    }
-    aaa++;
     return true;
 }
 
-CLASS_REGISTER(AndreGAM1, "1.0");
+CLASS_REGISTER(MemoryMapOutputBroker, "1.0")
 }
+

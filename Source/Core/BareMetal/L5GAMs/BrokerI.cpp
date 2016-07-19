@@ -46,7 +46,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-BrokerI::BrokerI() {
+BrokerI::BrokerI() : ExecutableI() {
 
     numberOfCopies = 0u;
     functionSignalPointers = NULL_PTR(void **);

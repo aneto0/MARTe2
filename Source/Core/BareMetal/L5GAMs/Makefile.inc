@@ -25,6 +25,7 @@
 #############################################################
 
 OBJSX=BrokerI.x \
+    ExecutableI.x \
     GAM.x \
     GAMGroup.x \
     DataSourceI.x \

@@ -1,8 +1,8 @@
 /**
- * @file DataSource1.h
- * @brief Header file for class DataSource1
- * @date Jun 8, 2016
- * @author aneto
+ * @file ExecutableI.h
+ * @brief Header file for class ExecutableI
+ * @date 19/07/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DataSource1
+ * @details This header file contains the declaration of the class ExecutableI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TEST_GTEST_DataSource1_H_
-#define 		TEST_GTEST_DataSource1_H_
+#ifndef EXECUTORI_H_
+#define EXECUTORI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,45 +31,37 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "DataSourceI.h"
+#include "ReferenceContainer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe{
 
-namespace MARTe {
-class DataSource1: public DataSourceI {
+class ExecutableI : public ReferenceContainer {
+
 public:
-    CLASS_REGISTER_DECLARATION()
+    ExecutableI();
 
-    DataSource1();
+    virtual ~ExecutableI();
 
-    virtual ~DataSource1();
+    virtual bool Execute() = 0;
 
-    virtual bool Initialise(StructuredDataI & data);
+    void SetLastExecutionTime(uint64 counter);
 
-    virtual uint32 GetCurrentBufferIndex();
+    uint64 GetLastExecutionTime();
 
-    virtual uint32 GetNumberOfMemoryBuffers();
+private:
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-                                       uint32 bufferIdx,
-                                       void *&signalAddress);
-
-    virtual bool AllocateMemory();
-
-    virtual ReferenceContainer GetInputReaders(const char8 * const functionName);
-
-    virtual ReferenceContainer GetOutputWriters(const char8 * const functionName);
-
-    virtual bool PrepareNextState(const RealTimeStateInfo &status);
-
-    virtual bool ChangeState();
+    uint64 lastExecutionCounter;
 };
 }
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_GTEST_DataSource1_H_ */
-
+#endif /* EXECUTORI_H_ */
+	

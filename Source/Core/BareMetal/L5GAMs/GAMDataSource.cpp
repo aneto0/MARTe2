@@ -188,16 +188,20 @@ bool GAMDataSource::AllocateMemory() {
     return ret;
 }
 
-ReferenceT<BrokerI> GAMDataSource::GetInputReader(const char8 * const functionName) {
+ReferenceContainer GAMDataSource::GetInputReaders(const char8 * const functionName) {
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
     broker->Init(InputSignals, this, functionName);
-    return broker;
+    ReferenceContainer brokers;
+    brokers.Insert(broker);
+    return brokers;
 }
 
-ReferenceT<BrokerI> GAMDataSource::GetOutputWriter(const char8 * const functionName) {
+ReferenceContainer GAMDataSource::GetOutputWriters(const char8 * const functionName) {
     ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
     broker->Init(OutputSignals, this, functionName);
-    return broker;
+    ReferenceContainer brokers;
+    brokers.Insert(broker);
+    return brokers;
 }
 
 bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {

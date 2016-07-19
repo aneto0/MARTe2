@@ -48,15 +48,11 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 GAM::GAM() :
-        ReferenceContainer() {
-    numberOfInputBrokers = 0u;
-    numberOfOutputBrokers = 0u;
+        ExecutableI() {
     numberOfInputSignals = 0u;
     numberOfOutputSignals = 0u;
     inputSignalsMemory = NULL_PTR(void **);
     outputSignalsMemory = NULL_PTR(void **);
-    inputBrokers = NULL_PTR(ReferenceT<BrokerI> *);
-    outputBrokers = NULL_PTR(ReferenceT<BrokerI> *);
 
     heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
 #if 0
@@ -78,12 +74,6 @@ GAM::~GAM() {
     }
     if (outputSignalsMemory != NULL_PTR(void **)) {
         heap->Free(outputSignalsMemory);
-    }
-    if (inputBrokers != NULL_PTR(ReferenceT<BrokerI> *)) {
-        delete[] inputBrokers;
-    }
-    if (outputBrokers != NULL_PTR(ReferenceT<BrokerI> *)) {
-        delete[] outputBrokers;
     }
 
 #if 0
@@ -422,60 +412,34 @@ bool GAM::MoveToSignalIndex(SignalDirection direction,
     return ret;
 }
 
-void GAM::AddInputBroker(ReferenceT<BrokerI> broker) {
-    ReferenceT<BrokerI> *temp = new ReferenceT<BrokerI> [numberOfInputBrokers + 1u];
-
-    if (inputBrokers != NULL_PTR(ReferenceT<BrokerI> *)) {
-        uint32 n;
-        for (n = 0u; n < numberOfInputBrokers; n++) {
-            temp[n] = inputBrokers[n];
-        }
-        delete[] inputBrokers;
+void GAM::AddInputBrokers(ReferenceContainer brokers) {
+    uint32 n;
+    for (n = 0u; n < brokers.Size(); n++) {
+        inputBrokers.Insert(brokers.Get(n));
     }
-    inputBrokers = temp;
-    inputBrokers[numberOfInputBrokers] = broker;
-    numberOfInputBrokers++;
 }
 
-void GAM::AddOutputBroker(ReferenceT<BrokerI> broker) {
-    ReferenceT<BrokerI> *temp = new ReferenceT<BrokerI> [numberOfOutputBrokers + 1u];
-
-    if (outputBrokers != NULL_PTR(ReferenceT<BrokerI> *)) {
-        uint32 n;
-        for (n = 0u; n < numberOfOutputBrokers; n++) {
-            temp[n] = outputBrokers[n];
-        }
-        delete[] outputBrokers;
+void GAM::AddOutputBrokers(ReferenceContainer brokers) {
+    uint32 n;
+    for (n = 0u; n < brokers.Size(); n++) {
+        outputBrokers.Insert(brokers.Get(n));
     }
-    outputBrokers = temp;
-    outputBrokers[numberOfOutputBrokers] = broker;
-    numberOfOutputBrokers++;
+}
+
+ReferenceContainer GAM::GetInputBrokers(){
+    return inputBrokers;
+}
+
+ReferenceContainer GAM::GetOutputBrokers(){
+    return outputBrokers;
 }
 
 const void * GAM::GetInputSignalsBuffer() {
     return inputSignalsMemory;
 }
 
-void * GAM::GetOutputSignalsBuffer(){
+void * GAM::GetOutputSignalsBuffer() {
     return outputSignalsMemory;
-}
-
-bool GAM::Read() {
-    uint32 b;
-    bool ret = true;
-    for (b = 0u; (b < numberOfInputBrokers) && (ret); b++) {
-        ret = inputBrokers[b]->Execute();
-    }
-    return ret;
-}
-
-bool GAM::Write() {
-    uint32 b;
-    bool ret = true;
-    for (b = 0u; (b < numberOfOutputBrokers) && (ret); b++) {
-        ret = outputBrokers[b]->Execute();
-    }
-    return ret;
 }
 
 #if 0

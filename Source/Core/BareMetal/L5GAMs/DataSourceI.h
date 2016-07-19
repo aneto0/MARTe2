@@ -198,9 +198,9 @@ public:
                                        uint32 bufferIdx,
                                        void *&signalAddress) = 0;
 
-    virtual ReferenceT<BrokerI> GetInputReader(const char8 * const functionName) = 0;
+    virtual ReferenceContainer GetInputReaders(const char8 * const functionName) = 0;
 
-    virtual ReferenceT<BrokerI> GetOutputWriter(const char8 * const functionName) = 0;
+    virtual ReferenceContainer GetOutputWriters(const char8 * const functionName) = 0;
 
     virtual bool PrepareNextState(const RealTimeStateInfo &status) = 0;
 
