@@ -77,6 +77,8 @@ public:
 
     bool TestResolveStatesFalse_SameGAMIn2Threads();
 
+    bool TestResolveStatesFalse_MoreThanOneSyncInAThread_SameGAM();
+
     bool TestResolveConsumersAndProducers();
 
     bool TestVerifyConsumersAndProducers();
@@ -90,6 +92,12 @@ public:
     bool TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxMin();
 
     bool TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxNElements();
+
+    bool TestResolveFunctionsMemory();
+
+    bool TestAllocateFunctionsMemory();
+
+    bool TestAssignFunctionsMemoryToDataSource();
 
 };
 

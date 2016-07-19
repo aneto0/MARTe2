@@ -64,6 +64,12 @@ public:
     ReferenceContainer();
 
     /**
+     * @brief Copy Constructor
+     * @details Inserts all the references contained by \a copy in this.
+     */
+    ReferenceContainer(ReferenceContainer &copy);
+
+    /**
      * @brief Destructor. Deletes all the elements hold by the container.
      */
     virtual ~ReferenceContainer();
