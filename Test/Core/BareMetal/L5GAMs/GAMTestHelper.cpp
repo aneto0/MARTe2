@@ -31,8 +31,7 @@
 
 #include "GAMTestHelper.h"
 #include "ConfigurationDatabase.h"
-#include "MemoryMapInputBroker.h"
-#include "MemoryMapOutputBroker.h"
+#include "MemoryMapBroker.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -123,12 +122,12 @@ bool DS1::GetSignalMemoryBuffer(uint32 signalIdx,
 }
 
 ReferenceT<BrokerI> DS1::GetInputReader(const char8 * const functionName) {
-    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+    ReferenceT<MemoryMapBroker> broker("MemoryMapInputBroker");
     return broker;
 }
 
 ReferenceT<BrokerI> DS1::GetOutputWriter(const char8 * const functionName) {
-    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+    ReferenceT<MemoryMapBroker> broker("MemoryMapOutputBroker");
     return broker;
 }
 

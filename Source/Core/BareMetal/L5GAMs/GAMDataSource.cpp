@@ -36,8 +36,7 @@
 #include <GAMDataSource.h>
 #include "DataSourceSignalRecord.h"
 #include "GAM.h"
-#include "MemoryMapInputBroker.h"
-#include "MemoryMapOutputBroker.h"
+#include "MemoryMapBroker.h"
 #include "ReferenceT.h"
 #include "StandardParser.h"
 #include "stdio.h"
@@ -189,13 +188,13 @@ bool GAMDataSource::AllocateMemory() {
 }
 
 ReferenceT<BrokerI> GAMDataSource::GetInputReader(const char8 * const functionName) {
-    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+    ReferenceT<MemoryMapBroker> broker("MemoryMapInputBroker");
     broker->Init(InputSignals, this, functionName);
     return broker;
 }
 
 ReferenceT<BrokerI> GAMDataSource::GetOutputWriter(const char8 * const functionName) {
-    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+    ReferenceT<MemoryMapBroker> broker("MemoryMapOutputBroker");
     broker->Init(OutputSignals, this, functionName);
     return broker;
 }

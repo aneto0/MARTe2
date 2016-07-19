@@ -40,7 +40,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestInitialiseSignalsDatabase) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestInitialiseSignalsDatabase());
@@ -121,6 +120,12 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_SameGAM
     ASSERT_TRUE(test.TestResolveStatesFalse_SameGAMIn2Threads());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreThanOneSyncInAThread_SameGAM) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStatesFalse_MoreThanOneSyncInAThread_SameGAM());
+}
+
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveConsumersAndProducers) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveConsumersAndProducers());
@@ -154,4 +159,20 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemo
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxNElements) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxNElements());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionsMemory) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionsMemory());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestAllocateFunctionsMemory) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestAllocateFunctionsMemory());
+}
+
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestAssignFunctionsMemoryToDataSource) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestAssignFunctionsMemoryToDataSource());
 }

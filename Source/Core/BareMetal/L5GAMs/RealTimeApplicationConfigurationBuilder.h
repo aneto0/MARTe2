@@ -169,6 +169,9 @@ public:
      */
     bool FlattenSignalsDatabases();
 
+
+    bool VerifySynchronization();
+
     /**
      * @brief Merges all the signals from the Functions into the corresponding DataSource.
      * @details For each signal (where the Type is defined) in every function, merge the signal to the corresponding DataSource.
@@ -666,6 +669,12 @@ public:
      */
     bool AssignFunctionsMemoryToDataSource();
 
+
+#if 0
+    // For each gam signal, the data source will write the name of the broker to be used
+    bool AssignBrokersToFunctions();
+#endif
+
     /**
      * @brief For each DataSource calls DataSourceI::SetConfiguredDatabase followed by DataSourceI::AllocateMemory.
      * @details Calls DataSourceI::SetConfiguredDatabase on each DataSource under Data, passing the Signals{} and Functions{} branches.
@@ -734,7 +743,7 @@ private:
      * otherwise it shall have the value None.
      * @return true if FlattenSignal returns true for all signals in the functionsDatabase and in the dataSourcesDatabase tree.
      */
-    bool FlattenSignalsDatabase(ConfigurationDatabase &signalDatabase,
+    bool FlattenSignalsDatabase(bool isFunctionsDatabase,
                                 SignalDirection direction);
 
     /**
@@ -751,35 +760,13 @@ private:
      * If it is not known and if defaultDataSourceName exists then DataSource will be assumed to be defaultDataSourceName.
      * @return true if \a signalName can be successfully flatten and all of its members added to a new signal node in \a resolvedSignal.
      */
-    bool FlattenSignal(ConfigurationDatabase &signalDatabase,
+    bool FlattenSignal(bool isFunctionsDatabase,
                        const char8 * const signalName,
                        ConfigurationDatabase &resolvedSignal,
                        uint32 &signalNumber,
                        bool forceWriteDataSource);
 
-    /**
-     * @brief Recursively flattens a nested structure into a list of signals.
-     * @details For each signal a node with a consecutive number will be created and the
-     * fully qualified signal name (with its properties added to it).
-     * @param[in] typeName the type of the signal as registered in the ClassRegistryDatabase
-     * @param[in] signalName the signal name that will prefix the fully qualified signal name
-     * @param[in] alias where can this signal be found in the DataSource. If this parameter is defined, the qualified alias will be prefixed by this value.
-     * @param[in] dataSourceName the qualified name of the DataSource where this signal can be found.
-     * @param[in] ranges if this parameter is defined, the same ranges will be applied to all the nested signals.
-     * @param[in] timeCyclesSamples if this parameter is defined, the same TimeCyclesSamples definition will be applied to all the nested signals.
-     * @param[in] data target database where to write the flatten nested signals.
-     * @param[out] signalNumber is incremented every time a new signal is added to \a data.
-     * @return true if the typeName exists in the ClassRegistryDatabase and if all the signal properties can be successfully written to \a data.
-     */
-    bool SignalIntrospectionToStructuredData(ConfigurationDatabase &signalDatabase,
-                                             const char8 * const typeName,
-                                             const char8 * const signalName,
-                                             const char8 * const alias,
-                                             const char8 * const dataSourceName,
-                                             AnyType ranges,
-                                             AnyType timeCyclesSamples,
-                                             StructuredDataI & data,
-                                             uint32 &signalNumber);
+
 
     /**
      * @brief Adds a signal from \a gamName into \a dataSourceName.

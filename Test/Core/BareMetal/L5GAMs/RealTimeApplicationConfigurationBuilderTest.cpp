@@ -1384,6 +1384,131 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_SameGAM
     return (!rtAppBuilder.ResolveStates());
 }
 
+bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_MoreThanOneSyncInAThread_SameGAM() {
+
+    static StreamString configLocal = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Alias = X"
+            "                    Type = int32"
+            "                    Frequency = 10"
+            "                }"
+            "                Signal2 = {"
+            "                    DataSource = DDB1"
+            "                    Alias = Y"
+            "                    Type = int32"
+            "                    Frequency = 10"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Alias = X"
+            "                    Type = int32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = DS1"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA}"
+            "                }"
+            "                +Thread2 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMB}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    ConfigurationDatabase cdb;
+    configLocal.Seek(0);
+    StandardParser parser(configLocal, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return (!rtAppBuilder.ResolveStates());
+}
+
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveConsumersAndProducers() {
     ConfigurationDatabase cdb;
     config1.Seek(0);
@@ -1976,7 +2101,6 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemo
         return false;
     }
 
-
     ConfigurationDatabase fcdb;
     ConfigurationDatabase dcdb;
     if (!rtAppBuilder.Copy(fcdb, dcdb)) {
@@ -2109,7 +2233,6 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemo
         return false;
     }
 
-
     ConfigurationDatabase fcdb;
     ConfigurationDatabase dcdb;
     if (!rtAppBuilder.Copy(fcdb, dcdb)) {
@@ -2130,3 +2253,272 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemo
 
     return !rtAppBuilder.ResolveFunctionSignalsMemorySize();
 }
+
+bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionsMemory() {
+    ConfigurationDatabase cdb;
+    config1.Seek(0);
+    StandardParser parser(config1, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveStates()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignalsMemorySize()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionsMemory()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return true;
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestAllocateFunctionsMemory() {
+    ConfigurationDatabase cdb;
+    config1.Seek(0);
+    StandardParser parser(config1, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveStates()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignalsMemorySize()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionsMemory()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.AllocateFunctionsMemory()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return true;
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestAssignFunctionsMemoryToDataSource(){
+    ConfigurationDatabase cdb;
+    config1.Seek(0);
+    StandardParser parser(config1, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveStates()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignalsMemorySize()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionsMemory()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.AllocateFunctionsMemory()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.AssignFunctionsMemoryToDataSource()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return true;
+}
+
+
