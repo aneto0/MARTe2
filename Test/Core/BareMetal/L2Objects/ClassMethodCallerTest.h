@@ -37,7 +37,6 @@
 /*---------------------------------------------------------------------------*/
 
 class ClassMethodCallerTest {
-//TODO Add the macro DLL_API to the class declaration (i.e. class DLL_API ClassMethodCallerTest)
 public:
     ClassMethodCallerTest();
     virtual ~ClassMethodCallerTest();

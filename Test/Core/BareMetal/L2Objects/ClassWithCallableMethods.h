@@ -43,7 +43,6 @@
 /*---------------------------------------------------------------------------*/
 
 class ClassWithCallableMethods: public MARTe::Object {
-//TODO Add the macro DLL_API to the class declaration (i.e. class DLL_API ClassWithCallableMethods)
 
 public:
 
