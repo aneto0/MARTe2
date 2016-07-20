@@ -27,7 +27,6 @@ ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  AnyType.x \
-		CallRegisteredMethodLauncher.x \
         ClassMethodsRegistryItem.x \
         ClassMethodCaller.x\
         ClassMethodInterfaceMapper.x\
@@ -43,8 +42,7 @@ OBJSX=  AnyType.x \
 		ReferenceContainerNode.x \
 		ReferenceContainerFilter.x \
 		ReferenceContainerFilterReferences.x \
-		ReferenceContainerFilterObjectName.x \
-		ReferenceT.x
+		ReferenceContainerFilterObjectName.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
