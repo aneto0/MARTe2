@@ -4,3 +4,11 @@
 /cov/
 /depends.cov
 /dependsRaw.cov
+/temp/
+/dummy.cpp
+/depends.msc
+/dependsRaw.msc
+/dllGenerator.def
+/dummy.obj
+/title
+/vc140.pdb
