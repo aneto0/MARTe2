@@ -35,6 +35,7 @@
 #include "LinkedListable.h"
 #include "ClassMethodInterfaceMapper.h"
 #include "CString.h"
+#include "CLASSMETHODREGISTER.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -196,19 +197,6 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * conte
 }
 
 }
-
-/**
- * @brief Macro used to register automatically a list of class methods in the ClassRegistryItem (and in the ClassRegistryDatabase).
- * @details Passing a list of class method pointers, this macro automatically creates the list of function names. To find the function
- * in the list it is only necessary that the function name (without mangling) is enclosed between a ':' and a ',' or '\0'. For instance
- * putting "(bool (*)())A::f1(),B::f2()" the find function will match the functions f1 and f2. It is possible to register two different
- * functions with the same name (if a class overloads a method).
- * @param[in] C is the class name.
- * @param[in] ... list of class methods.
- */
-#define CLASS_METHOD_REGISTER(C,...)\
-    static MARTe::ClassMethodInterfaceMapper C ## __ClassMethodsInterfaceMapper[] = {__VA_ARGS__}; \
-    static /*const*/ MARTe::ClassMethodsRegistryItem C ## __ClassMethodsRegistryItem(C::GetClassRegistryItem_Static(),C ## __ClassMethodsInterfaceMapper,#__VA_ARGS__);
 
 #endif /* CLASSMETHODSREGISTRYITEM_H_ */
 
