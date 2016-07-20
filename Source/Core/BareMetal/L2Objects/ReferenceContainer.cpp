@@ -68,6 +68,19 @@ ReferenceContainer::ReferenceContainer(ReferenceContainer &copy) :
     }
 }
 
+ReferenceContainer& ReferenceContainer::operator =(ReferenceContainer &copy) {
+    if (this != &copy) {
+        uint32 nChildren = copy.Size();
+        for (uint32 i = 0u; i < nChildren; i++) {
+            Reference toInsert = copy.Get(i);
+            if (!Insert(toInsert)) {
+                //TODO
+            }
+        }
+    }
+    return *this;
+}
+
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
 Reference ReferenceContainer::Get(const uint32 idx) {
     Reference ref;

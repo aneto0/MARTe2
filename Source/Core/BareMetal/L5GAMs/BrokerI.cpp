@@ -858,10 +858,10 @@ bool BrokerI::InitFunctionPointers(SignalDirection direction,
     }
     numberOfCopies = 0u;
     uint32 numberOfByteOffsets = 0u;
-    uint32 n;
-    for (n = 0u; (n < functionNumberOfSignals) && (ret); n++) {
+    uint32 i;
+    for (i = 0u; (i < functionNumberOfSignals) && (ret); i++) {
         if (ret) {
-            ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, n, numberOfByteOffsets);
+            ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, i, numberOfByteOffsets);
         }
         if (ret) {
             //One copy for each signal but each signal might want to copy several pieces (i.e. offsets)
@@ -876,22 +876,21 @@ bool BrokerI::InitFunctionPointers(SignalDirection direction,
         uint32 memoryOffset = 0u;
         uint32 c = 0u;
         //The same signal can be copied from different ranges. A CopyTableEntry is added for each signal range.
-        for (n = 0u; (n < functionNumberOfSignals) && (ret); n++) {
+        for (i = 0u; (i < functionNumberOfSignals) && (ret); i++) {
             void *gamMemoryAddress = NULL_PTR(void *);
             ret = dataSource->GetFunctionSignalsAddress(direction, functionIdx, gamMemoryAddress);
             if (ret) {
                 ret = (gamMemoryAddress != NULL_PTR(void *));
             }
             if (ret) {
-                ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, n, numberOfByteOffsets);
+                ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, i, numberOfByteOffsets);
             }
 
-            uint32 bo;
             //Take into account  different ranges for the same signal
-            for (bo = 0u; (bo < numberOfByteOffsets) && (ret); bo++) {
+            for (uint32 j = 0u; (j < numberOfByteOffsets) && (ret); j++) {
                 uint32 offsetStart;
                 uint32 copySize;
-                ret = dataSource->GetFunctionSignalByteOffsetInfo(direction, functionIdx, n, bo, offsetStart, copySize);
+                ret = dataSource->GetFunctionSignalByteOffsetInfo(direction, functionIdx, i, j, offsetStart, copySize);
                 if (ret) {
                     copyByteSize[c] = copySize;
                     copyOffset[c] = offsetStart;

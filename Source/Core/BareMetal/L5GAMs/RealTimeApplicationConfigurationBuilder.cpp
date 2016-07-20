@@ -2569,7 +2569,7 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToFunctions() {
 }
 
 bool RealTimeApplicationConfigurationBuilder::AssignBrokersToSignals(SignalDirection direction,
-                                                                     ReferenceT<DataSourceI> dataSource) {
+        ReferenceT<DataSourceI> dataSource) {
     const char8 * dirStr = "InputSignals";
     if (direction == OutputSignals) {
         dirStr = "OutputSignals";
@@ -2603,7 +2603,6 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToSignals(SignalDirec
 }
 #endif
 
-
 bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
     bool ret = dataSourcesDatabase.MoveToRoot();
     uint32 numberOfDataSources = 0u;
@@ -2616,7 +2615,7 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
     if (ret) {
         uint32 n;
         for (n = 0u; (n < numberOfDataSources) && (ret); n++) {
-            StreamString qualifiedName="Data.";
+            StreamString qualifiedName = "Data.";
             StreamString dataSourceIdx;
             dataSourceIdx.Printf("%d", n);
             ret = dataSourcesDatabase.MoveRelative(dataSourceIdx.Buffer());
@@ -2625,8 +2624,8 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
             }
             ReferenceT<DataSourceI> dataSource;
             if (ret) {/*
-                StreamString fullDsName="Data.";
-                fullDsName+=qualifiedName;*/
+             StreamString fullDsName="Data.";
+             fullDsName+=qualifiedName;*/
                 dataSource = realTimeApplication->Find(qualifiedName.Buffer());
                 ret = dataSource.IsValid();
             }
@@ -2656,7 +2655,7 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureFunctions() {
     if (ret) {
         uint32 n;
         for (n = 0u; (n < numberOfFunctions) && (ret); n++) {
-            StreamString qualifiedName="Functions.";
+            StreamString qualifiedName = "Functions.";
             StreamString functionIdx;
             functionIdx.Printf("%d", n);
             ret = functionsDatabase.MoveRelative(functionIdx.Buffer());
@@ -2714,7 +2713,7 @@ bool RealTimeApplicationConfigurationBuilder::AddBrokersToFunctions(SignalDirect
     if (ret) {
         uint32 n;
         for (n = 0u; (n < numberOfDataSources) && (ret); n++) {
-            StreamString qualifiedName="Data.";
+            StreamString qualifiedName = "Data.";
             StreamString dataSourceIdx;
             dataSourceIdx.Printf("%d", n);
             ret = dataSourcesDatabase.MoveRelative(dataSourceIdx.Buffer());
@@ -2733,28 +2732,29 @@ bool RealTimeApplicationConfigurationBuilder::AddBrokersToFunctions(SignalDirect
 
             uint32 k;
             for (k = 0u; (k < numberOfFunctions) && (ret); k++) {
-                StreamString gamQualifiedName="Functions.";
+                StreamString gamQualifiedName;
                 ret = dataSource->GetFunctionName(k, gamQualifiedName);
                 ReferenceT<GAM> gam;
                 if (ret) {
-                    gam = realTimeApplication->Find(gamQualifiedName.Buffer());
+                    StreamString fullFunctioName = "Functions.";
+                    fullFunctioName += gamQualifiedName;
+                    gam = realTimeApplication->Find(fullFunctioName.Buffer());
                     ret = gam.IsValid();
                 }
                 ReferenceContainer brokers;
                 if (ret) {
                     if (direction == InputSignals) {
-                        brokers = dataSource->GetInputReaders(gamQualifiedName.Buffer());
+                        ret = dataSource->GetInputReaders(gamQualifiedName.Buffer(), brokers);
                     }
                     else {
-                        brokers = dataSource->GetOutputWriters(gamQualifiedName.Buffer());
+                        ret = dataSource->GetOutputWriters(gamQualifiedName.Buffer(), brokers);
                     }
                     uint32 nb;
                     for (nb = 0u; (nb < brokers.Size()) && (ret); nb++) {
                         ReferenceT<BrokerI> broker = brokers.Get(nb);
                         ret = broker.IsValid();
                         if (!ret) {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Invalid BrokerI returned by DataSource with name %s ",
-                                                    dataSource->GetName())
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Invalid BrokerI returned by DataSource with name %s ", dataSource->GetName())
                         }
                     }
                 }

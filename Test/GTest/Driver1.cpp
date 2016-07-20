@@ -77,18 +77,18 @@ bool Driver1::GetSignalMemoryBuffer(uint32 signalIdx,
     return true;
 }
 
-ReferenceContainer Driver1::GetInputReaders(const char8 * const functionName) {
+bool Driver1::GetInputReaders(const char8 * const functionName,
+                                            ReferenceContainer &output) {
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
     ReferenceContainer brokers;
-    brokers.Insert(broker);
-    return brokers;
+    return output.Insert(broker);
 }
 
-ReferenceContainer Driver1::GetOutputWriters(const char8 * const functionName) {
-    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+
+bool Driver1::GetOutputWriters(const char8 * const functionName, ReferenceContainer &output){
+    ReferenceT<MemoryMapInputBroker> broker("MemoryMapOutputBroker");
     ReferenceContainer brokers;
-    brokers.Insert(broker);
-    return brokers;
+    return output.Insert(broker);
 }
 
 bool Driver1::PrepareNextState(const RealTimeStateInfo &status) {

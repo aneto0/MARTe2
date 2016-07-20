@@ -70,6 +70,9 @@ ReferenceContainer    ();
      */
     ReferenceContainer(ReferenceContainer &copy);
 
+    ReferenceContainer& operator=(ReferenceContainer &copy);
+
+
     /**
      * @brief Destructor. Deletes all the elements hold by the container.
      */

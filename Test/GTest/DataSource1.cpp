@@ -72,18 +72,18 @@ bool DataSource1::GetSignalMemoryBuffer(uint32 signalIdx,
     return true;
 }
 
-ReferenceContainer DataSource1::GetInputReaders(const char8 * const functionName) {
+bool DataSource1::GetInputReaders(const char8 * const functionName,
+                                            ReferenceContainer &output) {
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
     ReferenceContainer brokers;
-    brokers.Insert(broker);
-    return brokers;
+    return output.Insert(broker);
 }
 
-ReferenceContainer DataSource1::GetOutputWriters(const char8 * const functionName) {
-    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+
+bool DataSource1::GetOutputWriters(const char8 * const functionName, ReferenceContainer &output){
+    ReferenceT<MemoryMapInputBroker> broker("MemoryMapOutputBroker");
     ReferenceContainer brokers;
-    brokers.Insert(broker);
-    return brokers;
+    return output.Insert(broker);
 }
 
 bool DataSource1::PrepareNextState(const RealTimeStateInfo &status) {

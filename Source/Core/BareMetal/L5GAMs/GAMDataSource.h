@@ -88,9 +88,9 @@ public:
 
     virtual bool AllocateMemory();
 
-    virtual ReferenceContainer GetInputReaders(const char8 * const functionName);
+    virtual bool GetInputReaders(const char8 * const functionName, ReferenceContainer &output);
 
-    virtual ReferenceContainer GetOutputWriters(const char8 * const functionName);
+    virtual bool GetOutputWriters(const char8 * const functionName, ReferenceContainer &output);
 
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
