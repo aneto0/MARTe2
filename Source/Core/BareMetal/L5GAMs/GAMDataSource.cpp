@@ -40,6 +40,7 @@
 #include "MemoryMapOutputBroker.h"
 #include "ReferenceT.h"
 #include "StandardParser.h"
+#include "CLASSREGISTER.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

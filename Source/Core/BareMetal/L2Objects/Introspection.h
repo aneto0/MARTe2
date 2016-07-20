@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class Introspection
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -38,6 +38,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
@@ -48,13 +49,23 @@ class DLL_API Introspection {
 public:
 
     /**
+     * @brief Default constructor
+     * @post
+     *   GetClassSize()==0u
+     */
+    Introspection();
+
+    /**
      * @brief Constructor.
      * @param[in] introspectionListIn contains a list of IntrospectionEntry pointers, one for each class member.
      * @param[in] classSizeIn is the class size.
      * @pre
      *   introspectionListIn must be a zero-terminated array.
+     * @post
+     *   GetClassSize()==classSizeIn
      */
-    Introspection(const IntrospectionEntry ** const introspectionListIn, const uint32 classSizeIn);
+    Introspection(const IntrospectionEntry ** const introspectionListIn,
+                  const uint32 classSizeIn);
 
     /**
      * @brief Retrieves the information about a specific member.
@@ -91,44 +102,7 @@ private:
 
 };
 
-
-
 }
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-/**
- * This macro retrieves the member address with respect to the class begin.
- */
-#define INTROSPECTION_MEMBER_INDEX(className, memberName) \
-    (intptr)&(((className *)0)->memberName)
-
-/**
- * This macro retrieves the member size.
- */
-#define INTROSPECTION_MEMBER_SIZE(className, memberName) \
-    sizeof(((className *)0)->memberName)
-
-/**
- * This macro creates a static instance of IntrospectionEntry with the provided inputs.
- */
-#define DECLARE_CLASS_MEMBER(className, memberName, type, modifierString, attributeString ) \
-    static const IntrospectionEntry className ## _ ## memberName ## _introspectionEntry =   \
-    IntrospectionEntry(                                                                     \
-        #memberName,                                                                        \
-        #type,                                                                              \
-        modifierString,                                                                     \
-        attributeString,                                                                    \
-        INTROSPECTION_MEMBER_SIZE(className, memberName),                                   \
-        INTROSPECTION_MEMBER_INDEX(className, memberName)                                   \
-    )
-
-/**
- * This macro creates a static instance of Introspection with the provided inputs.
- */
-#define DECLARE_CLASS_INTROSPECTION(className, introEntryArray) \
-    static Introspection className ## _ ## introspection(introEntryArray, sizeof(className))
 
 #endif /* INTROSPECTION_H_ */
 

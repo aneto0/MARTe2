@@ -24,7 +24,7 @@
 
 OBJSX= 
 
-SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x L5GAMs.x
+SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x L4Messages.x L5GAMs.x
 
 PACKAGE=GTest
 ROOT_DIR=../../..
@@ -38,6 +38,7 @@ LIBRARIES_STATIC+= $(BUILD_DIR)/L1Portability/L1PortabilityBGTest$(LIBEXT)
 LIBRARIES_STATIC+= $(BUILD_DIR)/L2Objects/L2ObjectsBGTest$(LIBEXT)
 LIBRARIES_STATIC+= $(BUILD_DIR)/L3Streams/L3StreamsBGTest$(LIBEXT)
 LIBRARIES_STATIC+= $(BUILD_DIR)/L4Configuration/L4ConfigurationBGTest$(LIBEXT)
+LIBRARIES_STATIC+= $(BUILD_DIR)/L4Messages/L4MessagesBGTest$(LIBEXT)
 LIBRARIES_STATIC+= $(BUILD_DIR)/L5GAMs/L5GAMsBGTest$(LIBEXT)
 
 

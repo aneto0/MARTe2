@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "LinkedListHolder.h"
+#include "SearchFilter.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -56,8 +57,9 @@ void LinkedListHolder::Reset() {
     llhSize = 0u;
 }
 
-LinkedListHolder::LinkedListHolder() {
+LinkedListHolder::LinkedListHolder(const bool destroyIn) {
     llhSize = 0u;
+    destroy = destroyIn;
     llhRoot.SetNext(NULL_PTR(LinkedListable *));
 }
 
@@ -65,7 +67,12 @@ LinkedListHolder::LinkedListHolder() {
  * due to some racing condition, while destroying the list, the pointer
  * to the next element was to be destructed by some other thread. */
 LinkedListHolder::~LinkedListHolder() {
-    CleanUp();
+    if (destroy) {
+        CleanUp();
+    }
+    else{
+        Reset();
+    }
 }
 
 LinkedListable *LinkedListHolder::List() {

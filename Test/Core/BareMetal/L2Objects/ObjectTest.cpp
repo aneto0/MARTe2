@@ -32,11 +32,15 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ObjectTest.h"
-#include "Reference.h"
-#include "StringHelper.h"
-#include "ObjectTestHelper.h"
-#include "StreamString.h"
+
+#include "ClassWithCallableMethods.h"
 #include "ConfigurationDatabase.h"
+#include "ObjectRegistryDatabase.h"
+#include "ObjectTestHelper.h"
+#include "Reference.h"
+#include "StandardParser.h"
+#include "StringHelper.h"
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -212,10 +216,9 @@ bool ObjectTest::TestGetUniqueName2() {
 
 bool ObjectTest::TestGetProperties() {
     Object obj;
-    ClassProperties properties;
-    obj.GetClassPropertiesCopy(properties);
-    const char8 *name = properties.GetName();
-    const char8 *version = properties.GetVersion();
+    const ClassProperties* properties = obj.GetClassProperties();
+    const char8 *name = properties->GetName();
+    const char8 *version = properties->GetVersion();
     return (StringHelper::Compare("Object", name) == 0) && (StringHelper::Compare("1.0", version) == 0);
 }
 
@@ -637,6 +640,148 @@ bool ObjectTest::TestExportMetadata() {
             }
         }
         result = result && test_status && test_values;
+    }
+    return result;
+}
+
+bool ObjectTest::TestCallRegisteredMethod() {
+    using namespace MARTe;
+    bool result = true;
+    Reference target; /* Reference is a smart pointer to Object */
+    ObjectRegistryDatabase* const ordb = ObjectRegistryDatabase::Instance();
+    StreamString definition("+context={Class=ClassWithCallableMethods}");
+    ConfigurationDatabase cdb;
+    StandardParser parser(definition, cdb);
+    result &= definition.Seek(0);
+    result &= parser.Parse();
+    result &= ordb->Initialise(cdb);
+    target = ordb->Find("context");
+    result &= target.IsValid();
+    if (target.IsValid()) {
+        ReferenceT<ClassWithCallableMethods> context = target;
+        {
+            ErrorManagement::ErrorType status;
+            ReferenceContainer params;
+            status = target->CallRegisteredMethod("NonRegisteredMethod", params);
+            result &= status.unsupportedFeature;
+        }
+        {
+            ErrorManagement::ErrorType status;
+            ReferenceContainer params;
+            status = target->CallRegisteredMethod("FaultyMethod", params);
+            result &= status.functionError;
+            result &= (context->GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
+        }
+        {
+            ErrorManagement::ErrorType status;
+            status = target->CallRegisteredMethod("OverloadedMethod");
+            result &= status;
+            result &= (context->GetLastMethodExecuted() == "OverloadedMethod()");
+        }
+        {
+            ErrorManagement::ErrorType status;
+            int params = 0;
+            status = target->CallRegisteredMethod<int&>("OverloadedMethod", params);
+            result &= status;
+            result &= (context->GetLastMethodExecuted() == "OverloadedMethod(int&)");
+        }
+        {
+            ErrorManagement::ErrorType status;
+            ReferenceContainer params;
+            status = target->CallRegisteredMethod<ReferenceContainer&>("OverloadedMethod", params);
+            result &= status;
+            result &= (context->GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
+        }
+        {
+            ErrorManagement::ErrorType status;
+            int params;
+            params = 10;
+            status = target->CallRegisteredMethod<int&>("MethodWithInputInteger", params);
+            result &= status;
+            result &= (context->GetLastMethodExecuted() == "MethodWithInputInteger(int&)");
+        }
+        {
+            ErrorManagement::ErrorType status;
+            int params;
+            status = target->CallRegisteredMethod<int&>( "MethodWithOutputInteger", params);
+            result &= status;
+            result &= (params == 20);
+            result &= (context->GetLastMethodExecuted() == "MethodWithOutputInteger(int&)");
+        }
+        {
+            ErrorManagement::ErrorType status;
+            int params = 30;
+            status = target->CallRegisteredMethod<int&>("MethodWithInputOutputInteger", params);
+            result &= status;
+            result &= (params == (30 + 5));
+            result &= (context->GetLastMethodExecuted() == "MethodWithInputOutputInteger(int&)");
+        }
+        {
+            ErrorManagement::ErrorType status;
+            ReferenceContainer params;
+            Reference obj("Object");
+            bool success;
+            success = params.Insert("TestObject", obj);
+            if (success) {
+                status = target->CallRegisteredMethod<ReferenceContainer&>("MethodWithInputReferenceContainer", params);
+                result &= status;
+                result &= (context->GetLastMethodExecuted() == "MethodWithInputReferenceContainer(MARTe::ReferenceContainer&)");
+            }
+            else {
+                result = false;
+            }
+        }
+        {
+            ErrorManagement::ErrorType status;
+            ReferenceContainer params;
+            Reference obj;
+            status = target->CallRegisteredMethod<ReferenceContainer&>("MethodWithOutputReferenceContainer", params);
+            result &= status;
+            obj = params.Find("TestObject2");
+            result &= obj.IsValid();
+            result &= (context->GetLastMethodExecuted() == "MethodWithOutputReferenceContainer(MARTe::ReferenceContainer&)");
+        }
+        {
+            ErrorManagement::ErrorType status;
+            ReferenceContainer params;
+            Reference obj("Object");
+            bool success;
+            success = params.Insert("TestObject", obj);
+            if (success) {
+                status = target->CallRegisteredMethod<ReferenceContainer&>("MethodWithInputOutputReferenceContainer", params);
+                result &= status;
+                obj = params.Find("TestObject");
+                result &= !obj.IsValid();
+                obj = params.Find("TestObject2");
+                result &= obj.IsValid();
+                result &= (context->GetLastMethodExecuted() == "MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer&)");
+            }
+            else {
+                result = false;
+            }
+        }
+        {
+            ErrorManagement::ErrorType status;
+            int params = 80;
+            status = target->CallRegisteredMethod<int>("MethodWithInputIntegerByCopy", params);
+            result &= status;
+            result &= (context->GetLastMethodExecuted() == "MethodWithInputIntegerByCopy(int)");
+        }
+        {
+            ErrorManagement::ErrorType status;
+            ReferenceContainer params;
+            Reference obj("Object");
+            bool success;
+            success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
+            if (success) {
+                status = target->CallRegisteredMethod<ReferenceContainer>("MethodWithInputReferenceContainerByCopy", params);
+                result &= status;
+                result &= (context->GetLastMethodExecuted() == "MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer)");
+            }
+            else {
+                result = false;
+            }
+        }
     }
     return result;
 }

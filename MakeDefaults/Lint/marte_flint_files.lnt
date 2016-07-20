@@ -17,11 +17,20 @@ BufferedStreamGenerator.h
 BufferedStreamI.cpp
 BufferedStreamIOBuffer.cpp
 CharBuffer.cpp
+ClassMethodCaller.h
+ClassMethodCallerT.h
+ClassMethodCaller.cpp
+ClassMethodInterfaceMapper.h
+ClassMethodInterfaceMapper.cpp
+ClassMethodsRegistryItem.h
+ClassMethodsRegistryItem.cpp
 ClassProperties.cpp
 ClassRegistryDatabase.cpp
 ClassRegistryItem.cpp
+ClassRegistryItemT.h
 CompilerTypes.h
 ConfigurationDatabase.cpp
+CString.h
 Directory.cpp
 DirectoryCore.h
 DirectoryScanner.cpp
@@ -60,6 +69,7 @@ InternetService.cpp
 InternetServiceCore.h
 Introspection.h
 Introspection.cpp
+IntrospectionT.h
 IntrospectionEntry.h
 IntrospectionEntry.cpp
 Iterator.h
@@ -67,6 +77,7 @@ IteratorT.h
 JsonParser.cpp
 LexicalAnalyzer.cpp
 LinkedListHolder.cpp
+LinkedListHolderT.h
 LinkedListable.cpp
 LoadableLibrary.cpp
 Matrix.h
@@ -75,6 +86,10 @@ MemoryCheck.h
 MemoryCheck_Generic.cpp
 MemoryOperationsHelper.h
 MemoryOperationsHelper_CLIB_Generic.cpp
+Message.h
+Message.cpp
+MessageI.h
+MessageI.cpp
 MutexSem.cpp
 Object.cpp
 ObjectRegistryDatabase.cpp

@@ -71,15 +71,25 @@ const FlagsType EnablePaging(8u);
 
 }
 
+}
+
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                          Forward declarations                             */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
 /**
  * Forward declaration of the operating system specific properties (defined in the operating system
  * specific unit file).
  */
 struct BasicConsoleProperties;
+}
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 /**
  * @brief Multi-platform basic console support.
@@ -545,4 +555,5 @@ bool BasicConsole::PagedWrite(const char8 * const buffer,
 }
 
 }
+
 #endif /*BASICCONSOLE_H_ */

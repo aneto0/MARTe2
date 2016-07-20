@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class ReferenceContainer
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -44,6 +44,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
@@ -75,22 +76,30 @@ public:
     virtual ~ReferenceContainer();
 
     /**
+     * @brief Full Destruction of the database.
+     * @details This function destroys each element of the database also in case of reference loops (the father contains a reference to the children and the
+     * children contains a reference to the father) by extracting all elements from the tree and destroying them separately.
+     * @warning This function does not perform the behavior of the ReferenceContainer destructor because if another ReferenceContainer shares some
+     * ReferenceT<ReferenceContainer> with this, this function will destroy also its sub-trees related with that shared elements. Vice versa, the
+     * destructor extracts references from the tree only if they are not referenced by someone else.
+     */
+    void CleanUp();
+
+    /**
      * @brief Inserts a new reference to the container.
      * @details If \a position = -1 the reference is added to the end of the container.
      * @param[in] ref the reference to be inserted.
      * @param[in] position the position in the container where the reference is to be inserted.
      * @return true if \a ref is valid and if it can be successfully added to the container.
      */
-    bool Insert(Reference ref,
-                const int32 &position = -1);
-
+    bool Insert(Reference ref, const int32 &position = -1);
 
     /**
      * @brief Inserts a new reference in the specified path.
-     * @details It the nodes in the \a path to the reference do not exist, these will be created by this method.
+     * @details Creates all the nodes in the \a path if needed before adding \a ref as a leaf.
      * @param[in] path is the path where \a ref must be inserted to.
-     * @param[in] ref is the Reference to be inserted in the container.
-     * @return true if \a ref is valid and if it can be successfully added to the container.
+     * @param[in] red is the Reference to be inserted in the container.
+     * @return false if \a ref is not valid or in case of errors, true otherwise.
      */
     bool Insert(const char8 * const path, Reference ref);
 
@@ -104,6 +113,13 @@ public:
     bool Delete(Reference ref);
 
     /**
+     * @brief Delete the reference denoted by the \a path in input.
+     * @param[in] path is the path of the reference to be deleted from the database.
+     * @return false if the reference is not found in the specified path, true if it will be successfully deleted.
+     */
+    bool Delete(const char8 * const path);
+
+    /**
      * @brief Finds on or more elements in the container.
      * @details The container is walked and its elements are tested against a \a filter. Valid results are
      * stored in the \a result container.
@@ -111,8 +127,7 @@ public:
      * @param[in,out] filter the searching criteria to be applied.
      */
     void Find(ReferenceContainer &result,
-              ReferenceContainerFilter &filter);
-
+            ReferenceContainerFilter &filter);
 
     /**
      * @brief Finds the first element identified by \a path in RECURSIVE mode.
@@ -163,12 +178,10 @@ public:
      */
     virtual bool Initialise(StructuredDataI &data);
 
-
     /**
-     * @see Object::ToStructuredData(*)
+     * @see Object::ExportData(*)
      */
-    virtual bool ToStructuredData(StructuredDataI & data);
-
+    virtual bool ExportData(StructuredDataI & data);
 
     /**
      * @brief Locks the internal spin-lock mutex.
@@ -182,10 +195,11 @@ public:
     void UnLock();
 
 private:
+
     /**
      * The list of references
      */
-    LinkedListHolder list;
+    LinkedListHolderT<ReferenceContainerNode> list;
 
     /**
      * Protects multiple access to the internal resources
@@ -196,9 +210,15 @@ private:
      * Timeout
      */
     TimeoutType muxTimeout;
+
+    /**
+     * List used to destroy the database.
+     */
+    LinkedListHolderT<ReferenceContainerNode> purgeList;
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

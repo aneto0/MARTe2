@@ -744,7 +744,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
             //const char8* string type.
             //if in the format descriptor is specified the hex notation (%p or %x)
             //print the value of the pointer.
-            if (((par.GetTypeDescriptor()).type) == CCString) {
+            if (((par.GetTypeDescriptor()).type) == BT_CCString) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Char String";
                     AnyType info = infoName;

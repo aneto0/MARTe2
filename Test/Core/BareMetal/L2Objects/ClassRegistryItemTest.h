@@ -55,19 +55,24 @@ public:
      * @brief Tests the constructor with the Introspection input.
      * @return true if all the class attributes are initialised correctly.
      */
-    bool TestIntrospectionCostructor();
+    bool TestIntrospectionConstructor();
 
     /**
      * @brief Tests the full constructor.
      * @return true if all the class attributes are initialised correctly.
      */
-    bool TestFullCostructor();
+    bool TestFullConstructor();
+
+//    /**
+//     * @brief Tests destructor.
+//     * @return true if the class is deleted from the database.
+//     */
+//    bool TestDestructor();
 
     /**
-     * @brief Tests destructor.
-     * @return true if the class is deleted from the database.
+     * TODO
      */
-    bool TestDestructor();
+    bool TestRegisterMethods();
 
     /**
      * @brief Tests ClassRegistryItem::IncrementNumberOfInstances.
@@ -128,6 +133,11 @@ public:
      * @brief Checks if the function returns the pointer to the Introspection set by constructor.
      */
     bool TestGetIntrospection();
+
+    /**
+     * TODO
+     */
+    bool TestCallRegisteredMethod();
 
     /**
      * @brief Tests the ClassRegistryItem::SetUniqueIdentifier function.

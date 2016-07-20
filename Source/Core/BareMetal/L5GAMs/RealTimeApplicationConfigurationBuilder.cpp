@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
 #include "GAM.h"
+#include "Introspection.h"
 #include "RealTimeApplicationConfigurationBuilder.h"
 #include "RealTimeState.h"
 #include "RealTimeThread.h"

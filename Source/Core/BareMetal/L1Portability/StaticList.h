@@ -125,6 +125,14 @@ public:
     bool Set(const uint32 position,
              elementType &value);
 
+    /**
+     * @brief Fast peek of the element in \a pos position
+     * @param[in] pos is the position of the required element in the list.
+     * @return the element in \a pos position.
+     * @post
+     *   if (pos >= GetSize())
+     *      return last element in the list
+     */
     elementType operator[](uint32 pos);
 
 private:
@@ -217,4 +225,3 @@ elementType StaticList<elementType, listAllocationGranularity>::operator[](uint3
 }
 
 #endif /* STATICLIST_H_ */
-

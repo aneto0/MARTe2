@@ -1,8 +1,8 @@
 /**
- * @file MemoryCheck.cpp
- * @brief Source file for module MemoryCheck
- * @date 27/07/2015
- * @author Giuseppe Ferrò
+ * @file ClassMethodsRegistryItemGTest.cpp
+ * @brief Source file for class ClassMethodsRegistryItemGTest
+ * @date 24/05/2016
+ * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,27 +17,24 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the module MemoryCheck (public, protected, and private). Be aware that some
+ * the class ClassMethodsRegistryItemGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
-#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
-#ifndef LINT
-
-#include <stdlib.h>
-#include <string.h>
-#else
-#include "lint-linux.h"
-#endif
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "../../MemoryCheck.h"
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+#include "ClassMethodsRegistryItemTest.h"
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -47,16 +44,17 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
-
-namespace MemoryCheck {
-
-bool Check(const void * const address,
-           const MemoryTestAccessMode accessMode,
-           const uint32 size) {
-
-    return address != NULL;
+TEST(ClassMethodsRegistryItemGTest,TestConstructor) {
+    ClassMethodsRegistryItemTest target;
+    ASSERT_TRUE(target.TestConstructor());
 }
 
+TEST(ClassMethodsRegistryItemGTest,TestCallFunction) {
+    ClassMethodsRegistryItemTest target;
+    ASSERT_TRUE(target.TestCallFunction());
 }
+
+TEST(ClassMethodsRegistryItemGTest,TestCallFunction_WithMacroSupport) {
+    ClassMethodsRegistryItemTest target;
+    ASSERT_TRUE(target.TestCallFunction_WithMacroSupport());
 }

@@ -30,13 +30,13 @@
 /*---------------------------------------------------------------------------*/
 #define DLL_API
 
+#include "ClassRegistryItemT.h"
 #include "AnyObject.h"
 #include "Vector.h"
 #include "Matrix.h"
 #include "StreamString.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -53,7 +53,7 @@ static bool SerializeStaticMatrix(const AnyType &typeIn,
     // allocate the memory block on destination
     uint32 memoryAllocationSize = 0u;
     bool isString = (sourceDescriptor.type == SString);
-    bool isCCString = (sourceDescriptor.type == CCString);
+    bool isCCString = (sourceDescriptor.type == BT_CCString);
 
     // the SString will be changed into a CCString
     if (isString) {
@@ -113,7 +113,7 @@ static bool SerializeHeapMatrix(const AnyType &typeIn,
 
     bool ret = true;
     bool isString = (sourceDescriptor.type == SString);
-    bool isCCString = (sourceDescriptor.type == CCString);
+    bool isCCString = (sourceDescriptor.type == BT_CCString);
 
     uint32 rowSize = 0u;
 
@@ -189,7 +189,7 @@ static bool SerializeVector(const AnyType &typeIn,
     // allocate the memory block on destination
     uint32 memoryAllocationSize = 0u;
     bool isString = (sourceDescriptor.type == SString);
-    bool isCCString = (sourceDescriptor.type == CCString);
+    bool isCCString = (sourceDescriptor.type == BT_CCString);
     bool isCArray = (sourceDescriptor.type == CArray);
     bool isStaticDeclared = (typeIn.IsStaticDeclared());
 
@@ -217,12 +217,12 @@ static bool SerializeVector(const AnyType &typeIn,
                 token = reinterpret_cast<const char8 **>(sourcePointer)[i];
                 tokenLength = StringHelper::Length(token) + 1u;
             }
-            if(isCArrayOnHeap) {
+            if (isCArrayOnHeap) {
                 token = reinterpret_cast<const char8 **>(sourcePointer)[i];
                 tokenLength = typeIn.GetByteSize();
             }
             if (isString) {
-                token=(reinterpret_cast<StreamString *>(sourcePointer)[i]).Buffer();
+                token = (reinterpret_cast<StreamString *>(sourcePointer)[i]).Buffer();
                 tokenLength = StringHelper::Length(token) + 1u;
             }
             char8 **destBegin = reinterpret_cast<char8 **>(destPointer);
@@ -232,7 +232,7 @@ static bool SerializeVector(const AnyType &typeIn,
     }
     else {
         // it works also for static matrix of characters!!
-        ret=MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
+        ret = MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
     }
 
     return ret;
@@ -256,7 +256,7 @@ static bool SerializeScalar(const AnyType &typeIn,
     void* sourcePointer = typeIn.GetDataPointer();
 
     bool isString = (sourceDescriptor.type == SString);
-    bool isCCString = (sourceDescriptor.type == CCString);
+    bool isCCString = (sourceDescriptor.type == BT_CCString);
     bool isCArray = (sourceDescriptor.type == CArray);
     bool isStaticDeclared = (typeIn.IsStaticDeclared());
     bool isCArrayOnHeap = ((isCArray) && (!isStaticDeclared));
@@ -346,7 +346,7 @@ bool AnyObject::Serialise(const AnyType &typeIn) {
 
 void AnyObject::CleanUp() {
     void *typePointer = type.GetDataPointer();
-    bool cString = (type.GetTypeDescriptor().type == CCString);
+    bool cString = (type.GetTypeDescriptor().type == BT_CCString);
     bool sString = (type.GetTypeDescriptor().type == SString);
     bool cArray = (type.GetTypeDescriptor().type == CArray);
     bool staticDeclared = type.IsStaticDeclared();

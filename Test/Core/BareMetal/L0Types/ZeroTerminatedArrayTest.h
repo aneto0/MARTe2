@@ -56,7 +56,7 @@ public:
     /**
      * @brief Checks if the [] operator returns the element in the correct position.
      */
-    bool TestPositionOperator();
+    bool TestSubscriptOperator();
 
     /**
      * @brief Checks if the function returns the array size.
@@ -73,32 +73,32 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-#include "stdio.h"
+
 template<typename T>
 bool ZeroTerminatedArrayTest<T>::TestConstructor() {
-
-    T array[32];
-    for (uint32 i = 0; i < 31; i++) {
-        array[i] = static_cast<T>(i);
-    }
-
-    ZeroTerminatedArray<T> test(array);
-
-    for (uint32 i = 0; i < 32; i++) {
-        if (test.GetList()[i] != array[i]) {
-            return false;
-        }
-    }
-
-    return test.GetList() == array;
+	bool result = true;
+	{
+		T array[32]={0};
+		ZeroTerminatedArray<T> test(array);
+		result = (result && (test.GetList() == array));
+	}
+	{
+		ZeroTerminatedArray<T> test;
+		result = (result && (test.GetList() == NULL_PTR(T *)));
+	}
+	return result;
 }
 
 template<typename T>
-bool ZeroTerminatedArrayTest<T>::TestPositionOperator() {
-    T array[32];
+bool ZeroTerminatedArrayTest<T>::TestSubscriptOperator() {
+    T array[32]={0};
+    T value = 0;
     for (uint32 i = 0; i < 31; i++) {
-        array[i] = static_cast<T>(i);
+        array[i] = value;
+        value++;
     }
+    array[31] = static_cast<T>(0);
+
     ZeroTerminatedArray<T> test(array);
 
     for (uint32 i = 0; i < 32; i++) {
@@ -112,7 +112,7 @@ bool ZeroTerminatedArrayTest<T>::TestPositionOperator() {
 
 template<typename T>
 bool ZeroTerminatedArrayTest<T>::TestGetSize() {
-    T array[32];
+    T array[32]={0};
     ZeroTerminatedArray<T> test(array);
 
     for (uint32 i = 0; i < 31; i++) {

@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAMTestHelper.h"
+#include "Introspection.h"
+#include "IntrospectionT.h"
 #include "ConfigurationDatabase.h"
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"
@@ -44,8 +46,7 @@ DECLARE_CLASS_MEMBER(B, b2, int32, "", "");
 
 static const IntrospectionEntry* BEntries[] = { &B_b1_introspectionEntry, &B_b2_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(B, BEntries);
-INTROSPECTION_REGISTER(B, "1.0", B_introspection)
+DECLARE_STRUCT_INTROSPECTION(B, BEntries)
 
 DECLARE_CLASS_MEMBER(A, a1, B, "", "");
 
@@ -53,8 +54,7 @@ DECLARE_CLASS_MEMBER(A, a2, float32, "", "");
 
 static const IntrospectionEntry* AEntries[] = { &A_a1_introspectionEntry, &A_a2_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(A, AEntries);
-INTROSPECTION_REGISTER(A, "1.0", A_introspection)
+DECLARE_STRUCT_INTROSPECTION(A, AEntries);
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////

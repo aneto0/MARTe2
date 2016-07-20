@@ -340,7 +340,7 @@ static void WriteJob(ServerParam &param) {
 
     uint32 sizeResponse = 64;
     if (param.testObj->isServer && param.testObj->isValidClient) {
-        char8 input[64];
+        char8 input[64]={'\0'};
         StringHelper::Copy(input, param.testObj->string);
         if (!param.socket->Write(input, sizeResponse)) {
             param.testObj->sem.FastLock();
@@ -652,6 +652,7 @@ static void ClientJob_Write(BasicTCPSocketTest &param) {
             bool ret = true;
             const uint32 maxSize = (param.size > 1000) ? (512) : (128);
             char8 *input = new char8[maxSize];
+            MemoryOperationsHelper::Set(input, 0, maxSize);
             StringHelper::Copy(input, param.string);
             uint32 size = param.size;
             uint32 remainedSize = size;
@@ -684,10 +685,11 @@ static void ClientJob_Write(BasicTCPSocketTest &param) {
                     param.sem.FastUnLock();
                 }
             }
+            delete [] input;
+
         }
 
     }
-
     param.eventSem.Wait();
     clientSocket.Close();
 }
@@ -940,7 +942,7 @@ static void StartServer_IsConnected(BasicTCPSocketTest &param) {
 
     uint32 acceptedConnections = 0;
 
-    BasicTCPSocket clients[256];
+    BasicTCPSocket *clients[256];
     if (param.isServer) {
 
         if (!serverSocket.Listen(param.server.GetPort(), 30)) {
@@ -954,7 +956,7 @@ static void StartServer_IsConnected(BasicTCPSocketTest &param) {
 
                 BasicTCPSocket * newConnection = serverSocket.WaitConnection();
                 if (newConnection != NULL) {
-                    clients[acceptedConnections] = *newConnection;
+                    clients[acceptedConnections] = newConnection;
                     acceptedConnections++;
                 }
                 else {
@@ -977,6 +979,10 @@ static void StartServer_IsConnected(BasicTCPSocketTest &param) {
     while (Threads::NumberOfThreads() > 1) {
         Sleep::MSec(10);
     }
+    for(uint32 i=0; i<acceptedConnections; i++){
+        delete clients[i];
+    }
+
     serverSocket.Close();
 }
 

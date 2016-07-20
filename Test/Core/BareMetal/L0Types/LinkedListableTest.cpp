@@ -652,24 +652,27 @@ bool LinkedListableTest::TestDelete() {
         cursor = cursor->Next();
     }
 
+
     LinkedListable* notIn = new LinkedListable;
+    bool ret=true;
     if (root->Delete(notIn)) {
-        return false;
+        ret= false;
     }
+    delete notIn;
 
     cursor = root->Next();
     for (uint32 i = 0; i < size; i++) {
         if (!root->Delete(cursor)) {
-            return false;
+            ret=false;
         }
         if (root->Size() != (size - i)) {
-            return false;
+            ret= false;
         }
         cursor = root->Next();
     }
 
     delete root;
-    return true;
+    return ret;
 
 }
 

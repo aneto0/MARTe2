@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class ReferenceT
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -31,11 +31,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Reference.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
@@ -43,7 +45,7 @@ namespace MARTe {
  * @tparam T the base type of the objects referenced by instances of this class
  */
 template<typename T>
-class ReferenceT: public Reference {
+class DLL_API ReferenceT: public Reference {
 public:
 
     /**
@@ -143,7 +145,7 @@ public:
      * @return true if the object was successfully created and initialized.
      */
     virtual bool Initialise(StructuredDataI &data,
-    const bool &initOnly);
+                            const bool &initOnly);
 
 private:
 
@@ -162,7 +164,6 @@ private:
      * The pointer to the referenced object.
      */
     T* typeTObjectPointer;
-
 };
 
 /*---------------------------------------------------------------------------*/
@@ -189,7 +190,6 @@ ReferenceT<T>::ReferenceT() :
         Reference() {
     Init();
 }
-
 
 /*lint -e{1566} Init function initializes members */
 /*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
@@ -240,6 +240,7 @@ ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);
         if (typeTObjectPointer == NULL) {
             RemoveReference();
+            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
         }
     }
 
@@ -273,10 +274,6 @@ bool ReferenceT<T>::Initialise(StructuredDataI &data,
     }
     return ok;
 }
-
-
-
-
 
 /*lint -e{1566} Init function initializes members */
 /*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting

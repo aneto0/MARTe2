@@ -60,11 +60,18 @@ public:
      */
     bool TestConstructor();
 
+//    /**
+//     * @brief Tests the TestGetClassPropertiesCopy function.
+//     * @return true if ClassProperties::GetName == "ReferenceContainer".
+//     */
+//    bool TestGetClassPropertiesCopy();
+
     /**
-     * @brief Tests the TestGetClassPropertiesCopy function.
+     * @brief Tests the TestGetClassProperties function.
      * @return true if ClassProperties::GetName == "ReferenceContainer".
      */
-    bool TestGetClassPropertiesCopy();
+
+    bool TestGetClassProperties();
 
     /**
      * @brief Tests the ReferenceContainer::GetTimeout function.
@@ -77,6 +84,12 @@ public:
      * @return true if the timeout is changed to a new value and correctly read-back.
      */
     bool TestSetTimeout(TimeoutType timeout);
+
+    /**
+     * @brief Tests the ReferenceContainer::Find function.
+     * @return true if the leaf "E" is found.
+     */
+    bool TestFind();
 
     /**
      * @brief Tests the ReferenceContainer::Find function with a use-case that always finds an occurrence.
@@ -290,6 +303,16 @@ public:
     float TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
                               ReferenceContainerFilter &filter);
 
+
+
+    bool TestFindWithPath();
+
+    /**
+     * @brief Tests the ReferenceContainer::Insert with the full path as parameter.
+     * @return true if the function inserts the reference at the specified path
+     */
+    bool TestInsertWithPath();
+
     /**
      * @brief Tests the ReferenceContainer::Insert function.
      * @details Creates an empty container and Inserts the following nodes to the end of the container: leafB, containerC, containerD, leafH
@@ -361,7 +384,29 @@ public:
      */
     bool TestDelete();
 
+
+    bool TestDeleteWithPath();
+
+
+
     /**
+     * @brief Tests if for each of the marked nodes of \a data a new Object
+     * will be created and its Reference added to the container.
+     */
+    bool TestInitialise();
+
+
+
+    bool TestCleanUp();
+
+
+    bool TestCleanUp_Shared();
+
+
+    bool TestExportData();
+
+
+   /**
      * List of nodes for the tree described in the GenerateTestTree function
      */
     ReferenceT<ReferenceContainer> tree;
@@ -412,6 +457,9 @@ public:
      * @return the container with the generated tree, i.e. the Root
      */
     ReferenceT<ReferenceContainer> GenerateTestTreeLarge(uint32 depth);
+
+
+    volatile int32 spinLock;
 
 private:
     /**
@@ -467,6 +515,8 @@ private:
     bool GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source,
                                                                  ReferenceContainer &result,
                                                                  const char8 * const str);
+
+
 };
 
 /*---------------------------------------------------------------------------*/

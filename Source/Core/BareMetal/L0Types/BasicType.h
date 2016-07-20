@@ -66,7 +66,7 @@ const BasicType Pointer = 3u;
  * The type is a C string
  * (const char *)
  */
-const BasicType CCString = 4u;
+const BasicType BT_CCString = 4u;
 
 /**
  * The type is a pointer to a C string allocated on heap.

@@ -277,69 +277,6 @@ private:
     ReferenceT<ReferenceContainer> dataSourceContainer;
 #endif
 
-    bool InitialiseSignalsDatabase();
-
-    bool FlattenSignal(ConfigurationDatabase &signalDatabase,
-                       StreamString signalName,
-                       ConfigurationDatabase &resolvedSignal,
-                       uint32 &signalNumber,
-                       bool forceWriteDataSource);
-
-    bool FlattenSignalsDatabase(ConfigurationDatabase &signalDatabase,
-                                const char8 *signalDirection);
-
-    bool ResolveIntrospectionInDataSources();
-
-    bool FindFunctionNumber(StreamString functionName,
-                            StreamString &functionNumber);
-
-    bool FindDataSourceNumber(StreamString dataSourceName,
-                              StreamString &dataSourceNumber);
-
-    bool FindSignalName(StreamString signalName,
-                        ConfigurationDatabase &database);
-
-    bool SignalIntrospectionToStructuredData(StreamString typeName,
-                                             StreamString signalname,
-                                             StreamString alias,
-                                             StreamString dataSourceName,
-                                             AnyType ranges,
-                                             StructuredDataI & data,
-                                             uint32 &signalNumber);
-
-    bool LinkGAMToState(StreamString functionName,
-                        StreamString stateName,
-                        StreamString threadName);
-
-    bool ResolveDataSources(const char *signalDirection);
-
-    bool AddSignalToDataSource(StreamString gamName,
-                               StreamString dataSourceName);
-
-    bool VerifyDataSource(StreamString dataSourceName);
-
-    bool ResolveStates();
-
-    bool VerifyDataSourcesSignals();
-
-    bool ResolveFunctionSignal(StreamString signalName,
-                               StreamString functionName,
-                               StreamString dataSourceName,
-                               uint32 numberOfFunctionSignals);
-
-    bool ResolveConsumersAndProducers(bool consumers);
-
-    bool ResolveFunctionSignals(const char *signalDirection);
-
-    bool VerifyFunctionSignals(const char *signalDirection);
-
-    bool FlattenDatabase(const char *signalDirection);
-
-    bool ResolveFunctionSignalsMemorySize(const char *signalDirection);
-
-    bool ResolveFunctionsMemory(const char *signalDirection);
-
-    bool AllocateFunctionsMemory(const char *signalDirection);
 
     ConfigurationDatabase functionsDatabase;
     ConfigurationDatabase dataSourcesDatabase;

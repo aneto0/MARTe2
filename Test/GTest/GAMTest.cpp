@@ -26,6 +26,7 @@
 /*---------------------------------------------------------------------------*/
 #include <stdio.h>
 #include "CompilerTypes.h"
+#include "IntrospectionT.h"
 #include "ConfigurationDatabase.h"
 #include "ErrorInformation.h"
 #include "ErrorManagement.h"
@@ -48,8 +49,7 @@ struct TrackErrorPar3 {
 
 DECLARE_CLASS_MEMBER(TrackErrorPar3, Par1, uint32, "", "");
 static const IntrospectionEntry* TrackErrorPar3Entries[] = { &TrackErrorPar3_Par1_introspectionEntry, 0 };
-DECLARE_CLASS_INTROSPECTION(TrackErrorPar3, TrackErrorPar3Entries);
-INTROSPECTION_REGISTER(TrackErrorPar3, "1.0", TrackErrorPar3_introspection)
+DECLARE_STRUCT_INTROSPECTION(TrackErrorPar3, TrackErrorPar3Entries)
 
 struct TrackError {
     uint32 Par1;
@@ -62,8 +62,7 @@ DECLARE_CLASS_MEMBER(TrackError, Par2, uint32, "", "");
 DECLARE_CLASS_MEMBER(TrackError, Par3, TrackErrorPar3, "", "");
 static const IntrospectionEntry* TrackErrorEntries[] = { &TrackError_Par1_introspectionEntry, &TrackError_Par2_introspectionEntry,
         &TrackError_Par3_introspectionEntry, 0 };
-DECLARE_CLASS_INTROSPECTION(TrackError, TrackErrorEntries);
-INTROSPECTION_REGISTER(TrackError, "1.0", TrackError_introspection)
+DECLARE_STRUCT_INTROSPECTION(TrackError, TrackErrorEntries);
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

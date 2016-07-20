@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class IntrospectionEntry
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -46,6 +46,18 @@ namespace MARTe {
 class DLL_API IntrospectionEntry {
 
 public:
+
+    /**
+     * @brief Default constructor
+     * @post
+     *   GetMemberName() == NULL &&
+     *   GetMemberTypeName() == NULL &&
+     *   GetMemberModifiers() == NULL &&
+     *   GetMemberAttributes() == NULL &&
+     *   GetMemberSize() == 0 &&
+     *   GetMemberByteOffset() == 0
+     */
+    IntrospectionEntry();
 
     /**
      * @brief Constructor.
@@ -82,7 +94,6 @@ public:
      */
     const char8 *GetMemberTypeName() const;
 
-
     /**
      * @brief Retrieves the TypeDescriptor associated to the member type.
      * @return the TypeDescriptor associated to the member type.
@@ -112,7 +123,6 @@ public:
      *   @return the member modifiers.
      */
     const char8 * GetMemberModifiers() const;
-
 
     /**
      * @brief Retrieves the member attributes.

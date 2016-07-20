@@ -28,8 +28,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "ClassRegistryItemT.h"
 #include "ObjectTestHelper.h"
-#include "Introspection.h"
+#include "IntrospectionT.h"
+#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -54,17 +56,26 @@ CLASS_REGISTER(CollectInts, "1.0")
 CLASS_REGISTER(NonIntrospectableIntegerObject, "1.0")
 
 
+CLASS_REGISTER(IntrospectableIntegerObject, "1.0")
+
+
+CLASS_REGISTER(IntrospectableObjectWith2Members, "1.0")
+
+
+CLASS_REGISTER(IntrospectableObjectWith3Members, "1.0")
+
+
 DECLARE_CLASS_MEMBER(IntrospectableIntegerObject, member, int32, "", "");
 static const IntrospectionEntry* objFields[] = { &IntrospectableIntegerObject_member_introspectionEntry, 0 };
 DECLARE_CLASS_INTROSPECTION(IntrospectableIntegerObject, objFields);
-CLASS_INTROSPECTION_REGISTER(IntrospectableIntegerObject, "1.0", IntrospectableIntegerObject_introspection)
+//CLASS_INTROSPECTION_REGISTER(IntrospectableIntegerObject, "1.0", IntrospectableIntegerObject_introspection)
 
 
 DECLARE_CLASS_MEMBER(IntrospectableObjectWith2Members, member1, int32, "", "");
 DECLARE_CLASS_MEMBER(IntrospectableObjectWith2Members, member2, uint64, "", "");
 static const IntrospectionEntry* IntrospectableObjectWith2Members_objFields[] = { &IntrospectableObjectWith2Members_member1_introspectionEntry, &IntrospectableObjectWith2Members_member2_introspectionEntry, 0 };
 DECLARE_CLASS_INTROSPECTION(IntrospectableObjectWith2Members, IntrospectableObjectWith2Members_objFields);
-CLASS_INTROSPECTION_REGISTER(IntrospectableObjectWith2Members, "1.0", IntrospectableObjectWith2Members_introspection)
+//CLASS_INTROSPECTION_REGISTER(IntrospectableObjectWith2Members, "1.0", IntrospectableObjectWith2Members_introspection)
 
 
 DECLARE_CLASS_MEMBER(IntrospectableObjectWith3Members, member1, int32, "", "");
@@ -72,4 +83,4 @@ DECLARE_CLASS_MEMBER(IntrospectableObjectWith3Members, member2, uint64, "", "");
 DECLARE_CLASS_MEMBER(IntrospectableObjectWith3Members, member3, IntrospectableIntegerObject, "", "");
 static const IntrospectionEntry* IntrospectableObjectWith3Members_objFields[] = { &IntrospectableObjectWith3Members_member1_introspectionEntry, &IntrospectableObjectWith3Members_member2_introspectionEntry, &IntrospectableObjectWith3Members_member3_introspectionEntry, 0 };
 DECLARE_CLASS_INTROSPECTION(IntrospectableObjectWith3Members, IntrospectableObjectWith3Members_objFields);
-CLASS_INTROSPECTION_REGISTER(IntrospectableObjectWith3Members, "1.0", IntrospectableObjectWith3Members_introspection)
+//CLASS_INTROSPECTION_REGISTER(IntrospectableObjectWith3Members, "1.0", IntrospectableObjectWith3Members_introspection)

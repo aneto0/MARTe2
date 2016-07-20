@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Object.h"
+#include "StructuredDataI.h"
 
 using namespace MARTe;
 /*---------------------------------------------------------------------------*/
@@ -72,6 +73,14 @@ public:
         this->dummyVariable = dummyVariable;
     }
 
+    virtual bool Initialise(StructuredDataI & data) {
+        int32 value;
+        if (data.Read("var", value)) {
+            dummyVariable = value;
+        }
+        return true;
+    }
+
 protected:
     /**
      * Dummy variable
@@ -107,6 +116,11 @@ public:
     int32 saturate(int32 threshold) {
 
         return dummyVariable > threshold ? threshold : dummyVariable;
+    }
+
+    virtual bool Initialise(StructuredDataI & data) {
+        dummyVariable = 2;
+        return true;
     }
 
 private:
@@ -147,6 +161,11 @@ public:
      */
     void SetVariable(float32 dummyVariable) {
         this->dummyFVariable = dummyVariable;
+    }
+
+    virtual bool Initialise(StructuredDataI & data) {
+        dummyFVariable = 2.0;
+        return true;
     }
 
 private:

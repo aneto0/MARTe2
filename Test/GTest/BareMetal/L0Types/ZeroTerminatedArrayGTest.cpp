@@ -106,62 +106,62 @@ TEST(ZeroTerminatedArrayGTest,TestConstructor_float64) {
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestPositionOperator_char8) {
+TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_char8) {
     ZeroTerminatedArrayTest<char8> ztArrayTest;
-    ASSERT_TRUE(ztArrayTest.TestPositionOperator());
+    ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestPositionOperator_int8) {
+TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_int8) {
     ZeroTerminatedArrayTest<int8> ztArrayTest;
-    ASSERT_TRUE(ztArrayTest.TestPositionOperator());
+    ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestPositionOperator_uint8) {
+TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_uint8) {
     ZeroTerminatedArrayTest<uint8> ztArrayTest;
-    ASSERT_TRUE(ztArrayTest.TestPositionOperator());
+    ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestPositionOperator_int16) {
+TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_int16) {
     ZeroTerminatedArrayTest<int16> ztArrayTest;
-    ASSERT_TRUE(ztArrayTest.TestPositionOperator());
+    ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestPositionOperator_uint16) {
+TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_uint16) {
     ZeroTerminatedArrayTest<uint16> ztArrayTest;
-    ASSERT_TRUE(ztArrayTest.TestPositionOperator());
+    ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestPositionOperator_int32) {
+TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_int32) {
     ZeroTerminatedArrayTest<int32> ztArrayTest;
-    ASSERT_TRUE(ztArrayTest.TestPositionOperator());
+    ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestPositionOperator_uint32) {
+TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_uint32) {
     ZeroTerminatedArrayTest<uint32> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestPositionOperator_int64) {
+TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_int64) {
     ZeroTerminatedArrayTest<int64> ztArrayTest;
-    ASSERT_TRUE(ztArrayTest.TestPositionOperator());
+    ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestPositionOperator_uint64) {
+TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_uint64) {
     ZeroTerminatedArrayTest<uint64> ztArrayTest;
-    ASSERT_TRUE(ztArrayTest.TestPositionOperator());
+    ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestPositionOperator_float32) {
+TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_float32) {
     ZeroTerminatedArrayTest<float32> ztArrayTest;
-    ASSERT_TRUE(ztArrayTest.TestPositionOperator());
+    ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestPositionOperator_float64) {
+TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_float64) {
     ZeroTerminatedArrayTest<float64> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }

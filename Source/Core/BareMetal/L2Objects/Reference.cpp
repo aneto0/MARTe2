@@ -15,12 +15,14 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This source file contains the definition of all the methods for
  * the class Reference (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -28,10 +30,15 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "ClassRegistryItem.h"
 #include "Reference.h"
 #include "ClassRegistryDatabase.h"
 #include "ErrorManagement.h"
+#include "ObjectBuilder.h"
+#include "StringHelper.h"
+#include "MemoryOperationsHelper.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,6 +46,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 Reference::Reference() {
@@ -95,17 +103,36 @@ bool Reference::Initialise(StructuredDataI &data,
 
     if (!initOnly) {
         if (objectPointer == NULL_PTR(Object*)) {
-            char8 className[256] = { '\0' };
-            ok = data.Read("Class", className);
+            AnyType at = data.GetType("Class");
+            void* ptr = at.GetDataPointer();
+            ok = (ptr != NULL);
             if (ok) {
-                Object *objPtr = CreateByName(&className[0], GlobalObjectsDatabase::Instance()->GetStandardHeap());
-                ok = (objPtr != NULL_PTR(Object*));
+                TypeDescriptor td = at.GetTypeDescriptor();
+                bool isCCString = (td.type == BT_CCString);
+                bool isCArray = (td.type == CArray);
+                bool isPCString = (td.type == PCString);
+                ok = (isCCString) || (isCArray) || (isPCString);
                 if (ok) {
-                    objectPointer = objPtr;
-                    objectPointer->IncrementReferences();
-                }
-                else {
-                    REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
+                    uint32 len = StringHelper::Length(reinterpret_cast<const char8 *>(ptr)) + 1u;
+                    char8 *className = reinterpret_cast<char8 *>(HeapManager::Malloc(len * static_cast<uint32>(sizeof(char8))));
+                    ok = MemoryOperationsHelper::Set(className, '\0', len);
+                    if (ok) {
+                        ok = data.Read("Class", className);
+                        if (ok) {
+                            Object *objPtr = CreateByName(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                            ok = (objPtr != NULL_PTR(Object*));
+                            if (ok) {
+                                objectPointer = objPtr;
+                                objectPointer->IncrementReferences();
+                            }
+                            else {
+                                REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
+                            }
+                        }
+                        if (!HeapManager::Free(reinterpret_cast<void *&>(className))) {
+                            //TODO
+                        }
+                    }
                 }
             }
         }
@@ -167,18 +194,14 @@ bool Reference::operator!=(const Reference& sourceReference) const {
     return (objectPointer != sourceReference.objectPointer);
 }
 
-Object* Reference::operator->() {
-    return objectPointer;
-}
-
 Object *Reference::CreateByName(const char8 * const className,
                                 HeapI* const heap) const {
     Object *obj = NULL_PTR(Object *);
 
     const ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance()->Find(className);
     if ((classRegistryItem != NULL)) {
-        if (classRegistryItem->GetObjectBuildFunction() != NULL) {
-            obj = classRegistryItem->GetObjectBuildFunction()(heap);
+        if (classRegistryItem->GetObjectBuilder() != NULL) {
+            obj = classRegistryItem->GetObjectBuilder()->Build(heap);
         }
     }
 
