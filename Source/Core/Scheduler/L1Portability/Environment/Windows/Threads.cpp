@@ -262,9 +262,6 @@ bool Kill(const ThreadIdentifier &threadId) {
 
     ThreadsDatabase::Lock();
     ThreadsDatabase::RemoveEntry(threadId);
-    if (threadId != NULL) {
-        delete threadId;
-    }
     ThreadsDatabase::UnLock();
 
     if (threadId == GetCurrentThreadId()) {
