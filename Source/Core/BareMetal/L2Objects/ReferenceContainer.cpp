@@ -373,9 +373,14 @@ void ReferenceContainer::Find(ReferenceContainer &result,
     UnLock();
 }
 
-Reference ReferenceContainer::Find(const char8 * const path) {
+Reference ReferenceContainer::Find(const char8 * const path,
+                                   const bool recursive) {
     Reference ret;
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::SHALLOW | ReferenceContainerFilterMode::RECURSIVE, path);
+    uint32 mode = ReferenceContainerFilterMode::SHALLOW;
+    if (recursive) {
+        mode = ReferenceContainerFilterMode::RECURSIVE;
+    }
+    ReferenceContainerFilterObjectName filter(1, mode, path);
     ReferenceContainer resultSingle;
     Find(resultSingle, filter);
     if (resultSingle.Size() > 0u) {

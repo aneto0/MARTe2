@@ -240,7 +240,6 @@ ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);
         if (typeTObjectPointer == NULL) {
             RemoveReference();
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
         }
     }
 

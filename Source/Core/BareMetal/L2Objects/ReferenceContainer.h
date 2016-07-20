@@ -62,7 +62,7 @@ public:
      * @brief Default constructor.
      * @details Initialises the semaphore and set the default timeout to infinite.
      */
-    ReferenceContainer();
+ReferenceContainer    ();
 
     /**
      * @brief Copy Constructor
@@ -134,7 +134,7 @@ public:
      * @param[in] path is the name of the element to be found or its full path.
      * @return the element if it is found or an invalid reference if not.
      */
-    Reference Find(const char8 * const path);
+    Reference Find(const char8 * const path, const bool recursive=false);
 
     /**
      * @brief Checks if \a ref holds a container.

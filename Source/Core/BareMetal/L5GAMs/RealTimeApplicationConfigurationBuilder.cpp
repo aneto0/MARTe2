@@ -2616,7 +2616,7 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
     if (ret) {
         uint32 n;
         for (n = 0u; (n < numberOfDataSources) && (ret); n++) {
-            StreamString qualifiedName;
+            StreamString qualifiedName="Data.";
             StreamString dataSourceIdx;
             dataSourceIdx.Printf("%d", n);
             ret = dataSourcesDatabase.MoveRelative(dataSourceIdx.Buffer());
@@ -2624,7 +2624,9 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
                 ret = dataSourcesDatabase.Read("QualifiedName", qualifiedName);
             }
             ReferenceT<DataSourceI> dataSource;
-            if (ret) {
+            if (ret) {/*
+                StreamString fullDsName="Data.";
+                fullDsName+=qualifiedName;*/
                 dataSource = realTimeApplication->Find(qualifiedName.Buffer());
                 ret = dataSource.IsValid();
             }
@@ -2654,7 +2656,7 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureFunctions() {
     if (ret) {
         uint32 n;
         for (n = 0u; (n < numberOfFunctions) && (ret); n++) {
-            StreamString qualifiedName;
+            StreamString qualifiedName="Functions.";
             StreamString functionIdx;
             functionIdx.Printf("%d", n);
             ret = functionsDatabase.MoveRelative(functionIdx.Buffer());
@@ -2712,7 +2714,7 @@ bool RealTimeApplicationConfigurationBuilder::AddBrokersToFunctions(SignalDirect
     if (ret) {
         uint32 n;
         for (n = 0u; (n < numberOfDataSources) && (ret); n++) {
-            StreamString qualifiedName;
+            StreamString qualifiedName="Data.";
             StreamString dataSourceIdx;
             dataSourceIdx.Printf("%d", n);
             ret = dataSourcesDatabase.MoveRelative(dataSourceIdx.Buffer());
@@ -2731,7 +2733,7 @@ bool RealTimeApplicationConfigurationBuilder::AddBrokersToFunctions(SignalDirect
 
             uint32 k;
             for (k = 0u; (k < numberOfFunctions) && (ret); k++) {
-                StreamString gamQualifiedName;
+                StreamString gamQualifiedName="Functions.";
                 ret = dataSource->GetFunctionName(k, gamQualifiedName);
                 ReferenceT<GAM> gam;
                 if (ret) {
