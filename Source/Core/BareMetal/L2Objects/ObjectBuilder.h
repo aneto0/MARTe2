@@ -76,10 +76,10 @@ public:
 
 namespace MARTe {
 
-ObjectBuilder::~ObjectBuilder() {
+inline ObjectBuilder::~ObjectBuilder() {
 }
 
-virtual Object *ObjectBuilder::Build(HeapI* const heap) const {
+inline Object *ObjectBuilder::Build(HeapI* const heap) const {
     return NULL_PTR(Object *);
 }
 
