@@ -189,6 +189,31 @@ bool GAMDataSource::AllocateMemory() {
     return ret;
 }
 
+const char8 *GAMDataSource::Negotiate(StructuredDataI &data,
+                                      SignalDirection direction) {
+    const char8* brokerName = NULL_PTR(const char8 *);
+
+    float32 freq;
+    if (!data.Read("Frequency", freq)) {
+        freq = -1;
+    }
+    uint32 samples;
+    if (!data.Read("Samples", samples)) {
+        samples = 1u;
+    }
+
+    if ((freq < 0.) && (samples == 1u)) {
+        if (direction == InputSignals) {
+            brokerName = "MemoryMapInputBroker";
+        }
+        else {
+            brokerName = "MemoryMapOutputBroker";
+        }
+    }
+    return brokerName;
+
+}
+
 bool GAMDataSource::GetInputReaders(const char8 * const functionName,
                                     ReferenceContainer &output) {
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");

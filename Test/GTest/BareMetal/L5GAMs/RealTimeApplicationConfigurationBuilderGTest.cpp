@@ -176,3 +176,8 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestAssignFunctionsMemoryToDat
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestAssignFunctionsMemoryToDataSource());
 }
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestAssignBrokersToFunctions) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestAssignBrokersToFunctions());
+}

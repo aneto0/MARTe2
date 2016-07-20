@@ -400,6 +400,17 @@ bool RealTimeApplication::ConfigureApplication() {
     if (ret) {
         ret = rtAppBuilder.PostConfigureFunctions();
     }
+    //<<<<<<<<<<<<<<Mine
+
+    if (ret) {
+        rtAppBuilder.Copy(functionsDatabase, dataSourcesDatabase);
+    }
+    //TODO Add brokers to GAMs allocating GAM memory
+
+    //<<<<<<<<<<<<<<Mine
+    return ret;
+#if 0
+    //Andre's stuff
     if (ret) {
         ret = rtAppBuilder.AddBrokersToFunctions();
     }
@@ -518,6 +529,9 @@ bool RealTimeApplication::ConfigureApplication() {
         }
     }
     return ret;
+
+#endif
+
 #if 0
 //Create the Function and the Data nodes. Add all the signals by querying the GAMs and the DataSourceI
     bool ret = InitialiseSignalsDatabase();
@@ -744,6 +758,47 @@ bool RealTimeApplication::ConfigureApplication() {
 
     return ret;
 #endif
+}
+
+bool RealTimeApplication::ConfigureApplicationFromExternalSource(ConfigurationDatabase &functionsDatabaseIn,
+                                                                 ConfigurationDatabase &dataSourcesDatabaseIn) {
+    // no check..someone else did it
+    // TODO Standard checks can be done (the Verifies)
+    functionsDatabaseIn.MoveToRoot();
+    bool ret = functionsDatabaseIn.Copy(functionsDatabase);
+    if (ret) {
+        dataSourcesDatabaseIn.MoveToRoot();
+        dataSourcesDatabaseIn.Copy(dataSourcesDatabase);
+    }
+    return ret;
+}
+
+bool RealTimeApplication::AddBrokersToFunctions() {
+    //pre: called after ConfigureApplication(*)
+    bool ret = dataSourcesDatabase.MoveAbsolute("Data");
+    if (ret) {
+        uint32 numberOfDataSources = dataSourcesDatabase.GetNumberOfChildren();
+        for (uint32 i = 0u; i < numberOfDataSources && ret; i++) {
+            const char8 * dataSourceId = dataSourcesDatabase.GetChildName(i);
+            ret = dataSourcesDatabase.MoveRelative(dataSourceId);
+            StreamString fullDataSourcePath = "Data.";
+            if (ret) {
+                ret = dataSourcesDatabase.Read("QualifiedName", fullDataSourcePath);
+            }
+            ReferenceT<DataSourceI> dataSource;
+            if (ret) {
+                dataSource = Find(fullDataSourcePath.Buffer());
+                ret = dataSource.IsValid();
+            }
+            if (ret) {
+                //TODO Call the function for each ds
+            }
+            if (ret) {
+                ret = dataSourcesDatabase.MoveToAncestor(1u);
+            }
+        }
+    }
+    return ret;
 }
 
 bool RealTimeApplication::Initialise(StructuredDataI & data) {

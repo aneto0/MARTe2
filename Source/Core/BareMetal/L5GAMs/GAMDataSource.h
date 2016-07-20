@@ -88,6 +88,9 @@ public:
 
     virtual bool AllocateMemory();
 
+    virtual const char8 *Negotiate(StructuredDataI &data, SignalDirection direction);
+
+
     virtual bool GetInputReaders(const char8 * const functionName, ReferenceContainer &output);
 
     virtual bool GetOutputWriters(const char8 * const functionName, ReferenceContainer &output);

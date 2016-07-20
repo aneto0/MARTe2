@@ -99,6 +99,8 @@ public:
 
     bool TestAssignFunctionsMemoryToDataSource();
 
+    bool TestAssignBrokersToFunctions();
+
 };
 
 

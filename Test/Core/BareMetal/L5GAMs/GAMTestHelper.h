@@ -104,7 +104,6 @@ static StreamString config1 = ""
         "                        NumberOfDimensions = 2"
         "                        NumberOfElements = 32"
         "                        Ranges = {{1 2},{6 31}}"
-        "                        TimeCyclesSamples = {1 1}"
         "                    }"
         "                }"
         "                InputSignals = {"
@@ -240,6 +239,8 @@ public:
                                        void *&signalAddress);
 
     virtual bool AllocateMemory();
+
+    virtual const char8 *Negotiate(StructuredDataI &data, SignalDirection direction);
 
     virtual bool GetInputReaders(const char8 * const functionName, ReferenceContainer &output);
 

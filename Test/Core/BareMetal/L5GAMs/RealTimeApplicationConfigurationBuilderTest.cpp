@@ -2428,7 +2428,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAllocateFunctionsMemory() 
     return true;
 }
 
-bool RealTimeApplicationConfigurationBuilderTest::TestAssignFunctionsMemoryToDataSource(){
+bool RealTimeApplicationConfigurationBuilderTest::TestAssignFunctionsMemoryToDataSource() {
     ConfigurationDatabase cdb;
     config1.Seek(0);
     StandardParser parser(config1, cdb);
@@ -2521,4 +2521,234 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignFunctionsMemoryToDat
     return true;
 }
 
+bool RealTimeApplicationConfigurationBuilderTest::TestAssignBrokersToFunctions() {
 
+    static StreamString config1 = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = A"
+            "                    MemberAliases = {"
+            "                        Signal1.a1 = E"
+            "                    }"
+            "                    Defaults = {"
+            "                        Signal1.a1.b1 = 1"
+            "                        Signal1.a2 = 0.5"
+            "                    }"
+            "                }"
+            "                Signal2 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Samples = 1"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB2.DDB1"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMC = {"
+            "            Class = GAM1"
+            "            OutputSignals = {"
+            "                ToBoard1 = {"
+            "                    Signal1 = {"
+            "                        DataSource = DDB1"
+            "                        Type = uint32"
+            "                        Alias = SharedVar"
+            "                        NumberOfDimensions = 2"
+            "                        NumberOfElements = 32"
+            "                        Ranges = {{0 0},{3 5}}"
+            "                    }"
+            "                }"
+            "            }"
+            "            +GAMA = {"
+            "                Class = GAM1"
+            "                OutputSignals = {"
+            "                    Signal1 = {"
+            "                        DataSource = DDB1"
+            "                        Type = uint32"
+            "                        Alias = SharedVar"
+            "                        NumberOfDimensions = 2"
+            "                        NumberOfElements = 32"
+            "                        Ranges = {{1 2},{6 31}}"
+            "                    }"
+            "                }"
+            "                InputSignals = {"
+            "                    Signal2 = {"
+            "                        DataSource = DDB2"
+            "                        Alias = PredefinedSignal"
+            "                    }"
+            "                    Signal3 = {"
+            "                        DataSource = DDB2"
+            "                        Alias = PredefinedSignal.a1"
+            "                    }"
+            "                    Signal4 = {"
+            "                        DataSource = DDB2"
+            "                        Alias = PredefinedSignal.a2"
+            "                    }"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = DS1"
+            "        }"
+            "        +DDB2 = {"
+            "            Class = DS1"
+            "            +DDB1 = {"
+            "                Class = DS1"
+            "                Signals = {"
+            "                    Signal1 = {"
+            "                        Type = int32"
+            "                        NumberOfDimensions = 1"
+            "                        NumberOfElements = 32"
+            "                    }"
+            "                }"
+            "            }"
+            "            Signals = {"
+            "                PredefinedSignal = {"
+            "                    Type = A"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA, :Functions.GAMB, :Functions.GAMC}"
+            "                }"
+            "                +Thread2 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMC.GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "        +State2 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA,:Functions.GAMC.GAMA}"
+            "                }"
+            "                +Thread2 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = { :Functions.GAMC, :Functions.GAMB}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    ConfigurationDatabase cdb;
+    config1.Seek(0);
+    StandardParser parser(config1, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveStates()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignalsMemorySize()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionsMemory()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.AllocateFunctionsMemory()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.AssignFunctionsMemoryToDataSource()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.AssignBrokersToFunctions()) {
+        return false;
+    }
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return true;
+}

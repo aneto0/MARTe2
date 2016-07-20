@@ -161,6 +161,12 @@ public:
 
     bool ConfigureApplication();
 
+    //TODO
+    bool ConfigureApplicationFromExternalSource(ConfigurationDatabase &functionsDatabase, ConfigurationDatabase &dataSourcesDatabase);
+
+
+    bool AddBrokersToFunctions();
+
 #if 0
     /**
      * @brief Configuration of the main application environment.

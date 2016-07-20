@@ -169,7 +169,6 @@ public:
      */
     bool FlattenSignalsDatabases();
 
-
     bool VerifySynchronization();
 
     /**
@@ -669,11 +668,8 @@ public:
      */
     bool AssignFunctionsMemoryToDataSource();
 
-
-#if 0
     // For each gam signal, the data source will write the name of the broker to be used
     bool AssignBrokersToFunctions();
-#endif
 
     /**
      * @brief For each DataSource calls DataSourceI::SetConfiguredDatabase followed by DataSourceI::AllocateMemory.
@@ -766,8 +762,6 @@ private:
                        uint32 &signalNumber,
                        bool forceWriteDataSource);
 
-
-
     /**
      * @brief Adds a signal from \a gamName into \a dataSourceName.
      * @details It assumes that the functionsDatabase and the dataSourcesDatabase are pointing at the correct signal already. If the signal
@@ -806,10 +800,11 @@ private:
      * @return true if the signal can be successfully resolved (which might include createing the signal).
      */
     bool ResolveFunctionSignal(const char8 * const signalName,
+                               const char8 * const aliasName,
                                const char8 * const functionName,
                                const char8 * const dataSourceName,
                                uint32 &numberOfFunctionSignals,
-                               uint32 & index);
+                               bool &deleted);
     /**
      * @brief Final merge of signals from the DataSources to the Functions.
      * @details For every signal in every Function merge with the corresponding DataSource signal.
@@ -858,6 +853,9 @@ private:
      * @return @see AssignFunctionsMemoryToDataSource()
      */
     bool AssignFunctionsMemoryToDataSource(SignalDirection direction);
+
+    bool AssignBrokersToSignals(SignalDirection direction,
+                                ReferenceT<DataSourceI> dataSource);
 
     /**
      * @brief @see AddBrokersToFunctions()

@@ -214,7 +214,8 @@ bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
     if (ok) {
         //Invalidate move to leafs
         ReferenceT < ReferenceContainer > container = resultSingle.Get(resultSingle.Size() - 1u);
-        if (container.IsValid()) {
+        ok=container.IsValid();
+        if (ok) {
             currentNode = container;
         }
     }
@@ -232,7 +233,8 @@ bool ConfigurationDatabase::MoveRelative(const char8 * const path) {
     if (ok) {
         //Invalidate move to leafs
         ReferenceT < ReferenceContainer > container = resultSingle.Get(resultSingle.Size() - 1u);
-        if (container.IsValid()) {
+        ok=container.IsValid();
+        if (ok) {
             currentNode = container;
         }
     }

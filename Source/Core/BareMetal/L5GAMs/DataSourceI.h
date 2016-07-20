@@ -197,6 +197,7 @@ public:
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
                                        uint32 bufferIdx,
                                        void *&signalAddress) = 0;
+    virtual const char8 *Negotiate(StructuredDataI &data, SignalDirection direction)=0;
 
     virtual bool GetInputReaders(const char8 * const functionName, ReferenceContainer &output) = 0;
 
@@ -205,6 +206,8 @@ public:
     virtual bool PrepareNextState(const RealTimeStateInfo &status) = 0;
 
     virtual bool ChangeState() = 0;
+
+
 
 #if 0
     /**
