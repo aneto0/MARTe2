@@ -46,7 +46,7 @@ namespace MARTe {
  * @tparam T is a descendant of MARTe::Object.
  */
 template<typename T>
-class DLL_API ObjectBuilderT: public ObjectBuilder {
+class ObjectBuilderT: public ObjectBuilder {
 
 public:
     /**

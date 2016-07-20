@@ -45,7 +45,7 @@ namespace MARTe {
  * @tparam T the base type of the objects referenced by instances of this class
  */
 template<typename T>
-class DLL_API ReferenceT: public Reference {
+class ReferenceT: public Reference {
 public:
 
     /**

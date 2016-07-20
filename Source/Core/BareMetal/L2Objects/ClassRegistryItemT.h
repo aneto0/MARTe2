@@ -49,7 +49,7 @@ namespace MARTe {
  * must be created.
  */
 template<typename T, bool AddDefaultObjectBuilder = true>
-class DLL_API ClassRegistryItemT: public ClassRegistryItem {
+class ClassRegistryItemT: public ClassRegistryItem {
 
 public:
     /**

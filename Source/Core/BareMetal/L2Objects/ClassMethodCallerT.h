@@ -49,7 +49,7 @@ namespace MARTe {
  * @tparam argType1 is the type of the input parameter to be passed as the class method argument
  */
 template<typename className, typename argType1 = void>
-class DLL_API ClassMethodCallerT: public ClassMethodCaller {
+class ClassMethodCallerT: public ClassMethodCaller {
 
 public:
 
@@ -104,7 +104,7 @@ private:
  * @tparam className is the class owning the registered method.
  */
 template<typename className>
-class DLL_API ClassMethodCallerT<className> : public ClassMethodCaller {
+class ClassMethodCallerT<className> : public ClassMethodCaller {
 
 public:
 
