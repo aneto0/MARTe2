@@ -56,6 +56,7 @@ namespace MARTe {
 /*lint -e{9109} forward declaration in ReferenceContainerFilter.h is required to define the class*/
 class DLL_API ReferenceContainer: public Object {
 public:
+
     CLASS_REGISTER_DECLARATION()
 
     /**

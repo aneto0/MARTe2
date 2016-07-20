@@ -47,8 +47,8 @@ namespace MARTe {
  */
 template<typename T>
 class ObjectBuilderT: public ObjectBuilder {
-
 public:
+
     /**
      * @brief Constructor. Registers itself in the ClassRegistryItem if the registered class.
      */
@@ -66,9 +66,13 @@ public:
 
 };
 
+}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 template<typename T>
 ObjectBuilderT<T>::ObjectBuilderT() {

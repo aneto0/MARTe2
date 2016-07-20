@@ -53,6 +53,9 @@ class ClassMethodCallerT: public ClassMethodCaller {
 
 public:
 
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
     typedef bool (className::*MethodPointer)(argType1);
 
     /**
@@ -86,6 +89,9 @@ public:
                                             argType1 ref,
                                             bool ByCopy);
 
+    /**
+     * @brief Gets the pointer to the method
+     */
     MethodPointer GetMethodPointer();
 
 private:
@@ -108,6 +114,9 @@ class ClassMethodCallerT<className> : public ClassMethodCaller {
 
 public:
 
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
     typedef bool (className::*MethodPointer)();
 
     /**
@@ -129,6 +138,9 @@ public:
      */
     virtual ErrorManagement::ErrorType Call(Object * context);
 
+    /**
+     * @brief Gets the pointer to the method
+     */
     MethodPointer GetMethodPointer();
 
 private:

@@ -92,6 +92,11 @@ public:
     ClassMethodInterfaceMapper(bool (C::*f)(T&));
 
     /**
+     * @brief Destructor
+     */
+    virtual ~ClassMethodInterfaceMapper();
+
+    /**
      * @brief Calls the function with no arguments.
      * @param[in] context is the object which must call the function.
      * @return ErrorManagement::UnsupportedFeature if no function has been registered, ErrorManagement::FatalError
@@ -110,11 +115,6 @@ public:
     template<typename T>
     ErrorManagement::ErrorType Call(Object * const context,
                                     T ref);
-
-    /**
-     * @brief Destructor
-     */
-    virtual ~ClassMethodInterfaceMapper();
 
 private:
 

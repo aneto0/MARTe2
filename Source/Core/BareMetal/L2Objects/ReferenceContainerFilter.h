@@ -92,6 +92,7 @@ const uint32 REMOVE = 0x8u;
  */
 class DLL_API ReferenceContainerFilter {
 public:
+
     /**
      * @brief Default constructor
      */
@@ -112,8 +113,9 @@ public:
      */
     ReferenceContainerFilter(const int32 &occurrenceNumber,
                              const uint32 &modeToSet);
+
     /**
-     * @brief Destructor. NOOP
+     * @brief Destructor.
      */
     virtual ~ReferenceContainerFilter();
 
@@ -222,6 +224,7 @@ private:
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

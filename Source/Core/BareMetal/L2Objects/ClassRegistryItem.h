@@ -70,8 +70,7 @@ class DLL_API ClassRegistryItem: public LinkedListable {
 public:
 
     /**
-     * Destructor.
-     * Responsible for destroying the assigned loadable library.
+     * @brief Destructor. Responsible for destroying the assigned loadable library.
      */
     virtual ~ClassRegistryItem();
 
@@ -189,6 +188,7 @@ public:
                                                     argType parameters);
 
 protected:
+
     /**
      // singleton approach - usable only by descendant methods
      * @brief Default constructor
@@ -203,6 +203,7 @@ protected:
                                        ClassProperties &classProperties_in);
 
 private:
+
     /**
      * The properties of the class represented by this registry item.
      */

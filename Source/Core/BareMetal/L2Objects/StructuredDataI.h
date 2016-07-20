@@ -68,8 +68,9 @@ class DLL_API Reference;
  */
 class DLL_API StructuredDataI {
 public:
+
     /**
-     * Default destructor. NOOP.
+     * @brief Destructor.
      */
     virtual ~StructuredDataI() {
     }
@@ -214,9 +215,13 @@ public:
 
 };
 
+}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 StructuredDataI::operator AnyType() {
     AnyType anyTypeConversion(StructuredDataInterfaceType, 0u, this);

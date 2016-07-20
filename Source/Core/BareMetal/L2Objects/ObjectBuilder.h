@@ -55,19 +55,17 @@ class DLL_API ObjectBuilder {
 public:
 
     /**
+     * @brief Destructor.
+     */
+    virtual ~ObjectBuilder();
+
+    /**
      * @brief invalid object builder function.
      * @param[in] heap is the heap where the memory for the new instance must be allocated.
      * @return a NULL pointer to MARTe::Object.
      */
-    virtual Object *Build(HeapI* const heap) const {
-        return NULL_PTR(Object *);
-    }
+    virtual Object *Build(HeapI* const heap) const;
 
-    /**
-     * @brief Destructor.
-     */
-    virtual ~ObjectBuilder() {
-    }
 };
 
 }
@@ -75,6 +73,17 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+ObjectBuilder::~ObjectBuilder() {
+}
+
+virtual Object *ObjectBuilder::Build(HeapI* const heap) const {
+    return NULL_PTR(Object *);
+}
+
+}
 
 #endif /* OBJECTBUILDER_H_ */
 

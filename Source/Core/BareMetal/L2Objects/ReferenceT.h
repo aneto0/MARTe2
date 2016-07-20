@@ -91,7 +91,7 @@ public:
                HeapI* const heap = static_cast<HeapI *>(NULL));
 
     /**
-     * @brief Removes the reference to the underlying object. @see RemoveReference.
+     * @brief Destructor. Removes the reference to the underlying object. @see RemoveReference.
      */
     virtual ~ReferenceT();
 
@@ -166,9 +166,13 @@ private:
     T* typeTObjectPointer;
 };
 
+}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 template<typename T>
 void ReferenceT<T>::Init() {
@@ -333,4 +337,5 @@ bool ReferenceT<T>::operator==(const ReferenceT<T>& sourceReference) const {
 }
 
 }
+
 #endif /* REFERENCET_H_ */
