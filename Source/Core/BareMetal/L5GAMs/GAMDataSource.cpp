@@ -171,11 +171,10 @@ bool GAMDataSource::GetSignalMemoryBuffer(uint32 signalIdx,
 
 bool GAMDataSource::AllocateMemory() {
     uint32 numberOfSignals = GetNumberOfSignals();
-    uint32 s;
     bool ret = true;
     signalMemory[0] = new void*[numberOfSignals];
     signalMemory[1] = new void*[numberOfSignals];
-    for (s = 0u; (s < numberOfSignals) && (ret); s++) {
+    for (uint32 s = 0u; (s < numberOfSignals) && (ret); s++) {
         uint32 memorySize;
         ret = GetSignalByteSize(s, memorySize);
         if (ret) {
@@ -289,7 +288,6 @@ bool GAMDataSource::ChangeState() {
     return true;
 }
 
-
 //TODO OPTIMIZE THIS!! change only the In-Out
 bool GAMDataSource::AddInputBrokers(RealTimeApplication &application) {
     //TODO Each ds has a Functions area
@@ -322,9 +320,8 @@ bool GAMDataSource::AddInputBrokers(RealTimeApplication &application) {
                     ret = (gamMemoryAddress != NULL);
                 }
                 if (ret) {
-                    ret = configuredDatabase.MoveRelative("InputSignals");
+                    if (configuredDatabase.MoveRelative("InputSignals")) {
 
-                    if (ret) {
                         uint32 memOffset;
 
                         ret = configuredDatabase.Read("GamMemoryOffset", memOffset);
@@ -332,28 +329,32 @@ bool GAMDataSource::AddInputBrokers(RealTimeApplication &application) {
                             char8* gamMemoryAddresschar = reinterpret_cast<char8*>(gamMemoryAddress);
                             gamMemoryAddress = &gamMemoryAddresschar[memOffset];
                         }
-                    }
 
-                    //<<<<<<<<<<<<<<<<<<
-                    //generally a loop for each supported broker
-                    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
-                    ReferenceContainer inputReaders;
-                    if (ret) {
-                        ret = broker->Init2(InputSignals, this, functionName.Buffer(), gamMemoryAddress);
-                    }
-                    if (ret) {
-                        if (broker->GetNumberOfCopies() > 0u) {
-                            ret = inputReaders.Insert(broker);
+                        //<<<<<<<<<<<<<<<<<<
+                        //generally a loop for each supported broker
+                        ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+                        ReferenceContainer inputReaders;
+                        if (ret) {
+                            ret = broker.IsValid();
                         }
+                        if (ret) {
+                            ret = broker->Init2(InputSignals, *this, functionName.Buffer(), gamMemoryAddress);
+                        }
+                        if (ret) {
+                            if (broker->GetNumberOfCopies() > 0u) {
+                                ret = inputReaders.Insert(broker);
+                            }
+                        }
+                        if (ret) {
+                            printf("\nAdd in broker to %s\n", functionName.Buffer());
+                            gam->AddInputBrokers(inputReaders);
+                        }
+                        //<<<<<<<<<<<<<<<<<<< Only this needs to be re-implemented!!!
                     }
-                    if (ret) {
-                        gam->AddInputBrokers(inputReaders);
-                    }
-                    //<<<<<<<<<<<<<<<<<<< Only this needs to be re-implemented!!!
                 }
             }
             if (ret) {
-                configuredDatabase.MoveAbsolute("Functions");
+                ret = configuredDatabase.MoveAbsolute("Functions");
             }
         }
     }
@@ -391,8 +392,7 @@ bool GAMDataSource::AddOutputBrokers(RealTimeApplication &application) {
                     ret = (gamMemoryAddress != NULL);
                 }
                 if (ret) {
-                    ret = configuredDatabase.MoveRelative("OutputSignals");
-                    if (ret) {
+                    if (configuredDatabase.MoveRelative("OutputSignals")) {
                         uint32 memOffset;
 
                         ret = configuredDatabase.Read("GamMemoryOffset", memOffset);
@@ -400,29 +400,33 @@ bool GAMDataSource::AddOutputBrokers(RealTimeApplication &application) {
                             char8* gamMemoryAddresschar = reinterpret_cast<char8*>(gamMemoryAddress);
                             gamMemoryAddress = &gamMemoryAddresschar[memOffset];
                         }
-                    }
 
-                    //<<<<<<<<<<<<<<<<<<
-                    //generally a loop for each supported broker
-                    ReferenceT<MemoryMapInputBroker> broker("MemoryMapOutputBroker");
-                    ReferenceContainer inputReaders;
-                    if (ret) {
-                        ret = broker->Init2(OutputSignals, this, functionName.Buffer(), gamMemoryAddress);
-                    }
-                    if (ret) {
-                        if (broker->GetNumberOfCopies() > 0u) {
-                            ret = inputReaders.Insert(broker);
+                        //<<<<<<<<<<<<<<<<<<
+                        //generally a loop for each supported broker
+                        ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+                        ReferenceContainer outputWriters;
+                        if (ret) {
+                            ret = broker.IsValid();
                         }
-                    }
-                    if (ret) {
-                         gam->AddInputBrokers(inputReaders);
-                    }
+                        if (ret) {
+                            ret = broker->Init2(OutputSignals, *this, functionName.Buffer(), gamMemoryAddress);
+                        }
+                        if (ret) {
+                            if (broker->GetNumberOfCopies() > 0u) {
+                                ret = outputWriters.Insert(broker);
+                            }
+                        }
+                        if (ret) {
+                            printf("\nAdd out broker to %s\n", functionName.Buffer());
+                            gam->AddOutputBrokers(outputWriters);
+                        }
 
-                    //<<<<<<<<<<<<<<<<<<< Only this needs to be re-implemented!!!
+                        //<<<<<<<<<<<<<<<<<<< Only this needs to be re-implemented!!!
+                    }
                 }
             }
             if (ret) {
-                configuredDatabase.MoveToAncestor(1u);
+                ret = configuredDatabase.MoveAbsolute("Functions");
             }
         }
     }

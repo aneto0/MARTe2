@@ -166,6 +166,11 @@ public:
                                uint32 functionSignalIdx,
                                StreamString &functioSignalName);
 
+    bool GetFunctionSignalAlias(SignalDirection direction,
+                                uint32 functionIdx,
+                                uint32 functionSignalIdx,
+                                StreamString &functionSignalAlias);
+
     bool GetFunctionSignalIndex(SignalDirection direction,
                                 uint32 functionIdx,
                                 uint32 &functionSignalIdx,
@@ -175,7 +180,6 @@ public:
                                               uint32 functionIdx,
                                               uint32 functionSignalIdx,
                                               uint32 &numberOfByteOffsets);
-
 
     bool GetFunctionSignalByteOffsetInfo(SignalDirection direction,
                                          uint32 functionIdx,

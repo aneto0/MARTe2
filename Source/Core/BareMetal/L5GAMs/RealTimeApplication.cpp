@@ -385,12 +385,21 @@ bool RealTimeApplication::ConfigureApplication() {
         ret = rtAppBuilder.ResolveFunctionsMemory();
         PrintDatabases(rtAppBuilder);
     }
+    /*
+     if (ret) {
+     ret = rtAppBuilder.AllocateFunctionsMemory();
+     PrintDatabases(rtAppBuilder);
+     }*/
     if (ret) {
-        ret = rtAppBuilder.AllocateFunctionsMemory();
+        ret = rtAppBuilder.CalculateFunctionsMemory();
         PrintDatabases(rtAppBuilder);
     }
     if (ret) {
         ret = rtAppBuilder.AssignFunctionsMemoryToDataSource();
+        PrintDatabases(rtAppBuilder);
+    }
+    if(ret){
+        ret = rtAppBuilder.AssignBrokersToFunctions();
         PrintDatabases(rtAppBuilder);
     }
     if (ret) {
@@ -760,15 +769,26 @@ bool RealTimeApplication::ConfigureApplication() {
 #endif
 }
 
-bool RealTimeApplication::ConfigureApplicationFromExternalSource(ConfigurationDatabase &functionsDatabaseIn,
-                                                                 ConfigurationDatabase &dataSourcesDatabaseIn) {
+bool RealTimeApplication::ConfigureApplicationFromExternalSource(StructuredDataI &functionsDatabaseIn,
+                                                                 StructuredDataI &dataSourcesDatabaseIn) {
     // no check..someone else did it
     // TODO Standard checks can be done (the Verifies)
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(this, "DDB1");
+
     functionsDatabaseIn.MoveToRoot();
     bool ret = functionsDatabaseIn.Copy(functionsDatabase);
     if (ret) {
         dataSourcesDatabaseIn.MoveToRoot();
-        dataSourcesDatabaseIn.Copy(dataSourcesDatabase);
+        ret = dataSourcesDatabaseIn.Copy(dataSourcesDatabase);
+    }
+    if (ret) {
+        ret = rtAppBuilder.Set(functionsDatabase, dataSourcesDatabase);
+    }
+    if (ret) {
+        ret = rtAppBuilder.PostConfigureDataSources();
+    }
+    if (ret) {
+        ret = rtAppBuilder.PostConfigureFunctions();
     }
     return ret;
 }
@@ -788,9 +808,9 @@ bool RealTimeApplication::AllocateGAMMemory() {
                 ret = gam.IsValid();
 
                 if (ret) {
-                    gam->AllocateInputSignalsMemory2();
+                    ret = gam->AllocateInputSignalsMemory2();
                     if (ret) {
-                        gam->AllocateOutputSignalsMemory2();
+                        ret = gam->AllocateOutputSignalsMemory2();
                     }
                 }
             }
@@ -815,7 +835,7 @@ bool RealTimeApplication::AllocateDataSourceMemory() {
                 ReferenceT<DataSourceI> ds = Find(fullDsName.Buffer());
                 ret = ds.IsValid();
                 if (ret) {
-                    ds->AllocateMemory();
+                    ret=ds->AllocateMemory();
                 }
             }
         }

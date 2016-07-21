@@ -535,6 +535,19 @@ bool DataSourceI::GetFunctionSignalName(SignalDirection direction,
     return ret;
 }
 
+
+bool DataSourceI::GetFunctionSignalAlias(SignalDirection direction,
+                                        uint32 functionIdx,
+                                        uint32 functionSignalIdx,
+                                        StreamString &functionSignalAlias) {
+
+    bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
+    if (ret) {
+        ret = configuredDatabase.Read("Alias", functionSignalAlias);
+    }
+    return ret;
+}
+
 bool DataSourceI::GetFunctionSignalIndex(SignalDirection direction,
                                          uint32 functionIdx,
                                          uint32 &functionSignalIdx,

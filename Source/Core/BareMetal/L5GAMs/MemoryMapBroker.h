@@ -84,11 +84,11 @@ public:
      *
      */
     virtual bool Init(SignalDirection direction,
-                      ReferenceT<DataSourceI> dataSourceIn,
+                      DataSourceI *dataSourceIn,
                       const char8 * const functionName);
 
     virtual bool Init2(SignalDirection direction,
-                       ReferenceT<DataSourceI> dataSourceIn,
+                       DataSourceI &dataSourceIn,
                        const char8 * const functionName,
                        void *gamMemoryAddress);
 
@@ -98,7 +98,7 @@ protected:
 
     uint32 numberOfDataSourceSignalBuffers;
 
-    ReferenceT<DataSourceI> dataSource;
+    DataSourceI* dataSource;
 
 };
 

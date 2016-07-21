@@ -66,7 +66,9 @@ DataSource1    ();
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
     virtual bool ChangeState();
+
     virtual bool AddInputBrokers(RealTimeApplication &application);
+
     virtual bool AddOutputBrokers(RealTimeApplication &application);
 
 };

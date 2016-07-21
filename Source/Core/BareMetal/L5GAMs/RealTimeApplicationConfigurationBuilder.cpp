@@ -2290,8 +2290,7 @@ bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory(SignalDire
                         functionsDatabase.MoveToAncestor(1u);
                     }
                 }
-                ret=functionsDatabase.Write("ByteSize", totalByteSize);
-
+                ret = functionsDatabase.Write("ByteSize", totalByteSize);
 
                 //Move back to the Function level
                 functionsDatabase.MoveToAncestor(2u);
@@ -2347,7 +2346,7 @@ bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory(SignalDire
                             char8 *signalBlockMemoryChar = reinterpret_cast<char8 *>(signalsMemory);
                             signalBlockMemoryChar += allocatedBytes;
                             ret = functionsDatabase.Write("Address", reinterpret_cast<void *>(signalBlockMemoryChar));
-                            if(ret){
+                            if (ret) {
                                 ret = functionsDatabase.Write("GamMemoryOffset", allocatedBytes);
                             }
                             allocatedBytes += byteSize;
@@ -2373,6 +2372,131 @@ bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory(SignalDire
     return ret;
 }
 
+////////////////////////////////
+////////////////////////////////
+// AllocateFunctionsMemory
+////////////////////////////////
+////////////////////////////////
+
+bool RealTimeApplicationConfigurationBuilder::CalculateFunctionsMemory() {
+    bool ret = AllocateFunctionsMemory(InputSignals);
+    if (ret) {
+        ret = AllocateFunctionsMemory(OutputSignals);
+    }
+    return ret;
+}
+
+bool RealTimeApplicationConfigurationBuilder::CalculateFunctionsMemory(SignalDirection direction) {
+    const char8 *signalDirection = "InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "OutputSignals";
+    }
+
+    bool ret = functionsDatabase.MoveAbsolute("Functions");
+    uint32 numberOfFunctions = 0u;
+    if (ret) {
+        numberOfFunctions = functionsDatabase.GetNumberOfChildren();
+    }
+    if (ret) {
+        uint32 i;
+        //For every function
+        for (i = 0; (i < numberOfFunctions) && (ret); i++) {
+            StreamString functionNumber = functionsDatabase.GetChildName(i);
+            ret = functionsDatabase.MoveRelative(functionNumber.Buffer());
+            StreamString functionName;
+            if (ret) {
+                ret = functionsDatabase.Read("QualifiedName", functionName);
+            }
+            //Compute the total amount of memory
+            if (ret) {
+                ret = functionsDatabase.MoveRelative("Signals");
+            }
+            bool exists = false;
+            if (ret) {
+                exists = functionsDatabase.MoveRelative(signalDirection);
+            }
+            if (exists) {
+                uint32 numberOfSignals = functionsDatabase.GetNumberOfChildren();
+                uint32 s;
+                uint32 totalByteSize = 0u;
+                for (s = 0u; (s < numberOfSignals) && (ret); s++) {
+                    ret = functionsDatabase.MoveRelative(functionsDatabase.GetChildName(s));
+                    if (ret) {
+                        uint32 byteSize = 0u;
+                        ret = functionsDatabase.Read("ByteSize", byteSize);
+                        totalByteSize += byteSize;
+                    }
+                    if (ret) {
+                        functionsDatabase.MoveToAncestor(1u);
+                    }
+                }
+                ret = functionsDatabase.Write("ByteSize", totalByteSize);
+
+                //Move back to the Function level
+                functionsDatabase.MoveToAncestor(2u);
+                //Allocate the memory
+                ReferenceT<GAM> gam;
+                if (ret) {
+                    StreamString fullFunctionName = "Functions.";
+                    fullFunctionName += functionName;
+                    gam = realTimeApplication->Find(fullFunctionName.Buffer());
+                }
+                if (ret) {
+                    ret = gam.IsValid();
+                }
+
+                if (ret) {
+                    ret = functionsDatabase.MoveRelative("Memory");
+                }
+                bool exists = false;
+                if (ret) {
+                    exists = functionsDatabase.MoveRelative(signalDirection);
+                }
+                if (exists) {
+                    uint32 numberOfDataSources = 0u;
+                    if (ret) {
+                        numberOfDataSources = functionsDatabase.GetNumberOfChildren();
+                    }
+
+                    uint32 allocatedBytes = 0u;
+                    uint32 d;
+                    //For every DataSource in this function
+                    for (d = 0u; (d < numberOfDataSources) && (ret); d++) {
+                        uint32 byteSize = 0u;
+                        StreamString dataSourceName;
+                        StreamString dataSourceId = functionsDatabase.GetChildName(d);
+                        ret = functionsDatabase.MoveRelative(dataSourceId.Buffer());
+                        if (ret) {
+                            ret = functionsDatabase.Read("DataSource", dataSourceName);
+                        }
+                        if (ret) {
+                            ret = functionsDatabase.Read("ByteSize", byteSize);
+                        }
+                        //Allocate the memory
+                        if (ret) {
+                            ret = functionsDatabase.Write("GamMemoryOffset", allocatedBytes);
+                            allocatedBytes += byteSize;
+                        }
+                        if (ret) {
+                            //Move to SignalDirection level
+                            ret = functionsDatabase.MoveToAncestor(1u);
+                        }
+                    }
+                }
+                if (ret) {
+                    //Move to Memory level
+                    ret = functionsDatabase.MoveToAncestor(1u);
+                }
+            }
+            if (ret) {
+                //Move to next Function
+                ret = functionsDatabase.MoveToAncestor(2u);
+            }
+
+        }
+    }
+    return ret;
+}
 ////////////////////////////////
 ////////////////////////////////
 // AssignFunctionsMemoryToDataSource
@@ -2425,6 +2549,7 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                 for (d = 0u; (d < numberOfDataSources) && (ret); d++) {
                     uint32 byteSize = 0u;
                     uint64 address = 0u;
+                    uint32 gamMemoryOffset = 0u;
                     StreamString dataSourceName;
                     StreamString dataSourceId = functionsDatabase.GetChildName(d);
                     ret = functionsDatabase.MoveRelative(dataSourceId.Buffer());
@@ -2433,9 +2558,12 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                     }
                     if (ret) {
                         ret = functionsDatabase.Read("ByteSize", byteSize);
-                    }
+                    }/*
+                     if (ret) {
+                     ret = functionsDatabase.Read("Address", address);
+                     }*/
                     if (ret) {
-                        ret = functionsDatabase.Read("Address", address);
+                        ret = functionsDatabase.Read("GamMemoryOffset", gamMemoryOffset);
                     }
                     //Find the DataSource
                     StreamString dataSourceIdInDataSourceDatabase;
@@ -2512,12 +2640,15 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                                 ret = dataSourcesDatabase.MoveToAncestor(1u);
                             }
                         }
-                    }
-                    if (ret) {
-                        ret = dataSourcesDatabase.Write("Address", reinterpret_cast<void *>(address));
-                    }
+                    }/*
+                     if (ret) {
+                     ret = dataSourcesDatabase.Write("Address", reinterpret_cast<void *>(address));
+                     }*/
                     if (ret) {
                         ret = dataSourcesDatabase.Write("ByteSize", byteSize);
+                    }
+                    if (ret) {
+                        ret = dataSourcesDatabase.Write("GamMemoryOffset", gamMemoryOffset);
                     }
                     //Move back to the DataSource level
                     if (ret) {
@@ -2662,9 +2793,9 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
             if (ret) {
                 ret = dataSource->SetConfiguredDatabase(dataSourcesDatabase);
             }
-            if (ret) {
-                ret = dataSource->AllocateMemory();
-            }
+            /*  if (ret) {
+             ret = dataSource->AllocateMemory();
+             }*/
             if (ret) {
                 ret = dataSourcesDatabase.MoveToAncestor(1u);
             }
@@ -2801,6 +2932,21 @@ bool RealTimeApplicationConfigurationBuilder::Copy(ConfigurationDatabase &functi
     }
     if (ret) {
         ret = dataSourcesDatabase.Copy(dataSourcesDatabaseOut);
+    }
+    return ret;
+}
+
+bool RealTimeApplicationConfigurationBuilder::Set(ConfigurationDatabase &functionsDatabaseIn,
+                                                  ConfigurationDatabase &dataSourcesDatabaseIn) {
+    bool ret = functionsDatabase.MoveToRoot();
+    if (ret) {
+        ret = functionsDatabaseIn.Copy(functionsDatabase);
+    }
+    if (ret) {
+        dataSourcesDatabase.MoveToRoot();
+    }
+    if (ret) {
+        ret = dataSourcesDatabaseIn.Copy(dataSourcesDatabase);
     }
     return ret;
 }

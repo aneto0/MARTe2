@@ -2428,6 +2428,95 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAllocateFunctionsMemory() 
     return true;
 }
 
+bool RealTimeApplicationConfigurationBuilderTest::TestCalculateFunctionsMemory() {
+    ConfigurationDatabase cdb;
+    config1.Seek(0);
+    StandardParser parser(config1, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+    if (!application.IsValid()) {
+        return false;
+    }
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+
+    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.FlattenSignalsDatabases()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveDataSources()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyFunctionSignals()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveStates()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.VerifyConsumersAndProducers()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionSignalsMemorySize()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.ResolveFunctionsMemory()) {
+        return false;
+    }
+
+    if (!rtAppBuilder.CalculateFunctionsMemory()) {
+        return false;
+    }
+
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
+        return false;
+    }
+
+    StreamString fDisplay;
+    StreamString dDisplay;
+
+    fDisplay.Printf("%!", fcdb);
+    dDisplay.Printf("%!", dcdb);
+
+    fDisplay.Seek(0);
+    dDisplay.Seek(0);
+
+    printf("\n%s", fDisplay.Buffer());
+    printf("\n%s", dDisplay.Buffer());
+
+    return true;
+}
+
 bool RealTimeApplicationConfigurationBuilderTest::TestAssignFunctionsMemoryToDataSource() {
     ConfigurationDatabase cdb;
     config1.Seek(0);
@@ -2492,7 +2581,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignFunctionsMemoryToDat
         return false;
     }
 
-    if (!rtAppBuilder.AllocateFunctionsMemory()) {
+    if (!rtAppBuilder.CalculateFunctionsMemory()) {
         return false;
     }
 
@@ -2721,7 +2810,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignBrokersToFunctions()
         return false;
     }
 
-    if (!rtAppBuilder.AllocateFunctionsMemory()) {
+    if (!rtAppBuilder.CalculateFunctionsMemory()) {
         return false;
     }
 
@@ -2752,3 +2841,127 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignBrokersToFunctions()
 
     return true;
 }
+
+bool RealTimeApplicationConfigurationBuilderTest::TestAllocateGAMMemory() {
+
+    static StreamString config1 = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add1"
+            "                    Default = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add2"
+            "                    Default = 2"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB2"
+            "                    Alias = sum"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add2"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = sum"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add1"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +DDB2 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA, :Functions.GAMB}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    ConfigurationDatabase cdb;
+    config1.Seek(0);
+    StandardParser parser(config1, cdb);
+
+    if (!parser.Parse()) {
+        return false;
+    }
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+    ReferenceT<RealTimeApplication> application = god->Find("Fibonacci");
+    if (!application.IsValid()) {
+        return false;
+    }
+
+    if (!application->ConfigureApplication()) {
+        return false;
+    }
+    if (!application->AllocateGAMMemory()) {
+        return false;
+    }
+    if (!application->AllocateDataSourceMemory()) {
+        return false;
+    }
+
+    if (!application->AddBrokersToFunctions()) {
+        return false;
+    }
+
+
+    ReferenceT<GAM> gam1=application->Find("Functions.GAMA");
+
+    ReferenceT<GAM> gam2=application->Find("Functions.GAMB");
+
+    gam1->Execute();
+
+    gam2->Execute();
+
+    return true;
+}
+

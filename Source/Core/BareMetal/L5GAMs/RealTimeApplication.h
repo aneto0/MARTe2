@@ -162,7 +162,7 @@ public:
     bool ConfigureApplication();
 
     //TODO
-    bool ConfigureApplicationFromExternalSource(ConfigurationDatabase &functionsDatabase, ConfigurationDatabase &dataSourcesDatabase);
+    bool ConfigureApplicationFromExternalSource(StructuredDataI &functionsDatabase, StructuredDataI &dataSourcesDatabase);
 
 
     bool AllocateGAMMemory();

@@ -40,6 +40,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestInitialiseSignalsDatabase) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestInitialiseSignalsDatabase());
@@ -171,6 +172,11 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestAllocateFunctionsMemory) {
     ASSERT_TRUE(test.TestAllocateFunctionsMemory());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestCalculateFunctionsMemory) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestCalculateFunctionsMemory());
+}
+
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestAssignFunctionsMemoryToDataSource) {
     RealTimeApplicationConfigurationBuilderTest test;
@@ -180,4 +186,9 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestAssignFunctionsMemoryToDat
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestAssignBrokersToFunctions) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestAssignBrokersToFunctions());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestAllocateGAMMemory) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestAllocateGAMMemory());
 }

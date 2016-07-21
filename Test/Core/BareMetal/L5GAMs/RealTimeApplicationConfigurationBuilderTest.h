@@ -97,9 +97,14 @@ public:
 
     bool TestAllocateFunctionsMemory();
 
+    bool TestCalculateFunctionsMemory();
+
     bool TestAssignFunctionsMemoryToDataSource();
 
     bool TestAssignBrokersToFunctions();
+
+    bool TestAllocateGAMMemory();
+
 
 };
 

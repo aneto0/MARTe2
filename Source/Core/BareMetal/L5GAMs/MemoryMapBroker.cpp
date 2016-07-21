@@ -64,7 +64,7 @@ MemoryMapBroker::~MemoryMapBroker() {
 }
 
 bool MemoryMapBroker::Init(SignalDirection direction,
-                           ReferenceT<DataSourceI> dataSourceIn,
+                           DataSourceI *dataSourceIn,
                            const char8 * const functionName) {
     dataSource = dataSourceIn;
 
@@ -128,12 +128,12 @@ bool MemoryMapBroker::Init(SignalDirection direction,
 }
 
 bool MemoryMapBroker::Init2(SignalDirection direction,
-                            ReferenceT<DataSourceI> dataSourceIn,
+                            DataSourceI &dataSourceIn,
                             const char8 * const functionName,
                             void *gamMemoryAddress) {
-    dataSource = dataSourceIn;
+    dataSource = &dataSourceIn;
 
-    bool ret = InitFunctionPointers2(direction, dataSource, functionName, gamMemoryAddress);
+    bool ret = InitFunctionPointers2(direction, dataSourceIn, functionName, gamMemoryAddress);
 
     const ClassProperties * properties = GetClassProperties();
     if (ret) {
@@ -170,7 +170,7 @@ bool MemoryMapBroker::Init2(SignalDirection direction,
             }
             StreamString functionSignalName;
             if (ret) {
-                ret = dataSource->GetFunctionSignalName(direction, functionIdx, n, functionSignalName);
+                ret = dataSource->GetFunctionSignalAlias(direction, functionIdx, n, functionSignalName);
             }
             uint32 signalIdx;
             if (ret) {

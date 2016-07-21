@@ -588,6 +588,8 @@ public:
     //TODO allocate memory
     bool AllocateFunctionsMemory();
 
+    bool CalculateFunctionsMemory();
+
     /**
      * @brief For every DataSource add the memory information about each Function that interacts with the DataSource.
      * @return true if the memory information can be successfully added to each DataSource definition.
@@ -704,6 +706,9 @@ public:
      */
     bool Copy(ConfigurationDatabase &functionsDatabaseOut,
               ConfigurationDatabase &dataSourcesDatabaseOut);
+
+    bool Set(ConfigurationDatabase &functionsDatabaseOut,
+             ConfigurationDatabase &dataSourcesDatabaseOut);
 
 private:
     /**
@@ -846,6 +851,8 @@ private:
      * @return @see AllocateFunctionsMemory()
      */
     bool AllocateFunctionsMemory(SignalDirection direction);
+
+    bool CalculateFunctionsMemory(SignalDirection direction);
 
     /**
      * @brief @see AssignFunctionsMemoryToDataSource()

@@ -74,6 +74,28 @@ bool GAM1::Initialise(StructuredDataI & data) {
 }
 
 bool GAM1::Execute() {
+    uint32 b;
+    for (b = 0u; b < inputBrokers.Size(); b++) {
+        ReferenceT<ExecutableI> broker = inputBrokers.Get(b);
+        broker->Execute();
+    }
+    const char8 *name = GetName();
+    printf("%s:\n", name);
+    uint32 numberOfInputSignals = GetNumberOfInputSignals();
+    uint32 numberOfOutputSignals = GetNumberOfOutputSignals();
+    printf("Inputs\n");
+    uint32 *inputBuffer = (uint32 *) GetInputSignalsBuffer();
+
+    uint32 *outputBuffer = (uint32 *) GetOutputSignalsBuffer();
+
+    outputBuffer[0] = inputBuffer[0] + inputBuffer[1];
+    printf("  %d + %d = %d\n", inputBuffer[0], inputBuffer[1], outputBuffer[0]);
+
+    for (b = 0u; b < outputBrokers.Size(); b++) {
+        ReferenceT<ExecutableI> broker = outputBrokers.Get(b);
+        broker->Execute();
+    }
+
     return true;
 }
 
@@ -122,9 +144,8 @@ bool DS1::GetSignalMemoryBuffer(uint32 signalIdx,
     return true;
 }
 
-
 const char8 *DS1::Negotiate(StructuredDataI &data,
-                                      SignalDirection direction) {
+                            SignalDirection direction) {
     const char8* brokerName = NULL_PTR(const char8 *);
 
     float32 freq;
@@ -149,14 +170,14 @@ const char8 *DS1::Negotiate(StructuredDataI &data,
 }
 
 bool DS1::GetInputReaders(const char8 * const functionName,
-                                            ReferenceContainer &output) {
+                          ReferenceContainer &output) {
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
     ReferenceContainer brokers;
     return output.Insert(broker);
 }
 
-
-bool DS1::GetOutputWriters(const char8 * const functionName, ReferenceContainer &output){
+bool DS1::GetOutputWriters(const char8 * const functionName,
+                           ReferenceContainer &output) {
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapOutputBroker");
     ReferenceContainer brokers;
     return output.Insert(broker);
@@ -170,19 +191,15 @@ bool DS1::ChangeState() {
     return true;
 }
 
-bool DS1::AddInputBrokers(RealTimeApplication &application){
+bool DS1::AddInputBrokers(RealTimeApplication &application) {
     return true;
 }
 
-bool DS1::AddOutputBrokers(RealTimeApplication &application){
+bool DS1::AddOutputBrokers(RealTimeApplication &application) {
     return true;
 }
-
 
 CLASS_REGISTER(DS1, "1.0");
-
-
-
 
 #if 0
 
