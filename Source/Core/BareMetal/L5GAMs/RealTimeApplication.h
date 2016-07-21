@@ -165,6 +165,12 @@ public:
     bool ConfigureApplicationFromExternalSource(ConfigurationDatabase &functionsDatabase, ConfigurationDatabase &dataSourcesDatabase);
 
 
+    bool AllocateGAMMemory();
+
+
+    bool AllocateDataSourceMemory();
+
+
     bool AddBrokersToFunctions();
 
 #if 0

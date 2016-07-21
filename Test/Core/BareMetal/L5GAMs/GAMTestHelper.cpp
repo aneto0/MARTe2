@@ -170,6 +170,15 @@ bool DS1::ChangeState() {
     return true;
 }
 
+bool DS1::AddInputBrokers(RealTimeApplication &application){
+    return true;
+}
+
+bool DS1::AddOutputBrokers(RealTimeApplication &application){
+    return true;
+}
+
+
 CLASS_REGISTER(DS1, "1.0");
 
 

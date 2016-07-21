@@ -773,6 +773,59 @@ bool RealTimeApplication::ConfigureApplicationFromExternalSource(ConfigurationDa
     return ret;
 }
 
+bool RealTimeApplication::AllocateGAMMemory() {
+
+    bool ret = functionsDatabase.MoveAbsolute("Functions");
+    uint32 numberOfFunctions = functionsDatabase.GetNumberOfChildren();
+    for (uint32 i = 0u; i < numberOfFunctions && ret; i++) {
+        const char8 * functionId = functionsDatabase.GetChildName(i);
+        ret = functionsDatabase.MoveRelative(functionId);
+        if (ret) {
+            StreamString fullGAMName = "Functions.";
+            ret = functionsDatabase.Read("QualifiedName", fullGAMName);
+            if (ret) {
+                ReferenceT<GAM> gam = Find(fullGAMName.Buffer());
+                ret = gam.IsValid();
+
+                if (ret) {
+                    gam->AllocateInputSignalsMemory2();
+                    if (ret) {
+                        gam->AllocateOutputSignalsMemory2();
+                    }
+                }
+            }
+        }
+        if (ret) {
+            ret = functionsDatabase.MoveToAncestor(1u);
+        }
+    }
+    return ret;
+}
+
+bool RealTimeApplication::AllocateDataSourceMemory() {
+    bool ret = dataSourcesDatabase.MoveAbsolute("Data");
+    uint32 numberOfDs = dataSourcesDatabase.GetNumberOfChildren();
+    for (uint32 i = 0u; i < numberOfDs && ret; i++) {
+        const char8* dsId = dataSourcesDatabase.GetChildName(i);
+        ret = dataSourcesDatabase.MoveRelative(dsId);
+        if (ret) {
+            StreamString fullDsName = "Data.";
+            ret = dataSourcesDatabase.Read("QualifiedName", fullDsName);
+            if (ret) {
+                ReferenceT<DataSourceI> ds = Find(fullDsName.Buffer());
+                ret = ds.IsValid();
+                if (ret) {
+                    ds->AllocateMemory();
+                }
+            }
+        }
+        if (ret) {
+            ret = dataSourcesDatabase.MoveToAncestor(1u);
+        }
+    }
+    return ret;
+}
+
 bool RealTimeApplication::AddBrokersToFunctions() {
     //pre: called after ConfigureApplication(*)
     bool ret = dataSourcesDatabase.MoveAbsolute("Data");
@@ -791,7 +844,12 @@ bool RealTimeApplication::AddBrokersToFunctions() {
                 ret = dataSource.IsValid();
             }
             if (ret) {
-                //TODO Call the function for each ds
+
+                ret = dataSource->AddInputBrokers(*this);
+                if (ret) {
+                    ret = dataSource->AddOutputBrokers(*this);
+                }
+
             }
             if (ret) {
                 ret = dataSourcesDatabase.MoveToAncestor(1u);

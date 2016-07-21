@@ -72,6 +72,11 @@ protected:
                               ReferenceT<DataSourceI> dataSource,
                               const char8 * const functionName);
 
+    bool InitFunctionPointers2(SignalDirection direction,
+                               ReferenceT<DataSourceI> dataSource,
+                               const char8 * const functionName,
+                               void *gamMemoryAddress);
+
     uint32 numberOfCopies;
 
 private:

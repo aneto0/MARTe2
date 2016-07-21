@@ -250,6 +250,10 @@ public:
 
     virtual bool ChangeState();
 
+    virtual bool AddInputBrokers(RealTimeApplication &application);
+
+    virtual bool AddOutputBrokers(RealTimeApplication &application);
+
 };
 }
 

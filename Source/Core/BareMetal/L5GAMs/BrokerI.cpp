@@ -46,7 +46,8 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-BrokerI::BrokerI() : ExecutableI() {
+BrokerI::BrokerI() :
+        ExecutableI() {
 
     numberOfCopies = 0u;
     functionSignalPointers = NULL_PTR(void **);
@@ -848,6 +849,12 @@ void *BrokerI::GetFunctionPointer(uint32 copyIdx) {
 bool BrokerI::InitFunctionPointers(SignalDirection direction,
                                    ReferenceT<DataSourceI> dataSource,
                                    const char8 * const functionName) {
+
+    //TODO
+    //Need to check the broker class name!!!!
+    //For each signal it is possible have a different one
+    //Can i get the class name thanks the ClassProperties
+
     //Find the function
     uint32 functionIdx;
     bool ret = dataSource->GetFunctionIndex(functionIdx, functionName);
@@ -878,6 +885,9 @@ bool BrokerI::InitFunctionPointers(SignalDirection direction,
         //The same signal can be copied from different ranges. A CopyTableEntry is added for each signal range.
         for (i = 0u; (i < functionNumberOfSignals) && (ret); i++) {
             void *gamMemoryAddress = NULL_PTR(void *);
+
+            //TODO TODO TODO
+            // It is enough re-implement this one !!!
             ret = dataSource->GetFunctionSignalsAddress(direction, functionIdx, gamMemoryAddress);
             if (ret) {
                 ret = (gamMemoryAddress != NULL_PTR(void *));
@@ -898,6 +908,97 @@ bool BrokerI::InitFunctionPointers(SignalDirection direction,
                     char8 *gamMemoryCharAddress = reinterpret_cast<char8 *>(gamMemoryAddress);
                     gamMemoryCharAddress += memoryOffset;
                     functionSignalPointers[c] = reinterpret_cast<void *>(gamMemoryCharAddress);
+                    memoryOffset += copySize;
+                }
+                c++;
+            }
+        }
+    }
+    return ret;
+}
+
+bool BrokerI::InitFunctionPointers2(SignalDirection direction,
+                                    ReferenceT<DataSourceI> dataSource,
+                                    const char8 * const functionName,
+                                    void *gamMemoryAddress) {
+
+    //TODO
+    //Need to check the broker class name!!!!
+    //For each signal it is possible have a different one
+    //Can i get the class name thanks the ClassProperties
+
+    const ClassProperties * properties = GetClassProperties();
+    bool ret = (properties != NULL);
+    const char8* brokerClassName = NULL_PTR(const char8*);
+    if (ret) {
+        brokerClassName = properties->GetName();
+        ret = (brokerClassName != NULL);
+    }
+    //Find the function
+    uint32 functionIdx;
+    if (ret) {
+        ret = dataSource->GetFunctionIndex(functionIdx, functionName);
+    }
+    //For this function, how many signals in this direction
+    uint32 functionNumberOfSignals = 0u;
+    if (ret) {
+        ret = dataSource->GetFunctionNumberOfSignals(direction, functionIdx, functionNumberOfSignals);
+    }
+    numberOfCopies = 0u;
+    uint32 numberOfByteOffsets = 0u;
+
+    uint32 i;
+    for (i = 0u; (i < functionNumberOfSignals) && (ret); i++) {
+        if (dataSource->IsSupportedBroker(direction, functionIdx, i, brokerClassName)) {
+
+            if (ret) {
+                ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, i, numberOfByteOffsets);
+            }
+            if (ret) {
+                //One copy for each signal but each signal might want to copy several pieces (i.e. offsets)
+                numberOfCopies += numberOfByteOffsets;
+            }
+        }
+    }
+    if (numberOfCopies > 0u) {
+        functionSignalPointers = new void*[numberOfCopies];
+        copyByteSize = new uint32[numberOfCopies];
+        copyOffset = new uint32[numberOfCopies];
+
+        uint32 memoryOffset = 0u;
+        uint32 c = 0u;
+        //The same signal can be copied from different ranges. A CopyTableEntry is added for each signal range.
+
+        // i need the pointer of the gam memory of this ds!
+        /*
+        void *gamMemoryAddress = NULL_PTR(void*);
+        if (direction == InputSignals) {
+            gamMemoryAddress = gam->AllocateInputSignalsMemory(totalByteSize);
+        }
+        else {
+            gamMemoryAddress = gam->AllocateOutputSignalsMemory(totalByteSize);
+        }*/
+        ret = (gamMemoryAddress != NULL_PTR(void *));
+
+        for (i = 0u; (i < functionNumberOfSignals) && (ret); i++) {
+            if (ret) {
+                ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, i, numberOfByteOffsets);
+            }
+
+            //Take into account  different ranges for the same signal
+            for (uint32 j = 0u; (j < numberOfByteOffsets) && (ret); j++) {
+                uint32 offsetStart;
+                uint32 copySize;
+                ret = dataSource->GetFunctionSignalByteOffsetInfo(direction, functionIdx, i, j, offsetStart, copySize);
+                if (ret) {
+                    char8 *gamMemoryCharAddress = reinterpret_cast<char8 *>(gamMemoryAddress);
+                    gamMemoryCharAddress += memoryOffset;
+
+                    if (dataSource->IsSupportedBroker(direction, functionIdx, i, brokerClassName)) {
+                        copyByteSize[c] = copySize;
+                        copyOffset[c] = offsetStart;
+                        functionSignalPointers[c] = reinterpret_cast<void *>(gamMemoryCharAddress);
+                    }
                     memoryOffset += copySize;
                 }
                 c++;

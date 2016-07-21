@@ -127,4 +127,80 @@ bool MemoryMapBroker::Init(SignalDirection direction,
     return ret;
 }
 
+bool MemoryMapBroker::Init2(SignalDirection direction,
+                            ReferenceT<DataSourceI> dataSourceIn,
+                            const char8 * const functionName,
+                            void *gamMemoryAddress) {
+    dataSource = dataSourceIn;
+
+    bool ret = InitFunctionPointers2(direction, dataSource, functionName, gamMemoryAddress);
+
+    const ClassProperties * properties = GetClassProperties();
+    if (ret) {
+        ret = (properties != NULL);
+    }
+    const char8* brokerClassName = NULL_PTR(const char8*);
+    if (ret) {
+        brokerClassName = properties->GetName();
+        ret = (brokerClassName != NULL);
+    }
+
+    if (ret) {
+        ret = (numberOfCopies > 0u);
+    }
+    if (ret) {
+        copyTable = new CopyTableEntry[numberOfCopies];
+    }
+    uint32 functionIdx;
+    if (ret) {
+        ret = dataSource->GetFunctionIndex(functionIdx, functionName);
+    }
+    uint32 functionNumberOfSignals = 0u;
+    if (ret) {
+        ret = dataSource->GetFunctionNumberOfSignals(direction, functionIdx, functionNumberOfSignals);
+    }
+    numberOfDataSourceSignalBuffers = dataSource->GetNumberOfMemoryBuffers();
+    //The same signal can be copied from different ranges. A CopyTableEntry is added for each signal range.
+    uint32 c = 0u;
+    for (uint32 n = 0u; (n < functionNumberOfSignals) && (ret); n++) {
+        if (dataSource->IsSupportedBroker(direction, functionIdx, n, brokerClassName)) {
+            uint32 numberOfByteOffsets = 0u;
+            if (ret) {
+                ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, n, numberOfByteOffsets);
+            }
+            StreamString functionSignalName;
+            if (ret) {
+                ret = dataSource->GetFunctionSignalName(direction, functionIdx, n, functionSignalName);
+            }
+            uint32 signalIdx;
+            if (ret) {
+                ret = dataSource->GetSignalIndex(signalIdx, functionSignalName.Buffer());
+            }
+            //Take into account different ranges for the same signal
+            uint32 bo;
+            for (bo = 0u; (bo < numberOfByteOffsets) && (ret); bo++) {
+                uint32 offsetStart = GetCopyOffset(c);
+                if (ret) {
+                    copyTable[c].copySize = GetCopyByteSize(c);
+                    copyTable[c].gamPointer = GetFunctionPointer(c);
+                    copyTable[c].dataSourcePointers = new void*[numberOfDataSourceSignalBuffers];
+                    uint32 b;
+                    for (b = 0u; (b < numberOfDataSourceSignalBuffers) && (ret); b++) {
+                        void *dataSourceSignalAddress;
+                        ret = dataSource->GetSignalMemoryBuffer(signalIdx, b, dataSourceSignalAddress);
+                        if (ret) {
+                            char8 *dataSourceSignalCharAddress = reinterpret_cast<char8 *>(dataSourceSignalAddress);
+                            dataSourceSignalCharAddress += offsetStart;
+                            copyTable[c].dataSourcePointers[b] = reinterpret_cast<void *>(dataSourceSignalCharAddress);
+                        }
+                    }
+                }
+                c++;
+            }
+        }
+
+    }
+    return ret;
+}
+
 }

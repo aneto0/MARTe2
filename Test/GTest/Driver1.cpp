@@ -125,5 +125,13 @@ bool Driver1::ChangeState() {
     return true;
 }
 
+bool Driver1::AddInputBrokers(RealTimeApplication &application){
+    return true;
+}
+
+bool Driver1::AddOutputBrokers(RealTimeApplication &application){
+    return true;
+}
+
 CLASS_REGISTER(Driver1, "1.0");
 }

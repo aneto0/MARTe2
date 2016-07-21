@@ -120,5 +120,13 @@ bool DataSource1::ChangeState() {
     return true;
 }
 
+bool DataSource1::AddInputBrokers(RealTimeApplication &application){
+    return true;
+}
+
+bool DataSource1::AddOutputBrokers(RealTimeApplication &application){
+    return true;
+}
+
 CLASS_REGISTER(DataSource1, "1.0");
 }

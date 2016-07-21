@@ -159,13 +159,51 @@ bool GAM::Finalise() {
 }
 
 void * GAM::AllocateInputSignalsMemory(uint32 numberOfBytes) {
-    inputSignalsMemory = heap->Malloc(numberOfBytes);
+    if (inputSignalsMemory != NULL) {
+        inputSignalsMemory = heap->Malloc(numberOfBytes);
+    }
 
     return inputSignalsMemory;
 }
 
+bool GAM::AllocateInputSignalsMemory2() {
+    const char8* dirStr = "Signals.InputSignals";
+    configuredDatabase.MoveToRoot();
+    bool ret = configuredDatabase.MoveRelative(dirStr);
+    uint32 totalByteSize = 0u;
+    if (ret) {
+        ret = configuredDatabase.Read("ByteSize", totalByteSize);
+    }
+    if (ret) {
+        inputSignalsMemory = heap->Malloc(totalByteSize);
+    }
+    return ret;
+}
+
 void * GAM::AllocateOutputSignalsMemory(uint32 numberOfBytes) {
     outputSignalsMemory = heap->Malloc(numberOfBytes);
+    return outputSignalsMemory;
+}
+
+bool GAM::AllocateOutputSignalsMemory2() {
+    const char8* dirStr = "Signals.OutputSignals";
+    configuredDatabase.MoveToRoot();
+    bool ret = configuredDatabase.MoveRelative(dirStr);
+    uint32 totalByteSize = 0u;
+    if (ret) {
+        ret = configuredDatabase.Read("ByteSize", totalByteSize);
+    }
+    if (ret) {
+        inputSignalsMemory = heap->Malloc(totalByteSize);
+    }
+    return ret;
+}
+
+void *GAM::GetInputMemoryPointer() {
+    return inputSignalsMemory;
+}
+
+void *GAM::GetOutputMemoryPointer() {
     return outputSignalsMemory;
 }
 
@@ -426,11 +464,11 @@ void GAM::AddOutputBrokers(ReferenceContainer brokers) {
     }
 }
 
-ReferenceContainer GAM::GetInputBrokers(){
+ReferenceContainer GAM::GetInputBrokers() {
     return inputBrokers;
 }
 
-ReferenceContainer GAM::GetOutputBrokers(){
+ReferenceContainer GAM::GetOutputBrokers() {
     return outputBrokers;
 }
 

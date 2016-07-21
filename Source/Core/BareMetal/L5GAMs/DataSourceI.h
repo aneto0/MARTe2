@@ -44,6 +44,7 @@
 namespace MARTe {
 
 class BrokerI;
+class RealTimeApplication;
 
 enum SignalDirection {
     InputSignals, OutputSignals, None
@@ -175,6 +176,7 @@ public:
                                               uint32 functionSignalIdx,
                                               uint32 &numberOfByteOffsets);
 
+
     bool GetFunctionSignalByteOffsetInfo(SignalDirection direction,
                                          uint32 functionIdx,
                                          uint32 functionSignalIdx,
@@ -188,6 +190,11 @@ public:
                                          uint32 &timeCycles,
                                          uint32 &timeSamples);
 
+    bool IsSupportedBroker(SignalDirection direction,
+                           uint32 functionIdx,
+                           uint32 functionSignalIdx,
+                           const char8* brokerClassName);
+
     virtual bool AllocateMemory() = 0;
 
     virtual uint32 GetCurrentBufferIndex() = 0;
@@ -197,17 +204,22 @@ public:
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
                                        uint32 bufferIdx,
                                        void *&signalAddress) = 0;
-    virtual const char8 *Negotiate(StructuredDataI &data, SignalDirection direction)=0;
+    virtual const char8 *Negotiate(StructuredDataI &data,
+                                   SignalDirection direction)=0;
 
-    virtual bool GetInputReaders(const char8 * const functionName, ReferenceContainer &output) = 0;
+    virtual bool GetInputReaders(const char8 * const functionName,
+                                 ReferenceContainer &output) = 0;
 
-    virtual bool GetOutputWriters(const char8 * const functionName, ReferenceContainer &output) = 0;
+    virtual bool GetOutputWriters(const char8 * const functionName,
+                                  ReferenceContainer &output) = 0;
 
     virtual bool PrepareNextState(const RealTimeStateInfo &status) = 0;
 
     virtual bool ChangeState() = 0;
 
+    virtual bool AddInputBrokers(RealTimeApplication &application)=0;
 
+    virtual bool AddOutputBrokers(RealTimeApplication &application)=0;
 
 #if 0
     /**

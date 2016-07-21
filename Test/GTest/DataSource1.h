@@ -41,7 +41,7 @@ class DataSource1: public DataSourceI {
 public:
     CLASS_REGISTER_DECLARATION()
 
-    DataSource1();
+DataSource1    ();
 
     virtual ~DataSource1();
 
@@ -52,8 +52,8 @@ public:
     virtual uint32 GetNumberOfMemoryBuffers();
 
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-                                       uint32 bufferIdx,
-                                       void *&signalAddress);
+            uint32 bufferIdx,
+            void *&signalAddress);
 
     virtual bool AllocateMemory();
 
@@ -66,6 +66,9 @@ public:
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
     virtual bool ChangeState();
+    virtual bool AddInputBrokers(RealTimeApplication &application);
+    virtual bool AddOutputBrokers(RealTimeApplication &application);
+
 };
 }
 

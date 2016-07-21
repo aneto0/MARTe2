@@ -154,6 +154,14 @@ public:
 
     ReferenceContainer GetOutputBrokers();
 
+    bool AllocateInputSignalsMemory2();
+
+    bool AllocateOutputSignalsMemory2();
+
+    void *GetInputMemoryPointer();
+
+    void *GetOutputMemoryPointer();
+
 #if 0
     /**
      * @brief Links the signals of this GAM to the RealTimeApplication DataSourceContainer (+Data).

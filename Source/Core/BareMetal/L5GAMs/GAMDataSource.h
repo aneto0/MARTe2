@@ -99,6 +99,11 @@ public:
 
     virtual bool ChangeState();
 
+    virtual bool AddInputBrokers(RealTimeApplication &application);
+
+    virtual bool AddOutputBrokers(RealTimeApplication &application);
+
+
 #if 0
     /**
      * @brief Retrieves to the memory address containing the signal data.

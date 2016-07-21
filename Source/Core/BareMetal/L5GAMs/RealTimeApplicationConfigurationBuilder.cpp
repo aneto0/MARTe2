@@ -2082,8 +2082,8 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(SignalDirec
                         ret = functionsDatabase.Read("QualifiedName", signalName);
                     }
                     if (ret) {
-                        if (functionsDatabase.Read("Alias", alias)) {
-                            signalName = alias;
+                        if (!functionsDatabase.Read("Alias", alias)) {
+                            alias = signalName;
                         }
                     }
                     if (ret) {
@@ -2162,17 +2162,20 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(SignalDirec
                         //Store the relevant signals belonging to this DataSource
                         if (!functionsDatabase.MoveRelative("Signals")) {
                             ret = functionsDatabase.CreateRelative("Signals");
-                        }
-                        uint32 numberOfSignalsInDataSource = functionsDatabase.GetNumberOfChildren();
-                        StreamString newSignalId;
+                        }/*
+                         uint32 numberOfSignalsInDataSource = functionsDatabase.GetNumberOfChildren();
+                         StreamString newSignalId;
+                         if (ret) {
+                         newSignalId.Printf("%d", signalId.Buffer());
+                         }*/
                         if (ret) {
-                            newSignalId.Printf("%d", numberOfSignalsInDataSource);
-                        }
-                        if (ret) {
-                            ret = functionsDatabase.CreateRelative(newSignalId.Buffer());
+                            ret = functionsDatabase.CreateRelative(signalId.Buffer());
                         }
                         if (ret) {
                             ret = functionsDatabase.Write("QualifiedName", signalName.Buffer());
+                        }
+                        if (ret) {
+                            ret = functionsDatabase.Write("Alias", alias.Buffer());
                         }
                         if (ret) {
                             if (offsetMatrixBackend != NULL_PTR(void *)) {
@@ -2287,6 +2290,9 @@ bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory(SignalDire
                         functionsDatabase.MoveToAncestor(1u);
                     }
                 }
+                ret=functionsDatabase.Write("ByteSize", totalByteSize);
+
+
                 //Move back to the Function level
                 functionsDatabase.MoveToAncestor(2u);
                 //Allocate the memory
@@ -2298,12 +2304,6 @@ bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory(SignalDire
                 }
                 if (ret) {
                     ret = gam.IsValid();
-                    if (!ret) {
-                        printf("\nInvalid GAM  %s!!\n", functionName.Buffer());
-                    }
-                    else {
-                        printf("\nFound GAM  %s!!\n", functionName.Buffer());
-                    }
                 }
                 void *signalsMemory = NULL_PTR(void *);
                 if (ret) {
@@ -2347,6 +2347,9 @@ bool RealTimeApplicationConfigurationBuilder::AllocateFunctionsMemory(SignalDire
                             char8 *signalBlockMemoryChar = reinterpret_cast<char8 *>(signalsMemory);
                             signalBlockMemoryChar += allocatedBytes;
                             ret = functionsDatabase.Write("Address", reinterpret_cast<void *>(signalBlockMemoryChar));
+                            if(ret){
+                                ret = functionsDatabase.Write("GamMemoryOffset", allocatedBytes);
+                            }
                             allocatedBytes += byteSize;
                         }
                         if (ret) {

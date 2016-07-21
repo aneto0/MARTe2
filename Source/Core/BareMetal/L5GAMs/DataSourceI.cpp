@@ -40,6 +40,7 @@
 #include "MemoryMapBroker.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "StandardParser.h"
+#include "RealTimeApplication.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -618,6 +619,21 @@ bool DataSourceI::GetFunctionSignalTimeCyclesInfo(SignalDirection direction,
     else {
         timeCycles = 1u;
         timeSamples = 1u;
+    }
+    return ret;
+}
+
+bool DataSourceI::IsSupportedBroker(SignalDirection direction,
+                                    uint32 functionIdx,
+                                    uint32 functionSignalIdx,
+                                    const char8* brokerClassName) {
+    bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
+    if (ret) {
+        StreamString broker;
+        ret = configuredDatabase.Read("Broker", broker);
+        if (ret) {
+            ret = (broker == brokerClassName);
+        }
     }
     return ret;
 }
