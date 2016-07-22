@@ -83,6 +83,13 @@ public:
      *   GetStatefulGAMGroups() = NULL
      */
     virtual ~RealTimeState();
+
+
+    /**
+     * @brief Prepare the context for the state in each registered GAMGroup.
+     * @param[in] status contains informations about the current and the next state.
+     */
+    void PrepareState(const RealTimeStateInfo &status);
 #if 0
     /**
      * @brief Propagates the configuration setup request to the declared RealTimeThreads.
@@ -112,12 +119,6 @@ public:
      * @return true if the memory allocation succeeds, false otherwise.
      */
     void AddGAMGroup(ReferenceT<GAMGroup> element);
-
-    /**
-     * @brief Prepare the context for the state in each registered GAMGroup.
-     * @param[in] status contains informations about the current and the next state.
-     */
-    void PrepareState(const RealTimeStateInfo &status);
 
     /**
      * @brief Returns the stateful GAMGroups array.

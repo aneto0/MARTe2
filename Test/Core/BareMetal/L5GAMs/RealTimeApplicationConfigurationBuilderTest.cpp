@@ -2339,95 +2339,6 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionsMemory() {
     return true;
 }
 
-bool RealTimeApplicationConfigurationBuilderTest::TestAllocateFunctionsMemory() {
-    ConfigurationDatabase cdb;
-    config1.Seek(0);
-    StandardParser parser(config1, cdb);
-
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-    ReferenceT<RealTimeApplication> application = god->Find("Application1");
-    if (!application.IsValid()) {
-        return false;
-    }
-    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
-
-    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.FlattenSignalsDatabases()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveDataSources()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveFunctionSignals()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.VerifyFunctionSignals()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveStates()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.VerifyConsumersAndProducers()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveFunctionSignalsMemorySize()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveFunctionsMemory()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.AllocateFunctionsMemory()) {
-        return false;
-    }
-
-    ConfigurationDatabase fcdb;
-    ConfigurationDatabase dcdb;
-    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
-        return false;
-    }
-
-    StreamString fDisplay;
-    StreamString dDisplay;
-
-    fDisplay.Printf("%!", fcdb);
-    dDisplay.Printf("%!", dcdb);
-
-    fDisplay.Seek(0);
-    dDisplay.Seek(0);
-
-    printf("\n%s", fDisplay.Buffer());
-    printf("\n%s", dDisplay.Buffer());
-
-    return true;
-}
-
 bool RealTimeApplicationConfigurationBuilderTest::TestCalculateFunctionsMemory() {
     ConfigurationDatabase cdb;
     config1.Seek(0);
@@ -2867,8 +2778,8 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAllocateGAMMemory() {
             "            }"
             "            OutputSignals = {"
             "                SignalOut = {"
-            "                    DataSource = DDB2"
-            "                    Alias = sum"
+            "                    DataSource = DDB1"
+            "                    Alias = add1"
             "                    Type = uint32"
             "                }"
             "            }"
@@ -2882,15 +2793,15 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAllocateGAMMemory() {
             "                    Alias = add2"
             "                }"
             "                SignalIn2 = {"
-            "                    DataSource = DDB2"
+            "                    DataSource = DDB1"
             "                    Type = uint32"
-            "                    Alias = sum"
+            "                    Alias = add1"
             "                }"
             "            }"
             "            OutputSignals = {"
             "                SignalOut = {"
-            "                    DataSource = DDB1"
-            "                    Alias = add1"
+            "                    DataSource = DDB2"
+            "                    Alias = add2"
             "                    Type = uint32"
             "                }"
             "            }"
@@ -2953,10 +2864,20 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAllocateGAMMemory() {
         return false;
     }
 
+    if (!application->PrepareNextState("State1")) {
+        return false;
+    }
 
-    ReferenceT<GAM> gam1=application->Find("Functions.GAMA");
+    application->StartExecution();
 
-    ReferenceT<GAM> gam2=application->Find("Functions.GAMB");
+    ReferenceT<GAM> gam1 = application->Find("Functions.GAMA");
+
+    ReferenceT<GAM> gam2 = application->Find("Functions.GAMB");
+
+    gam1->Execute();
+
+    gam2->Execute();
+
 
     gam1->Execute();
 

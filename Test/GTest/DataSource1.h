@@ -53,15 +53,11 @@ DataSource1    ();
 
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
             uint32 bufferIdx,
-            void *&signalAddress);
+            void **&signalAddress);
 
     virtual bool AllocateMemory();
 
     virtual const char8 *Negotiate(StructuredDataI &data, SignalDirection direction);
-
-    virtual bool GetInputReaders(const char8 * const functionName, ReferenceContainer &output);
-
-    virtual bool GetOutputWriters(const char8 * const functionName, ReferenceContainer &output);
 
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
@@ -70,6 +66,15 @@ DataSource1    ();
     virtual bool AddInputBrokers(RealTimeApplication &application);
 
     virtual bool AddOutputBrokers(RealTimeApplication &application);
+
+protected:
+    virtual bool AddInputBrokerToGAM(ReferenceT<GAM> gam,
+            const char8 * functionName,
+            void* gamMemPtr);
+
+    virtual bool AddOutputBrokerToGAM(ReferenceT<GAM> gam,
+            const char8 * functionName,
+            void* gamMemPtr);
 
 };
 }

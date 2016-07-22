@@ -158,15 +158,7 @@ bool GAM::Finalise() {
     return true;
 }
 
-void * GAM::AllocateInputSignalsMemory(uint32 numberOfBytes) {
-    if (inputSignalsMemory != NULL) {
-        inputSignalsMemory = heap->Malloc(numberOfBytes);
-    }
-
-    return inputSignalsMemory;
-}
-
-bool GAM::AllocateInputSignalsMemory2() {
+bool GAM::AllocateInputSignalsMemory() {
     const char8* dirStr = "Signals.InputSignals";
     configuredDatabase.MoveToRoot();
     bool ret = configuredDatabase.MoveRelative(dirStr);
@@ -180,12 +172,7 @@ bool GAM::AllocateInputSignalsMemory2() {
     return ret;
 }
 
-void * GAM::AllocateOutputSignalsMemory(uint32 numberOfBytes) {
-    outputSignalsMemory = heap->Malloc(numberOfBytes);
-    return outputSignalsMemory;
-}
-
-bool GAM::AllocateOutputSignalsMemory2() {
+bool GAM::AllocateOutputSignalsMemory() {
     const char8* dirStr = "Signals.OutputSignals";
     configuredDatabase.MoveToRoot();
     bool ret = configuredDatabase.MoveRelative(dirStr);
@@ -194,7 +181,7 @@ bool GAM::AllocateOutputSignalsMemory2() {
         ret = configuredDatabase.Read("ByteSize", totalByteSize);
     }
     if (ret) {
-        inputSignalsMemory = heap->Malloc(totalByteSize);
+        outputSignalsMemory = heap->Malloc(totalByteSize);
     }
     return ret;
 }
@@ -221,6 +208,12 @@ bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
 
     return ret;
 }
+
+
+void *GAM::GetContext(){
+    return NULL;
+}
+
 
 uint32 GAM::GetNumberOfInputSignals() {
     return numberOfInputSignals;
@@ -522,183 +515,5 @@ bool GAM::ConfigureFunction() {
     return ret;
 }
 
-bool GAM::ConfigureDataSource() {
-
-    bool ret = true;
-    if (GetNumberOfSupportedStates() > 0u) {
-        ret = (application != NULL);
-        if (ret) {
-            ReferenceT<DataSourceContainer> dataContainer = application->GetDataSourceContainer();
-            ret = dataContainer.IsValid();
-            if (ret) {
-                ret = dataContainer->AddDataDefinition(ReferenceT<GAM>(this));
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::FatalError, "+Data container not found or invalid in the application");
-            }
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Application not set");
-        }
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::Warning, "GAM never called in states or threads");
-    }
-    return ret;
-}
-
-void GAM::SetApplication(RealTimeApplication &rtApp) {
-    if (application == NULL) {
-        application = &rtApp;
-    }
-    inputReaders->SetApplication(rtApp);
-    outputWriters->SetApplication(rtApp);
-}
-
-void GAM::SetGAMGroup(ReferenceT<GAMGroup> gamGroup) {
-    if (group == NULL) {
-        group = gamGroup.operator->();
-    }
-}
-
-bool GAM::AddState(const char8 * const stateName,
-        const char8 * const threadName) {
-
-    bool ret = true;
-    bool found = false;
-    for (uint32 i = 0u; (i < numberOfSupportedStates) && (!found); i++) {
-        /*lint -e{613} never enter here if supportedStates is NULL (because numberOfSupportedStates == 0) */
-        found = (supportedStates[i] == stateName);
-
-        if (found) {
-            ret = (supportedThreads[i] == threadName);
-            if (!ret) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s cannot be in both %s and %s threads into the state %s", GetName(),
-                        supportedThreads[i].Buffer(), threadName, stateName)
-                //TODO same gam in two different threads!
-            }
-        }
-
-    }
-    if (!found) {
-        if ((numberOfSupportedStates % stateNamesGranularity) == 0u) {
-            uint32 newSize = numberOfSupportedStates + stateNamesGranularity;
-            StreamString *tempStates = new StreamString[newSize];
-            StreamString *tempThreads = new StreamString[newSize];
-            if (supportedStates != NULL) {
-                for (uint32 i = 0u; i < numberOfSupportedStates; i++) {
-                    tempStates[i] = supportedStates[i];
-                    tempThreads[i] = supportedThreads[i];
-                }
-                delete[] supportedStates;
-                delete[] supportedThreads;
-            }
-            supportedStates = tempStates;
-            supportedThreads = tempThreads;
-
-        }
-        /*lint -e{613} the memory of supportedStates is already allocated (numberOfSupportedStates == 0) */
-        supportedStates[numberOfSupportedStates] = stateName;
-        supportedThreads[numberOfSupportedStates] = threadName;
-        numberOfSupportedStates++;
-    }
-    return ret;
-}
-
-StreamString * GAM::GetSupportedStates() {
-    return supportedStates;
-}
-
-StreamString * GAM::GetSupportedThreads() {
-    return supportedThreads;
-}
-
-uint32 GAM::GetNumberOfSupportedStates() const {
-    return numberOfSupportedStates;
-
-}
-
-/*void GAM::SetUp() {
- // initialises the local status
- }*/
-
-/*
- virtual void Execute(){
- // execution routine
- */
-
-bool GAM::ConfigureDataSourceLinks() {
-    bool ret = true;
-    uint32 numberOfElements = Size();
-
-    for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
-        ReferenceT<GAMSignalsContainer> defContainer = Get(i);
-        if (defContainer.IsValid()) {
-            uint32 numberOfDefs = defContainer->Size();
-            for (uint32 j = 0u; (j < numberOfDefs) && (ret); j++) {
-                ReferenceT<GAMSignalI> def = defContainer->Get(j);
-                ret = def.IsValid();
-                if (ret) {
-
-                    if (defContainer->IsInput()) {
-                        ret = (inputReaders->AddSignal(def));
-                        if (!ret) {
-                            // TODO definition not compatible with
-                            // its data source !!!
-
-                        }
-                    }
-                    if (defContainer->IsOutput()) {
-                        ret = (outputWriters->AddSignal(def));
-                        if (!ret) {
-                            // TODO definition not compatible with
-                            // its data source !!!
-
-                        }
-                    }
-                }
-                else {
-                    REPORT_ERROR(ErrorManagement::FatalError, "The GAMSignalsContainer must contain GAMSignalI objects");
-                }
-            }
-        }
-    }
-
-    if (ret) {
-        ret = inputReaders->Finalise();
-        if (!ret) {
-//TODO Failed readers finalisation
-        }
-    }
-    if (ret) {
-        ret = outputWriters->Finalise();
-        if (!ret) {
-//TODO Failed readers finalisation
-        }
-    }
-
-    if (ret) {
-// not both sync!
-        ret = !((inputReaders->IsSync()) && (outputWriters->IsSync()));
-    }
-
-    return ret;
-}
-
-bool GAM::IsSync() {
-    return (inputReaders->IsSync() || outputWriters->IsSync());
-}
-
-Reference GAM::GetInputReader() {
-    return inputReaders;
-}
-
-Reference GAM::GetOutputWriter() {
-    return outputWriters;
-}
-
-RealTimeApplication *GAM::GetApplication() {
-    return application;
-}
 #endif
 }

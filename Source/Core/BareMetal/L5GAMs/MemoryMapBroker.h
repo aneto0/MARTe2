@@ -50,7 +50,8 @@ namespace MARTe {
 
 struct CopyTableEntry {
     void *gamPointer;
-    void **dataSourcePointers;
+    void **dataSourcePointer[2];
+    uint32 dataSourceOffset;
     uint32 copySize;
 };
 
@@ -84,13 +85,10 @@ public:
      *
      */
     virtual bool Init(SignalDirection direction,
-                      DataSourceI *dataSourceIn,
-                      const char8 * const functionName);
+                      DataSourceI &dataSourceIn,
+                      const char8 * const functionName,
+                      void *gamMemoryAddress);
 
-    virtual bool Init2(SignalDirection direction,
-                       DataSourceI &dataSourceIn,
-                       const char8 * const functionName,
-                       void *gamMemoryAddress);
 
 protected:
 

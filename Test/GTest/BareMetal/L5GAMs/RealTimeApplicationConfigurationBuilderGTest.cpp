@@ -167,11 +167,6 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionsMemory) {
     ASSERT_TRUE(test.TestResolveFunctionsMemory());
 }
 
-TEST(RealTimeApplicationConfigurationBuilderGTest,TestAllocateFunctionsMemory) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestAllocateFunctionsMemory());
-}
-
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestCalculateFunctionsMemory) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestCalculateFunctionsMemory());

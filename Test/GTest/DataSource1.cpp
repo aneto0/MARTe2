@@ -31,7 +31,7 @@
 #include "DataSource1.h"
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"
-
+#include "GAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -68,7 +68,7 @@ bool DataSource1::AllocateMemory() {
 
 bool DataSource1::GetSignalMemoryBuffer(uint32 signalIdx,
                                         uint32 bufferIdx,
-                                        void *&signalAddress) {
+                                        void **&signalAddress) {
     return true;
 }
 
@@ -98,20 +98,6 @@ const char8 *DataSource1::Negotiate(StructuredDataI &data,
 
 }
 
-bool DataSource1::GetInputReaders(const char8 * const functionName,
-                                            ReferenceContainer &output) {
-    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
-    ReferenceContainer brokers;
-    return output.Insert(broker);
-}
-
-
-bool DataSource1::GetOutputWriters(const char8 * const functionName, ReferenceContainer &output){
-    ReferenceT<MemoryMapInputBroker> broker("MemoryMapOutputBroker");
-    ReferenceContainer brokers;
-    return output.Insert(broker);
-}
-
 bool DataSource1::PrepareNextState(const RealTimeStateInfo &status) {
     return true;
 }
@@ -126,6 +112,56 @@ bool DataSource1::AddInputBrokers(RealTimeApplication &application){
 
 bool DataSource1::AddOutputBrokers(RealTimeApplication &application){
     return true;
+}
+
+
+
+
+bool DataSource1::AddInputBrokerToGAM(ReferenceT<GAM> gam,
+                                      const char8 * functionName,
+                                      void* gamMemPtr) {
+    bool ret = true;
+    //generally a loop for each supported broker
+    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+    ReferenceContainer inputReaders;
+    ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = inputReaders.Insert(broker);
+        }
+    }
+    if (ret) {
+        gam->AddInputBrokers(inputReaders);
+    }
+    return ret;
+}
+
+bool DataSource1::AddOutputBrokerToGAM(ReferenceT<GAM> gam,
+                                       const char8 * functionName,
+                                       void* gamMemPtr) {
+
+    bool ret = true;
+    //generally a loop for each supported broker
+    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+    ReferenceContainer outputWriters;
+
+    ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = outputWriters.Insert(broker);
+        }
+    }
+    if (ret) {
+        gam->AddOutputBrokers(outputWriters);
+    }
+    return ret;
+
 }
 
 CLASS_REGISTER(DataSource1, "1.0");

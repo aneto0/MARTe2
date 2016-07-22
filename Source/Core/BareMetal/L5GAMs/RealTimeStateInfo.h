@@ -53,10 +53,6 @@ struct RealTimeStateInfo {
      */
     const char8* nextState;
 
-    /**
-     * The state active buffer (0 or 1)
-     */
-    uint8 activeBuffer;
 };
 
 }

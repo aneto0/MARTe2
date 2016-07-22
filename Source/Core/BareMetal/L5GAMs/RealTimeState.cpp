@@ -58,6 +58,14 @@ RealTimeState::~RealTimeState() {
         delete[] statefulGAMGroups;
     }*/
 }
+
+
+void RealTimeState::PrepareState(const RealTimeStateInfo &status) {
+/*    for (uint32 i = 0u; i < numberOfGAMGroups; i++) {
+        statefulGAMGroups[i]->PrepareNextState(status);
+    }*/
+}
+
 #if 0
 bool RealTimeState::ConfigureArchitecture(RealTimeApplication & rtApp) {
 

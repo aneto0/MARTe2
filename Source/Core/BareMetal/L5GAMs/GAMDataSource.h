@@ -73,35 +73,22 @@ public:
     /**
      * @brief Constructor
      */
-    GAMDataSource();
+GAMDataSource    ();
 
     /**
      * @brief Destructor
      */
     virtual ~GAMDataSource();
 
-    virtual uint32 GetCurrentBufferIndex();
-
     virtual uint32 GetNumberOfMemoryBuffers();
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress);
+    virtual bool GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void **&signalAddress);
 
     virtual bool AllocateMemory();
 
     virtual const char8 *Negotiate(StructuredDataI &data, SignalDirection direction);
 
-
-    virtual bool GetInputReaders(const char8 * const functionName, ReferenceContainer &output);
-
-    virtual bool GetOutputWriters(const char8 * const functionName, ReferenceContainer &output);
-
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
-
-    virtual bool ChangeState();
-
-    virtual bool AddInputBrokers(RealTimeApplication &application);
-
-    virtual bool AddOutputBrokers(RealTimeApplication &application);
 
 
 #if 0
@@ -191,7 +178,7 @@ public:
      *  (i.e. if MemoryMapInputReader::AddSignal(signalOut) == true).
      */
     virtual ReferenceT<BrokerI> GetInputReader(ReferenceT<GAMSignalI> signalIn,
-                                                         void * varPtr = NULL_PTR(void*));
+            void * varPtr = NULL_PTR(void*));
 
     /**
      * @see DataSourceSignalI::GetOutputWriter(*).
@@ -199,7 +186,7 @@ public:
      *  (i.e. if MemoryMapOutputWriter::AddSignal(signalOut) == true).
      */
     virtual ReferenceT<BrokerI> GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
-                                                          void * varPtr = NULL_PTR(void*));
+            void * varPtr = NULL_PTR(void*));
 
     /**
      * @see DataSourceSignalI::IsSupportedBroker(*)
@@ -236,9 +223,20 @@ protected:
     MemoryArea *memory;
 #endif
 
+protected:
+    virtual bool AddInputBrokerToGAM(ReferenceT<GAM> gam,
+            const char8 * functionName,
+            void* gamMemPtr);
+
+    virtual bool AddOutputBrokerToGAM(ReferenceT<GAM> gam,
+            const char8 * functionName,
+            void* gamMemPtr);
+
     void **signalMemory[2];
 
-    uint32 currentBufferIndex;
+    void **signalMemoryIndex[2];
+
+
 
     HeapI *heap;
 };

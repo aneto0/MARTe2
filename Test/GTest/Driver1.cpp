@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "Driver1.h"
+#include "GAM.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -60,20 +61,13 @@ uint32 Driver1::GetNumberOfMemoryBuffers() {
     return 1u;
 }
 
-bool Driver1::GetSignalMemoryBuffer(uint32 functionIdx,
-                                    uint32 functionSignalIdx,
-                                    uint32 bufferIdx,
-                                    void *&signalAddress) {
-    return true;
-}
-
 bool Driver1::AllocateMemory() {
     return false;
 }
 
 bool Driver1::GetSignalMemoryBuffer(uint32 signalIdx,
                                     uint32 bufferIdx,
-                                    void *&signalAddress) {
+                                    void **&signalAddress) {
     return true;
 }
 
@@ -103,19 +97,6 @@ const char8 *Driver1::Negotiate(StructuredDataI &data,
 
 }
 
-bool Driver1::GetInputReaders(const char8 * const functionName,
-                                            ReferenceContainer &output) {
-    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
-    ReferenceContainer brokers;
-    return output.Insert(broker);
-}
-
-
-bool Driver1::GetOutputWriters(const char8 * const functionName, ReferenceContainer &output){
-    ReferenceT<MemoryMapInputBroker> broker("MemoryMapOutputBroker");
-    ReferenceContainer brokers;
-    return output.Insert(broker);
-}
 
 bool Driver1::PrepareNextState(const RealTimeStateInfo &status) {
     return true;
@@ -125,12 +106,62 @@ bool Driver1::ChangeState() {
     return true;
 }
 
+
+
 bool Driver1::AddInputBrokers(RealTimeApplication &application){
     return true;
 }
 
 bool Driver1::AddOutputBrokers(RealTimeApplication &application){
     return true;
+}
+
+
+bool Driver1::AddInputBrokerToGAM(ReferenceT<GAM> gam,
+                                      const char8 * functionName,
+                                      void* gamMemPtr) {
+    bool ret = true;
+    //generally a loop for each supported broker
+    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+    ReferenceContainer inputReaders;
+    ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = inputReaders.Insert(broker);
+        }
+    }
+    if (ret) {
+        gam->AddInputBrokers(inputReaders);
+    }
+    return ret;
+}
+
+bool Driver1::AddOutputBrokerToGAM(ReferenceT<GAM> gam,
+                                       const char8 * functionName,
+                                       void* gamMemPtr) {
+
+    bool ret = true;
+    //generally a loop for each supported broker
+    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+    ReferenceContainer outputWriters;
+
+    ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = outputWriters.Insert(broker);
+        }
+    }
+    if (ret) {
+        gam->AddOutputBrokers(outputWriters);
+    }
+    return ret;
+
 }
 
 CLASS_REGISTER(Driver1, "1.0");

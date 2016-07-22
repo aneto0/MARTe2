@@ -83,7 +83,8 @@ bool GAM1::Execute() {
     printf("%s:\n", name);
     uint32 numberOfInputSignals = GetNumberOfInputSignals();
     uint32 numberOfOutputSignals = GetNumberOfOutputSignals();
-    printf("Inputs\n");
+    printf("Inputs %d\n", numberOfInputSignals);
+    printf("Outputs %d\n", numberOfOutputSignals);
     uint32 *inputBuffer = (uint32 *) GetInputSignalsBuffer();
 
     uint32 *outputBuffer = (uint32 *) GetOutputSignalsBuffer();
@@ -97,6 +98,10 @@ bool GAM1::Execute() {
     }
 
     return true;
+}
+
+void GAM1::SetUp(){
+
 }
 
 CLASS_REGISTER(GAM1, "1.0");
@@ -140,7 +145,7 @@ bool DS1::AllocateMemory() {
 
 bool DS1::GetSignalMemoryBuffer(uint32 signalIdx,
                                 uint32 bufferIdx,
-                                void *&signalAddress) {
+                                void **&signalAddress) {
     return true;
 }
 
@@ -169,20 +174,6 @@ const char8 *DS1::Negotiate(StructuredDataI &data,
 
 }
 
-bool DS1::GetInputReaders(const char8 * const functionName,
-                          ReferenceContainer &output) {
-    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
-    ReferenceContainer brokers;
-    return output.Insert(broker);
-}
-
-bool DS1::GetOutputWriters(const char8 * const functionName,
-                           ReferenceContainer &output) {
-    ReferenceT<MemoryMapInputBroker> broker("MemoryMapOutputBroker");
-    ReferenceContainer brokers;
-    return output.Insert(broker);
-}
-
 bool DS1::PrepareNextState(const MARTe::RealTimeStateInfo&) {
     return true;
 }
@@ -191,12 +182,52 @@ bool DS1::ChangeState() {
     return true;
 }
 
-bool DS1::AddInputBrokers(RealTimeApplication &application) {
-    return true;
+
+bool DS1::AddInputBrokerToGAM(ReferenceT<GAM> gam,
+                                      const char8 * functionName,
+                                      void* gamMemPtr) {
+    bool ret = true;
+    //generally a loop for each supported broker
+    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+    ReferenceContainer inputReaders;
+    ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = inputReaders.Insert(broker);
+        }
+    }
+    if (ret) {
+        gam->AddInputBrokers(inputReaders);
+    }
+    return ret;
 }
 
-bool DS1::AddOutputBrokers(RealTimeApplication &application) {
-    return true;
+bool DS1::AddOutputBrokerToGAM(ReferenceT<GAM> gam,
+                                       const char8 * functionName,
+                                       void* gamMemPtr) {
+
+    bool ret = true;
+    //generally a loop for each supported broker
+    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+    ReferenceContainer outputWriters;
+
+    ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = outputWriters.Insert(broker);
+        }
+    }
+    if (ret) {
+        gam->AddOutputBrokers(outputWriters);
+    }
+    return ret;
+
 }
 
 CLASS_REGISTER(DS1, "1.0");

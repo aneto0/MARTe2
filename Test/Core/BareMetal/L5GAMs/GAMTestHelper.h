@@ -68,6 +68,9 @@ static StreamString config1 = ""
         "                Signal2 = {"
         "                    DataSource = DDB2"
         "                    Type = uint32"
+        "                    NumberOfDimensions = 1"
+        "                    NumberOfElements = 2"
+        "                    Default = \"{1 2}\""
         "                    Samples = 10"
         "                }"
         "            }"
@@ -189,13 +192,17 @@ class GAM1: public GAM {
 public:
     CLASS_REGISTER_DECLARATION()
 
-    GAM1();
+GAM1    ();
 
     virtual ~GAM1();
 
     virtual bool Initialise(StructuredDataI & data);
 
     virtual bool Execute();
+
+protected:
+    virtual void SetUp();
+
 
 };
 
@@ -219,7 +226,7 @@ class DS1: public DataSourceI {
 public:
     CLASS_REGISTER_DECLARATION()
 
-    DS1();
+DS1    ();
 
     virtual ~DS1();
 
@@ -230,33 +237,33 @@ public:
     virtual uint32 GetNumberOfMemoryBuffers();
 
     virtual bool GetSignalMemoryBuffer(uint32 functionIdx,
-                                       uint32 functionSignalIdx,
-                                       uint32 bufferIdx,
-                                       void *&signalAddress);
+            uint32 functionSignalIdx,
+            uint32 bufferIdx,
+            void *&signalAddress);
 
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-                                       uint32 bufferIdx,
-                                       void *&signalAddress);
+            uint32 bufferIdx,
+            void **&signalAddress);
 
     virtual bool AllocateMemory();
 
     virtual const char8 *Negotiate(StructuredDataI &data, SignalDirection direction);
 
-    virtual bool GetInputReaders(const char8 * const functionName, ReferenceContainer &output);
-
-    virtual bool GetOutputWriters(const char8 * const functionName, ReferenceContainer &output);
 
     virtual bool PrepareNextState(const MARTe::RealTimeStateInfo&);
 
     virtual bool ChangeState();
 
-    virtual bool AddInputBrokers(RealTimeApplication &application);
+protected:
+    virtual bool AddInputBrokerToGAM(ReferenceT<GAM> gam,
+            const char8 * functionName,
+            void* gamMemPtr);
 
-    virtual bool AddOutputBrokers(RealTimeApplication &application);
-
+    virtual bool AddOutputBrokerToGAM(ReferenceT<GAM> gam,
+            const char8 * functionName,
+            void* gamMemPtr);
 };
 }
-
 
 #if 0
 
@@ -266,10 +273,10 @@ public:
 ///////////////////////////////////////////
 
 struct ReadParam {
-    ReferenceT<MemoryMapInputReader> reader;
-    uint32 numberOfReads;
-    volatile int32 *spinlock;
-    bool retVal;
+ReferenceT<MemoryMapInputReader> reader;
+uint32 numberOfReads;
+volatile int32 *spinlock;
+bool retVal;
 };
 
 ///////////////////////////////////////////
@@ -278,10 +285,10 @@ struct ReadParam {
 ///////////////////////////////////////////
 
 struct WriteParam {
-    ReferenceT<MemoryMapOutputWriter> writer;
-    uint32 numberOfWrites;
-    volatile int32 *spinlock;
-    bool retVal;
+ReferenceT<MemoryMapOutputWriter> writer;
+uint32 numberOfWrites;
+volatile int32 *spinlock;
+bool retVal;
 };
 
 ///////////////////////////////////////////
@@ -293,8 +300,8 @@ struct WriteParam {
  * @brief An introspectable structure
  */
 struct TrackError {
-    uint32 Par1;
-    uint32 Par2;
+uint32 Par1;
+uint32 Par2;
 };
 
 ///////////////////////////////////////////
@@ -306,8 +313,8 @@ struct TrackError {
  * @brief An introspectable structure
  */
 struct ControlIn {
-    uint32 Par1;
-    uint32 Par2;
+uint32 Par1;
+uint32 Par2;
 };
 
 ///////////////////////////////////////////
@@ -319,7 +326,7 @@ struct ControlIn {
  * @brief An introspectable structure
  */
 struct ControlNoise {
-    float32 noiseValue;
+float32 noiseValue;
 };
 
 ///////////////////////////////////////////
@@ -332,7 +339,7 @@ struct ControlNoise {
  * with a vector member
  */
 struct TrackErrorArray {
-    uint32 Pars[2];
+uint32 Pars[2];
 };
 
 ///////////////////////////////////////////
@@ -345,7 +352,7 @@ struct TrackErrorArray {
  * with a vector member
  */
 struct ControlInArray {
-    uint32 Pars[2];
+uint32 Pars[2];
 };
 
 ///////////////////////////////////////////
@@ -358,7 +365,7 @@ struct ControlInArray {
  * with a matrix member
  */
 struct TrackErrorMatrix {
-    uint32 Pars[3][2];
+uint32 Pars[3][2];
 };
 
 ///////////////////////////////////////////
@@ -371,7 +378,7 @@ struct TrackErrorMatrix {
  * with a matrix member
  */
 struct ControlInMatrix {
-    uint32 Pars[3][2];
+uint32 Pars[3][2];
 };
 
 ///////////////////////////////////////////
@@ -385,25 +392,25 @@ struct ControlInMatrix {
 class PIDGAM: public GAM {
 
 public:
-    CLASS_REGISTER_DECLARATION()
+CLASS_REGISTER_DECLARATION()
 
-    PIDGAM();
+PIDGAM();
 
-    /**
-     * @brief Destructor. Frees the local cdb created internally
-     */
-    virtual ~PIDGAM();
+/**
+ * @brief Destructor. Frees the local cdb created internally
+ */
+virtual ~PIDGAM();
 
-    /**
-     * @brief The execution routine.
-     */
-    virtual void Execute(uint8 activeContextBuffer);
+/**
+ * @brief The execution routine.
+ */
+virtual void Execute(uint8 activeContextBuffer);
 protected:
 
-    /**
-     * @brief Creates the local cdb.
-     */
-    virtual void SetUp();
+/**
+ * @brief Creates the local cdb.
+ */
+virtual void SetUp();
 
 private:
 
@@ -419,33 +426,33 @@ private:
  */
 class PIDGAMGroup: public GAMGroup {
 public:
-    CLASS_REGISTER_DECLARATION()
+CLASS_REGISTER_DECLARATION()
 
-    PIDGAMGroup();
+PIDGAMGroup();
 
-    /**
-     * @brief Dummy implementation of the pure virtual PrepareNextState() function which change a variable.
-     */
-    virtual void PrepareNextState(const RealTimeStateInfo &status);
+/**
+ * @brief Dummy implementation of the pure virtual PrepareNextState() function which change a variable.
+ */
+virtual void PrepareNextState(const RealTimeStateInfo &status);
 
-    /**
-     * @brief Retrieves the variable changed by PrepareNextState().
-     */
-    uint32 GetContext();
+/**
+ * @brief Retrieves the variable changed by PrepareNextState().
+ */
+uint32 GetContext();
 
 protected:
 
-    /**
-     * @brief Initialises the internal variable.
-     */
-    virtual void SetUp();
+/**
+ * @brief Initialises the internal variable.
+ */
+virtual void SetUp();
 
 private:
 
-    /**
-     * An internal variable.
-     */
-    uint32 context;
+/**
+ * An internal variable.
+ */
+uint32 context;
 
 };
 
@@ -460,23 +467,23 @@ private:
 class PIDGAM2: public GAM {
 
 public:
-    CLASS_REGISTER_DECLARATION()
-    PIDGAM2();
-    /**
-     * @brief Empty
-     */
-    ~PIDGAM2();
+CLASS_REGISTER_DECLARATION()
+PIDGAM2();
+/**
+ * @brief Empty
+ */
+~PIDGAM2();
 
-    /**
-     * @brief The execution routine using vector variables.
-     */
-    virtual void Execute(uint8 activeContextBuffer);
+/**
+ * @brief The execution routine using vector variables.
+ */
+virtual void Execute(uint8 activeContextBuffer);
 protected:
 
-    /**
-     * @brief Empty.
-     */
-    virtual void SetUp();
+/**
+ * @brief Empty.
+ */
+virtual void SetUp();
 
 private:
 };
@@ -489,21 +496,21 @@ private:
 class PIDGAM3: public GAM {
 
 public:
-    CLASS_REGISTER_DECLARATION()
-    PIDGAM3();
+CLASS_REGISTER_DECLARATION()
+PIDGAM3();
 
-    ~PIDGAM3();
+~PIDGAM3();
 
-    /**
-     * @brief The execution routine using matrix variables.
-     */
-    virtual void Execute(uint8 activeContextBuffer);
+/**
+ * @brief The execution routine using matrix variables.
+ */
+virtual void Execute(uint8 activeContextBuffer);
 protected:
 
-    /**
-     * @brief Empty
-     */
-    virtual void SetUp();
+/**
+ * @brief Empty
+ */
+virtual void SetUp();
 
 private:
 };
@@ -519,18 +526,18 @@ private:
 class PlantGAM: public GAM {
 
 public:
-    CLASS_REGISTER_DECLARATION()
-    PlantGAM();
+CLASS_REGISTER_DECLARATION()
+PlantGAM();
 
-    /**
-     * @brief The execution routine.
-     */
-    virtual void Execute(uint8 activeContextBuffer);
+/**
+ * @brief The execution routine.
+ */
+virtual void Execute(uint8 activeContextBuffer);
 protected:
-    /**
-     * @brief Empty
-     */
-    virtual void SetUp();
+/**
+ * @brief Empty
+ */
+virtual void SetUp();
 
 };
 
@@ -545,20 +552,20 @@ protected:
 class DummyGAM: public GAM {
 
 public:
-    CLASS_REGISTER_DECLARATION()
-    DummyGAM();
+CLASS_REGISTER_DECLARATION()
+DummyGAM();
 
-    /**
-     * @brief The execution routine.
-     */
-    virtual void Execute(uint8 activeContextBuffer);
+/**
+ * @brief The execution routine.
+ */
+virtual void Execute(uint8 activeContextBuffer);
 
-    uint32 flag;
+uint32 flag;
 protected:
-    /**
-     * @brief Empty
-     */
-    virtual void SetUp();
+/**
+ * @brief Empty
+ */
+virtual void SetUp();
 
 };
 
@@ -1279,21 +1286,21 @@ static const char8 *cdbStr5 = "\n"
 class SyncDataSourceSignal: public GAMDataSource {
 
 public:
-    CLASS_REGISTER_DECLARATION()
-    SyncDataSourceSignal();
-    virtual ~SyncDataSourceSignal();
+CLASS_REGISTER_DECLARATION()
+SyncDataSourceSignal();
+virtual ~SyncDataSourceSignal();
 
-    virtual void WriteEnd();
+virtual void WriteEnd();
 
-    virtual bool WaitOnEvent(const TimeoutType &timeout = TTInfiniteWait);
+virtual bool WaitOnEvent(const TimeoutType &timeout = TTInfiniteWait);
 
-    virtual bool Configure(Reference gamSignalIn);
+virtual bool Configure(Reference gamSignalIn);
 
 private:
 
-    // fake driver initialised from cdb
+// fake driver initialised from cdb
 
-    FastPollingEventSem internalSem;
+FastPollingEventSem internalSem;
 
 };
 
@@ -1305,21 +1312,21 @@ private:
 class WriteSyncDataSourceSignal: public GAMDataSource {
 
 public:
-    CLASS_REGISTER_DECLARATION()
-    WriteSyncDataSourceSignal();
-    virtual ~WriteSyncDataSourceSignal();
+CLASS_REGISTER_DECLARATION()
+WriteSyncDataSourceSignal();
+virtual ~WriteSyncDataSourceSignal();
 
-    virtual void ReadEnd();
+virtual void ReadEnd();
 
-    virtual bool WaitOnEvent(const TimeoutType &timeout = TTInfiniteWait);
+virtual bool WaitOnEvent(const TimeoutType &timeout = TTInfiniteWait);
 
-    virtual bool Configure(Reference gamSignalIn);
+virtual bool Configure(Reference gamSignalIn);
 
 private:
 
-    // fake driver initialised from cdb
+// fake driver initialised from cdb
 
-    FastPollingEventSem internalSem;
+FastPollingEventSem internalSem;
 
 };
 
@@ -1331,15 +1338,15 @@ private:
 class DummyScheduler: public GAMSchedulerI {
 public:
 
-    CLASS_REGISTER_DECLARATION()
+CLASS_REGISTER_DECLARATION()
 
-    DummyScheduler();
+DummyScheduler();
 
-    virtual void StartExecution(const uint32 activeBuffer);
+virtual void StartExecution(const uint32 activeBuffer);
 
-    virtual void StopExecution();
+virtual void StopExecution();
 
-    uint32 numberOfExecutions;
+uint32 numberOfExecutions;
 };
 
 /*---------------------------------------------------------------------------*/

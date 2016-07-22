@@ -159,6 +159,7 @@ public:
      */
     virtual bool Initialise(StructuredDataI & data);
 
+
     bool ConfigureApplication();
 
     //TODO
@@ -173,6 +174,19 @@ public:
 
     bool AddBrokersToFunctions();
 
+    /**
+       * @brief Prepares the environment for the next state and starts the new execution.
+       * @details This function has to be executed in a low-priority thread in order to prepare the context for the contextful GAMs
+       * and resets the variables in the RealTimeDataSource to the default values if they will be used in the next state but are not
+       * used in the current (the value is supposed to be consistent if it is used in both two consecutive states). When all is ready,
+       * this function calls the scheduler to stop the current state execution and starts the next state execution.
+       * @param[in] status contains informations about the current and the next state.
+       * @return false in case of errors, true otherwise.
+       */
+      bool PrepareNextState(const char8 * const nextStateName);
+
+
+      bool StartExecution();
 #if 0
     /**
      * @brief Configuration of the main application environment.
@@ -226,16 +240,7 @@ public:
      */
     bool ValidateDataSourceLinks();
 
-    /**
-     * @brief Prepares the environment for the next state and starts the new execution.
-     * @details This function has to be executed in a low-priority thread in order to prepare the context for the contextful GAMs
-     * and resets the variables in the RealTimeDataSource to the default values if they will be used in the next state but are not
-     * used in the current (the value is supposed to be consistent if it is used in both two consecutive states). When all is ready,
-     * this function calls the scheduler to stop the current state execution and starts the next state execution.
-     * @param[in] status contains informations about the current and the next state.
-     * @return false in case of errors, true otherwise.
-     */
-    bool PrepareNextState(const char8 * const nextStateName);
+
 
     /**
      * @brief Stops the application execution.
@@ -257,16 +262,14 @@ public:
     ReferenceT<ReferenceContainer> GetDataSourceContainer();
 
 private:
+#endif
 
-    /**
-     * The active buffer.
-     */
-    uint8 activeBuffer;
 
     /**
      * The current state name.
      */
     StreamString currentStateName;
+
 
     /**
      * The +States container.
@@ -287,13 +290,14 @@ private:
      * The +Data container
      */
     ReferenceT<ReferenceContainer> dataSourceContainer;
-#endif
 
 
     ConfigurationDatabase functionsDatabase;
     ConfigurationDatabase dataSourcesDatabase;
 
     StreamString defaultDataSourceName;
+
+    static uint32 index;
 };
 
 }

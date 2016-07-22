@@ -127,7 +127,6 @@ static uint32 GetDataSourceDimension(Reference gamSignalIn) {
 
 GAMDataSource::GAMDataSource() :
         DataSourceI() {
-    currentBufferIndex = 0u;
     signalMemory[0] = NULL_PTR(void **);
     signalMemory[1] = NULL_PTR(void **);
     heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
@@ -149,21 +148,17 @@ GAMDataSource::~GAMDataSource() {
     }
 }
 
-uint32 GAMDataSource::GetCurrentBufferIndex() {
-    return currentBufferIndex;
-}
-
 uint32 GAMDataSource::GetNumberOfMemoryBuffers() {
     return 2u;
 }
 
 bool GAMDataSource::GetSignalMemoryBuffer(uint32 signalIdx,
                                           uint32 bufferIdx,
-                                          void *&signalAddress) {
+                                          void **&signalAddress) {
     StreamString signalName;
     bool ret = (bufferIdx < 2u);
     if (ret) {
-        signalAddress = signalMemory[bufferIdx][signalIdx];
+        signalAddress = &signalMemoryIndex[bufferIdx][signalIdx];
     }
 
     return ret;
@@ -174,6 +169,8 @@ bool GAMDataSource::AllocateMemory() {
     bool ret = true;
     signalMemory[0] = new void*[numberOfSignals];
     signalMemory[1] = new void*[numberOfSignals];
+    signalMemoryIndex[0] = new void*[numberOfSignals];
+    signalMemoryIndex[1] = new void*[numberOfSignals];
     for (uint32 s = 0u; (s < numberOfSignals) && (ret); s++) {
         uint32 memorySize;
         ret = GetSignalByteSize(s, memorySize);
@@ -182,7 +179,9 @@ bool GAMDataSource::AllocateMemory() {
         }
         if (ret) {
             signalMemory[0][s] = heap->Malloc(memorySize);
+            signalMemoryIndex[0][s] = signalMemory[0][s];
             signalMemory[1][s] = heap->Malloc(memorySize);
+            signalMemoryIndex[1][s] = signalMemory[1][s];
         }
     }
     return ret;
@@ -213,53 +212,31 @@ const char8 *GAMDataSource::Negotiate(StructuredDataI &data,
 
 }
 
-bool GAMDataSource::GetInputReaders(const char8 * const functionName,
-                                    ReferenceContainer &output) {
-    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
-    bool ret = broker->Init(InputSignals, this, functionName);
-    if (ret) {
-        ret = output.Insert(broker);
-    }
-    return ret;
-}
-
-bool GAMDataSource::GetOutputWriters(const char8 * const functionName,
-                                     ReferenceContainer &output) {
-    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
-    bool ret = broker->Init(OutputSignals, this, functionName);
-    if (ret) {
-        ret = output.Insert(broker);
-    }
-    return ret;
-}
-
 bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
-    uint32 nextBufferIndex = ((currentBufferIndex + 1u) % 2u);
+    uint32 nextBufferIndex = ((RealTimeApplication::index + 1u) % 2u);
     //Set the default value for all the input signals
     uint32 numberOfFunctions = GetNumberOfFunctions();
-    uint32 n;
     bool ret = true;
 
-    for (n = 0u; (n < numberOfFunctions) && (ret); n++) {
+    for (uint32 n = 0u; (n < numberOfFunctions) && (ret); n++) {
         uint32 numberOfFunctionInputSignals;
         ret = GetFunctionNumberOfSignals(InputSignals, n, numberOfFunctionInputSignals);
-        uint32 i;
-        for (i = 0u; (i < numberOfFunctionInputSignals) && (ret); i++) {
-            StreamString functionSignalName;
+        for (uint32 i = 0u; (i < numberOfFunctionInputSignals) && (ret); i++) {
+            StreamString functionSignalAlias;
             if (ret) {
-                ret = GetFunctionSignalName(InputSignals, n, i, functionSignalName);
+                ret = GetFunctionSignalAlias(InputSignals, n, i, functionSignalAlias);
             }
             uint32 signalIdx;
             if (ret) {
-                ret = GetSignalIndex(signalIdx, functionSignalName.Buffer());
+                ret = GetSignalIndex(signalIdx, functionSignalAlias.Buffer());
             }
-            StreamString defaultValueStr = "";
+            AnyType defaultValue;
             if (ret) {
-                ret = GetSignalDefaultValue(i, defaultValueStr);
+                ret = GetSignalDefaultValue(i, defaultValue);
             }
-            bool update = (defaultValueStr.Size() > 0u);
+            bool update = false;
             //Variable used in the current state?
-            if (update && ret) {
+            if (ret) {
                 uint32 numberOfProducersCurrentState;
                 if (!GetSignalNumberOfProducers(i, status.currentState, numberOfProducersCurrentState)) {
                     numberOfProducersCurrentState = 0u;
@@ -273,8 +250,39 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
                 ret = (typeDesc != InvalidType);
             }
             if (update && ret) {
-                AnyType defaultValue(typeDesc, 0u, signalMemory[nextBufferIndex][signalIdx]);
-                ret = TypeConvert(defaultValue, defaultValueStr);
+                //if the def value is declared use it to initialise
+                //otherwise null the memory
+                if (!defaultValue.IsVoid()) {
+                    AnyType thisValue(typeDesc, 0u, signalMemory[nextBufferIndex][signalIdx]);
+                    uint32 numberOfDimensions;
+                    ret = GetSignalNumberOfDimensions(signalIdx, numberOfDimensions);
+                    if (ret) {
+                        uint32 numberOfElements;
+                        ret = GetSignalNumberElements(signalIdx, numberOfElements);
+                        if (ret) {
+                            uint32 usedDimensions = (numberOfDimensions > 0u) ? (1u) : (0u);
+                            thisValue.SetNumberOfDimensions(usedDimensions);
+                            if (ret) {
+                                thisValue.SetNumberOfElements(1u, numberOfElements);
+                            }
+                            if (ret) {
+                                // minimum effort because it is all already done in configuration :)
+                                ret = TypeConvert(thisValue, defaultValue);
+                            }
+                        }
+                    }
+                }
+                else {
+                    uint32 size;
+                    ret = GetSignalByteSize(signalIdx, size);
+                    if (ret) {
+                        MemoryOperationsHelper::Set(signalMemory[nextBufferIndex][signalIdx], '\0', size);
+                    }
+                }
+                signalMemoryIndex[nextBufferIndex][signalIdx] = signalMemory[nextBufferIndex][signalIdx];
+            }
+            else{
+                signalMemoryIndex[nextBufferIndex][signalIdx] = signalMemory[RealTimeApplication::index][signalIdx];
             }
         }
 
@@ -282,11 +290,53 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
     return ret;
 }
 
-bool GAMDataSource::ChangeState() {
-    uint32 nextBufferIndex = ((currentBufferIndex + 1u) % 2u);
-    currentBufferIndex = nextBufferIndex;
-    return true;
+bool GAMDataSource::AddInputBrokerToGAM(ReferenceT<GAM> gam,
+                                        const char8* functionName,
+                                        void * gamMemPtr) {
+
+    //generally a loop for each supported broker
+    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+    ReferenceContainer inputReaders;
+    bool ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = inputReaders.Insert(broker);
+        }
+    }
+    if (ret) {
+        printf("\nAdd in broker to %s\n", functionName);
+
+        gam->AddInputBrokers(inputReaders);
+    }
+    return ret;
 }
+
+bool GAMDataSource::AddOutputBrokerToGAM(ReferenceT<GAM> gam,
+                                         const char8* functionName,
+                                         void * gamMemPtr) {
+    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+    ReferenceContainer outputWriters;
+    bool ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = outputWriters.Insert(broker);
+        }
+    }
+    if (ret) {
+        printf("\nAdd out broker to %s\n", functionName);
+
+        gam->AddOutputBrokers(outputWriters);
+    }
+    return ret;
+}
+
+#if 0
 
 //TODO OPTIMIZE THIS!! change only the In-Out
 bool GAMDataSource::AddInputBrokers(RealTimeApplication &application) {
@@ -434,7 +484,6 @@ bool GAMDataSource::AddOutputBrokers(RealTimeApplication &application) {
 
 }
 
-#if 0
 void **GAMDataSource::GetDataSourcePointer(uint8 bufferIndex) {
     if (bufferIndex > 1u) {
         bufferIndex = bufferIndex % 2u;

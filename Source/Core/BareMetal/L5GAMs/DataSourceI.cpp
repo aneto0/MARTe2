@@ -41,6 +41,7 @@
 #include "ReferenceContainerFilterObjectName.h"
 #include "StandardParser.h"
 #include "RealTimeApplication.h"
+#include "GAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -127,17 +128,13 @@ static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
 
 DataSourceI::DataSourceI() :
         ReferenceContainer() {
+    numberOfSignals = 0u;
 }
 
 DataSourceI::~DataSourceI() {
 
 }
 
-#if 0
-bool DataSourceI::Allocate() {
-    return AllocatePrivate(ReferenceT<ReferenceContainer>(this), memory);
-}
-#endif
 bool DataSourceI::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (data.MoveRelative("Signals")) {
@@ -146,13 +143,6 @@ bool DataSourceI::Initialise(StructuredDataI & data) {
     }
     signalsDatabase.MoveToRoot();
 
-#if 0
-    if (ret) {
-        if (data.Read("HeapName", heapName)) {
-            memory.SetHeapName(heapName.Buffer());
-        }
-    }
-#endif
     return ret;
 }
 
@@ -400,11 +390,9 @@ bool DataSourceI::GetSignalProducerName(uint32 signalIdx,
 }
 
 bool DataSourceI::GetSignalDefaultValue(uint32 signalIdx,
-                                        StreamString &defaultValue) {
+                                        AnyType &defaultValue) {
     bool ret = MoveToSignalIndex(signalIdx);
-    if (!configuredDatabase.Read("Default", defaultValue)) {
-        defaultValue = "";
-    }
+    defaultValue = configuredDatabase.GetType("Default");
     return ret;
 }
 
@@ -500,28 +488,28 @@ bool DataSourceI::GetFunctionSignalsByteSize(SignalDirection direction,
 
     return ret;
 }
+/*
+ bool DataSourceI::GetFunctionSignalsAddress(SignalDirection direction,
+ uint32 functionIdx,
+ void *&address) {
+ const char8 *signalDirection = "InputSignals";
+ if (direction == OutputSignals) {
+ signalDirection = "OutputSignals";
+ }
+ bool ret = MoveToFunctionIndex(functionIdx);
+ if (ret) {
+ ret = configuredDatabase.MoveRelative(signalDirection);
+ }
+ uint64 temp = 0u;
+ if (ret) {
+ ret = configuredDatabase.Read("Address", temp);
+ }
+ if (ret) {
+ address = reinterpret_cast<void *>(temp);
+ }
 
-bool DataSourceI::GetFunctionSignalsAddress(SignalDirection direction,
-                                            uint32 functionIdx,
-                                            void *&address) {
-    const char8 *signalDirection = "InputSignals";
-    if (direction == OutputSignals) {
-        signalDirection = "OutputSignals";
-    }
-    bool ret = MoveToFunctionIndex(functionIdx);
-    if (ret) {
-        ret = configuredDatabase.MoveRelative(signalDirection);
-    }
-    uint64 temp = 0u;
-    if (ret) {
-        ret = configuredDatabase.Read("Address", temp);
-    }
-    if (ret) {
-        address = reinterpret_cast<void *>(temp);
-    }
-
-    return ret;
-}
+ return ret;
+ }*/
 
 bool DataSourceI::GetFunctionSignalName(SignalDirection direction,
                                         uint32 functionIdx,
@@ -535,11 +523,10 @@ bool DataSourceI::GetFunctionSignalName(SignalDirection direction,
     return ret;
 }
 
-
 bool DataSourceI::GetFunctionSignalAlias(SignalDirection direction,
-                                        uint32 functionIdx,
-                                        uint32 functionSignalIdx,
-                                        StreamString &functionSignalAlias) {
+                                         uint32 functionIdx,
+                                         uint32 functionSignalIdx,
+                                         StreamString &functionSignalAlias) {
 
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (ret) {
@@ -617,21 +604,24 @@ bool DataSourceI::GetFunctionSignalByteOffsetInfo(SignalDirection direction,
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalTimeCyclesInfo(SignalDirection direction,
-                                                  uint32 functionIdx,
-                                                  uint32 functionSignalIdx,
-                                                  uint32 &timeCycles,
-                                                  uint32 &timeSamples) {
-
-    Vector<uint32> timeCyclesSamplesVec(2u);
+bool DataSourceI::GetFunctionSignalSamples(SignalDirection direction,
+                                           uint32 functionIdx,
+                                           uint32 functionSignalIdx,
+                                           uint32 &samples) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
-    if (configuredDatabase.Read("TimeCyclesSamples", timeCyclesSamplesVec)) {
-        timeCycles = timeCyclesSamplesVec[0u];
-        timeSamples = timeCyclesSamplesVec[1u];
+    if (configuredDatabase.Read("Samples", samples)) {
+        samples = 1u;
     }
-    else {
-        timeCycles = 1u;
-        timeSamples = 1u;
+    return ret;
+}
+
+bool DataSourceI::GetFunctionSignalReadFrequency(SignalDirection direction,
+                                                 uint32 functionIdx,
+                                                 uint32 functionSignalIdx,
+                                                 float32 &frequency) {
+    bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
+    if (configuredDatabase.Read("Frequency", frequency)) {
+        frequency = -1.0;
     }
     return ret;
 }
@@ -679,6 +669,70 @@ bool DataSourceI::MoveToFunctionSignalIndex(SignalDirection direction,
     functionSignalIdxStr.Printf("%d", functionSignalIdx);
     if (ret) {
         ret = configuredDatabase.MoveRelative(functionSignalIdxStr.Buffer());
+    }
+    return ret;
+}
+
+bool DataSourceI::AddBrokers(RealTimeApplication &application,
+                             SignalDirection direction) {
+    //TODO Each ds has a Functions area
+    // For each Function allocate memory
+    // Search the signal and get the memory pointer for each signal linked it to the correct broker
+    // return the broker to the gam
+    const char8 * dirStr = "InputSignals";
+    if (direction == OutputSignals) {
+        dirStr = "OutputSignals";
+    }
+
+    bool ret = configuredDatabase.MoveAbsolute("Functions");
+    if (ret) {
+        uint32 numberOfFunctions = configuredDatabase.GetNumberOfChildren();
+        for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
+            const char8* functionId = configuredDatabase.GetChildName(i);
+            ret = configuredDatabase.MoveRelative(functionId);
+            StreamString functionName;
+            if (ret) {
+                ret = configuredDatabase.Read("QualifiedName", functionName);
+            }
+            if (ret) {
+                StreamString fullFunctionName = "Functions.";
+                fullFunctionName += functionName;
+
+                ReferenceT<GAM> gam = application.Find(fullFunctionName.Buffer());
+                ret = gam.IsValid();
+                void *gamMemoryAddress = NULL_PTR(void *);
+
+                if (ret) {
+                    gamMemoryAddress = (direction == InputSignals) ? (gam->GetInputMemoryPointer()) : (gam->GetOutputMemoryPointer());
+                }
+                if (ret) {
+                    ret = (gamMemoryAddress != NULL);
+                }
+                if (ret) {
+                    if (configuredDatabase.MoveRelative(dirStr)) {
+
+                        uint32 memOffset;
+
+                        ret = configuredDatabase.Read("GamMemoryOffset", memOffset);
+                        if (ret) {
+                            char8* gamMemoryAddresschar = reinterpret_cast<char8*>(gamMemoryAddress);
+                            gamMemoryAddress = &gamMemoryAddresschar[memOffset];
+                        }
+
+                        if (direction == InputSignals) {
+                            ret = AddInputBrokerToGAM(gam, functionName.Buffer(), gamMemoryAddress);
+                        }
+                        else {
+                            ret = AddOutputBrokerToGAM(gam, functionName.Buffer(), gamMemoryAddress);
+                        }
+
+                    }
+                }
+            }
+            if (ret) {
+                ret = configuredDatabase.MoveAbsolute("Functions");
+            }
+        }
     }
     return ret;
 }

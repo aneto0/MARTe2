@@ -48,6 +48,8 @@ public:
     virtual bool Initialise(StructuredDataI & data);
 
     virtual bool Execute();
+protected:
+    virtual void SetUp();
 
 };
 }

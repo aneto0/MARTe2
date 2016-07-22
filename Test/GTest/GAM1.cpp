@@ -94,5 +94,10 @@ bool AndreGAM1::Execute() {
     return true;
 }
 
+void AndreGAM1::SetUp(){
+
+}
+
+
 CLASS_REGISTER(AndreGAM1, "1.0");
 }

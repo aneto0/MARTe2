@@ -37,6 +37,7 @@
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 #include "StaticList.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -45,7 +46,7 @@ namespace MARTe {
 
 class BrokerI;
 class RealTimeApplication;
-
+class GAM;
 enum SignalDirection {
     InputSignals, OutputSignals, None
 };
@@ -110,6 +111,7 @@ public:
     bool GetSignalNumberElements(uint32 signalIdx,
                                  uint32 &numberOfElements);
 
+
     bool GetSignalByteSize(uint32 signalIdx,
                            uint32 &byteSize);
 
@@ -139,7 +141,7 @@ public:
                                StreamString &producerName);
 
     bool GetSignalDefaultValue(uint32 signalIdx,
-                               StreamString &defaultValue);
+                               AnyType &defaultValue);
 
     uint32 GetNumberOfFunctions();
 
@@ -157,10 +159,10 @@ public:
                                     uint32 functionIdx,
                                     uint32 &byteSize);
 
-    bool GetFunctionSignalsAddress(SignalDirection direction,
-                                   uint32 functionIdx,
-                                   void *&address);
-
+    /* bool GetFunctionSignalsAddress(SignalDirection direction,
+     uint32 functionIdx,
+     void *&address);
+     */
     bool GetFunctionSignalName(SignalDirection direction,
                                uint32 functionIdx,
                                uint32 functionSignalIdx,
@@ -188,11 +190,15 @@ public:
                                          uint32 &byteOffsetStart,
                                          uint32 &byteOffsetSize);
 
-    bool GetFunctionSignalTimeCyclesInfo(SignalDirection direction,
-                                         uint32 functionIdx,
-                                         uint32 functionSignalIdx,
-                                         uint32 &timeCycles,
-                                         uint32 &timeSamples);
+    bool GetFunctionSignalSamples(SignalDirection direction,
+                                  uint32 functionIdx,
+                                  uint32 functionSignalIdx,
+                                  uint32 &samples);
+
+    bool GetFunctionSignalReadFrequency(SignalDirection direction,
+                                        uint32 functionIdx,
+                                        uint32 functionSignalIdx,
+                                        float32 &frequency);
 
     bool IsSupportedBroker(SignalDirection direction,
                            uint32 functionIdx,
@@ -201,119 +207,29 @@ public:
 
     virtual bool AllocateMemory() = 0;
 
-    virtual uint32 GetCurrentBufferIndex() = 0;
-
     virtual uint32 GetNumberOfMemoryBuffers() = 0;
 
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
                                        uint32 bufferIdx,
-                                       void *&signalAddress) = 0;
+                                       void **&signalAddress) = 0;
     virtual const char8 *Negotiate(StructuredDataI &data,
                                    SignalDirection direction)=0;
 
-    virtual bool GetInputReaders(const char8 * const functionName,
-                                 ReferenceContainer &output) = 0;
-
-    virtual bool GetOutputWriters(const char8 * const functionName,
-                                  ReferenceContainer &output) = 0;
-
     virtual bool PrepareNextState(const RealTimeStateInfo &status) = 0;
 
-    virtual bool ChangeState() = 0;
+    virtual bool AddBrokers(RealTimeApplication &application,
+                            SignalDirection direction);
 
-    virtual bool AddInputBrokers(RealTimeApplication &application)=0;
+protected:
 
-    virtual bool AddOutputBrokers(RealTimeApplication &application)=0;
+    virtual bool AddInputBrokerToGAM(ReferenceT<GAM> gam,
+                                     const char8* functionName,
+                                     void * gamMemPtr)=0;
 
-#if 0
-    /**
-     * @brief Recursively calls DataSourceSignalI::Allocate
-     * @details During the initialisation of a RealTimeApplication this method is called and allows
-     * to share the memory of this DataSourceI with all of its children (provided that they inherit from DataSourceSignalI).
-     * @return true if DataSourceSignalI::Allocate returns true for all the DataSourceSignalI in this container.
-     * @pre
-     *    All the children of this container inherit either from DataSourceSignalI or from ReferenceContainer.
-     */
-    virtual bool Allocate();
+    virtual bool AddOutputBrokerToGAM(ReferenceT<GAM> gam,
+                                      const char8* functionName,
+                                      void * gamMemPtr)=0;
 
-    /**
-     * @brief Prepares the environment for the next state.
-     * @param[in] status contains informations about the current and the next state and about the current
-     * active buffer.
-     * @return true if the state change request is admissible by this DataSourceSignalI.
-     */
-    virtual bool PrepareNextState(const RealTimeStateInfo &status);
-
-    /**
-     * @brief Allocates the memory for this signal.
-     * @param[in] dsMemory is the memory where this signal has to be allocated.
-     * @return true if the memory for this signal can be successfully allocated in \a dsMemory.
-     */
-    //virtual bool Allocate(MemoryArea &dsMemory)=0;
-    /**
-     * @brief The synchronising routine.
-     * @details This function will block the execution thread until an event is generated.
-     * In particular, if a GAMSignalI linked to this signal specifies a number of cycles
-     * different from 0, the read (write) operation will be synchronised and this function
-     * will be called from the broker (DataSourceBrokerI) before the read (write) operation.
-     * @return false in case of errors or if the timeout expire.
-     */
-    virtual bool WaitOnEvent(const TimeoutType &timeout = TTInfiniteWait)=0;
-
-    /**
-     * @brief Retrieves the DataSourceBrokerI reader for the signal passed in input.
-     * @details Generally a DataSourceSignalI will support a certain number of interfaces to interact with GAMs.
-     * This function retrieves the first input reader compatible with this DataSourceSignalI and with the
-     * GAMSignalI in input, or an invalid reference if the two are incompatible. The GAM signal \a defIn in input
-     * will be added to eventually generated input reader.
-     * @param[in] signalIn is a GAMSignalI to be linked to this signal.
-     * @param[in] varPtr is the pointer of the GAMSignalI memory (if NULL the broker will allocate the memory).
-     * @return a reference to a reader compatible with \a signalIn, an invalid reference in case of incompatibility.
-     */
-    virtual ReferenceT<BrokerI> GetInputReader(ReferenceT<GAMSignalI> signalIn,
-            void * varPtr = NULL_PTR(void*))=0;
-
-    /**
-     * @brief Retrieves the DataSourceBrokerI writer for the signal passed in input.
-     * @details Generally a data source can supports a certain number of interfaces to interact with GAMs.
-     * This function retrieves the first output writer compatible with this DataSourceSignalI and with the
-     * GAMSignalI in output, or an invalid reference if the two are incompatible. The GAM signal \a defIn in input
-     * will be added to eventually generated output writer.
-     * @param[in] signalOut is a GAMSignalI to be linked to this signal.
-     * @param[in] varPtr is the pointer of the GAMSignalI memory (if NULL the broker will allocate the memory).
-     * @return a reference to a writer compatible with \a signalOut, an invalid reference in case of incompatibility.
-     */
-    virtual ReferenceT<BrokerI> GetOutputWriter(ReferenceT<GAMSignalI> signalOut,
-            void * varPtr = NULL_PTR(void*))=0;
-
-    /**
-     * @brief Configures the signal from a GAMSignalI definition.
-     * @details If the signal is not fully configured (i.e. if not all the configurable fields were already specified),
-     * this function completes the definition reading the fields of a GAMSignalI linked to this signal passed in input.
-     * @param[in] gamSignalIn is a GAMSignalI to be linked to this signal.
-     * @return false if the current configuration is not compatible with the \a gamSignalIn one.
-     */
-    virtual bool Configure(ReferenceT<GAMSignalI> gamSignalIn)=0;
-
-    /**
-     * @brief Checks if the broker in input is compatible with this signal.
-     * @param[in] testBroker is the broker to be checked.
-     * @return true if \a testBroker is supported by this signal, false otherwise.
-     */
-    virtual bool IsSupportedBroker(BrokerI &testBroker)=0;
-
-private:
-
-    /**
-     * The heap name
-     */
-    StreamString heapName;
-
-    /**
-     * The memory of the data source.
-     */
-    MemoryArea memory;
-#endif
     ConfigurationDatabase signalsDatabase;
 
     ConfigurationDatabase configuredDatabase;

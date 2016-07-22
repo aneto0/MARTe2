@@ -686,17 +686,6 @@ public:
      */
     bool PostConfigureFunctions();
 
-    /**
-     * @brief For each GAM and for each Input Broker used by this GAM in all DataSources, calls GAM::AddInputBroker/GAM::AddOutputBroker
-     * TODO
-     */
-    bool AddBrokersToFunctions();
-
-    /**
-     * @brief Informs every GAM that the configuration phase is terminated by calling GAM::Finalise
-     * TODO
-     */
-    bool FinaliseFunctions();
 
     /**
      * @brief Copies the Function and DataSource databases.
@@ -720,6 +709,9 @@ private:
      * ConfigurationDatabase with all the DataSource information.
      */
     ConfigurationDatabase dataSourcesDatabase;
+
+
+    ConfigurationDatabase statesDatabase;
 
     /**
      * The default DataSource name to be used if this is not defined in any of the signals.
@@ -850,8 +842,6 @@ private:
      * @param[in] direction can be either InputSignals or OutputSignals
      * @return @see AllocateFunctionsMemory()
      */
-    bool AllocateFunctionsMemory(SignalDirection direction);
-
     bool CalculateFunctionsMemory(SignalDirection direction);
 
     /**
@@ -864,12 +854,6 @@ private:
     bool AssignBrokersToSignals(SignalDirection direction,
                                 ReferenceT<DataSourceI> dataSource);
 
-    /**
-     * @brief @see AddBrokersToFunctions()
-     * @param[in] direction can be either InputSignals or OutputSignals
-     * @return @see AddBrokersToFunctions()
-     */
-    bool AddBrokersToFunctions(SignalDirection direction);
 
     /**
      * @brief Finds a signal with the name \a signalName in \a database.

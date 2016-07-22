@@ -56,8 +56,9 @@ public:
     virtual ~BrokerI();
 
     virtual bool Init(SignalDirection direction,
-                      DataSourceI *dataSourceIn,
-                      const char8 * const functionName) = 0;
+                      DataSourceI &dataSourceIn,
+                      const char8 * const functionName,
+                      void *gamMemoryAddress) = 0;
 
     uint32 GetNumberOfCopies();
 
@@ -69,13 +70,9 @@ public:
 
 protected:
     bool InitFunctionPointers(SignalDirection direction,
-                              ReferenceT<DataSourceI> dataSource,
-                              const char8 * const functionName);
-
-    bool InitFunctionPointers2(SignalDirection direction,
-                               DataSourceI &dataSource,
-                               const char8 * const functionName,
-                               void *gamMemoryAddress);
+                              DataSourceI &dataSource,
+                              const char8 * const functionName,
+                              void *gamMemoryAddress);
 
     uint32 numberOfCopies;
 

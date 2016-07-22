@@ -48,6 +48,9 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
+
+uint32 RealTimeApplication::index = 1u;
+
 #if 0
 static bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functions) {
 
@@ -151,9 +154,6 @@ static bool ConfigureDataSourceLinksPrivate(ReferenceT<ReferenceContainer> funct
 
 RealTimeApplication::RealTimeApplication() :
         ReferenceContainer() {
-#if 0
-    activeBuffer = 1u;
-#endif
 }
 
 RealTimeApplication::~RealTimeApplication() {
@@ -398,7 +398,7 @@ bool RealTimeApplication::ConfigureApplication() {
         ret = rtAppBuilder.AssignFunctionsMemoryToDataSource();
         PrintDatabases(rtAppBuilder);
     }
-    if(ret){
+    if (ret) {
         ret = rtAppBuilder.AssignBrokersToFunctions();
         PrintDatabases(rtAppBuilder);
     }
@@ -415,6 +415,55 @@ bool RealTimeApplication::ConfigureApplication() {
         rtAppBuilder.Copy(functionsDatabase, dataSourcesDatabase);
     }
     //TODO Add brokers to GAMs allocating GAM memory
+
+    uint32 numberOfContainers = Size();
+    ret = false;
+    for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+        Reference item = Get(i);
+        if (item.IsValid()) {
+            if (StringHelper::Compare(item->GetName(), "States") == 0) {
+                statesContainer = item;
+                ret = statesContainer.IsValid();
+            }
+        }
+    }
+    if (ret) {
+        ret = false;
+        for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+            Reference container = Get(i);
+            if (container.IsValid()) {
+                if (StringHelper::Compare(container->GetName(), "Data") == 0) {
+                    dataSourceContainer = container;
+                    ret = dataSourceContainer.IsValid();
+                }
+            }
+        }
+    }
+    if (ret) {
+        ret = false;
+        for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+            Reference item = Get(i);
+            if (item.IsValid()) {
+                if (StringHelper::Compare(item->GetName(), "Functions") == 0) {
+                    functionsContainer = item;
+                    ret = functionsContainer.IsValid();
+                }
+            }
+        }
+    }
+    /*   if (ret) {
+     ret = false;
+     for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+     Reference container = Get(i);
+     if (container.IsValid()) {
+     if (StringHelper::Compare(container->GetName(), "Scheduler") == 0) {
+     schedulerContainer = container;
+     ret = schedulerContainer.IsValid();
+     }
+     }
+     }
+     }
+     */
 
     //<<<<<<<<<<<<<<Mine
     return ret;
@@ -808,9 +857,10 @@ bool RealTimeApplication::AllocateGAMMemory() {
                 ret = gam.IsValid();
 
                 if (ret) {
-                    ret = gam->AllocateInputSignalsMemory2();
+
+                    ret = gam->AllocateInputSignalsMemory();
                     if (ret) {
-                        ret = gam->AllocateOutputSignalsMemory2();
+                        ret = gam->AllocateOutputSignalsMemory();
                     }
                 }
             }
@@ -835,7 +885,7 @@ bool RealTimeApplication::AllocateDataSourceMemory() {
                 ReferenceT<DataSourceI> ds = Find(fullDsName.Buffer());
                 ret = ds.IsValid();
                 if (ret) {
-                    ret=ds->AllocateMemory();
+                    ret = ds->AllocateMemory();
                 }
             }
         }
@@ -865,9 +915,9 @@ bool RealTimeApplication::AddBrokersToFunctions() {
             }
             if (ret) {
 
-                ret = dataSource->AddInputBrokers(*this);
+                ret = dataSource->AddBrokers(*this, InputSignals);
                 if (ret) {
-                    ret = dataSource->AddOutputBrokers(*this);
+                    ret = dataSource->AddBrokers(*this, OutputSignals);
                 }
 
             }
@@ -877,6 +927,66 @@ bool RealTimeApplication::AddBrokersToFunctions() {
         }
     }
     return ret;
+}
+
+bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
+
+    RealTimeStateInfo status;
+    status.currentState = currentStateName.Buffer();
+    status.nextState = nextStateName;
+
+    StreamString nextStatePath = "States.";
+    nextStatePath += nextStateName;
+
+    ReferenceT<RealTimeState> nextState = Find(nextStatePath.Buffer());
+    bool ret = nextState.IsValid();
+    if (ret) {
+        // change the context in gam groups if needed
+        nextState->PrepareState(status);
+    }
+    if (ret) {
+        ret = dataSourceContainer.IsValid();
+        if (ret) {
+            uint32 numberOfDataSources = dataSourceContainer->Size();
+            for (uint32 i = 0u; (i < numberOfDataSources) && (ret); i++) {
+                ReferenceT<DataSourceI> dataSource = dataSourceContainer->Get(i);
+                ret = dataSource.IsValid();
+                if (ret) {
+                    // resets the default value in data sources if needed
+                    ret = dataSource->PrepareNextState(status);
+                    if (!ret) {
+                        REPORT_ERROR(ErrorManagement::FatalError, "Failed PrepareNextState");
+                    }
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Invalid DataSource");
+                }
+            }
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "Data container not found");
+        }
+    }
+    /*
+     if (ret) {
+     ReferenceT<GAMSchedulerI> scheduler = schedulerContainer;
+     ret = scheduler.IsValid();
+     // save the accelerator to the next group of threads to be executed
+     if (ret) {
+     ret = scheduler->PrepareNextState(status);
+     }
+     if (ret) {
+     scheduler->ChangeState(activeBuffer);
+     }
+     }*/
+
+    return ret;
+}
+
+bool RealTimeApplication::StartExecution() {
+    index = (index + 1u) % 2u;
+    //TODO Start scheduler execution
+    return true;
 }
 
 bool RealTimeApplication::Initialise(StructuredDataI & data) {

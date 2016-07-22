@@ -95,8 +95,6 @@ public:
 
     bool TestResolveFunctionsMemory();
 
-    bool TestAllocateFunctionsMemory();
-
     bool TestCalculateFunctionsMemory();
 
     bool TestAssignFunctionsMemoryToDataSource();

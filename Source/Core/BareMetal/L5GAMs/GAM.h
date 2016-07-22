@@ -38,6 +38,7 @@
 #include "GAMSignalI.h"
 #include "RealTimeApplication.h"
 #include "BrokerContainer.h"
+#include "GAMContextT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -73,16 +74,6 @@ public:
     virtual bool Finalise();
 
     bool AddSignals(StructuredDataI & data);
-
-    /**
-     * This function will be called once per DataSource!
-     */
-    void * AllocateInputSignalsMemory(uint32 numberOfBytes);
-
-    /**
-     * This function will be called once per DataSource!
-     */
-    void * AllocateOutputSignalsMemory(uint32 numberOfBytes);
 
     const void * GetInputSignalsBuffer();
 
@@ -154,93 +145,15 @@ public:
 
     ReferenceContainer GetOutputBrokers();
 
-    bool AllocateInputSignalsMemory2();
+    bool AllocateInputSignalsMemory();
 
-    bool AllocateOutputSignalsMemory2();
+    bool AllocateOutputSignalsMemory();
 
     void *GetInputMemoryPointer();
 
     void *GetOutputMemoryPointer();
 
-#if 0
-    /**
-     * @brief Links the signals of this GAM to the RealTimeApplication DataSourceContainer (+Data).
-     * @details @see DataSourceContainer::AddDataDefinition(*).
-     * @return true if the RealTimeApplication where this GAM belongs to is valid and if calling
-     * DataSourceContainer.AddDataDefinition for this GAM returns true.
-     */
-    virtual bool ConfigureDataSource();
-
-    /**
-     * @brief Links this GAM to its RealTimeApplication.
-     * @param[in] rtApp is a reference to the RealTimeApplication where this GAM is declared into.
-     */
-    void SetApplication(RealTimeApplication &rtApp);
-
-    /**
-     * @brief Links this GAM to its GAMGroup.
-     * @param[in] gamGroup is the GAMGroup involving this GAM.
-     */
-    void SetGAMGroup(ReferenceT<GAMGroup> gamGroup);
-
-    /**
-     * @brief Adds the name of a RealTimeState where this GAM is declared into.
-     * @param[in] stateName is the RealTimeState name.
-     * @param[in] threadName is the RealTimeThread name.
-     * @return false if the same state was already added with a different thread name. This means that the
-     * configuration is wrong: one GAM can be declared in only one RealTimeThread for each RealTimeState.
-     * Returns true otherwise.
-     */
-    bool AddState(const char8 * const stateName,
-            const char8 * const threadName);
-
-    /**
-     * @brief Retrieves the states names where this class is declared into.
-     * @return the states names where this class is declared into.
-     */
-    StreamString *GetSupportedStates();
-
-    /**
-     * @brief Retrieves the thread names where this class is declared into. The threads
-     * are related one by one with the state names array returned by GetSupportedStates().
-     * @return the thread names where this class is declared into.
-     */
-    StreamString *GetSupportedThreads();
-
-    /**
-     * @brief Returns the number of the supported states.
-     * @return the number of the supported states.
-     */
-    uint32 GetNumberOfSupportedStates() const;
-
-    /**
-     * @brief Links the GAM with RealTimeDataSource.
-     * @details Configures the input (RealTimeDataInputReader) and output interfaces (RealTimeDataOutputWriter)
-     * to communicate with the RealTimeDataSource.
-     */
-    // can make accelerators to internal reader and writer
-    virtual bool ConfigureDataSourceLinks();
-
-    /**
-     * @brief Retrieves the input interface with the RealTimeDataSource.
-     * @return the input interface with the RealTimeDataSource.
-     */
-    virtual Reference GetInputReader();
-
-    /**
-     * @brief Retrieves the output interface with the RealTimeDataSource.
-     * @return the output interface with the RealTimeDataSource.
-     */
-    virtual Reference GetOutputWriter();
-
-    /**
-     * @brief Specifies if this GAM is synchronising.
-     * @return true if this GAM is linked to a synchronising RealTimeDataSourceDef, false otherwise.
-     */
-
-    RealTimeApplication *GetApplication();
-
-    virtual bool IsSync();
+    void *GetContext();
 
 protected:
     /**
@@ -250,53 +163,6 @@ protected:
      */
     virtual void SetUp()=0;
 
-    /**
-     * The input interface with the RealTimeDataSource
-     */
-    ReferenceT<BrokerContainer> inputReaders;
-
-    ReferenceT<BrokerContainer> outputWriters;
-
-    /**
-     * The names of the supported states
-     */
-    StreamString *supportedStates;
-
-    /**
-     * The thread associated to each supported state.
-     */
-    StreamString *supportedThreads;
-
-    /**
-     * How many supported states
-     */
-    uint32 numberOfSupportedStates;
-
-    /**
-     * The local configuration
-     */
-    StructuredDataI* localData;
-
-    /**
-     * Link to the RealTimeApplication
-     */
-    RealTimeApplication *application;
-
-    /**
-     * Link to the GAMGroup
-     */
-    GAMGroup *group;
-
-private:
-    /**
-     * @brief Completes the IO structure definitions (see GAMSignalI) found in the global CDB
-     * with the definitions in the local CDB and check their consistency.
-     * @param[in] localData is the local StructuredData.
-     * @return false in case of conflicts between the local and the global definitions, or
-     * if the definitions are inconsistent with registered types. True otherwise.
-     */
-    bool ConfigureFunction();
-#endif
     ConfigurationDatabase signalsDatabase;
 
     void *inputSignalsMemory;
@@ -317,13 +183,26 @@ private:
     ReferenceContainer outputBrokers;
 
     HeapI *heap;
-};
 
-}
+#if 0
+private:
+
+    /**
+     * @brief Completes the IO structure definitions (see GAMSignalI) found in the global CDB
+     * with the definitions in the local CDB and check their consistency.
+     * @param[in] localData is the local StructuredData.
+     * @return false in case of conflicts between the local and the global definitions, or
+     * if the definitions are inconsistent with registered types. True otherwise.
+     */
+    bool ConfigureFunction();
+#endif
+
+};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+}
 #endif /* SOURCE_CORE_BAREMETAL_L5GAMS_GAM_H_ */
 

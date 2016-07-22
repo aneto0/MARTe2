@@ -48,9 +48,8 @@ MemoryMapInputBroker::~MemoryMapInputBroker() {
 
 bool MemoryMapInputBroker::Execute() {
     uint32 n;
-    uint32 dataSourceIdx = dataSource->GetCurrentBufferIndex();
     for (n = 0u; n < numberOfCopies; n++) {
-        MemoryOperationsHelper::Copy(copyTable[n].gamPointer, copyTable[n].dataSourcePointers[dataSourceIdx], copyTable[n].copySize);
+        MemoryOperationsHelper::Copy(copyTable[n].gamPointer, copyTable[n].dataSourcePointer[RealTimeApplication::index][copyTable[n].dataSourceOffset], copyTable[n].copySize);
     }
     return true;
 }
