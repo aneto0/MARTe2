@@ -676,7 +676,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(bool isFunctionsData
                                     "Specified a synchronising signal in %s with no synchronised frequency. Please define the \"Frequency\" field", signalName)
                         }
                         else {
-                            // both syc signal and frequency specified... check if the member will be found
+                            // both sync signal and frequency specified... check if the member will be found
                             syncSet = false;
                         }
                     }
@@ -1118,6 +1118,8 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                             if (ret) {
                                 ret = (defValDims == usedDimensions);
                                 if (ret) {
+                                    //TODO discuss with GF... do we really want to impose default values for all the parameters
+                                    //or is it sufficient for the used ranges. I prefer the latter....
                                     ret = (defVal.GetNumberOfElements(0u) == numberOfElements);
                                 }
                             }
@@ -1885,7 +1887,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(bool 
 // VerifyConsumersAndProducers
 ////////////////////////////////
 ////////////////////////////////
-
+//TODO discuss with GF. This is never called!
 bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
 
     bool ret = dataSourcesDatabase.MoveAbsolute("Data");
@@ -2484,7 +2486,7 @@ bool RealTimeApplicationConfigurationBuilder::CalculateFunctionsMemory(SignalDir
                         numberOfDataSources = functionsDatabase.GetNumberOfChildren();
                     }
 
-                    uint32 allocatedBytes = 0u;
+                    uint32 allocatedBytesInPreviousDataSources = 0u;
                     uint32 d;
                     //For every DataSource in this function
                     for (d = 0u; (d < numberOfDataSources) && (ret); d++) {
@@ -2498,10 +2500,12 @@ bool RealTimeApplicationConfigurationBuilder::CalculateFunctionsMemory(SignalDir
                         if (ret) {
                             ret = functionsDatabase.Read("ByteSize", byteSize);
                         }
-                        //Allocate the memory
+                        //Compute the offset
                         if (ret) {
-                            ret = functionsDatabase.Write("GamMemoryOffset", allocatedBytes);
-                            allocatedBytes += byteSize;
+                            //TODO discuss with GF. This does not allow to interleave DataSource signals. This is a rule
+                            //that we will have to check!
+                            ret = functionsDatabase.Write("GAMMemoryOffset", allocatedBytesInPreviousDataSources);
+                            allocatedBytesInPreviousDataSources += byteSize;
                         }
                         if (ret) {
                             //Move to SignalDirection level
@@ -2583,12 +2587,9 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                     }
                     if (ret) {
                         ret = functionsDatabase.Read("ByteSize", byteSize);
-                    }/*
-                     if (ret) {
-                     ret = functionsDatabase.Read("Address", address);
-                     }*/
+                    }
                     if (ret) {
-                        ret = functionsDatabase.Read("GamMemoryOffset", gamMemoryOffset);
+                        ret = functionsDatabase.Read("GAMMemoryOffset", gamMemoryOffset);
                     }
                     //Find the DataSource
                     StreamString dataSourceIdInDataSourceDatabase;
@@ -2673,7 +2674,7 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                         ret = dataSourcesDatabase.Write("ByteSize", byteSize);
                     }
                     if (ret) {
-                        ret = dataSourcesDatabase.Write("GamMemoryOffset", gamMemoryOffset);
+                        ret = dataSourcesDatabase.Write("GAMMemoryOffset", gamMemoryOffset);
                     }
                     //Move back to the DataSource level
                     if (ret) {
@@ -2809,18 +2810,13 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
                 ret = dataSourcesDatabase.Read("QualifiedName", qualifiedName);
             }
             ReferenceT<DataSourceI> dataSource;
-            if (ret) {/*
-             StreamString fullDsName="Data.";
-             fullDsName+=qualifiedName;*/
+            if (ret) {
                 dataSource = realTimeApplication->Find(qualifiedName.Buffer());
                 ret = dataSource.IsValid();
             }
             if (ret) {
                 ret = dataSource->SetConfiguredDatabase(dataSourcesDatabase);
             }
-            /*  if (ret) {
-             ret = dataSource->AllocateMemory();
-             }*/
             if (ret) {
                 ret = dataSourcesDatabase.MoveToAncestor(1u);
             }

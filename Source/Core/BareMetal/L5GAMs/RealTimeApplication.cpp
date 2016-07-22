@@ -385,11 +385,6 @@ bool RealTimeApplication::ConfigureApplication() {
         ret = rtAppBuilder.ResolveFunctionsMemory();
         PrintDatabases(rtAppBuilder);
     }
-    /*
-     if (ret) {
-     ret = rtAppBuilder.AllocateFunctionsMemory();
-     PrintDatabases(rtAppBuilder);
-     }*/
     if (ret) {
         ret = rtAppBuilder.CalculateFunctionsMemory();
         PrintDatabases(rtAppBuilder);
@@ -408,6 +403,7 @@ bool RealTimeApplication::ConfigureApplication() {
     }
     if (ret) {
         ret = rtAppBuilder.PostConfigureFunctions();
+        PrintDatabases(rtAppBuilder);
     }
     //<<<<<<<<<<<<<<Mine
 
