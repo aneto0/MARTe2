@@ -102,6 +102,14 @@ public:
      *                 +Samples = NUMBER > 0, defines the number of (time) samples to be copied on each operation. The default value is one.
      *                 +Frequency = NUMBER>0, defines the cycle time frequency. Only and only one signal may define this property.
      *                 +Default = "Default value as a string". The value to be used when the signal is not produced in a previous state.
+     *                 +MemberAliases = {//Only valid for StructuredType signals
+     *                    OriginalMemberName1 = NewMemberName1
+     *                    ...
+     *                 }
+     *                 +Defaults = {//Only valid for StructuredType signals
+     *                    MemberName1 = DefaultValue1
+     *                    ...
+     *                 }
      *               }
      *            }
      *         }

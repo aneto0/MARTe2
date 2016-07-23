@@ -125,9 +125,10 @@ static bool SignalIntrospectionToStructuredData(ConfigurationDatabase &signalDat
                 if (samples.GetTypeDescriptor() != VoidType) {
                     ret = data.Write("Samples", samples);
                 }
-                if (samples.GetTypeDescriptor() != VoidType) {
+                //TODO Check with GF
+                if (frequency.GetTypeDescriptor() != VoidType) {
+                    ret = data.Write("Frequency", frequency);
                     if (StringHelper::Compare(fullSignalName.Buffer(), syncSignalName) == 0) {
-                        ret = data.Write("Frequency", frequency);
                         syncSet = true;
                     }
                 }
@@ -313,13 +314,12 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
     return ret;
 }
 
-
 #if 0
 
 bool RealTimeApplicationConfigurationBuilder::InitialiseFunctionDatabaseFromConfiguration(ConfigurationDatabase &originalConfig,
-                                                                                          originalConfig,
-                                                                                          StreamString & fullPath,
-                                                                                          uint32 &index) {
+        originalConfig,
+        StreamString & fullPath,
+        uint32 &index) {
     uint32 numberOfFunctions = originalConfig.GetNumberOfChildren();
     bool ret = true;
     bool isGam = false;
@@ -374,9 +374,9 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseFunctionDatabaseFromConf
 }
 
 bool RealTimeApplicationConfigurationBuilder::InitialiseDataDatabaseFromConfiguration(ConfigurationDatabase &originalConfig,
-                                                                                      originalConfig,
-                                                                                      StreamString & fullPath,
-                                                                                      uint32 &index) {
+        originalConfig,
+        StreamString & fullPath,
+        uint32 &index) {
     uint32 numberOfDataSources = originalConfig.GetNumberOfChildren();
     bool ret = true;
     bool isGam = false;
@@ -435,7 +435,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseDataDatabaseFromConfigur
 //-QualifiedName is the name of the GAM path beginning from "Functions" or the name of the DataSource beginning from "Data"
 //-The name of each GAM and of each DS node is an incremental id number
 bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabaseFromConfiguration(ConfigurationDatabase &originalConfig,
-                                                                                         const char8* appName) {
+        const char8* appName) {
 
     StreamString functionPath = appName;
     functionPath += ".Functions";
@@ -632,7 +632,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(bool isFunctionsData
         }
     }
     //Namespace resolved. Working at signal level
-    if (!isNode) {
+    if (ret && (!isNode)) {
         bool isStructuredData = false;
         StreamString dataSourceName;
         if (forceWriteDataSource) {
@@ -643,26 +643,43 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(bool isFunctionsData
                     ret = signalDatabase.Write("DataSource", dataSourceName);
                 }
                 else {
+                    ret = false;
                     REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "DataSource not specified for %s and DefaultDataSource not specified",
                                             signalName)
                 }
             }
         }
-        if (signalTypeDefined) {
+        if ((ret) && (signalTypeDefined)) {
             TypeDescriptor signalTypeDescriptor = TypeDescriptor::GetTypeDescriptorFromTypeName(signalType.Buffer());
             //...check if it is a BasicType. If it is not, discombobulate it to its BasicTypes
             if (signalTypeDescriptor == InvalidType) {
+                uint32 numberOfDimensions = 0;
+                uint32 numberOfElements = 1;
+                if (signalDatabase.Read("NumberOfDimensions", numberOfDimensions)) {
+                    ret = (numberOfDimensions == 0);
+                    if (!ret) {
+                        REPORT_ERROR_PARAMETERS(
+                                ErrorManagement::InitialisationError,
+                                "Invalid NumberOfDimensions for signal %s. Structured types only support NumberOfDimensions = 0 (you may define arrays of basic types inside the structure)",
+                                signalName)
+                    }
+                }
+                if (signalDatabase.Read("NumberOfElements", numberOfElements)) {
+                    ret = (numberOfElements == 1);
+                    if (!ret) {
+                        REPORT_ERROR_PARAMETERS(
+                                ErrorManagement::InitialisationError,
+                                "Invalid NumberOfElements for signal %s. Structured types only support NumberOfElements = 1 (you may define arrays of basic types inside the structure)",
+                                signalName)
+                    }
+                }
+
                 if (ret) {
                     isStructuredData = true;
                     StreamString alias;
                     if (!signalDatabase.Read("Alias", alias)) {
                         alias = "";
                     }
-
-                    //TODO check here number of elements and number of dimensions
-                    // and produce a warning
-
-                    //TODO Error if
 
                     AnyType ranges = signalDatabase.GetType("Ranges");
                     AnyType samples = signalDatabase.GetType("Samples");
@@ -701,7 +718,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(bool isFunctionsData
         }
         //BasicType. Write all the known signal properties
         // do this also if the type is undefined
-        if (!isStructuredData) {
+        if ((ret) && (!isStructuredData)) {
             StreamString property;
             StreamString signalNumberStr;
             signalNumberStr.Printf("Signals.%d", signalNumber);
@@ -716,7 +733,6 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(bool isFunctionsData
             while ((properties[p] != NULL_PTR(char8 *)) && (ret)) {
                 AnyType element = signalDatabase.GetType(properties[p]);
                 if (element.GetTypeDescriptor() != VoidType) {
-
                     ret = resolvedSignal.Write(properties[p], element);
                 }
                 p++;
@@ -1436,7 +1452,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignal(const char8 
         if (ret) {
             if (signalToDeleteName != NULL) {
                 ret = functionsDatabase.Delete(signalToDeleteName);
-                deleted=true;
+                deleted = true;
             }
         }
     }

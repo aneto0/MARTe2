@@ -46,10 +46,46 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestInitialiseSignalsDatabase)
     ASSERT_TRUE(test.TestInitialiseSignalsDatabase());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestInitialiseSignalsDatabase1) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestInitialiseSignalsDatabase1());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestFlattenSignalsDatabases());
 }
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases1) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases1());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases2) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases2());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases3) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases3());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases4) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases4());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_CopyAllKnownSignalsProperties) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_CopyAllKnownSignalsProperties());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_InvalidDimensions) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_InvalidDimensions());
+}
+
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources) {
     RealTimeApplicationConfigurationBuilderTest test;

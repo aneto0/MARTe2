@@ -40,21 +40,31 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-DECLARE_CLASS_MEMBER(B, b1, int32, "", "");
+DECLARE_CLASS_MEMBER(TestStructB, b1, int32, "", "");
 
-DECLARE_CLASS_MEMBER(B, b2, int32, "", "");
+DECLARE_CLASS_MEMBER(TestStructB, b2, int32, "", "");
 
-static const IntrospectionEntry* BEntries[] = { &B_b1_introspectionEntry, &B_b2_introspectionEntry, 0 };
+static const IntrospectionEntry* TestStructBEntries[] = { &TestStructB_b1_introspectionEntry, &TestStructB_b2_introspectionEntry, 0 };
 
-DECLARE_STRUCT_INTROSPECTION(B, BEntries)
+DECLARE_STRUCT_INTROSPECTION(TestStructB, TestStructBEntries)
 
-DECLARE_CLASS_MEMBER(A, a1, B, "", "");
+DECLARE_CLASS_MEMBER(TestStructA, a1, TestStructB, "", "");
 
-DECLARE_CLASS_MEMBER(A, a2, float32, "", "");
+DECLARE_CLASS_MEMBER(TestStructA, a2, float32, "", "");
 
-static const IntrospectionEntry* AEntries[] = { &A_a1_introspectionEntry, &A_a2_introspectionEntry, 0 };
+static const IntrospectionEntry* TestStructAEntries[] = { &TestStructA_a1_introspectionEntry, &TestStructA_a2_introspectionEntry, 0 };
 
-DECLARE_STRUCT_INTROSPECTION(A, AEntries);
+DECLARE_STRUCT_INTROSPECTION(TestStructA, TestStructAEntries);
+
+DECLARE_CLASS_MEMBER(TestStructC, c1, TestStructB, "", "");
+
+DECLARE_CLASS_MEMBER(TestStructC, c2, float32, "[3]", "");
+
+DECLARE_CLASS_MEMBER(TestStructC, c3, int32, "[2][4]", "");
+
+static const IntrospectionEntry* TestStructCEntries[] = { &TestStructC_c1_introspectionEntry, &TestStructC_c2_introspectionEntry, &TestStructC_c3_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructC, TestStructCEntries);
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////

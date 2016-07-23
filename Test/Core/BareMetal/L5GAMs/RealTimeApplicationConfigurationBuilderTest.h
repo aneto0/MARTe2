@@ -47,7 +47,27 @@ public:
 
     bool TestInitialiseSignalsDatabase();
 
+    bool TestInitialiseSignalsDatabase1();
+
     bool TestFlattenSignalsDatabases();
+
+    //Basic
+    bool TestFlattenSignalsDatabases1();
+
+    //With nested names
+    bool TestFlattenSignalsDatabases2();
+
+    //Unspecified DataSource
+    bool TestFlattenSignalsDatabases3();
+
+    //Alias
+    bool TestFlattenSignalsDatabases4();
+
+    //Known signal properties
+    bool TestFlattenSignalsDatabases_CopyAllKnownSignalsProperties();
+
+    //Invalid dimensions
+    bool TestFlattenSignalsDatabases_InvalidDimensions();
 
     bool TestResolveDataSources();
 
