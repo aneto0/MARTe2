@@ -471,8 +471,10 @@ public:
      *              +States = {
      *                *StateN = {
      *                  GAMConsumers = { "0" ... "N" }, where 0 ... N are the indices of the Function as defined in the Functions node
+     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }, where NAME1...NAMEN are the names of the functions
      *                  SignalConsumers = { "0" ... "N" }, where 0 ... N are the indices of the Signals in the respective function
      *                  GAMProducers = { "0" ... "N" }, where 0 ... N are the indices of the Function as defined in the Functions node
+     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }, where NAME1...NAMEN are the names of the functions
      *                  SignalProducers = { "0" ... "N" }, where 0 ... N are the indices of the Signals in the respective function
      *                }
      *              }
@@ -532,8 +534,10 @@ public:
      *              +States = {
      *                *StateN = {
      *                  GAMConsumers = { "0" ... "N" }
+     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }
      *                  SignalConsumers = { "0" ... "N" }
      *                  GAMProducers = { "0" ... "N" }
+     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }
      *                  SignalProducers = { "0" ... "N" }
      *                }
      *              }
@@ -608,8 +612,10 @@ public:
      *              +States = {
      *                *StateN = {
      *                  GAMConsumers = { "0" ... "N" }
+     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }
      *                  SignalConsumers = { "0" ... "N" }
      *                  GAMProducers = { "0" ... "N" }
+     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }
      *                  SignalProducers = { "0" ... "N" }
      *                }
      *              }
@@ -685,8 +691,10 @@ public:
      *              +States = {
      *                *StateN = {
      *                  GAMConsumers = { "0" ... "N" }
+     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }
      *                  SignalConsumers = { "0" ... "N" }
      *                  GAMProducers = { "0" ... "N" }
+     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }
      *                  SignalProducers = { "0" ... "N" }
      *                }
      *              }
@@ -761,8 +769,10 @@ public:
      *              +States = {
      *                *StateN = {
      *                  GAMConsumers = { "0" ... "N" }
+     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }
      *                  SignalConsumers = { "0" ... "N" }
      *                  GAMProducers = { "0" ... "N" }
+     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }
      *                  SignalProducers = { "0" ... "N" }
      *                }
      *              }
@@ -850,8 +860,10 @@ public:
      *              +States = {
      *                *StateN = {
      *                  GAMConsumers = { "0" ... "N" }
+     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }
      *                  SignalConsumers = { "0" ... "N" }
      *                  GAMProducers = { "0" ... "N" }
+     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }
      *                  SignalProducers = { "0" ... "N" }
      *                }
      *              }

@@ -1820,35 +1820,49 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(bool 
                                         //Check if the array Consumers (or Producers) already exists
                                         StreamString operationTypeGAM = "GAM";
                                         operationTypeGAM += operationType;
+                                        StreamString operationTypeGAMNames = "GAMNames";
+                                        operationTypeGAMNames += operationType;
                                         StreamString operationTypeSignal = "Signal";
                                         operationTypeSignal += operationType;
                                         AnyType existentArray = dataSourcesDatabase.GetType(operationTypeGAM.Buffer());
                                         StreamString *newGAMArray = NULL_PTR(StreamString *);
+                                        StreamString *newGAMNamesArray = NULL_PTR(StreamString *);
                                         StreamString *newSignalArray = NULL_PTR(StreamString *);
 
                                         uint32 numberOfExistentElements = 0u;
                                         if (existentArray.GetDataPointer() != NULL_PTR(void *)) {
                                             numberOfExistentElements = existentArray.GetNumberOfElements(0u);
                                             newGAMArray = new StreamString[numberOfExistentElements + 1u];
+                                            newGAMNamesArray = new StreamString[numberOfExistentElements + 1u];
                                             newSignalArray = new StreamString[numberOfExistentElements + 1u];
                                             Vector<StreamString> newGAMVector(newGAMArray, numberOfExistentElements);
+                                            Vector<StreamString> newGAMNamesVector(newGAMNamesArray, numberOfExistentElements);
                                             Vector<StreamString> newSignalVector(newSignalArray, numberOfExistentElements);
                                             ret = (dataSourcesDatabase.Read(operationTypeGAM.Buffer(), newGAMVector));
+                                            if (ret) {
+                                                ret = (dataSourcesDatabase.Read(operationTypeGAMNames.Buffer(), newGAMNamesVector));
+                                            }
                                             if (ret) {
                                                 ret = (dataSourcesDatabase.Read(operationTypeSignal.Buffer(), newSignalVector));
                                             }
                                         }
                                         else {
                                             newGAMArray = new StreamString[1u];
+                                            newGAMNamesArray = new StreamString[1u];
                                             newSignalArray = new StreamString[1u];
                                         }
-                                        newGAMArray[numberOfExistentElements] = functionId.Buffer();    //functionName.Buffer();
+                                        newGAMArray[numberOfExistentElements] = functionId.Buffer();
+                                        newGAMNamesArray[numberOfExistentElements] = functionName.Buffer();
                                         newSignalArray[numberOfExistentElements] = signalId.Buffer();
                                         Vector<StreamString> newGAMVector(newGAMArray, numberOfExistentElements + 1u);
+                                        Vector<StreamString> newGAMNamesVector(newGAMNamesArray, numberOfExistentElements + 1u);
                                         Vector<StreamString> newSignalVector(newSignalArray, numberOfExistentElements + 1u);
 
                                         if (existentArray.GetDataPointer() != NULL_PTR(void *)) {
                                             ret = dataSourcesDatabase.Delete(operationTypeGAM.Buffer());
+                                            if (ret) {
+                                                ret = dataSourcesDatabase.Delete(operationTypeGAMNames.Buffer());
+                                            }
                                             if (ret) {
                                                 ret = dataSourcesDatabase.Delete(operationTypeSignal.Buffer());
                                             }
@@ -1856,10 +1870,14 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(bool 
                                         if (ret) {
                                             ret = (dataSourcesDatabase.Write(operationTypeGAM.Buffer(), newGAMVector));
                                             if (ret) {
+                                                ret = (dataSourcesDatabase.Write(operationTypeGAMNames.Buffer(), newGAMNamesVector));
+                                            }
+                                            if (ret) {
                                                 ret = (dataSourcesDatabase.Write(operationTypeSignal.Buffer(), newSignalVector));
                                             }
                                         }
                                         delete[] newGAMArray;
+                                        delete[] newGAMNamesArray;
                                         delete[] newSignalArray;
                                     }
                                     //Move to the next state

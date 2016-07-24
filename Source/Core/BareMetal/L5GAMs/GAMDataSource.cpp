@@ -258,7 +258,7 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
                     ret = GetSignalNumberOfDimensions(signalIdx, numberOfDimensions);
                     if (ret) {
                         uint32 numberOfElements;
-                        ret = GetSignalNumberElements(signalIdx, numberOfElements);
+                        ret = GetSignalNumberOfElements(signalIdx, numberOfElements);
                         if (ret) {
                             uint32 usedDimensions = (numberOfDimensions > 0u) ? (1u) : (0u);
                             thisValue.SetNumberOfDimensions(usedDimensions);

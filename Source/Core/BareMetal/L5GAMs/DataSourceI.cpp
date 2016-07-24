@@ -141,7 +141,9 @@ bool DataSourceI::Initialise(StructuredDataI & data) {
         signalsDatabase.Write("Signals", data);
         ret = data.MoveToAncestor(1);
     }
-    signalsDatabase.MoveToRoot();
+    if (ret) {
+        ret = signalsDatabase.MoveToRoot();
+    }
 
     return ret;
 }
@@ -220,8 +222,8 @@ bool DataSourceI::GetSignalNumberOfDimensions(uint32 signalIdx,
     return ret;
 }
 
-bool DataSourceI::GetSignalNumberElements(uint32 signalIdx,
-                                          uint32 &numberOfElements) {
+bool DataSourceI::GetSignalNumberOfElements(uint32 signalIdx,
+                                            uint32 &numberOfElements) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.Read("NumberOfElements", numberOfElements);
@@ -289,7 +291,7 @@ bool DataSourceI::GetSignalNumberOfConsumers(uint32 signalIdx,
     }
     AnyType consumers;
     if (ret) {
-        consumers = configuredDatabase.GetType("Consumers");
+        consumers = configuredDatabase.GetType("GAMConsumers");
         ret = (consumers.GetDataPointer() != NULL_PTR(void *));
     }
     numberOfConsumers = 0u;
@@ -311,7 +313,7 @@ bool DataSourceI::GetSignalNumberOfProducers(uint32 signalIdx,
     }
     AnyType producers;
     if (ret) {
-        producers = configuredDatabase.GetType("Producers");
+        producers = configuredDatabase.GetType("GAMProducers");
         ret = (producers.GetDataPointer() != NULL_PTR(void *));
     }
     numberOfProducers = 0u;
@@ -345,9 +347,12 @@ bool DataSourceI::GetSignalConsumerName(uint32 signalIdx,
     if (ret) {
         StreamString *consumerArray = new StreamString[numberOfConsumers];
         Vector<StreamString> consumerVector(consumerArray, numberOfConsumers);
-        ret = configuredDatabase.Read("Consumers", consumerVector);
+        ret = configuredDatabase.Read("GAMNamesConsumers", consumerVector);
         if (ret) {
             consumerName = consumerVector[consumerIdx];
+        }
+        if (ret) {
+
         }
         delete[] consumerArray;
     }
@@ -379,7 +384,7 @@ bool DataSourceI::GetSignalProducerName(uint32 signalIdx,
     if (ret) {
         StreamString *producerArray = new StreamString[numberOfProducers];
         Vector<StreamString> producerVector(producerArray, numberOfProducers);
-        ret = configuredDatabase.Read("Producers", producerVector);
+        ret = configuredDatabase.Read("GAMNamesProducers", producerVector);
         if (ret) {
             producerName = producerVector[producerIdx];
         }
