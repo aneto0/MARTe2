@@ -329,7 +329,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseFunctionDatabaseFromConf
 
         const char8 *nodeName = originalConfig.GetChildName(i);
         if (nodeName[0] == '+' || nodeName == '$') {
-            nodeName = &nodeName[0];
+            nodeName = &nodeName[1];
         }
         if (originalConfig.MoveRelative(nodeName)) {
             StreamString className;
@@ -386,7 +386,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseDataDatabaseFromConfigur
 
         const char8 *nodeName = originalConfig.GetChildName(i);
         if (nodeName[0] == '+' || nodeName == '$') {
-            nodeName = &nodeName[0];
+            nodeName = &nodeName[1];
         }
         if (originalConfig.MoveRelative(nodeName)) {
             StreamString className;
