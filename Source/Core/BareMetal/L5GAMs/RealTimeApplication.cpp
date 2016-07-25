@@ -329,7 +329,7 @@ bool RealTimeApplication::StopExecution() {
 #include <stdio.h>
 
 static void PrintDatabases(RealTimeApplicationConfigurationBuilder &rtAppBuilder) {
-return;
+    return;
     static uint32 i = 0u;
     static uint32 j = 1u;
     ConfigurationDatabase fdb;
@@ -379,7 +379,8 @@ bool RealTimeApplication::ConfigureApplication() {
         PrintDatabases(rtAppBuilder);
     }
     if (ret) {
-        ret = rtAppBuilder.VerifyConsumersAndProducers();
+        //TODO REMOVE comment!
+        //ret = rtAppBuilder.VerifyConsumersAndProducers();
         PrintDatabases(rtAppBuilder);
     }
     if (ret) {
@@ -417,37 +418,39 @@ bool RealTimeApplication::ConfigureApplication() {
     }
     //TODO Add brokers to GAMs allocating GAM memory
 
-    uint32 numberOfContainers = Size();
-    ret = false;
-    for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-        Reference item = Get(i);
-        if (item.IsValid()) {
-            if (StringHelper::Compare(item->GetName(), "States") == 0) {
-                statesContainer = item;
-                ret = statesContainer.IsValid();
-            }
-        }
-    }
     if (ret) {
-        ret = false;
-        for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-            Reference container = Get(i);
-            if (container.IsValid()) {
-                if (StringHelper::Compare(container->GetName(), "Data") == 0) {
-                    dataSourceContainer = container;
-                    ret = dataSourceContainer.IsValid();
-                }
-            }
-        }
-    }
-    if (ret) {
+        uint32 numberOfContainers = Size();
         ret = false;
         for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
             Reference item = Get(i);
             if (item.IsValid()) {
-                if (StringHelper::Compare(item->GetName(), "Functions") == 0) {
-                    functionsContainer = item;
-                    ret = functionsContainer.IsValid();
+                if (StringHelper::Compare(item->GetName(), "States") == 0) {
+                    statesContainer = item;
+                    ret = statesContainer.IsValid();
+                }
+            }
+        }
+        if (ret) {
+            ret = false;
+            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+                Reference container = Get(i);
+                if (container.IsValid()) {
+                    if (StringHelper::Compare(container->GetName(), "Data") == 0) {
+                        dataSourceContainer = container;
+                        ret = dataSourceContainer.IsValid();
+                    }
+                }
+            }
+        }
+        if (ret) {
+            ret = false;
+            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+                Reference item = Get(i);
+                if (item.IsValid()) {
+                    if (StringHelper::Compare(item->GetName(), "Functions") == 0) {
+                        functionsContainer = item;
+                        ret = functionsContainer.IsValid();
+                    }
                 }
             }
         }

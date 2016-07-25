@@ -128,3 +128,38 @@ TEST(DataSourceIGTest,TestGetSignalDefaultValue) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalDefaultValue());
 }
+
+TEST(DataSourceIGTest,TestGetNumberOfFunctions) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetNumberOfFunctions());
+}
+
+TEST(DataSourceIGTest,TestGetFunctionIndex) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionIndex());
+}
+
+TEST(DataSourceIGTest,TestGetFunctionName) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionName());
+}
+
+TEST(DataSourceIGTest,TestGetFunctionNumberOfSignals) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionNumberOfSignals());
+}
+
+TEST(DataSourceIGTest,TestGetFunctionSignalsByteSize) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionSignalsByteSize());
+}
+
+TEST(DataSourceIGTest,TestGetFunctionSignalIndex) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionSignalIndex());
+}
+
+TEST(DataSourceIGTest,TestGetFunctionSignalAlias) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionSignalAlias());
+}

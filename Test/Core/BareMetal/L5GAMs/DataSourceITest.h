@@ -77,6 +77,22 @@ public:
 
     bool TestGetSignalDefaultValue();
 
+    bool TestGetNumberOfFunctions();
+
+    bool TestGetFunctionName();
+
+    bool TestGetFunctionIndex();
+
+    bool TestGetFunctionNumberOfSignals();
+
+    bool TestGetFunctionSignalsByteSize();
+
+    bool TestGetFunctionSignalName();
+
+    bool TestGetFunctionSignalIndex();
+
+    bool TestGetFunctionSignalAlias();
+
 };
 
 /*---------------------------------------------------------------------------*/
