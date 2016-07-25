@@ -395,9 +395,9 @@ bool DataSourceI::GetSignalProducerName(uint32 signalIdx,
 }
 
 bool DataSourceI::GetSignalDefaultValue(uint32 signalIdx,
-                                        AnyType &defaultValue) {
+                                        const AnyType &defaultValue) {
     bool ret = MoveToSignalIndex(signalIdx);
-    defaultValue = configuredDatabase.GetType("Default");
+    //defaultValue = configuredDatabase.GetType("Default");
     return ret;
 }
 
