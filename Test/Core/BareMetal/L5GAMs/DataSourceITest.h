@@ -75,6 +75,8 @@ public:
 
     bool TestGetSignalProducerName();
 
+    bool TestGetSignalDefaultValue();
+
 };
 
 /*---------------------------------------------------------------------------*/

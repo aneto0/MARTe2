@@ -298,8 +298,16 @@ public:
                                uint32 producerIdx,
                                StreamString &producerName);
 
+    /**
+     * @brief Gets the default of the signal with index \a signalIdx.
+     * @param[in] signalIdx the index of the signal.
+     * @param[out] defaultValue the default value of the signal or an InvalidType if no default value was set.
+     * @return true if the signalIdx exists.
+     * @pre
+     *   SetConfiguredDatabase
+     */
     bool GetSignalDefaultValue(uint32 signalIdx,
-                               AnyType &defaultValue);
+                               const AnyType &defaultValue);
 
     uint32 GetNumberOfFunctions();
 
