@@ -66,7 +66,7 @@ public:
     //Known signal properties
     bool TestFlattenSignalsDatabases_CopyAllKnownSignalsProperties();
 
-    //Invalid dimensions
+    //Invalid dimensions todo
     bool TestFlattenSignalsDatabases_InvalidDimensions();
 
     bool TestResolveDataSources();

@@ -125,10 +125,9 @@ static bool SignalIntrospectionToStructuredData(ConfigurationDatabase &signalDat
                 if (samples.GetTypeDescriptor() != VoidType) {
                     ret = data.Write("Samples", samples);
                 }
-                //TODO Check with GF
                 if (frequency.GetTypeDescriptor() != VoidType) {
-                    ret = data.Write("Frequency", frequency);
                     if (StringHelper::Compare(fullSignalName.Buffer(), syncSignalName) == 0) {
+                        ret = data.Write("Frequency", frequency);
                         syncSet = true;
                     }
                 }
@@ -1921,7 +1920,6 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(bool 
 // VerifyConsumersAndProducers
 ////////////////////////////////
 ////////////////////////////////
-//TODO discuss with GF. This is never called!
 bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
 
     bool ret = dataSourcesDatabase.MoveAbsolute("Data");
@@ -2536,8 +2534,6 @@ bool RealTimeApplicationConfigurationBuilder::CalculateFunctionsMemory(SignalDir
                         }
                         //Compute the offset
                         if (ret) {
-                            //TODO discuss with GF. This does not allow to interleave DataSource signals. This is a rule
-                            //that we will have to check!
                             ret = functionsDatabase.Write("GAMMemoryOffset", allocatedBytesInPreviousDataSources);
                             allocatedBytesInPreviousDataSources += byteSize;
                         }
@@ -2700,10 +2696,7 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                                 ret = dataSourcesDatabase.MoveToAncestor(1u);
                             }
                         }
-                    }/*
-                     if (ret) {
-                     ret = dataSourcesDatabase.Write("Address", reinterpret_cast<void *>(address));
-                     }*/
+                    }
                     if (ret) {
                         ret = dataSourcesDatabase.Write("ByteSize", byteSize);
                     }

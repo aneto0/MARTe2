@@ -379,6 +379,10 @@ bool RealTimeApplication::ConfigureApplication() {
         PrintDatabases(rtAppBuilder);
     }
     if (ret) {
+        ret = rtAppBuilder.VerifyConsumersAndProducers();
+        PrintDatabases(rtAppBuilder);
+    }
+    if (ret) {
         ret = rtAppBuilder.ResolveFunctionSignalsMemorySize();
         PrintDatabases(rtAppBuilder);
     }
