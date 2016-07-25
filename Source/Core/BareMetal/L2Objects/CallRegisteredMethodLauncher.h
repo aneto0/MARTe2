@@ -75,8 +75,8 @@ public:
      * @param[in] objectIn The target object of the call
      * @param[in] methodNameIn The name of the registered method to call
      */
-    CallRegisteredMethodLauncher(Object *objectIn,
-                                 CCString methodNameIn);
+    CallRegisteredMethodLauncher(Object* const objectIn,
+                                 const CCString& methodNameIn);
 
     /**
      * @brief Destructor
@@ -89,7 +89,7 @@ public:
      * @param[in] data the current LinkedListable element to be tested.
      * @return true if \a data meets the search criteria.
      */
-    virtual bool Test(ClassMethodsRegistryItem *data);
+    virtual bool Test(ClassMethodsRegistryItem * const data);
 
     /**
      * @brief Gets the status of the last call

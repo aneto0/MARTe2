@@ -39,6 +39,8 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+/*lint -e{9109} forward declaration in ReferenceContainerFilter.h is required to define the class*/
+/*lint -e{763} forward declaration in ReferenceContainerFilter.h is required to define the class*/
 class ReferenceContainer;
 }
 

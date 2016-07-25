@@ -54,6 +54,7 @@ namespace MARTe {
  * by an internal FastPollingMutexSem whose timeout can be specified.
  */
 /*lint -e{9109} forward declaration in ReferenceContainerFilter.h is required to define the class*/
+/*lint -e{763} forward declaration in ReferenceContainerFilter.h is required to define the class*/
 class DLL_API ReferenceContainer: public Object {
 public:
 
@@ -69,6 +70,7 @@ public:
      * @brief Copy Constructor
      * @details Inserts all the references contained by \a copy in this.
      */
+    /*lint -e{1724} Parameter of copy constructor is not modified, but can not be declared const.*/
     ReferenceContainer(ReferenceContainer &copy);
 
     /**

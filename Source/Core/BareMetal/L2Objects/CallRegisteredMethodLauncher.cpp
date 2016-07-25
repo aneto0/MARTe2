@@ -47,17 +47,17 @@ namespace {
 
 namespace MARTe {
 
-CallRegisteredMethodLauncher::CallRegisteredMethodLauncher(Object *objectIn,
-                                                           CCString methodNameIn) {
+CallRegisteredMethodLauncher::CallRegisteredMethodLauncher(Object* const objectIn,
+                                                           const CCString& methodNameIn) {
     object = objectIn;
     methodName = methodNameIn;
 }
 
 CallRegisteredMethodLauncher::~CallRegisteredMethodLauncher() {
-
+    /*lint -e{1540} the memory of the object pointed by the pointer member 'object' is managed by the clients of this class*/
 }
 
-bool CallRegisteredMethodLauncher::Test(ClassMethodsRegistryItem *data) {
+bool CallRegisteredMethodLauncher::Test(ClassMethodsRegistryItem * const data) {
     ret = data->CallFunction(object, methodName.GetList());
     // the function has been found and called
     return !ret.unsupportedFeature;

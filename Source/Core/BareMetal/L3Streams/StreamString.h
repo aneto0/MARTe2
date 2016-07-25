@@ -406,9 +406,16 @@ char8 *StreamString::BufferReference() {
 }
 
 const char8 *StreamString::Tail(const uint32 ix) const {
+    const char8* result;
     bool ok = (ix <= (buffer.UsedSize() - 1u));
-
-    return ok ? &(buffer.BufferReference()[(buffer.UsedSize() - ix) - 1u]) : static_cast<const char8 *>(NULL);
+    if (ok) {
+        const char8* bufref = buffer.Buffer();
+        result = &(bufref[(buffer.UsedSize() - ix) - 1u]);
+    }
+    else {
+        result = static_cast<const char8 *>(NULL);
+    }
+    return result;
 }
 
 bool StreamString::operator=(const char8 c) {
@@ -466,7 +473,7 @@ bool StreamString::operator!=(const char8 * const s) const {
 char8 StreamString::operator[](const uint32 pos) const {
     char8 ret = static_cast<char8>(0);
     if (pos < buffer.UsedSize()) {
-        ret = buffer.BufferReference()[pos];
+        ret = buffer.Buffer()[pos];
     }
     return ret;
 }

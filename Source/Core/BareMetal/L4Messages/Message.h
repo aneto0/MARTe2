@@ -35,7 +35,6 @@
 #include "ReferenceContainer.h"
 #include "CString.h"
 #include "StreamString.h"
-#include "TimeoutType.h"
 #include "BitBoolean.h"
 #include "BitRange.h"
 
@@ -56,9 +55,10 @@ public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief Constructor.
+     * @brief Default constructor.
      */
-Message    ();
+    Message();
+
     /**
      * @brief Destructor
      */
@@ -108,19 +108,19 @@ Message    ();
      * @brief Checks if this message requires an immediate reply.
      * @return true if this message requires an immediate reply, false otherwise.
      */
-    bool ImmediateReplyExpected()const;
+    bool ImmediateReplyExpected() const;
 
     /**
      * @brief Checks if this message requires a late reply.
      * @return true if this message requires a late reply, false otherwise.
      */
-    bool LateReplyExpected()const;
+    bool LateReplyExpected() const;
 
     /**
      * @brief Checks if this message is a reply.
      * @return true if this message is a reply, false otherwise.
      */
-    bool IsReplyMessage()const;
+    bool IsReplyMessage() const;
 
     /**
      * @brief Retrieved the address of the destination Object in the ObjectRegistryDatabase.
@@ -154,35 +154,13 @@ Message    ();
      */
     inline void SetReplyTimeout(const TimeoutType &maxWaitIn);
 
-    inline TimeoutType GetReplyTimeout();
+    /**
+     * @brief Gets the timeout for the reply
+     */
+    inline TimeoutType GetReplyTimeout() const;
 
 private:
 
-    /**
-     * The originator of the message
-     * empty means anonymous
-     * */
-    StreamString sender;
-
-    /**
-     * The destination of the message
-     * addressed from ObjectRegistryDatabase forward
-     * */
-    StreamString destination;
-
-    /**
-     * The function to be called
-     * */
-    StreamString function;
-
-    /**
-     * In case of synchronous communication, how long to wait
-     * */
-    TimeoutType maxWait;
-
-    /**
-     * @brief Defines the Message types.
-     */
     struct MessageFlags {
 
         /**
@@ -193,11 +171,7 @@ private:
          *   Message::ExpectsImmediateReply() == false &&
          *   Message::ExpectsLateReply() == false;
          */
-        MessageFlags() {
-            expectsReply = false;
-            expectsImmediateReply = false;
-            isReply = false;
-        }
+        MessageFlags();
 
         /**
          * @brief Constructor from string.
@@ -213,16 +187,9 @@ private:
          *     Message::ExpectsLateReply() == false &&
          *     Message::ExpectsImmediateReply() == true;
          */
-        MessageFlags(CCString asString) {
-            expectsReply = (StringHelper::Compare(asString.GetList(),"ExpectsReply")==0);
-            expectsImmediateReply = (StringHelper::Compare(asString.GetList(),"ExpectsImmediateReply")==0);
-            if (expectsImmediateReply==true) {
-                expectsReply = true;
-            }
-            isReply = false;
-        }
+        MessageFlags(CCString asString);
 
-        /*lint -e{9018} Use of union allows to use this memory to describe both objects and basic types.*/
+        /*lint ++flb*/
         union {
 
             /**
@@ -256,8 +223,36 @@ private:
              */
             uint8 format_as_uint8;
         };
+        /*lint --flb*/
 
-    }flags;
+    };
+
+    /**
+     * The originator of the message
+     * empty means anonymous
+     * */
+    StreamString sender;
+
+    /**
+     * The destination of the message
+     * addressed from ObjectRegistryDatabase forward
+     * */
+    StreamString destination;
+
+    /**
+     * The function to be called
+     * */
+    StreamString function;
+
+    /**
+     * In case of synchronous communication, how long to wait
+     * */
+    TimeoutType maxWait;
+
+    /**
+     * @brief Defines the Message types.
+     */
+    MessageFlags flags;
 
 };
 
@@ -281,7 +276,7 @@ void Message::SetReplyTimeout(const TimeoutType &maxWaitIn) {
     maxWait = maxWaitIn;
 }
 
-TimeoutType Message::GetReplyTimeout() {
+TimeoutType Message::GetReplyTimeout() const {
     return maxWait;
 }
 

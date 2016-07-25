@@ -43,39 +43,23 @@
 
 namespace MARTe {
 
+QueuedMessageI::QueuedMessageI(): MessageI() {
 
-ErrorManagement::ErrorType QueuedMessageI::ReceiveMessage(ReferenceT<Message> &message){
+}
+
+QueuedMessageI::~QueuedMessageI() {
+
+}
+
+ErrorManagement::ErrorType QueuedMessageI::ReceiveMessage(ReferenceT<Message> &message) {
     ErrorManagement::ErrorType ret;
-
 
     return ret;
 }
 
-
-void QueuedMessageI::MessageProcessingThread(){
-
+void QueuedMessageI::MessageProcessingThread() {
 
 }
 
-
-/**
- *     sets all up and starts the message handler thread
- */
-QueuedMessageI::QueuedMessageI(){
-
 }
 
-/**
- * TODO
- *     kills the message handler thread
- */
-QueuedMessageI::~QueuedMessageI(){
-
-}
-
-
-
-
-}
-
-	

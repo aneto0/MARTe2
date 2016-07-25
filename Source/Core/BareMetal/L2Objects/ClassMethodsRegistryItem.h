@@ -129,7 +129,7 @@ private:
      * -1 otherwise.
      */
     int32 FindFunction(const char8 * const name,
-                       int32 minIndex);
+                       const int32 minIndex);
 
     /**
      * The array of objects used to call the class methods.

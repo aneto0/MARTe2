@@ -46,20 +46,9 @@ namespace MARTe {
 /**
  * TODO
  * */
-class DLL_API QueuedMessageI: public MessageI{
+class DLL_API QueuedMessageI: public MessageI {
+
 public:
-
-    /**
-       * TODO
-       * Default message handling mechanism
-       * Handles the reception of a message
-       * By default simply calls SortMessage
-       * Can be overridden to implement message Queues etc...
-       * in the case of a specialised method where queued message handling is implemented
-       * when the immediate return message is requested then the wait is performed here and a timeout+communication error may be produced here
-      * */
-    virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
-
 
     /**
      *     sets all up and starts the message handler thread
@@ -70,45 +59,60 @@ public:
      * TODO
      *     kills the message handler thread
      */
-   virtual ~QueuedMessageI();
+    virtual ~QueuedMessageI();
+
+protected:
+
+    /**
+     * TODO
+     * Default message handling mechanism
+     * Handles the reception of a message
+     * By default simply calls SortMessage
+     * Can be overridden to implement message Queues etc...
+     * in the case of a specialised method where queued message handling is implemented
+     * when the immediate return message is requested then the wait is performed here and a timeout+communication error may be produced here
+     * */
+    virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
 
 private:
 
-   void MessageProcessingThread();
+    /**
+     * TODO
+     */
+    void MessageProcessingThread();
 
-   /*
-    * to protect access to both queues
-    */
-   MutexSem           queuesAccessControl;
+    /*
+     * to protect access to both queues
+     */
+    MutexSem queuesAccessControl;
 
-   /*
-    * This is where the messages are piled up
-    */
-   ReferenceContainer messageProcessQueue;
+    /*
+     * This is where the messages are piled up
+     */
+    ReferenceContainer messageProcessQueue;
 
-   /*
-    * triggered whenever a new message is inserted
-    */
-   EventSem           newMessageInQueue;
+    /*
+     * triggered whenever a new message is inserted
+     */
+    EventSem newMessageInQueue;
 
-   /*
-    * This is where the senders may wait for a reply
-    */
-   ReferenceContainer messageReplyWaitList;
+    /*
+     * This is where the senders may wait for a reply
+     */
+    ReferenceContainer messageReplyWaitList;
 
-   /*
-    * triggered whenever a new reply is available
-    */
-   EventSem           newReplyInWaitList;
+    /*
+     * triggered whenever a new reply is available
+     */
+    EventSem newReplyInWaitList;
 
 };
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
 }
+
 #endif /* QUEUEDMESSAGEI_H_ */
-	
+
