@@ -125,9 +125,10 @@ static bool SignalIntrospectionToStructuredData(ConfigurationDatabase &signalDat
                 if (samples.GetTypeDescriptor() != VoidType) {
                     ret = data.Write("Samples", samples);
                 }
-                if (samples.GetTypeDescriptor() != VoidType) {
+                //TODO Check with GF
+                if (frequency.GetTypeDescriptor() != VoidType) {
+                    ret = data.Write("Frequency", frequency);
                     if (StringHelper::Compare(fullSignalName.Buffer(), syncSignalName) == 0) {
-                        ret = data.Write("Frequency", frequency);
                         syncSet = true;
                     }
                 }
@@ -313,13 +314,12 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
     return ret;
 }
 
-
 #if 0
 
 bool RealTimeApplicationConfigurationBuilder::InitialiseFunctionDatabaseFromConfiguration(ConfigurationDatabase &originalConfig,
-                                                                                          originalConfig,
-                                                                                          StreamString & fullPath,
-                                                                                          uint32 &index) {
+        originalConfig,
+        StreamString & fullPath,
+        uint32 &index) {
     uint32 numberOfFunctions = originalConfig.GetNumberOfChildren();
     bool ret = true;
     bool isGam = false;
@@ -374,9 +374,9 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseFunctionDatabaseFromConf
 }
 
 bool RealTimeApplicationConfigurationBuilder::InitialiseDataDatabaseFromConfiguration(ConfigurationDatabase &originalConfig,
-                                                                                      originalConfig,
-                                                                                      StreamString & fullPath,
-                                                                                      uint32 &index) {
+        originalConfig,
+        StreamString & fullPath,
+        uint32 &index) {
     uint32 numberOfDataSources = originalConfig.GetNumberOfChildren();
     bool ret = true;
     bool isGam = false;
@@ -435,7 +435,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseDataDatabaseFromConfigur
 //-QualifiedName is the name of the GAM path beginning from "Functions" or the name of the DataSource beginning from "Data"
 //-The name of each GAM and of each DS node is an incremental id number
 bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabaseFromConfiguration(ConfigurationDatabase &originalConfig,
-                                                                                         const char8* appName) {
+        const char8* appName) {
 
     StreamString functionPath = appName;
     functionPath += ".Functions";
@@ -632,7 +632,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(bool isFunctionsData
         }
     }
     //Namespace resolved. Working at signal level
-    if (!isNode) {
+    if (ret && (!isNode)) {
         bool isStructuredData = false;
         StreamString dataSourceName;
         if (forceWriteDataSource) {
@@ -643,26 +643,43 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(bool isFunctionsData
                     ret = signalDatabase.Write("DataSource", dataSourceName);
                 }
                 else {
+                    ret = false;
                     REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "DataSource not specified for %s and DefaultDataSource not specified",
                                             signalName)
                 }
             }
         }
-        if (signalTypeDefined) {
+        if ((ret) && (signalTypeDefined)) {
             TypeDescriptor signalTypeDescriptor = TypeDescriptor::GetTypeDescriptorFromTypeName(signalType.Buffer());
             //...check if it is a BasicType. If it is not, discombobulate it to its BasicTypes
             if (signalTypeDescriptor == InvalidType) {
+                uint32 numberOfDimensions = 0;
+                uint32 numberOfElements = 1;
+                if (signalDatabase.Read("NumberOfDimensions", numberOfDimensions)) {
+                    ret = (numberOfDimensions == 0);
+                    if (!ret) {
+                        REPORT_ERROR_PARAMETERS(
+                                ErrorManagement::InitialisationError,
+                                "Invalid NumberOfDimensions for signal %s. Structured types only support NumberOfDimensions = 0 (you may define arrays of basic types inside the structure)",
+                                signalName)
+                    }
+                }
+                if (signalDatabase.Read("NumberOfElements", numberOfElements)) {
+                    ret = (numberOfElements == 1);
+                    if (!ret) {
+                        REPORT_ERROR_PARAMETERS(
+                                ErrorManagement::InitialisationError,
+                                "Invalid NumberOfElements for signal %s. Structured types only support NumberOfElements = 1 (you may define arrays of basic types inside the structure)",
+                                signalName)
+                    }
+                }
+
                 if (ret) {
                     isStructuredData = true;
                     StreamString alias;
                     if (!signalDatabase.Read("Alias", alias)) {
                         alias = "";
                     }
-
-                    //TODO check here number of elements and number of dimensions
-                    // and produce a warning
-
-                    //TODO Error if
 
                     AnyType ranges = signalDatabase.GetType("Ranges");
                     AnyType samples = signalDatabase.GetType("Samples");
@@ -676,7 +693,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(bool isFunctionsData
                                     "Specified a synchronising signal in %s with no synchronised frequency. Please define the \"Frequency\" field", signalName)
                         }
                         else {
-                            // both syc signal and frequency specified... check if the member will be found
+                            // both sync signal and frequency specified... check if the member will be found
                             syncSet = false;
                         }
                     }
@@ -701,7 +718,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(bool isFunctionsData
         }
         //BasicType. Write all the known signal properties
         // do this also if the type is undefined
-        if (!isStructuredData) {
+        if ((ret) && (!isStructuredData)) {
             StreamString property;
             StreamString signalNumberStr;
             signalNumberStr.Printf("Signals.%d", signalNumber);
@@ -716,7 +733,6 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(bool isFunctionsData
             while ((properties[p] != NULL_PTR(char8 *)) && (ret)) {
                 AnyType element = signalDatabase.GetType(properties[p]);
                 if (element.GetTypeDescriptor() != VoidType) {
-
                     ret = resolvedSignal.Write(properties[p], element);
                 }
                 p++;
@@ -1118,6 +1134,8 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                             if (ret) {
                                 ret = (defValDims == usedDimensions);
                                 if (ret) {
+                                    //TODO discuss with GF... do we really want to impose default values for all the parameters
+                                    //or is it sufficient for the used ranges. I prefer the latter....
                                     ret = (defVal.GetNumberOfElements(0u) == numberOfElements);
                                 }
                             }
@@ -1434,7 +1452,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignal(const char8 
         if (ret) {
             if (signalToDeleteName != NULL) {
                 ret = functionsDatabase.Delete(signalToDeleteName);
-                deleted=true;
+                deleted = true;
             }
         }
     }
@@ -1802,35 +1820,49 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(bool 
                                         //Check if the array Consumers (or Producers) already exists
                                         StreamString operationTypeGAM = "GAM";
                                         operationTypeGAM += operationType;
+                                        StreamString operationTypeGAMNames = "GAMNames";
+                                        operationTypeGAMNames += operationType;
                                         StreamString operationTypeSignal = "Signal";
                                         operationTypeSignal += operationType;
                                         AnyType existentArray = dataSourcesDatabase.GetType(operationTypeGAM.Buffer());
                                         StreamString *newGAMArray = NULL_PTR(StreamString *);
+                                        StreamString *newGAMNamesArray = NULL_PTR(StreamString *);
                                         StreamString *newSignalArray = NULL_PTR(StreamString *);
 
                                         uint32 numberOfExistentElements = 0u;
                                         if (existentArray.GetDataPointer() != NULL_PTR(void *)) {
                                             numberOfExistentElements = existentArray.GetNumberOfElements(0u);
                                             newGAMArray = new StreamString[numberOfExistentElements + 1u];
+                                            newGAMNamesArray = new StreamString[numberOfExistentElements + 1u];
                                             newSignalArray = new StreamString[numberOfExistentElements + 1u];
                                             Vector<StreamString> newGAMVector(newGAMArray, numberOfExistentElements);
+                                            Vector<StreamString> newGAMNamesVector(newGAMNamesArray, numberOfExistentElements);
                                             Vector<StreamString> newSignalVector(newSignalArray, numberOfExistentElements);
                                             ret = (dataSourcesDatabase.Read(operationTypeGAM.Buffer(), newGAMVector));
+                                            if (ret) {
+                                                ret = (dataSourcesDatabase.Read(operationTypeGAMNames.Buffer(), newGAMNamesVector));
+                                            }
                                             if (ret) {
                                                 ret = (dataSourcesDatabase.Read(operationTypeSignal.Buffer(), newSignalVector));
                                             }
                                         }
                                         else {
                                             newGAMArray = new StreamString[1u];
+                                            newGAMNamesArray = new StreamString[1u];
                                             newSignalArray = new StreamString[1u];
                                         }
-                                        newGAMArray[numberOfExistentElements] = functionId.Buffer();    //functionName.Buffer();
+                                        newGAMArray[numberOfExistentElements] = functionId.Buffer();
+                                        newGAMNamesArray[numberOfExistentElements] = functionName.Buffer();
                                         newSignalArray[numberOfExistentElements] = signalId.Buffer();
                                         Vector<StreamString> newGAMVector(newGAMArray, numberOfExistentElements + 1u);
+                                        Vector<StreamString> newGAMNamesVector(newGAMNamesArray, numberOfExistentElements + 1u);
                                         Vector<StreamString> newSignalVector(newSignalArray, numberOfExistentElements + 1u);
 
                                         if (existentArray.GetDataPointer() != NULL_PTR(void *)) {
                                             ret = dataSourcesDatabase.Delete(operationTypeGAM.Buffer());
+                                            if (ret) {
+                                                ret = dataSourcesDatabase.Delete(operationTypeGAMNames.Buffer());
+                                            }
                                             if (ret) {
                                                 ret = dataSourcesDatabase.Delete(operationTypeSignal.Buffer());
                                             }
@@ -1838,10 +1870,14 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(bool 
                                         if (ret) {
                                             ret = (dataSourcesDatabase.Write(operationTypeGAM.Buffer(), newGAMVector));
                                             if (ret) {
+                                                ret = (dataSourcesDatabase.Write(operationTypeGAMNames.Buffer(), newGAMNamesVector));
+                                            }
+                                            if (ret) {
                                                 ret = (dataSourcesDatabase.Write(operationTypeSignal.Buffer(), newSignalVector));
                                             }
                                         }
                                         delete[] newGAMArray;
+                                        delete[] newGAMNamesArray;
                                         delete[] newSignalArray;
                                     }
                                     //Move to the next state
@@ -1885,7 +1921,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(bool 
 // VerifyConsumersAndProducers
 ////////////////////////////////
 ////////////////////////////////
-
+//TODO discuss with GF. This is never called!
 bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
 
     bool ret = dataSourcesDatabase.MoveAbsolute("Data");
@@ -2484,7 +2520,7 @@ bool RealTimeApplicationConfigurationBuilder::CalculateFunctionsMemory(SignalDir
                         numberOfDataSources = functionsDatabase.GetNumberOfChildren();
                     }
 
-                    uint32 allocatedBytes = 0u;
+                    uint32 allocatedBytesInPreviousDataSources = 0u;
                     uint32 d;
                     //For every DataSource in this function
                     for (d = 0u; (d < numberOfDataSources) && (ret); d++) {
@@ -2498,10 +2534,12 @@ bool RealTimeApplicationConfigurationBuilder::CalculateFunctionsMemory(SignalDir
                         if (ret) {
                             ret = functionsDatabase.Read("ByteSize", byteSize);
                         }
-                        //Allocate the memory
+                        //Compute the offset
                         if (ret) {
-                            ret = functionsDatabase.Write("GamMemoryOffset", allocatedBytes);
-                            allocatedBytes += byteSize;
+                            //TODO discuss with GF. This does not allow to interleave DataSource signals. This is a rule
+                            //that we will have to check!
+                            ret = functionsDatabase.Write("GAMMemoryOffset", allocatedBytesInPreviousDataSources);
+                            allocatedBytesInPreviousDataSources += byteSize;
                         }
                         if (ret) {
                             //Move to SignalDirection level
@@ -2583,12 +2621,9 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                     }
                     if (ret) {
                         ret = functionsDatabase.Read("ByteSize", byteSize);
-                    }/*
-                     if (ret) {
-                     ret = functionsDatabase.Read("Address", address);
-                     }*/
+                    }
                     if (ret) {
-                        ret = functionsDatabase.Read("GamMemoryOffset", gamMemoryOffset);
+                        ret = functionsDatabase.Read("GAMMemoryOffset", gamMemoryOffset);
                     }
                     //Find the DataSource
                     StreamString dataSourceIdInDataSourceDatabase;
@@ -2673,7 +2708,7 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                         ret = dataSourcesDatabase.Write("ByteSize", byteSize);
                     }
                     if (ret) {
-                        ret = dataSourcesDatabase.Write("GamMemoryOffset", gamMemoryOffset);
+                        ret = dataSourcesDatabase.Write("GAMMemoryOffset", gamMemoryOffset);
                     }
                     //Move back to the DataSource level
                     if (ret) {
@@ -2809,18 +2844,13 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
                 ret = dataSourcesDatabase.Read("QualifiedName", qualifiedName);
             }
             ReferenceT<DataSourceI> dataSource;
-            if (ret) {/*
-             StreamString fullDsName="Data.";
-             fullDsName+=qualifiedName;*/
+            if (ret) {
                 dataSource = realTimeApplication->Find(qualifiedName.Buffer());
                 ret = dataSource.IsValid();
             }
             if (ret) {
                 ret = dataSource->SetConfiguredDatabase(dataSourcesDatabase);
             }
-            /*  if (ret) {
-             ret = dataSource->AllocateMemory();
-             }*/
             if (ret) {
                 ret = dataSourcesDatabase.MoveToAncestor(1u);
             }

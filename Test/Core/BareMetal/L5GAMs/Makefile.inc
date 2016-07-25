@@ -25,7 +25,8 @@
 #############################################################
 
 
-OBJSX= RealTimeApplicationConfigurationBuilderTest.x\
+OBJSX= DataSourceITest.x\
+       RealTimeApplicationConfigurationBuilderTest.x\
        GAMTestHelper.x 
 
 #BrokerContainerTest.x \

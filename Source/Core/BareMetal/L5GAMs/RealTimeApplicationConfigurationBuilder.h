@@ -99,9 +99,17 @@ public:
      *                 +NumberOfDimensions = 0|1|2
      *                 +NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
-     *                 +TimeCyclesSamples = {x y}, where x is the number o samples for each cycle and y the number of cycles covered by the data
-     *                                      {1,1} => same as cycle time, {1,>1} => over-sampling, {>1,1) => sub-sampling, {-1,1} => asynchronous (i.e.
-     *                                      not related to cycle time), {N,N>1} => N history samples, {-1,N} => history of asynchronous data
+     *                 +Samples = NUMBER > 0, defines the number of (time) samples to be copied on each operation. The default value is one.
+     *                 +Frequency = NUMBER>0, defines the cycle time frequency. Only and only one signal may define this property.
+     *                 +Default = "Default value as a string". The value to be used when the signal is not produced in a previous state.
+     *                 +MemberAliases = {//Only valid for StructuredType signals
+     *                    OriginalMemberName1 = NewMemberName1
+     *                    ...
+     *                 }
+     *                 +Defaults = {//Only valid for StructuredType signals
+     *                    MemberName1 = DefaultValue1
+     *                    ...
+     *                 }
      *               }
      *            }
      *         }
@@ -116,6 +124,8 @@ public:
      *              +Type = BasicType|StructuredType
      *              +NumberOfDimensions = 0|1|2
      *              +NumberOfElements = NUMBER>0
+     *              +Frequency = -1|NUMBER>0, the frequency at which the signal is expected to be produced. -1 => the latest value available
+     *                   (i.e. the frequency is not important), any other positive number is the desired frequency. The default is -1
      *            }
      *          }
      *        }
@@ -146,7 +156,8 @@ public:
      *                 +NumberOfDimensions = 0|1|2
      *                 +NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
-     *                 +TimeCyclesSamples = {x y}
+     *                 +Samples = NUMBER > 0
+     *                 +Frequency = NUMBER>0
      *               }
      *            }
      *         }
@@ -162,14 +173,13 @@ public:
      *              +Type = BasicType
      *              +NumberOfDimensions = 0|1|2
      *              +NumberOfElements = NUMBER>0
+     *              +Frequency = -1|NUMBER>0
      *            }
      *          }
      *        }
      *      }
      */
     bool FlattenSignalsDatabases();
-
-    bool VerifySynchronization();
 
     /**
      * @brief Merges all the signals from the Functions into the corresponding DataSource.
@@ -195,7 +205,8 @@ public:
      *                 +NumberOfDimensions = 0|1|2
      *                 +NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
-     *                 +TimeCyclesSamples = {x y}
+     *                 +Samples = NUMBER > 0
+     *                 +Frequency = NUMBER>0
      *               }
      *            }
      *         }
@@ -211,6 +222,7 @@ public:
      *              Type = BasicType
      *              +NumberOfDimensions = 0|1|2
      *              +NumberOfElements = NUMBER>0
+     *              +Frequency = -1|NUMBER>0
      *            }
      *          }
      *        }
@@ -239,7 +251,8 @@ public:
      *                 +NumberOfDimensions = 0|1|2
      *                 +NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
-     *                 +TimeCyclesSamples = {x y}
+     *                 +Samples = NUMBER > 0
+     *                 +Frequency = NUMBER>0
      *               }
      *            }
      *         }
@@ -256,6 +269,7 @@ public:
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
      *              ByteSize = NUMBER > 0
+     *              +Frequency = -1|NUMBER>0
      *            }
      *          }
      *        }
@@ -288,7 +302,8 @@ public:
      *                 NumberOfDimensions = 0|1|2
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
-     *                 +TimeCyclesSamples = {x y}
+     *                 +Samples = NUMBER > 0
+     *                 +Frequency = NUMBER>0
      *               }
      *            }
      *         }
@@ -304,6 +319,7 @@ public:
      *              Type = BasicType
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
+     *              +Frequency = -1|NUMBER>0
      *            }
      *          }
      *        }
@@ -331,7 +347,8 @@ public:
      *                 NumberOfDimensions = 0|1|2
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
-     *                 +TimeCyclesSamples = {x y}
+     *                 +Samples = NUMBER > 0
+     *                 +Frequency = NUMBER>0
      *               }
      *            }
      *         }
@@ -347,6 +364,7 @@ public:
      *              Type = BasicType
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
+     *              +Frequency = -1|NUMBER>0
      *            }
      *          }
      *        }
@@ -375,7 +393,8 @@ public:
      *                 NumberOfDimensions = 0|1|2
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
-     *                 +TimeCyclesSamples = {x y}
+     *                 +Samples = NUMBER > 0
+     *                 +Frequency = NUMBER>0
      *               }
      *            }
      *         }
@@ -394,6 +413,7 @@ public:
      *              Type = BasicType
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
+     *              +Frequency = -1|NUMBER>0
      *            }
      *          }
      *        }
@@ -401,7 +421,10 @@ public:
      */
     bool ResolveStates();
 
-    // Checks that each GAM has been called in at least one thread
+    /**
+     * @brief Checks that every GAM has been called in at least one thread.
+     * @return true if every GAM has been called in at least one thread.
+     */
     bool VerifyStates();
 
     /**
@@ -424,7 +447,8 @@ public:
      *                 NumberOfDimensions = 0|1|2
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
-     *                 +TimeCyclesSamples = {x y}
+     *                 +Samples = NUMBER > 0
+     *                 +Frequency = NUMBER>0
      *               }
      *            }
      *         }
@@ -443,10 +467,15 @@ public:
      *              Type = BasicType
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
+     *              +Frequency = -1|NUMBER>0
      *              +States = {
      *                *StateN = {
-     *                  +Consumers = { "FunctionX" ... "FunctionZ" }
-     *                  +Producers = { "FunctionX" ... "FunctionZ" }
+     *                  GAMConsumers = { "0" ... "N" }, where 0 ... N are the indices of the Function as defined in the Functions node
+     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }, where NAME1...NAMEN are the names of the functions
+     *                  SignalConsumers = { "0" ... "N" }, where 0 ... N are the indices of the Signals in the respective function
+     *                  GAMProducers = { "0" ... "N" }, where 0 ... N are the indices of the Function as defined in the Functions node
+     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }, where NAME1...NAMEN are the names of the functions
+     *                  SignalProducers = { "0" ... "N" }, where 0 ... N are the indices of the Signals in the respective function
      *                }
      *              }
      *            }
@@ -455,8 +484,6 @@ public:
      *      }
      */
     bool ResolveConsumersAndProducers();
-
-    bool VerifyConsumersAndProducers();
 
     /**
      * @brief For every signal in every Function compute the memory size and the memory offset (if Ranges are defined).
@@ -483,7 +510,8 @@ public:
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
      *                 ByteSize = NUMBER > 0
      *                 +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
-     *                 +TimeCyclesSamples = {x y}
+     *                 +Samples = NUMBER > 0
+     *                 +Frequency = NUMBER>0
      *               }
      *            }
      *         }
@@ -502,10 +530,15 @@ public:
      *              Type = BasicType
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
+     *              +Frequency = -1|NUMBER>0
      *              +States = {
      *                *StateN = {
-     *                  +Consumers = { "FunctionX" ... "FunctionZ" }
-     *                  +Producers = { "FunctionX" ... "FunctionZ" }
+     *                  GAMConsumers = { "0" ... "N" }
+     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }
+     *                  SignalConsumers = { "0" ... "N" }
+     *                  GAMProducers = { "0" ... "N" }
+     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }
+     *                  SignalProducers = { "0" ... "N" }
      *                }
      *              }
      *            }
@@ -538,7 +571,8 @@ public:
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
      *                 ByteSize = NUMBER>0
      *                 +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
-     *                 +TimeCyclesSamples = {x y}
+     *                 +Samples = NUMBER > 0
+     *                 +Frequency = NUMBER>0
      *               }
      *            }
      *         }
@@ -554,7 +588,8 @@ public:
      *                 *NUMBER = {
      *                   QualifiedName = "QualifiedName of the Signal"
      *                   +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
-     *                   +TimeCyclesSamples = {x y}
+     *                   Frequency = -1|NUMBER>0
+     *                   Samples = |NUMBER>0
      *                 }
      *               }
      *             }
@@ -572,10 +607,16 @@ public:
      *              Type = BasicType
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
+     *              Frequency = -1|NUMBER>0
+     *              Samples = -1|NUMBER>0
      *              +States = {
      *                *StateN = {
-     *                  +Consumers = { "FunctionX" ... "FunctionZ" }
-     *                  +Producers = { "FunctionX" ... "FunctionZ" }
+     *                  GAMConsumers = { "0" ... "N" }
+     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }
+     *                  SignalConsumers = { "0" ... "N" }
+     *                  GAMProducers = { "0" ... "N" }
+     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }
+     *                  SignalProducers = { "0" ... "N" }
      *                }
      *              }
      *            }
@@ -585,16 +626,91 @@ public:
      */
     bool ResolveFunctionsMemory();
 
-    //TODO allocate memory
-    bool AllocateFunctionsMemory();
-
+    /**
+     * @brief For every Function compute the memory size and the memory offset for each DataSource which interfaces to the Function.
+     * @details Computes the amount of GAM memory associated to each DataSource and for every DataSource writes the offset of the
+     * DataSource signals associated to this GAM (as GAMMemoryOffset) w.r.t. to the beginning of the GAM signal memory.
+     * @return true if the total amount of memory can be successfully computed.
+     * @pre
+     *   ResolveFunctionsMemory()
+     * @post
+     *   functionsDatabase =
+     *     Functions = {
+     *       *NUMBER = {
+     *         QualifiedName = "x.y.GAMNAME"
+     *         Signals = {
+     *            InputSignals|OutputSignals = {
+     *               *NUMBER  ={
+     *                 QualifiedName = "QualifiedName of the signal"
+     *                 DataSource = "QualifiedName of the DataSource"
+     *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
+     *                 Type = BasicType
+     *                 NumberOfDimensions = 0|1|2
+     *                 NumberOfElements = NUMBER>0
+     *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
+     *                 ByteSize = NUMBER>0
+     *                 +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
+     *                 +Samples = NUMBER > 0
+     *                 +Frequency = NUMBER>0
+     *               }
+     *            }
+     *         }
+     *         States = {
+     *           +*StateNameN = "ThreadNameN"
+     *         }
+     *         Memory = {
+     *           InputSignals|OutputSignals = {
+     *             +*NUMBER = {
+     *               DataSource = "QualifiedName of the DataSource"
+     *               ByteSize = NUMBER>0
+     *               GAMMemoryOffset = NUMBER>0
+     *               Signals = {
+     *                 *NUMBER = {
+     *                   QualifiedName = "QualifiedName of the Signal"
+     *                   +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
+     *                   Frequency = -1|NUMBER>0
+     *                   Samples = -1|NUMBER>0
+     *                 }
+     *               }
+     *             }
+     *           }
+     *         }
+     *       }
+     *    }
+     *    dataSourcesDatabase =
+     *      Data = {
+     *        *NUMBER = {
+     *          QualifiedName = "x.y.DATASOURCENAME"
+     *          Signals = {
+     *            *NUMBER = {
+     *              QualifiedName = "QualifiedName of the signal"
+     *              Type = BasicType
+     *              NumberOfDimensions = 0|1|2
+     *              NumberOfElements = NUMBER>0
+     *              +Frequency = -1|NUMBER>0
+     *              +States = {
+     *                *StateN = {
+     *                  GAMConsumers = { "0" ... "N" }
+     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }
+     *                  SignalConsumers = { "0" ... "N" }
+     *                  GAMProducers = { "0" ... "N" }
+     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }
+     *                  SignalProducers = { "0" ... "N" }
+     *                }
+     *              }
+     *            }
+     *          }
+     *        }
+     *      }
+     */
     bool CalculateFunctionsMemory();
 
     /**
-     * @brief For every DataSource add the memory information about each Function that interacts with the DataSource.
+     * @brief For every DataSource add the memory information about each Function that interacts with the DataSource
+     *  add the corresponding memory information.
      * @return true if the memory information can be successfully added to each DataSource definition.
      * @pre
-     *   ResolveFunctionsMemory()
+     *   CalculateFunctionsMemory()
      * @post
      *   functionsDatabase =
      *     Functions = {
@@ -612,7 +728,8 @@ public:
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
      *                 ByteSize = NUMBER>0
      *                 ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
-     *                 +TimeCyclesSamples = {x y}
+     *                 +Samples = NUMBER > 0
+     *                 +Frequency = NUMBER>0
      *               }
      *            }
      *         }
@@ -624,10 +741,13 @@ public:
      *             +*NUMBER = {
      *               DataSource = "QualifiedName of the DataSource"
      *               ByteSize = NUMBER>0
+     *               GAMMemoryOffset = NUMBER>0
      *               Signals = {
      *                 *NUMBER = {
      *                   QualifiedName = "QualifiedName of the Signal"
      *                   +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
+     *                   Frequency = -1|NUMBER>0
+     *                   Samples = -1|NUMBER>0
      *                 }
      *               }
      *             }
@@ -645,21 +765,28 @@ public:
      *              Type = BasicType
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
+     *              +Frequency = -1|NUMBER>0
      *              +States = {
      *                *StateN = {
-     *                  +Consumers = { "FunctionX" ... "FunctionZ" }
-     *                  +Producers = { "FunctionX" ... "FunctionZ" }
+     *                  GAMConsumers = { "0" ... "N" }
+     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }
+     *                  SignalConsumers = { "0" ... "N" }
+     *                  GAMProducers = { "0" ... "N" }
+     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }
+     *                  SignalProducers = { "0" ... "N" }
      *                }
      *              }
      *              Functions+ = {
      *                *NUMBER = {
      *                  QualifiedName = "QualifiedName of the Function"
      *                  ByteSize = NUMBER>0
+     *                  GAMMemoryOffset = NUMBER>0
      *                  Signals = {
      *                    *NUMBER = {
      *                      QualifiedName = "QualifiedName of the Signal"
      *                      +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
-     *                      +TimeCyclesSamples = {x y}
+     *                       Frequency = -1|NUMBER>0
+     *                       Samples = -1|NUMBER>0
      *                    }
      *                 }
      *               }
@@ -670,7 +797,96 @@ public:
      */
     bool AssignFunctionsMemoryToDataSource();
 
-    // For each gam signal, the data source will write the name of the broker to be used
+    /**
+     * @brief For each GAM signal, the DataSource will write the name of the BrokerI to be used.
+     * @return true if the BrokerI name can be successfully retrieved from the DataSource.
+     * @pre
+     *   AssignFunctionsMemoryToDataSource()
+     * @post
+     *   functionsDatabase =
+     *     Functions = {
+     *       *NUMBER = {
+     *         QualifiedName = "x.y.GAMNAME"
+     *         Signals = {
+     *            InputSignals|OutputSignals = {
+     *               *NUMBER = {
+     *                 QualifiedName = "QualifiedName of the signal"
+     *                 DataSource = "QualifiedName of the DataSource"
+     *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
+     *                 Type = BasicType
+     *                 NumberOfDimensions = 0|1|2
+     *                 NumberOfElements = NUMBER>0
+     *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
+     *                 ByteSize = NUMBER>0
+     *                 ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
+     *                 +Samples = NUMBER > 0
+     *                 +Frequency = NUMBER>0
+     *               }
+     *            }
+     *         }
+     *         States = {
+     *           +*StateNameN = "ThreadNameN"
+     *         }
+     *         Memory = {
+     *           InputSignals|OutputSignals = {
+     *             +*NUMBER = {
+     *               DataSource = "QualifiedName of the DataSource"
+     *               ByteSize = NUMBER>0
+     *               GAMMemoryOffset = NUMBER>0
+     *               Signals = {
+     *                 *NUMBER = {
+     *                   QualifiedName = "QualifiedName of the Signal"
+     *                   +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
+     *                   Frequency = -1|NUMBER>0
+     *                   Samples = -1|NUMBER>0
+     *                 }
+     *               }
+     *             }
+     *           }
+     *         }
+     *       }
+     *    }
+     *    dataSourcesDatabase =
+     *      Data = {
+     *        *NUMBER = {
+     *          QualifiedName = "x.y.DATASOURCENAME"
+     *          Signals = {
+     *            *NUMBER={
+     *              QualifiedName = "QualifiedName of the signal"
+     *              Type = BasicType
+     *              NumberOfDimensions = 0|1|2
+     *              NumberOfElements = NUMBER>0
+     *              +Frequency = -1|NUMBER>0
+     *              +States = {
+     *                *StateN = {
+     *                  GAMConsumers = { "0" ... "N" }
+     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }
+     *                  SignalConsumers = { "0" ... "N" }
+     *                  GAMProducers = { "0" ... "N" }
+     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }
+     *                  SignalProducers = { "0" ... "N" }
+     *                }
+     *              }
+     *              Functions+ = {
+     *                *NUMBER = {
+     *                  QualifiedName = "QualifiedName of the Function"
+     *                  ByteSize = NUMBER>0
+     *                  GAMMemoryOffset = NUMBER>0
+     *                  Signals = {
+     *                    *NUMBER = {
+     *                      QualifiedName = "QualifiedName of the Signal"
+     *                      +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
+     *                       Frequency = -1|NUMBER>0
+     *                       Samples = -1|NUMBER>0
+     *                       Broker = "Name of the Broker returned by the DataSource"
+     *                    }
+     *                 }
+     *               }
+     *             }
+     *          }
+     *        }
+     *     }
+     */
     bool AssignBrokersToFunctions();
 
     /**
@@ -682,10 +898,14 @@ public:
 
     /**
      * @brief For each GAM calls GAM::SetConfiguredDatabase
-     * TODO
+     * @details Calls calls::SetConfiguredDatabase on each GAM under Functions, passing the Functions{} branches.
+     * @return true if calls::SetConfiguredDatabase returns true for all GAMs.
      */
     bool PostConfigureFunctions();
 
+    bool VerifyConsumersAndProducers();
+
+    bool VerifySynchronization();
 
     /**
      * @brief Copies the Function and DataSource databases.
@@ -710,7 +930,9 @@ private:
      */
     ConfigurationDatabase dataSourcesDatabase;
 
-
+    /**
+     * ConfigurationDatabase with all the States information.
+     */
     ConfigurationDatabase statesDatabase;
 
     /**
@@ -851,9 +1073,14 @@ private:
      */
     bool AssignFunctionsMemoryToDataSource(SignalDirection direction);
 
+    /**
+     * @brief @see AssignBrokersToSignals()
+     * @param[in] direction can be either InputSignals or OutputSignals
+     * @param[in] dataSource the DataSourceI to be queried.
+     * @return @see AssignBrokersToSignals()
+     */
     bool AssignBrokersToSignals(SignalDirection direction,
                                 ReferenceT<DataSourceI> dataSource);
-
 
     /**
      * @brief Finds a signal with the name \a signalName in \a database.

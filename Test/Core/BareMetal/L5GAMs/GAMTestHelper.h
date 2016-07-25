@@ -53,7 +53,7 @@ static StreamString config1 = ""
         "            InputSignals = {"
         "                Signal1 = {"
         "                    DataSource = DDB1"
-        "                    Type = A"
+        "                    Type = TestStructA"
         "                    MemberAliases = {"
         "                        Signal1.a1 = E"
         "                    }"
@@ -146,7 +146,7 @@ static StreamString config1 = ""
         "            }"
         "            Signals = {"
         "                PredefinedSignal = {"
-        "                    Type = A"
+        "                    Type = TestStructA"
         "                }"
         "            }"
         "        }"
@@ -206,14 +206,20 @@ protected:
 
 };
 
-struct B {
+struct TestStructB {
     int32 b1;
     int32 b2;
 };
 
-struct A {
-    B a1;
+struct TestStructA {
+    TestStructB a1;
     float32 a2;
+};
+
+struct TestStructC {
+    TestStructB c1;
+    float32 c2[3];
+    int32 c3[2][4];
 };
 
 ///////////////////////////////////////////

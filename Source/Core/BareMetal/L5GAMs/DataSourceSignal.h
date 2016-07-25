@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"

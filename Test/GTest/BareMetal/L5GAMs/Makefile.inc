@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX=  RealTimeApplicationConfigurationBuilderGTest.x
+OBJSX=  DataSourceIGTest.x\
+        RealTimeApplicationConfigurationBuilderGTest.x
 		 
 
 PACKAGE=GTest/BareMetal

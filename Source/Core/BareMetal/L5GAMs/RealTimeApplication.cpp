@@ -329,6 +329,7 @@ bool RealTimeApplication::StopExecution() {
 #include <stdio.h>
 
 static void PrintDatabases(RealTimeApplicationConfigurationBuilder &rtAppBuilder) {
+return;
     static uint32 i = 0u;
     static uint32 j = 1u;
     ConfigurationDatabase fdb;
@@ -385,11 +386,6 @@ bool RealTimeApplication::ConfigureApplication() {
         ret = rtAppBuilder.ResolveFunctionsMemory();
         PrintDatabases(rtAppBuilder);
     }
-    /*
-     if (ret) {
-     ret = rtAppBuilder.AllocateFunctionsMemory();
-     PrintDatabases(rtAppBuilder);
-     }*/
     if (ret) {
         ret = rtAppBuilder.CalculateFunctionsMemory();
         PrintDatabases(rtAppBuilder);
@@ -408,6 +404,7 @@ bool RealTimeApplication::ConfigureApplication() {
     }
     if (ret) {
         ret = rtAppBuilder.PostConfigureFunctions();
+        PrintDatabases(rtAppBuilder);
     }
     //<<<<<<<<<<<<<<Mine
 
