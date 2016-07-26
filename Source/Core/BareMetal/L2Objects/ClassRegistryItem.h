@@ -131,7 +131,9 @@ public:
 
     /**
      * @brief Adds a list of registered class methods.
-     * @param[in] classMethodRecord contains a list of registered class methods.
+     * @param[in] classMethodRecord contains a list of registered class methods
+     * to add to the class registry item instance. The class of this argument
+     * must be a descendant of LinkedListable.
      */
     void RegisterMethods(ClassMethodsRegistryItem * const classMethodRecord);
 
@@ -162,10 +164,10 @@ public:
      * @param[in] object is the object which must call the method.
      * @param[in] methodName is the name of the class method to be called.
      * @return the status value of the execution, being one of the following:
-     *     ErrorManagement::UnsupportedFeature if \a methodName is not
-     *     registered or the class has not declared the method;
-     *     ErrorManagement::FatalError if the class method returns false;
-     *     ErrorManagement::NoError if the class method returns true.
+     * + ErrorManagement::UnsupportedFeature if \a methodName is not
+     * + registered or the class has not declared the method;
+     * + ErrorManagement::FatalError if the class method returns false;
+     * + ErrorManagement::NoError if the class method returns true.
      */
     ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
                                                     CCString methodName);
@@ -177,10 +179,10 @@ public:
      * @param[in] methodName is the name of the class method to be called.
      * @param[in] parameters is the class method argument.
      * @return the status value of the execution, being one of the following:
-     *     ErrorManagement::UnsupportedFeature if \a methodName is not
-     *     registered or the class has not declared the method;
-     *     ErrorManagement::FatalError if the class method returns false;
-     *     ErrorManagement::NoError if the class method returns true.
+     * + ErrorManagement::UnsupportedFeature if \a methodName is not
+     * + registered or the class has not declared the method;
+     * + ErrorManagement::FatalError if the class method returns false;
+     * + ErrorManagement::NoError if the class method returns true.
      */
     template<typename argType>
     ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,

@@ -70,7 +70,8 @@ public:
 //    bool TestDestructor();
 
     /**
-     * TODO
+     * @brief Tests ClassRegistryItem::TestRegisterMethods.
+     * @return true if the registering of methods succeeds.
      */
     bool TestRegisterMethods();
 
@@ -135,7 +136,8 @@ public:
     bool TestGetIntrospection();
 
     /**
-     * TODO
+     * @brief Tests ClassRegistryItem::CallRegisteredMethod.
+     * @return true if the call to registered methods succeed.
      */
     bool TestCallRegisteredMethod();
 
