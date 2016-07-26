@@ -248,7 +248,7 @@ public:
      * @brief Gets the number of functions consuming the signal at position \a signalIdx in the state with name \a stateName.
      * @param[in] signalIdx the index of the signal.
      * @param[in] stateName the name of the state (see GetSignalStateName).
-     * @param[out] numberOfConsumers the number of functions consuming this signal at the the state with name \a stateName.
+     * @param[out] numberOfConsumers the number of functions consuming this signal at the state with name \a stateName.
      * @return true if the signalIdx and the stateName exist for this signalIdx.
      * @pre
      *   SetConfiguredDatabase
@@ -261,7 +261,7 @@ public:
      * @brief Gets the number of functions producing the signal at position \a signalIdx in the state with name \a stateName.
      * @param[in] signalIdx the index of the signal.
      * @param[in] stateName the name of the state (see GetSignalStateName).
-     * @param[out] numberOfProducers the number of functions producing this signal at the the state with name \a stateName.
+     * @param[out] numberOfProducers the number of functions producing this signal at the state with name \a stateName.
      * @return true if the signalIdx and the stateName exist for this signalIdx.
      * @pre
      *   SetConfiguredDatabase
@@ -274,7 +274,7 @@ public:
      * @param[in] signalIdx the index of the signal.
      * @param[in] stateName the name of the state (see GetSignalStateName).
      * @param[in] consumerIdx the index of the consumer (see GetSignalNumberOfConsumers).
-     * @param[out] consumerName the name of function with index \a consumerIdx consuming this signal at the the state with name \a stateName.
+     * @param[out] consumerName the name of function with index \a consumerIdx consuming this signal at the state with name \a stateName.
      * @return true if the signalIdx, the consumerIdx and the stateName exist for this signalIdx.
      * @pre
      *   SetConfiguredDatabase
@@ -288,7 +288,7 @@ public:
      * @param[in] signalIdx the index of the signal.
      * @param[in] stateName the name of the state (see GetSignalStateName).
      * @param[in] producerIdx the index of the producer (see GetSignalNumberOfProducers).
-     * @param[out] producerName the name of function with index \a consumerIdx producing this signal at the the state with name \a stateName.
+     * @param[out] producerName the name of function with index \a consumerIdx producing this signal at the state with name \a stateName.
      * @return true if the signalIdx, the producerIdx and the stateName exist for this signalIdx.
      * @pre
      *   SetConfiguredDatabase
@@ -301,40 +301,110 @@ public:
     /**
      * @brief Gets the default of the signal with index \a signalIdx.
      * @param[in] signalIdx the index of the signal.
-     * @param[out] defaultValue the default value of the signal or an InvalidType if no default value was set.
-     * @return true if the signalIdx exists.
+     * @param[out] defaultValue the default value of the signal.
+     * @return true if the signalIdx exists and if a default value was set for this signal.
      * @pre
      *   SetConfiguredDatabase
      */
     bool GetSignalDefaultValue(uint32 signalIdx,
                                const AnyType &defaultValue);
 
+    /**
+     * @brief Gets the number of functions that interact with this DataSourceI.
+     * @return the number of functions that interact with this DataSourceI
+     * @pre
+     *   SetConfiguredDatabase
+     */
     uint32 GetNumberOfFunctions();
 
+    /**
+     * @brief Gets the name of the function at index \a functionIdx.
+     * @param[in] functionIdx the index of the function.
+     * @param[out] functionName the name of the function at index \a functionIdx.
+     * @return true if functionIdx exists.
+     * @pre
+     *   SetConfiguredDatabase
+     */
     bool GetFunctionName(uint32 functionIdx,
                          StreamString &functionName);
 
+    /**
+     * @brief Gets the index of the function with name \a functionName.
+     * @param[out] functionIdx the index of the function with name \a functionName.
+     * @param[in] functionName the name of the function.
+     * @return true if there is a function with name == \a functionName.
+     * @pre
+     *   SetConfiguredDatabase
+     */
     bool GetFunctionIndex(uint32 &functionIdx,
                           const char8* const functionName);
 
+    /**
+     * @brief Gets the number of signals, from the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
+     * @param[in] direction the signal direction.
+     * @param[in] functionIdx the index of the function.
+     * @param[out] numberOfSignals the number of signals, from the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
+     * @return true if the functionIdx exists.
+     * @pre
+     *   SetConfiguredDatabase
+     */
     bool GetFunctionNumberOfSignals(SignalDirection direction,
                                     uint32 functionIdx,
                                     uint32 &numberOfSignals);
 
+    /**
+     * @brief Gets the number of bytes, required for the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
+     * @param[in] direction the signal direction.
+     * @param[in] functionIdx the index of the function.
+     * @param[out] byteSize the number of bytes, required for the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
+     * @return true if the functionIdx exists.
+     * @pre
+     *   SetConfiguredDatabase
+     */
     bool GetFunctionSignalsByteSize(SignalDirection direction,
                                     uint32 functionIdx,
                                     uint32 &byteSize);
 
+    /**
+     * @brief Gets the name of the signal from the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
+     * @param[in] direction the signal direction.
+     * @param[in] functionIdx the index of the function.
+     * @param[in] functionSignalIdx the index of the signal in this function.
+     * @param[out] functioSignalName the name of the signal.
+     * @return true if the functionIdx and the functionSignalIdx exist in the specified direction.
+     * @pre
+     *   SetConfiguredDatabase
+     */
     bool GetFunctionSignalName(SignalDirection direction,
                                uint32 functionIdx,
                                uint32 functionSignalIdx,
                                StreamString &functioSignalName);
 
+    /**
+     * @brief Gets the alias of the signal from the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
+     * @param[in] direction the signal direction.
+     * @param[in] functionIdx the index of the function.
+     * @param[in] functionSignalIdx the index of the signal in this function.
+     * @param[out] functionSignalAlias the signal alias or an empty string if this was not specified.
+     * @return true if the functionIdx and the functionSignalIdx exist in the specified direction.
+     * @pre
+     *   SetConfiguredDatabase
+     */
     bool GetFunctionSignalAlias(SignalDirection direction,
                                 uint32 functionIdx,
                                 uint32 functionSignalIdx,
                                 StreamString &functionSignalAlias);
 
+    /**
+     * @brief Gets the index of the signal with the name \a functionSignalName, from the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
+     * @param[in] direction the signal direction.
+     * @param[in] functionIdx the index of the function.
+     * @param[out] functionSignalIdx the index of the signal in this function.
+     * @param[in] functionSignalName the name of the signal.
+     * @return true if the functionSignalName is a member of this function (in the specified direction).
+     * @pre
+     *   SetConfiguredDatabase
+     */
     bool GetFunctionSignalIndex(SignalDirection direction,
                                 uint32 functionIdx,
                                 uint32 &functionSignalIdx,

@@ -140,10 +140,24 @@ static const char8 * const startedTestConfig1 = ""
         "        +GAMA = {"
         "            Class = GAM1"
         "            InputSignals = {"
+        "               Signal4 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint32"
+        "                   Alias = Signal4A"
+        "               }"
+        "               Signal5 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint32"
+        "               }"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
         "               Signal1 = {"
         "                   DataSource = Drv1"
         "                   Default = 7"
         "                   Type = uint32"
+        "                   Alias = Signal1A"
         "               }"
         "            }"
         "        }"
@@ -160,6 +174,20 @@ static const char8 * const startedTestConfig1 = ""
         "            Class = GAM1"
         "            OutputSignals = {"
         "               Signal1 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint32"
+        "                   Alias = Signal1A"
+        "               }"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "               Signal4 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint32"
+        "                   Alias = Signal4A"
+        "               }"
+        "               Signal5 = {"
         "                   DataSource = Drv1"
         "                   Type = uint32"
         "               }"
@@ -192,7 +220,7 @@ static const char8 * const startedTestConfig1 = ""
         "                    NumberOfDimensions = 2"
         "                    NumberOfElements = 6"
         "                    Frequency = 10"
-        "                    Default = \"{3 6 9 12 15 18\"}"
+        "                    Default = \"{3 6 9 12 15 18}\""
         "                }"
         "            }"
         "        }"
@@ -215,6 +243,9 @@ static const char8 * const startedTestConfig1 = ""
         "                    Frequency = 10"
         "                }"
         "            }"
+        "        }"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -367,7 +398,7 @@ bool DataSourceITest::TestGetNumberOfSignals() {
         ret = dataSource.IsValid();
     }
     if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
+        ret = (dataSource->GetNumberOfSignals() == 5u);
     }
     return ret;
 }
@@ -379,27 +410,24 @@ bool DataSourceITest::TestGetSignalIndex() {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
         ret = dataSource.IsValid();
     }
+    uint32 numberOfSignals = dataSource->GetNumberOfSignals();
     if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
+        ret = (numberOfSignals == 5u);
     }
+
+    const char8 *signalNames[] = { "Signal1", "Signal2", "Signal3", "Signal4", "Signal5" };
+    StreamString name;
     uint32 idx;
-    if (ret) {
-        ret = dataSource->GetSignalIndex(idx, "Signal1");
-    }
-    if (ret) {
-        ret = (idx == 0);
-    }
-    if (ret) {
-        ret = dataSource->GetSignalIndex(idx, "Signal2");
-    }
-    if (ret) {
-        ret = (idx == 1);
-    }
-    if (ret) {
-        ret = dataSource->GetSignalIndex(idx, "Signal3");
-    }
-    if (ret) {
-        ret = (idx == 2);
+    uint32 n;
+    for (n = 0; (n < numberOfSignals) && (ret); n++) {
+        ret = dataSource->GetSignalIndex(idx, signalNames[n]);
+        if (ret) {
+            name = "";
+            ret = dataSource->GetSignalName(idx, name);
+        }
+        if (ret) {
+            ret = (name == signalNames[n]);
+        }
     }
     if (ret) {
         ret = !(dataSource->GetSignalIndex(idx, "DoesNotExist"));
@@ -408,39 +436,17 @@ bool DataSourceITest::TestGetSignalIndex() {
 }
 
 bool DataSourceITest::TestGetSignalName() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
-    ReferenceT<DataSourceITestHelper> dataSource;
+    bool ret = TestGetSignalIndex();
     if (ret) {
-        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
-        ret = dataSource.IsValid();
-    }
-    if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
-    }
-    StreamString value;
-    if (ret) {
-        ret = dataSource->GetSignalName(0, value);
-    }
-    if (ret) {
-        ret = (value == "Signal1");
-        value = "";
-    }
-    if (ret) {
-        ret = dataSource->GetSignalName(1, value);
-    }
-    if (ret) {
-        ret = (value == "Signal2");
-        value = "";
-    }
-    if (ret) {
-        ret = dataSource->GetSignalName(2, value);
-    }
-    if (ret) {
-        ret = (value == "Signal3");
-        value = "";
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalName(100000, value));
+        ReferenceT<DataSourceITestHelper> dataSource;
+        if (ret) {
+            dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+            ret = dataSource.IsValid();
+        }
+        StreamString name;
+        if (ret) {
+            ret = !(dataSource->GetSignalName(100000, name));
+        }
     }
     return ret;
 }
@@ -452,21 +458,23 @@ bool DataSourceITest::TestGetSignalType() {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
         ret = dataSource.IsValid();
     }
+    uint32 numberOfSignals = dataSource->GetNumberOfSignals();
     if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
+        ret = (numberOfSignals == 5u);
     }
+
+    const char8 *signalNames[] = { "Signal1", "Signal2", "Signal3", "Signal4", "Signal5" };
+    const char8 *signalTypes[] = { "uint32", "float32", "int32", "uint32", "uint32" };
+    StreamString name;
+    uint32 idx;
+    uint32 n;
     TypeDescriptor desc;
-    if (ret) {
-        desc = dataSource->GetSignalType(0);
-        ret = (desc == TypeDescriptor::GetTypeDescriptorFromTypeName("uint32"));
-    }
-    if (ret) {
-        desc = dataSource->GetSignalType(1);
-        ret = (desc == TypeDescriptor::GetTypeDescriptorFromTypeName("float32"));
-    }
-    if (ret) {
-        desc = dataSource->GetSignalType(2);
-        ret = (desc == TypeDescriptor::GetTypeDescriptorFromTypeName("int32"));
+    for (n = 0; (n < numberOfSignals) && (ret); n++) {
+        ret = dataSource->GetSignalIndex(idx, signalNames[n]);
+        if (ret) {
+            desc = dataSource->GetSignalType(idx);
+            ret = (desc == TypeDescriptor::GetTypeDescriptorFromTypeName(signalTypes[n]));
+        }
     }
     if (ret) {
         desc = dataSource->GetSignalType(10000);
@@ -482,27 +490,25 @@ bool DataSourceITest::TestGetSignalNumberOfDimensions() {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
         ret = dataSource.IsValid();
     }
+    uint32 numberOfSignals = dataSource->GetNumberOfSignals();
     if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
+        ret = (numberOfSignals == 5u);
     }
+
+    const char8 *signalNames[] = { "Signal1", "Signal2", "Signal3", "Signal4", "Signal5" };
+    uint32 signalDimensions[] = { 0, 0, 2, 0, 0 };
+    StreamString name;
+    uint32 idx;
+    uint32 n;
     uint32 dimensions;
-    if (ret) {
-        ret = dataSource->GetSignalNumberOfDimensions(0, dimensions);
-    }
-    if (ret) {
-        ret = (dimensions == 0u);
-    }
-    if (ret) {
-        ret = dataSource->GetSignalNumberOfDimensions(1, dimensions);
-    }
-    if (ret) {
-        ret = (dimensions == 0u);
-    }
-    if (ret) {
-        ret = dataSource->GetSignalNumberOfDimensions(2, dimensions);
-    }
-    if (ret) {
-        ret = (dimensions == 2u);
+    for (n = 0; (n < numberOfSignals) && (ret); n++) {
+        ret = dataSource->GetSignalIndex(idx, signalNames[n]);
+        if (ret) {
+            ret = dataSource->GetSignalNumberOfDimensions(idx, dimensions);
+        }
+        if (ret) {
+            ret = (dimensions == signalDimensions[n]);
+        }
     }
     if (ret) {
         ret = !(dataSource->GetSignalNumberOfDimensions(100000, dimensions));
@@ -517,27 +523,25 @@ bool DataSourceITest::TestGetSignalNumberOfElements() {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
         ret = dataSource.IsValid();
     }
+    uint32 numberOfSignals = dataSource->GetNumberOfSignals();
     if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
+        ret = (numberOfSignals == 5u);
     }
+
+    const char8 *signalNames[] = { "Signal1", "Signal2", "Signal3", "Signal4", "Signal5" };
+    uint32 signalElements[] = { 1, 1, 6, 1, 1 };
+    StreamString name;
+    uint32 idx;
+    uint32 n;
     uint32 elements;
-    if (ret) {
-        ret = dataSource->GetSignalNumberOfElements(0, elements);
-    }
-    if (ret) {
-        ret = (elements == 1u);
-    }
-    if (ret) {
-        ret = dataSource->GetSignalNumberOfElements(1, elements);
-    }
-    if (ret) {
-        ret = (elements == 1u);
-    }
-    if (ret) {
-        ret = dataSource->GetSignalNumberOfElements(2, elements);
-    }
-    if (ret) {
-        ret = (elements == 6u);
+    for (n = 0; (n < numberOfSignals) && (ret); n++) {
+        ret = dataSource->GetSignalIndex(idx, signalNames[n]);
+        if (ret) {
+            ret = dataSource->GetSignalNumberOfElements(idx, elements);
+        }
+        if (ret) {
+            ret = (elements == signalElements[n]);
+        }
     }
     if (ret) {
         ret = !(dataSource->GetSignalNumberOfElements(100000, elements));
@@ -552,30 +556,28 @@ bool DataSourceITest::TestGetSignalByteSize() {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
         ret = dataSource.IsValid();
     }
+    uint32 numberOfSignals = dataSource->GetNumberOfSignals();
     if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
+        ret = (numberOfSignals == 5u);
     }
+
+    const char8 *signalNames[] = { "Signal1", "Signal2", "Signal3", "Signal4", "Signal5" };
+    uint32 byteSizes[] = { 4, 4, 24, 4, 4 };
+    StreamString name;
+    uint32 idx;
+    uint32 n;
     uint32 byteSize;
-    if (ret) {
-        ret = dataSource->GetSignalByteSize(0, byteSize);
+    for (n = 0; (n < numberOfSignals) && (ret); n++) {
+        ret = dataSource->GetSignalIndex(idx, signalNames[n]);
+        if (ret) {
+            ret = dataSource->GetSignalByteSize(idx, byteSize);
+        }
+        if (ret) {
+            ret = (byteSize == byteSizes[n]);
+        }
     }
     if (ret) {
-        ret = (byteSize == 4u);
-    }
-    if (ret) {
-        ret = dataSource->GetSignalByteSize(1, byteSize);
-    }
-    if (ret) {
-        ret = (byteSize == 4u);
-    }
-    if (ret) {
-        ret = dataSource->GetSignalByteSize(2, byteSize);
-    }
-    if (ret) {
-        ret = (byteSize == 24u);
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalByteSize(100000, byteSize));
+        ret = !(dataSource->GetSignalNumberOfElements(100000, byteSize));
     }
     return ret;
 }
@@ -587,27 +589,25 @@ bool DataSourceITest::TestGetSignalNumberOfStates() {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
         ret = dataSource.IsValid();
     }
+    uint32 numberOfSignals = dataSource->GetNumberOfSignals();
     if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
+        ret = (numberOfSignals == 5u);
     }
+
+    const char8 *signalNames[] = { "Signal1", "Signal2", "Signal3", "Signal4", "Signal5" };
+    uint32 signalNStates[] = { 1, 1, 2, 1, 1 };
+    StreamString name;
+    uint32 idx;
+    uint32 n;
     uint32 numberOfStates;
-    if (ret) {
-        ret = (dataSource->GetSignalNumberOfStates(0, numberOfStates));
-    }
-    if (ret) {
-        ret = (numberOfStates == 1u);
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalNumberOfStates(1, numberOfStates));
-    }
-    if (ret) {
-        ret = (numberOfStates == 1u);
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalNumberOfStates(2, numberOfStates));
-    }
-    if (ret) {
-        ret = (numberOfStates == 2u);
+    for (n = 0; (n < numberOfSignals) && (ret); n++) {
+        ret = dataSource->GetSignalIndex(idx, signalNames[n]);
+        if (ret) {
+            ret = dataSource->GetSignalNumberOfStates(idx, numberOfStates);
+        }
+        if (ret) {
+            ret = (numberOfStates == signalNStates[n]);
+        }
     }
     if (ret) {
         ret = !(dataSource->GetSignalNumberOfStates(100000, numberOfStates));
@@ -622,87 +622,71 @@ bool DataSourceITest::TestGetSignalStateName() {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
         ret = dataSource.IsValid();
     }
+    uint32 numberOfSignals = dataSource->GetNumberOfSignals();
     if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
+        ret = (numberOfSignals == 5u);
     }
+
+    const char8 *signalNames[] = { "Signal1", "Signal2", "Signal3", "Signal4", "Signal5" };
+    const char8 *signalStateNames[][2] = { { "State1", NULL }, { "State2", NULL }, { "State1", "State2" }, { "State1", NULL }, { "State1", NULL } };
     StreamString stateName;
-    if (ret) {
-        ret = (dataSource->GetSignalStateName(0, 0, stateName));
+    uint32 idx;
+    uint32 n;
+    uint32 numberOfStates = 2;
+
+    for (n = 0; (n < numberOfSignals) && (ret); n++) {
+        ret = dataSource->GetSignalIndex(idx, signalNames[n]);
+        uint32 s;
+        for (s = 0u; (s < numberOfStates) && (ret); s++) {
+            ret = dataSource->GetSignalStateName(idx, s, stateName);
+            if (signalStateNames[n][s] == NULL) {
+                ret = !ret;
+            }
+            else if (ret) {
+                ret = (stateName == signalStateNames[n][s]);
+            }
+        }
     }
     if (ret) {
-        ret = (stateName == "State1");
-        stateName = "";
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalStateName(0, 1, stateName));
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalStateName(1, 0, stateName));
-    }
-    if (ret) {
-        ret = (stateName == "State2");
-        stateName = "";
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalStateName(1, 1, stateName));
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalStateName(2, 0, stateName));
-    }
-    if (ret) {
-        ret = (stateName == "State1");
-        stateName = "";
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalStateName(2, 1, stateName));
-    }
-    if (ret) {
-        ret = (stateName == "State2");
-        stateName = "";
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalStateName(2, 2, stateName));
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalStateName(3, 0, stateName));
+        ret = !(dataSource->GetSignalStateName(1000000, 0, stateName));
     }
     return ret;
 }
 
 bool DataSourceITest::TestGetSignalNumberOfConsumers() {
+
     bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
         ret = dataSource.IsValid();
     }
+    uint32 numberOfSignals = dataSource->GetNumberOfSignals();
     if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
+        ret = (numberOfSignals == 5u);
     }
+
+    const char8 *signalNames[] = { "Signal1", "Signal2", "Signal3", "Signal4", "Signal5" };
+    const char8 *signalStates[] = { "State1", "State2" };
+    uint32 signalConsumers[][2] = { { 1, 0 }, { 0, 2 }, { 0, 0 }, { 1, 0 }, { 1, 0 } };
+    uint32 numberOfStates = 2;
+
     uint32 numberOfConsumers;
-    if (ret) {
-        ret = (dataSource->GetSignalNumberOfConsumers(0, "State1", numberOfConsumers));
-    }
-    if (ret) {
-        ret = (numberOfConsumers == 1);
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalNumberOfConsumers(0, "State2", numberOfConsumers));
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalNumberOfConsumers(1, "State1", numberOfConsumers));
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalNumberOfConsumers(1, "State2", numberOfConsumers));
-    }
-    if (ret) {
-        ret = (numberOfConsumers == 2);
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalNumberOfConsumers(2, "State1", numberOfConsumers));
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalNumberOfConsumers(2, "State2", numberOfConsumers));
+    uint32 idx;
+    uint32 n;
+
+    for (n = 0; (n < numberOfSignals) && (ret); n++) {
+        ret = dataSource->GetSignalIndex(idx, signalNames[n]);
+        uint32 s;
+        for (s = 0u; (s < numberOfStates) && (ret); s++) {
+            ret = (dataSource->GetSignalNumberOfConsumers(idx, signalStates[s], numberOfConsumers));
+            if (signalConsumers[n][s] == 0) {
+                ret = !ret;
+            }
+            else {
+                ret = (numberOfConsumers == signalConsumers[n][s]);
+            }
+        }
     }
     if (ret) {
         ret = !(dataSource->GetSignalNumberOfConsumers(0, "NonExistentState", numberOfConsumers));
@@ -720,39 +704,32 @@ bool DataSourceITest::TestGetSignalNumberOfProducers() {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
         ret = dataSource.IsValid();
     }
+    uint32 numberOfSignals = dataSource->GetNumberOfSignals();
     if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
+        ret = (numberOfSignals == 5u);
     }
+
+    const char8 *signalNames[] = { "Signal1", "Signal2", "Signal3", "Signal4", "Signal5" };
+    const char8 *signalStates[] = { "State1", "State2" };
+    uint32 signalProducers[][2] = { { 1, 0 }, { 0, 1 }, { 1, 1 }, { 1, 0 }, { 1, 0 } };
+    uint32 numberOfStates = 2;
+
     uint32 numberOfProducers;
-    if (ret) {
-        ret = (dataSource->GetSignalNumberOfProducers(0, "State1", numberOfProducers));
-    }
-    if (ret) {
-        ret = (numberOfProducers == 1);
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalNumberOfProducers(0, "State2", numberOfProducers));
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalNumberOfProducers(1, "State1", numberOfProducers));
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalNumberOfProducers(1, "State2", numberOfProducers));
-    }
-    if (ret) {
-        ret = (numberOfProducers == 1);
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalNumberOfProducers(2, "State1", numberOfProducers));
-    }
-    if (ret) {
-        ret = (numberOfProducers == 1);
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalNumberOfProducers(2, "State2", numberOfProducers));
-    }
-    if (ret) {
-        ret = (numberOfProducers == 1);
+    uint32 idx;
+    uint32 n;
+
+    for (n = 0; (n < numberOfSignals) && (ret); n++) {
+        ret = dataSource->GetSignalIndex(idx, signalNames[n]);
+        uint32 s;
+        for (s = 0u; (s < numberOfStates) && (ret); s++) {
+            ret = (dataSource->GetSignalNumberOfProducers(idx, signalStates[s], numberOfProducers));
+            if (signalProducers[n][s] == 0) {
+                ret = !ret;
+            }
+            else {
+                ret = (numberOfProducers == signalProducers[n][s]);
+            }
+        }
     }
     if (ret) {
         ret = !(dataSource->GetSignalNumberOfProducers(0, "NonExistentState", numberOfProducers));
@@ -770,48 +747,37 @@ bool DataSourceITest::TestGetSignalConsumerName() {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
         ret = dataSource.IsValid();
     }
+    uint32 numberOfSignals = dataSource->GetNumberOfSignals();
     if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
+        ret = (numberOfSignals == 5u);
     }
+
+    const uint32 numberOfStates = 2;
+    const uint32 numberOfConsumers = 2;
+    const char8 *signalNames[] = { "Signal1", "Signal2", "Signal3", "Signal4", "Signal5" };
+    const char8 *signalStates[] = { "State1", "State2" };
+    const char8 *signalConsumerNames[][numberOfStates][numberOfConsumers] = { { { "GAMA", NULL }, { NULL, NULL } }, { { NULL, NULL }, { "GAMB", "GAME" } }, { {
+    NULL, NULL }, { NULL, NULL } }, { { "GAMA", NULL }, { NULL, NULL } }, { { "GAMA", NULL }, { NULL, NULL } } };
+
+    uint32 idx;
+    uint32 n;
     StreamString name;
-    if (ret) {
-        ret = (dataSource->GetSignalConsumerName(0, "State1", 0, name));
-    }
-    if (ret) {
-        ret = (name == "GAMA");
-        name = "";
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalConsumerName(0, "State2", 0, name));
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalConsumerName(1, "State1", 0, name));
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalConsumerName(1, "State2", 0, name));
-    }
-    if (ret) {
-        ret = (name == "GAMB");
-        name = "";
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalConsumerName(1, "State2", 1, name));
-    }
-    if (ret) {
-        ret = (name == "GAME");
-        name = "";
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalConsumerName(2, "State1", 0, name));
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalConsumerName(2, "State2", 0, name));
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalConsumerName(2, "State1", 1, name));
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalConsumerName(2, "State2", 1, name));
+
+    for (n = 0; (n < numberOfSignals) && (ret); n++) {
+        ret = dataSource->GetSignalIndex(idx, signalNames[n]);
+        uint32 s;
+        for (s = 0u; (s < numberOfStates) && (ret); s++) {
+            uint32 c;
+            for (c = 0u; (c < numberOfConsumers) && (ret); c++) {
+                ret = (dataSource->GetSignalConsumerName(idx, signalStates[s], c, name));
+                if (signalConsumerNames[n][s][c] == NULL) {
+                    ret = !ret;
+                }
+                else {
+                    ret = (name == signalConsumerNames[n][s][c]);
+                }
+            }
+        }
     }
     if (ret) {
         ret = !(dataSource->GetSignalConsumerName(0, "NonExistentState", 0, name));
@@ -829,52 +795,38 @@ bool DataSourceITest::TestGetSignalProducerName() {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
         ret = dataSource.IsValid();
     }
+    uint32 numberOfSignals = dataSource->GetNumberOfSignals();
     if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
+        ret = (numberOfSignals == 5u);
     }
+
+    const uint32 numberOfStates = 2;
+    const char8 *signalNames[] = { "Signal1", "Signal2", "Signal3", "Signal4", "Signal5" };
+    const char8 *signalStates[] = { "State1", "State2" };
+    const char8 *signalProducerNames[][numberOfStates] = { { "GAMC", NULL }, { NULL, "GAMD" }, { "GAMF", "GAMF" }, { "GAMC", NULL }, { "GAMC", NULL } };
+
+    uint32 idx;
+    uint32 n;
     StreamString name;
-    if (ret) {
-        ret = (dataSource->GetSignalProducerName(0, "State1", 0, name));
-    }
-    if (ret) {
-        ret = (name == "GAMC");
-        name = "";
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalProducerName(0, "State2", 0, name));
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalProducerName(1, "State1", 0, name));
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalProducerName(1, "State2", 0, name));
-    }
-    if (ret) {
-        ret = (name == "GAMD");
-        name = "";
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalProducerName(2, "State1", 0, name));
-    }
-    if (ret) {
-        ret = (name == "GAMF");
-        name = "";
-    }
-    if (ret) {
-        ret = (dataSource->GetSignalProducerName(2, "State2", 0, name));
-    }
-    if (ret) {
-        ret = (name == "GAMF");
-        name = "";
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalProducerName(2, "State1", 1, name));
-    }
-    if (ret) {
-        ret = !(dataSource->GetSignalProducerName(2, "State2", 1, name));
+
+    for (n = 0; (n < numberOfSignals) && (ret); n++) {
+        ret = dataSource->GetSignalIndex(idx, signalNames[n]);
+        uint32 s;
+        for (s = 0u; (s < numberOfStates) && (ret); s++) {
+            ret = (dataSource->GetSignalProducerName(idx, signalStates[s], 0, name));
+            if (signalProducerNames[n][s] == NULL) {
+                ret = !ret;
+            }
+            else {
+                ret = (name == signalProducerNames[n][s]);
+            }
+        }
     }
     if (ret) {
         ret = !(dataSource->GetSignalProducerName(0, "NonExistentState", 0, name));
+    }
+    if (ret) {
+        ret = !(dataSource->GetSignalProducerName(0, "State1", 10000, name));
     }
     if (ret) {
         ret = !(dataSource->GetSignalProducerName(100000, "State1", 0, name));
@@ -890,15 +842,321 @@ bool DataSourceITest::TestGetSignalDefaultValue() {
         ret = dataSource.IsValid();
     }
     if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
+        ret = (dataSource->GetNumberOfSignals() == 5u);
     }
 
     uint32 defaultValueUInt32;
-    if(ret){
+    if (ret) {
         ret = dataSource->GetSignalDefaultValue(0, defaultValueUInt32);
     }
-    if(ret){
+    if (ret) {
         ret = (defaultValueUInt32 == 7u);
+    }
+    if (ret) {
+        ret = !dataSource->GetSignalDefaultValue(1, defaultValueUInt32);
+    }
+    int32 defaultValueInt32Arr[6];
+    if (ret) {
+        ret = dataSource->GetSignalDefaultValue(2, defaultValueInt32Arr);
+    }
+    if (ret) {
+        int32 i;
+        for (i = 1; (i < 7) && ret; i++) {
+            ret = (defaultValueInt32Arr[i - 1] == 3 * i);
+        }
+    }
+    if (ret) {
+        ret = !dataSource->GetSignalDefaultValue(1, defaultValueInt32Arr);
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestGetNumberOfFunctions() {
+    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        ret = (dataSource->GetNumberOfFunctions() == 6u);
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestGetFunctionIndex() {
+    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    uint32 numberOfFunctions = dataSource->GetNumberOfFunctions();
+    if (ret) {
+        ret = (numberOfFunctions == 6u);
+    }
+    uint32 idx;
+    StreamString value;
+    const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
+
+    uint32 n;
+    for (n = 0u; (n < numberOfFunctions) && ret; n++) {
+        ret = dataSource->GetFunctionIndex(idx, functionNames[n]);
+        if (ret) {
+            ret = dataSource->GetFunctionName(idx, value);
+        }
+        if (ret) {
+            ret = (value == functionNames[n]);
+            value = "";
+        }
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionName(10000, value);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionIndex(idx, "GAMDoesNotExist");
+    }
+
+    return ret;
+}
+
+bool DataSourceITest::TestGetFunctionName() {
+    return TestGetFunctionIndex();
+}
+
+bool DataSourceITest::TestGetFunctionNumberOfSignals() {
+    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    uint32 numberOfFunctions = dataSource->GetNumberOfFunctions();
+    if (ret) {
+        ret = (numberOfFunctions == 6u);
+    }
+    uint32 idx;
+    StreamString value;
+    const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
+    uint32 numberOfSignalsInput[] = { 3, 1, 0, 0, 1, 0 };
+    uint32 numberOfSignalsOutput[] = { 0, 0, 3, 1, 0, 1 };
+
+    uint32 n;
+    uint32 numberOfSignals = 0u;
+    for (n = 0u; (n < numberOfFunctions) && ret; n++) {
+        ret = dataSource->GetFunctionIndex(idx, functionNames[n]);
+        if (ret) {
+            ret = dataSource->GetFunctionNumberOfSignals(InputSignals, idx, numberOfSignals);
+        }
+        if (ret) {
+            ret = (numberOfSignals == numberOfSignalsInput[n]);
+        }
+        if (ret) {
+            ret = dataSource->GetFunctionNumberOfSignals(OutputSignals, idx, numberOfSignals);
+        }
+        if (ret) {
+            ret = (numberOfSignals == numberOfSignalsOutput[n]);
+        }
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionNumberOfSignals(InputSignals, 100000u, numberOfSignals);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionNumberOfSignals(OutputSignals, 100000u, numberOfSignals);
+    }
+
+    return ret;
+}
+
+bool DataSourceITest::TestGetFunctionSignalsByteSize() {
+    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    uint32 numberOfFunctions = dataSource->GetNumberOfFunctions();
+    if (ret) {
+        ret = (numberOfFunctions == 6u);
+    }
+    uint32 idx;
+    StreamString value;
+    const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
+    uint32 numberOfBytesInput[] = { 12, 4, 0, 0, 4, 0 };
+    uint32 numberOfBytesOutput[] = { 0, 0, 12, 4, 0, 24 };
+
+    uint32 n;
+    uint32 numberOfBytes = 0u;
+    for (n = 0u; (n < numberOfFunctions) && ret; n++) {
+        ret = dataSource->GetFunctionIndex(idx, functionNames[n]);
+        if (ret) {
+            ret = dataSource->GetFunctionSignalsByteSize(InputSignals, idx, numberOfBytes);
+        }
+        if (ret) {
+            ret = (numberOfBytes == numberOfBytesInput[n]);
+        }
+        if (ret) {
+            ret = dataSource->GetFunctionSignalsByteSize(OutputSignals, idx, numberOfBytes);
+        }
+        if (ret) {
+            ret = (numberOfBytes == numberOfBytesOutput[n]);
+        }
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalsByteSize(InputSignals, 100000u, numberOfBytes);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalsByteSize(OutputSignals, 100000u, numberOfBytes);
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestGetFunctionSignalName() {
+    return TestGetFunctionSignalIndex();
+}
+
+bool DataSourceITest::TestGetFunctionSignalIndex() {
+    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    uint32 numberOfFunctions = dataSource->GetNumberOfFunctions();
+
+    if (ret) {
+        ret = (numberOfFunctions == 6u);
+    }
+    StreamString value;
+    uint32 idx;
+    const uint32 maxNumberOfInputSignals = 3;
+    const uint32 maxNumberOfOutputSignals = 3;
+    const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
+    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
+            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
+
+    uint32 n;
+    uint32 functionSignalIdx;
+    for (n = 0u; (n < numberOfFunctions) && (ret); n++) {
+        ret = dataSource->GetFunctionIndex(idx, functionNames[n]);
+        if (ret) {
+            uint32 i;
+            for (i = 0; (i < maxNumberOfInputSignals) && (ret); i++) {
+                ret = dataSource->GetFunctionSignalIndex(InputSignals, idx, functionSignalIdx, functionInputSignalNames[n][i]);
+                if (functionInputSignalNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else if (ret) {
+                    value = "";
+                    ret = dataSource->GetFunctionSignalName(InputSignals, idx, functionSignalIdx, value);
+                    if (ret) {
+                        ret = (value == functionInputSignalNames[n][i]);
+                    }
+                }
+            }
+            for (i = 0; (i < maxNumberOfOutputSignals) && (ret); i++) {
+                ret = dataSource->GetFunctionSignalIndex(OutputSignals, idx, functionSignalIdx, functionOutputSignalNames[n][i]);
+                if (functionOutputSignalNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else if (ret) {
+                    value = "";
+                    ret = dataSource->GetFunctionSignalName(OutputSignals, idx, functionSignalIdx, value);
+                    if (ret) {
+                        ret = (value == functionOutputSignalNames[n][i]);
+                    }
+                }
+            }
+        }
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalIndex(InputSignals, 0, functionSignalIdx, "NonExistentFunctionName");
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalIndex(InputSignals, 100000, functionSignalIdx, "Signal4");
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalIndex(OutputSignals, 0, functionSignalIdx, "NonExistentFunctionName");
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalIndex(OutputSignals, 100000, functionSignalIdx, "Signal4");
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestGetFunctionSignalAlias() {
+    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    uint32 numberOfFunctions = dataSource->GetNumberOfFunctions();
+
+    if (ret) {
+        ret = (numberOfFunctions == 6u);
+    }
+    StreamString value;
+    uint32 idx;
+    const uint32 maxNumberOfInputSignals = 3;
+    const uint32 maxNumberOfOutputSignals = 3;
+    const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
+    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
+            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
+    const char8 *functionInputSignalAlias[][maxNumberOfInputSignals] = { { "Signal4A", "Signal5", "Signal1A" }, { "Signal2", "", "" }, { "", "", "" }, { "", "",
+            "" }, { "Signal2", "", "" }, { "Signal3", "", "" } };
+    const char8 *functionOutputSignalAlias[][maxNumberOfInputSignals] = { { "", "", "" }, { "", "", "" }, { "Signal1A", "Signal4A", "Signal5" }, { "Signal2", "",
+            "" }, { "", "", "" }, { "Signal3", "", "" } };
+
+    uint32 n;
+    uint32 functionSignalIdx;
+    for (n = 0u; (n < numberOfFunctions) && (ret); n++) {
+        ret = dataSource->GetFunctionIndex(idx, functionNames[n]);
+        if (ret) {
+            uint32 i;
+            for (i = 0; (i < maxNumberOfInputSignals) && (ret); i++) {
+                ret = dataSource->GetFunctionSignalIndex(InputSignals, idx, functionSignalIdx, functionInputSignalNames[n][i]);
+                if (functionInputSignalNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else if (ret) {
+                    value = "";
+                    ret = dataSource->GetFunctionSignalAlias(InputSignals, idx, functionSignalIdx, value);
+                    if (ret) {
+                        ret = (value == functionInputSignalAlias[n][i]);
+                    }
+                }
+            }
+            for (i = 0; (i < maxNumberOfOutputSignals) && (ret); i++) {
+                ret = dataSource->GetFunctionSignalIndex(OutputSignals, idx, functionSignalIdx, functionOutputSignalNames[n][i]);
+                if (functionOutputSignalNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else if (ret) {
+                    value = "";
+                    ret = dataSource->GetFunctionSignalAlias(OutputSignals, idx, functionSignalIdx, value);
+                    if (ret) {
+                        ret = (value == functionOutputSignalAlias[n][i]);
+                    }
+                }
+            }
+        }
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalIndex(InputSignals, 0, functionSignalIdx, "NonExistentFunctionName");
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalIndex(InputSignals, 100000, functionSignalIdx, "Signal4");
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalIndex(OutputSignals, 0, functionSignalIdx, "NonExistentFunctionName");
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalIndex(OutputSignals, 100000, functionSignalIdx, "Signal4");
     }
     return ret;
 }

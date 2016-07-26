@@ -2969,27 +2969,28 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToFunctions() {
             ret = dataSource.IsValid();
         }
 
-        if (ret) {
-            ret = dataSourcesDatabase.MoveRelative("Functions");
-        }
-        if (ret) {
-            uint32 numberOfFunctions = dataSourcesDatabase.GetNumberOfChildren();
-            for (uint32 j = 0u; (j < numberOfFunctions) && (ret); j++) {
-                const char8 * functionId = dataSourcesDatabase.GetChildName(j);
-                ret = dataSourcesDatabase.MoveRelative(functionId);
-                if (ret) {
-                    ret = AssignBrokersToSignals(InputSignals, dataSource);
+        //Allow for empty DataSources...
+        if (dataSourcesDatabase.MoveRelative("Functions")) {
+
+            if (ret) {
+                uint32 numberOfFunctions = dataSourcesDatabase.GetNumberOfChildren();
+                for (uint32 j = 0u; (j < numberOfFunctions) && (ret); j++) {
+                    const char8 * functionId = dataSourcesDatabase.GetChildName(j);
+                    ret = dataSourcesDatabase.MoveRelative(functionId);
                     if (ret) {
-                        ret = AssignBrokersToSignals(OutputSignals, dataSource);
+                        ret = AssignBrokersToSignals(InputSignals, dataSource);
+                        if (ret) {
+                            ret = AssignBrokersToSignals(OutputSignals, dataSource);
+                        }
+                    }
+                    if (ret) {
+                        ret = dataSourcesDatabase.MoveToAncestor(1u);
                     }
                 }
-                if (ret) {
-                    ret = dataSourcesDatabase.MoveToAncestor(1u);
-                }
             }
-        }
-        if (ret) {
-            ret = dataSourcesDatabase.MoveToAncestor(2u);
+            if (ret) {
+                ret = dataSourcesDatabase.MoveToAncestor(2u);
+            }
         }
     }
     return ret;

@@ -397,7 +397,9 @@ bool DataSourceI::GetSignalProducerName(uint32 signalIdx,
 bool DataSourceI::GetSignalDefaultValue(uint32 signalIdx,
                                         const AnyType &defaultValue) {
     bool ret = MoveToSignalIndex(signalIdx);
-    //defaultValue = configuredDatabase.GetType("Default");
+    if (ret) {
+        ret = configuredDatabase.Read("Default", defaultValue);
+    }
     return ret;
 }
 
@@ -463,14 +465,15 @@ bool DataSourceI::GetFunctionNumberOfSignals(SignalDirection direction,
     if (direction == OutputSignals) {
         signalDirection = "OutputSignals";
     }
+    numberOfSignals = 0u;
     bool ret = MoveToFunctionIndex(functionIdx);
     if (ret) {
         if (configuredDatabase.MoveRelative(signalDirection)) {
             //Ignore the ByteSize and the Address
             ret = (configuredDatabase.GetNumberOfChildren() > 2u);
-        }
-        if (ret) {
-            numberOfSignals = configuredDatabase.GetNumberOfChildren() - 2u;
+            if (ret) {
+                numberOfSignals = configuredDatabase.GetNumberOfChildren() - 2u;
+            }
         }
     }
     return ret;
@@ -483,38 +486,16 @@ bool DataSourceI::GetFunctionSignalsByteSize(SignalDirection direction,
     if (direction == OutputSignals) {
         signalDirection = "OutputSignals";
     }
+    byteSize = 0u;
     bool ret = MoveToFunctionIndex(functionIdx);
     if (ret) {
-        ret = configuredDatabase.MoveRelative(signalDirection);
-    }
-    if (ret) {
-        ret = configuredDatabase.Read("ByteSize", byteSize);
+        if (configuredDatabase.MoveRelative(signalDirection)) {
+            ret = configuredDatabase.Read("ByteSize", byteSize);
+        }
     }
 
     return ret;
 }
-/*
- bool DataSourceI::GetFunctionSignalsAddress(SignalDirection direction,
- uint32 functionIdx,
- void *&address) {
- const char8 *signalDirection = "InputSignals";
- if (direction == OutputSignals) {
- signalDirection = "OutputSignals";
- }
- bool ret = MoveToFunctionIndex(functionIdx);
- if (ret) {
- ret = configuredDatabase.MoveRelative(signalDirection);
- }
- uint64 temp = 0u;
- if (ret) {
- ret = configuredDatabase.Read("Address", temp);
- }
- if (ret) {
- address = reinterpret_cast<void *>(temp);
- }
-
- return ret;
- }*/
 
 bool DataSourceI::GetFunctionSignalName(SignalDirection direction,
                                         uint32 functionIdx,
@@ -535,7 +516,9 @@ bool DataSourceI::GetFunctionSignalAlias(SignalDirection direction,
 
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (ret) {
-        ret = configuredDatabase.Read("Alias", functionSignalAlias);
+        if(!configuredDatabase.Read("Alias", functionSignalAlias)){
+            functionSignalAlias = "";
+        }
     }
     return ret;
 }
@@ -550,7 +533,7 @@ bool DataSourceI::GetFunctionSignalIndex(SignalDirection direction,
     uint32 i;
     for (i = 0u; (i < numberOfFunctionSignals) && (ret) && (!found); i++) {
         StreamString searchName;
-        ret = GetFunctionName(i, searchName);
+        ret = GetFunctionSignalName(direction, functionIdx, i, searchName);
         if (ret) {
             found = (StringHelper::Compare(functionSignalName, searchName.Buffer()) == 0u);
             functionSignalIdx = i;
