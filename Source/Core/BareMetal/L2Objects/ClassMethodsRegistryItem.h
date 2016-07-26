@@ -52,7 +52,45 @@ class ClassRegistryItem;
 namespace MARTe {
 
 /**
- * @brief A list of a class callable methods.
+ * @brief This class represents a registry of callable methods for a class.
+ *
+ * @details This class is in charge of allowing to call methods on a target
+ * object, but only those methods that are registered, i.e. those that are
+ * into a closed list. For that reason, each instance of this class must be
+ * linked to a previously initialised list of ClassMethodInterfaceMapper
+ * instances and a list of method names, being its maintenance out of the
+ * scope of the class.
+ *
+ * Moreover, each instance of this class will register itself to a previously
+ * existent ClassRegistryItem instance, calling its RegisterMethods method
+ * (that's why this class derives from LinkedListable). The initialisation
+ * and maintenance of this ClassRegistryItem instance is out of the scope
+ * of this class, too.
+ *
+ * Example (registering virtual function):\n
+ * Assume we have the inheritance chain A<--B<--C and the virtual function
+ * A::f() reimplemented in B::f() but not in C. Registering A::f() in the
+ * ClassRegistryItem of the class C, means that when calling
+ * CallFunction(C* x) the implementation will be the one defined in B,
+ * namely B::f() will be called because of the polymorphism.
+ *
+ * Example (registering non virtual function):\n
+ * Assume we have the inheritance chain A<--B<--C and the non-virtual
+ * function A::f() implemented also in B::f() but not in C. Registering
+ * A::f() in the ClassRegistryItem of the class C, means that when calling
+ * CallFunction(C* x) the implementation will be the one defined in A,
+ * namely A::f(). Registering B::f() in the ClassRegistryItem of C, the
+ * implementation will be the one defined in B::f() also passing a pointer
+ * to C in the CallFunction. At last, registering C::f(), CallFunction(C* x)
+ * will return UnsupportedFeature because C::f() has not been defined.
+ *
+ * @warning All the methods of the provided list have to belong to the class
+ * we want to register, otherwise at the moment of calling the function,
+ * through the CallFunction method, it will return ErrorManagement::UnsupportedFeature.
+ *
+ *
+ * method without argument and 1 argument
+ *
  */
 class DLL_API ClassMethodsRegistryItem: public LinkedListable {
 
@@ -60,26 +98,18 @@ public:
 
     /**
      * @brief Constructor.
-     * @details Passing a list of class methods, the ClassMethodInterfaceMapper array will be automatically built
-     * and passed as the constructor input. The constructor adds this object in ClassRegistryItem passed in input.
-     * All the methods have to belong to the class we want to register, otherwise at the moment of calling the function
-     * the CallFunction(*) will return ErrorManagement::UnsupportedFeature.
-     * @param[in] cri is the ClassRegistryItem where this object has to be added to.
-     * @param[in] functionTable_in is the list of ClassMethodInterfaceMapper, each one capable to store and call one
-     * class method.
-     * @param[in] functionNames_in is a string containing all the class methods names. The syntax for this string
-     * has to be "ClassName::FunctionName1, ClassName::FunctionName2, ...". ClassName it is not forced to be the same
-     * name of the class to be registered because can be also the name of an ancestor of this class.
-     * Example (registering virtual function):\n
-     * Assume we have the inheritance chain A<--B<--C and the virtual function A::f() reimplemented in B::f() but not in C.
-     * Registering A::f() in the ClassRegistryItem of the class C, means that when calling CallFunction(C* x) the implementation will be
-     * the one defined in B, namely B::f() will be called because of the polimorphism.
-     * Example (registering non virtual function):\n
-     * Assume we have the inheritance chain A<--B<--C and the non-virtual function A::f() implemented also in B::f() but not in C.
-     * Registering A::f() in the ClassRegistryItem of the class C, means that when calling CallFunction(C* x) the implementation will be
-     * the one defined in A, namely A::f(). Registering B::f() in the ClassRegistryItem of C, the implementation will be the one defined
-     * in B::f() also passing a pointer to C in the CallFunction. At last, registering C::f(), CallFunction(C* x) will return UnsupportedFeature
-     * because C::f() has not been defined.
+     * @details Initialise an instance of the class with the required external
+     * objects, i.e. it links the instance with the list of callable methods
+     * and its method names list companion, and the ClassRegistryItem instance.
+     * @param[in] cri is the ClassRegistryItem where this object has to be
+     * added to.
+     * @param[in] functionTable_in is the list of ClassMethodInterfaceMapper,
+     * each one capable to store and call one class method.
+     * @param[in] functionNames_in is a string containing all the class methods
+     * names. The syntax for this string has to be "ClassName::FunctionName1,
+     * ClassName::FunctionName2, ...". ClassName it is not forced to be the
+     * same name of the class to be registered because can be also the name of
+     * an ancestor of this class.
      */
     ClassMethodsRegistryItem(ClassRegistryItem * const cri,
                              ClassMethodInterfaceMapper * const functionTable_In,
@@ -91,27 +121,32 @@ public:
     virtual ~ClassMethodsRegistryItem();
 
     /**
-     * @brief Calls the function with one argument.
+     * @brief Calls a function without arguments.
      * @param[in] context is the object which must call the class method.
-     * @param[in] name is the name of the class method to be called. The name has to be
-     * only the name of the function without any extra mangling.
-     * @param[in,out] is the class method argument.
-     * @return ErrorManagement::UnsupportedFeature if \a name does not match with any of the names in the
-     * function names list or if the class method does not belong to \a context. ErrorManagement::FatalError
-     * will be returned if the class method returns false, ErrorManagemenr::NoError if it returns true.
+     * @param[in] name is the name of the class method to be called. The name
+     * has to be only the name of the function without any extra mangling.
+     * @return
+     * + ErrorManagement::UnsupportedFeature if \a name does not match with
+     * any of the names in the function names list or if the class method does
+     * not belong to \a context.
+     * + ErrorManagement::FatalError if the class method returns false
+     * + ErrorManagemenr::NoError if the class method returns true.
      */
     ErrorManagement::ErrorType CallFunction(Object * const context,
                                             const char8 * const name);
 
     /**
-     * @brief Calls the function with one argument.
+     * @brief Calls a function with one argument.
      * @param[in] context is the object which must call the class method.
-     * @param[in] name is the name of the class method to be called. The name has to be
-     * only the name of the function without any extra mangling.
-     * @param[in,out] is the class method argument.
-     * @return ErrorManagement::UnsupportedFeature if \a name does not match with any of the names in the
-     * function names list or if the class method does not belong to \a context. ErrorManagement::FatalError
-     * will be returned if the class method returns false, ErrorManagemenr::NoError if it returns true.
+     * @param[in] name is the name of the class method to be called. The name
+     * has to be only the name of the function without any extra mangling.
+     * @param[in,out] ref is the class method argument.
+     * @return
+     * + ErrorManagement::UnsupportedFeature if \a name does not match with
+     * any of the names in the function names list or if the class method does
+     * not belong to \a context.
+     * + ErrorManagement::FatalError if the class method returns false
+     * + ErrorManagemenr::NoError if the class method returns true.
      * @tparam argType is the type of the argument to pass to the class method.
      */
     template<typename argType>
@@ -122,22 +157,24 @@ public:
 private:
 
     /**
-     * @brief Finds the class method name in input in the class method names list.
+     * @brief Finds the class method name in the class method names list.
      * @param[in] name is the name of the class method (without any mangling)
      * to be searched in the names list.
-     * @return the index of the class method pointer in the table if \a name is found in the list,
-     * -1 otherwise.
+     * @return the index of the class method pointer in the table if \a name
+     * is found in the list, -1 otherwise.
      */
     int32 FindFunction(const char8 * const name,
                        const int32 minIndex);
 
     /**
-     * The array of objects used to call the class methods.
+     * @brief The pointer to the array of objects used to call class methods
+     * @warning This class does not own the array, so it is not responsible
+     * for the management of the array's lifecycle.
      */
     ClassMethodInterfaceMapper * const functionTable;
 
     /**
-     * The class method names list.
+     * The class method names list encoded into a string.
      */
     CCString functionNames;
 

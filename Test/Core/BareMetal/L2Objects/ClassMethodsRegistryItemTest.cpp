@@ -47,64 +47,17 @@
 
 namespace {
 
-//using namespace MARTe;
-
-//class ClassWithCallableMethods: public Object {
-//public:
-//    CLASS_REGISTER_DECLARATION()
-//    ClassWithCallableMethods() {};
-//    virtual ~ClassWithCallableMethods() {};
-//    /**
-//     * Method which simulates an error execution (i.e. returns false)
-//     */
-//    bool FaultyMethod(ReferenceContainer& ref) {
-//        return false;
-//    }
-//    /**
-//     *
-//     */
-//    bool NonRegisteredMethod(ReferenceContainer& ref) {
-//        return true;
-//    }
-//    /**
-//     * consumes input from a ReferenceContainer
-//     */
-//    bool MethodWithInputReferenceContainer(ReferenceContainer& ref) {
-//        return true;
-//    };
-//    bool MethodWithInputReferenceContainer() {
-//        return true;
-//    }
-//    /**
-//     * produces output into a ReferenceContainer
-//     */
-//    bool MethodWithOutputReferenceContainer(ReferenceContainer& ref) {
-//        return true;
-//    };
-//    /**
-//     * consumes/produces from/into a ReferenceContainer
-//     */
-//    bool MethodWithInputOutputReferenceContainer(ReferenceContainer& ref) {
-//        return true;
-//    };
-//
-//    /**
-//     * consumes an integer
-//     */
-//    bool MethodM(int ref) {
-//        return true;
-//    }
-//};
-//
-//CLASS_REGISTER(ClassWithCallableMethods,"1.0")
-//
-//CLASS_METHOD_REGISTER(ClassWithCallableMethods, &ClassWithCallableMethods::FaultyMethod, &ClassWithCallableMethods::MethodWithInputReferenceContainer, &ClassWithCallableMethods::MethodWithOutputReferenceContainer, &ClassWithCallableMethods::MethodWithInputOutputReferenceContainer)
-
+/**
+ * @brief This class is a fresh version of ClassWithCallableMethods, providing
+ * the same methods but without automatic registering.
+ */
 class ClassWithCallableMethods1: public ClassWithCallableMethods {};
-class ClassWithCallableMethods2: public ClassWithCallableMethods {};
 
-//CLASS_METHOD_REGISTER(ClassWithCallableMethods1, &ClassWithCallableMethods1::FaultyMethod, (bool (ClassWithCallableMethods1::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods1::MethodWithInputReferenceContainer, &ClassWithCallableMethods1::MethodWithOutputReferenceContainer, &ClassWithCallableMethods1::MethodWithInputOutputReferenceContainer)
-//CLASS_METHOD_REGISTER(ClassWithCallableMethods2, &ClassWithCallableMethods2::FaultyMethod, (bool (ClassWithCallableMethods2::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods2::MethodWithInputReferenceContainer, &ClassWithCallableMethods2::MethodWithOutputReferenceContainer, &ClassWithCallableMethods2::MethodWithInputOutputReferenceContainer)
+/**
+ * @brief This class is a fresh version of ClassWithCallableMethods, providing
+ * the same methods but without automatic registering.
+ */
+class ClassWithCallableMethods2: public ClassWithCallableMethods {};
 
 }
 
@@ -113,15 +66,9 @@ class ClassWithCallableMethods2: public ClassWithCallableMethods {};
 /*---------------------------------------------------------------------------*/
 
 ClassMethodsRegistryItemTest::ClassMethodsRegistryItemTest() {
-//Auto-generated constructor stub for ClassMethodsRegistryItemTest
-
-//TODO Verify if manual additions are needed here
 }
 
 ClassMethodsRegistryItemTest::~ClassMethodsRegistryItemTest() {
-//Auto-generated destructor stub for ClassMethodsRegistryItemTest
-
-//TODO Verify if manual additions are needed here
 }
 
 bool ClassMethodsRegistryItemTest::TestConstructor() {

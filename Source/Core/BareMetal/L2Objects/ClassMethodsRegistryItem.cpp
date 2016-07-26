@@ -44,27 +44,24 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem * const cri,
                                                    ClassMethodInterfaceMapper * const functionTable_In,
                                                    const char8 * const functionNames_In) :
-    LinkedListable(),
-    functionTable(functionTable_In) {
-    functionNames = functionNames_In;
-    // register in Object the record
+        LinkedListable(),
+        functionTable(functionTable_In),
+        functionNames(functionNames_In) {
+    //Registers itself into the in RegisterMethods instance passed as argument:
     if (cri != NULL) {
         cri->RegisterMethods(this);
     }
 }
 
 ClassMethodsRegistryItem::~ClassMethodsRegistryItem() {
-    /*
-     * TODO
-     */
 }
 
 int32 ClassMethodsRegistryItem::FindFunction(const char8 * const name,
                                              const int32 minIndex) {
-
     const char8 *list = functionNames;
 
     uint32 nameSize = StringHelper::Length(name);
