@@ -66,6 +66,17 @@ static const IntrospectionEntry* TestStructCEntries[] = { &TestStructC_c1_intros
         &TestStructC_c3_introspectionEntry, 0 };
 
 DECLARE_STRUCT_INTROSPECTION(TestStructC, TestStructCEntries);
+
+
+DECLARE_CLASS_MEMBER(TestStructD, c1, TestStructB, "", "");
+
+DECLARE_CLASS_MEMBER(TestStructD, c2, float32, "[3]", "");
+
+DECLARE_CLASS_MEMBER(TestStructD, c3, int32, "[2][4]", "");
+
+static const IntrospectionEntry* TestStructDEntries[] = { &TestStructD_c1_introspectionEntry, &TestStructD_c2_introspectionEntry, &TestStructD_c3_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructD, TestStructDEntries);
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////

@@ -63,31 +63,146 @@ public:
     //Alias
     bool TestFlattenSignalsDatabases4();
 
+    //With deep nested names
+    bool TestFlattenSignalsDatabases5();
+
+    //With deep nested names in data source
+    bool TestFlattenSignalsDatabases6();
+
     //Known signal properties
     bool TestFlattenSignalsDatabases_CopyAllKnownSignalsProperties();
 
-    //Invalid dimensions todo
-    bool TestFlattenSignalsDatabases_InvalidDimensions();
+    //Member aliases in struct
+    bool TestFlattenSignalsDatabases_MemberAliases();
 
-    bool TestResolveDataSources();
+    //Defaults in struct in GAM
+    bool TestFlattenSignalsDatabases_Defaults();
 
+    //Defaults in struct in ds
+    bool TestFlattenSignalsDatabases_Defaults2();
+
+
+    //dimensions>0 in struct
+    bool TestFlattenSignalsDatabases_InvalidNDimensionsInStruct();
+
+    //elements>1 in struct
+    bool TestFlattenSignalsDatabases_InvalidNElementsInStruct();
+
+    //Only frequency specified in struct
+    bool TestFlattenSignalsDatabases_OnlyFrequencyInStruct();
+
+    //Only sync signal specified in struct
+    bool TestFlattenSignalsDatabases_OnlySyncSignalInStruct();
+
+    //Invalid sync signal specified in struct
+    bool TestFlattenSignalsDatabases_InvalidSyncSignalInStruct();
+
+    //Basic
+    bool TestResolveDataSources1();
+
+    //Different data sources
+    bool TestResolveDataSources2();
+
+    //Merge properties
+    bool TestResolveDataSources3();
+
+    //Structures Remapping
+    bool TestResolveDataSources_StructMap();
+
+    //Structures Remapping with ds namespaces
+    bool TestResolveDataSources_StructMapNamespaces();
+
+    //Structures Remapping using namespace
+    bool TestResolveDataSources_StructNamespaceMap();
+
+
+    //Type mismatch
     bool TestResolveDataSourceFalse_TypeMismatch();
 
+    //Type mismatch directly from ds
+    bool TestResolveDataSourceFalse_TypeMismatch1();
+
+    //NElements mismatch
     bool TestResolveDataSourceFalse_NElementsMismatch();
 
+    //NElements mismatch directly from ds
+    bool TestResolveDataSourceFalse_NElementsMismatch1();
+
+
+    //NDimensions mismatch
     bool TestResolveDataSourceFalse_NDimensionsMismatch();
 
-    bool TestVerifyDataSourcesSignals();
 
-    bool TestVerifyDataSourcesSignals_PartialInPredefinedDsNoType();
+    //NDimensions mismatch directly from ds
+    bool TestResolveDataSourceFalse_NDimensionsMismatch1();
 
-    bool TestVerifyDataSourcesSignalsFalse_NoTypeInPredefinedDs();
+    //Default mismatch
+    bool TestResolveDataSourceFalse_DefaultMismatch();
 
-    bool TestVerifyDataSourcesSignalsFalse_PartialInPredefinedDsWithType();
 
-    bool TestResolveFunctionSignals();
+    //Default mismatch directly from ds
+    bool TestResolveDataSourceFalse_DefaultMismatch1();
 
+    //Default mismatch with structures
+    bool TestResolveDataSourceFalse_DefaultMismatch3();
+
+
+    //assignment of a leaf on a node
+    bool TestResolveDataSourcesSignalsFalse_LeafMappedOnNode();
+
+    //incompatible struct map
+    bool TestResolveDataSourcesSignalsFalse_IncompatibleMap();
+
+    //incompatible struct map
+    bool TestResolveDataSourcesSignalsFalse_IncompatibleMap1();
+
+    //pre-existent ds with type not allowed (map a structure on a leaf basically)
+    bool TestResolveDataSourcesSignalsFalse_PartialDataSourceWithType();
+
+    //bool TestVerifyDataSourcesSignals();
+
+    //Basic
+    bool TestVerifyDataSourcesSignals1();
+
+    //Partial struct node defined
+    bool TestVerifyDataSourcesSignals_PartialDataSource();
+
+    //Match of various defaults
+    bool TestVerifyDataSourcesSignals_DefaultValuesMatch();
+
+    //Automatic assignment of NumberOfElements
+    bool TestVerifyDataSourcesSignals_AssignNumberOfElements();
+
+    //Automatic assignment of NumberOfDimensions
+    bool TestVerifyDataSourcesSignals_AssignNumberOfDimensions();
+
+    //DS without type
+    bool TestVerifyDataSourcesSignalsFalse_NoType();
+
+    //NumberOfElements = 0
+    bool TestVerifyDataSourcesSignalsFalse_InvalidNElements();
+
+    //Incompatible defaults
+    bool TestVerifyDataSourcesSignalsFalse_IncompatibleDefaults();
+
+    //Incompatible defaults
+    bool TestVerifyDataSourcesSignalsFalse_IncompatibleDefaultsMultiVarAsArray();
+
+    //Basic
+    bool TestResolveFunctionSignals1();
+
+    //merge a struct
     bool TestResolveFunctionSignals2();
+
+    //merge a struct
+    bool TestResolveFunctionSignals3();
+
+    //no type
+    bool TestResolveFunctionSignals_FalseNoType();
+
+
+
+
 
     bool TestResolveFunctionSignalsFalse_NoTypeInGAMSignal();
 
