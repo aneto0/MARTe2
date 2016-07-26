@@ -50,24 +50,30 @@ class ReferenceContainer;
 namespace MARTe {
 
 /**
- * @brief Class method caller
+ * @brief This class represents an abstract class method caller.
  *
  * @details A class method caller is an object whose purpose is to call a
  * specific method of another object. In order to make a call, a class method
  * caller needs:
- * + A pointer to the target object, known as the context.
- * + A pointer to the class method of the target object.
+ * + A pointer to the context, also known as the target object.
+ * + A pointer to the class method of the target object, also known as the
+ * target method.
  * + A list of the arguments to be passed to the target method.
  *
- * This class supplies a list of "Call" methods, which acts as a list of valid
- * prototypes for the accepted class methods on the target object. Each one of
- * these "Call" methods expects a target object (the context) and the arguments
- * to be passed to the class method of the target object. Note: The default
- * implementation of these methods return ErrorManagement::UnsupportedFeature.
+ * This class is meant as a supplier of "Call" methods prototypes, defining
+ * a closed list of callable methods for any context. These "Call" methods
+ * always receive a context and the arguments to be passed to the target
+ * method. If a target method does not match any of the defined "Call"
+ * prototypes, then a new "Call" method must be added to the class. It must
+ * be noted, too, that this class does not hold a pointer to the target
+ * method, because this is left to the classes that will derive from it.
  *
- * It is intended that each instance of the class is going to be linked to a
- * specific method of target object's class, but this is left to its derived
- * classes (e.g. passing to it through the constructor of a derived class).
+ * @warning This class must be considered as a pure abstract class, i.e. an
+ * interface, although it does not declare any of its methods as pure virtual.
+ * Instead, it implements all the methods forcing them to return a default
+ * value (UnsupportedFeature). The reason to this is that derived classes are
+ * expected to implement only one of the "Call" methods, being this a way for
+ * getting a default null implementation for the others.
  */
 class DLL_API ClassMethodCaller {
 
@@ -85,43 +91,73 @@ public:
 
     /**
      * @brief Calls a class method without parameters.
-     * @param[in] context is the objects owning the method.
-     * @return ErrorManagement::FatalError if the registered function returns false, ErrorManagement::NoError if it returns true, or ErrorManagement::UnsupportedFeature if the call is not registered.
+     * @param[in] context is the pointer to the object owning the method.
+     * @return
+     * + ErrorManagement::FatalError if the registered function returns false
+     * + ErrorManagement::NoError if it returns true
+     * + ErrorManagement::UnsupportedFeature if the call is not registered
+     * @warning The object pointed by context could be modified by the actual
+     * class method called.
      */
-    virtual ErrorManagement::ErrorType Call(Object * const context);
+    virtual ErrorManagement::ErrorType Call(Object* const context);
 
     /**
      * @brief Calls a class method with an integer in input passed by reference.
-     * @param[in] context is the objects owning the method.
+     * @param[in] context is the pointer to the object owning the method.
      * @param[in, out] x is the integer in input.
-     * @return ErrorManagement::FatalError if the registered function returns false, ErrorManagement::NoError if it returns true, or ErrorManagement::UnsupportedFeature if the call is not registered..
+     * @return
+     * + ErrorManagement::FatalError if the registered function returns false
+     * + ErrorManagement::NoError if it returns true
+     * + ErrorManagement::UnsupportedFeature if the call is not registered
+     * @warning The object pointed by context could be modified by the actual
+     * class method called.
      */
-    virtual ErrorManagement::ErrorType Call(Object * const context,
-                                            int32 &x);
+    virtual ErrorManagement::ErrorType Call(Object* const context,
+                                            int32& x);
 
     /**
      * @brief Calls a class method with a ReferenceContainer in input passed by reference.
-     * @param[in] context is the objects owning the method.
+     * @param[in] context is the pointer to the object owning the method.
      * @param[in, out] x is the ReferenceContainer in input.
-     * @return ErrorManagement::FatalError if the registered function returns false, ErrorManagement::NoError if it returns true, or ErrorManagement::UnsupportedFeature if the call is not registered..
+     * @return
+     * + ErrorManagement::FatalError if the registered function returns false
+     * + ErrorManagement::NoError if it returns true
+     * + ErrorManagement::UnsupportedFeature if the call is not registered
+     * @warning The object pointed by context could be modified by the actual
+     * class method called.
      */
-    virtual ErrorManagement::ErrorType Call(Object * const context,
-                                            ReferenceContainer & x);
+    virtual ErrorManagement::ErrorType Call(Object* const context,
+                                            ReferenceContainer& x);
 
     /**
      * @brief Calls a class method with an integer in input passed by copy.
-     * @param[in] context is the objects owning the method.
-     * @param[in, out] x is the integer in input.
-     * @return ErrorManagement::FatalError if the registered function returns false, ErrorManagement::NoError if it returns true, or ErrorManagement::UnsupportedFeature if the call is not registered..
+     * @param[in] context is the pointer to the object owning the method.
+     * @param[in] x is the integer in input.
+     * @param[in] byCopy states if the x argument is actually passed by copy
+     * (meaningful when used from templates, helping on overloading resolution)
+     * @return
+     * + ErrorManagement::FatalError if the registered function returns false
+     * + ErrorManagement::NoError if it returns true
+     * + ErrorManagement::UnsupportedFeature if the call is not registered
+     * @warning The object pointed by context could be modified by the actual
+     * class method called.
      */
-    virtual ErrorManagement::ErrorType Call(Object * const context,
+    virtual ErrorManagement::ErrorType Call(Object* const context,
                                             int32 x,
                                             bool byCopy);
+
     /**
      * @brief Calls a class method with a ReferenceContainer in input passed by copy.
-     * @param[in] context is the objects owning the method.
-     * @param[in, out] x is the ReferenceContainer in input.
-     * @return ErrorManagement::FatalError if the registered function returns false, ErrorManagement::NoError if it returns true, or ErrorManagement::UnsupportedFeature if the call is not registered..
+     * @param[in] context is the pointer to the object owning the method.
+     * @param[in] x is the ReferenceContainer in input.
+     * @param[in] byCopy states if the x argument is actually passed by copy
+     * (meaningful when used from templates, helping on overloading resolution)
+     * @return
+     * + ErrorManagement::FatalError if the registered function returns false
+     * + ErrorManagement::NoError if it returns true
+     * + ErrorManagement::UnsupportedFeature if the call is not registered
+     * @warning The object pointed by context could be modified by the actual
+     * class method called.
      */
     virtual ErrorManagement::ErrorType Call(Object * const context,
                                             ReferenceContainer x,

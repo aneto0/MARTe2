@@ -55,9 +55,17 @@ ClassMethodCallerTTest::~ClassMethodCallerTTest() {
 
 bool ClassMethodCallerTTest::TestDefaultConstructor() {
     using namespace MARTe;
+    bool result = true;
     ClassMethodCallerT<ClassWithCallableMethods, int&>::MethodPointer pFun = &ClassWithCallableMethods::MethodWithInputInteger;
-    ClassMethodCallerT<ClassWithCallableMethods, int&> target(pFun);
-    return (pFun == target.GetMethodPointer());
+    {
+        ClassMethodCallerT<ClassWithCallableMethods, int&> target(pFun);
+        result &= (target.GetMethodPointer() == pFun);
+    }
+    {
+        ClassMethodCallerT<ClassWithCallableMethods> target(pFun);
+        result &= (target.GetMethodPointer() == pFun);
+    }
+    return result;
 }
 
 bool ClassMethodCallerTTest::TestCall() {

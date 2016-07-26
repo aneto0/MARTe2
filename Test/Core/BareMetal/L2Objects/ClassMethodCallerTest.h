@@ -36,11 +36,30 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * @brief Unit tests for the public methods of ClassMethodCaller.
+ */
 class ClassMethodCallerTest {
 public:
+
+    /**
+     * @brief Default constructor.
+     **/
     ClassMethodCallerTest();
+
+    /**
+     * @brief Destructor.
+     **/
     virtual ~ClassMethodCallerTest();
+
+    /**
+     * @brief Tests the default constructor
+     */
     bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests the Call method
+     */
     bool TestCall();
 };
 
