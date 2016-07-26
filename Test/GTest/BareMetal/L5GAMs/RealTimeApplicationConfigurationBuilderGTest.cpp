@@ -76,20 +76,76 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases4) 
     ASSERT_TRUE(test.TestFlattenSignalsDatabases4());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases5) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases5());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases6) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases6());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_CopyAllKnownSignalsProperties) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestFlattenSignalsDatabases_CopyAllKnownSignalsProperties());
 }
 
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_MemberAliases) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_MemberAliases());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_Defaults) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_Defaults());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_Defaults2) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_Defaults2());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_InvalidDimensions) {
     RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestFlattenSignalsDatabases_InvalidDimensions());
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_InvalidNDimensionsInStruct());
 }
 
 
-TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources) {
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_InvalidNElementsInStruct) {
     RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveDataSources());
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_InvalidNElementsInStruct());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_OnlyFrequencyInStruct) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_OnlyFrequencyInStruct());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_OnlySyncSignalInStruct) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_OnlySyncSignalInStruct());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_InvalidSyncSignalInStruct) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_InvalidSyncSignalInStruct());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources1) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources1());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources2) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources2());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources3) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources3());
 }
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourceFalse_TypeMismatch) {
@@ -97,9 +153,19 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourceFalse_Typ
     ASSERT_TRUE(test.TestResolveDataSourceFalse_TypeMismatch());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourceFalse_TypeMismatch1) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSourceFalse_TypeMismatch1());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourceFalse_NElementsMismatch) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveDataSourceFalse_NElementsMismatch());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourceFalse_NElementsMismatch1) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSourceFalse_NElementsMismatch1());
 }
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourceFalse_NDimensionsMismatch) {
@@ -107,9 +173,126 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourceFalse_NDi
     ASSERT_TRUE(test.TestResolveDataSourceFalse_NDimensionsMismatch());
 }
 
-TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignals) {
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourceFalse_NDimensionsMismatch1) {
     RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestVerifyDataSourcesSignals());
+    ASSERT_TRUE(test.TestResolveDataSourceFalse_NDimensionsMismatch1());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourceFalse_DefaultMismatch) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSourceFalse_DefaultMismatch());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourceFalse_DefaultMismatch1) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSourceFalse_DefaultMismatch1());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourceFalse_DefaultMismatch3) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSourceFalse_DefaultMismatch3());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourcesSignalsFalse_IncompatibleMap) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSourcesSignalsFalse_IncompatibleMap());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourcesSignalsFalse_IncompatibleMap1) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSourcesSignalsFalse_IncompatibleMap1());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourcesSignalsFalse_PartialDataSourceWithType) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSourcesSignalsFalse_PartialDataSourceWithType());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMap) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources_StructMap());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMapNamespaces) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources_StructMapNamespaces());
+}
+
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructNamespaceMap) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources_StructNamespaceMap());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourcesSignalsFalse_LeafMappedOnNode) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSourcesSignalsFalse_LeafMappedOnNode());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignals1) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyDataSourcesSignals1());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignals_PartialDataSource) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyDataSourcesSignals_PartialDataSource());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignals_DefaultValuesMatch) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyDataSourcesSignals_DefaultValuesMatch());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignals_AssignNumberOfElements) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyDataSourcesSignals_AssignNumberOfElements());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignals_AssignNumberOfDimensions) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyDataSourcesSignals_AssignNumberOfDimensions());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignalsFalse_IncompatibleDefaults) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyDataSourcesSignalsFalse_IncompatibleDefaults());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignalsFalse_IncompatibleDefaultsMultiVarAsArray) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyDataSourcesSignalsFalse_IncompatibleDefaultsMultiVarAsArray());
+}
+
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals1) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionSignals1());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals2) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionSignals2());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals3) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionSignals3());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals_FalseNoType) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionSignals_FalseNoType());
+}
+/*
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignalsFalse_NoType) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyDataSourcesSignalsFalse_NoType());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignalsFalse_InvalidNElements) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyDataSourcesSignalsFalse_InvalidNElements());
 }
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignals_PartialInPredefinedDsNoType) {
@@ -222,4 +405,4 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestAssignBrokersToFunctions) 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestAllocateGAMMemory) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestAllocateGAMMemory());
-}
+}*/
