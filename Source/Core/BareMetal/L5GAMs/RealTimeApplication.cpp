@@ -329,7 +329,7 @@ bool RealTimeApplication::StopExecution() {
 #include <stdio.h>
 
 static void PrintDatabases(RealTimeApplicationConfigurationBuilder &rtAppBuilder) {
-    return;
+    //return;
     static uint32 i = 0u;
     static uint32 j = 1u;
     ConfigurationDatabase fdb;
@@ -919,9 +919,9 @@ bool RealTimeApplication::AddBrokersToFunctions() {
             }
             if (ret) {
 
-                ret = dataSource->AddBrokers(*this, InputSignals);
+                ret = dataSource->AddBrokers(InputSignals);
                 if (ret) {
-                    ret = dataSource->AddBrokers(*this, OutputSignals);
+                    ret = dataSource->AddBrokers(OutputSignals);
                 }
 
             }

@@ -2796,7 +2796,7 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToSignals(SignalDirec
 
                 if (ret) {
                     // return the broker depending on the signal configuration
-                    StreamString brokerClassName = dataSource->Negotiate(dataSourcesDatabase, direction);
+                    StreamString brokerClassName = dataSource->GetBrokerName(dataSourcesDatabase, direction);
                     ret = brokerClassName.Size() > 0u;
                     if (ret) {
                         ret = dataSourcesDatabase.Write("Broker", brokerClassName.Buffer());

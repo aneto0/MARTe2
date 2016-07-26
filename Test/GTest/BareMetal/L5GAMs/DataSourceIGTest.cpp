@@ -163,3 +163,39 @@ TEST(DataSourceIGTest,TestGetFunctionSignalAlias) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionSignalAlias());
 }
+
+TEST(DataSourceIGTest,TestGetFunctionSignalNumberOfByteOffsets) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionSignalNumberOfByteOffsets());
+}
+
+TEST(DataSourceIGTest,TestGetFunctionSignalByteOffsetInfo) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionSignalByteOffsetInfo());
+}
+
+TEST(DataSourceIGTest,TestGetFunctionSignalSamples) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionSignalSamples());
+}
+
+TEST(DataSourceIGTest,TestGetFunctionSignalReadFrequencyInput) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionSignalReadFrequencyInput());
+}
+
+TEST(DataSourceIGTest,TestGetFunctionSignalReadFrequencyOutput) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionSignalReadFrequencyOutput());
+}
+
+TEST(DataSourceIGTest,TestGetAddBrokers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetAddBrokers());
+}
+
+TEST(DataSourceIGTest,TestIsSupportedBroker) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestIsSupportedBroker());
+}
+
