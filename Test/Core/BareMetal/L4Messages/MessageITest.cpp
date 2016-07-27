@@ -34,6 +34,7 @@
 #include "Message.h"
 #include "ConfigurationDatabase.h"
 #include "ObjectRegistryDatabase.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -42,7 +43,12 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-//using namespace MARTe;
+MessageITest::MessageITest() {
+}
+
+MessageITest::~MessageITest() {
+}
+
 bool MessageITest::TestDefaultConstructor() {
     using namespace MARTe;
     MessageI mess;
@@ -206,7 +212,6 @@ bool MessageITest::TestSendMessage_False_NoDestinationForExpectedReply() {
         return false;
     }
 
-
     mess->MarkLateReplyExpected();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
@@ -219,8 +224,6 @@ bool MessageITest::TestSendMessage_False_NoDestinationForExpectedReply() {
     return result;
 
 }
-
-
 
 bool MessageITest::TestSendMessage_False_InvalidDestination() {
     using namespace MARTe;
@@ -257,10 +260,9 @@ bool MessageITest::TestSendMessage_False_InvalidFunction() {
     bool result = false;
     ErrorManagement::ErrorType status;
     ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    ReferenceT<ObjectWithMessages> receiver=ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());;
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     sender->SetName("sender");
     receiver->SetName("receiver");
-
 
     ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ConfigurationDatabase cdb;
@@ -282,33 +284,6 @@ bool MessageITest::TestSendMessage_False_InvalidFunction() {
     return result;
 
 }
-
-/*
- bool MessageITest::TestSendMessage_False_NotReplyButImmediateReplayExpected(){
- ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
- ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
- sender->SetName("sender");
- receiver->SetName("receiver");
-
- ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
- ConfigurationDatabase cdb;
- cdb.Write("Destination", "receiver");
- cdb.Write("Function", "ReceiverMethod");
-
- if (!mess->Initialise(cdb)) {
- return false;
- }
-
- mess->MarkImmediateReplyExpected();
-
- ObjectRegistryDatabase::Instance()->CleanUp();
- ObjectRegistryDatabase::Instance()->Insert(sender);
- ObjectRegistryDatabase::Instance()->Insert(receiver);
-
- return (MessageI::SendMessage(mess, sender.operator->())==ErrorManagement::CommunicationError);
-
- }
- */
 
 bool MessageITest::TestSendMessageAndWaitReply() {
     using namespace MARTe;
@@ -433,8 +408,7 @@ bool MessageITest::TestSendMessageAndExpectReplyLater() {
     return result;
 }
 
-
-bool MessageITest::TestSendMessageAndExpectReplyLater_False_InvalidMessage(){
+bool MessageITest::TestSendMessageAndExpectReplyLater_False_InvalidMessage() {
     using namespace MARTe;
     bool result = false;
     ErrorManagement::ErrorType status;
@@ -456,9 +430,7 @@ bool MessageITest::TestSendMessageAndExpectReplyLater_False_InvalidMessage(){
     return result;
 }
 
-
-
-bool MessageITest::TestSendMessageAndExpectReplyLater_False_ReplyOfReply(){
+bool MessageITest::TestSendMessageAndExpectReplyLater_False_ReplyOfReply() {
     using namespace MARTe;
     bool result = false;
     ErrorManagement::ErrorType status;
@@ -488,5 +460,3 @@ bool MessageITest::TestSendMessageAndExpectReplyLater_False_ReplyOfReply(){
 
     return result;
 }
-
-

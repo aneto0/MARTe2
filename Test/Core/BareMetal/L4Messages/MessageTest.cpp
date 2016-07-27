@@ -43,14 +43,21 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool MessageTest::TestConstructor() {
+MessageTest::MessageTest() {
+}
 
+MessageTest::~MessageTest() {
+}
+
+bool MessageTest::TestConstructor() {
+    using namespace MARTe;
     Message mess;
     return true;
 
 }
 
 bool MessageTest::TestInitialise() {
+    using namespace MARTe;
     bool result = false;
     const MessageTest::MessageInitTableTest table[]={
             {"dummyDestination", "dummyFunction", 1000,           "ExpectsReply",          "Destination=dummyDestination\n Function=dummyFunction\n MaxWait=1000\n Mode=ExpectsReply\n", true},
@@ -66,6 +73,7 @@ bool MessageTest::TestInitialise() {
 }
 
 bool MessageTest::TestInitialise(const MessageInitTableTest * table) {
+    using namespace MARTe;
 
     bool result = true;
 
@@ -118,6 +126,7 @@ bool MessageTest::TestInitialise(const MessageInitTableTest * table) {
 }
 
 bool MessageTest::TestMarkAsReply() {
+    using namespace MARTe;
     bool result = true;
     Message mess;
     mess.MarkAsReply();
@@ -136,6 +145,7 @@ bool MessageTest::TestIsReplyMessage() {
 }
 
 bool MessageTest::TestMarkImmediateReplyExpected() {
+    using namespace MARTe;
     bool result = true;
     Message mess;
     mess.MarkImmediateReplyExpected();
@@ -148,6 +158,7 @@ bool MessageTest::TestMarkImmediateReplyExpected() {
 }
 
 bool MessageTest::TestMarkLateReplyExpected() {
+    using namespace MARTe;
     bool result = true;
     Message mess;
     mess.MarkLateReplyExpected();
@@ -160,6 +171,7 @@ bool MessageTest::TestMarkLateReplyExpected() {
 }
 
 bool MessageTest::TestReplyExpected() {
+    using namespace MARTe;
     bool result = true;
     Message mess;
     result &= !mess.ReplyExpected();
@@ -174,6 +186,7 @@ bool MessageTest::TestReplyExpected() {
 }
 
 bool MessageTest::TestImmediateReplyExpected() {
+    using namespace MARTe;
     bool result = true;
     Message mess;
     result &= !mess.ImmediateReplyExpected();
@@ -188,6 +201,7 @@ bool MessageTest::TestImmediateReplyExpected() {
 }
 
 bool MessageTest::TestLateReplyExpected() {
+    using namespace MARTe;
     bool result = true;
     Message mess;
     result &= !mess.LateReplyExpected();
@@ -202,6 +216,7 @@ bool MessageTest::TestLateReplyExpected() {
 }
 
 bool MessageTest::TestGetDestination() {
+    using namespace MARTe;
     bool result = true;
     ConfigurationDatabase cdb;
     result &= cdb.Write("Destination", "dummyDestination");
@@ -213,6 +228,7 @@ bool MessageTest::TestGetDestination() {
 }
 
 bool MessageTest::TestSetSender() {
+    using namespace MARTe;
     bool result = true;
     Message mess;
     mess.SetSender("sender");
@@ -227,6 +243,7 @@ bool MessageTest::TestGetSender() {
 }
 
 bool MessageTest::TestGetFunction() {
+    using namespace MARTe;
     bool result = true;
     ConfigurationDatabase cdb;
     result &= cdb.Write("Destination", "dummyDestination");
@@ -238,6 +255,7 @@ bool MessageTest::TestGetFunction() {
 }
 
 bool MessageTest::TestSetReplyTimeout() {
+    using namespace MARTe;
     TimeoutType maxWaitIn = 1000;
     Message mess;
     mess.SetReplyTimeout(maxWaitIn);

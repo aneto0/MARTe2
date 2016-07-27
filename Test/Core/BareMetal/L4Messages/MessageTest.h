@@ -39,49 +39,109 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
-
+/**
+ * Tests the Message public methods.
+ */
 class MessageTest {
 public:
+
+    /**
+     * @brief Default constructor
+     */
+    MessageTest();
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~MessageTest();
+
+    /**
+     * @brief Tests the default constructor
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests the Initialise method
+     */
     bool TestInitialise();
 
+    /**
+     * @brief Tests the MarkAsReply method
+     */
     bool TestMarkAsReply();
 
+    /**
+     * @brief Tests the IsReplyMessage method
+     */
     bool TestIsReplyMessage();
 
+    /**
+     * @brief Tests the MarkImmediateReplyExpected method
+     */
     bool TestMarkImmediateReplyExpected();
 
+    /**
+     * @brief Tests the MarkLateReplyExpected method
+     */
     bool TestMarkLateReplyExpected();
 
+    /**
+     * @brief Tests the ReplyExpected method
+     */
     bool TestReplyExpected();
 
+    /**
+     * @brief Tests the ImmediateReplyExpected method
+     */
     bool TestImmediateReplyExpected();
 
+    /**
+     * @brief Tests the LateReplyExpected method
+     */
     bool TestLateReplyExpected();
 
+    /**
+     * @brief Tests the GetDestination method
+     */
     bool TestGetDestination();
 
+    /**
+     * @brief Tests the GetSender method
+     */
     bool TestGetSender();
 
+    /**
+     * @brief Tests the SetSender method
+     */
     bool TestSetSender();
 
+    /**
+     * @brief Tests the GetFunction method
+     */
     bool TestGetFunction();
 
+    /**
+     * @brief Tests the SetReplyTimeout method
+     */
     bool TestSetReplyTimeout();
 
 private:
 
+    /**
+     * @brief Data structure for testing intialisation of messages
+     */
     struct MessageInitTableTest {
-        const char8* destination;
-        const char8* function;
-        const TimeoutType maxwait;
-        const char8* mode;
-        const char8* configuration;
+        const MARTe::char8* destination;
+        const MARTe::char8* function;
+        const MARTe::TimeoutType maxwait;
+        const MARTe::char8* mode;
+        const MARTe::char8* configuration;
         bool expected;
     };
 
+    /**
+     * @brief Tests the Initialise method (parameterised version)
+     */
     bool TestInitialise(const MessageInitTableTest * table);
 };
 
@@ -89,5 +149,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_CORE_BAREMETAL_L4MESSAGES_MESSAGETEST_H_ */
+#endif /* MESSAGETEST_H_ */
 
