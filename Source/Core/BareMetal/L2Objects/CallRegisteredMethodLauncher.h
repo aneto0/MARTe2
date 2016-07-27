@@ -85,7 +85,8 @@ public:
 
     /**
      * @brief LinkedListable searching callback function.
-     * @details This function is called for every element in the list being searched (i.e. traversed).
+     * @details This function is called for every element in the list being
+     * searched (i.e. traversed).
      * @param[in] data the current LinkedListable element to be tested.
      * @return true if \a data meets the search criteria.
      */
