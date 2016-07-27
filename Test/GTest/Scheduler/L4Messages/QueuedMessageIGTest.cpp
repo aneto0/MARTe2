@@ -40,10 +40,15 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
-
 TEST(QueuedMessageIGTest,TestDefaultConstructor) {
+    using namespace MARTe;
     QueuedMessageITest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
+}
+
+TEST(QueuedMessageIGTest,TestDefaultConstructor) {
+    using namespace MARTe;
+    QueuedMessageITest target;
+    ASSERT_TRUE(target.TestReceiveMessage());
 }
 

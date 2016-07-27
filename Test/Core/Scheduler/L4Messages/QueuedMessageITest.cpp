@@ -39,8 +39,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
 QueuedMessageITest::QueuedMessageITest() {
 }
 
@@ -48,7 +46,19 @@ QueuedMessageITest::~QueuedMessageITest() {
 }
 
 bool QueuedMessageITest::TestDefaultConstructor() {
-    return false;
+    /* Remark: This test defaults to false, because the QueuedMessageI class
+     * is not finished, therefore its contract is not specified or stable.
+     */
+    bool result;
+    result = false;
+    return result;
 }
 
+bool QueuedMessageITest::TestReceiveMessage() {
+    /* Remark: This test defaults to false, because the QueuedMessageI class
+     * is not finished, therefore its contract is not specified or stable.
+     */
+    bool result;
+    result = false;
+    return result;
 }

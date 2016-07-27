@@ -1,8 +1,8 @@
 /**
  * @file QueuedMessageI.cpp
  * @brief Source file for class QueuedMessageI
- * @date Apr 22, 2016
- * @author fsartori
+ * @date 22/04/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -44,21 +44,23 @@
 namespace MARTe {
 
 QueuedMessageI::QueuedMessageI(): MessageI() {
-
+    //TODO: Implement object's construction
+    //sets all up and starts the message handler thread
 }
 
 QueuedMessageI::~QueuedMessageI() {
-
+    //TODO: Implement object's destruction
+    //kills the message handler thread
 }
 
 ErrorManagement::ErrorType QueuedMessageI::ReceiveMessage(ReferenceT<Message> &message) {
     ErrorManagement::ErrorType ret;
-
+    //TODO: Implement ReceiveMessage behaviour
     return ret;
 }
 
 void QueuedMessageI::MessageProcessingThread() {
-
+    //TODO: Implement MessageProcessingThread behaviour
 }
 
 }

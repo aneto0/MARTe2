@@ -1,8 +1,8 @@
 /**
  * @file QueuedMessageI.h
  * @brief Header file for class QueuedMessageI
- * @date Apr 22, 2016
- * @author fsartori
+ * @date 22/04/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -44,65 +44,68 @@
 namespace MARTe {
 
 /**
- * TODO
- * */
+ * @brief This class represents a queue of messages
+ * @details This class creates a thread for handling messages of the queue
+ * without blocking the sender. The lifecycle of this thread is managed by
+ * the class itself (created on construction and deleted on destruction)
+ */
 class DLL_API QueuedMessageI: public MessageI {
 
 public:
 
     /**
-     *     sets all up and starts the message handler thread
+     * @brief Default constructor
      */
     QueuedMessageI();
 
     /**
-     * TODO
-     *     kills the message handler thread
+     * @brief Destructor
      */
     virtual ~QueuedMessageI();
 
 protected:
 
     /**
-     * TODO
-     * Default message handling mechanism
-     * Handles the reception of a message
-     * By default simply calls SortMessage
-     * Can be overridden to implement message Queues etc...
-     * in the case of a specialised method where queued message handling is implemented
-     * when the immediate return message is requested then the wait is performed here and a timeout+communication error may be produced here
+     * @brief TODO
+     * @details
+     * + Default message handling mechanism
+     * + Handles the reception of a message
+     * + By default simply calls SortMessage
+     * + Can be overridden to implement message Queues etc...
+     * + in the case of a specialised method where queued message handling is implemented
+     * + when the immediate return message is requested then the wait is performed here and a timeout+communication error may be produced here
      * */
     virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
 
 private:
 
     /**
-     * TODO
+     * @brief TODO
      */
     void MessageProcessingThread();
 
     /*
-     * to protect access to both queues
+     * A mutex semaphore to protect access to both queues
      */
     MutexSem queuesAccessControl;
 
     /*
-     * This is where the messages are piled up
+     * A reference container where the messages are piled up
      */
     ReferenceContainer messageProcessQueue;
 
     /*
-     * triggered whenever a new message is inserted
+     * An event sempahore triggered whenever a new message is inserted
      */
     EventSem newMessageInQueue;
 
     /*
-     * This is where the senders may wait for a reply
+     * A reference container where the senders may wait for a reply
      */
     ReferenceContainer messageReplyWaitList;
 
     /*
-     * triggered whenever a new reply is available
+     * An event semaphore triggered whenever a new reply is available
      */
     EventSem newReplyInWaitList;
 

@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef EVENTSEMTEST_H_
-#define EVENTSEMTEST_H_
+#ifndef QUEUEDMESSAGEITEST_H_
+#define QUEUEDMESSAGEITEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,42 +33,42 @@
 /*---------------------------------------------------------------------------*/
 
 #include "QueuedMessageI.h"
-#include "EventSem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
 /**
- * @brief A class to test the EventSem functions.
+ * @brief Tests the QueuedMessageI public methods.
  */
 class QueuedMessageITest {
 public:
 
     /**
-     * @brief Constructor.
+     * @brief Constructor
      */
     QueuedMessageITest();
 
     /**
-     * @brief Destructor.
+     * @brief Destructor
      */
     ~QueuedMessageITest();
 
     /**
-     * @brief Tests the default constructor.
+     * @brief Tests the default constructor
      */
     bool TestDefaultConstructor();
 
-};
+    /**
+     * @brief Tests the TestReceiveMessage method
+     */
+    bool TestReceiveMessage();
 
-}
+};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* EVENTSEMTEST_H_ */
+#endif /* QUEUEDMESSAGEITEST_H_ */
 
