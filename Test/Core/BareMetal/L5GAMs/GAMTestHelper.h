@@ -205,6 +205,18 @@ protected:
 
 };
 
+
+class GAMGroup1: public GAMGroup{
+public:
+    CLASS_REGISTER_DECLARATION()
+virtual void PrepareNextState(const RealTimeStateInfo &status);
+
+protected:
+    virtual void SetUp();
+
+};
+
+
 struct TestStructB {
     int32 b1;
     int32 b2;
@@ -267,6 +279,48 @@ DS1    ();
             void* gamMemPtr);
 };
 }
+
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+class Driver1: public DataSourceI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    Driver1();
+
+    virtual ~Driver1();
+
+    virtual bool Initialise(StructuredDataI & data);
+
+    virtual uint32 GetCurrentBufferIndex();
+
+    virtual uint32 GetNumberOfMemoryBuffers();
+
+
+    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
+                                       uint32 bufferIdx,
+                                       void **&signalAddress);
+
+    virtual bool AllocateMemory();
+
+    virtual const char8 *GetBrokerName(StructuredDataI &data, SignalDirection direction);
+
+
+    virtual bool PrepareNextState(const RealTimeStateInfo &status);
+
+    virtual bool ChangeState();
+
+    virtual bool GetInputBrokers(ReferenceContainer &inputBrokers,
+            const char8 * functionName,
+            void* gamMemPtr);
+
+    virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers,
+            const char8 * functionName,
+            void* gamMemPtr);
+
+};
 
 #if 0
 

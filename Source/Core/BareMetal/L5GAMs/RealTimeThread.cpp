@@ -106,7 +106,7 @@ bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric) {
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError, "The function be a GAM, GAMGroups or ReferenceContainer");
+                REPORT_ERROR(ErrorManagement::FatalError, "The function must be a GAM, GAMGroup or ReferenceContainer");
             }
         }
 

@@ -179,6 +179,9 @@ public:
     //DS without type
     bool TestVerifyDataSourcesSignalsFalse_NoType();
 
+    //no type
+    bool TestVerifyDataSourcesSignalsFalse_NoType2();
+
     //NumberOfElements = 0
     bool TestVerifyDataSourcesSignalsFalse_InvalidNElements();
 
@@ -197,32 +200,100 @@ public:
     //merge a struct
     bool TestResolveFunctionSignals3();
 
-    //no type
-    bool TestResolveFunctionSignals_FalseNoType();
-
-
-
-
-
-    bool TestResolveFunctionSignalsFalse_NoTypeInGAMSignal();
-
+    //TODO The verify is useless??
+    //basic
     bool TestVerifyFunctionSignals();
 
+    //no type
+    bool TestVerifyFunctionSignalsFalse_FalseNoType();
+
+    //no #elements
+    bool TestVerifyFunctionSignalsFalse_FalseNoNumberOfElements();
+
+    //no #dimensions
+    bool TestVerifyFunctionSignalsFalse_FalseNoNumberOfDimensions();
+
+    //no qualified name
+    bool TestVerifyFunctionSignalsFalse_FalseNoQualifiedName();
+
+    //basic
     bool TestResolveStates();
 
-    bool TestResolveStatesFalse_SameGAMIn2Threads();
+    //same gam in more states
+    bool TestResolveStates2();
 
-    bool TestResolveStatesFalse_MoreThanOneSyncInAThread_SameGAM();
+    //gam groups
+    bool TestResolveStates_FunctionGroups();
 
+    //more threads per state
+    bool TestResolveStates_MoreThreads();
+
+    //same gam in more than one thread in the same state
+    bool TestResolveStatesFalse_SameGAMInMoreThreads();
+
+    //more than one sync point in a thread
+    bool TestResolveStatesFalse_MoreSyncs1();
+
+    //more than one sync point in a thread
+    bool TestResolveStatesFalse_MoreSyncs2();
+
+    //more than one sync point in a thread
+    bool TestResolveStatesFalse_MoreSyncs3();
+
+    //basic
+    bool TestVerifyStates();
+
+    //GAM never called
+    bool TestVerifyStatesFalse_GAMNeverCalled();
+
+    //basic
     bool TestResolveConsumersAndProducers();
 
+    //more gam signals
+    bool TestResolveConsumersAndProducers_MoreSignalsSameGAM();
+
+    //more threads
+    bool TestResolveConsumersAndProducers_MoreThreads();
+
+    //more states
+    bool TestResolveConsumersAndProducers_MoreStates();
+
+    //more producers
+    bool TestResolveConsumersAndProducers_MoreProducers();
+
+    //basic
     bool TestVerifyConsumersAndProducers();
 
-    bool TestVerifyConsumersAndProducersFalse_TwoProducers();
+    //ranges
+    bool TestVerifyConsumersAndProducers_Ranges();
 
-    bool TestVerifyConsumersAndProducersFalse_MemoryOverlap();
+    //ranges in structure
+    bool TestVerifyConsumersAndProducers_Ranges2();
 
+    //ranges overlap but in input
+    bool TestVerifyConsumersAndProducers_Ranges3();
+
+
+    //more than one producer
+    bool TestVerifyConsumersAndProducersFalse_MoreProducers();
+
+    //more than one producer
+    bool TestVerifyConsumersAndProducersFalse_MoreProducers2();
+
+    //range overlap fail
+    bool TestVerifyConsumersAndProducersFalse_RangeOverlap();
+
+    //range overlap fail same signal
+    bool TestVerifyConsumersAndProducersFalse_RangeOverlap2();
+
+    //basic
     bool TestResolveFunctionSignalsMemorySize();
+
+    //ranges
+    bool TestResolveFunctionSignalsMemorySize_Ranges();
+
+    //TODO Range check failure
+
 
     bool TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxMin();
 

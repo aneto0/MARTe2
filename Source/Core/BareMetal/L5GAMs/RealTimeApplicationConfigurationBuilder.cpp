@@ -388,57 +388,57 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
 
 #if 0
 
-bool RealTimeApplicationConfigurationBuilder::InitialiseFunctionDatabaseFromConfiguration(ConfigurationDatabase &originalConfig,
-        originalConfig,
+static bool SearchGAMs(ConfigurationDatabase &inputDatabase,
+        ConfigurationDatabase &outputDatabase,
         StreamString & fullPath,
         uint32 &index) {
-    uint32 numberOfFunctions = originalConfig.GetNumberOfChildren();
+    uint32 numberOfFunctions = inputDatabase.GetNumberOfChildren();
     bool ret = true;
     bool isGam = false;
     StreamString currentStep = fullPath;
 
     for (uint32 i = 0u; i < numberOfFunctions && ret; i++) {
 
-        const char8 *nodeName = originalConfig.GetChildName(i);
+        const char8 *nodeName = inputDatabase.GetChildName(i);
         if (nodeName[0] == '+' || nodeName == '$') {
             nodeName = &nodeName[1];
         }
-        if (originalConfig.MoveRelative(nodeName)) {
+        if (inputDatabase.MoveRelative(nodeName)) {
             StreamString className;
-            isGam = originalConfig.Read("Class", className);
+            isGam = inputDatabase.Read("Class", className);
             if (isGam) {
                 isGam = className.Size() > 0u;
             }
             if (isGam) {
+                isGam = inputDatabase.MoveRelative("InputSignals");
+                if (!isGam) {
+                    isGam = inputDatabase.MoveRelative("OutputSignals");
+                }
                 //TODO Use typeid to check polimorphism with GAM
-
+            }
+            if (isGam) {
+                isGam = inputDatabase.MoveToAncestor(1u);
             }
             if (isGam) {
                 StreamString functionN;
                 functionN.Printf("%d", index);
-                ret = functionsDatabase.CreateRelative(functionN.Buffer());
+                ret = outputDatabase.CreateRelative(functionN.Buffer());
                 if (ret) {
-                    functionsDatabase.Write("QualifiedName", currentStep.Buffer());
+                    outputDatabase.Write("QualifiedName", currentStep.Buffer());
                 }
                 if (ret) {
-                    ret = originalConfig.MoveRelative("Signals");
-
+                    ret = inputDatabase.Copy(outputDatabase);
                 }
                 if (ret) {
-                    ret = originalConfig.Copy(functionsDatabase);
-                }
-                if (ret) {
-                    ret = originalConfig.MoveToAncestor(1u);
-                }
-                if (ret) {
-                    ret = functionsDatabase.MoveToAncestor(1u);
+                    ret = outputDatabase.MoveToAncestor(1u);
                 }
                 index++;
             }
+            currentStep += ".";
             currentStep += nodeName;
-            ret = InitialiseFunctionDatabaseFromConfiguration(originalConfig, currentStep);
+            ret = SearchGAMs(inputDatabase, outputDatabase, currentStep, index);
 
-            ret = originalConfig.MoveToAncestor(1u);
+            ret = inputDatabase.MoveToAncestor(1u);
         }
 
     }
@@ -478,13 +478,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseDataDatabaseFromConfigur
                     dataSourcesDatabase.Write("dataSourcesDatabase", currentStep.Buffer());
                 }
                 if (ret) {
-                    ret = originalConfig.MoveRelative("Signals");
-                }
-                if (ret) {
                     ret = originalConfig.Copy(dataSourcesDatabase);
-                }
-                if (ret) {
-                    ret = originalConfig.MoveToAncestor(1u);
                 }
                 if (ret) {
 
@@ -1742,13 +1736,14 @@ bool RealTimeApplicationConfigurationBuilder::VerifyFunctionSignals(SignalDirect
                     StreamString type;
                     if (ret) {
                         ret = functionsDatabase.Read("Type", type);
-                    }
-                    if (ret) {
-                        ret = (type.Size() > 0u);
-                    }
-                    if (!ret) {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Type was not defined for signal: %s in %s", signalName.Buffer(),
-                                                functionName.Buffer())
+
+                        if (ret) {
+                            ret = (type.Size() > 0u);
+                        }
+                        if (!ret) {
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Type was not defined for signal: %s in %s", signalName.Buffer(),
+                                                    functionName.Buffer())
+                        }
                     }
                     uint32 numberOfDimensions = 0u;
                     if (ret) {
@@ -1772,8 +1767,10 @@ bool RealTimeApplicationConfigurationBuilder::VerifyFunctionSignals(SignalDirect
                     }
                 }
             }
-            //Move to next Function
-            ret = functionsDatabase.MoveAbsolute("Functions");
+            if (ret) {
+                //Move to next Function
+                ret = functionsDatabase.MoveAbsolute("Functions");
+            }
         }
     }
     return ret;
@@ -1788,7 +1785,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyFunctionSignals(SignalDirect
 bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
 
 //TODO Absolute path with respect to Functions without using realTimeApplication
-
+//TODO Use a function search GAM finding GAMs as nodes specifying Input-Output signals
     bool ret = true;
     ReferenceContainer statesFound;
 //Look for all the RealTimeStates
@@ -1873,6 +1870,16 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                             if (ret) {
                                 ret = functionsDatabase.Write(stateName, threadName);
                             }
+                            else {
+                                StreamString gamName;
+                                if (functionsDatabase.MoveToAncestor(1u)) {
+                                    if (!functionsDatabase.Read("QualifiedName", gamName)) {
+                                        gamName = "UnknownGAM";
+                                    }
+                                }
+                                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "The GAM %s is declared in more than one thread in %s",
+                                                        gamName.Buffer(), stateName)
+                            }
                         }
                     }
                     if (ret) {
@@ -1903,15 +1910,23 @@ bool RealTimeApplicationConfigurationBuilder::VerifyStates() {
     bool ret = functionsDatabase.MoveAbsolute("Functions");
     uint32 numberOfFunctions = functionsDatabase.GetNumberOfChildren();
     for (uint32 i = 0u; i < numberOfFunctions && (ret); i++) {
+
         ret = functionsDatabase.MoveRelative(functionsDatabase.GetChildName(i));
+
         if (ret) {
             ret = functionsDatabase.MoveRelative("States");
-        }
-        if (ret) {
-            ret = functionsDatabase.GetNumberOfChildren() > 0u;
-            if (!ret) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM with id %s is never called", functionsDatabase.GetChildName(i))
+
+            if (ret) {
+                ret = functionsDatabase.GetNumberOfChildren() > 0u;
             }
+            if (!ret) {
+                StreamString gamName;
+                if (!functionsDatabase.Read("QualifiedName", gamName)) {
+                    gamName = "UnknownGAM";
+                }
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s is never called", gamName.Buffer())
+            }
+
         }
         if (ret) {
             //return to Functions level
@@ -2383,7 +2398,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(S
                                         if (minIdx > maxIdx) {
                                             ret = false;
                                             REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
-                                                                    "Illegal Ranges for signal %s in %s: minimum index must be < maximum index",
+                                                                    "Illegal Ranges for signal %s in %s: minimum index must be <= maximum index",
                                                                     signalName.Buffer(), functionName.Buffer())
                                         }
                                         if (ret) {
