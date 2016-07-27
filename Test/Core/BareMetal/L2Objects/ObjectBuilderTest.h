@@ -1,8 +1,8 @@
 /**
  * @file ObjectBuilderTest.h
  * @brief Header file for class ObjectBuilderTest
- * @date 17/giu/2016
- * @author pc
+ * @date 17/06/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -31,7 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ObjectBuilder.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -41,9 +43,14 @@ using namespace MARTe;
 class ObjectBuilderTest {
 public:
 
+    /**
+     * @brief Tests the default constructor
+     */
+    bool TestDefaultConstructor();
 
-    bool TestConstructor();
-
+    /**
+     * @brief Tests the build
+     */
     bool TestBuild();
 
 };
@@ -53,4 +60,3 @@ public:
 /*---------------------------------------------------------------------------*/
 
 #endif /* OBJECTBUILDERTEST_H_ */
-

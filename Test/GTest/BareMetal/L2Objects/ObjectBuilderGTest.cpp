@@ -44,7 +44,7 @@
 
 TEST(ObjectBuilderGTest,TestConstructor) {
     ObjectBuilderTest test;
-    ASSERT_TRUE(test.TestConstructor());
+    ASSERT_TRUE(test.TestDefaultConstructor());
 }
 
 TEST(ObjectBuilderGTest,TestBuild) {

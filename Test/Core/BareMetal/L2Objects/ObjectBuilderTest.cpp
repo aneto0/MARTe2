@@ -1,8 +1,8 @@
 /**
  * @file ObjectBuilderTest.cpp
  * @brief Source file for class ObjectBuilderTest
- * @date 17/giu/2016
- * @author pc
+ * @date 17/06/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -28,34 +28,50 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "ClassRegistryItemT.h"
+#include "HeapI.h"
 #include "ObjectBuilderTest.h"
 #include "ObjectTestHelper.h"
 #include "StringHelper.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-class NotBuildableAgainObj: public Object{
+
+namespace {
+
+class NotBuildableAgainObj: public Object {
 public:
     CLASS_REGISTER_DECLARATION();
 };
 
-CLASS_REGISTER(NotBuildableAgainObj,"1.0");
+CLASS_REGISTER(NotBuildableAgainObj, "1.0");
+
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool ObjectBuilderTest::TestConstructor() {
-    ObjectBuilderT<NotBuildableAgainObj> build;
-    NotBuildableAgainObj *obj = (NotBuildableAgainObj *)build.Build(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    if (obj == NULL) {
-        return false;
-    }
-    delete obj;
-    return true;
+bool ObjectBuilderTest::TestDefaultConstructor() {
+    bool result;
+    ObjectBuilderT<NotBuildableAgainObj> target;
+    result = (NotBuildableAgainObj::GetClassRegistryItem_Static()->GetObjectBuilder() == &target);
+    return result;
 }
 
 bool ObjectBuilderTest::TestBuild() {
-    return TestConstructor();
+    bool result;
+    ObjectBuilderT<NotBuildableAgainObj> target;
+    HeapI* heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
+    NotBuildableAgainObj *obj = (NotBuildableAgainObj *) target.Build(heap);
+    if (obj == NULL) {
+        result = false;
+    }
+    else {
+        delete obj;
+        result = true;
+    }
+    return result;
 }
-

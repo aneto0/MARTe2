@@ -41,26 +41,36 @@
 namespace MARTe {
 
 /**
+ * @brief This class template is a helper for building specific versions of
+ * object builders for specific classes (the class specified as a class
+ * template parameter).
  * @brief Template of ObjectBuilder implementing a default memory allocation for
  * the new instance of a MARTe::Object descendant.
- * @tparam T is a descendant of MARTe::Object.
+ * @tparam T is the typename of a class descendant of MARTe::Object, which has
+ * been registered as a class into ClassRegistryDatabase, and that provides a
+ * new operator compatible for working with HeapI as memory manager.
  */
 template<typename T>
 class ObjectBuilderT: public ObjectBuilder {
 public:
 
     /**
-     * @brief Constructor. Registers itself in the ClassRegistryItem if the registered class.
+     * @brief Default constructor.
+     * @details Registers itself into the ClassRegistryItem of the type T.
      */
     ObjectBuilderT();
+
     /**
      * @brief Destructor.
      */
     virtual ~ObjectBuilderT();
+
     /**
-     * @brief Creates a new instance of the template type inheriting from MARTe::Object.
-     * @param[in] heap is the heap where the memory for the new instance must be allocated.
-     * @return a NULL pointer to the new created instance.
+     * @brief Creates a new instance of type T, which inherits from
+     * MARTe::Object and whose memory is managed by a HeapI object.
+     * @param[in] heap is the heap where the memory for the new
+     * instance will be allocated.
+     * @return a pointer to the new created instance.
      */
     Object *Build(HeapI* const heap) const;
 
@@ -92,4 +102,3 @@ Object *ObjectBuilderT<T>::Build(HeapI* const heap) const {
 }
 
 #endif /* OBJECTBUILDERT_H_ */
-
