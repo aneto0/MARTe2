@@ -206,6 +206,18 @@ protected:
 
 };
 
+
+class GAMGroup1: public GAMGroup{
+public:
+    CLASS_REGISTER_DECLARATION()
+virtual void PrepareNextState(const RealTimeStateInfo &status);
+
+protected:
+    virtual void SetUp();
+
+};
+
+
 struct TestStructB {
     int32 b1;
     int32 b2;
