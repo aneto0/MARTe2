@@ -93,6 +93,19 @@ public:
 
     bool TestGetFunctionSignalAlias();
 
+    bool TestGetFunctionSignalNumberOfByteOffsets();
+
+    bool TestGetFunctionSignalByteOffsetInfo();
+
+    bool TestGetFunctionSignalSamples();
+
+    bool TestGetFunctionSignalReadFrequencyInput();
+
+    bool TestGetFunctionSignalReadFrequencyOutput();
+
+    bool TestGetAddBrokers();
+
+    bool TestIsSupportedBroker();
 };
 
 /*---------------------------------------------------------------------------*/

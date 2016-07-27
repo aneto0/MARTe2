@@ -203,7 +203,6 @@ GAM1    ();
 protected:
     virtual void SetUp();
 
-
 };
 
 
@@ -271,19 +270,17 @@ DS1    ();
 
     virtual bool AllocateMemory();
 
-    virtual const char8 *Negotiate(StructuredDataI &data, SignalDirection direction);
-
+    virtual const char8 *GetBrokerName(StructuredDataI &data, SignalDirection direction);
 
     virtual bool PrepareNextState(const MARTe::RealTimeStateInfo&);
 
     virtual bool ChangeState();
 
-protected:
-    virtual bool AddInputBrokerToGAM(ReferenceT<GAM> gam,
+    virtual bool GetInputBrokers(ReferenceContainer &inputBrokers,
             const char8 * functionName,
             void* gamMemPtr);
 
-    virtual bool AddOutputBrokerToGAM(ReferenceT<GAM> gam,
+    virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers,
             const char8 * functionName,
             void* gamMemPtr);
 };

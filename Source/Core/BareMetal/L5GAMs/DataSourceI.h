@@ -64,8 +64,6 @@ enum SignalDirection {
  *            +Type = BasicType|StructuredType
  *            +NumberOfDimensions = 0|1|2
  *            +NumberOfElements = NUMBER>0
- *            +Frequency = -1|NUMBER>0, the frequency at which the signal is expected to be produced. -1 => the latest value available
- *                   (i.e. the frequency is not important), any other positive number is the desired frequency. The default is -1
  *       }
  *    }
  * }
@@ -410,11 +408,32 @@ public:
                                 uint32 &functionSignalIdx,
                                 const char8* const functionSignalName);
 
+    /**
+     * @brief Gets the number of different byte offsets (one for each different Range) that were set for the signal with index \a functionSignalIdx.
+     * @param[in] direction the signal direction.
+     * @param[in] functionIdx the index of the function.
+     * @param[in] functionSignalIdx the index of the signal in this function.
+     * @param[out] numberOfByteOffsets the number of byte offsets.
+     * @return true if the functionIdx and the functionSignalIdx exist in the specified direction.
+     * @pre
+     *   SetConfiguredDatabase
+     */
     bool GetFunctionSignalNumberOfByteOffsets(SignalDirection direction,
                                               uint32 functionIdx,
                                               uint32 functionSignalIdx,
                                               uint32 &numberOfByteOffsets);
 
+    /**
+     * @brief Gets the number of different byte offset index and size (one for each different Range) that were set for the signal with index \a functionSignalIdx.
+     * @param[in] functionIdx the index of the function.
+     * @param[in] functionSignalIdx the index of the signal in this function.
+     * @param[in] byteOffsetIndex the index of the offset in this signal.
+     * @param[out] byteOffsetStart the offset starting index.
+     * @param[out] byteOffsetSize the offset size.
+     * @return true if the functionIdx, the functionSignalIdx and the byteOffsetIndex exist in the specified direction.
+     * @pre
+     *   SetConfiguredDatabase
+     */
     bool GetFunctionSignalByteOffsetInfo(SignalDirection direction,
                                          uint32 functionIdx,
                                          uint32 functionSignalIdx,
@@ -422,56 +441,165 @@ public:
                                          uint32 &byteOffsetStart,
                                          uint32 &byteOffsetSize);
 
+    /**
+     * @brief Gets the number of samples that were set for the signal with index \a functionSignalIdx.
+     * @param[in] direction the signal direction.
+     * @param[in] functionIdx the index of the function.
+     * @param[in] functionSignalIdx the index of the signal in this function.
+     * @param[out] samples the number of samples.
+     * @return true if the functionIdx and the functionSignalIdx exist in the specified direction.
+     * @pre
+     *   SetConfiguredDatabase
+     */
     bool GetFunctionSignalSamples(SignalDirection direction,
                                   uint32 functionIdx,
                                   uint32 functionSignalIdx,
                                   uint32 &samples);
 
+    /**
+     * @brief Gets the read frequency that was set for the signal with index \a functionSignalIdx.
+     * @param[in] direction the signal direction.
+     * @param[in] functionIdx the index of the function.
+     * @param[in] functionSignalIdx the index of the signal in this function.
+     * @param[out] frequency the frequency at which the signal is to be read.
+     * @return true if the functionIdx and the functionSignalIdx exist in the specified direction.
+     * @pre
+     *   SetConfiguredDatabase
+     */
     bool GetFunctionSignalReadFrequency(SignalDirection direction,
                                         uint32 functionIdx,
                                         uint32 functionSignalIdx,
                                         float32 &frequency);
 
+    /**
+     * @brief Checks if the broker with name \a brokerClassName is suitable for this signal
+     * @param[in] direction the signal direction.
+     * @param[in] functionIdx the index of the function.
+     * @param[in] functionSignalIdx the index of the signal in this function.
+     * @param[in] brokerClassName the name of the broker to be queried.
+     * @return true if the broker with name \a brokerClassName is capable of interfacing to this signal.
+     * @pre
+     *   SetConfiguredDatabase
+     */
     bool IsSupportedBroker(SignalDirection direction,
                            uint32 functionIdx,
                            uint32 functionSignalIdx,
                            const char8* brokerClassName);
 
+    /**
+     * @brief For every signal in the provided direction assign a Broker that knows how to copy from the DataSourceI memory to the GAM memory.
+     * @param[in] direction are the signal directions.
+     * @return true if a BrokerI can be assigned to every signal in the given direction.
+     */
+    bool AddBrokers(SignalDirection direction);
+
+    /**
+     * @brief Allocate the memory for this DataSourceI.
+     * @return true if the memory can be successfully allocated.
+     */
     virtual bool AllocateMemory() = 0;
 
+    /**
+     * @brief Gets the number of memory buffers supported by this DataSourceI.
+     * @details This information can be used by a BrokerI to implement, for example, a circular buffer interface.
+     * @return the number of memory buffers supported by this DataSourceI.
+     */
     virtual uint32 GetNumberOfMemoryBuffers() = 0;
 
+    /**
+     * @brief Gets the memory address for the signal at index \a signalIdx.
+     * @param[in] signalIdx the index of the signal.
+     * @param[in] bufferIdx the index of the buffer (see GetNumberOfMemoryBuffers()).
+     * @param[out] signalAddress a pointer to the variable that holds the memory address of this signal for this \a bufferIdx.
+     * @return true if the signalIdx and the bufferIdx exist and the memory address can be retrieved for this signal.
+     * @pre
+     *   signalIdx < GetNumberOfSignals() &&
+     *   bufferIdx < GetNumberOfMemoryBuffers()
+     */
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
                                        uint32 bufferIdx,
                                        void **&signalAddress) = 0;
-    virtual const char8 *Negotiate(StructuredDataI &data,
-                                   SignalDirection direction)=0;
 
+    /**
+     * @brief Gets the name of the broker for the signal information available in the input \a data.
+     * @param[in] data the information about the signal. The structure is:
+     *   QualifiedName = "Name of the signal"
+     *   NumberOfDimensions = N
+     *   NumberOfElements = N
+     *   Samples = N
+     *   Frequency = N
+     * @param[in] direction the signal direction.
+     * @return the name of the BrokerI class that will handle the copy of this signal from the DataSourceI memory to the GAM memory.
+     */
+    virtual const char8 *GetBrokerName(StructuredDataI &data,
+                                       SignalDirection direction)=0;
+
+    /**
+     * @brief This function is called previous to a state change and allows the DataSourceI to react in advance.
+     * @param[in] status information about the state change.
+     * @return true if the state change can be performed.
+     */
     virtual bool PrepareNextState(const RealTimeStateInfo &status) = 0;
 
-    virtual bool AddBrokers(RealTimeApplication &application,
-                            SignalDirection direction);
+    /**
+     * @brief Adds to the \a inputBrokers all the BrokerI instances that will interact with the GAM with name \a functionName.
+     * @param[out] inputBrokers where the BrokerI instances have to be added to.
+     * @param[in] functionName name of the function being queried.
+     * @param[in] gamMemPtr the GAM memory where the signals will be read from.
+     * @return true if a list of BrokerI instances can be successfully added to the inputBrokers list.
+     */
+    virtual bool GetInputBrokers(ReferenceContainer &inputBrokers,
+                                 const char8* functionName,
+                                 void * gamMemPtr)=0;
+
+    /**
+     * @brief Adds to the \a outputBrokers all the BrokerI instances that will interact with the GAM with name \a functionName.
+     * @param[out] outputBrokers where the BrokerI instances have to be added to.
+     * @param[in] functionName name of the function being queried.
+     * @param[in] gamMemPtr the GAM memory where the signals will be written to.
+     * @return true if a list of BrokerI instances can be successfully added to the outputBrokers list.
+     */
+    virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers,
+                                  const char8* functionName,
+                                  void * gamMemPtr)=0;
 
 protected:
 
-    virtual bool AddInputBrokerToGAM(ReferenceT<GAM> gam,
-                                     const char8* functionName,
-                                     void * gamMemPtr)=0;
-
-    virtual bool AddOutputBrokerToGAM(ReferenceT<GAM> gam,
-                                      const char8* functionName,
-                                      void * gamMemPtr)=0;
-
+    /**
+     * Configuration database with the Signals {} information.
+     */
     ConfigurationDatabase signalsDatabase;
 
+    /**
+     * Configured database with the information defined in the Data node of the RealTimeApplicationConfigurationBuilder.
+     */
     ConfigurationDatabase configuredDatabase;
 
+    /**
+     * Number of signals assigned to this function
+     */
     uint32 numberOfSignals;
 
+    /**
+     * @brief Moves the configuredDatabase to the signal with index \a signalIdx.
+     * @param[in] signalIdx the index of the signal where to move to.
+     * @return true if the signalIdx exists.
+     */
     bool MoveToSignalIndex(uint32 signalIdx);
 
+    /**
+     * @brief Moves the configuredDatabase to the function with index \a functionIdx.
+     * @param[in] functionIdx the index of the function where to move to.
+     * @return true if the functionIdx exists.
+     */
     bool MoveToFunctionIndex(uint32 functionIdx);
 
+    /**
+     * @brief Moves the configuredDatabase to the signal to the index \a functionIdx in the function with the index \a functionIdx.
+     * @param[in] signalIdx the index of the signal where to move to.
+     * @param[in] functionIdx the index of the function where to move to.
+     * @return true if the functionIdx exists.
+     */
     bool MoveToFunctionSignalIndex(SignalDirection direction,
                                    uint32 functionIdx,
                                    uint32 functionSignalIdx);

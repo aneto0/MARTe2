@@ -291,14 +291,14 @@ static StreamString config2 = ""
         "    }"
         "}";
 
-void MyErrorProcessFunction(const ErrorInformation &errorInfo,
+void GAMTestMyErrorProcessFunction(const ErrorInformation &errorInfo,
                             const char8 * const errorDescription) {
     //printf("---->>%s\n", errorDescription);
 }
 
 int main(int argc,
          char **argv) {
-    SetErrorProcessFunction(&MyErrorProcessFunction);
+    SetErrorProcessFunction(&GAMTestMyErrorProcessFunction);
     ConfigurationDatabase cdb;
     config2.Seek(0);
     StandardParser parser(config2, cdb);

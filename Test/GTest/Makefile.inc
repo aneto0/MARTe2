@@ -22,9 +22,7 @@
 #
 #############################################################
 
-OBJSX=GAM1.x\
-    DataSource1.x\
-    Driver1.x
+OBJSX=
 #SPB = BareMetal.x Scheduler.x FileSystem.x
 SPB = BareMetal.x
 PACKAGE=

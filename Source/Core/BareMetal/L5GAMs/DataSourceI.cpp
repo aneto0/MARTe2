@@ -35,93 +35,15 @@
 #include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
 #include "GAM.h"
-#include "GAMDataSource.h"
-#include "GAMSignalsContainer.h"
 #include "MemoryMapBroker.h"
-#include "ReferenceContainerFilterObjectName.h"
-#include "StandardParser.h"
+#include "ObjectRegistryDatabase.h"
 #include "RealTimeApplication.h"
-#include "GAM.h"
+#include "ReferenceContainerFilterReferences.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-#if 0
-static bool Allocate(ReferenceT<DataSourceSignal> dataSourceSignal,
-        MemoryArea &memory) {
-    bool ret = dataSourceSignal.IsValid();
-    if (ret) {
-        TypeDescriptor typeDes = TypeDescriptor::GetTypeDescriptorFromTypeName(dataSourceSignal->GetType());
-        uint32 varSize = 0u;
-        // structured type
-        if (typeDes == InvalidType) {
-            const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(dataSourceSignal->GetType());
-            ret = (item != NULL);
-            if (ret) {
-                /*lint -e{613} NULL pointer checking done before entering here */
-                const ClassProperties *properties = item->GetClassProperties();
-                ret = (properties != NULL);
-                if (ret) {
-                    varSize = properties->GetSize();
-                }
-                else {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s does not provide ClassProperties", dataSourceSignal->GetType())
-                }
-            }
-            else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s is not registered", dataSourceSignal->GetType())
-            }
-        }
-        // basic type
-        else {
-            varSize = (static_cast<uint32>(typeDes.numberOfBits) + 7u) / 8u;
-            // consider the multi - dimensional
-            varSize *= dataSourceSignal->GetNumberOfElements();
-        }
 
-        // consider the number of samples per cycle
-        varSize *= dataSourceSignal->GetNumberOfSamples();
-
-        // allocate the memory
-        if (ret) {
-            /*lint -e{613} NULL pointer checking done before entering here */
-            //TODO likely that these offsets have to be set in DataSourceSignal
-            uint32 offset = 0;
-            ret = memory.Add(varSize, offset);
-            //ret = memory->Add(varSize, dataSourceSignal->bufferPtrOffset[0]);
-            if (ret) {
-                /*lint -e{613} NULL pointer checking done before entering here */
-                ret = memory.Add(varSize, offset);
-                //ret = memory->Add(varSize, bufferPtrOffset[1]);
-            }
-        }
-    }
-    return ret;
-}
-
-static bool AllocatePrivate(ReferenceT<ReferenceContainer> container,
-        MemoryArea &memory) {
-    bool ret = true;
-    uint32 numberOfNodes = container->Size();
-    for (uint32 i = 0u; (i < numberOfNodes) && (ret); i++) {
-        ReferenceT<ReferenceContainer> subContainer = container->Get(i);
-        ret = subContainer.IsValid();
-        if (ret) {
-            ReferenceT<DataSourceSignal> def = subContainer;
-            if (def.IsValid()) {
-                ret = Allocate(def, memory);
-            }
-            else {
-                ret = AllocatePrivate(subContainer, memory);
-            }
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "DataSourceI must contain an object inheriting from ReferenceContainer");
-        }
-    }
-    return ret;
-}
-#endif
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -516,7 +438,7 @@ bool DataSourceI::GetFunctionSignalAlias(SignalDirection direction,
 
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (ret) {
-        if(!configuredDatabase.Read("Alias", functionSignalAlias)){
+        if (!configuredDatabase.Read("Alias", functionSignalAlias)) {
             functionSignalAlias = "";
         }
     }
@@ -551,13 +473,12 @@ bool DataSourceI::GetFunctionSignalNumberOfByteOffsets(SignalDirection direction
                                                        uint32 &numberOfByteOffsets) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     AnyType byteOffset;
-    if (ret) {
-        byteOffset = configuredDatabase.GetType("ByteOffset");
-        ret = (byteOffset.GetDataPointer() != NULL_PTR(void *));
-    }
     numberOfByteOffsets = 0u;
     if (ret) {
-        numberOfByteOffsets = byteOffset.GetNumberOfElements(1u);
+        byteOffset = configuredDatabase.GetType("ByteOffset");
+        if (byteOffset.GetDataPointer() != NULL_PTR(void *)) {
+            numberOfByteOffsets = byteOffset.GetNumberOfElements(1u);
+        }
     }
     return ret;
 }
@@ -597,7 +518,7 @@ bool DataSourceI::GetFunctionSignalSamples(SignalDirection direction,
                                            uint32 functionSignalIdx,
                                            uint32 &samples) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
-    if (configuredDatabase.Read("Samples", samples)) {
+    if (!configuredDatabase.Read("Samples", samples)) {
         samples = 1u;
     }
     return ret;
@@ -608,7 +529,7 @@ bool DataSourceI::GetFunctionSignalReadFrequency(SignalDirection direction,
                                                  uint32 functionSignalIdx,
                                                  float32 &frequency) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
-    if (configuredDatabase.Read("Frequency", frequency)) {
+    if (!configuredDatabase.Read("Frequency", frequency)) {
         frequency = -1.0;
     }
     return ret;
@@ -661,18 +582,35 @@ bool DataSourceI::MoveToFunctionSignalIndex(SignalDirection direction,
     return ret;
 }
 
-bool DataSourceI::AddBrokers(RealTimeApplication &application,
-                             SignalDirection direction) {
-    //TODO Each ds has a Functions area
+bool DataSourceI::AddBrokers(SignalDirection direction) {
+    // Each ds has a Functions area
     // For each Function allocate memory
     // Search the signal and get the memory pointer for each signal linked it to the correct broker
-    // return the broker to the gam
+    // Assign the broker to the gam
     const char8 * dirStr = "InputSignals";
     if (direction == OutputSignals) {
         dirStr = "OutputSignals";
     }
 
-    bool ret = configuredDatabase.MoveAbsolute("Functions");
+    //Find the application name
+    ReferenceContainer result;
+    ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::PATH, this);
+    ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(result, filter);
+    ReferenceT<RealTimeApplication> application;
+    uint32 c;
+    bool found = false;
+    for (c = 0u; (c < result.Size()) && (!found); c++) {
+        application = result.Get(c);
+        found = (application.IsValid());
+    }
+    bool ret = found;
+
+    if (ret) {
+        configuredDatabase.MoveAbsolute("Functions");
+    }
+    else {
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No RealTimeApplication found for DataSourceI : %s", GetName())
+    }
     if (ret) {
         uint32 numberOfFunctions = configuredDatabase.GetNumberOfChildren();
         for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
@@ -686,7 +624,7 @@ bool DataSourceI::AddBrokers(RealTimeApplication &application,
                 StreamString fullFunctionName = "Functions.";
                 fullFunctionName += functionName;
 
-                ReferenceT<GAM> gam = application.Find(fullFunctionName.Buffer());
+                ReferenceT<GAM> gam = application->Find(fullFunctionName.Buffer());
                 ret = gam.IsValid();
                 void *gamMemoryAddress = NULL_PTR(void *);
 
@@ -708,10 +646,18 @@ bool DataSourceI::AddBrokers(RealTimeApplication &application,
                         }
 
                         if (direction == InputSignals) {
-                            ret = AddInputBrokerToGAM(gam, functionName.Buffer(), gamMemoryAddress);
+                            ReferenceContainer inputBrokers;
+                            ret = GetInputBrokers(inputBrokers, functionName.Buffer(), gamMemoryAddress);
+                            if (ret) {
+                                gam->AddInputBrokers(inputBrokers);
+                            }
                         }
                         else {
-                            ret = AddOutputBrokerToGAM(gam, functionName.Buffer(), gamMemoryAddress);
+                            ReferenceContainer outputBrokers;
+                            ret = GetOutputBrokers(outputBrokers, functionName.Buffer(), gamMemoryAddress);
+                            if (ret) {
+                                gam->AddOutputBrokers(outputBrokers);
+                            }
                         }
 
                     }
