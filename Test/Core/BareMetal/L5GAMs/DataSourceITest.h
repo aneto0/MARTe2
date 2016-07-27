@@ -103,6 +103,8 @@ public:
 
     bool TestGetFunctionSignalReadFrequencyOutput();
 
+    bool TestGetFunctionSignalGAMMemoryOffset();
+
     bool TestGetAddBrokers();
 
     bool TestIsSupportedBroker();

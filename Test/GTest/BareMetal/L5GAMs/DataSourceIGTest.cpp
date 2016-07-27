@@ -189,6 +189,11 @@ TEST(DataSourceIGTest,TestGetFunctionSignalReadFrequencyOutput) {
     ASSERT_TRUE(test.TestGetFunctionSignalReadFrequencyOutput());
 }
 
+TEST(DataSourceIGTest,TestGetFunctionSignalGAMMemoryOffset) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionSignalGAMMemoryOffset());
+}
+
 TEST(DataSourceIGTest,TestGetAddBrokers) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetAddBrokers());

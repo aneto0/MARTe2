@@ -535,6 +535,18 @@ bool DataSourceI::GetFunctionSignalReadFrequency(SignalDirection direction,
     return ret;
 }
 
+bool DataSourceI::GetFunctionSignalGAMMemoryOffset(SignalDirection direction,
+                                                   uint32 functionIdx,
+                                                   uint32 functionSignalIdx,
+                                                   uint32 &memoryOffset) {
+
+    bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
+    if (ret) {
+        ret = configuredDatabase.Read("GAMMemoryOffset", memoryOffset);
+    }
+    return ret;
+}
+
 bool DataSourceI::IsSupportedBroker(SignalDirection direction,
                                     uint32 functionIdx,
                                     uint32 functionSignalIdx,
