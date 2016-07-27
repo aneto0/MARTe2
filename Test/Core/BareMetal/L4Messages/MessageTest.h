@@ -128,7 +128,7 @@ public:
 private:
 
     /**
-     * @brief Data structure for testing intialisation of messages
+     * @brief Data structure for testing initialisation of messages
      */
     struct MessageInitTableTest {
         const MARTe::char8* destination;
