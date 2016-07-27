@@ -846,11 +846,10 @@ void *BrokerI::GetFunctionPointer(uint32 copyIdx) {
     return functionSignalPointers[copyIdx];
 }
 
-
 bool BrokerI::InitFunctionPointers(SignalDirection direction,
-                                    DataSourceI &dataSource,
-                                    const char8 * const functionName,
-                                    void *gamMemoryAddress) {
+                                   DataSourceI &dataSource,
+                                   const char8 * const functionName,
+                                   void *gamMemoryAddress) {
 
     //Need to check the broker class name!!!!
     //For each signal it is possible have a different one
@@ -898,7 +897,7 @@ bool BrokerI::InitFunctionPointers(SignalDirection direction,
         uint32 c = 0u;
         //The same signal can be copied from different ranges. A CopyTableEntry is added for each signal range.
 
-        // i need the pointer of the gam memory of this ds!
+        // The pointer of the gam memory for this DataSource!
         ret = (gamMemoryAddress != NULL_PTR(void *));
 
         for (i = 0u; (i < functionNumberOfSignals) && (ret); i++) {
@@ -906,6 +905,9 @@ bool BrokerI::InitFunctionPointers(SignalDirection direction,
                 ret = dataSource.GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, i, numberOfByteOffsets);
             }
 
+            if (ret) {
+                ret = dataSource.GetFunctionSignalGAMMemoryOffset(direction, functionIdx, i, memoryOffset);
+            }
             //Take into account  different ranges for the same signal
             for (uint32 j = 0u; (j < numberOfByteOffsets) && (ret); j++) {
                 uint32 offsetStart;
