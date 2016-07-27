@@ -98,7 +98,10 @@ bool DataSourceITestHelper::GetSignalMemoryBuffer(uint32 signalIdx,
 
 const char8 *DataSourceITestHelper::GetBrokerName(StructuredDataI &data,
                                                   SignalDirection direction) {
-    return "MemoryMapInputBroker";
+    if(direction == InputSignals){
+        return "MemoryMapInputBroker";
+    }
+    return "MemoryMapOutputBroker";
 }
 
 bool DataSourceITestHelper::PrepareNextState(const RealTimeStateInfo &status) {
@@ -477,7 +480,7 @@ bool DataSourceITest::TestAddSignals() {
         ret = (test.GetNumberOfChildren() == 3);
     }
     if (ret) {
-        ret = test.MoveRelative("Signal1");
+        ret = test.MoveRelative("Signal1A");
     }
     if (ret) {
         ret = (test.GetNumberOfChildren() == 1);
@@ -513,7 +516,7 @@ bool DataSourceITest::TestAddSignals() {
         ret = test.MoveRelative("Signal3");
     }
     if (ret) {
-        ret = (test.GetNumberOfChildren() == 4);
+        ret = (test.GetNumberOfChildren() == 3);
     }
     if (ret) {
         ret = (test.Read("Type", value));
@@ -534,13 +537,6 @@ bool DataSourceITest::TestAddSignals() {
     }
     if (ret) {
         ret = (value == "6");
-        value = "";
-    }
-    if (ret) {
-        ret = (test.Read("Frequency", value));
-    }
-    if (ret) {
-        ret = (value == "10");
         value = "";
     }
     if (ret) {
@@ -1151,7 +1147,8 @@ bool DataSourceITest::TestGetFunctionSignalsByteSize() {
     uint32 idx;
     StreamString value;
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
-    uint32 numberOfBytesInput[] = { 32, 4, 0, 0, 4, 0 };
+    //Remember that the size is also multiplied by the number of samples
+    uint32 numberOfBytesInput[] = { 40, 4, 0, 0, 4, 0 };
     uint32 numberOfBytesOutput[] = { 0, 0, 40, 4, 0, 24 };
 
     uint32 n;

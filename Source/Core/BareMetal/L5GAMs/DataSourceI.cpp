@@ -391,10 +391,10 @@ bool DataSourceI::GetFunctionNumberOfSignals(SignalDirection direction,
     bool ret = MoveToFunctionIndex(functionIdx);
     if (ret) {
         if (configuredDatabase.MoveRelative(signalDirection)) {
-            //Ignore the ByteSize and the Address
-            ret = (configuredDatabase.GetNumberOfChildren() > 2u);
+            //Ignore the ByteSize
+            ret = (configuredDatabase.GetNumberOfChildren() > 1u);
             if (ret) {
-                numberOfSignals = configuredDatabase.GetNumberOfChildren() - 2u;
+                numberOfSignals = configuredDatabase.GetNumberOfChildren() - 1u;
             }
         }
     }
