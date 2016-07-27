@@ -37,6 +37,7 @@ OBJSX=  AnyTypeTest.x\
 		IntrospectionEntryTest.x\
 		IntrospectionTest.x \
 		ObjectBuilderTest.x \
+		ObjectBuilderTTest.x \
 		ObjectTest.x \
 		ObjectRegistryDatabaseTest.x \
 		ObjectTestHelper.x \

@@ -1,8 +1,8 @@
 /**
- * @file ObjectBuilderGTest.cpp
- * @brief Source file for class ObjectBuilderGTest
- * @date 27/07/2016
- * @author Ivan Herrero
+ * @file ObjectBuilderTTest.h
+ * @brief Header file for class ObjectBuilderTTest
+ * @date 17/06/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,38 +16,57 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class ObjectBuilderGTest (public, protected, and private). Be aware that some
- * methods, such as those inline could be defined on the header file, instead.
+ * @details This header file contains the declaration of the class ObjectBuilderTTest
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
-/*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
-/*---------------------------------------------------------------------------*/
-
-#include <limits.h>
+#ifndef OBJECTBUILDERTTEST_H_
+#define OBJECTBUILDERTTEST_H_
 
 /*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
-/*---------------------------------------------------------------------------*/
-
-#include "ObjectBuilderTest.h"
-#include "gtest/gtest.h"
-
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
+/*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-TEST(ObjectBuilderGTest,TestConstructor) {
-    ObjectBuilderTest test;
-    ASSERT_TRUE(test.TestDefaultConstructor());
-}
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
 
-TEST(ObjectBuilderGTest,TestBuild) {
-    ObjectBuilderTest test;
-    ASSERT_TRUE(test.TestBuild());
-}
+/**
+ * Tests the ObjectBuilderT public methods.
+ */
+class ObjectBuilderTTest {
+public:
+
+    /**
+     * @brief Default constructor
+     */
+    ObjectBuilderTTest();
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~ObjectBuilderTTest();
+
+    /**
+     * @brief Tests the default constructor
+     */
+    bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests the build
+     */
+    bool TestBuild();
+
+};
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* OBJECTBUILDERTTEST_H_ */
+

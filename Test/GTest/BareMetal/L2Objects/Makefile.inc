@@ -34,6 +34,7 @@ OBJSX=  AnyTypeGTest.x \
 		IntrospectionEntryGTest.x\
 		IntrospectionGTest.x\
 		ObjectBuilderGTest.x \
+		ObjectBuilderTGTest.x \
 		ObjectGTest.x \
 		ObjectRegistryDatabaseGTest.x \
 		ReferenceContainerFilterObjectNameGTest.x \

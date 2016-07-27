@@ -1,8 +1,8 @@
 /**
- * @file ObjectBuilderTest.cpp
- * @brief Source file for class ObjectBuilderTest
- * @date 27/07/2016
- * @author Ivan Herrero
+ * @file ObjectBuilderGTest.cpp
+ * @brief Source file for class ObjectBuilderGTest
+ * @date 17/06/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ObjectBuilderTest (public, protected, and private). Be aware that some 
+ * the class ObjectBuilderGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,45 +25,29 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <limits.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ObjectBuilderTest.h"
-
-#include "HeapI.h"
-#include "Object.h"
-#include "ObjectBuilder.h"
+#include "ObjectBuilderTTest.h"
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace {
-
-}
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ObjectBuilderTest::ObjectBuilderTest() {
+TEST(ObjectBuilderTGTest,TestConstructor) {
+    ObjectBuilderTTest test;
+    ASSERT_TRUE(test.TestDefaultConstructor());
 }
 
-ObjectBuilderTest::~ObjectBuilderTest() {
-}
-
-bool ObjectBuilderTest::TestDefaultConstructor() {
-    //Remark: The default constructor of ObjectBuilder does nothing.
-    return true;
-}
-
-bool ObjectBuilderTest::TestBuild() {
-    //Remark: The Build method always return a NULL and does not use the heap.
-    using namespace MARTe;
-    bool result;
-    ObjectBuilder target;
-    Object *obj = target.Build(NULL_PTR(HeapI *));
-    result = (obj == NULL_PTR(Object *));
-    return result;
+TEST(ObjectBuilderTGTest,TestBuild) {
+    ObjectBuilderTTest test;
+    ASSERT_TRUE(test.TestBuild());
 }
