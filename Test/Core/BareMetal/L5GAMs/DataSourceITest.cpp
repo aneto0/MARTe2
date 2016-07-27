@@ -54,7 +54,7 @@ DataSourceITestHelper    ();
 
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
             uint32 bufferIdx,
-            void **&signalAddress);
+            void *&signalAddress);
 
     virtual const char8 *GetBrokerName(StructuredDataI &data,
             SignalDirection direction);
@@ -92,7 +92,7 @@ uint32 DataSourceITestHelper::GetNumberOfMemoryBuffers() {
 
 bool DataSourceITestHelper::GetSignalMemoryBuffer(uint32 signalIdx,
                                                   uint32 bufferIdx,
-                                                  void **&signalAddress) {
+                                                  void *&signalAddress) {
     return true;
 }
 

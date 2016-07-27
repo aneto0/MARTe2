@@ -55,6 +55,8 @@ GAMDataSource::GAMDataSource() :
         DataSourceI() {
     signalMemory[0] = NULL_PTR(void **);
     signalMemory[1] = NULL_PTR(void **);
+    signalMemoryIndex[0] = NULL_PTR(void **);
+    signalMemoryIndex[1] = NULL_PTR(void **);
     heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
 }
 
@@ -65,6 +67,12 @@ GAMDataSource::~GAMDataSource() {
     if (signalMemory[1] != NULL_PTR(void **)) {
         delete[] signalMemory[1];
     }
+    if (signalMemoryIndex[0] != NULL_PTR(void **)) {
+        delete[] signalMemory[0];
+    }
+    if (signalMemoryIndex[1] != NULL_PTR(void **)) {
+        delete[] signalMemory[1];
+    }
 }
 
 uint32 GAMDataSource::GetNumberOfMemoryBuffers() {
@@ -73,7 +81,7 @@ uint32 GAMDataSource::GetNumberOfMemoryBuffers() {
 
 bool GAMDataSource::GetSignalMemoryBuffer(uint32 signalIdx,
                                           uint32 bufferIdx,
-                                          void **&signalAddress) {
+                                          void *&signalAddress) {
     StreamString signalName;
     bool ret = (bufferIdx < 2u);
     if (ret) {

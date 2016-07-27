@@ -533,7 +533,7 @@ public:
      */
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
                                        uint32 bufferIdx,
-                                       void **&signalAddress) = 0;
+                                       void *&signalAddress) = 0;
 
     /**
      * @brief Gets the name of the broker for the signal information available in the input \a data.
