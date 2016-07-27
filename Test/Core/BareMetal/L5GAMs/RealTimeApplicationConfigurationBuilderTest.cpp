@@ -164,7 +164,8 @@ enum RealTimeApplicationConfigurationBuilderFunctions {
     ResolveStates = 7,
     VerifyStates = 8,
     ResolveConsumersAndProducers = 9,
-    VerifyConsumersAndProducers = 10
+    VerifyConsumersAndProducers = 10,
+    ResolveFunctionSignalsMemorySize = 11
 };
 
 static bool TestBuilder(const char8 * const config,
@@ -282,6 +283,13 @@ static bool TestBuilder(const char8 * const config,
         ret = rtAppBuilder.VerifyConsumersAndProducers();
         if (!ret) {
             printf("Failed VerifyConsumersAndProducers\n");
+        }
+    }
+
+    if (ret && (functionToCall >= ResolveFunctionSignalsMemorySize)) {
+        ret = rtAppBuilder.ResolveFunctionSignalsMemorySize();
+        if (!ret) {
+            printf("Failed ResolveFunctionSignalsMemorySize\n");
         }
     }
 
@@ -14461,335 +14469,630 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
     return TestBuilder(config, "Application1", "DDB1", "", "", VerifyConsumersAndProducers, true);
 }
 
-bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducersFalse_TwoProducers() {
-
-    static StreamString configLocal = ""
-            "$Application1 = {"
-            "    Class = RealTimeApplication"
-            "    +Functions = {"
-            "        Class = ReferenceContainer"
-            "        +GAMA = {"
-            "            Class = GAM1"
-            "            OutputSignals = {"
-            "                Signal1 = {"
-            "                    DataSource = DDB1"
-            "                    Type = int32"
-            "                    Alias = SharedVar"
-            "                }"
-            "            }"
-            "        }"
-            "        +GAMB = {"
-            "            Class = GAM1"
-            "            OutputSignals = {"
-            "                Signal2 = {"
-            "                    DataSource = DDB1"
-            "                    Type = int32"
-            "                    Alias = SharedVar"
-            "                }"
-            "            }"
-            "        }"
-            "    }"
-            "    +Data = {"
-            "        Class = ReferenceContainer"
-            "        DefaultDataSource = DDB1"
-            "        +DDB1 = {"
-            "            Class = DS1"
-            "        }"
-            "    }"
-            "    +States = {"
-            "        Class = ReferenceContainer"
-            "        +State1 = {"
-            "            Class = RealTimeState"
-            "            +Threads = {"
-            "                Class = ReferenceContainer"
-            "                +Thread1 = {"
-            "                    Class = RealTimeThread"
-            "                    Functions = {:Functions.GAMA, :Functions.GAMB}"
-            "                }"
-            "            }"
-            "        }"
-            "    }"
-            "}";
-
-    ConfigurationDatabase cdb;
-    configLocal.Seek(0);
-    StandardParser parser(configLocal, cdb);
-
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-    ReferenceT<RealTimeApplication> application = god->Find("Application1");
-    if (!application.IsValid()) {
-        return false;
-    }
-    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
-
-    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.FlattenSignalsDatabases()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveDataSources()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveFunctionSignals()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.VerifyFunctionSignals()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveStates()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
-        return false;
-    }
-
-    ConfigurationDatabase fcdb;
-    ConfigurationDatabase dcdb;
-    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
-        return false;
-    }
-
-    StreamString fDisplay;
-    StreamString dDisplay;
-
-    fDisplay.Printf("%!", fcdb);
-    dDisplay.Printf("%!", dcdb);
-
-    fDisplay.Seek(0);
-    dDisplay.Seek(0);
-
-    printf("\n%s", fDisplay.Buffer());
-    printf("\n%s", dDisplay.Buffer());
-
-    return (!rtAppBuilder.VerifyConsumersAndProducers());
-}
-
-bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducersFalse_MemoryOverlap() {
-
-    static StreamString configLocal = ""
-            "$Application1 = {"
-            "    Class = RealTimeApplication"
-            "    +Functions = {"
-            "        Class = ReferenceContainer"
-            "        +GAMA = {"
-            "            Class = GAM1"
-            "            OutputSignals = {"
-            "                Signal1 = {"
-            "                    DataSource = DDB1"
-            "                    Type = int32"
-            "                    Alias = SharedVar"
-            "                    NumberOfDimensions = 1"
-            "                    NumberOfElements = 32"
-            "                    Ranges = {{0 10}{15 20}}"
-            "                }"
-            "            }"
-            "        }"
-            "        +GAMB = {"
-            "            Class = GAM1"
-            "            OutputSignals = {"
-            "                Signal2 = {"
-            "                    DataSource = DDB1"
-            "                    Type = int32"
-            "                    Alias = SharedVar"
-            "                    NumberOfDimensions = 1"
-            "                    NumberOfElements = 32"
-            "                    Ranges = {{11 14}{20 31}}"
-            "                }"
-            "            }"
-            "        }"
-            "    }"
-            "    +Data = {"
-            "        Class = ReferenceContainer"
-            "        DefaultDataSource = DDB1"
-            "        +DDB1 = {"
-            "            Class = DS1"
-            "        }"
-            "    }"
-            "    +States = {"
-            "        Class = ReferenceContainer"
-            "        +State1 = {"
-            "            Class = RealTimeState"
-            "            +Threads = {"
-            "                Class = ReferenceContainer"
-            "                +Thread1 = {"
-            "                    Class = RealTimeThread"
-            "                    Functions = {:Functions.GAMA, :Functions.GAMB}"
-            "                }"
-            "            }"
-            "        }"
-            "    }"
-            "}";
-
-    ConfigurationDatabase cdb;
-    configLocal.Seek(0);
-    StandardParser parser(configLocal, cdb);
-
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-    ReferenceT<RealTimeApplication> application = god->Find("Application1");
-    if (!application.IsValid()) {
-        return false;
-    }
-    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
-
-    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.FlattenSignalsDatabases()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveDataSources()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveFunctionSignals()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.VerifyFunctionSignals()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveStates()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
-        return false;
-    }
-
-    ConfigurationDatabase fcdb;
-    ConfigurationDatabase dcdb;
-    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
-        return false;
-    }
-
-    StreamString fDisplay;
-    StreamString dDisplay;
-
-    fDisplay.Printf("%!", fcdb);
-    dDisplay.Printf("%!", dcdb);
-
-    fDisplay.Seek(0);
-    dDisplay.Seek(0);
-
-    printf("\n%s", fDisplay.Buffer());
-    printf("\n%s", dDisplay.Buffer());
-
-    return (!rtAppBuilder.VerifyConsumersAndProducers());
-}
-
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemorySize() {
-    ConfigurationDatabase cdb;
-    config1.Seek(0);
-    StandardParser parser(config1, cdb);
+    const char8 * const config = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "               Signal1 = {"
+            "                   Type = uint32"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   Type = TestStructC"
+            "               }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "               Signal3 = {"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   Alias = Signal2.c1.b2"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               Signal4 = {"
+            "                   Type = uint32"
+            "                   Alias = Signal1"
+            "               }"
+            "            }"
+            "        }"
+            "        +GAMC = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "               Signal5 = {"
+            "                   DataSource = Drv1"
+            "                   Type = float32"
+            "                   Alias = Signal2.c2"
+            "               }"
+            "               Signal6 = {"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   Alias = Signal2.c3"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +Drv1 = {"
+            "            Class = Driver1"
+            "            Signals = {"
+            "               Signal2 = {"
+            "                   Type = TestStructC"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA :Functions.GAMB :Functions.GAMC}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "}";
 
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    const char8 * const expectedFunctionsConfig = ""
+            "Functions = {"
+            "   \"0\" = {"
+            "       QualifiedName = GAMA"
+            "       Signals = {"
+            "           InputSignals = {"
+            "               \"0\" = {"
+            "                   QualifiedName = Signal1"
+            "                   Type = uint32"
+            "                   DataSource = DDB1"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   FullType = uint32"
+            "                   ByteSize = 4"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               \"0\" = {"
+            "                   QualifiedName = Signal2.c1.b1"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   FullType = TestStructC.TestStructB.int32"
+            "                   ByteSize = 4"
+            "               }"
+            "               \"1\" = {"
+            "                   QualifiedName = Signal2.c1.b2"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   FullType = TestStructC.TestStructB.int32"
+            "                   ByteSize = 4"
+            "               }"
+            "               \"2\" = {"
+            "                   QualifiedName = Signal2.c2"
+            "                   DataSource = Drv1"
+            "                   Type = float32"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   FullType = TestStructC.float32"
+            "                   ByteSize = 12"
+            "               }"
+            "               \"3\" = {"
+            "                   QualifiedName = Signal2.c3"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 2"
+            "                   NumberOfElements = 8"
+            "                   FullType = TestStructC.int32"
+            "                   ByteSize = 32"
+            "               }"
+            "           }"
+            "       }"
+            "       States = {"
+            "           State1 = Thread1"
+            "       }"
+            "   }"
+            "   \"1\" = {"
+            "       QualifiedName = GAMB"
+            "       Signals = {"
+            "           InputSignals = {"
+            "               \"0\" = {"
+            "                   QualifiedName = Signal3"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   DataSource = Drv1"
+            "                   Alias = Signal2.c1.b2"
+            "                   FullType = TestStructC.TestStructB.int32"
+            "                   ByteSize = 4"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               \"0\" = {"
+            "                   QualifiedName = Signal4"
+            "                   Type = uint32"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   DataSource = DDB1"
+            "                   Alias = Signal1"
+            "                   FullType = uint32"
+            "                   ByteSize = 4"
+            "               }"
+            "           }"
+            "       }"
+            "       States = {"
+            "           State1 = Thread1"
+            "       }"
+            "   }"
+            "   \"2\" = {"
+            "       QualifiedName = GAMC"
+            "       Signals = {"
+            "           InputSignals = {"
+            "               \"0\" = {"
+            "                   QualifiedName = Signal5"
+            "                   Type = float32"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   DataSource = Drv1"
+            "                   Alias = Signal2.c2"
+            "                   FullType = TestStructC.float32"
+            "                   ByteSize = 12"
+            "               }"
+            "               \"1\" = {"
+            "                   QualifiedName = Signal6"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 2"
+            "                   NumberOfElements = 8"
+            "                   DataSource = Drv1"
+            "                   Alias = Signal2.c3"
+            "                   FullType = TestStructC.int32"
+            "                   ByteSize = 32"
+            "               }"
+            "           }"
+            "       }"
+            "       States = {"
+            "           State1 = Thread1"
+            "       }"
+            "   }"
+            "}";
 
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-    ReferenceT<RealTimeApplication> application = god->Find("Application1");
-    if (!application.IsValid()) {
-        return false;
-    }
-    RealTimeApplicationConfigurationBuilder rtAppBuilder(application, "DDB1");
+    const char8 * const expectedDataConfig = ""
+            "Data = {"
+            "   \"0\" = {"
+            "       QualifiedName = DDB1"
+            "       Signals = {"
+            "          \"0\" = {"
+            "               QualifiedName = Signal1"
+            "               Type = uint32"
+            "               NumberOfDimensions = 0"
+            "               NumberOfElements = 1"
+            "               FullType = uint32"
+            "               ByteSize = 4"
+            "               States = {"
+            "                   State1 = {"
+            "                       GAMConsumers = { \"0\" }"
+            "                       GAMNamesConsumers = { \"GAMA\" }"
+            "                       SignalConsumers = { \"0\" }"
+            "                       GAMProducers = { \"1\" }"
+            "                       GAMNamesProducers = { \"GAMB\" }"
+            "                       SignalProducers = { \"0\" }"
+            "                   }"
+            "               }"
+            "          }"
+            "       }"
+            "   }"
+            "   \"1\" = {"
+            "       QualifiedName = Drv1"
+            "       Signals = {"
+            "           \"0\" = {"
+            "               QualifiedName = Signal2.c1.b1"
+            "               Type = int32"
+            "               NumberOfDimensions = 0"
+            "               NumberOfElements = 1"
+            "               FullType = TestStructC.TestStructB.int32"
+            "               ByteSize = 4"
+            "               States = {"
+            "                   State1 = {"
+            "                       GAMProducers = { \"0\" }"
+            "                       GAMNamesProducers = { \"GAMA\" }"
+            "                       SignalProducers = { \"0\" }"
+            "                   }"
+            "               }"
+            "           }"
+            "           \"1\" = {"
+            "               QualifiedName = Signal2.c1.b2"
+            "               Type = int32"
+            "               NumberOfDimensions = 0"
+            "               NumberOfElements = 1"
+            "               FullType = TestStructC.TestStructB.int32"
+            "               ByteSize = 4"
+            "               States = {"
+            "                   State1 = {"
+            "                       GAMConsumers = { \"1\" }"
+            "                       GAMNamesConsumers = { \"GAMB\" }"
+            "                       SignalConsumers = { \"0\" }"
+            "                       GAMProducers = { \"0\" }"
+            "                       GAMNamesProducers = { \"GAMA\" }"
+            "                       SignalProducers = { \"1\" }"
+            "                   }"
+            "               }"
+            "            }"
+            "            \"2\" = {"
+            "               QualifiedName = Signal2.c2"
+            "               Type = float32"
+            "               NumberOfDimensions = 1"
+            "               NumberOfElements = 3"
+            "               FullType = TestStructC.float32"
+            "               ByteSize = 12"
+            "               States = {"
+            "                   State1 = {"
+            "                       GAMConsumers = { \"2\" }"
+            "                       GAMNamesConsumers = { \"GAMC\" }"
+            "                       SignalConsumers = { \"0\" }"
+            "                       GAMProducers = { \"0\" }"
+            "                       GAMNamesProducers = { \"GAMA\" }"
+            "                       SignalProducers = { \"2\" }"
+            "                   }"
+            "               }"
+            "            }"
+            "            \"3\" = {"
+            "               QualifiedName = Signal2.c3"
+            "               Type = int32"
+            "               NumberOfDimensions = 2"
+            "               NumberOfElements = 8"
+            "               FullType = TestStructC.int32"
+            "               ByteSize = 32"
+            "               States = {"
+            "                   State1 = {"
+            "                       GAMConsumers = { \"2\" }"
+            "                       GAMNamesConsumers = { \"GAMC\" }"
+            "                       SignalConsumers = { \"1\" }"
+            "                       GAMProducers = { \"0\" }"
+            "                       GAMNamesProducers = { \"GAMA\" }"
+            "                       SignalProducers = { \"3\" }"
+            "                   }"
+            "               }"
+            "           }"
+            "       }"
+            "   }"
+            "}";
 
-    if (!rtAppBuilder.InitialiseSignalsDatabase()) {
-        return false;
-    }
+    return TestBuilder(config, "Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, ResolveFunctionSignalsMemorySize);
+}
 
-    if (!rtAppBuilder.FlattenSignalsDatabases()) {
-        return false;
-    }
+bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemorySize_Ranges() {
+    const char8 * const config = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "               Signal1 = {"
+            "                   Type = uint32"
+            "                   Ranges = {{0 0} {5 5}}"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 8"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   Type = TestStructC"
+            "               }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "               Signal3 = {"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   Alias = Signal2.c1.b2"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               Signal4 = {"
+            "                   Type = uint32"
+            "                   Alias = Signal1"
+            "                   Ranges = {{1 4} {6 7}}"
+            "               }"
+            "            }"
+            "        }"
+            "        +GAMC = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "               Signal5 = {"
+            "                   DataSource = Drv1"
+            "                   Type = float32"
+            "                   Alias = Signal2.c2"
+            "               }"
+            "               Signal6 = {"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   Alias = Signal2.c3"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +Drv1 = {"
+            "            Class = Driver1"
+            "            Signals = {"
+            "               Signal2 = {"
+            "                   Type = TestStructC"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {:Functions.GAMA :Functions.GAMB :Functions.GAMC}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "}";
 
-    if (!rtAppBuilder.ResolveDataSources()) {
-        return false;
-    }
+    const char8 * const expectedFunctionsConfig = ""
+            "Functions = {"
+            "   \"0\" = {"
+            "       QualifiedName = GAMA"
+            "       Signals = {"
+            "           InputSignals = {"
+            "               \"0\" = {"
+            "                   QualifiedName = Signal1"
+            "                   Type = uint32"
+            "                   DataSource = DDB1"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 8"
+            "                   FullType = uint32"
+            "                   ByteSize = 8"
+            "                   Ranges = {{0 0} {5 5}}"
+            "                   ByteOffset = {{0 4}{20 4}}"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               \"0\" = {"
+            "                   QualifiedName = Signal2.c1.b1"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   FullType = TestStructC.TestStructB.int32"
+            "                   ByteSize = 4"
+            "               }"
+            "               \"1\" = {"
+            "                   QualifiedName = Signal2.c1.b2"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   FullType = TestStructC.TestStructB.int32"
+            "                   ByteSize = 4"
+            "               }"
+            "               \"2\" = {"
+            "                   QualifiedName = Signal2.c2"
+            "                   DataSource = Drv1"
+            "                   Type = float32"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   FullType = TestStructC.float32"
+            "                   ByteSize = 12"
+            "               }"
+            "               \"3\" = {"
+            "                   QualifiedName = Signal2.c3"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 2"
+            "                   NumberOfElements = 8"
+            "                   FullType = TestStructC.int32"
+            "                   ByteSize = 32"
+            "               }"
+            "           }"
+            "       }"
+            "       States = {"
+            "           State1 = Thread1"
+            "       }"
+            "   }"
+            "   \"1\" = {"
+            "       QualifiedName = GAMB"
+            "       Signals = {"
+            "           InputSignals = {"
+            "               \"0\" = {"
+            "                   QualifiedName = Signal3"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   DataSource = Drv1"
+            "                   Alias = Signal2.c1.b2"
+            "                   FullType = TestStructC.TestStructB.int32"
+            "                   ByteSize = 4"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               \"0\" = {"
+            "                   QualifiedName = Signal4"
+            "                   Type = uint32"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 8"
+            "                   DataSource = DDB1"
+            "                   Alias = Signal1"
+            "                   FullType = uint32"
+            "                   ByteSize = 24"
+            "                   Ranges = {{1 4} {6 7}}"
+            "                   ByteOffset = {{4 16}{24 8}}"
+            "               }"
+            "           }"
+            "       }"
+            "       States = {"
+            "           State1 = Thread1"
+            "       }"
+            "   }"
+            "   \"2\" = {"
+            "       QualifiedName = GAMC"
+            "       Signals = {"
+            "           InputSignals = {"
+            "               \"0\" = {"
+            "                   QualifiedName = Signal5"
+            "                   Type = float32"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   DataSource = Drv1"
+            "                   Alias = Signal2.c2"
+            "                   FullType = TestStructC.float32"
+            "                   ByteSize = 12"
+            "               }"
+            "               \"1\" = {"
+            "                   QualifiedName = Signal6"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 2"
+            "                   NumberOfElements = 8"
+            "                   DataSource = Drv1"
+            "                   Alias = Signal2.c3"
+            "                   FullType = TestStructC.int32"
+            "                   ByteSize = 32"
+            "               }"
+            "           }"
+            "       }"
+            "       States = {"
+            "           State1 = Thread1"
+            "       }"
+            "   }"
+            "}";
 
-    if (!rtAppBuilder.VerifyDataSourcesSignals()) {
-        return false;
-    }
+    const char8 * const expectedDataConfig = ""
+            "Data = {"
+            "   \"0\" = {"
+            "       QualifiedName = DDB1"
+            "       Signals = {"
+            "          \"0\" = {"
+            "               QualifiedName = Signal1"
+            "               Type = uint32"
+            "               NumberOfDimensions = 1"
+            "               NumberOfElements = 8"
+            "               FullType = uint32"
+            "               ByteSize = 32"
+            "               States = {"
+            "                   State1 = {"
+            "                       GAMConsumers = { \"0\" }"
+            "                       GAMNamesConsumers = { \"GAMA\" }"
+            "                       SignalConsumers = { \"0\" }"
+            "                       GAMProducers = { \"1\" }"
+            "                       GAMNamesProducers = { \"GAMB\" }"
+            "                       SignalProducers = { \"0\" }"
+            "                   }"
+            "               }"
+            "          }"
+            "       }"
+            "   }"
+            "   \"1\" = {"
+            "       QualifiedName = Drv1"
+            "       Signals = {"
+            "           \"0\" = {"
+            "               QualifiedName = Signal2.c1.b1"
+            "               Type = int32"
+            "               NumberOfDimensions = 0"
+            "               NumberOfElements = 1"
+            "               FullType = TestStructC.TestStructB.int32"
+            "               ByteSize = 4"
+            "               States = {"
+            "                   State1 = {"
+            "                       GAMProducers = { \"0\" }"
+            "                       GAMNamesProducers = { \"GAMA\" }"
+            "                       SignalProducers = { \"0\" }"
+            "                   }"
+            "               }"
+            "           }"
+            "           \"1\" = {"
+            "               QualifiedName = Signal2.c1.b2"
+            "               Type = int32"
+            "               NumberOfDimensions = 0"
+            "               NumberOfElements = 1"
+            "               FullType = TestStructC.TestStructB.int32"
+            "               ByteSize = 4"
+            "               States = {"
+            "                   State1 = {"
+            "                       GAMConsumers = { \"1\" }"
+            "                       GAMNamesConsumers = { \"GAMB\" }"
+            "                       SignalConsumers = { \"0\" }"
+            "                       GAMProducers = { \"0\" }"
+            "                       GAMNamesProducers = { \"GAMA\" }"
+            "                       SignalProducers = { \"1\" }"
+            "                   }"
+            "               }"
+            "            }"
+            "            \"2\" = {"
+            "               QualifiedName = Signal2.c2"
+            "               Type = float32"
+            "               NumberOfDimensions = 1"
+            "               NumberOfElements = 3"
+            "               FullType = TestStructC.float32"
+            "               ByteSize = 12"
+            "               States = {"
+            "                   State1 = {"
+            "                       GAMConsumers = { \"2\" }"
+            "                       GAMNamesConsumers = { \"GAMC\" }"
+            "                       SignalConsumers = { \"0\" }"
+            "                       GAMProducers = { \"0\" }"
+            "                       GAMNamesProducers = { \"GAMA\" }"
+            "                       SignalProducers = { \"2\" }"
+            "                   }"
+            "               }"
+            "            }"
+            "            \"3\" = {"
+            "               QualifiedName = Signal2.c3"
+            "               Type = int32"
+            "               NumberOfDimensions = 2"
+            "               NumberOfElements = 8"
+            "               FullType = TestStructC.int32"
+            "               ByteSize = 32"
+            "               States = {"
+            "                   State1 = {"
+            "                       GAMConsumers = { \"2\" }"
+            "                       GAMNamesConsumers = { \"GAMC\" }"
+            "                       SignalConsumers = { \"1\" }"
+            "                       GAMProducers = { \"0\" }"
+            "                       GAMNamesProducers = { \"GAMA\" }"
+            "                       SignalProducers = { \"3\" }"
+            "                   }"
+            "               }"
+            "           }"
+            "       }"
+            "   }"
+            "}";
 
-    if (!rtAppBuilder.ResolveFunctionSignals()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.VerifyFunctionSignals()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveStates()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveConsumersAndProducers()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.VerifyConsumersAndProducers()) {
-        return false;
-    }
-
-    if (!rtAppBuilder.ResolveFunctionSignalsMemorySize()) {
-        return false;
-    }
-
-    ConfigurationDatabase fcdb;
-    ConfigurationDatabase dcdb;
-    if (!rtAppBuilder.Copy(fcdb, dcdb)) {
-        return false;
-    }
-
-    StreamString fDisplay;
-    StreamString dDisplay;
-
-    fDisplay.Printf("%!", fcdb);
-    dDisplay.Printf("%!", dcdb);
-
-    fDisplay.Seek(0);
-    dDisplay.Seek(0);
-
-    printf("\n%s", fDisplay.Buffer());
-    printf("\n%s", dDisplay.Buffer());
-
-    return true;
+    return TestBuilder(config, "Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, ResolveFunctionSignalsMemorySize);
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxMin() {

@@ -286,12 +286,14 @@ public:
     //range overlap fail same signal
     bool TestVerifyConsumersAndProducersFalse_RangeOverlap2();
 
-
-    bool TestVerifyConsumersAndProducersFalse_TwoProducers();
-
-    bool TestVerifyConsumersAndProducersFalse_MemoryOverlap();
-
+    //basic
     bool TestResolveFunctionSignalsMemorySize();
+
+    //ranges
+    bool TestResolveFunctionSignalsMemorySize_Ranges();
+
+    //TODO Range check failure
+
 
     bool TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxMin();
 

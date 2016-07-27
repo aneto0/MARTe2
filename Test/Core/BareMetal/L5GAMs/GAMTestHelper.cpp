@@ -262,6 +262,124 @@ bool DS1::GetOutputBrokers(ReferenceContainer &outputBrokers,
 
 CLASS_REGISTER(DS1, "1.0");
 
+
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+
+
+
+Driver1::Driver1() :
+        DataSourceI() {
+
+}
+
+Driver1::~Driver1() {
+
+}
+
+bool Driver1::Initialise(StructuredDataI & data) {
+    return DataSourceI::Initialise(data);
+}
+
+uint32 Driver1::GetCurrentBufferIndex() {
+    return 0u;
+}
+
+uint32 Driver1::GetNumberOfMemoryBuffers() {
+    return 1u;
+}
+
+bool Driver1::AllocateMemory() {
+    return false;
+}
+
+bool Driver1::GetSignalMemoryBuffer(uint32 signalIdx,
+                                    uint32 bufferIdx,
+                                    void **&signalAddress) {
+    return true;
+}
+
+
+const char8 *Driver1::GetBrokerName(StructuredDataI &data,
+                                      SignalDirection direction) {
+    const char8* brokerName = NULL_PTR(const char8 *);
+
+    float32 freq;
+    if (!data.Read("Frequency", freq)) {
+        freq = -1;
+    }
+    uint32 samples;
+    if (!data.Read("Samples", samples)) {
+        samples = 1u;
+    }
+
+    if ((freq < 0.) && (samples == 1u)) {
+        if (direction == InputSignals) {
+            brokerName = "MemoryMapInputBroker";
+        }
+        else {
+            brokerName = "MemoryMapOutputBroker";
+        }
+    }
+    return brokerName;
+
+}
+
+
+bool Driver1::PrepareNextState(const RealTimeStateInfo &status) {
+    return true;
+}
+
+bool Driver1::ChangeState() {
+    return true;
+}
+
+
+
+bool Driver1::GetInputBrokers(ReferenceContainer &inputBrokers,
+                         const char8 * functionName,
+                         void* gamMemPtr) {
+    bool ret = true;
+    //generally a loop for each supported broker
+    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+    ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = inputBrokers.Insert(broker);
+        }
+    }
+    return ret;
+}
+
+bool Driver1::GetOutputBrokers(ReferenceContainer &outputBrokers,
+                           const char8 * functionName,
+                           void* gamMemPtr) {
+
+    bool ret = true;
+    //generally a loop for each supported broker
+    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+
+    ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = outputBrokers.Insert(broker);
+        }
+    }
+    return ret;
+
+}
+
+CLASS_REGISTER(Driver1, "1.0");
+
+
 #if 0
 
 DECLARE_CLASS_MEMBER(TrackError, Par1, uint32, "", "");

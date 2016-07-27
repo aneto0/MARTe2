@@ -286,6 +286,48 @@ DS1    ();
 };
 }
 
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+class Driver1: public DataSourceI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    Driver1();
+
+    virtual ~Driver1();
+
+    virtual bool Initialise(StructuredDataI & data);
+
+    virtual uint32 GetCurrentBufferIndex();
+
+    virtual uint32 GetNumberOfMemoryBuffers();
+
+
+    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
+                                       uint32 bufferIdx,
+                                       void **&signalAddress);
+
+    virtual bool AllocateMemory();
+
+    virtual const char8 *GetBrokerName(StructuredDataI &data, SignalDirection direction);
+
+
+    virtual bool PrepareNextState(const RealTimeStateInfo &status);
+
+    virtual bool ChangeState();
+
+    virtual bool GetInputBrokers(ReferenceContainer &inputBrokers,
+            const char8 * functionName,
+            void* gamMemPtr);
+
+    virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers,
+            const char8 * functionName,
+            void* gamMemPtr);
+
+};
+
 #if 0
 
 ///////////////////////////////////////////

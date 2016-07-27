@@ -432,6 +432,15 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducer
     ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_RangeOverlap2());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySize) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySize());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySize_Ranges) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySize_Ranges());
+}
 /*
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignalsFalse_NoType) {
     RealTimeApplicationConfigurationBuilderTest test;
