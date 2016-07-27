@@ -46,7 +46,7 @@ TEST(QueuedMessageIGTest,TestDefaultConstructor) {
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(QueuedMessageIGTest,TestDefaultConstructor) {
+TEST(QueuedMessageIGTest,TestReceiveMessage) {
     using namespace MARTe;
     QueuedMessageITest target;
     ASSERT_TRUE(target.TestReceiveMessage());
