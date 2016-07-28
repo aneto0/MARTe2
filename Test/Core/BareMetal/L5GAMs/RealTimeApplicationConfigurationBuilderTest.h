@@ -45,6 +45,10 @@ class RealTimeApplicationConfigurationBuilderTest {
 public:
     RealTimeApplicationConfigurationBuilderTest();
 
+    bool TestInitFromConfig();
+
+    bool TestResolveStatesFromConfig();
+
     bool TestInitialiseSignalsDatabase();
 
     bool TestInitialiseSignalsDatabase1();
@@ -96,6 +100,9 @@ public:
 
     //Invalid sync signal specified in struct
     bool TestFlattenSignalsDatabases_InvalidSyncSignalInStruct();
+
+    //unregistered type
+    bool TestFlattenSignalsDatabases_UnregisteredType();
 
     //Basic
     bool TestResolveDataSources1();
@@ -292,22 +299,38 @@ public:
     //ranges
     bool TestResolveFunctionSignalsMemorySize_Ranges();
 
-    //TODO Range check failure
+    //invalid ranges min>max
+    bool TestResolveFunctionSignalsMemorySize_FalseInvalidRanges();
 
+    //invalid ranges max>#elements
+    bool TestResolveFunctionSignalsMemorySize_FalseInvalidRanges2();
 
-    bool TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxMin();
+    //invalid ranges field 3 columns
+    bool TestResolveFunctionSignalsMemorySize_FalseInvalidRanges3();
 
-    bool TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxNElements();
-
+    //basic
     bool TestResolveFunctionsMemory();
 
-    bool TestCalculateFunctionsMemory();
+    //samples
+    bool TestResolveFunctionsMemory_Samples();
 
+    //interleaved ds
+    bool TestResolveFunctionsMemory_InterleavedDs();
+
+    //Samples =0
+    bool TestResolveFunctionsMemoryFalse_InvalidSamples();
+
+    //basic
     bool TestAssignFunctionsMemoryToDataSource();
 
+    //same gam is producer and consumer
+    bool TestAssignFunctionsMemoryToDataSource_GamIO();
+
+    //basic
     bool TestAssignBrokersToFunctions();
 
-    bool TestAllocateGAMMemory();
+    //unsupported broker
+    bool TestAssignBrokersToFunctionsFalse_UnsupportedBroker();
 
 
 };

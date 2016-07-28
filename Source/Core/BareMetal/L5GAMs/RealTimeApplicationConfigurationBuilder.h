@@ -75,6 +75,11 @@ public:
     RealTimeApplicationConfigurationBuilder(ReferenceT<ReferenceContainer> realTimeApplicationIn,
                                             const char8 *defaultDataSourceNameIn);
 
+    RealTimeApplicationConfigurationBuilder(ConfigurationDatabase &globalDatabaseIn,
+                                            const char8 *defaultDataSourceNameIn);
+
+    bool InitialiseSignalsDatabaseFromConfig();
+
     /**
      * @brief Adds all the GAM signals to the Functions database and adds all the DataSource signals to the DataSource database.
      * @details Looks for all the GAM instances and calls GAM::AddSignals. The GAM name is stored as a qualified name (i.e. each recursion into
@@ -421,6 +426,8 @@ public:
      */
     bool ResolveStates();
 
+    bool ResolveStatesFromConfiguration();
+
     /**
      * @brief Checks that every GAM has been called in at least one thread.
      * @return true if every GAM has been called in at least one thread.
@@ -484,6 +491,8 @@ public:
      *      }
      */
     bool ResolveConsumersAndProducers();
+
+    bool VerifyConsumersAndProducers();
 
     /**
      * @brief For every signal in every Function compute the memory size and the memory offset (if Ranges are defined).
@@ -625,85 +634,6 @@ public:
      *      }
      */
     bool ResolveFunctionsMemory();
-
-    /**
-     * @brief For every Function compute the memory size and the memory offset for each DataSource which interfaces to the Function.
-     * @details Computes the amount of GAM memory associated to each DataSource and for every DataSource writes the offset of the
-     * DataSource signals associated to this GAM (as GAMMemoryOffset) w.r.t. to the beginning of the GAM signal memory.
-     * @return true if the total amount of memory can be successfully computed.
-     * @pre
-     *   ResolveFunctionsMemory()
-     * @post
-     *   functionsDatabase =
-     *     Functions = {
-     *       *NUMBER = {
-     *         QualifiedName = "x.y.GAMNAME"
-     *         Signals = {
-     *            InputSignals|OutputSignals = {
-     *               *NUMBER  ={
-     *                 QualifiedName = "QualifiedName of the signal"
-     *                 DataSource = "QualifiedName of the DataSource"
-     *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
-     *                 Type = BasicType
-     *                 NumberOfDimensions = 0|1|2
-     *                 NumberOfElements = NUMBER>0
-     *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
-     *                 ByteSize = NUMBER>0
-     *                 +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
-     *                 +Samples = NUMBER > 0
-     *                 +Frequency = NUMBER>0
-     *               }
-     *            }
-     *         }
-     *         States = {
-     *           +*StateNameN = "ThreadNameN"
-     *         }
-     *         Memory = {
-     *           InputSignals|OutputSignals = {
-     *             +*NUMBER = {
-     *               DataSource = "QualifiedName of the DataSource"
-     *               ByteSize = NUMBER>0
-     *               GAMMemoryOffset = NUMBER>0
-     *               Signals = {
-     *                 *NUMBER = {
-     *                   QualifiedName = "QualifiedName of the Signal"
-     *                   +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
-     *                   Frequency = -1|NUMBER>0
-     *                   Samples = -1|NUMBER>0
-     *                 }
-     *               }
-     *             }
-     *           }
-     *         }
-     *       }
-     *    }
-     *    dataSourcesDatabase =
-     *      Data = {
-     *        *NUMBER = {
-     *          QualifiedName = "x.y.DATASOURCENAME"
-     *          Signals = {
-     *            *NUMBER = {
-     *              QualifiedName = "QualifiedName of the signal"
-     *              Type = BasicType
-     *              NumberOfDimensions = 0|1|2
-     *              NumberOfElements = NUMBER>0
-     *              +Frequency = -1|NUMBER>0
-     *              +States = {
-     *                *StateN = {
-     *                  GAMConsumers = { "0" ... "N" }
-     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }
-     *                  SignalConsumers = { "0" ... "N" }
-     *                  GAMProducers = { "0" ... "N" }
-     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }
-     *                  SignalProducers = { "0" ... "N" }
-     *                }
-     *              }
-     *            }
-     *          }
-     *        }
-     *      }
-     */
-    bool CalculateFunctionsMemory();
 
     /**
      * @brief For every DataSource add the memory information about each Function that interacts with the DataSource
@@ -903,10 +833,6 @@ public:
      */
     bool PostConfigureFunctions();
 
-    bool VerifyConsumersAndProducers();
-
-    bool VerifySynchronization();
-
     /**
      * @brief Copies the Function and DataSource databases.
      * @param[out] functionsDatabaseOut where to copy the Functions database into.
@@ -930,10 +856,7 @@ private:
      */
     ConfigurationDatabase dataSourcesDatabase;
 
-    /**
-     * ConfigurationDatabase with all the States information.
-     */
-    ConfigurationDatabase statesDatabase;
+    ConfigurationDatabase globalDatabase;
 
     /**
      * The default DataSource name to be used if this is not defined in any of the signals.
@@ -1060,13 +983,6 @@ private:
     bool ResolveFunctionsMemory(SignalDirection direction);
 
     /**
-     * @brief @see AllocateFunctionsMemory()
-     * @param[in] direction can be either InputSignals or OutputSignals
-     * @return @see AllocateFunctionsMemory()
-     */
-    bool CalculateFunctionsMemory(SignalDirection direction);
-
-    /**
      * @brief @see AssignFunctionsMemoryToDataSource()
      * @param[in] direction can be either InputSignals or OutputSignals
      * @return @see AssignFunctionsMemoryToDataSource()
@@ -1108,9 +1024,20 @@ private:
      */
     bool FindFunctionNumber(StreamString functionName,
                             StreamString &functionNumber);
-};
-}
 
+    bool AddStateToFunction(ConfigurationDatabase &local,
+                            const char8 *functionName,
+                            const char8* stateName,
+                            const char8 * threadName,
+                            uint32 &syncSignals);
+
+    bool AddStateToGAM(const char8* gamName,
+                       const char8* stateName,
+                       const char8 * threadName,
+                       uint32 &syncSignals);
+};
+
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
