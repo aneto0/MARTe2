@@ -301,7 +301,7 @@ public:
 
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
                                        uint32 bufferIdx,
-                                       void **&signalAddress);
+                                       void *&signalAddress);
 
     virtual bool AllocateMemory();
 

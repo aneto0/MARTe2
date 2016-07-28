@@ -163,7 +163,7 @@ public:
     bool ConfigureApplication();
 
     //TODO
-    bool ConfigureApplicationFromExternalSource(StructuredDataI &functionsDatabase, StructuredDataI &dataSourcesDatabase);
+    bool ConfigureApplicationFromExternalSource(RealTimeApplicationConfigurationBuilder &configuration);
 
 
     bool AllocateGAMMemory();

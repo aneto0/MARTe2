@@ -392,10 +392,6 @@ bool RealTimeApplication::ConfigureApplication() {
         PrintDatabases(rtAppBuilder);
     }
     if (ret) {
-        ret = rtAppBuilder.CalculateFunctionsMemory();
-        PrintDatabases(rtAppBuilder);
-    }
-    if (ret) {
         ret = rtAppBuilder.AssignFunctionsMemoryToDataSource();
         PrintDatabases(rtAppBuilder);
     }
@@ -822,26 +818,26 @@ bool RealTimeApplication::ConfigureApplication() {
 #endif
 }
 
-bool RealTimeApplication::ConfigureApplicationFromExternalSource(StructuredDataI &functionsDatabaseIn,
-                                                                 StructuredDataI &dataSourcesDatabaseIn) {
+bool RealTimeApplication::ConfigureApplicationFromExternalSource(RealTimeApplicationConfigurationBuilder &configuration) {
     // no check..someone else did it
-    // TODO Standard checks can be done (the Verifies)
-    RealTimeApplicationConfigurationBuilder rtAppBuilder(this, "DDB1");
 
-    functionsDatabaseIn.MoveToRoot();
-    bool ret = functionsDatabaseIn.Copy(functionsDatabase);
+    //-External compiling
+    //-Initialization
+    //-Brokers negotiation
+    //-PostConfig
+
+    // TODO Standard checks can be done (the Verifies)
+    //TODO
+    bool ret = configuration.AssignBrokersToFunctions();
     if (ret) {
-        dataSourcesDatabaseIn.MoveToRoot();
-        ret = dataSourcesDatabaseIn.Copy(dataSourcesDatabase);
+        ret = configuration.Copy(functionsDatabase, dataSourcesDatabase);
+    }
+
+    if (ret) {
+        ret = configuration.PostConfigureDataSources();
     }
     if (ret) {
-        ret = rtAppBuilder.Set(functionsDatabase, dataSourcesDatabase);
-    }
-    if (ret) {
-        ret = rtAppBuilder.PostConfigureDataSources();
-    }
-    if (ret) {
-        ret = rtAppBuilder.PostConfigureFunctions();
+        ret = configuration.PostConfigureFunctions();
     }
     return ret;
 }

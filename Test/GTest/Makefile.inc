@@ -23,8 +23,8 @@
 #############################################################
 
 OBJSX=
-#SPB = BareMetal.x Scheduler.x FileSystem.x
-SPB = BareMetal.x
+SPB = BareMetal.x Scheduler.x FileSystem.x
+#SPB = BareMetal.x
 PACKAGE=
 ROOT_DIR=../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults

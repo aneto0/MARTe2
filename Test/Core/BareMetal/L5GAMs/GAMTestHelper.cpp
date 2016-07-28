@@ -67,14 +67,14 @@ static const IntrospectionEntry* TestStructCEntries[] = { &TestStructC_c1_intros
 
 DECLARE_STRUCT_INTROSPECTION(TestStructC, TestStructCEntries);
 
-
 DECLARE_CLASS_MEMBER(TestStructD, c1, TestStructB, "", "");
 
 DECLARE_CLASS_MEMBER(TestStructD, c2, float32, "[3]", "");
 
 DECLARE_CLASS_MEMBER(TestStructD, c3, int32, "[2][4]", "");
 
-static const IntrospectionEntry* TestStructDEntries[] = { &TestStructD_c1_introspectionEntry, &TestStructD_c2_introspectionEntry, &TestStructD_c3_introspectionEntry, 0 };
+static const IntrospectionEntry* TestStructDEntries[] = { &TestStructD_c1_introspectionEntry, &TestStructD_c2_introspectionEntry,
+        &TestStructD_c3_introspectionEntry, 0 };
 
 DECLARE_STRUCT_INTROSPECTION(TestStructD, TestStructDEntries);
 ///////////////////////////////////////////
@@ -128,22 +128,19 @@ void GAM1::SetUp() {
 
 CLASS_REGISTER(GAM1, "1.0");
 
-
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 
-void GAMGroup1::PrepareNextState(const RealTimeStateInfo &status){
+void GAMGroup1::PrepareNextState(const RealTimeStateInfo &status) {
 
 }
 
-
-void GAMGroup1::SetUp(){
+void GAMGroup1::SetUp() {
 
 }
 CLASS_REGISTER(GAMGroup1, "1.0");
-
 
 ///////////////////////////////////////////
 ///////////////////////////////////////////
@@ -215,8 +212,8 @@ bool DS1::ChangeState() {
 }
 
 bool DS1::GetInputBrokers(ReferenceContainer &inputBrokers,
-                         const char8 * functionName,
-                         void* gamMemPtr) {
+                          const char8 * functionName,
+                          void* gamMemPtr) {
     bool ret = true;
     //generally a loop for each supported broker
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
@@ -255,13 +252,10 @@ bool DS1::GetOutputBrokers(ReferenceContainer &outputBrokers,
 
 CLASS_REGISTER(DS1, "1.0");
 
-
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
-
-
 
 Driver1::Driver1() :
         DataSourceI() {
@@ -290,13 +284,12 @@ bool Driver1::AllocateMemory() {
 
 bool Driver1::GetSignalMemoryBuffer(uint32 signalIdx,
                                     uint32 bufferIdx,
-                                    void **&signalAddress) {
+                                    void *&signalAddress) {
     return true;
 }
 
-
 const char8 *Driver1::GetBrokerName(StructuredDataI &data,
-                                      SignalDirection direction) {
+                                    SignalDirection direction) {
     const char8* brokerName = NULL_PTR(const char8 *);
 
     float32 freq;
@@ -308,18 +301,35 @@ const char8 *Driver1::GetBrokerName(StructuredDataI &data,
         samples = 1u;
     }
 
-    if ((freq < 0.) && (samples == 1u)) {
-        if (direction == InputSignals) {
-            brokerName = "MemoryMapInputBroker";
+    if (freq < 0.) {
+        if (samples == 1) {
+            if (direction == InputSignals) {
+                brokerName = "MemoryMapInputBroker";
+            }
+            else {
+                brokerName = "MemoryMapOutputBroker";
+            }
         }
         else {
-            brokerName = "MemoryMapOutputBroker";
+            if (direction == InputSignals) {
+                brokerName = "SampleInputBroker";
+            }
+            else {
+                brokerName = "SampleOutputBroker";
+            }
+        }
+    }
+    else {
+        if (direction == InputSignals) {
+            brokerName = "SyncInputBroker";
+        }
+        else {
+            brokerName = "SyncOutputBroker";
         }
     }
     return brokerName;
 
 }
-
 
 bool Driver1::PrepareNextState(const RealTimeStateInfo &status) {
     return true;
@@ -329,11 +339,9 @@ bool Driver1::ChangeState() {
     return true;
 }
 
-
-
 bool Driver1::GetInputBrokers(ReferenceContainer &inputBrokers,
-                         const char8 * functionName,
-                         void* gamMemPtr) {
+                              const char8 * functionName,
+                              void* gamMemPtr) {
     bool ret = true;
     //generally a loop for each supported broker
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
@@ -350,8 +358,8 @@ bool Driver1::GetInputBrokers(ReferenceContainer &inputBrokers,
 }
 
 bool Driver1::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                           const char8 * functionName,
-                           void* gamMemPtr) {
+                               const char8 * functionName,
+                               void* gamMemPtr) {
 
     bool ret = true;
     //generally a loop for each supported broker
@@ -371,7 +379,6 @@ bool Driver1::GetOutputBrokers(ReferenceContainer &outputBrokers,
 }
 
 CLASS_REGISTER(Driver1, "1.0");
-
 
 #if 0
 
