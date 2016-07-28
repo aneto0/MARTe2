@@ -441,6 +441,21 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemo
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySize_Ranges());
 }
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySize_FalseInvalidRanges) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySize_FalseInvalidRanges());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySize_FalseInvalidRanges2) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySize_FalseInvalidRanges2());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySize_FalseInvalidRanges3) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySize_FalseInvalidRanges3());
+}
 /*
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignalsFalse_NoType) {
     RealTimeApplicationConfigurationBuilderTest test;

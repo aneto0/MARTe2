@@ -292,7 +292,14 @@ public:
     //ranges
     bool TestResolveFunctionSignalsMemorySize_Ranges();
 
-    //TODO Range check failure
+    //invalid ranges min>max
+    bool TestResolveFunctionSignalsMemorySize_FalseInvalidRanges();
+
+    //invalid ranges max>#elements
+    bool TestResolveFunctionSignalsMemorySize_FalseInvalidRanges2();
+
+    //invalid ranges field 3 columns
+    bool TestResolveFunctionSignalsMemorySize_FalseInvalidRanges3();
 
 
     bool TestResolveFunctionSignalsMemorySizeFalse_WrongRangeMaxMin();

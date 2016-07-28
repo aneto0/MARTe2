@@ -2392,6 +2392,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(S
                                     //Read the Ranges matrix from the configuration data.
                                     Matrix<uint32> rangesMat(rangesMatBackend, numberOfRanges, 2u);
                                     ret = functionsDatabase.Read("Ranges", rangesMat);
+                                    if(ret){
                                     for (uint32 n = 0u; (n < numberOfRanges) && (ret); n++) {
                                         uint32 minIdx = rangesMat[n][0];
                                         uint32 maxIdx = rangesMat[n][1];
@@ -2415,6 +2416,12 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(S
                                             offsetMat[n][0u] = (minIdx * signalTypeDescriptor.numberOfBits) / 8u;
                                             offsetMat[n][1u] = rangeByteSize;
                                         }
+                                    }
+                                    }
+                                    else{
+                                        REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
+                                                                             "Ranges must be a nx2 matrix for %s in %s",
+                                                                             signalName.Buffer(), functionName.Buffer())
                                     }
                                     delete[] rangesMatBackend;
                                 }
