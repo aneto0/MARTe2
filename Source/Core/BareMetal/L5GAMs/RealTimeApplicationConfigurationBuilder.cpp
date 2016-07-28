@@ -1463,7 +1463,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignals(SignalDirec
                     if (ret) {
                         ret = functionsDatabase.Read("DataSource", dataSourceName);
                     }
-                    if (ret) {
+                    if (!ret) {
                         REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "DataSource was not defined for signal: %s in %s", signalName.Buffer(),
                                                 functionName.Buffer())
                     }

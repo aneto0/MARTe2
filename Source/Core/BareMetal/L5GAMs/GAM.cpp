@@ -160,28 +160,32 @@ bool GAM::Finalise() {
 
 bool GAM::AllocateInputSignalsMemory() {
     const char8* dirStr = "Signals.InputSignals";
-    configuredDatabase.MoveToRoot();
-    bool ret = configuredDatabase.MoveRelative(dirStr);
-    uint32 totalByteSize = 0u;
-    if (ret) {
-        ret = configuredDatabase.Read("ByteSize", totalByteSize);
-    }
-    if (ret) {
-        inputSignalsMemory = heap->Malloc(totalByteSize);
+    bool ret = configuredDatabase.MoveToRoot();
+    if (numberOfInputSignals > 0u) {
+        ret = configuredDatabase.MoveRelative(dirStr);
+        uint32 totalByteSize = 0u;
+        if (ret) {
+            ret = configuredDatabase.Read("ByteSize", totalByteSize);
+        }
+        if (ret) {
+            inputSignalsMemory = heap->Malloc(totalByteSize);
+        }
     }
     return ret;
 }
 
 bool GAM::AllocateOutputSignalsMemory() {
     const char8* dirStr = "Signals.OutputSignals";
-    configuredDatabase.MoveToRoot();
-    bool ret = configuredDatabase.MoveRelative(dirStr);
-    uint32 totalByteSize = 0u;
-    if (ret) {
-        ret = configuredDatabase.Read("ByteSize", totalByteSize);
-    }
-    if (ret) {
-        outputSignalsMemory = heap->Malloc(totalByteSize);
+    bool ret = configuredDatabase.MoveToRoot();
+    if (numberOfOutputSignals > 0u) {
+        ret = configuredDatabase.MoveRelative(dirStr);
+        uint32 totalByteSize = 0u;
+        if (ret) {
+            ret = configuredDatabase.Read("ByteSize", totalByteSize);
+        }
+        if (ret) {
+            outputSignalsMemory = heap->Malloc(totalByteSize);
+        }
     }
     return ret;
 }
@@ -209,11 +213,9 @@ bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
     return ret;
 }
 
-
-void *GAM::GetContext(){
+void *GAM::GetContext() {
     return NULL;
 }
-
 
 uint32 GAM::GetNumberOfInputSignals() {
     return numberOfInputSignals;

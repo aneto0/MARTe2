@@ -45,66 +45,122 @@
 namespace MARTe {
 
 /**
- * @brief DataSourceSignalI implementation for the exchange of signals between GAM components.
+ * @brief DataSource implementation for the exchange of signals between GAM components.
  *
- * @details This implementation of the DataSourceSignalI interface is intend for the interchange
- *  of signals in real-time between GAM components. The DataSourceSignal instances are managed by a
- *  single DataSource which offers the memory back-end to store the signal data. It is implemented
+ * @details This implementation of the DataSourceI interface is intend for the interchange
+ *  of signals in real-time between GAM components. This implementation is performed
  *  with a dual buffering mechanism which allows to load a default value when changing to a new state
  *  (if this signal was not being used in the current state).
  *
  * @details The syntax in the input configuration stream (see Initialise) has to be:
  *
- * +DataSourceSignal_Name= {\n
- *    Class = DataSourceSignal
- *    Type = "the variable type" (default "")\n
- *    Default = "the variable default value" (default "")\n
- *    Dimensions = "the variable dimensions" (default "")\n
- *    Samples = "how many samples will be produced for each cycle" (default 1)\n
- *     ...\n
- * }\n
- *
- * and it has to be contained inside a [DataSource] declaration.
+ * +GAMDataSource_Name= {\n
+ *    Class = GAMDataSource
+ *    HeapName = "The name of the Heap to use" If not specified GlobalObjectsDatabase::GetStandardHeap() will be used.
+ * }
  */
 class DLL_API GAMDataSource: public DataSourceI {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief Constructor
+     * @brief Constructor. NOOP.
      */
-GAMDataSource    ();
+    GAMDataSource();
 
     /**
      * @brief Destructor
      */
     virtual ~GAMDataSource();
 
+    /**
+     * @brief Reads the HeapName. Calls the DataSourceI::Initialise()
+     * @param[in] data the input configuration data.
+     * @return true if DataSourceI::Initialise() returns true.
+     * If the HeapName is specified and the HeapI cannot be instantied this method will return false.
+     */
+    virtual bool Initialise(StructuredDataI & data);
+
+    /**
+     * @brief See DataSourceI::GetNumberOfMemoryBuffers()
+     * @return This method always returns 2 (double buffer).
+     */
     virtual uint32 GetNumberOfMemoryBuffers();
 
+    /**
+     * @brief See DataSourceI::GetSignalMemoryBuffer().
+     * @details This method returns the address of the variable containing the requested buffer (not the address of the buffer itself).
+     * @param[in] signalIdx the index of the signal.
+     * @param[in] bufferIdx the index of the buffer (see GetNumberOfMemoryBuffers()).
+     * @param[out] signalAddress a pointer to the address of the variable holding the memory address of this signal for this \a bufferIdx.
+     * @return true if the signalIdx and the bufferIdx exist and the memory address can be retrieved for this signal.
+     * @pre
+     *   signalIdx < GetNumberOfSignals() &&
+     *   bufferIdx < GetNumberOfMemoryBuffers()
+     */
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress);
 
+    /**
+     * @brief Allocates the memory required to hold all the signal data allocated to this GAMDataSource.
+     * @return true if the memory can be successfully allocated.
+     */
     virtual bool AllocateMemory();
 
+    /**
+     * @brief See DataSourceI::GetBrokerName()
+     * @return MemoryMapInputBroker if direction is InputSignals, MemoryMapOutputBroker if the direction is OutputSignals
+     *  or NULL if Frequency != -1 and Samples != 1.
+     */
     virtual const char8 *GetBrokerName(StructuredDataI &data, SignalDirection direction);
 
+    /**
+     * @brief Initialises the signals that were not used in the previous state with their default value.
+     * details For every signal that was not used in the previous state and that has a default value specified on its configuration,
+     *  the first of value of this signal on the next state will be the specified the Default (see RealTimeApplicationConfigurationBuilder).
+     *  If the Default is not specified then the signal memory is set to zero for the next state.
+     * @param[in] status information about the state change.
+     * @return true if the state change can be performed and all the default values successfully applied.
+     */
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
+    /**
+     * @brief Tries to initialise a MemoryMapInputBroker with the function input parameters.
+     * @param[out] inputBrokers where the MemoryMapInputBroker instance will have to be added to.
+     * @param[in] functionName name of the function being queried.
+     * @param[in] gamMemPtr the GAM memory where the signals will be read from.
+     * @return true if a the MemoryMapInputBroker can be successfully initialised (see MemoryMapInputBroker::Init)
+     */
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
             const char8 * functionName,
             void* gamMemPtr);
 
+    /**
+     * @brief Tries to initialise a MemoryMapOutputBroker with the function input parameters.
+     * @param[out] outputBrokers where the MemoryMapOutputBroker instance will have to be added to.
+     * @param[in] functionName name of the function being queried.
+     * @param[in] gamMemPtr the GAM memory where the signals will be read from.
+     * @return true if a the MemoryMapOutputBroker can be successfully initialised (see MemoryMapOutputBroker::Init)
+     */
     virtual bool GetOutputBrokers(
             ReferenceContainer &outputBrokers,
             const char8 * functionName,
             void* gamMemPtr);
 
 protected:
+    /**
+     * The double buffer memory.
+     */
     void **signalMemory[2];
 
+    /**
+     * The address of signals in the double buffer memory.
+     */
     void **signalMemoryIndex[2];
 
+    /**
+     * The HeapI to allocate the double memory.
+     */
     HeapI *heap;
 };
 

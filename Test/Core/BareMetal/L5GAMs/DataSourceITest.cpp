@@ -122,7 +122,7 @@ bool DataSourceITestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
 bool DataSourceITestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
                                              const char8* functionName,
                                              void * gamMemPtr) {
-    ReferenceT<MemoryMapInputBroker> broker("MemoryMapOutputBroker");
+    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
     bool ret = broker.IsValid();
     if (ret) {
         ret = outputBrokers.Insert(broker);

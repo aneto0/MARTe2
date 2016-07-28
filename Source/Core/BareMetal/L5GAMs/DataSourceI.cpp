@@ -640,38 +640,42 @@ bool DataSourceI::AddBrokers(SignalDirection direction) {
                 ret = gam.IsValid();
                 void *gamMemoryAddress = NULL_PTR(void *);
 
-                if (ret) {
-                    gamMemoryAddress = (direction == InputSignals) ? (gam->GetInputMemoryPointer()) : (gam->GetOutputMemoryPointer());
+                bool relevant = false;
+                if (direction == InputSignals) {
+                    if (gam->GetNumberOfInputSignals() > 0u) {
+                        gamMemoryAddress = gam->GetInputMemoryPointer();
+                        relevant = true;
+                    }
                 }
-                if (ret) {
-                    ret = (gamMemoryAddress != NULL);
+                else if (direction == OutputSignals) {
+                    if (gam->GetNumberOfOutputSignals() > 0u) {
+                        gamMemoryAddress = gam->GetOutputMemoryPointer();
+                        relevant = true;
+                    }
                 }
-                if (ret) {
-                    if (configuredDatabase.MoveRelative(dirStr)) {
 
-                        uint32 memOffset;
-
-                        ret = configuredDatabase.Read("GamMemoryOffset", memOffset);
-                        if (ret) {
-                            char8* gamMemoryAddresschar = reinterpret_cast<char8*>(gamMemoryAddress);
-                            gamMemoryAddress = &gamMemoryAddresschar[memOffset];
-                        }
-
-                        if (direction == InputSignals) {
-                            ReferenceContainer inputBrokers;
-                            ret = GetInputBrokers(inputBrokers, functionName.Buffer(), gamMemoryAddress);
-                            if (ret) {
-                                gam->AddInputBrokers(inputBrokers);
+                if (relevant) {
+                    if (ret) {
+                        ret = (gamMemoryAddress != NULL);
+                    }
+                    if (ret) {
+                        if (configuredDatabase.MoveRelative(dirStr)) {
+                            if (direction == InputSignals) {
+                                ReferenceContainer inputBrokers;
+                                ret = GetInputBrokers(inputBrokers, functionName.Buffer(), gamMemoryAddress);
+                                if (ret) {
+                                    gam->AddInputBrokers(inputBrokers);
+                                }
                             }
-                        }
-                        else {
-                            ReferenceContainer outputBrokers;
-                            ret = GetOutputBrokers(outputBrokers, functionName.Buffer(), gamMemoryAddress);
-                            if (ret) {
-                                gam->AddOutputBrokers(outputBrokers);
+                            else {
+                                ReferenceContainer outputBrokers;
+                                ret = GetOutputBrokers(outputBrokers, functionName.Buffer(), gamMemoryAddress);
+                                if (ret) {
+                                    gam->AddOutputBrokers(outputBrokers);
+                                }
                             }
-                        }
 
+                        }
                     }
                 }
             }

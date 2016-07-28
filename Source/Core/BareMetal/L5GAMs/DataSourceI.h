@@ -88,6 +88,7 @@ public:
      * @details Initialises the ReferenceContainer with input \a data StructuredDataI.
      * Moves to the node "Signals" in the input \a data StructuredDataI and
      * locally stores the information of all the available signals.
+     * @param[in] data The configuration information which may include a Signals node.
      * @return true if the ReferenceContainer is successfully initialised.
      */
     virtual bool Initialise(StructuredDataI & data);
@@ -525,7 +526,7 @@ public:
      * @brief Gets the memory address for the signal at index \a signalIdx.
      * @param[in] signalIdx the index of the signal.
      * @param[in] bufferIdx the index of the buffer (see GetNumberOfMemoryBuffers()).
-     * @param[out] signalAddress a pointer to the variable that holds the memory address of this signal for this \a bufferIdx.
+     * @param[out] signalAddress a pointer to the memory address of this signal for this \a bufferIdx.
      * @return true if the signalIdx and the bufferIdx exist and the memory address can be retrieved for this signal.
      * @pre
      *   signalIdx < GetNumberOfSignals() &&

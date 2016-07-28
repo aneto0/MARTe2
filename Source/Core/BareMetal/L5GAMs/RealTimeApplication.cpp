@@ -417,6 +417,15 @@ bool RealTimeApplication::ConfigureApplication() {
         rtAppBuilder.Copy(functionsDatabase, dataSourcesDatabase);
     }
     //TODO Add brokers to GAMs allocating GAM memory
+    if (ret) {
+        ret = AllocateGAMMemory();
+    }
+    if (ret) {
+        ret = AllocateDataSourceMemory();
+    }
+    if (ret) {
+        ret = AddBrokersToFunctions();
+    }
 
     if (ret) {
         uint32 numberOfContainers = Size();

@@ -290,7 +290,7 @@ bool Driver1::AllocateMemory() {
 
 bool Driver1::GetSignalMemoryBuffer(uint32 signalIdx,
                                     uint32 bufferIdx,
-                                    void **&signalAddress) {
+                                    void *&signalAddress) {
     return true;
 }
 
