@@ -82,7 +82,7 @@ GAMDataSource    ();
 
     virtual uint32 GetNumberOfMemoryBuffers();
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void **&signalAddress);
+    virtual bool GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress);
 
     virtual bool AllocateMemory();
 

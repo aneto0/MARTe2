@@ -233,7 +233,6 @@ struct TestStructC {
     int32 c3[2][4];
 };
 
-
 struct TestStructD {
     TestStructB c1;
     float32 c2[3];
@@ -259,14 +258,9 @@ DS1    ();
 
     virtual uint32 GetNumberOfMemoryBuffers();
 
-    virtual bool GetSignalMemoryBuffer(uint32 functionIdx,
-            uint32 functionSignalIdx,
-            uint32 bufferIdx,
-            void *&signalAddress);
-
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
             uint32 bufferIdx,
-            void **&signalAddress);
+            void *&signalAddress);
 
     virtual bool AllocateMemory();
 

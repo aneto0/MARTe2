@@ -25,7 +25,8 @@
 #############################################################
 
 
-OBJSX= DataSourceITest.x\
+OBJSX= BrokerITest.x \
+       DataSourceITest.x\
        RealTimeApplicationConfigurationBuilderTest.x\
        GAMTestHelper.x 
 

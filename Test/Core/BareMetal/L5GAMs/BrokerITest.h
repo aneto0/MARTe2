@@ -1,7 +1,7 @@
 /**
- * @file DataSourceITest.h
- * @brief Header file for class DataSourceITest
- * @date 24/07/2016
+ * @file BrokerITest.h
+ * @brief Header file for class BrokerITest
+ * @date 27/07/2016
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DataSourceITest
+ * @details This header file contains the declaration of the class BrokerITest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef DATASOURCEITEST_H_
-#define DATASOURCEITEST_H_
+#ifndef BROKERITEST_H_
+#define BROKERITEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,88 +31,33 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "DataSourceI.h"
+#include "BrokerI.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
 
-class DataSourceITest {
+class BrokerITest {
 public:
     bool TestConstructor();
 
-    bool TestInitialise();
+    bool TestInitFunctionPointers();
 
-    bool TestAddSignals();
+    bool TestGetNumberOfCopies();
 
-    //This is tested implicitly
-    bool TestSetConfiguredDatabase();
+    bool TestGetCopyByteSize();
 
-    bool TestGetNumberOfSignals();
+    bool TestGetCopyOffset();
 
-    bool TestGetSignalIndex();
+    bool TestGetFunctionPointer();
 
-    bool TestGetSignalName();
-
-    bool TestGetSignalType();
-
-    bool TestGetSignalNumberOfDimensions();
-
-    bool TestGetSignalNumberOfElements();
-
-    bool TestGetSignalByteSize();
-
-    bool TestGetSignalNumberOfStates();
-
-    bool TestGetSignalStateName();
-
-    bool TestGetSignalNumberOfConsumers();
-
-    bool TestGetSignalNumberOfProducers();
-
-    bool TestGetSignalConsumerName();
-
-    bool TestGetSignalProducerName();
-
-    bool TestGetSignalDefaultValue();
-
-    bool TestGetNumberOfFunctions();
-
-    bool TestGetFunctionName();
-
-    bool TestGetFunctionIndex();
-
-    bool TestGetFunctionNumberOfSignals();
-
-    bool TestGetFunctionSignalsByteSize();
-
-    bool TestGetFunctionSignalName();
-
-    bool TestGetFunctionSignalIndex();
-
-    bool TestGetFunctionSignalAlias();
-
-    bool TestGetFunctionSignalNumberOfByteOffsets();
-
-    bool TestGetFunctionSignalByteOffsetInfo();
-
-    bool TestGetFunctionSignalSamples();
-
-    bool TestGetFunctionSignalReadFrequencyInput();
-
-    bool TestGetFunctionSignalReadFrequencyOutput();
-
-    bool TestGetFunctionSignalGAMMemoryOffset();
-
-    bool TestGetAddBrokers();
-
-    bool TestIsSupportedBroker();
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* DATASOURCEITEST_H_ */
-
+#endif /* BROKERITEST_H_ */
+	

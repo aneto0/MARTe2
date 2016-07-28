@@ -2512,6 +2512,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(SignalDirec
                 }
                 uint32 s;
                 //For every signal in this function
+                uint32 allocatedByteSize = 0u;
                 for (s = 0u; (s < numberOfSignals) && (ret); s++) {
                     TypeDescriptor signalTypeDescriptor;
                     StreamString signalId;
@@ -2607,52 +2608,54 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(SignalDirec
                                 }
                             }
                         }
-                        //Store the relevant signals belonging to this DataSource
-                        if (!functionsDatabase.MoveRelative("Signals")) {
-                            ret = functionsDatabase.CreateRelative("Signals");
-                        }/*
-                         uint32 numberOfSignalsInDataSource = functionsDatabase.GetNumberOfChildren();
-                         StreamString newSignalId;
-                         if (ret) {
-                         newSignalId.Printf("%d", signalId.Buffer());
-                         }*/
-                        if (ret) {
-                            ret = functionsDatabase.CreateRelative(signalId.Buffer());
-                        }
-                        if (ret) {
-                            ret = functionsDatabase.Write("QualifiedName", signalName.Buffer());
-                        }
-                        if (ret) {
-                            ret = functionsDatabase.Write("Alias", alias.Buffer());
-                        }
-                        if (ret) {
-                            if (offsetMatrixBackend != NULL_PTR(void *)) {
-                                Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
-                                ret = functionsDatabase.Write("ByteOffset", offsetMat);
-                                delete[] offsetMatrixBackend;
-                            }
-                        }
-                        if (ret) {
-                            ret = functionsDatabase.Write("Samples", samplesBackend);
-                        }
-
-                        if (ret) {
-                            ret = functionsDatabase.Write("Frequency", frequencyBackend);
-                        }
-
-                        if (ret) {
-                            ret = functionsDatabase.MoveToAncestor(2u);
-                        }
                     }
+                    uint32 existentByteSize = 0u;
                     if (ret) {
-                        uint32 existentByteSize = 0u;
                         if (functionsDatabase.Read("ByteSize", existentByteSize)) {
                             ret = functionsDatabase.Delete("ByteSize");
                         }
-                        if (ret) {
-                            existentByteSize += byteSize * samplesBackend;
-                            ret = functionsDatabase.Write("ByteSize", existentByteSize);
+                    }
+
+                    //Store the relevant signals belonging to this DataSource
+                    if (!functionsDatabase.MoveRelative("Signals")) {
+                        ret = functionsDatabase.CreateRelative("Signals");
+                    }
+                    if (ret) {
+                        ret = functionsDatabase.CreateRelative(signalId.Buffer());
+                    }
+                    if (ret) {
+                        ret = functionsDatabase.Write("QualifiedName", signalName.Buffer());
+                    }
+                    if (ret) {
+                        ret = functionsDatabase.Write("Alias", alias.Buffer());
+                    }
+                    if (ret) {
+                        if (offsetMatrixBackend != NULL_PTR(void *)) {
+                            Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
+                            ret = functionsDatabase.Write("ByteOffset", offsetMat);
+                            delete[] offsetMatrixBackend;
                         }
+                    }
+                    if (ret) {
+                        ret = functionsDatabase.Write("Samples", samplesBackend);
+                    }
+
+                    if (ret) {
+                        ret = functionsDatabase.Write("Frequency", frequencyBackend);
+                    }
+
+                    if(ret){
+                        ret = functionsDatabase.Write("GAMMemoryOffset", allocatedByteSize);
+                    }
+
+                    if (ret) {
+                        ret = functionsDatabase.MoveToAncestor(2u);
+                    }
+
+                    if (ret) {
+                        existentByteSize += byteSize * samplesBackend;
+                        allocatedByteSize += byteSize * samplesBackend;
+                        ret = functionsDatabase.Write("ByteSize", existentByteSize);
                     }
                     //Move to this Function Level
                     if (ret) {
@@ -2756,7 +2759,7 @@ bool RealTimeApplicationConfigurationBuilder::CalculateFunctionsMemory(SignalDir
                         numberOfDataSources = functionsDatabase.GetNumberOfChildren();
                     }
 
-                    uint32 allocatedBytesInPreviousDataSources = 0u;
+                    //uint32 allocatedBytesInPreviousDataSources = 0u;
                     uint32 d;
                     //For every DataSource in this function
                     for (d = 0u; (d < numberOfDataSources) && (ret); d++) {
@@ -2771,10 +2774,10 @@ bool RealTimeApplicationConfigurationBuilder::CalculateFunctionsMemory(SignalDir
                             ret = functionsDatabase.Read("ByteSize", byteSize);
                         }
                         //Compute the offset
-                        if (ret) {
+                        /*if (ret) {
                             ret = functionsDatabase.Write("GAMMemoryOffset", allocatedBytesInPreviousDataSources);
                             allocatedBytesInPreviousDataSources += byteSize;
-                        }
+                        }*/
                         if (ret) {
                             //Move to SignalDirection level
                             ret = functionsDatabase.MoveToAncestor(1u);
@@ -2846,7 +2849,7 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                 //For every DataSource in this function
                 for (d = 0u; (d < numberOfDataSources) && (ret); d++) {
                     uint32 byteSize = 0u;
-                    uint32 gamMemoryOffset = 0u;
+                    //uint32 gamMemoryOffset = 0u;
                     StreamString dataSourceName;
                     StreamString dataSourceId = functionsDatabase.GetChildName(d);
                     ret = functionsDatabase.MoveRelative(dataSourceId.Buffer());
@@ -2856,9 +2859,9 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                     if (ret) {
                         ret = functionsDatabase.Read("ByteSize", byteSize);
                     }
-                    if (ret) {
+                    /*if (ret) {
                         ret = functionsDatabase.Read("GAMMemoryOffset", gamMemoryOffset);
-                    }
+                    }*/
                     //Find the DataSource
                     StreamString dataSourceIdInDataSourceDatabase;
                     if (ret) {
@@ -2938,9 +2941,9 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                     if (ret) {
                         ret = dataSourcesDatabase.Write("ByteSize", byteSize);
                     }
-                    if (ret) {
+                    /*if (ret) {
                         ret = dataSourcesDatabase.Write("GAMMemoryOffset", gamMemoryOffset);
-                    }
+                    }*/
                     //Move back to the DataSource level
                     if (ret) {
                         ret = functionsDatabase.MoveToAncestor(1u);

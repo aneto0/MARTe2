@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX=  DataSourceIGTest.x\
+OBJSX=  BrokerIGTest.x\
+        DataSourceIGTest.x\
         RealTimeApplicationConfigurationBuilderGTest.x
 		 
 

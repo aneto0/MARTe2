@@ -171,20 +171,13 @@ uint32 DS1::GetNumberOfMemoryBuffers() {
     return 1u;
 }
 
-bool DS1::GetSignalMemoryBuffer(uint32 functionIdx,
-                                uint32 functionSignalIdx,
-                                uint32 bufferIdx,
-                                void *&signalAddress) {
-    return true;
-}
-
 bool DS1::AllocateMemory() {
     return false;
 }
 
 bool DS1::GetSignalMemoryBuffer(uint32 signalIdx,
                                 uint32 bufferIdx,
-                                void **&signalAddress) {
+                                void *&signalAddress) {
     return true;
 }
 

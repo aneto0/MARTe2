@@ -391,10 +391,10 @@ bool DataSourceI::GetFunctionNumberOfSignals(SignalDirection direction,
     bool ret = MoveToFunctionIndex(functionIdx);
     if (ret) {
         if (configuredDatabase.MoveRelative(signalDirection)) {
-            //Ignore the ByteSize and the Address
-            ret = (configuredDatabase.GetNumberOfChildren() > 2u);
+            //Ignore the ByteSize
+            ret = (configuredDatabase.GetNumberOfChildren() > 1u);
             if (ret) {
-                numberOfSignals = configuredDatabase.GetNumberOfChildren() - 2u;
+                numberOfSignals = configuredDatabase.GetNumberOfChildren() - 1u;
             }
         }
     }
@@ -531,6 +531,18 @@ bool DataSourceI::GetFunctionSignalReadFrequency(SignalDirection direction,
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (!configuredDatabase.Read("Frequency", frequency)) {
         frequency = -1.0;
+    }
+    return ret;
+}
+
+bool DataSourceI::GetFunctionSignalGAMMemoryOffset(SignalDirection direction,
+                                                   uint32 functionIdx,
+                                                   uint32 functionSignalIdx,
+                                                   uint32 &memoryOffset) {
+
+    bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
+    if (ret) {
+        ret = configuredDatabase.Read("GAMMemoryOffset", memoryOffset);
     }
     return ret;
 }

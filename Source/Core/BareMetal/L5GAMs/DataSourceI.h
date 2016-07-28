@@ -472,6 +472,21 @@ public:
                                         float32 &frequency);
 
     /**
+     * @brief Gets the offset in bytes of this signal with respect to the beginning of the GAM signal memory address.
+     * @param[in] direction the signal direction.
+     * @param[in] functionIdx the index of the function.
+     * @param[in] functionSignalIdx the index of the signal in this function.
+     * @param[out] offset the offset in bytes of this signal with respect to the beginning of the GAM signal memory address.
+     * @return true if the functionIdx and the functionSignalIdx exist in the specified direction.
+     * @pre
+     *   SetConfiguredDatabase
+     */
+    bool GetFunctionSignalGAMMemoryOffset(SignalDirection direction,
+                                          uint32 functionIdx,
+                                          uint32 functionSignalIdx,
+                                          uint32 &memoryOffset);
+
+    /**
      * @brief Checks if the broker with name \a brokerClassName is suitable for this signal
      * @param[in] direction the signal direction.
      * @param[in] functionIdx the index of the function.
@@ -518,7 +533,7 @@ public:
      */
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
                                        uint32 bufferIdx,
-                                       void **&signalAddress) = 0;
+                                       void *&signalAddress) = 0;
 
     /**
      * @brief Gets the name of the broker for the signal information available in the input \a data.

@@ -54,7 +54,7 @@ DataSourceITestHelper    ();
 
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
             uint32 bufferIdx,
-            void **&signalAddress);
+            void *&signalAddress);
 
     virtual const char8 *GetBrokerName(StructuredDataI &data,
             SignalDirection direction);
@@ -92,13 +92,16 @@ uint32 DataSourceITestHelper::GetNumberOfMemoryBuffers() {
 
 bool DataSourceITestHelper::GetSignalMemoryBuffer(uint32 signalIdx,
                                                   uint32 bufferIdx,
-                                                  void **&signalAddress) {
+                                                  void *&signalAddress) {
     return true;
 }
 
 const char8 *DataSourceITestHelper::GetBrokerName(StructuredDataI &data,
                                                   SignalDirection direction) {
-    return "MemoryMapInputBroker";
+    if (direction == InputSignals) {
+        return "MemoryMapInputBroker";
+    }
+    return "MemoryMapOutputBroker";
 }
 
 bool DataSourceITestHelper::PrepareNextState(const RealTimeStateInfo &status) {
@@ -477,7 +480,7 @@ bool DataSourceITest::TestAddSignals() {
         ret = (test.GetNumberOfChildren() == 3);
     }
     if (ret) {
-        ret = test.MoveRelative("Signal1");
+        ret = test.MoveRelative("Signal1A");
     }
     if (ret) {
         ret = (test.GetNumberOfChildren() == 1);
@@ -513,7 +516,7 @@ bool DataSourceITest::TestAddSignals() {
         ret = test.MoveRelative("Signal3");
     }
     if (ret) {
-        ret = (test.GetNumberOfChildren() == 4);
+        ret = (test.GetNumberOfChildren() == 3);
     }
     if (ret) {
         ret = (test.Read("Type", value));
@@ -534,13 +537,6 @@ bool DataSourceITest::TestAddSignals() {
     }
     if (ret) {
         ret = (value == "6");
-        value = "";
-    }
-    if (ret) {
-        ret = (test.Read("Frequency", value));
-    }
-    if (ret) {
-        ret = (value == "10");
         value = "";
     }
     if (ret) {
@@ -1151,7 +1147,8 @@ bool DataSourceITest::TestGetFunctionSignalsByteSize() {
     uint32 idx;
     StreamString value;
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
-    uint32 numberOfBytesInput[] = { 32, 4, 0, 0, 4, 0 };
+    //Remember that the size is also multiplied by the number of samples
+    uint32 numberOfBytesInput[] = { 40, 4, 0, 0, 4, 0 };
     uint32 numberOfBytesOutput[] = { 0, 0, 40, 4, 0, 24 };
 
     uint32 n;
@@ -1728,6 +1725,78 @@ bool DataSourceITest::TestGetFunctionSignalReadFrequencyOutput() {
     }
     if (ret) {
         ret = !dataSource->GetFunctionSignalReadFrequency(OutputSignals, 10000, 0, frequency);
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestGetFunctionSignalGAMMemoryOffset() {
+    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig2);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    uint32 numberOfFunctions = dataSource->GetNumberOfFunctions();
+
+    if (ret) {
+        ret = (numberOfFunctions == 6u);
+    }
+    StreamString value;
+    uint32 idx;
+    const uint32 maxNumberOfInputSignals = 3;
+    const uint32 maxNumberOfOutputSignals = 3;
+    const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
+    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
+            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
+    uint32 offsetInput[][maxNumberOfInputSignals] = { { 0, 24, 40 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+    uint32 offsetOutput[][maxNumberOfOutputSignals] = { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 8, 32 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+
+    uint32 n;
+    uint32 functionSignalIdx;
+    uint32 offset;
+    for (n = 0u; (n < numberOfFunctions) && (ret); n++) {
+        ret = dataSource->GetFunctionIndex(idx, functionNames[n]);
+        if (ret) {
+            uint32 i;
+            for (i = 0; (i < maxNumberOfInputSignals) && (ret); i++) {
+                ret = dataSource->GetFunctionSignalIndex(InputSignals, idx, functionSignalIdx, functionInputSignalNames[n][i]);
+                if (functionInputSignalNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else if (ret) {
+                    ret = dataSource->GetFunctionSignalGAMMemoryOffset(InputSignals, idx, functionSignalIdx, offset);
+                    if (ret) {
+                        ret = (offset == offsetInput[n][i]);
+                    }
+                }
+            }
+            for (i = 0; (i < maxNumberOfOutputSignals) && (ret); i++) {
+                ret = dataSource->GetFunctionSignalIndex(OutputSignals, idx, functionSignalIdx, functionOutputSignalNames[n][i]);
+                if (functionOutputSignalNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else if (ret) {
+                    ret = dataSource->GetFunctionSignalGAMMemoryOffset(OutputSignals, idx, functionSignalIdx, offset);
+                    if (ret) {
+                        ret = (offset == offsetOutput[n][i]);
+                    }
+                }
+            }
+        }
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalGAMMemoryOffset(InputSignals, 0, 10000, offset);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalGAMMemoryOffset(OutputSignals, 0, 10000, offset);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalGAMMemoryOffset(InputSignals, 10000, 0, offset);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalGAMMemoryOffset(OutputSignals, 10000, 0, offset);
     }
     return ret;
 }
