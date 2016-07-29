@@ -24,10 +24,10 @@
 
 
 OBJSX=  BrokerIGTest.x\
-        DataSourceIGTest.x\
         GAMDataSourceGTest.x\
         RealTimeApplicationConfigurationBuilderGTest.x
-		 
+#DataSourceIGTest.x
+         
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
