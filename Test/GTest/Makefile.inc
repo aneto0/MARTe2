@@ -40,8 +40,7 @@ INCLUDES += -I../../Source/Core/FileSystem/L1Portability
 INCLUDES += -I../../Source/Core/Scheduler/L1Portability
 
 all: $(OBJS) $(SUBPROJ)   \
-        $(BUILD_DIR)/MainGTest$(EXEEXT) \
-        $(BUILD_DIR)/GAMTest$(EXEEXT)        
+        $(BUILD_DIR)/MainGTest$(EXEEXT)
 	echo  $(OBJS)
 
 

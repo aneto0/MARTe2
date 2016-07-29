@@ -180,14 +180,15 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
                 ret = GetSignalIndex(signalIdx, functionSignalAlias.Buffer());
             }
             AnyType defaultValue;
-            if (ret) {
-                ret = GetSignalDefaultValue(i, defaultValue);
+            bool defaultExits = GetSignalDefaultValue(signalIdx, defaultValue);
+            if(defaultExits){
+                defaultExits = !(defaultValue.IsVoid());
             }
             bool update = false;
             //Variable used in the current state?
             if (ret) {
                 uint32 numberOfProducersCurrentState;
-                if (!GetSignalNumberOfProducers(i, status.currentState, numberOfProducersCurrentState)) {
+                if (!GetSignalNumberOfProducers(signalIdx, status.currentState, numberOfProducersCurrentState)) {
                     numberOfProducersCurrentState = 0u;
                 }
                 //If the variable was not used update!
@@ -201,7 +202,7 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
             if (update && ret) {
                 //if the def value is declared use it to initialise
                 //otherwise null the memory
-                if (!defaultValue.IsVoid()) {
+                if (defaultExits) {
                     AnyType thisValue(typeDesc, 0u, signalMemory[nextBufferIndex][signalIdx]);
                     uint32 numberOfDimensions;
                     ret = GetSignalNumberOfDimensions(signalIdx, numberOfDimensions);

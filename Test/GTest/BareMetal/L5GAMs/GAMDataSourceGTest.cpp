@@ -56,4 +56,8 @@ TEST(GAMDataSourceGTest,TestPrepareNextState_NoDefault) {
     ASSERT_TRUE(test.TestPrepareNextState_NoDefault());
 }
 
+TEST(GAMDataSourceGTest,TestPrepareNextState_NoDefault_Basic) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestPrepareNextState_NoDefault());
+}
 	

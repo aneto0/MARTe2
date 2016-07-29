@@ -44,6 +44,8 @@ public:
     bool TestConstructor();
 
     bool TestPrepareNextState_NoDefault();
+
+    bool TestPrepareNextState_Default_Basic();
 };
 
 /*---------------------------------------------------------------------------*/

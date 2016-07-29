@@ -80,6 +80,24 @@ static const char8 * const config1 = ""
         "               }"
         "            }"
         "        }"
+        "        +GAMC = {"
+        "            Class = GAM1"
+        "            OutputSignals = {"
+        "               Signal1 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMD = {"
+        "            Class = GAM1"
+        "            InputSignals = {"
+        "               Signal1 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
         "    }"
         "    +Data = {"
         "        Class = ReferenceContainer"
@@ -105,7 +123,92 @@ static const char8 * const config1 = ""
         "                Class = ReferenceContainer"
         "                +Thread1 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = {:Functions.GAMB :Functions.GAMA }"
+        "                    Functions = {:Functions.GAMB :Functions.GAMA :Functions.GAMD :Functions.GAMC}"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "}";
+
+static const char8 * const config2 = ""
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAMA = {"
+        "            Class = GAM1"
+        "            OutputSignals = {"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "                   Default = 2"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMB = {"
+        "            Class = GAM1"
+        "            InputSignals = {"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMC = {"
+        "            Class = GAM1"
+        "            OutputSignals = {"
+        "               Signal1 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMD = {"
+        "            Class = GAM1"
+        "            InputSignals = {"
+        "               Signal1 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "                   Default = 5"
+        "               }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        Class = ReferenceContainer"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {:Functions.GAMB :Functions.GAMA}"
+        "                }"
+        "            }"
+        "        }"
+        "        +State2 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {:Functions.GAMB :Functions.GAMA :Functions.GAMD :Functions.GAMC}"
+        "                }"
+        "            }"
+        "        }"
+        "        +State3 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {:Functions.GAMD :Functions.GAMC}"
         "                }"
         "            }"
         "        }"
@@ -131,30 +234,188 @@ bool GAMDataSourceTest::TestPrepareNextState_NoDefault() {
         gamDataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.DDB1");
         ret = gamDataSource.IsValid();
     }
-    void *gamBSignal0Buffer0PointerHolder = NULL_PTR(void *);
-    void *gamBSignal0Buffer1PointerHolder = NULL_PTR(void *);
-    uint32 *gamBSignal0Buffer0 = NULL_PTR(uint32 *);
-    uint32 *gamBSignal0Buffer1 = NULL_PTR(uint32 *);
+    void *signal0Buffer0PointerHolder = NULL_PTR(void *);
+    void *signal0Buffer1PointerHolder = NULL_PTR(void *);
+    uint32 **signal0Buffer0 = NULL_PTR(uint32 **);
+    uint32 **signal0Buffer1 = NULL_PTR(uint32 **);
+    void *signal1Buffer0PointerHolder = NULL_PTR(void *);
+    void *signal1Buffer1PointerHolder = NULL_PTR(void *);
+    uint32 **signal1Buffer0 = NULL_PTR(uint32 **);
+    uint32 **signal1Buffer1 = NULL_PTR(uint32 **);
 
     if (ret) {
         //Remember that the dual-buffer mechanism returns a pointer to the variable holding the real memory address.
-        ret = gamDataSource->GetSignalMemoryBuffer(0, 0, gamBSignal0Buffer0PointerHolder);
+        ret = gamDataSource->GetSignalMemoryBuffer(0, 0, signal0Buffer0PointerHolder);
     }
     if (ret) {
-        ret = gamDataSource->GetSignalMemoryBuffer(0, 1, gamBSignal0Buffer1PointerHolder);
+        ret = gamDataSource->GetSignalMemoryBuffer(0, 1, signal0Buffer1PointerHolder);
     }
     if (ret) {
-        gamBSignal0Buffer0 = *(reinterpret_cast<uint32 **>(gamBSignal0Buffer0PointerHolder));
+        signal0Buffer0 = (reinterpret_cast<uint32 **>(signal0Buffer0PointerHolder));
     }
     if (ret) {
-        gamBSignal0Buffer1 = *(reinterpret_cast<uint32 **>(gamBSignal0Buffer1PointerHolder));
+        signal0Buffer1 = (reinterpret_cast<uint32 **>(signal0Buffer1PointerHolder));
     }
     if (ret) {
-        ret = (*gamBSignal0Buffer0 == 0u);
+        ret = gamDataSource->GetSignalMemoryBuffer(1, 0, signal1Buffer0PointerHolder);
     }
     if (ret) {
-        ret = (*gamBSignal0Buffer1 == 0u);
+        ret = gamDataSource->GetSignalMemoryBuffer(1, 1, signal1Buffer1PointerHolder);
+    }
+    if (ret) {
+        signal1Buffer0 = (reinterpret_cast<uint32 **>(signal1Buffer0PointerHolder));
+    }
+    if (ret) {
+        signal1Buffer1 = (reinterpret_cast<uint32 **>(signal1Buffer1PointerHolder));
+    }
+    if (ret) {
+        ret = (**signal0Buffer0 == 0u);
+    }
+    if (ret) {
+        ret = (**signal0Buffer1 == 0u);
+    }
+    if (ret) {
+        ret = (**signal1Buffer0 == 0u);
+    }
+    if (ret) {
+        ret = (**signal1Buffer1 == 0u);
+    }
+    RealTimeApplication::index = 0;
+    RealTimeStateInfo stateInfo;
+    if (ret) {
+        **signal0Buffer0 = 1u;
+        **signal0Buffer1 = 2u;
+        **signal1Buffer0 = 3u;
+        **signal1Buffer1 = 4u;
+        stateInfo.currentState = "State1";
+        stateInfo.nextState = "State2";
+        ret = gamDataSource->PrepareNextState(stateInfo);
+    }
+    if (ret) {
+        //As in the previous state, since we are changing to State2 (i.e. signal0Buffer0 -> memorySignalBuffer0)
+        ret = (**signal0Buffer0 == 1u);
+    }
+    if (ret) {
+        //Point to the memory buffer of the previous state, as the signal already existed (signal0Buffer1 -> memorySignalBuffer0)
+        ret = (**signal0Buffer1 == 1u);
+    }
+    if (ret) {
+        //This is not touched...
+        ret = (**signal1Buffer0 == 3u);
+    }
+    if (ret) {
+        //memoryBuffer1 is zeroed because no Default was set and signal1Buffer1 -> memorySignalBuffer1
+        ret = (**signal1Buffer1 == 0u);
     }
     return ret;
 }
 
+bool GAMDataSourceTest::TestPrepareNextState_Default_Basic() {
+    bool ret = InitialiseGAMDataSourceEnviroment(config2);
+    ReferenceT<GAMDataSource> gamDataSource;
+    if (ret) {
+        gamDataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.DDB1");
+        ret = gamDataSource.IsValid();
+    }
+    void *signal0Buffer0PointerHolder = NULL_PTR(void *);
+    void *signal0Buffer1PointerHolder = NULL_PTR(void *);
+    uint32 **signal0Buffer0 = NULL_PTR(uint32 **);
+    uint32 **signal0Buffer1 = NULL_PTR(uint32 **);
+    void *signal1Buffer0PointerHolder = NULL_PTR(void *);
+    void *signal1Buffer1PointerHolder = NULL_PTR(void *);
+    uint32 **signal1Buffer0 = NULL_PTR(uint32 **);
+    uint32 **signal1Buffer1 = NULL_PTR(uint32 **);
+
+    if (ret) {
+        //Remember that the dual-buffer mechanism returns a pointer to the variable holding the real memory address.
+        ret = gamDataSource->GetSignalMemoryBuffer(0, 0, signal0Buffer0PointerHolder);
+    }
+    if (ret) {
+        ret = gamDataSource->GetSignalMemoryBuffer(0, 1, signal0Buffer1PointerHolder);
+    }
+    if (ret) {
+        signal0Buffer0 = (reinterpret_cast<uint32 **>(signal0Buffer0PointerHolder));
+    }
+    if (ret) {
+        signal0Buffer1 = (reinterpret_cast<uint32 **>(signal0Buffer1PointerHolder));
+    }
+    if (ret) {
+        ret = gamDataSource->GetSignalMemoryBuffer(1, 0, signal1Buffer0PointerHolder);
+    }
+    if (ret) {
+        ret = gamDataSource->GetSignalMemoryBuffer(1, 1, signal1Buffer1PointerHolder);
+    }
+    if (ret) {
+        signal1Buffer0 = (reinterpret_cast<uint32 **>(signal1Buffer0PointerHolder));
+    }
+    if (ret) {
+        signal1Buffer1 = (reinterpret_cast<uint32 **>(signal1Buffer1PointerHolder));
+    }
+    if (ret) {
+        ret = (**signal0Buffer0 == 0u);
+    }
+    if (ret) {
+        ret = (**signal0Buffer1 == 0u);
+    }
+    if (ret) {
+        ret = (**signal1Buffer0 == 0u);
+    }
+    if (ret) {
+        ret = (**signal1Buffer1 == 0u);
+    }
+    RealTimeApplication::index = 0;
+    RealTimeStateInfo stateInfo;
+    if (ret) {
+        **signal0Buffer0 = 1u;
+        **signal0Buffer1 = 2u;
+        **signal1Buffer0 = 3u;
+        **signal1Buffer1 = 4u;
+        stateInfo.currentState = "State1";
+        stateInfo.nextState = "State2";
+        ret = gamDataSource->PrepareNextState(stateInfo);
+    }
+    if (ret) {
+        ret = (**signal0Buffer0 == 1u);
+    }
+    if (ret) {
+        ret = (**signal0Buffer1 == 1u);
+    }
+    if (ret) {
+        ret = (**signal1Buffer0 == 3u);
+    }
+    if (ret) {
+        //Use the default value
+        ret = (**signal1Buffer1 == 5u);
+    }
+    RealTimeApplication::index = 1;
+    if (ret) {
+        stateInfo.currentState = "State2";
+        stateInfo.nextState = "State3";
+        ret = gamDataSource->PrepareNextState(stateInfo);
+    }
+    if (ret) {
+        //Keep the old value
+        ret = (**signal1Buffer0 == 5u);
+    }
+    RealTimeApplication::index = 0;
+    if (ret) {
+        stateInfo.currentState = "State3";
+        stateInfo.nextState = "State2";
+        ret = gamDataSource->PrepareNextState(stateInfo);
+    }
+    if (ret) {
+        ret = (**signal0Buffer0 == 1u);
+    }
+    if (ret) {
+        //Load the default as this was not used in the previous state
+        ret = (**signal0Buffer1 == 2u);
+    }
+    if (ret) {
+        ret = (**signal1Buffer0 == 5u);
+    }
+    if (ret) {
+        //Keep the old value
+        ret = (**signal1Buffer1 == 5u);
+    }
+    return ret;
+}
