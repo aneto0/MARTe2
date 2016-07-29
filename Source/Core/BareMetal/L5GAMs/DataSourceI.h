@@ -139,6 +139,8 @@ public:
      *        }
      *      }
      *    }
+     *  @param[in] data the configured database of parameters.
+     *  @return true if the \a data can be successfully copied.
      */
     bool SetConfiguredDatabase(StructuredDataI & data);
 
@@ -156,7 +158,7 @@ public:
     /**
      * @brief Gets the index of the signal with name \a signalIdx.
      * @param[out] signalIdx the index of the signal.
-     * @param[out] signalName the name of the signal.
+     * @param[in] signalName the name of the signal.
      * @return true if the signalName can be found.
      * @pre
      *   SetConfiguredDatabase
@@ -425,7 +427,8 @@ public:
                                               uint32 &numberOfByteOffsets);
 
     /**
-     * @brief Gets the number of different byte offset index and size (one for each different Range) that were set for the signal with index \a functionSignalIdx.
+     * @brief Gets the byte offset index and size (one for each different Range) that were set for the signal with index \a functionSignalIdx.
+     * @param[in] direction the signal direction.
      * @param[in] functionIdx the index of the function.
      * @param[in] functionSignalIdx the index of the signal in this function.
      * @param[in] byteOffsetIndex the index of the offset in this signal.
@@ -444,6 +447,9 @@ public:
 
     /**
      * @brief Gets the number of samples that were set for the signal with index \a functionSignalIdx.
+     * @details The Samples parameter defines the number of samples that the GAM would like to receive/transmit for any given signal.
+     * Note that these are samples which are acquired as a function of time (not multi-dimensional arrays of data which should be set with
+     * the NumberOfElements and NumberOfDimensions).
      * @param[in] direction the signal direction.
      * @param[in] functionIdx the index of the function.
      * @param[in] functionSignalIdx the index of the signal in this function.
@@ -458,11 +464,12 @@ public:
                                   uint32 &samples);
 
     /**
-     * @brief Gets the read frequency that was set for the signal with index \a functionSignalIdx.
+     * @brief Gets the frequency that was set for the signal with index \a functionSignalIdx.
+     * @details The Frequency parameter defines the rate at which the signal is expected to be produced.
      * @param[in] direction the signal direction.
      * @param[in] functionIdx the index of the function.
      * @param[in] functionSignalIdx the index of the signal in this function.
-     * @param[out] frequency the frequency at which the signal is to be read.
+     * @param[out] frequency the frequency at which the signal is to be read/written.
      * @return true if the functionIdx and the functionSignalIdx exist in the specified direction.
      * @pre
      *   SetConfiguredDatabase

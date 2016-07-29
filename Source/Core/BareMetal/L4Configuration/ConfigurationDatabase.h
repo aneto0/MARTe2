@@ -70,6 +70,7 @@ public:
     virtual ~ConfigurationDatabase();
 
 
+    //TODO test and document
     void CleanUp();
 
 

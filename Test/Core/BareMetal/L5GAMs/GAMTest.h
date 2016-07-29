@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GAM.h"
-#include "ConfigurationDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -48,16 +47,6 @@ class GAMTest {
 public:
 
     /**
-     * @brief Initialises a ConfigurationDatabase used for tests.
-     */
-    GAMTest();
-
-    /**
-     * @brief Destroy the ObjectRegistryDatabase.
-     */
-    ~GAMTest();
-
-    /**
      * @brief Tests the constructor.
      */
     bool TestConstructor();
@@ -67,101 +56,44 @@ public:
      */
     bool TestInitialise();
 
-    /**
-     * @brief Tests if the function sets correctly the application reference in the gam.
-     */
-    bool TestSetApplication();
+    bool TestAddSignals();
 
-    /**
-     * @brief Tests if the function sets correctly the gam group reference in the gam.
-     */
-    bool TestSetGAMGroup();
+    //Tested implicitly
+    bool TestSetConfiguredDatabase();
 
-    /**
-     * @brief Tests if the function adds correctly a state to the gam.
-     */
-    bool TestAddState();
+    bool TestGetNumberOfInputSignals();
 
-    /**
-     * @brief Tests if the function returns false if the same gam is called by more than one
-     * thread in the same state.
-     */
-    bool TestAddStateFalse_MoreThreadsPerGAM();
+    bool TestGetNumberOfOutputSignals();
 
-    /**
-     * @brief Tests if the function returns correctly the number of the contextless gam supported states
-     */
-    bool TestGetNumberOfSupportedStates();
+    bool TestGetSignalName();
 
-    /**
-     * @brief Tests if the function returns correctly the contextless gam supported states
-     */
-    bool TestGetSupportedStates();
+    bool TestGetSignalIndex();
 
-    /**
-     * @brief Tests if the function returns correctly the contextless gam supported threads
-     */
-    bool TestGetSupportedThreads();
+    bool TestGetSignalDataSourceName();
 
-    /**
-     * @brief Tests if the function creates correctly the RealTimeDataSourceDefs from the gam RealTimeDataDefI
-     */
-    bool TestConfigureDataSource();
+    bool TestGetSignalType();
 
-    /**
-     * @brief Tests if the function fails adding RealTimeDataSourceDefs if RealTimeDataSource is declared final.
-     */
-    bool TestConfigureDataSourceFalse_NoDataSource();
+    bool TestGetSignalNumberOfDimensions();
 
-    /**
-     * @brief Tests if the function fails if the application does not contain the "+Data" container.
-     */
-    bool TestConfigureDataSourceFalse_NoData();
+    bool TestGetSignalNumberOfElements();
 
-    /**
-     * @brief Tests if the function fails if the reference to the application in the gam is not set.
-     */
-    bool TestConfigureDataSourceFalse_NoApplicationSet();
+    bool TestGetSignalByteSize();
 
-    /**
-     * @brief Tests if the function returns true also if the gam is not involved in any state. In this case a warning will be
-     * generated.
-     */
-    bool TestConfigureDataSource_NoStates();
+    bool TestGetSignalDefaultValue();
 
-    /**
-     * @brief Tests if the function configures the RealTimeInputReader and the RealTimeOutputWriter correctly.
-     */
-    bool TestConfigureDataSourceLinks();
+    bool TestGetSignalNumberOfByteOffsets();
 
-    /**
-     * @brief Tests if the function fails if more than one signal is synchronising.
-     */
-    bool TestConfigureDataSourceLinksFalse_MoreThanOneSyncSignal();
+    bool TestGetSignalByteOffsetInfo();
 
-    /**
-     * @brief Tests if the function returns true if the GAM input reader is linked to a synchronising data source.
-     */
-    bool TestIsSync();
+    bool TestGetSignalNumberOfRanges();
 
-    /**
-     * @brief Tests if the function returns a reference to the GAM input reader.
-     */
-    bool TestGetInputReader();
+    bool TestGetSignalRangesInfo();
 
-    /**
-     * @brief Tests if the function returns a reference to the GAM output writer.
-     */
-    bool TestGetOutputWriter();
+    bool TestGetSignalNumberOfSamples();
 
+    bool TestGetSignalFrequency_Input();
 
-private:
-
-    /**
-     * A configuration database used for tests.
-     */
-    ConfigurationDatabase cdb;
-
+    bool TestGetSignalFrequency_Output();
 };
 
 /*---------------------------------------------------------------------------*/
