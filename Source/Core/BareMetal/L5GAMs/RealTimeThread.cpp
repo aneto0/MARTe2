@@ -39,6 +39,7 @@
 #include "GAM.h"
 #include "AdvancedErrorManagement.h"
 #include "GAMSchedulerI.h"
+#include "ReferenceContainerFilterReferences.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -75,27 +76,27 @@ RealTimeThread::~RealTimeThread() {
 bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric) {
     bool ret = true;
     // case GAMGroup (stateful gams)
-    ReferenceT<GAMGroup> functionGAMGroup = functionGeneric;
+    ReferenceT < GAMGroup > functionGAMGroup = functionGeneric;
     if (functionGAMGroup.IsValid()) {
         uint32 nOfSubGAMs = functionGAMGroup->Size();
         // add all the gams in the order of the configuration inside GAMGroup
         for (uint32 j = 0u; (j < nOfSubGAMs) && (ret); j++) {
-            ReferenceT<GAM> subGam = functionGAMGroup->Get(j);
+            ReferenceT < GAM > subGam = functionGAMGroup->Get(j);
             ret = subGam.IsValid();
             if (ret) {
-                AddGAM(subGam);
+                AddGAM (subGam);
             }
         }
     }
     else {
         // case stateless GAM
-        ReferenceT<GAM> functionGAM = functionGeneric;
+        ReferenceT < GAM > functionGAM = functionGeneric;
         if (functionGAM.IsValid()) {
-            AddGAM(functionGAM);
+            AddGAM (functionGAM);
         }
         else {
             // a generic container
-            ReferenceT<ReferenceContainer> functionContainer = functionGeneric;
+            ReferenceT < ReferenceContainer > functionContainer = functionGeneric;
             ret = functionContainer.IsValid();
             if (ret) {
                 uint32 size = functionContainer->Size();
@@ -118,7 +119,7 @@ void RealTimeThread::AddGAM(ReferenceT<GAM> element) {
     if (element.IsValid()) {
         if ((numberOfGAMs % gamsArrayGranularity) == 0u) {
             uint32 newSize = numberOfGAMs + gamsArrayGranularity;
-            ReferenceT<GAM> *temp = new ReferenceT<GAM> [newSize];
+            ReferenceT < GAM > *temp = new ReferenceT<GAM> [newSize];
 
             if (GAMs != NULL) {
                 for (uint32 i = 0u; i < numberOfGAMs; i++) {
@@ -140,11 +141,33 @@ bool RealTimeThread::ConfigureArchitecture() {
     bool ret = true;
 
     if (!configured) {
+        ReferenceContainerFilterReferences findme(1, ReferenceContainerFilterMode::PATH, this);
+        ReferenceContainer path;
+        ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(path, findme);
+        uint32 numberOfNodes = path.Size();
+        StreamString absoluteFunctionPath;
+
+        for (uint32 i = 0u; i < numberOfNodes && ret; i++) {
+            Reference node = path.Get(i);
+            ret = node.IsValid();
+            if (ret) {
+                absoluteFunctionPath += node->GetName();
+                absoluteFunctionPath += ".";
+                ReferenceT < RealTimeApplication > app = node;
+                if (app.IsValid()) {
+                    break;
+                }
+            }
+        }
+        absoluteFunctionPath += "Functions.";
+
         for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
 
+            StreamString functionPath = absoluteFunctionPath;
+            functionPath += functions[i].Buffer();
             // find the functions specified in cdb
             /*lint -e{613} Never enters here if (functions == NULL) because (numberOfFunctions == 0) */
-            Reference functionGeneric = ObjectRegistryDatabase::Instance()->Find(functions[i].Buffer(), Reference(this));
+            Reference functionGeneric = ObjectRegistryDatabase::Instance()->Find(functionPath.Buffer());
             ret = functionGeneric.IsValid();
             if (ret) {
                 //Discombobulate GAMGroups
@@ -332,7 +355,7 @@ bool RealTimeThread::Initialise(StructuredDataI & data) {
         if (ret) {
             functions = new StreamString[numberOfFunctions];
 
-            Vector<StreamString> functionVector(functions, numberOfFunctions);
+            Vector < StreamString > functionVector(functions, numberOfFunctions);
             ret = (data.Read("Functions", functionVector));
         }
         if (ret) {

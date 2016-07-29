@@ -160,38 +160,6 @@ RealTimeApplication::~RealTimeApplication() {
 
 }
 #if 0
-bool RealTimeApplication::ConfigureArchitecture() {
-
-    // there must be the container called "States"
-    bool ret = statesContainer.IsValid();
-
-    if (ret) {
-        // States contains RealTimeState references
-        // for each of them call Validate(*)
-        uint32 numberOfStates = statesContainer->Size();
-        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-            ReferenceT<RealTimeState> state = statesContainer->Get(i);
-            if (state.IsValid()) {
-                // for each state call the configuration function
-                ret = state->ConfigureArchitecture(*this);
-            }
-        }
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "+States container not found");
-    }
-    if (ret) {
-        ReferenceT<GAMSchedulerI> scheduler = schedulerContainer;
-        ret = (scheduler.IsValid());
-        if (ret) {
-            scheduler->SetApplication(*this);
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "+Scheduler container not found");
-        }
-    }
-    return ret;
-}
 
 bool RealTimeApplication::ConfigureDataSource() {
 
@@ -345,7 +313,7 @@ static void PrintDatabases(RealTimeApplicationConfigurationBuilder &rtAppBuilder
 }
 
 bool RealTimeApplication::ConfigureApplication() {
-    RealTimeApplicationConfigurationBuilder rtAppBuilder(this, "DDB1");
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(*this, "DDB1");
     bool ret = rtAppBuilder.InitialiseSignalsDatabase();
     if (ret) {
         PrintDatabases(rtAppBuilder);
@@ -423,43 +391,6 @@ bool RealTimeApplication::ConfigureApplication() {
         ret = AddBrokersToFunctions();
     }
 
-    if (ret) {
-        uint32 numberOfContainers = Size();
-        ret = false;
-        for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-            Reference item = Get(i);
-            if (item.IsValid()) {
-                if (StringHelper::Compare(item->GetName(), "States") == 0) {
-                    statesContainer = item;
-                    ret = statesContainer.IsValid();
-                }
-            }
-        }
-        if (ret) {
-            ret = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                Reference container = Get(i);
-                if (container.IsValid()) {
-                    if (StringHelper::Compare(container->GetName(), "Data") == 0) {
-                        dataSourceContainer = container;
-                        ret = dataSourceContainer.IsValid();
-                    }
-                }
-            }
-        }
-        if (ret) {
-            ret = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                Reference item = Get(i);
-                if (item.IsValid()) {
-                    if (StringHelper::Compare(item->GetName(), "Functions") == 0) {
-                        functionsContainer = item;
-                        ret = functionsContainer.IsValid();
-                    }
-                }
-            }
-        }
-    }
     /*   if (ret) {
      ret = false;
      for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
@@ -827,17 +758,25 @@ bool RealTimeApplication::ConfigureApplication() {
 #endif
 }
 
-bool RealTimeApplication::ConfigureApplicationFromExternalSource(RealTimeApplicationConfigurationBuilder &configuration) {
+bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsDatabase,
+                                               ConfigurationDatabase &dataDatabase) {
     // no check..someone else did it
 
     //-External compiling
     //-Initialization
-    //-Brokers negotiation
-    //-PostConfig
+    // This Function {
+    //    -Brokers negotiation
+    //    -PostConfig
+    // }
 
     // TODO Standard checks can be done (the Verifies)
     //TODO
-    bool ret = configuration.AssignBrokersToFunctions();
+
+    RealTimeApplicationConfigurationBuilder configuration(*this, "DDB1");
+    bool ret = configuration.Set(functionsDatabase, dataDatabase);
+    if (ret) {
+        ret = configuration.AssignBrokersToFunctions();
+    }
     if (ret) {
         ret = configuration.Copy(functionsDatabase, dataSourcesDatabase);
     }
@@ -848,6 +787,10 @@ bool RealTimeApplication::ConfigureApplicationFromExternalSource(RealTimeApplica
     if (ret) {
         ret = configuration.PostConfigureFunctions();
     }
+    if (ret) {
+        ret = ConfigureArchitecture();
+    }
+
     return ret;
 }
 
@@ -891,7 +834,7 @@ bool RealTimeApplication::AllocateDataSourceMemory() {
             StreamString fullDsName = "Data.";
             ret = dataSourcesDatabase.Read("QualifiedName", fullDsName);
             if (ret) {
-                ReferenceT<DataSourceI> ds = Find(fullDsName.Buffer());
+                ReferenceT < DataSourceI > ds = Find(fullDsName.Buffer());
                 ret = ds.IsValid();
                 if (ret) {
                     ret = ds->AllocateMemory();
@@ -917,7 +860,7 @@ bool RealTimeApplication::AddBrokersToFunctions() {
             if (ret) {
                 ret = dataSourcesDatabase.Read("QualifiedName", fullDataSourcePath);
             }
-            ReferenceT<DataSourceI> dataSource;
+            ReferenceT < DataSourceI > dataSource;
             if (ret) {
                 dataSource = Find(fullDataSourcePath.Buffer());
                 ret = dataSource.IsValid();
@@ -947,7 +890,7 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
     StreamString nextStatePath = "States.";
     nextStatePath += nextStateName;
 
-    ReferenceT<RealTimeState> nextState = Find(nextStatePath.Buffer());
+    ReferenceT < RealTimeState > nextState = Find(nextStatePath.Buffer());
     bool ret = nextState.IsValid();
     if (ret) {
         // change the context in gam groups if needed
@@ -958,7 +901,7 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
         if (ret) {
             uint32 numberOfDataSources = dataSourceContainer->Size();
             for (uint32 i = 0u; (i < numberOfDataSources) && (ret); i++) {
-                ReferenceT<DataSourceI> dataSource = dataSourceContainer->Get(i);
+                ReferenceT < DataSourceI > dataSource = dataSourceContainer->Get(i);
                 ret = dataSource.IsValid();
                 if (ret) {
                     // resets the default value in data sources if needed
@@ -1007,11 +950,8 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
         data.MoveToAncestor(1u);
     }
     defaultDataSourceName.Seek(0u);
-#if 0
-    if (ret) {
-//TODO Read the name of the first state
-// do the PrepareNextState here.
 
+    if (ret) {
         uint32 numberOfContainers = Size();
         ret = false;
         for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
@@ -1058,6 +998,47 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     }
                 }
             }
+        }
+    }
+
+    return ret;
+}
+
+bool RealTimeApplication::ConfigureArchitecture() {
+
+    // there must be the container called "States"
+    bool ret = statesContainer.IsValid();
+
+    if (ret) {
+        // States contains RealTimeState references
+        // for each of them call Validate(*)
+        uint32 numberOfStates = statesContainer->Size();
+        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+            ReferenceT < RealTimeState > state = statesContainer->Get(i);
+            if (state.IsValid()) {
+                // for each state call the configuration function
+                uint32 numberOfThreads = state->Size();
+                for (uint32 j = 0u; (j < numberOfThreads) && (ret); j++) {
+                    ReferenceT < RealTimeThread > thread = state->Get(j);
+                    if (thread.IsValid()) {
+                        ret = thread->ConfigureArchitecture();
+                    }
+                }
+            }
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "Invalid States container");
+    }
+#if 0
+    if (ret) {
+        ReferenceT<GAMSchedulerI> scheduler = schedulerContainer;
+        ret = (scheduler.IsValid());
+        if (ret) {
+            scheduler->SetApplication(*this);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "+Scheduler container not found");
         }
     }
 #endif
