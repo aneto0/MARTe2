@@ -1,8 +1,8 @@
 /**
- * @file DataSourceITest.h
- * @brief Header file for class DataSourceITest
- * @date 24/07/2016
- * @author Andre Neto
+ * @file MemoryMapDataSourceBroker.h
+ * @brief Header file for class MemoryMapDataSourceBroker
+ * @date 11/04/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DataSourceITest
+ * @details This header file contains the declaration of the class MemoryMapDataSourceBroker
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef DATASOURCEITEST_H_
-#define DATASOURCEITEST_H_
+#ifndef MEMORYMAPSTATEFULBROKER_H_
+#define MEMORYMAPSTATEFULBROKER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,90 +31,80 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
+#include "BrokerI.h"
+#include "MemoryArea.h"
+#include "ReferenceT.h"
+#include "RealTimeApplication.h"
+#include "FastPollingEventSem.h"
+#include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
+#include "DataSourceSignal.h"
+#include "StandardParser.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-using namespace MARTe;
 
-class DataSourceITest {
-public:
-    bool TestConstructor();
+namespace MARTe {
 
-    bool TestInitialise();
-
-    bool TestAddSignals();
-
-    //This is tested implicitly
-    bool TestSetConfiguredDatabase();
-
-    bool TestGetNumberOfSignals();
-
-    bool TestGetSignalIndex();
-
-    bool TestGetSignalName();
-
-    bool TestGetSignalType();
-
-    bool TestGetSignalNumberOfDimensions();
-
-    bool TestGetSignalNumberOfElements();
-
-    bool TestGetSignalByteSize();
-
-    bool TestGetSignalNumberOfStates();
-
-    bool TestGetSignalStateName();
-
-    bool TestGetSignalNumberOfConsumers();
-
-    bool TestGetSignalNumberOfProducers();
-
-    bool TestGetSignalConsumerName();
-
-    bool TestGetSignalProducerName();
-
-    bool TestGetSignalDefaultValue();
-
-    bool TestGetSignalDefaultValueType();
-
-    bool TestGetNumberOfFunctions();
-
-    bool TestGetFunctionName();
-
-    bool TestGetFunctionIndex();
-
-    bool TestGetFunctionNumberOfSignals();
-
-    bool TestGetFunctionSignalsByteSize();
-
-    bool TestGetFunctionSignalName();
-
-    bool TestGetFunctionSignalIndex();
-
-    bool TestGetFunctionSignalAlias();
-
-    bool TestGetFunctionSignalNumberOfByteOffsets();
-
-    bool TestGetFunctionSignalByteOffsetInfo();
-
-    bool TestGetFunctionSignalSamples();
-
-    bool TestGetFunctionSignalReadFrequencyInput();
-
-    bool TestGetFunctionSignalReadFrequencyOutput();
-
-    bool TestGetFunctionSignalGAMMemoryOffset();
-
-    bool TestGetAddBrokers();
-
-    bool TestIsSupportedBroker();
+struct CopyTableEntry {
+    void *gamPointer;
+    void **dataSourcePointer[2];
+    uint32 dataSourceOffset;
+    uint32 copySize;
 };
+
+/**
+ * @brief Memory mapped Broker implementation.
+ * @details The configuration of this element has to be performed after the
+ * RealTimeApplication::ConfigureDataSource() step. It allows to read (write) data blocks
+ * of each element and to read (write) blocks of samples. It supports both single and dual buffering mechanisms
+ *  for the interconnection between the DataSourceSignalI signals and the GAMSignalI signals.
+ */
+class DLL_API MemoryMapStatefulBroker: public BrokerI {
+
+public:
+
+    /**
+     * @brief Constructor.
+     * @post
+     *   GetData(*) == NULL &&
+     *   GetMemoryPointer(*) == NULL &&
+     *   GetNumberOfSignals() == 0 &&
+     *   IsSync() == false
+     */
+    MemoryMapStatefulBroker();
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~MemoryMapStatefulBroker();
+
+    /**
+     *
+     */
+    virtual bool Init(SignalDirection direction,
+                      DataSourceI &dataSourceIn,
+                      const char8 * const functionName,
+                      void *gamMemoryAddress);
+
+
+protected:
+
+    CopyTableEntry *copyTable;
+
+    uint32 numberOfDataSourceSignalBuffers;
+
+    DataSourceI* dataSource;
+
+};
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* DATASOURCEITEST_H_ */
+#endif /* MEMORYMAPSTATEFULBROKER_H_ */
 

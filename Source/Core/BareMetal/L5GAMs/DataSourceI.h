@@ -311,6 +311,16 @@ public:
                                const AnyType &defaultValue);
 
     /**
+     * @brief Gets the type of the default value for the signal with index \a signalIdx.
+     * @param[in] signalIdx the index of the signal.
+     * @return the type of the default value for the signal with index \a signalIdx or VoidType if the Default was not specified.
+     * @pre
+     *   SetConfiguredDatabase
+     * @warning Note that this does not return the value of the default. It only returns the type meta-data.! (see GetSignalDefaultValue)
+     */
+    AnyType GetSignalDefaultValueType(uint32 signalIdx);
+
+    /**
      * @brief Gets the number of functions that interact with this DataSourceI.
      * @return the number of functions that interact with this DataSourceI
      * @pre

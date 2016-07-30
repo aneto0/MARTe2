@@ -46,6 +46,26 @@ public:
     bool TestPrepareNextState_NoDefault();
 
     bool TestPrepareNextState_Default_Basic();
+
+    bool TestPrepareNextState_Default_Dimensions();
+
+    bool TestPrepareNextState_Default_Dimensions_Mismatch_1();
+
+    bool TestPrepareNextState_Default_Dimensions_Mismatch_2();
+
+    bool TestPrepareNextState_Default_Elements_Mismatch();
+
+    bool TestGetNumberOfMemoryBuffers();
+
+    bool TestGetSignalMemoryBuffer();
+
+    bool TestAllocateMemory();
+
+    bool TestGetBrokerName();
+
+    bool TestGetInputBrokers();
+
+    bool TestGetOutputBrokers();
 };
 
 /*---------------------------------------------------------------------------*/

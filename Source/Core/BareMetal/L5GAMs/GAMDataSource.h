@@ -48,9 +48,7 @@ namespace MARTe {
  * @brief DataSource implementation for the exchange of signals between GAM components.
  *
  * @details This implementation of the DataSourceI interface is intend for the interchange
- *  of signals in real-time between GAM components. This implementation is performed
- *  with a dual buffering mechanism which allows to load a default value when changing to a new state
- *  (if this signal was not being used in the current state).
+ *  of signals in real-time between GAM components.
  *
  * @details The syntax in the input configuration stream (see Initialise) has to be:
  *
@@ -77,32 +75,33 @@ public:
      * @brief Reads the HeapName. Calls the DataSourceI::Initialise()
      * @param[in] data the input configuration data.
      * @return true if DataSourceI::Initialise() returns true.
-     * If the HeapName is specified and the HeapI cannot be instantied this method will return false.
+     * If the HeapName is specified and the HeapI cannot be instantiated this method will return false.
      */
     virtual bool Initialise(StructuredDataI & data);
 
     /**
      * @brief See DataSourceI::GetNumberOfMemoryBuffers()
-     * @return This method always returns 2 (double buffer).
+     * @return This method always returns 1 (single buffer).
      */
     virtual uint32 GetNumberOfMemoryBuffers();
 
     /**
      * @brief See DataSourceI::GetSignalMemoryBuffer().
-     * @details This method returns the address of the variable containing the requested buffer (not the address of the buffer itself).
+     * @details This method returns the address of the variable containing the requested signal.
      * @param[in] signalIdx the index of the signal.
-     * @param[in] bufferIdx the index of the buffer (see GetNumberOfMemoryBuffers()).
-     * @param[out] signalAddress a pointer to the address of the variable holding the memory address of this signal for this \a bufferIdx.
+     * @param[in] bufferIdx the index of the buffer shall be zero.
+     * @param[out] signalAddress a pointer to the memory address of this signal for this \a bufferIdx.
      * @return true if the signalIdx and the bufferIdx exist and the memory address can be retrieved for this signal.
      * @pre
      *   signalIdx < GetNumberOfSignals() &&
-     *   bufferIdx < GetNumberOfMemoryBuffers()
+     *   bufferIdx < GetNumberOfMemoryBuffers() < 1
      */
     virtual bool GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress);
 
     /**
      * @brief Allocates the memory required to hold all the signal data allocated to this GAMDataSource.
-     * @return true if the memory can be successfully allocated.
+     * @return true if the memory can be successfully allocated. This function will return false if it called more than once
+     *  (to avoid memory leaks).
      */
     virtual bool AllocateMemory();
 
@@ -151,12 +150,7 @@ protected:
     /**
      * The double buffer memory.
      */
-    void **signalMemory[2];
-
-    /**
-     * The address of signals in the double buffer memory.
-     */
-    void **signalMemoryIndex[2];
+    void **signalMemory;
 
     /**
      * The HeapI to allocate the double memory.

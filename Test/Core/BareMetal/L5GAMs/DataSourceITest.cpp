@@ -1036,6 +1036,39 @@ bool DataSourceITest::TestGetSignalDefaultValue() {
     return ret;
 }
 
+bool DataSourceITest::TestGetSignalDefaultValueType() {
+    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        ret = (dataSource->GetNumberOfSignals() == 5u);
+    }
+
+    AnyType defaultValueAnyType = dataSource->GetSignalDefaultValueType(0);
+    if (ret) {
+        ret = (defaultValueAnyType.GetTypeDescriptor() == TypeDescriptor::GetTypeDescriptorFromTypeName("uint32"));
+    }
+    if (ret) {
+        defaultValueAnyType = dataSource->GetSignalDefaultValueType(1);
+        ret = (defaultValueAnyType.GetTypeDescriptor() == TypeDescriptor::GetTypeDescriptorFromTypeName("uint32"));
+    }
+    if (ret) {
+        defaultValueAnyType = dataSource->GetSignalDefaultValueType(2);
+        ret = (defaultValueAnyType.GetTypeDescriptor() == TypeDescriptor::GetTypeDescriptorFromTypeName("uint32"));
+    }
+    if (ret) {
+        ret = (defaultValueAnyType.GetNumberOfDimensions() == 1u);
+    }
+    if (ret) {
+        ret = (defaultValueAnyType.GetNumberOfElements(0u) == 6u);
+    }
+
+    return ret;
+}
+
 bool DataSourceITest::TestGetNumberOfFunctions() {
     bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
     ReferenceT<DataSourceITestHelper> dataSource;

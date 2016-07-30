@@ -34,7 +34,7 @@
 #include "AdvancedErrorManagement.h"
 #include "GAMGenericSignal.h"
 #include "GAMSampledSignal.h"
-#include "MemoryMapBroker.h"
+#include "MemoryMapStatefulBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -46,22 +46,22 @@
 
 namespace MARTe {
 
-MemoryMapBroker::MemoryMapBroker() :
+MemoryMapStatefulBroker::MemoryMapStatefulBroker() :
         BrokerI() {
-    copyTable = NULL_PTR(MemoryMapBrokerCopyTableEntry *);
+    copyTable = NULL_PTR(CopyTableEntry *);
     numberOfCopies = 0u;
     numberOfDataSourceSignalBuffers = 0u;
     dataSource = NULL_PTR(DataSourceI*);
 }
 
-MemoryMapBroker::~MemoryMapBroker() {
+MemoryMapStatefulBroker::~MemoryMapStatefulBroker() {
     uint32 n;
-    if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+    if (copyTable != NULL_PTR(CopyTableEntry *)) {
         delete[] copyTable;
     }
 }
 
-bool MemoryMapBroker::Init(SignalDirection direction,
+bool MemoryMapStatefulBroker::Init(SignalDirection direction,
                             DataSourceI &dataSourceIn,
                             const char8 * const functionName,
                             void *gamMemoryAddress) {
@@ -83,7 +83,7 @@ bool MemoryMapBroker::Init(SignalDirection direction,
         ret = (numberOfCopies > 0u);
     }
     if (ret) {
-        copyTable = new MemoryMapBrokerCopyTableEntry[numberOfCopies];
+        copyTable = new CopyTableEntry[numberOfCopies];
     }
     uint32 functionIdx;
     if (ret) {
@@ -93,7 +93,7 @@ bool MemoryMapBroker::Init(SignalDirection direction,
     if (ret) {
         ret = dataSource->GetFunctionNumberOfSignals(direction, functionIdx, functionNumberOfSignals);
     }
-    //The same signal can be copied from different ranges. A MemoryMapBrokerCopyTableEntry is added for each signal range.
+    //The same signal can be copied from different ranges. A CopyTableEntry is added for each signal range.
     uint32 c = 0u;
     for (uint32 n = 0u; (n < functionNumberOfSignals) && (ret); n++) {
         if (dataSource->IsSupportedBroker(direction, functionIdx, n, brokerClassName)) {
@@ -115,13 +115,14 @@ bool MemoryMapBroker::Init(SignalDirection direction,
                 if (ret) {
                     copyTable[c].copySize = GetCopyByteSize(c);
                     copyTable[c].gamPointer = GetFunctionPointer(c);
-                    uint32 dataSourceOffset = GetCopyOffset(c);
-                    void *dataSourceSignalAddress;
-                    char8 *dataSourceSignalAddressChar = reinterpret_cast<char8 *>(dataSourceSignalAddress);
-                    ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0u, dataSourceSignalAddress);
-                    if (ret) {
-                        dataSourceSignalAddressChar += dataSourceOffset;
-                        copyTable[c].dataSourcePointer = reinterpret_cast<void *>(dataSourceSignalAddressChar);
+                    copyTable[c].dataSourceOffset = GetCopyOffset(c);
+                    uint32 b;
+                    for (b = 0u; (b < 2u) && (ret); b++) {
+                        void *dataSourceSignalAddress;
+                        ret = dataSource->GetSignalMemoryBuffer(signalIdx, b, dataSourceSignalAddress);
+                        if (ret) {
+                            copyTable[c].dataSourcePointer[b] = reinterpret_cast<void **>(dataSourceSignalAddress);
+                        }
                     }
                 }
                 c++;

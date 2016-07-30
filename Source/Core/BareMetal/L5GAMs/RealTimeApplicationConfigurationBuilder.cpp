@@ -42,6 +42,8 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+//TODO discuss with GF. Do we allow matrix default values or not? It will be a mess and we will have to trust the user on the Default signal correct dimensions...
+
 namespace MARTe {
 
 static bool CheckTypeCompatibility(StreamString &fullType,

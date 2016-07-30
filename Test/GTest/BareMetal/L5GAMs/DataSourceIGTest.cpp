@@ -129,6 +129,11 @@ TEST(DataSourceIGTest,TestGetSignalDefaultValue) {
     ASSERT_TRUE(test.TestGetSignalDefaultValue());
 }
 
+TEST(DataSourceIGTest,TestGetSignalDefaultValueType) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetSignalDefaultValueType());
+}
+
 TEST(DataSourceIGTest,TestGetNumberOfFunctions) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetNumberOfFunctions());

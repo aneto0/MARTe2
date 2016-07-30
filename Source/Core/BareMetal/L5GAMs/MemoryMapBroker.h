@@ -48,10 +48,9 @@
 
 namespace MARTe {
 
-struct CopyTableEntry {
+struct MemoryMapBrokerCopyTableEntry {
     void *gamPointer;
-    void **dataSourcePointer[2];
-    uint32 dataSourceOffset;
+    void *dataSourcePointer;
     uint32 copySize;
 };
 
@@ -92,7 +91,7 @@ public:
 
 protected:
 
-    CopyTableEntry *copyTable;
+    MemoryMapBrokerCopyTableEntry *copyTable;
 
     uint32 numberOfDataSourceSignalBuffers;
 

@@ -77,18 +77,19 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
 
 bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
     bool ret = data.Copy(configuredDatabase);
+    if (ret) {
+        ret = configuredDatabase.MoveToRoot();
+    }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("Signals");
+    }
+    if (ret) {
+        numberOfSignals = configuredDatabase.GetNumberOfChildren();
+    }
     return ret;
 }
 
 uint32 DataSourceI::GetNumberOfSignals() {
-    bool ret = configuredDatabase.MoveToRoot();
-    if (ret) {
-        ret = configuredDatabase.MoveRelative("Signals");
-    }
-    uint32 numberOfSignals = 0u;
-    if (ret) {
-        numberOfSignals = configuredDatabase.GetNumberOfChildren();
-    }
     return numberOfSignals;
 }
 
@@ -323,6 +324,14 @@ bool DataSourceI::GetSignalDefaultValue(uint32 signalIdx,
         ret = configuredDatabase.Read("Default", defaultValue);
     }
     return ret;
+}
+
+AnyType DataSourceI::GetSignalDefaultValueType(uint32 signalIdx) {
+    AnyType retType = voidAnyType;
+    if (MoveToSignalIndex(signalIdx)) {
+        retType = configuredDatabase.GetType("Default");
+    }
+    return retType;
 }
 
 bool DataSourceI::MoveToSignalIndex(uint32 signalIdx) {
