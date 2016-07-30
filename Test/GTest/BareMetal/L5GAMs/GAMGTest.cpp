@@ -143,3 +143,34 @@ TEST(GAMGTest,TestGetSignalFrequency_Output) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalFrequency_Output());
 }
+
+TEST(GAMGTest,TestAllocateInputSignalsMemory) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestAllocateInputSignalsMemory());
+}
+
+TEST(GAMGTest,TestAllocateOutputSignalsMemory) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestAllocateOutputSignalsMemory());
+}
+
+TEST(GAMGTest,TestGetInputSignalsMemoryPointer) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestGetInputSignalsMemory());
+}
+
+TEST(GAMGTest,TestGetOutputSignalsMemoryPointer) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestGetOutputSignalsMemory());
+}
+
+TEST(GAMGTest,TestGetInputSignalMemoryPointer) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestGetInputSignalMemory());
+}
+
+TEST(GAMGTest,TestGetOutputSignalMemoryPointer) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestGetOutputSignalMemory());
+}
+

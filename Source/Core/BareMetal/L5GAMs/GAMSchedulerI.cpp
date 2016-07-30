@@ -79,6 +79,7 @@ bool ConfigureScheduler(ReferenceT<ReferenceContainer> statesContainer) {
 
 
     bool ret = statesContainer.IsValid();
+#if 0
     if (ret) {
         uint32 numberOfStates = statesContainer->Size();
         states = new ScheduledState[numberOfStates];
@@ -158,7 +159,7 @@ bool ConfigureScheduler(ReferenceT<ReferenceContainer> statesContainer) {
     else {
         //TODO Invalid states container
     }
-
+#endif
     return ret;
 }
 
@@ -193,6 +194,7 @@ bool GAMSchedulerI::InsertRecord(const char8 * stateName,
 }
 
 bool GAMSchedulerI::PrepareNextState(RealTimeStateInfo info) {
+#if 0
     uint32 numberOfStates = Size();
     StreamString newStateName = info.nextState;
     ReferenceT < GAMSchedulerRecord > record;
@@ -298,7 +300,10 @@ bool GAMSchedulerI::PrepareNextState(RealTimeStateInfo info) {
     else {
         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Next state %s not found", newStateName)
     }
+
     return ret;
+#endif
+    return true;
 }
 
 void GAMSchedulerI::ChangeState(const uint32 activeBuffer) {
@@ -313,7 +318,7 @@ void GAMSchedulerI::ExecuteSingleCycle(const uint32 threadId,
                                        const uint32 activeBuffer) {
     // warning: possible segmentation faults if the previous operations
     // lack or fail and the pointers are invalid.
-
+#if 0
     printf("Executing thread %d", threadId);
     ReferenceT < RealTimeThread > thread = statesInExecution[activeBuffer]->Peek(threadId);
     if (thread.IsValid()) {
@@ -335,6 +340,7 @@ void GAMSchedulerI::ExecuteSingleCycle(const uint32 threadId,
             (writer[activeBuffer])[threadId].Write(activeBuffer);
         }
     }
+#endif
 }
 
 void GAMSchedulerI::SetApplication(RealTimeApplication &rtApp) {

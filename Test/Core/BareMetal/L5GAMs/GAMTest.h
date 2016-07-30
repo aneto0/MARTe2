@@ -94,6 +94,19 @@ public:
     bool TestGetSignalFrequency_Input();
 
     bool TestGetSignalFrequency_Output();
+
+    bool TestAllocateInputSignalsMemory();
+
+    bool TestAllocateOutputSignalsMemory();
+
+    bool TestGetInputSignalsMemory();
+
+    bool TestGetOutputSignalsMemory();
+
+    bool TestGetInputSignalMemory();
+
+    bool TestGetOutputSignalMemory();
+
 };
 
 /*---------------------------------------------------------------------------*/

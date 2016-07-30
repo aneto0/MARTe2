@@ -443,6 +443,15 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
                             ok = data.MoveToAncestor(1u);
                         }
                     }
+                    else {
+                        const uint32 maxSize = 64u;
+                        char8 errorMsg[maxSize];
+                        errorMsg[0] = '\0';
+                        StringHelper::Concatenate(errorMsg, "Failed to Initialise object with name ");
+                        uint32 sizeLeft = maxSize - StringHelper::Length(errorMsg);
+                        StringHelper::ConcatenateN(errorMsg, childName, sizeLeft);
+                        REPORT_ERROR(ErrorManagement::FatalError, errorMsg);
+                    }
                 }
                 else {
                     ok = false;

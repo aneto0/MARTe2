@@ -24,10 +24,11 @@
 
 
 OBJSX=  BrokerIGTest.x\
+        DataSourceIGTest.x\
         GAMDataSourceGTest.x\
         GAMGTest.x\
         RealTimeApplicationConfigurationBuilderGTest.x
-#DataSourceIGTest.x
+
          
 
 PACKAGE=GTest/BareMetal

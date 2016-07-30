@@ -193,6 +193,32 @@ bool GAMTestGAM1::Execute() {
 }
 CLASS_REGISTER(GAMTestGAM1, "1.0")
 
+class GAMTestScheduler1: public GAMSchedulerI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+GAMTestScheduler1    ();
+
+    virtual void StartExecution(const uint32 activeBuffer);
+
+    virtual void StopExecution();
+};
+
+GAMTestScheduler1::GAMTestScheduler1() :
+        GAMSchedulerI() {
+
+}
+
+void GAMTestScheduler1::StartExecution(const uint32 activeBuffer) {
+
+}
+
+void GAMTestScheduler1::StopExecution() {
+
+}
+
+CLASS_REGISTER(GAMTestScheduler1, "1.0")
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -202,16 +228,23 @@ static bool InitialiseGAMEnviroment(const char8 * const config) {
     configStream.Seek(0);
     StandardParser parser(configStream, cdb);
 
-    parser.Parse();
-
-    ObjectRegistryDatabase::Instance()->CleanUp();
-
-    ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    bool ok = parser.Parse();
 
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-    ReferenceT<RealTimeApplication> application = god->Find("Application1");
 
-    return application->ConfigureApplication();
+    if (ok) {
+        god->CleanUp();
+        ok = god->Initialise(cdb);
+    }
+    ReferenceT<RealTimeApplication> application;
+    if (ok) {
+        application = god->Find("Application1");
+        ok = application.IsValid();
+    }
+    if (ok) {
+        ok = application->ConfigureApplication();
+    }
+    return ok;
 }
 
 static const char8 * const gamTestConfig1 = ""
@@ -292,6 +325,9 @@ static const char8 * const gamTestConfig1 = ""
         "                }"
         "            }"
         "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = GAMTestScheduler1"
         "    }"
         "}";
 
@@ -405,6 +441,9 @@ static const char8 * const gamTestConfig2 = ""
         "            }"
         "        }"
         "    }"
+        "    +Scheduler = {"
+        "        Class = GAMTestScheduler1"
+        "    }"
         "}";
 
 static const char8 * const gamTestConfig3 = ""
@@ -463,7 +502,9 @@ static const char8 * const gamTestConfig3 = ""
         "                }"
         "            }"
         "        }"
-
+        "    }"
+        "    +Scheduler = {"
+        "        Class = GAMTestScheduler1"
         "    }"
         "}";
 
@@ -523,7 +564,132 @@ static const char8 * const gamTestConfig4 = ""
         "                }"
         "            }"
         "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = GAMTestScheduler1"
+        "    }"
+        "}";
 
+static const char8 * const gamTestConfig5 = ""
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAMA = {"
+        "            Class = GAMTestGAM1"
+        "            InputSignals = {"
+        "               Signal1 = {"
+        "                  DataSource = DDB2"
+        "                  Type = GAMTestStruct1"
+        "                  Defaults = {"
+        "                      Signal1.Par3.Par1 = 5"
+        "                  }"
+        "               }"
+        "               Signal2 = {"
+        "                  DataSource = DDB1"
+        "                  Type = uint32"
+        "                  Default = 3"
+        "               }"
+        "               Signal3 = {"
+        "                  DataSource = DDB2"
+        "                  Type = uint32"
+        "                  NumberOfElements = 10"
+        "                  NumberOfDimensions = 1"
+        "                  Ranges = {{0 0} {2 5} {9 9}}"
+        "                  Default = {1 2 3 4 5 6 7 8 9 10}"
+        "               }"
+        "               Signal4 = {"
+        "                  DataSource = DDB1"
+        "                  Type = uint32"
+        "               }"
+        "            }"
+        "            OutputSignals = {"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMB = {"
+        "            Class = GAMTestGAM1"
+        "            InputSignals = {"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "            OutputSignals = {"
+        "               Signal3 = {"
+        "                  DataSource = DDB2"
+        "                  Type = uint32"
+        "               }"
+        "               Signal2 = {"
+        "                  DataSource = DDB1"
+        "                  Type = uint32"
+        "               }"
+        "               Signal1 = {"
+        "                  DataSource = DDB2"
+        "                  Type = GAMTestStruct1"
+        "               }"
+        "               Signal4 = {"
+        "                  DataSource = DDB1"
+        "                  Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMC = {"
+        "            Class = GAMTestGAM1"
+        "            InputSignals = {"
+        "               Signal4 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMD = {"
+        "            Class = GAMTestGAM1"
+        "            OutputSignals = {"
+        "               Signal4 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        Class = ReferenceContainer"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
+        "        }"
+        "        +DDB2 = {"
+        "            Class = GAMDataSource"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {:Functions.GAMB :Functions.GAMA}"
+        "                }"
+        "            }"
+        "        }"
+        "        +State2 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {:Functions.GAMB :Functions.GAMA :Functions.GAMD :Functions.GAMC}"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = GAMTestScheduler1"
         "    }"
         "}";
 
@@ -534,10 +700,10 @@ bool GAMTest::TestConstructor() {
         ret = (gam.GetNumberOfOutputSignals() == 0u);
     }
     if (ret) {
-        ret = (gam.GetInputMemoryPointer() == NULL_PTR(void *));
+        ret = (gam.GetInputSignalsMemory() == NULL_PTR(void *));
     }
     if (ret) {
-        ret = (gam.GetOutputMemoryPointer() == NULL_PTR(void *));
+        ret = (gam.GetOutputSignalsMemory() == NULL_PTR(void *));
     }
     return ret;
 }
@@ -732,7 +898,8 @@ bool GAMTest::TestGetSignalName() {
     const uint32 maxNumberOfSignalNames = 5u;
     const char8 * const gamNames[] = { "GAMA", "GAMB", "GAMC", "GAMD" };
     const char8 * const inputSignalsNames[][maxNumberOfSignalNames] = { { "Signal1.Par1", "Signal1.Par2", "Signal1.Par3.Par1", "Signal2", "Signal3" }, {
-            "Signal0", NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
+            "Signal0",
+            NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
     const char8 * const outputSignalsNames[][maxNumberOfSignalNames] = { { "Signal0", NULL, NULL, NULL, NULL }, { "Signal3", "Signal2", "Signal1.Par1",
             "Signal1.Par2", "Signal1.Par3.Par1" }, { NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL } };
 
@@ -823,13 +990,15 @@ bool GAMTest::TestGetSignalDataSourceName() {
     const uint32 maxNumberOfSignalNames = 5u;
     const char8 * const gamNames[] = { "GAMA", "GAMB", "GAMC", "GAMD" };
     const char8 * const inputSignalsNames[][maxNumberOfSignalNames] = { { "Signal1.Par1", "Signal1.Par2", "Signal1.Par3.Par1", "Signal2", "Signal3" }, {
-            "Signal0", NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
+            "Signal0",
+            NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
     const char8 * const outputSignalsNames[][maxNumberOfSignalNames] = { { "Signal0", NULL, NULL, NULL, NULL }, { "Signal3", "Signal2", "Signal1.Par1",
             "Signal1.Par2", "Signal1.Par3.Par1" }, { NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL } };
     const char8 * const inputSignalsDataSourceNames[][maxNumberOfSignalNames] = { { "DDB2", "DDB2", "DDB2", "DDB1", "DDB2" }, { "DDB1", NULL, NULL, NULL,
     NULL }, { "DDB1", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
     const char8 * const outputSignalsDataSourceNames[][maxNumberOfSignalNames] = { { "DDB1", NULL, NULL, NULL, NULL },
-            { "DDB2", "DDB1", "DDB2", "DDB2", "DDB2" }, { NULL, NULL, NULL, NULL, NULL }, { "DDB1", NULL, NULL, NULL, NULL } };
+            { "DDB2", "DDB1", "DDB2", "DDB2", "DDB2" }, {
+            NULL, NULL, NULL, NULL, NULL }, { "DDB1", NULL, NULL, NULL, NULL } };
 
     bool ret = InitialiseGAMEnviroment(gamTestConfig2);
     uint32 n;
@@ -897,7 +1066,8 @@ bool GAMTest::TestGetSignalType() {
     const uint32 maxNumberOfSignalNames = 5u;
     const char8 * const gamNames[] = { "GAMA", "GAMB", "GAMC", "GAMD" };
     const char8 * const inputSignalsNames[][maxNumberOfSignalNames] = { { "Signal1.Par1", "Signal1.Par2", "Signal1.Par3.Par1", "Signal2", "Signal3" }, {
-            "Signal0", NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
+            "Signal0",
+            NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
     const char8 * const outputSignalsNames[][maxNumberOfSignalNames] = { { "Signal0", NULL, NULL, NULL, NULL }, { "Signal3", "Signal2", "Signal1.Par1",
             "Signal1.Par2", "Signal1.Par3.Par1" }, { NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL } };
     const char8 * const inputSignalsType[][maxNumberOfSignalNames] = { { "uint32", "float32", "uint32", "uint32", "uint32" }, { "uint32", NULL, NULL, NULL,
@@ -967,7 +1137,8 @@ bool GAMTest::TestGetSignalNumberOfDimensions() {
     const uint32 maxNumberOfSignalNames = 5u;
     const char8 * const gamNames[] = { "GAMA", "GAMB", "GAMC", "GAMD" };
     const char8 * const inputSignalsNames[][maxNumberOfSignalNames] = { { "Signal1.Par1", "Signal1.Par2", "Signal1.Par3.Par1", "Signal2", "Signal3" }, {
-            "Signal0", NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
+            "Signal0",
+            NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
     const char8 * const outputSignalsNames[][maxNumberOfSignalNames] = { { "Signal0", NULL, NULL, NULL, NULL }, { "Signal3", "Signal2", "Signal1.Par1",
             "Signal1.Par2", "Signal1.Par3.Par1" }, { NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL } };
     uint32 inputSignalsNumberOfDimensions[][maxNumberOfSignalNames] = { { 0, 0, 0, 0, 1 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
@@ -1040,7 +1211,8 @@ bool GAMTest::TestGetSignalNumberOfElements() {
     const uint32 maxNumberOfSignalNames = 5u;
     const char8 * const gamNames[] = { "GAMA", "GAMB", "GAMC", "GAMD" };
     const char8 * const inputSignalsNames[][maxNumberOfSignalNames] = { { "Signal1.Par1", "Signal1.Par2", "Signal1.Par3.Par1", "Signal2", "Signal3" }, {
-            "Signal0", NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
+            "Signal0",
+            NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
     const char8 * const outputSignalsNames[][maxNumberOfSignalNames] = { { "Signal0", NULL, NULL, NULL, NULL }, { "Signal3", "Signal2", "Signal1.Par1",
             "Signal1.Par2", "Signal1.Par3.Par1" }, { NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL } };
     uint32 inputSignalsNumberOfElements[][maxNumberOfSignalNames] = { { 1, 1, 1, 1, 10 }, { 1, 0, 0, 0, 0 }, { 1, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
@@ -1113,7 +1285,8 @@ bool GAMTest::TestGetSignalByteSize() {
     const uint32 maxNumberOfSignalNames = 5u;
     const char8 * const gamNames[] = { "GAMA", "GAMB", "GAMC", "GAMD" };
     const char8 * const inputSignalsNames[][maxNumberOfSignalNames] = { { "Signal1.Par1", "Signal1.Par2", "Signal1.Par3.Par1", "Signal2", "Signal3" }, {
-            "Signal0", NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
+            "Signal0",
+            NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
     const char8 * const outputSignalsNames[][maxNumberOfSignalNames] = { { "Signal0", NULL, NULL, NULL, NULL }, { "Signal3", "Signal2", "Signal1.Par1",
             "Signal1.Par2", "Signal1.Par3.Par1" }, { NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL } };
     uint32 inputSignalsByteSize[][maxNumberOfSignalNames] = { { 4, 4, 4, 4, 24 }, { 4, 0, 0, 0, 0 }, { 4, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
@@ -1244,7 +1417,8 @@ bool GAMTest::TestGetSignalNumberOfByteOffsets() {
     const uint32 maxNumberOfSignalNames = 5u;
     const char8 * const gamNames[] = { "GAMA", "GAMB", "GAMC", "GAMD" };
     const char8 * const inputSignalsNames[][maxNumberOfSignalNames] = { { "Signal1.Par1", "Signal1.Par2", "Signal1.Par3.Par1", "Signal2", "Signal3" }, {
-            "Signal0", NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
+            "Signal0",
+            NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
     const char8 * const outputSignalsNames[][maxNumberOfSignalNames] = { { "Signal0", NULL, NULL, NULL, NULL }, { "Signal3", "Signal2", "Signal1.Par1",
             "Signal1.Par2", "Signal1.Par3.Par1" }, { NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL } };
     uint32 inputSignalsNumberOfByteOffsets[][maxNumberOfSignalNames] = { { 0, 0, 0, 0, 3 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
@@ -1318,7 +1492,8 @@ bool GAMTest::TestGetSignalByteOffsetInfo() {
     const uint32 maxNumberOfByteOffsetInfos = 3u;
     const char8 * const gamNames[] = { "GAMA", "GAMB", "GAMC", "GAMD" };
     const char8 * const inputSignalsNames[][maxNumberOfSignalNames] = { { "Signal1.Par1", "Signal1.Par2", "Signal1.Par3.Par1", "Signal2", "Signal3" }, {
-            "Signal0", NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
+            "Signal0",
+            NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
     const char8 * const outputSignalsNames[][maxNumberOfSignalNames] = { { "Signal0", NULL, NULL, NULL, NULL }, { "Signal3", "Signal2", "Signal1.Par1",
             "Signal1.Par2", "Signal1.Par3.Par1" }, { NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL } };
     uint32 inputSignalsStartIdx[][maxNumberOfSignalNames][maxNumberOfByteOffsetInfos] = { { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 8, 36 } },
@@ -1428,7 +1603,8 @@ bool GAMTest::TestGetSignalNumberOfRanges() {
     const uint32 maxNumberOfSignalNames = 5u;
     const char8 * const gamNames[] = { "GAMA", "GAMB", "GAMC", "GAMD" };
     const char8 * const inputSignalsNames[][maxNumberOfSignalNames] = { { "Signal1.Par1", "Signal1.Par2", "Signal1.Par3.Par1", "Signal2", "Signal3" }, {
-            "Signal0", NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
+            "Signal0",
+            NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
     const char8 * const outputSignalsNames[][maxNumberOfSignalNames] = { { "Signal0", NULL, NULL, NULL, NULL }, { "Signal3", "Signal2", "Signal1.Par1",
             "Signal1.Par2", "Signal1.Par3.Par1" }, { NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL } };
     uint32 inputSignalsNumberOfRanges[][maxNumberOfSignalNames] = { { 0, 0, 0, 0, 3 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
@@ -1502,7 +1678,8 @@ bool GAMTest::TestGetSignalRangesInfo() {
     const uint32 maxNumberOfByteOffsetInfos = 3u;
     const char8 * const gamNames[] = { "GAMA", "GAMB", "GAMC", "GAMD" };
     const char8 * const inputSignalsNames[][maxNumberOfSignalNames] = { { "Signal1.Par1", "Signal1.Par2", "Signal1.Par3.Par1", "Signal2", "Signal3" }, {
-            "Signal0", NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
+            "Signal0",
+            NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL } };
     const char8 * const outputSignalsNames[][maxNumberOfSignalNames] = { { "Signal0", NULL, NULL, NULL, NULL }, { "Signal3", "Signal2", "Signal1.Par1",
             "Signal1.Par2", "Signal1.Par3.Par1" }, { NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL } };
     uint32 inputSignalsStartIdx[][maxNumberOfSignalNames][maxNumberOfByteOffsetInfos] = { { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 2, 9 } }, {
@@ -1776,6 +1953,143 @@ bool GAMTest::TestGetSignalFrequency_Output() {
     }
     if (ret) {
         ret = (frequency == 10);
+    }
+
+    return ret;
+}
+
+bool GAMTest::TestAllocateInputSignalsMemory() {
+    //Tested implicitly
+    bool ret = InitialiseGAMEnviroment(gamTestConfig1);
+    ReferenceT<GAM> gamB;
+    if (ret) {
+        StreamString gamFullName;
+        gamB = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMB");
+        ret = gamB.IsValid();
+    }
+    if (ret) {
+        //Cannot be called twice so it should fail.
+        ret = !gamB->AllocateInputSignalsMemory();
+    }
+    return ret;
+}
+
+bool GAMTest::TestAllocateOutputSignalsMemory() {
+    //Tested implicitly
+    bool ret = InitialiseGAMEnviroment(gamTestConfig1);
+    ReferenceT<GAM> gamA;
+    if (ret) {
+        StreamString gamFullName;
+        gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gamA.IsValid();
+    }
+    if (ret) {
+        //Cannot be called twice so it should fail.
+        ret = !gamA->AllocateOutputSignalsMemory();
+    }
+    return ret;
+
+}
+
+bool GAMTest::TestGetInputSignalsMemory() {
+    bool ret = InitialiseGAMEnviroment(gamTestConfig1);
+
+    ReferenceT<GAM> gamA;
+    ReferenceT<GAM> gamB;
+    if (ret) {
+        StreamString gamFullName;
+        gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gamA.IsValid();
+    }
+    if (ret) {
+        StreamString gamFullName;
+        gamB = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMB");
+        ret = gamB.IsValid();
+    }
+    if (ret) {
+        ret = (gamA->GetInputSignalsMemory() == NULL_PTR(void *));
+    }
+    if (ret) {
+        ret = (gamB->GetInputSignalsMemory() != NULL_PTR(void *));
+    }
+    return ret;
+}
+
+bool GAMTest::TestGetOutputSignalsMemory() {
+    bool ret = InitialiseGAMEnviroment(gamTestConfig1);
+
+    ReferenceT<GAM> gamA;
+    ReferenceT<GAM> gamB;
+    if (ret) {
+        StreamString gamFullName;
+        gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gamA.IsValid();
+    }
+    if (ret) {
+        StreamString gamFullName;
+        gamB = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMB");
+        ret = gamB.IsValid();
+    }
+    if (ret) {
+        ret = (gamA->GetOutputSignalsMemory() != NULL_PTR(void *));
+    }
+    if (ret) {
+        ret = (gamB->GetOutputSignalsMemory() == NULL_PTR(void *));
+    }
+    return ret;
+}
+
+bool GAMTest::TestGetInputSignalMemory() {
+    bool ret = InitialiseGAMEnviroment(gamTestConfig5);
+
+    ReferenceT<GAM> gamA;
+    if (ret) {
+        StreamString gamFullName;
+        gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gamA.IsValid();
+    }
+
+    char8 *gamAMemoryAddress = reinterpret_cast<char8 *>(gamA->GetInputSignalsMemory());
+    uint32 numberOfInputs = 6;
+    uint32 offsets[] = { sizeof(uint32), sizeof(float32), sizeof(uint32), sizeof(uint32), 6 * sizeof(uint32), sizeof(uint32) };
+    if (ret) {
+        uint32 i;
+        uint32 offset = 0u;
+        for (i = 0; (i < numberOfInputs) && (ret); i++) {
+            ret = (gamA->GetInputSignalMemory(i) == (gamAMemoryAddress + offset));
+            offset += offsets[i];
+        }
+    }
+    if (ret) {
+        ret = (gamA->GetInputSignalMemory(1000) == NULL_PTR(void *));
+    }
+
+    return ret;
+}
+
+bool GAMTest::TestGetOutputSignalMemory() {
+    bool ret = InitialiseGAMEnviroment(gamTestConfig5);
+
+    ReferenceT<GAM> gamB;
+    if (ret) {
+        StreamString gamFullName;
+        gamB = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMB");
+        ret = gamB.IsValid();
+    }
+
+    char8 *gamBMemoryAddress = reinterpret_cast<char8 *>(gamB->GetOutputSignalsMemory());
+    uint32 numberOfOutputs = 6;
+    uint32 offsets[] = { 10 * sizeof(uint32), sizeof(uint32), sizeof(uint32), sizeof(float32), sizeof(uint32), sizeof(uint32) };
+    if (ret) {
+        uint32 i;
+        uint32 offset = 0u;
+        for (i = 0; (i < numberOfOutputs) && (ret); i++) {
+            ret = (gamB->GetOutputSignalMemory(i) == (gamBMemoryAddress + offset));
+            offset += offsets[i];
+        }
+    }
+    if (ret) {
+        ret = (gamB->GetOutputSignalMemory(1000) == NULL_PTR(void *));
     }
 
     return ret;

@@ -51,19 +51,27 @@ GAM::GAM() :
         ExecutableI() {
     numberOfInputSignals = 0u;
     numberOfOutputSignals = 0u;
-    inputSignalsMemory = NULL_PTR(void **);
-    outputSignalsMemory = NULL_PTR(void **);
+    inputSignalsMemory = NULL_PTR(void *);
+    outputSignalsMemory = NULL_PTR(void *);
+    inputSignalsMemoryIndexer = NULL_PTR(void **);
+    outputSignalsMemoryIndexer = NULL_PTR(void **);
 
     heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
 }
 
 /*lint -e{1551} no exception should be thrown*/
 GAM::~GAM() {
-    if (inputSignalsMemory != NULL_PTR(void **)) {
+    if (inputSignalsMemory != NULL_PTR(void *)) {
         heap->Free(inputSignalsMemory);
     }
-    if (outputSignalsMemory != NULL_PTR(void **)) {
+    if (outputSignalsMemory != NULL_PTR(void *)) {
         heap->Free(outputSignalsMemory);
+    }
+    if (inputSignalsMemoryIndexer != NULL_PTR(void **)) {
+        delete[] inputSignalsMemoryIndexer;
+    }
+    if (outputSignalsMemoryIndexer != NULL_PTR(void **)) {
+        delete[] outputSignalsMemoryIndexer;
     }
 }
 
@@ -97,14 +105,13 @@ bool GAM::AddSignals(StructuredDataI &data) {
     return data.Write("Signals", signalsDatabase);
 }
 
-bool GAM::Finalise() {
-    return true;
-}
-
 bool GAM::AllocateInputSignalsMemory() {
     const char8* dirStr = "Signals.InputSignals";
     bool ret = configuredDatabase.MoveToRoot();
-    if (numberOfInputSignals > 0u) {
+    if (ret) {
+        ret = (inputSignalsMemory == NULL_PTR(void *));
+    }
+    if ((ret) && (numberOfInputSignals > 0u)) {
         ret = configuredDatabase.MoveRelative(dirStr);
         uint32 totalByteSize = 0u;
         if (ret) {
@@ -113,14 +120,51 @@ bool GAM::AllocateInputSignalsMemory() {
         if (ret) {
             inputSignalsMemory = heap->Malloc(totalByteSize);
         }
+        if (ret) {
+            inputSignalsMemoryIndexer = new void*[numberOfInputSignals];
+        }
+        uint32 i;
+        uint32 totalByteOffset = 0u;
+        char8 *inputSignalsMemoryChar = reinterpret_cast<char8 *>(inputSignalsMemory);
+        for (i = 0u; (i < numberOfInputSignals) && (ret); i++) {
+            inputSignalsMemoryIndexer[i] = reinterpret_cast<void *>(inputSignalsMemoryChar + totalByteOffset);
+
+            uint32 numberOfByteOffsets = 0u;
+            uint32 thisSignalByteOffset = 0u;
+            ret = GetSignalNumberOfByteOffsets(InputSignals, i, numberOfByteOffsets);
+            if (ret) {
+                if (numberOfByteOffsets == 0u) {
+                    ret = GetSignalByteSize(InputSignals, i, thisSignalByteOffset);
+                }
+                else {
+                    uint32 b;
+                    for (b = 0u; (b < numberOfByteOffsets) && (ret); b++) {
+                        uint32 ignore;
+                        uint32 offsetSize;
+                        ret = GetSignalByteOffsetInfo(InputSignals, i, b, ignore, offsetSize);
+                        if (ret) {
+                            thisSignalByteOffset += offsetSize;
+                        }
+                    }
+                }
+                if (ret) {
+                    totalByteOffset += thisSignalByteOffset;
+                }
+            }
+        }
+
     }
+
     return ret;
 }
 
 bool GAM::AllocateOutputSignalsMemory() {
     const char8* dirStr = "Signals.OutputSignals";
     bool ret = configuredDatabase.MoveToRoot();
-    if (numberOfOutputSignals > 0u) {
+    if (ret) {
+        ret = (outputSignalsMemory == NULL_PTR(void *));
+    }
+    if ((ret) && (numberOfOutputSignals > 0u)) {
         ret = configuredDatabase.MoveRelative(dirStr);
         uint32 totalByteSize = 0u;
         if (ret) {
@@ -129,16 +173,65 @@ bool GAM::AllocateOutputSignalsMemory() {
         if (ret) {
             outputSignalsMemory = heap->Malloc(totalByteSize);
         }
+        if (ret) {
+            outputSignalsMemoryIndexer = new void*[numberOfOutputSignals];
+            uint32 i;
+            uint32 totalByteOffset = 0u;
+            char8 *outputSignalsMemoryChar = reinterpret_cast<char8 *>(outputSignalsMemory);
+            for (i = 0u; (i < numberOfOutputSignals) && (ret); i++) {
+                outputSignalsMemoryIndexer[i] = reinterpret_cast<void *>(outputSignalsMemoryChar + totalByteOffset);
+
+                uint32 numberOfByteOffsets = 0u;
+                uint32 thisSignalByteOffset = 0u;
+                ret = GetSignalNumberOfByteOffsets(OutputSignals, i, numberOfByteOffsets);
+                if (ret) {
+                    if (numberOfByteOffsets == 0u) {
+                        ret = GetSignalByteSize(OutputSignals, i, thisSignalByteOffset);
+                    }
+                    else {
+                        uint32 b;
+                        for (b = 0u; (b < numberOfByteOffsets) && (ret); b++) {
+                            uint32 ignore;
+                            uint32 offsetSize;
+                            ret = GetSignalByteOffsetInfo(OutputSignals, i, b, ignore, offsetSize);
+                            if (ret) {
+                                thisSignalByteOffset += offsetSize;
+                            }
+                        }
+                    }
+                    if (ret) {
+                        totalByteOffset += thisSignalByteOffset;
+                    }
+                }
+
+            }
+        }
     }
     return ret;
 }
 
-void *GAM::GetInputMemoryPointer() {
+void *GAM::GetInputSignalsMemory() {
     return inputSignalsMemory;
 }
 
-void *GAM::GetOutputMemoryPointer() {
+void *GAM::GetOutputSignalsMemory() {
     return outputSignalsMemory;
+}
+
+void *GAM::GetInputSignalMemory(uint32 signalIdx) {
+    void *ret = NULL_PTR(void *);
+    if (signalIdx < numberOfInputSignals) {
+        ret = inputSignalsMemoryIndexer[signalIdx];
+    }
+    return ret;
+}
+
+void *GAM::GetOutputSignalMemory(uint32 signalIdx) {
+    void *ret = NULL_PTR(void *);
+    if (signalIdx < numberOfOutputSignals) {
+        ret = outputSignalsMemoryIndexer[signalIdx];
+    }
+    return ret;
 }
 
 bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
@@ -504,11 +597,4 @@ ReferenceContainer GAM::GetOutputBrokers() {
     return outputBrokers;
 }
 
-const void * GAM::GetInputSignalsBuffer() {
-    return inputSignalsMemory;
-}
-
-void * GAM::GetOutputSignalsBuffer() {
-    return outputSignalsMemory;
-}
 }

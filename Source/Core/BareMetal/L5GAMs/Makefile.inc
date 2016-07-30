@@ -25,11 +25,13 @@
 #############################################################
 
 OBJSX=BrokerI.x \
+    DataSourceI.x \
     ExecutableI.x \
     GAM.x \
     GAMGroup.x \
-    DataSourceI.x \
+    GAMSchedulerI.x \
     GAMDataSource.x \
+    GAMSchedulerRecord.x \
     MemoryMapBroker.x \
     MemoryMapInputBroker.x \
     MemoryMapOutputBroker.x \
@@ -41,18 +43,13 @@ OBJSX=BrokerI.x \
 #OBJSX=BrokerI.x \
         BrokerContainer.x \
         DataSourceContainer.x \
-        DataSourceI.x \
         DataSourceSignal.x \
         DataSourceSignalRecord.x \
-        GAM.x \
         GAMGenericSignal.x \
         GAMGroup.x \
         GAMSampledSignal.x \
-        GAMSchedulerI.x \
-        GAMSchedulerRecord.x \
         GAMSignalI.x \
-        GAMSignalsContainer.x \
-        MemoryMapBroker.x \
+        GAMSignalsContainer.x
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

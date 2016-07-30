@@ -344,73 +344,153 @@ public:
      *   SetConfiguredDatabase
      */
     bool GetSignalFrequency(SignalDirection direction,
-                                  uint32 signalIdx,
-                                  float32 &frequency);
+                            uint32 signalIdx,
+                            float32 &frequency);
 
-    void *GetInputMemoryPointer();
-
-    void *GetOutputMemoryPointer();
-
-    virtual bool Finalise();
-
+    /**
+     * @brief Allocates all memory required to hold all the input signals of this GAM.
+     * @return true if the memory can be successfully allocated.
+     * @pre
+     *   SetConfiguredDatabase &&
+     *   GetInputSignalsMemory == NULL (this function cannot be called twice).
+     */
     bool AllocateInputSignalsMemory();
 
+    /**
+     * @brief Allocates all memory required to hold all the output signals of this GAM.
+     * @return true if the memory can be successfully allocated.
+     * @pre
+     *   SetConfiguredDatabase &&
+     *   GetOutputSignalsMemory == NULL (this function cannot be called twice).
+     */
     bool AllocateOutputSignalsMemory();
 
+    /**
+     * @brief Returns a pointer to the beginning of the input signals memory.
+     * @return a pointer to the beginning of the input signals memory.
+     * @pre
+     *   SetConfiguredDatabase
+     */
+    void *GetInputSignalsMemory();
+
+    /**
+     * @brief Returns a pointer to the beginning of the output signals memory.
+     * @return a pointer to the beginning of the output signals memory.
+     * @pre
+     *   SetConfiguredDatabase
+     */
+    void *GetOutputSignalsMemory();
+
+    /**
+     * @brief Returns a pointer to the beginning of the input signal memory with index \a signalIdx.
+     * @param[in] signalIdx the index of the signal.
+     * @return a pointer to the beginning of the input signal memory with index \a signalIdx or NULL if signalIdx >= GetNumberOfInputSignals().
+     * @pre
+     *   SetConfiguredDatabase &&
+     *   signalIdx < GetNumberOfInputSignals()
+     */
+    void *GetInputSignalMemory(uint32 signalIdx);
+
+    /**
+     * @brief Returns a pointer to the beginning of the output signal memory with index \a signalIdx.
+     * @param[in] signalIdx the index of the signal.
+     * @return a pointer to the beginning of the output signal memory with index \a signalIdx or NULL if signalIdx >= GetNumberOfOutputSignals().
+     * @pre
+     *   SetConfiguredDatabase &&
+     *   signalIdx < GetNumberOfOutputSignals()
+     */
+    void *GetOutputSignalMemory(uint32 signalIdx);
+
+    /**
+     * TODO
+     */
     void AddInputBrokers(ReferenceContainer brokers);
 
+    /**
+     * TODO
+     */
     void AddOutputBrokers(ReferenceContainer brokers);
 
-    const void * GetInputSignalsBuffer();
-
-    void * GetOutputSignalsBuffer();
-
+    /**
+     * TODO
+     */
     ReferenceContainer GetInputBrokers();
 
+    /**
+     * TODO
+     */
     ReferenceContainer GetOutputBrokers();
 
+    /**
+     * TODO
+     */
     void *GetContext();
 
 protected:
+
     /**
-     * @brief Setup the GAM.
-     * @details Initialises the local status (memory allocation
-     * of the IO structures, local configuration file, ecc)
+     * Holds the Signals definition which is received in the Initialise phase.
      */
-    //virtual void SetUp()=0;
     ConfigurationDatabase signalsDatabase;
 
-    void *inputSignalsMemory;
-
-    void *outputSignalsMemory;
-
-    uint32 numberOfInputSignals;
-
-    uint32 numberOfOutputSignals;
-
+    /**
+     * Hols the final GAM configuration data (see RealTimeApplicationConfigurationBuilder).
+     */
     ConfigurationDatabase configuredDatabase;
 
+    /**
+     * Input signals memory.
+     */
+    void *inputSignalsMemory;
+
+    /**
+     * Output signals memory.
+     */
+    void *outputSignalsMemory;
+
+    /**
+     * Provides direct access to the desired signal
+     */
+    void **inputSignalsMemoryIndexer;
+
+    /**
+     * Provides direct access to the desired signal
+     */
+    void **outputSignalsMemoryIndexer;
+
+    /**
+     * Number of input signals.
+     */
+    uint32 numberOfInputSignals;
+
+    /**
+     * Number of output signals.
+     */
+    uint32 numberOfOutputSignals;
+
+    /**
+     * @brief Moves the configuredDatabase to the \a signalIdx
+     * @param[in] direction the signal direction.
+     * @param[in] signalIdx the signal index.
+     * @return true if the Move is successful.
+     */
     bool MoveToSignalIndex(SignalDirection direction,
                            uint32 signalIdx);
 
+    /**
+     * Brokers for signal reading.
+     */
     ReferenceContainer inputBrokers;
 
+    /**
+     * Brokers for signal writing.
+     */
     ReferenceContainer outputBrokers;
 
-    HeapI *heap;
-
-#if 0
-private:
-
     /**
-     * @brief Completes the IO structure definitions (see GAMSignalI) found in the global CDB
-     * with the definitions in the local CDB and check their consistency.
-     * @param[in] localData is the local StructuredData.
-     * @return false in case of conflicts between the local and the global definitions, or
-     * if the definitions are inconsistent with registered types. True otherwise.
+     * The heap that is used to malloc the input and output signals.
      */
-    bool ConfigureFunction();
-#endif
+    HeapI *heap;
 
 };
 

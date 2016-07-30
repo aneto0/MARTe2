@@ -643,13 +643,13 @@ bool DataSourceI::AddBrokers(SignalDirection direction) {
                 bool relevant = false;
                 if (direction == InputSignals) {
                     if (gam->GetNumberOfInputSignals() > 0u) {
-                        gamMemoryAddress = gam->GetInputMemoryPointer();
+                        gamMemoryAddress = gam->GetInputSignalsMemory();
                         relevant = true;
                     }
                 }
                 else if (direction == OutputSignals) {
                     if (gam->GetNumberOfOutputSignals() > 0u) {
-                        gamMemoryAddress = gam->GetOutputMemoryPointer();
+                        gamMemoryAddress = gam->GetOutputSignalsMemory();
                         relevant = true;
                     }
                 }
