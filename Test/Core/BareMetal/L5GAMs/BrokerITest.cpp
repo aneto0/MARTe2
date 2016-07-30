@@ -32,6 +32,7 @@
 #include "BrokerITest.h"
 #include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
+#include "GAMSchedulerI.h"
 #include "ObjectRegistryDatabase.h"
 #include "RealTimeApplication.h"
 #include "StandardParser.h"
@@ -39,6 +40,51 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+class BrokerITestScheduler1: public GAMSchedulerI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+BrokerITestScheduler1    ();
+
+    virtual void StartExecution(const uint32 activeBuffer);
+
+    virtual void StopExecution();
+};
+
+BrokerITestScheduler1::BrokerITestScheduler1() :
+        GAMSchedulerI() {
+
+}
+
+void BrokerITestScheduler1::StartExecution(const uint32 activeBuffer) {
+
+}
+
+void BrokerITestScheduler1::StopExecution() {
+
+}
+
+CLASS_REGISTER(BrokerITestScheduler1, "1.0")
+
+class BrokerITestGAM1: public GAM {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+BrokerITestGAM1    ();
+
+    virtual bool Execute();
+};
+
+BrokerITestGAM1::BrokerITestGAM1() :
+        GAM() {
+
+}
+
+bool BrokerITestGAM1::Execute() {
+    return true;
+}
+CLASS_REGISTER(BrokerITestGAM1, "1.0")
+
 class BrokerITestHelper: public BrokerI {
 public:
     CLASS_REGISTER_DECLARATION()virtual bool Init(SignalDirection direction,
@@ -162,25 +208,34 @@ static bool InitialiseBrokerIEnviroment(const char8 * const config) {
     configStream.Seek(0);
     StandardParser parser(configStream, cdb);
 
-    parser.Parse();
-
-    ObjectRegistryDatabase::Instance()->CleanUp();
-
-    ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    bool ok = parser.Parse();
 
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-    ReferenceT<RealTimeApplication> application = god->Find("Application1");
+
+    if (ok) {
+        god->CleanUp();
+        ok = god->Initialise(cdb);
+    }
+    ReferenceT<RealTimeApplication> application;
+    if (ok) {
+        application = god->Find("Application1");
+        ok = application.IsValid();
+    }
+    if (ok) {
+        ok = application->ConfigureApplication();
+    }
+    return ok;
 
     return application->ConfigureApplication();
 }
 
-static const char8 * const testConfig1 = ""
+static const char8 * const config1 = ""
         "$Application1 = {"
         "    Class = RealTimeApplication"
         "    +Functions = {"
         "        Class = ReferenceContainer"
         "        +GAMA = {"
-        "            Class = GAM1"
+        "            Class = BrokerITestGAM1"
         "            InputSignals = {"
         "               Signal4 = {"
         "                   DataSource = Drv1"
@@ -209,7 +264,7 @@ static const char8 * const testConfig1 = ""
         "            }"
         "        }"
         "        +GAMB = {"
-        "            Class = GAM1"
+        "            Class = BrokerITestGAM1"
         "            InputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -218,7 +273,7 @@ static const char8 * const testConfig1 = ""
         "            }"
         "        }"
         "        +GAMC = {"
-        "            Class = GAM1"
+        "            Class = BrokerITestGAM1"
         "            OutputSignals = {"
         "               Signal1 = {"
         "                   DataSource = Drv1"
@@ -245,7 +300,7 @@ static const char8 * const testConfig1 = ""
         "            }"
         "        }"
         "        +GAMD = {"
-        "            Class = GAM1"
+        "            Class = BrokerITestGAM1"
         "            OutputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -254,7 +309,7 @@ static const char8 * const testConfig1 = ""
         "            }"
         "        }"
         "        +GAME = {"
-        "            Class = GAM1"
+        "            Class = BrokerITestGAM1"
         "            InputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -263,7 +318,7 @@ static const char8 * const testConfig1 = ""
         "            }"
         "        }"
         "        +GAMF = {"
-        "            Class = GAM1"
+        "            Class = BrokerITestGAM1"
         "            OutputSignals = {"
         "               Signal3 = {"
         "                    DataSource = Drv1"
@@ -320,6 +375,9 @@ static const char8 * const testConfig1 = ""
         "            }"
         "        }"
         "    }"
+        "    +Scheduler = {"
+        "        Class = BrokerITestScheduler1"
+        "    }"
         "}";
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -334,7 +392,7 @@ bool BrokerITest::TestConstructor() {
 }
 
 bool BrokerITest::TestInitFunctionPointers() {
-    bool ret = InitialiseBrokerIEnviroment(testConfig1);
+    bool ret = InitialiseBrokerIEnviroment(config1);
     ReferenceT<BrokerIDataSourceTestHelper> dataSource;
     ReferenceT<BrokerITestHelper> broker;
     ReferenceContainer brokers;
@@ -358,7 +416,7 @@ bool BrokerITest::TestInitFunctionPointers() {
 }
 
 bool BrokerITest::TestGetNumberOfCopies() {
-    bool ret = InitialiseBrokerIEnviroment(testConfig1);
+    bool ret = InitialiseBrokerIEnviroment(config1);
     ReferenceT<BrokerIDataSourceTestHelper> dataSource;
     ReferenceT<BrokerITestHelper> inputBroker;
     ReferenceT<BrokerITestHelper> outputBroker;
@@ -408,7 +466,7 @@ bool BrokerITest::TestGetNumberOfCopies() {
 }
 #include <stdio.h>
 bool BrokerITest::TestGetCopyByteSize() {
-    bool ret = InitialiseBrokerIEnviroment(testConfig1);
+    bool ret = InitialiseBrokerIEnviroment(config1);
     ReferenceT<BrokerIDataSourceTestHelper> dataSource;
     ReferenceT<BrokerITestHelper> inputBroker;
     ReferenceT<BrokerITestHelper> outputBroker;
@@ -470,7 +528,7 @@ bool BrokerITest::TestGetCopyByteSize() {
 }
 
 bool BrokerITest::TestGetCopyOffset() {
-    bool ret = InitialiseBrokerIEnviroment(testConfig1);
+    bool ret = InitialiseBrokerIEnviroment(config1);
     ReferenceT<BrokerIDataSourceTestHelper> dataSource;
     ReferenceT<BrokerITestHelper> inputBroker;
     ReferenceT<BrokerITestHelper> outputBroker;
@@ -532,7 +590,7 @@ bool BrokerITest::TestGetCopyOffset() {
 }
 
 bool BrokerITest::TestGetFunctionPointer() {
-    bool ret = InitialiseBrokerIEnviroment(testConfig1);
+    bool ret = InitialiseBrokerIEnviroment(config1);
     ReferenceT<BrokerIDataSourceTestHelper> dataSource;
     ReferenceT<BrokerITestHelper> inputBroker;
     ReferenceT<BrokerITestHelper> outputBroker;
@@ -546,11 +604,11 @@ bool BrokerITest::TestGetFunctionPointer() {
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
 
     const char *basePointer = reinterpret_cast<const char *>(0xA);
-    const char *pointerInput[][maxNumberOfCopyByteSize] = { { basePointer, basePointer + 4, basePointer + 20, basePointer + 24, basePointer + 40 }, { basePointer, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { basePointer, 0, 0, 0, 0 }, { 0,
-            0, 0, 0, 0 } };
+    const char *pointerInput[][maxNumberOfCopyByteSize] = { { basePointer, basePointer + 4, basePointer + 20, basePointer + 24, basePointer + 40 }, {
+            basePointer, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { basePointer, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
 
-    const char *pointerOutput[][maxNumberOfCopyByteSize] = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { basePointer, basePointer + 8, basePointer + 12, basePointer + 28, basePointer + 32 }, { basePointer, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { basePointer,
-            0, 0, 0, 0 } };
+    const char *pointerOutput[][maxNumberOfCopyByteSize] = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { basePointer, basePointer + 8, basePointer + 12, basePointer
+            + 28, basePointer + 32 }, { basePointer, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { basePointer, 0, 0, 0, 0 } };
 
     uint32 n;
     for (n = 0; (n < numberOfFunctions) && (ret); n++) {

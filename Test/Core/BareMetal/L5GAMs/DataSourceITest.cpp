@@ -31,6 +31,7 @@
 #include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
 #include "DataSourceITest.h"
+#include "GAMSchedulerI.h"
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"
 #include "ObjectRegistryDatabase.h"
@@ -40,6 +41,51 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+class DataSourceITestScheduler1: public GAMSchedulerI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+DataSourceITestScheduler1    ();
+
+    virtual void StartExecution(const uint32 activeBuffer);
+
+    virtual void StopExecution();
+};
+
+DataSourceITestScheduler1::DataSourceITestScheduler1() :
+        GAMSchedulerI() {
+
+}
+
+void DataSourceITestScheduler1::StartExecution(const uint32 activeBuffer) {
+
+}
+
+void DataSourceITestScheduler1::StopExecution() {
+
+}
+
+CLASS_REGISTER(DataSourceITestScheduler1, "1.0")
+
+class DataSourceITestGAM1: public GAM {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+DataSourceITestGAM1    ();
+
+    virtual bool Execute();
+};
+
+DataSourceITestGAM1::DataSourceITestGAM1() :
+        GAM() {
+
+}
+
+bool DataSourceITestGAM1::Execute() {
+    return true;
+}
+CLASS_REGISTER(DataSourceITestGAM1, "1.0")
+
 class DataSourceITestHelper: public DataSourceI {
 public:
     CLASS_REGISTER_DECLARATION()
@@ -137,25 +183,32 @@ static bool InitialiseDataSourceIEnviroment(const char8 * const config) {
     configStream.Seek(0);
     StandardParser parser(configStream, cdb);
 
-    parser.Parse();
-
-    ObjectRegistryDatabase::Instance()->CleanUp();
-
-    ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    bool ok = parser.Parse();
 
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-    ReferenceT<RealTimeApplication> application = god->Find("Application1");
 
-    return application->ConfigureApplication();
+    if (ok) {
+        god->CleanUp();
+        ok = god->Initialise(cdb);
+    }
+    ReferenceT<RealTimeApplication> application;
+    if (ok) {
+        application = god->Find("Application1");
+        ok = application.IsValid();
+    }
+    if (ok) {
+        ok = application->ConfigureApplication();
+    }
+    return ok;
 }
 
-static const char8 * const startedTestConfig1 = ""
+static const char8 * const config1 = ""
         "$Application1 = {"
         "    Class = RealTimeApplication"
         "    +Functions = {"
         "        Class = ReferenceContainer"
         "        +GAMA = {"
-        "            Class = GAM1"
+        "            Class = DataSourceITestGAM1"
         "            InputSignals = {"
         "               Signal4 = {"
         "                   DataSource = Drv1"
@@ -184,7 +237,7 @@ static const char8 * const startedTestConfig1 = ""
         "            }"
         "        }"
         "        +GAMB = {"
-        "            Class = GAM1"
+        "            Class = DataSourceITestGAM1"
         "            InputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -193,7 +246,7 @@ static const char8 * const startedTestConfig1 = ""
         "            }"
         "        }"
         "        +GAMC = {"
-        "            Class = GAM1"
+        "            Class = DataSourceITestGAM1"
         "            OutputSignals = {"
         "               Signal1 = {"
         "                   DataSource = Drv1"
@@ -220,7 +273,7 @@ static const char8 * const startedTestConfig1 = ""
         "            }"
         "        }"
         "        +GAMD = {"
-        "            Class = GAM1"
+        "            Class = DataSourceITestGAM1"
         "            OutputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -229,7 +282,7 @@ static const char8 * const startedTestConfig1 = ""
         "            }"
         "        }"
         "        +GAME = {"
-        "            Class = GAM1"
+        "            Class = DataSourceITestGAM1"
         "            InputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -238,7 +291,7 @@ static const char8 * const startedTestConfig1 = ""
         "            }"
         "        }"
         "        +GAMF = {"
-        "            Class = GAM1"
+        "            Class = DataSourceITestGAM1"
         "            OutputSignals = {"
         "               Signal3 = {"
         "                    DataSource = Drv1"
@@ -295,15 +348,18 @@ static const char8 * const startedTestConfig1 = ""
         "            }"
         "        }"
         "    }"
+        "    +Scheduler = {"
+        "        Class = GAMDataSourceTestScheduler1"
+        "    }"
         "}";
 
-static const char8 * const startedTestConfig2 = ""
+static const char8 * const config2 = ""
         "$Application1 = {"
         "    Class = RealTimeApplication"
         "    +Functions = {"
         "        Class = ReferenceContainer"
         "        +GAMA = {"
-        "            Class = GAM1"
+        "            Class = DataSourceITestGAM1"
         "            InputSignals = {"
         "               Signal4 = {"
         "                   DataSource = Drv1"
@@ -331,7 +387,7 @@ static const char8 * const startedTestConfig2 = ""
         "            }"
         "        }"
         "        +GAMB = {"
-        "            Class = GAM1"
+        "            Class = DataSourceITestGAM1"
         "            InputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -340,7 +396,7 @@ static const char8 * const startedTestConfig2 = ""
         "            }"
         "        }"
         "        +GAMC = {"
-        "            Class = GAM1"
+        "            Class = DataSourceITestGAM1"
         "            OutputSignals = {"
         "               Signal1 = {"
         "                   DataSource = Drv1"
@@ -367,7 +423,7 @@ static const char8 * const startedTestConfig2 = ""
         "            }"
         "        }"
         "        +GAMD = {"
-        "            Class = GAM1"
+        "            Class = DataSourceITestGAM1"
         "            OutputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -376,7 +432,7 @@ static const char8 * const startedTestConfig2 = ""
         "            }"
         "        }"
         "        +GAME = {"
-        "            Class = GAM1"
+        "            Class = DataSourceITestGAM1"
         "            InputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -385,7 +441,7 @@ static const char8 * const startedTestConfig2 = ""
         "            }"
         "        }"
         "        +GAMF = {"
-        "            Class = GAM1"
+        "            Class = DataSourceITestGAM1"
         "            OutputSignals = {"
         "               Signal3 = {"
         "                    DataSource = Drv1"
@@ -443,6 +499,9 @@ static const char8 * const startedTestConfig2 = ""
         "            }"
         "        }"
         "    }"
+        "    +Scheduler = {"
+        "        Class = GAMDataSourceTestScheduler1"
+        "    }"
         "}";
 
 /*---------------------------------------------------------------------------*/
@@ -454,7 +513,7 @@ bool DataSourceITest::TestConstructor() {
 }
 
 bool DataSourceITest::TestInitialise() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     if (ret) {
         ReferenceT<DataSourceITestHelper> dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
         ret = dataSource.IsValid();
@@ -463,7 +522,7 @@ bool DataSourceITest::TestInitialise() {
 }
 
 bool DataSourceITest::TestAddSignals() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -546,7 +605,7 @@ bool DataSourceITest::TestAddSignals() {
 }
 
 bool DataSourceITest::TestSetConfiguredDatabase() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -556,7 +615,7 @@ bool DataSourceITest::TestSetConfiguredDatabase() {
 }
 
 bool DataSourceITest::TestGetNumberOfSignals() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -569,7 +628,7 @@ bool DataSourceITest::TestGetNumberOfSignals() {
 }
 
 bool DataSourceITest::TestGetSignalIndex() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -617,7 +676,7 @@ bool DataSourceITest::TestGetSignalName() {
 }
 
 bool DataSourceITest::TestGetSignalType() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -649,7 +708,7 @@ bool DataSourceITest::TestGetSignalType() {
 }
 
 bool DataSourceITest::TestGetSignalNumberOfDimensions() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -682,7 +741,7 @@ bool DataSourceITest::TestGetSignalNumberOfDimensions() {
 }
 
 bool DataSourceITest::TestGetSignalNumberOfElements() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -715,7 +774,7 @@ bool DataSourceITest::TestGetSignalNumberOfElements() {
 }
 
 bool DataSourceITest::TestGetSignalByteSize() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -748,7 +807,7 @@ bool DataSourceITest::TestGetSignalByteSize() {
 }
 
 bool DataSourceITest::TestGetSignalNumberOfStates() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -781,7 +840,7 @@ bool DataSourceITest::TestGetSignalNumberOfStates() {
 }
 
 bool DataSourceITest::TestGetSignalStateName() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -820,7 +879,7 @@ bool DataSourceITest::TestGetSignalStateName() {
 
 bool DataSourceITest::TestGetSignalNumberOfConsumers() {
 
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -863,7 +922,7 @@ bool DataSourceITest::TestGetSignalNumberOfConsumers() {
 }
 
 bool DataSourceITest::TestGetSignalNumberOfProducers() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -906,7 +965,7 @@ bool DataSourceITest::TestGetSignalNumberOfProducers() {
 }
 
 bool DataSourceITest::TestGetSignalConsumerName() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -954,7 +1013,7 @@ bool DataSourceITest::TestGetSignalConsumerName() {
 }
 
 bool DataSourceITest::TestGetSignalProducerName() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1000,7 +1059,7 @@ bool DataSourceITest::TestGetSignalProducerName() {
 }
 
 bool DataSourceITest::TestGetSignalDefaultValue() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1037,7 +1096,7 @@ bool DataSourceITest::TestGetSignalDefaultValue() {
 }
 
 bool DataSourceITest::TestGetSignalDefaultValueType() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1053,11 +1112,11 @@ bool DataSourceITest::TestGetSignalDefaultValueType() {
     }
     if (ret) {
         defaultValueAnyType = dataSource->GetSignalDefaultValueType(1);
-        ret = (defaultValueAnyType.GetTypeDescriptor() == TypeDescriptor::GetTypeDescriptorFromTypeName("uint32"));
+        ret = (defaultValueAnyType.GetTypeDescriptor() == VoidType);
     }
     if (ret) {
         defaultValueAnyType = dataSource->GetSignalDefaultValueType(2);
-        ret = (defaultValueAnyType.GetTypeDescriptor() == TypeDescriptor::GetTypeDescriptorFromTypeName("uint32"));
+        ret = (defaultValueAnyType.GetTypeDescriptor() == TypeDescriptor::GetTypeDescriptorFromTypeName("int32"));
     }
     if (ret) {
         ret = (defaultValueAnyType.GetNumberOfDimensions() == 1u);
@@ -1070,7 +1129,7 @@ bool DataSourceITest::TestGetSignalDefaultValueType() {
 }
 
 bool DataSourceITest::TestGetNumberOfFunctions() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1083,7 +1142,7 @@ bool DataSourceITest::TestGetNumberOfFunctions() {
 }
 
 bool DataSourceITest::TestGetFunctionIndex() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1123,7 +1182,7 @@ bool DataSourceITest::TestGetFunctionName() {
 }
 
 bool DataSourceITest::TestGetFunctionNumberOfSignals() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1167,7 +1226,7 @@ bool DataSourceITest::TestGetFunctionNumberOfSignals() {
 }
 
 bool DataSourceITest::TestGetFunctionSignalsByteSize() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1215,7 +1274,7 @@ bool DataSourceITest::TestGetFunctionSignalName() {
 }
 
 bool DataSourceITest::TestGetFunctionSignalIndex() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1286,7 +1345,7 @@ bool DataSourceITest::TestGetFunctionSignalIndex() {
 }
 
 bool DataSourceITest::TestGetFunctionSignalAlias() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1361,7 +1420,7 @@ bool DataSourceITest::TestGetFunctionSignalAlias() {
 }
 
 bool DataSourceITest::TestGetFunctionSignalNumberOfByteOffsets() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1433,7 +1492,7 @@ bool DataSourceITest::TestGetFunctionSignalNumberOfByteOffsets() {
 }
 
 bool DataSourceITest::TestGetFunctionSignalByteOffsetInfo() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1543,7 +1602,7 @@ bool DataSourceITest::TestGetFunctionSignalByteOffsetInfo() {
 }
 
 bool DataSourceITest::TestGetFunctionSignalSamples() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1615,7 +1674,7 @@ bool DataSourceITest::TestGetFunctionSignalSamples() {
 }
 
 bool DataSourceITest::TestGetFunctionSignalReadFrequencyInput() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1689,7 +1748,7 @@ bool DataSourceITest::TestGetFunctionSignalReadFrequencyInput() {
 }
 
 bool DataSourceITest::TestGetFunctionSignalReadFrequencyOutput() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig2);
+    bool ret = InitialiseDataSourceIEnviroment(config2);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1763,7 +1822,7 @@ bool DataSourceITest::TestGetFunctionSignalReadFrequencyOutput() {
 }
 
 bool DataSourceITest::TestGetFunctionSignalGAMMemoryOffset() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig2);
+    bool ret = InitialiseDataSourceIEnviroment(config2);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -1836,11 +1895,11 @@ bool DataSourceITest::TestGetFunctionSignalGAMMemoryOffset() {
 
 bool DataSourceITest::TestGetAddBrokers() {
     //Implicitly tested in the RealTimeApplicationConfigurationBuilder
-    return InitialiseDataSourceIEnviroment(startedTestConfig1);
+    return InitialiseDataSourceIEnviroment(config1);
 }
 
 bool DataSourceITest::TestIsSupportedBroker() {
-    bool ret = InitialiseDataSourceIEnviroment(startedTestConfig1);
+    bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
