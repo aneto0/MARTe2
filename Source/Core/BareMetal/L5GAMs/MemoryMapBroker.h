@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MEMORYMAPDATASOURCEBROKER_H_
-#define MEMORYMAPDATASOURCEBROKER_H_
+#ifndef MEMORYMAPBROKER_H_
+#define MEMORYMAPBROKER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,14 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BrokerI.h"
-#include "MemoryArea.h"
-#include "ReferenceT.h"
-#include "RealTimeApplication.h"
-#include "FastPollingEventSem.h"
-#include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
-#include "DataSourceSignal.h"
-#include "StandardParser.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -48,6 +41,10 @@
 
 namespace MARTe {
 
+/**
+ * @brief Helper structure which holds the memory pointers of the GAM and DataSource elements
+ * that are to be copied by this MemoryMapBroker
+ */
 struct MemoryMapBrokerCopyTableEntry {
     void *gamPointer;
     void *dataSourcePointer;
@@ -55,11 +52,11 @@ struct MemoryMapBrokerCopyTableEntry {
 };
 
 /**
- * @brief Memory mapped Broker implementation.
- * @details The configuration of this element has to be performed after the
- * RealTimeApplication::ConfigureDataSource() step. It allows to read (write) data blocks
- * of each element and to read (write) blocks of samples. It supports both single and dual buffering mechanisms
- *  for the interconnection between the DataSourceSignalI signals and the GAMSignalI signals.
+ * @brief Memory mapped BrokerI implementation.
+ * @details This class knows how to copy from/to a DataSourceI memory address to/from a GAM signal memory address.
+ * For each GAM signal, the signal name is searched in the provided DataSourceI (see Init) and the memory
+ * memory address of the signal retrieved using the GetSignalMemoryBuffer function. The information of each element to
+ *  be copied is stored in a MemoryMapBrokerCopyTableEntry.
  */
 class DLL_API MemoryMapBroker: public BrokerI {
 
@@ -68,33 +65,42 @@ public:
     /**
      * @brief Constructor.
      * @post
-     *   GetData(*) == NULL &&
-     *   GetMemoryPointer(*) == NULL &&
-     *   GetNumberOfSignals() == 0 &&
-     *   IsSync() == false
+     *   GetNumberOfCopies() == 0
      */
     MemoryMapBroker();
 
     /**
-     * @brief Destructor
+     * @brief Destructor. Frees the created MemoryMapBrokerCopyTableEntry entries.
      */
     virtual ~MemoryMapBroker();
 
     /**
-     *
+     * @brief Initialises the MemoryMapBroker.
+     * @detail For each signal in the \a functionName, which wishes to use this MemoryMapBroker instance
+     * (i.e. IsSupportedBroker(class inhering from MemoryMapBroker) == true), the signal name is searched
+     *  in the provided \a dataSourceIn (see Init) and the memory address of the signal retrieved using the
+     *  GetSignalMemoryBuffer function. The information of each element to  be copied is stored in a MemoryMapBrokerCopyTableEntry.
+     * @param[in] direction the signal direction (InputSignals or OutputSignals).
+     * @param[in] dataSource the DataSourceI to be queried.
+     * @param[in] functionName the name of GAM the to which this BrokerI is being allocated to.
+     * @param[in] gamMemoryAddress the base address of the GAM memory (where signal data is stored).
+     * @return true if all the copy information related to \a functionName can be successfully retrieved.
      */
     virtual bool Init(SignalDirection direction,
                       DataSourceI &dataSourceIn,
                       const char8 * const functionName,
                       void *gamMemoryAddress);
 
-
 protected:
 
+    /**
+     * A table with all the elements to be copied
+     */
     MemoryMapBrokerCopyTableEntry *copyTable;
 
-    uint32 numberOfDataSourceSignalBuffers;
-
+    /**
+     * The DataSourceI instance
+     */
     DataSourceI* dataSource;
 
 };
@@ -105,5 +111,5 @@ protected:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_MEMORYMAPDATASOURCEBROKER_H_ */
+#endif /* MEMORYMAPBROKER_H_ */
 

@@ -31,9 +31,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "AdvancedErrorManagement.h"
-#include "GAMGenericSignal.h"
-#include "GAMSampledSignal.h"
 #include "MemoryMapBroker.h"
 
 /*---------------------------------------------------------------------------*/
@@ -49,13 +46,11 @@ namespace MARTe {
 MemoryMapBroker::MemoryMapBroker() :
         BrokerI() {
     copyTable = NULL_PTR(MemoryMapBrokerCopyTableEntry *);
-    numberOfCopies = 0u;
-    numberOfDataSourceSignalBuffers = 0u;
     dataSource = NULL_PTR(DataSourceI*);
+    numberOfCopies = 0u;
 }
 
 MemoryMapBroker::~MemoryMapBroker() {
-    uint32 n;
     if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
         delete[] copyTable;
     }
@@ -117,8 +112,8 @@ bool MemoryMapBroker::Init(SignalDirection direction,
                     copyTable[c].gamPointer = GetFunctionPointer(c);
                     uint32 dataSourceOffset = GetCopyOffset(c);
                     void *dataSourceSignalAddress;
-                    char8 *dataSourceSignalAddressChar = reinterpret_cast<char8 *>(dataSourceSignalAddress);
                     ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0u, dataSourceSignalAddress);
+                    char8 *dataSourceSignalAddressChar = reinterpret_cast<char8 *>(dataSourceSignalAddress);
                     if (ret) {
                         dataSourceSignalAddressChar += dataSourceOffset;
                         copyTable[c].dataSourcePointer = reinterpret_cast<void *>(dataSourceSignalAddressChar);

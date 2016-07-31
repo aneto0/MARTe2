@@ -27,6 +27,7 @@ OBJSX=  BrokerIGTest.x\
         DataSourceIGTest.x\
         GAMDataSourceGTest.x\
         GAMGTest.x\
+        MemoryMapBrokerGTest.x\
         RealTimeApplicationConfigurationBuilderGTest.x
 
          

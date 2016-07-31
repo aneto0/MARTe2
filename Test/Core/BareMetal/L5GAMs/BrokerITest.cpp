@@ -87,7 +87,9 @@ CLASS_REGISTER(BrokerITestGAM1, "1.0")
 
 class BrokerITestHelper: public BrokerI {
 public:
-    CLASS_REGISTER_DECLARATION()virtual bool Init(SignalDirection direction,
+    CLASS_REGISTER_DECLARATION()
+
+    virtual bool Init(SignalDirection direction,
             DataSourceI &dataSourceIn,
             const char8 * const functionName,
             void *gamMemoryAddress);
