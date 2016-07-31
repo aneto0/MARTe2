@@ -174,6 +174,9 @@ bool DataSourceIGAMTest1::GetOutputBrokers(ReferenceContainer &outputBrokers,
 }
 CLASS_REGISTER(DataSourceIGAMTest1, "1.0");
 
+/**
+ * @brief Exposes the protected methods of GAM for testing
+ */
 class GAMTestGAM1: public GAM {
 public:
     CLASS_REGISTER_DECLARATION()
@@ -181,11 +184,34 @@ public:
 GAMTestGAM1    ();
 
     virtual bool Execute();
+
+    void *GetInputSignalsMemory();
+
+    void *GetOutputSignalsMemory();
+
+    void *GetInputSignalMemory(uint32 signalIdx);
+
+    void *GetOutputSignalMemory(uint32 signalIdx);
 };
 
 GAMTestGAM1::GAMTestGAM1() :
         GAM() {
+}
 
+void *GAMTestGAM1::GetInputSignalsMemory() {
+    return GAM::GetInputSignalsMemory();
+}
+
+void *GAMTestGAM1::GetOutputSignalsMemory() {
+    return GAM::GetOutputSignalsMemory();
+}
+
+void *GAMTestGAM1::GetInputSignalMemory(uint32 signalIdx) {
+    return GAM::GetInputSignalMemory(signalIdx);
+}
+
+void *GAMTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
+    return GAM::GetOutputSignalMemory(signalIdx);
 }
 
 bool GAMTestGAM1::Execute() {
@@ -819,7 +845,7 @@ static const char8 * const gamTestConfig6 = ""
         "}";
 
 bool GAMTest::TestConstructor() {
-    GAM1 gam;
+    GAMTestGAM1 gam;
     bool ret = (gam.GetNumberOfInputSignals() == 0u);
     if (ret) {
         ret = (gam.GetNumberOfOutputSignals() == 0u);
@@ -2119,8 +2145,8 @@ bool GAMTest::TestAllocateOutputSignalsMemory() {
 bool GAMTest::TestGetInputSignalsMemory() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig1);
 
-    ReferenceT<GAM> gamA;
-    ReferenceT<GAM> gamB;
+    ReferenceT<GAMTestGAM1> gamA;
+    ReferenceT<GAMTestGAM1> gamB;
     if (ret) {
         StreamString gamFullName;
         gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -2143,8 +2169,8 @@ bool GAMTest::TestGetInputSignalsMemory() {
 bool GAMTest::TestGetOutputSignalsMemory() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig1);
 
-    ReferenceT<GAM> gamA;
-    ReferenceT<GAM> gamB;
+    ReferenceT<GAMTestGAM1> gamA;
+    ReferenceT<GAMTestGAM1> gamB;
     if (ret) {
         StreamString gamFullName;
         gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -2167,7 +2193,7 @@ bool GAMTest::TestGetOutputSignalsMemory() {
 bool GAMTest::TestGetInputSignalMemory() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig5);
 
-    ReferenceT<GAM> gamA;
+    ReferenceT<GAMTestGAM1> gamA;
     if (ret) {
         StreamString gamFullName;
         gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -2195,7 +2221,7 @@ bool GAMTest::TestGetInputSignalMemory() {
 bool GAMTest::TestGetOutputSignalMemory() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig5);
 
-    ReferenceT<GAM> gamB;
+    ReferenceT<GAMTestGAM1> gamB;
     if (ret) {
         StreamString gamFullName;
         gamB = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMB");
@@ -2223,7 +2249,7 @@ bool GAMTest::TestGetOutputSignalMemory() {
 bool GAMTest::TestGetInputSignalMemory_Samples() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig6);
 
-    ReferenceT<GAM> gamA;
+    ReferenceT<GAMTestGAM1> gamA;
     if (ret) {
         StreamString gamFullName;
         gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -2251,7 +2277,7 @@ bool GAMTest::TestGetInputSignalMemory_Samples() {
 bool GAMTest::TestGetOutputSignalMemory_Samples() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig6);
 
-    ReferenceT<GAM> gamB;
+    ReferenceT<GAMTestGAM1> gamB;
     if (ret) {
         StreamString gamFullName;
         gamB = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMB");

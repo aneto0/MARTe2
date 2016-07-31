@@ -1113,13 +1113,13 @@ bool GAMDataSourceTest::TestGetInputBrokers() {
     ReferenceContainer inputBrokersA;
     ReferenceContainer inputBrokersB;
     if (ret) {
-        ret = !gamDataSource->GetInputBrokers(inputBrokersA, "GAMA", gamA->GetInputSignalsMemory());
+        ret = !gamDataSource->GetInputBrokers(inputBrokersA, "GAMA", reinterpret_cast<void *>(0xAA));
     }
     if (ret) {
         ret = (inputBrokersA.Size() == 0u);
     }
     if (ret) {
-        ret = gamDataSource->GetInputBrokers(inputBrokersB, "GAMB", gamB->GetInputSignalsMemory());
+        ret = gamDataSource->GetInputBrokers(inputBrokersB, "GAMB", reinterpret_cast<void *>(0xAA));
     }
     if (ret) {
         ret = (inputBrokersB.Size() > 0u);
@@ -1156,7 +1156,7 @@ bool GAMDataSourceTest::TestGetOutputBrokers() {
     ReferenceContainer outputBrokersA;
     ReferenceContainer outputBrokersB;
     if (ret) {
-        ret = gamDataSource->GetOutputBrokers(outputBrokersA, "GAMA", gamA->GetOutputSignalsMemory());
+        ret = gamDataSource->GetOutputBrokers(outputBrokersA, "GAMA", reinterpret_cast<void *>(0xAA));
     }
     if (ret) {
         ret = (outputBrokersA.Size() > 0u);
@@ -1169,7 +1169,7 @@ bool GAMDataSourceTest::TestGetOutputBrokers() {
         ret = broker.IsValid();
     }
     if (ret) {
-        ret = !gamDataSource->GetOutputBrokers(outputBrokersB, "GAMB", gamB->GetOutputSignalsMemory());
+        ret = !gamDataSource->GetOutputBrokers(outputBrokersB, "GAMB", reinterpret_cast<void *>(0xAA));
     }
     if (ret) {
         ret = (outputBrokersB.Size() == 0u);

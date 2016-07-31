@@ -79,11 +79,34 @@ public:
 MemoryMapBrokerTestGAM1    ();
 
     virtual bool Execute();
+
+    void *GetInputSignalsMemory();
+
+    void *GetOutputSignalsMemory();
+
+    void *GetInputSignalMemory(uint32 signalIdx);
+
+    void *GetOutputSignalMemory(uint32 signalIdx);
 };
 
 MemoryMapBrokerTestGAM1::MemoryMapBrokerTestGAM1() :
         GAM() {
+}
 
+void *MemoryMapBrokerTestGAM1::GetInputSignalsMemory() {
+    return GAM::GetInputSignalsMemory();
+}
+
+void *MemoryMapBrokerTestGAM1::GetOutputSignalsMemory() {
+    return GAM::GetOutputSignalsMemory();
+}
+
+void *MemoryMapBrokerTestGAM1::GetInputSignalMemory(uint32 signalIdx) {
+    return GAM::GetInputSignalMemory(signalIdx);
+}
+
+void *MemoryMapBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
+    return GAM::GetOutputSignalMemory(signalIdx);
 }
 
 bool MemoryMapBrokerTestGAM1::Execute() {
@@ -456,7 +479,7 @@ bool MemoryMapBrokerTest::TestInit_Input_Ranges_Samples() {
     bool ret = InitialiseMemoryMapBrokerEnviroment(config1);
     ReferenceT<MemoryMapBrokerDataSourceTestHelper> dataSource;
     ReferenceT<MemoryMapBrokerTestHelper> broker;
-    ReferenceT<GAM> gamA;
+    ReferenceT<MemoryMapBrokerTestGAM1> gamA;
     ReferenceContainer brokers;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -570,7 +593,7 @@ bool MemoryMapBrokerTest::TestInit_Output_Ranges_Samples() {
     bool ret = InitialiseMemoryMapBrokerEnviroment(config1);
     ReferenceT<MemoryMapBrokerDataSourceTestHelper> dataSource;
     ReferenceT<MemoryMapBrokerTestHelper> broker;
-    ReferenceT<GAM> gamC;
+    ReferenceT<MemoryMapBrokerTestGAM1> gamC;
     ReferenceContainer brokers;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");

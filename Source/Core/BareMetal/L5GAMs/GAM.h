@@ -80,6 +80,13 @@ namespace MARTe {
 class DLL_API GAM: public ExecutableI {
 public:
     /**
+     * Allows the BrokerI implementations to have access to the
+     * GAM memory. This strategy makes the DataSourceI has the only
+     * class which will have direct access to the GAM memory.
+     */
+    friend class DataSourceI;
+
+    /**
      * @brief Constructor
      * @post
      *   GetNumberOfInputSignals() == 0 &&
@@ -366,6 +373,32 @@ public:
     bool AllocateOutputSignalsMemory();
 
     /**
+     * TODO
+     */
+    void AddInputBrokers(ReferenceContainer brokers);
+
+    /**
+     * TODO
+     */
+    void AddOutputBrokers(ReferenceContainer brokers);
+
+    /**
+     * TODO
+     */
+    ReferenceContainer GetInputBrokers();
+
+    /**
+     * TODO
+     */
+    ReferenceContainer GetOutputBrokers();
+
+    /**
+     * TODO
+     */
+    void *GetContext();
+
+protected:
+    /**
      * @brief Returns a pointer to the beginning of the input signals memory.
      * @return a pointer to the beginning of the input signals memory.
      * @pre
@@ -400,33 +433,6 @@ public:
      *   signalIdx < GetNumberOfOutputSignals()
      */
     void *GetOutputSignalMemory(uint32 signalIdx);
-
-    /**
-     * TODO
-     */
-    void AddInputBrokers(ReferenceContainer brokers);
-
-    /**
-     * TODO
-     */
-    void AddOutputBrokers(ReferenceContainer brokers);
-
-    /**
-     * TODO
-     */
-    ReferenceContainer GetInputBrokers();
-
-    /**
-     * TODO
-     */
-    ReferenceContainer GetOutputBrokers();
-
-    /**
-     * TODO
-     */
-    void *GetContext();
-
-protected:
 
     /**
      * Holds the Signals definition which is received in the Initialise phase.
