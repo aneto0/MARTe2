@@ -148,9 +148,14 @@ public:
 
 protected:
     /**
-     * The double buffer memory.
+     * The single buffer memory.
      */
-    void **signalMemory;
+    void *signalMemory;
+
+    /**
+     * The signal offsets
+     */
+    uint32 *signalOffsets;
 
     /**
      * The HeapI to allocate the double memory.

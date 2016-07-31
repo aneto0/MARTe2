@@ -40,13 +40,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-void TODODeleteMe(const MARTe::ErrorManagement::ErrorInformation &errorInfo,
-                            const char8 * const errorDescription) {
-    printf("---->>%s\n", errorDescription);
-}
-
 TEST(GAMDataSourceGTest,TestConstructor) {
-    SetErrorProcessFunction(&TODODeleteMe);
     GAMDataSourceTest test;
     ASSERT_TRUE(test.TestConstructor());
 }

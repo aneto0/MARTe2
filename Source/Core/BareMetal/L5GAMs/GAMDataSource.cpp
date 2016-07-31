@@ -53,13 +53,19 @@ namespace MARTe {
 
 GAMDataSource::GAMDataSource() :
         DataSourceI() {
-    signalMemory = NULL_PTR(void **);
+    signalMemory = NULL_PTR(void *);
+    signalOffsets = NULL_PTR(uint32 *);
     heap = NULL_PTR(HeapI *);
 }
 
 GAMDataSource::~GAMDataSource() {
-    if (signalMemory != NULL_PTR(void **)) {
-        delete[] signalMemory;
+    if (heap != NULL_PTR(HeapI *)) {
+        if (signalMemory != NULL_PTR(void *)) {
+            heap->Free(signalMemory);
+        }
+        if (signalOffsets != NULL_PTR(uint32 *)) {
+            delete[] signalOffsets;
+        }
     }
 }
 
@@ -93,7 +99,9 @@ bool GAMDataSource::GetSignalMemoryBuffer(uint32 signalIdx,
         ret = (signalIdx < numberOfSignals);
     }
     if (ret) {
-        signalAddress = signalMemory[signalIdx];
+        char8 *signalAddressChar = reinterpret_cast<char8 *>(signalMemory);
+        signalAddressChar += signalOffsets[signalIdx];
+        signalAddress = reinterpret_cast<void *&>(signalAddressChar);
     }
 
     return ret;
@@ -103,21 +111,28 @@ bool GAMDataSource::AllocateMemory() {
     uint32 numberOfSignals = GetNumberOfSignals();
     bool ret = (numberOfSignals > 0u);
     if (ret) {
-        ret = (signalMemory == NULL_PTR(void **));
+        ret = (signalMemory == NULL_PTR(void *));
     }
     if (ret) {
-        signalMemory = new void*[numberOfSignals];
+        signalOffsets = new uint32[numberOfSignals];
     }
+    uint32 memorySize = 0u;
     for (uint32 s = 0u; (s < numberOfSignals) && (ret); s++) {
-        uint32 memorySize;
-        ret = GetSignalByteSize(s, memorySize);
+        uint32 thisSignalMemorySize;
+        ret = GetSignalByteSize(s, thisSignalMemorySize);
         if (ret) {
-            ret = (memorySize > 0u);
+            signalOffsets[s] = memorySize;
         }
         if (ret) {
-            signalMemory[s] = heap->Malloc(memorySize);
-            MemoryOperationsHelper::Set(signalMemory[s], 0, memorySize);
+            ret = (thisSignalMemorySize > 0u);
         }
+        if (ret) {
+            memorySize += thisSignalMemorySize;
+        }
+    }
+    if (ret) {
+        signalMemory = heap->Malloc(memorySize);
+        MemoryOperationsHelper::Set(signalMemory, 0, memorySize);
     }
     return ret;
 }
@@ -175,66 +190,77 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
                 update = (numberOfProducersCurrentState == 0u);
             }
             TypeDescriptor typeDesc;
-            if (update && ret) {
-                typeDesc = GetSignalType(signalIdx);
-                ret = (typeDesc != InvalidType);
+            if (update) {
+                if (ret) {
+                    typeDesc = GetSignalType(signalIdx);
+                    ret = (typeDesc != InvalidType);
+                }
             }
-            if (update && ret) {
+            if (update) {
                 //if the default value is declared use it to initialise
                 //otherwise null the memory
                 AnyType defaultValueType = GetSignalDefaultValueType(signalIdx);
+                void *signalMemory = NULL_PTR(void *);
+                if (ret) {
+                    ret = GetSignalMemoryBuffer(signalIdx, 0u, signalMemory);
+                }
                 if (defaultValueType.GetTypeDescriptor() == VoidType) {
                     uint32 size;
-                    ret = GetSignalByteSize(signalIdx, size);
                     if (ret) {
-                        MemoryOperationsHelper::Set(signalMemory[signalIdx], '\0', size);
+                        ret = GetSignalByteSize(signalIdx, size);
+                    }
+                    if (ret) {
+                        MemoryOperationsHelper::Set(signalMemory, '\0', size);
                     }
                 }
                 else {
-                    StreamString signalName;
-                    ret = GetSignalName(signalIdx, signalName);
-                    signalName.Seek(0u);
-
-                    AnyType thisSignal(typeDesc, 0u, signalMemory[signalIdx]);
+                    AnyType thisSignal(typeDesc, 0u, signalMemory);
                     uint32 thisSignalNumberOfElements;
                     uint32 thisSignalNumberOfDimensions;
-                    ret = GetSignalNumberOfElements(signalIdx, thisSignalNumberOfElements);
+                    StreamString signalName;
+                    if (ret) {
+                        ret = GetSignalName(signalIdx, signalName);
+                        signalName.Seek(0u);
+                    }
+                    if (ret) {
+                        ret = GetSignalNumberOfElements(signalIdx, thisSignalNumberOfElements);
+                    }
                     if (ret) {
                         ret = GetSignalNumberOfDimensions(signalIdx, thisSignalNumberOfDimensions);
                     }
                     if (ret) {
                         ret = (thisSignalNumberOfDimensions == defaultValueType.GetNumberOfDimensions());
                     }
-
-                    uint32 defaultValueNumberOfElements = 1u;
                     if (ret) {
                         thisSignal.SetNumberOfDimensions(thisSignalNumberOfDimensions);
-                        uint32 d;
-                        for (d = 0u; (d < thisSignalNumberOfDimensions) && (ret); d++) {
-                            uint32 elementsInDimensionN = defaultValueType.GetNumberOfElements(d);
-                            defaultValueNumberOfElements *= elementsInDimensionN;
-                        }
-                        ret = (thisSignalNumberOfElements == defaultValueNumberOfElements);
-                        if (ret) {
-                            for (d = 0u; (d < thisSignalNumberOfDimensions) && (ret); d++) {
-                                uint32 elementsInDimensionN = defaultValueType.GetNumberOfElements(d);
-                                thisSignal.SetNumberOfElements(d, elementsInDimensionN);
-                            }
-                        }
-                        else {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Default value has different number of elements w.r.t. to the signal %s",
-                                                    signalName)
-                        }
                     }
                     else {
                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Default value has different number of dimensions w.r.t. to the signal %s",
                                                 signalName)
                     }
 
+                    uint32 defaultValueNumberOfElements = 1u;
+                    uint32 d;
+                    for (d = 0u; (d < thisSignalNumberOfDimensions) && (ret); d++) {
+                        uint32 elementsInDimensionN = defaultValueType.GetNumberOfElements(d);
+                        defaultValueNumberOfElements *= elementsInDimensionN;
+                    }
+                    if (ret) {
+                        ret = (thisSignalNumberOfElements == defaultValueNumberOfElements);
+                    }
+                    else {
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Default value has different number of elements w.r.t. to the signal %s",
+                                                signalName)
+                    }
+                    for (d = 0u; (d < thisSignalNumberOfDimensions) && (ret); d++) {
+                        uint32 elementsInDimensionN = defaultValueType.GetNumberOfElements(d);
+                        thisSignal.SetNumberOfElements(d, elementsInDimensionN);
+                    }
                     if (!GetSignalDefaultValue(signalIdx, thisSignal)) {
                         ret = false;
                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Could not read existent Default value for signal %s", signalName)
                     }
+
                 }
             }
         }
