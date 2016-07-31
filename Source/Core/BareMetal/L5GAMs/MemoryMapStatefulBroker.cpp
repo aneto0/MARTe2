@@ -1,6 +1,6 @@
 /**
- * @file MemoryMapDataSourceBroker.cpp
- * @brief Source file for class MemoryMapDataSourceBroker
+ * @file MemoryMapStatefulBroker.cpp
+ * @brief Source file for class MemoryMapStatefulBroker
  * @date 11/04/2016
  * @author Giuseppe Ferrò
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryMapDataSourceBroker (public, protected, and private). Be aware that some 
+ * the class MemoryMapStatefulBroker (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -46,15 +46,13 @@ namespace MARTe {
 
 MemoryMapStatefulBroker::MemoryMapStatefulBroker() :
         BrokerI() {
-    copyTable = NULL_PTR(CopyTableEntry *);
+    copyTable = NULL_PTR(MemoryMapStatefulBrokerCopyTableEntry *);
     numberOfCopies = 0u;
-    numberOfDataSourceSignalBuffers = 0u;
     dataSource = NULL_PTR(DataSourceI*);
 }
 
 MemoryMapStatefulBroker::~MemoryMapStatefulBroker() {
-    uint32 n;
-    if (copyTable != NULL_PTR(CopyTableEntry *)) {
+    if (copyTable != NULL_PTR(MemoryMapStatefulBrokerCopyTableEntry *)) {
         delete[] copyTable;
     }
 }
@@ -81,7 +79,7 @@ bool MemoryMapStatefulBroker::Init(SignalDirection direction,
         ret = (numberOfCopies > 0u);
     }
     if (ret) {
-        copyTable = new CopyTableEntry[numberOfCopies];
+        copyTable = new MemoryMapStatefulBrokerCopyTableEntry[numberOfCopies];
     }
     uint32 functionIdx;
     if (ret) {
@@ -91,7 +89,7 @@ bool MemoryMapStatefulBroker::Init(SignalDirection direction,
     if (ret) {
         ret = dataSource->GetFunctionNumberOfSignals(direction, functionIdx, functionNumberOfSignals);
     }
-    //The same signal can be copied from different ranges. A CopyTableEntry is added for each signal range.
+    //The same signal can be copied from different ranges. A MemoryMapStatefulBrokerCopyTableEntry is added for each signal range.
     uint32 c = 0u;
     for (uint32 n = 0u; (n < functionNumberOfSignals) && (ret); n++) {
         if (dataSource->IsSupportedBroker(direction, functionIdx, n, brokerClassName)) {

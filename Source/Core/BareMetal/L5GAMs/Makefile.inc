@@ -35,6 +35,7 @@ OBJSX=BrokerI.x \
     MemoryMapBroker.x \
     MemoryMapInputBroker.x \
     MemoryMapOutputBroker.x \
+    MemoryMapStatefulBroker.x \
     RealTimeApplication.x \
     RealTimeApplicationConfigurationBuilder.x \
     RealTimeState.x \

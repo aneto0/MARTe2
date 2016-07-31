@@ -1,6 +1,6 @@
 /**
- * @file MemoryMapDataSourceBroker.cpp
- * @brief Source file for class MemoryMapDataSourceBroker
+ * @file MemoryMapBroker.cpp
+ * @brief Source file for class MemoryMapBroker
  * @date 11/04/2016
  * @author Giuseppe Ferrò
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryMapDataSourceBroker (public, protected, and private). Be aware that some 
+ * the class MemoryMapBroker (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 

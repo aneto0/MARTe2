@@ -30,6 +30,7 @@ OBJSX=  BrokerIGTest.x\
         MemoryMapBrokerGTest.x\
         MemoryMapInputBrokerGTest.x\
         MemoryMapOutputBrokerGTest.x\
+        MemoryMapStatefulBrokerGTest.x\
         RealTimeApplicationConfigurationBuilderGTest.x
 
          

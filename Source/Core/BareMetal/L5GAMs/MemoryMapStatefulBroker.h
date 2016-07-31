@@ -47,7 +47,12 @@
 
 namespace MARTe {
 
-struct CopyTableEntry {
+/**
+ * @brief Helper structure which holds the memory pointers of the GAM and DataSource elements
+ * that are to be copied by this MemoryMapStatefulBroker. Note that the dataSourcePointer will
+ * hold the address of variable which has the pointer to the memory (and not the memory address itself).
+ */
+struct MemoryMapStatefulBrokerCopyTableEntry {
     void *gamPointer;
     void **dataSourcePointer[2];
     uint32 dataSourceOffset;
@@ -55,11 +60,14 @@ struct CopyTableEntry {
 };
 
 /**
- * @brief Memory mapped Broker implementation.
- * @details The configuration of this element has to be performed after the
- * RealTimeApplication::ConfigureDataSource() step. It allows to read (write) data blocks
- * of each element and to read (write) blocks of samples. It supports both single and dual buffering mechanisms
- *  for the interconnection between the DataSourceSignalI signals and the GAMSignalI signals.
+ * @brief Stateful memory mapped BrokerI implementation.
+ * @details This class knows how to copy from/to a DataSourceI memory address to/from a GAM signal memory address,
+ *  provided that the associated DataSourceI supports a dual-buffer mechanism.
+ * For each GAM signal, the signal name is searched in the provided DataSourceI (see Init) and, for each of the two buffers,
+ *  the memory address of the variable containing the address of the signal is retrieved using the GetSignalMemoryBuffer function.
+ *  The idea is that the DataSource can change this variable value (and thus the place to where it is pointing) and as a consequence
+ *  the Broker will be able to read/write from this different location with minimum penalty on performance.
+ *  The information of each element to be copied is stored in a MemoryMapStatefulBrokerCopyTableEntry.
  */
 class DLL_API MemoryMapStatefulBroker: public BrokerI {
 
@@ -68,33 +76,43 @@ public:
     /**
      * @brief Constructor.
      * @post
-     *   GetData(*) == NULL &&
-     *   GetMemoryPointer(*) == NULL &&
-     *   GetNumberOfSignals() == 0 &&
-     *   IsSync() == false
+     *   GetNumberOfCopies() == 0
      */
     MemoryMapStatefulBroker();
 
     /**
-     * @brief Destructor
+     * @brief Destructor. Frees the created MemoryMapStatefulBrokerCopyTableEntry entries.
      */
     virtual ~MemoryMapStatefulBroker();
 
     /**
-     *
+     * @brief Initialises the MemoryMapStatefulBroker.
+     * @detail For each signal in the \a functionName, which wishes to use this MemoryMapBroker instance
+     * (i.e. IsSupportedBroker(class inhering from MemoryMapBroker) == true), the signal name is searched
+     *  in the provided \a dataSourceIn (see Init) and, for each of the two buffers, the memory address of the variable holding
+     *  the signal memory pointer address retrieved using the GetSignalMemoryBuffer function.
+     *  The information of each element to  be copied is stored in a MemoryMapStatefulBrokerCopyTableEntry.
+     * @param[in] direction the signal direction (InputSignals or OutputSignals).
+     * @param[in] dataSource the DataSourceI to be queried.
+     * @param[in] functionName the name of GAM the to which this BrokerI is being allocated to.
+     * @param[in] gamMemoryAddress the base address of the GAM memory (where signal data is stored).
+     * @return true if all the copy information related to \a functionName can be successfully retrieved.
      */
     virtual bool Init(SignalDirection direction,
                       DataSourceI &dataSourceIn,
                       const char8 * const functionName,
                       void *gamMemoryAddress);
 
-
 protected:
 
-    CopyTableEntry *copyTable;
+    /**
+     * A table with all the elements to be copied
+     */
+    MemoryMapStatefulBrokerCopyTableEntry *copyTable;
 
-    uint32 numberOfDataSourceSignalBuffers;
-
+    /**
+     * The DataSourceI instance
+     */
     DataSourceI* dataSource;
 
 };
