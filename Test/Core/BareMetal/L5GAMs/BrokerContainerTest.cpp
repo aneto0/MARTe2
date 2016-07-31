@@ -34,8 +34,6 @@
 #include "GAMDataSource.h"
 #include "MemoryMapBroker.h"
 #include "GAMTestHelper.h"
-#include "GAMGenericSignal.h"
-#include "GAMSampledSignal.h"
 #include "stdio.h"
 
 /*---------------------------------------------------------------------------*/

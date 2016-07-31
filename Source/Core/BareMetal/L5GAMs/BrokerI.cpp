@@ -34,8 +34,6 @@
 #include "AdvancedErrorManagement.h"
 #include "BrokerI.h"
 #include "DataSourceI.h"
-#include "GAMGenericSignal.h"
-#include "GAMSampledSignal.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

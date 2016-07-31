@@ -32,11 +32,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAM.h"
-#include "GAMSignalsContainer.h"
-#include "DataSourceContainer.h"
 #include "AdvancedErrorManagement.h"
-#include <BrokerI.h>
-#include <DataSourceI.h>
+#include "BrokerI.h"
+#include "DataSourceI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

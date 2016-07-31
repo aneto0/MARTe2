@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AdvancedErrorManagement.h"
-#include "GAMGenericSignal.h"
-#include "GAMSampledSignal.h"
 #include "MemoryMapStatefulBroker.h"
 
 /*---------------------------------------------------------------------------*/

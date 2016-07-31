@@ -30,11 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include <DataSourceI.h>
-#include <DataSourceSignal.h>
 #include "BrokerContainer.h"
-#include "GAMSignalI.h"
 #include "AdvancedErrorManagement.h"
-#include "GAMGenericSignal.h"
 #include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
@@ -64,7 +61,7 @@ BrokerContainer::~BrokerContainer() {
     numberOfBrokers = 0u;
 }
 
-bool BrokerContainer::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
+/*bool BrokerContainer::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
                                 void * const ptr) {
 
     ReferenceT<GAMSignalI> gamSignal = gamSignalIn;
@@ -157,7 +154,7 @@ bool BrokerContainer::AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
 
     return ret;
 
-}
+}*/
 
 void *BrokerContainer::GetSignal(const uint32 n) {
     void* ret = NULL_PTR(void*);

@@ -37,6 +37,7 @@
 #include "RealTimeThread.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceContainerFilterReferencesTemplate.h"
+#include "StandardParser.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

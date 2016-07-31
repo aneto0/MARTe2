@@ -33,8 +33,7 @@
 
 #include "AdvancedErrorManagement.h"
 #include "ConfigurationDatabase.h"
-#include <GAMDataSource.h>
-#include "DataSourceSignalRecord.h"
+#include "GAMDataSource.h"
 #include "GAM.h"
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"

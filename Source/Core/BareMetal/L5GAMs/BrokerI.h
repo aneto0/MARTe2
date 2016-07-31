@@ -31,8 +31,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "DataSourceSignal.h"
-#include "GAMSignalI.h"
 #include "RealTimeApplication.h"
 #include "ReferenceContainer.h"
 #include "ExecutableI.h"

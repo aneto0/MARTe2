@@ -76,8 +76,8 @@ public:
      * @return false if \a gamSignalIn could not be added to any of the DataSourceBrokerI supported by
      *  this \a gamSignalIn, true otherwise.
      */
-    virtual bool AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
-                           void * const ptr = NULL_PTR(void*));
+    /*virtual bool AddSignal(ReferenceT<GAMSignalI> gamSignalIn,
+                           void * const ptr = NULL_PTR(void*));*/
 
     /**
      * @see DataSourceBrokerI::GetSignal

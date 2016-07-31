@@ -39,7 +39,6 @@
 #include "FastPollingEventSem.h"
 #include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
-#include "DataSourceSignal.h"
 #include "StandardParser.h"
 
 /*---------------------------------------------------------------------------*/
