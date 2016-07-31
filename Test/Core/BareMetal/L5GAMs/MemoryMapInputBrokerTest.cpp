@@ -1,7 +1,7 @@
 /**
- * @file MemoryMapBrokerTest.cpp
- * @brief Source file for class MemoryMapBrokerTest
- * @date 27/07/2016
+ * @file MemoryMapInputBrokerTest.cpp
+ * @brief Source file for class MemoryMapInputBrokerTest
+ * @date 30/07/2016
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryMapBrokerTest (public, protected, and private). Be aware that some
+ * the class MemoryMapInputBrokerTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "BrokerI.h"
-#include "MemoryMapBrokerTest.h"
+#include "MemoryMapInputBrokerTest.h"
 #include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
 #include "GAMSchedulerI.h"
@@ -41,44 +41,42 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief GAMSchedulerI empty implementation to support the MemoryMapBroker tests
+ * @brief GAMSchedulerI empty implementation to support the MemoryMapInputBroker tests
  */
-class MemoryMapBrokerTestScheduler1: public GAMSchedulerI {
+class MemoryMapInputBrokerTestScheduler1: public GAMSchedulerI {
 public:
     CLASS_REGISTER_DECLARATION()
 
-MemoryMapBrokerTestScheduler1    ();
+MemoryMapInputBrokerTestScheduler1    ();
 
     virtual void StartExecution(const uint32 activeBuffer);
 
     virtual void StopExecution();
 };
 
-MemoryMapBrokerTestScheduler1::MemoryMapBrokerTestScheduler1() :
+MemoryMapInputBrokerTestScheduler1::MemoryMapInputBrokerTestScheduler1() :
         GAMSchedulerI() {
 
 }
 
-void MemoryMapBrokerTestScheduler1::StartExecution(const uint32 activeBuffer) {
+void MemoryMapInputBrokerTestScheduler1::StartExecution(const uint32 activeBuffer) {
 
 }
 
-void MemoryMapBrokerTestScheduler1::StopExecution() {
+void MemoryMapInputBrokerTestScheduler1::StopExecution() {
 
 }
 
-CLASS_REGISTER(MemoryMapBrokerTestScheduler1, "1.0")
+CLASS_REGISTER(MemoryMapInputBrokerTestScheduler1, "1.0")
 
 /**
- * @brief GAM empty implementation to support the MemoryMapBroker tests
+ * @brief GAM empty implementation to support the MemoryMapInputBroker tests
  */
-class MemoryMapBrokerTestGAM1: public GAM {
+class MemoryMapInputBrokerTestGAM1: public GAM {
 public:
     CLASS_REGISTER_DECLARATION()
 
-MemoryMapBrokerTestGAM1    ();
-
-    virtual bool Execute();
+MemoryMapInputBrokerTestGAM1    ();
 
     void *GetInputSignalsMemory();
 
@@ -87,76 +85,46 @@ MemoryMapBrokerTestGAM1    ();
     void *GetInputSignalMemory(uint32 signalIdx);
 
     void *GetOutputSignalMemory(uint32 signalIdx);
+
+    virtual bool Execute();
 };
 
-MemoryMapBrokerTestGAM1::MemoryMapBrokerTestGAM1() :
+MemoryMapInputBrokerTestGAM1::MemoryMapInputBrokerTestGAM1() :
         GAM() {
 }
 
-void *MemoryMapBrokerTestGAM1::GetInputSignalsMemory() {
+void *MemoryMapInputBrokerTestGAM1::GetInputSignalsMemory() {
     return GAM::GetInputSignalsMemory();
 }
 
-void *MemoryMapBrokerTestGAM1::GetOutputSignalsMemory() {
+void *MemoryMapInputBrokerTestGAM1::GetOutputSignalsMemory() {
     return GAM::GetOutputSignalsMemory();
 }
 
-void *MemoryMapBrokerTestGAM1::GetInputSignalMemory(uint32 signalIdx) {
+void *MemoryMapInputBrokerTestGAM1::GetInputSignalMemory(uint32 signalIdx) {
     return GAM::GetInputSignalMemory(signalIdx);
 }
 
-void *MemoryMapBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
+void *MemoryMapInputBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
     return GAM::GetOutputSignalMemory(signalIdx);
 }
 
-bool MemoryMapBrokerTestGAM1::Execute() {
-    return true;
-}
-CLASS_REGISTER(MemoryMapBrokerTestGAM1, "1.0")
-
-/**
- * @brief The MemoryMapBroker is an abstract class. This implementation
- * allows to test if the Init() function is correctly performed.
- */
-class MemoryMapBrokerTestHelper: public MemoryMapBroker {
-public:
-    CLASS_REGISTER_DECLARATION()
-
-virtual    bool Execute();
-
-};
-
-/**
- * @brief Writes a known pattern to the memory so that the tests can check
- * if the Init() function behaves as expected.
- */
-bool MemoryMapBrokerTestHelper::Execute() {
-    uint32 numberOfCopies = GetNumberOfCopies();
-    uint32 n;
-    uint32 s;
-    for (n = 0; (n < numberOfCopies); n++) {
-        char8 *dsPtr = reinterpret_cast<char8 *>(copyTable[n].dataSourcePointer);
-        char8 *gamPtr = reinterpret_cast<char8 *>(copyTable[n].gamPointer);
-        for (s = 0; s < copyTable[n].copySize; s++) {
-            dsPtr[s] = static_cast<char8>(n + s);
-            gamPtr[s] = static_cast<char8>(n + s);
-        }
-    }
+bool MemoryMapInputBrokerTestGAM1::Execute() {
     return true;
 }
 
-CLASS_REGISTER(MemoryMapBrokerTestHelper, "1.0");
+CLASS_REGISTER(MemoryMapInputBrokerTestGAM1, "1.0")
 
 /**
- * @brief DataSourceI implementation which returns a MemoryMapBrokerTestHelper broker.
+ * @brief DataSourceI implementation which returns a MemoryMapInputBrokerTestHelper broker.
  */
-class MemoryMapBrokerDataSourceTestHelper: public DataSourceI {
+class MemoryMapInputBrokerDataSourceTestHelper: public DataSourceI {
 public:
     CLASS_REGISTER_DECLARATION()
 
-MemoryMapBrokerDataSourceTestHelper    ();
+MemoryMapInputBrokerDataSourceTestHelper    ();
 
-    virtual ~MemoryMapBrokerDataSourceTestHelper();
+    virtual ~ MemoryMapInputBrokerDataSourceTestHelper();
 
     virtual bool AllocateMemory();
 
@@ -183,19 +151,19 @@ MemoryMapBrokerDataSourceTestHelper    ();
 
     void *signalMemory;
     uint32 *offsets;
-    //Store 10 samples per signal
-    uint32 samples;
 
+    //Store 10 samples per signal.
+    uint32 samples;
 };
 
-MemoryMapBrokerDataSourceTestHelper::MemoryMapBrokerDataSourceTestHelper() :
+MemoryMapInputBrokerDataSourceTestHelper::MemoryMapInputBrokerDataSourceTestHelper() :
         DataSourceI() {
     signalMemory = NULL_PTR(void *);
     offsets = NULL_PTR(uint32 *);
     samples = 10;
 }
 
-MemoryMapBrokerDataSourceTestHelper::~MemoryMapBrokerDataSourceTestHelper() {
+MemoryMapInputBrokerDataSourceTestHelper::~MemoryMapInputBrokerDataSourceTestHelper() {
     if (signalMemory != NULL_PTR(void *)) {
         GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(signalMemory);
     }
@@ -204,7 +172,7 @@ MemoryMapBrokerDataSourceTestHelper::~MemoryMapBrokerDataSourceTestHelper() {
     }
 }
 
-bool MemoryMapBrokerDataSourceTestHelper::AllocateMemory() {
+bool MemoryMapInputBrokerDataSourceTestHelper::AllocateMemory() {
     uint32 numberOfSignals = GetNumberOfSignals();
     bool ret = (numberOfSignals > 0u);
     if (ret) {
@@ -224,40 +192,47 @@ bool MemoryMapBrokerDataSourceTestHelper::AllocateMemory() {
     }
     if (ret) {
         signalMemory = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(totalMemorySize);
-        MemoryOperationsHelper::Set(signalMemory, 0, totalMemorySize);
     }
     return ret;
 }
 
-uint32 MemoryMapBrokerDataSourceTestHelper::GetNumberOfMemoryBuffers() {
+uint32 MemoryMapInputBrokerDataSourceTestHelper::GetNumberOfMemoryBuffers() {
     return 1u;
 }
 
-bool MemoryMapBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 signalIdx,
-                                                                uint32 bufferIdx,
-                                                                void *&signalAddress) {
+bool MemoryMapInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 signalIdx,
+                                                                     uint32 bufferIdx,
+                                                                     void *&signalAddress) {
     char8 *memPtr = reinterpret_cast<char8 *>(signalMemory);
     memPtr += offsets[signalIdx];
-    signalAddress = reinterpret_cast<void *&>(memPtr);
-    return true;
-}
-
-const char8 *MemoryMapBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data,
-                                                                SignalDirection direction) {
-    if (direction == InputSignals) {
-        return "MemoryMapBrokerTestHelper";
+    uint32 byteSize;
+    bool ret = GetSignalByteSize(signalIdx, byteSize);
+    uint32 n;
+    for (n = 0; n < byteSize * samples; n++) {
+        memPtr[n] = static_cast<char8>(n * n);
     }
-    return "MemoryMapBrokerTestHelper";
+    if (ret) {
+        signalAddress = reinterpret_cast<void *&>(memPtr);
+    }
+    return ret;
 }
 
-bool MemoryMapBrokerDataSourceTestHelper::PrepareNextState(const RealTimeStateInfo &status) {
+const char8 * MemoryMapInputBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data,
+                                                                      SignalDirection direction) {
+    if (direction == InputSignals) {
+        return "MemoryMapInputBroker";
+    }
+    return "MemoryMapInputBroker";
+}
+
+bool MemoryMapInputBrokerDataSourceTestHelper::PrepareNextState(const RealTimeStateInfo &status) {
     return true;
 }
 
-bool MemoryMapBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
-                                                          const char8* functionName,
-                                                          void * gamMemPtr) {
-    ReferenceT<MemoryMapBrokerTestHelper> broker("MemoryMapBrokerTestHelper");
+bool MemoryMapInputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
+                                                               const char8* functionName,
+                                                               void * gamMemPtr) {
+    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
     bool ret = broker.IsValid();
     if (ret) {
         ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
@@ -268,25 +243,17 @@ bool MemoryMapBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &in
     return ret;
 }
 
-bool MemoryMapBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                                           const char8* functionName,
-                                                           void * gamMemPtr) {
-    ReferenceT<MemoryMapBrokerTestHelper> broker("MemoryMapBrokerTestHelper");
-    bool ret = broker.IsValid();
-    if (ret) {
-        ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
-    }
-    if (ret) {
-        ret = outputBrokers.Insert(broker);
-    }
-    return ret;
+bool MemoryMapInputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
+                                                                const char8* functionName,
+                                                                void * gamMemPtr) {
+    return true;
 }
-CLASS_REGISTER(MemoryMapBrokerDataSourceTestHelper, "1.0");
+CLASS_REGISTER(MemoryMapInputBrokerDataSourceTestHelper, "1.0");
 
 /**
  * Helper function to setup a MARTe execution environment
  */
-static bool InitialiseMemoryMapBrokerEnviroment(const char8 * const config) {
+static bool InitialiseMemoryMapInputBrokerEnviroment(const char8 * const config) {
     ConfigurationDatabase cdb;
     StreamString configStream = config;
     configStream.Seek(0);
@@ -314,7 +281,7 @@ static bool InitialiseMemoryMapBrokerEnviroment(const char8 * const config) {
 }
 
 /**
- * MARTe configuration structure to test the MemoryMapBroker
+ * MARTe configuration structure to test the MemoryMapInputBroker
  */
 static const char8 * const config1 = ""
         "$Application1 = {"
@@ -322,7 +289,7 @@ static const char8 * const config1 = ""
         "    +Functions = {"
         "        Class = ReferenceContainer"
         "        +GAMA = {"
-        "            Class = MemoryMapBrokerTestGAM1"
+        "            Class = MemoryMapInputBrokerTestGAM1"
         "            InputSignals = {"
         "               Signal4 = {"
         "                   DataSource = Drv1"
@@ -351,7 +318,7 @@ static const char8 * const config1 = ""
         "            }"
         "        }"
         "        +GAMB = {"
-        "            Class = MemoryMapBrokerTestGAM1"
+        "            Class = MemoryMapInputBrokerTestGAM1"
         "            InputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -360,7 +327,7 @@ static const char8 * const config1 = ""
         "            }"
         "        }"
         "        +GAMC = {"
-        "            Class = MemoryMapBrokerTestGAM1"
+        "            Class = MemoryMapInputBrokerTestGAM1"
         "            OutputSignals = {"
         "               Signal1 = {"
         "                   DataSource = Drv1"
@@ -387,7 +354,7 @@ static const char8 * const config1 = ""
         "            }"
         "        }"
         "        +GAMD = {"
-        "            Class = MemoryMapBrokerTestGAM1"
+        "            Class = MemoryMapInputBrokerTestGAM1"
         "            OutputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -396,7 +363,7 @@ static const char8 * const config1 = ""
         "            }"
         "        }"
         "        +GAME = {"
-        "            Class = MemoryMapBrokerTestGAM1"
+        "            Class = MemoryMapInputBrokerTestGAM1"
         "            InputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -405,7 +372,7 @@ static const char8 * const config1 = ""
         "            }"
         "        }"
         "        +GAMF = {"
-        "            Class = MemoryMapBrokerTestGAM1"
+        "            Class = MemoryMapInputBrokerTestGAM1"
         "            OutputSignals = {"
         "               Signal3 = {"
         "                    DataSource = Drv1"
@@ -420,7 +387,7 @@ static const char8 * const config1 = ""
         "    +Data = {"
         "        Class = ReferenceContainer"
         "        +Drv1 = {"
-        "            Class = MemoryMapBrokerDataSourceTestHelper"
+        "            Class = MemoryMapInputBrokerDataSourceTestHelper"
         "            Signals = {"
         "                Signal1A = {"
         "                    Type = uint32"
@@ -463,14 +430,14 @@ static const char8 * const config1 = ""
         "        }"
         "    }"
         "    +Scheduler = {"
-        "        Class = MemoryMapBrokerTestScheduler1"
+        "        Class = MemoryMapInputBrokerTestScheduler1"
         "    }"
         "}";
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-bool MemoryMapBrokerTest::TestConstructor() {
-    ReferenceT<MemoryMapBrokerTestHelper> broker("MemoryMapBrokerTestHelper");
+bool MemoryMapInputBrokerTest::TestConstructor() {
+    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
     bool ret = broker.IsValid();
     if (ret) {
         ret = broker->GetNumberOfCopies() == 0;
@@ -478,11 +445,11 @@ bool MemoryMapBrokerTest::TestConstructor() {
     return ret;
 }
 
-bool MemoryMapBrokerTest::TestInit_Input_Ranges_Samples() {
-    bool ret = InitialiseMemoryMapBrokerEnviroment(config1);
-    ReferenceT<MemoryMapBrokerDataSourceTestHelper> dataSource;
-    ReferenceT<MemoryMapBrokerTestHelper> broker;
-    ReferenceT<MemoryMapBrokerTestGAM1> gamA;
+bool MemoryMapInputBrokerTest::TestExecute() {
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
+    ReferenceT<MemoryMapInputBrokerDataSourceTestHelper> dataSource;
+    ReferenceT<MemoryMapInputBroker> broker;
+    ReferenceT<MemoryMapInputBrokerTestGAM1> gamA;
     ReferenceContainer brokers;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -508,7 +475,6 @@ bool MemoryMapBrokerTest::TestInit_Input_Ranges_Samples() {
         numberOfCopies = broker->GetNumberOfCopies();
         ret = (numberOfCopies == 5u);
     }
-    //Verify if the DataSourceMemory has the correct pattern
     if (ret) {
         ret = broker->Execute();
     }
@@ -516,191 +482,43 @@ bool MemoryMapBrokerTest::TestInit_Input_Ranges_Samples() {
     if (ret) {
         ret = dataSource->GetSignalIndex(signalIdx, "Signal4A");
     }
-    char8 *dataSourcePtr;
+    //Verify if the GAM has the expected pattern
     char8 *gamPtr;
-    if (ret) {
-        ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0, reinterpret_cast<void *&>(dataSourcePtr));
-    }
     if (ret) {
         gamPtr = reinterpret_cast<char8 *>(gamA->GetInputSignalMemory(0));
     }
     uint32 copySize = 0;
     uint32 s;
-    uint32 n;
-    for (n = 0u; (n < 3) && (ret); n++) {
-        uint32 startOffset = 0;
-        uint32 byteOffset = 0;
-        uint32 functionIdx;
-        uint32 functionSignalIdx;
-        if (ret) {
-            ret = dataSource->GetFunctionIndex(functionIdx, "GAMA");
-        }
-        if (ret) {
-            ret = dataSource->GetFunctionSignalIndex(InputSignals, functionIdx, functionSignalIdx, "Signal4");
-        }
-        if (ret) {
-            ret = dataSource->GetFunctionSignalByteOffsetInfo(InputSignals, functionIdx, functionSignalIdx, n, startOffset, byteOffset);
-        }
-        copySize = broker->GetCopyByteSize(n);
-
-        for (s = 0; (s < copySize) && (ret); s++) {
-            ret = (dataSourcePtr[s + startOffset] == static_cast<char8>(n + s));
-        }
-        for (s = 0; (s < copySize) && (ret); s++) {
-            ret = (*(gamPtr++) == static_cast<char8>(n + s));
-        }
+    copySize = broker->GetCopyByteSize(0);
+    for (s = 0; (s < copySize) && (ret); s++) {
+        ret = (*(gamPtr++) == static_cast<char8>(s * s));
     }
-
-    //Signal5
-    if (ret) {
-        ret = dataSource->GetSignalIndex(signalIdx, "Signal5");
+    copySize = broker->GetCopyByteSize(1);
+    for (s = 0; (s < copySize) && (ret); s++) {
+        //In the DataSource memory there are other ranges in the middle
+        ret = (*(gamPtr++) == static_cast<char8>((s + 2 * 4) * (s + 2 * 4)));
     }
-    if (ret) {
-        ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0, reinterpret_cast<void *&>(dataSourcePtr));
+    copySize = broker->GetCopyByteSize(2);
+    for (s = 0; (s < copySize) && (ret); s++) {
+        //In the DataSource memory there are other ranges in the middle
+        ret = (*(gamPtr++) == static_cast<char8>((s + 9 * 4) * (s + 9 * 4)));
     }
     if (ret) {
         gamPtr = reinterpret_cast<char8 *>(gamA->GetInputSignalMemory(1));
     }
-    n = 3;
-    copySize = broker->GetCopyByteSize(n);
-    for (s = 0; (s < copySize) && ret; s++) {
-        ret = (dataSourcePtr[s] == static_cast<char8>(n + s));
+    copySize = broker->GetCopyByteSize(3);
+    for (s = 0; (s < copySize) && (ret); s++) {
+        ret = (*(gamPtr++) == static_cast<char8>(s * s));
     }
-    for (s = 0; (s < copySize) && ret; s++) {
-        ret = (gamPtr[s] == static_cast<char8>(n + s));
-    }
-
-    //Signal1A
+    //Skip the signal that belongs to the other DataSource...
     if (ret) {
-        ret = dataSource->GetSignalIndex(signalIdx, "Signal1A");
-    }
-    if (ret) {
-        ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0, reinterpret_cast<void *&>(dataSourcePtr));
-    }
-    if (ret) {
-        //4th signal of the GAM. The 3rd belongs to another DataSource (and thus to another Broker)
         gamPtr = reinterpret_cast<char8 *>(gamA->GetInputSignalMemory(3));
     }
-    n = 4;
-    copySize = broker->GetCopyByteSize(n);
-    for (s = 0; (s < copySize) && ret; s++) {
-        ret = (dataSourcePtr[s] == static_cast<char8>(n + s));
-    }
-    for (s = 0; (s < copySize) && ret; s++) {
-        ret = (gamPtr[s] == static_cast<char8>(n + s));
-    }
-    return ret;
-}
-
-bool MemoryMapBrokerTest::TestInit_Output_Ranges_Samples() {
-    bool ret = InitialiseMemoryMapBrokerEnviroment(config1);
-    ReferenceT<MemoryMapBrokerDataSourceTestHelper> dataSource;
-    ReferenceT<MemoryMapBrokerTestHelper> broker;
-    ReferenceT<MemoryMapBrokerTestGAM1> gamC;
-    ReferenceContainer brokers;
-    if (ret) {
-        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
-        ret = dataSource.IsValid();
-    }
-    if (ret) {
-        gamC = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMC");
-        ret = gamC.IsValid();
-    }
-
-    if (ret) {
-        ret = dataSource->GetOutputBrokers(brokers, "GAMC", (void *) gamC->GetOutputSignalsMemory());
-    }
-    if (ret) {
-        ret = (brokers.Size() > 0u);
-    }
-    if (ret) {
-        broker = brokers.Get(0);
-        ret = broker.IsValid();
-    }
-    uint32 numberOfCopies;
-    if (ret) {
-        numberOfCopies = broker->GetNumberOfCopies();
-        ret = (numberOfCopies == 5u);
-    }
-    //Verify if the DataSourceMemory has the correct pattern
-    if (ret) {
-        ret = broker->Execute();
-    }
-    uint32 signalIdx;
-    if (ret) {
-        ret = dataSource->GetSignalIndex(signalIdx, "Signal1A");
-    }
-    char8 *dataSourcePtr;
-    char8 *gamPtr;
-    if (ret) {
-        ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0, reinterpret_cast<void *&>(dataSourcePtr));
-    }
-    if (ret) {
-        gamPtr = reinterpret_cast<char8 *>(gamC->GetOutputSignalMemory(0));
-    }
-    uint32 n = 0;
-    uint32 copySize = broker->GetCopyByteSize(n);
-    uint32 s;
-    for (s = 0; (s < copySize) && ret; s++) {
-        ret = (dataSourcePtr[s] == static_cast<char8>(n + s));
-    }
-    for (s = 0; (s < copySize) && ret; s++) {
-        ret = (gamPtr[s] == static_cast<char8>(n + s));
-    }
-
-    //Signal4
-    if (ret) {
-        ret = dataSource->GetSignalIndex(signalIdx, "Signal4A");
-    }
-    if (ret) {
-        ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0, reinterpret_cast<void *&>(dataSourcePtr));
-    }
-    if (ret) {
-        //3rd signal of the GAM. The 2nd belongs to another DataSource (and thus to another Broker)
-        gamPtr = reinterpret_cast<char8 *>(gamC->GetOutputSignalMemory(2));
-    }
-    for (n = 1u; (n < 4) && (ret); n++) {
-        uint32 startOffset = 0;
-        uint32 byteOffset = 0;
-        uint32 functionIdx;
-        uint32 functionSignalIdx;
-        if (ret) {
-            ret = dataSource->GetFunctionIndex(functionIdx, "GAMC");
-        }
-        if (ret) {
-            ret = dataSource->GetFunctionSignalIndex(OutputSignals, functionIdx, functionSignalIdx, "Signal4");
-        }
-        if (ret) {
-            ret = dataSource->GetFunctionSignalByteOffsetInfo(OutputSignals, functionIdx, functionSignalIdx, n - 1, startOffset, byteOffset);
-        }
-        copySize = broker->GetCopyByteSize(n);
-
-        for (s = 0; (s < copySize) && (ret); s++) {
-            ret = (dataSourcePtr[s + startOffset] == static_cast<char8>(n + s));
-        }
-        for (s = 0; (s < copySize) && (ret); s++) {
-            ret = (*(gamPtr++) == static_cast<char8>(n + s));
-        }
-    }
-
-    //Signal5
-    if (ret) {
-        ret = dataSource->GetSignalIndex(signalIdx, "Signal5");
-    }
-    if (ret) {
-        ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0, reinterpret_cast<void *&>(dataSourcePtr));
-    }
-    if (ret) {
-        gamPtr = reinterpret_cast<char8 *>(gamC->GetOutputSignalMemory(3));
-    }
-    n = 4;
-    copySize = broker->GetCopyByteSize(n);
-    for (s = 0; (s < copySize) && ret; s++) {
-        ret = (dataSourcePtr[s] == static_cast<char8>(n + s));
-    }
-    for (s = 0; (s < copySize) && ret; s++) {
-        ret = (gamPtr[s] == static_cast<char8>(n + s));
+    copySize = broker->GetCopyByteSize(4);
+    for (s = 0; (s < copySize) && (ret); s++) {
+        ret = (*(gamPtr++) == static_cast<char8>(s * s));
     }
 
     return ret;
 }
+
