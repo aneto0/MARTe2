@@ -107,6 +107,10 @@ public:
 
     bool TestGetOutputSignalMemory();
 
+    bool TestGetInputSignalMemory_Samples();
+
+    bool TestGetOutputSignalMemory_Samples();
+
 };
 
 /*---------------------------------------------------------------------------*/

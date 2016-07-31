@@ -693,6 +693,131 @@ static const char8 * const gamTestConfig5 = ""
         "    }"
         "}";
 
+static const char8 * const gamTestConfig6 = ""
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAMA = {"
+        "            Class = GAMTestGAM1"
+        "            InputSignals = {"
+        "               Signal1 = {"
+        "                  DataSource = DDB2"
+        "                  Type = GAMTestStruct1"
+        "                  Defaults = {"
+        "                      Signal1.Par3.Par1 = 5"
+        "                  }"
+        "               }"
+        "               Signal2 = {"
+        "                  DataSource = DDB1"
+        "                  Type = uint32"
+        "                  Default = 3"
+        "                  Samples = 10"
+        "               }"
+        "               Signal3 = {"
+        "                  DataSource = DDB2"
+        "                  Type = uint32"
+        "                  NumberOfElements = 10"
+        "                  NumberOfDimensions = 1"
+        "                  Ranges = {{0 0} {2 5} {9 9}}"
+        "                  Default = {1 2 3 4 5 6 7 8 9 10}"
+        "               }"
+        "               Signal4 = {"
+        "                  DataSource = DDB1"
+        "                  Type = uint32"
+        "               }"
+        "            }"
+        "            OutputSignals = {"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMB = {"
+        "            Class = GAMTestGAM1"
+        "            InputSignals = {"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "            OutputSignals = {"
+        "               Signal3 = {"
+        "                  DataSource = DDB2"
+        "                  Type = uint32"
+        "               }"
+        "               Signal2 = {"
+        "                  DataSource = DDB1"
+        "                  Type = uint32"
+        "                  Samples = 10"
+        "               }"
+        "               Signal1 = {"
+        "                  DataSource = DDB2"
+        "                  Type = GAMTestStruct1"
+        "               }"
+        "               Signal4 = {"
+        "                  DataSource = DDB1"
+        "                  Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMC = {"
+        "            Class = GAMTestGAM1"
+        "            InputSignals = {"
+        "               Signal4 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMD = {"
+        "            Class = GAMTestGAM1"
+        "            OutputSignals = {"
+        "               Signal4 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        Class = ReferenceContainer"
+        "        +DDB1 = {"
+        "            Class = DataSourceIGAMTest1"
+        "        }"
+        "        +DDB2 = {"
+        "            Class = DataSourceIGAMTest1"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {:Functions.GAMB :Functions.GAMA}"
+        "                }"
+        "            }"
+        "        }"
+        "        +State2 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {:Functions.GAMB :Functions.GAMA :Functions.GAMD :Functions.GAMC}"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = GAMTestScheduler1"
+        "    }"
+        "}";
+
 bool GAMTest::TestConstructor() {
     GAM1 gam;
     bool ret = (gam.GetNumberOfInputSignals() == 0u);
@@ -2080,6 +2205,62 @@ bool GAMTest::TestGetOutputSignalMemory() {
     char8 *gamBMemoryAddress = reinterpret_cast<char8 *>(gamB->GetOutputSignalsMemory());
     uint32 numberOfOutputs = 6;
     uint32 offsets[] = { 10 * sizeof(uint32), sizeof(uint32), sizeof(uint32), sizeof(float32), sizeof(uint32), sizeof(uint32) };
+    if (ret) {
+        uint32 i;
+        uint32 offset = 0u;
+        for (i = 0; (i < numberOfOutputs) && (ret); i++) {
+            ret = (gamB->GetOutputSignalMemory(i) == (gamBMemoryAddress + offset));
+            offset += offsets[i];
+        }
+    }
+    if (ret) {
+        ret = (gamB->GetOutputSignalMemory(1000) == NULL_PTR(void *));
+    }
+
+    return ret;
+}
+
+bool GAMTest::TestGetInputSignalMemory_Samples() {
+    bool ret = InitialiseGAMEnviroment(gamTestConfig6);
+
+    ReferenceT<GAM> gamA;
+    if (ret) {
+        StreamString gamFullName;
+        gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gamA.IsValid();
+    }
+
+    char8 *gamAMemoryAddress = reinterpret_cast<char8 *>(gamA->GetInputSignalsMemory());
+    uint32 numberOfInputs = 6;
+    uint32 offsets[] = { sizeof(uint32), sizeof(float32), sizeof(uint32), sizeof(uint32) * 10, 6 * sizeof(uint32), sizeof(uint32) };
+    if (ret) {
+        uint32 i;
+        uint32 offset = 0u;
+        for (i = 0; (i < numberOfInputs) && (ret); i++) {
+            ret = (gamA->GetInputSignalMemory(i) == (gamAMemoryAddress + offset));
+            offset += offsets[i];
+        }
+    }
+    if (ret) {
+        ret = (gamA->GetInputSignalMemory(1000) == NULL_PTR(void *));
+    }
+
+    return ret;
+}
+
+bool GAMTest::TestGetOutputSignalMemory_Samples() {
+    bool ret = InitialiseGAMEnviroment(gamTestConfig6);
+
+    ReferenceT<GAM> gamB;
+    if (ret) {
+        StreamString gamFullName;
+        gamB = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMB");
+        ret = gamB.IsValid();
+    }
+
+    char8 *gamBMemoryAddress = reinterpret_cast<char8 *>(gamB->GetOutputSignalsMemory());
+    uint32 numberOfOutputs = 6;
+    uint32 offsets[] = { 10 * sizeof(uint32), sizeof(uint32) * 10, sizeof(uint32), sizeof(float32), sizeof(uint32), sizeof(uint32) };
     if (ret) {
         uint32 i;
         uint32 offset = 0u;

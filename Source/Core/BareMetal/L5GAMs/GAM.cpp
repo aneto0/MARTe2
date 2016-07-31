@@ -148,6 +148,12 @@ bool GAM::AllocateInputSignalsMemory() {
                     }
                 }
                 if (ret) {
+                    uint32 samples = 1u;
+                    if (GetSignalNumberOfSamples(InputSignals, i, samples)) {
+                        thisSignalByteOffset *= samples;
+                    }
+                }
+                if (ret) {
                     totalByteOffset += thisSignalByteOffset;
                 }
             }
@@ -197,6 +203,12 @@ bool GAM::AllocateOutputSignalsMemory() {
                             if (ret) {
                                 thisSignalByteOffset += offsetSize;
                             }
+                        }
+                    }
+                    if (ret) {
+                        uint32 samples = 1u;
+                        if (GetSignalNumberOfSamples(OutputSignals, i, samples)) {
+                            thisSignalByteOffset *= samples;
                         }
                     }
                     if (ret) {

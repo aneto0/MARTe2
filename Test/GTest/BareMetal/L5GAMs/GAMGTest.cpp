@@ -174,3 +174,13 @@ TEST(GAMGTest,TestGetOutputSignalMemoryPointer) {
     ASSERT_TRUE(test.TestGetOutputSignalMemory());
 }
 
+TEST(GAMGTest,TestGetInputSignalMemoryPointer_Samples) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestGetInputSignalMemory_Samples());
+}
+
+TEST(GAMGTest,TestGetOutputSignalMemoryPointer_Samples) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestGetOutputSignalMemory_Samples());
+}
+
