@@ -131,20 +131,8 @@ bool GAM::AllocateInputSignalsMemory() {
             uint32 thisSignalByteOffset = 0u;
             ret = GetSignalNumberOfByteOffsets(InputSignals, i, numberOfByteOffsets);
             if (ret) {
-                if (numberOfByteOffsets == 0u) {
-                    ret = GetSignalByteSize(InputSignals, i, thisSignalByteOffset);
-                }
-                else {
-                    uint32 b;
-                    for (b = 0u; (b < numberOfByteOffsets) && (ret); b++) {
-                        uint32 ignore;
-                        uint32 offsetSize;
-                        ret = GetSignalByteOffsetInfo(InputSignals, i, b, ignore, offsetSize);
-                        if (ret) {
-                            thisSignalByteOffset += offsetSize;
-                        }
-                    }
-                }
+                ret = GetSignalByteSize(InputSignals, i, thisSignalByteOffset);
+
                 if (ret) {
                     uint32 samples = 1u;
                     if (GetSignalNumberOfSamples(InputSignals, i, samples)) {
@@ -189,20 +177,8 @@ bool GAM::AllocateOutputSignalsMemory() {
                 uint32 thisSignalByteOffset = 0u;
                 ret = GetSignalNumberOfByteOffsets(OutputSignals, i, numberOfByteOffsets);
                 if (ret) {
-                    if (numberOfByteOffsets == 0u) {
-                        ret = GetSignalByteSize(OutputSignals, i, thisSignalByteOffset);
-                    }
-                    else {
-                        uint32 b;
-                        for (b = 0u; (b < numberOfByteOffsets) && (ret); b++) {
-                            uint32 ignore;
-                            uint32 offsetSize;
-                            ret = GetSignalByteOffsetInfo(OutputSignals, i, b, ignore, offsetSize);
-                            if (ret) {
-                                thisSignalByteOffset += offsetSize;
-                            }
-                        }
-                    }
+                    ret = GetSignalByteSize(OutputSignals, i, thisSignalByteOffset);
+
                     if (ret) {
                         uint32 samples = 1u;
                         if (GetSignalNumberOfSamples(OutputSignals, i, samples)) {
