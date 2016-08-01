@@ -117,6 +117,8 @@ DataSourceITestHelper    ();
             const char8* functionName,
             void * gamMemPtr);
 
+    virtual bool Synchronise();
+
 };
 
 DataSourceITestHelper::DataSourceITestHelper() :
@@ -175,6 +177,11 @@ bool DataSourceITestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
     }
     return ret;
 }
+
+bool DataSourceITestHelper::Synchronise(){
+    return false;
+}
+
 CLASS_REGISTER(DataSourceITestHelper, "1.0");
 
 static bool InitialiseDataSourceIEnviroment(const char8 * const config) {

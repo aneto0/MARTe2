@@ -117,6 +117,7 @@ bool GAM::AllocateInputSignalsMemory() {
         }
         if (ret) {
             inputSignalsMemory = heap->Malloc(totalByteSize);
+            ret = MemoryOperationsHelper::Set(inputSignalsMemory, 0, totalByteSize);
         }
         if (ret) {
             inputSignalsMemoryIndexer = new void*[numberOfInputSignals];
@@ -144,7 +145,6 @@ bool GAM::AllocateInputSignalsMemory() {
                 }
             }
         }
-
     }
 
     return ret;
@@ -164,6 +164,7 @@ bool GAM::AllocateOutputSignalsMemory() {
         }
         if (ret) {
             outputSignalsMemory = heap->Malloc(totalByteSize);
+            ret = MemoryOperationsHelper::Set(outputSignalsMemory, 0, totalByteSize);
         }
         if (ret) {
             outputSignalsMemoryIndexer = new void*[numberOfOutputSignals];

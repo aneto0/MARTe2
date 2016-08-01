@@ -527,6 +527,14 @@ public:
     bool AddBrokers(const SignalDirection direction);
 
     /**
+     * @brief A DataSourceI that implements this method will provide a synchronisation entry for the real-time cycle.
+     * @details A BrokerI implementation may call on its Execute this Synchronise method. A DataSourceI that
+     *  implements this method is expected will lock the real-time cycle until a successful synchronisation event occurs.
+     * @return true if the DataSourceI has successfully synchronised with the underlying hardware.
+     */
+    virtual bool Synchronise() = 0;
+
+    /**
      * @brief Allocate the memory for this DataSourceI.
      * @return true if the memory can be successfully allocated.
      */

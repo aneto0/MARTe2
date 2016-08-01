@@ -180,6 +180,8 @@ MemoryMapStatefulInputBrokerDataSourceTestHelper    ();
             const char8* functionName,
             void * gamMemPtr);
 
+    virtual bool Synchronise();
+
     void **bufferedMemoryAddress[2];
     void **signalMemoryAddress[2];
     void *signalMemoryBuffer[2];
@@ -339,6 +341,11 @@ bool MemoryMapStatefulInputBrokerDataSourceTestHelper::GetOutputBrokers(Referenc
                                                                         void * gamMemPtr) {
     return true;
 }
+
+bool MemoryMapStatefulInputBrokerDataSourceTestHelper::Synchronise(){
+    return false;
+}
+
 CLASS_REGISTER(MemoryMapStatefulInputBrokerDataSourceTestHelper, "1.0");
 
 /**

@@ -138,6 +138,8 @@ BrokerIDataSourceTestHelper    ();
             const char8* functionName,
             void * gamMemPtr);
 
+    virtual bool Synchronise();
+
 };
 
 BrokerIDataSourceTestHelper::BrokerIDataSourceTestHelper() :
@@ -202,6 +204,11 @@ bool BrokerIDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBro
     }
     return ret;
 }
+
+bool BrokerIDataSourceTestHelper::Synchronise() {
+    return false;
+}
+
 CLASS_REGISTER(BrokerIDataSourceTestHelper, "1.0");
 
 static bool InitialiseBrokerIEnviroment(const char8 * const config) {

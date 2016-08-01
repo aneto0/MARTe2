@@ -223,6 +223,8 @@ MemoryMapStatefulBrokerDataSourceTestHelper    ();
             const char8* functionName,
             void * gamMemPtr);
 
+    virtual bool Synchronise();
+
     void **bufferedMemoryAddress[2];
     void **signalMemoryAddress[2];
     void *signalMemoryBuffer[2];
@@ -374,6 +376,11 @@ bool MemoryMapStatefulBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceCont
     }
     return ret;
 }
+
+bool MemoryMapStatefulBrokerDataSourceTestHelper::Synchronise(){
+    return false;
+}
+
 CLASS_REGISTER(MemoryMapStatefulBrokerDataSourceTestHelper, "1.0");
 
 /**

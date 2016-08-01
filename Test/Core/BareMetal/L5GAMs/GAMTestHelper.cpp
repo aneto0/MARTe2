@@ -250,6 +250,10 @@ bool DS1::GetOutputBrokers(ReferenceContainer &outputBrokers,
 
 }
 
+bool DS1::Synchronise() {
+    return false;
+}
+
 CLASS_REGISTER(DS1, "1.0");
 
 ///////////////////////////////////////////
@@ -376,6 +380,10 @@ bool Driver1::GetOutputBrokers(ReferenceContainer &outputBrokers,
     }
     return ret;
 
+}
+
+bool Driver1::Synchronise() {
+    return false;
 }
 
 CLASS_REGISTER(Driver1, "1.0");

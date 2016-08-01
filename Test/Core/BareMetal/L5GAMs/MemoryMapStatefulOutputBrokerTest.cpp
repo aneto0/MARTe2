@@ -201,6 +201,8 @@ MemoryMapStatefulOutputBrokerDataSourceTestHelper    ();
             const char8* functionName,
             void * gamMemPtr);
 
+    virtual bool Synchronise();
+
     void **bufferedMemoryAddress[2];
     void **signalMemoryAddress[2];
     void *signalMemoryBuffer[2];
@@ -345,6 +347,11 @@ bool MemoryMapStatefulOutputBrokerDataSourceTestHelper::GetOutputBrokers(Referen
     }
     return ret;
 }
+
+bool MemoryMapStatefulOutputBrokerDataSourceTestHelper::Synchronise(){
+    return false;
+}
+
 CLASS_REGISTER(MemoryMapStatefulOutputBrokerDataSourceTestHelper, "1.0");
 
 /**

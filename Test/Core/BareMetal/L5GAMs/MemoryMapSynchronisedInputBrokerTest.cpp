@@ -1,6 +1,6 @@
 /**
- * @file MemoryMapInputBrokerTest.cpp
- * @brief Source file for class MemoryMapInputBrokerTest
+ * @file MemoryMapSynchronisedInputBrokerTest.cpp
+ * @brief Source file for class MemoryMapSynchronisedInputBrokerTest
  * @date 30/07/2016
  * @author Andre Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryMapInputBrokerTest (public, protected, and private). Be aware that some
+ * the class MemoryMapSynchronisedInputBrokerTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "BrokerI.h"
-#include "MemoryMapInputBrokerTest.h"
+#include "MemoryMapSynchronisedInputBrokerTest.h"
 #include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
 #include "GAMSchedulerI.h"
@@ -41,42 +41,42 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief GAMSchedulerI empty implementation to support the MemoryMapInputBroker tests
+ * @brief GAMSchedulerI empty implementation to support the MemoryMapSynchronisedInputBroker tests
  */
-class MemoryMapInputBrokerTestScheduler1: public GAMSchedulerI {
+class MemoryMapSynchronisedInputBrokerTestScheduler1: public GAMSchedulerI {
 public:
     CLASS_REGISTER_DECLARATION()
 
-MemoryMapInputBrokerTestScheduler1    ();
+MemoryMapSynchronisedInputBrokerTestScheduler1    ();
 
     virtual void StartExecution(const uint32 activeBuffer);
 
     virtual void StopExecution();
 };
 
-MemoryMapInputBrokerTestScheduler1::MemoryMapInputBrokerTestScheduler1() :
+MemoryMapSynchronisedInputBrokerTestScheduler1::MemoryMapSynchronisedInputBrokerTestScheduler1() :
         GAMSchedulerI() {
 
 }
 
-void MemoryMapInputBrokerTestScheduler1::StartExecution(const uint32 activeBuffer) {
+void MemoryMapSynchronisedInputBrokerTestScheduler1::StartExecution(const uint32 activeBuffer) {
 
 }
 
-void MemoryMapInputBrokerTestScheduler1::StopExecution() {
+void MemoryMapSynchronisedInputBrokerTestScheduler1::StopExecution() {
 
 }
 
-CLASS_REGISTER(MemoryMapInputBrokerTestScheduler1, "1.0")
+CLASS_REGISTER(MemoryMapSynchronisedInputBrokerTestScheduler1, "1.0")
 
 /**
- * @brief GAM empty implementation to support the MemoryMapInputBroker tests
+ * @brief GAM empty implementation to support the MemoryMapSynchronisedInputBroker tests
  */
-class MemoryMapInputBrokerTestGAM1: public GAM {
+class MemoryMapSynchronisedInputBrokerTestGAM1: public GAM {
 public:
     CLASS_REGISTER_DECLARATION()
 
-MemoryMapInputBrokerTestGAM1    ();
+MemoryMapSynchronisedInputBrokerTestGAM1    ();
 
     void *GetInputSignalsMemory();
 
@@ -89,45 +89,45 @@ MemoryMapInputBrokerTestGAM1    ();
     virtual bool Execute();
 };
 
-MemoryMapInputBrokerTestGAM1::MemoryMapInputBrokerTestGAM1() :
+MemoryMapSynchronisedInputBrokerTestGAM1::MemoryMapSynchronisedInputBrokerTestGAM1() :
         GAM() {
 }
 
-void *MemoryMapInputBrokerTestGAM1::GetInputSignalsMemory() {
+void *MemoryMapSynchronisedInputBrokerTestGAM1::GetInputSignalsMemory() {
     return GAM::GetInputSignalsMemory();
 }
 
-void *MemoryMapInputBrokerTestGAM1::GetOutputSignalsMemory() {
+void *MemoryMapSynchronisedInputBrokerTestGAM1::GetOutputSignalsMemory() {
     return GAM::GetOutputSignalsMemory();
 }
 
-void *MemoryMapInputBrokerTestGAM1::GetInputSignalMemory(uint32 signalIdx) {
+void *MemoryMapSynchronisedInputBrokerTestGAM1::GetInputSignalMemory(uint32 signalIdx) {
     return GAM::GetInputSignalMemory(signalIdx);
 }
 
-void *MemoryMapInputBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
+void *MemoryMapSynchronisedInputBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
     return GAM::GetOutputSignalMemory(signalIdx);
 }
 
-bool MemoryMapInputBrokerTestGAM1::Execute() {
+bool MemoryMapSynchronisedInputBrokerTestGAM1::Execute() {
     return true;
 }
 
-CLASS_REGISTER(MemoryMapInputBrokerTestGAM1, "1.0")
+CLASS_REGISTER(MemoryMapSynchronisedInputBrokerTestGAM1, "1.0")
 
 /**
- * @brief DataSourceI implementation which returns a MemoryMapInputBrokerTestHelper broker
+ * @brief DataSourceI implementation which returns a MemoryMapSynchronisedInputBrokerTestHelper broker
  * and which offers a linear memory back-end implementation to read the signals.
- * This memory is set with a pattern (see GetSignalMemoryBuffer) which allows to verify if the MemoryMapInputBroker is
+ * This memory is set with a pattern (see GetSignalMemoryBuffer) which allows to verify if the MemoryMapSynchronisedInputBroker is
  * correctly copying the signals to the GAM memory.
  */
-class MemoryMapInputBrokerDataSourceTestHelper: public DataSourceI {
+class MemoryMapSynchronisedInputBrokerDataSourceTestHelper: public DataSourceI {
 public:
     CLASS_REGISTER_DECLARATION()
 
-MemoryMapInputBrokerDataSourceTestHelper    ();
+MemoryMapSynchronisedInputBrokerDataSourceTestHelper    ();
 
-    virtual ~ MemoryMapInputBrokerDataSourceTestHelper();
+    virtual ~ MemoryMapSynchronisedInputBrokerDataSourceTestHelper();
 
     virtual bool AllocateMemory();
 
@@ -159,16 +159,20 @@ MemoryMapInputBrokerDataSourceTestHelper    ();
 
     //Store 10 samples per signal.
     uint32 samples;
+
+    //Fail synchronisation?
+    bool failSynchronisation;
 };
 
-MemoryMapInputBrokerDataSourceTestHelper::MemoryMapInputBrokerDataSourceTestHelper() :
+MemoryMapSynchronisedInputBrokerDataSourceTestHelper::MemoryMapSynchronisedInputBrokerDataSourceTestHelper() :
         DataSourceI() {
     signalMemory = NULL_PTR(void *);
     offsets = NULL_PTR(uint32 *);
     samples = 10;
+    failSynchronisation = false;
 }
 
-MemoryMapInputBrokerDataSourceTestHelper::~MemoryMapInputBrokerDataSourceTestHelper() {
+MemoryMapSynchronisedInputBrokerDataSourceTestHelper::~MemoryMapSynchronisedInputBrokerDataSourceTestHelper() {
     if (signalMemory != NULL_PTR(void *)) {
         GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(signalMemory);
     }
@@ -180,7 +184,7 @@ MemoryMapInputBrokerDataSourceTestHelper::~MemoryMapInputBrokerDataSourceTestHel
 /**
  * @brief Allocates the memory for all the signals
  */
-bool MemoryMapInputBrokerDataSourceTestHelper::AllocateMemory() {
+bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::AllocateMemory() {
     uint32 numberOfSignals = GetNumberOfSignals();
     bool ret = (numberOfSignals > 0u);
     if (ret) {
@@ -204,7 +208,7 @@ bool MemoryMapInputBrokerDataSourceTestHelper::AllocateMemory() {
     return ret;
 }
 
-uint32 MemoryMapInputBrokerDataSourceTestHelper::GetNumberOfMemoryBuffers() {
+uint32 MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetNumberOfMemoryBuffers() {
     return 1u;
 }
 
@@ -212,7 +216,7 @@ uint32 MemoryMapInputBrokerDataSourceTestHelper::GetNumberOfMemoryBuffers() {
  * @brief Returns the correct memory buffer and generates a pattern where the signal
  * address byte N contains the value N*N
  */
-bool MemoryMapInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 signalIdx,
+bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 signalIdx,
                                                                      uint32 bufferIdx,
                                                                      void *&signalAddress) {
     char8 *memPtr = reinterpret_cast<char8 *>(signalMemory);
@@ -229,22 +233,22 @@ bool MemoryMapInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 sign
     return ret;
 }
 
-const char8 * MemoryMapInputBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data,
+const char8 * MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data,
                                                                       SignalDirection direction) {
     if (direction == InputSignals) {
-        return "MemoryMapInputBroker";
+        return "MemoryMapSynchronisedInputBroker";
     }
-    return "MemoryMapInputBroker";
+    return "MemoryMapSynchronisedInputBroker";
 }
 
-bool MemoryMapInputBrokerDataSourceTestHelper::PrepareNextState(const RealTimeStateInfo &status) {
+bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::PrepareNextState(const RealTimeStateInfo &status) {
     return true;
 }
 
-bool MemoryMapInputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
+bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
                                                                const char8* functionName,
                                                                void * gamMemPtr) {
-    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+    ReferenceT<MemoryMapSynchronisedInputBroker> broker("MemoryMapSynchronisedInputBroker");
     bool ret = broker.IsValid();
     if (ret) {
         ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
@@ -255,22 +259,22 @@ bool MemoryMapInputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContaine
     return ret;
 }
 
-bool MemoryMapInputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
+bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
                                                                 const char8* functionName,
                                                                 void * gamMemPtr) {
     return true;
 }
 
-bool MemoryMapInputBrokerDataSourceTestHelper::Synchronise(){
-    return false;
+bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::Synchronise(){
+    return !failSynchronisation;
 }
 
-CLASS_REGISTER(MemoryMapInputBrokerDataSourceTestHelper, "1.0");
+CLASS_REGISTER(MemoryMapSynchronisedInputBrokerDataSourceTestHelper, "1.0");
 
 /**
  * Helper function to setup a MARTe execution environment
  */
-static bool InitialiseMemoryMapInputBrokerEnviroment(const char8 * const config) {
+static bool InitialiseMemoryMapSynchronisedInputBrokerEnviroment(const char8 * const config) {
     ConfigurationDatabase cdb;
     StreamString configStream = config;
     configStream.Seek(0);
@@ -296,7 +300,7 @@ static bool InitialiseMemoryMapInputBrokerEnviroment(const char8 * const config)
 }
 
 /**
- * MARTe configuration structure to test the MemoryMapInputBroker
+ * MARTe configuration structure to test the MemoryMapSynchronisedInputBroker
  */
 static const char8 * const config1 = ""
         "$Application1 = {"
@@ -304,7 +308,7 @@ static const char8 * const config1 = ""
         "    +Functions = {"
         "        Class = ReferenceContainer"
         "        +GAMA = {"
-        "            Class = MemoryMapInputBrokerTestGAM1"
+        "            Class = MemoryMapSynchronisedInputBrokerTestGAM1"
         "            InputSignals = {"
         "               Signal4 = {"
         "                   DataSource = Drv1"
@@ -333,7 +337,7 @@ static const char8 * const config1 = ""
         "            }"
         "        }"
         "        +GAMB = {"
-        "            Class = MemoryMapInputBrokerTestGAM1"
+        "            Class = MemoryMapSynchronisedInputBrokerTestGAM1"
         "            InputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -342,7 +346,7 @@ static const char8 * const config1 = ""
         "            }"
         "        }"
         "        +GAMC = {"
-        "            Class = MemoryMapInputBrokerTestGAM1"
+        "            Class = MemoryMapSynchronisedInputBrokerTestGAM1"
         "            OutputSignals = {"
         "               Signal1 = {"
         "                   DataSource = Drv1"
@@ -369,7 +373,7 @@ static const char8 * const config1 = ""
         "            }"
         "        }"
         "        +GAMD = {"
-        "            Class = MemoryMapInputBrokerTestGAM1"
+        "            Class = MemoryMapSynchronisedInputBrokerTestGAM1"
         "            OutputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -378,7 +382,7 @@ static const char8 * const config1 = ""
         "            }"
         "        }"
         "        +GAME = {"
-        "            Class = MemoryMapInputBrokerTestGAM1"
+        "            Class = MemoryMapSynchronisedInputBrokerTestGAM1"
         "            InputSignals = {"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -387,7 +391,7 @@ static const char8 * const config1 = ""
         "            }"
         "        }"
         "        +GAMF = {"
-        "            Class = MemoryMapInputBrokerTestGAM1"
+        "            Class = MemoryMapSynchronisedInputBrokerTestGAM1"
         "            OutputSignals = {"
         "               Signal3 = {"
         "                    DataSource = Drv1"
@@ -402,7 +406,7 @@ static const char8 * const config1 = ""
         "    +Data = {"
         "        Class = ReferenceContainer"
         "        +Drv1 = {"
-        "            Class = MemoryMapInputBrokerDataSourceTestHelper"
+        "            Class = MemoryMapSynchronisedInputBrokerDataSourceTestHelper"
         "            Signals = {"
         "                Signal1A = {"
         "                    Type = uint32"
@@ -445,14 +449,14 @@ static const char8 * const config1 = ""
         "        }"
         "    }"
         "    +Scheduler = {"
-        "        Class = MemoryMapInputBrokerTestScheduler1"
+        "        Class = MemoryMapSynchronisedInputBrokerTestScheduler1"
         "    }"
         "}";
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-bool MemoryMapInputBrokerTest::TestConstructor() {
-    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+bool MemoryMapSynchronisedInputBrokerTest::TestConstructor() {
+    ReferenceT<MemoryMapSynchronisedInputBroker> broker("MemoryMapSynchronisedInputBroker");
     bool ret = broker.IsValid();
     if (ret) {
         ret = broker->GetNumberOfCopies() == 0;
@@ -460,11 +464,11 @@ bool MemoryMapInputBrokerTest::TestConstructor() {
     return ret;
 }
 
-bool MemoryMapInputBrokerTest::TestExecute() {
-    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
-    ReferenceT<MemoryMapInputBrokerDataSourceTestHelper> dataSource;
-    ReferenceT<MemoryMapInputBroker> broker;
-    ReferenceT<MemoryMapInputBrokerTestGAM1> gamA;
+bool MemoryMapSynchronisedInputBrokerTest::TestExecute() {
+    bool ret = InitialiseMemoryMapSynchronisedInputBrokerEnviroment(config1);
+    ReferenceT<MemoryMapSynchronisedInputBrokerDataSourceTestHelper> dataSource;
+    ReferenceT<MemoryMapSynchronisedInputBroker> broker;
+    ReferenceT<MemoryMapSynchronisedInputBrokerTestGAM1> gamA;
     ReferenceContainer brokers;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -504,15 +508,63 @@ bool MemoryMapInputBrokerTest::TestExecute() {
         ret = (*(gamPtr++) == static_cast<char8>(s * s));
     }
 
+    return ret;
+}
+
+bool MemoryMapSynchronisedInputBrokerTest::TestExecute_FailSynchronisation() {
+    bool ret = InitialiseMemoryMapSynchronisedInputBrokerEnviroment(config1);
+    ReferenceT<MemoryMapSynchronisedInputBrokerDataSourceTestHelper> dataSource;
+    ReferenceT<MemoryMapSynchronisedInputBroker> broker;
+    ReferenceT<MemoryMapSynchronisedInputBrokerTestGAM1> gamA;
+    ReferenceContainer brokers;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gamA.IsValid();
+    }
+
+    if (ret) {
+        ret = dataSource->GetInputBrokers(brokers, "GAMA", (void *) gamA->GetInputSignalsMemory());
+    }
+    if (ret) {
+        ret = (brokers.Size() > 0u);
+    }
+    if (ret) {
+        broker = brokers.Get(0);
+        ret = broker.IsValid();
+    }
+    uint32 numberOfCopies;
+    if (ret) {
+        numberOfCopies = broker->GetNumberOfCopies();
+        ret = (numberOfCopies == 5u);
+    }
+    if (ret) {
+        dataSource->failSynchronisation = true;
+        ret = !broker->Execute();
+    }
+    //Verify if the GAM has the expected pattern
+    char8 *gamPtr;
+    if (ret) {
+        gamPtr = reinterpret_cast<char8 *>(gamA->GetInputSignalMemory(1));
+    }
+    uint32 copySize = broker->GetCopyByteSize(3);
+    uint32 s;
+    //After failing the values should not be updated...
+    for (s = 0; (s < copySize) && (ret); s++) {
+        ret = (*(gamPtr++) == 0);
+    }
 
     return ret;
 }
 
-bool MemoryMapInputBrokerTest::TestExecute_Ranges() {
-    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
-    ReferenceT<MemoryMapInputBrokerDataSourceTestHelper> dataSource;
-    ReferenceT<MemoryMapInputBroker> broker;
-    ReferenceT<MemoryMapInputBrokerTestGAM1> gamA;
+bool MemoryMapSynchronisedInputBrokerTest::TestExecute_Ranges() {
+    bool ret = InitialiseMemoryMapSynchronisedInputBrokerEnviroment(config1);
+    ReferenceT<MemoryMapSynchronisedInputBrokerDataSourceTestHelper> dataSource;
+    ReferenceT<MemoryMapSynchronisedInputBroker> broker;
+    ReferenceT<MemoryMapSynchronisedInputBrokerTestGAM1> gamA;
     ReferenceContainer brokers;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
@@ -566,11 +618,11 @@ bool MemoryMapInputBrokerTest::TestExecute_Ranges() {
     return ret;
 }
 
-bool MemoryMapInputBrokerTest::TestExecute_Samples() {
-    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
-    ReferenceT<MemoryMapInputBrokerDataSourceTestHelper> dataSource;
-    ReferenceT<MemoryMapInputBroker> broker;
-    ReferenceT<MemoryMapInputBrokerTestGAM1> gamA;
+bool MemoryMapSynchronisedInputBrokerTest::TestExecute_Samples() {
+    bool ret = InitialiseMemoryMapSynchronisedInputBrokerEnviroment(config1);
+    ReferenceT<MemoryMapSynchronisedInputBrokerDataSourceTestHelper> dataSource;
+    ReferenceT<MemoryMapSynchronisedInputBroker> broker;
+    ReferenceT<MemoryMapSynchronisedInputBrokerTestGAM1> gamA;
     ReferenceContainer brokers;
     if (ret) {
         dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");

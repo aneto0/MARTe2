@@ -40,7 +40,7 @@
 #include "ReferenceT.h"
 #include "StandardParser.h"
 #include "CLASSREGISTER.h"
-#include "stdio.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -298,6 +298,10 @@ bool GAMDataSource::GetOutputBrokers(ReferenceContainer &outputBrokers,
         }
     }
     return ret;
+}
+
+bool GAMDataSource::Synchronise() {
+    return false;
 }
 
 CLASS_REGISTER(GAMDataSource, "1.0")

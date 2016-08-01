@@ -277,6 +277,8 @@ DS1    ();
     virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers,
             const char8 * functionName,
             void* gamMemPtr);
+
+    virtual bool Synchronise();
 };
 }
 
@@ -320,6 +322,7 @@ public:
             const char8 * functionName,
             void* gamMemPtr);
 
+    virtual bool Synchronise();
 };
 
 #if 0

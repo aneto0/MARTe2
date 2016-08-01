@@ -114,6 +114,8 @@ DataSourceIGAMTest1    ();
             const char8* functionName,
             void * gamMemPtr);
 
+    virtual bool Synchronise();
+
 };
 
 DataSourceIGAMTest1::DataSourceIGAMTest1() :
@@ -171,6 +173,10 @@ bool DataSourceIGAMTest1::GetOutputBrokers(ReferenceContainer &outputBrokers,
         ret = outputBrokers.Insert(broker);
     }
     return ret;
+}
+
+bool DataSourceIGAMTest1::Synchronise(){
+    return false;
 }
 CLASS_REGISTER(DataSourceIGAMTest1, "1.0");
 

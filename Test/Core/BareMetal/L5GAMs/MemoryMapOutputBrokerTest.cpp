@@ -171,6 +171,8 @@ MemoryMapOutputBrokerDataSourceTestHelper    ();
             const char8* functionName,
             void * gamMemPtr);
 
+    virtual bool Synchronise();
+
     void *signalMemory;
     uint32 *offsets;
 
@@ -267,6 +269,11 @@ bool MemoryMapOutputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContai
     }
     return ret;
 }
+
+bool MemoryMapOutputBrokerDataSourceTestHelper::Synchronise(){
+    return false;
+}
+
 CLASS_REGISTER(MemoryMapOutputBrokerDataSourceTestHelper, "1.0");
 
 /**

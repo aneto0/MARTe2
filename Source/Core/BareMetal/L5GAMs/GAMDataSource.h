@@ -146,6 +146,12 @@ public:
             const char8 * functionName,
             void* gamMemPtr);
 
+    /**
+     * @brief Not supported (see DataSourceI::Synchronise)
+     * @return false.
+     */
+    virtual bool Synchronise();
+
 protected:
     /**
      * The single buffer memory.

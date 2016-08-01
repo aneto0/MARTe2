@@ -183,6 +183,8 @@ MemoryMapBrokerDataSourceTestHelper    ();
             const char8* functionName,
             void * gamMemPtr);
 
+    virtual bool Synchronise();
+
     void *signalMemory;
     uint32 *offsets;
     //Store 10 samples per signal
@@ -283,6 +285,11 @@ bool MemoryMapBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &o
     }
     return ret;
 }
+
+bool MemoryMapBrokerDataSourceTestHelper::Synchronise(){
+    return false;
+}
+
 CLASS_REGISTER(MemoryMapBrokerDataSourceTestHelper, "1.0");
 
 /**
