@@ -221,8 +221,15 @@ public:
      */
     //virtual bool Configure(ReferenceT<GAMSignalI> gamSignalIn)=0;
 
-    bool Initialise(StructuredDataI & data);
-    bool ExportData(StructuredDataI& data);
+    /**
+     * @see ReferenceContainer::Initialise(StructuredDataI&)
+     */
+    virtual bool Initialise(StructuredDataI & data);
+
+    /**
+     * @see ReferenceContainer::ExportData(StructuredDataI&)
+     */
+    virtual bool ExportData(StructuredDataI& data);
 
     /**
      * @brief Retrieves the pointer the memory address containing the signal data.
