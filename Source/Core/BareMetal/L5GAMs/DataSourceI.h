@@ -153,7 +153,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    uint32 GetNumberOfSignals();
+    uint32 GetNumberOfSignals() const;
 
     /**
      * @brief Gets the index of the signal with name \a signalIdx.
@@ -318,7 +318,7 @@ public:
      *   SetConfiguredDatabase
      * @warning Note that this does not return the value of the default. It only returns the type meta-data.! (see GetSignalDefaultValue)
      */
-    AnyType GetSignalDefaultValueType(uint32 signalIdx);
+    AnyType GetSignalDefaultValueType(const uint32 signalIdx);
 
     /**
      * @brief Gets the number of functions that interact with this DataSourceI.

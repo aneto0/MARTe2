@@ -96,7 +96,7 @@ bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
     return ret;
 }
 
-uint32 DataSourceI::GetNumberOfSignals() {
+uint32 DataSourceI::GetNumberOfSignals() const {
     return numberOfSignals;
 }
 
@@ -345,7 +345,7 @@ bool DataSourceI::GetSignalDefaultValue(const uint32 signalIdx,
     return ret;
 }
 
-AnyType DataSourceI::GetSignalDefaultValueType(uint32 signalIdx) {
+AnyType DataSourceI::GetSignalDefaultValueType(const uint32 signalIdx) {
     AnyType retType = voidAnyType;
     if (MoveToSignalIndex(signalIdx)) {
         retType = configuredDatabase.GetType("Default");
