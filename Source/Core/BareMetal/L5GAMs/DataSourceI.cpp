@@ -360,9 +360,7 @@ bool DataSourceI::MoveToSignalIndex(const uint32 signalIdx) {
     }
     StreamString signalIdxStr;
     if (ret) {
-        ret = signalIdxStr.Printf("%d", signalIdx);
-    }
-    if (ret) {
+        signalIdxStr = configuredDatabase.GetChildName(signalIdx);
         ret = configuredDatabase.MoveRelative(signalIdxStr.Buffer());
     }
     return ret;
@@ -599,9 +597,7 @@ bool DataSourceI::MoveToFunctionIndex(uint32 functionIdx) {
     }
     StreamString functionIdxStr;
     if (ret) {
-        ret = functionIdxStr.Printf("%d", functionIdx);
-    }
-    if (ret) {
+        functionIdxStr = configuredDatabase.GetChildName(functionIdx);
         ret = configuredDatabase.MoveRelative(functionIdxStr.Buffer());
     }
     return ret;
@@ -620,9 +616,7 @@ bool DataSourceI::MoveToFunctionSignalIndex(const SignalDirection direction,
     }
     StreamString functionSignalIdxStr;
     if (ret) {
-        ret = functionSignalIdxStr.Printf("%d", functionSignalIdx);
-    }
-    if (ret) {
+        functionSignalIdxStr = configuredDatabase.GetChildName(functionSignalIdx);
         ret = configuredDatabase.MoveRelative(functionSignalIdxStr.Buffer());
     }
     return ret;

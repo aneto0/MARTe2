@@ -554,8 +554,8 @@ bool GAM::MoveToSignalIndex(SignalDirection direction,
         ret = configuredDatabase.MoveRelative(signalDirection);
     }
     StreamString signalIdxStr;
-    signalIdxStr.Printf("%d", signalIdx);
     if (ret) {
+        signalIdxStr = configuredDatabase.GetChildName(signalIdx);
         ret = configuredDatabase.MoveRelative(signalIdxStr.Buffer());
     }
     return ret;
