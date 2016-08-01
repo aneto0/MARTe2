@@ -153,7 +153,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    uint32 GetNumberOfSignals();
+    uint32 GetNumberOfSignals() const;
 
     /**
      * @brief Gets the index of the signal with name \a signalIdx.
@@ -174,7 +174,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalName(uint32 signalIdx,
+    bool GetSignalName(const uint32 signalIdx,
                        StreamString &signalName);
 
     /**
@@ -184,7 +184,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    TypeDescriptor GetSignalType(uint32 signalIdx);
+    TypeDescriptor GetSignalType(const uint32 signalIdx);
 
     /**
      * @brief Gets the number of dimensions of the signal at position \a signalIdx.
@@ -195,7 +195,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalNumberOfDimensions(uint32 signalIdx,
+    bool GetSignalNumberOfDimensions(const uint32 signalIdx,
                                      uint32 &numberOfDimensions);
 
     /**
@@ -207,7 +207,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalNumberOfElements(uint32 signalIdx,
+    bool GetSignalNumberOfElements(const uint32 signalIdx,
                                    uint32 &numberOfElements);
 
     /**
@@ -218,7 +218,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalByteSize(uint32 signalIdx,
+    bool GetSignalByteSize(const uint32 signalIdx,
                            uint32 &byteSize);
 
     /**
@@ -229,7 +229,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalNumberOfStates(uint32 signalIdx,
+    bool GetSignalNumberOfStates(const uint32 signalIdx,
                                  uint32 &numberOfStates);
 
     /**
@@ -241,8 +241,8 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalStateName(uint32 signalIdx,
-                            uint32 stateIdx,
+    bool GetSignalStateName(const uint32 signalIdx,
+                            const uint32 stateIdx,
                             StreamString &stateName);
 
     /**
@@ -254,8 +254,8 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalNumberOfConsumers(uint32 signalIdx,
-                                    const char8 *stateName,
+    bool GetSignalNumberOfConsumers(const uint32 signalIdx,
+                                    const char8 * const stateName,
                                     uint32 &numberOfConsumers);
 
     /**
@@ -267,8 +267,8 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalNumberOfProducers(uint32 signalIdx,
-                                    const char8 *stateName,
+    bool GetSignalNumberOfProducers(const uint32 signalIdx,
+                                    const char8 * const stateName,
                                     uint32 &numberOfProducers);
     /**
      * @brief Gets the name of function with index \a consumerIdx and which is consuming the signal at position \a signalIdx in the state with name \a stateName.
@@ -280,9 +280,9 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalConsumerName(uint32 signalIdx,
-                               const char8 *stateName,
-                               uint32 consumerIdx,
+    bool GetSignalConsumerName(const uint32 signalIdx,
+                               const char8 * const stateName,
+                               const uint32 consumerIdx,
                                StreamString &consumerName);
     /**
      * @brief Gets the name of function with index \a producerIdx and which is producing the signal at position \a signalIdx in the state with name \a stateName.
@@ -294,9 +294,9 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalProducerName(uint32 signalIdx,
-                               const char8 *stateName,
-                               uint32 producerIdx,
+    bool GetSignalProducerName(const uint32 signalIdx,
+                               const char8 * const stateName,
+                               const uint32 producerIdx,
                                StreamString &producerName);
 
     /**
@@ -307,7 +307,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalDefaultValue(uint32 signalIdx,
+    bool GetSignalDefaultValue(const uint32 signalIdx,
                                const AnyType &defaultValue);
 
     /**
@@ -318,7 +318,7 @@ public:
      *   SetConfiguredDatabase
      * @warning Note that this does not return the value of the default. It only returns the type meta-data.! (see GetSignalDefaultValue)
      */
-    AnyType GetSignalDefaultValueType(uint32 signalIdx);
+    AnyType GetSignalDefaultValueType(const uint32 signalIdx);
 
     /**
      * @brief Gets the number of functions that interact with this DataSourceI.
@@ -336,7 +336,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionName(uint32 functionIdx,
+    bool GetFunctionName(const uint32 functionIdx,
                          StreamString &functionName);
 
     /**
@@ -354,14 +354,14 @@ public:
      * @brief Gets the number of signals, from the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
      * @param[in] direction the signal direction.
      * @param[in] functionIdx the index of the function.
-     * @param[out] numberOfSignals the number of signals, from the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
+     * @param[out] numSignals the number of signals, from the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
      * @return true if the functionIdx exists.
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionNumberOfSignals(SignalDirection direction,
-                                    uint32 functionIdx,
-                                    uint32 &numberOfSignals);
+    bool GetFunctionNumberOfSignals(const SignalDirection direction,
+                                    const uint32 functionIdx,
+                                    uint32 &numSignals);
 
     /**
      * @brief Gets the number of bytes, required for the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
@@ -372,8 +372,8 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionSignalsByteSize(SignalDirection direction,
-                                    uint32 functionIdx,
+    bool GetFunctionSignalsByteSize(const SignalDirection direction,
+                                    const uint32 functionIdx,
                                     uint32 &byteSize);
 
     /**
@@ -381,15 +381,15 @@ public:
      * @param[in] direction the signal direction.
      * @param[in] functionIdx the index of the function.
      * @param[in] functionSignalIdx the index of the signal in this function.
-     * @param[out] functioSignalName the name of the signal.
+     * @param[out] functionSignalName the name of the signal.
      * @return true if the functionIdx and the functionSignalIdx exist in the specified direction.
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionSignalName(SignalDirection direction,
-                               uint32 functionIdx,
-                               uint32 functionSignalIdx,
-                               StreamString &functioSignalName);
+    bool GetFunctionSignalName(const SignalDirection direction,
+                               const uint32 functionIdx,
+                               const uint32 functionSignalIdx,
+                               StreamString &functionSignalName);
 
     /**
      * @brief Gets the alias of the signal from the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
@@ -401,9 +401,9 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionSignalAlias(SignalDirection direction,
-                                uint32 functionIdx,
-                                uint32 functionSignalIdx,
+    bool GetFunctionSignalAlias(const SignalDirection direction,
+                                const uint32 functionIdx,
+                                const uint32 functionSignalIdx,
                                 StreamString &functionSignalAlias);
 
     /**
@@ -416,8 +416,8 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionSignalIndex(SignalDirection direction,
-                                uint32 functionIdx,
+    bool GetFunctionSignalIndex(const SignalDirection direction,
+                                const uint32 functionIdx,
                                 uint32 &functionSignalIdx,
                                 const char8* const functionSignalName);
 
@@ -431,9 +431,9 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionSignalNumberOfByteOffsets(SignalDirection direction,
-                                              uint32 functionIdx,
-                                              uint32 functionSignalIdx,
+    bool GetFunctionSignalNumberOfByteOffsets(const SignalDirection direction,
+                                              const uint32 functionIdx,
+                                              const uint32 functionSignalIdx,
                                               uint32 &numberOfByteOffsets);
 
     /**
@@ -448,10 +448,10 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionSignalByteOffsetInfo(SignalDirection direction,
-                                         uint32 functionIdx,
-                                         uint32 functionSignalIdx,
-                                         uint32 byteOffsetIndex,
+    bool GetFunctionSignalByteOffsetInfo(const SignalDirection direction,
+                                         const uint32 functionIdx,
+                                         const uint32 functionSignalIdx,
+                                         const uint32 byteOffsetIndex,
                                          uint32 &byteOffsetStart,
                                          uint32 &byteOffsetSize);
 
@@ -468,9 +468,9 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionSignalSamples(SignalDirection direction,
-                                  uint32 functionIdx,
-                                  uint32 functionSignalIdx,
+    bool GetFunctionSignalSamples(const SignalDirection direction,
+                                  const uint32 functionIdx,
+                                  const uint32 functionSignalIdx,
                                   uint32 &samples);
 
     /**
@@ -484,9 +484,9 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionSignalReadFrequency(SignalDirection direction,
-                                        uint32 functionIdx,
-                                        uint32 functionSignalIdx,
+    bool GetFunctionSignalReadFrequency(const SignalDirection direction,
+                                        const uint32 functionIdx,
+                                        const uint32 functionSignalIdx,
                                         float32 &frequency);
 
     /**
@@ -499,9 +499,9 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionSignalGAMMemoryOffset(SignalDirection direction,
-                                          uint32 functionIdx,
-                                          uint32 functionSignalIdx,
+    bool GetFunctionSignalGAMMemoryOffset(const SignalDirection direction,
+                                          const uint32 functionIdx,
+                                          const uint32 functionSignalIdx,
                                           uint32 &memoryOffset);
 
     /**
@@ -514,17 +514,17 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool IsSupportedBroker(SignalDirection direction,
-                           uint32 functionIdx,
-                           uint32 functionSignalIdx,
-                           const char8* brokerClassName);
+    bool IsSupportedBroker(const SignalDirection direction,
+                           const uint32 functionIdx,
+                           const uint32 functionSignalIdx,
+                           const char8* const brokerClassName);
 
     /**
      * @brief For every signal in the provided direction assign a Broker that knows how to copy from the DataSourceI memory to the GAM memory.
      * @param[in] direction are the signal directions.
      * @return true if a BrokerI can be assigned to every signal in the given direction.
      */
-    bool AddBrokers(SignalDirection direction);
+    bool AddBrokers(const SignalDirection direction);
 
     /**
      * @brief Allocate the memory for this DataSourceI.
@@ -618,7 +618,7 @@ protected:
      * @param[in] signalIdx the index of the signal where to move to.
      * @return true if the signalIdx exists.
      */
-    bool MoveToSignalIndex(uint32 signalIdx);
+    bool MoveToSignalIndex(const uint32 signalIdx);
 
     /**
      * @brief Moves the configuredDatabase to the function with index \a functionIdx.
@@ -629,13 +629,14 @@ protected:
 
     /**
      * @brief Moves the configuredDatabase to the signal to the index \a functionIdx in the function with the index \a functionIdx.
-     * @param[in] signalIdx the index of the signal where to move to.
+     * @param[in] direction the signal direction.
      * @param[in] functionIdx the index of the function where to move to.
+     * @param[in] functionSignalIdx the index of the signal where to move to.
      * @return true if the functionIdx exists.
      */
-    bool MoveToFunctionSignalIndex(SignalDirection direction,
-                                   uint32 functionIdx,
-                                   uint32 functionSignalIdx);
+    bool MoveToFunctionSignalIndex(const SignalDirection direction,
+                                   const uint32 functionIdx,
+                                   const uint32 functionSignalIdx);
 };
 
 }

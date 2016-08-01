@@ -60,8 +60,10 @@ DataSourceI::~DataSourceI() {
 bool DataSourceI::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (data.MoveRelative("Signals")) {
-        signalsDatabase.Write("Signals", data);
-        ret = data.MoveToAncestor(1);
+        ret = signalsDatabase.Write("Signals", data);
+        if (ret) {
+            ret = data.MoveToAncestor(1u);
+        }
     }
     if (ret) {
         ret = signalsDatabase.MoveToRoot();
@@ -71,8 +73,13 @@ bool DataSourceI::Initialise(StructuredDataI & data) {
 }
 
 bool DataSourceI::AddSignals(StructuredDataI &data) {
+    bool ret;
+    /*lint -e{534} [MISRA C++ Rule 0-1-7], [MISRA C++ Rule 0-3-2].
+     *Justification: "Signals" is an optional field, so the move command must
+     *Justification: not be checked.*/
     signalsDatabase.MoveAbsolute("Signals");
-    return data.Write("Signals", signalsDatabase);
+    ret = data.Write("Signals", signalsDatabase);
+    return ret;
 }
 
 bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
@@ -89,11 +96,11 @@ bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
     return ret;
 }
 
-uint32 DataSourceI::GetNumberOfSignals() {
+uint32 DataSourceI::GetNumberOfSignals() const {
     return numberOfSignals;
 }
 
-bool DataSourceI::GetSignalName(uint32 signalIdx,
+bool DataSourceI::GetSignalName(const uint32 signalIdx,
                                 StreamString &signalName) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
@@ -105,15 +112,15 @@ bool DataSourceI::GetSignalName(uint32 signalIdx,
 bool DataSourceI::GetSignalIndex(uint32 &signalIdx,
                                  const char8* const signalName) {
 
-    uint32 numberOfSignals = GetNumberOfSignals();
+    const uint32 numSignals = GetNumberOfSignals();
     bool ret = true;
     bool found = false;
     uint32 i;
-    for (i = 0u; (i < numberOfSignals) && (ret) && (!found); i++) {
+    for (i = 0u; (i < numSignals) && (ret) && (!found); i++) {
         StreamString searchName;
         ret = GetSignalName(i, searchName);
         if (ret) {
-            found = (StringHelper::Compare(signalName, searchName.Buffer()) == 0u);
+            found = (StringHelper::Compare(signalName, searchName.Buffer()) == 0);
             signalIdx = i;
         }
     }
@@ -123,7 +130,7 @@ bool DataSourceI::GetSignalIndex(uint32 &signalIdx,
     return ret;
 }
 
-TypeDescriptor DataSourceI::GetSignalType(uint32 signalIdx) {
+TypeDescriptor DataSourceI::GetSignalType(const uint32 signalIdx) {
     TypeDescriptor signalTypeDescriptor = InvalidType;
     bool ret = MoveToSignalIndex(signalIdx);
     StreamString signalType;
@@ -136,7 +143,7 @@ TypeDescriptor DataSourceI::GetSignalType(uint32 signalIdx) {
     return signalTypeDescriptor;
 }
 
-bool DataSourceI::GetSignalNumberOfDimensions(uint32 signalIdx,
+bool DataSourceI::GetSignalNumberOfDimensions(const uint32 signalIdx,
                                               uint32 &numberOfDimensions) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
@@ -145,7 +152,7 @@ bool DataSourceI::GetSignalNumberOfDimensions(uint32 signalIdx,
     return ret;
 }
 
-bool DataSourceI::GetSignalNumberOfElements(uint32 signalIdx,
+bool DataSourceI::GetSignalNumberOfElements(const uint32 signalIdx,
                                             uint32 &numberOfElements) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
@@ -154,7 +161,7 @@ bool DataSourceI::GetSignalNumberOfElements(uint32 signalIdx,
     return ret;
 }
 
-bool DataSourceI::GetSignalByteSize(uint32 signalIdx,
+bool DataSourceI::GetSignalByteSize(const uint32 signalIdx,
                                     uint32 &byteSize) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
@@ -163,7 +170,7 @@ bool DataSourceI::GetSignalByteSize(uint32 signalIdx,
     return ret;
 }
 
-bool DataSourceI::GetSignalNumberOfStates(uint32 signalIdx,
+bool DataSourceI::GetSignalNumberOfStates(const uint32 signalIdx,
                                           uint32 &numberOfStates) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
@@ -175,8 +182,8 @@ bool DataSourceI::GetSignalNumberOfStates(uint32 signalIdx,
     return ret;
 }
 
-bool DataSourceI::GetSignalStateName(uint32 signalIdx,
-                                     uint32 stateIdx,
+bool DataSourceI::GetSignalStateName(const uint32 signalIdx,
+                                     const uint32 stateIdx,
                                      StreamString &stateName) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
@@ -202,8 +209,8 @@ bool DataSourceI::GetSignalStateName(uint32 signalIdx,
     return ret;
 }
 
-bool DataSourceI::GetSignalNumberOfConsumers(uint32 signalIdx,
-                                             const char8 *stateName,
+bool DataSourceI::GetSignalNumberOfConsumers(const uint32 signalIdx,
+                                             const char8 * const stateName,
                                              uint32 &numberOfConsumers) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
@@ -224,8 +231,8 @@ bool DataSourceI::GetSignalNumberOfConsumers(uint32 signalIdx,
     return ret;
 }
 
-bool DataSourceI::GetSignalNumberOfProducers(uint32 signalIdx,
-                                             const char8 *stateName,
+bool DataSourceI::GetSignalNumberOfProducers(const uint32 signalIdx,
+                                             const char8 * const stateName,
                                              uint32 &numberOfProducers) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
@@ -246,78 +253,90 @@ bool DataSourceI::GetSignalNumberOfProducers(uint32 signalIdx,
     return ret;
 }
 
-bool DataSourceI::GetSignalConsumerName(uint32 signalIdx,
-                                        const char8 *stateName,
-                                        uint32 consumerIdx,
+bool DataSourceI::GetSignalConsumerName(const uint32 signalIdx,
+                                        const char8 * const stateName,
+                                        const uint32 consumerIdx,
                                         StreamString &consumerName) {
     bool ret = MoveToSignalIndex(signalIdx);
-    uint32 numberOfConsumers;
+    uint32 numberOfConsumers = 0u;
     if (ret) {
         ret = GetSignalNumberOfConsumers(signalIdx, stateName, numberOfConsumers);
     }
     if (ret) {
-        ret = (consumerIdx < numberOfConsumers);
-    }
-    if (ret) {
-        ret = MoveToSignalIndex(signalIdx);
-    }
-    if (ret) {
-        ret = configuredDatabase.MoveRelative("States");
-    }
-    if (ret) {
-        ret = configuredDatabase.MoveRelative(stateName);
-    }
-    if (ret) {
-        StreamString *consumerArray = new StreamString[numberOfConsumers];
-        Vector<StreamString> consumerVector(consumerArray, numberOfConsumers);
-        ret = configuredDatabase.Read("GAMNamesConsumers", consumerVector);
-        if (ret) {
-            consumerName = consumerVector[consumerIdx];
-        }
-        if (ret) {
+        if (numberOfConsumers > 0u) {
+            if (ret) {
+                ret = (consumerIdx < numberOfConsumers);
+            }
+            if (ret) {
+                ret = MoveToSignalIndex(signalIdx);
+            }
+            if (ret) {
+                ret = configuredDatabase.MoveRelative("States");
+            }
+            if (ret) {
+                ret = configuredDatabase.MoveRelative(stateName);
+            }
+            if (ret) {
+                StreamString *consumerArray = new StreamString[numberOfConsumers];
+                Vector<StreamString> consumerVector(consumerArray, numberOfConsumers);
+                ret = configuredDatabase.Read("GAMNamesConsumers", consumerVector);
+                if (ret) {
+                    consumerName = consumerVector[consumerIdx];
+                }
+                if (ret) {
 
+                }
+                delete[] consumerArray;
+            }
         }
-        delete[] consumerArray;
+        else {
+            ret = false;
+        }
     }
-
     return ret;
 }
 
-bool DataSourceI::GetSignalProducerName(uint32 signalIdx,
-                                        const char8 *stateName,
-                                        uint32 producerIdx,
+bool DataSourceI::GetSignalProducerName(const uint32 signalIdx,
+                                        const char8 * const stateName,
+                                        const uint32 producerIdx,
                                         StreamString &producerName) {
     bool ret = MoveToSignalIndex(signalIdx);
-    uint32 numberOfProducers;
+    uint32 numberOfProducers = 0u;
     if (ret) {
         ret = GetSignalNumberOfProducers(signalIdx, stateName, numberOfProducers);
     }
     if (ret) {
-        ret = (producerIdx < numberOfProducers);
-    }
-    if (ret) {
-        ret = MoveToSignalIndex(signalIdx);
-    }
-    if (ret) {
-        ret = configuredDatabase.MoveRelative("States");
-    }
-    if (ret) {
-        ret = configuredDatabase.MoveRelative(stateName);
-    }
-    if (ret) {
-        StreamString *producerArray = new StreamString[numberOfProducers];
-        Vector<StreamString> producerVector(producerArray, numberOfProducers);
-        ret = configuredDatabase.Read("GAMNamesProducers", producerVector);
-        if (ret) {
-            producerName = producerVector[producerIdx];
+        if (numberOfProducers > 0u) {
+            if (ret) {
+                ret = (producerIdx < numberOfProducers);
+            }
+            if (ret) {
+                ret = MoveToSignalIndex(signalIdx);
+            }
+            if (ret) {
+                ret = configuredDatabase.MoveRelative("States");
+            }
+            if (ret) {
+                ret = configuredDatabase.MoveRelative(stateName);
+            }
+            if (ret) {
+                StreamString *producerArray = new StreamString[numberOfProducers];
+                Vector<StreamString> producerVector(producerArray, numberOfProducers);
+                ret = configuredDatabase.Read("GAMNamesProducers", producerVector);
+                if (ret) {
+                    producerName = producerVector[producerIdx];
+                }
+                delete[] producerArray;
+            }
         }
-        delete[] producerArray;
+        else {
+            ret = false;
+        }
     }
-
     return ret;
 }
 
-bool DataSourceI::GetSignalDefaultValue(uint32 signalIdx,
+bool DataSourceI::GetSignalDefaultValue(const uint32 signalIdx,
                                         const AnyType &defaultValue) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
@@ -326,7 +345,7 @@ bool DataSourceI::GetSignalDefaultValue(uint32 signalIdx,
     return ret;
 }
 
-AnyType DataSourceI::GetSignalDefaultValueType(uint32 signalIdx) {
+AnyType DataSourceI::GetSignalDefaultValueType(const uint32 signalIdx) {
     AnyType retType = voidAnyType;
     if (MoveToSignalIndex(signalIdx)) {
         retType = configuredDatabase.GetType("Default");
@@ -334,13 +353,15 @@ AnyType DataSourceI::GetSignalDefaultValueType(uint32 signalIdx) {
     return retType;
 }
 
-bool DataSourceI::MoveToSignalIndex(uint32 signalIdx) {
+bool DataSourceI::MoveToSignalIndex(const uint32 signalIdx) {
     bool ret = configuredDatabase.MoveToRoot();
     if (ret) {
         ret = configuredDatabase.MoveRelative("Signals");
     }
     StreamString signalIdxStr;
-    signalIdxStr.Printf("%d", signalIdx);
+    if (ret) {
+        ret = signalIdxStr.Printf("%d", signalIdx);
+    }
     if (ret) {
         ret = configuredDatabase.MoveRelative(signalIdxStr.Buffer());
     }
@@ -359,7 +380,7 @@ uint32 DataSourceI::GetNumberOfFunctions() {
     return numberOfFunctions;
 }
 
-bool DataSourceI::GetFunctionName(uint32 functionIdx,
+bool DataSourceI::GetFunctionName(const uint32 functionIdx,
                                   StreamString &functionName) {
     bool ret = MoveToFunctionIndex(functionIdx);
     if (ret) {
@@ -379,7 +400,7 @@ bool DataSourceI::GetFunctionIndex(uint32 &functionIdx,
         StreamString searchName;
         ret = GetFunctionName(i, searchName);
         if (ret) {
-            found = (StringHelper::Compare(functionName, searchName.Buffer()) == 0u);
+            found = (StringHelper::Compare(functionName, searchName.Buffer()) == 0);
             functionIdx = i;
         }
     }
@@ -389,29 +410,29 @@ bool DataSourceI::GetFunctionIndex(uint32 &functionIdx,
     return ret;
 }
 
-bool DataSourceI::GetFunctionNumberOfSignals(SignalDirection direction,
-                                             uint32 functionIdx,
-                                             uint32 &numberOfSignals) {
+bool DataSourceI::GetFunctionNumberOfSignals(const SignalDirection direction,
+                                             const uint32 functionIdx,
+                                             uint32 &numSignals) {
     const char8 *signalDirection = "InputSignals";
     if (direction == OutputSignals) {
         signalDirection = "OutputSignals";
     }
-    numberOfSignals = 0u;
+    numSignals = 0u;
     bool ret = MoveToFunctionIndex(functionIdx);
     if (ret) {
         if (configuredDatabase.MoveRelative(signalDirection)) {
             //Ignore the ByteSize
             ret = (configuredDatabase.GetNumberOfChildren() > 1u);
             if (ret) {
-                numberOfSignals = configuredDatabase.GetNumberOfChildren() - 1u;
+                numSignals = configuredDatabase.GetNumberOfChildren() - 1u;
             }
         }
     }
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalsByteSize(SignalDirection direction,
-                                             uint32 functionIdx,
+bool DataSourceI::GetFunctionSignalsByteSize(const SignalDirection direction,
+                                             const uint32 functionIdx,
                                              uint32 &byteSize) {
     const char8 *signalDirection = "InputSignals";
     if (direction == OutputSignals) {
@@ -428,9 +449,9 @@ bool DataSourceI::GetFunctionSignalsByteSize(SignalDirection direction,
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalName(SignalDirection direction,
-                                        uint32 functionIdx,
-                                        uint32 functionSignalIdx,
+bool DataSourceI::GetFunctionSignalName(const SignalDirection direction,
+                                        const uint32 functionIdx,
+                                        const uint32 functionSignalIdx,
                                         StreamString &functionSignalName) {
 
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
@@ -440,9 +461,9 @@ bool DataSourceI::GetFunctionSignalName(SignalDirection direction,
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalAlias(SignalDirection direction,
-                                         uint32 functionIdx,
-                                         uint32 functionSignalIdx,
+bool DataSourceI::GetFunctionSignalAlias(const SignalDirection direction,
+                                         const uint32 functionIdx,
+                                         const uint32 functionSignalIdx,
                                          StreamString &functionSignalAlias) {
 
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
@@ -454,8 +475,8 @@ bool DataSourceI::GetFunctionSignalAlias(SignalDirection direction,
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalIndex(SignalDirection direction,
-                                         uint32 functionIdx,
+bool DataSourceI::GetFunctionSignalIndex(const SignalDirection direction,
+                                         const uint32 functionIdx,
                                          uint32 &functionSignalIdx,
                                          const char8* const functionSignalName) {
     uint32 numberOfFunctionSignals = 0u;
@@ -466,7 +487,7 @@ bool DataSourceI::GetFunctionSignalIndex(SignalDirection direction,
         StreamString searchName;
         ret = GetFunctionSignalName(direction, functionIdx, i, searchName);
         if (ret) {
-            found = (StringHelper::Compare(functionSignalName, searchName.Buffer()) == 0u);
+            found = (StringHelper::Compare(functionSignalName, searchName.Buffer()) == 0);
             functionSignalIdx = i;
         }
     }
@@ -476,9 +497,9 @@ bool DataSourceI::GetFunctionSignalIndex(SignalDirection direction,
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalNumberOfByteOffsets(SignalDirection direction,
-                                                       uint32 functionIdx,
-                                                       uint32 functionSignalIdx,
+bool DataSourceI::GetFunctionSignalNumberOfByteOffsets(const SignalDirection direction,
+                                                       const uint32 functionIdx,
+                                                       const uint32 functionSignalIdx,
                                                        uint32 &numberOfByteOffsets) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     AnyType byteOffset;
@@ -492,10 +513,10 @@ bool DataSourceI::GetFunctionSignalNumberOfByteOffsets(SignalDirection direction
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalByteOffsetInfo(SignalDirection direction,
-                                                  uint32 functionIdx,
-                                                  uint32 functionSignalIdx,
-                                                  uint32 byteOffsetIndex,
+bool DataSourceI::GetFunctionSignalByteOffsetInfo(const SignalDirection direction,
+                                                  const uint32 functionIdx,
+                                                  const uint32 functionSignalIdx,
+                                                  const uint32 byteOffsetIndex,
                                                   uint32 &byteOffsetStart,
                                                   uint32 &byteOffsetSize) {
     uint32 numberOfByteOffsets = 0u;
@@ -522,9 +543,9 @@ bool DataSourceI::GetFunctionSignalByteOffsetInfo(SignalDirection direction,
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalSamples(SignalDirection direction,
-                                           uint32 functionIdx,
-                                           uint32 functionSignalIdx,
+bool DataSourceI::GetFunctionSignalSamples(const SignalDirection direction,
+                                           const uint32 functionIdx,
+                                           const uint32 functionSignalIdx,
                                            uint32 &samples) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (!configuredDatabase.Read("Samples", samples)) {
@@ -533,20 +554,20 @@ bool DataSourceI::GetFunctionSignalSamples(SignalDirection direction,
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalReadFrequency(SignalDirection direction,
-                                                 uint32 functionIdx,
-                                                 uint32 functionSignalIdx,
+bool DataSourceI::GetFunctionSignalReadFrequency(const SignalDirection direction,
+                                                 const uint32 functionIdx,
+                                                 const uint32 functionSignalIdx,
                                                  float32 &frequency) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (!configuredDatabase.Read("Frequency", frequency)) {
-        frequency = -1.0;
+        frequency = -1.0F;
     }
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalGAMMemoryOffset(SignalDirection direction,
-                                                   uint32 functionIdx,
-                                                   uint32 functionSignalIdx,
+bool DataSourceI::GetFunctionSignalGAMMemoryOffset(const SignalDirection direction,
+                                                   const uint32 functionIdx,
+                                                   const uint32 functionSignalIdx,
                                                    uint32 &memoryOffset) {
 
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
@@ -556,10 +577,10 @@ bool DataSourceI::GetFunctionSignalGAMMemoryOffset(SignalDirection direction,
     return ret;
 }
 
-bool DataSourceI::IsSupportedBroker(SignalDirection direction,
-                                    uint32 functionIdx,
-                                    uint32 functionSignalIdx,
-                                    const char8* brokerClassName) {
+bool DataSourceI::IsSupportedBroker(const SignalDirection direction,
+                                    const uint32 functionIdx,
+                                    const uint32 functionSignalIdx,
+                                    const char8* const brokerClassName) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (ret) {
         StreamString broker;
@@ -577,16 +598,18 @@ bool DataSourceI::MoveToFunctionIndex(uint32 functionIdx) {
         ret = configuredDatabase.MoveRelative("Functions");
     }
     StreamString functionIdxStr;
-    functionIdxStr.Printf("%d", functionIdx);
+    if (ret) {
+        ret = functionIdxStr.Printf("%d", functionIdx);
+    }
     if (ret) {
         ret = configuredDatabase.MoveRelative(functionIdxStr.Buffer());
     }
     return ret;
 }
 
-bool DataSourceI::MoveToFunctionSignalIndex(SignalDirection direction,
-                                            uint32 functionIdx,
-                                            uint32 functionSignalIdx) {
+bool DataSourceI::MoveToFunctionSignalIndex(const SignalDirection direction,
+                                            const uint32 functionIdx,
+                                            const uint32 functionSignalIdx) {
     const char8 *signalDirection = "InputSignals";
     if (direction == OutputSignals) {
         signalDirection = "OutputSignals";
@@ -596,14 +619,16 @@ bool DataSourceI::MoveToFunctionSignalIndex(SignalDirection direction,
         ret = configuredDatabase.MoveRelative(signalDirection);
     }
     StreamString functionSignalIdxStr;
-    functionSignalIdxStr.Printf("%d", functionSignalIdx);
+    if (ret) {
+        ret = functionSignalIdxStr.Printf("%d", functionSignalIdx);
+    }
     if (ret) {
         ret = configuredDatabase.MoveRelative(functionSignalIdxStr.Buffer());
     }
     return ret;
 }
 
-bool DataSourceI::AddBrokers(SignalDirection direction) {
+bool DataSourceI::AddBrokers(const SignalDirection direction) {
     // Each ds has a Functions area
     // For each Function allocate memory
     // Search the signal and get the memory pointer for each signal linked it to the correct broker
@@ -627,7 +652,7 @@ bool DataSourceI::AddBrokers(SignalDirection direction) {
     bool ret = found;
 
     if (ret) {
-        configuredDatabase.MoveAbsolute("Functions");
+        ret = configuredDatabase.MoveAbsolute("Functions");
     }
     else {
         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No RealTimeApplication found for DataSourceI : %s", GetName())
@@ -661,6 +686,11 @@ bool DataSourceI::AddBrokers(SignalDirection direction) {
                         gamMemoryAddress = gam->GetOutputSignalsMemory();
                         relevant = true;
                     }
+                }
+                else {
+                    //There is no direction set
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No direction set when adding brokers to DataSourceI : %s", GetName())
+                    ret = false;
                 }
 
                 if (relevant) {
