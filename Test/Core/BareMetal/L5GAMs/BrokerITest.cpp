@@ -227,8 +227,6 @@ static bool InitialiseBrokerIEnviroment(const char8 * const config) {
         ok = application->ConfigureApplication();
     }
     return ok;
-
-    return application->ConfigureApplication();
 }
 
 static const char8 * const config1 = ""

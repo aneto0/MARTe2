@@ -1,7 +1,7 @@
 /**
- * @file MemoryMapStatefulOutputBroker.cpp
- * @brief Source file for class MemoryMapStatefulOutputBroker
- * @date 18/07/2016
+ * @file MemoryMapStatefulInputBrokerGTest.cpp
+ * @brief Source file for class MemoryMapStatefulInputBrokerGTest
+ * @date 30/07/2016
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,18 +17,21 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryMapStatefulOutputBroker (public, protected, and private). Be aware that some
+ * the class MemoryMapStatefulInputBrokerGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <limits.h>
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "MemoryMapStatefulOutputBroker.h"
+#include "MemoryMapStatefulInputBrokerTest.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -37,27 +40,54 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-MemoryMapStatefulOutputBroker::MemoryMapStatefulOutputBroker() {
 
+TEST(MemoryMapStatefulInputBrokerGTest,TestConstructor) {
+    MemoryMapStatefulInputBrokerTest test;
+    ASSERT_TRUE(test.TestConstructor());
 }
 
-MemoryMapStatefulOutputBroker::~MemoryMapStatefulOutputBroker() {
-
+TEST(MemoryMapStatefulInputBrokerGTest,TestExecute_0) {
+    MemoryMapStatefulInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_0());
 }
 
-bool MemoryMapStatefulOutputBroker::Execute() {
-    uint32 n;
-    bool ret = true;
-    char8 *dataSourceSignalPointer;
-    for (n = 0u; (n < numberOfCopies) && (ret); n++) {
-        dataSourceSignalPointer = reinterpret_cast<char8 *>(*(copyTable[n].dataSourcePointer[RealTimeApplication::index]));
-        dataSourceSignalPointer += copyTable[n].dataSourceOffset;
-        ret = MemoryOperationsHelper::Copy(dataSourceSignalPointer, copyTable[n].gamPointer, copyTable[n].copySize);
-    }
-    return true;
+TEST(MemoryMapStatefulInputBrokerGTest,TestExecute_1) {
+    MemoryMapStatefulInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_1());
 }
 
-CLASS_REGISTER(MemoryMapStatefulOutputBroker, "1.0")
+TEST(MemoryMapStatefulInputBrokerGTest,TestExecute_ChangeState) {
+    MemoryMapStatefulInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_ChangeState());
+}
+
+TEST(MemoryMapStatefulInputBrokerGTest,TestExecute_Ranges_0) {
+    MemoryMapStatefulInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Ranges_0());
+}
+
+TEST(MemoryMapStatefulInputBrokerGTest,TestExecute_Ranges_1) {
+    MemoryMapStatefulInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Ranges_1());
+}
+
+TEST(MemoryMapStatefulInputBrokerGTest,TestExecute_Ranges_ChangeState) {
+    MemoryMapStatefulInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Ranges_ChangeState());
+}
+
+TEST(MemoryMapStatefulInputBrokerGTest,TestExecute_Samples_0) {
+    MemoryMapStatefulInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Samples_0());
+}
+
+TEST(MemoryMapStatefulInputBrokerGTest,TestExecute_Samples_1) {
+    MemoryMapStatefulInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Samples_1());
+}
+
+TEST(MemoryMapStatefulInputBrokerGTest,TestExecute_Samples_ChangeState) {
+    MemoryMapStatefulInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Samples_ChangeState());
 }
 

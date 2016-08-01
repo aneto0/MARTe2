@@ -311,8 +311,6 @@ static bool InitialiseMemoryMapBrokerEnviroment(const char8 * const config) {
         ok = application->ConfigureApplication();
     }
     return ok;
-
-    return application->ConfigureApplication();
 }
 
 /**

@@ -402,8 +402,6 @@ static bool InitialiseMemoryMapStatefulBrokerEnviroment(const char8 * const conf
         ok = application->ConfigureApplication();
     }
     return ok;
-
-    return application->ConfigureApplication();
 }
 
 /**
