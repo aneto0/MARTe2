@@ -31,8 +31,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "DataSourceSignal.h"
-#include "GAMSignalI.h"
 #include "RealTimeApplication.h"
 #include "ReferenceContainer.h"
 #include "ExecutableI.h"
@@ -72,7 +70,6 @@ public:
      * @param[in] functionName the name of the to which this BrokerI is being allocated to.
      * @param[in] gamMemoryAddress the base address of the GAM memory (where signal data is stored).
      * @return true if all the copy information related to \a functionName can be successfully retrieved.
-     *
      */
     virtual bool Init(SignalDirection direction,
                       DataSourceI &dataSourceIn,
@@ -122,7 +119,7 @@ protected:
      * @brief Helper function which retrieves from the \a dataSource all the copy information related to the GAM.
      * @param[in] direction the signal direction (InputSignals or OutputSignals).
      * @param[in] dataSource the DataSourceI to be queried.
-     * @param[in] functionName the name of the to which this BrokerI is being allocated to.
+     * @param[in] functionName the name of the GAM  to which this BrokerI is being allocated to.
      * @param[in] gamMemoryAddress the base address of the GAM memory (where the GAM signal data is stored).
      * @return true if all the copy information related to \a functionName can be successfully retrieved.
      */

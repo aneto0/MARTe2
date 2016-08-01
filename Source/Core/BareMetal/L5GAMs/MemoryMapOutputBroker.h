@@ -39,21 +39,36 @@
 
 namespace MARTe {
 
-
-class MemoryMapOutputBroker: public MemoryMapBroker {
+/**
+ * @brief Output MemoryMapBroker implementation.
+ * @details This class copies all the signals declared on a MemoryMapBroker
+ * from the GAM memory to the DataSourceI memory.
+ */
+class DLL_API MemoryMapOutputBroker: public MemoryMapBroker {
 public:
-CLASS_REGISTER_DECLARATION()
+    CLASS_REGISTER_DECLARATION()
+    /**
+     * @brief Default constructor. NOOP.
+     */
     MemoryMapOutputBroker();
+
+    /**
+     * @brief Destructor. NOOP.
+     */
     virtual ~MemoryMapOutputBroker();
+
+    /**
+     * @brief Sequentially copies all the signals from the GAM memory to the DataSourceI memory.
+     * @return true if all copies are successfully performed.
+     */
     virtual bool Execute();
 };
 
 }
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* MEMORYMAPOUTPUTBROKER_H_ */
-	
+

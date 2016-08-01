@@ -164,7 +164,7 @@ public:
     bool ConfigureApplication();
 
     //TODO
-    bool ConfigureApplicationFromExternalSource(RealTimeApplicationConfigurationBuilder &configuration);
+    bool ConfigureApplication(ConfigurationDatabase &functionsDatabase, ConfigurationDatabase &dataDatabase);
 
 
     bool AllocateGAMMemory();
@@ -188,14 +188,14 @@ public:
 
 
       bool StartExecution();
-#if 0
+
     /**
      * @brief Configuration of the main application environment.
      * @details Propagates the configuration setup request to the States (RealTimeState.ConfigureArchitecture) and Scheduler entries (@see Initialise).
      * @return true if all the declared States and Scheduler elements are valid, false otherwise.
      */
     bool ConfigureArchitecture();
-
+#if 0
     /**
      * @brief Configuration of the data sources.
      * @details Generates the data source definitions from the RealTimeDataDef definitions in each GAM. If the

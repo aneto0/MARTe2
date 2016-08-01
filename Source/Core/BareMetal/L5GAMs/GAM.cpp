@@ -32,11 +32,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAM.h"
-#include "GAMSignalsContainer.h"
-#include "DataSourceContainer.h"
 #include "AdvancedErrorManagement.h"
-#include <BrokerI.h>
-#include <DataSourceI.h>
+#include "BrokerI.h"
+#include "DataSourceI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -51,46 +49,30 @@ GAM::GAM() :
         ExecutableI() {
     numberOfInputSignals = 0u;
     numberOfOutputSignals = 0u;
-    inputSignalsMemory = NULL_PTR(void **);
-    outputSignalsMemory = NULL_PTR(void **);
+    inputSignalsMemory = NULL_PTR(void *);
+    outputSignalsMemory = NULL_PTR(void *);
+    inputSignalsMemoryIndexer = NULL_PTR(void **);
+    outputSignalsMemoryIndexer = NULL_PTR(void **);
 
     heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
-#if 0
-    localData = NULL_PTR(StructuredDataI*);
-    numberOfSupportedStates = 0u;
-    supportedStates = NULL_PTR(StreamString *);
-    supportedThreads = NULL_PTR(StreamString *);
-    group = NULL_PTR(GAMGroup*);
-    application = NULL_PTR(RealTimeApplication *);
-    inputReaders = ReferenceT<BrokerContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    outputWriters = ReferenceT<BrokerContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-#endif
 }
 
 /*lint -e{1551} no exception should be thrown*/
 GAM::~GAM() {
-    if (inputSignalsMemory != NULL_PTR(void **)) {
+    if (inputSignalsMemory != NULL_PTR(void *)) {
         heap->Free(inputSignalsMemory);
     }
-    if (outputSignalsMemory != NULL_PTR(void **)) {
+    if (outputSignalsMemory != NULL_PTR(void *)) {
         heap->Free(outputSignalsMemory);
     }
-
-#if 0
-    if (supportedStates != NULL) {
-        delete[] supportedStates;
+    if (inputSignalsMemoryIndexer != NULL_PTR(void **)) {
+        delete[] inputSignalsMemoryIndexer;
     }
-
-    if (supportedThreads != NULL) {
-        delete[] supportedThreads;
+    if (outputSignalsMemoryIndexer != NULL_PTR(void **)) {
+        delete[] outputSignalsMemoryIndexer;
     }
-
-    application = NULL_PTR(RealTimeApplication *);
-    group = NULL_PTR(GAMGroup*);
-#endif
 }
 
-#include <stdio.h>
 bool GAM::Initialise(StructuredDataI & data) {
 
     bool ret = ReferenceContainer::Initialise(data);
@@ -114,39 +96,6 @@ bool GAM::Initialise(StructuredDataI & data) {
     if (ret) {
         ret = signalsDatabase.MoveToRoot();
     }
-#if 0
-    ret = inputReaders.IsValid();
-    if (ret) {
-        StreamString irName = GetName();
-        irName += "_InputReader";
-        inputReaders->SetName(irName.Buffer());
-        inputReaders->SetInput(true);
-    }
-
-    if (ret) {
-        ret = outputWriters.IsValid();
-        if (ret) {
-            StreamString owName = GetName();
-            owName += "_OutputWriter";
-            outputWriters->SetName(owName.Buffer());
-            outputWriters->SetInput(false);
-        }
-        else {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s does not have a valid input BrokerContainer", GetName())
-        }
-    }
-    else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s does not have a valid output BrokerContainer", GetName())
-    }
-
-    if (ret) {
-        // implemented in the derived classes
-        // get the local cdb
-        SetUp();
-        // merge definitions
-        ret = ConfigureFunction();
-    }
-#endif
     return ret;
 }
 
@@ -154,14 +103,13 @@ bool GAM::AddSignals(StructuredDataI &data) {
     return data.Write("Signals", signalsDatabase);
 }
 
-bool GAM::Finalise() {
-    return true;
-}
-
 bool GAM::AllocateInputSignalsMemory() {
     const char8* dirStr = "Signals.InputSignals";
     bool ret = configuredDatabase.MoveToRoot();
-    if (numberOfInputSignals > 0u) {
+    if (ret) {
+        ret = (inputSignalsMemory == NULL_PTR(void *));
+    }
+    if ((ret) && (numberOfInputSignals > 0u)) {
         ret = configuredDatabase.MoveRelative(dirStr);
         uint32 totalByteSize = 0u;
         if (ret) {
@@ -170,14 +118,45 @@ bool GAM::AllocateInputSignalsMemory() {
         if (ret) {
             inputSignalsMemory = heap->Malloc(totalByteSize);
         }
+        if (ret) {
+            inputSignalsMemoryIndexer = new void*[numberOfInputSignals];
+        }
+        uint32 i;
+        uint32 totalByteOffset = 0u;
+        char8 *inputSignalsMemoryChar = reinterpret_cast<char8 *>(inputSignalsMemory);
+        for (i = 0u; (i < numberOfInputSignals) && (ret); i++) {
+            inputSignalsMemoryIndexer[i] = reinterpret_cast<void *>(inputSignalsMemoryChar + totalByteOffset);
+
+            uint32 numberOfByteOffsets = 0u;
+            uint32 thisSignalByteOffset = 0u;
+            ret = GetSignalNumberOfByteOffsets(InputSignals, i, numberOfByteOffsets);
+            if (ret) {
+                ret = GetSignalByteSize(InputSignals, i, thisSignalByteOffset);
+
+                if (ret) {
+                    uint32 samples = 1u;
+                    if (GetSignalNumberOfSamples(InputSignals, i, samples)) {
+                        thisSignalByteOffset *= samples;
+                    }
+                }
+                if (ret) {
+                    totalByteOffset += thisSignalByteOffset;
+                }
+            }
+        }
+
     }
+
     return ret;
 }
 
 bool GAM::AllocateOutputSignalsMemory() {
     const char8* dirStr = "Signals.OutputSignals";
     bool ret = configuredDatabase.MoveToRoot();
-    if (numberOfOutputSignals > 0u) {
+    if (ret) {
+        ret = (outputSignalsMemory == NULL_PTR(void *));
+    }
+    if ((ret) && (numberOfOutputSignals > 0u)) {
         ret = configuredDatabase.MoveRelative(dirStr);
         uint32 totalByteSize = 0u;
         if (ret) {
@@ -186,16 +165,59 @@ bool GAM::AllocateOutputSignalsMemory() {
         if (ret) {
             outputSignalsMemory = heap->Malloc(totalByteSize);
         }
+        if (ret) {
+            outputSignalsMemoryIndexer = new void*[numberOfOutputSignals];
+            uint32 i;
+            uint32 totalByteOffset = 0u;
+            char8 *outputSignalsMemoryChar = reinterpret_cast<char8 *>(outputSignalsMemory);
+            for (i = 0u; (i < numberOfOutputSignals) && (ret); i++) {
+                outputSignalsMemoryIndexer[i] = reinterpret_cast<void *>(outputSignalsMemoryChar + totalByteOffset);
+
+                uint32 numberOfByteOffsets = 0u;
+                uint32 thisSignalByteOffset = 0u;
+                ret = GetSignalNumberOfByteOffsets(OutputSignals, i, numberOfByteOffsets);
+                if (ret) {
+                    ret = GetSignalByteSize(OutputSignals, i, thisSignalByteOffset);
+
+                    if (ret) {
+                        uint32 samples = 1u;
+                        if (GetSignalNumberOfSamples(OutputSignals, i, samples)) {
+                            thisSignalByteOffset *= samples;
+                        }
+                    }
+                    if (ret) {
+                        totalByteOffset += thisSignalByteOffset;
+                    }
+                }
+
+            }
+        }
     }
     return ret;
 }
 
-void *GAM::GetInputMemoryPointer() {
+void *GAM::GetInputSignalsMemory() {
     return inputSignalsMemory;
 }
 
-void *GAM::GetOutputMemoryPointer() {
+void *GAM::GetOutputSignalsMemory() {
     return outputSignalsMemory;
+}
+
+void *GAM::GetInputSignalMemory(uint32 signalIdx) {
+    void *ret = NULL_PTR(void *);
+    if (signalIdx < numberOfInputSignals) {
+        ret = inputSignalsMemoryIndexer[signalIdx];
+    }
+    return ret;
+}
+
+void *GAM::GetOutputSignalMemory(uint32 signalIdx) {
+    void *ret = NULL_PTR(void *);
+    if (signalIdx < numberOfOutputSignals) {
+        ret = outputSignalsMemoryIndexer[signalIdx];
+    }
+    return ret;
 }
 
 bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
@@ -204,10 +226,12 @@ bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
         ret = configuredDatabase.MoveToRoot();
     }
     if (configuredDatabase.MoveAbsolute("Signals.InputSignals")) {
-        numberOfInputSignals = configuredDatabase.GetNumberOfChildren();
+        //-1 to ignore the ByteSize field
+        numberOfInputSignals = (configuredDatabase.GetNumberOfChildren() - 1u);
     }
     if (configuredDatabase.MoveAbsolute("Signals.OutputSignals")) {
-        numberOfOutputSignals = configuredDatabase.GetNumberOfChildren();
+        //-1 to ignore the ByteSize field
+        numberOfOutputSignals = (configuredDatabase.GetNumberOfChildren() - 1u);
     }
 
     return ret;
@@ -297,14 +321,26 @@ bool GAM::GetSignalNumberOfDimensions(SignalDirection direction,
     return ret;
 }
 
-bool GAM::GetSignalNumberElements(SignalDirection direction,
-                                  uint32 signalIdx,
-                                  uint32 &numberOfElements) {
+bool GAM::GetSignalNumberOfElements(SignalDirection direction,
+                                    uint32 signalIdx,
+                                    uint32 &numberOfElements) {
     bool ret = MoveToSignalIndex(direction, signalIdx);
     if (ret) {
         ret = configuredDatabase.Read("NumberOfElements", numberOfElements);
     }
     return ret;
+}
+
+bool GAM::GetSignalDefaultValue(SignalDirection direction,
+                                uint32 signalIdx,
+                                const AnyType &defaultValue) {
+
+    bool ret = MoveToSignalIndex(direction, signalIdx);
+    if (ret) {
+        ret = configuredDatabase.Read("Default", defaultValue);
+    }
+    return ret;
+
 }
 
 bool GAM::GetSignalByteSize(SignalDirection direction,
@@ -323,12 +359,11 @@ bool GAM::GetSignalNumberOfByteOffsets(SignalDirection direction,
                                        uint32 &numberOfByteOffsets) {
     bool ret = MoveToSignalIndex(direction, signalIdx);
     AnyType byteOffset;
-    if (ret) {
-        byteOffset = configuredDatabase.GetType("ByteOffset");
-        ret = (byteOffset.GetDataPointer() != NULL_PTR(void *));
-    }
     numberOfByteOffsets = 0u;
     if (ret) {
+        byteOffset = configuredDatabase.GetType("ByteOffset");
+    }
+    if (byteOffset.GetDataPointer() != NULL_PTR(void *)) {
         numberOfByteOffsets = byteOffset.GetNumberOfElements(1u);
     }
     return ret;
@@ -369,12 +404,11 @@ bool GAM::GetSignalNumberOfRanges(SignalDirection direction,
                                   uint32 &numberOfRanges) {
     bool ret = MoveToSignalIndex(direction, signalIdx);
     AnyType ranges;
-    if (ret) {
-        ranges = configuredDatabase.GetType("Ranges");
-        ret = (ranges.GetDataPointer() != NULL_PTR(void *));
-    }
     numberOfRanges = 0u;
     if (ret) {
+        ranges = configuredDatabase.GetType("Ranges");
+    }
+    if (ranges.GetDataPointer() != NULL_PTR(void *)) {
         numberOfRanges = ranges.GetNumberOfElements(1u);
     }
     return ret;
@@ -409,20 +443,102 @@ bool GAM::GetSignalRangesInfo(SignalDirection direction,
     return ret;
 }
 
-bool GAM::GetSignalTimeCyclesInfo(SignalDirection direction,
-                                  uint32 signalIdx,
-                                  uint32 &timeCycles,
-                                  uint32 &timeSamples) {
+bool GAM::GetSignalNumberOfSamples(SignalDirection direction,
+                                   uint32 signalIdx,
+                                   uint32 &numberOfSamples) {
+    StreamString dataSourceName;
 
-    Vector<uint32> timeCyclesSamplesVec(2u);
-    bool ret = MoveToSignalIndex(direction, signalIdx);
-    if (configuredDatabase.Read("TimeCyclesSamples", timeCyclesSamplesVec)) {
-        timeCycles = timeCyclesSamplesVec[0u];
-        timeSamples = timeCyclesSamplesVec[1u];
+    bool ret = GetSignalDataSourceName(direction, signalIdx, dataSourceName);
+
+    if (ret) {
+        ret = configuredDatabase.MoveToRoot();
     }
-    else {
-        timeCycles = 1u;
-        timeSamples = 1u;
+    //This information is stored in the Memory node
+    const char8 * signalDirection = "Memory.InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "Memory.OutputSignals";
+    }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative(signalDirection);
+    }
+
+    uint32 n;
+    uint32 numberOfDataSources = configuredDatabase.GetNumberOfChildren();
+    bool found = false;
+    for (n = 0u; (n < numberOfDataSources) && (!found) && (ret); n++) {
+        //Move to the next DataSource
+        ret = configuredDatabase.MoveRelative(configuredDatabase.GetChildName(n));
+        StreamString thisDataSourceName;
+        if (ret) {
+            ret = configuredDatabase.Read("DataSource", thisDataSourceName);
+        }
+        if (ret) {
+            found = (thisDataSourceName == dataSourceName);
+            if (found) {
+                ret = configuredDatabase.MoveRelative("Signals");
+                if (ret) {
+                    StreamString signalIdxStr;
+                    signalIdxStr.Printf("%d", signalIdx);
+                    ret = configuredDatabase.MoveRelative(signalIdxStr.Buffer());
+                }
+                if (ret) {
+                    ret = configuredDatabase.Read("Samples", numberOfSamples);
+                }
+            }
+        }
+        if (ret) {
+            ret = configuredDatabase.MoveToAncestor(1u);
+        }
+    }
+    return ret;
+}
+
+bool GAM::GetSignalFrequency(SignalDirection direction,
+                             uint32 signalIdx,
+                             float32 &frequency) {
+    StreamString dataSourceName;
+
+    bool ret = GetSignalDataSourceName(direction, signalIdx, dataSourceName);
+
+    if (ret) {
+        ret = configuredDatabase.MoveToRoot();
+    }
+    //This information is stored in the Memory node
+    const char8 * signalDirection = "Memory.InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "Memory.OutputSignals";
+    }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative(signalDirection);
+    }
+
+    uint32 n;
+    uint32 numberOfDataSources = configuredDatabase.GetNumberOfChildren();
+    bool found = false;
+    for (n = 0u; (n < numberOfDataSources) && (!found) && (ret); n++) {
+        //Move to the next DataSource
+        ret = configuredDatabase.MoveRelative(configuredDatabase.GetChildName(n));
+        StreamString thisDataSourceName;
+        if (ret) {
+            ret = configuredDatabase.Read("DataSource", thisDataSourceName);
+        }
+        if (ret) {
+            found = (thisDataSourceName == dataSourceName);
+            if (found) {
+                ret = configuredDatabase.MoveRelative("Signals");
+                if (ret) {
+                    StreamString signalIdxStr;
+                    signalIdxStr.Printf("%d", signalIdx);
+                    ret = configuredDatabase.MoveRelative(signalIdxStr.Buffer());
+                }
+                if (ret) {
+                    ret = configuredDatabase.Read("Frequency", frequency);
+                }
+            }
+        }
+        if (ret) {
+            ret = configuredDatabase.MoveToAncestor(1u);
+        }
     }
     return ret;
 }
@@ -467,55 +583,4 @@ ReferenceContainer GAM::GetOutputBrokers() {
     return outputBrokers;
 }
 
-const void * GAM::GetInputSignalsBuffer() {
-    return inputSignalsMemory;
-}
-
-void * GAM::GetOutputSignalsBuffer() {
-    return outputSignalsMemory;
-}
-
-#if 0
-/*void GAM::SetUp() {
- // initialises the local status
- }*/
-
-/*
- virtual void Execute(){
- // execution routine
- */
-
-bool GAM::ConfigureFunction() {
-// use for each of them before RealTimeDataContainer::MergeWithLocal(localData)
-// and merge the result with the existing one
-    bool ret = true;
-    if (localData != NULL) {
-        uint32 numberOfElements = Size();
-        for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
-
-            ReferenceT<GAMSignalsContainer> def = Get(i);
-
-// must be all GAMSignalsContainer ??
-
-            if (def.IsValid()) {
-                StreamString defName = "+";
-                defName += def->GetName();
-                if (localData->MoveRelative(defName.Buffer())) {
-                    // the partial definitions after this must become complete
-                    ret = def->MergeWithLocal(*localData);
-                    if (ret) {
-                        ret = localData->MoveToAncestor(1u);
-                    }
-                }
-                if (ret) {
-                    // check if the definitions are meaningful
-                    ret = def->Verify();
-                }
-            }
-        }
-    }
-    return ret;
-}
-
-#endif
 }

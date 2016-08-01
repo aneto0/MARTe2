@@ -37,7 +37,6 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
 using namespace MARTe;
 
 class RealTimeApplicationConfigurationBuilderTest {
@@ -45,15 +44,23 @@ class RealTimeApplicationConfigurationBuilderTest {
 public:
     RealTimeApplicationConfigurationBuilderTest();
 
-    bool TestInitFromConfig();
+    //basic
+    bool TestInitialiseSignalsDatabase1(bool fromConfig);
 
-    bool TestResolveStatesFromConfig();
+    //nested datasources
+    bool TestInitialiseSignalsDatabase2(bool fromConfig);
 
-    bool TestInitialiseSignalsDatabase();
+    //flag to specify that is not a datasource
+    bool TestInitialiseSignalsDatabase_IgnoreDataSource();
 
-    bool TestInitialiseSignalsDatabase1();
+    //invalid application
+    bool TestInitialiseSignalsDatabaseFalse_InvalidApplication();
 
-    bool TestFlattenSignalsDatabases();
+    //invalid nested gams
+    bool TestInitialiseSignalsDatabaseFalse_InvalidNestedGAMs(bool fromConfig);
+
+    //gam with no IO signals
+    bool TestInitialiseSignalsDatabaseFalse_GAMsNoIO(bool fromConfig);
 
     //Basic
     bool TestFlattenSignalsDatabases1();
@@ -84,7 +91,6 @@ public:
 
     //Defaults in struct in ds
     bool TestFlattenSignalsDatabases_Defaults2();
-
 
     //dimensions>0 in struct
     bool TestFlattenSignalsDatabases_InvalidNDimensionsInStruct();
@@ -122,7 +128,6 @@ public:
     //Structures Remapping using namespace
     bool TestResolveDataSources_StructNamespaceMap();
 
-
     //Type mismatch
     bool TestResolveDataSourceFalse_TypeMismatch();
 
@@ -135,10 +140,8 @@ public:
     //NElements mismatch directly from ds
     bool TestResolveDataSourceFalse_NElementsMismatch1();
 
-
     //NDimensions mismatch
     bool TestResolveDataSourceFalse_NDimensionsMismatch();
-
 
     //NDimensions mismatch directly from ds
     bool TestResolveDataSourceFalse_NDimensionsMismatch1();
@@ -146,13 +149,11 @@ public:
     //Default mismatch
     bool TestResolveDataSourceFalse_DefaultMismatch();
 
-
     //Default mismatch directly from ds
     bool TestResolveDataSourceFalse_DefaultMismatch1();
 
     //Default mismatch with structures
     bool TestResolveDataSourceFalse_DefaultMismatch3();
-
 
     //assignment of a leaf on a node
     bool TestResolveDataSourcesSignalsFalse_LeafMappedOnNode();
@@ -224,28 +225,34 @@ public:
     bool TestVerifyFunctionSignalsFalse_FalseNoQualifiedName();
 
     //basic
-    bool TestResolveStates();
+    bool TestResolveStates(bool fromConfig);
+
+    //basic
+    bool TestResolveStatesFromConfig(bool fromConfig);
 
     //same gam in more states
-    bool TestResolveStates2();
+    bool TestResolveStates2(bool fromConfig);
 
     //gam groups
-    bool TestResolveStates_FunctionGroups();
+    bool TestResolveStates_FunctionGroups(bool fromConfig);
 
     //more threads per state
-    bool TestResolveStates_MoreThreads();
+    bool TestResolveStates_MoreThreads(bool fromConfig);
 
     //same gam in more than one thread in the same state
-    bool TestResolveStatesFalse_SameGAMInMoreThreads();
+    bool TestResolveStatesFalse_SameGAMInMoreThreads(bool fromConfig);
 
     //more than one sync point in a thread
-    bool TestResolveStatesFalse_MoreSyncs1();
+    bool TestResolveStatesFalse_MoreSyncs1(bool fromConfig);
 
     //more than one sync point in a thread
-    bool TestResolveStatesFalse_MoreSyncs2();
+    bool TestResolveStatesFalse_MoreSyncs2(bool fromConfig);
 
     //more than one sync point in a thread
-    bool TestResolveStatesFalse_MoreSyncs3();
+    bool TestResolveStatesFalse_MoreSyncs3(bool fromConfig);
+
+    //invalid application
+    bool TestResolveStatesFalse_InvalidApplication();
 
     //basic
     bool TestVerifyStates();
@@ -279,7 +286,6 @@ public:
 
     //ranges overlap but in input
     bool TestVerifyConsumersAndProducers_Ranges3();
-
 
     //more than one producer
     bool TestVerifyConsumersAndProducersFalse_MoreProducers();
@@ -317,6 +323,10 @@ public:
     //interleaved ds
     bool TestResolveFunctionsMemory_InterleavedDs();
 
+    //samples and blocks
+    bool TestResolveFunctionsMemory_SamplesAndBlocks();
+
+
     //Samples =0
     bool TestResolveFunctionsMemoryFalse_InvalidSamples();
 
@@ -329,12 +339,37 @@ public:
     //basic
     bool TestAssignBrokersToFunctions();
 
+    //unregistered ds if initialised from config
+    bool TestAssignBrokersToFunctionsFalse_UnregisteredDataSource();
+
     //unsupported broker
     bool TestAssignBrokersToFunctionsFalse_UnsupportedBroker();
 
+    //invalid application
+    bool TestAssignBrokersToFunctionsFalse_InvalidApplication();
+
+    bool TestSet();
+
+    bool TestCopy();
+
+    //basic
+    bool TestPostConfigureDataSource();
+
+    //invalid data source
+    bool TestPostConfigureDataSourceFalse_InvalidDataSource();
+
+    //basic
+    bool TestPostConfigureFunctions();
+
+    //invalid GAM
+    bool TestPostConfigureFunctionsFalse_InvalidDataSource();
+
+
+    bool TestConfigureAfterInitialisation();
+
+    bool TestConfigureBeforeInitialisation();
 
 };
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

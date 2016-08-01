@@ -107,9 +107,9 @@ bool GAM1::Execute() {
     uint32 numberOfOutputSignals = GetNumberOfOutputSignals();
     printf("Inputs %d\n", numberOfInputSignals);
     printf("Outputs %d\n", numberOfOutputSignals);
-    uint32 *inputBuffer = (uint32 *) GetInputSignalsBuffer();
+    uint32 *inputBuffer = (uint32 *) GetInputSignalsMemory();
 
-    uint32 *outputBuffer = (uint32 *) GetOutputSignalsBuffer();
+    uint32 *outputBuffer = (uint32 *) GetOutputSignalsMemory();
 
     outputBuffer[0] = inputBuffer[0] + inputBuffer[1];
     printf("  %d + %d = %d\n", inputBuffer[0], inputBuffer[1], outputBuffer[0]);

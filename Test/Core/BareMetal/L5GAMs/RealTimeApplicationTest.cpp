@@ -37,7 +37,6 @@
 #include "RealTimeThread.h"
 #include "ObjectRegistryDatabase.h"
 #include "GAMTestHelper.h"
-#include "GAMGenericSignal.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

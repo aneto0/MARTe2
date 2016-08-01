@@ -77,6 +77,8 @@ public:
 
     bool TestGetSignalDefaultValue();
 
+    bool TestGetSignalDefaultValueType();
+
     bool TestGetNumberOfFunctions();
 
     bool TestGetFunctionName();

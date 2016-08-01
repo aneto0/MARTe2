@@ -72,7 +72,7 @@ bool GAMGroup::Initialise(StructuredDataI &data) {
 
     if (ret) {
         // Setup the context
-        SetUp();
+        //SetUp();
     }
     return ret;
 }

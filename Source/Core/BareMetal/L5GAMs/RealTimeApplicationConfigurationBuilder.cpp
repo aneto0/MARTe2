@@ -37,10 +37,13 @@
 #include "RealTimeThread.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceContainerFilterReferencesTemplate.h"
+#include "StandardParser.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+//TODO discuss with GF. Do we allow matrix default values or not? It will be a mess and we will have to trust the user on the Default signal correct dimensions...
 
 namespace MARTe {
 
@@ -259,10 +262,10 @@ static uint32 GetNumberOfSyncSignals(ConfigurationDatabase &functionsDatabase,
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder(ReferenceT<ReferenceContainer> realTimeApplicationIn,
+RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder(RealTimeApplication & realTimeApplicationIn,
                                                                                  const char8 *defaultDataSourceNameIn) {
     defaultDataSourceName = defaultDataSourceNameIn;
-    realTimeApplication = realTimeApplicationIn;
+    realTimeApplication = &realTimeApplicationIn;
 }
 
 RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder(ConfigurationDatabase &globalDatabaseIn,
@@ -270,12 +273,100 @@ RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder
     defaultDataSourceName = defaultDataSourceNameIn;
     globalDatabaseIn.Copy(globalDatabase);
     globalDatabase.MoveToRoot();
+    realTimeApplication = NULL_PTR(RealTimeApplication*);
+}
+
+bool RealTimeApplicationConfigurationBuilder::ConfigureAfterInitialisation() {
+
+    bool ret = InitialiseSignalsDatabase();
+    if (ret) {
+    }
+    if (ret) {
+        ret = FlattenSignalsDatabases();
+    }
+    if (ret) {
+        ret = ResolveDataSources();
+    }
+    if (ret) {
+        ret = VerifyDataSourcesSignals();
+    }
+    if (ret) {
+        ret = ResolveFunctionSignals();
+    }
+    if (ret) {
+        ret = VerifyFunctionSignals();
+    }
+    if (ret) {
+        ret = ResolveStates();
+    }
+    if (ret) {
+        ret = ResolveConsumersAndProducers();
+    }
+    if (ret) {
+        ret = VerifyConsumersAndProducers();
+    }
+    if (ret) {
+        ret = ResolveFunctionSignalsMemorySize();
+    }
+    if (ret) {
+        ret = ResolveFunctionsMemory();
+    }
+    if (ret) {
+        ret = AssignFunctionsMemoryToDataSource();
+    }
+    if (ret) {
+        ret = AssignBrokersToFunctions();
+    }
+    return ret;
+}
+
+bool RealTimeApplicationConfigurationBuilder::ConfigureBeforeInitialisation() {
+
+    bool ret = InitialiseSignalsDatabaseFromConfiguration();
+    if (ret) {
+    }
+    if (ret) {
+        ret = FlattenSignalsDatabases();
+    }
+    if (ret) {
+        ret = ResolveDataSources();
+    }
+    if (ret) {
+        ret = VerifyDataSourcesSignals();
+    }
+    if (ret) {
+        ret = ResolveFunctionSignals();
+    }
+    if (ret) {
+        ret = VerifyFunctionSignals();
+    }
+    if (ret) {
+        ret = ResolveStatesFromConfiguration();
+    }
+    if (ret) {
+        ret = ResolveConsumersAndProducers();
+    }
+    if (ret) {
+        ret = VerifyConsumersAndProducers();
+    }
+    if (ret) {
+        ret = ResolveFunctionSignalsMemorySize();
+    }
+    if (ret) {
+        ret = ResolveFunctionsMemory();
+    }
+    if (ret) {
+        ret = AssignFunctionsMemoryToDataSource();
+    }
+    return ret;
+
 }
 
 static bool SearchGAMs(ConfigurationDatabase &inputDatabase,
                        ConfigurationDatabase &outputDatabase,
                        StreamString & fullPath,
-                       uint32 &index) {
+                       uint32 &index,
+                       bool found) {
 
     bool ret = true;
     StreamString className;
@@ -284,20 +375,43 @@ static bool SearchGAMs(ConfigurationDatabase &inputDatabase,
         isGam = className.Size() > 0u;
     }
     if (isGam) {
+        isGam = (className != "ReferenceContainer");
+    }
+    if (isGam) {
+        StreamString notGAM;
+        if (inputDatabase.Read("NotGAM", notGAM)) {
+            isGam = (notGAM != "true");
+        }
+    }
+    if (isGam) {
         isGam = inputDatabase.MoveRelative("InputSignals");
         if (!isGam) {
             isGam = inputDatabase.MoveRelative("OutputSignals");
+            if (!isGam) {
+                ret=false;
+                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Specified GAM %s with no input nor output", fullPath.Buffer())
+            }
         }
     }
     if (isGam) {
         isGam = inputDatabase.MoveToAncestor(1u);
     }
     if (isGam) {
+
+        if (found) {
+            ret = false;
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Unsupported nested GAMs in path %s", fullPath.Buffer())
+        }
+        else {
+            found = true;
+        }
         printf("\nfound GAM %s\n", fullPath.Buffer());
         if (fullPath.Size() > 0u) {
             StreamString functionN;
             functionN.Printf("%d", index);
-            ret = outputDatabase.CreateRelative(functionN.Buffer());
+            if (ret) {
+                ret = outputDatabase.CreateRelative(functionN.Buffer());
+            }
             if (ret) {
                 outputDatabase.Write("QualifiedName", fullPath.Buffer());
             }
@@ -338,33 +452,33 @@ static bool SearchGAMs(ConfigurationDatabase &inputDatabase,
             }
             index++;
         }
+
     }
-    else {
-        uint32 numberOfFunctions = inputDatabase.GetNumberOfChildren();
+    //don't go deep
+    uint32 numberOfFunctions = inputDatabase.GetNumberOfChildren();
 
-        for (uint32 i = 0u; i < numberOfFunctions && ret; i++) {
-            const char8 *nodeName = inputDatabase.GetChildName(i);
+    for (uint32 i = 0u; i < numberOfFunctions && ret; i++) {
+        const char8 *nodeName = inputDatabase.GetChildName(i);
 
-            if (inputDatabase.MoveRelative(nodeName)) {
-                if (nodeName[0] == '+' || nodeName[0] == '$') {
-                    nodeName = &nodeName[1];
-                }
-                StreamString currentStep = fullPath;
-                if (currentStep.Size() > 0u) {
-                    currentStep += ".";
-                }
-                currentStep += nodeName;
-
-                // don't search gams into gams
-
-                ret = SearchGAMs(inputDatabase, outputDatabase, currentStep, index);
-
-                if (ret) {
-                    ret = inputDatabase.MoveToAncestor(1u);
-                }
+        if (inputDatabase.MoveRelative(nodeName)) {
+            if (nodeName[0] == '+' || nodeName[0] == '$') {
+                nodeName = &nodeName[1];
             }
+            StreamString currentStep = fullPath;
+            if (currentStep.Size() > 0u) {
+                currentStep += ".";
+            }
+            currentStep += nodeName;
 
+            // don't search gams into gams
+
+            ret = SearchGAMs(inputDatabase, outputDatabase, currentStep, index, found);
+
+            if (ret) {
+                ret = inputDatabase.MoveToAncestor(1u);
+            }
         }
+
     }
     printf("\nisGam %d\n", isGam);
 
@@ -381,6 +495,15 @@ static bool SearchDataSources(ConfigurationDatabase &inputDatabase,
     bool isDataSource = inputDatabase.Read("Class", className) && (fullPath.Size() > 0u);
     if (isDataSource) {
         isDataSource = (className.Size() > 0u);
+    }
+    if (isDataSource) {
+        isDataSource = (className != "ReferenceContainer");
+    }
+    if (isDataSource) {
+        StreamString notDataSource;
+        if (inputDatabase.Read("NotDataSource", notDataSource)) {
+            isDataSource = (notDataSource != "true");
+        }
     }
     if (isDataSource) {
         StreamString functionN;
@@ -414,51 +537,59 @@ static bool SearchDataSources(ConfigurationDatabase &inputDatabase,
         }
         index++;
     }
-    else {
+    // go deep
 
-        uint32 numberOfFunctions = inputDatabase.GetNumberOfChildren();
+    uint32 numberOfFunctions = inputDatabase.GetNumberOfChildren();
 
-        for (uint32 i = 0u; i < numberOfFunctions && ret; i++) {
+    for (uint32 i = 0u; i < numberOfFunctions && ret; i++) {
 
-            const char8 *nodeName = inputDatabase.GetChildName(i);
-            if (inputDatabase.MoveRelative(nodeName)) {
-                if (nodeName[0] == '+' || nodeName[0] == '$') {
-                    nodeName = &nodeName[1];
-                }
-
-                StreamString currentStep = fullPath;
-                if (currentStep.Size() > 0u) {
-                    currentStep += ".";
-                }
-                currentStep += nodeName;
-
-                // don't search ds into ds
-
-                ret = SearchDataSources(inputDatabase, outputDatabase, currentStep, index);
-
-                if (ret) {
-                    ret = inputDatabase.MoveToAncestor(1u);
-                }
+        const char8 *nodeName = inputDatabase.GetChildName(i);
+        if (inputDatabase.MoveRelative(nodeName)) {
+            if (nodeName[0] == '+' || nodeName[0] == '$') {
+                nodeName = &nodeName[1];
             }
 
+            StreamString currentStep = fullPath;
+            if (currentStep.Size() > 0u) {
+                currentStep += ".";
+            }
+            currentStep += nodeName;
+
+            // don't search ds into ds
+
+            ret = SearchDataSources(inputDatabase, outputDatabase, currentStep, index);
+
+            if (ret) {
+                ret = inputDatabase.MoveToAncestor(1u);
+            }
         }
+
     }
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabaseFromConfig() {
+bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabaseFromConfiguration() {
     StreamString path = "";
     uint32 index = 0u;
     bool ret = functionsDatabase.CreateAbsolute("Functions");
-    globalDatabase.MoveAbsolute("+Functions");
     if (ret) {
-        //the global database must point to the application to be configured
-        ret = SearchGAMs(globalDatabase, functionsDatabase, path, index);
+        ret = globalDatabase.MoveAbsolute("+Functions");
+        if (!ret) {
+            ret = globalDatabase.MoveAbsolute("$Functions");
+        }
     }
     if (ret) {
-        globalDatabase.MoveAbsolute("+Data");
-
-        ret = dataSourcesDatabase.CreateAbsolute("Data");
+        //the global database must point to the application to be configured
+        ret = SearchGAMs(globalDatabase, functionsDatabase, path, index, false);
+    }
+    if (ret) {
+        ret = globalDatabase.MoveAbsolute("+Data");
+        if (!ret) {
+            ret = globalDatabase.MoveAbsolute("$Data");
+        }
+        if (ret) {
+            ret = dataSourcesDatabase.CreateAbsolute("Data");
+        }
     }
     if (ret) {
         path = "";
@@ -481,111 +612,141 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabaseFromConfi
 //-QualifiedName is the name of the GAM path beginning from "Functions" or the name of the DataSource beginning from "Data"
 //-The name of each GAM and of each DS node is an incremental id number
 bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
-    //Create the Functions master node
-    bool ret = functionsDatabase.CreateAbsolute("Functions");
+    bool ret = (realTimeApplication != NULL);
     if (ret) {
-        ReferenceContainer gamsFound;
-        //Look for all the GAMs inside the RealTimeApplication
-        ReferenceContainerFilterReferencesTemplate<GAM> gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+        //Create the Functions master node
+        ret = functionsDatabase.CreateAbsolute("Functions");
+        if (ret) {
+            ReferenceContainer gamsFound;
+            //Look for all the GAMs inside the RealTimeApplication
+            ReferenceContainerFilterReferencesTemplate < GAM > gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
 
-        realTimeApplication->Find(gamsFound, gamFilter);
-        uint32 numberOfGAMs = gamsFound.Size();
-        for (uint32 i = 0; (i < numberOfGAMs) && (ret); i++) {
-            // build the GAM qualified name searching each GAM by path
-            ReferenceT<GAM> gam = gamsFound.Get(i);
-            StreamString qualifiedName = "";
-            ReferenceContainerFilterReferences qualifiedNameFilter(1, ReferenceContainerFilterMode::PATH, gam);
-            ReferenceContainer result;
-            realTimeApplication->Find(result, qualifiedNameFilter);
-            //Store the fully qualified name (Functions in the sub-levels of the tree might have the same name)
-            uint32 r;
-            uint32 pathLength = result.Size();
-            //r == 0 => Functions
-            for (r = 1u; (r < pathLength); r++) {
-                StreamString name = result.Get(r)->GetName();
-                if (r > 1u) {
-                    qualifiedName.Printf(".", voidAnyType);
+            realTimeApplication->Find(gamsFound, gamFilter);
+            uint32 numberOfGAMs = gamsFound.Size();
+            for (uint32 i = 0; (i < numberOfGAMs) && (ret); i++) {
+                // build the GAM qualified name searching each GAM by path
+                ReferenceT < GAM > gam = gamsFound.Get(i);
+                StreamString qualifiedName = "";
+                ReferenceContainerFilterReferences qualifiedNameFilter(1, ReferenceContainerFilterMode::PATH, gam);
+                ReferenceContainer result;
+                realTimeApplication->Find(result, qualifiedNameFilter);
+                //Store the fully qualified name (Functions in the sub-levels of the tree might have the same name)
+                uint32 r;
+                uint32 pathLength = result.Size();
+                //r == 0 => Functions
+                for (r = 1u; (r < pathLength) && ret; r++) {
+                    Reference element=result.Get(r);
+                    ReferenceT<GAM> gam = element;
+                    if(gam.IsValid()) {
+                        ret=(r==(pathLength-1u));
+                        if(!ret) {
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Unsupported nested GAMs in path %s", qualifiedName.Buffer())
+                        }
+                    }
+                    StreamString name = element->GetName();
+                    if (r > 1u) {
+                        qualifiedName.Printf(".", voidAnyType);
+                    }
+                    qualifiedName.Printf("%s", name.Buffer());
                 }
-                qualifiedName.Printf("%s", name.Buffer());
-            }
-            //Having the fully qualified name add a new node to the Function node, where the name of the node is the index of the
-            //Function (GAM) and the fully qualified name is stored as a property.
-            StreamString functionN;
-            functionN.Printf("%d", i);
-            ret = functionsDatabase.CreateRelative(functionN.Buffer());
-            if (ret) {
-                functionsDatabase.Write("QualifiedName", qualifiedName.Buffer());
-            }
-            if (ret) {
-                //Declare all the signals with which this GAM interacts
-                ret = gam->AddSignals(functionsDatabase);
-            }
-            if (ret) {
-                //Move to the next GAM
-                ret = functionsDatabase.MoveToAncestor(1);
-            }
-            else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Failed to AddSignals for %s", gam->GetName())
+                //Having the fully qualified name add a new node to the Function node, where the name of the node is the index of the
+                //Function (GAM) and the fully qualified name is stored as a property.
+                StreamString functionN;
+                functionN.Printf("%d", i);
+                if(ret) {
+                    ret = functionsDatabase.CreateRelative(functionN.Buffer());
+                }
+                if (ret) {
+                    functionsDatabase.Write("QualifiedName", qualifiedName.Buffer());
+                }
+                if (ret) {
+                    //Declare all the signals with which this GAM interacts
+                    ret = gam->AddSignals(functionsDatabase);
+                    if(ret) {
+                        ret=functionsDatabase.MoveRelative("Signals");
+                        if(ret) {
+                            if(!functionsDatabase.MoveRelative("InputSignals")) {
+                                ret=functionsDatabase.MoveRelative("OutputSignals");
+                                if(!ret) {
+                                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Specified GAM %s with no input nor output", qualifiedName.Buffer())
+                                }
+                            }
+                        }
+                        if(ret) {
+                            ret=functionsDatabase.MoveToAncestor(2u);
+                        }
+                    }
+                }
+                if (ret) {
+                    //Move to the next GAM
+                    ret = functionsDatabase.MoveToAncestor(1);
+                }
+                else {
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Failed to AddSignals for %s", gam->GetName())
+                }
             }
         }
-    }
 
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    //Create the Data master node.
-    if (ret) {
-        ret = dataSourcesDatabase.CreateAbsolute("Data");
-    }
-    if (ret) {
-        ReferenceContainer dataSourcesFound;
-        //Look for all the DataSources
-        ReferenceContainerFilterReferencesTemplate<DataSourceI> dataSourceFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+        if (ret) {
+            ret = functionsDatabase.MoveToRoot();
+        }
+        //Create the Data master node.
+        if (ret) {
+            ret = dataSourcesDatabase.CreateAbsolute("Data");
+        }
+        if (ret) {
+            ReferenceContainer dataSourcesFound;
+            //Look for all the DataSources
+            ReferenceContainerFilterReferencesTemplate < DataSourceI > dataSourceFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
 
-        realTimeApplication->Find(dataSourcesFound, dataSourceFilter);
-        uint32 numberOfDataSources = dataSourcesFound.Size();
-        uint32 i = 0;
-        for (i = 0; (i < numberOfDataSources) && (ret); i++) {
-            ReferenceT<DataSourceI> dataSource = dataSourcesFound.Get(i);
-            StreamString qualifiedName = "";
-            ReferenceContainerFilterReferences qualifiedNameFilter(1, ReferenceContainerFilterMode::PATH, dataSource);
-            ReferenceContainer result;
-            realTimeApplication->Find(result, qualifiedNameFilter);
-            //Store the fully qualified name (DataSources in sub-levels of the tree might have the same name)
-            uint32 r;
-            uint32 pathLength = result.Size();
-            for (r = 1u; (r < pathLength); r++) {
-                StreamString name = result.Get(r)->GetName();
-                if (r > 1u) {
-                    qualifiedName.Printf(".", voidAnyType);
+            realTimeApplication->Find(dataSourcesFound, dataSourceFilter);
+            uint32 numberOfDataSources = dataSourcesFound.Size();
+            uint32 i = 0;
+            for (i = 0; (i < numberOfDataSources) && (ret); i++) {
+                ReferenceT < DataSourceI > dataSource = dataSourcesFound.Get(i);
+                StreamString qualifiedName = "";
+                ReferenceContainerFilterReferences qualifiedNameFilter(1, ReferenceContainerFilterMode::PATH, dataSource);
+                ReferenceContainer result;
+                realTimeApplication->Find(result, qualifiedNameFilter);
+                //Store the fully qualified name (DataSources in sub-levels of the tree might have the same name)
+                uint32 r;
+                uint32 pathLength = result.Size();
+                for (r = 1u; (r < pathLength); r++) {
+                    StreamString name = result.Get(r)->GetName();
+                    if (r > 1u) {
+                        qualifiedName.Printf(".", voidAnyType);
+                    }
+                    qualifiedName.Printf("%s", name.Buffer());
                 }
-                qualifiedName.Printf("%s", name.Buffer());
-            }
-            //Having the fully qualified name add a new node to the Data node, where the name of the node is the index of the
-            //DataSource and the fully qualified name is stored as a property.
-            StreamString dataSourceN;
-            dataSourceN.Printf("%d", i);
-            if (ret) {
-                ret = dataSourcesDatabase.CreateRelative(dataSourceN.Buffer());
-            }
-            if (ret) {
-                dataSourcesDatabase.Write("QualifiedName", qualifiedName.Buffer());
-            }
-            if (ret) {
-                //Declare all the signals with which this GAM interacts
-                ret = dataSource->AddSignals(dataSourcesDatabase);
-            }
-            if (ret) {
-                //Move to the next DataSource
-                ret = dataSourcesDatabase.MoveToAncestor(1);
-            }
-            else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Failed to AddSignals for %s", dataSource->GetName())
+                //Having the fully qualified name add a new node to the Data node, where the name of the node is the index of the
+                //DataSource and the fully qualified name is stored as a property.
+                StreamString dataSourceN;
+                dataSourceN.Printf("%d", i);
+                if (ret) {
+                    ret = dataSourcesDatabase.CreateRelative(dataSourceN.Buffer());
+                }
+                if (ret) {
+                    dataSourcesDatabase.Write("QualifiedName", qualifiedName.Buffer());
+                }
+                if (ret) {
+                    //Declare all the signals with which this GAM interacts
+                    ret = dataSource->AddSignals(dataSourcesDatabase);
+                }
+                if (ret) {
+                    //Move to the next DataSource
+                    ret = dataSourcesDatabase.MoveToAncestor(1);
+                }
+                else {
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Failed to AddSignals for %s", dataSource->GetName())
+                }
             }
         }
+        if (ret) {
+            ret = dataSourcesDatabase.MoveToRoot();
+        }
     }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
+    else {
+        REPORT_ERROR(ErrorManagement::InitialisationError, "Invalid RealTimeApplication set");
     }
 
     return ret;
@@ -1827,117 +1988,123 @@ bool RealTimeApplicationConfigurationBuilder::VerifyFunctionSignals(SignalDirect
 
 bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
 
-    bool ret = true;
-    ReferenceContainer statesFound;
+    bool ret = realTimeApplication != NULL;
+    if(ret) {
+        ReferenceContainer statesFound;
 //Look for all the RealTimeStates
-    ReferenceContainerFilterReferencesTemplate<RealTimeState> stateFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+        ReferenceContainerFilterReferencesTemplate < RealTimeState > stateFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
 
-    realTimeApplication->Find(statesFound, stateFilter);
-    uint32 numberOfStates = statesFound.Size();
+        realTimeApplication->Find(statesFound, stateFilter);
+        uint32 numberOfStates = statesFound.Size();
 //Loop on each state...
-    for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-        ReferenceT<RealTimeState> state = statesFound.Get(i);
-        const char8 * stateName = state->GetName();
-        //Look for a ReferenceContainer named Threads
-        uint32 j;
-        bool found = false;
-        ReferenceT<ReferenceContainer> threadContainer;
-        for (j = 0; (j < realTimeApplication->Size()) && (!found); j++) {
-            threadContainer = state->Get(j);
-            if (threadContainer.IsValid()) {
-                found = (StringHelper::Compare("Threads", threadContainer->GetName()) == 0u);
+        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+            ReferenceT < RealTimeState > state = statesFound.Get(i);
+            const char8 * stateName = state->GetName();
+            //Look for a ReferenceContainer named Threads
+            uint32 j;
+            bool found = false;
+            ReferenceT < ReferenceContainer > threadContainer;
+            for (j = 0; (j < realTimeApplication->Size()) && (!found); j++) {
+                threadContainer = state->Get(j);
+                if (threadContainer.IsValid()) {
+                    found = (StringHelper::Compare("Threads", threadContainer->GetName()) == 0u);
+                }
             }
-        }
-        ret = found;
-        if (ret) {
-            uint32 numberOfThreads = threadContainer->Size();
-            //...get the threads which belong to this state...
-            for (j = 0; (j < numberOfThreads) && (ret); j++) {
-                uint32 syncSignals = 0u;
-                ReferenceT<RealTimeThread> thread = threadContainer->Get(j);
-                ret = thread.IsValid();
-                if (ret) {
-                    ret = thread->ConfigureArchitecture();
-                }
-                else {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Found an invalid RealTimeThread in RealTimeState %s", stateName)
-                }
-                if (ret) {
-                    const char8 * threadName = thread->GetName();
-                    ReferenceT<GAM> *gams = thread->GetGAMs();
-                    uint32 numberOfGAMs = thread->GetNumberOfGAMs();
-                    uint32 z;
-                    //...get the GAMs that are executed by this thread....
-                    for (z = 0; (z < numberOfGAMs) && (ret); z++) {
-                        ReferenceT<GAM> gam = gams[z];
-                        StreamString qualifiedName = "";
-                        ReferenceContainerFilterReferences qualifiedNameFilter(1, ReferenceContainerFilterMode::PATH, gam);
-                        ReferenceContainer result;
-                        realTimeApplication->Find(result, qualifiedNameFilter);
-                        //Store the fully qualified name (Functions in the sub-levels of the tree might have the same name)
-                        uint32 r;
-                        uint32 pathLength = result.Size();
-                        //r == 0 => Functions
-                        for (r = 1u; (r < pathLength); r++) {
-                            StreamString name = result.Get(r)->GetName();
-                            if (r > 1u) {
-                                qualifiedName.Printf(".", voidAnyType);
-                            }
-                            qualifiedName.Printf("%s", name.Buffer());
-                        }
-                        StreamString functionNumber;
-                        //Look for the FunctionNumber which has this qualified name
-                        ret = FindFunctionNumber(qualifiedName, functionNumber);
-                        if (ret) {
-                            ret = functionsDatabase.MoveAbsolute("Functions");
-                        }
-                        if (ret) {
-                            ret = functionsDatabase.MoveRelative(functionNumber.Buffer());
-                        }
-                        if (ret) {
-                            syncSignals += GetNumberOfSyncSignals(functionsDatabase, "Signals.InputSignals", ret);
-                            if (ret) {
-                                syncSignals += GetNumberOfSyncSignals(functionsDatabase, "Signals.OutputSignals", ret);
-                            }
-                        }
-                        if (ret) {
-                            if (!functionsDatabase.MoveRelative("States")) {
-                                ret = functionsDatabase.CreateRelative("States");
-                            }
-                        }
-                        if (ret) {
-                            // the same gam cannot be declared in two different threads!!
-                            ret = (functionsDatabase.GetType(stateName).IsVoid());
-                            if (ret) {
-                                ret = functionsDatabase.Write(stateName, threadName);
-                            }
-                            else {
-                                StreamString gamName;
-                                if (functionsDatabase.MoveToAncestor(1u)) {
-                                    if (!functionsDatabase.Read("QualifiedName", gamName)) {
-                                        gamName = "UnknownGAM";
-                                    }
-                                }
-                                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "The GAM %s is declared in more than one thread in %s",
-                                                        gamName.Buffer(), stateName)
-                            }
-                        }
+            ret = found;
+            if (ret) {
+                uint32 numberOfThreads = threadContainer->Size();
+                //...get the threads which belong to this state...
+                for (j = 0; (j < numberOfThreads) && (ret); j++) {
+                    uint32 syncSignals = 0u;
+                    ReferenceT < RealTimeThread > thread = threadContainer->Get(j);
+                    ret = thread.IsValid();
+                    if (ret) {
+                        ret = thread->ConfigureArchitecture();
+                    }
+                    else {
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Found an invalid RealTimeThread in RealTimeState %s", stateName)
                     }
                     if (ret) {
-                        //TODO Always a synchronisation point???
-                        ret = (syncSignals <= 1u);
-                        if (!ret) {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "More than one synchronising signal found in %s.%s", stateName,
-                                                    threadName)
+                        const char8 * threadName = thread->GetName();
+                        ReferenceT < GAM > *gams = thread->GetGAMs();
+                        uint32 numberOfGAMs = thread->GetNumberOfGAMs();
+                        uint32 z;
+                        //...get the GAMs that are executed by this thread....
+                        for (z = 0; (z < numberOfGAMs) && (ret); z++) {
+                            ReferenceT < GAM > gam = gams[z];
+                            StreamString qualifiedName = "";
+                            ReferenceContainerFilterReferences qualifiedNameFilter(1, ReferenceContainerFilterMode::PATH, gam);
+                            ReferenceContainer result;
+                            realTimeApplication->Find(result, qualifiedNameFilter);
+                            //Store the fully qualified name (Functions in the sub-levels of the tree might have the same name)
+                            uint32 r;
+                            uint32 pathLength = result.Size();
+                            //r == 0 => Functions
+                            for (r = 1u; (r < pathLength); r++) {
+                                StreamString name = result.Get(r)->GetName();
+                                if (r > 1u) {
+                                    qualifiedName.Printf(".", voidAnyType);
+                                }
+                                qualifiedName.Printf("%s", name.Buffer());
+                            }
+                            StreamString functionNumber;
+                            //Look for the FunctionNumber which has this qualified name
+                            ret = FindFunctionNumber(qualifiedName, functionNumber);
+                            if (ret) {
+                                ret = functionsDatabase.MoveAbsolute("Functions");
+                            }
+                            if (ret) {
+                                ret = functionsDatabase.MoveRelative(functionNumber.Buffer());
+                            }
+                            if (ret) {
+                                syncSignals += GetNumberOfSyncSignals(functionsDatabase, "Signals.InputSignals", ret);
+                                if (ret) {
+                                    syncSignals += GetNumberOfSyncSignals(functionsDatabase, "Signals.OutputSignals", ret);
+                                }
+                            }
+                            if (ret) {
+                                if (!functionsDatabase.MoveRelative("States")) {
+                                    ret = functionsDatabase.CreateRelative("States");
+                                }
+                            }
+                            if (ret) {
+                                // the same gam cannot be declared in two different threads!!
+                                ret = (functionsDatabase.GetType(stateName).IsVoid());
+                                if (ret) {
+                                    ret = functionsDatabase.Write(stateName, threadName);
+                                }
+                                else {
+                                    StreamString gamName;
+                                    if (functionsDatabase.MoveToAncestor(1u)) {
+                                        if (!functionsDatabase.Read("QualifiedName", gamName)) {
+                                            gamName = "UnknownGAM";
+                                        }
+                                    }
+                                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "The GAM %s is declared in more than one thread in %s",
+                                            gamName.Buffer(), stateName)
+                                }
+                            }
+                        }
+                        if (ret) {
+                            //TODO Always a synchronisation point???
+                            ret = (syncSignals <= 1u);
+                            if (!ret) {
+                                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "More than one synchronising signal found in %s.%s", stateName,
+                                        threadName)
+                            }
                         }
                     }
                 }
             }
-        }
-        else {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Threads ReferenceContainer found in RealTimeState %s", stateName)
+            else {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Threads ReferenceContainer found in RealTimeState %s", stateName)
+            }
         }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::InitialisationError, "Invalid RealTimeApplication set");
+    }
+
     return ret;
 }
 
@@ -1987,6 +2154,10 @@ bool RealTimeApplicationConfigurationBuilder::AddStateToFunction(ConfigurationDa
     StreamString token = "+";
     char8 terminator;
     bool ret = local.MoveAbsolute("+Functions");
+    if (!ret) {
+        ret = local.MoveAbsolute("$Functions");
+    }
+
     functionPathStr.Seek(0u);
     while (functionPathStr.GetToken(token, ".", terminator) && ret) {
         ret = local.MoveRelative(token.Buffer());
@@ -1998,7 +2169,7 @@ bool RealTimeApplicationConfigurationBuilder::AddStateToFunction(ConfigurationDa
     StreamString path = "";
     uint32 index = 0u;
     if (ret) {
-        ret = SearchGAMs(local, output, path, index);
+        ret = SearchGAMs(local, output, path, index, false);
     }
     if (ret) {
         ret = output.MoveToRoot();
@@ -2034,12 +2205,18 @@ bool RealTimeApplicationConfigurationBuilder::AddStateToFunction(ConfigurationDa
 
 bool RealTimeApplicationConfigurationBuilder::ResolveStatesFromConfiguration() {
     bool ret = globalDatabase.MoveAbsolute("+Functions");
+    if (!ret) {
+        ret = globalDatabase.MoveAbsolute("$Functions");
+    }
     ConfigurationDatabase local;
     if (ret) {
         local.AddToCurrentNode(globalDatabase);
     }
     if (ret) {
         ret = globalDatabase.MoveAbsolute("+States");
+        if (!ret) {
+            ret = globalDatabase.MoveAbsolute("$States");
+        }
     }
     if (ret) {
         uint32 numberOfStates = globalDatabase.GetNumberOfChildren();
@@ -2049,6 +2226,9 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStatesFromConfiguration() {
                 printf("\nstate %s\n", stateName);
 
                 ret = globalDatabase.MoveRelative("+Threads");
+                if (!ret) {
+                    ret = globalDatabase.MoveAbsolute("$Threads");
+                }
                 if (ret) {
                     uint32 numberOfThreads = globalDatabase.GetNumberOfChildren();
                     for (uint32 j = 0u; j < numberOfThreads && ret; j++) {
@@ -2063,7 +2243,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStatesFromConfiguration() {
                                 ret = (at.GetNumberOfDimensions() == 1u);
                                 if (ret) {
                                     uint32 numberOfFunctions = at.GetNumberOfElements(0u);
-                                    Vector<StreamString> functions(numberOfFunctions);
+                                    Vector < StreamString > functions(numberOfFunctions);
                                     ret = globalDatabase.Read("Functions", functions);
                                     if (ret) {
                                         uint32 syncSignals = 0u;
@@ -2189,7 +2369,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(bool 
             if ((ret) && (functionsDatabase.MoveRelative("States"))) {
                 uint32 numberOfStates = functionsDatabase.GetNumberOfChildren();
                 if (numberOfStates > 0u) {
-                    Vector<StreamString> states(numberOfStates);
+                    Vector < StreamString > states(numberOfStates);
                     uint32 s;
                     for (s = 0u; (s < numberOfStates) && (ret); s++) {
                         StreamString stateName = functionsDatabase.GetChildName(s);
@@ -2277,9 +2457,9 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(bool 
                                             newGAMArray = new StreamString[numberOfExistentElements + 1u];
                                             newGAMNamesArray = new StreamString[numberOfExistentElements + 1u];
                                             newSignalArray = new StreamString[numberOfExistentElements + 1u];
-                                            Vector<StreamString> newGAMVector(newGAMArray, numberOfExistentElements);
-                                            Vector<StreamString> newGAMNamesVector(newGAMNamesArray, numberOfExistentElements);
-                                            Vector<StreamString> newSignalVector(newSignalArray, numberOfExistentElements);
+                                            Vector < StreamString > newGAMVector(newGAMArray, numberOfExistentElements);
+                                            Vector < StreamString > newGAMNamesVector(newGAMNamesArray, numberOfExistentElements);
+                                            Vector < StreamString > newSignalVector(newSignalArray, numberOfExistentElements);
                                             ret = (dataSourcesDatabase.Read(operationTypeGAM.Buffer(), newGAMVector));
                                             if (ret) {
                                                 ret = (dataSourcesDatabase.Read(operationTypeGAMNames.Buffer(), newGAMNamesVector));
@@ -2296,9 +2476,9 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(bool 
                                         newGAMArray[numberOfExistentElements] = functionId.Buffer();
                                         newGAMNamesArray[numberOfExistentElements] = functionName.Buffer();
                                         newSignalArray[numberOfExistentElements] = signalId.Buffer();
-                                        Vector<StreamString> newGAMVector(newGAMArray, numberOfExistentElements + 1u);
-                                        Vector<StreamString> newGAMNamesVector(newGAMNamesArray, numberOfExistentElements + 1u);
-                                        Vector<StreamString> newSignalVector(newSignalArray, numberOfExistentElements + 1u);
+                                        Vector < StreamString > newGAMVector(newGAMArray, numberOfExistentElements + 1u);
+                                        Vector < StreamString > newGAMNamesVector(newGAMNamesArray, numberOfExistentElements + 1u);
+                                        Vector < StreamString > newSignalVector(newSignalArray, numberOfExistentElements + 1u);
 
                                         if (existentArray.GetDataPointer() != NULL_PTR(void *)) {
                                             ret = dataSourcesDatabase.Delete(operationTypeGAM.Buffer());
@@ -2434,9 +2614,9 @@ bool RealTimeApplicationConfigurationBuilder::BuildProducersRanges() {
     AnyType prods = dataSourcesDatabase.GetType("GAMProducers");
 
     uint32 numberOfProducers = prods.GetNumberOfElements(0u);
-    Vector<StreamString> producers(numberOfProducers);
+    Vector < StreamString > producers(numberOfProducers);
     bool ret = dataSourcesDatabase.Read("GAMProducers", producers);
-    Vector<StreamString> signalProducers(numberOfProducers);
+    Vector < StreamString > signalProducers(numberOfProducers);
     if (ret) {
         ret = dataSourcesDatabase.Read("SignalProducers", signalProducers);
     }
@@ -2464,7 +2644,7 @@ bool RealTimeApplicationConfigurationBuilder::BuildProducersRanges() {
                 if (ret) {
                     uint32 rangeRows = at.GetNumberOfElements(1u);
                     uint32 rangeCols = at.GetNumberOfElements(0u);
-                    Matrix<uint32> rangesMatrix = Matrix<uint32>(rangeRows, rangeCols);
+                    Matrix < uint32 > rangesMatrix = Matrix < uint32 > (rangeRows, rangeCols);
                     ret = functionsDatabase.Read("Ranges", rangesMatrix);
                     for (uint32 k = 0u; (k < rangeRows) && (ret); k++) {
                         // allocate new memory if needed
@@ -2599,9 +2779,9 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(S
                                     uint32 *rangesMatBackend = new uint32[numberOfRanges * 2u];
                                     offsetMatrixBackend = new uint32[numberOfRanges * 2u];
                                     //The offset matrix stores, for each range and in bytes, the starting offset and the size of the range to copy.
-                                    Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfRanges, 2u);
+                                    Matrix < uint32 > offsetMat(offsetMatrixBackend, numberOfRanges, 2u);
                                     //Read the Ranges matrix from the configuration data.
-                                    Matrix<uint32> rangesMat(rangesMatBackend, numberOfRanges, 2u);
+                                    Matrix < uint32 > rangesMat(rangesMatBackend, numberOfRanges, 2u);
                                     ret = functionsDatabase.Read("Ranges", rangesMat);
                                     if (ret) {
                                         for (uint32 n = 0u; (n < numberOfRanges) && (ret); n++) {
@@ -2646,7 +2826,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(S
                     }
                     if (ret) {
                         if (offsetMatrixBackend != NULL_PTR(uint32 *)) {
-                            Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfRanges, 2u);
+                            Matrix < uint32 > offsetMat(offsetMatrixBackend, numberOfRanges, 2u);
                             ret = functionsDatabase.Write("ByteOffset", offsetMat);
                             delete[] offsetMatrixBackend;
                         }
@@ -2753,7 +2933,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(SignalDirec
                             numberOfOffsetElements = existentByteOffset.GetNumberOfElements(1u);
                             // create a static matrix
                             offsetMatrixBackend = new uint32[numberOfOffsetElements * 2u];
-                            Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
+                            Matrix < uint32 > offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
                             ret = functionsDatabase.Read("ByteOffset", offsetMat);
                         }
                         else {
@@ -2845,7 +3025,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(SignalDirec
                     }
                     if (ret) {
                         if (offsetMatrixBackend != NULL_PTR(void *)) {
-                            Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
+                            Matrix < uint32 > offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
                             ret = functionsDatabase.Write("ByteOffset", offsetMat);
                             delete[] offsetMatrixBackend;
                         }
@@ -3077,46 +3257,51 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToFunctions() {
 
     dataSourcesDatabase.MoveAbsolute("Data");
     uint32 numberOfDataSources = dataSourcesDatabase.GetNumberOfChildren();
-    bool ret = true;
-    for (uint32 i = 0u; (i < numberOfDataSources) && (ret); i++) {
-        const char8 *dsId = dataSourcesDatabase.GetChildName(i);
-        ret = dataSourcesDatabase.MoveRelative(dsId);
+    bool ret = (realTimeApplication != NULL);
+    if (ret) {
+        for (uint32 i = 0u; (i < numberOfDataSources) && (ret); i++) {
+            const char8 *dsId = dataSourcesDatabase.GetChildName(i);
+            ret = dataSourcesDatabase.MoveRelative(dsId);
 
-        StreamString dsName;
-        if (ret) {
-            ret = dataSourcesDatabase.Read("QualifiedName", dsName);
-        }
-        ReferenceT<DataSourceI> dataSource;
-        if (ret) {
-            StreamString fullDsPath = "Data.";
-            fullDsPath += dsName;
-            dataSource = realTimeApplication->Find(fullDsPath.Buffer());
-            ret = dataSource.IsValid();
-        }
+            StreamString dsName;
+            if (ret) {
+                ret = dataSourcesDatabase.Read("QualifiedName", dsName);
+            }
+            ReferenceT < DataSourceI > dataSource;
+            if (ret) {
+                StreamString fullDsPath = "Data.";
+                fullDsPath += dsName;
+                dataSource = realTimeApplication->Find(fullDsPath.Buffer());
+                ret = dataSource.IsValid();
+            }
 
 //Allow for empty DataSources...
-        if (dataSourcesDatabase.MoveRelative("Functions")) {
+            if (dataSourcesDatabase.MoveRelative("Functions")) {
 
-            if (ret) {
-                uint32 numberOfFunctions = dataSourcesDatabase.GetNumberOfChildren();
-                for (uint32 j = 0u; (j < numberOfFunctions) && (ret); j++) {
-                    const char8 * functionId = dataSourcesDatabase.GetChildName(j);
-                    ret = dataSourcesDatabase.MoveRelative(functionId);
-                    if (ret) {
-                        ret = AssignBrokersToSignals(InputSignals, dataSource);
+                if (ret) {
+                    uint32 numberOfFunctions = dataSourcesDatabase.GetNumberOfChildren();
+                    for (uint32 j = 0u; (j < numberOfFunctions) && (ret); j++) {
+                        const char8 * functionId = dataSourcesDatabase.GetChildName(j);
+                        ret = dataSourcesDatabase.MoveRelative(functionId);
                         if (ret) {
-                            ret = AssignBrokersToSignals(OutputSignals, dataSource);
+                            ret = AssignBrokersToSignals(InputSignals, dataSource);
+                            if (ret) {
+                                ret = AssignBrokersToSignals(OutputSignals, dataSource);
+                            }
+                        }
+                        if (ret) {
+                            ret = dataSourcesDatabase.MoveToAncestor(1u);
                         }
                     }
-                    if (ret) {
-                        ret = dataSourcesDatabase.MoveToAncestor(1u);
-                    }
+                }
+                if (ret) {
+                    ret = dataSourcesDatabase.MoveToAncestor(2u);
                 }
             }
-            if (ret) {
-                ret = dataSourcesDatabase.MoveToAncestor(2u);
-            }
         }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::InitialisationError, "Invalid RealTimeApplication set");
     }
     return ret;
 }
@@ -3184,10 +3369,13 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
             if (ret) {
                 ret = dataSourcesDatabase.Read("QualifiedName", qualifiedName);
             }
-            ReferenceT<DataSourceI> dataSource;
+            ReferenceT < DataSourceI > dataSource;
             if (ret) {
                 dataSource = realTimeApplication->Find(qualifiedName.Buffer());
                 ret = dataSource.IsValid();
+                if(!ret){
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "The DataSource %s is not valid", qualifiedName.Buffer())
+                }
             }
             if (ret) {
                 ret = dataSource->SetConfiguredDatabase(dataSourcesDatabase);
@@ -3219,10 +3407,13 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureFunctions() {
             if (ret) {
                 ret = functionsDatabase.Read("QualifiedName", qualifiedName);
             }
-            ReferenceT<GAM> gam;
+            ReferenceT < GAM > gam;
             if (ret) {
                 gam = realTimeApplication->Find(qualifiedName.Buffer());
                 ret = gam.IsValid();
+                if(!ret){
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "The GAM %s is not valid", qualifiedName.Buffer())
+                }
             }
             if (ret) {
                 ret = gam->SetConfiguredDatabase(functionsDatabase);
@@ -3252,14 +3443,11 @@ bool RealTimeApplicationConfigurationBuilder::Copy(ConfigurationDatabase &functi
 
 bool RealTimeApplicationConfigurationBuilder::Set(ConfigurationDatabase &functionsDatabaseIn,
                                                   ConfigurationDatabase &dataSourcesDatabaseIn) {
-    bool ret = functionsDatabase.MoveToRoot();
+    functionsDatabase.CleanUp();
+    bool ret = functionsDatabaseIn.Copy(functionsDatabase);
     if (ret) {
-        ret = functionsDatabaseIn.Copy(functionsDatabase);
-    }
-    if (ret) {
-        dataSourcesDatabase.MoveToRoot();
-    }
-    if (ret) {
+        dataSourcesDatabase.CleanUp();
+
         ret = dataSourcesDatabaseIn.Copy(dataSourcesDatabase);
     }
     return ret;

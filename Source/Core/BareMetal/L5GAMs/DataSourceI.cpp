@@ -84,19 +84,20 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
 
 bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
     bool ret = data.Copy(configuredDatabase);
+    if (ret) {
+        ret = configuredDatabase.MoveToRoot();
+    }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("Signals");
+    }
+    if (ret) {
+        numberOfSignals = configuredDatabase.GetNumberOfChildren();
+    }
     return ret;
 }
 
 uint32 DataSourceI::GetNumberOfSignals() {
-    bool ret = configuredDatabase.MoveToRoot();
-    if (ret) {
-        ret = configuredDatabase.MoveRelative("Signals");
-    }
-    uint32 result = 0u;
-    if (ret) {
-        result = configuredDatabase.GetNumberOfChildren();
-    }
-    return result;
+    return numberOfSignals;
 }
 
 bool DataSourceI::GetSignalName(const uint32 signalIdx,
@@ -342,6 +343,14 @@ bool DataSourceI::GetSignalDefaultValue(const uint32 signalIdx,
         ret = configuredDatabase.Read("Default", defaultValue);
     }
     return ret;
+}
+
+AnyType DataSourceI::GetSignalDefaultValueType(uint32 signalIdx) {
+    AnyType retType = voidAnyType;
+    if (MoveToSignalIndex(signalIdx)) {
+        retType = configuredDatabase.GetType("Default");
+    }
+    return retType;
 }
 
 bool DataSourceI::MoveToSignalIndex(const uint32 signalIdx) {
@@ -668,13 +677,13 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
                 bool relevant = false;
                 if (direction == InputSignals) {
                     if (gam->GetNumberOfInputSignals() > 0u) {
-                        gamMemoryAddress = gam->GetInputMemoryPointer();
+                        gamMemoryAddress = gam->GetInputSignalsMemory();
                         relevant = true;
                     }
                 }
                 else if (direction == OutputSignals) {
                     if (gam->GetNumberOfOutputSignals() > 0u) {
-                        gamMemoryAddress = gam->GetOutputMemoryPointer();
+                        gamMemoryAddress = gam->GetOutputSignalsMemory();
                         relevant = true;
                     }
                 }

@@ -1,6 +1,6 @@
 /**
- * @file MemoryMapBroker.cpp
- * @brief Source file for class MemoryMapBroker
+ * @file MemoryMapStatefulBroker.cpp
+ * @brief Source file for class MemoryMapStatefulBroker
  * @date 11/04/2016
  * @author Giuseppe Ferrò
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryMapBroker (public, protected, and private). Be aware that some
+ * the class MemoryMapStatefulBroker (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -31,7 +31,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "MemoryMapBroker.h"
+#include "AdvancedErrorManagement.h"
+#include "MemoryMapStatefulBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -43,20 +44,20 @@
 
 namespace MARTe {
 
-MemoryMapBroker::MemoryMapBroker() :
+MemoryMapStatefulBroker::MemoryMapStatefulBroker() :
         BrokerI() {
-    copyTable = NULL_PTR(MemoryMapBrokerCopyTableEntry *);
-    dataSource = NULL_PTR(DataSourceI*);
+    copyTable = NULL_PTR(MemoryMapStatefulBrokerCopyTableEntry *);
     numberOfCopies = 0u;
+    dataSource = NULL_PTR(DataSourceI*);
 }
 
-MemoryMapBroker::~MemoryMapBroker() {
-    if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+MemoryMapStatefulBroker::~MemoryMapStatefulBroker() {
+    if (copyTable != NULL_PTR(MemoryMapStatefulBrokerCopyTableEntry *)) {
         delete[] copyTable;
     }
 }
 
-bool MemoryMapBroker::Init(SignalDirection direction,
+bool MemoryMapStatefulBroker::Init(SignalDirection direction,
                             DataSourceI &dataSourceIn,
                             const char8 * const functionName,
                             void *gamMemoryAddress) {
@@ -78,7 +79,7 @@ bool MemoryMapBroker::Init(SignalDirection direction,
         ret = (numberOfCopies > 0u);
     }
     if (ret) {
-        copyTable = new MemoryMapBrokerCopyTableEntry[numberOfCopies];
+        copyTable = new MemoryMapStatefulBrokerCopyTableEntry[numberOfCopies];
     }
     uint32 functionIdx;
     if (ret) {
@@ -88,7 +89,7 @@ bool MemoryMapBroker::Init(SignalDirection direction,
     if (ret) {
         ret = dataSource->GetFunctionNumberOfSignals(direction, functionIdx, functionNumberOfSignals);
     }
-    //The same signal can be copied from different ranges. A MemoryMapBrokerCopyTableEntry is added for each signal range.
+    //The same signal can be copied from different ranges. A MemoryMapStatefulBrokerCopyTableEntry is added for each signal range.
     uint32 c = 0u;
     for (uint32 n = 0u; (n < functionNumberOfSignals) && (ret); n++) {
         if (dataSource->IsSupportedBroker(direction, functionIdx, n, brokerClassName)) {
@@ -110,13 +111,14 @@ bool MemoryMapBroker::Init(SignalDirection direction,
                 if (ret) {
                     copyTable[c].copySize = GetCopyByteSize(c);
                     copyTable[c].gamPointer = GetFunctionPointer(c);
-                    uint32 dataSourceOffset = GetCopyOffset(c);
-                    void *dataSourceSignalAddress;
-                    ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0u, dataSourceSignalAddress);
-                    char8 *dataSourceSignalAddressChar = reinterpret_cast<char8 *>(dataSourceSignalAddress);
-                    if (ret) {
-                        dataSourceSignalAddressChar += dataSourceOffset;
-                        copyTable[c].dataSourcePointer = reinterpret_cast<void *>(dataSourceSignalAddressChar);
+                    copyTable[c].dataSourceOffset = GetCopyOffset(c);
+                    uint32 b;
+                    for (b = 0u; (b < 2u) && (ret); b++) {
+                        void *dataSourceSignalAddress;
+                        ret = dataSource->GetSignalMemoryBuffer(signalIdx, b, dataSourceSignalAddress);
+                        if (ret) {
+                            copyTable[c].dataSourcePointer[b] = reinterpret_cast<void **>(dataSourceSignalAddress);
+                        }
                     }
                 }
                 c++;

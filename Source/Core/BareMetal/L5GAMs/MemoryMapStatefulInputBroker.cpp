@@ -1,6 +1,6 @@
 /**
- * @file MemoryMapOutputBroker.cpp
- * @brief Source file for class MemoryMapOutputBroker
+ * @file MemoryMapStatefulInputBroker.cpp
+ * @brief Source file for class MemoryMapStatefulInputBroker
  * @date 18/07/2016
  * @author Andre Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryMapOutputBroker (public, protected, and private). Be aware that some 
+ * the class MemoryMapStatefulInputBroker (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "MemoryMapOutputBroker.h"
+#include "MemoryMapStatefulInputBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,23 +38,26 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-MemoryMapOutputBroker::MemoryMapOutputBroker() {
+MemoryMapStatefulInputBroker::MemoryMapStatefulInputBroker() {
 
 }
 
-MemoryMapOutputBroker::~MemoryMapOutputBroker() {
+MemoryMapStatefulInputBroker::~MemoryMapStatefulInputBroker() {
 
 }
 
-bool MemoryMapOutputBroker::Execute() {
+bool MemoryMapStatefulInputBroker::Execute() {
     uint32 n;
     bool ret = true;
+    char8 *dataSourceSignalPointer;
     for (n = 0u; (n < numberOfCopies) && (ret); n++) {
-        MemoryOperationsHelper::Copy(copyTable[n].dataSourcePointer, copyTable[n].gamPointer, copyTable[n].copySize);
+        dataSourceSignalPointer = reinterpret_cast<char8 *>(*(copyTable[n].dataSourcePointer[RealTimeApplication::index]));
+        dataSourceSignalPointer += copyTable[n].dataSourceOffset;
+        MemoryOperationsHelper::Copy(copyTable[n].gamPointer, dataSourceSignalPointer, copyTable[n].copySize);
     }
     return ret;
 }
 
-CLASS_REGISTER(MemoryMapOutputBroker, "1.0")
+CLASS_REGISTER(MemoryMapStatefulInputBroker, "1.0")
 }
 

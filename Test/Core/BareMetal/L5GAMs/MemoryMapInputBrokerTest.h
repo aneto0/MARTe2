@@ -1,8 +1,8 @@
 /**
- * @file GAMSignalITest.h
- * @brief Header file for class GAMSignalITest
- * @date 12/04/2016
- * @author Giuseppe Ferrò
+ * @file MemoryMapInputBrokerTest.h
+ * @brief Header file for class MemoryMapInputBrokerTest
+ * @date 28/07/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMSignalITest
+ * @details This header file contains the declaration of the class MemoryMapInputBrokerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMSIGNALITEST_H_
-#define GAMSIGNALITEST_H_
+#ifndef MEMORYMAPINPUTBROKERTEST_H_
+#define MEMORYMAPINPUTBROKERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,72 +31,44 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GAMSignalI.h"
+#include "MemoryMapInputBroker.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
 
-
 /**
- * @brief Tests all the RealTimeDataDefI functions.
+ * @brief Tests the MemoryMapInputBroker public methods.
  */
-class GAMSignalITest {
-
+class MemoryMapInputBrokerTest {
 public:
-
     /**
-     * @brief Tests the constructor.
+     * @brief Tests the default constructor.
      */
     bool TestConstructor();
 
     /**
-     * @brief Tests if the function initialises correctly the definition from a StructuredDataI in input.
+     * @brief Tests the Execute method.
      */
-    bool TestInitialise();
+    bool TestExecute();
 
     /**
-     * @brief Tests if the function returns the type name defined.
+     * @brief Tests the Execute method with a signal with ranges.
      */
-    bool TestGetType();
+    bool TestExecute_Ranges();
 
     /**
-     * @brief Tests if the function returns the defined variable path in the RealTimeDataSource.
+     * @brief Tests the Execute method with a signal with samples.
      */
-    bool TestGetPath();
-
-    /**
-     * @brief Tests if the function sets the specified path.
-     */
-    bool TestSetPath();
-
-    /**
-     * @brief Tests if the function returns the variable default value.
-     */
-    bool TestGetDefaultValue();
-
-
-    bool TestGetOperation();
-
-    /**
-     * @brief Tests if the function returns the variable number of dimensions defined.
-     */
-    bool TestNumberOfDimensions(const char8 * type,
-                                const char8 * dimensions,
-                                uint8 ret);
-
-    /**
-     * @brief Tests if the function returns the number of elements for each dimension specified.
-     */
-    bool TestNumberOfElements(const char8 * type,
-                              const char8 * dimensions,
-                              uint32 ret[3]);
+    bool TestExecute_Samples();
 
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMSIGNALITEST_H_ */
+#endif /* MEMORYMAPINPUTBROKERTEST_H_ */
 

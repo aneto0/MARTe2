@@ -64,6 +64,14 @@ namespace MARTe {
 class DLL_API RealTimeApplicationConfigurationBuilder {
 public:
 
+
+    bool ConfigureAfterInitialisation();
+
+    bool ConfigureBeforeInitialisation();
+
+
+
+
     /**
      * @brief Default constructor. Sets the RealTimeApplication
      * @param[in] realTimeApplicationIn the RealTimeApplication associated to this RealTimeApplicationConfigurationBuilder.
@@ -72,13 +80,13 @@ public:
      *   realTimeApplication = realTimeApplicationIn
      *   defaultDataSourceName = defaultDataSourceNameIn
      */
-    RealTimeApplicationConfigurationBuilder(ReferenceT<ReferenceContainer> realTimeApplicationIn,
+    RealTimeApplicationConfigurationBuilder(RealTimeApplication &realTimeApplicationIn,
                                             const char8 *defaultDataSourceNameIn);
 
     RealTimeApplicationConfigurationBuilder(ConfigurationDatabase &globalDatabaseIn,
                                             const char8 *defaultDataSourceNameIn);
 
-    bool InitialiseSignalsDatabaseFromConfig();
+    bool InitialiseSignalsDatabaseFromConfiguration();
 
     /**
      * @brief Adds all the GAM signals to the Functions database and adds all the DataSource signals to the DataSource database.
@@ -866,7 +874,7 @@ private:
     /**
      * The RealTimeApplication associated to this RealTimeApplicationConfigurationBuilder.
      */
-    ReferenceT<ReferenceContainer> realTimeApplication;
+    RealTimeApplication *realTimeApplication;
 
     /**
      * @brief Flattens all the nested structures in a Database.

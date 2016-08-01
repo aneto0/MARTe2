@@ -71,6 +71,9 @@ public:
     virtual ~GAMSchedulerI();
 
 
+
+    bool ConfigureScheduler(ReferenceT<ReferenceContainer> statesContainer);
+
     /**
      * @brief Inserts a thread to be executed in a specific state.
      * @return false in case of errors, true otherwise.

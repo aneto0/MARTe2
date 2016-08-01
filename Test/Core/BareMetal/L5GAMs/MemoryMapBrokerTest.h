@@ -1,8 +1,8 @@
 /**
- * @file DataSourceSignalTest.h
- * @brief Header file for class DataSourceSignalTest
- * @date 13/apr/2016
- * @author pc
+ * @file MemoryMapBrokerTest.h
+ * @brief Header file for class MemoryMapBrokerTest
+ * @date 28/07/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DataSourceSignalTest
+ * @details This header file contains the declaration of the class MemoryMapBrokerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef DATASOURCESIGNALTEST_H_
-#define DATASOURCESIGNALTEST_H_
+#ifndef MEMORYMAPBROKERTEST_H_
+#define MEMORYMAPBROKERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,8 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "../../../../Source/Core/BareMetal/L5GAMs/GAMDataSource.h"
+#include "MemoryMapBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -40,57 +39,45 @@
 
 using namespace MARTe;
 
-class DataSourceSignalTest {
-
+/**
+ * @brief Tests the MemoryMapBrokerTest public methods.
+ */
+class MemoryMapBrokerTest {
 public:
-
+    /**
+     * @brief Tests the default constructor.
+     */
     bool TestConstructor();
 
-    bool TestInitialise();
-
-    bool TestToStructuredData();
-
-    bool TestConfigure();
-
-    bool TestConfigureFalse_AlreadyTypeSet();
-
-    bool TestConfigureFalse_AlreadyDefaultSet();
+    /**
+     * @brief Tests the Init method for an input basic signal (i.e. no ranges and no samples)
+     */
+    bool TestInit_Input();
 
     /**
-     * @brief Tests if the function returns the number producer gams.
+     * @brief Tests the Init method for an input signal with ranges
      */
+    bool TestInit_Input_Ranges();
 
-    bool TestWriteStart();
+    /**
+     * @brief Tests the Init method for an input signal with samples
+     */
+    bool TestInit_Input_Samples();
 
-    bool TestReadStart();
+    /**
+     * @brief Tests the Init method for an output basic signal (i.e. no ranges and no samples)
+     */
+    bool TestInit_Output();
 
-    bool TestWriteEnd();
+    /**
+     * @brief Tests the Init method for an output signal with ranges
+     */
+    bool TestInit_Output_Ranges();
 
-    bool TestReadEnd();
-
-    bool TestWaitOnEvent();
-
-    bool TestAllocate();
-
-    bool TestAllocateStructure();
-
-    bool TestAllocateStructureFalse_NotRegisteredType();
-
-    bool TestAllocateStructureFalse_MultiDim();
-
-    bool TestGetDataSourcePointer();
-
-    bool TestPrepareNextState();
-
-    bool TestPrepareNextStateStructure();
-
-    bool TestPrepareNextStateStructure_MultiSample();
-
-    bool TestPrepareNextState_MultiDim_MultiSample();
-
-    bool TestGetInputReader();
-
-    bool TestGetOutputWriter();
+    /**
+     * @brief Tests the Init method for an output signal with samples
+     */
+    bool TestInit_Output_Samples();
 
 };
 
@@ -98,5 +85,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* DATASOURCESIGNALTEST_H_ */
+#endif /* MEMORYMAPBROKERTEST_H_ */
 

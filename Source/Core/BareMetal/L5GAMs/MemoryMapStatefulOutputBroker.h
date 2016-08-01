@@ -1,8 +1,8 @@
 /**
- * @file DataSourceSignalITest.h
- * @brief Header file for class DataSourceSignalITest
- * @date 22/04/2016
- * @author Giuseppe Ferrò
+ * @file MemoryMapStatefulOutputBroker.h
+ * @brief Header file for class MemoryMapStatefulOutputBroker
+ * @date Jul 18, 2016
+ * @author aneto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DataSourceSignalITest
+ * @details This header file contains the declaration of the class MemoryMapStatefulOutputBroker
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef DATASOURCESIGNALITEST_H_
-#define DATASOURCESIGNALITEST_H_
+#ifndef MEMORYMAPSTATEFULOUTPUTBROKER_H_
+#define MEMORYMAPSTATEFULOUTPUTBROKER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,50 +31,46 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "../../../../Source/Core/BareMetal/L5GAMs/GAMDataSource.h"
+#include "MemoryMapBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
+namespace MARTe {
 
-class DataSourceSignalITest {
-
+/**
+ * @brief Output MemoryMapStatefulBroker implementation.
+ * @details This class copies all the signals declared on a MemoryMapStatefulBroker
+ * from the GAM memory to the DataSourceI memory.
+ */
+class MemoryMapStatefulOutputBroker: public MemoryMapBroker {
 public:
-
-    bool TestConstructor();
-
-    bool TestInitialise();
-
-    bool TestAddConsumer();
-
-    bool TestAddProducer();
-
-    bool TestGetNumberOfConsumers(uint32 nConsumers);
+CLASS_REGISTER_DECLARATION()
+    /**
+     * @brief Default constructor. NOOP.
+     */
+    MemoryMapStatefulOutputBroker();
 
     /**
-     * @brief Tests if the function returns the number producer gams.
+     * @brief Destructor. NOOP.
      */
-    bool TestGetNumberOfProducers(uint32 nProducers);
+    virtual ~MemoryMapStatefulOutputBroker();
 
-    bool TestVerify();
-
-    bool TestVerifyFalse_TwoProducers();
-
-    bool TestGetType();
-
-    bool TestGetNumberOfElements();
-
-    bool TestGetNumberOfElements_DifferentSizes();
-
-    bool TestGetNumberOfSamples();
-
+    /**
+     * @brief Sequentially copies all the signals from the GAM memory to the DataSourceI memory buffer[state].
+     * This state is defined by the RealTimeApplication::index (which can be either 0/1).
+     * @return true if all copies are successfully performed.
+     */
+    virtual bool Execute();
 };
+
+}
+
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* DATASOURCESIGNALITEST_H_ */
-
+#endif /* MEMORYMAPOUTPUTBROKER_H_ */
+	

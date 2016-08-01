@@ -40,13 +40,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-void TODODeleteMe(const MARTe::ErrorManagement::ErrorInformation &errorInfo,
-                            const char8 * const errorDescription) {
-    printf("---->>%s\n", errorDescription);
-}
-
 TEST(GAMDataSourceGTest,TestConstructor) {
-    SetErrorProcessFunction(&TODODeleteMe);
     GAMDataSourceTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
@@ -56,8 +50,58 @@ TEST(GAMDataSourceGTest,TestPrepareNextState_NoDefault) {
     ASSERT_TRUE(test.TestPrepareNextState_NoDefault());
 }
 
-TEST(GAMDataSourceGTest,TestPrepareNextState_NoDefault_Basic) {
+TEST(GAMDataSourceGTest,TestPrepareNextState_Default_Basic) {
     GAMDataSourceTest test;
-    ASSERT_TRUE(test.TestPrepareNextState_NoDefault());
+    ASSERT_TRUE(test.TestPrepareNextState_Default_Basic());
 }
 	
+TEST(GAMDataSourceGTest,TestPrepareNextState_Default_Dimensions) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestPrepareNextState_Default_Dimensions());
+}
+
+TEST(GAMDataSourceGTest,TestPrepareNextState_Default_Dimensions_Mismatch_1) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestPrepareNextState_Default_Dimensions_Mismatch_1());
+}
+
+TEST(GAMDataSourceGTest,TestPrepareNextState_Default_Dimensions_Mismatch_2) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestPrepareNextState_Default_Dimensions_Mismatch_2());
+}
+
+TEST(GAMDataSourceGTest,TestPrepareNextState_Default_Elements_Mismatch) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestPrepareNextState_Default_Elements_Mismatch());
+}
+
+
+TEST(GAMDataSourceGTest,TestGetNumberOfMemoryBuffers) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestGetNumberOfMemoryBuffers());
+}
+
+TEST(GAMDataSourceGTest,TestGetSignalMemoryBuffer) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestGetSignalMemoryBuffer());
+}
+
+TEST(GAMDataSourceGTest,TestAllocateMemory) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestAllocateMemory());
+}
+
+TEST(GAMDataSourceGTest,TestGetBrokerName) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestGetBrokerName());
+}
+
+TEST(GAMDataSourceGTest,TestGetInputBrokers) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestGetInputBrokers());
+}
+
+TEST(GAMDataSourceGTest,TestGetOutputBrokers) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestGetOutputBrokers());
+}

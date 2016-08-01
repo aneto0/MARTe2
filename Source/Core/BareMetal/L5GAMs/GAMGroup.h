@@ -96,7 +96,7 @@ protected:
      * @brief Setup the GAMGroup. This function can be custom
      * implemented to initialise the context, make accelerators, ecc.
      */
-    virtual void SetUp()=0;
+    //virtual void SetUp()=0;
 
     //? Possible specific GAMContexts
 
