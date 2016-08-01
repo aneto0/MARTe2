@@ -70,7 +70,9 @@ void MemoryMapOutputBrokerTestScheduler1::StopExecution() {
 CLASS_REGISTER(MemoryMapOutputBrokerTestScheduler1, "1.0")
 
 /**
- * @brief GAM empty implementation to support the MemoryMapOutputBroker tests
+ * @brief GAM implementation to support the MemoryMapOutputBroker tests.
+ * @details This GAM generates a memory pattern (see Execute) which allows to verify if the
+ *  MemoryMapOutputBroker is correctly copying the signal into the DataSource.
  */
 class MemoryMapOutputBrokerTestGAM1: public GAM {
 public:
@@ -109,6 +111,9 @@ void *MemoryMapOutputBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
     return GAM::GetOutputSignalMemory(signalIdx);
 }
 
+/**
+ * @brief For each signal byte N, generates a pattern given by N*N
+ */
 bool MemoryMapOutputBrokerTestGAM1::Execute() {
     uint32 numberOfOutputSignals = GetNumberOfOutputSignals();
     uint32 n;
@@ -499,7 +504,7 @@ bool MemoryMapOutputBrokerTest::TestExecute() {
     if (ret) {
         ret = dataSource->GetSignalIndex(signalIdx, "Signal1A");
     }
-    //Verify if the DataSource has the expected pattern
+
     char8 *dsPtr;
     if (ret) {
         ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0, reinterpret_cast<void *&>(dsPtr));
@@ -508,12 +513,54 @@ bool MemoryMapOutputBrokerTest::TestExecute() {
     if (ret) {
         ret = dataSource->GetSignalByteSize(signalIdx, byteSize);
     }
-
-    //Address the signal with the ranges
     uint32 s;
     for (s = 0; (s < byteSize) && (ret); s++) {
         ret = (*(dsPtr++) == static_cast<char8>(s * s));
     }
+
+    return ret;
+}
+
+bool MemoryMapOutputBrokerTest::TestExecute_Ranges() {
+    bool ret = InitialiseMemoryMapOutputBrokerEnviroment(config1);
+    ReferenceT<MemoryMapOutputBrokerDataSourceTestHelper> dataSource;
+    ReferenceT<MemoryMapOutputBroker> broker;
+    ReferenceT<MemoryMapOutputBrokerTestGAM1> gamC;
+    ReferenceContainer brokers;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        gamC = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMC");
+        ret = gamC.IsValid();
+    }
+
+    if (ret) {
+        ret = dataSource->GetOutputBrokers(brokers, "GAMC", (void *) gamC->GetOutputSignalsMemory());
+    }
+    if (ret) {
+        ret = (brokers.Size() > 0u);
+    }
+    if (ret) {
+        broker = brokers.Get(0);
+        ret = broker.IsValid();
+    }
+    uint32 numberOfCopies;
+    if (ret) {
+        numberOfCopies = broker->GetNumberOfCopies();
+        ret = (numberOfCopies == 5u);
+    }
+    if (ret) {
+        ret = gamC->Execute();
+    }
+    if (ret) {
+        ret = broker->Execute();
+    }
+    uint32 signalIdx;
+    char8 *dsPtr;
+    uint32 byteSize;
+    uint32 s;
     if (ret) {
         ret = dataSource->GetSignalIndex(signalIdx, "Signal4A");
     }
@@ -538,7 +585,49 @@ bool MemoryMapOutputBrokerTest::TestExecute() {
         ret = (*(dsPtr++) == static_cast<char8>(s * s));
     }
 
-    //Finally handle the signal with the samples
+    return ret;
+}
+
+bool MemoryMapOutputBrokerTest::TestExecute_Samples() {
+    bool ret = InitialiseMemoryMapOutputBrokerEnviroment(config1);
+    ReferenceT<MemoryMapOutputBrokerDataSourceTestHelper> dataSource;
+    ReferenceT<MemoryMapOutputBroker> broker;
+    ReferenceT<MemoryMapOutputBrokerTestGAM1> gamC;
+    ReferenceContainer brokers;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        gamC = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMC");
+        ret = gamC.IsValid();
+    }
+
+    if (ret) {
+        ret = dataSource->GetOutputBrokers(brokers, "GAMC", (void *) gamC->GetOutputSignalsMemory());
+    }
+    if (ret) {
+        ret = (brokers.Size() > 0u);
+    }
+    if (ret) {
+        broker = brokers.Get(0);
+        ret = broker.IsValid();
+    }
+    uint32 numberOfCopies;
+    if (ret) {
+        numberOfCopies = broker->GetNumberOfCopies();
+        ret = (numberOfCopies == 5u);
+    }
+    if (ret) {
+        ret = gamC->Execute();
+    }
+    if (ret) {
+        ret = broker->Execute();
+    }
+    uint32 signalIdx;
+    char8 *dsPtr;
+    uint32 byteSize;
+    uint32 s;
     if (ret) {
         ret = dataSource->GetSignalIndex(signalIdx, "Signal5");
     }

@@ -50,3 +50,13 @@ TEST(MemoryMapOutputBrokerGTest,TestExecute) {
     MemoryMapOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute());
 }
+
+TEST(MemoryMapOutputBrokerGTest,TestExecute_Ranges) {
+    MemoryMapOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Ranges());
+}
+
+TEST(MemoryMapOutputBrokerGTest,TestExecute_Samples) {
+    MemoryMapOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Samples());
+}
