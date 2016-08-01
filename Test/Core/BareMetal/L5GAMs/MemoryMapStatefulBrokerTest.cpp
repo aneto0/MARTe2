@@ -606,8 +606,6 @@ bool MemoryMapStatefulBrokerTest::TestInit_Input_0() {
         ret = broker->Execute();
     }
 
-    //The dual buffer implementation has a pointer to the variable containing the pointer. This way the data source
-    //can change in real-time this variable value and we will be copying/writing to another buffer.
     void **dataSourcePtrPtr;
     char8 *dataSourcePtr;
     char8 *gamPtr;
@@ -615,9 +613,9 @@ bool MemoryMapStatefulBrokerTest::TestInit_Input_0() {
     uint32 s;
     uint32 n;
     uint32 signalIdx;
-    //Signal5
+    //Signal1A
     if (ret) {
-        ret = dataSource->GetSignalIndex(signalIdx, "Signal5");
+        ret = dataSource->GetSignalIndex(signalIdx, "Signal1A");
     }
     if (ret) {
         void *getPtr;
@@ -630,9 +628,10 @@ bool MemoryMapStatefulBrokerTest::TestInit_Input_0() {
         }
     }
     if (ret) {
-        gamPtr = reinterpret_cast<char8 *>(gamA->GetInputSignalMemory(1));
+        //4th signal of the GAM. The 3rd belongs to another DataSource (and thus to another Broker)
+        gamPtr = reinterpret_cast<char8 *>(gamA->GetInputSignalMemory(3));
     }
-    n = 3;
+    n = 4;
     copySize = broker->GetCopyByteSize(n);
     for (s = 0; (s < copySize) && ret; s++) {
         ret = (dataSourcePtr[s] == static_cast<char8>(n + s));
@@ -679,15 +678,15 @@ bool MemoryMapStatefulBrokerTest::TestInit_Input_1() {
         ret = broker->Execute();
     }
 
-    //The dual buffer implementation has a pointer to the variable containing the pointer. This way the data source
-    //can change in real-time this variable value and we will be copying/writing to another buffer.
     void **dataSourcePtrPtr;
     char8 *dataSourcePtr;
+    uint32 copySize = 0;
+    uint32 s;
+    uint32 n;
     uint32 signalIdx;
-
-    //Signal5
+    //Signal1A
     if (ret) {
-        ret = dataSource->GetSignalIndex(signalIdx, "Signal5");
+        ret = dataSource->GetSignalIndex(signalIdx, "Signal1A");
     }
     if (ret) {
         void *getPtr;
@@ -700,9 +699,8 @@ bool MemoryMapStatefulBrokerTest::TestInit_Input_1() {
         }
     }
 
-    uint32 n = 3;
-    uint32 copySize = broker->GetCopyByteSize(n);
-    uint32 s;
+    n = 4;
+    copySize = broker->GetCopyByteSize(n);
     for (s = 0; (s < copySize) && ret; s++) {
         ret = (dataSourcePtr[s] == static_cast<char8>((n + 1) * s));
     }
@@ -880,6 +878,7 @@ bool MemoryMapStatefulBrokerTest::TestInit_Input_Ranges_1() {
 
     return ret;
 }
+
 bool MemoryMapStatefulBrokerTest::TestInit_Input_Samples_0() {
     bool ret = InitialiseMemoryMapStatefulBrokerEnviroment(config1);
     ReferenceT<MemoryMapStatefulBrokerDataSourceTestHelper> dataSource;
@@ -915,6 +914,8 @@ bool MemoryMapStatefulBrokerTest::TestInit_Input_Samples_0() {
         ret = broker->Execute();
     }
 
+    //The dual buffer implementation has a pointer to the variable containing the pointer. This way the data source
+    //can change in real-time this variable value and we will be copying/writing to another buffer.
     void **dataSourcePtrPtr;
     char8 *dataSourcePtr;
     char8 *gamPtr;
@@ -922,9 +923,9 @@ bool MemoryMapStatefulBrokerTest::TestInit_Input_Samples_0() {
     uint32 s;
     uint32 n;
     uint32 signalIdx;
-    //Signal1A
+    //Signal5
     if (ret) {
-        ret = dataSource->GetSignalIndex(signalIdx, "Signal1A");
+        ret = dataSource->GetSignalIndex(signalIdx, "Signal5");
     }
     if (ret) {
         void *getPtr;
@@ -937,10 +938,9 @@ bool MemoryMapStatefulBrokerTest::TestInit_Input_Samples_0() {
         }
     }
     if (ret) {
-        //4th signal of the GAM. The 3rd belongs to another DataSource (and thus to another Broker)
-        gamPtr = reinterpret_cast<char8 *>(gamA->GetInputSignalMemory(3));
+        gamPtr = reinterpret_cast<char8 *>(gamA->GetInputSignalMemory(1));
     }
-    n = 4;
+    n = 3;
     copySize = broker->GetCopyByteSize(n);
     for (s = 0; (s < copySize) && ret; s++) {
         ret = (dataSourcePtr[s] == static_cast<char8>(n + s));
@@ -987,15 +987,15 @@ bool MemoryMapStatefulBrokerTest::TestInit_Input_Samples_1() {
         ret = broker->Execute();
     }
 
+    //The dual buffer implementation has a pointer to the variable containing the pointer. This way the data source
+    //can change in real-time this variable value and we will be copying/writing to another buffer.
     void **dataSourcePtrPtr;
     char8 *dataSourcePtr;
-    uint32 copySize = 0;
-    uint32 s;
-    uint32 n;
     uint32 signalIdx;
-    //Signal1A
+
+    //Signal5
     if (ret) {
-        ret = dataSource->GetSignalIndex(signalIdx, "Signal1A");
+        ret = dataSource->GetSignalIndex(signalIdx, "Signal5");
     }
     if (ret) {
         void *getPtr;
@@ -1008,8 +1008,9 @@ bool MemoryMapStatefulBrokerTest::TestInit_Input_Samples_1() {
         }
     }
 
-    n = 4;
-    copySize = broker->GetCopyByteSize(n);
+    uint32 n = 3;
+    uint32 copySize = broker->GetCopyByteSize(n);
+    uint32 s;
     for (s = 0; (s < copySize) && ret; s++) {
         ret = (dataSourcePtr[s] == static_cast<char8>((n + 1) * s));
     }
@@ -1317,7 +1318,6 @@ bool MemoryMapStatefulBrokerTest::TestInit_Output_Ranges_1() {
     return ret;
 }
 
-
 bool MemoryMapStatefulBrokerTest::TestInit_Output_Samples_0() {
     bool ret = InitialiseMemoryMapStatefulBrokerEnviroment(config1);
     ReferenceT<MemoryMapStatefulBrokerDataSourceTestHelper> dataSource;
@@ -1451,7 +1451,6 @@ bool MemoryMapStatefulBrokerTest::TestInit_Output_Samples_1() {
 
     return ret;
 }
-
 
 bool MemoryMapStatefulBrokerTest::TestInit_PrepareNextState() {
     bool ret = InitialiseMemoryMapStatefulBrokerEnviroment(config1);

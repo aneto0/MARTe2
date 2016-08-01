@@ -46,12 +46,32 @@ TEST(MemoryMapBrokerGTest,TestConstructor) {
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(MemoryMapBrokerGTest,TestInit_Input_Ranges_Samples) {
+TEST(MemoryMapBrokerGTest,TestInit_Input) {
     MemoryMapBrokerTest test;
-    ASSERT_TRUE(test.TestInit_Input_Ranges_Samples());
+    ASSERT_TRUE(test.TestInit_Input());
 }
 
-TEST(MemoryMapBrokerGTest,TestInit_Output_Ranges_Samples) {
+TEST(MemoryMapBrokerGTest,TestInit_Input_Ranges) {
     MemoryMapBrokerTest test;
-    ASSERT_TRUE(test.TestInit_Output_Ranges_Samples());
+    ASSERT_TRUE(test.TestInit_Input_Ranges());
+}
+
+TEST(MemoryMapBrokerGTest,TestInit_Input_Samples) {
+    MemoryMapBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Input_Samples());
+}
+
+TEST(MemoryMapBrokerGTest,TestInit_Output) {
+    MemoryMapBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Output());
+}
+
+TEST(MemoryMapBrokerGTest,TestInit_Output_Ranges) {
+    MemoryMapBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Output_Ranges());
+}
+
+TEST(MemoryMapBrokerGTest,TestInit_Output_Samples) {
+    MemoryMapBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Output_Samples());
 }
