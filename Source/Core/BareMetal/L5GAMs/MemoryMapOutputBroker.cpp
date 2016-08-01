@@ -48,10 +48,11 @@ MemoryMapOutputBroker::~MemoryMapOutputBroker() {
 
 bool MemoryMapOutputBroker::Execute() {
     uint32 n;
-    for (n = 0u; n < numberOfCopies; n++) {
+    bool ret = true;
+    for (n = 0u; (n < numberOfCopies) && (ret); n++) {
         MemoryOperationsHelper::Copy(copyTable[n].dataSourcePointer, copyTable[n].gamPointer, copyTable[n].copySize);
     }
-    return true;
+    return ret;
 }
 
 CLASS_REGISTER(MemoryMapOutputBroker, "1.0")

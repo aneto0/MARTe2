@@ -59,7 +59,7 @@ public:
 
     /**
      * @brief Sequentially copies all the signals from the GAM memory to the DataSourceI memory.
-     * @return true
+     * @return true if all copies are successfully performed.
      */
     virtual bool Execute();
 };

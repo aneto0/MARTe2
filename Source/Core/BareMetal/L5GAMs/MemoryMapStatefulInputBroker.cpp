@@ -48,10 +48,14 @@ MemoryMapStatefulInputBroker::~MemoryMapStatefulInputBroker() {
 
 bool MemoryMapStatefulInputBroker::Execute() {
     uint32 n;
-    for (n = 0u; n < numberOfCopies; n++) {
-        MemoryOperationsHelper::Copy(copyTable[n].gamPointer, copyTable[n].dataSourcePointer[RealTimeApplication::index][copyTable[n].dataSourceOffset], copyTable[n].copySize);
+    bool ret = true;
+    char8 *dataSourceSignalPointer;
+    for (n = 0u; (n < numberOfCopies) && (ret); n++) {
+        dataSourceSignalPointer = reinterpret_cast<char8 *>(*(copyTable[n].dataSourcePointer[RealTimeApplication::index]));
+        dataSourceSignalPointer += copyTable[n].dataSourceOffset;
+        MemoryOperationsHelper::Copy(copyTable[n].gamPointer, dataSourceSignalPointer, copyTable[n].copySize);
     }
-    return true;
+    return ret;
 }
 
 CLASS_REGISTER(MemoryMapStatefulInputBroker, "1.0")

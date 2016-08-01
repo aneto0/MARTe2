@@ -39,12 +39,29 @@
 
 namespace MARTe {
 
-
+/**
+ * @brief Output MemoryMapStatefulBroker implementation.
+ * @details This class copies all the signals declared on a MemoryMapStatefulBroker
+ * from the GAM memory to the DataSourceI memory.
+ */
 class MemoryMapStatefulOutputBroker: public MemoryMapBroker {
 public:
 CLASS_REGISTER_DECLARATION()
+    /**
+     * @brief Default constructor. NOOP.
+     */
     MemoryMapStatefulOutputBroker();
+
+    /**
+     * @brief Destructor. NOOP.
+     */
     virtual ~MemoryMapStatefulOutputBroker();
+
+    /**
+     * @brief Sequentially copies all the signals from the GAM memory to the DataSourceI memory buffer[state].
+     * This state is defined by the RealTimeApplication::index (which can be either 0/1).
+     * @return true if all copies are successfully performed.
+     */
     virtual bool Execute();
 };
 
