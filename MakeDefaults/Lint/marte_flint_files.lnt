@@ -51,6 +51,7 @@ FlagsType.h
 FloatToInteger.cpp
 FormatDescriptor.cpp
 FractionalInteger.h
+GAM.cpp
 GeneralDefinitions.h
 GlobalObjectI.cpp
 GlobalObjectsDatabase.cpp

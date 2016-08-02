@@ -590,7 +590,7 @@ bool DataSourceI::IsSupportedBroker(const SignalDirection direction,
     return ret;
 }
 
-bool DataSourceI::MoveToFunctionIndex(uint32 functionIdx) {
+bool DataSourceI::MoveToFunctionIndex(const uint32 functionIdx) {
     bool ret = configuredDatabase.MoveToRoot();
     if (ret) {
         ret = configuredDatabase.MoveRelative("Functions");
@@ -697,14 +697,14 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
                                 ReferenceContainer inputBrokers;
                                 ret = GetInputBrokers(inputBrokers, functionName.Buffer(), gamMemoryAddress);
                                 if (ret) {
-                                    gam->AddInputBrokers(inputBrokers);
+                                    ret = gam->AddInputBrokers(inputBrokers);
                                 }
                             }
                             else {
                                 ReferenceContainer outputBrokers;
                                 ret = GetOutputBrokers(outputBrokers, functionName.Buffer(), gamMemoryAddress);
                                 if (ret) {
-                                    gam->AddOutputBrokers(outputBrokers);
+                                    ret = gam->AddOutputBrokers(outputBrokers);
                                 }
                             }
 
