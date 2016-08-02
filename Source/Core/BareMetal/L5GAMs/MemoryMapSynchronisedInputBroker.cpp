@@ -48,9 +48,8 @@ MemoryMapSynchronisedInputBroker::~MemoryMapSynchronisedInputBroker() {
 }
 
 bool MemoryMapSynchronisedInputBroker::Execute() {
-    bool ret = (dataSource != NULL_PTR(DataSourceI *));
-    if (ret) {
-        //lint -e{613} dataSource != NULL is verified
+    bool ret = true;
+    if (dataSource != NULL_PTR(DataSourceI *)) {
         ret = dataSource->Synchronise();
     }
     if (ret) {

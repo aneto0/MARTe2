@@ -38,7 +38,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-MemoryMapStatefulOutputBroker::MemoryMapStatefulOutputBroker() : MemoryMapStatefulBroker(){
+MemoryMapStatefulOutputBroker::MemoryMapStatefulOutputBroker() :
+        MemoryMapStatefulBroker() {
 
 }
 
@@ -48,15 +49,15 @@ MemoryMapStatefulOutputBroker::~MemoryMapStatefulOutputBroker() {
 
 bool MemoryMapStatefulOutputBroker::Execute() {
     uint32 n;
-    bool ret = (copyTable != NULL_PTR(MemoryMapStatefulBrokerCopyTableEntry *));
+    bool ret = true;
     char8 *dataSourceSignalPointer;
     for (n = 0u; (n < numberOfCopies) && (ret); n++) {
-        //lint -e{613} -e{9025}  copyTable != NULL is verified [MISRA C++ Rule 5-0-19]. Justification: two pointer indirection required to access the address of the variable that holds the final address of the double buffer
-        dataSourceSignalPointer = reinterpret_cast<char8 *>(*(copyTable[n].dataSourcePointer[RealTimeApplication::index]));
-        //lint -e{613} copyTable != NULL is verified
-        dataSourceSignalPointer = &dataSourceSignalPointer[copyTable[n].dataSourceOffset];
-        //lint -e{613} copyTable != NULL is verified
-        ret = MemoryOperationsHelper::Copy(dataSourceSignalPointer, copyTable[n].gamPointer, copyTable[n].copySize);
+        if (copyTable != NULL_PTR(MemoryMapStatefulBrokerCopyTableEntry *)) {
+            //lint -e{9025}  [MISRA C++ Rule 5-0-19]. Justification: two pointer indirection required to access the address of the variable that holds the final address of the double buffer
+            dataSourceSignalPointer = reinterpret_cast<char8 *>(*(copyTable[n].dataSourcePointer[RealTimeApplication::index]));
+            dataSourceSignalPointer = &dataSourceSignalPointer[copyTable[n].dataSourceOffset];
+            ret = MemoryOperationsHelper::Copy(dataSourceSignalPointer, copyTable[n].gamPointer, copyTable[n].copySize);
+        }
     }
     return ret;
 }

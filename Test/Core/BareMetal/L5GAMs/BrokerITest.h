@@ -33,24 +33,44 @@
 /*---------------------------------------------------------------------------*/
 #include "BrokerI.h"
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
 
+/**
+ * @brief Tests the BrokerI public methods.
+ */
 class BrokerITest {
 public:
+    /**
+     * @brief Tests the default constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests the InitFunctionPointers method.
+     */
     bool TestInitFunctionPointers();
 
+    /**
+     * @brief Tests the GetNumberOfCopies method.
+     */
     bool TestGetNumberOfCopies();
 
+    /**
+     * @brief Tests the GetCopyByteSize method.
+     */
     bool TestGetCopyByteSize();
 
+    /**
+     * @brief Tests the GetCopyOffset method.
+     */
     bool TestGetCopyOffset();
 
+    /**
+     * @brief Tests the GetFunctionPointer method.
+     */
     bool TestGetFunctionPointer();
 
 };
@@ -60,4 +80,4 @@ public:
 /*---------------------------------------------------------------------------*/
 
 #endif /* BROKERITEST_H_ */
-	
+

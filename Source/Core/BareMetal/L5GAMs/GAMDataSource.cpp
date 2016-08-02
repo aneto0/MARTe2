@@ -100,21 +100,17 @@ bool GAMDataSource::GetSignalMemoryBuffer(const uint32 signalIdx,
     if (ret) {
         ret = (signalIdx < nOfSignals);
     }
+
     if (ret) {
-        ret = (signalMemory != NULL_PTR(void *));
-    }
-    if (ret) {
-        ret = (signalOffsets != NULL_PTR(uint32 *));
-    }
-    char8 *signalAddressChar = NULL_PTR(char8 *);
-    if (ret) {
-        signalAddressChar = reinterpret_cast<char8 *>(signalMemory);
-        ret = (signalAddressChar != NULL_PTR(char8 *));
-    }
-    if (ret) {
-        //lint -e{613} signalAddressChar != NULL is verified
-        signalAddressChar = &signalAddressChar[signalOffsets[signalIdx]];
-        signalAddress = reinterpret_cast<void *&>(signalAddressChar);
+        char8 *signalAddressChar = reinterpret_cast<char8 *>(signalMemory);
+        uint32 offset = 0u;
+        if (signalOffsets != NULL_PTR(uint32 *)) {
+            offset = signalOffsets[signalIdx];
+        }
+        if (signalAddressChar != NULL_PTR(char8 *)) {
+            signalAddressChar = &signalAddressChar[offset];
+            signalAddress = reinterpret_cast<void *&>(signalAddressChar);
+        }
     }
 
     return ret;
@@ -135,11 +131,9 @@ bool GAMDataSource::AllocateMemory() {
         uint32 thisSignalMemorySize;
         ret = GetSignalByteSize(s, thisSignalMemorySize);
         if (ret) {
-            ret = (signalOffsets != NULL_PTR(uint32 *));
-        }
-        if (ret) {
-            //lint -e{613} signalOffsets != NULL is tested
-            signalOffsets[s] = memorySize;
+            if (signalOffsets != NULL_PTR(uint32 *)) {
+                signalOffsets[s] = memorySize;
+            }
         }
         if (ret) {
             ret = (thisSignalMemorySize > 0u);
@@ -149,11 +143,9 @@ bool GAMDataSource::AllocateMemory() {
         }
     }
     if (ret) {
-        ret = (memoryHeap != NULL_PTR(HeapI *));
-    }
-    if (ret) {
-        //lint -e{613} memoryHeap != NULL is tested
-        signalMemory = memoryHeap->Malloc(memorySize);
+        if (memoryHeap != NULL_PTR(HeapI *)) {
+            signalMemory = memoryHeap->Malloc(memorySize);
+        }
         ret = MemoryOperationsHelper::Set(signalMemory, '\0', memorySize);
     }
     return ret;
@@ -346,7 +338,9 @@ bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
                 if (!GetSignalName(n, signalName)) {
                     signalName = "";
                 }
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be 1 and is %d", GetName(), stateName.Buffer(), signalName.Buffer(), nProducers)
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
+                                        "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be 1 and is %d", GetName(),
+                                        stateName.Buffer(), signalName.Buffer(), nProducers)
             }
         }
     }
