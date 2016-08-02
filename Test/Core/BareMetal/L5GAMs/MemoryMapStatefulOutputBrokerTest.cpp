@@ -187,7 +187,7 @@ MemoryMapStatefulOutputBrokerDataSourceTestHelper    ();
             void *&signalAddress);
 
     virtual const char8 *GetBrokerName(StructuredDataI &data,
-                                       const SignalDirection direction);
+            const SignalDirection direction);
 
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
@@ -296,12 +296,15 @@ uint32 MemoryMapStatefulOutputBrokerDataSourceTestHelper::GetNumberOfMemoryBuffe
     return 2u;
 }
 
-bool MemoryMapStatefulOutputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
+bool MemoryMapStatefulOutputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                                                              const uint32 bufferIdx,
+                                                                              void *&signalAddress) {
     signalAddress = &bufferedMemoryAddress[bufferIdx][signalIdx];
     return true;
 }
 
-const char8 *MemoryMapStatefulOutputBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data, const SignalDirection direction) {
+const char8 *MemoryMapStatefulOutputBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data,
+                                                                              const SignalDirection direction) {
     if (direction == InputSignals) {
         return "MemoryMapStatefulInputBroker";
     }
@@ -324,12 +327,16 @@ bool MemoryMapStatefulOutputBrokerDataSourceTestHelper::PrepareNextState(const R
     return true;
 }
 
-bool MemoryMapStatefulOutputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers, const char8* const functionName, void * const gamMemPtr) {
+bool MemoryMapStatefulOutputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
+                                                                        const char8* const functionName,
+                                                                        void * const gamMemPtr) {
 
     return true;
 }
 
-bool MemoryMapStatefulOutputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers, const char8* const functionName, void * const gamMemPtr) {
+bool MemoryMapStatefulOutputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
+                                                                         const char8* const functionName,
+                                                                         void * const gamMemPtr) {
     ReferenceT<MemoryMapStatefulOutputBroker> broker("MemoryMapStatefulOutputBroker");
     bool ret = broker.IsValid();
     if (ret) {
@@ -500,6 +507,9 @@ static const char8 * const config1 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
+        "        +Times = {"
+        "            Class = TimesDataSource"
+        "        }"
         "    }"
         "    +States = {"
         "        Class = ReferenceContainer"
@@ -509,7 +519,7 @@ static const char8 * const config1 = ""
         "                Class = ReferenceContainer"
         "                +Thread1 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = {:Functions.GAMC :Functions.GAMA :Functions.GAMF}"
+        "                    Functions = {GAMC GAMA GAMF}"
         "                }"
         "            }"
         "        }"
@@ -519,7 +529,7 @@ static const char8 * const config1 = ""
         "                Class = ReferenceContainer"
         "                +Thread1 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = {:Functions.GAMD :Functions.GAMB :Functions.GAME :Functions.GAMF}"
+        "                    Functions = {GAMD GAMB GAME GAMF}"
         "                }"
         "            }"
         "        }"

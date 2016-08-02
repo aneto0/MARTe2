@@ -37,6 +37,9 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
+
+class RealTimeApplication;
+
 /**
  * @brief Helper class which expands and parses a RealTimeApplication configuration database.
  * @details This class takes a RealTimeApplication ConfigurationDatabase as defined by the

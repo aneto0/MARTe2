@@ -122,6 +122,9 @@ bool GAMDataSource::AllocateMemory() {
     if (ret) {
         ret = (signalMemory == NULL_PTR(void *));
     }
+    else {
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No signals defined for DataSource with name %s", GetName())
+    }
     if (ret) {
         signalOffsets = new uint32[nOfSignals];
     }
@@ -343,7 +346,7 @@ bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
                 ret = GetSignalNumberOfProducers(n, stateName.Buffer(), nProducers);
             }
             if (ret) {
-                ret = (nProducers >= 1u);
+                ret = (nProducers > 0u);
             }
             if (!ret) {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,

@@ -162,11 +162,11 @@ MemoryMapStatefulInputBrokerDataSourceTestHelper    ();
     virtual uint32 GetNumberOfMemoryBuffers();
 
     virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
-                                       const uint32 bufferIdx,
+            const uint32 bufferIdx,
             void *&signalAddress);
 
     virtual const char8 *GetBrokerName(StructuredDataI &data,
-                                       const SignalDirection direction);
+            const SignalDirection direction);
 
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
@@ -342,7 +342,7 @@ bool MemoryMapStatefulInputBrokerDataSourceTestHelper::GetOutputBrokers(Referenc
     return true;
 }
 
-bool MemoryMapStatefulInputBrokerDataSourceTestHelper::Synchronise(){
+bool MemoryMapStatefulInputBrokerDataSourceTestHelper::Synchronise() {
     return false;
 }
 
@@ -501,6 +501,9 @@ static const char8 * const config1 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
+        "        +Times = {"
+        "            Class = TimesDataSource"
+        "        }"
         "    }"
         "    +States = {"
         "        Class = ReferenceContainer"
@@ -510,7 +513,7 @@ static const char8 * const config1 = ""
         "                Class = ReferenceContainer"
         "                +Thread1 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = {:Functions.GAMC :Functions.GAMA :Functions.GAMF}"
+        "                    Functions = {GAMC GAMA GAMF}"
         "                }"
         "            }"
         "        }"
@@ -520,7 +523,7 @@ static const char8 * const config1 = ""
         "                Class = ReferenceContainer"
         "                +Thread1 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = {:Functions.GAMD :Functions.GAMB :Functions.GAME :Functions.GAMF}"
+        "                    Functions = {GAMD GAMB GAME GAMF}"
         "                }"
         "            }"
         "        }"

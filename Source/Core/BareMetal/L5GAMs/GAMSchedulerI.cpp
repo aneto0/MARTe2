@@ -69,6 +69,8 @@ GAMSchedulerI::~GAMSchedulerI() {
 }
 
 bool GAMSchedulerI::Initialise(StructuredDataI & data) {
+    //TODO remove. GF working on this now.
+    return true;
     bool ret = ReferenceContainer::Initialise(data);
     if (ret) {
         ret = data.Read("TimesDataSource", timeDsAddress);

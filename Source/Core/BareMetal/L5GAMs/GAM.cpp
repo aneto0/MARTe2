@@ -610,11 +610,11 @@ bool GAM::AddOutputBrokers(ReferenceContainer brokers) {
     return ret;
 }
 
-ReferenceT<ReferenceContainer> GAM::GetInputBrokers() {
+ReferenceT<ReferenceContainer> GAM::GetInputBrokers() const {
     return inputBrokers;
 }
 
-ReferenceT<ReferenceContainer> GAM::GetOutputBrokers() {
+ReferenceT<ReferenceContainer> GAM::GetOutputBrokers() const {
     return outputBrokers;
 }
 
