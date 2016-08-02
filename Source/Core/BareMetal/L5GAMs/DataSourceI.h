@@ -43,9 +43,9 @@
 
 namespace MARTe {
 
-class BrokerI;
-class RealTimeApplication;
-class GAM;
+//class BrokerI;
+//class RealTimeApplication;
+//class GAM;
 
 enum SignalDirection {
     InputSignals, OutputSignals, None
