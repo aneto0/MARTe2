@@ -46,7 +46,7 @@ public:
     TimesDataSource();
 
     virtual ~TimesDataSource();
-
+    virtual bool SetConfiguredDatabase(StructuredDataI & data);
 };
 
 }

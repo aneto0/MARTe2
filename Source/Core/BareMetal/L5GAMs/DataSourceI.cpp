@@ -82,7 +82,7 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
     return ret;
 }
 
-bool DataSourceI::IsLocked() {
+bool DataSourceI::IsLocked(){
     signalsDatabase.MoveAbsolute("Signals");
     uint32 locked;
     bool ret = false;

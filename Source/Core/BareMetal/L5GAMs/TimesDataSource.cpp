@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TimesDataSource.h"
-
+#include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -48,10 +48,34 @@ TimesDataSource::TimesDataSource() :
 TimesDataSource::~TimesDataSource() {
 }
 
+bool TimesDataSource::SetConfiguredDatabase(StructuredDataI & data) {
+    bool ret = DataSourceI::SetConfiguredDatabase(data);
+    uint32 nSignals = GetNumberOfSignals();
+    uint32 nStates = 0u;
+    uint32 n;
+    for (n = 0u; (n < nSignals) && (ret); n++) {
+        ret = GetSignalNumberOfStates(n, nStates);
+        uint32 s;
+        for (s = 0u; (s < nStates) && (ret); s++) {
+            uint32 nProducers = 0u;
+            StreamString stateName;
+            ret = GetSignalStateName(n, s, stateName);
+            if (ret) {
+                ret = !GetSignalNumberOfProducers(n, stateName.Buffer(), nProducers);
+                if (!ret) {
+                    StreamString signalName;
+                    if (!GetSignalName(n, signalName)) {
+                        signalName = "";
+                    }
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In TimesDataSource %s, state %s, signal %s has a producer", GetName(),
+                                            stateName.Buffer(), signalName.Buffer())
+                }
 
-
-
-
+            }
+        }
+    }
+    return ret;
+}
 
 CLASS_REGISTER(TimesDataSource, "1.0")
 

@@ -49,7 +49,7 @@ public:
 
 MemoryMapStatefulOutputBrokerTestScheduler1    ();
 
-    virtual void StartExecution(const uint32 activeBuffer);
+    virtual void StartExecution();
 
     virtual void StopExecution();
 };
@@ -59,7 +59,7 @@ MemoryMapStatefulOutputBrokerTestScheduler1::MemoryMapStatefulOutputBrokerTestSc
 
 }
 
-void MemoryMapStatefulOutputBrokerTestScheduler1::StartExecution(const uint32 activeBuffer) {
+void MemoryMapStatefulOutputBrokerTestScheduler1::StartExecution() {
 
 }
 

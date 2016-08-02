@@ -41,7 +41,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestInitialiseSignalsDatabase1) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestInitialiseSignalsDatabase1(false));

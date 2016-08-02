@@ -102,7 +102,7 @@ public:
     bool AddSignals(StructuredDataI & data);
 
 
-    bool IsLocked() const;
+    bool IsLocked();
 
     /**
      * @brief Assigns a valid and StructuredDataI to this DataSourceI.
