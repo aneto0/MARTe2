@@ -345,8 +345,7 @@ bool RealTimeApplication::ConfigureApplication() {
         PrintDatabases(rtAppBuilder);
     }
     if (ret) {
-        //TODO REMOVE comment!
-        //ret = rtAppBuilder.VerifyConsumersAndProducers();
+        ret = rtAppBuilder.VerifyConsumersAndProducers();
         PrintDatabases(rtAppBuilder);
     }
     if (ret) {

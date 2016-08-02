@@ -82,7 +82,7 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
     return ret;
 }
 
-bool DataSourceI::IsLocked(){
+bool DataSourceI::IsLocked() {
     signalsDatabase.MoveAbsolute("Signals");
     uint32 locked;
     bool ret = false;
@@ -654,76 +654,76 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
         found = (application.IsValid());
     }
     bool ret = found;
-
-    if (ret) {
-        ret = configuredDatabase.MoveAbsolute("Functions");
-    }
-    else {
+    if (!ret) {
         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No RealTimeApplication found for DataSourceI : %s", GetName())
     }
+
     if (ret) {
-        uint32 numberOfFunctions = configuredDatabase.GetNumberOfChildren();
-        for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
-            const char8* functionId = configuredDatabase.GetChildName(i);
-            ret = configuredDatabase.MoveRelative(functionId);
-            StreamString functionName;
-            if (ret) {
-                ret = configuredDatabase.Read("QualifiedName", functionName);
-            }
-            if (ret) {
-                StreamString fullFunctionName = "Functions.";
-                fullFunctionName += functionName;
-
-                ReferenceT<GAM> gam = application->Find(fullFunctionName.Buffer());
-                ret = gam.IsValid();
-                void *gamMemoryAddress = NULL_PTR(void *);
-
-                bool relevant = false;
-                if (direction == InputSignals) {
-                    if (gam->GetNumberOfInputSignals() > 0u) {
-                        gamMemoryAddress = gam->GetInputSignalsMemory();
-                        relevant = true;
-                    }
+        //If no Functions are defined it means that no one wants to interact with this DataSourceI. This is not an error.
+        if (configuredDatabase.MoveAbsolute("Functions")) {
+            uint32 numberOfFunctions = configuredDatabase.GetNumberOfChildren();
+            for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
+                const char8* functionId = configuredDatabase.GetChildName(i);
+                ret = configuredDatabase.MoveRelative(functionId);
+                StreamString functionName;
+                if (ret) {
+                    ret = configuredDatabase.Read("QualifiedName", functionName);
                 }
-                else if (direction == OutputSignals) {
-                    if (gam->GetNumberOfOutputSignals() > 0u) {
-                        gamMemoryAddress = gam->GetOutputSignalsMemory();
-                        relevant = true;
-                    }
-                }
-                else {
-                    //There is no direction set
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No direction set when adding brokers to DataSourceI : %s", GetName())
-                    ret = false;
-                }
+                if (ret) {
+                    StreamString fullFunctionName = "Functions.";
+                    fullFunctionName += functionName;
 
-                if (relevant) {
-                    if (ret) {
-                        ret = (gamMemoryAddress != NULL);
+                    ReferenceT<GAM> gam = application->Find(fullFunctionName.Buffer());
+                    ret = gam.IsValid();
+                    void *gamMemoryAddress = NULL_PTR(void *);
+
+                    bool relevant = false;
+                    if (direction == InputSignals) {
+                        if (gam->GetNumberOfInputSignals() > 0u) {
+                            gamMemoryAddress = gam->GetInputSignalsMemory();
+                            relevant = true;
+                        }
                     }
-                    if (ret) {
-                        if (configuredDatabase.MoveRelative(dirStr)) {
-                            if (direction == InputSignals) {
-                                ReferenceContainer inputBrokers;
-                                ret = GetInputBrokers(inputBrokers, functionName.Buffer(), gamMemoryAddress);
-                                if (ret) {
-                                    ret = gam->AddInputBrokers(inputBrokers);
+                    else if (direction == OutputSignals) {
+                        if (gam->GetNumberOfOutputSignals() > 0u) {
+                            gamMemoryAddress = gam->GetOutputSignalsMemory();
+                            relevant = true;
+                        }
+                    }
+                    else {
+                        //There is no direction set
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No direction set when adding brokers to DataSourceI : %s", GetName())
+                        ret = false;
+                    }
+
+                    if (relevant) {
+                        if (ret) {
+                            ret = (gamMemoryAddress != NULL);
+                        }
+                        if (ret) {
+                            if (configuredDatabase.MoveRelative(dirStr)) {
+                                if (direction == InputSignals) {
+                                    ReferenceContainer inputBrokers;
+                                    ret = GetInputBrokers(inputBrokers, functionName.Buffer(), gamMemoryAddress);
+                                    if (ret) {
+                                        ret = gam->AddInputBrokers(inputBrokers);
+                                    }
                                 }
-                            }
-                            else {
-                                ReferenceContainer outputBrokers;
-                                ret = GetOutputBrokers(outputBrokers, functionName.Buffer(), gamMemoryAddress);
-                                if (ret) {
-                                    ret = gam->AddOutputBrokers(outputBrokers);
+                                else {
+                                    ReferenceContainer outputBrokers;
+                                    ret = GetOutputBrokers(outputBrokers, functionName.Buffer(), gamMemoryAddress);
+                                    if (ret) {
+                                        ret = gam->AddOutputBrokers(outputBrokers);
+                                    }
                                 }
-                            }
 
+                            }
                         }
                     }
                 }
-            }
-            if (ret) {
-                ret = configuredDatabase.MoveAbsolute("Functions");
+                if (ret) {
+                    ret = configuredDatabase.MoveAbsolute("Functions");
+                }
             }
         }
     }

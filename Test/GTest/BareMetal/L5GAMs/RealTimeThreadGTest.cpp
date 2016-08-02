@@ -93,3 +93,18 @@ TEST(RealTimeThreadGTest,TestGetGAMs) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestGetGAMs());
 }
+
+TEST(RealTimeThreadGTest,TestGetStackSize) {
+    RealTimeThreadTest test;
+    ASSERT_TRUE(test.TestGetStackSize());
+}
+
+TEST(RealTimeThreadGTest,TestGetCPU) {
+    RealTimeThreadTest test;
+    ASSERT_TRUE(test.TestGetCPU());
+}
+/*
+TEST(RealTimeThreadGTest,TestGetGAMs) {
+    RealTimeThreadTest test;
+    ASSERT_TRUE(test.TestGetGAMs());
+}*/
