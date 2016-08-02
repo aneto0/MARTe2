@@ -75,7 +75,6 @@ TEST(GAMDataSourceGTest,TestPrepareNextState_Default_Elements_Mismatch) {
     ASSERT_TRUE(test.TestPrepareNextState_Default_Elements_Mismatch());
 }
 
-
 TEST(GAMDataSourceGTest,TestGetNumberOfMemoryBuffers) {
     GAMDataSourceTest test;
     ASSERT_TRUE(test.TestGetNumberOfMemoryBuffers());
@@ -104,4 +103,29 @@ TEST(GAMDataSourceGTest,TestGetInputBrokers) {
 TEST(GAMDataSourceGTest,TestGetOutputBrokers) {
     GAMDataSourceTest test;
     ASSERT_TRUE(test.TestGetOutputBrokers());
+}
+
+TEST(GAMDataSourceGTest,TestSetConfiguredDatabase) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase());
+}
+
+TEST(GAMDataSourceGTest,TestSetConfiguredDatabase_MoreThanOneProducer_State_1) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_MoreThanOneProducer_State_1());
+}
+
+TEST(GAMDataSourceGTest,TestSetConfiguredDatabase_MoreThanOneProducer_State_2) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_MoreThanOneProducer_State_2());
+}
+
+TEST(GAMDataSourceGTest,TestSetConfiguredDatabase_NoProducer_State_1) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_NoProducer_State_1());
+}
+
+TEST(GAMDataSourceGTest,TestSetConfiguredDatabase_NoProducer_State_2) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_NoProducer_State_2());
 }

@@ -142,7 +142,7 @@ public:
      *  @param[in] data the configured database of parameters.
      *  @return true if the \a data can be successfully copied.
      */
-    bool SetConfiguredDatabase(StructuredDataI & data);
+    virtual bool SetConfiguredDatabase(StructuredDataI & data);
 
     /**
      * @brief Gets the number of signals handled by this DataSource.

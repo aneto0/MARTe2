@@ -77,8 +77,7 @@ bool GAMDataSource::Initialise(StructuredDataI & data) {
         if (data.Read("HeapName", heapName)) {
             memoryHeap = HeapManager::FindHeap(heapName.Buffer());
             if (memoryHeap == NULL_PTR(HeapI *)) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                        "Could not instantiate an memoryHeap with the name: %s", heapName.Buffer())
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Could not instantiate an memoryHeap with the name: %s", heapName.Buffer())
                 ret = false;
             }
         }
@@ -93,7 +92,9 @@ uint32 GAMDataSource::GetNumberOfMemoryBuffers() {
     return 1u;
 }
 
-bool GAMDataSource::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
+bool GAMDataSource::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                          const uint32 bufferIdx,
+                                          void *&signalAddress) {
     bool ret = (bufferIdx < 1u);
     uint32 nOfSignals = GetNumberOfSignals();
     if (ret) {
@@ -158,7 +159,8 @@ bool GAMDataSource::AllocateMemory() {
     return ret;
 }
 
-const char8 *GAMDataSource::GetBrokerName(StructuredDataI &data, const SignalDirection direction) {
+const char8 *GAMDataSource::GetBrokerName(StructuredDataI &data,
+                                          const SignalDirection direction) {
     const char8* brokerName = NULL_PTR(const char8 *);
 
     float32 freq;
@@ -255,9 +257,8 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
                         thisSignal.SetNumberOfDimensions(thisSignalNumberOfDimensions);
                     }
                     else {
-                        REPORT_ERROR_PARAMETERS(
-                                ErrorManagement::FatalError,
-                                "Default value has different number of dimensions w.r.t. to the signal %s", signalName)
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Default value has different number of dimensions w.r.t. to the signal %s",
+                                                signalName)
                     }
 
                     uint32 defaultValueNumberOfElements = 1u;
@@ -270,9 +271,8 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
                         ret = (thisSignalNumberOfElements == defaultValueNumberOfElements);
                     }
                     else {
-                        REPORT_ERROR_PARAMETERS(
-                                ErrorManagement::FatalError,
-                                "Default value has different number of elements w.r.t. to the signal %s", signalName)
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Default value has different number of elements w.r.t. to the signal %s",
+                                                signalName)
                     }
                     for (d = 0u; (d < thisSignalNumberOfDimensions) && (ret); d++) {
                         uint32 elementsInDimensionN = defaultValueType.GetNumberOfElements(d);
@@ -280,8 +280,7 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
                     }
                     if (!GetSignalDefaultValue(signalIdx, thisSignal)) {
                         ret = false;
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                                "Could not read existent Default value for signal %s", signalName)
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Could not read existent Default value for signal %s", signalName)
                     }
 
                 }
@@ -291,7 +290,9 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
     return ret;
 }
 
-bool GAMDataSource::GetInputBrokers(ReferenceContainer &inputBrokers, const char8* const functionName, void * const gamMemPtr) {
+bool GAMDataSource::GetInputBrokers(ReferenceContainer &inputBrokers,
+                                    const char8* const functionName,
+                                    void * const gamMemPtr) {
 //generally a loop for each supported broker
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
     bool ret = broker.IsValid();
@@ -306,7 +307,9 @@ bool GAMDataSource::GetInputBrokers(ReferenceContainer &inputBrokers, const char
     return ret;
 }
 
-bool GAMDataSource::GetOutputBrokers(ReferenceContainer &outputBrokers, const char8* const functionName, void * const gamMemPtr) {
+bool GAMDataSource::GetOutputBrokers(ReferenceContainer &outputBrokers,
+                                     const char8* const functionName,
+                                     void * const gamMemPtr) {
     ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
     bool ret = broker.IsValid();
     if (ret) {
@@ -315,6 +318,36 @@ bool GAMDataSource::GetOutputBrokers(ReferenceContainer &outputBrokers, const ch
     if (ret) {
         if (broker->GetNumberOfCopies() > 0u) {
             ret = outputBrokers.Insert(broker);
+        }
+    }
+    return ret;
+}
+
+bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
+    bool ret = DataSourceI::SetConfiguredDatabase(data);
+    uint32 nSignals = GetNumberOfSignals();
+    uint32 nStates = 0u;
+    uint32 n;
+    for (n = 0u; (n < nSignals) && (ret); n++) {
+        ret = GetSignalNumberOfStates(n, nStates);
+        uint32 s;
+        for (s = 0u; (s < nStates) && (ret); s++) {
+            uint32 nProducers = 0u;
+            StreamString stateName;
+            ret = GetSignalStateName(n, s, stateName);
+            if (ret) {
+                ret = GetSignalNumberOfProducers(n, stateName.Buffer(), nProducers);
+            }
+            if (ret) {
+                ret = (nProducers == 1u);
+            }
+            if (!ret) {
+                StreamString signalName;
+                if (!GetSignalName(n, signalName)) {
+                    signalName = "";
+                }
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be 1 and is %d", GetName(), stateName.Buffer(), signalName.Buffer(), nProducers)
+            }
         }
     }
     return ret;

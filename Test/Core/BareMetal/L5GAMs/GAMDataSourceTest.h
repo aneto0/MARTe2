@@ -66,6 +66,16 @@ public:
     bool TestGetInputBrokers();
 
     bool TestGetOutputBrokers();
+
+    bool TestSetConfiguredDatabase();
+
+    bool TestSetConfiguredDatabase_NoProducer_State_1();
+
+    bool TestSetConfiguredDatabase_NoProducer_State_2();
+
+    bool TestSetConfiguredDatabase_MoreThanOneProducer_State_1();
+
+    bool TestSetConfiguredDatabase_MoreThanOneProducer_State_2();
 };
 
 /*---------------------------------------------------------------------------*/

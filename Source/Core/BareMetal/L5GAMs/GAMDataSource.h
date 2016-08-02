@@ -152,6 +152,15 @@ public:
      */
     virtual bool Synchronise();
 
+    /**
+     * @brief Calls DataSourceI::SetConfiguredDatabase and verifies that there is one and only one
+     * producer for each consumer on each state.
+     * @param[in] data see DataSourceI::SetConfiguredDatabase
+     * @return true if DataSourceI::SetConfiguredDatabase returns true and if there is one and only one
+     * producer for each consumer on each state.
+     */
+    virtual bool SetConfiguredDatabase(StructuredDataI & data);
+
 protected:
     /**
      * The single buffer memory.
