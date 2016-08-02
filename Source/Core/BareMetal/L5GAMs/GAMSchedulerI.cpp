@@ -72,7 +72,7 @@ bool GAMSchedulerI::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (ret) {
         StreamString timeDsAddress;
-        ret = data.Read("TimeStampDataSource", timeDsAddress);
+        ret = data.Read("TimesDataSource", timeDsAddress);
         if (ret) {
             timeDataSource = ObjectRegistryDatabase::Instance()->Find(timeDsAddress.Buffer());
             ret = timeDataSource.IsValid();

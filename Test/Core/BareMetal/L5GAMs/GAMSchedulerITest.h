@@ -51,6 +51,9 @@ public:
      */
     bool TestConstructor();
 
+
+    bool TestConfigureScheduler();
+#if 0
     /**
      * @brief Tests if the function inserts a new GAMSchedulerRecord.
      */
@@ -83,6 +86,7 @@ public:
 
 
     bool TestExecuteSingleCycle();
+#endif
 
 };
 
