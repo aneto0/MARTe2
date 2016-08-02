@@ -594,7 +594,7 @@ bool GAM::AddInputBrokers(ReferenceContainer brokers) {
     bool ret = true;
     uint32 n = 0u;
     while ((n < brokers.Size()) && ret) {
-        ret = inputBrokers.Insert(brokers.Get(n));
+        ret = inputBrokers->Insert(brokers.Get(n));
         n++;
     }
     return ret;
@@ -604,7 +604,7 @@ bool GAM::AddOutputBrokers(ReferenceContainer brokers) {
     bool ret = true;
     uint32 n = 0u;
     while ((n < brokers.Size()) && ret) {
-        ret = outputBrokers.Insert(brokers.Get(n));
+        ret = outputBrokers->Insert(brokers.Get(n));
         n++;
     }
     return ret;
