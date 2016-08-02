@@ -49,7 +49,7 @@ public:
 
 MemoryMapSynchronisedInputBrokerTestScheduler1    ();
 
-    virtual void StartExecution(const uint32 activeBuffer);
+    virtual void StartExecution();
 
     virtual void StopExecution();
 };
@@ -59,7 +59,7 @@ MemoryMapSynchronisedInputBrokerTestScheduler1::MemoryMapSynchronisedInputBroker
 
 }
 
-void MemoryMapSynchronisedInputBrokerTestScheduler1::StartExecution(const uint32 activeBuffer) {
+void MemoryMapSynchronisedInputBrokerTestScheduler1::StartExecution() {
 
 }
 
@@ -133,24 +133,24 @@ MemoryMapSynchronisedInputBrokerDataSourceTestHelper    ();
 
     virtual uint32 GetNumberOfMemoryBuffers();
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-            uint32 bufferIdx,
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+            const uint32 bufferIdx,
             void *&signalAddress);
 
     virtual const char8 *GetBrokerName(StructuredDataI &data,
-            SignalDirection direction);
+            const SignalDirection direction);
 
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
 
     virtual bool GetOutputBrokers(
             ReferenceContainer &outputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
 
     virtual bool Synchronise();
 
@@ -216,9 +216,7 @@ uint32 MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetNumberOfMemoryBu
  * @brief Returns the correct memory buffer and generates a pattern where the signal
  * address byte N contains the value N*N
  */
-bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 signalIdx,
-                                                                     uint32 bufferIdx,
-                                                                     void *&signalAddress) {
+bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
     char8 *memPtr = reinterpret_cast<char8 *>(signalMemory);
     memPtr += offsets[signalIdx];
     uint32 byteSize;
@@ -233,8 +231,7 @@ bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer
     return ret;
 }
 
-const char8 * MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data,
-                                                                      SignalDirection direction) {
+const char8 * MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data, const SignalDirection direction) {
     if (direction == InputSignals) {
         return "MemoryMapSynchronisedInputBroker";
     }
@@ -245,9 +242,7 @@ bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::PrepareNextState(cons
     return true;
 }
 
-bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
-                                                               const char8* functionName,
-                                                               void * gamMemPtr) {
+bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers, const char8* const functionName, void * const gamMemPtr) {
     ReferenceT<MemoryMapSynchronisedInputBroker> broker("MemoryMapSynchronisedInputBroker");
     bool ret = broker.IsValid();
     if (ret) {
@@ -259,13 +254,11 @@ bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetInputBrokers(Refer
     return ret;
 }
 
-bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                                                const char8* functionName,
-                                                                void * gamMemPtr) {
+bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers, const char8* const functionName, void * const gamMemPtr) {
     return true;
 }
 
-bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::Synchronise(){
+bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::Synchronise() {
     return !failSynchronisation;
 }
 

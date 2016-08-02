@@ -64,13 +64,9 @@ namespace MARTe {
 class DLL_API RealTimeApplicationConfigurationBuilder {
 public:
 
-
     bool ConfigureAfterInitialisation();
 
     bool ConfigureBeforeInitialisation();
-
-
-
 
     /**
      * @brief Default constructor. Sets the RealTimeApplication
@@ -502,6 +498,7 @@ public:
 
     bool VerifyConsumersAndProducers();
 
+
     /**
      * @brief For every signal in every Function compute the memory size and the memory offset (if Ranges are defined).
      * @details The memory size is given by sizeof(Type) multiplied by all the Ranges. Illegal Ranges definitions (see post condition).
@@ -909,8 +906,7 @@ private:
     bool FlattenSignal(bool isFunctionsDatabase,
                        const char8 * const signalName,
                        ConfigurationDatabase &resolvedSignal,
-                       uint32 &signalNumber,
-                       bool forceWriteDataSource);
+                       uint32 &signalNumber);
 
     /**
      * @brief Adds a signal from \a gamName into \a dataSourceName.
@@ -1043,6 +1039,11 @@ private:
                        const char8* stateName,
                        const char8 * threadName,
                        uint32 &syncSignals);
+
+    bool AddSignalsToTimeStamp(const char8* tDsName);
+
+    bool WriteTimeSignalInfo(const char8*signalNameStr);
+
 };
 
 }

@@ -386,12 +386,13 @@ public:
     /**
      * TODO
      */
-    ReferenceContainer GetInputBrokers();
+    ReferenceT<ReferenceContainer> GetInputBrokers();
 
     /**
      * TODO
      */
-    ReferenceContainer GetOutputBrokers();
+    ReferenceT<ReferenceContainer> GetOutputBrokers();
+
 
     /**
      * TODO
@@ -488,12 +489,12 @@ protected:
     /**
      * Brokers for signal reading.
      */
-    ReferenceContainer inputBrokers;
+    ReferenceT<ReferenceContainer> inputBrokers;
 
     /**
      * Brokers for signal writing.
      */
-    ReferenceContainer outputBrokers;
+    ReferenceT<ReferenceContainer> outputBrokers;
 
     /**
      * The heap that is used to malloc the input and output signals.
@@ -509,4 +510,3 @@ protected:
 }
 
 #endif /* GAM_H_ */
-

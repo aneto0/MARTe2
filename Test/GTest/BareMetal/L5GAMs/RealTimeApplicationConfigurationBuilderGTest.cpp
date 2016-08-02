@@ -41,10 +41,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-
-
-
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestInitialiseSignalsDatabase1) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestInitialiseSignalsDatabase1(false));
@@ -95,6 +91,26 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestInitialiseSignalsDatabaseF
     ASSERT_TRUE(test.TestInitialiseSignalsDatabaseFalse_InvalidApplication());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestInitialiseSignalsDatabaseFalse_TooManyTimeDataSources) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestInitialiseSignalsDatabaseFalse_TooManyTimeDataSources(false));
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestInitialiseSignalsDatabaseFalse_TooManyTimeDataSources_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestInitialiseSignalsDatabaseFalse_TooManyTimeDataSources(true));
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestInitialiseSignalsDatabaseFalse_NoTimeDataSource) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestInitialiseSignalsDatabaseFalse_NoTimeDataSource(false));
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestInitialiseSignalsDatabaseFalse_NoTimeDataSource_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestInitialiseSignalsDatabaseFalse_NoTimeDataSource(true));
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases1) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestFlattenSignalsDatabases1());
@@ -123,6 +139,11 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases5) 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases6) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestFlattenSignalsDatabases6());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_LockedDataSource) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_LockedDataSource());
 }
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_CopyAllKnownSignalsProperties) {
@@ -273,6 +294,11 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourcesSignalsF
     ASSERT_TRUE(test.TestResolveDataSourcesSignalsFalse_LeafMappedOnNode());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourcesSignalsFalse_AddSignalToLockedDataSource) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSourcesSignalsFalse_AddSignalToLockedDataSource());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignals1) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestVerifyDataSourcesSignals1());
@@ -337,6 +363,11 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals2) {
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals3) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveFunctionSignals3());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsFalse_CompleteSignalInLockedDataSource) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveFunctionSignalsFalse_CompleteSignalInLockedDataSource());
 }
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyFunctionSignals) {
@@ -504,6 +535,11 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducer
     ASSERT_TRUE(test.TestVerifyConsumersAndProducers_Ranges3());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers_TimesSignals) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyConsumersAndProducers_TimesSignals());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducersFalse_MoreProducers) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_MoreProducers());
@@ -522,6 +558,16 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducer
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducersFalse_RangeOverlap2) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_RangeOverlap2());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducersFalse_InvalidTimeSignals) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_InvalidTimeSignals());
 }
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySize) {

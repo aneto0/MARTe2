@@ -62,6 +62,12 @@ public:
     //gam with no IO signals
     bool TestInitialiseSignalsDatabaseFalse_GAMsNoIO(bool fromConfig);
 
+    //more than one time ds defined
+    bool TestInitialiseSignalsDatabaseFalse_TooManyTimeDataSources(bool fromConfig);
+
+    //no time ds defined
+    bool TestInitialiseSignalsDatabaseFalse_NoTimeDataSource(bool fromConfig);
+
     //Basic
     bool TestFlattenSignalsDatabases1();
 
@@ -79,6 +85,9 @@ public:
 
     //With deep nested names in data source
     bool TestFlattenSignalsDatabases6();
+
+    //Put Locked flag in data source
+    bool TestFlattenSignalsDatabases_LockedDataSource();
 
     //Known signal properties
     bool TestFlattenSignalsDatabases_CopyAllKnownSignalsProperties();
@@ -167,6 +176,9 @@ public:
     //pre-existent ds with type not allowed (map a structure on a leaf basically)
     bool TestResolveDataSourcesSignalsFalse_PartialDataSourceWithType();
 
+    //Locked ds
+    bool TestResolveDataSourcesSignalsFalse_AddSignalToLockedDataSource();
+
     //bool TestVerifyDataSourcesSignals();
 
     //Basic
@@ -207,6 +219,9 @@ public:
 
     //merge a struct
     bool TestResolveFunctionSignals3();
+
+    //locked ds
+    bool TestResolveFunctionSignalsFalse_CompleteSignalInLockedDataSource();
 
     //TODO The verify is useless??
     //basic
@@ -287,6 +302,9 @@ public:
     //ranges overlap but in input
     bool TestVerifyConsumersAndProducers_Ranges3();
 
+    //merging of time signals
+    bool TestVerifyConsumersAndProducers_TimesSignals();
+
     //more than one producer
     bool TestVerifyConsumersAndProducersFalse_MoreProducers();
 
@@ -298,6 +316,12 @@ public:
 
     //range overlap fail same signal
     bool TestVerifyConsumersAndProducersFalse_RangeOverlap2();
+
+    //producer in time signals
+    bool TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals();
+
+    //the time signals must have a specific name
+    bool TestVerifyConsumersAndProducersFalse_InvalidTimeSignals();
 
     //basic
     bool TestResolveFunctionSignalsMemorySize();

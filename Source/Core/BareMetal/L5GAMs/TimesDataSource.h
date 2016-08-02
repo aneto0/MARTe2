@@ -1,8 +1,8 @@
 /**
- * @file BrokerITest.h
- * @brief Header file for class BrokerITest
- * @date 27/07/2016
- * @author Andre Neto
+ * @file TimesDataSource.h
+ * @brief Header file for class TimesDataSource
+ * @date 01/ago/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class BrokerITest
+ * @details This header file contains the declaration of the class TimesDataSource
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef BROKERITEST_H_
-#define BROKERITEST_H_
+#ifndef TIMESDATASOURCE_H_
+#define TIMESDATASOURCE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,53 +31,29 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BrokerI.h"
+
+#include "GAMDataSource.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-using namespace MARTe;
 
-/**
- * @brief Tests the BrokerI public methods.
- */
-class BrokerITest {
+namespace MARTe {
+
+class TimesDataSource: public GAMDataSource {
 public:
-    /**
-     * @brief Tests the default constructor.
-     */
-    bool TestConstructor();
+    CLASS_REGISTER_DECLARATION()
+    TimesDataSource();
 
-    /**
-     * @brief Tests the InitFunctionPointers method.
-     */
-    bool TestInitFunctionPointers();
-
-    /**
-     * @brief Tests the GetNumberOfCopies method.
-     */
-    bool TestGetNumberOfCopies();
-
-    /**
-     * @brief Tests the GetCopyByteSize method.
-     */
-    bool TestGetCopyByteSize();
-
-    /**
-     * @brief Tests the GetCopyOffset method.
-     */
-    bool TestGetCopyOffset();
-
-    /**
-     * @brief Tests the GetFunctionPointer method.
-     */
-    bool TestGetFunctionPointer();
-
+    virtual ~TimesDataSource();
+    virtual bool SetConfiguredDatabase(StructuredDataI & data);
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* BROKERITEST_H_ */
+#endif /* TIMESDATASOURCE_H_ */
 

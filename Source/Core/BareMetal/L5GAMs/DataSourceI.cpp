@@ -82,6 +82,16 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
     return ret;
 }
 
+bool DataSourceI::IsLocked(){
+    signalsDatabase.MoveAbsolute("Signals");
+    uint32 locked;
+    bool ret = false;
+    if (signalsDatabase.Read("Locked", locked)) {
+        ret = (locked != 0u);
+    }
+    return ret;
+}
+
 bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
     bool ret = data.Copy(configuredDatabase);
     if (ret) {
@@ -144,7 +154,7 @@ TypeDescriptor DataSourceI::GetSignalType(const uint32 signalIdx) {
 }
 
 bool DataSourceI::GetSignalNumberOfDimensions(const uint32 signalIdx,
-                                              uint32 &numberOfDimensions) {
+                                              uint8 &numberOfDimensions) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.Read("NumberOfDimensions", numberOfDimensions);

@@ -54,7 +54,8 @@ GAM::GAM() :
     outputSignalsMemory = NULL_PTR(void *);
     inputSignalsMemoryIndexer = NULL_PTR(void **);
     outputSignalsMemoryIndexer = NULL_PTR(void **);
-
+    inputBrokers = ReferenceT<ReferenceContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    outputBrokers = ReferenceT<ReferenceContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
 }
 
@@ -609,11 +610,11 @@ bool GAM::AddOutputBrokers(ReferenceContainer brokers) {
     return ret;
 }
 
-ReferenceContainer GAM::GetInputBrokers() {
+ReferenceT<ReferenceContainer> GAM::GetInputBrokers() {
     return inputBrokers;
 }
 
-ReferenceContainer GAM::GetOutputBrokers() {
+ReferenceT<ReferenceContainer> GAM::GetOutputBrokers() {
     return outputBrokers;
 }
 

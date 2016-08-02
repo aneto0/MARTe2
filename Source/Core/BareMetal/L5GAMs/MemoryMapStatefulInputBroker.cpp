@@ -38,7 +38,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-MemoryMapStatefulInputBroker::MemoryMapStatefulInputBroker() {
+MemoryMapStatefulInputBroker::MemoryMapStatefulInputBroker() :
+        MemoryMapStatefulBroker() {
 
 }
 
@@ -51,9 +52,12 @@ bool MemoryMapStatefulInputBroker::Execute() {
     bool ret = true;
     char8 *dataSourceSignalPointer;
     for (n = 0u; (n < numberOfCopies) && (ret); n++) {
-        dataSourceSignalPointer = reinterpret_cast<char8 *>(*(copyTable[n].dataSourcePointer[RealTimeApplication::index]));
-        dataSourceSignalPointer += copyTable[n].dataSourceOffset;
-        MemoryOperationsHelper::Copy(copyTable[n].gamPointer, dataSourceSignalPointer, copyTable[n].copySize);
+        if (copyTable != NULL_PTR(MemoryMapStatefulBrokerCopyTableEntry *)) {
+            //lint -e{9025}  [MISRA C++ Rule 5-0-19]. Justification: two pointer indirection required to access the address of the variable that holds the final address of the double buffer
+            dataSourceSignalPointer = reinterpret_cast<char8 *>(*(copyTable[n].dataSourcePointer[RealTimeApplication::index]));
+            dataSourceSignalPointer = &dataSourceSignalPointer[copyTable[n].dataSourceOffset];
+            ret = MemoryOperationsHelper::Copy(copyTable[n].gamPointer, dataSourceSignalPointer, copyTable[n].copySize);
+        }
     }
     return ret;
 }

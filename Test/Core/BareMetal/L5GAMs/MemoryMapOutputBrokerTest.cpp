@@ -49,7 +49,7 @@ public:
 
 MemoryMapOutputBrokerTestScheduler1    ();
 
-    virtual void StartExecution(const uint32 activeBuffer);
+    virtual void StartExecution();
 
     virtual void StopExecution();
 };
@@ -59,7 +59,7 @@ MemoryMapOutputBrokerTestScheduler1::MemoryMapOutputBrokerTestScheduler1() :
 
 }
 
-void MemoryMapOutputBrokerTestScheduler1::StartExecution(const uint32 activeBuffer) {
+void MemoryMapOutputBrokerTestScheduler1::StartExecution() {
 
 }
 
@@ -152,24 +152,24 @@ MemoryMapOutputBrokerDataSourceTestHelper    ();
 
     virtual uint32 GetNumberOfMemoryBuffers();
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-            uint32 bufferIdx,
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+                                       const uint32 bufferIdx,
             void *&signalAddress);
 
     virtual const char8 *GetBrokerName(StructuredDataI &data,
-            SignalDirection direction);
+                                       const SignalDirection direction);
 
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
 
     virtual bool GetOutputBrokers(
             ReferenceContainer &outputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
 
     virtual bool Synchronise();
 
@@ -224,8 +224,8 @@ uint32 MemoryMapOutputBrokerDataSourceTestHelper::GetNumberOfMemoryBuffers() {
     return 1u;
 }
 
-bool MemoryMapOutputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 signalIdx,
-                                                                      uint32 bufferIdx,
+bool MemoryMapOutputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                                                      const uint32 bufferIdx,
                                                                       void *&signalAddress) {
     char8 *memPtr = reinterpret_cast<char8 *>(signalMemory);
     memPtr += offsets[signalIdx];
@@ -238,7 +238,7 @@ bool MemoryMapOutputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 sig
 }
 
 const char8 * MemoryMapOutputBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data,
-                                                                       SignalDirection direction) {
+                                                                       const SignalDirection direction) {
     if (direction == InputSignals) {
         return "MemoryMapOutputBroker";
     }
@@ -250,15 +250,15 @@ bool MemoryMapOutputBrokerDataSourceTestHelper::PrepareNextState(const RealTimeS
 }
 
 bool MemoryMapOutputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
-                                                                const char8* functionName,
-                                                                void * gamMemPtr) {
+                                                                const char8* const functionName,
+                                                                void * const gamMemPtr) {
 
     return true;
 }
 
 bool MemoryMapOutputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                                                 const char8* functionName,
-                                                                 void * gamMemPtr) {
+                                                                 const char8* const functionName,
+                                                                 void * const gamMemPtr) {
     ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
     bool ret = broker.IsValid();
     if (ret) {

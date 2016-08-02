@@ -49,7 +49,7 @@ public:
 
 MemoryMapStatefulBrokerTestScheduler1    ();
 
-    virtual void StartExecution(const uint32 activeBuffer);
+    virtual void StartExecution();
 
     virtual void StopExecution();
 };
@@ -59,7 +59,7 @@ MemoryMapStatefulBrokerTestScheduler1::MemoryMapStatefulBrokerTestScheduler1() :
 
 }
 
-void MemoryMapStatefulBrokerTestScheduler1::StartExecution(const uint32 activeBuffer) {
+void MemoryMapStatefulBrokerTestScheduler1::StartExecution() {
 
 }
 
@@ -204,24 +204,24 @@ MemoryMapStatefulBrokerDataSourceTestHelper    ();
 
     virtual uint32 GetNumberOfMemoryBuffers();
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-            uint32 bufferIdx,
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+                                       const uint32 bufferIdx,
             void *&signalAddress);
 
     virtual const char8 *GetBrokerName(StructuredDataI &data,
-            SignalDirection direction);
+                                       const SignalDirection direction);
 
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
 
     virtual bool GetOutputBrokers(
             ReferenceContainer &outputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
 
     virtual bool Synchronise();
 
@@ -318,15 +318,15 @@ uint32 MemoryMapStatefulBrokerDataSourceTestHelper::GetNumberOfMemoryBuffers() {
     return 2u;
 }
 
-bool MemoryMapStatefulBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 signalIdx,
-                                                                        uint32 bufferIdx,
+bool MemoryMapStatefulBrokerDataSourceTestHelper::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                                                        const uint32 bufferIdx,
                                                                         void *&signalAddress) {
     signalAddress = &bufferedMemoryAddress[bufferIdx][signalIdx];
     return true;
 }
 
 const char8 *MemoryMapStatefulBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data,
-                                                                        SignalDirection direction) {
+                                                                        const SignalDirection direction) {
     if (direction == InputSignals) {
         return "MemoryMapStatefulBrokerTestHelper";
     }
@@ -337,7 +337,7 @@ bool MemoryMapStatefulBrokerDataSourceTestHelper::PrepareNextState(const RealTim
     //All the odd signals of Buffer 1 will know be pointing at the memory[2]
     //All the even signals of Buffer 2 will know be pointing at the memory[1]
     uint32 s = 0;
-    for (s = 0; s < numberOfSignals; s++) {
+    for (s = 0; s < GetNumberOfSignals(); s++) {
         if ((s % 2) != 0) {
             bufferedMemoryAddress[1][s] = signalMemoryAddress[0][s];
         }
@@ -350,8 +350,8 @@ bool MemoryMapStatefulBrokerDataSourceTestHelper::PrepareNextState(const RealTim
 }
 
 bool MemoryMapStatefulBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
-                                                                  const char8* functionName,
-                                                                  void * gamMemPtr) {
+                                                                  const char8* const functionName,
+                                                                  void * const gamMemPtr) {
     ReferenceT<MemoryMapStatefulBrokerTestHelper> broker("MemoryMapStatefulBrokerTestHelper");
     bool ret = broker.IsValid();
     if (ret) {
@@ -364,8 +364,8 @@ bool MemoryMapStatefulBrokerDataSourceTestHelper::GetInputBrokers(ReferenceConta
 }
 
 bool MemoryMapStatefulBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                                                   const char8* functionName,
-                                                                   void * gamMemPtr) {
+                                                                   const char8* const functionName,
+                                                                   void * const gamMemPtr) {
     ReferenceT<MemoryMapStatefulBrokerTestHelper> broker("MemoryMapStatefulBrokerTestHelper");
     bool ret = broker.IsValid();
     if (ret) {

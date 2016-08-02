@@ -1,8 +1,8 @@
 /**
- * @file MemoryMapOutputBroker.cpp
- * @brief Source file for class MemoryMapOutputBroker
- * @date 18/07/2016
- * @author Andre Neto
+ * @file TimesDataSource.cpp
+ * @brief Source file for class TimesDataSource
+ * @date 01/ago/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryMapOutputBroker (public, protected, and private). Be aware that some 
+ * the class TimesDataSource (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,8 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "MemoryMapOutputBroker.h"
 
+#include "TimesDataSource.h"
+#include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -37,27 +38,45 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
-MemoryMapOutputBroker::MemoryMapOutputBroker() :
-        MemoryMapBroker() {
 
+TimesDataSource::TimesDataSource() :
+        GAMDataSource() {
 }
 
-MemoryMapOutputBroker::~MemoryMapOutputBroker() {
-
+TimesDataSource::~TimesDataSource() {
 }
 
-bool MemoryMapOutputBroker::Execute() {
+bool TimesDataSource::SetConfiguredDatabase(StructuredDataI & data) {
+    bool ret = DataSourceI::SetConfiguredDatabase(data);
+    uint32 nSignals = GetNumberOfSignals();
+    uint32 nStates = 0u;
     uint32 n;
-    bool ret = true;
-    for (n = 0u; (n < numberOfCopies) && (ret); n++) {
-        if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
-            ret = MemoryOperationsHelper::Copy(copyTable[n].dataSourcePointer, copyTable[n].gamPointer, copyTable[n].copySize);
+    for (n = 0u; (n < nSignals) && (ret); n++) {
+        ret = GetSignalNumberOfStates(n, nStates);
+        uint32 s;
+        for (s = 0u; (s < nStates) && (ret); s++) {
+            uint32 nProducers = 0u;
+            StreamString stateName;
+            ret = GetSignalStateName(n, s, stateName);
+            if (ret) {
+                ret = !GetSignalNumberOfProducers(n, stateName.Buffer(), nProducers);
+                if (!ret) {
+                    StreamString signalName;
+                    if (!GetSignalName(n, signalName)) {
+                        signalName = "";
+                    }
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In TimesDataSource %s, state %s, signal %s has a producer", GetName(),
+                                            stateName.Buffer(), signalName.Buffer())
+                }
+
+            }
         }
     }
     return ret;
 }
 
-CLASS_REGISTER(MemoryMapOutputBroker, "1.0")
-}
+CLASS_REGISTER(TimesDataSource, "1.0")
 
+}
