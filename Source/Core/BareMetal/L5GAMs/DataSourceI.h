@@ -196,7 +196,7 @@ public:
      *   SetConfiguredDatabase
      */
     bool GetSignalNumberOfDimensions(const uint32 signalIdx,
-                                     uint32 &numberOfDimensions);
+                                     uint8 &numberOfDimensions);
 
     /**
      * @brief Gets the number of elements of the signal at position \a signalIdx.
@@ -557,8 +557,8 @@ public:
      *   signalIdx < GetNumberOfSignals() &&
      *   bufferIdx < GetNumberOfMemoryBuffers()
      */
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-                                       uint32 bufferIdx,
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+                                       const uint32 bufferIdx,
                                        void *&signalAddress) = 0;
 
     /**
@@ -573,7 +573,7 @@ public:
      * @return the name of the BrokerI class that will handle the copy of this signal from the DataSourceI memory to the GAM memory.
      */
     virtual const char8 *GetBrokerName(StructuredDataI &data,
-                                       SignalDirection direction)=0;
+                                       const SignalDirection direction)=0;
 
     /**
      * @brief This function is called previous to a state change and allows the DataSourceI to react in advance.
@@ -590,8 +590,8 @@ public:
      * @return true if a list of BrokerI instances can be successfully added to the inputBrokers list.
      */
     virtual bool GetInputBrokers(ReferenceContainer &inputBrokers,
-                                 const char8* functionName,
-                                 void * gamMemPtr)=0;
+                                 const char8* const functionName,
+                                 void * const gamMemPtr)=0;
 
     /**
      * @brief Adds to the \a outputBrokers all the BrokerI instances that will interact with the GAM with name \a functionName.
@@ -601,8 +601,8 @@ public:
      * @return true if a list of BrokerI instances can be successfully added to the outputBrokers list.
      */
     virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                  const char8* functionName,
-                                  void * gamMemPtr)=0;
+                                  const char8* const functionName,
+                                  void * const gamMemPtr)=0;
 
 protected:
 
@@ -615,11 +615,6 @@ protected:
      * Configured database with the information defined in the Data node of the RealTimeApplicationConfigurationBuilder.
      */
     ConfigurationDatabase configuredDatabase;
-
-    /**
-     * Number of signals assigned to this function
-     */
-    uint32 numberOfSignals;
 
     /**
      * @brief Moves the configuredDatabase to the signal with index \a signalIdx.
@@ -645,6 +640,12 @@ protected:
     bool MoveToFunctionSignalIndex(const SignalDirection direction,
                                    const uint32 functionIdx,
                                    const uint32 functionSignalIdx);
+
+private:
+    /**
+     * Number of signals assigned to this function
+     */
+    uint32 numberOfSignals;
 };
 
 }

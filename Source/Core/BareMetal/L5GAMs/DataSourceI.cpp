@@ -144,7 +144,7 @@ TypeDescriptor DataSourceI::GetSignalType(const uint32 signalIdx) {
 }
 
 bool DataSourceI::GetSignalNumberOfDimensions(const uint32 signalIdx,
-                                              uint32 &numberOfDimensions) {
+                                              uint8 &numberOfDimensions) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.Read("NumberOfDimensions", numberOfDimensions);

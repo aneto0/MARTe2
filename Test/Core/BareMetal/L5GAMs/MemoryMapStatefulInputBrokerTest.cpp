@@ -161,24 +161,24 @@ MemoryMapStatefulInputBrokerDataSourceTestHelper    ();
 
     virtual uint32 GetNumberOfMemoryBuffers();
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-            uint32 bufferIdx,
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+                                       const uint32 bufferIdx,
             void *&signalAddress);
 
     virtual const char8 *GetBrokerName(StructuredDataI &data,
-            SignalDirection direction);
+                                       const SignalDirection direction);
 
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
 
     virtual bool GetOutputBrokers(
             ReferenceContainer &outputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
 
     virtual bool Synchronise();
 
@@ -278,8 +278,8 @@ uint32 MemoryMapStatefulInputBrokerDataSourceTestHelper::GetNumberOfMemoryBuffer
 /**
  * Generate a memory pattern that can be checked later.
  */
-bool MemoryMapStatefulInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 signalIdx,
-                                                                             uint32 bufferIdx,
+bool MemoryMapStatefulInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                                                             const uint32 bufferIdx,
                                                                              void *&signalAddress) {
     char8 *memPtr = reinterpret_cast<char8 *>(signalMemoryAddress[bufferIdx][signalIdx]);
     uint32 byteSize;
@@ -299,7 +299,7 @@ bool MemoryMapStatefulInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uin
 }
 
 const char8 *MemoryMapStatefulInputBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data,
-                                                                             SignalDirection direction) {
+                                                                             const SignalDirection direction) {
     if (direction == InputSignals) {
         return "MemoryMapStatefulInputBroker";
     }
@@ -310,7 +310,7 @@ bool MemoryMapStatefulInputBrokerDataSourceTestHelper::PrepareNextState(const Re
     //All the odd signals of Buffer 1 will know be pointing at the memory[2]
     //All the even signals of Buffer 2 will know be pointing at the memory[1]
     uint32 s = 0;
-    for (s = 0; s < numberOfSignals; s++) {
+    for (s = 0; s < GetNumberOfSignals(); s++) {
         if ((s % 2) != 0) {
             bufferedMemoryAddress[1][s] = signalMemoryAddress[0][s];
         }
@@ -323,8 +323,8 @@ bool MemoryMapStatefulInputBrokerDataSourceTestHelper::PrepareNextState(const Re
 }
 
 bool MemoryMapStatefulInputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
-                                                                       const char8* functionName,
-                                                                       void * gamMemPtr) {
+                                                                       const char8* const functionName,
+                                                                       void * const gamMemPtr) {
     ReferenceT<MemoryMapStatefulInputBroker> broker("MemoryMapStatefulInputBroker");
     bool ret = broker.IsValid();
     if (ret) {
@@ -337,8 +337,8 @@ bool MemoryMapStatefulInputBrokerDataSourceTestHelper::GetInputBrokers(Reference
 }
 
 bool MemoryMapStatefulInputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                                                        const char8* functionName,
-                                                                        void * gamMemPtr) {
+                                                                        const char8* const functionName,
+                                                                        void * const gamMemPtr) {
     return true;
 }
 

@@ -38,7 +38,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-MemoryMapOutputBroker::MemoryMapOutputBroker() {
+MemoryMapOutputBroker::MemoryMapOutputBroker() : MemoryMapBroker() {
 
 }
 
@@ -48,9 +48,10 @@ MemoryMapOutputBroker::~MemoryMapOutputBroker() {
 
 bool MemoryMapOutputBroker::Execute() {
     uint32 n;
-    bool ret = true;
+    bool ret = (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *));
     for (n = 0u; (n < numberOfCopies) && (ret); n++) {
-        MemoryOperationsHelper::Copy(copyTable[n].dataSourcePointer, copyTable[n].gamPointer, copyTable[n].copySize);
+        //lint -e{613} copyTable != NULL is verified
+        ret = MemoryOperationsHelper::Copy(copyTable[n].dataSourcePointer, copyTable[n].gamPointer, copyTable[n].copySize);
     }
     return ret;
 }

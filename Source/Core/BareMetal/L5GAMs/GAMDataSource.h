@@ -96,7 +96,7 @@ public:
      *   signalIdx < GetNumberOfSignals() &&
      *   bufferIdx < GetNumberOfMemoryBuffers() < 1
      */
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx, uint32 bufferIdx, void *&signalAddress);
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress);
 
     /**
      * @brief Allocates the memory required to hold all the signal data allocated to this GAMDataSource.
@@ -110,7 +110,7 @@ public:
      * @return MemoryMapInputBroker if direction is InputSignals, MemoryMapOutputBroker if the direction is OutputSignals
      *  or NULL if Frequency != -1 and Samples != 1.
      */
-    virtual const char8 *GetBrokerName(StructuredDataI &data, SignalDirection direction);
+    virtual const char8 *GetBrokerName(StructuredDataI &data, const SignalDirection direction);
 
     /**
      * @brief Initialises the signals that were not used in the previous state with their default value.
@@ -131,8 +131,8 @@ public:
      */
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
-            const char8 * functionName,
-            void* gamMemPtr);
+            const char8 * const functionName,
+            void * const gamMemPtr);
 
     /**
      * @brief Tries to initialise a MemoryMapOutputBroker with the function input parameters.
@@ -143,8 +143,8 @@ public:
      */
     virtual bool GetOutputBrokers(
             ReferenceContainer &outputBrokers,
-            const char8 * functionName,
-            void* gamMemPtr);
+            const char8 * const functionName,
+            void * const gamMemPtr);
 
     /**
      * @brief Not supported (see DataSourceI::Synchronise)
@@ -164,9 +164,9 @@ protected:
     uint32 *signalOffsets;
 
     /**
-     * The HeapI to allocate the double memory.
+     * The HeapI to allocate the signal memory.
      */
-    HeapI *heap;
+    HeapI *memoryHeap;
 };
 
 }

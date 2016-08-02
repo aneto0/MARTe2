@@ -133,24 +133,24 @@ MemoryMapInputBrokerDataSourceTestHelper    ();
 
     virtual uint32 GetNumberOfMemoryBuffers();
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-            uint32 bufferIdx,
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+                                       const uint32 bufferIdx,
             void *&signalAddress);
 
     virtual const char8 *GetBrokerName(StructuredDataI &data,
-            SignalDirection direction);
+                                       const SignalDirection direction);
 
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
 
     virtual bool GetOutputBrokers(
             ReferenceContainer &outputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
 
     virtual bool Synchronise();
 
@@ -212,8 +212,8 @@ uint32 MemoryMapInputBrokerDataSourceTestHelper::GetNumberOfMemoryBuffers() {
  * @brief Returns the correct memory buffer and generates a pattern where the signal
  * address byte N contains the value N*N
  */
-bool MemoryMapInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 signalIdx,
-                                                                     uint32 bufferIdx,
+bool MemoryMapInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                                                     const uint32 bufferIdx,
                                                                      void *&signalAddress) {
     char8 *memPtr = reinterpret_cast<char8 *>(signalMemory);
     memPtr += offsets[signalIdx];
@@ -230,7 +230,7 @@ bool MemoryMapInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 sign
 }
 
 const char8 * MemoryMapInputBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data,
-                                                                      SignalDirection direction) {
+                                                                      const SignalDirection direction) {
     if (direction == InputSignals) {
         return "MemoryMapInputBroker";
     }
@@ -242,8 +242,8 @@ bool MemoryMapInputBrokerDataSourceTestHelper::PrepareNextState(const RealTimeSt
 }
 
 bool MemoryMapInputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
-                                                               const char8* functionName,
-                                                               void * gamMemPtr) {
+                                                               const char8* const functionName,
+                                                               void * const gamMemPtr) {
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
     bool ret = broker.IsValid();
     if (ret) {
@@ -256,8 +256,8 @@ bool MemoryMapInputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContaine
 }
 
 bool MemoryMapInputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                                                const char8* functionName,
-                                                                void * gamMemPtr) {
+                                                                const char8* const functionName,
+                                                                void * const gamMemPtr) {
     return true;
 }
 

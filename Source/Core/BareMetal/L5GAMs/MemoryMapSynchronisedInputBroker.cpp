@@ -38,7 +38,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-MemoryMapSynchronisedInputBroker::MemoryMapSynchronisedInputBroker() {
+MemoryMapSynchronisedInputBroker::MemoryMapSynchronisedInputBroker() :
+        MemoryMapInputBroker() {
 
 }
 
@@ -47,7 +48,11 @@ MemoryMapSynchronisedInputBroker::~MemoryMapSynchronisedInputBroker() {
 }
 
 bool MemoryMapSynchronisedInputBroker::Execute() {
-    bool ret = dataSource->Synchronise();
+    bool ret = (dataSource != NULL_PTR(DataSourceI *));
+    if (ret) {
+        //lint -e{613} dataSource != NULL is verified
+        ret = dataSource->Synchronise();
+    }
     if (ret) {
         ret = MemoryMapInputBroker::Execute();
     }

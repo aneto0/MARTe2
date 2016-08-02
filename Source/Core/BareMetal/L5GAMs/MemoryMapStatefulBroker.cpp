@@ -55,12 +55,13 @@ MemoryMapStatefulBroker::~MemoryMapStatefulBroker() {
     if (copyTable != NULL_PTR(MemoryMapStatefulBrokerCopyTableEntry *)) {
         delete[] copyTable;
     }
+    /*lint -e{1740} dataSource contains a copy of a pointer. No need to be freed.*/
 }
 
-bool MemoryMapStatefulBroker::Init(SignalDirection direction,
-                            DataSourceI &dataSourceIn,
-                            const char8 * const functionName,
-                            void *gamMemoryAddress) {
+bool MemoryMapStatefulBroker::Init(const SignalDirection direction,
+                                   DataSourceI &dataSourceIn,
+                                   const char8 * const functionName,
+                                   void * const gamMemoryAddress) {
     dataSource = &dataSourceIn;
 
     bool ret = InitFunctionPointers(direction, dataSourceIn, functionName, gamMemoryAddress);
@@ -81,7 +82,7 @@ bool MemoryMapStatefulBroker::Init(SignalDirection direction,
     if (ret) {
         copyTable = new MemoryMapStatefulBrokerCopyTableEntry[numberOfCopies];
     }
-    uint32 functionIdx;
+    uint32 functionIdx = 0u;
     if (ret) {
         ret = dataSource->GetFunctionIndex(functionIdx, functionName);
     }
@@ -91,36 +92,39 @@ bool MemoryMapStatefulBroker::Init(SignalDirection direction,
     }
     //The same signal can be copied from different ranges. A MemoryMapStatefulBrokerCopyTableEntry is added for each signal range.
     uint32 c = 0u;
-    for (uint32 n = 0u; (n < functionNumberOfSignals) && (ret); n++) {
+    uint32 n;
+    for (n = 0u; (n < functionNumberOfSignals) && (ret); n++) {
         if (dataSource->IsSupportedBroker(direction, functionIdx, n, brokerClassName)) {
             uint32 numberOfByteOffsets = 0u;
-            if (ret) {
-                ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, n, numberOfByteOffsets);
-            }
+            ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, n, numberOfByteOffsets);
+
             StreamString functionSignalName;
             if (ret) {
                 ret = dataSource->GetFunctionSignalAlias(direction, functionIdx, n, functionSignalName);
             }
-            uint32 signalIdx;
+            uint32 signalIdx = 0u;
             if (ret) {
                 ret = dataSource->GetSignalIndex(signalIdx, functionSignalName.Buffer());
             }
             //Take into account different ranges for the same signal
             uint32 bo;
             for (bo = 0u; (bo < numberOfByteOffsets) && (ret); bo++) {
-                if (ret) {
-                    copyTable[c].copySize = GetCopyByteSize(c);
-                    copyTable[c].gamPointer = GetFunctionPointer(c);
-                    copyTable[c].dataSourceOffset = GetCopyOffset(c);
-                    uint32 b;
-                    for (b = 0u; (b < 2u) && (ret); b++) {
-                        void *dataSourceSignalAddress;
-                        ret = dataSource->GetSignalMemoryBuffer(signalIdx, b, dataSourceSignalAddress);
-                        if (ret) {
-                            copyTable[c].dataSourcePointer[b] = reinterpret_cast<void **>(dataSourceSignalAddress);
-                        }
+                //lint -e{613} copyTable != NULL is verified
+                copyTable[c].copySize = GetCopyByteSize(c);
+                //lint -e{613} copyTable != NULL is verified
+                copyTable[c].gamPointer = GetFunctionPointer(c);
+                //lint -e{613} copyTable != NULL is verified
+                copyTable[c].dataSourceOffset = GetCopyOffset(c);
+                uint32 b;
+                for (b = 0u; (b < 2u) && (ret); b++) {
+                    void *dataSourceSignalAddress;
+                    ret = dataSource->GetSignalMemoryBuffer(signalIdx, b, dataSourceSignalAddress);
+                    if (ret) {
+                        //lint -e{613} -e{9025}  copyTable != NULL is verified [MISRA C++ Rule 5-0-19]. Justification: two pointer indirection required to access the address of the variable that holds the final address of the double buffer
+                        copyTable[c].dataSourcePointer[b] = reinterpret_cast<void **>(dataSourceSignalAddress);
                     }
                 }
+
                 c++;
             }
         }

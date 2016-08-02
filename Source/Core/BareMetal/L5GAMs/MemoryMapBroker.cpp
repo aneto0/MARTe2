@@ -54,12 +54,13 @@ MemoryMapBroker::~MemoryMapBroker() {
     if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
         delete[] copyTable;
     }
+    /*lint -e{1740} dataSource contains a copy of a pointer. No need to be freed.*/
 }
 
-bool MemoryMapBroker::Init(SignalDirection direction,
-                            DataSourceI &dataSourceIn,
-                            const char8 * const functionName,
-                            void *gamMemoryAddress) {
+bool MemoryMapBroker::Init(const SignalDirection direction,
+                           DataSourceI &dataSourceIn,
+                           const char8 * const functionName,
+                           void * const gamMemoryAddress) {
     dataSource = &dataSourceIn;
 
     bool ret = InitFunctionPointers(direction, dataSourceIn, functionName, gamMemoryAddress);
@@ -80,7 +81,7 @@ bool MemoryMapBroker::Init(SignalDirection direction,
     if (ret) {
         copyTable = new MemoryMapBrokerCopyTableEntry[numberOfCopies];
     }
-    uint32 functionIdx;
+    uint32 functionIdx = 0u;
     if (ret) {
         ret = dataSource->GetFunctionIndex(functionIdx, functionName);
     }
@@ -90,35 +91,37 @@ bool MemoryMapBroker::Init(SignalDirection direction,
     }
     //The same signal can be copied from different ranges. A MemoryMapBrokerCopyTableEntry is added for each signal range.
     uint32 c = 0u;
-    for (uint32 n = 0u; (n < functionNumberOfSignals) && (ret); n++) {
+    uint32 n;
+    for (n = 0u; (n < functionNumberOfSignals) && (ret); n++) {
         if (dataSource->IsSupportedBroker(direction, functionIdx, n, brokerClassName)) {
             uint32 numberOfByteOffsets = 0u;
-            if (ret) {
-                ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, n, numberOfByteOffsets);
-            }
+            ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, n, numberOfByteOffsets);
+
             StreamString functionSignalName;
             if (ret) {
                 ret = dataSource->GetFunctionSignalAlias(direction, functionIdx, n, functionSignalName);
             }
-            uint32 signalIdx;
+            uint32 signalIdx = 0u;
             if (ret) {
                 ret = dataSource->GetSignalIndex(signalIdx, functionSignalName.Buffer());
             }
             //Take into account different ranges for the same signal
             uint32 bo;
             for (bo = 0u; (bo < numberOfByteOffsets) && (ret); bo++) {
+                //lint -e{613} copyTable != NULL is verified
+                copyTable[c].copySize = GetCopyByteSize(c);
+                //lint -e{613} copyTable != NULL is verified
+                copyTable[c].gamPointer = GetFunctionPointer(c);
+                uint32 dataSourceOffset = GetCopyOffset(c);
+                void *dataSourceSignalAddress;
+                ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0u, dataSourceSignalAddress);
+                char8 *dataSourceSignalAddressChar = reinterpret_cast<char8 *>(dataSourceSignalAddress);
                 if (ret) {
-                    copyTable[c].copySize = GetCopyByteSize(c);
-                    copyTable[c].gamPointer = GetFunctionPointer(c);
-                    uint32 dataSourceOffset = GetCopyOffset(c);
-                    void *dataSourceSignalAddress;
-                    ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0u, dataSourceSignalAddress);
-                    char8 *dataSourceSignalAddressChar = reinterpret_cast<char8 *>(dataSourceSignalAddress);
-                    if (ret) {
-                        dataSourceSignalAddressChar += dataSourceOffset;
-                        copyTable[c].dataSourcePointer = reinterpret_cast<void *>(dataSourceSignalAddressChar);
-                    }
+                    dataSourceSignalAddressChar = &dataSourceSignalAddressChar[dataSourceOffset];
+                    //lint -e{613} copyTable != NULL is verified
+                    copyTable[c].dataSourcePointer = reinterpret_cast<void *>(dataSourceSignalAddressChar);
                 }
+
                 c++;
             }
         }

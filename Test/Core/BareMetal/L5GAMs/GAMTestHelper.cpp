@@ -172,14 +172,14 @@ bool DS1::AllocateMemory() {
     return false;
 }
 
-bool DS1::GetSignalMemoryBuffer(uint32 signalIdx,
-                                uint32 bufferIdx,
+bool DS1::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                const uint32 bufferIdx,
                                 void *&signalAddress) {
     return true;
 }
 
 const char8 *DS1::GetBrokerName(StructuredDataI &data,
-                                SignalDirection direction) {
+                                const SignalDirection direction) {
     const char8* brokerName = NULL_PTR(const char8 *);
 
     float32 freq;
@@ -212,8 +212,8 @@ bool DS1::ChangeState() {
 }
 
 bool DS1::GetInputBrokers(ReferenceContainer &inputBrokers,
-                          const char8 * functionName,
-                          void* gamMemPtr) {
+                          const char8 * const  functionName,
+                          void* const gamMemPtr) {
     bool ret = true;
     //generally a loop for each supported broker
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
@@ -230,8 +230,8 @@ bool DS1::GetInputBrokers(ReferenceContainer &inputBrokers,
 }
 
 bool DS1::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                           const char8 * functionName,
-                           void* gamMemPtr) {
+                           const char8 * const functionName,
+                           void* const gamMemPtr) {
 
     bool ret = true;
     //generally a loop for each supported broker
@@ -286,14 +286,14 @@ bool Driver1::AllocateMemory() {
     return false;
 }
 
-bool Driver1::GetSignalMemoryBuffer(uint32 signalIdx,
-                                    uint32 bufferIdx,
+bool Driver1::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                    const uint32 bufferIdx,
                                     void *&signalAddress) {
     return true;
 }
 
 const char8 *Driver1::GetBrokerName(StructuredDataI &data,
-                                    SignalDirection direction) {
+                                    const SignalDirection direction) {
     const char8* brokerName = NULL_PTR(const char8 *);
 
     float32 freq;
@@ -344,8 +344,8 @@ bool Driver1::ChangeState() {
 }
 
 bool Driver1::GetInputBrokers(ReferenceContainer &inputBrokers,
-                              const char8 * functionName,
-                              void* gamMemPtr) {
+                              const char8 * const functionName,
+                              void* const gamMemPtr) {
     bool ret = true;
     //generally a loop for each supported broker
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
@@ -362,8 +362,8 @@ bool Driver1::GetInputBrokers(ReferenceContainer &inputBrokers,
 }
 
 bool Driver1::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                               const char8 * functionName,
-                               void* gamMemPtr) {
+                               const char8 * const functionName,
+                               void* const gamMemPtr) {
 
     bool ret = true;
     //generally a loop for each supported broker
