@@ -386,12 +386,12 @@ public:
     /**
      * TODO
      */
-    ReferenceT<ReferenceContainer> GetInputBrokers();
+    ReferenceT<ReferenceContainer> GetInputBrokers() const;
 
     /**
      * TODO
      */
-    ReferenceT<ReferenceContainer> GetOutputBrokers();
+    ReferenceT<ReferenceContainer> GetOutputBrokers() const;
 
 
     /**
