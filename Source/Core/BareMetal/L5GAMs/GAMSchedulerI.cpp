@@ -124,20 +124,23 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
                     ret = threadElement.IsValid();
                     if (ret) {
 
-                        ReferenceT<GAM> *gams = threadElement->GetGAMs();
+                        //ReferenceT<GAM> *gams = threadElement->GetGAMs();
+                        ReferenceContainer gams;
+                        threadElement->GetGAMs(gams);
                         uint32 numberOfGams = threadElement->GetNumberOfGAMs();
                         uint32 numberOfExecutables = 0u;
 
                         for (uint32 k = 0u; k < numberOfGams && ret; k++) {
-                            ret = gams[k].IsValid();
+                            ReferenceT<GAM> gam = gams.Get(k);
+                            ret = gam.IsValid();
                             if (ret) {
-                                ReferenceT<ReferenceContainer> ib = gams[k]->GetInputBrokers();
+                                ReferenceT<ReferenceContainer> ib = gam->GetInputBrokers();
                                 ret = ib.IsValid();
                                 if (ret) {
                                     numberOfExecutables += ib->Size();
                                 }
                                 if (ret) {
-                                    ReferenceT<ReferenceContainer> ob = gams[k]->GetOutputBrokers();
+                                    ReferenceT<ReferenceContainer> ob = gam->GetOutputBrokers();
                                     ret = ob.IsValid();
                                     if (ret) {
                                         numberOfExecutables += ob->Size();
@@ -152,18 +155,18 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
                         }
                         uint32 c = 0u;
                         for (uint32 k = 0u; k < numberOfGams && ret; k++) {
-                            StreamString gamName = gams[k]->GetName();
+                            StreamString gamName = gams.Get(k)->GetName();
                             //add input brokers
                             StreamString gamFullName = threadElement->GetFunctions()[k];
-                            ret = InsertInputBrokers(gams[k], gamFullName.Buffer(), i, j, c);
+                            ret = InsertInputBrokers(gams.Get(k), gamFullName.Buffer(), i, j, c);
                             //add gam
                             if (ret) {
-                                ret = InsertGam(gams[k], gamFullName.Buffer(), i, j, c);
+                                ret = InsertGam(gams.Get(k), gamFullName.Buffer(), i, j, c);
                             }
 
                             //add output brokers
                             if (ret) {
-                                ret = InsertOutputBrokers(gams[k], gamFullName.Buffer(), i, j, c);
+                                ret = InsertOutputBrokers(gams.Get(k), gamFullName.Buffer(), i, j, c);
                             }
 
                             //TODO In Configuration must be created a signal with rel and abs time for each gam (executable)
