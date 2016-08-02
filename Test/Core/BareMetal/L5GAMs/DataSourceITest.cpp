@@ -47,7 +47,7 @@ public:
 
 DataSourceITestScheduler1    ();
 
-    virtual void StartExecution(const uint32 activeBuffer);
+    virtual void StartExecution();
 
     virtual void StopExecution();
 };
@@ -57,7 +57,7 @@ DataSourceITestScheduler1::DataSourceITestScheduler1() :
 
 }
 
-void DataSourceITestScheduler1::StartExecution(const uint32 activeBuffer) {
+void DataSourceITestScheduler1::StartExecution() {
 
 }
 

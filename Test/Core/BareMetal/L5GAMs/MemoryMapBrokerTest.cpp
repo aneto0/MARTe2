@@ -49,7 +49,7 @@ public:
 
 MemoryMapBrokerTestScheduler1    ();
 
-    virtual void StartExecution(const uint32 activeBuffer);
+    virtual void StartExecution();
 
     virtual void StopExecution();
 };
@@ -59,7 +59,7 @@ MemoryMapBrokerTestScheduler1::MemoryMapBrokerTestScheduler1() :
 
 }
 
-void MemoryMapBrokerTestScheduler1::StartExecution(const uint32 activeBuffer) {
+void MemoryMapBrokerTestScheduler1::StartExecution() {
 
 }
 

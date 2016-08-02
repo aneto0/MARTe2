@@ -32,12 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GAM.h"
+#include "DataSourceI.h"
 #include "ExecutableI.h"
-#include "GAMGroup.h"
-#include "RealTimeApplication.h"
-#include "BrokerContainer.h"
-#include "GAMContextT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -47,9 +43,12 @@ namespace MARTe {
 
 /**
  * @brief The MARTe application module.
- * @details Classes inheriting from GAM can be scheduled by a RealTimeThread and
- * exchange signals with other GAM instances.
- * The minimum configuration structure is (more information about the syntax in RealTimeApplicationConfigurationBuilder):
+ *
+ * @details Classes inheriting from GAM can be scheduled by a RealTimeThread
+ * and exchange signals with other GAM instances.
+ *
+ * The minimum configuration structure is (more information about the syntax
+ * in RealTimeApplicationConfigurationBuilder):
  * +ThisGAMName = {"
  *    Class = ClassThatInheritsFromGAM"
  *    Signals = {
@@ -79,15 +78,16 @@ namespace MARTe {
  */
 class DLL_API GAM: public ExecutableI {
 public:
+
     /**
-     * Allows the BrokerI implementations to have access to the
-     * GAM memory. This strategy makes the DataSourceI has the only
-     * class which will have direct access to the GAM memory.
+     * Allows the DataSourceI implementations to have access to the
+     * GAM memory. This strategy makes the DataSourceI the only class
+     * which will have direct access to the GAM memory.
      */
     friend class DataSourceI;
 
     /**
-     * @brief Constructor
+     * @brief Default constructor
      * @post
      *   GetNumberOfInputSignals() == 0 &&
      *   GetNumberOfOutputSignals() == 0 &&
@@ -150,13 +150,13 @@ public:
      * @brief Returns the number of input signals.
      * @return the number of input signals.
      */
-    uint32 GetNumberOfInputSignals();
+    uint32 GetNumberOfInputSignals() const;
 
     /**
      * @brief Returns the number of output signals.
      * @return the number of output signals.
      */
-    uint32 GetNumberOfOutputSignals();
+    uint32 GetNumberOfOutputSignals() const;
 
     /**
      * @brief Gets the name of the signal at position \a signalIdx.
@@ -165,10 +165,10 @@ public:
      * @param[out] signalName where to write the signal name.
      * @return true if the signalIdx exists.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    bool GetSignalName(SignalDirection direction,
-                       uint32 signalIdx,
+    bool GetSignalName(const SignalDirection direction,
+                       const uint32 signalIdx,
                        StreamString &signalName);
 
     /**
@@ -178,9 +178,9 @@ public:
      * @param[in] signalName the name of the signal.
      * @return true if the signalName can be found.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    bool GetSignalIndex(SignalDirection direction,
+    bool GetSignalIndex(const SignalDirection direction,
                         uint32 &signalIdx,
                         const char8* const signalName);
 
@@ -191,10 +191,10 @@ public:
      * @param[out] dataSourceName the name of the DataSourceI.
      * @return true if the signalIdx exists and the DataSource configuration field is defined.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    bool GetSignalDataSourceName(SignalDirection direction,
-                                 uint32 signalIdx,
+    bool GetSignalDataSourceName(const SignalDirection direction,
+                                 const uint32 signalIdx,
                                  StreamString &dataSourceName);
 
     /**
@@ -203,10 +203,10 @@ public:
      * @param[in] signalIdx the index of the signal.
      * @return the signal type or InvalidType if the signal is not found.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    TypeDescriptor GetSignalType(SignalDirection direction,
-                                 uint32 signalIdx);
+    TypeDescriptor GetSignalType(const SignalDirection direction,
+                                 const uint32 signalIdx);
 
     /**
      * @brief Gets the number of dimensions of the signal at position \a signalIdx.
@@ -216,10 +216,10 @@ public:
      * @param[out] numberOfDimensions the number of dimensions.
      * @return true if the signalIdx exists.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    bool GetSignalNumberOfDimensions(SignalDirection direction,
-                                     uint32 signalIdx,
+    bool GetSignalNumberOfDimensions(const SignalDirection direction,
+                                     const uint32 signalIdx,
                                      uint32 &numberOfDimensions);
 
     /**
@@ -230,10 +230,10 @@ public:
      * @param[out] numberOfDimensions the number of elements.
      * @return true if the signalIdx exists.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    bool GetSignalNumberOfElements(SignalDirection direction,
-                                   uint32 signalIdx,
+    bool GetSignalNumberOfElements(const SignalDirection direction,
+                                   const uint32 signalIdx,
                                    uint32 &numberOfElements);
 
     /**
@@ -243,10 +243,10 @@ public:
      * @param[out] defaultValue the default value of the signal.
      * @return true if the signalIdx exists and if a default value was set for this signal.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    bool GetSignalDefaultValue(SignalDirection direction,
-                               uint32 signalIdx,
+    bool GetSignalDefaultValue(const SignalDirection direction,
+                               const uint32 signalIdx,
                                const AnyType &defaultValue);
 
     /**
@@ -256,10 +256,10 @@ public:
      * @param[out] byteSize the size in bytes.
      * @return true if the signalIdx exists.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    bool GetSignalByteSize(SignalDirection direction,
-                           uint32 signalIdx,
+    bool GetSignalByteSize(const SignalDirection direction,
+                           const uint32 signalIdx,
                            uint32 &byteSize);
 
     /**
@@ -270,10 +270,10 @@ public:
      * @param[out] numberOfByteOffsets the number of byte offsets.
      * @return true if the signalIdx exists in the specified direction.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    bool GetSignalNumberOfByteOffsets(SignalDirection direction,
-                                      uint32 signalIdx,
+    bool GetSignalNumberOfByteOffsets(const SignalDirection direction,
+                                      const uint32 signalIdx,
                                       uint32 &numberOfByteOffsets);
 
     /**
@@ -285,26 +285,25 @@ public:
      * @param[out] byteOffsetSize the offset size.
      * @return true if the signalIdx and the byteOffsetIndex exist in the specified direction.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    bool GetSignalByteOffsetInfo(SignalDirection direction,
-                                 uint32 signalIdx,
-                                 uint32 byteOffsetIndex,
+    bool GetSignalByteOffsetInfo(const SignalDirection direction,
+                                 const uint32 signalIdx,
+                                 const uint32 byteOffsetIndex,
                                  uint32 &byteOffsetStart,
                                  uint32 &byteOffsetSize);
 
     /**
      * @brief Gets the number of ranges that were set for the signal with index \a signalIdx.
-     * @details If no ranges were defined this function will return 0.
      * @param[in] direction the signal direction.
      * @param[in] signalIdx the index of the signal in this function.
-     * @param[out] numberOfRanges the number of ranges.
+     * @param[out] numberOfRanges the number of ranges or 0 if no ranges were defined.
      * @return true if the signalIdx exists in the specified direction.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    bool GetSignalNumberOfRanges(SignalDirection direction,
-                                 uint32 signalIdx,
+    bool GetSignalNumberOfRanges(const SignalDirection direction,
+                                 const uint32 signalIdx,
                                  uint32 &numberOfRanges);
 
     /**
@@ -316,11 +315,11 @@ public:
      * @param[out] rangeEnd the offset size.
      * @return true if the signalIdx and the rangeIndex exist in the specified direction.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    bool GetSignalRangesInfo(SignalDirection direction,
-                             uint32 signalIdx,
-                             uint32 rangeIndex,
+    bool GetSignalRangesInfo(const SignalDirection direction,
+                             const uint32 signalIdx,
+                             const uint32 rangeIndex,
                              uint32 &rangeStart,
                              uint32 &rangeEnd);
 
@@ -334,10 +333,10 @@ public:
      * @param[out] numberOfSamples the number of samples set for this signal.
      * @return true if the signalIdx exists in the specified direction.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    bool GetSignalNumberOfSamples(SignalDirection direction,
-                                  uint32 signalIdx,
+    bool GetSignalNumberOfSamples(const SignalDirection direction,
+                                  const uint32 signalIdx,
                                   uint32 &numberOfSamples);
 
     /**
@@ -348,18 +347,19 @@ public:
      * @param[out] frequency the frequency at which the signal is to be read/written.
      * @return true if the signalIdx exists in the specified direction.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
-    bool GetSignalFrequency(SignalDirection direction,
-                            uint32 signalIdx,
+    bool GetSignalFrequency(const SignalDirection direction,
+                            const uint32 signalIdx,
                             float32 &frequency);
 
     /**
      * @brief Allocates all memory required to hold all the input signals of this GAM.
      * @return true if the memory can be successfully allocated.
      * @pre
-     *   SetConfiguredDatabase &&
-     *   GetInputSignalsMemory == NULL (this function cannot be called twice).
+     *   The ConfiguredDatabase must be set &&
+     *   GetInputSignalsMemory() == NULL
+     * @warning From the precondition is inferred that this function cannot be called twice.
      */
     bool AllocateInputSignalsMemory();
 
@@ -367,42 +367,45 @@ public:
      * @brief Allocates all memory required to hold all the output signals of this GAM.
      * @return true if the memory can be successfully allocated.
      * @pre
-     *   SetConfiguredDatabase &&
-     *   GetOutputSignalsMemory == NULL (this function cannot be called twice).
+     *   The ConfiguredDatabase must be set &&
+     *   GetOutputSignalsMemory() == NULL
+     * @warning From the precondition is inferred that this function cannot be called twice.
      */
     bool AllocateOutputSignalsMemory();
 
     /**
      * TODO
      */
-    void AddInputBrokers(ReferenceContainer brokers);
+    bool AddInputBrokers(ReferenceContainer brokers);
 
     /**
      * TODO
      */
-    void AddOutputBrokers(ReferenceContainer brokers);
+    bool AddOutputBrokers(ReferenceContainer brokers);
 
     /**
      * TODO
      */
-    ReferenceContainer GetInputBrokers();
+    ReferenceT<ReferenceContainer> GetInputBrokers();
 
     /**
      * TODO
      */
-    ReferenceContainer GetOutputBrokers();
+    ReferenceT<ReferenceContainer> GetOutputBrokers();
+
 
     /**
      * TODO
      */
-    void *GetContext();
+    void *GetContext() const;
 
 protected:
+
     /**
      * @brief Returns a pointer to the beginning of the input signals memory.
      * @return a pointer to the beginning of the input signals memory.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
     void *GetInputSignalsMemory();
 
@@ -410,7 +413,7 @@ protected:
      * @brief Returns a pointer to the beginning of the output signals memory.
      * @return a pointer to the beginning of the output signals memory.
      * @pre
-     *   SetConfiguredDatabase
+     *   The ConfiguredDatabase must be set
      */
     void *GetOutputSignalsMemory();
 
@@ -419,20 +422,20 @@ protected:
      * @param[in] signalIdx the index of the signal.
      * @return a pointer to the beginning of the input signal memory with index \a signalIdx or NULL if signalIdx >= GetNumberOfInputSignals().
      * @pre
-     *   SetConfiguredDatabase &&
+     *   The ConfiguredDatabase must be set &&
      *   signalIdx < GetNumberOfInputSignals()
      */
-    void *GetInputSignalMemory(uint32 signalIdx);
+    void *GetInputSignalMemory(const uint32 signalIdx) const;
 
     /**
      * @brief Returns a pointer to the beginning of the output signal memory with index \a signalIdx.
      * @param[in] signalIdx the index of the signal.
      * @return a pointer to the beginning of the output signal memory with index \a signalIdx or NULL if signalIdx >= GetNumberOfOutputSignals().
      * @pre
-     *   SetConfiguredDatabase &&
+     *   The ConfiguredDatabase must be set &&
      *   signalIdx < GetNumberOfOutputSignals()
      */
-    void *GetOutputSignalMemory(uint32 signalIdx);
+    void *GetOutputSignalMemory(const uint32 signalIdx) const;
 
     /**
      * Holds the Signals definition which is received in the Initialise phase.
@@ -440,27 +443,27 @@ protected:
     ConfigurationDatabase signalsDatabase;
 
     /**
-     * Hols the final GAM configuration data (see RealTimeApplicationConfigurationBuilder).
+     * Holds the final GAM configuration data (see RealTimeApplicationConfigurationBuilder).
      */
     ConfigurationDatabase configuredDatabase;
 
     /**
-     * Input signals memory.
+     * Holds a pointer to the input signals memory.
      */
     void *inputSignalsMemory;
 
     /**
-     * Output signals memory.
+     * Holds a pointer to the output signals memory.
      */
     void *outputSignalsMemory;
 
     /**
-     * Provides direct access to the desired signal
+     * Provides direct access to the desired input signal
      */
     void **inputSignalsMemoryIndexer;
 
     /**
-     * Provides direct access to the desired signal
+     * Provides direct access to the desired output signal
      */
     void **outputSignalsMemoryIndexer;
 
@@ -480,18 +483,18 @@ protected:
      * @param[in] signalIdx the signal index.
      * @return true if the Move is successful.
      */
-    bool MoveToSignalIndex(SignalDirection direction,
-                           uint32 signalIdx);
+    bool MoveToSignalIndex(const SignalDirection direction,
+                           const uint32 signalIdx);
 
     /**
      * Brokers for signal reading.
      */
-    ReferenceContainer inputBrokers;
+    ReferenceT<ReferenceContainer> inputBrokers;
 
     /**
      * Brokers for signal writing.
      */
-    ReferenceContainer outputBrokers;
+    ReferenceT<ReferenceContainer> outputBrokers;
 
     /**
      * The heap that is used to malloc the input and output signals.
@@ -505,5 +508,5 @@ protected:
 /*---------------------------------------------------------------------------*/
 
 }
-#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_GAM_H_ */
 
+#endif /* GAM_H_ */

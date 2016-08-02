@@ -140,11 +140,13 @@ bool RealTimeThread::ConfigureArchitecture() {
 
         for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
 
-            //StreamString functionPath = absoluteFunctionPath;
-            StreamString functionPath = functions[i].Buffer();
+            StreamString functionPath = absoluteFunctionPath;
+            functionPath += functions[i].Buffer();
+            //functionPath = functions[i].Buffer();
+
             // find the functions specified in cdb
             /*lint -e{613} Never enters here if (functions == NULL) because (numberOfFunctions == 0) */
-            Reference functionGeneric = ObjectRegistryDatabase::Instance()->Find(functionPath.Buffer(), this);
+            Reference functionGeneric = ObjectRegistryDatabase::Instance()->Find(functionPath.Buffer()/*, this*/);
             ret = functionGeneric.IsValid();
             if (ret) {
                 //Discombobulate GAMGroups

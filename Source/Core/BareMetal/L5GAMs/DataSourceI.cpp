@@ -82,6 +82,16 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
     return ret;
 }
 
+bool DataSourceI::IsLocked(){
+    signalsDatabase.MoveAbsolute("Signals");
+    uint32 locked;
+    bool ret = false;
+    if (signalsDatabase.Read("Locked", locked)) {
+        ret = (locked != 0u);
+    }
+    return ret;
+}
+
 bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
     bool ret = data.Copy(configuredDatabase);
     if (ret) {
@@ -590,7 +600,7 @@ bool DataSourceI::IsSupportedBroker(const SignalDirection direction,
     return ret;
 }
 
-bool DataSourceI::MoveToFunctionIndex(uint32 functionIdx) {
+bool DataSourceI::MoveToFunctionIndex(const uint32 functionIdx) {
     bool ret = configuredDatabase.MoveToRoot();
     if (ret) {
         ret = configuredDatabase.MoveRelative("Functions");
@@ -697,14 +707,14 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
                                 ReferenceContainer inputBrokers;
                                 ret = GetInputBrokers(inputBrokers, functionName.Buffer(), gamMemoryAddress);
                                 if (ret) {
-                                    gam->AddInputBrokers(inputBrokers);
+                                    ret = gam->AddInputBrokers(inputBrokers);
                                 }
                             }
                             else {
                                 ReferenceContainer outputBrokers;
                                 ret = GetOutputBrokers(outputBrokers, functionName.Buffer(), gamMemoryAddress);
                                 if (ret) {
-                                    gam->AddOutputBrokers(outputBrokers);
+                                    ret = gam->AddOutputBrokers(outputBrokers);
                                 }
                             }
 
