@@ -40,7 +40,7 @@
 using namespace MARTe;
 
 /**
- * @brief Tests all the GAM functions
+ * @brief Tests the GAM I public methods.
  */
 class GAMTest {
 
@@ -56,59 +56,139 @@ public:
      */
     bool TestInitialise();
 
+    /**
+     * @brief Tests the AddSignals method.
+     */
     bool TestAddSignals();
-
-    //Tested implicitly
+    
+    /**
+     * @brief Tests the SetConfiguredDatabase method (this is tested implicitly)
+     */
     bool TestSetConfiguredDatabase();
 
+    /**
+     * @brief Tests the GetNumberOfInputSignals method.
+     */
     bool TestGetNumberOfInputSignals();
 
+    /**
+     * @brief Tests the GetNumberOfOutputSignals method.
+     */
     bool TestGetNumberOfOutputSignals();
 
+    /**
+     * @brief Tests the GetSignalName method.
+     */
     bool TestGetSignalName();
 
+    /**
+     * @brief Tests the GetSignalIndex method.
+     */
     bool TestGetSignalIndex();
 
+    /**
+     * @brief Tests the GetSignalDataSourceName method.
+     */
     bool TestGetSignalDataSourceName();
 
+    /**
+     * @brief Tests the GetSignalType method.
+     */
     bool TestGetSignalType();
 
+    /**
+     * @brief Tests the GetSignalNumberOfDimensions method.
+     */
     bool TestGetSignalNumberOfDimensions();
 
+    /**
+     * @brief Tests the GetSignalNumberOfElements method.
+     */
     bool TestGetSignalNumberOfElements();
 
+    /**
+     * @brief Tests the GetSignalByteSize method.
+     */
     bool TestGetSignalByteSize();
 
+    /**
+     * @brief Tests the GetSignalDefaultValue method.
+     */
     bool TestGetSignalDefaultValue();
 
+    /**
+     * @brief Tests the GetSignalNumberOfByteOffsets method.
+     */
     bool TestGetSignalNumberOfByteOffsets();
 
+    /**
+     * @brief Tests the GetSignalByteOffsetInfo method.
+     */
     bool TestGetSignalByteOffsetInfo();
 
+    /**
+     * @brief Tests the GetSignalNumberOfRanges method.
+     */
     bool TestGetSignalNumberOfRanges();
 
+    /**
+     * @brief Tests the GetSignalRangesInfo method.
+     */
     bool TestGetSignalRangesInfo();
 
+    /**
+     * @brief Tests the GetSignalNumberOfSamples method.
+     */
     bool TestGetSignalNumberOfSamples();
 
+    /**
+     * @brief Tests the GetSignalFrequency_Input method.
+     */
     bool TestGetSignalFrequency_Input();
 
+    /**
+     * @brief Tests the GetSignalFrequency_Output method.
+     */
     bool TestGetSignalFrequency_Output();
 
+    /**
+     * @brief Tests the AllocateInputSignalsMemory method.
+     */
     bool TestAllocateInputSignalsMemory();
 
+    /**
+     * @brief Tests the AllocateOutputSignalsMemory method.
+     */
     bool TestAllocateOutputSignalsMemory();
 
+    /**
+     * @brief Tests the GetInputSignalsMemory method.
+     */
     bool TestGetInputSignalsMemory();
 
+    /**
+     * @brief Tests the GetOutputSignalsMemory method.
+     */
     bool TestGetOutputSignalsMemory();
 
+    /**
+     * @brief Tests the GetInputSignalMemory method.
+     */
     bool TestGetInputSignalMemory();
 
+    /**
+     * @brief Tests the GetOutputSignalMemory method.
+     */
     bool TestGetOutputSignalMemory();
 
+    /**
+     * @brief Tests the GetInputSignalMemory_Samples method.
+     */
     bool TestGetInputSignalMemory_Samples();
 
+    /**
+     * @brief Tests the GetOutputSignalMemory_Samples method.
+     */
     bool TestGetOutputSignalMemory_Samples();
 
 };

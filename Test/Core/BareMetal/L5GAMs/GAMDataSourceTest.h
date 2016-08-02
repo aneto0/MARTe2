@@ -39,42 +39,99 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests the DataSourceI public methods.
+ */
 class GAMDataSourceTest {
 public:
+    /**
+     * @brief Tests the Constructor method.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests the PrepareNextState method without any signal Default values.
+     */
     bool TestPrepareNextState_NoDefault();
 
+    /**
+     * @brief Tests the PrepareNextState method using signal Default values which are basic types.
+     */
     bool TestPrepareNextState_Default_Basic();
 
+    /**
+     * @brief Tests the PrepareNextState method using signal Default values which are multi-dimensional.
+     */
     bool TestPrepareNextState_Default_Dimensions();
 
+    /**
+     * @brief Tests the PrepareNextStatemethod using signal Default values which have a dimension mismatch with respect to the signal dimension (number of rows).
+     */
     bool TestPrepareNextState_Default_Dimensions_Mismatch_1();
 
+    /**
+    * @brief Tests the PrepareNextStatemethod using signal Default values which have a dimension mismatch with respect to the signal dimension (number of columns).
+     */
     bool TestPrepareNextState_Default_Dimensions_Mismatch_2();
 
+    /**
+* @brief Tests the PrepareNextStatemethod using signal Default values which have a number of elements mismatch with respect to the signal number of elements.
+     */
     bool TestPrepareNextState_Default_Elements_Mismatch();
 
+    /**
+     * @brief Tests the GetNumberOfMemoryBuffers method.
+     */
     bool TestGetNumberOfMemoryBuffers();
 
+    /**
+     * @brief Tests the GetSignalMemoryBuffer method.
+     */
     bool TestGetSignalMemoryBuffer();
 
+    /**
+     * @brief Tests the AllocateMemory method.
+     */
     bool TestAllocateMemory();
 
+    /**
+     * @brief Tests the GetBrokerName method.
+     */
     bool TestGetBrokerName();
 
+    /**
+     * @brief Tests the GetInputBrokers method.
+     */
     bool TestGetInputBrokers();
 
+    /**
+     * @brief Tests the GetOutputBrokers method.
+     */
     bool TestGetOutputBrokers();
 
+    /**
+     * @brief Tests the SetConfiguredDatabase method.
+     */
     bool TestSetConfiguredDatabase();
 
+    /**
+     * @brief Tests the SetConfiguredDatabase method and verifies that an error is issued if a signal has no producers in one state.
+     */
     bool TestSetConfiguredDatabase_NoProducer_State_1();
 
+    /**
+     * @brief Tests the SetConfiguredDatabase method and verifies that an error is issued if a signal has no producers in another state.
+     */
     bool TestSetConfiguredDatabase_NoProducer_State_2();
 
+    /**
+     * @brief Tests the SetConfiguredDatabase method and verifies that an error is issued if a signal has more than one producer in one state.
+     */
     bool TestSetConfiguredDatabase_MoreThanOneProducer_State_1();
 
+    /**
+     * @brief Tests the SetConfiguredDatabase method and verifies that an error is issued if a signal has more than one producer in another state.
+     */
     bool TestSetConfiguredDatabase_MoreThanOneProducer_State_2();
 };
 

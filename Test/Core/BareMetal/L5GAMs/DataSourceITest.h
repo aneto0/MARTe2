@@ -38,6 +38,9 @@
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
 
+/**
+ * @brief Tests the DataSourceI public methods.
+ */
 class DataSourceITest {
 public:
     /**
@@ -55,9 +58,8 @@ public:
      */
     bool TestAddSignals();
 
-    //This is tested implicitly
     /**
-     * @brief Tests the SetConfiguredDatabase method.
+     * @brief Tests the SetConfiguredDatabase method (This is tested implicitly).
      */
     bool TestSetConfiguredDatabase();
 
