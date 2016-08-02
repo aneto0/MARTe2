@@ -39,7 +39,8 @@ OBJSX=BrokerI.x \
     RealTimeApplication.x \
     RealTimeApplicationConfigurationBuilder.x \
     RealTimeState.x \
-    RealTimeThread.x
+    RealTimeThread.x \
+    TimesDataSource.x
 
 #OBJSX=BrokerI.x \
         BrokerContainer.x \

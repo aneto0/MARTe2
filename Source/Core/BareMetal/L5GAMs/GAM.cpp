@@ -53,7 +53,8 @@ GAM::GAM() :
     outputSignalsMemory = NULL_PTR(void *);
     inputSignalsMemoryIndexer = NULL_PTR(void **);
     outputSignalsMemoryIndexer = NULL_PTR(void **);
-
+    inputBrokers = ReferenceT<ReferenceContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    outputBrokers = ReferenceT<ReferenceContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
 }
 
@@ -442,7 +443,6 @@ bool GAM::GetSignalRangesInfo(SignalDirection direction,
 
     return ret;
 }
-
 bool GAM::GetSignalNumberOfSamples(SignalDirection direction,
                                    uint32 signalIdx,
                                    uint32 &numberOfSamples) {
@@ -564,23 +564,24 @@ bool GAM::MoveToSignalIndex(SignalDirection direction,
 void GAM::AddInputBrokers(ReferenceContainer brokers) {
     uint32 n;
     for (n = 0u; n < brokers.Size(); n++) {
-        inputBrokers.Insert(brokers.Get(n));
+        inputBrokers->Insert(brokers.Get(n));
     }
 }
 
 void GAM::AddOutputBrokers(ReferenceContainer brokers) {
     uint32 n;
     for (n = 0u; n < brokers.Size(); n++) {
-        outputBrokers.Insert(brokers.Get(n));
+        outputBrokers->Insert(brokers.Get(n));
     }
 }
 
-ReferenceContainer GAM::GetInputBrokers() {
+ReferenceT<ReferenceContainer> GAM::GetInputBrokers() {
     return inputBrokers;
 }
 
-ReferenceContainer GAM::GetOutputBrokers() {
+ReferenceT<ReferenceContainer> GAM::GetOutputBrokers() {
     return outputBrokers;
 }
+
 
 }

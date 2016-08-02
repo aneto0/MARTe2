@@ -984,7 +984,7 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     }
                 }
             }
-        }
+        }/*
         if (ret) {
             ret = false;
             for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
@@ -996,7 +996,7 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     }
                 }
             }
-        }
+        }*/
     }
 
     return ret;

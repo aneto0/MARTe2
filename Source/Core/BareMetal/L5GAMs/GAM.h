@@ -385,17 +385,21 @@ public:
     /**
      * TODO
      */
-    ReferenceContainer GetInputBrokers();
+    ReferenceT<ReferenceContainer> GetInputBrokers();
 
     /**
      * TODO
      */
-    ReferenceContainer GetOutputBrokers();
+    ReferenceT<ReferenceContainer> GetOutputBrokers();
+
 
     /**
      * TODO
      */
     void *GetContext();
+
+
+
 
 protected:
     /**
@@ -474,6 +478,7 @@ protected:
      */
     uint32 numberOfOutputSignals;
 
+
     /**
      * @brief Moves the configuredDatabase to the \a signalIdx
      * @param[in] direction the signal direction.
@@ -486,12 +491,12 @@ protected:
     /**
      * Brokers for signal reading.
      */
-    ReferenceContainer inputBrokers;
+    ReferenceT<ReferenceContainer> inputBrokers;
 
     /**
      * Brokers for signal writing.
      */
-    ReferenceContainer outputBrokers;
+    ReferenceT<ReferenceContainer> outputBrokers;
 
     /**
      * The heap that is used to malloc the input and output signals.

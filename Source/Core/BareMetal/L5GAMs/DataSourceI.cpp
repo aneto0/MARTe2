@@ -75,6 +75,16 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
     return data.Write("Signals", signalsDatabase);
 }
 
+bool DataSourceI::IsLocked() {
+    signalsDatabase.MoveAbsolute("Signals");
+    uint32 locked;
+    bool ret = false;
+    if (signalsDatabase.Read("Locked", locked)) {
+        ret = (locked != 0u);
+    }
+    return ret;
+}
+
 bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
     bool ret = data.Copy(configuredDatabase);
     if (ret) {

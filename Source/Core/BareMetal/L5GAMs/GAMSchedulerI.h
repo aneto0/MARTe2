@@ -36,6 +36,7 @@
 #include "RealTimeThread.h"
 #include "GAMSchedulerRecord.h"
 #include "MemoryMapBroker.h"
+#include "GAMDataSource.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -70,16 +71,9 @@ public:
 
     virtual ~GAMSchedulerI();
 
-
+    virtual bool Initialise(StructuredDataI & data);
 
     bool ConfigureScheduler(ReferenceT<ReferenceContainer> statesContainer);
-
-    /**
-     * @brief Inserts a thread to be executed in a specific state.
-     * @return false in case of errors, true otherwise.
-     */
-    bool InsertRecord(const char8 * stateName,
-                      ReferenceT<RealTimeThread> thread);
 
     /**
      * @brief Stores the GAMSchedulerRecord for the new state in the next buffer.
@@ -89,48 +83,86 @@ public:
      */
     bool PrepareNextState(RealTimeStateInfo info);
 
-    /**
-     * @brief Stops the execution of the current state and starts the execution
-     * of the new state threads.
-     * @param[in] activeBuffer is the current state buffer active index .
-     */
-    void ChangeState(const uint32 activeBuffer);
+    void ChangeState();
 
-
-    void ExecuteSingleCycle(const uint32 threadId, const uint32 activeBuffer);
+    uint64 ExecuteSingleCycle(ExecutableI* executables,
+                              uint32 *timeAddress,
+                              uint32 numberOfExecutables);
 
     /**
      * @brief Starts the execution of the next state threads.
      */
-    virtual void StartExecution(const uint32 activeBuffer)=0;
+    virtual void StartExecution()=0;
 
     /**
      * @brief Stops the execution of the current state threads.
      */
     virtual void StopExecution()=0;
 
-    /**
-     * @brief Sets a pointer to the RealTimeApplication.
-     */
-    void SetApplication(RealTimeApplication &rtApp);
-
 protected:
+
+    /*
+     * struct ScheduledState (array) {
+     *     Struct ScheduledThread (array) {
+     *         Struct ScheduledExecutable (array){
+     *             ExecutableI
+     *             bool SumOrReset
+     *             void* TimeAddress
+     *         }
+     *         name
+     *         numberOfExecutables
+     *     }
+     *     name
+     *     numberOfThreads
+     * }
+     */
+
+    struct ScheduledExecutable {
+        ExecutableI * executable;
+        uint32 *timeAddress;
+    };
+    struct ScheduledThread {
+        ScheduledExecutable * executables;
+        uint32 numberOfExecutables;
+        const char8 * name;
+    };
+
+    struct ScheduledState {
+        ScheduledThread * threads;
+        uint32 numberOfThreads;
+        const char8 * name;
+    };
+
+    bool InsertInputBrokers(ReferenceT<GAM> gam,
+                            const char8 * gamFullName,
+                            uint32 i,
+                            uint32 j,
+                            uint32 &index);
+
+    bool InsertGam(ReferenceT<GAM> gam,
+                   const char8 * gamFullName,
+                   uint32 i,
+                   uint32 j,
+                   uint32 &index);
+
+    bool InsertOutputBrokers(ReferenceT<GAM> gam,
+                             const char8 * gamFullName,
+                             uint32 i,
+                             uint32 j,
+                             uint32 &index);
 
     /**
      * Double buffer accelerator to the threads to be executed for the current
      * and next state.
      */
-    ReferenceT<GAMSchedulerRecord> statesInExecution[2];
+    ScheduledState *statesInExecution[2];
 
-    /**
-     * Double buffer array of writers (one for each thread).
-     */
-    MemoryMapBroker* writer[2];
+    //TODO Change to TimesDataSource
+    ReferenceT<GAMDataSource> timeDataSource;
 
-    /**
-     * The RealTimeApplication pointer.
-     */
-    RealTimeApplication *application;
+    ScheduledState *states;
+    uint32 numberOfStates;
+    uint32 *cycleTimePtr;
 };
 
 }

@@ -225,7 +225,7 @@ public:
 
 GAMTestScheduler1    ();
 
-    virtual void StartExecution(const uint32 activeBuffer);
+    virtual void StartExecution();
 
     virtual void StopExecution();
 };
@@ -235,7 +235,7 @@ GAMTestScheduler1::GAMTestScheduler1() :
 
 }
 
-void GAMTestScheduler1::StartExecution(const uint32 activeBuffer) {
+void GAMTestScheduler1::StartExecution() {
 
 }
 

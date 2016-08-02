@@ -101,6 +101,8 @@ public:
      */
     bool AddSignals(StructuredDataI & data);
 
+    bool IsLocked();
+
     /**
      * @brief Assigns a valid and StructuredDataI to this DataSourceI.
      * @details This method is called by the RealTimeApplicationConfigurationBuilder once all
@@ -524,7 +526,7 @@ public:
      * @param[in] direction are the signal directions.
      * @return true if a BrokerI can be assigned to every signal in the given direction.
      */
-    bool AddBrokers(SignalDirection direction);
+    virtual bool AddBrokers(SignalDirection direction);
 
     /**
      * @brief Allocate the memory for this DataSourceI.

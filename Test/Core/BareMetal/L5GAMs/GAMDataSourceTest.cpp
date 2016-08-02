@@ -70,7 +70,7 @@ public:
 
 GAMDataSourceTestScheduler1    ();
 
-    virtual void StartExecution(const uint32 activeBuffer);
+    virtual void StartExecution();
 
     virtual void StopExecution();
 };
@@ -80,7 +80,7 @@ GAMDataSourceTestScheduler1::GAMDataSourceTestScheduler1() :
 
 }
 
-void GAMDataSourceTestScheduler1::StartExecution(const uint32 activeBuffer) {
+void GAMDataSourceTestScheduler1::StartExecution() {
 
 }
 

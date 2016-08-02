@@ -97,8 +97,8 @@ bool GAM1::Initialise(StructuredDataI & data) {
 
 bool GAM1::Execute() {
     uint32 b;
-    for (b = 0u; b < inputBrokers.Size(); b++) {
-        ReferenceT<ExecutableI> broker = inputBrokers.Get(b);
+    for (b = 0u; b < inputBrokers->Size(); b++) {
+        ReferenceT<ExecutableI> broker = inputBrokers->Get(b);
         broker->Execute();
     }
     const char8 *name = GetName();
@@ -114,8 +114,8 @@ bool GAM1::Execute() {
     outputBuffer[0] = inputBuffer[0] + inputBuffer[1];
     printf("  %d + %d = %d\n", inputBuffer[0], inputBuffer[1], outputBuffer[0]);
 
-    for (b = 0u; b < outputBrokers.Size(); b++) {
-        ReferenceT<ExecutableI> broker = outputBrokers.Get(b);
+    for (b = 0u; b < outputBrokers->Size(); b++) {
+        ReferenceT<ExecutableI> broker = outputBrokers->Get(b);
         broker->Execute();
     }
 

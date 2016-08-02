@@ -46,7 +46,7 @@ public:
 
 BrokerITestScheduler1    ();
 
-    virtual void StartExecution(const uint32 activeBuffer);
+    virtual void StartExecution();
 
     virtual void StopExecution();
 };
@@ -56,7 +56,7 @@ BrokerITestScheduler1::BrokerITestScheduler1() :
 
 }
 
-void BrokerITestScheduler1::StartExecution(const uint32 activeBuffer) {
+void BrokerITestScheduler1::StartExecution() {
 
 }
 
