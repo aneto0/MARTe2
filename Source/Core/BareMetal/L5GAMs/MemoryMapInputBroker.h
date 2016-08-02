@@ -37,12 +37,29 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-
-class MemoryMapInputBroker: public MemoryMapBroker {
+/**
+ * @brief Input MemoryMapBroker implementation.
+ * @details This class copies all the signals declared on a MemoryMapBroker
+ * from the DataSourceI memory to the GAM memory.
+ */
+class DLL_API MemoryMapInputBroker: public MemoryMapBroker {
 public:
-CLASS_REGISTER_DECLARATION()
+    CLASS_REGISTER_DECLARATION()
+    /**
+     * @brief Default constructor. NOOP.
+     */
     MemoryMapInputBroker();
+
+    /**
+     * @brief Destructor. NOOP.
+     */
     virtual ~MemoryMapInputBroker();
+
+    /**
+     * @brief Sequentially copies all the signals from the DataSourceI memory to the GAM
+     *  memory.
+     * @return true if all copies are successfully performed.
+     */
     virtual bool Execute();
 };
 
@@ -53,4 +70,4 @@ CLASS_REGISTER_DECLARATION()
 /*---------------------------------------------------------------------------*/
 
 #endif /* MEMORYMAPINPUTBROKER_H_ */
-	
+

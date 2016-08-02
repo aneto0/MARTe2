@@ -46,14 +46,64 @@ TEST(MemoryMapStatefulBrokerGTest,TestConstructor) {
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(MemoryMapStatefulBrokerGTest,TestInit_Input_Ranges_Samples) {
+TEST(MemoryMapStatefulBrokerGTest,TestInit_Input_0) {
     MemoryMapStatefulBrokerTest test;
-    ASSERT_TRUE(test.TestInit_Input_Ranges_Samples());
+    ASSERT_TRUE(test.TestInit_Input_0());
 }
 
-TEST(MemoryMapStatefulBrokerGTest,TestInit_Output_Ranges_Samples) {
+TEST(MemoryMapStatefulBrokerGTest,TestInit_Input_1) {
     MemoryMapStatefulBrokerTest test;
-    ASSERT_TRUE(test.TestInit_Output_Ranges_Samples());
+    ASSERT_TRUE(test.TestInit_Input_1());
+}
+
+TEST(MemoryMapStatefulBrokerGTest,TestInit_Input_Ranges_0) {
+    MemoryMapStatefulBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Input_Ranges_0());
+}
+
+TEST(MemoryMapStatefulBrokerGTest,TestInit_Input_Ranges_1) {
+    MemoryMapStatefulBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Input_Ranges_1());
+}
+
+TEST(MemoryMapStatefulBrokerGTest,TestInit_Input_Samples_0) {
+    MemoryMapStatefulBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Input_Samples_0());
+}
+
+TEST(MemoryMapStatefulBrokerGTest,TestInit_Input_Samples_1) {
+    MemoryMapStatefulBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Input_Samples_1());
+}
+
+TEST(MemoryMapStatefulBrokerGTest,TestInit_Output_0) {
+    MemoryMapStatefulBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Output_0());
+}
+
+TEST(MemoryMapStatefulBrokerGTest,TestInit_Output_1) {
+    MemoryMapStatefulBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Output_1());
+}
+
+TEST(MemoryMapStatefulBrokerGTest,TestInit_Output_Ranges_0) {
+    MemoryMapStatefulBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Output_Ranges_0());
+}
+
+TEST(MemoryMapStatefulBrokerGTest,TestInit_Output_Ranges_1) {
+    MemoryMapStatefulBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Output_Ranges_1());
+}
+
+TEST(MemoryMapStatefulBrokerGTest,TestInit_Output_Samples_0) {
+    MemoryMapStatefulBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Output_Samples_0());
+}
+
+TEST(MemoryMapStatefulBrokerGTest,TestInit_Output_Samples_1) {
+    MemoryMapStatefulBrokerTest test;
+    ASSERT_TRUE(test.TestInit_Output_Samples_1());
 }
 
 TEST(MemoryMapStatefulBrokerGTest,TestInit_PrepareNextState) {

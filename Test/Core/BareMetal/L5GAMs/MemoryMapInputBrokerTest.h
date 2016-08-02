@@ -39,12 +39,30 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests the MemoryMapInputBroker public methods.
+ */
 class MemoryMapInputBrokerTest {
 public:
+    /**
+     * @brief Tests the default constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests the Execute method.
+     */
     bool TestExecute();
 
+    /**
+     * @brief Tests the Execute method with a signal with ranges.
+     */
+    bool TestExecute_Ranges();
+
+    /**
+     * @brief Tests the Execute method with a signal with samples.
+     */
+    bool TestExecute_Samples();
 
 };
 

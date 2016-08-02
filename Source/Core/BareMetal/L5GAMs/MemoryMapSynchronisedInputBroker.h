@@ -1,8 +1,8 @@
 /**
- * @file MemoryMapOutputBroker.h
- * @brief Header file for class MemoryMapOutputBroker
- * @date Jul 18, 2016
- * @author aneto
+ * @file MemoryMapSynchronisedInputBroker.h
+ * @brief Header file for class MemoryMapSynchronisedInputBroker
+ * @date 18/07/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,12 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MemoryMapOutputBroker
+ * @details This header file contains the declaration of the class MemoryMapSynchronisedInputBroker
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
-
-#ifndef MEMORYMAPOUTPUTBROKER_H_
-#define MEMORYMAPOUTPUTBROKER_H_
+#ifndef MEMORYMAPISYNCHRONISEDNPUTBROKER_H_
+#define MEMORYMAPISYNCHRONISEDNPUTBROKER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,35 +30,35 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "MemoryMapBroker.h"
+#include "MemoryMapInputBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 
 /**
- * @brief Output MemoryMapBroker implementation.
- * @details This class copies all the signals declared on a MemoryMapBroker
- * from the GAM memory to the DataSourceI memory.
+ * @brief Synchronous input MemoryMapBroker implementation.
+ * @details This class calls Synchronise on the DataSourceI and copies all
+ * the signals declared on this MemoryMapBroker (from the DataSourceI memory to the GAM memory).
  */
-class DLL_API MemoryMapOutputBroker: public MemoryMapBroker {
+class DLL_API MemoryMapSynchronisedInputBroker: public MemoryMapInputBroker {
 public:
     CLASS_REGISTER_DECLARATION()
     /**
      * @brief Default constructor. NOOP.
      */
-    MemoryMapOutputBroker();
+    MemoryMapSynchronisedInputBroker();
 
     /**
      * @brief Destructor. NOOP.
      */
-    virtual ~MemoryMapOutputBroker();
+    virtual ~MemoryMapSynchronisedInputBroker();
 
     /**
-     * @brief Sequentially copies all the signals from the GAM memory to the DataSourceI memory.
-     * @return true if all copies are successfully performed.
+     * @brief Calls Synchronise on the DataSourceI and sequentially copies all the
+     * signals from the DataSourceI memory to the GAM  memory.
+     * @return true if the synchronisation call is successful and if all copies are successfully performed.
      */
     virtual bool Execute();
 };
@@ -70,5 +69,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* MEMORYMAPOUTPUTBROKER_H_ */
+#endif /* MEMORYMAPISYNCHRONISEDNPUTBROKER_H_ */
 

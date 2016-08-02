@@ -40,7 +40,7 @@
 #include "ReferenceT.h"
 #include "StandardParser.h"
 #include "CLASSREGISTER.h"
-#include "stdio.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -54,18 +54,20 @@ GAMDataSource::GAMDataSource() :
         DataSourceI() {
     signalMemory = NULL_PTR(void *);
     signalOffsets = NULL_PTR(uint32 *);
-    heap = NULL_PTR(HeapI *);
+    memoryHeap = NULL_PTR(HeapI *);
 }
 
 GAMDataSource::~GAMDataSource() {
-    if (heap != NULL_PTR(HeapI *)) {
+    if (memoryHeap != NULL_PTR(HeapI *)) {
         if (signalMemory != NULL_PTR(void *)) {
-            heap->Free(signalMemory);
+            /*lint -e{1551} HeapManager::Free is expected to be exception free*/
+            memoryHeap->Free(signalMemory);
         }
         if (signalOffsets != NULL_PTR(uint32 *)) {
             delete[] signalOffsets;
         }
     }
+    /*lint -e{1740} memoryHeap+ was zero or it is freed and zeroed by HeapManager::Free*/
 }
 
 bool GAMDataSource::Initialise(StructuredDataI & data) {
@@ -73,14 +75,14 @@ bool GAMDataSource::Initialise(StructuredDataI & data) {
     if (ret) {
         StreamString heapName;
         if (data.Read("HeapName", heapName)) {
-            heap = HeapManager::FindHeap(heapName.Buffer());
-            if (heap == NULL_PTR(HeapI *)) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Could not instantiate an heap with the name: %s", heapName.Buffer())
+            memoryHeap = HeapManager::FindHeap(heapName.Buffer());
+            if (memoryHeap == NULL_PTR(HeapI *)) {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Could not instantiate an memoryHeap with the name: %s", heapName.Buffer())
                 ret = false;
             }
         }
         else {
-            heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
+            memoryHeap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
         }
     }
     return ret;
@@ -90,37 +92,48 @@ uint32 GAMDataSource::GetNumberOfMemoryBuffers() {
     return 1u;
 }
 
-bool GAMDataSource::GetSignalMemoryBuffer(uint32 signalIdx,
-                                          uint32 bufferIdx,
+bool GAMDataSource::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                          const uint32 bufferIdx,
                                           void *&signalAddress) {
     bool ret = (bufferIdx < 1u);
+    uint32 nOfSignals = GetNumberOfSignals();
     if (ret) {
-        ret = (signalIdx < numberOfSignals);
+        ret = (signalIdx < nOfSignals);
     }
+
     if (ret) {
         char8 *signalAddressChar = reinterpret_cast<char8 *>(signalMemory);
-        signalAddressChar += signalOffsets[signalIdx];
-        signalAddress = reinterpret_cast<void *&>(signalAddressChar);
+        uint32 offset = 0u;
+        if (signalOffsets != NULL_PTR(uint32 *)) {
+            offset = signalOffsets[signalIdx];
+        }
+        if (signalAddressChar != NULL_PTR(char8 *)) {
+            signalAddressChar = &signalAddressChar[offset];
+            signalAddress = reinterpret_cast<void *&>(signalAddressChar);
+        }
     }
 
     return ret;
 }
 
 bool GAMDataSource::AllocateMemory() {
-    uint32 numberOfSignals = GetNumberOfSignals();
-    bool ret = (numberOfSignals > 0u);
+    uint32 nOfSignals = GetNumberOfSignals();
+    bool ret = (nOfSignals > 0u);
     if (ret) {
         ret = (signalMemory == NULL_PTR(void *));
     }
     if (ret) {
-        signalOffsets = new uint32[numberOfSignals];
+        signalOffsets = new uint32[nOfSignals];
     }
+
     uint32 memorySize = 0u;
-    for (uint32 s = 0u; (s < numberOfSignals) && (ret); s++) {
+    for (uint32 s = 0u; (s < nOfSignals) && (ret); s++) {
         uint32 thisSignalMemorySize;
         ret = GetSignalByteSize(s, thisSignalMemorySize);
         if (ret) {
-            signalOffsets[s] = memorySize;
+            if (signalOffsets != NULL_PTR(uint32 *)) {
+                signalOffsets[s] = memorySize;
+            }
         }
         if (ret) {
             ret = (thisSignalMemorySize > 0u);
@@ -130,19 +143,21 @@ bool GAMDataSource::AllocateMemory() {
         }
     }
     if (ret) {
-        signalMemory = heap->Malloc(memorySize);
-        MemoryOperationsHelper::Set(signalMemory, 0, memorySize);
+        if (memoryHeap != NULL_PTR(HeapI *)) {
+            signalMemory = memoryHeap->Malloc(memorySize);
+        }
+        ret = MemoryOperationsHelper::Set(signalMemory, '\0', memorySize);
     }
     return ret;
 }
 
 const char8 *GAMDataSource::GetBrokerName(StructuredDataI &data,
-                                          SignalDirection direction) {
+                                          const SignalDirection direction) {
     const char8* brokerName = NULL_PTR(const char8 *);
 
     float32 freq;
     if (!data.Read("Frequency", freq)) {
-        freq = -1;
+        freq = -1.0F;
     }
     uint32 samples;
     if (!data.Read("Samples", samples)) {
@@ -171,10 +186,8 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
         ret = GetFunctionNumberOfSignals(InputSignals, n, numberOfFunctionInputSignals);
         for (uint32 i = 0u; (i < numberOfFunctionInputSignals) && (ret); i++) {
             StreamString functionSignalAlias;
-            if (ret) {
-                ret = GetFunctionSignalAlias(InputSignals, n, i, functionSignalAlias);
-            }
-            uint32 signalIdx;
+            ret = GetFunctionSignalAlias(InputSignals, n, i, functionSignalAlias);
+            uint32 signalIdx = 0u;
             if (ret) {
                 ret = GetSignalIndex(signalIdx, functionSignalAlias.Buffer());
             }
@@ -199,27 +212,29 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
                 //if the default value is declared use it to initialise
                 //otherwise null the memory
                 AnyType defaultValueType = GetSignalDefaultValueType(signalIdx);
-                void *signalMemory = NULL_PTR(void *);
+                void *thisSignalMemory = NULL_PTR(void *);
                 if (ret) {
-                    ret = GetSignalMemoryBuffer(signalIdx, 0u, signalMemory);
+                    ret = GetSignalMemoryBuffer(signalIdx, 0u, thisSignalMemory);
                 }
                 if (defaultValueType.GetTypeDescriptor() == VoidType) {
-                    uint32 size;
+                    uint32 size = 0u;
                     if (ret) {
                         ret = GetSignalByteSize(signalIdx, size);
                     }
                     if (ret) {
-                        MemoryOperationsHelper::Set(signalMemory, '\0', size);
+                        ret = MemoryOperationsHelper::Set(thisSignalMemory, '\0', size);
                     }
                 }
                 else {
-                    AnyType thisSignal(typeDesc, 0u, signalMemory);
-                    uint32 thisSignalNumberOfElements;
-                    uint32 thisSignalNumberOfDimensions;
+                    AnyType thisSignal(typeDesc, 0u, thisSignalMemory);
+                    uint32 thisSignalNumberOfElements = 0u;
+                    uint8 thisSignalNumberOfDimensions = 0u;
                     StreamString signalName;
                     if (ret) {
                         ret = GetSignalName(signalIdx, signalName);
-                        signalName.Seek(0u);
+                    }
+                    if (ret) {
+                        ret = signalName.Seek(0LLU);
                     }
                     if (ret) {
                         ret = GetSignalNumberOfElements(signalIdx, thisSignalNumberOfElements);
@@ -267,9 +282,9 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
     return ret;
 }
 
-bool GAMDataSource::GetInputBrokers(ReferenceContainer &inputReaders,
-                                    const char8* functionName,
-                                    void * gamMemPtr) {
+bool GAMDataSource::GetInputBrokers(ReferenceContainer &inputBrokers,
+                                    const char8* const functionName,
+                                    void * const gamMemPtr) {
 //generally a loop for each supported broker
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
     bool ret = broker.IsValid();
@@ -278,15 +293,15 @@ bool GAMDataSource::GetInputBrokers(ReferenceContainer &inputReaders,
     }
     if (ret) {
         if (broker->GetNumberOfCopies() > 0u) {
-            ret = inputReaders.Insert(broker);
+            ret = inputBrokers.Insert(broker);
         }
     }
     return ret;
 }
 
 bool GAMDataSource::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                     const char8* functionName,
-                                     void * gamMemPtr) {
+                                     const char8* const functionName,
+                                     void * const gamMemPtr) {
     ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
     bool ret = broker.IsValid();
     if (ret) {
@@ -298,6 +313,42 @@ bool GAMDataSource::GetOutputBrokers(ReferenceContainer &outputBrokers,
         }
     }
     return ret;
+}
+
+bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
+    bool ret = DataSourceI::SetConfiguredDatabase(data);
+    uint32 nSignals = GetNumberOfSignals();
+    uint32 nStates = 0u;
+    uint32 n;
+    for (n = 0u; (n < nSignals) && (ret); n++) {
+        ret = GetSignalNumberOfStates(n, nStates);
+        uint32 s;
+        for (s = 0u; (s < nStates) && (ret); s++) {
+            uint32 nProducers = 0u;
+            StreamString stateName;
+            ret = GetSignalStateName(n, s, stateName);
+            if (ret) {
+                ret = GetSignalNumberOfProducers(n, stateName.Buffer(), nProducers);
+            }
+            if (ret) {
+                ret = (nProducers == 1u);
+            }
+            if (!ret) {
+                StreamString signalName;
+                if (!GetSignalName(n, signalName)) {
+                    signalName = "";
+                }
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
+                                        "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be 1 and is %d", GetName(),
+                                        stateName.Buffer(), signalName.Buffer(), nProducers)
+            }
+        }
+    }
+    return ret;
+}
+
+bool GAMDataSource::Synchronise() {
+    return false;
 }
 
 CLASS_REGISTER(GAMDataSource, "1.0")

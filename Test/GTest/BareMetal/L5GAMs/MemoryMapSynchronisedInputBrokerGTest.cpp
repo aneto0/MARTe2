@@ -1,7 +1,7 @@
 /**
- * @file MemoryMapOutputBroker.cpp
- * @brief Source file for class MemoryMapOutputBroker
- * @date 18/07/2016
+ * @file MemoryMapSynchronisedInputBrokerGTest.cpp
+ * @brief Source file for class MemoryMapSynchronisedInputBrokerGTest
+ * @date 30/07/2016
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,18 +17,21 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryMapOutputBroker (public, protected, and private). Be aware that some 
+ * the class MemoryMapSynchronisedInputBrokerGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <limits.h>
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "MemoryMapOutputBroker.h"
+#include "MemoryMapSynchronisedInputBrokerTest.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -37,27 +40,28 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-MemoryMapOutputBroker::MemoryMapOutputBroker() :
-        MemoryMapBroker() {
 
+TEST(MemoryMapSynchronisedInputBrokerGTest,TestConstructor) {
+    MemoryMapSynchronisedInputBrokerTest test;
+    ASSERT_TRUE(test.TestConstructor());
 }
 
-MemoryMapOutputBroker::~MemoryMapOutputBroker() {
-
+TEST(MemoryMapSynchronisedInputBrokerGTest,TestExecute) {
+    MemoryMapSynchronisedInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute());
 }
 
-bool MemoryMapOutputBroker::Execute() {
-    uint32 n;
-    bool ret = true;
-    for (n = 0u; (n < numberOfCopies) && (ret); n++) {
-        if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
-            ret = MemoryOperationsHelper::Copy(copyTable[n].dataSourcePointer, copyTable[n].gamPointer, copyTable[n].copySize);
-        }
-    }
-    return ret;
+TEST(MemoryMapSynchronisedInputBrokerGTest,TestExecute_FailSynchronisation) {
+    MemoryMapSynchronisedInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_FailSynchronisation());
 }
 
-CLASS_REGISTER(MemoryMapOutputBroker, "1.0")
+TEST(MemoryMapSynchronisedInputBrokerGTest,TestExecute_Ranges) {
+    MemoryMapSynchronisedInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Ranges());
 }
 
+TEST(MemoryMapSynchronisedInputBrokerGTest,TestExecute_Samples) {
+    MemoryMapSynchronisedInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Samples());
+}

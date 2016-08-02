@@ -85,11 +85,13 @@ public:
      * @param[in] functionName the name of GAM the to which this BrokerI is being allocated to.
      * @param[in] gamMemoryAddress the base address of the GAM memory (where signal data is stored).
      * @return true if all the copy information related to \a functionName can be successfully retrieved.
+     * @post
+     *   GetNumberOfCopies() > 0
      */
-    virtual bool Init(SignalDirection direction,
+    virtual bool Init(const SignalDirection direction,
                       DataSourceI &dataSourceIn,
                       const char8 * const functionName,
-                      void *gamMemoryAddress);
+                      void * const gamMemoryAddress);
 
 protected:
 

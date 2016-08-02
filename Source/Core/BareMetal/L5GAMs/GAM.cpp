@@ -118,6 +118,7 @@ bool GAM::AllocateInputSignalsMemory() {
         }
         if (ret) {
             inputSignalsMemory = heap->Malloc(totalByteSize);
+            ret = MemoryOperationsHelper::Set(inputSignalsMemory, 0, totalByteSize);
         }
         if (ret) {
             inputSignalsMemoryIndexer = new void*[numberOfInputSignals];
@@ -145,7 +146,6 @@ bool GAM::AllocateInputSignalsMemory() {
                 }
             }
         }
-
     }
 
     return ret;
@@ -165,6 +165,7 @@ bool GAM::AllocateOutputSignalsMemory() {
         }
         if (ret) {
             outputSignalsMemory = heap->Malloc(totalByteSize);
+            ret = MemoryOperationsHelper::Set(outputSignalsMemory, 0, totalByteSize);
         }
         if (ret) {
             outputSignalsMemoryIndexer = new void*[numberOfOutputSignals];
@@ -554,8 +555,8 @@ bool GAM::MoveToSignalIndex(SignalDirection direction,
         ret = configuredDatabase.MoveRelative(signalDirection);
     }
     StreamString signalIdxStr;
-    signalIdxStr.Printf("%d", signalIdx);
     if (ret) {
+        signalIdxStr = configuredDatabase.GetChildName(signalIdx);
         ret = configuredDatabase.MoveRelative(signalIdxStr.Buffer());
     }
     return ret;

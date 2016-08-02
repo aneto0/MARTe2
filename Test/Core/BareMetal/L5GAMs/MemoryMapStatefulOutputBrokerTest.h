@@ -1,8 +1,8 @@
 /**
- * @file MemoryMapOutputBroker.h
- * @brief Header file for class MemoryMapOutputBroker
- * @date Jul 18, 2016
- * @author aneto
+ * @file MemoryMapStatefulOutputBrokerTest.h
+ * @brief Header file for class MemoryMapStatefulOutputBrokerTest
+ * @date 28/07/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MemoryMapOutputBroker
+ * @details This header file contains the declaration of the class MemoryMapStatefulOutputBrokerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MEMORYMAPOUTPUTBROKER_H_
-#define MEMORYMAPOUTPUTBROKER_H_
+#ifndef MEMORYMAPSTATEFULOUTPUTROKERTEST_H_
+#define MEMORYMAPSTATEFULOUTPUTROKERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,44 +31,74 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "MemoryMapBroker.h"
+#include "MemoryMapStatefulOutputBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+using namespace MARTe;
 
 /**
- * @brief Output MemoryMapBroker implementation.
- * @details This class copies all the signals declared on a MemoryMapBroker
- * from the GAM memory to the DataSourceI memory.
+ * @brief Tests the MemoryMapStatefulOutputBroker public methods.
  */
-class DLL_API MemoryMapOutputBroker: public MemoryMapBroker {
+class MemoryMapStatefulOutputBrokerTest {
 public:
-    CLASS_REGISTER_DECLARATION()
     /**
-     * @brief Default constructor. NOOP.
+     * @brief Tests the default constructor.
      */
-    MemoryMapOutputBroker();
+    bool TestConstructor();
 
     /**
-     * @brief Destructor. NOOP.
+     * @brief Tests the Execute method for RealTimeApplication::index = 0.
      */
-    virtual ~MemoryMapOutputBroker();
+    bool TestExecute_0();
 
     /**
-     * @brief Sequentially copies all the signals from the GAM memory to the DataSourceI memory.
-     * @return true if all copies are successfully performed.
+     * @brief Tests the Execute method for RealTimeApplication::index = 1.
      */
-    virtual bool Execute();
+    bool TestExecute_1();
+
+    /**
+     * @brief Tests the Execute method after changing state.
+     */
+    bool TestExecute_ChangeState();
+
+    /**
+     * @brief Tests the Execute method with a signal with ranges for RealTimeApplication::index = 0.
+     */
+    bool TestExecute_Ranges_0();
+
+    /**
+     * @brief Tests the Execute method with a signal with ranges for RealTimeApplication::index = 1.
+     */
+    bool TestExecute_Ranges_1();
+
+    /**
+     * @brief Tests the Execute method with a signal with ranges after changing state.
+     */
+    bool TestExecute_Ranges_ChangeState();
+
+    /**
+     * @brief Tests the Execute method with a signal with samples for RealTimeApplication::index = 0.
+     */
+    bool TestExecute_Samples_0();
+
+    /**
+     * @brief Tests the Execute method with a signal with samples for RealTimeApplication::index = 1.
+     */
+    bool TestExecute_Samples_1();
+
+    /**
+     * @brief Tests the Execute method with a signal with samples after changing state.
+     */
+    bool TestExecute_Samples_ChangeState();
+
 };
-
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* MEMORYMAPOUTPUTBROKER_H_ */
+#endif /* MEMORYMAPOUTPUTROKERTEST_H_ */
 

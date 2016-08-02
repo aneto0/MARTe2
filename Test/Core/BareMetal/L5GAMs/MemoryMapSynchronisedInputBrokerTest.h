@@ -1,8 +1,8 @@
 /**
- * @file MemoryMapOutputBroker.h
- * @brief Header file for class MemoryMapOutputBroker
- * @date Jul 18, 2016
- * @author aneto
+ * @file MemoryMapSynchronisedInputBrokerTest.h
+ * @brief Header file for class MemoryMapSynchronisedInputBrokerTest
+ * @date 28/07/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MemoryMapOutputBroker
+ * @details This header file contains the declaration of the class MemoryMapSynchronisedInputBrokerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MEMORYMAPOUTPUTBROKER_H_
-#define MEMORYMAPOUTPUTBROKER_H_
+#ifndef MEMORYMAPSYNCHRONISEDINPUTBROKERTEST_H_
+#define MEMORYMAPSYNCHRONISEDINPUTBROKERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,44 +31,49 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "MemoryMapBroker.h"
+#include "MemoryMapSynchronisedInputBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+using namespace MARTe;
 
 /**
- * @brief Output MemoryMapBroker implementation.
- * @details This class copies all the signals declared on a MemoryMapBroker
- * from the GAM memory to the DataSourceI memory.
+ * @brief Tests the MemoryMapSynchronisedInputBroker public methods.
  */
-class DLL_API MemoryMapOutputBroker: public MemoryMapBroker {
+class MemoryMapSynchronisedInputBrokerTest {
 public:
-    CLASS_REGISTER_DECLARATION()
     /**
-     * @brief Default constructor. NOOP.
+     * @brief Tests the default constructor.
      */
-    MemoryMapOutputBroker();
+    bool TestConstructor();
 
     /**
-     * @brief Destructor. NOOP.
+     * @brief Tests the Execute method.
      */
-    virtual ~MemoryMapOutputBroker();
+    bool TestExecute();
 
     /**
-     * @brief Sequentially copies all the signals from the GAM memory to the DataSourceI memory.
-     * @return true if all copies are successfully performed.
+     * @brief Tests the Execute method and check that a failed synchronisation returns false.
      */
-    virtual bool Execute();
+    bool TestExecute_FailSynchronisation();
+
+    /**
+     * @brief Tests the Execute method with a signal with ranges.
+     */
+    bool TestExecute_Ranges();
+
+    /**
+     * @brief Tests the Execute method with a signal with samples.
+     */
+    bool TestExecute_Samples();
+
 };
-
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* MEMORYMAPOUTPUTBROKER_H_ */
+#endif /* MEMORYMAPINPUTBROKERTEST_H_ */
 

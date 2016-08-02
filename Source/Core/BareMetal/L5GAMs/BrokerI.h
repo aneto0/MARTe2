@@ -86,7 +86,7 @@ public:
      *   InitFunctionPointers() &&
      *   copyIdx < GetNumberOfCopies()
      */
-    uint32 GetNumberOfCopies();
+    uint32 GetNumberOfCopies() const;
 
     /**
      * @brief Gets the number of bytes to copy for the copy operation with index \a copyIdx.
@@ -94,7 +94,7 @@ public:
      * @pre
      *   InitFunctionPointers()
      */
-    uint32 GetCopyByteSize(uint32 copyIdx);
+    uint32 GetCopyByteSize(const uint32 copyIdx) const ;
 
     /**
      * @brief Gets the number of bytes to offset (w.r.t. to the Signal base address in the DataSourceI memory) for the copy operation with index \a copyIdx.
@@ -103,7 +103,7 @@ public:
      *   InitFunctionPointers() &&
      *   copyIdx < GetNumberOfCopies()
      */
-    uint32 GetCopyOffset(uint32 copyIdx);
+    uint32 GetCopyOffset(const uint32 copyIdx) const;
 
     /**
      * @brief Gets the pointer in the GAM memory where the signal is to be copied to/from in the copy operation with index \a copyIdx.
@@ -112,7 +112,7 @@ public:
      *   InitFunctionPointers() &&
      *   copyIdx < GetNumberOfCopies()
      */
-    void *GetFunctionPointer(uint32 copyIdx);
+    void *GetFunctionPointer(const uint32 copyIdx) const;
 
 protected:
     /**
@@ -123,10 +123,10 @@ protected:
      * @param[in] gamMemoryAddress the base address of the GAM memory (where the GAM signal data is stored).
      * @return true if all the copy information related to \a functionName can be successfully retrieved.
      */
-    bool InitFunctionPointers(SignalDirection direction,
+    bool InitFunctionPointers(const SignalDirection direction,
                               DataSourceI &dataSource,
                               const char8 * const functionName,
-                              void *gamMemoryAddress);
+                              void * const gamMemoryAddress);
 
     /**
      * Number of copy operations to be performed by this BrokerI.

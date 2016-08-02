@@ -38,7 +38,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-MemoryMapInputBroker::MemoryMapInputBroker() {
+MemoryMapInputBroker::MemoryMapInputBroker() :
+        MemoryMapBroker() {
 
 }
 
@@ -48,10 +49,13 @@ MemoryMapInputBroker::~MemoryMapInputBroker() {
 
 bool MemoryMapInputBroker::Execute() {
     uint32 n;
-    for (n = 0u; n < numberOfCopies; n++) {
-        MemoryOperationsHelper::Copy(copyTable[n].gamPointer, copyTable[n].dataSourcePointer, copyTable[n].copySize);
+    bool ret = true;
+    for (n = 0u; (n < numberOfCopies) && (ret); n++) {
+        if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+            ret = MemoryOperationsHelper::Copy(copyTable[n].gamPointer, copyTable[n].dataSourcePointer, copyTable[n].copySize);
+        }
     }
-    return true;
+    return ret;
 }
 
 CLASS_REGISTER(MemoryMapInputBroker, "1.0")

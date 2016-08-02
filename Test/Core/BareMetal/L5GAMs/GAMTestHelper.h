@@ -205,17 +205,14 @@ protected:
 
 };
 
-
-class GAMGroup1: public GAMGroup{
+class GAMGroup1: public GAMGroup {
 public:
-    CLASS_REGISTER_DECLARATION()
-virtual void PrepareNextState(const RealTimeStateInfo &status);
+    CLASS_REGISTER_DECLARATION()virtual void PrepareNextState(const RealTimeStateInfo &status);
 
 protected:
     virtual void SetUp();
 
 };
-
 
 struct TestStructB {
     int32 b1;
@@ -258,25 +255,27 @@ DS1    ();
 
     virtual uint32 GetNumberOfMemoryBuffers();
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-            uint32 bufferIdx,
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+            const uint32 bufferIdx,
             void *&signalAddress);
 
     virtual bool AllocateMemory();
 
-    virtual const char8 *GetBrokerName(StructuredDataI &data, SignalDirection direction);
+    virtual const char8 *GetBrokerName(StructuredDataI &data, const SignalDirection direction);
 
     virtual bool PrepareNextState(const MARTe::RealTimeStateInfo&);
 
     virtual bool ChangeState();
 
     virtual bool GetInputBrokers(ReferenceContainer &inputBrokers,
-            const char8 * functionName,
-            void* gamMemPtr);
+            const char8 *const functionName,
+            void* const gamMemPtr);
 
     virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers,
-            const char8 * functionName,
-            void* gamMemPtr);
+            const char8 * const functionName,
+            void* const gamMemPtr);
+
+    virtual bool Synchronise();
 };
 }
 
@@ -286,40 +285,39 @@ DS1    ();
 ///////////////////////////////////////////
 class Driver1: public DataSourceI {
 public:
-    CLASS_REGISTER_DECLARATION()
+CLASS_REGISTER_DECLARATION()
 
-    Driver1();
+Driver1();
 
-    virtual ~Driver1();
+virtual ~Driver1();
 
-    virtual bool Initialise(StructuredDataI & data);
+virtual bool Initialise(StructuredDataI & data);
 
-    virtual uint32 GetCurrentBufferIndex();
+virtual uint32 GetCurrentBufferIndex();
 
-    virtual uint32 GetNumberOfMemoryBuffers();
+virtual uint32 GetNumberOfMemoryBuffers();
 
+virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+        const uint32 bufferIdx,
+        void *&signalAddress);
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-                                       uint32 bufferIdx,
-                                       void *&signalAddress);
+virtual bool AllocateMemory();
 
-    virtual bool AllocateMemory();
+virtual const char8 *GetBrokerName(StructuredDataI &data, const SignalDirection direction);
 
-    virtual const char8 *GetBrokerName(StructuredDataI &data, SignalDirection direction);
+virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
+virtual bool ChangeState();
 
-    virtual bool PrepareNextState(const RealTimeStateInfo &status);
+virtual bool GetInputBrokers(ReferenceContainer &inputBrokers,
+        const char8 * const functionName,
+        void* const gamMemPtr);
 
-    virtual bool ChangeState();
+virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers,
+        const char8 * const functionName,
+        void* const gamMemPtr);
 
-    virtual bool GetInputBrokers(ReferenceContainer &inputBrokers,
-            const char8 * functionName,
-            void* gamMemPtr);
-
-    virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers,
-            const char8 * functionName,
-            void* gamMemPtr);
-
+virtual bool Synchronise();
 };
 
 #if 0

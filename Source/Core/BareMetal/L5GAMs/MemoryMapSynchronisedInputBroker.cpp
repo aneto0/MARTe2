@@ -1,6 +1,6 @@
 /**
- * @file MemoryMapOutputBroker.cpp
- * @brief Source file for class MemoryMapOutputBroker
+ * @file MemoryMapSynchronisedInputBroker.cpp
+ * @brief Source file for class MemoryMapSynchronisedInputBroker
  * @date 18/07/2016
  * @author Andre Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryMapOutputBroker (public, protected, and private). Be aware that some 
+ * the class MemoryMapSynchronisedInputBroker (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "MemoryMapOutputBroker.h"
+#include "MemoryMapSynchronisedInputBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,26 +38,26 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-MemoryMapOutputBroker::MemoryMapOutputBroker() :
-        MemoryMapBroker() {
+MemoryMapSynchronisedInputBroker::MemoryMapSynchronisedInputBroker() :
+        MemoryMapInputBroker() {
 
 }
 
-MemoryMapOutputBroker::~MemoryMapOutputBroker() {
+MemoryMapSynchronisedInputBroker::~MemoryMapSynchronisedInputBroker() {
 
 }
 
-bool MemoryMapOutputBroker::Execute() {
-    uint32 n;
+bool MemoryMapSynchronisedInputBroker::Execute() {
     bool ret = true;
-    for (n = 0u; (n < numberOfCopies) && (ret); n++) {
-        if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
-            ret = MemoryOperationsHelper::Copy(copyTable[n].dataSourcePointer, copyTable[n].gamPointer, copyTable[n].copySize);
-        }
+    if (dataSource != NULL_PTR(DataSourceI *)) {
+        ret = dataSource->Synchronise();
+    }
+    if (ret) {
+        ret = MemoryMapInputBroker::Execute();
     }
     return ret;
 }
 
-CLASS_REGISTER(MemoryMapOutputBroker, "1.0")
+CLASS_REGISTER(MemoryMapSynchronisedInputBroker, "1.0")
 }
 

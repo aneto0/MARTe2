@@ -13,6 +13,7 @@ BasicUDPSocket.cpp
 BitBoolean.h
 BitRange.h
 BitSetToInteger.h
+BrokerI.cpp
 BufferedStreamGenerator.h
 BufferedStreamI.cpp
 BufferedStreamIOBuffer.cpp
@@ -31,6 +32,7 @@ ClassRegistryItemT.h
 CompilerTypes.h
 ConfigurationDatabase.cpp
 CString.h
+DataSourceI.cpp
 Directory.cpp
 DirectoryCore.h
 DirectoryScanner.cpp
@@ -50,6 +52,7 @@ FlagsType.h
 FloatToInteger.cpp
 FormatDescriptor.cpp
 FractionalInteger.h
+GAMDataSource.cpp
 GeneralDefinitions.h
 GlobalObjectI.cpp
 GlobalObjectsDatabase.cpp
@@ -84,6 +87,13 @@ Matrix.h
 MemoryArea.cpp
 MemoryCheck.h
 MemoryCheck_Generic.cpp
+MemoryMapBroker.cpp
+MemoryMapInputBroker.cpp
+MemoryMapOutputBroker.cpp
+MemoryMapStatefulBroker.cpp
+MemoryMapStatefulInputBroker.cpp
+MemoryMapStatefulOutputBroker.cpp
+MemoryMapSynchronisedInputBroker.cpp
 MemoryOperationsHelper.h
 MemoryOperationsHelper_CLIB_Generic.cpp
 Message.h

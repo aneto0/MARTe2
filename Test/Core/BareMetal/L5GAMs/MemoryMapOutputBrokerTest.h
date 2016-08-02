@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MEMORYMAPIOUTUTBROKERTEST_H_
-#define MEMORYMAPIOUTUTBROKERTEST_H_
+#ifndef MEMORYMAPOUTPUTROKERTEST_H_
+#define MEMORYMAPOUTPUTROKERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -39,12 +39,30 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests the MemoryMapOutputBroker public methods.
+ */
 class MemoryMapOutputBrokerTest {
 public:
+    /**
+     * @brief Tests the default constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests the Execute method.
+     */
     bool TestExecute();
 
+    /**
+     * @brief Tests the Execute method with a signal with ranges.
+     */
+    bool TestExecute_Ranges();
+
+    /**
+     * @brief Tests the Execute method with a signal with samples.
+     */
+    bool TestExecute_Samples();
 
 };
 
@@ -52,5 +70,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* MEMORYMAPIOUTUTBROKERTEST_H_ */
+#endif /* MEMORYMAPOUTPUTROKERTEST_H_ */
 

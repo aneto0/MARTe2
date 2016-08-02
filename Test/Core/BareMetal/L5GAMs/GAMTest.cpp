@@ -95,24 +95,26 @@ DataSourceIGAMTest1    ();
 
     virtual uint32 GetNumberOfMemoryBuffers();
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-            uint32 bufferIdx,
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+                                       const uint32 bufferIdx,
             void *&signalAddress);
 
     virtual const char8 *GetBrokerName(StructuredDataI &data,
-            SignalDirection direction);
+                                       const SignalDirection direction);
 
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
 
     virtual bool GetOutputBrokers(
             ReferenceContainer &outputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
+
+    virtual bool Synchronise();
 
 };
 
@@ -133,14 +135,14 @@ uint32 DataSourceIGAMTest1::GetNumberOfMemoryBuffers() {
     return 0u;
 }
 
-bool DataSourceIGAMTest1::GetSignalMemoryBuffer(uint32 signalIdx,
-                                                uint32 bufferIdx,
+bool DataSourceIGAMTest1::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                                const uint32 bufferIdx,
                                                 void *&signalAddress) {
     return true;
 }
 
 const char8 *DataSourceIGAMTest1::GetBrokerName(StructuredDataI &data,
-                                                SignalDirection direction) {
+                                                const SignalDirection direction) {
     if (direction == InputSignals) {
         return "BrokerITestGAMTest1";
     }
@@ -152,8 +154,8 @@ bool DataSourceIGAMTest1::PrepareNextState(const RealTimeStateInfo &status) {
 }
 
 bool DataSourceIGAMTest1::GetInputBrokers(ReferenceContainer &inputBrokers,
-                                          const char8* functionName,
-                                          void * gamMemPtr) {
+                                          const char8* const functionName,
+                                          void * const gamMemPtr) {
     ReferenceT<BrokerITestGAMTest1> broker("BrokerITestGAMTest1");
     bool ret = broker.IsValid();
     if (ret) {
@@ -163,14 +165,18 @@ bool DataSourceIGAMTest1::GetInputBrokers(ReferenceContainer &inputBrokers,
 }
 
 bool DataSourceIGAMTest1::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                           const char8* functionName,
-                                           void * gamMemPtr) {
+                                           const char8* const functionName,
+                                           void * const gamMemPtr) {
     ReferenceT<BrokerITestGAMTest1> broker("BrokerITestGAMTest1");
     bool ret = broker.IsValid();
     if (ret) {
         ret = outputBrokers.Insert(broker);
     }
     return ret;
+}
+
+bool DataSourceIGAMTest1::Synchronise(){
+    return false;
 }
 CLASS_REGISTER(DataSourceIGAMTest1, "1.0");
 

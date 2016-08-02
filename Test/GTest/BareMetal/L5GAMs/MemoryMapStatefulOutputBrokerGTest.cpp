@@ -1,6 +1,6 @@
 /**
- * @file MemoryMapBrokerGTest.cpp
- * @brief Source file for class MemoryMapBrokerGTest
+ * @file MemoryMapStatefulOutputBrokerGTest.cpp
+ * @brief Source file for class MemoryMapStatefulOutputBrokerGTest
  * @date 30/07/2016
  * @author Andre Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryMapBrokerGTest (public, protected, and private). Be aware that some
+ * the class MemoryMapStatefulOutputBrokerGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "MemoryMapBrokerTest.h"
+#include "MemoryMapStatefulOutputBrokerTest.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -41,37 +41,52 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MemoryMapBrokerGTest,TestConstructor) {
-    MemoryMapBrokerTest test;
+TEST(MemoryMapStatefulOutputBrokerGTest,TestConstructor) {
+    MemoryMapStatefulOutputBrokerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(MemoryMapBrokerGTest,TestInit_Input) {
-    MemoryMapBrokerTest test;
-    ASSERT_TRUE(test.TestInit_Input());
+TEST(MemoryMapStatefulOutputBrokerGTest,TestExecute_0) {
+    MemoryMapStatefulOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_0());
 }
 
-TEST(MemoryMapBrokerGTest,TestInit_Input_Ranges) {
-    MemoryMapBrokerTest test;
-    ASSERT_TRUE(test.TestInit_Input_Ranges());
+TEST(MemoryMapStatefulOutputBrokerGTest,TestExecute_1) {
+    MemoryMapStatefulOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_1());
 }
 
-TEST(MemoryMapBrokerGTest,TestInit_Input_Samples) {
-    MemoryMapBrokerTest test;
-    ASSERT_TRUE(test.TestInit_Input_Samples());
+TEST(MemoryMapStatefulOutputBrokerGTest,TestExecute_ChangeState) {
+    MemoryMapStatefulOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_ChangeState());
 }
 
-TEST(MemoryMapBrokerGTest,TestInit_Output) {
-    MemoryMapBrokerTest test;
-    ASSERT_TRUE(test.TestInit_Output());
+TEST(MemoryMapStatefulOutputBrokerGTest,TestExecute_Ranges_0) {
+    MemoryMapStatefulOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Ranges_0());
 }
 
-TEST(MemoryMapBrokerGTest,TestInit_Output_Ranges) {
-    MemoryMapBrokerTest test;
-    ASSERT_TRUE(test.TestInit_Output_Ranges());
+TEST(MemoryMapStatefulOutputBrokerGTest,TestExecute_Ranges_1) {
+    MemoryMapStatefulOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Ranges_1());
 }
 
-TEST(MemoryMapBrokerGTest,TestInit_Output_Samples) {
-    MemoryMapBrokerTest test;
-    ASSERT_TRUE(test.TestInit_Output_Samples());
+TEST(MemoryMapStatefulOutputBrokerGTest,TestExecute_Ranges_ChangeState) {
+    MemoryMapStatefulOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Ranges_ChangeState());
+}
+
+TEST(MemoryMapStatefulOutputBrokerGTest,TestExecute_Samples_0) {
+    MemoryMapStatefulOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Samples_0());
+}
+
+TEST(MemoryMapStatefulOutputBrokerGTest,TestExecute_Samples_1) {
+    MemoryMapStatefulOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Samples_1());
+}
+
+TEST(MemoryMapStatefulOutputBrokerGTest,TestExecute_Samples_ChangeState) {
+    MemoryMapStatefulOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Samples_ChangeState());
 }

@@ -70,7 +70,9 @@ void MemoryMapOutputBrokerTestScheduler1::StopExecution() {
 CLASS_REGISTER(MemoryMapOutputBrokerTestScheduler1, "1.0")
 
 /**
- * @brief GAM empty implementation to support the MemoryMapOutputBroker tests
+ * @brief GAM implementation to support the MemoryMapOutputBroker tests.
+ * @details This GAM generates a memory pattern (see Execute) which allows to verify if the
+ *  MemoryMapOutputBroker is correctly copying the signal into the DataSource.
  */
 class MemoryMapOutputBrokerTestGAM1: public GAM {
 public:
@@ -109,6 +111,9 @@ void *MemoryMapOutputBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
     return GAM::GetOutputSignalMemory(signalIdx);
 }
 
+/**
+ * @brief For each signal byte N, generates a pattern given by N*N
+ */
 bool MemoryMapOutputBrokerTestGAM1::Execute() {
     uint32 numberOfOutputSignals = GetNumberOfOutputSignals();
     uint32 n;
@@ -147,24 +152,26 @@ MemoryMapOutputBrokerDataSourceTestHelper    ();
 
     virtual uint32 GetNumberOfMemoryBuffers();
 
-    virtual bool GetSignalMemoryBuffer(uint32 signalIdx,
-            uint32 bufferIdx,
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+                                       const uint32 bufferIdx,
             void *&signalAddress);
 
     virtual const char8 *GetBrokerName(StructuredDataI &data,
-            SignalDirection direction);
+                                       const SignalDirection direction);
 
     virtual bool PrepareNextState(const RealTimeStateInfo &status);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
 
     virtual bool GetOutputBrokers(
             ReferenceContainer &outputBrokers,
-            const char8* functionName,
-            void * gamMemPtr);
+            const char8* const functionName,
+            void * const gamMemPtr);
+
+    virtual bool Synchronise();
 
     void *signalMemory;
     uint32 *offsets;
@@ -217,8 +224,8 @@ uint32 MemoryMapOutputBrokerDataSourceTestHelper::GetNumberOfMemoryBuffers() {
     return 1u;
 }
 
-bool MemoryMapOutputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 signalIdx,
-                                                                      uint32 bufferIdx,
+bool MemoryMapOutputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                                                      const uint32 bufferIdx,
                                                                       void *&signalAddress) {
     char8 *memPtr = reinterpret_cast<char8 *>(signalMemory);
     memPtr += offsets[signalIdx];
@@ -231,7 +238,7 @@ bool MemoryMapOutputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(uint32 sig
 }
 
 const char8 * MemoryMapOutputBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data,
-                                                                       SignalDirection direction) {
+                                                                       const SignalDirection direction) {
     if (direction == InputSignals) {
         return "MemoryMapOutputBroker";
     }
@@ -243,15 +250,15 @@ bool MemoryMapOutputBrokerDataSourceTestHelper::PrepareNextState(const RealTimeS
 }
 
 bool MemoryMapOutputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
-                                                                const char8* functionName,
-                                                                void * gamMemPtr) {
+                                                                const char8* const functionName,
+                                                                void * const gamMemPtr) {
 
     return true;
 }
 
 bool MemoryMapOutputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                                                 const char8* functionName,
-                                                                 void * gamMemPtr) {
+                                                                 const char8* const functionName,
+                                                                 void * const gamMemPtr) {
     ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
     bool ret = broker.IsValid();
     if (ret) {
@@ -262,6 +269,11 @@ bool MemoryMapOutputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContai
     }
     return ret;
 }
+
+bool MemoryMapOutputBrokerDataSourceTestHelper::Synchronise(){
+    return false;
+}
+
 CLASS_REGISTER(MemoryMapOutputBrokerDataSourceTestHelper, "1.0");
 
 /**
@@ -290,8 +302,6 @@ static bool InitialiseMemoryMapOutputBrokerEnviroment(const char8 * const config
         ok = application->ConfigureApplication();
     }
     return ok;
-
-    return application->ConfigureApplication();
 }
 
 /**
@@ -499,7 +509,7 @@ bool MemoryMapOutputBrokerTest::TestExecute() {
     if (ret) {
         ret = dataSource->GetSignalIndex(signalIdx, "Signal1A");
     }
-    //Verify if the DataSource has the expected pattern
+
     char8 *dsPtr;
     if (ret) {
         ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0, reinterpret_cast<void *&>(dsPtr));
@@ -508,12 +518,54 @@ bool MemoryMapOutputBrokerTest::TestExecute() {
     if (ret) {
         ret = dataSource->GetSignalByteSize(signalIdx, byteSize);
     }
-
-    //Address the signal with the ranges
     uint32 s;
     for (s = 0; (s < byteSize) && (ret); s++) {
         ret = (*(dsPtr++) == static_cast<char8>(s * s));
     }
+
+    return ret;
+}
+
+bool MemoryMapOutputBrokerTest::TestExecute_Ranges() {
+    bool ret = InitialiseMemoryMapOutputBrokerEnviroment(config1);
+    ReferenceT<MemoryMapOutputBrokerDataSourceTestHelper> dataSource;
+    ReferenceT<MemoryMapOutputBroker> broker;
+    ReferenceT<MemoryMapOutputBrokerTestGAM1> gamC;
+    ReferenceContainer brokers;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        gamC = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMC");
+        ret = gamC.IsValid();
+    }
+
+    if (ret) {
+        ret = dataSource->GetOutputBrokers(brokers, "GAMC", (void *) gamC->GetOutputSignalsMemory());
+    }
+    if (ret) {
+        ret = (brokers.Size() > 0u);
+    }
+    if (ret) {
+        broker = brokers.Get(0);
+        ret = broker.IsValid();
+    }
+    uint32 numberOfCopies;
+    if (ret) {
+        numberOfCopies = broker->GetNumberOfCopies();
+        ret = (numberOfCopies == 5u);
+    }
+    if (ret) {
+        ret = gamC->Execute();
+    }
+    if (ret) {
+        ret = broker->Execute();
+    }
+    uint32 signalIdx;
+    char8 *dsPtr;
+    uint32 byteSize;
+    uint32 s;
     if (ret) {
         ret = dataSource->GetSignalIndex(signalIdx, "Signal4A");
     }
@@ -538,7 +590,49 @@ bool MemoryMapOutputBrokerTest::TestExecute() {
         ret = (*(dsPtr++) == static_cast<char8>(s * s));
     }
 
-    //Finally handle the signal with the samples
+    return ret;
+}
+
+bool MemoryMapOutputBrokerTest::TestExecute_Samples() {
+    bool ret = InitialiseMemoryMapOutputBrokerEnviroment(config1);
+    ReferenceT<MemoryMapOutputBrokerDataSourceTestHelper> dataSource;
+    ReferenceT<MemoryMapOutputBroker> broker;
+    ReferenceT<MemoryMapOutputBrokerTestGAM1> gamC;
+    ReferenceContainer brokers;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        gamC = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMC");
+        ret = gamC.IsValid();
+    }
+
+    if (ret) {
+        ret = dataSource->GetOutputBrokers(brokers, "GAMC", (void *) gamC->GetOutputSignalsMemory());
+    }
+    if (ret) {
+        ret = (brokers.Size() > 0u);
+    }
+    if (ret) {
+        broker = brokers.Get(0);
+        ret = broker.IsValid();
+    }
+    uint32 numberOfCopies;
+    if (ret) {
+        numberOfCopies = broker->GetNumberOfCopies();
+        ret = (numberOfCopies == 5u);
+    }
+    if (ret) {
+        ret = gamC->Execute();
+    }
+    if (ret) {
+        ret = broker->Execute();
+    }
+    uint32 signalIdx;
+    char8 *dsPtr;
+    uint32 byteSize;
+    uint32 s;
     if (ret) {
         ret = dataSource->GetSignalIndex(signalIdx, "Signal5");
     }
