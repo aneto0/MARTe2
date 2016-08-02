@@ -29,14 +29,397 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeThreadTest.h"
 #include "ConfigurationDatabase.h"
-#include "GAMTestHelper.h"
+#include "GAM.h"
+#include "GAMGroup.h"
+#include "GAMSchedulerI.h"
+#include "RealTimeThread.h"
+#include "RealTimeThreadTest.h"
+#include "StandardParser.h"
+
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+/**
+ * @brief GAMSchedulerI empty implementation to support the RealTimeThread tests
+ */
+class RealTimeThreadTestScheduler1: public GAMSchedulerI {
+public:
+    CLASS_REGISTER_DECLARATION()
 
+RealTimeThreadTestScheduler1    ();
+
+    virtual void StartExecution();
+
+    virtual void StopExecution();
+};
+
+RealTimeThreadTestScheduler1::RealTimeThreadTestScheduler1() :
+        GAMSchedulerI() {
+
+}
+
+void RealTimeThreadTestScheduler1::StartExecution() {
+
+}
+
+void RealTimeThreadTestScheduler1::StopExecution() {
+
+}
+
+CLASS_REGISTER(RealTimeThreadTestScheduler1, "1.0")
+
+/**
+ * @brief GAM empty implementation to support the RealTimeThread tests
+ */
+class RealTimeThreadTestGAM1: public GAM {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+RealTimeThreadTestGAM1    ();
+
+    virtual bool Execute();
+};
+
+RealTimeThreadTestGAM1::RealTimeThreadTestGAM1() :
+        GAM() {
+}
+
+bool RealTimeThreadTestGAM1::Execute() {
+    return true;
+}
+CLASS_REGISTER(RealTimeThreadTestGAM1, "1.0")
+
+/**
+ * @brief Empty object implementation to fake a GAM
+ */
+class RealTimeThreadTestFakeGAM1: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+RealTimeThreadTestFakeGAM1    ();
+
+    virtual bool Execute();
+
+};
+
+RealTimeThreadTestFakeGAM1::RealTimeThreadTestFakeGAM1() :
+        Object() {
+}
+
+bool RealTimeThreadTestFakeGAM1::Execute() {
+    return true;
+}
+CLASS_REGISTER(RealTimeThreadTestFakeGAM1, "1.0")
+
+/**
+ * @brief GAMGroup empty implementation to support the RealTimeThread tests
+ */
+class RealTimeThreadTestGAMGroup1: public GAMGroup {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+RealTimeThreadTestGAMGroup1    ();
+
+    virtual void PrepareNextState(const RealTimeStateInfo &status);
+};
+
+RealTimeThreadTestGAMGroup1::RealTimeThreadTestGAMGroup1() :
+        GAMGroup() {
+}
+
+void RealTimeThreadTestGAMGroup1::PrepareNextState(const RealTimeStateInfo &status) {
+
+}
+CLASS_REGISTER(RealTimeThreadTestGAMGroup1, "1.0")
+
+/**
+ * Helper function to setup a MARTe execution environment
+ */
+static bool InitialiseRealTimeThreadEnviroment(const char8 * const config) {
+    ConfigurationDatabase cdb;
+    StreamString configStream = config;
+    configStream.Seek(0);
+    StandardParser parser(configStream, cdb);
+
+    bool ok = parser.Parse();
+
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+
+    if (ok) {
+        god->CleanUp();
+        ok = god->Initialise(cdb);
+    }
+    ReferenceT<RealTimeApplication> application;
+    if (ok) {
+        application = god->Find("Application1");
+        ok = application.IsValid();
+    }
+    if (ok) {
+        ok = application->ConfigureApplication();
+    }
+    return ok;
+}
+
+//Standard valid config with GAMs, ReferenceContainers and GAMGroups
+static const char8* config1 = ""
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAM1 = {"
+        "            Class = RealTimeThreadTestGAM1"
+        "            OutputSignals = {"
+        "               Signal0 = {"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAM2 = {"
+        "            Class = RealTimeThreadTestGAM1"
+        "            InputSignals = {"
+        "               Signal0 = {"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMGroup1 = {"
+        "            Class = RealTimeThreadTestGAMGroup1"
+        "            +GAM3 = {"
+        "                Class = RealTimeThreadTestGAM1"
+        "                OutputSignals = {"
+        "                   Signal1 = {"
+        "                      Type = uint32"
+        "                   }"
+        "                }"
+        "            }"
+        "            +GAM4 = {"
+        "                Class = RealTimeThreadTestGAM1"
+        "                OutputSignals = {"
+        "                   Signal2 = {"
+        "                      Type = uint32"
+        "                   }"
+        "                }"
+        "            }"
+        "        }"
+        "        +GAMContainer = {"
+        "            Class = ReferenceContainer"
+        "            +GAM5 = {"
+        "                Class = RealTimeThreadTestGAM1"
+        "                InputSignals = {"
+        "                   Signal1 = {"
+        "                      Type = uint32"
+        "                   }"
+        "                   Signal2 = {"
+        "                      Type = uint32"
+        "                   }"
+        "                }"
+        "            }"
+        "            +GAM6 = {"
+        "                Class = RealTimeThreadTestGAM1"
+        "                InputSignals = {"
+        "                   Signal1 = {"
+        "                      Type = uint32"
+        "                   }"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = { :Functions.GAM1 :Functions.GAM2 }"
+        "                }"
+        "                +Thread2 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = { :Functions.GAMGroup1 }"
+        "                }"
+        "            }"
+        "        }"
+        "        +State2 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = { :Functions.GAM1 :Functions.GAM2 }"
+        "                }"
+        "                +Thread2 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = { :Functions.GAMGroup1 :Functions.GAMContainer }"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        DefaultDataSource = DDB1"
+        "        Class = ReferenceContainer"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = RealTimeThreadTestScheduler1"
+        "    }"
+        "}";
+
+//Invalid configuration trying to link to GAM which does not live inside +Functions
+static const char8* config2 = ""
+        "GAM0 = {"
+        "   Class = RealTimeThreadTestGAM1"
+        "   InputSignals = {"
+        "      Signal0 = {"
+        "         Type = uint32"
+        "      }"
+        "   }"
+        "}"
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAM1 = {"
+        "            Class = RealTimeThreadTestGAM1"
+        "            OutputSignals = {"
+        "               Signal0 = {"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAM2 = {"
+        "            Class = RealTimeThreadTestGAM1"
+        "            InputSignals = {"
+        "               Signal0 = {"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = { ::GAM0 :Functions.GAM1 :Functions.GAM2 }"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        DefaultDataSource = DDB1"
+        "        Class = ReferenceContainer"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = RealTimeThreadTestScheduler1"
+        "    }"
+        "}";
+
+//Invalid configuration trying to link a GAM which is not of type GAM
+static const char8* config3 = ""
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAM1 = {"
+        "            Class = RealTimeThreadTestFakeGAM1"
+        "            OutputSignals = {"
+        "               Signal0 = {"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAM2 = {"
+        "            Class = RealTimeThreadTestGAM1"
+        "            InputSignals = {"
+        "               Signal0 = {"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = { :Functions.GAM1 :Functions.GAM2 }"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        DefaultDataSource = DDB1"
+        "        Class = ReferenceContainer"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = RealTimeThreadTestScheduler1"
+        "    }"
+        "}";
+
+//Invalid configuration trying to link a GAM with the wrong path
+static const char8* config4 = ""
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAM1 = {"
+        "            Class = RealTimeThreadTestGAM1"
+        "            OutputSignals = {"
+        "               Signal0 = {"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAM2 = {"
+        "            Class = RealTimeThreadTestGAM1"
+        "            InputSignals = {"
+        "               Signal0 = {"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = { :Functions.GAM1 :Functions.GAM2a }"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        DefaultDataSource = DDB1"
+        "        Class = ReferenceContainer"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = RealTimeThreadTestScheduler1"
+        "    }"
+        "}";
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -51,12 +434,26 @@ RealTimeThreadTest::~RealTimeThreadTest() {
 bool RealTimeThreadTest::TestConstructor() {
 
     RealTimeThread test;
-
-    if (test.GetNumberOfFunctions() != 0) {
-        return false;
+    bool ret = (test.GetNumberOfFunctions() != 0);
+    if (ret) {
+        ret = (test.GetFunctions() == NULL);
     }
-    if (test.GetFunctions() != NULL) {
-        return false;
+    if (ret) {
+        ret = (test.GetNumberOfGAMs() != 0);
+    }
+    if (ret) {
+        ReferenceContainer gamList;
+        test.GetGAMs(gamList);
+        ret = (gamList.Size() == 0u);
+    }
+    if (ret) {
+        ret = (test.GetStackSize() == THREADS_DEFAULT_STACKSIZE);
+    }
+    if (ret) {
+        ret = (test.GetCPU() == ProcessorType::GetDefaultCPUs());
+    }
+    if (ret) {
+        ret = (test.Size() == 0);
     }
     return test.Size() == 0;
 }
@@ -97,109 +494,263 @@ bool RealTimeThreadTest::TestInitialiseFalse_NoFunctions() {
 }
 
 bool RealTimeThreadTest::TestConfigureArchitecture() {
-
-    ConfigurationDatabase cdb;
-    StreamString conf = cdbStr1;
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
+    bool ret = InitialiseRealTimeThreadEnviroment(config1);
+    ReferenceT<RealTimeThread> thread1S1;
+    ReferenceT<RealTimeThread> thread2S1;
+    ReferenceT<RealTimeThread> thread1S2;
+    ReferenceT<RealTimeThread> thread2S2;
+    if (ret) {
+        thread1S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
+        ret = thread1S1.IsValid();
     }
-
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
+    if (ret) {
+        thread2S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
+        ret = thread2S1.IsValid();
     }
-    ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
-    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1");
-
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
-
-    if (!thread1->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
-        return false;
+    if (ret) {
+        thread1S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread1");
+        ret = thread1S2.IsValid();
     }
-
-    ReferenceT<PIDGAM> gam1 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAM1");
-    ReferenceT<PIDGAM> gam2 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAM2");
-
-    if (gam1->GetNumberOfSupportedStates() != 1) {
-        return false;
+    if (ret) {
+        thread2S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread2");
+        ret = thread2S2.IsValid();
     }
-
-    if (gam1->GetSupportedStates()[0] != "State1") {
-        return false;
-    }
-    if (gam2->GetNumberOfSupportedStates() != 1) {
-        return false;
-    }
-
-    if (gam2->GetSupportedStates()[0] != "State1") {
-        return false;
-    }
-
-    return true;
+    return ret;
 }
 
+bool RealTimeThreadTest::TestConfigureArchitecture_OrphanGAM() {
+    bool ret = InitialiseRealTimeThreadEnviroment(config2);
+    return !ret;
+}
+
+bool RealTimeThreadTest::TestConfigureArchitecture_InvalidGAMType() {
+    bool ret = InitialiseRealTimeThreadEnviroment(config3);
+    return !ret;
+}
+
+bool RealTimeThreadTest::TestConfigureArchitecture_InvalidGAMPath() {
+    bool ret = InitialiseRealTimeThreadEnviroment(config4);
+    return !ret;
+}
+
+bool RealTimeThreadTest::TestGetNumberOfFunctions() {
+    bool ret = InitialiseRealTimeThreadEnviroment(config1);
+    ReferenceT<RealTimeThread> thread1S1;
+    ReferenceT<RealTimeThread> thread2S1;
+    ReferenceT<RealTimeThread> thread1S2;
+    ReferenceT<RealTimeThread> thread2S2;
+    if (ret) {
+        thread1S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
+        ret = thread1S1.IsValid();
+    }
+    if (ret) {
+        thread2S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
+        ret = thread2S1.IsValid();
+    }
+    if (ret) {
+        thread1S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread1");
+        ret = thread1S2.IsValid();
+    }
+    if (ret) {
+        thread2S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread2");
+        ret = thread2S2.IsValid();
+    }
+
+    const uint32 numberOfThreads = 4;
+    ReferenceT<RealTimeThread> threads[numberOfThreads] = { thread1S1, thread2S1, thread1S2, thread2S2 };
+    uint32 numberOfFunctions[numberOfThreads] = { 2, 1, 2, 2 };
+
+    uint32 n;
+    for (n = 0u; (n < numberOfThreads) && (ret); n++) {
+        ret = (threads[n]->GetNumberOfFunctions() == numberOfFunctions[n]);
+    }
+
+    return ret;
+}
+
+bool RealTimeThreadTest::TestGetFunctions() {
+    bool ret = InitialiseRealTimeThreadEnviroment(config1);
+    ReferenceT<RealTimeThread> thread1S1;
+    ReferenceT<RealTimeThread> thread2S1;
+    ReferenceT<RealTimeThread> thread1S2;
+    ReferenceT<RealTimeThread> thread2S2;
+    if (ret) {
+        thread1S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
+        ret = thread1S1.IsValid();
+    }
+    if (ret) {
+        thread2S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
+        ret = thread2S1.IsValid();
+    }
+    if (ret) {
+        thread1S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread1");
+        ret = thread1S2.IsValid();
+    }
+    if (ret) {
+        thread2S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread2");
+        ret = thread2S2.IsValid();
+    }
+
+    const uint32 numberOfThreads = 4;
+    const uint32 maxFunctions = 2;
+    ReferenceT<RealTimeThread> threads[numberOfThreads] = { thread1S1, thread2S1, thread1S2, thread2S2 };
+    const char8 * const functionNames[numberOfThreads][maxFunctions] = { { ":Functions.GAM1", ":Functions.GAM2" }, { ":Functions.GAMGroup1", NULL }, {
+            ":Functions.GAM1", ":Functions.GAM2" }, { ":Functions.GAMGroup1", ":Functions.GAMContainer" } };
+
+    uint32 n;
+    for (n = 0u; (n < numberOfThreads) && (ret); n++) {
+        uint32 numberOfFunctions = threads[n]->GetNumberOfFunctions();
+        StreamString *thisThreadFunctionNames = threads[n]->GetFunctions();
+        uint32 i;
+        for (i = 0u; i < numberOfFunctions; i++) {
+            ret = (thisThreadFunctionNames[i] == functionNames[n][i]);
+        }
+    }
+
+    return ret;
+}
+
+bool RealTimeThreadTest::TestGetNumberOfGAMs() {
+    bool ret = InitialiseRealTimeThreadEnviroment(config1);
+    ReferenceT<RealTimeThread> thread1S1;
+    ReferenceT<RealTimeThread> thread2S1;
+    ReferenceT<RealTimeThread> thread1S2;
+    ReferenceT<RealTimeThread> thread2S2;
+    if (ret) {
+        thread1S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
+        ret = thread1S1.IsValid();
+    }
+    if (ret) {
+        thread2S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
+        ret = thread2S1.IsValid();
+    }
+    if (ret) {
+        thread1S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread1");
+        ret = thread1S2.IsValid();
+    }
+    if (ret) {
+        thread2S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread2");
+        ret = thread2S2.IsValid();
+    }
+
+    const uint32 numberOfThreads = 4;
+    ReferenceT<RealTimeThread> threads[numberOfThreads] = { thread1S1, thread2S1, thread1S2, thread2S2 };
+    uint32 numberOfGAMs[numberOfThreads] = { 2, 2, 2, 4 };
+
+    uint32 n;
+    for (n = 0u; (n < numberOfThreads) && (ret); n++) {
+        ret = (threads[n]->GetNumberOfGAMs() == numberOfGAMs[n]);
+    }
+
+    return ret;
+}
+
+bool RealTimeThreadTest::TestGetGAMs() {
+    bool ret = InitialiseRealTimeThreadEnviroment(config1);
+    ReferenceT<RealTimeThread> thread1S1;
+    ReferenceT<RealTimeThread> thread2S1;
+    ReferenceT<RealTimeThread> thread1S2;
+    ReferenceT<RealTimeThread> thread2S2;
+    if (ret) {
+        thread1S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
+        ret = thread1S1.IsValid();
+    }
+    if (ret) {
+        thread2S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
+        ret = thread2S1.IsValid();
+    }
+    if (ret) {
+        thread1S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread1");
+        ret = thread1S2.IsValid();
+    }
+    if (ret) {
+        thread2S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread2");
+        ret = thread2S2.IsValid();
+    }
+
+    const uint32 numberOfThreads = 4;
+    const uint32 maxGAMs = 4;
+    ReferenceT<RealTimeThread> threads[numberOfThreads] = { thread1S1, thread2S1, thread1S2, thread2S2 };
+    const char8 * const gamNames[numberOfThreads][maxGAMs] = { { "GAM1", "GAM2", NULL, NULL }, { "GAM3", "GAM4", NULL, NULL }, { "GAM1", "GAM2", NULL, NULL }, {
+            "GAM3", "GAM4", "GAM5", "GAM6" } };
+
+    uint32 n;
+    for (n = 0u; (n < numberOfThreads) && (ret); n++) {
+        ReferenceContainer gamList;
+        threads[n]->GetGAMs(gamList);
+        uint32 i;
+        for (i = 0u; i < gamList.Size(); i++) {
+            StreamString name = gamList.Get(i)->GetName();
+            name.Seek(0u);
+            ret = (name == gamNames[n][i]);
+        }
+    }
+
+    return ret;
+}
+
+#if 0
 bool RealTimeThreadTest::TestConfigureArchitecture_MoreGAMs() {
     ConfigurationDatabase cdb;
     StreamString conf =
-            "$Application1 = {\n"
-                    "    Class = RealTimeApplication\n"
-                    "    +Functions = {\n"
-                    "        Class = ReferenceContainer\n"
-                    "        +GAM1 = {\n"
-                    "            Class = PIDGAM\n"
-                    "        }\n"
-                    "        +GAM2 = {\n"
-                    "            Class = PIDGAM\n"
-                    "        }\n"
-                    "        +PIDGroup1 = {\n"
-                    "            Class = PIDGAMGroup\n"
-                    "            +GAM3 = {\n"
-                    "                Class = PIDGAM\n"
-                    "            }\n"
-                    "            +GAM4 = {\n"
-                    "                Class = PIDGAM\n"
-                    "            }\n"
-                    "        }\n"
-                    "        +GAMContainer = {\n"
-                    "            Class = ReferenceContainer\n"
-                    "            +GAM5 = {\n"
-                    "                Class = PIDGAM\n"
-                    "            }\n"
-                    "            +GAM6 = {\n"
-                    "                Class = PIDGAM\n"
-                    "            }\n"
-                    "        }\n"
-                    "        +PIDGroup2 = {\n"
-                    "            Class = PIDGAMGroup\n"
-                    "            +GAM7 = {\n"
-                    "                Class = PIDGAM\n"
-                    "            }\n"
-                    "            +GAM8 = {\n"
-                    "                Class = PIDGAM\n"
-                    "            }\n"
-                    "        }\n"
-                    "    }\n"
-                    "    +States = {\n"
-                    "        Class = ReferenceContainer\n"
-                    "        +State1 = {\n"
-                    "            Class = RealTimeState\n"
-                    "            +Threads = {\n"
-                    "                Class = ReferenceContainer\n"
-                    "                +Thread1 = {\n"
-                    "                    Class = RealTimeThread\n"
-                    "                    Functions = {:Functions.GAM1 :Functions.GAM2 :Functions.PIDGroup1 :Functions.GAMContainer :Functions.PIDGroup2.GAM7 :Functions.PIDGroup2.GAM8}\n"
-                    "                }\n"
-                    "            }\n"
-                    "        }\n"
-                    "    }\n"
-                    "    +Data = {\n"
-                    "        Class = DataSourceContainer\n"
-                    "    }\n"
-                    "    +Scheduler = {\n"
-                    "        Class = DummyScheduler\n"
-                    "    }\n"
-                    "}\n";
+    "$Application1 = {\n"
+    "    Class = RealTimeApplication\n"
+    "    +Functions = {\n"
+    "        Class = ReferenceContainer\n"
+    "        +GAM1 = {\n"
+    "            Class = PIDGAM\n"
+    "        }\n"
+    "        +GAM2 = {\n"
+    "            Class = PIDGAM\n"
+    "        }\n"
+    "        +PIDGroup1 = {\n"
+    "            Class = PIDGAMGroup\n"
+    "            +GAM3 = {\n"
+    "                Class = PIDGAM\n"
+    "            }\n"
+    "            +GAM4 = {\n"
+    "                Class = PIDGAM\n"
+    "            }\n"
+    "        }\n"
+    "        +GAMContainer = {\n"
+    "            Class = ReferenceContainer\n"
+    "            +GAM5 = {\n"
+    "                Class = PIDGAM\n"
+    "            }\n"
+    "            +GAM6 = {\n"
+    "                Class = PIDGAM\n"
+    "            }\n"
+    "        }\n"
+    "        +PIDGroup2 = {\n"
+    "            Class = PIDGAMGroup\n"
+    "            +GAM7 = {\n"
+    "                Class = PIDGAM\n"
+    "            }\n"
+    "            +GAM8 = {\n"
+    "                Class = PIDGAM\n"
+    "            }\n"
+    "        }\n"
+    "    }\n"
+    "    +States = {\n"
+    "        Class = ReferenceContainer\n"
+    "        +State1 = {\n"
+    "            Class = RealTimeState\n"
+    "            +Threads = {\n"
+    "                Class = ReferenceContainer\n"
+    "                +Thread1 = {\n"
+    "                    Class = RealTimeThread\n"
+    "                    Functions = {:Functions.GAM1 :Functions.GAM2 :Functions.PIDGroup1 :Functions.GAMContainer :Functions.PIDGroup2.GAM7 :Functions.PIDGroup2.GAM8}\n"
+    "                }\n"
+    "            }\n"
+    "        }\n"
+    "    }\n"
+    "    +Data = {\n"
+    "        Class = DataSourceContainer\n"
+    "    }\n"
+    "    +Scheduler = {\n"
+    "        Class = DummyScheduler\n"
+    "    }\n"
+    "}\n";
     conf.Seek(0);
     StandardParser parser(conf, cdb);
     if (!parser.Parse()) {
@@ -366,37 +917,37 @@ bool RealTimeThreadTest::TestConfigureArchitectureFalse_OrphanGAM() {
 
     // application
     StreamString conf = ""
-            "+GAM1 = {\n"
-            "    Class = PIDGAM\n"
-            "}\n"
-            "$Application1 = {\n"
-            "    Class = RealTimeApplication\n"
-            "    +Functions = {\n"
-            "        Class = ReferenceContainer\n"
-            "        +GAM2 = {\n"
-            "            Class = PIDGAM\n"
-            "        }\n"
-            "    }\n"
-            "    +States = {\n"
-            "        Class = ReferenceContainer\n"
-            "        +State1 = {\n"
-            "            Class = RealTimeState\n"
-            "            +Threads = {\n"
-            "                Class = ReferenceContainer\n"
-            "                +Thread1 = {\n"
-            "                    Class = RealTimeThread\n"
-            "                    Functions = {::GAM1 :Functions.GAM2 }\n"
-            "                }\n"
-            "            }\n"
-            "        }\n"
-            "    }\n"
-            "    +Data = {\n"
-            "        Class = DataSourceContainer\n"
-            "    }\n"
-            "    +Scheduler = {\n"
-            "        Class = DummyScheduler\n"
-            "    }\n"
-            "}\n";
+    "+GAM1 = {\n"
+    "    Class = PIDGAM\n"
+    "}\n"
+    "$Application1 = {\n"
+    "    Class = RealTimeApplication\n"
+    "    +Functions = {\n"
+    "        Class = ReferenceContainer\n"
+    "        +GAM2 = {\n"
+    "            Class = PIDGAM\n"
+    "        }\n"
+    "    }\n"
+    "    +States = {\n"
+    "        Class = ReferenceContainer\n"
+    "        +State1 = {\n"
+    "            Class = RealTimeState\n"
+    "            +Threads = {\n"
+    "                Class = ReferenceContainer\n"
+    "                +Thread1 = {\n"
+    "                    Class = RealTimeThread\n"
+    "                    Functions = {::GAM1 :Functions.GAM2 }\n"
+    "                }\n"
+    "            }\n"
+    "        }\n"
+    "    }\n"
+    "    +Data = {\n"
+    "        Class = DataSourceContainer\n"
+    "    }\n"
+    "    +Scheduler = {\n"
+    "        Class = DummyScheduler\n"
+    "    }\n"
+    "}\n";
     conf.Seek(0);
     StandardParser parser(conf, cdb);
     if (!parser.Parse()) {
@@ -426,37 +977,37 @@ bool RealTimeThreadTest::TestConfigureArchitectureFalse_InvalidGAMType() {
 
     StreamString conf = ""
 
-            "$Application1 = {\n"
-            "    Class = RealTimeApplication\n"
-            "    +Functions = {\n"
-            "        Class = ReferenceContainer\n"
-            "        +GAM1 = {\n"
-            "            Class = PIDGAM\n"
-            "        }\n"
-            "        +GAM2 = {\n"
-            "            Class = Object\n"
-            "        }\n"
-            "    }\n"
-            "    +States = {\n"
-            "        Class = ReferenceContainer\n"
-            "        +State1 = {\n"
-            "            Class = RealTimeState\n"
-            "            +Threads = {\n"
-            "                Class = ReferenceContainer\n"
-            "                +Thread1 = {\n"
-            "                    Class = RealTimeThread\n"
-            "                    Functions = {::GAM1 :Functions.GAM2 }\n"
-            "                }\n"
-            "            }\n"
-            "        }\n"
-            "    }\n"
-            "    +Data = {\n"
-            "        Class = DataSourceContainer\n"
-            "    }\n"
-            "    +Scheduler = {\n"
-            "        Class = DummyScheduler\n"
-            "    }\n"
-            "}\n";
+    "$Application1 = {\n"
+    "    Class = RealTimeApplication\n"
+    "    +Functions = {\n"
+    "        Class = ReferenceContainer\n"
+    "        +GAM1 = {\n"
+    "            Class = PIDGAM\n"
+    "        }\n"
+    "        +GAM2 = {\n"
+    "            Class = Object\n"
+    "        }\n"
+    "    }\n"
+    "    +States = {\n"
+    "        Class = ReferenceContainer\n"
+    "        +State1 = {\n"
+    "            Class = RealTimeState\n"
+    "            +Threads = {\n"
+    "                Class = ReferenceContainer\n"
+    "                +Thread1 = {\n"
+    "                    Class = RealTimeThread\n"
+    "                    Functions = {::GAM1 :Functions.GAM2 }\n"
+    "                }\n"
+    "            }\n"
+    "        }\n"
+    "    }\n"
+    "    +Data = {\n"
+    "        Class = DataSourceContainer\n"
+    "    }\n"
+    "    +Scheduler = {\n"
+    "        Class = DummyScheduler\n"
+    "    }\n"
+    "}\n";
     conf.Seek(0);
     StandardParser parser(conf, cdb);
     if (!parser.Parse()) {
@@ -487,64 +1038,64 @@ bool RealTimeThreadTest::TestConfigureArchitectureFalse_InvalidGAMType() {
 bool RealTimeThreadTest::TestConfigureArchitectureFalse_InvalidGAMPath() {
     ConfigurationDatabase cdb;
     StreamString conf =
-            "$Application1 = {\n"
-                    "    Class = RealTimeApplication\n"
-                    "    +Functions = {\n"
-                    "        Class = ReferenceContainer\n"
-                    "        +GAM1 = {\n"
-                    "            Class = PIDGAM\n"
-                    "        }\n"
-                    "        +GAM2 = {\n"
-                    "            Class = PIDGAM\n"
-                    "        }\n"
-                    "        +PIDGroup1 = {\n"
-                    "            Class = PIDGAMGroup\n"
-                    "            +GAM3 = {\n"
-                    "                Class = PIDGAM\n"
-                    "            }\n"
-                    "            +GAM4 = {\n"
-                    "                Class = PIDGAM\n"
-                    "            }\n"
-                    "        }\n"
-                    "        +GAMContainer = {\n"
-                    "            Class = ReferenceContainer\n"
-                    "            +GAM5 = {\n"
-                    "                Class = PIDGAM\n"
-                    "            }\n"
-                    "            +GAM6 = {\n"
-                    "                Class = PIDGAM\n"
-                    "            }\n"
-                    "        }\n"
-                    "        +PIDGroup2 = {\n"
-                    "            Class = PIDGAMGroup\n"
-                    "            +GAM7 = {\n"
-                    "                Class = PIDGAM\n"
-                    "            }\n"
-                    "            +GAM8 = {\n"
-                    "                Class = PIDGAM\n"
-                    "            }\n"
-                    "        }\n"
-                    "    }\n"
-                    "    +States = {\n"
-                    "        Class = ReferenceContainer\n"
-                    "        +State1 = {\n"
-                    "            Class = RealTimeState\n"
-                    "            +Threads = {\n"
-                    "                Class = ReferenceContainer\n"
-                    "                +Thread1 = {\n"
-                    "                    Class = RealTimeThread\n"
-                    "                    Functions = {:Functions.GAM1 :Functions.GAM2 :Functions.PIDGroup1 :Functions.GAMContainer :Functions.PIDGroup2.GAM7 :Functions.PIDGroup3.GAM8}\n"
-                    "                }\n"
-                    "            }\n"
-                    "        }\n"
-                    "    }\n"
-                    "    +Data = {\n"
-                    "        Class = DataSourceContainer\n"
-                    "    }\n"
-                    "    +Scheduler = {\n"
-                    "        Class = DummyScheduler\n"
-                    "    }\n"
-                    "}\n";
+    "$Application1 = {\n"
+    "    Class = RealTimeApplication\n"
+    "    +Functions = {\n"
+    "        Class = ReferenceContainer\n"
+    "        +GAM1 = {\n"
+    "            Class = PIDGAM\n"
+    "        }\n"
+    "        +GAM2 = {\n"
+    "            Class = PIDGAM\n"
+    "        }\n"
+    "        +PIDGroup1 = {\n"
+    "            Class = PIDGAMGroup\n"
+    "            +GAM3 = {\n"
+    "                Class = PIDGAM\n"
+    "            }\n"
+    "            +GAM4 = {\n"
+    "                Class = PIDGAM\n"
+    "            }\n"
+    "        }\n"
+    "        +GAMContainer = {\n"
+    "            Class = ReferenceContainer\n"
+    "            +GAM5 = {\n"
+    "                Class = PIDGAM\n"
+    "            }\n"
+    "            +GAM6 = {\n"
+    "                Class = PIDGAM\n"
+    "            }\n"
+    "        }\n"
+    "        +PIDGroup2 = {\n"
+    "            Class = PIDGAMGroup\n"
+    "            +GAM7 = {\n"
+    "                Class = PIDGAM\n"
+    "            }\n"
+    "            +GAM8 = {\n"
+    "                Class = PIDGAM\n"
+    "            }\n"
+    "        }\n"
+    "    }\n"
+    "    +States = {\n"
+    "        Class = ReferenceContainer\n"
+    "        +State1 = {\n"
+    "            Class = RealTimeState\n"
+    "            +Threads = {\n"
+    "                Class = ReferenceContainer\n"
+    "                +Thread1 = {\n"
+    "                    Class = RealTimeThread\n"
+    "                    Functions = {:Functions.GAM1 :Functions.GAM2 :Functions.PIDGroup1 :Functions.GAMContainer :Functions.PIDGroup2.GAM7 :Functions.PIDGroup3.GAM8}\n"
+    "                }\n"
+    "            }\n"
+    "        }\n"
+    "    }\n"
+    "    +Data = {\n"
+    "        Class = DataSourceContainer\n"
+    "    }\n"
+    "    +Scheduler = {\n"
+    "        Class = DummyScheduler\n"
+    "    }\n"
+    "}\n";
     conf.Seek(0);
     StandardParser parser(conf, cdb);
     if (!parser.Parse()) {
@@ -771,7 +1322,7 @@ bool RealTimeThreadTest::TestGetStackSize() {
 
     ConfigurationDatabase tcdb;
     tcdb.Write("Class", "RealTimeThread");
-    const char8 *functions[1] = { "??" };
+    const char8 *functions[1] = {"??"};
     tcdb.Write("Functions", functions);
     tcdb.Write("StackSize", "12345");
     tcdb.MoveToRoot();
@@ -792,7 +1343,7 @@ bool RealTimeThreadTest::TestGetStackSize() {
 bool RealTimeThreadTest::TestGetCPU() {
     ConfigurationDatabase tcdb;
     tcdb.Write("Class", "RealTimeThread");
-    const char8 *functions[1] = { "??" };
+    const char8 *functions[1] = {"??"};
     tcdb.Write("Functions", functions);
     tcdb.Write("CPUs", "0xfeff");
     tcdb.MoveToRoot();
@@ -839,18 +1390,18 @@ bool RealTimeThreadTest::TestToStructuredData() {
     printf("\n%s\n", display.Buffer());
 
     StreamString test = "+Thread2 = {\n"
-            "Class = \"RealTimeThread\"\n"
-            "Functions = { \":Functions.PIDGroup1\" } \n"
-            "+PIDGroup1 = {\n"
-            "Class = \"PIDGAMGroup\"\n"
-            "+GAM3 = {\n"
-            "Class = \"PIDGAM\"\n"
-            "}\n"
-            "+GAM4 = {\n"
-            "Class = \"PIDGAM\"\n"
-            "}\n"
-            "}\n"
-            "}\n";
+    "Class = \"RealTimeThread\"\n"
+    "Functions = { \":Functions.PIDGroup1\" } \n"
+    "+PIDGroup1 = {\n"
+    "Class = \"PIDGAMGroup\"\n"
+    "+GAM3 = {\n"
+    "Class = \"PIDGAM\"\n"
+    "}\n"
+    "+GAM4 = {\n"
+    "Class = \"PIDGAM\"\n"
+    "}\n"
+    "}\n"
+    "}\n";
 
     return test == display;
 }
@@ -858,89 +1409,89 @@ bool RealTimeThreadTest::TestToStructuredData() {
 bool RealTimeThreadTest::TestValidateDataSourceLinks() {
     ConfigurationDatabase cdb;
     StreamString conf = ""
-            "$Application1 = {\n"
-            "    Class = RealTimeApplication\n"
-            "    +Functions = {\n"
-            "        Class = ReferenceContainer\n"
-            "        +GAM1 = {\n"
-            "            Class = DummyGAM\n"
-            "            +Input = {\n"
-            "                Class = GAMSignalsContainer\n"
-            "                IsInput = true\n"
-            "                IsFinal = true\n"
-            "                +Counter = {\n"
-            "                    Class = GAMGenericSignal\n"
-            "                    Type = uint32\n"
-            "                    Default = 0\n"
-            "                    Path = DDB.Counter1\n"
-            "                    IsFinal = true\n"
-            "                }\n"
-            "            }\n"
-            "            +Output = {\n"
-            "                Class = GAMSignalsContainer\n"
-            "                IsOutput = true\n"
-            "                IsFinal = true\n"
-            "                +Counter = {\n"
-            "                    Class = GAMGenericSignal\n"
-            "                    Type = uint32\n"
-            "                    Default = 0\n"
-            "                    Path = DDB.Counter2\n"
-            "                    IsFinal = true\n"
-            "                }\n"
-            "            }\n"
-            "        }\n"
-            "        +GAM2 = {\n"
-            "            Class = DummyGAM\n"
-            "            +Input = {\n"
-            "                Class = GAMSignalsContainer\n"
-            "                IsInput = true\n"
-            "                IsFinal = true\n"
-            "                +Counter = {\n"
-            "                    Class = GAMGenericSignal\n"
-            "                    Type = uint32\n"
-            "                    Default = 0\n"
-            "                    Path = DDB.Counter2\n"
-            "                    IsFinal = true\n"
-            "                }\n"
-            "            }\n"
-            "            +Output = {\n"
-            "                Class = GAMSignalsContainer\n"
-            "                IsOutput = true\n"
-            "                IsFinal = true\n"
-            "                +Counter = {\n"
-            "                    Class = GAMGenericSignal\n"
-            "                    Type = uint32\n"
-            "                    Default = 0\n"
-            "                    Path = DDB.Counter1\n"
-            "                    IsFinal = true\n"
-            "                    Cycles = 1" // the only one sync
-            "                }\n"
-            "            }\n"
-            "        }\n"
-            "    }\n"
-            "    +States = {\n"
-            "        Class = ReferenceContainer\n"
-            "        +State1 = {\n"
-            "            Class = RealTimeState\n"
-            "            +Threads = {\n"
-            "                Class = ReferenceContainer\n"
-            "                +Thread1 = {\n"
-            "                    Class = RealTimeThread\n"
-            "                    Functions = {:Functions.GAM1 :Functions.GAM2}\n"
-            "                }\n"
-            "            }\n"
-            "        }\n"
-            "    }\n"
-            "    +Data = {\n"
-            "        Class = DataSourceContainer\n"
-            "        +DDB = {\n"
-            "            Class = DataSource\n"
-            "        }\n"
-            "    }\n"
-            "    +Scheduler = {\n"
-            "        Class = DummyScheduler\n"
-            "    }\n"
-            "}\n";
+    "$Application1 = {\n"
+    "    Class = RealTimeApplication\n"
+    "    +Functions = {\n"
+    "        Class = ReferenceContainer\n"
+    "        +GAM1 = {\n"
+    "            Class = DummyGAM\n"
+    "            +Input = {\n"
+    "                Class = GAMSignalsContainer\n"
+    "                IsInput = true\n"
+    "                IsFinal = true\n"
+    "                +Counter = {\n"
+    "                    Class = GAMGenericSignal\n"
+    "                    Type = uint32\n"
+    "                    Default = 0\n"
+    "                    Path = DDB.Counter1\n"
+    "                    IsFinal = true\n"
+    "                }\n"
+    "            }\n"
+    "            +Output = {\n"
+    "                Class = GAMSignalsContainer\n"
+    "                IsOutput = true\n"
+    "                IsFinal = true\n"
+    "                +Counter = {\n"
+    "                    Class = GAMGenericSignal\n"
+    "                    Type = uint32\n"
+    "                    Default = 0\n"
+    "                    Path = DDB.Counter2\n"
+    "                    IsFinal = true\n"
+    "                }\n"
+    "            }\n"
+    "        }\n"
+    "        +GAM2 = {\n"
+    "            Class = DummyGAM\n"
+    "            +Input = {\n"
+    "                Class = GAMSignalsContainer\n"
+    "                IsInput = true\n"
+    "                IsFinal = true\n"
+    "                +Counter = {\n"
+    "                    Class = GAMGenericSignal\n"
+    "                    Type = uint32\n"
+    "                    Default = 0\n"
+    "                    Path = DDB.Counter2\n"
+    "                    IsFinal = true\n"
+    "                }\n"
+    "            }\n"
+    "            +Output = {\n"
+    "                Class = GAMSignalsContainer\n"
+    "                IsOutput = true\n"
+    "                IsFinal = true\n"
+    "                +Counter = {\n"
+    "                    Class = GAMGenericSignal\n"
+    "                    Type = uint32\n"
+    "                    Default = 0\n"
+    "                    Path = DDB.Counter1\n"
+    "                    IsFinal = true\n"
+    "                    Cycles = 1" // the only one sync
+    "                }\n"
+    "            }\n"
+    "        }\n"
+    "    }\n"
+    "    +States = {\n"
+    "        Class = ReferenceContainer\n"
+    "        +State1 = {\n"
+    "            Class = RealTimeState\n"
+    "            +Threads = {\n"
+    "                Class = ReferenceContainer\n"
+    "                +Thread1 = {\n"
+    "                    Class = RealTimeThread\n"
+    "                    Functions = {:Functions.GAM1 :Functions.GAM2}\n"
+    "                }\n"
+    "            }\n"
+    "        }\n"
+    "    }\n"
+    "    +Data = {\n"
+    "        Class = DataSourceContainer\n"
+    "        +DDB = {\n"
+    "            Class = DataSource\n"
+    "        }\n"
+    "    }\n"
+    "    +Scheduler = {\n"
+    "        Class = DummyScheduler\n"
+    "    }\n"
+    "}\n";
     conf.Seek(0);
     StandardParser parser(conf, cdb);
     if (!parser.Parse()) {
@@ -983,90 +1534,90 @@ bool RealTimeThreadTest::TestValidateDataSourceLinks() {
 bool RealTimeThreadTest::TestValidateDataSourceLinksFalse_MoreSync() {
     ConfigurationDatabase cdb;
     StreamString conf = ""
-            "$Application1 = {\n"
-            "    Class = RealTimeApplication\n"
-            "    +Functions = {\n"
-            "        Class = ReferenceContainer\n"
-            "        +GAM1 = {\n"
-            "            Class = DummyGAM\n"
-            "            +Input = {\n"
-            "                Class = GAMSignalsContainer\n"
-            "                IsInput = true\n"
-            "                IsFinal = true\n"
-            "                +Counter = {\n"
-            "                    Class = GAMGenericSignal\n"
-            "                    Type = uint32\n"
-            "                    Default = 0\n"
-            "                    Path = DDB.Counter1\n"
-            "                    IsFinal = true\n"
-            "                    Cycles = 2\n"
-            "                }\n"
-            "            }\n"
-            "            +Output = {\n"
-            "                Class = GAMSignalsContainer\n"
-            "                IsOutput = true\n"
-            "                IsFinal = true\n"
-            "                +Counter = {\n"
-            "                    Class = GAMGenericSignal\n"
-            "                    Type = uint32\n"
-            "                    Default = 0\n"
-            "                    Path = DDB.Counter2\n"
-            "                    IsFinal = true\n"
-            "                }\n"
-            "            }\n"
-            "        }\n"
-            "        +GAM2 = {\n"
-            "            Class = DummyGAM\n"
-            "            +Input = {\n"
-            "                Class = GAMSignalsContainer\n"
-            "                IsInput = true\n"
-            "                IsFinal = true\n"
-            "                +Counter = {\n"
-            "                    Class = GAMGenericSignal\n"
-            "                    Type = uint32\n"
-            "                    Default = 0\n"
-            "                    Path = DDB.Counter2\n"
-            "                    IsFinal = true\n"
-            "                }\n"
-            "            }\n"
-            "            +Output = {\n"
-            "                Class = GAMSignalsContainer\n"
-            "                IsOutput = true\n"
-            "                IsFinal = true\n"
-            "                +Counter = {\n"
-            "                    Class = GAMGenericSignal\n"
-            "                    Type = uint32\n"
-            "                    Default = 0\n"
-            "                    Path = DDB.Counter1\n"
-            "                    IsFinal = true\n"
-            "                    Cycles = 1"
-            "                }\n"
-            "            }\n"
-            "        }\n"
-            "    }\n"
-            "    +States = {\n"
-            "        Class = ReferenceContainer\n"
-            "        +State1 = {\n"
-            "            Class = RealTimeState\n"
-            "            +Threads = {\n"
-            "                Class = ReferenceContainer\n"
-            "                +Thread1 = {\n"
-            "                    Class = RealTimeThread\n"
-            "                    Functions = {:Functions.GAM1 :Functions.GAM2}\n"
-            "                }\n"
-            "            }\n"
-            "        }\n"
-            "    }\n"
-            "    +Data = {\n"
-            "        Class = DataSourceContainer\n"
-            "        +DDB = {\n"
-            "            Class = DataSource\n"
-            "        }\n"
-            "    }\n"
-            "    +Scheduler = {\n"
-            "        Class = DummyScheduler\n"
-            "    }\n"
-            "}\n";
+    "$Application1 = {\n"
+    "    Class = RealTimeApplication\n"
+    "    +Functions = {\n"
+    "        Class = ReferenceContainer\n"
+    "        +GAM1 = {\n"
+    "            Class = DummyGAM\n"
+    "            +Input = {\n"
+    "                Class = GAMSignalsContainer\n"
+    "                IsInput = true\n"
+    "                IsFinal = true\n"
+    "                +Counter = {\n"
+    "                    Class = GAMGenericSignal\n"
+    "                    Type = uint32\n"
+    "                    Default = 0\n"
+    "                    Path = DDB.Counter1\n"
+    "                    IsFinal = true\n"
+    "                    Cycles = 2\n"
+    "                }\n"
+    "            }\n"
+    "            +Output = {\n"
+    "                Class = GAMSignalsContainer\n"
+    "                IsOutput = true\n"
+    "                IsFinal = true\n"
+    "                +Counter = {\n"
+    "                    Class = GAMGenericSignal\n"
+    "                    Type = uint32\n"
+    "                    Default = 0\n"
+    "                    Path = DDB.Counter2\n"
+    "                    IsFinal = true\n"
+    "                }\n"
+    "            }\n"
+    "        }\n"
+    "        +GAM2 = {\n"
+    "            Class = DummyGAM\n"
+    "            +Input = {\n"
+    "                Class = GAMSignalsContainer\n"
+    "                IsInput = true\n"
+    "                IsFinal = true\n"
+    "                +Counter = {\n"
+    "                    Class = GAMGenericSignal\n"
+    "                    Type = uint32\n"
+    "                    Default = 0\n"
+    "                    Path = DDB.Counter2\n"
+    "                    IsFinal = true\n"
+    "                }\n"
+    "            }\n"
+    "            +Output = {\n"
+    "                Class = GAMSignalsContainer\n"
+    "                IsOutput = true\n"
+    "                IsFinal = true\n"
+    "                +Counter = {\n"
+    "                    Class = GAMGenericSignal\n"
+    "                    Type = uint32\n"
+    "                    Default = 0\n"
+    "                    Path = DDB.Counter1\n"
+    "                    IsFinal = true\n"
+    "                    Cycles = 1"
+    "                }\n"
+    "            }\n"
+    "        }\n"
+    "    }\n"
+    "    +States = {\n"
+    "        Class = ReferenceContainer\n"
+    "        +State1 = {\n"
+    "            Class = RealTimeState\n"
+    "            +Threads = {\n"
+    "                Class = ReferenceContainer\n"
+    "                +Thread1 = {\n"
+    "                    Class = RealTimeThread\n"
+    "                    Functions = {:Functions.GAM1 :Functions.GAM2}\n"
+    "                }\n"
+    "            }\n"
+    "        }\n"
+    "    }\n"
+    "    +Data = {\n"
+    "        Class = DataSourceContainer\n"
+    "        +DDB = {\n"
+    "            Class = DataSource\n"
+    "        }\n"
+    "    }\n"
+    "    +Scheduler = {\n"
+    "        Class = DummyScheduler\n"
+    "    }\n"
+    "}\n";
     conf.Seek(0);
     StandardParser parser(conf, cdb);
     if (!parser.Parse()) {
@@ -1104,4 +1655,4 @@ bool RealTimeThreadTest::TestValidateDataSourceLinksFalse_MoreSync() {
     ObjectRegistryDatabase::Instance()->CleanUp();
     return ret;
 }
-
+#endif

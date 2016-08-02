@@ -70,12 +70,12 @@ public:
     bool TestPrepareNextState_Default_Dimensions_Mismatch_1();
 
     /**
-    * @brief Tests the PrepareNextStatemethod using signal Default values which have a dimension mismatch with respect to the signal dimension (number of columns).
+     * @brief Tests the PrepareNextStatemethod using signal Default values which have a dimension mismatch with respect to the signal dimension (number of columns).
      */
     bool TestPrepareNextState_Default_Dimensions_Mismatch_2();
 
     /**
-* @brief Tests the PrepareNextStatemethod using signal Default values which have a number of elements mismatch with respect to the signal number of elements.
+     * @brief Tests the PrepareNextStatemethod using signal Default values which have a number of elements mismatch with respect to the signal number of elements.
      */
     bool TestPrepareNextState_Default_Elements_Mismatch();
 
@@ -133,6 +133,11 @@ public:
      * @brief Tests the SetConfiguredDatabase method and verifies that an error is issued if a signal has more than one producer in another state.
      */
     bool TestSetConfiguredDatabase_MoreThanOneProducer_State_2();
+
+    /**
+     * @brief Tests the SetConfiguredDatabase method and verifies that an error is NOT issued if a GAM is not executed in any of the states.
+     */
+    bool TestSetConfiguredDatabase_GAM_Never_Executed();
 };
 
 /*---------------------------------------------------------------------------*/

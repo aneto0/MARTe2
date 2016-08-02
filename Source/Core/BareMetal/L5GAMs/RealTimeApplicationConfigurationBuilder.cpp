@@ -2125,12 +2125,14 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                     }
                     if (ret) {
                         const char8 * threadName = thread->GetName();
-                        ReferenceT < GAM > *gams = thread->GetGAMs();
+                        //ReferenceT < GAM > *gams = thread->GetGAMs();
+                        ReferenceContainer gams;
+                        thread->GetGAMs(gams);
                         uint32 numberOfGAMs = thread->GetNumberOfGAMs();
                         uint32 z;
                         //...get the GAMs that are executed by this thread....
                         for (z = 0; (z < numberOfGAMs) && (ret); z++) {
-                            ReferenceT < GAM > gam = gams[z];
+                            ReferenceT < GAM > gam = gams.Get(z);
                             StreamString qualifiedName = "";
                             ReferenceContainerFilterReferences qualifiedNameFilter(1, ReferenceContainerFilterMode::PATH, gam);
                             ReferenceContainer result;

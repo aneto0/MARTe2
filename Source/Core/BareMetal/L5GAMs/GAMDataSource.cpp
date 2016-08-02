@@ -321,7 +321,19 @@ bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
     uint32 nStates = 0u;
     uint32 n;
     for (n = 0u; (n < nSignals) && (ret); n++) {
-        ret = GetSignalNumberOfStates(n, nStates);
+        StreamString signalName;
+        ret = GetSignalName(n, signalName);
+        if (ret) {
+            if (!GetSignalNumberOfStates(n, nStates)) {
+                nStates = 0u;
+            }
+            if (nStates == 0u) {
+                REPORT_ERROR_PARAMETERS(
+                        ErrorManagement::Information,
+                        "In GAMDataSource %s, signal %s will never be produced nor consumed because there is no GAM with this signal being executed in any state.",
+                        GetName(), signalName.Buffer())
+            }
+        }
         uint32 s;
         for (s = 0u; (s < nStates) && (ret); s++) {
             uint32 nProducers = 0u;
@@ -331,15 +343,11 @@ bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
                 ret = GetSignalNumberOfProducers(n, stateName.Buffer(), nProducers);
             }
             if (ret) {
-                ret = (nProducers == 1u);
+                ret = (nProducers > 1u);
             }
             if (!ret) {
-                StreamString signalName;
-                if (!GetSignalName(n, signalName)) {
-                    signalName = "";
-                }
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                        "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be 1 and is %d", GetName(),
+                                        "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be > 1 and is %d", GetName(),
                                         stateName.Buffer(), signalName.Buffer(), nProducers)
             }
         }
