@@ -53,6 +53,8 @@ public:
 
 
     bool TestConfigureScheduler();
+
+    bool TestGetNumberOfExecutables();
 #if 0
     /**
      * @brief Tests if the function inserts a new GAMSchedulerRecord.

@@ -110,6 +110,7 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
         numberOfStates = statesContainer->Size();
         states = new ScheduledState[numberOfStates];
         for (uint32 i = 0u; i < numberOfStates && ret; i++) {
+            printf("\nState %d\n", i);
             ReferenceT<RealTimeState> stateElement = statesContainer->Get(i);
             ret = stateElement.IsValid();
             if (ret) {
@@ -124,6 +125,7 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
                     states[i].threads = new ScheduledThread[numberOfThreads];
 
                     for (uint32 j = 0u; j < numberOfThreads && ret; j++) {
+                        printf("\nThread %d\n", j);
                         ReferenceT<RealTimeThread> threadElement = threadContainer->Get(j);
                         ret = threadElement.IsValid();
                         if (ret) {
@@ -131,7 +133,7 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
                             ReferenceContainer gams;
                             threadElement->GetGAMs(gams);
                             uint32 numberOfGams = threadElement->GetNumberOfGAMs();
-                            uint32 numberOfExecutables = 0u;
+                            uint32 numberOfExecutables = numberOfGams;
 
                             for (uint32 k = 0u; k < numberOfGams && ret; k++) {
                                 ReferenceT<GAM> gam = gams.Get(k);
@@ -158,13 +160,13 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
                             }
                             uint32 c = 0u;
                             for (uint32 k = 0u; k < numberOfGams && ret; k++) {
-                                StreamString gamName = gams.Get(k)->GetName();
                                 //add input brokers
                                 StreamString gamFullName = threadElement->GetFunctions()[k];
                                 ret = InsertInputBrokers(gams.Get(k), gamFullName.Buffer(), i, j, c);
                                 //add gam
                                 if (ret) {
                                     ret = InsertGam(gams.Get(k), gamFullName.Buffer(), i, j, c);
+                                    printf("\nInserted %s\n", gamFullName.Buffer());
                                 }
 
                                 //add output brokers
@@ -174,11 +176,14 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
                             }
 
                             //Add the cycle time
+
+                            //TODO Need a cycle time for each thread
                             if (ret) {
                                 uint32 signalIdx;
                                 ret = timeDataSource->GetSignalIndex(signalIdx, "CycleTime");
                                 if (ret) {
                                     ret = timeDataSource->GetSignalMemoryBuffer(signalIdx, 0u, reinterpret_cast<void*&>(cycleTimePtr));
+                                    printf("\nInserted CycleTime\n");
                                 }
                             }
                         }
@@ -193,6 +198,8 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
     else {
         //TODO Invalid states container
     }
+    printf("\nHERE!!\n");
+
     return ret;
 }
 
@@ -201,8 +208,6 @@ bool GAMSchedulerI::InsertInputBrokers(ReferenceT<GAM> gam,
                                        uint32 i,
                                        uint32 j,
                                        uint32 &index) {
-    StreamString gamName = gam->GetName();
-
     ReferenceT<ReferenceContainer> inputBrokers = gam->GetInputBrokers();
     uint32 numberOfIB = inputBrokers->Size();
     //add input brokers
