@@ -129,3 +129,8 @@ TEST(GAMDataSourceGTest,TestSetConfiguredDatabase_NoProducer_State_2) {
     GAMDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_NoProducer_State_2());
 }
+
+TEST(GAMDataSourceGTest,TestSetConfiguredDatabase_GAM_Never_Executed) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_GAM_Never_Executed());
+}
