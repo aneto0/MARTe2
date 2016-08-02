@@ -631,7 +631,7 @@ protected:
      * @param[in] functionIdx the index of the function where to move to.
      * @return true if the functionIdx exists.
      */
-    bool MoveToFunctionIndex(uint32 functionIdx);
+    bool MoveToFunctionIndex(const uint32 functionIdx);
 
     /**
      * @brief Moves the configuredDatabase to the signal to the index \a functionIdx in the function with the index \a functionIdx.

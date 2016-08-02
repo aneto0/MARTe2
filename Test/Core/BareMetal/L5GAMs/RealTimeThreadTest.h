@@ -72,45 +72,24 @@ public:
     bool TestInitialiseFalse_NoFunctions();
 
     /**
-     * @brief Tests if the function adds the references to the GAM to be execute in the thread and the
-     * supported states to the gams,
+     * @brief Tests if the function adds the references to the GAM to be executed (this is tested implicitly).
      */
     bool TestConfigureArchitecture();
 
     /**
-     * @brief Tests the function declaring a bigger number of gams to be executed.
-     */
-    bool TestConfigureArchitecture_MoreGAMs();
-
-    /**
-     * @brief Tests if the function adds the supported states to the gam group.
-     */
-    bool TestConfigureArchitecture_GAMGroup();
-
-    /**
-     * @brief Tests if the function works correctly for a function defined as a ReferenceContainer
-     */
-    bool TestConfigureArchitecture_ReferenceContainer();
-
-    /**
-     * @brief Tests if the function works correctly specifying the path of the single GAMs in the GAMGroup
-     */
-    bool TestConfigureArchitecture_SingleInGAMGroup();
-
-    /**
      * @brief Tests if the function fails if the GAM is not declared inside a container.
      */
-    bool TestConfigureArchitectureFalse_OrphanGAM();
+    bool TestConfigureArchitecture_OrphanGAM();
 
     /**
      * @brief Tests if the function fails if the type declared not inherits from GAMI
      */
-    bool TestConfigureArchitectureFalse_InvalidGAMType();
+    bool TestConfigureArchitecture_InvalidGAMType();
 
     /**
      * @brief Tests if the function fails if the thread declares a wrong path for the gam
      */
-    bool TestConfigureArchitectureFalse_InvalidGAMPath();
+    bool TestConfigureArchitecture_InvalidGAMPath();
 
     /**
      * @brief Tests if the function retrieves correctly the number of thread functions.
@@ -121,6 +100,11 @@ public:
      * @brief Tests if the function retrieves correctly the array with the thread functions.
      */
     bool TestGetFunctions();
+
+    /**
+     * @brief Tests if the function returns correctly the thread number of GAMs.
+     */
+    bool TestGetNumberOfGAMs();
 
     /**
      * @brief Tests if the function returns the thread GAMs array.
@@ -136,11 +120,6 @@ public:
      * @brief Tests if the function returns correctly the thread cpu mask.
      */
     bool TestGetCPU();
-
-    /**
-     * @brief Tests if the function returns correctly the thread number of GAMs.
-     */
-    bool TestGetNumberOfGAMs();
 
     /**
      * @brief Tests if the function performs correctly the conversion to a StructuredDataI.

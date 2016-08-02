@@ -103,11 +103,9 @@ public:
     virtual bool Initialise(StructuredDataI & data);
 
 
-#if 0
+
     /**
      * @brief Maps all the declared Function references (GAM, GAMGroup, ...) to this state.
-     * @param[in] rtApp is the RealTimeApplication where this thread is declared into.
-     * @param[in] rtState is the RealTimeState where this thread is declared into.
      * @return true if all the declared Function references are valid AND if this thread can be
      * successfully added to the scheduler AND if all the declared GAMs support this \a rtState.
      * @pre
@@ -118,17 +116,8 @@ public:
      *   GetGAMs() != NULL &&
      *   GetNumberOfGAMs() != 0
      */
-    bool ConfigureArchitecture(RealTimeApplication &rtApp,
-                               RealTimeState &rtState);
-
-    /**
-     * @see RealTimeApplication::ValidateDataSourceLinks()
-     */
-    bool ValidateDataSourceLinks();
-#endif
-
-    //TODO
     bool ConfigureArchitecture();
+
 
     /**
      * @brief Returns the array with the name of the Functions (GAM, GAMGroup, ...) executed by this thread.
@@ -142,10 +131,12 @@ public:
     uint32 GetNumberOfFunctions() const;
 
     /**
-     * @brief Returns a pointer to the list of GAMs (aka accelerator) executed by this thread.
-     * @return the accelerator to the GAMs executed in this thread.
+     * @brief Returns in the \a gamList the GAMs executed by this thread.
+     * @param[out] gamList the list of GAMs executed by this thread.
+     * @pre
+     *    Initialise()
      */
-    ReferenceT<GAM> *GetGAMs();
+    void GetGAMs(ReferenceContainer &gamList);
 
     /**
      * @brief Retrieves the number of GAMs executed in this thread.
@@ -200,9 +191,9 @@ private:
     uint32 numberOfFunctions;
 
     /**
-     * The GAM to be executed by this thread.
+     * The GAMs to be executed by this thread.
      */
-    ReferenceT<GAM> * GAMs;
+    ReferenceContainer GAMs;
 
     /**
      * The number of GAMs to be executed by this thread
