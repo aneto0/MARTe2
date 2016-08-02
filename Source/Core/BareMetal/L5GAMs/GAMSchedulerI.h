@@ -99,6 +99,8 @@ public:
      */
     virtual void StopExecution()=0;
 
+    uint32 GetNumberOfExecutables(const char8* stateName, const char8 *threadName);
+
 protected:
 
     /*
@@ -163,6 +165,7 @@ protected:
     ScheduledState *states;
     uint32 numberOfStates;
     uint32 *cycleTimePtr;
+    StreamString timeDsAddress;
 };
 
 }

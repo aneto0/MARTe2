@@ -343,7 +343,7 @@ bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
                 ret = GetSignalNumberOfProducers(n, stateName.Buffer(), nProducers);
             }
             if (ret) {
-                ret = (nProducers > 1u);
+                ret = (nProducers >= 1u);
             }
             if (!ret) {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,

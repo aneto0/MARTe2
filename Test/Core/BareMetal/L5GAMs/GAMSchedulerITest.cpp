@@ -48,7 +48,8 @@ DummyScheduler    ();
     uint32 numberOfExecutions;
 };
 
-DummyScheduler::DummyScheduler() {
+DummyScheduler::DummyScheduler() :
+        GAMSchedulerI() {
     numberOfExecutions = 0;
 }
 void DummyScheduler::StartExecution() {
@@ -69,7 +70,6 @@ bool GAMSchedulerITest::TestConstructor() {
 }
 
 bool GAMSchedulerITest::TestConfigureScheduler() {
-    ReferenceT<RealTimeState> state = ReferenceT<RealTimeState>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     static StreamString config = ""
             "$Fibonacci = {"
             "    Class = RealTimeApplication"
@@ -150,7 +150,7 @@ bool GAMSchedulerITest::TestConfigureScheduler() {
             "    }"
             "    +Scheduler = {"
             "        Class = DummyScheduler"
-            "        TimesDataSource = Data.Times"
+            "        TimesDataSource = \"Fibonacci.Data.Times\""
             "    }"
             "}";
 
@@ -161,6 +161,7 @@ bool GAMSchedulerITest::TestConfigureScheduler() {
         return false;
     }
 
+    cdb.MoveToRoot();
     ObjectRegistryDatabase::Instance()->CleanUp();
 
     if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
@@ -172,12 +173,28 @@ bool GAMSchedulerITest::TestConfigureScheduler() {
         return false;
     }
 
-    if(!app->ConfigureApplication()){
+    if (!app->ConfigureApplication()) {
         return false;
     }
 
+    ReferenceT<GAMSchedulerI> scheduler = app->Find("Scheduler");
+    if (!scheduler.IsValid()) {
+        return false;
+    }
 
-    return true;
+    ReferenceT<ReferenceContainer> states = app->Find("States");
+
+    if (!states.IsValid()) {
+        return false;
+    }
+
+    if (!scheduler->ConfigureScheduler(states)) {
+        return false;
+    }
+
+    uint32 numberOfExecutables = scheduler->GetNumberOfExecutables("State1", "Thread1");
+
+    return numberOfExecutables == 6;
 
 }
 #if 0
