@@ -259,6 +259,6 @@ bool MessageTest::TestSetReplyTimeout() {
     TimeoutType maxWaitIn = 1000;
     Message mess;
     mess.SetReplyTimeout(maxWaitIn);
-    return false;
+    return (mess.GetReplyTimeout() == maxWaitIn);
 }
 
