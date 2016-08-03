@@ -1,6 +1,6 @@
 /**
- * @file TimesDataSource.cpp
- * @brief Source file for class TimesDataSource
+ * @file TimingDataSource.cpp
+ * @brief Source file for class TimingDataSource
  * @date 01/ago/2016
  * @author pc
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class TimesDataSource (public, protected, and private). Be aware that some 
+ * the class TimingDataSource (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "TimesDataSource.h"
+#include "TimingDataSource.h"
+
 #include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,14 +42,14 @@
 
 namespace MARTe {
 
-TimesDataSource::TimesDataSource() :
+TimingDataSource::TimingDataSource() :
         GAMDataSource() {
 }
 
-TimesDataSource::~TimesDataSource() {
+TimingDataSource::~TimingDataSource() {
 }
 
-bool TimesDataSource::SetConfiguredDatabase(StructuredDataI & data) {
+bool TimingDataSource::SetConfiguredDatabase(StructuredDataI & data) {
     bool ret = DataSourceI::SetConfiguredDatabase(data);
     uint32 nSignals = GetNumberOfSignals();
     uint32 nStates = 0u;
@@ -67,7 +68,7 @@ bool TimesDataSource::SetConfiguredDatabase(StructuredDataI & data) {
                     if (!GetSignalName(n, signalName)) {
                         signalName = "";
                     }
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In TimesDataSource %s, state %s, signal %s has a producer", GetName(),
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In TimingDataSource %s, state %s, signal %s has a producer", GetName(),
                                             stateName.Buffer(), signalName.Buffer())
                 }
 
@@ -77,6 +78,6 @@ bool TimesDataSource::SetConfiguredDatabase(StructuredDataI & data) {
     return ret;
 }
 
-CLASS_REGISTER(TimesDataSource, "1.0")
+CLASS_REGISTER(TimingDataSource, "1.0")
 
 }

@@ -542,7 +542,7 @@ static bool SearchDataSources(ConfigurationDatabase &inputDatabase,
             ret = outputDatabase.CreateRelative(functionN.Buffer());
         }
         if (ret) {
-            if (className == "TimesDataSource") {
+            if (className == "TimingDataSource") {
                 uint32 isTimeDataSource;
                 if (!outputDatabase.Read("IsTimeDataSource", isTimeDataSource)) {
                     isTimeDataSource = 1u;
@@ -636,11 +636,11 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabaseFromConfi
         if (ret) {
             ret = (timeDsCounter == 1u);
             if (timeDsCounter > 1u) {
-                REPORT_ERROR(ErrorManagement::InitialisationError, "Only one TimesDataSource per application allowed");
+                REPORT_ERROR(ErrorManagement::InitialisationError, "Only one TimingDataSource per application allowed");
             }
             else {
                 if (timeDsCounter == 0u) {
-                    REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify a TimesDataSource to store GAMs relevant times");
+                    REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify a TimingDataSource to store GAMs relevant times");
                 }
             }
         }
@@ -810,7 +810,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
                 }
                 if (ret) {
                     StreamString className = prop->GetName();
-                    if (className == "TimesDataSource") {
+                    if (className == "TimingDataSource") {
                         isTimeStamp++;
                         timeStampDsName = dataSourceN;
                     }
@@ -827,10 +827,10 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
             if (ret) {
                 ret = (isTimeStamp == 1u);
                 if (isTimeStamp > 1u) {
-                    REPORT_ERROR(ErrorManagement::InitialisationError, "Only one TimesDataSource per application allowed");
+                    REPORT_ERROR(ErrorManagement::InitialisationError, "Only one TimingDataSource per application allowed");
                 }
                 else if (isTimeStamp == 0u) {
-                    REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify a TimesDataSource to store GAMs relevant times");
+                    REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify a TimingDataSource to store GAMs relevant times");
                 }
                 else {
                     ret = dataSourcesDatabase.MoveRelative(timeStampDsName.Buffer());

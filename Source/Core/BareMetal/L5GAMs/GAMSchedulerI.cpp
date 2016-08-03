@@ -75,9 +75,9 @@ bool GAMSchedulerI::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (ret) {
         timeDsAddress="Data.";
-        ret = data.Read("TimesDataSource", timeDsAddress);
+        ret = data.Read("TimingDataSource", timeDsAddress);
         if (!ret) {
-            REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify the TimesDataSource address");
+            REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify the TimingDataSource address");
         }
     }
     return ret;
@@ -120,7 +120,7 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
         timeDataSource = app->Find(timeDsAddress.Buffer());
         ret = timeDataSource.IsValid();
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "TimesDataSource %s not found", timeDsAddress.Buffer())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "TimingDataSource %s not found", timeDsAddress.Buffer())
         }
     }
 

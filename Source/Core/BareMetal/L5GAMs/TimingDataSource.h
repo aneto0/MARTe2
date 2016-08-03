@@ -1,6 +1,6 @@
 /**
- * @file TimesDataSource.h
- * @brief Header file for class TimesDataSource
+ * @file TimingDataSource.h
+ * @brief Header file for class TimingDataSource
  * @date 01/ago/2016
  * @author pc
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class TimesDataSource
+ * @details This header file contains the declaration of the class TimingDataSource
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TIMESDATASOURCE_H_
-#define TIMESDATASOURCE_H_
+#ifndef TimingDataSource_H_
+#define TimingDataSource_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -40,12 +40,12 @@
 
 namespace MARTe {
 
-class TimesDataSource: public GAMDataSource {
+class TimingDataSource: public GAMDataSource {
 public:
     CLASS_REGISTER_DECLARATION()
-    TimesDataSource();
+    TimingDataSource();
 
-    virtual ~TimesDataSource();
+    virtual ~TimingDataSource();
     virtual bool SetConfiguredDatabase(StructuredDataI & data);
 };
 
@@ -55,5 +55,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TIMESDATASOURCE_H_ */
+#endif /* TimingDataSource_H_ */
 

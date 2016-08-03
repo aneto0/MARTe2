@@ -142,7 +142,7 @@ protected:
      */
     ScheduledState *statesInExecution[2];
 
-    //TODO Change to TimesDataSource
+    //TODO Change to TimingDataSource
     ReferenceT<GAMDataSource> timeDataSource;
 
     ScheduledState *states;
