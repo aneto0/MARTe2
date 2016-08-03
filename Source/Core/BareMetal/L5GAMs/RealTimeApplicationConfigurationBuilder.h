@@ -1044,9 +1044,11 @@ private:
                        const char8 * threadName,
                        uint32 &syncSignals);
 
-    bool AddSignalsToTimeStamp(const char8* tDsName);
+    bool AddSignalTime(const char8* tDsName);
+    bool AddThreadCycleTime(const char8* threadFullName);
 
-    bool WriteTimeSignalInfo(const char8*signalNameStr);
+    bool WriteTimeSignalInfo(const char8*signalName);
+    bool CheckTimeSignalInfo();
 
 };
 

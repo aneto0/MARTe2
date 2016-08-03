@@ -52,7 +52,6 @@ GAMSchedulerI::GAMSchedulerI() {
     statesInExecution[0] = NULL_PTR(ScheduledState *);
     statesInExecution[1] = NULL_PTR(ScheduledState *);
     numberOfStates = 0u;
-    cycleTimePtr = NULL_PTR(uint32 *);
 
 }
 
@@ -178,13 +177,15 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
                             }
 
                             //Add the cycle time
-
-                            //TODO Need a cycle time for each thread
                             if (ret) {
+                                StreamString threadFullName=states[i].name;
+                                threadFullName+=".";
+                                threadFullName+=states[i].threads[j].name;
+                                threadFullName+="_CycleTime";
                                 uint32 signalIdx;
-                                ret = timeDataSource->GetSignalIndex(signalIdx, "CycleTime");
+                                ret = timeDataSource->GetSignalIndex(signalIdx, threadFullName.Buffer());
                                 if (ret) {
-                                    ret = timeDataSource->GetSignalMemoryBuffer(signalIdx, 0u, reinterpret_cast<void*&>(cycleTimePtr));
+                                    ret = timeDataSource->GetSignalMemoryBuffer(signalIdx, 0u, reinterpret_cast<void*&>(states[i].threads[j].cycleTime));
                                     printf("\nInserted CycleTime\n");
                                 }
                             }
@@ -326,7 +327,7 @@ uint64 GAMSchedulerI::ExecuteSingleCycle(ExecutableI* executables,
         // save the time before
         // execute the gam
         executables[i].Execute();
-        uint32 absTime = static_cast<uint32>(HighResolutionTimer::Counter() - absTic);
+        uint32 absTime = static_cast<uint32>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(),absTic)*10e6);//us
         MemoryOperationsHelper::Copy(timeAddress, &absTime, sizeof(uint32));
     }
     return absTic;

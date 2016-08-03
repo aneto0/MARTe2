@@ -242,9 +242,6 @@ public:
     //basic
     bool TestResolveStates(bool fromConfig);
 
-    //basic
-    bool TestResolveStatesFromConfig(bool fromConfig);
-
     //same gam in more states
     bool TestResolveStates2(bool fromConfig);
 
@@ -320,9 +317,6 @@ public:
     //producer in time signals
     bool TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals();
 
-    //the time signals must have a specific name
-    bool TestVerifyConsumersAndProducersFalse_InvalidTimeSignals();
-
     //basic
     bool TestResolveFunctionSignalsMemorySize();
 
@@ -349,7 +343,6 @@ public:
 
     //samples and blocks
     bool TestResolveFunctionsMemory_SamplesAndBlocks();
-
 
     //Samples =0
     bool TestResolveFunctionsMemoryFalse_InvalidSamples();
