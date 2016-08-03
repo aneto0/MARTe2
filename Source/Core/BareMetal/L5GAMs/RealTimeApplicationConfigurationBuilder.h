@@ -80,10 +80,10 @@ public:
      *   defaultDataSourceName = defaultDataSourceNameIn
      */
     RealTimeApplicationConfigurationBuilder(RealTimeApplication &realTimeApplicationIn,
-                                            const char8 *defaultDataSourceNameIn);
+                                            const char8 * const defaultDataSourceNameIn);
 
     RealTimeApplicationConfigurationBuilder(ConfigurationDatabase &globalDatabaseIn,
-                                            const char8 *defaultDataSourceNameIn);
+                                            const char8 * const defaultDataSourceNameIn);
 
     bool InitialiseSignalsDatabaseFromConfiguration();
 
@@ -431,6 +431,7 @@ public:
      *        }
      *      }
      */
+    //TODO Add the cycle times to the time data source
     bool ResolveStates();
 
     bool ResolveStatesFromConfiguration();
