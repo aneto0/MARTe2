@@ -395,9 +395,14 @@ public:
 
 
     /**
-     * TODO
+     * @brief Sets a GAM shared context.
+     * @details If this GAM belongs to a GAMGroup (association performed in the configuration stage of a RealTimeApplication)
+     *  then this method will be called by the GAMGroup and will allow this GAM to share a common \a context with all the GAMs
+     *  that belong to that GAMGroup. This method only is only meaningful if further specialised.
+     * @param[in] context the context to be shared. Its final type is to be defined on each specific GAM application.
+     * @return true if the provided context is accepted by the GAM.
      */
-    void *GetContext() const;
+    virtual bool SetContext(Reference context);
 
 protected:
 
