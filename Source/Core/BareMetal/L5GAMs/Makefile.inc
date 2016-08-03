@@ -45,17 +45,6 @@ OBJSX=BrokerI.x \
     RealTimeThread.x \
     TimesDataSource.x
 
-#OBJSX=BrokerI.x \
-        BrokerContainer.x \
-        DataSourceContainer.x \
-        DataSourceSignal.x \
-        DataSourceSignalRecord.x \
-        GAMGenericSignal.x \
-        GAMGroup.x \
-        GAMSampledSignal.x \
-        GAMSignalI.x \
-        GAMSignalsContainer.x
-
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults

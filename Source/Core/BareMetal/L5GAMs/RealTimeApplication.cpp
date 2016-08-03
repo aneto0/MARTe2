@@ -983,8 +983,8 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     }
                 }
             }
-        }/*
-        if (ret) {
+        }
+       /* if (ret) {
             ret = false;
             for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
                 Reference container = Get(i);

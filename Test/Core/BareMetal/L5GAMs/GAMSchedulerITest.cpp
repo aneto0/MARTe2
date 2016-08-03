@@ -34,7 +34,32 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+class DummyScheduler: public GAMSchedulerI {
+public:
 
+    CLASS_REGISTER_DECLARATION()
+
+DummyScheduler    ();
+
+    virtual void StartExecution();
+
+    virtual void StopExecution();
+
+    uint32 numberOfExecutions;
+};
+
+DummyScheduler::DummyScheduler() :
+        GAMSchedulerI() {
+    numberOfExecutions = 0;
+}
+void DummyScheduler::StartExecution() {
+    numberOfExecutions++;
+}
+void DummyScheduler::StopExecution() {
+    numberOfExecutions++;
+}
+
+CLASS_REGISTER(DummyScheduler, "1.0")
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -44,6 +69,296 @@ bool GAMSchedulerITest::TestConstructor() {
     return true;
 }
 
+bool GAMSchedulerITest::TestConfigureScheduler() {
+    static StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add1"
+            "                    Default = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add2"
+            "                    Default = 2"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add1"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add2"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB2"
+            "                    Alias = add2"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMC = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add3"
+            "                    Default = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add4"
+            "                    Default = 2"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add3"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMD = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add4"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add3"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB2"
+            "                    Alias = add4"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAME = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add5"
+            "                    Default = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add6"
+            "                    Default = 2"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add5"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMF = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add6"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add5"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB2"
+            "                    Alias = add6"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMG = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add7"
+            "                    Default = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add8"
+            "                    Default = 2"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add7"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMH = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add8"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add7"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB2"
+            "                    Alias = add8"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +DDB2 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +Times = {"
+            "            Class = TimesDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA, GAMB}"
+            "                }"
+            "                +Thread2 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMC, GAMD}"
+            "                }"
+            "            }"
+            "        }"
+            "        +State2 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAME, GAMF}"
+            "                }"
+            "                +Thread2 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMG, GAMH}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DummyScheduler"
+            "        TimesDataSource = \"Fibonacci.Data.Times\""
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    if (!parser.Parse()) {
+        return false;
+    }
+
+    cdb.MoveToRoot();
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (!app.IsValid()) {
+        return false;
+    }
+
+    if (!app->ConfigureApplication()) {
+        return false;
+    }
+
+    ReferenceT<GAMSchedulerI> scheduler = app->Find("Scheduler");
+    if (!scheduler.IsValid()) {
+        return false;
+    }
+
+    ReferenceT<ReferenceContainer> states = app->Find("States");
+
+    if (!states.IsValid()) {
+        return false;
+    }
+
+    if (!scheduler->ConfigureScheduler(states)) {
+        return false;
+    }
+
+    uint32 numberOfExecutables = scheduler->GetNumberOfExecutables("State1", "Thread1");
+
+    return numberOfExecutables == 8;
+
+}
+
+
+bool GAMSchedulerITest::TestGetNumberOfExecutables(){
+    return TestConfigureScheduler();
+}
+#if 0
 bool GAMSchedulerITest::TestInsertRecord() {
 
     const uint32 size = 32;
@@ -225,4 +540,4 @@ bool GAMSchedulerITest::TestExecuteSingleCycle() {
 
     return ret;
 }
-
+#endif
