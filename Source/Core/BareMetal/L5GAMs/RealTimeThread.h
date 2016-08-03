@@ -163,23 +163,6 @@ public:
 private:
 
     /**
-     * @brief Links the Function to the relevant RealTimeState and adds the GAM to the accelerator list.
-     * @param[in] functionGeneric the GAM, GAMGroup or ReferenceContainer to be added.
-     * @param[in] rtApp the real-time application to which this RealTimeThread belongs to.
-     * @param[in] rtState the RealTimeState to which this RealTimeThread belongs to.
-     * @return true if \functionGeneric is a GAM or a GAMGroup or a ReferenceContainer and if it can be successfully added to the \a rtState.
-     * @post
-     *   GetNumberOfGAMs() > GetNumberOfGAMs()'
-     */
-    bool ConfigureArchitecturePrivate(Reference functionGeneric);
-
-    /**
-     * @brief Adds a GAM reference into the accelerator array.
-     * @param[in] element the gam to be added.
-     */
-    void AddGAM(ReferenceT<GAM> element);
-
-    /**
      * The array with the GAM names
      */
     StreamString* functions;

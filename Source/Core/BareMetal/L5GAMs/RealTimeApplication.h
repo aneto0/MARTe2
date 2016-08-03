@@ -36,7 +36,7 @@
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 #include "RealTimeStateInfo.h"
-
+#include "StatefulI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -184,11 +184,18 @@ public:
        * @param[in] status contains informations about the current and the next state.
        * @return false in case of errors, true otherwise.
        */
-      bool PrepareNextState(const char8 * const nextStateName);
+      virtual bool PrepareNextState(
+                                    const char8 * nextStateName);
 
 
       bool StartExecution();
 
+      /**
+       * @brief Stops the application execution.
+       * @details Calls the Scheduler::StopExecution() to terminate the threads running in the current active state.
+       * @return true if the scheduler container is valid, false otherwise.
+       */
+      bool StopExecution();
     /**
      * @brief Configuration of the main application environment.
      * @details Propagates the configuration setup request to the States (RealTimeState.ConfigureArchitecture) and Scheduler entries (@see Initialise).
@@ -243,12 +250,6 @@ public:
 
 
 
-    /**
-     * @brief Stops the application execution.
-     * @details Calls the Scheduler::StopExecution() to terminate the threads running in the current active state.
-     * @return true if the scheduler container is valid, false otherwise.
-     */
-    bool StopExecution();
 
     /**
      * @brief Retrieves the current active buffer index.

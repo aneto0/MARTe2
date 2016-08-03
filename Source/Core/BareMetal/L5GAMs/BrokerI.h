@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "RealTimeApplication.h"
-#include "ReferenceContainer.h"
+#include "Object.h"
 #include "ExecutableI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -45,7 +45,7 @@ namespace MARTe {
  * @details A class that implements this interface is capable of copying signals from a GAM to/from
  *  DataSourceI.
  */
-class BrokerI: public ExecutableI {
+class BrokerI: public Object, public ExecutableI {
 
 public:
 

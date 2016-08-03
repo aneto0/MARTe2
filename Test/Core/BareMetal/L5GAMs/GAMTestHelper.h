@@ -200,6 +200,8 @@ GAM1    ();
 
     virtual bool Execute();
 
+
+    uint32 numberOfExecutions;
 protected:
     virtual void SetUp();
 
@@ -207,7 +209,9 @@ protected:
 
 class GAMGroup1: public GAMGroup {
 public:
-    CLASS_REGISTER_DECLARATION()virtual void PrepareNextState(const RealTimeStateInfo &status);
+    CLASS_REGISTER_DECLARATION()
+virtual bool PrepareNextState(const char8 * currentStateName,
+                              const char8 * nextStateName);
 
 protected:
     virtual void SetUp();

@@ -37,6 +37,8 @@
 #include "GAMSchedulerRecord.h"
 #include "MemoryMapBroker.h"
 #include "GAMDataSource.h"
+#include "StatefulI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -60,7 +62,7 @@ namespace MARTe {
  *
  * and it has to be contained in the [RealTimeApplication] declaration.
  */
-class DLL_API GAMSchedulerI: public ReferenceContainer {
+class DLL_API GAMSchedulerI: public ReferenceContainer, public StatefulI {
 
 public:
 
@@ -81,12 +83,11 @@ public:
      * and the active buffer index.
      * @return true if the next state name is found, false otherwise.
      */
-    bool PrepareNextState(RealTimeStateInfo info);
+    virtual bool PrepareNextState(const char8 * currentStateName,
+                                  const char8 * nextStateName);
 
-    void ChangeState();
-
-    uint64 ExecuteSingleCycle(ExecutableI* executables,
-                              uint32 *timeAddress,
+    uint64 ExecuteSingleCycle(ExecutableI** executables,
+                              uint32 **timeAddress,
                               uint32 numberOfExecutables);
 
     /**
@@ -99,7 +100,8 @@ public:
      */
     virtual void StopExecution()=0;
 
-    uint32 GetNumberOfExecutables(const char8* stateName, const char8 *threadName);
+    uint32 GetNumberOfExecutables(const char8* stateName,
+                                  const char8 *threadName);
 
 protected:
 
@@ -119,12 +121,10 @@ protected:
      * }
      */
 
-    struct ScheduledExecutable {
-        ExecutableI * executable;
-        uint32 *timeAddress;
-    };
     struct ScheduledThread {
-        ScheduledExecutable * executables;
+        ExecutableI ** executables;
+        uint32 **timeAddresses;
+
         uint32 *cycleTime;
         uint32 numberOfExecutables;
         const char8 * name;
@@ -135,6 +135,21 @@ protected:
         uint32 numberOfThreads;
         const char8 * name;
     };
+
+    /**
+     * Double buffer accelerator to the threads to be executed for the current
+     * and next state.
+     */
+    ScheduledState *statesInExecution[2];
+
+    //TODO Change to TimesDataSource
+    ReferenceT<GAMDataSource> timeDataSource;
+
+    ScheduledState *states;
+    uint32 numberOfStates;
+    StreamString timeDsAddress;
+
+private:
 
     bool InsertInputBrokers(ReferenceT<GAM> gam,
                             const char8 * gamFullName,
@@ -153,19 +168,6 @@ protected:
                              uint32 i,
                              uint32 j,
                              uint32 &index);
-
-    /**
-     * Double buffer accelerator to the threads to be executed for the current
-     * and next state.
-     */
-    ScheduledState *statesInExecution[2];
-
-    //TODO Change to TimesDataSource
-    ReferenceT<GAMDataSource> timeDataSource;
-
-    ScheduledState *states;
-    uint32 numberOfStates;
-    StreamString timeDsAddress;
 };
 
 }

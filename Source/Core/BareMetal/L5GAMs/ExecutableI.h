@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe{
 
-class ExecutableI : public ReferenceContainer {
+class ExecutableI {
 
 public:
     ExecutableI();
@@ -47,21 +47,27 @@ public:
 
     virtual bool Execute() = 0;
 
-    void SetLastExecutionTime(uint64 counter);
+    inline void SetLastExecutionTime(uint64 counter);
 
-    uint64 GetLastExecutionTime();
+    inline uint64 GetLastExecutionTime();
 
 private:
 
     uint64 lastExecutionCounter;
 };
-}
 
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+void ExecutableI::SetLastExecutionTime(uint64 counter) {
+    lastExecutionCounter = counter;
+}
 
+uint64 ExecutableI::GetLastExecutionTime() {
+    return lastExecutionCounter;
+}
+}
 #endif /* EXECUTORI_H_ */
 	

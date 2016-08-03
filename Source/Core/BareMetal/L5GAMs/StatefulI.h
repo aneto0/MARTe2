@@ -1,8 +1,8 @@
 /**
- * @file GAMGroup.h
- * @brief Header file for class GAMGroup
- * @date 24/02/2016
- * @author Giuseppe Ferrò
+ * @file StatefulI.h
+ * @brief Header file for class StatefulI
+ * @date 03/ago/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMGroup
+ * @details This header file contains the declaration of the class StatefulI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMGROUP_H_
-#define GAMGROUP_H_
+#ifndef L5GAMS_STATEFULI_H_
+#define L5GAMS_STATEFULI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,62 +31,28 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
-#include "RealTimeStateInfo.h"
-#include "StatefulI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
-/**
- * @brief A group of GAMs sharing the same context.
- * @details This class allows GAMs to share a common context. GAMs which are referenced
- *  by a GAMGroup will have their SetContext method called.
- *
- * @details The syntax in the configuration stream has to be:
- *
- * +GAMGroup_name = {\n
- *    Class = GAMGroup\n
- *    GAM_name = {\n
- *        Class = GAM\n
- *        ...\n
- *    }\n
- *    ...\n
- * }
- *
- * and it has to be contained in the [RealTimeApplication].+Functions.[?ReferenceContainer?] declaration.
- */
-class DLL_API GAMGroup: public ReferenceContainer , public StatefulI {
+class StatefulI {
 public:
+    virtual ~StatefulI(){
 
-    /**
-     * @brief Constructor. NOOP
-     */
-    GAMGroup();
+    }
 
-    /**
-     * @brief Destructor. NOOP
-     */
-    virtual ~GAMGroup();
-
-
-protected:
-
-    /**
-     * @brief Sets the context on all the GAMs that belong to this GAMGroup.
-     * @param[in] context The context to be set on all GAMs.
-     * @return true if GAM::SetContext returns true for all the GAMs.
-     */
-    bool SetContext(Reference context);
+    virtual bool PrepareNextState(const char8 * currentStateName,
+                                  const char8 * nextStateName)=0;
 
 };
-}
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMGROUP_H_ */
+#endif /* L5GAMS_STATEFULI_H_ */
 
