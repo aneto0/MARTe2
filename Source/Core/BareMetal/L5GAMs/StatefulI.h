@@ -1,8 +1,8 @@
 /**
  * @file StatefulI.h
  * @brief Header file for class StatefulI
- * @date 03/ago/2016
- * @author pc
+ * @date 03/08/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -38,14 +38,27 @@
 
 namespace MARTe {
 
+/**
+ * @brief GAM classes that implement this method will be warned every time there is a state change.
+ */
 class StatefulI {
 public:
+
+    /**
+     * @brief NOOP
+     */
     virtual ~StatefulI(){
 
     }
 
-    virtual bool PrepareNextState(const char8 * currentStateName,
-                                  const char8 * nextStateName)=0;
+    /**
+     * @brief Function called every time there is state change request.
+     * @param[in] currentStateName the name of the current state being executed.
+     * @param[in] nextStateName the name of the next state to be executed.
+     * @return true if the state change is accepted by this component.
+     */
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateName)=0;
 
 };
 

@@ -189,7 +189,8 @@ MemoryMapStatefulOutputBrokerDataSourceTestHelper    ();
     virtual const char8 *GetBrokerName(StructuredDataI &data,
             const SignalDirection direction);
 
-    virtual bool PrepareNextState(const RealTimeStateInfo &status);
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateNames);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
@@ -311,7 +312,8 @@ const char8 *MemoryMapStatefulOutputBrokerDataSourceTestHelper::GetBrokerName(St
     return "MemoryMapStatefulOutputBroker";
 }
 
-bool MemoryMapStatefulOutputBrokerDataSourceTestHelper::PrepareNextState(const RealTimeStateInfo &status) {
+bool MemoryMapStatefulOutputBrokerDataSourceTestHelper::PrepareNextState(const char8 * const currentStateName,
+                                                                         const char8 * const nextStateName) {
     //All the odd signals of Buffer 1 will know be pointing at the memory[2]
     //All the even signals of Buffer 2 will know be pointing at the memory[1]
     uint32 s = 0;
@@ -739,8 +741,7 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_ChangeState() {
         ret = broker->Execute();
     }
     if (ret) {
-        RealTimeStateInfo info;
-        ret = dataSource->PrepareNextState(info);
+        ret = dataSource->PrepareNextState("", "");
     }
     uint32 signalIdx;
     if (ret) {
@@ -1000,8 +1001,7 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_Ranges_ChangeState() {
 
     //Swap the memory for the odd buffers
     if (ret) {
-        RealTimeStateInfo info;
-        ret = dataSource->PrepareNextState(info);
+        ret = dataSource->PrepareNextState("", "");
     }
     uint32 signalIdx;
     char8 *dsPtr;
@@ -1236,8 +1236,7 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_Samples_ChangeState() {
     }
     //Swap the memory for the odd buffers
     if (ret) {
-        RealTimeStateInfo info;
-        ret = dataSource->PrepareNextState(info);
+        ret = dataSource->PrepareNextState("", "");
     }
     uint32 signalIdx;
     char8 *dsPtr;

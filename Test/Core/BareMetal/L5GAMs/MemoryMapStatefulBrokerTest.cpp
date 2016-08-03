@@ -211,7 +211,8 @@ MemoryMapStatefulBrokerDataSourceTestHelper    ();
     virtual const char8 *GetBrokerName(StructuredDataI &data,
             const SignalDirection direction);
 
-    virtual bool PrepareNextState(const RealTimeStateInfo &status);
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateName);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
@@ -333,7 +334,8 @@ const char8 *MemoryMapStatefulBrokerDataSourceTestHelper::GetBrokerName(Structur
     return "MemoryMapStatefulBrokerTestHelper";
 }
 
-bool MemoryMapStatefulBrokerDataSourceTestHelper::PrepareNextState(const RealTimeStateInfo &status) {
+bool MemoryMapStatefulBrokerDataSourceTestHelper::PrepareNextState(const char8 * const currentStateName,
+                                                                   const char8 * const nextStateName) {
     //All the odd signals of Buffer 1 will know be pointing at the memory[2]
     //All the even signals of Buffer 2 will know be pointing at the memory[1]
     uint32 s = 0;
@@ -1496,8 +1498,7 @@ bool MemoryMapStatefulBrokerTest::TestInit_PrepareNextState() {
     }
     //Change the state
     if (ret) {
-        RealTimeStateInfo info;
-        ret = dataSource->PrepareNextState(info);
+        ret = dataSource->PrepareNextState("", "");
     }
     //Now the odd signal indexes will have their buffer 0 pointing at the memory held by the first buffer
     //And the even signal indexes will have their buffer 1 pointing at the memory held by the second buffer

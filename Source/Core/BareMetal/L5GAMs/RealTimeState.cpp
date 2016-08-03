@@ -68,15 +68,15 @@ bool RealTimeState::AddStatefuls(ReferenceContainer &statefulsIn) {
     return ret;
 }
 
-bool RealTimeState::PrepareNextState(const char8 * currentStateName,
-                                     const char8 * nextStateName) {
-    uint32 numberOfStatefuls=statefuls.Size();
-    bool ret=true;
-    for(uint32 i=0u; i<numberOfStatefuls && ret; i++){
-        ReferenceT<StatefulI> stateful=statefuls.Get(i);
-        ret=stateful.IsValid();
-        if(ret){
-            ret=stateful->PrepareNextState(currentStateName, nextStateName);
+bool RealTimeState::PrepareNextState(const char8 * const currentStateName,
+                                     const char8 * const nextStateName) {
+    uint32 numberOfStatefuls = statefuls.Size();
+    bool ret = true;
+    for (uint32 i = 0u; i < numberOfStatefuls && ret; i++) {
+        ReferenceT<StatefulI> stateful = statefuls.Get(i);
+        ret = stateful.IsValid();
+        if (ret) {
+            ret = stateful->PrepareNextState(currentStateName, nextStateName);
         }
     }
     return ret;

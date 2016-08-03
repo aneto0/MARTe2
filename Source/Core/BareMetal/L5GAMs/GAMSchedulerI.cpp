@@ -311,8 +311,8 @@ bool GAMSchedulerI::InsertOutputBrokers(ReferenceT<GAM> gam,
     return ret;
 }
 
-bool GAMSchedulerI::PrepareNextState(const char8 * currentStateName,
-                                     const char8 * nextStateName) {
+bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
+                                     const char8 * const nextStateName) {
 
     // Find the next state and prepare the pointer to
     uint32 nextBuffer = (RealTimeApplication::index + 1u) % 2u;

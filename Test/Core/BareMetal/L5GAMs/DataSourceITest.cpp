@@ -105,7 +105,8 @@ DataSourceITestHelper    ();
     virtual const char8 *GetBrokerName(StructuredDataI &data,
             const SignalDirection direction);
 
-    virtual bool PrepareNextState(const RealTimeStateInfo &status);
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+            const char8 * const nextStateName);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
@@ -152,7 +153,8 @@ const char8 *DataSourceITestHelper::GetBrokerName(StructuredDataI &data,
     return "MemoryMapOutputBroker";
 }
 
-bool DataSourceITestHelper::PrepareNextState(const RealTimeStateInfo &status) {
+bool DataSourceITestHelper::PrepareNextState(const char8 * const currentStateName,
+                                             const char8 * const nextStateName) {
     return true;
 }
 

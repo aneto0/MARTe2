@@ -168,7 +168,8 @@ MemoryMapStatefulInputBrokerDataSourceTestHelper    ();
     virtual const char8 *GetBrokerName(StructuredDataI &data,
             const SignalDirection direction);
 
-    virtual bool PrepareNextState(const RealTimeStateInfo &status);
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateName);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
@@ -306,7 +307,8 @@ const char8 *MemoryMapStatefulInputBrokerDataSourceTestHelper::GetBrokerName(Str
     return "MemoryMapStatefulOutputBroker";
 }
 
-bool MemoryMapStatefulInputBrokerDataSourceTestHelper::PrepareNextState(const RealTimeStateInfo &status) {
+bool MemoryMapStatefulInputBrokerDataSourceTestHelper::PrepareNextState(const char8 * const currentStateName,
+                                                                        const char8 * const nextStateName) {
     //All the odd signals of Buffer 1 will know be pointing at the memory[2]
     //All the even signals of Buffer 2 will know be pointing at the memory[1]
     uint32 s = 0;
@@ -675,8 +677,7 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_ChangeState() {
     }
 
     if (ret) {
-        RealTimeStateInfo info;
-        ret = dataSource->PrepareNextState(info);
+        ret = dataSource->PrepareNextState("", "");
     }
 
     RealTimeApplication::index = 0u;
@@ -866,8 +867,7 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Ranges_ChangeState() {
         ret = (numberOfCopies == 5u);
     }
     if (ret) {
-        RealTimeStateInfo info;
-        ret = dataSource->PrepareNextState(info);
+        ret = dataSource->PrepareNextState("", "");
     }
     RealTimeApplication::index = 0u;
     if (ret) {
@@ -1047,8 +1047,7 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Samples_ChangeState() {
         ret = (numberOfCopies == 5u);
     }
     if (ret) {
-        RealTimeStateInfo info;
-        ret = dataSource->PrepareNextState(info);
+        ret = dataSource->PrepareNextState("", "");
     }
     RealTimeApplication::index = 0u;
     if (ret) {

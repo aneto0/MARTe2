@@ -878,7 +878,7 @@ bool RealTimeApplication::AddBrokersToFunctions() {
     return ret;
 }
 
-bool RealTimeApplication::PrepareNextState(const char8 * nextStateName) {
+bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
 
     bool ret = statesContainer.IsValid();
     if (ret) {

@@ -184,8 +184,7 @@ public:
        * @param[in] status contains informations about the current and the next state.
        * @return false in case of errors, true otherwise.
        */
-      virtual bool PrepareNextState(
-                                    const char8 * nextStateName);
+      virtual bool PrepareNextState(const char8 * const nextStateName);
 
 
       bool StartExecution();

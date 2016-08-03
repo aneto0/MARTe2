@@ -83,8 +83,8 @@ public:
      * and the active buffer index.
      * @return true if the next state name is found, false otherwise.
      */
-    virtual bool PrepareNextState(const char8 * currentStateName,
-                                  const char8 * nextStateName);
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateName);
 
     uint64 ExecuteSingleCycle(ExecutableI** executables,
                               uint32 **timeAddress,
