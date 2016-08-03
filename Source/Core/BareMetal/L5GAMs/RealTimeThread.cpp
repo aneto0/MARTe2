@@ -31,15 +31,13 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeThread.h"
-#include "Vector.h"
-#include "ObjectRegistryDatabase.h"
-#include "ReferenceContainerFilterObjectName.h"
-#include "ReferenceContainerFilterReferences.h"
-#include "GAM.h"
 #include "AdvancedErrorManagement.h"
+#include "GAM.h"
 #include "GAMSchedulerI.h"
+#include "ObjectRegistryDatabase.h"
+#include "RealTimeThread.h"
 #include "ReferenceContainerFilterReferences.h"
+#include "Vector.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -165,32 +163,35 @@ bool RealTimeThread::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
 
     AnyType functionsArray = data.GetType("Functions");
-    if(ret){
+    if (ret) {
         ret = (functionsArray.GetDataPointer() != NULL);
     }
 
     if (ret) {
         numberOfFunctions = functionsArray.GetNumberOfElements(0u);
         ret = (numberOfFunctions > 0);
-        if (ret) {
-            functions = new StreamString[numberOfFunctions];
+    }
+    if (ret) {
+        functions = new StreamString[numberOfFunctions];
 
-            Vector<StreamString> functionVector(functions, numberOfFunctions);
-            ret = (data.Read("Functions", functionVector));
-        }
-        if (ret) {
-            if (!data.Read("CPUs", cpuMask)) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No CPUs defined for the RealTimeThread %s", GetName())
-            }
-            if (!data.Read("StackSize", stackSize)) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No StackSize defined for the RealTimeThread %s", GetName())
-            }
-        }
-
+        Vector<StreamString> functionVector(functions, numberOfFunctions);
+        ret = (data.Read("Functions", functionVector));
     }
     else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No functions defined for the RealTimeThread %s", GetName())
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No functions defined for the RealTimeThread %s",
+                                GetName())
     }
+    if (ret) {
+        if (!data.Read("CPUs", cpuMask)) {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No CPUs defined for the RealTimeThread %s",
+                                    GetName())
+        }
+        if (!data.Read("StackSize", stackSize)) {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No StackSize defined for the RealTimeThread %s",
+                                    GetName())
+        }
+    }
+
     return ret;
 
 }
@@ -229,28 +230,41 @@ bool RealTimeThread::ToStructuredData(StructuredDataI& data) {
     bool ret = data.CreateRelative(objNameToPrint.Buffer());
     if (ret) {
         ret = data.Write("Class", "RealTimeThread");
-        if (ret) {
-            if (functions != NULL) {
-                Vector<StreamString> functionVector(functions, numberOfFunctions);
-                ret = data.Write("Functions", functionVector);
-            }
+    }
+    if (ret) {
+        if (functions != NULL) {
+            Vector<StreamString> functionVector(functions, numberOfFunctions);
+            ret = data.Write("Functions", functionVector);
         }
-        if (ret) {
-            uint32 numberOfChildren = Size();
-            for (uint32 i = 0u; i < numberOfChildren; i++) {
-                Reference child = Get(i);
-                ret = child.IsValid();
+    }
+    if (ret) {
+        if (numberOfGAMs > 0u) {
+            StreamString *gamList = new StreamString[numberOfGAMs];
+            uint32 n;
+            for (n = 0u; n < numberOfGAMs; n++) {
+                gamList[n] = GAMs.Get(n)->GetName();
+            }
+            Vector<StreamString> gamsVector(gamList, numberOfGAMs);
+            ret = data.Write("GAMs", gamsVector);
+            delete[] gamList;
+        }
+    }
+    if (ret) {
+        uint32 numberOfChildren = Size();
+        for (uint32 i = 0u; i < numberOfChildren; i++) {
+            Reference child = Get(i);
+            ret = child.IsValid();
+            if (ret) {
                 if (ret) {
-                    if (ret) {
-                        ret = child->ExportData(data);
-                    }
+                    ret = child->ExportData(data);
                 }
             }
         }
-        if (!data.MoveToAncestor(1u)) {
-            ret = false;
-        }
     }
+    if (!data.MoveToAncestor(1u)) {
+        ret = false;
+    }
+
     return ret;
 }
 CLASS_REGISTER(RealTimeThread, "1.0");

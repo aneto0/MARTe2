@@ -85,8 +85,7 @@ public:
      *   Functions = { function1_path, function2_path, ... }
      *
      * Each element must be the path of the function to be executed by this thread with respect to the position
-     * of the definition of this thread itself in the configuration data. See ObjectRegistryDatabase::Find(*)
-     * for more documentation on how to specify the correct path.
+     * of the "Functions" node.
      *
      * The following fields can be defined
      *

@@ -28,6 +28,7 @@
 OBJSX= BrokerITest.x \
        DataSourceITest.x\
        GAMDataSourceTest.x\
+       GAMGroupTest.x\
        GAMTest.x\
        MemoryMapBrokerTest.x\
        MemoryMapInputBrokerTest.x\

@@ -40,17 +40,13 @@ namespace MARTe {
 
 /**
  * @brief A group of GAMs sharing the same context.
- * @details In order to allow custom implementations of the shared context, some of the methods
- * of this class are pure virtual. The derived class can generally
- * add a context (see ContextT) and implements the specific procedures in order
- * to prepare the context for the next state (PrepareNextState(*) function) and
- * to switch to the new context (ChangeState(*) function).
+ * @details This class allows GAMs to share a common context. GAMs which are referenced
+ *  by a GAMGroup will have their SetContext method called.
  *
  * @details The syntax in the configuration stream has to be:
  *
- * GAMGroup_name = {\n
+ * +GAMGroup_name = {\n
  *    Class = GAMGroup\n
- *    ... // context definition, ecc\n
  *    GAM_name = {\n
  *        Class = GAM\n
  *        ...\n
@@ -64,15 +60,12 @@ class DLL_API GAMGroup: public ReferenceContainer {
 public:
 
     /**
-     * @brief Constructor
-     * @post
-     *   GetSupportedStates() == NULL &&
-     *   GetNumberOfSupportedStates() == 0;
+     * @brief Constructor. NOOP
      */
     GAMGroup();
 
     /**
-     * @brief Destructor. Frees the array of the supported state names.
+     * @brief Destructor. NOOP
      */
     virtual ~GAMGroup();
 
@@ -83,22 +76,14 @@ public:
      */
     virtual void PrepareNextState(const RealTimeStateInfo &status)=0;
 
-
-    /**
-     * @brief Initialises all the sub-nodes, then call SetUp(*) to setup the environment.
-     * @return true if no errors occur, false otherwise.
-     */
-    virtual bool Initialise(StructuredDataI &data);
-
 protected:
 
     /**
-     * @brief Setup the GAMGroup. This function can be custom
-     * implemented to initialise the context, make accelerators, ecc.
+     * @brief Sets the context on all the GAMs that belong to this GAMGroup.
+     * @param[in] context The context to be set on all GAMs.
+     * @return true if GAM::SetContext returns true for all the GAMs.
      */
-    //virtual void SetUp()=0;
-
-    //? Possible specific GAMContexts
+    bool SetContext(Reference context);
 
 };
 }

@@ -26,6 +26,7 @@
 OBJSX=  BrokerIGTest.x\
         DataSourceIGTest.x\
         GAMDataSourceGTest.x\
+        GAMGroupGTest.x\
         GAMGTest.x\
         GAMSchedulerIGTest.x \
         MemoryMapBrokerGTest.x\
@@ -38,7 +39,7 @@ OBJSX=  BrokerIGTest.x\
         RealTimeApplicationConfigurationBuilderGTest.x\
         RealTimeThreadGTest.x
 
-         
+#GAMSchedulerIGTest.x \
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..

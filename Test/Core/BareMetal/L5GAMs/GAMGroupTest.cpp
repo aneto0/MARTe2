@@ -29,9 +29,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GAMGroupTest.h"
-#include "GAMTestHelper.h"
 #include "ConfigurationDatabase.h"
+#include "GAMGroupTest.h"
+#include "GAMSchedulerI.h"
+#include "StandardParser.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,29 +41,340 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
-bool GAMGroupTest::TestConstructor() {
-    PIDGAMGroup test;
 
+/**
+ * @brief GAMSchedulerI empty implementation to support the GAMGroup tests
+ */
+class GAMGroupTestScheduler1: public GAMSchedulerI {
+public:
+    CLASS_REGISTER_DECLARATION()
 
+GAMGroupTestScheduler1    ();
+
+    virtual void StartExecution();
+
+    virtual void StopExecution();
+};
+
+GAMGroupTestScheduler1::GAMGroupTestScheduler1() :
+        GAMSchedulerI() {
+
+}
+
+void GAMGroupTestScheduler1::StartExecution() {
+
+}
+
+void GAMGroupTestScheduler1::StopExecution() {
+
+}
+
+CLASS_REGISTER(GAMGroupTestScheduler1, "1.0")
+
+/**
+ * @brief GAM empty implementation to support the GAMGroup tests
+ */
+class GAMGroupTestGAM1: public GAM {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+GAMGroupTestGAM1    ();
+
+    virtual bool Execute();
+
+    virtual bool SetContext(Reference contextIn);
+
+    virtual Reference GetContext();
+
+    bool failContext;
+private:
+    Reference context;
+};
+
+GAMGroupTestGAM1::GAMGroupTestGAM1() :
+        GAM() {
+    failContext = false;
+}
+
+bool GAMGroupTestGAM1::Execute() {
     return true;
 }
 
-bool GAMGroupTest::TestInitialise() {
-
-    ConfigurationDatabase cdb;
-    cdb.Write("Class", "PIDGAMGroup");
-    cdb.CreateAbsolute("PID1");
-    cdb.Write("Class", "PIDGAM");
-    cdb.CreateAbsolute("PID2");
-    cdb.Write("Class", "PIDGAM");
-    cdb.CreateAbsolute("PID3");
-    cdb.Write("Class", "PIDGAM");
-    cdb.MoveToRoot();
-
-    PIDGAMGroup test;
-    if (!test.Initialise(cdb)) {
-        return false;
-    }
-
-    return test.GetContext() == 1;
+bool GAMGroupTestGAM1::SetContext(Reference contextIn) {
+    context = contextIn;
+    return !failContext;
 }
+
+Reference GAMGroupTestGAM1::GetContext() {
+    return context;
+}
+
+CLASS_REGISTER(GAMGroupTestGAM1, "1.0")
+
+/**
+ * @brief GAMGroup empty implementation to support the GAMGroup tests
+ */
+class GAMGroupTestGAMGroup1: public GAMGroup {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+GAMGroupTestGAMGroup1    ();
+
+    virtual void PrepareNextState(const RealTimeStateInfo &status);
+
+    bool SetContext(Reference context);
+};
+
+GAMGroupTestGAMGroup1::GAMGroupTestGAMGroup1() :
+        GAMGroup() {
+}
+
+void GAMGroupTestGAMGroup1::PrepareNextState(const RealTimeStateInfo &status) {
+
+}
+
+bool GAMGroupTestGAMGroup1::SetContext(Reference context) {
+    return GAMGroup::SetContext(context);
+}
+CLASS_REGISTER(GAMGroupTestGAMGroup1, "1.0")
+
+class GAMGroupTestContext1: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+GAMGroupTestContext1    ();
+
+    int32 GetProperty1();
+
+    float32 GetProperty2();
+
+private:
+    int32 propertyToBeShared1;
+
+    float32 propertyToBeShared2;
+};
+
+GAMGroupTestContext1::GAMGroupTestContext1() :
+        Object() {
+    propertyToBeShared1 = 1;
+    propertyToBeShared2 = 2;
+}
+
+int32 GAMGroupTestContext1::GetProperty1() {
+    return propertyToBeShared1;
+}
+
+float32 GAMGroupTestContext1::GetProperty2() {
+    return propertyToBeShared2;
+}
+
+CLASS_REGISTER(GAMGroupTestContext1, "1.0")
+/**
+ * Helper function to setup a MARTe execution environment
+ */
+static bool InitialiseGAMGroupEnviroment(const char8 * const config) {
+    ConfigurationDatabase cdb;
+    StreamString configStream = config;
+    configStream.Seek(0);
+    StandardParser parser(configStream, cdb);
+
+    bool ok = parser.Parse();
+
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+
+    if (ok) {
+        god->CleanUp();
+        ok = god->Initialise(cdb);
+    }
+    ReferenceT<RealTimeApplication> application;
+    if (ok) {
+        application = god->Find("Application1");
+        ok = application.IsValid();
+    }
+    if (ok) {
+        ok = application->ConfigureApplication();
+    }
+    return ok;
+}
+
+//Standard valid config with GAMs, ReferenceContainers and GAMGroups
+static const char8* config1 = ""
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAM1 = {"
+        "            Class = GAMGroupTestGAM1"
+        "            OutputSignals = {"
+        "               Signal0 = {"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMGroup1 = {"
+        "            Class = GAMGroupTestGAMGroup1"
+        "            +GAM2 = {"
+        "                Class = GAMGroupTestGAM1"
+        "                InputSignals = {"
+        "                   Signal0 = {"
+        "                      Type = uint32"
+        "                   }"
+        "                }"
+        "            }"
+        "            +GAM3 = {"
+        "                Class = GAMGroupTestGAM1"
+        "                OutputSignals = {"
+        "                   Signal2 = {"
+        "                      Type = uint32"
+        "                   }"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = { GAM1 GAMGroup1 }"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        DefaultDataSource = DDB1"
+        "        Class = ReferenceContainer"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
+        "        }"
+        "        +Times = {"
+        "            Class = TimesDataSource"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = GAMGroupTestScheduler1"
+        "    }"
+        "}";
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+bool GAMGroupTest::TestConstructor() {
+    GAMGroupTestGAMGroup1 test;
+    return test.Size() == 0;
+}
+
+bool GAMGroupTest::TestSetContext() {
+    bool ret = InitialiseGAMGroupEnviroment(config1);
+    ReferenceT<GAMGroupTestGAM1> gam1;
+    ReferenceT<GAMGroupTestGAM1> gam2;
+    ReferenceT<GAMGroupTestGAM1> gam3;
+    ReferenceT<GAMGroupTestGAMGroup1> gamGroup1;
+
+    if (ret) {
+        gam1 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAM1");
+        ret = gam1.IsValid();
+    }
+    if (ret) {
+        gam2 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMGroup1.GAM2");
+        ret = gam2.IsValid();
+    }
+    if (ret) {
+        gam3 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMGroup1.GAM3");
+        ret = gam3.IsValid();
+    }
+    if (ret) {
+        gamGroup1 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMGroup1");
+        ret = gamGroup1.IsValid();
+    }
+    if (ret) {
+        ret = (gamGroup1->Size() == 2);
+    }
+    ReferenceT<GAMGroupTestContext1> context("GAMGroupTestContext1");
+    if (ret) {
+        ret = context.IsValid();
+    }
+    if (ret) {
+        ret = (gam1->GetContext() != context);
+    }
+    if (ret) {
+        ret = (gam2->GetContext() != context);
+    }
+    if (ret) {
+        ret = (gam3->GetContext() != context);
+    }
+    if (ret) {
+        ret = (gamGroup1->SetContext(context));
+    }
+    if (ret) {
+        ret = (gam1->GetContext() != context);
+    }
+    if (ret) {
+        ret = (gam2->GetContext() == context);
+    }
+    if (ret) {
+        ret = (gam3->GetContext() == context);
+    }
+    ReferenceT<GAMGroupTestContext1> thisGAMContext = context;
+    if (ret) {
+        ret = thisGAMContext.IsValid();
+    }
+    if (ret) {
+        ret = (thisGAMContext->GetProperty1() == 1u);
+    }
+    if (ret) {
+        ret = (thisGAMContext->GetProperty2() == 2);
+    }
+    return ret;
+}
+
+bool GAMGroupTest::TestSetContext_Failure() {
+    bool ret = InitialiseGAMGroupEnviroment(config1);
+    ReferenceT<GAMGroupTestGAM1> gam1;
+    ReferenceT<GAMGroupTestGAM1> gam2;
+    ReferenceT<GAMGroupTestGAM1> gam3;
+    ReferenceT<GAMGroupTestGAMGroup1> gamGroup1;
+
+    if (ret) {
+        gam1 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAM1");
+        ret = gam1.IsValid();
+    }
+    if (ret) {
+        gam2 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMGroup1.GAM2");
+        ret = gam2.IsValid();
+    }
+    if (ret) {
+        gam3 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMGroup1.GAM3");
+        ret = gam3.IsValid();
+    }
+    if (ret) {
+        gamGroup1 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMGroup1");
+        ret = gamGroup1.IsValid();
+    }
+    if (ret) {
+        ret = (gamGroup1->Size() == 2);
+    }
+    ReferenceT<GAMGroupTestContext1> context("GAMGroupTestContext1");
+    if (ret) {
+        ret = context.IsValid();
+    }
+    if (ret) {
+        ret = (gam1->GetContext() != context);
+    }
+    if (ret) {
+        ret = (gam2->GetContext() != context);
+    }
+    if (ret) {
+        ret = (gam3->GetContext() != context);
+    }
+    if (ret) {
+        gam2->failContext = true;
+        ret = !(gamGroup1->SetContext(context));
+    }
+    return ret;
+}
+

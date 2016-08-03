@@ -262,8 +262,8 @@ bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
     return ret;
 }
 
-void *GAM::GetContext() const {
-    return NULL_PTR(void*);
+bool GAM::SetContext(Reference context) {
+    return true;
 }
 
 uint32 GAM::GetNumberOfInputSignals() const {
