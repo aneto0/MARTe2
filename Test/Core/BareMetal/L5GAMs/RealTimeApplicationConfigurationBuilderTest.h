@@ -300,7 +300,7 @@ public:
     bool TestVerifyConsumersAndProducers_Ranges3();
 
     //merging of time signals
-    bool TestVerifyConsumersAndProducers_TimesSignals();
+    bool TestVerifyConsumersAndProducers_TimingSignals();
 
     //more than one producer
     bool TestVerifyConsumersAndProducersFalse_MoreProducers();

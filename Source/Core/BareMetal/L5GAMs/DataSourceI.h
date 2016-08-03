@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ConfigurationDatabase.h"
-#include "RealTimeStateInfo.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 #include "StatefulI.h"

@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ObjectRegistryDatabase.h"
-#include "RealTimeStateInfo.h"
 #include "GAMGroup.h"
 #include "RealTimeApplication.h"
 /*---------------------------------------------------------------------------*/

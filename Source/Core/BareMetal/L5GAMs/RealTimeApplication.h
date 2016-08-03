@@ -35,7 +35,6 @@
 #include "RealTimeApplicationConfigurationBuilder.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
-#include "RealTimeStateInfo.h"
 #include "StatefulI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
