@@ -126,18 +126,6 @@ public:
      */
     bool TestToStructuredData();
 
-    /**
-     * @brief Tests if the function returns true if there is only one synchronising
-     * GAM in the thread.
-     */
-    bool TestValidateDataSourceLinks();
-
-    /**
-     * @brief Tests if the function returns false if there are more than one
-     * synchronising GAM in the thread.
-     */
-    bool TestValidateDataSourceLinksFalse_MoreSync();
-
 
 };
 

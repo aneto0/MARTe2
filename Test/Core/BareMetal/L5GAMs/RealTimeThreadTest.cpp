@@ -37,7 +37,6 @@
 #include "RealTimeThreadTest.h"
 #include "StandardParser.h"
 
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -234,11 +233,11 @@ static const char8* config1 = ""
         "                Class = ReferenceContainer"
         "                +Thread1 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = { :Functions.GAM1 :Functions.GAM2 }"
+        "                    Functions = { GAM1 GAM2 }"
         "                }"
         "                +Thread2 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = { :Functions.GAMGroup1 }"
+        "                    Functions = { GAMGroup1 }"
         "                }"
         "            }"
         "        }"
@@ -248,11 +247,11 @@ static const char8* config1 = ""
         "                Class = ReferenceContainer"
         "                +Thread1 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = { :Functions.GAM1 :Functions.GAM2 }"
+        "                    Functions = { GAM1 GAM2 }"
         "                }"
         "                +Thread2 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = { :Functions.GAMGroup1 :Functions.GAMContainer }"
+        "                    Functions = { GAMGroup1 GAMContainer }"
         "                }"
         "            }"
         "        }"
@@ -262,6 +261,9 @@ static const char8* config1 = ""
         "        Class = ReferenceContainer"
         "        +DDB1 = {"
         "            Class = GAMDataSource"
+        "        }"
+        "        +Times = {"
+        "            Class = TimesDataSource"
         "        }"
         "    }"
         "    +Scheduler = {"
@@ -308,7 +310,7 @@ static const char8* config2 = ""
         "                Class = ReferenceContainer"
         "                +Thread1 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = { ::GAM0 :Functions.GAM1 :Functions.GAM2 }"
+        "                    Functions = { ::GAM0 GAM1 GAM2 }"
         "                }"
         "            }"
         "        }"
@@ -318,6 +320,9 @@ static const char8* config2 = ""
         "        Class = ReferenceContainer"
         "        +DDB1 = {"
         "            Class = GAMDataSource"
+        "        }"
+        "        +Times = {"
+        "            Class = TimesDataSource"
         "        }"
         "    }"
         "    +Scheduler = {"
@@ -356,7 +361,7 @@ static const char8* config3 = ""
         "                Class = ReferenceContainer"
         "                +Thread1 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = { :Functions.GAM1 :Functions.GAM2 }"
+        "                    Functions = { GAM1 GAM2 }"
         "                }"
         "            }"
         "        }"
@@ -366,6 +371,9 @@ static const char8* config3 = ""
         "        Class = ReferenceContainer"
         "        +DDB1 = {"
         "            Class = GAMDataSource"
+        "        }"
+        "        +Times = {"
+        "            Class = TimesDataSource"
         "        }"
         "    }"
         "    +Scheduler = {"
@@ -404,7 +412,7 @@ static const char8* config4 = ""
         "                Class = ReferenceContainer"
         "                +Thread1 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = { :Functions.GAM1 :Functions.GAM2a }"
+        "                    Functions = { GAM1 GAM2a }"
         "                }"
         "            }"
         "        }"
@@ -414,6 +422,9 @@ static const char8* config4 = ""
         "        Class = ReferenceContainer"
         "        +DDB1 = {"
         "            Class = GAMDataSource"
+        "        }"
+        "        +Times = {"
+        "            Class = TimesDataSource"
         "        }"
         "    }"
         "    +Scheduler = {"
@@ -594,8 +605,8 @@ bool RealTimeThreadTest::TestGetFunctions() {
     const uint32 numberOfThreads = 4;
     const uint32 maxFunctions = 2;
     ReferenceT<RealTimeThread> threads[numberOfThreads] = { thread1S1, thread2S1, thread1S2, thread2S2 };
-    const char8 * const functionNames[numberOfThreads][maxFunctions] = { { ":Functions.GAM1", ":Functions.GAM2" }, { ":Functions.GAMGroup1", NULL }, {
-            ":Functions.GAM1", ":Functions.GAM2" }, { ":Functions.GAMGroup1", ":Functions.GAMContainer" } };
+    const char8 * const functionNames[numberOfThreads][maxFunctions] = { { "GAM1", "GAM2" }, { "GAMGroup1", NULL }, {
+            "GAM1", "GAM2" }, { "GAMGroup1", "GAMContainer" } };
 
     uint32 n;
     for (n = 0u; (n < numberOfThreads) && (ret); n++) {
@@ -671,8 +682,8 @@ bool RealTimeThreadTest::TestGetGAMs() {
     const uint32 numberOfThreads = 4;
     const uint32 maxGAMs = 4;
     ReferenceT<RealTimeThread> threads[numberOfThreads] = { thread1S1, thread2S1, thread1S2, thread2S2 };
-    const char8 * const gamNames[numberOfThreads][maxGAMs] = { { "GAM1", "GAM2", NULL, NULL }, { "GAM3", "GAM4", NULL, NULL }, { "GAM1", "GAM2", NULL, NULL }, {
-            "GAM3", "GAM4", "GAM5", "GAM6" } };
+    const char8 * const gamNames[numberOfThreads][maxGAMs] = { { "GAM1", "GAM2", NULL, NULL }, { "GAM3", "GAM4", NULL,
+    NULL }, { "GAM1", "GAM2", NULL, NULL }, { "GAM3", "GAM4", "GAM5", "GAM6" } };
 
     uint32 n;
     for (n = 0u; (n < numberOfThreads) && (ret); n++) {
@@ -689,970 +700,243 @@ bool RealTimeThreadTest::TestGetGAMs() {
     return ret;
 }
 
-#if 0
-bool RealTimeThreadTest::TestConfigureArchitecture_MoreGAMs() {
-    ConfigurationDatabase cdb;
-    StreamString conf =
-    "$Application1 = {\n"
-    "    Class = RealTimeApplication\n"
-    "    +Functions = {\n"
-    "        Class = ReferenceContainer\n"
-    "        +GAM1 = {\n"
-    "            Class = PIDGAM\n"
-    "        }\n"
-    "        +GAM2 = {\n"
-    "            Class = PIDGAM\n"
-    "        }\n"
-    "        +PIDGroup1 = {\n"
-    "            Class = PIDGAMGroup\n"
-    "            +GAM3 = {\n"
-    "                Class = PIDGAM\n"
-    "            }\n"
-    "            +GAM4 = {\n"
-    "                Class = PIDGAM\n"
-    "            }\n"
-    "        }\n"
-    "        +GAMContainer = {\n"
-    "            Class = ReferenceContainer\n"
-    "            +GAM5 = {\n"
-    "                Class = PIDGAM\n"
-    "            }\n"
-    "            +GAM6 = {\n"
-    "                Class = PIDGAM\n"
-    "            }\n"
-    "        }\n"
-    "        +PIDGroup2 = {\n"
-    "            Class = PIDGAMGroup\n"
-    "            +GAM7 = {\n"
-    "                Class = PIDGAM\n"
-    "            }\n"
-    "            +GAM8 = {\n"
-    "                Class = PIDGAM\n"
-    "            }\n"
-    "        }\n"
-    "    }\n"
-    "    +States = {\n"
-    "        Class = ReferenceContainer\n"
-    "        +State1 = {\n"
-    "            Class = RealTimeState\n"
-    "            +Threads = {\n"
-    "                Class = ReferenceContainer\n"
-    "                +Thread1 = {\n"
-    "                    Class = RealTimeThread\n"
-    "                    Functions = {:Functions.GAM1 :Functions.GAM2 :Functions.PIDGroup1 :Functions.GAMContainer :Functions.PIDGroup2.GAM7 :Functions.PIDGroup2.GAM8}\n"
-    "                }\n"
-    "            }\n"
-    "        }\n"
-    "    }\n"
-    "    +Data = {\n"
-    "        Class = DataSourceContainer\n"
-    "    }\n"
-    "    +Scheduler = {\n"
-    "        Class = DummyScheduler\n"
-    "    }\n"
-    "}\n";
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
-    }
-
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-    ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
-
-    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1");
-
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
-
-    if (!thread1->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
-        return false;
-    }
-
-    if (thread1->GetNumberOfGAMs() != 8) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    return true;
-}
-
-bool RealTimeThreadTest::TestConfigureArchitecture_GAMGroup() {
-    ConfigurationDatabase cdb;
-    StreamString conf = cdbStr1;
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-
-    ReferenceT<RealTimeThread> thread2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
-
-    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1");
-
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
-
-    if (!thread2->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
-        return false;
-    }
-
-    ReferenceT<PIDGAM> gam3 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.PIDGroup1.GAM3");
-    ReferenceT<PIDGAM> gam4 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.PIDGroup1.GAM4");
-
-    if (gam3->GetNumberOfSupportedStates() != 1) {
-        return false;
-    }
-
-    if (gam3->GetSupportedStates()[0] != "State1") {
-        return false;
-    }
-    if (gam4->GetNumberOfSupportedStates() != 1) {
-        return false;
-    }
-
-    if (gam4->GetSupportedStates()[0] != "State1") {
-        return false;
-    }
-
-    return true;
-}
-
-bool RealTimeThreadTest::TestConfigureArchitecture_ReferenceContainer() {
-
-    ConfigurationDatabase cdb;
-    StreamString conf = cdbStr1;
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-
-    ReferenceT<RealTimeThread> thread3 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread1");
-
-    ReferenceT<RealTimeState> state2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2");
-
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
-
-    if (!thread3->ConfigureArchitecture(*app.operator->(), *state2.operator->())) {
-        return false;
-    }
-
-    ReferenceT<PIDGAM> gam5 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMContainer.GAM5");
-    ReferenceT<PIDGAM> gam6 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMContainer.GAM6");
-
-    if (gam5->GetNumberOfSupportedStates() != 1) {
-        return false;
-    }
-
-    if (gam5->GetSupportedStates()[0] != "State2") {
-        return false;
-    }
-    if (gam6->GetNumberOfSupportedStates() != 1) {
-        return false;
-    }
-
-    if (gam6->GetSupportedStates()[0] != "State2") {
-        return false;
-    }
-
-    return true;
-}
-
-bool RealTimeThreadTest::TestConfigureArchitecture_SingleInGAMGroup() {
-
-    ConfigurationDatabase cdb;
-    StreamString conf = cdbStr1;
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-
-    ReferenceT<RealTimeThread> thread4 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread2");
-
-    ReferenceT<RealTimeState> state2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2");
-
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
-
-    if (!thread4->ConfigureArchitecture(*app.operator->(), *state2.operator->())) {
-        return false;
-    }
-
-    ReferenceT<PIDGAM> gam7 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.PIDGroup2.GAM7");
-    ReferenceT<PIDGAM> gam8 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.PIDGroup2.GAM8");
-
-    if (gam7->GetNumberOfSupportedStates() != 1) {
-        return false;
-    }
-
-    if (gam7->GetSupportedStates()[0] != "State2") {
-        return false;
-    }
-    if (gam8->GetNumberOfSupportedStates() != 1) {
-        return false;
-    }
-
-    if (gam8->GetSupportedStates()[0] != "State2") {
-        return false;
-    }
-
-    return true;
-}
-
-bool RealTimeThreadTest::TestConfigureArchitectureFalse_OrphanGAM() {
-    ConfigurationDatabase cdb;
-
-    // application
-    StreamString conf = ""
-    "+GAM1 = {\n"
-    "    Class = PIDGAM\n"
-    "}\n"
-    "$Application1 = {\n"
-    "    Class = RealTimeApplication\n"
-    "    +Functions = {\n"
-    "        Class = ReferenceContainer\n"
-    "        +GAM2 = {\n"
-    "            Class = PIDGAM\n"
-    "        }\n"
-    "    }\n"
-    "    +States = {\n"
-    "        Class = ReferenceContainer\n"
-    "        +State1 = {\n"
-    "            Class = RealTimeState\n"
-    "            +Threads = {\n"
-    "                Class = ReferenceContainer\n"
-    "                +Thread1 = {\n"
-    "                    Class = RealTimeThread\n"
-    "                    Functions = {::GAM1 :Functions.GAM2 }\n"
-    "                }\n"
-    "            }\n"
-    "        }\n"
-    "    }\n"
-    "    +Data = {\n"
-    "        Class = DataSourceContainer\n"
-    "    }\n"
-    "    +Scheduler = {\n"
-    "        Class = DummyScheduler\n"
-    "    }\n"
-    "}\n";
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-
-    printf("\nsize ordb= %d\n", ObjectRegistryDatabase::Instance()->Size());
-    ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
-
-    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1");
-
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
-
-    if (thread1->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    return true;
-}
-
-bool RealTimeThreadTest::TestConfigureArchitectureFalse_InvalidGAMType() {
-    ConfigurationDatabase cdb;
-
-    StreamString conf = ""
-
-    "$Application1 = {\n"
-    "    Class = RealTimeApplication\n"
-    "    +Functions = {\n"
-    "        Class = ReferenceContainer\n"
-    "        +GAM1 = {\n"
-    "            Class = PIDGAM\n"
-    "        }\n"
-    "        +GAM2 = {\n"
-    "            Class = Object\n"
-    "        }\n"
-    "    }\n"
-    "    +States = {\n"
-    "        Class = ReferenceContainer\n"
-    "        +State1 = {\n"
-    "            Class = RealTimeState\n"
-    "            +Threads = {\n"
-    "                Class = ReferenceContainer\n"
-    "                +Thread1 = {\n"
-    "                    Class = RealTimeThread\n"
-    "                    Functions = {::GAM1 :Functions.GAM2 }\n"
-    "                }\n"
-    "            }\n"
-    "        }\n"
-    "    }\n"
-    "    +Data = {\n"
-    "        Class = DataSourceContainer\n"
-    "    }\n"
-    "    +Scheduler = {\n"
-    "        Class = DummyScheduler\n"
-    "    }\n"
-    "}\n";
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
-
-    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1");
-
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
-
-    if (thread1->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-
-    return true;
-
-}
-
-bool RealTimeThreadTest::TestConfigureArchitectureFalse_InvalidGAMPath() {
-    ConfigurationDatabase cdb;
-    StreamString conf =
-    "$Application1 = {\n"
-    "    Class = RealTimeApplication\n"
-    "    +Functions = {\n"
-    "        Class = ReferenceContainer\n"
-    "        +GAM1 = {\n"
-    "            Class = PIDGAM\n"
-    "        }\n"
-    "        +GAM2 = {\n"
-    "            Class = PIDGAM\n"
-    "        }\n"
-    "        +PIDGroup1 = {\n"
-    "            Class = PIDGAMGroup\n"
-    "            +GAM3 = {\n"
-    "                Class = PIDGAM\n"
-    "            }\n"
-    "            +GAM4 = {\n"
-    "                Class = PIDGAM\n"
-    "            }\n"
-    "        }\n"
-    "        +GAMContainer = {\n"
-    "            Class = ReferenceContainer\n"
-    "            +GAM5 = {\n"
-    "                Class = PIDGAM\n"
-    "            }\n"
-    "            +GAM6 = {\n"
-    "                Class = PIDGAM\n"
-    "            }\n"
-    "        }\n"
-    "        +PIDGroup2 = {\n"
-    "            Class = PIDGAMGroup\n"
-    "            +GAM7 = {\n"
-    "                Class = PIDGAM\n"
-    "            }\n"
-    "            +GAM8 = {\n"
-    "                Class = PIDGAM\n"
-    "            }\n"
-    "        }\n"
-    "    }\n"
-    "    +States = {\n"
-    "        Class = ReferenceContainer\n"
-    "        +State1 = {\n"
-    "            Class = RealTimeState\n"
-    "            +Threads = {\n"
-    "                Class = ReferenceContainer\n"
-    "                +Thread1 = {\n"
-    "                    Class = RealTimeThread\n"
-    "                    Functions = {:Functions.GAM1 :Functions.GAM2 :Functions.PIDGroup1 :Functions.GAMContainer :Functions.PIDGroup2.GAM7 :Functions.PIDGroup3.GAM8}\n"
-    "                }\n"
-    "            }\n"
-    "        }\n"
-    "    }\n"
-    "    +Data = {\n"
-    "        Class = DataSourceContainer\n"
-    "    }\n"
-    "    +Scheduler = {\n"
-    "        Class = DummyScheduler\n"
-    "    }\n"
-    "}\n";
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
-    }
-
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-    ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
-
-    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1");
-
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
-
-    if (thread1->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    return true;
-}
-
-bool RealTimeThreadTest::TestGetNumberOfFunctions() {
-    ConfigurationDatabase cdb;
-    StreamString conf = cdbStr1;
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-    ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
-    ReferenceT<RealTimeThread> thread2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
-    ReferenceT<RealTimeThread> thread3 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread1");
-    ReferenceT<RealTimeThread> thread4 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread2");
-
-    if (thread1->GetNumberOfFunctions() != 2) {
-        return false;
-    }
-    if (thread2->GetNumberOfFunctions() != 1) {
-        return false;
-    }
-    if (thread3->GetNumberOfFunctions() != 1) {
-        return false;
-    }
-    if (thread4->GetNumberOfFunctions() != 2) {
-        return false;
-    }
-
-    return true;
-}
-
-bool RealTimeThreadTest::TestGetFunctions() {
-    ConfigurationDatabase cdb;
-    StreamString conf = cdbStr1;
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-    ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
-    ReferenceT<RealTimeThread> thread2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
-    ReferenceT<RealTimeThread> thread3 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread1");
-    ReferenceT<RealTimeThread> thread4 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread2");
-
-    if (thread1->GetFunctions()[0] != ":Functions.GAM1") {
-        return false;
-    }
-    if (thread1->GetFunctions()[1] != ":Functions.GAM2") {
-        return false;
-    }
-    if (thread2->GetFunctions()[0] != ":Functions.PIDGroup1") {
-        return false;
-    }
-    if (thread3->GetFunctions()[0] != ":Functions.GAMContainer") {
-        return false;
-    }
-    if (thread4->GetFunctions()[0] != ":Functions.PIDGroup2.GAM7") {
-        return false;
-    }
-    if (thread4->GetFunctions()[1] != ":Functions.PIDGroup2.GAM8") {
-        return false;
-    }
-
-    return true;
-}
-
-bool RealTimeThreadTest::TestGetNumberOfGAMs() {
-    ConfigurationDatabase cdb;
-    StreamString conf = cdbStr1;
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-    ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
-    ReferenceT<RealTimeThread> thread2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
-    ReferenceT<RealTimeThread> thread3 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread1");
-    ReferenceT<RealTimeThread> thread4 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread2");
-
-    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1");
-    ReferenceT<RealTimeState> state2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2");
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
-
-    if (!thread1->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
-        return false;
-    }
-    if (!thread2->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
-        return false;
-    }
-
-    if (!thread3->ConfigureArchitecture(*app.operator->(), *state2.operator->())) {
-        return false;
-    }
-
-    if (!thread4->ConfigureArchitecture(*app.operator->(), *state2.operator->())) {
-        return false;
-    }
-
-    if (thread1->GetNumberOfGAMs() != 2) {
-        return false;
-    }
-    if (thread2->GetNumberOfGAMs() != 2) {
-        return false;
-    }
-    if (thread3->GetNumberOfGAMs() != 2) {
-        return false;
-    }
-    if (thread4->GetNumberOfGAMs() != 2) {
-        return false;
-    }
-
-    return true;
-}
-
-bool RealTimeThreadTest::TestGetGAMs() {
-    ConfigurationDatabase cdb;
-    StreamString conf = cdbStr1;
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-    ReferenceT<RealTimeThread> thread1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
-    ReferenceT<RealTimeThread> thread2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
-    ReferenceT<RealTimeThread> thread3 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread1");
-    ReferenceT<RealTimeThread> thread4 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread2");
-
-    ReferenceT<PIDGAM> gam1 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAM1");
-    ReferenceT<PIDGAM> gam2 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAM2");
-
-    ReferenceT<PIDGAM> gam3 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.PIDGroup1.GAM3");
-    ReferenceT<PIDGAM> gam4 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.PIDGroup1.GAM4");
-
-    ReferenceT<PIDGAM> gam5 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMContainer.GAM5");
-    ReferenceT<PIDGAM> gam6 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMContainer.GAM6");
-
-    ReferenceT<PIDGAM> gam7 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.PIDGroup2.GAM7");
-    ReferenceT<PIDGAM> gam8 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.PIDGroup2.GAM8");
-
-    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1");
-    ReferenceT<RealTimeState> state2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2");
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
-
-    if (!thread1->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
-        return false;
-    }
-    if (!thread2->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
-        return false;
-    }
-
-    if (!thread3->ConfigureArchitecture(*app.operator->(), *state2.operator->())) {
-        return false;
-    }
-
-    if (!thread4->ConfigureArchitecture(*app.operator->(), *state2.operator->())) {
-        return false;
-    }
-
-    if (thread1->GetGAMs()[0] != gam1) {
-        return false;
-    }
-    if (thread1->GetGAMs()[1] != gam2) {
-        return false;
-    }
-    if (thread2->GetGAMs()[0] != gam3) {
-        return false;
-    }
-    if (thread2->GetGAMs()[1] != gam4) {
-        return false;
-    }
-    if (thread3->GetGAMs()[0] != gam5) {
-        return false;
-    }
-    if (thread3->GetGAMs()[1] != gam6) {
-        return false;
-    }
-    if (thread4->GetGAMs()[0] != gam7) {
-        return false;
-    }
-    if (thread4->GetGAMs()[1] != gam8) {
-        return false;
-    }
-    return true;
-}
-
 bool RealTimeThreadTest::TestGetStackSize() {
 
     ConfigurationDatabase tcdb;
     tcdb.Write("Class", "RealTimeThread");
-    const char8 *functions[1] = {"??"};
+    const char8 *functions[1] = { "??" };
     tcdb.Write("Functions", functions);
     tcdb.Write("StackSize", "12345");
     tcdb.MoveToRoot();
 
     RealTimeThread thread;
-    if (thread.GetStackSize() != THREADS_DEFAULT_STACKSIZE) {
-        return false;
+    bool ok = (thread.GetStackSize() == THREADS_DEFAULT_STACKSIZE);
+    if (ok) {
+        ok = thread.Initialise(tcdb);
     }
-
-    if (!thread.Initialise(tcdb)) {
-        return false;
+    if (ok) {
+        ok = (thread.GetStackSize() == 12345);
     }
-
-    return thread.GetStackSize() == 12345;
-
+    return ok;
 }
 
 bool RealTimeThreadTest::TestGetCPU() {
     ConfigurationDatabase tcdb;
     tcdb.Write("Class", "RealTimeThread");
-    const char8 *functions[1] = {"??"};
+    const char8 *functions[1] = { "??" };
     tcdb.Write("Functions", functions);
     tcdb.Write("CPUs", "0xfeff");
     tcdb.MoveToRoot();
 
     RealTimeThread thread;
-    if (thread.GetCPU() != ProcessorType::GetDefaultCPUs()) {
-        return false;
+    bool ok = (thread.GetCPU() == ProcessorType::GetDefaultCPUs());
+
+    if (ok) {
+        ok = thread.Initialise(tcdb);
+    }
+    if (ok) {
+        ok = (thread.GetCPU() == 0xfeff);
     }
 
-    if (!thread.Initialise(tcdb)) {
-        return false;
-    }
-
-    return thread.GetCPU() == 0xfeff;
+    return ok;
 }
 
 bool RealTimeThreadTest::TestToStructuredData() {
-    ConfigurationDatabase cdb;
-    StreamString conf = cdbStr1;
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
+    bool ret = InitialiseRealTimeThreadEnviroment(config1);
+    ReferenceT<RealTimeThread> thread1S1;
+    ReferenceT<RealTimeThread> thread2S1;
+    ReferenceT<RealTimeThread> thread1S2;
+    ReferenceT<RealTimeThread> thread2S2;
+    if (ret) {
+        thread1S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
+        ret = thread1S1.IsValid();
     }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
+    if (ret) {
+        thread2S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
+        ret = thread2S1.IsValid();
     }
-    ReferenceT<RealTimeThread> thread2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
+    if (ret) {
+        thread1S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread1");
+        ret = thread1S2.IsValid();
+    }
+    if (ret) {
+        thread2S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread2");
+        ret = thread2S2.IsValid();
+    }
+    if (ret) {
+        ConfigurationDatabase printedStructuredData;
+        ret = thread1S1->ToStructuredData(printedStructuredData);
+        if (ret) {
+            StreamString value;
+            ret = printedStructuredData.MoveToRoot();
+            ret &= printedStructuredData.MoveAbsolute("+Thread1");
+            ret &= printedStructuredData.Read("Class", value);
+            ret &= (value == "RealTimeThread");
+            value = "";
+            AnyType functionsArray = printedStructuredData.GetType("Functions");
+            if (ret) {
+                ret &= (functionsArray.GetDataPointer() != NULL);
+            }
+            uint32 numberOfFunctions = 0u;
+            if (ret) {
+                numberOfFunctions = functionsArray.GetNumberOfElements(0u);
+                ret &= (numberOfFunctions == 2u);
+            }
+            if (ret) {
+                StreamString *functions = new StreamString[numberOfFunctions];
+                Vector<StreamString> functionVector(functions, numberOfFunctions);
+                ret &= (printedStructuredData.Read("Functions", functionVector));
+                ret &= (functions[0] == "GAM1");
+                ret &= (functions[1] == "GAM2");
+                delete[] functions;
+            }
+            uint32 numberOfGAMs = 0u;
+            if (ret) {
+                numberOfGAMs = thread1S1->GetNumberOfGAMs();
+                ret = (numberOfGAMs == 2u);
+            }
 
-    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1");
-    ReferenceT<RealTimeState> state2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2");
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
-    if (!thread2->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
-        return false;
+            if (ret) {
+                StreamString *gams = new StreamString[numberOfGAMs];
+                Vector<StreamString> gamsVector(gams, numberOfGAMs);
+                ret &= (printedStructuredData.Read("GAMs", gamsVector));
+                ret &= (gams[0] == "GAM1");
+                ret &= (gams[1] == "GAM2");
+                delete[] gams;
+            }
+        }
+    }
+    if (ret) {
+        ConfigurationDatabase printedStructuredData;
+        ret = thread2S1->ToStructuredData(printedStructuredData);
+        if (ret) {
+            StreamString value;
+            ret = printedStructuredData.MoveToRoot();
+            ret &= printedStructuredData.MoveAbsolute("+Thread2");
+            ret &= printedStructuredData.Read("Class", value);
+            ret &= (value == "RealTimeThread");
+            value = "";
+            AnyType functionsArray = printedStructuredData.GetType("Functions");
+            if (ret) {
+                ret &= (functionsArray.GetDataPointer() != NULL);
+            }
+            uint32 numberOfFunctions = 0u;
+            if (ret) {
+                numberOfFunctions = functionsArray.GetNumberOfElements(0u);
+                ret &= (numberOfFunctions == 1u);
+            }
+            if (ret) {
+                StreamString *functions = new StreamString[numberOfFunctions];
+                Vector<StreamString> functionVector(functions, numberOfFunctions);
+                ret &= (printedStructuredData.Read("Functions", functionVector));
+                ret &= (functions[0] == "GAMGroup1");
+                delete[] functions;
+            }
+            uint32 numberOfGAMs = 0u;
+            if (ret) {
+                numberOfGAMs = thread2S1->GetNumberOfGAMs();
+                ret = (numberOfGAMs == 2u);
+            }
+
+            if (ret) {
+                StreamString *gams = new StreamString[numberOfGAMs];
+                Vector<StreamString> gamsVector(gams, numberOfGAMs);
+                ret &= (printedStructuredData.Read("GAMs", gamsVector));
+                ret &= (gams[0] == "GAM3");
+                ret &= (gams[1] == "GAM4");
+                delete[] gams;
+            }
+        }
+    }
+    if (ret) {
+        ConfigurationDatabase printedStructuredData;
+        ret = thread1S2->ToStructuredData(printedStructuredData);
+        if (ret) {
+            StreamString value;
+            ret = printedStructuredData.MoveToRoot();
+            ret &= printedStructuredData.MoveAbsolute("+Thread1");
+            ret &= printedStructuredData.Read("Class", value);
+            ret &= (value == "RealTimeThread");
+            value = "";
+            AnyType functionsArray = printedStructuredData.GetType("Functions");
+            if (ret) {
+                ret &= (functionsArray.GetDataPointer() != NULL);
+            }
+            uint32 numberOfFunctions = 0u;
+            if (ret) {
+                numberOfFunctions = functionsArray.GetNumberOfElements(0u);
+                ret &= (numberOfFunctions == 2u);
+            }
+            if (ret) {
+                StreamString *functions = new StreamString[numberOfFunctions];
+                Vector<StreamString> functionVector(functions, numberOfFunctions);
+                ret &= (printedStructuredData.Read("Functions", functionVector));
+                ret &= (functions[0] == "GAM1");
+                ret &= (functions[1] == "GAM2");
+                delete[] functions;
+            }
+            uint32 numberOfGAMs = 0u;
+            if (ret) {
+                numberOfGAMs = thread1S2->GetNumberOfGAMs();
+                ret = (numberOfGAMs == 2u);
+            }
+
+            if (ret) {
+                StreamString *gams = new StreamString[numberOfGAMs];
+                Vector<StreamString> gamsVector(gams, numberOfGAMs);
+                ret &= (printedStructuredData.Read("GAMs", gamsVector));
+                ret &= (gams[0] == "GAM1");
+                ret &= (gams[1] == "GAM2");
+                delete[] gams;
+            }
+        }
+    }
+    if (ret) {
+        ConfigurationDatabase printedStructuredData;
+        ret = thread2S2->ToStructuredData(printedStructuredData);
+        if (ret) {
+            StreamString value;
+            ret = printedStructuredData.MoveToRoot();
+            ret &= printedStructuredData.MoveAbsolute("+Thread2");
+            ret &= printedStructuredData.Read("Class", value);
+            ret &= (value == "RealTimeThread");
+            value = "";
+            AnyType functionsArray = printedStructuredData.GetType("Functions");
+            if (ret) {
+                ret &= (functionsArray.GetDataPointer() != NULL);
+            }
+            uint32 numberOfFunctions = 0u;
+            if (ret) {
+                numberOfFunctions = functionsArray.GetNumberOfElements(0u);
+                ret &= (numberOfFunctions == 2u);
+            }
+            if (ret) {
+                StreamString *functions = new StreamString[numberOfFunctions];
+                Vector<StreamString> functionVector(functions, numberOfFunctions);
+                ret &= (printedStructuredData.Read("Functions", functionVector));
+                ret &= (functions[0] == "GAMGroup1");
+                ret &= (functions[1] == "GAMContainer");
+                delete[] functions;
+            }
+            uint32 numberOfGAMs = 0u;
+            if (ret) {
+                numberOfGAMs = thread2S2->GetNumberOfGAMs();
+                ret = (numberOfGAMs == 4u);
+            }
+
+            if (ret) {
+                StreamString *gams = new StreamString[numberOfGAMs];
+                Vector<StreamString> gamsVector(gams, numberOfGAMs);
+                ret &= (printedStructuredData.Read("GAMs", gamsVector));
+                ret &= (gams[0] == "GAM3");
+                ret &= (gams[1] == "GAM4");
+                ret &= (gams[2] == "GAM5");
+                ret &= (gams[3] == "GAM6");
+                delete[] gams;
+            }
+        }
     }
 
-    ConfigurationDatabase outCDB;
-
-    thread2->ToStructuredData(outCDB);
-    StreamString display;
-    display.Printf("%!", outCDB);
-
-    printf("\n%s\n", display.Buffer());
-
-    StreamString test = "+Thread2 = {\n"
-    "Class = \"RealTimeThread\"\n"
-    "Functions = { \":Functions.PIDGroup1\" } \n"
-    "+PIDGroup1 = {\n"
-    "Class = \"PIDGAMGroup\"\n"
-    "+GAM3 = {\n"
-    "Class = \"PIDGAM\"\n"
-    "}\n"
-    "+GAM4 = {\n"
-    "Class = \"PIDGAM\"\n"
-    "}\n"
-    "}\n"
-    "}\n";
-
-    return test == display;
-}
-
-bool RealTimeThreadTest::TestValidateDataSourceLinks() {
-    ConfigurationDatabase cdb;
-    StreamString conf = ""
-    "$Application1 = {\n"
-    "    Class = RealTimeApplication\n"
-    "    +Functions = {\n"
-    "        Class = ReferenceContainer\n"
-    "        +GAM1 = {\n"
-    "            Class = DummyGAM\n"
-    "            +Input = {\n"
-    "                Class = GAMSignalsContainer\n"
-    "                IsInput = true\n"
-    "                IsFinal = true\n"
-    "                +Counter = {\n"
-    "                    Class = GAMGenericSignal\n"
-    "                    Type = uint32\n"
-    "                    Default = 0\n"
-    "                    Path = DDB.Counter1\n"
-    "                    IsFinal = true\n"
-    "                }\n"
-    "            }\n"
-    "            +Output = {\n"
-    "                Class = GAMSignalsContainer\n"
-    "                IsOutput = true\n"
-    "                IsFinal = true\n"
-    "                +Counter = {\n"
-    "                    Class = GAMGenericSignal\n"
-    "                    Type = uint32\n"
-    "                    Default = 0\n"
-    "                    Path = DDB.Counter2\n"
-    "                    IsFinal = true\n"
-    "                }\n"
-    "            }\n"
-    "        }\n"
-    "        +GAM2 = {\n"
-    "            Class = DummyGAM\n"
-    "            +Input = {\n"
-    "                Class = GAMSignalsContainer\n"
-    "                IsInput = true\n"
-    "                IsFinal = true\n"
-    "                +Counter = {\n"
-    "                    Class = GAMGenericSignal\n"
-    "                    Type = uint32\n"
-    "                    Default = 0\n"
-    "                    Path = DDB.Counter2\n"
-    "                    IsFinal = true\n"
-    "                }\n"
-    "            }\n"
-    "            +Output = {\n"
-    "                Class = GAMSignalsContainer\n"
-    "                IsOutput = true\n"
-    "                IsFinal = true\n"
-    "                +Counter = {\n"
-    "                    Class = GAMGenericSignal\n"
-    "                    Type = uint32\n"
-    "                    Default = 0\n"
-    "                    Path = DDB.Counter1\n"
-    "                    IsFinal = true\n"
-    "                    Cycles = 1" // the only one sync
-    "                }\n"
-    "            }\n"
-    "        }\n"
-    "    }\n"
-    "    +States = {\n"
-    "        Class = ReferenceContainer\n"
-    "        +State1 = {\n"
-    "            Class = RealTimeState\n"
-    "            +Threads = {\n"
-    "                Class = ReferenceContainer\n"
-    "                +Thread1 = {\n"
-    "                    Class = RealTimeThread\n"
-    "                    Functions = {:Functions.GAM1 :Functions.GAM2}\n"
-    "                }\n"
-    "            }\n"
-    "        }\n"
-    "    }\n"
-    "    +Data = {\n"
-    "        Class = DataSourceContainer\n"
-    "        +DDB = {\n"
-    "            Class = DataSource\n"
-    "        }\n"
-    "    }\n"
-    "    +Scheduler = {\n"
-    "        Class = DummyScheduler\n"
-    "    }\n"
-    "}\n";
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
-
-    ReferenceT<RealTimeThread> thread = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
-
-    if (!app->ConfigureArchitecture()) {
-        return false;
-    }
-
-    if (!app->ConfigureDataSource()) {
-        return false;
-    }
-
-    if (!app->ValidateDataSource()) {
-        return false;
-    }
-
-    if (!app->AllocateDataSource()) {
-        return false;
-    }
-
-    if (!app->ConfigureDataSourceLinks()) {
-        return false;
-    }
-
-    bool ret = thread->ValidateDataSourceLinks();
-    ObjectRegistryDatabase::Instance()->CleanUp();
     return ret;
 }
 
-bool RealTimeThreadTest::TestValidateDataSourceLinksFalse_MoreSync() {
-    ConfigurationDatabase cdb;
-    StreamString conf = ""
-    "$Application1 = {\n"
-    "    Class = RealTimeApplication\n"
-    "    +Functions = {\n"
-    "        Class = ReferenceContainer\n"
-    "        +GAM1 = {\n"
-    "            Class = DummyGAM\n"
-    "            +Input = {\n"
-    "                Class = GAMSignalsContainer\n"
-    "                IsInput = true\n"
-    "                IsFinal = true\n"
-    "                +Counter = {\n"
-    "                    Class = GAMGenericSignal\n"
-    "                    Type = uint32\n"
-    "                    Default = 0\n"
-    "                    Path = DDB.Counter1\n"
-    "                    IsFinal = true\n"
-    "                    Cycles = 2\n"
-    "                }\n"
-    "            }\n"
-    "            +Output = {\n"
-    "                Class = GAMSignalsContainer\n"
-    "                IsOutput = true\n"
-    "                IsFinal = true\n"
-    "                +Counter = {\n"
-    "                    Class = GAMGenericSignal\n"
-    "                    Type = uint32\n"
-    "                    Default = 0\n"
-    "                    Path = DDB.Counter2\n"
-    "                    IsFinal = true\n"
-    "                }\n"
-    "            }\n"
-    "        }\n"
-    "        +GAM2 = {\n"
-    "            Class = DummyGAM\n"
-    "            +Input = {\n"
-    "                Class = GAMSignalsContainer\n"
-    "                IsInput = true\n"
-    "                IsFinal = true\n"
-    "                +Counter = {\n"
-    "                    Class = GAMGenericSignal\n"
-    "                    Type = uint32\n"
-    "                    Default = 0\n"
-    "                    Path = DDB.Counter2\n"
-    "                    IsFinal = true\n"
-    "                }\n"
-    "            }\n"
-    "            +Output = {\n"
-    "                Class = GAMSignalsContainer\n"
-    "                IsOutput = true\n"
-    "                IsFinal = true\n"
-    "                +Counter = {\n"
-    "                    Class = GAMGenericSignal\n"
-    "                    Type = uint32\n"
-    "                    Default = 0\n"
-    "                    Path = DDB.Counter1\n"
-    "                    IsFinal = true\n"
-    "                    Cycles = 1"
-    "                }\n"
-    "            }\n"
-    "        }\n"
-    "    }\n"
-    "    +States = {\n"
-    "        Class = ReferenceContainer\n"
-    "        +State1 = {\n"
-    "            Class = RealTimeState\n"
-    "            +Threads = {\n"
-    "                Class = ReferenceContainer\n"
-    "                +Thread1 = {\n"
-    "                    Class = RealTimeThread\n"
-    "                    Functions = {:Functions.GAM1 :Functions.GAM2}\n"
-    "                }\n"
-    "            }\n"
-    "        }\n"
-    "    }\n"
-    "    +Data = {\n"
-    "        Class = DataSourceContainer\n"
-    "        +DDB = {\n"
-    "            Class = DataSource\n"
-    "        }\n"
-    "    }\n"
-    "    +Scheduler = {\n"
-    "        Class = DummyScheduler\n"
-    "    }\n"
-    "}\n";
-    conf.Seek(0);
-    StandardParser parser(conf, cdb);
-    if (!parser.Parse()) {
-        return false;
-    }
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        return false;
-    }
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
-
-    ReferenceT<RealTimeThread> thread = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
-
-    if (!app->ConfigureArchitecture()) {
-        return false;
-    }
-
-    if (!app->ConfigureDataSource()) {
-        return false;
-    }
-
-    if (!app->ValidateDataSource()) {
-        return false;
-    }
-
-    if (!app->AllocateDataSource()) {
-        return false;
-    }
-
-    if (!app->ConfigureDataSourceLinks()) {
-        return false;
-    }
-
-    bool ret = !thread->ValidateDataSourceLinks();
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    return ret;
-}
-#endif

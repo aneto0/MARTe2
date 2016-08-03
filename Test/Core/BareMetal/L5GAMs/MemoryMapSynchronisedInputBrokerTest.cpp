@@ -216,7 +216,9 @@ uint32 MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetNumberOfMemoryBu
  * @brief Returns the correct memory buffer and generates a pattern where the signal
  * address byte N contains the value N*N
  */
-bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
+bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                                                                 const uint32 bufferIdx,
+                                                                                 void *&signalAddress) {
     char8 *memPtr = reinterpret_cast<char8 *>(signalMemory);
     memPtr += offsets[signalIdx];
     uint32 byteSize;
@@ -231,7 +233,8 @@ bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer
     return ret;
 }
 
-const char8 * MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data, const SignalDirection direction) {
+const char8 * MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetBrokerName(StructuredDataI &data,
+                                                                                  const SignalDirection direction) {
     if (direction == InputSignals) {
         return "MemoryMapSynchronisedInputBroker";
     }
@@ -242,7 +245,9 @@ bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::PrepareNextState(cons
     return true;
 }
 
-bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers, const char8* const functionName, void * const gamMemPtr) {
+bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
+                                                                           const char8* const functionName,
+                                                                           void * const gamMemPtr) {
     ReferenceT<MemoryMapSynchronisedInputBroker> broker("MemoryMapSynchronisedInputBroker");
     bool ret = broker.IsValid();
     if (ret) {
@@ -254,7 +259,9 @@ bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetInputBrokers(Refer
     return ret;
 }
 
-bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers, const char8* const functionName, void * const gamMemPtr) {
+bool MemoryMapSynchronisedInputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
+                                                                            const char8* const functionName,
+                                                                            void * const gamMemPtr) {
     return true;
 }
 
@@ -417,6 +424,9 @@ static const char8 * const config1 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
+        "        +Times = {"
+        "            Class = TimesDataSource"
+        "        }"
         "    }"
         "    +States = {"
         "        Class = ReferenceContainer"
@@ -426,7 +436,7 @@ static const char8 * const config1 = ""
         "                Class = ReferenceContainer"
         "                +Thread1 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = {:Functions.GAMC :Functions.GAMA :Functions.GAMF}"
+        "                    Functions = {GAMC GAMA GAMF}"
         "                }"
         "            }"
         "        }"
@@ -436,7 +446,7 @@ static const char8 * const config1 = ""
         "                Class = ReferenceContainer"
         "                +Thread1 = {"
         "                    Class = RealTimeThread"
-        "                    Functions = {:Functions.GAMD :Functions.GAMB :Functions.GAME :Functions.GAMF}"
+        "                    Functions = {GAMD GAMB GAME GAMF}"
         "                }"
         "            }"
         "        }"

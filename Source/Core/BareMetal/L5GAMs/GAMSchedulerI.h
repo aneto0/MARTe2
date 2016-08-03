@@ -99,6 +99,8 @@ public:
      */
     virtual void StopExecution()=0;
 
+    uint32 GetNumberOfExecutables(const char8* stateName, const char8 *threadName);
+
 protected:
 
     /*
@@ -123,6 +125,7 @@ protected:
     };
     struct ScheduledThread {
         ScheduledExecutable * executables;
+        uint32 *cycleTime;
         uint32 numberOfExecutables;
         const char8 * name;
     };
@@ -162,7 +165,7 @@ protected:
 
     ScheduledState *states;
     uint32 numberOfStates;
-    uint32 *cycleTimePtr;
+    StreamString timeDsAddress;
 };
 
 }

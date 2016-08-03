@@ -51,9 +51,14 @@ public:
     bool TestConstructor();
 
     /**
-     * @brief Tests if the function initialises correctly the gam group from a StructuredDataI.
+     * @brief Tests if the context is correctly propagated.
      */
-    bool TestInitialise();
+    bool TestSetContext();
+
+    /**
+     * @brief Tests if a context propagation failure is correctly detected.
+     */
+    bool TestSetContext_Failure();
 
 };
 

@@ -1,8 +1,8 @@
 /**
- * @file GAMGroup.cpp
- * @brief Source file for class GAMGroup
- * @date 24/02/2016
- * @author Giuseppe Ferrò
+ * @file GAMSchedulerIGTest.cpp
+ * @brief Source file for class GAMSchedulerIGTest
+ * @date 02/ago/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMGroup (public, protected, and private). Be aware that some 
+ * the class GAMSchedulerIGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,48 +25,34 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-#define DLL_API
+#include <limits.h>
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "GAM.h"
-#include "GAMGroup.h"
-#include "ReferenceContainerFilterReferencesTemplate.h"
-#include "ReferenceT.h"
+#include "GAMSchedulerITest.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAMGroup::GAMGroup() :
-        ReferenceContainer() {
+TEST(GAMSchedulerIGTest,TestConstructor) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestConstructor());
 }
 
-/*lint -e{1551} no exception should be thrown*/
-GAMGroup::~GAMGroup() {
+TEST(GAMSchedulerIGTest,TestConfigureScheduler) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestConfigureScheduler());
 }
 
-bool GAMGroup::SetContext(Reference context) {
-    ReferenceContainerFilterReferencesTemplate<GAM> gamsFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
-    ReferenceContainer gamsList;
-    Find(gamsList, gamsFilter);
-    uint32 numberOfGAMs = gamsList.Size();
-    uint32 i;
-    bool ret = true;
-    for (i = 0u; (i < numberOfGAMs) && (ret); i++) {
-        ReferenceT<GAM> gam = gamsList.Get(i);
-        ret = gam.IsValid();
-        if(ret){
-            ret = gam->SetContext(context);
-        }
-    }
-    return ret;
-}
-
+TEST(GAMSchedulerIGTest,TestGetNumberOfExecutables) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestGetNumberOfExecutables());
 }

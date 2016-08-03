@@ -565,11 +565,6 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducer
     ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals());
 }
 
-TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducersFalse_InvalidTimeSignals) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_InvalidTimeSignals());
-}
-
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySize) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySize());
@@ -689,4 +684,5 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisat
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestConfigureBeforeInitialisation());
 }
+
 

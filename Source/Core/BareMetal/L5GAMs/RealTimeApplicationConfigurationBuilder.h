@@ -80,10 +80,10 @@ public:
      *   defaultDataSourceName = defaultDataSourceNameIn
      */
     RealTimeApplicationConfigurationBuilder(RealTimeApplication &realTimeApplicationIn,
-                                            const char8 *defaultDataSourceNameIn);
+                                            const char8 * const defaultDataSourceNameIn);
 
     RealTimeApplicationConfigurationBuilder(ConfigurationDatabase &globalDatabaseIn,
-                                            const char8 *defaultDataSourceNameIn);
+                                            const char8 * const defaultDataSourceNameIn);
 
     bool InitialiseSignalsDatabaseFromConfiguration();
 
@@ -431,6 +431,7 @@ public:
      *        }
      *      }
      */
+    //TODO Add the cycle times to the time data source
     bool ResolveStates();
 
     bool ResolveStatesFromConfiguration();
@@ -889,8 +890,8 @@ private:
      * otherwise it shall have the value None.
      * @return true if FlattenSignal returns true for all signals in the functionsDatabase and in the dataSourcesDatabase tree.
      */
-    bool FlattenSignalsDatabase(bool isFunctionsDatabase,
-                                SignalDirection direction);
+    bool FlattenSignalsDatabase(const bool isFunctionsDatabase,
+                                const SignalDirection direction);
 
     /**
      * @brief Flattens a signal from the \a signalDatabase and stores it in the \a resolvedSignal database.
@@ -906,7 +907,7 @@ private:
      * If it is not known and if defaultDataSourceName exists then DataSource will be assumed to be defaultDataSourceName.
      * @return true if \a signalName can be successfully flatten and all of its members added to a new signal node in \a resolvedSignal.
      */
-    bool FlattenSignal(bool isFunctionsDatabase,
+    bool FlattenSignal(const bool isFunctionsDatabase,
                        const char8 * const signalName,
                        ConfigurationDatabase &resolvedSignal,
                        uint32 &signalNumber);
@@ -916,12 +917,12 @@ private:
      * @details It assumes that the functionsDatabase and the dataSourcesDatabase are pointing at the correct signal already. If the signal
      *  already exits in the DataSource the definitions of the signal in the GAM and the one already existent in the DataSource will be merged.
      *  If incompatibilities are found an error will be returned.
-     * @param[in] gamName name of the GAM where the signal is going to be copied from.
+     * @param[in] functionName name of the GAM where the signal is going to be copied from.
      * @param[in] dataSourceName name of the DataSource where the signal is going to be copied to.
      * @return true if the signal from the GAM \a gamName can be successfully added to the DataSource with name \a dataSourceName. It will
      *  return false if the signal already exists in the DataSource and incompatibilities between definitions are found.
      */
-    bool AddSignalToDataSource(StreamString gamName,
+    bool AddSignalToDataSource(StreamString functionName,
                                StreamString dataSourceName);
 
     /**
@@ -930,7 +931,7 @@ private:
      * @param[in] direction can be either InputSignals or OutputSignals
      * @return true if all the calls to AddSignalToDataSource are successful.
      */
-    bool ResolveDataSources(SignalDirection direction);
+    bool ResolveDataSources(const SignalDirection direction);
 
     /**
      * @brief @see ResolveFunctionSignals()
@@ -1043,9 +1044,11 @@ private:
                        const char8 * threadName,
                        uint32 &syncSignals);
 
-    bool AddSignalsToTimeStamp(const char8* tDsName);
+    bool AddSignalTime(const char8* tDsName);
+    bool AddThreadCycleTime(const char8* threadFullName);
 
-    bool WriteTimeSignalInfo(const char8*signalNameStr);
+    bool WriteTimeSignalInfo(const char8*signalName);
+    bool CheckTimeSignalInfo();
 
 };
 
