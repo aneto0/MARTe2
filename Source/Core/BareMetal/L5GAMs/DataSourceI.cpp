@@ -654,12 +654,8 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
         found = (application.IsValid());
     }
     bool ret = found;
-    if (!ret) {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No RealTimeApplication found for DataSourceI : %s", GetName())
-    }
 
     if (ret) {
-        //If no Functions are defined it means that no one wants to interact with this DataSourceI. This is not an error.
         if (configuredDatabase.MoveAbsolute("Functions")) {
             uint32 numberOfFunctions = configuredDatabase.GetNumberOfChildren();
             for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
@@ -726,6 +722,9 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
                 }
             }
         }
+    }
+    else {
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No RealTimeApplication found for DataSourceI : %s", GetName())
     }
     return ret;
 }
