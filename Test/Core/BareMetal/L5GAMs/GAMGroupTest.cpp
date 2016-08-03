@@ -120,7 +120,8 @@ public:
 
 GAMGroupTestGAMGroup1    ();
 
-    virtual void PrepareNextState(const RealTimeStateInfo &status);
+    virtual bool PrepareNextState(const char8 * currentStateName,
+                                  const char8 * nextStateName);
 
     bool SetContext(Reference context);
 };
@@ -129,7 +130,9 @@ GAMGroupTestGAMGroup1::GAMGroupTestGAMGroup1() :
         GAMGroup() {
 }
 
-void GAMGroupTestGAMGroup1::PrepareNextState(const RealTimeStateInfo &status) {
+bool GAMGroupTestGAMGroup1::PrepareNextState(const char8 * currentStateName,
+                                             const char8 * nextStateName) {
+    return true;
 
 }
 

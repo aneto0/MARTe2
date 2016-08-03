@@ -350,7 +350,7 @@ bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
             }
             if (!ret) {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                        "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be > 1 and is %d", GetName(),
+                                        "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be > 0 but is %d", GetName(),
                                         stateName.Buffer(), signalName.Buffer(), nProducers)
             }
         }

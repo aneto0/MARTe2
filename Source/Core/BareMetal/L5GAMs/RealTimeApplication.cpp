@@ -41,6 +41,7 @@
 #include "AdvancedErrorManagement.h"
 #include "Matrix.h"
 #include "RealTimeApplicationConfigurationBuilder.h"
+#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -239,8 +240,8 @@ bool RealTimeApplication::ValidateDataSourceLinks() {
 
     return ret;
 }
-
-bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
+bool RealTimeApplication::PrepareNextState(const char8 * currentStateName,
+        const char8 * nextStateName) {
 
     RealTimeStateInfo status;
     status.currentState = currentStateName.Buffer();
@@ -292,7 +293,6 @@ bool RealTimeApplication::StopExecution() {
     return ret;
 }
 #endif
-#include <stdio.h>
 
 static void PrintDatabases(RealTimeApplicationConfigurationBuilder &rtAppBuilder) {
     return;
@@ -831,7 +831,7 @@ bool RealTimeApplication::AllocateDataSourceMemory() {
             StreamString fullDsName = "Data.";
             ret = dataSourcesDatabase.Read("QualifiedName", fullDsName);
             if (ret) {
-                ReferenceT < DataSourceI > ds = Find(fullDsName.Buffer());
+                ReferenceT<DataSourceI> ds = Find(fullDsName.Buffer());
                 ret = ds.IsValid();
                 if (ret) {
                     ret = ds->AllocateMemory();
@@ -857,7 +857,7 @@ bool RealTimeApplication::AddBrokersToFunctions() {
             if (ret) {
                 ret = dataSourcesDatabase.Read("QualifiedName", fullDataSourcePath);
             }
-            ReferenceT < DataSourceI > dataSource;
+            ReferenceT<DataSourceI> dataSource;
             if (ret) {
                 dataSource = Find(fullDataSourcePath.Buffer());
                 ret = dataSource.IsValid();
@@ -878,58 +878,22 @@ bool RealTimeApplication::AddBrokersToFunctions() {
     return ret;
 }
 
-bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
+bool RealTimeApplication::PrepareNextState(const char8 * nextStateName) {
 
-    RealTimeStateInfo status;
-    status.currentState = currentStateName.Buffer();
-    status.nextState = nextStateName;
-
-    StreamString nextStatePath = "States.";
-    nextStatePath += nextStateName;
-
-    ReferenceT < RealTimeState > nextState = Find(nextStatePath.Buffer());
-    bool ret = nextState.IsValid();
+    bool ret = statesContainer.IsValid();
     if (ret) {
-        // change the context in gam groups if needed
-        nextState->PrepareState(status);
-    }
-    if (ret) {
-        ret = dataSourceContainer.IsValid();
-        if (ret) {
-            uint32 numberOfDataSources = dataSourceContainer->Size();
-            for (uint32 i = 0u; (i < numberOfDataSources) && (ret); i++) {
-                ReferenceT < DataSourceI > dataSource = dataSourceContainer->Get(i);
-                ret = dataSource.IsValid();
-                if (ret) {
-                    // resets the default value in data sources if needed
-                    ret = dataSource->PrepareNextState(status);
-                    if (!ret) {
-                        REPORT_ERROR(ErrorManagement::FatalError, "Failed PrepareNextState");
-                    }
-                }
-                else {
-                    REPORT_ERROR(ErrorManagement::FatalError, "Invalid DataSource");
-                }
+        uint32 numberOfStates = statesContainer->Size();
+        for (uint32 i = 0u; i < numberOfStates && ret; i++) {
+            ReferenceT<RealTimeState> state = statesContainer->Get(i);
+            ret = state.IsValid();
+            if (ret) {
+                ret = state->PrepareNextState(currentStateName.Buffer(), nextStateName);
             }
         }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Data container not found");
-        }
     }
-    /*
-     if (ret) {
-     ReferenceT<GAMSchedulerI> scheduler = schedulerContainer;
-     ret = scheduler.IsValid();
-     // save the accelerator to the next group of threads to be executed
-     if (ret) {
-     ret = scheduler->PrepareNextState(status);
-     }
-     if (ret) {
-     scheduler->ChangeState(activeBuffer);
-     }
-     }*/
 
     return ret;
+
 }
 
 bool RealTimeApplication::StartExecution() {
@@ -984,18 +948,18 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                 }
             }
         }
-       /* if (ret) {
-            ret = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                Reference container = Get(i);
-                if (container.IsValid()) {
-                    if (StringHelper::Compare(container->GetName(), "Scheduler") == 0) {
-                        schedulerContainer = container;
-                        ret = schedulerContainer.IsValid();
-                    }
-                }
-            }
-        }*/
+        /* if (ret) {
+         ret = false;
+         for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+         Reference container = Get(i);
+         if (container.IsValid()) {
+         if (StringHelper::Compare(container->GetName(), "Scheduler") == 0) {
+         schedulerContainer = container;
+         ret = schedulerContainer.IsValid();
+         }
+         }
+         }
+         }*/
     }
 
     return ret;
@@ -1011,12 +975,12 @@ bool RealTimeApplication::ConfigureArchitecture() {
         // for each of them call Validate(*)
         uint32 numberOfStates = statesContainer->Size();
         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-            ReferenceT < RealTimeState > state = statesContainer->Get(i);
+            ReferenceT<RealTimeState> state = statesContainer->Get(i);
             if (state.IsValid()) {
                 // for each state call the configuration function
                 uint32 numberOfThreads = state->Size();
                 for (uint32 j = 0u; (j < numberOfThreads) && (ret); j++) {
-                    ReferenceT < RealTimeThread > thread = state->Get(j);
+                    ReferenceT<RealTimeThread> thread = state->Get(j);
                     if (thread.IsValid()) {
                         ret = thread->ConfigureArchitecture();
                     }

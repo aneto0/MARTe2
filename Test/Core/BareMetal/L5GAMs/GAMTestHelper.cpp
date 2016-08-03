@@ -84,7 +84,7 @@ DECLARE_STRUCT_INTROSPECTION(TestStructD, TestStructDEntries);
 
 GAM1::GAM1() :
         GAM() {
-
+    numberOfExecutions=0u;
 }
 
 GAM1::~GAM1() {
@@ -118,6 +118,7 @@ bool GAM1::Execute() {
         ReferenceT<ExecutableI> broker = outputBrokers->Get(b);
         broker->Execute();
     }
+    numberOfExecutions++;
 
     return true;
 }
@@ -133,7 +134,9 @@ CLASS_REGISTER(GAM1, "1.0");
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 
-void GAMGroup1::PrepareNextState(const RealTimeStateInfo &status) {
+bool GAMGroup1::PrepareNextState(const char8 * currentStateName,
+                                 const char8 * nextStateName) {
+    return true;
 
 }
 
