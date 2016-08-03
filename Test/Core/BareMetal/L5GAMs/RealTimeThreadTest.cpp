@@ -37,7 +37,6 @@
 #include "RealTimeThreadTest.h"
 #include "StandardParser.h"
 
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -683,8 +682,8 @@ bool RealTimeThreadTest::TestGetGAMs() {
     const uint32 numberOfThreads = 4;
     const uint32 maxGAMs = 4;
     ReferenceT<RealTimeThread> threads[numberOfThreads] = { thread1S1, thread2S1, thread1S2, thread2S2 };
-    const char8 * const gamNames[numberOfThreads][maxGAMs] = { { "GAM1", "GAM2", NULL, NULL }, { "GAM3", "GAM4", NULL, NULL }, { "GAM1", "GAM2", NULL, NULL }, {
-            "GAM3", "GAM4", "GAM5", "GAM6" } };
+    const char8 * const gamNames[numberOfThreads][maxGAMs] = { { "GAM1", "GAM2", NULL, NULL }, { "GAM3", "GAM4", NULL,
+    NULL }, { "GAM1", "GAM2", NULL, NULL }, { "GAM3", "GAM4", "GAM5", "GAM6" } };
 
     uint32 n;
     for (n = 0u; (n < numberOfThreads) && (ret); n++) {
@@ -742,49 +741,202 @@ bool RealTimeThreadTest::TestGetCPU() {
     return ok;
 }
 
-/*bool RealTimeThreadTest::TestToStructuredData() {
- ConfigurationDatabase cdb;
- StreamString conf = cdbStr1;
- conf.Seek(0);
- StandardParser parser(conf, cdb);
- if (!parser.Parse()) {
- return false;
- }
- ObjectRegistryDatabase::Instance()->CleanUp();
- if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
- return false;
- }
- ReferenceT<RealTimeThread> thread2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
+bool RealTimeThreadTest::TestToStructuredData() {
+    bool ret = InitialiseRealTimeThreadEnviroment(config1);
+    ReferenceT<RealTimeThread> thread1S1;
+    ReferenceT<RealTimeThread> thread2S1;
+    ReferenceT<RealTimeThread> thread1S2;
+    ReferenceT<RealTimeThread> thread2S2;
+    if (ret) {
+        thread1S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread1");
+        ret = thread1S1.IsValid();
+    }
+    if (ret) {
+        thread2S1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1.Threads.Thread2");
+        ret = thread2S1.IsValid();
+    }
+    if (ret) {
+        thread1S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread1");
+        ret = thread1S2.IsValid();
+    }
+    if (ret) {
+        thread2S2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2.Threads.Thread2");
+        ret = thread2S2.IsValid();
+    }
+    if (ret) {
+        ConfigurationDatabase printedStructuredData;
+        ret = thread1S1->ToStructuredData(printedStructuredData);
+        if (ret) {
+            StreamString value;
+            ret = printedStructuredData.MoveToRoot();
+            ret &= printedStructuredData.MoveAbsolute("+Thread1");
+            ret &= printedStructuredData.Read("Class", value);
+            ret &= (value == "RealTimeThread");
+            value = "";
+            AnyType functionsArray = printedStructuredData.GetType("Functions");
+            if (ret) {
+                ret &= (functionsArray.GetDataPointer() != NULL);
+            }
+            uint32 numberOfFunctions = 0u;
+            if (ret) {
+                numberOfFunctions = functionsArray.GetNumberOfElements(0u);
+                ret &= (numberOfFunctions == 2u);
+            }
+            if (ret) {
+                StreamString *functions = new StreamString[numberOfFunctions];
+                Vector<StreamString> functionVector(functions, numberOfFunctions);
+                ret &= (printedStructuredData.Read("Functions", functionVector));
+                ret &= (functions[0] == "GAM1");
+                ret &= (functions[1] == "GAM2");
+                delete[] functions;
+            }
+            uint32 numberOfGAMs = 0u;
+            if (ret) {
+                numberOfGAMs = thread1S1->GetNumberOfGAMs();
+                ret = (numberOfGAMs == 2u);
+            }
 
- ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State1");
- ReferenceT<RealTimeState> state2 = ObjectRegistryDatabase::Instance()->Find("Application1.States.State2");
- ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Application1");
- if (!thread2->ConfigureArchitecture(*app.operator->(), *state1.operator->())) {
- return false;
- }
+            if (ret) {
+                StreamString *gams = new StreamString[numberOfGAMs];
+                Vector<StreamString> gamsVector(gams, numberOfGAMs);
+                ret &= (printedStructuredData.Read("GAMs", gamsVector));
+                ret &= (gams[0] == "GAM1");
+                ret &= (gams[1] == "GAM2");
+                delete[] gams;
+            }
+        }
+    }
+    if (ret) {
+        ConfigurationDatabase printedStructuredData;
+        ret = thread2S1->ToStructuredData(printedStructuredData);
+        if (ret) {
+            StreamString value;
+            ret = printedStructuredData.MoveToRoot();
+            ret &= printedStructuredData.MoveAbsolute("+Thread2");
+            ret &= printedStructuredData.Read("Class", value);
+            ret &= (value == "RealTimeThread");
+            value = "";
+            AnyType functionsArray = printedStructuredData.GetType("Functions");
+            if (ret) {
+                ret &= (functionsArray.GetDataPointer() != NULL);
+            }
+            uint32 numberOfFunctions = 0u;
+            if (ret) {
+                numberOfFunctions = functionsArray.GetNumberOfElements(0u);
+                ret &= (numberOfFunctions == 1u);
+            }
+            if (ret) {
+                StreamString *functions = new StreamString[numberOfFunctions];
+                Vector<StreamString> functionVector(functions, numberOfFunctions);
+                ret &= (printedStructuredData.Read("Functions", functionVector));
+                ret &= (functions[0] == "GAMGroup1");
+                delete[] functions;
+            }
+            uint32 numberOfGAMs = 0u;
+            if (ret) {
+                numberOfGAMs = thread2S1->GetNumberOfGAMs();
+                ret = (numberOfGAMs == 2u);
+            }
 
- ConfigurationDatabase outCDB;
+            if (ret) {
+                StreamString *gams = new StreamString[numberOfGAMs];
+                Vector<StreamString> gamsVector(gams, numberOfGAMs);
+                ret &= (printedStructuredData.Read("GAMs", gamsVector));
+                ret &= (gams[0] == "GAM3");
+                ret &= (gams[1] == "GAM4");
+                delete[] gams;
+            }
+        }
+    }
+    if (ret) {
+        ConfigurationDatabase printedStructuredData;
+        ret = thread1S2->ToStructuredData(printedStructuredData);
+        if (ret) {
+            StreamString value;
+            ret = printedStructuredData.MoveToRoot();
+            ret &= printedStructuredData.MoveAbsolute("+Thread1");
+            ret &= printedStructuredData.Read("Class", value);
+            ret &= (value == "RealTimeThread");
+            value = "";
+            AnyType functionsArray = printedStructuredData.GetType("Functions");
+            if (ret) {
+                ret &= (functionsArray.GetDataPointer() != NULL);
+            }
+            uint32 numberOfFunctions = 0u;
+            if (ret) {
+                numberOfFunctions = functionsArray.GetNumberOfElements(0u);
+                ret &= (numberOfFunctions == 2u);
+            }
+            if (ret) {
+                StreamString *functions = new StreamString[numberOfFunctions];
+                Vector<StreamString> functionVector(functions, numberOfFunctions);
+                ret &= (printedStructuredData.Read("Functions", functionVector));
+                ret &= (functions[0] == "GAM1");
+                ret &= (functions[1] == "GAM2");
+                delete[] functions;
+            }
+            uint32 numberOfGAMs = 0u;
+            if (ret) {
+                numberOfGAMs = thread1S2->GetNumberOfGAMs();
+                ret = (numberOfGAMs == 2u);
+            }
 
- thread2->ToStructuredData(outCDB);
- StreamString display;
- display.Printf("%!", outCDB);
+            if (ret) {
+                StreamString *gams = new StreamString[numberOfGAMs];
+                Vector<StreamString> gamsVector(gams, numberOfGAMs);
+                ret &= (printedStructuredData.Read("GAMs", gamsVector));
+                ret &= (gams[0] == "GAM1");
+                ret &= (gams[1] == "GAM2");
+                delete[] gams;
+            }
+        }
+    }
+    if (ret) {
+        ConfigurationDatabase printedStructuredData;
+        ret = thread2S2->ToStructuredData(printedStructuredData);
+        if (ret) {
+            StreamString value;
+            ret = printedStructuredData.MoveToRoot();
+            ret &= printedStructuredData.MoveAbsolute("+Thread2");
+            ret &= printedStructuredData.Read("Class", value);
+            ret &= (value == "RealTimeThread");
+            value = "";
+            AnyType functionsArray = printedStructuredData.GetType("Functions");
+            if (ret) {
+                ret &= (functionsArray.GetDataPointer() != NULL);
+            }
+            uint32 numberOfFunctions = 0u;
+            if (ret) {
+                numberOfFunctions = functionsArray.GetNumberOfElements(0u);
+                ret &= (numberOfFunctions == 2u);
+            }
+            if (ret) {
+                StreamString *functions = new StreamString[numberOfFunctions];
+                Vector<StreamString> functionVector(functions, numberOfFunctions);
+                ret &= (printedStructuredData.Read("Functions", functionVector));
+                ret &= (functions[0] == "GAMGroup1");
+                ret &= (functions[1] == "GAMContainer");
+                delete[] functions;
+            }
+            uint32 numberOfGAMs = 0u;
+            if (ret) {
+                numberOfGAMs = thread2S2->GetNumberOfGAMs();
+                ret = (numberOfGAMs == 4u);
+            }
 
- printf("\n%s\n", display.Buffer());
+            if (ret) {
+                StreamString *gams = new StreamString[numberOfGAMs];
+                Vector<StreamString> gamsVector(gams, numberOfGAMs);
+                ret &= (printedStructuredData.Read("GAMs", gamsVector));
+                ret &= (gams[0] == "GAM3");
+                ret &= (gams[1] == "GAM4");
+                ret &= (gams[2] == "GAM5");
+                ret &= (gams[3] == "GAM6");
+                delete[] gams;
+            }
+        }
+    }
 
- StreamString test = "+Thread2 = {\n"
- "Class = \"RealTimeThread\"\n"
- "Functions = { \"PIDGroup1\" } \n"
- "+PIDGroup1 = {\n"
- "Class = \"PIDGAMGroup\"\n"
- "+GAM3 = {\n"
- "Class = \"PIDGAM\"\n"
- "}\n"
- "+GAM4 = {\n"
- "Class = \"PIDGAM\"\n"
- "}\n"
- "}\n"
- "}\n";
-
- return test == display;
- }*/
+    return ret;
+}
 

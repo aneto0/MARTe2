@@ -103,8 +103,8 @@ TEST(RealTimeThreadGTest,TestGetCPU) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestGetCPU());
 }
-/*
-TEST(RealTimeThreadGTest,TestGetGAMs) {
+
+TEST(RealTimeThreadGTest,TestToStructuredData) {
     RealTimeThreadTest test;
-    ASSERT_TRUE(test.TestGetGAMs());
-}*/
+    ASSERT_TRUE(test.TestToStructuredData());
+}
