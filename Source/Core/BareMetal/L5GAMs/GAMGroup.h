@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
-#include "RealTimeStateInfo.h"
 #include "StatefulI.h"
 
 /*---------------------------------------------------------------------------*/

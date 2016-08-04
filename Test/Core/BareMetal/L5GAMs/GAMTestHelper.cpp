@@ -206,7 +206,8 @@ const char8 *DS1::GetBrokerName(StructuredDataI &data,
 
 }
 
-bool DS1::PrepareNextState(const MARTe::RealTimeStateInfo&) {
+bool DS1::PrepareNextState(const char8 * const currentStateName,
+                           const char8 * const nextStateName) {
     return true;
 }
 
@@ -338,7 +339,8 @@ const char8 *Driver1::GetBrokerName(StructuredDataI &data,
 
 }
 
-bool Driver1::PrepareNextState(const RealTimeStateInfo &status) {
+bool Driver1::PrepareNextState(const char8 * const currentStateName,
+                               const char8 * const nextStateName) {
     return true;
 }
 
@@ -525,7 +527,8 @@ void PIDGAMGroup::SetUp() {
     context = 1u;
 }
 
-void PIDGAMGroup::PrepareNextState(const RealTimeStateInfo &status) {
+void PIDGAMGroup::PrepareNextState(const char8 * const currentStateName,
+                                   const char8 * const nextStateName) {
     if (StringHelper::Compare(status.currentState, "state1") == 0) {
         if (StringHelper::Compare(status.nextState, "state2") == 0) {
             context++;

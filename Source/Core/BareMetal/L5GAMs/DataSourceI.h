@@ -32,9 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ConfigurationDatabase.h"
-#include "RealTimeStateInfo.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
+#include "StatefulI.h"
 #include "StaticList.h"
 
 /*---------------------------------------------------------------------------*/
@@ -42,10 +42,6 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-//class BrokerI;
-//class RealTimeApplication;
-//class GAM;
 
 enum SignalDirection {
     InputSignals, OutputSignals, None
@@ -68,7 +64,7 @@ enum SignalDirection {
  *    }
  * }
  */
-class DLL_API DataSourceI: public ReferenceContainer {
+class DLL_API DataSourceI: public ReferenceContainer, public StatefulI {
 
 public:
     /**
@@ -577,13 +573,6 @@ public:
      */
     virtual const char8 *GetBrokerName(StructuredDataI &data,
                                        const SignalDirection direction)=0;
-
-    /**
-     * @brief This function is called previous to a state change and allows the DataSourceI to react in advance.
-     * @param[in] status information about the state change.
-     * @return true if the state change can be performed.
-     */
-    virtual bool PrepareNextState(const RealTimeStateInfo &status) = 0;
 
     /**
      * @brief Adds to the \a inputBrokers all the BrokerI instances that will interact with the GAM with name \a functionName.

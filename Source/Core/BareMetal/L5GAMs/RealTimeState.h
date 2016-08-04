@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ObjectRegistryDatabase.h"
-#include "RealTimeStateInfo.h"
 #include "GAMGroup.h"
 #include "RealTimeApplication.h"
 /*---------------------------------------------------------------------------*/
@@ -88,8 +87,8 @@ public:
     bool AddStatefuls(ReferenceContainer &statefulsIn);
 
 
-    virtual bool PrepareNextState(const char8 * currentStateName,
-                                  const char8 * nextStateName);
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateName);
 
 private:
 

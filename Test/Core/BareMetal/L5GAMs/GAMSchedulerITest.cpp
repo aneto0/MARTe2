@@ -270,8 +270,8 @@ GAMSchedulerITest::GAMSchedulerITest() {
             "        +DDB2 = {"
             "            Class = GAMDataSource"
             "        }"
-            "        +Times = {"
-            "            Class = TimesDataSource"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
             "        }"
             "    }"
             "    +States = {"
@@ -307,7 +307,7 @@ GAMSchedulerITest::GAMSchedulerITest() {
             "    }"
             "    +Scheduler = {"
             "        Class = DummyScheduler"
-            "        TimesDataSource = \"Times\""
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -474,8 +474,8 @@ bool GAMSchedulerITest::TestConfigureSchedulerFalse_InvalidState(){
             "        +DDB2 = {"
             "            Class = GAMDataSource"
             "        }"
-            "        +Times = {"
-            "            Class = TimesDataSource"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
             "        }"
             "    }"
             "    +States = {"
@@ -503,7 +503,7 @@ bool GAMSchedulerITest::TestConfigureSchedulerFalse_InvalidState(){
             "    }"
             "    +Scheduler = {"
             "        Class = DummyScheduler"
-            "        TimesDataSource = \"Times\""
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 

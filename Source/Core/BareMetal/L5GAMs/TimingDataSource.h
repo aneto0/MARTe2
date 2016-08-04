@@ -1,8 +1,8 @@
 /**
- * @file BrokerContainerTest.h
- * @brief Header file for class BrokerContainerTest
- * @date 21/04/2016
- * @author Giuseppe Ferrò
+ * @file TimingDataSource.h
+ * @brief Header file for class TimingDataSource
+ * @date 01/ago/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class BrokerContainerTest
+ * @details This header file contains the declaration of the class TimingDataSource
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef BROKERCONTAINERTEST_H_
-#define BROKERCONTAINERTEST_H_
+#ifndef TimingDataSource_H_
+#define TimingDataSource_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,57 +32,28 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "BrokerContainer.h"
+#include "GAMDataSource.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
+namespace MARTe {
 
-class BrokerContainerTest {
+class TimingDataSource: public GAMDataSource {
 public:
+    CLASS_REGISTER_DECLARATION()
+    TimingDataSource();
 
-    bool TestConstructor();
-
-    bool TestAddSignal();
-
-    bool TestAddSignal_SameBrokerSupported();
-
-    bool TestAddSignalFalse_NotSupported();
-
-    bool TestGetSignal();
-
-    bool TestGetSignalByName();
-
-    bool TestGetSignalNumberOfSamples();
-
-    bool TestGetNumberOfSignals();
-
-    bool TestFinalise();
-
-    bool TestFinaliseFalse_MoreThanOneSync();
-
-    bool TestInsertNewBroker();
-
-    bool TestSetAsInputTrue();
-
-    bool TestSetAsInput(bool flag);
-
-    bool TestSetApplication();
-
-    bool TestRead();
-
-    bool TestWrite();
-
-
-//    bool TestWrite();
-
+    virtual ~TimingDataSource();
+    virtual bool SetConfiguredDatabase(StructuredDataI & data);
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* BROKERCONTAINERTEST_H_ */
+#endif /* TimingDataSource_H_ */
 

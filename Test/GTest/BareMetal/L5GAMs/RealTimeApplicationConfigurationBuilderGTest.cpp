@@ -535,9 +535,9 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducer
     ASSERT_TRUE(test.TestVerifyConsumersAndProducers_Ranges3());
 }
 
-TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers_TimesSignals) {
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers_TimingSignals) {
     RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestVerifyConsumersAndProducers_TimesSignals());
+    ASSERT_TRUE(test.TestVerifyConsumersAndProducers_TimingSignals());
 }
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducersFalse_MoreProducers) {

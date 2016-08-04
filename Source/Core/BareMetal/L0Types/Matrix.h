@@ -142,7 +142,18 @@ public:
      * @param[in] rows The row to retrieve.
      * @return the vector associated to the specified row.
      */
-    Vector<T> operator [](uint32 rows);
+    Vector<T> operator[](uint32 rows);
+
+    /**
+     * @brief Returns a reference to a cell indexed by row and column.
+     * @param[in] row is the index for the row
+     * @param[in] col is the index for the column
+     * @pre
+     *   row >= 0 && row < GetNumberOfRows() &&
+     *   col >= 0 && col < GetNumberOfColumns()
+     * @return a T& which can be used for reading/writing the cell.
+     */
+    T& operator()(const uint32 row, const uint32 col);
 
     /**
      * @brief Gets the data pointer associated to the raw matrix data.
@@ -353,7 +364,7 @@ inline uint32 Matrix<T>::GetNumberOfRows() const {
 }
 
 template<typename T>
-Vector<T> Matrix<T>::operator [](uint32 element) {
+Vector<T> Matrix<T>::operator[](uint32 element) {
     Vector<T> vec;
 
     if (!staticDeclared) {
@@ -365,6 +376,21 @@ Vector<T> Matrix<T>::operator [](uint32 element) {
         vec = Vector<T>(&beginMemory[element * numberOfColumns], numberOfColumns);
     }
     return vec;
+}
+
+template<typename T>
+T& Matrix<T>::operator()(const uint32 row, const uint32 col) {
+    T* result;
+    if (!staticDeclared) {
+        T** mat = reinterpret_cast<T**>(dataPointer);
+        result = &mat[row][col];
+    }
+    else {
+        T* mat = reinterpret_cast<T*>(dataPointer);
+        T* line = &mat[row*numberOfColumns];
+        result = &line[col];
+    }
+    return (*result);
 }
 
 template<typename T>

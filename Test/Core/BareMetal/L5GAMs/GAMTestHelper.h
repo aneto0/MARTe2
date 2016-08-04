@@ -267,7 +267,8 @@ DS1    ();
 
     virtual const char8 *GetBrokerName(StructuredDataI &data, const SignalDirection direction);
 
-    virtual bool PrepareNextState(const MARTe::RealTimeStateInfo&);
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateName);
 
     virtual bool ChangeState();
 
@@ -309,8 +310,8 @@ virtual bool AllocateMemory();
 
 virtual const char8 *GetBrokerName(StructuredDataI &data, const SignalDirection direction);
 
-virtual bool PrepareNextState(const RealTimeStateInfo &status);
-
+virtual bool PrepareNextState(const char8 * const currentStateName,
+                              const char8 * const nextStateName);
 virtual bool ChangeState();
 
 virtual bool GetInputBrokers(ReferenceContainer &inputBrokers,

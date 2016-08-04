@@ -35,7 +35,6 @@
 #include "RealTimeApplicationConfigurationBuilder.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
-#include "RealTimeStateInfo.h"
 #include "StatefulI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -184,8 +183,7 @@ public:
        * @param[in] status contains informations about the current and the next state.
        * @return false in case of errors, true otherwise.
        */
-      virtual bool PrepareNextState(
-                                    const char8 * nextStateName);
+      virtual bool PrepareNextState(const char8 * const nextStateName);
 
 
       bool StartExecution();

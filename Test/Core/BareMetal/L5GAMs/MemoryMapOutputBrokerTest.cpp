@@ -159,7 +159,8 @@ MemoryMapOutputBrokerDataSourceTestHelper    ();
     virtual const char8 *GetBrokerName(StructuredDataI &data,
             const SignalDirection direction);
 
-    virtual bool PrepareNextState(const RealTimeStateInfo &status);
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateName);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
@@ -245,7 +246,8 @@ const char8 * MemoryMapOutputBrokerDataSourceTestHelper::GetBrokerName(Structure
     return "MemoryMapOutputBroker";
 }
 
-bool MemoryMapOutputBrokerDataSourceTestHelper::PrepareNextState(const RealTimeStateInfo &status) {
+bool MemoryMapOutputBrokerDataSourceTestHelper::PrepareNextState(const char8 * const currentStateName,
+                                                                 const char8 * const nextStateName) {
     return true;
 }
 
@@ -429,8 +431,8 @@ static const char8 * const config1 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -458,6 +460,7 @@ static const char8 * const config1 = ""
         "    }"
         "    +Scheduler = {"
         "        Class = MemoryMapOutputBrokerTestScheduler1"
+        "        TimingDataSource = Timings"
         "    }"
         "}";
 /*---------------------------------------------------------------------------*/

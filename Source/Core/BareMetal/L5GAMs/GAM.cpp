@@ -417,8 +417,8 @@ bool GAM::GetSignalByteOffsetInfo(const SignalDirection direction,
         ret = configuredDatabase.Read("ByteOffset", byteOffsetMat);
     }
     if (ret) {
-        byteOffsetStart = byteOffsetMat[byteOffsetIndex][0u];
-        byteOffsetSize = byteOffsetMat[byteOffsetIndex][1u];
+        byteOffsetStart = byteOffsetMat(byteOffsetIndex,0u);
+        byteOffsetSize = byteOffsetMat(byteOffsetIndex,1u);
     }
 
     return ret;
@@ -461,8 +461,8 @@ bool GAM::GetSignalRangesInfo(const SignalDirection direction,
         ret = configuredDatabase.Read("Ranges", rangesMat);
     }
     if (ret) {
-        rangeStart = rangesMat[rangeIndex][0u];
-        rangeEnd = rangesMat[rangeIndex][1u];
+        rangeStart = rangesMat(rangeIndex,0u);
+        rangeEnd = rangesMat(rangeIndex,1u);
     }
 
     return ret;

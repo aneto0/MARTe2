@@ -35,8 +35,8 @@
 #include "DataSourceI.h"
 #include "MemoryArea.h"
 #include "RealTimeApplication.h"
-#include "RealTimeStateInfo.h"
 #include "ReferenceT.h"
+#include "StatefulI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -117,10 +117,12 @@ public:
      * details For every signal that was not used in the previous state and that has a default value specified on its configuration,
      *  the first of value of this signal on the next state will be the specified the Default (see RealTimeApplicationConfigurationBuilder).
      *  If the Default is not specified then the signal memory is set to zero for the next state.
-     * @param[in] status information about the state change.
+     * @param[in] currentStateName the name of the current state being executed.
+     * @param[in] nextStateName the name of the next state to be executed.
      * @return true if the state change can be performed and all the default values successfully applied.
      */
-    virtual bool PrepareNextState(const RealTimeStateInfo &status);
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateName);
 
     /**
      * @brief Tries to initialise a MemoryMapInputBroker with the function input parameters.

@@ -102,7 +102,8 @@ DataSourceIGAMTest1    ();
     virtual const char8 *GetBrokerName(StructuredDataI &data,
             const SignalDirection direction);
 
-    virtual bool PrepareNextState(const RealTimeStateInfo &status);
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+            const char8 * const nextStateName);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
@@ -149,7 +150,8 @@ const char8 *DataSourceIGAMTest1::GetBrokerName(StructuredDataI &data,
     return "BrokerITestGAMTest1";
 }
 
-bool DataSourceIGAMTest1::PrepareNextState(const RealTimeStateInfo &status) {
+bool DataSourceIGAMTest1::PrepareNextState(const char8 * const currentStateName,
+                                           const char8 * const nextStateName) {
     return true;
 }
 
@@ -334,8 +336,8 @@ static const char8 * const gamTestConfig1 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
 
         "    }"
@@ -364,6 +366,7 @@ static const char8 * const gamTestConfig1 = ""
         "    }"
         "    +Scheduler = {"
         "        Class = GAMTestScheduler1"
+        "        TimingDataSource = Timings"
         "    }"
         "}";
 
@@ -453,8 +456,8 @@ static const char8 * const gamTestConfig2 = ""
         "        +DDB2 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -482,6 +485,7 @@ static const char8 * const gamTestConfig2 = ""
         "    }"
         "    +Scheduler = {"
         "        Class = GAMTestScheduler1"
+        "        TimingDataSource = Timings"
         "    }"
         "}";
 
@@ -528,8 +532,8 @@ static const char8 * const gamTestConfig3 = ""
         "        +DS1 = {"
         "            Class = DataSourceIGAMTest1"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -547,6 +551,7 @@ static const char8 * const gamTestConfig3 = ""
         "    }"
         "    +Scheduler = {"
         "        Class = GAMTestScheduler1"
+        "        TimingDataSource = Timings"
         "    }"
         "}";
 
@@ -593,8 +598,8 @@ static const char8 * const gamTestConfig4 = ""
         "        +DS1 = {"
         "            Class = DataSourceIGAMTest1"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -612,6 +617,7 @@ static const char8 * const gamTestConfig4 = ""
         "    }"
         "    +Scheduler = {"
         "        Class = GAMTestScheduler1"
+        "        TimingDataSource = Timings"
         "    }"
         "}";
 
@@ -709,8 +715,8 @@ static const char8 * const gamTestConfig5 = ""
         "        +DDB2 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -738,6 +744,7 @@ static const char8 * const gamTestConfig5 = ""
         "    }"
         "    +Scheduler = {"
         "        Class = GAMTestScheduler1"
+        "        TimingDataSource = Timings"
         "    }"
         "}";
 
@@ -837,8 +844,8 @@ static const char8 * const gamTestConfig6 = ""
         "        +DDB2 = {"
         "            Class = DataSourceIGAMTest1"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -866,6 +873,7 @@ static const char8 * const gamTestConfig6 = ""
         "    }"
         "    +Scheduler = {"
         "        Class = GAMTestScheduler1"
+        "        TimingDataSource = Timings"
         "    }"
         "}";
 
