@@ -1,5 +1,4 @@
-RealTimeApplicationConfigurationBuilder.cpp
-/*AdvancedErrorManagement.h
+AdvancedErrorManagement.h
 AnyObject.cpp
 AnyType.cpp
 AnyTypeCreator.cpp
@@ -110,6 +109,8 @@ ParserI.h
 ParserI.cpp
 Processor.cpp
 ProcessorType.cpp
+RealTimeApplicationConfigurationBuilder.cpp
+RealTimeThread.cpp
 Reference.cpp
 ReferenceContainer.cpp
 ReferenceContainerFilter.cpp
@@ -165,4 +166,3 @@ ValidateBasicType.cpp
 Vector.h
 XMLParser.cpp
 ZeroTerminatedArray.h
-*/

@@ -402,7 +402,8 @@ public:
      * @param[in] context the context to be shared. Its final type is to be defined on each specific GAM application.
      * @return true if the provided context is accepted by the GAM.
      */
-    virtual bool SetContext(Reference context);
+    //TODO Use a member ConstReference or ConstReferenceT(type) is mandatory to maintain the read-only property of the context!
+    virtual bool SetContext(ConstReference context);
 
 protected:
 

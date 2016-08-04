@@ -1,8 +1,8 @@
 /**
- * @file GAMGroupTest.h
- * @brief Header file for class GAMGroupTest
- * @date 07/03/2016
- * @author Giuseppe Ferrò
+ * @file RealTimeStateGTest.cpp
+ * @brief Source file for class RealTimeStateGTest
+ * @date 04/ago/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,60 +16,38 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMGroupTest
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class RealTimeStateGTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef GAMGROUPTEST_H_
-#define GAMGROUPTEST_H_
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+#include <limits.h>
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+#include "RealTimeStateTest.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
+/*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-#include "GAMGroup.h"
-/*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
-/*---------------------------------------------------------------------------*/
+TEST(RealTimeStateGTest,TestConstructor) {
+    RealTimeStateTest test;
+    ASSERT_TRUE(test.TestConstructor());
+}
 
-using namespace MARTe;
+TEST(RealTimeStateGTest,TestAddStatefuls) {
+    RealTimeStateTest test;
+    ASSERT_TRUE(test.TestAddStatefuls());
+}
 
-/**
- * @brief Tests all the GAMGroup functions
- */
-class GAMGroupTest {
 
-public:
-
-    /**
-     * @brief Tests the constructor.
-     */
-    bool TestConstructor();
-
-    /**
-     * @brief Tests the initialise
-     */
-    bool TestInitialise();
-
-    /**
-     * @brief Tests if the context is correctly propagated.
-     */
-    bool TestSetContext();
-
-    /**
-     * @brief Tests if a context propagation failure is correctly detected.
-     */
-    bool TestSetContext_Failure();
-
-};
-
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-#endif /* GAMGROUPTEST_H_ */
-
+	

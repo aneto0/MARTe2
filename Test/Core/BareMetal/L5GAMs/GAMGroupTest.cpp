@@ -82,14 +82,16 @@ GAMGroupTestGAM1    ();
 
     virtual bool Execute();
 
-    virtual bool SetContext(Reference contextIn);
+    virtual bool SetContext(ConstReference contextIn);
 
-    virtual Reference GetContext();
+    virtual ConstReference GetContext();
+
 
     bool failContext;
 private:
-    Reference context;
+    ConstReference context;
 };
+
 
 GAMGroupTestGAM1::GAMGroupTestGAM1() :
         GAM() {
@@ -100,14 +102,17 @@ bool GAMGroupTestGAM1::Execute() {
     return true;
 }
 
-bool GAMGroupTestGAM1::SetContext(Reference contextIn) {
+bool GAMGroupTestGAM1::SetContext(ConstReference contextIn) {
     context = contextIn;
     return !failContext;
 }
 
-Reference GAMGroupTestGAM1::GetContext() {
+ConstReference GAMGroupTestGAM1::GetContext() {
     return context;
 }
+
+
+
 
 CLASS_REGISTER(GAMGroupTestGAM1, "1.0")
 
@@ -123,7 +128,10 @@ GAMGroupTestGAMGroup1    ();
     virtual bool PrepareNextState(const char8 * currentStateName,
                                   const char8 * nextStateName);
 
-    bool SetContext(Reference context);
+    bool SetContext(ConstReference context);
+
+    uint32 GAMsContainerSize();
+
 };
 
 GAMGroupTestGAMGroup1::GAMGroupTestGAMGroup1() :
@@ -136,8 +144,13 @@ bool GAMGroupTestGAMGroup1::PrepareNextState(const char8 * currentStateName,
 
 }
 
-bool GAMGroupTestGAMGroup1::SetContext(Reference context) {
+bool GAMGroupTestGAMGroup1::SetContext(ConstReference context) {
     return GAMGroup::SetContext(context);
+}
+
+
+uint32 GAMGroupTestGAMGroup1::GAMsContainerSize(){
+    return GAMs.Size();
 }
 CLASS_REGISTER(GAMGroupTestGAMGroup1, "1.0")
 
@@ -147,9 +160,9 @@ public:
 
 GAMGroupTestContext1    ();
 
-    int32 GetProperty1();
+    int32 GetProperty1() const;
 
-    float32 GetProperty2();
+    float32 GetProperty2()const;
 
 private:
     int32 propertyToBeShared1;
@@ -163,11 +176,11 @@ GAMGroupTestContext1::GAMGroupTestContext1() :
     propertyToBeShared2 = 2;
 }
 
-int32 GAMGroupTestContext1::GetProperty1() {
+int32 GAMGroupTestContext1::GetProperty1() const{
     return propertyToBeShared1;
 }
 
-float32 GAMGroupTestContext1::GetProperty2() {
+float32 GAMGroupTestContext1::GetProperty2() const{
     return propertyToBeShared2;
 }
 
@@ -272,6 +285,18 @@ bool GAMGroupTest::TestConstructor() {
     return test.Size() == 0;
 }
 
+
+bool GAMGroupTest::TestInitialise(){
+    bool ret = InitialiseGAMGroupEnviroment(config1);
+    ReferenceT<GAMGroupTestGAMGroup1> gamGroup1;
+
+    if (ret) {
+        gamGroup1 = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMGroup1");
+        ret = gamGroup1.IsValid();
+    }
+    return ret && (gamGroup1->GAMsContainerSize() == 2);
+}
+
 bool GAMGroupTest::TestSetContext() {
     bool ret = InitialiseGAMGroupEnviroment(config1);
     ReferenceT<GAMGroupTestGAM1> gam1;
@@ -298,7 +323,7 @@ bool GAMGroupTest::TestSetContext() {
     if (ret) {
         ret = (gamGroup1->Size() == 2);
     }
-    ReferenceT<GAMGroupTestContext1> context("GAMGroupTestContext1");
+    ConstReferenceT(GAMGroupTestContext1) context("GAMGroupTestContext1");
     if (ret) {
         ret = context.IsValid();
     }
@@ -323,7 +348,7 @@ bool GAMGroupTest::TestSetContext() {
     if (ret) {
         ret = (gam3->GetContext() == context);
     }
-    ReferenceT<GAMGroupTestContext1> thisGAMContext = context;
+    ConstReferenceT(GAMGroupTestContext1) thisGAMContext = context;
     if (ret) {
         ret = thisGAMContext.IsValid();
     }

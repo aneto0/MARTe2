@@ -101,8 +101,6 @@ public:
      */
     virtual bool Initialise(StructuredDataI & data);
 
-
-
     /**
      * @brief Maps all the declared Function references (GAM, GAMGroup, ...) to this state.
      * @return true if all the declared Function references are valid AND if this thread can be
@@ -116,7 +114,6 @@ public:
      *   GetNumberOfGAMs() != 0
      */
     bool ConfigureArchitecture();
-
 
     /**
      * @brief Returns the array with the name of the Functions (GAM, GAMGroup, ...) executed by this thread.
@@ -135,7 +132,7 @@ public:
      * @pre
      *    Initialise()
      */
-    void GetGAMs(ReferenceContainer &gamList);
+    bool GetGAMs(ReferenceContainer &gamList);
 
     /**
      * @brief Retrieves the number of GAMs executed in this thread.

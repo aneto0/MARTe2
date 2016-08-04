@@ -44,6 +44,11 @@ TEST(GAMGroupGTest,TestConstructor) {
     ASSERT_TRUE(test.TestConstructor());
 }
 
+TEST(GAMGroupGTest,TestInitialise) {
+    GAMGroupTest test;
+    ASSERT_TRUE(test.TestInitialise());
+}
+
 TEST(GAMGroupGTest,TestSetContext) {
     GAMGroupTest test;
     ASSERT_TRUE(test.TestSetContext());
