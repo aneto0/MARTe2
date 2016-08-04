@@ -583,7 +583,12 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_0() {
         numberOfCopies = broker->GetNumberOfCopies();
         ret = (numberOfCopies == 5u);
     }
-    RealTimeApplication::index = 0u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    //RealTimeApplication::index = 0u;
     if (ret) {
         ret = gamC->Execute();
     }
@@ -658,7 +663,15 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_1() {
         numberOfCopies = broker->GetNumberOfCopies();
         ret = (numberOfCopies == 5u);
     }
-    RealTimeApplication::index = 1u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    if (ret) {
+        app->StartExecution();
+    }
+    //RealTimeApplication::index = 1u;
     if (ret) {
         ret = gamC->Execute();
     }
@@ -733,7 +746,15 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_ChangeState() {
         numberOfCopies = broker->GetNumberOfCopies();
         ret = (numberOfCopies == 5u);
     }
-    RealTimeApplication::index = 0u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    if (ret) {
+        app->StartExecution();
+    }
+    //RealTimeApplication::index = 0u;
 
     if (ret) {
         ret = gamC->Execute();
@@ -805,7 +826,12 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_Ranges_0() {
         ret = (numberOfCopies == 5u);
     }
 
-    RealTimeApplication::index = 0u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    //RealTimeApplication::index = 0u;
     if (ret) {
         ret = gamC->Execute();
     }
@@ -898,7 +924,15 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_Ranges_1() {
         numberOfCopies = broker->GetNumberOfCopies();
         ret = (numberOfCopies == 5u);
     }
-    RealTimeApplication::index = 1u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    if (ret) {
+        app->StartExecution();
+    }
+    //RealTimeApplication::index = 1u;
     if (ret) {
         ret = gamC->Execute();
     }
@@ -991,7 +1025,15 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_Ranges_ChangeState() {
         numberOfCopies = broker->GetNumberOfCopies();
         ret = (numberOfCopies == 5u);
     }
-    RealTimeApplication::index = 0u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    if (ret) {
+        app->StartExecution();
+    }
+    //RealTimeApplication::index = 0u;
 
     if (ret) {
         ret = gamC->Execute();
@@ -1084,7 +1126,12 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_Samples_0() {
         numberOfCopies = broker->GetNumberOfCopies();
         ret = (numberOfCopies == 5u);
     }
-    RealTimeApplication::index = 0u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    //RealTimeApplication::index = 0u;
     if (ret) {
         ret = gamC->Execute();
     }
@@ -1156,7 +1203,15 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_Samples_1() {
         numberOfCopies = broker->GetNumberOfCopies();
         ret = (numberOfCopies == 5u);
     }
-    RealTimeApplication::index = 1u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    if (ret) {
+        app->StartExecution();
+    }
+    //RealTimeApplication::index = 1u;
     if (ret) {
         ret = gamC->Execute();
     }
@@ -1228,7 +1283,15 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_Samples_ChangeState() {
         numberOfCopies = broker->GetNumberOfCopies();
         ret = (numberOfCopies == 5u);
     }
-    RealTimeApplication::index = 0u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    if (ret) {
+        app->StartExecution();
+    }
+    //RealTimeApplication::index = 0u;
     if (ret) {
         ret = gamC->Execute();
     }

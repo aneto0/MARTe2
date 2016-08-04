@@ -31,6 +31,9 @@
 
 #include "GAMSchedulerITest.h"
 #include "GAMTestHelper.h"
+#include "GAMGroup.h"
+#include "RealTimeApplication.h"
+#include "ObjectRegistryDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -57,9 +60,9 @@ void DummyScheduler::StartExecution() {
 
 void DummyScheduler::ExecuteThreadCycle(uint32 threadId) {
 
-    ExecuteSingleCycle(statesInExecution[RealTimeApplication::index]->threads[threadId].executables,
-                       statesInExecution[RealTimeApplication::index]->threads[threadId].timeAddresses,
-                       statesInExecution[RealTimeApplication::index]->threads[threadId].numberOfExecutables);
+    ExecuteSingleCycle(statesInExecution[RealTimeApplication::GetIndex()]->threads[threadId].executables,
+                       statesInExecution[RealTimeApplication::GetIndex()]->threads[threadId].timeAddresses,
+                       statesInExecution[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
 
 }
 void DummyScheduler::StopExecution() {
@@ -355,13 +358,8 @@ bool GAMSchedulerITest::TestConfigureScheduler() {
         return false;
     }
 
-    ReferenceT<ReferenceContainer> states = app->Find("States");
 
-    if (!states.IsValid()) {
-        return false;
-    }
-
-    if (!scheduler->ConfigureScheduler(states)) {
+    if (!scheduler->ConfigureScheduler()) {
         return false;
     }
 
@@ -390,26 +388,6 @@ bool GAMSchedulerITest::TestConfigureScheduler() {
 
 
 
-bool GAMSchedulerITest::TestConfigureSchedulerFalse_InvalidStatesContainer(){
-
-    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
-    if (!app.IsValid()) {
-        return false;
-    }
-
-    if (!app->ConfigureApplication()) {
-        return false;
-    }
-
-    ReferenceT<GAMSchedulerI> scheduler = app->Find("Scheduler");
-    if (!scheduler.IsValid()) {
-        return false;
-    }
-
-    ReferenceT<ReferenceContainer> states ;
-
-    return (!scheduler->ConfigureScheduler(states));
-}
 
 bool GAMSchedulerITest::TestConfigureSchedulerFalse_InvalidState(){
 
@@ -536,9 +514,7 @@ bool GAMSchedulerITest::TestConfigureSchedulerFalse_InvalidState(){
         return false;
     }
 
-    ReferenceT<ReferenceContainer> states = app->Find("States");
-
-    return (!scheduler->ConfigureScheduler(states));
+    return (!scheduler->ConfigureScheduler());
 }
 
 
@@ -564,13 +540,8 @@ bool GAMSchedulerITest::TestPrepareNextState() {
         return false;
     }
 
-    ReferenceT<ReferenceContainer> states = app->Find("States");
 
-    if (!states.IsValid()) {
-        return false;
-    }
-
-    if (!scheduler->ConfigureScheduler(states)) {
+    if (!scheduler->ConfigureScheduler()) {
         return false;
     }
 
@@ -587,7 +558,7 @@ bool GAMSchedulerITest::TestPrepareNextState() {
     ReferenceT<GAM1> gamf = app->Find("Functions.GAMF");
     ReferenceT<GAM1> gamg = app->Find("Functions.GAMG");
     ReferenceT<GAM1> gamh = app->Find("Functions.GAMH");
-    RealTimeApplication::index = 0u;
+    app->StartExecution();
 
     scheduler->ExecuteThreadCycle(0);
 
@@ -604,7 +575,7 @@ bool GAMSchedulerITest::TestPrepareNextState() {
         printf("\nFailed pns\n");
         return false;
     }
-    RealTimeApplication::index = 1u;
+    app->StartExecution();
 
     scheduler->ExecuteThreadCycle(0);
 

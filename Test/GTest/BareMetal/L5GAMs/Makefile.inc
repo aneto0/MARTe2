@@ -40,7 +40,8 @@ OBJSX=  BrokerIGTest.x\
         RealTimeStateGTest.x\
         RealTimeThreadGTest.x
 
-#GAMSchedulerIGTest.x \
+#RealTimeApplicationGTest.x\
+
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..

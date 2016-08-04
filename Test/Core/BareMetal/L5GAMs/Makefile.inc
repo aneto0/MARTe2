@@ -39,6 +39,7 @@ OBJSX= BrokerITest.x \
        MemoryMapStatefulInputBrokerTest.x\
        MemoryMapStatefulOutputBrokerTest.x\
        MemoryMapSynchronisedInputBrokerTest.x\
+       RealTimeApplicationTest.x\
        RealTimeApplicationConfigurationBuilderTest.x\
        RealTimeStateTest.x\
        RealTimeThreadTest.x

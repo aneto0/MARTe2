@@ -37,6 +37,8 @@
 #include "GAMSchedulerI.h"
 #include "StandardParser.h"
 #include "MemoryMapBroker.h"
+#include "GAMGroup.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -325,6 +327,23 @@ virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers,
 virtual bool Synchronise();
 };
 
+
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+class DefaultSchedulerForTests: public GAMSchedulerI {
+public:
+
+    CLASS_REGISTER_DECLARATION()
+
+DefaultSchedulerForTests    ();
+
+    virtual void StartExecution();
+
+    virtual void StopExecution();
+
+};
 #if 0
 
 ///////////////////////////////////////////

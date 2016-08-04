@@ -54,8 +54,6 @@ public:
 
     bool TestConfigureScheduler();
 
-    bool TestConfigureSchedulerFalse_InvalidStatesContainer();
-
     bool TestConfigureSchedulerFalse_InvalidState();
 
     bool TestGetNumberOfExecutables();
