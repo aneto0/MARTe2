@@ -887,7 +887,10 @@ bool RealTimeApplication::PrepareNextState(const char8 * nextStateName) {
             ReferenceT<RealTimeState> state = statesContainer->Get(i);
             ret = state.IsValid();
             if (ret) {
-                ret = state->PrepareNextState(currentStateName.Buffer(), nextStateName);
+                if (StringHelper::Compare(state->GetName(), nextStateName) == 0) {
+                    ret = state->PrepareNextState(currentStateName.Buffer(), nextStateName);
+                    break;
+                }
             }
         }
     }
