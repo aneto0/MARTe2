@@ -140,10 +140,10 @@ bool RealTimeThread::ConfigureArchitecture() {
                     ret = statefuls.Insert(stateful);
                 }
                 if (ret) {
-                    //Look for all the GAMs inside the RealTimeApplication
-                    ReferenceContainerFilterReferencesTemplate<GAM> gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+                    //Look for all the statefuls
+                    ReferenceContainerFilterReferencesTemplate<StatefulI> statefulFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
 
-                    functionGeneric->Find(statefuls, gamFilter);
+                    functionGeneric->Find(statefuls, statefulFilter);
                     ret = state->AddStatefuls(statefuls);
                     if (!ret) {
                         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Insert into state failed", "")

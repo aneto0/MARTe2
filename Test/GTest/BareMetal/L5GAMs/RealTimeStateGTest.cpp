@@ -49,5 +49,12 @@ TEST(RealTimeStateGTest,TestAddStatefuls) {
     ASSERT_TRUE(test.TestAddStatefuls());
 }
 
+TEST(RealTimeStateGTest,TestPrepareNextState) {
+    RealTimeStateTest test;
+    ASSERT_TRUE(test.TestPrepareNextState());
+}
 
-	
+TEST(RealTimeStateGTest,TestGetNumberOfStatefuls) {
+    RealTimeStateTest test;
+    ASSERT_TRUE(test.TestGetNumberOfStatefuls());
+}

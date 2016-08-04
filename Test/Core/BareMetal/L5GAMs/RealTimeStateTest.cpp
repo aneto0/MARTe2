@@ -37,32 +37,6 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class RealTimeStateTestGAMGroup: public GAMGroup {
-public:
-    CLASS_REGISTER_DECLARATION()
-
-RealTimeStateTestGAMGroup    ();
-
-    virtual bool PrepareNextState(const char8 * currentStateName,
-            const char8 * nextStateName);
-
-};
-
-RealTimeStateTestGAMGroup::RealTimeStateTestGAMGroup() :
-        GAMGroup() {
-}
-
-bool RealTimeStateTestGAMGroup::PrepareNextState(const char8 * currentStateName,
-                                                 const char8 * nextStateName) {
-    return true;
-
-}
-
-CLASS_REGISTER(RealTimeStateTestGAMGroup, "1.0")
-//////////////////
-//////////////////
-//////////////////
-//////////////////
 class RealTimeStateTestContext1: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
@@ -73,7 +47,11 @@ RealTimeStateTestContext1    ();
 
     float32 GetProperty2()const;
 
+    void SetProperty1(int32);
+
+    void SetProperty2(float32);
 private:
+
     int32 propertyToBeShared1;
 
     float32 propertyToBeShared2;
@@ -81,8 +59,8 @@ private:
 
 RealTimeStateTestContext1::RealTimeStateTestContext1() :
         Object() {
-    propertyToBeShared1 = 1;
-    propertyToBeShared2 = 2;
+    propertyToBeShared1 = 0;
+    propertyToBeShared2 = 0;
 }
 
 int32 RealTimeStateTestContext1::GetProperty1() const {
@@ -93,7 +71,86 @@ float32 RealTimeStateTestContext1::GetProperty2() const {
     return propertyToBeShared2;
 }
 
+void RealTimeStateTestContext1::SetProperty1(int32 x) {
+    propertyToBeShared1 = x;
+}
+
+void RealTimeStateTestContext1::SetProperty2(float32 x) {
+    propertyToBeShared2 = x;
+
+}
+
 CLASS_REGISTER(RealTimeStateTestContext1, "1.0")
+
+//////////////////
+//////////////////
+//////////////////
+//////////////////
+class RealTimeStateTestGAMGroup1: public GAMGroup {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+RealTimeStateTestGAMGroup1    ();
+
+    virtual bool PrepareNextState(const char8 * currentStateName,
+            const char8 * nextStateName);
+
+private:
+    ReferenceT<RealTimeStateTestContext1> context;
+};
+
+RealTimeStateTestGAMGroup1::RealTimeStateTestGAMGroup1() :
+        GAMGroup(){
+}
+
+bool RealTimeStateTestGAMGroup1::PrepareNextState(const char8 * currentStateName,
+                                                  const char8 * nextStateName) {
+
+    context= ReferenceT<RealTimeStateTestContext1>("RealTimeStateTestContext1") ;
+
+    context->SetProperty1(1);
+    context->SetProperty2(2.0);
+    return SetContext(context);
+
+}
+
+CLASS_REGISTER(RealTimeStateTestGAMGroup1, "1.0")
+
+//////////////////
+//////////////////
+//////////////////
+//////////////////
+class RealTimeStateTestGAMGroup2: public GAMGroup {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+RealTimeStateTestGAMGroup2    ();
+
+    virtual bool PrepareNextState(const char8 * currentStateName,
+            const char8 * nextStateName);
+private:
+    ReferenceT<RealTimeStateTestContext1> context;
+
+};
+
+RealTimeStateTestGAMGroup2::RealTimeStateTestGAMGroup2() :
+        GAMGroup(){
+
+}
+
+bool RealTimeStateTestGAMGroup2::PrepareNextState(const char8 * currentStateName,
+                                                  const char8 * nextStateName) {
+
+    context= ReferenceT<RealTimeStateTestContext1>("RealTimeStateTestContext1") ;
+
+    context->SetProperty1(3);
+    context->SetProperty2(4.0);
+
+    return SetContext(context);
+
+}
+
+CLASS_REGISTER(RealTimeStateTestGAMGroup2, "1.0")
 
 //////////////////
 //////////////////
@@ -111,15 +168,16 @@ RealTimeStateStateLessGAM    ();
 
     virtual bool SetContext(ConstReference contextIn);
 
-    virtual ConstReference GetContext();
+    virtual ConstReference GetContext(uint32 index);
 
 private:
-    ConstReference context;
-
+    ConstReference context[2];
+    uint32 index;
 };
 
 RealTimeStateStateLessGAM::RealTimeStateStateLessGAM() :
         GAM() {
+    index=0;
 }
 
 bool RealTimeStateStateLessGAM::Execute() {
@@ -127,12 +185,16 @@ bool RealTimeStateStateLessGAM::Execute() {
 }
 
 bool RealTimeStateStateLessGAM::SetContext(ConstReference contextIn) {
-    context = contextIn;
+
+    printf("Set to %s index=%d\n", GetName(), index);
+
+    context[index] = contextIn;
+    index++;
     return true;
 }
 
-ConstReference RealTimeStateStateLessGAM::GetContext() {
-    return context;
+ConstReference RealTimeStateStateLessGAM::GetContext(uint32 index) {
+    return context[index];
 }
 
 CLASS_REGISTER(RealTimeStateStateLessGAM, "1.0")
@@ -154,20 +216,23 @@ RealTimeStateStateFulGAM    ();
 
     virtual uint32 GetContext1();
 
-    virtual ConstReference GetContext2();
-
+    virtual ConstReference GetContext2(uint32 index);
 
     virtual bool PrepareNextState(const char8 * current, const char8 * next);
 
 private:
     uint32 context;
-    ConstReference context2;
+    ConstReference context2[2];
+    uint32 index;
+
 
 };
 
 RealTimeStateStateFulGAM::RealTimeStateStateFulGAM() :
         GAM() {
     context = 0u;
+    index=0;
+
 }
 
 bool RealTimeStateStateFulGAM::Execute() {
@@ -175,7 +240,10 @@ bool RealTimeStateStateFulGAM::Execute() {
 }
 
 bool RealTimeStateStateFulGAM::SetContext(ConstReference contextIn) {
-    context2 = contextIn;
+    printf("Set to %s index=%d\n", GetName(), index);
+
+    context2[index] = contextIn;
+    index++;
     return true;
 }
 
@@ -183,13 +251,12 @@ uint32 RealTimeStateStateFulGAM::GetContext1() {
     return context;
 }
 
-ConstReference RealTimeStateStateFulGAM::GetContext2() {
-    return context2;
+ConstReference RealTimeStateStateFulGAM::GetContext2(uint32 index) {
+    return context2[index];
 }
 
-
 bool RealTimeStateStateFulGAM::PrepareNextState(const char8 * current,
-                                           const char8 * next) {
+                                                const char8 * next) {
     context++;
     return true;
 }
@@ -199,7 +266,6 @@ CLASS_REGISTER(RealTimeStateStateFulGAM, "1.0")
 //////////////////
 //////////////////
 //////////////////
-
 
 class RealTimeStateTestScheduler: public GAMSchedulerI {
 public:
@@ -236,7 +302,7 @@ RealTimeStateTest::RealTimeStateTest() {
             "    +Functions = {"
             "        Class = ReferenceContainer"
             "        +GAMGroup1 = {"
-            "            Class = RealTimeStateTestGAMGroup"
+            "            Class = RealTimeStateTestGAMGroup1"
             "            +GAMA = {"
             "                Class = RealTimeStateStateFulGAM"
             "                InputSignals = {"
@@ -284,7 +350,7 @@ RealTimeStateTest::RealTimeStateTest() {
             "                }"
             "            }"
             "            +GAMGroup2 = {"
-            "                Class = RealTimeStateTestGAMGroup"
+            "                Class = RealTimeStateTestGAMGroup2"
             "                +GAMC = {"
             "                    Class = RealTimeStateStateLessGAM"
             "                    InputSignals = {"
@@ -334,11 +400,11 @@ RealTimeStateTest::RealTimeStateTest() {
             "            }"
             "        }"
             "        +GAMGroup3 = {"
-            "            Class = RealTimeStateTestGAMGroup"
+            "            Class = RealTimeStateTestGAMGroup2"
             "            +Container = {"
             "                Class = ReferenceContainer"
             "                +GAMGroup4 = {"
-            "                    Class = RealTimeStateTestGAMGroup"
+            "                    Class = RealTimeStateTestGAMGroup1"
             "                    +GAME = {"
             "                        Class = RealTimeStateStateLessGAM"
             "                        InputSignals = {"
@@ -526,6 +592,12 @@ bool RealTimeStateTest::TestAddStatefuls() {
     ReferenceContainerFilterReferencesTemplate<StatefulI> gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
 
     functions->Find(statefuls, gamFilter);
+
+    if (!state1->AddStatefuls(statefuls)) {
+        return false;
+    }
+
+    //if we do this twise it will not add nothing becouse they are already inside
     if (!state1->AddStatefuls(statefuls)) {
         return false;
     }
@@ -535,11 +607,137 @@ bool RealTimeStateTest::TestAddStatefuls() {
 }
 
 bool RealTimeStateTest::TestPrepareNextState() {
+    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("Fibonacci.States.State1");
+    if (!state1.IsValid()) {
+        return false;
+    }
+    ReferenceContainer statefuls;
+    ReferenceT<ReferenceContainer> functions = ObjectRegistryDatabase::Instance()->Find("Fibonacci.Functions");
+    if (!functions.IsValid()) {
+        return false;
+    }
+
+    ReferenceT<StatefulI> stateful = functions;
+
+    //Look for all the GAMs inside the RealTimeApplication
+    ReferenceContainerFilterReferencesTemplate<StatefulI> gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+
+    functions->Find(statefuls, gamFilter);
+
+    if (!state1->AddStatefuls(statefuls)) {
+        return false;
+    }
+
+    //if we do this twise it will not add nothing becouse they are already inside
+    if (!state1->AddStatefuls(statefuls)) {
+        return false;
+    }
+
+    if (!state1->PrepareNextState("", "State1")) {
+        return false;
+    }
+
+    ReferenceT<RealTimeStateStateFulGAM> gama = functions->Find("GAMGroup1.GAMA");
+    ReferenceT<RealTimeStateStateLessGAM> gamb = functions->Find("GAMGroup1.GAMB");
+    ReferenceT<RealTimeStateStateLessGAM> gamc = functions->Find("GAMGroup1.GAMGroup2.GAMC");
+    ReferenceT<RealTimeStateStateLessGAM> gamd = functions->Find("GAMGroup1.GAMGroup2.GAMD");
+    ReferenceT<RealTimeStateStateLessGAM> game = functions->Find("GAMGroup3.Container.GAMGroup4.GAME");
+    ReferenceT<RealTimeStateStateLessGAM> gamf = functions->Find("GAMGroup3.Container.GAMF");
+    ReferenceT<RealTimeStateStateLessGAM> gamg = functions->Find("GAMGroup3.GAMG");
+    ReferenceT<RealTimeStateStateFulGAM> gamh = functions->Find("GAMGroup3.GAMH");
+
+    ConstReferenceT(RealTimeStateTestContext1) context[2];
+    context[0]=gama->GetContext2(0);
+    context[1]=gama->GetContext2(1);
+    if(context[0]->GetProperty1()!=1 && context[0]->GetProperty2()!=2.0){
+        return false;
+    }
+    if(gama->GetContext1()!=1){
+        return false;
+    }
+    if(context[1].IsValid()){
+        return false;
+    }
+
+
+    context[0]=gamb->GetContext(0);
+    context[1]=gamb->GetContext(1);
+    if(context[0]->GetProperty1()!=1 && context[0]->GetProperty2()!=2.0){
+        return false;
+    }
+    if(context[1].IsValid()){
+        return false;
+    }
+
+    context[0]=gamc->GetContext(0);
+    context[1]=gamc->GetContext(1);
+    if(context[0]->GetProperty1()!=1 && context[0]->GetProperty2()!=2.0){
+        return false;
+    }
+    if(context[1]->GetProperty1()!=3 && context[1]->GetProperty2()!=4.0){
+        return false;
+    }
+
+    context[0]=gamd->GetContext(0);
+    context[1]=gamd->GetContext(1);
+    if(context[0]->GetProperty1()!=1 && context[0]->GetProperty2()!=2.0){
+        return false;
+    }
+    if(context[1]->GetProperty1()!=3 && context[1]->GetProperty2()!=4.0){
+        return false;
+    }
+
+    context[0]=game->GetContext(0);
+    context[1]=game->GetContext(1);
+    if(context[0]->GetProperty1()!=3 && context[0]->GetProperty2()!=4.0){
+        return false;
+    }
+
+    if(context[1]->GetProperty1()!=1 && context[1]->GetProperty2()!=2.0){
+        return false;
+    }
+
+
+    context[0]=gamf->GetContext(0);
+    context[1]=gamf->GetContext(1);
+    if(context[0]->GetProperty1()!=3 && context[0]->GetProperty2()!=4.0){
+        return false;
+    }
+
+    if(context[1].IsValid()){
+        return false;
+    }
+
+    context[0]=gamg->GetContext(0);
+    context[1]=gamg->GetContext(1);
+    if(context[0]->GetProperty1()!=3 && context[0]->GetProperty2()!=4.0){
+        return false;
+    }
+
+    if(context[1].IsValid()){
+        return false;
+    }
+
+    context[0]=gamh->GetContext2(0);
+    context[1]=gamh->GetContext2(1);
+
+    if(context[0]->GetProperty1()!=3 && context[0]->GetProperty2()!=4.0){
+        return false;
+    }
+
+    if(context[1].IsValid()){
+        return false;
+    }
+    if(gamh->GetContext1()!=1){
+        return false;
+    }
+
+
     return true;
 }
 
 bool RealTimeStateTest::TestGetNumberOfStatefuls() {
-    return true;
+    return TestAddStatefuls();
 }
 
 #if 0
