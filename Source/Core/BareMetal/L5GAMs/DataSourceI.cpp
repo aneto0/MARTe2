@@ -83,11 +83,13 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
 }
 
 bool DataSourceI::IsLocked() {
-    signalsDatabase.MoveAbsolute("Signals");
+    bool ret;
     uint32 locked;
-    bool ret = false;
-    if (signalsDatabase.Read("Locked", locked)) {
-        ret = (locked != 0u);
+    ret = signalsDatabase.MoveAbsolute("Signals");
+    if (ret) {
+        if (signalsDatabase.Read("Locked", locked)) {
+            ret = (locked != 0u);
+        }
     }
     return ret;
 }
@@ -544,8 +546,8 @@ bool DataSourceI::GetFunctionSignalByteOffsetInfo(const SignalDirection directio
         ret = configuredDatabase.Read("ByteOffset", byteOffsetMat);
     }
     if (ret) {
-        byteOffsetStart = byteOffsetMat[byteOffsetIndex][0u];
-        byteOffsetSize = byteOffsetMat[byteOffsetIndex][1u];
+        byteOffsetStart = byteOffsetMat(byteOffsetIndex,0u);
+        byteOffsetSize = byteOffsetMat(byteOffsetIndex,1u);
     }
 
     return ret;
