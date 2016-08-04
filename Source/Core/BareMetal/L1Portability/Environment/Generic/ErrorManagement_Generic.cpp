@@ -79,7 +79,7 @@ const
         {static_cast<const char8 *>(NULL),  SyntaxError},
 };
 
-const char8 *ToName(const ErrorType errorCode) {
+const char8 *ToName(const ErrorType &errorCode) {
     uint32 i = 0u;
     const char8* retString="Unrecognized Error";
 
@@ -94,7 +94,7 @@ const char8 *ToName(const ErrorType errorCode) {
 }
 
 
-void ReportError(const ErrorType code,
+void ReportError(const ErrorType &code,
                  const char8 * const errorDescription,
                  const char8 * const fileName,
                  const int16 lineNumber,
@@ -116,7 +116,7 @@ void ReportError(const ErrorType code,
 }
 
 
-void ReportErrorFullContext(const ErrorType code,
+void ReportErrorFullContext(const ErrorType &code,
                             const char8 * const errorDescription,
                             const char8 * const fileName,
                             const int16 lineNumber,

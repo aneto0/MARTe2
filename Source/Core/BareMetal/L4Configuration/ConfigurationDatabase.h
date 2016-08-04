@@ -69,6 +69,10 @@ public:
      */
     virtual ~ConfigurationDatabase();
 
+
+    void CleanUp();
+
+
     /**
      * @see StructuredDataI::Read
      * @details It is possible read directly a structure or a class if

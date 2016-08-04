@@ -55,9 +55,9 @@ namespace MARTe {
 HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
 HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
-    const size_t LINUX_CPUINFO_BUFFER_SIZE = 1023u;
+    const uint64 LINUX_CPUINFO_BUFFER_SIZE = 1023u;
     initialTicks = HighResolutionTimer::Counter();
-    frequency = 0;
+    frequency = 0u;
     period = 0.;
 
     struct timeval initTime;
@@ -73,7 +73,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
         FILE *f = fopen("/proc/cpuinfo", "r");
         size_t size = LINUX_CPUINFO_BUFFER_SIZE;
         if (f != NULL) {
-            size = fread(&buffer[0], static_cast<size_t>(size), static_cast<size_t>(1u), f);
+            size = fread(&buffer[0], size, static_cast<size_t>(1u), f);
             fclose(f);
         }
         else {
@@ -90,7 +90,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
                 if (freqMHz > 0.) {
                     float64 frequencyF = freqMHz *= 1.0e6;
                     period = 1.0 / frequencyF;
-                    frequency = static_cast<int64>(frequencyF);
+                    frequency = static_cast<uint64>(frequencyF);
                 }
             }
         }
@@ -105,7 +105,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
 
 bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {
 
-    int64 ticksFromStart = HighResolutionTimer::Counter() - initialTicks;
+    uint64 ticksFromStart = HighResolutionTimer::Counter() - initialTicks;
 
     //Use HRT
     float64 secondsFromStart = static_cast<float64>(ticksFromStart) * period;
@@ -133,7 +133,7 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {
     return ret;
 }
 
-int64 HighResolutionTimerCalibrator::GetFrequency() const {
+uint64 HighResolutionTimerCalibrator::GetFrequency() const {
     return frequency;
 }
 

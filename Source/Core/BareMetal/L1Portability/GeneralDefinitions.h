@@ -46,6 +46,10 @@ namespace MARTe {
 #define __ERROR_FUNCTION_NAME__ __func__
 #endif
 
+typedef void (GenericFn)(void*);
+
+
+
     /** List of colors */
     typedef enum {
         Black = 0,

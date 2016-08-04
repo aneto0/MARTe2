@@ -193,10 +193,10 @@ bool LinkedListHolderTest::TestFastListInsertSingle(uint32 nElements) {
     return list.ListSize() == nElements;
 }
 
-void BuildLists(IntegerList* list1Cursor,
-                IntegerList *list2Cursor,
-                uint32 size,
-                bool oppositeOrder) {
+static void BuildLists(IntegerList* list1Cursor,
+                       IntegerList *list2Cursor,
+                       uint32 size,
+                       bool oppositeOrder) {
 
     for (uint32 i = 1; i < size; i++) {
         IntegerList *list1Element;
@@ -214,6 +214,7 @@ void BuildLists(IntegerList* list1Cursor,
         list1Cursor = (IntegerList*) list1Cursor->Next();
         list2Cursor = (IntegerList*) list2Cursor->Next();
     }
+
 }
 
 bool LinkedListHolderTest::TestListInsert(uint32 nElements) {
@@ -241,6 +242,11 @@ bool LinkedListHolderTest::TestListInsert(uint32 nElements) {
             return false;
         }
     }
+    /*
+     DeleteLists(first1, first2, nElements);
+
+     delete first1;
+     delete first2;*/
 
     return list.ListSize() == (2 * nElements);
 
@@ -399,10 +405,15 @@ bool LinkedListHolderTest::TestListAdd(uint32 nElements) {
         }
     }
 
-    list.ListAdd(first2);
+    LinkedListable* cursor = first2;
+    for (uint32 i = 0; i < nElements; i++) {
+        LinkedListable* temp = cursor->Next();
+        list.ListAdd(cursor);
 
-    if (list.ListSize() != (nElements + 1)) {
-        return false;
+        if (list.ListSize() != (nElements + i + 1)) {
+            return false;
+        }
+        cursor = temp;
     }
 
     return ((IntegerList*) list.ListPeek(nElements))->intNumber == first2->intNumber;
@@ -417,7 +428,7 @@ bool LinkedListHolderTest::TestListSearch() {
 
     LinkedListable *stored[size];
 
-    stored[31] = new LinkedListable;
+    stored[size - 1] = new LinkedListable;
 
     for (uint32 i = 0; i < (size - 1); i++) {
 
@@ -426,13 +437,20 @@ bool LinkedListHolderTest::TestListSearch() {
 
     }
 
+    bool ret = true;
     for (uint32 i = 0; i < (size - 1); i++) {
         if (!list.ListSearch(stored[i])) {
-            return false;
+            ret = false;
         }
     }
 
-    return (!list.ListSearch(stored[size - 1]));
+    if (list.ListSearch(stored[size - 1])) {
+        return false;
+    }
+
+    delete stored[size - 1];
+
+    return ret;
 }
 
 bool LinkedListHolderTest::TestListSearchFilter() {
@@ -511,31 +529,31 @@ bool LinkedListHolderTest::TestListExtractSearchFilter() {
     }
 
     SearchInteger searchNotIn(size + 1);
-
+    bool ret = true;
     if (list.ListExtract(&searchNotIn) != NULL) {
-        return false;
+        ret= false;
     }
 
     if (list.ListExtract((SearchFilter*) NULL) != NULL) {
-        return false;
+        ret=false;
     }
 
     for (uint32 i = 0; i < (size); i++) {
         SearchInteger searchNumber(i);
         if (list.ListExtract(&searchNumber) != stored[i]) {
-            return false;
+            ret = false;
         }
 
         if (stored[i]->Next() != NULL) {
-            return false;
+            ret=false;
         }
 
         if (list.ListExtract(&searchNumber) != NULL) {
-            return false;
+            ret=false;
         }
 
         if (list.ListSize() != (size - 1 - i)) {
-            return false;
+            ret = false;
         }
     }
 
@@ -543,7 +561,7 @@ bool LinkedListHolderTest::TestListExtractSearchFilter() {
         delete stored[i];
     }
 
-    return list.ListSize() == 0;
+    return ret && (list.ListSize() == 0);
 
 }
 
@@ -586,7 +604,6 @@ bool LinkedListHolderTest::TestListDelete() {
 
     LinkedListHolder list;
 
-
     for (uint32 i = 0; i < size; i++) {
         stored[i] = new LinkedListable;
         list.ListAdd(stored[i]);
@@ -595,24 +612,26 @@ bool LinkedListHolderTest::TestListDelete() {
 
     LinkedListable* notIn = new LinkedListable;
 
+    bool ret = true;
     if (list.ListDelete(notIn)) {
-        return false;
+        ret = false;
     }
+    delete notIn;
 
     if (list.ListDelete((LinkedListable*) NULL)) {
-        return false;
+        ret= false;
     }
 
     for (uint32 i = 0; i < size; i++) {
         if (!list.ListDelete(stored[i])) {
-            return false;
+            ret = false;
         }
         if (list.ListSize() != (size - 1 - i)) {
-            return false;
+            ret = false;
         }
     }
 
-    return list.ListSize() == 0;
+    return ret && (list.ListSize() == 0);
 }
 
 bool LinkedListHolderTest::TestListDeleteSearchFilter() {
@@ -631,30 +650,30 @@ bool LinkedListHolderTest::TestListDeleteSearchFilter() {
     }
 
     SearchInteger searchNotIn(size + 1);
-
+    bool ret = true;
     if (list.ListDelete(&searchNotIn)) {
-        return false;
+        ret = false;
     }
     if (list.ListDelete((SearchFilter*) NULL)) {
-        return false;
+        ret=false;
     }
 
     for (uint32 i = 0; i < (size / 2); i++) {
         SearchInteger searchNumber(i % (size / 2));
         if (!list.ListDelete(&searchNumber)) {
-            return false;
+            ret = false;
         }
 
         if (list.ListDelete(&searchNumber)) {
-            return false;
+            ret = false;
         }
 
         if (list.ListSize() != (size - 2 * (i + 1))) {
-            return false;
+            ret = false;
         }
     }
 
-    return list.ListSize() == 0;
+    return ret && (list.ListSize() == 0);
 
 }
 

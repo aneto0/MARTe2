@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
+#include "Iterator.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -47,7 +47,7 @@ namespace MARTe {
  * the Do method.
  */
 template<typename T>
-class IteratorT {
+class IteratorT: public Iterator {
 public:
     /**
      * @brief Destructor.
@@ -59,7 +59,7 @@ public:
      * @brief The function performing the desired specific action on the input parameter.
      * @param[in] data is a generic template type.
      */
-    virtual void Do(T data)=0;
+    virtual void Do(T *data)=0;
 };
 }
 /*---------------------------------------------------------------------------*/

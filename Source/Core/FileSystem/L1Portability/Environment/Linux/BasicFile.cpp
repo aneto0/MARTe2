@@ -320,7 +320,7 @@ bool BasicFile::Read(char8* const output,
                      uint32 & size) {
     bool retVal = true;
     if (CanRead()) {
-        size = static_cast<uint32>(read(properties.identifier, output, static_cast<uint64>(size)));
+        size = static_cast<uint32>(read(properties.identifier, output, static_cast<size_t>(size)));
         retVal = (size != 0xFFFFFFFFU);
         if (retVal == false) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Read().File cannot be read");
@@ -354,7 +354,10 @@ bool BasicFile::Read(char8 * const output,
         /*lint -e{1924} C-style cast*/
         FD_SET(properties.identifier, &set1);
         /*lint -e{9114} implicit conversion of integer cvalue expression*/
-        timeout.tv_usec = static_cast<int64>(msecTimeout.GetTimeoutMSec()) * 1000;
+        uint32 secs = msecTimeout.GetTimeoutMSec() / 1000u;
+        uint32 usecs = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
+        timeout.tv_sec = static_cast<int64>(secs);
+        timeout.tv_usec = static_cast<int64>(usecs);
         retSelect = select((properties.identifier + 1), &set1, static_cast<fd_set *>(NULL), static_cast<fd_set *>(NULL), &timeout);
         if (retSelect == -1) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Read(). Error while waiting to read a file");
@@ -378,7 +381,7 @@ bool BasicFile::Write(const char8 * const input,
                       uint32 & size) {
     bool retVal = true;
     if (CanWrite()) {
-        size = static_cast<uint32>(write(properties.identifier, input, static_cast<uint64>(size)));
+        size = static_cast<uint32>(write(properties.identifier, input, static_cast<size_t>(size)));
         if (size == 0xFFFFFFFFU) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Write(). File cannot be written");
             retVal = false;
@@ -412,7 +415,10 @@ bool BasicFile::Write(const char8 * const input,
         /*lint -e{1924} C-style cast*/
         FD_SET(properties.identifier, &set);
         /*lint -e{9114} implicit conversion of integer cvalue expression*/
-        timeout.tv_usec = static_cast<int64>(msecTimeout.GetTimeoutMSec()) * 1000;
+        uint32 secs = msecTimeout.GetTimeoutMSec() / 1000u;
+        uint32 usecs = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
+        timeout.tv_sec = static_cast<int64>(secs);
+        timeout.tv_usec = static_cast<int64>(usecs);
         retSelect = select(properties.identifier + 1, static_cast<fd_set *>(NULL), &set, static_cast<fd_set *>(NULL), &timeout);
         if (retSelect == -1) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Write. Error while waiting to write a file");
@@ -525,7 +531,7 @@ bool BasicFile::SetSize(const uint64 size) {
         if (size >= static_cast<uint64>(MAX_INT64)) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::SetSize(). The size is too large");
         }
-        ret = ftruncate(properties.identifier, static_cast<int64>(size));
+        ret = ftruncate(properties.identifier, static_cast<off_t>(size));
         if (ret == -1) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::SetSize(). The size cannot be set");
             retVal = false;

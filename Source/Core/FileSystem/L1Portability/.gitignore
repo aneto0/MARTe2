@@ -8,3 +8,7 @@
 /cov/
 /depends.cov
 /dependsRaw.cov
+/vc140.pdb
+/dllGenerator.def
+/dummy.cpp
+/dummy.obj

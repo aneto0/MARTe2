@@ -31,11 +31,13 @@ OBJSX=  AtomicTest.x \
 		ErrorManagementTest.x \
 		FastMathTest.x \
 		FastPollingMutexSemTest.x \
+		FastPollingEventSemTest.x \
 		FormatDescriptorTest.x \
 		GlobalObjectsDatabaseTest.x \
 		HeapManagerTest.x \
 		HighResolutionTimerTest.x \
 		LoadableLibraryTest.x \
+		MemoryAreaTest.x \
 		MemoryCheckTest.x \
 		MemoryOperationsHelperTest.x\
 		ProcessorTypeTest.x \

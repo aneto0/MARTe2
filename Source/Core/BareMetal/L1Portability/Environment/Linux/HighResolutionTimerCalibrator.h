@@ -67,7 +67,7 @@ public:
      * @brief Returns the calibrated CPU frequency.
      * @return the calibrated CPU frequency.
      */
-    int64 GetFrequency() const;
+    uint64 GetFrequency() const;
 
     /**
      * @brief Returns the calibrated CPU period.
@@ -80,7 +80,7 @@ private:
     /**
      * Number of cpu ticks in a second
      */
-    int64 frequency;
+    uint64 frequency;
 
     /**
      * Time between two ticks in seconds
@@ -100,7 +100,7 @@ private:
     /**
      * Number of elapsed ticks at the time at which a framework instance was executed.
      */
-    int64 initialTicks;
+    uint64 initialTicks;
 };
 
 }

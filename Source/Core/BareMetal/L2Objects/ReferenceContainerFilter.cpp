@@ -15,12 +15,14 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This source file contains the definition of all the methods for
  * the class ReferenceContainerFilter (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -39,7 +41,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 ReferenceContainerFilter::ReferenceContainerFilter() {
     occurrence = 0;
@@ -84,7 +86,7 @@ bool ReferenceContainerFilter::IsRecursive() const {
 }
 
 bool ReferenceContainerFilter::IsSearchAll() const {
-    return (occurrence == -1);
+    return (originallySetOccurrence == -1);
 }
 
 bool ReferenceContainerFilter::IsStorePath() const {
@@ -116,13 +118,12 @@ void ReferenceContainerFilter::SetOriginalSetOccurrence(const int32 occurrenceTo
 void ReferenceContainerFilter::SetMode(const uint32& modeToSet) {
     mode = modeToSet;
 
-    // unset the path bit
-    if (IsSearchAll()) {
-        mode &= ~(ReferenceContainerFilterMode::PATH);
-    }
-
     //set the recursive bit
     if (IsStorePath()) {
+        if (IsSearchAll()) {
+            REPORT_ERROR(ErrorManagement::Warning, "Cannot use PATH mode to search more than one reference. The filter will match the first occurrence");
+            originallySetOccurrence = 1;
+        }
         mode |= ReferenceContainerFilterMode::RECURSIVE;
     }
 }

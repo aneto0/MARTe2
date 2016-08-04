@@ -1,8 +1,8 @@
 /**
- * @file MemoryCheck.cpp
- * @brief Source file for module MemoryCheck
- * @date 27/07/2015
- * @author Giuseppe Ferrò
+ * @file CallRegisteredMethodLauncher.cpp
+ * @brief Source file for class CallRegisteredMethodLauncher
+ * @date 11/07/2016
+ * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -15,48 +15,54 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This source file contains the definition of all the methods for
- * the module MemoryCheck (public, protected, and private). Be aware that some
+ * the class CallRegisteredMethodLauncher (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
-#ifndef LINT
-
-#include <stdlib.h>
-#include <string.h>
-#else
-#include "lint-linux.h"
-#endif
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "../../MemoryCheck.h"
+#include "CallRegisteredMethodLauncher.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace {
+
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
-namespace MemoryCheck {
+CallRegisteredMethodLauncher::CallRegisteredMethodLauncher(Object* const objectIn,
+                                                           const CCString& methodNameIn) {
+    object = objectIn;
+    methodName = methodNameIn;
+}
 
-bool Check(const void * const address,
-           const MemoryTestAccessMode accessMode,
-           const uint32 size) {
+CallRegisteredMethodLauncher::~CallRegisteredMethodLauncher() {
+    /*lint -e{1540} the memory of the object pointed by the pointer member
+     * 'object' is managed by the clients of this class*/
+}
 
-    return address != NULL;
+bool CallRegisteredMethodLauncher::Test(ClassMethodsRegistryItem * const data) {
+    ret = data->CallFunction(object, methodName.GetList());
+    // the function has been found and called
+    return !ret.unsupportedFeature;
 }
 
 }
-}
+

@@ -49,7 +49,7 @@ bool AnyObjectTest::TestGetType_Scalar_String() {
     MARTe::AnyObject anyObj;
     StreamString s = "ThisIsAString";
     bool ok = anyObj.Serialise(s);
-    ok = (anyObj.GetType().GetTypeDescriptor().type == CCString);
+    ok = (anyObj.GetType().GetTypeDescriptor().type == BT_CCString);
     return ok;
 }
 
@@ -269,12 +269,12 @@ bool AnyObjectTest::TestGetClassProperties() {
     return (StringHelper::Compare("AnyObject", classProps->GetName()) == 0);
 }
 
-bool AnyObjectTest::TestGetClassPropertiesCopy() {
-    AnyObject anyObj;
-    ClassProperties classProps;
-    anyObj.GetClassPropertiesCopy(classProps);
-    return (StringHelper::Compare("AnyObject", classProps.GetName()) == 0);
-}
+//bool AnyObjectTest::TestGetClassPropertiesCopy() {
+//    AnyObject anyObj;
+//    ClassProperties classProps;
+//    anyObj.GetClassPropertiesCopy(classProps);
+//    return (StringHelper::Compare("AnyObject", classProps.GetName()) == 0);
+//}
 
 bool AnyObjectTest::TestGetObjectBuildFunction() {
     Reference ref("AnyObject");

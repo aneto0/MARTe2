@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This source file contains the definition of all the methods for
  * the class ReferenceContainer (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
@@ -30,12 +30,17 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
+#include "ClassRegistryItemT.h"
 #include "ReferenceContainer.h"
 #include "ReferenceContainerNode.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceT.h"
 #include "ErrorManagement.h"
+#include "StringHelper.h"
+#include "ReferenceContainerFilterObjectName.h"
 #include <typeinfo>
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -43,7 +48,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
+
+namespace MARTe {
 
 ReferenceContainer::ReferenceContainer() :
         Object() {
@@ -51,19 +57,32 @@ ReferenceContainer::ReferenceContainer() :
     muxTimeout = TTInfiniteWait;
 }
 
+ReferenceContainer::ReferenceContainer(ReferenceContainer &copy) :
+        Object(copy) {
+    uint32 nChildren = copy.Size();
+    for (uint32 i = 0u; i < nChildren; i++) {
+        Reference toInsert = copy.Get(i);
+        if (!Insert(toInsert)) {
+            //TODO
+        }
+    }
+}
+
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
 Reference ReferenceContainer::Get(const uint32 idx) {
     Reference ref;
-    if (mux.FastLock(muxTimeout) == ErrorManagement::NoError) {
+    if (Lock()) {
         if (idx < list.ListSize()) {
-            ReferenceContainerNode *node = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(idx));
+            ReferenceContainerNode *node = (list.ListPeek(idx));
             if (node != NULL) {
                 ref = node->GetReference();
             }
         }
-        REPORT_ERROR(ErrorManagement::Warning,"ReferenceContainer: input greater than the list size.");
+        else {
+            REPORT_ERROR(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
+        }
     }
-    mux.FastUnLock();
+    UnLock();
     return ref;
 }
 
@@ -78,19 +97,66 @@ void ReferenceContainer::SetTimeout(const TimeoutType &timeout) {
 /*lint -e{1551} no exception should be thrown given that ReferenceContainer is
  * the sole owner of the list (LinkedListHolder)*/
 ReferenceContainer::~ReferenceContainer() {
-    LinkedListable *p = list.List();
-    list.Reset();
-    while (p != NULL) {
-        LinkedListable *q = p;
-        p = p->Next();
-        delete q;
+
+}
+
+void ReferenceContainer::CleanUp() {
+
+    uint32 numberOfElements;
+    if (!Lock()) {
+        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+    }
+    numberOfElements = list.ListSize() + purgeList.ListSize();
+    UnLock();
+
+    //flat recursion due to avoid stack waste!!
+    for (uint32 i = 0u; i < numberOfElements; i++) {
+        if (!Lock()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+        }
+        if (purgeList.ListSize() >= numberOfElements) {
+            UnLock();
+            break;
+        }
+        //extract the element from the list
+        ReferenceContainerNode *node = list.ListExtract(0u);
+        if (node != NULL) {
+            purgeList.ListInsert(node);
+        }
+        UnLock();
+    }
+
+    for (uint32 i = 0u; i < numberOfElements; i++) {
+        if (!Lock()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+        }
+        if (purgeList.ListSize() == 0u) {
+            UnLock();
+            break;
+        }
+
+        ReferenceContainerNode * node = purgeList.ListExtract(0u);
+        UnLock();
+
+        ReferenceT<ReferenceContainer> element;
+        if (node != NULL) {
+            element = node->GetReference();
+        }
+
+        if (element.IsValid()) {
+            element->CleanUp();
+        }
+        //extract and delete the element from the list
+        if (node != NULL) {
+            delete node;
+        }
     }
 }
 
 /*lint -e{593} .Justification: The node (newItem) will be deleted by the destructor. */
 bool ReferenceContainer::Insert(Reference ref,
                                 const int32 &position) {
-    bool ok = (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
+    bool ok = (Lock());
     if (ok) {
         ReferenceContainerNode *newItem = new ReferenceContainerNode();
         if (newItem->SetReference(ref)) {
@@ -106,15 +172,101 @@ bool ReferenceContainer::Insert(Reference ref,
             ok = false;
         }
     }
-    else{
-        REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed FastLock()");
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
     }
-    mux.FastUnLock();
+    UnLock();
     return ok;
+}
+
+bool ReferenceContainer::Insert(const char8 * const path,
+                                Reference ref) {
+    bool ok = ref.IsValid();
+    if (ok) {
+        if (StringHelper::Length(path) == 0u) {
+            ok = Insert(ref);
+        }
+        else {
+            bool created = false;
+            ReferenceContainer* currentNode = this;
+            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+
+            const char8* toTokenize = path;
+            const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
+            toTokenize = next;
+
+            while ((token[0] != '\0') && (ok)) {
+                ok = (StringHelper::Length(token) > 0u);
+                if (ok) {
+                    //Check if a node with this name already exists
+                    bool found = false;
+                    Reference foundReference;
+                    uint32 i;
+                    for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
+                        foundReference = currentNode->Get(i);
+                        found = (StringHelper::Compare(foundReference->GetName(), token) == 0);
+                    }
+                    // take the next token
+
+                    next = StringHelper::TokenizeByChars(toTokenize, ".", nextToken);
+                    toTokenize = next;
+
+                    if (found) {
+                        currentNode = dynamic_cast<ReferenceContainer*>(foundReference.operator->());
+                        // if it is a leaf exit (and return false)
+                        if (currentNode == NULL) {
+                            ok = false;
+                        }
+                    }
+                    else {
+                        // insert the reference
+                        if (nextToken[0] == '\0') {
+                            ref->SetName(token);
+                            created = currentNode->Insert(ref);
+                        }
+                        // create a node
+                        else {
+                            ReferenceT<ReferenceContainer> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                            container->SetName(token);
+                            ok = currentNode->Insert(container);
+                            if (ok) {
+                                currentNode = container.operator->();
+                            }
+                        }
+                    }
+                    if (ok) {
+                        ok = StringHelper::Copy(token, nextToken);
+                    }
+                }
+            }
+
+            if (ok) {
+                ok = created;
+            }
+
+            if (HeapManager::Free(reinterpret_cast<void*&>(token))) {
+
+            }
+            if (HeapManager::Free(reinterpret_cast<void*&>(nextToken))) {
+
+            }
+        }
+    }
+    return ok;
+
 }
 
 bool ReferenceContainer::Delete(Reference ref) {
     ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::REMOVE, ref);
+    ReferenceContainer result;
+    //Locking is already done inside the Find
+    Find(result, filter);
+    return (result.Size() > 0u);
+}
+
+bool ReferenceContainer::Delete(const char8 * const path) {
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::REMOVE, path);
     ReferenceContainer result;
     //Locking is already done inside the Find
     Find(result, filter);
@@ -130,101 +282,203 @@ bool ReferenceContainer::IsContainer(const Reference &ref) const {
 void ReferenceContainer::Find(ReferenceContainer &result,
                               ReferenceContainerFilter &filter) {
     int32 index = 0;
-    bool ok = (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
-    if (ok && (list.ListSize() > 0u)) {
-        if (filter.IsReverse()) {
-            index = static_cast<int32>(list.ListSize()) - 1;
-        }
-        //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
-        //lint -e{9007} no side-effects on the right of the && operator
-        while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
+    bool ok = Lock();
+    if (ok) {
+        if (list.ListSize() > 0u) {
+            if (filter.IsReverse()) {
+                index = static_cast<int32>(list.ListSize()) - 1;
+            }
+            //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
+            //lint -e{9007} no side-effects on the right of the && operator
+            while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
-            ReferenceContainerNode *currentNode = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(static_cast<uint32>(index)));
-            Reference currentNodeReference = currentNode->GetReference();
+                ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
 
-            //Check if the current node meets the filter criteria
-            bool found = filter.Test(result, currentNodeReference);
-            if (found) {
-                //IsSearchAll() => all found nodes should be inserted in the output list
-                //IsFinished() => that the desired occurrence of this object was found => add it to the output list
-                /*lint -e{9007} filter.IsSearchAll() has no side effects*/
-                if (filter.IsSearchAll() || filter.IsFinished()) {
-                    if (result.Insert(currentNodeReference)) {
-                        if (filter.IsRemove()) {
-                            //Only delete the exact node index
-                            if (list.ListDelete(currentNode)) {
-                                //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
-                                if (!filter.IsReverse()) {
-                                    index--;
+                Reference currentNodeReference = currentNode->GetReference();
+                //Check if the current node meets the filter criteria
+                bool found = filter.Test(result, currentNodeReference);
+                if (found) {
+                    //IsSearchAll() => all found nodes should be inserted in the output list
+                    //IsFinished() => that the desired occurrence of this object was found => add it to the output list
+                    /*lint -e{9007} filter.IsSearchAll() has no side effects*/
+                    if (filter.IsSearchAll() || filter.IsFinished()) {
+                        if (result.Insert(currentNodeReference)) {
+                            if (filter.IsRemove()) {
+                                //Only delete the exact node index
+                                if (list.ListDelete(currentNode)) {
+                                    //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
+                                    if (!filter.IsReverse()) {
+                                        index--;
+                                    }
+                                }
+                                else {
+                                    REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Delete()");
                                 }
                             }
-                            else{
-                                REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed StaticList::Delete()");
-                            }
+                        }
+                        else {
+                            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                         }
                     }
-                    else{
-                        REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed StaticList::Insert()");
+                }
+
+                // no other stack waste!!
+                if (filter.IsFinished()) {
+                    break;
+                }
+
+                /*lint -e{9007} filter.IsRecursive() has no side effects*/
+                if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
+                    ok = true;
+                    if (filter.IsStorePath()) {
+                        ok = result.Insert(currentNodeReference);
                     }
-                }
-            }
 
-            // no other stack waste!!
-            if(filter.IsFinished()){
-                break;
-            }
-
-            /*lint -e{9007} filter.IsRecursive() has no side effects*/
-            if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
-                ok = true;
-                if (filter.IsStorePath()) {
-                    ok = result.Insert(currentNodeReference);
-                }
-
-                if (ok) {
-                    ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
-                    uint32 sizeBeforeBranching = result.list.ListSize();
-                    mux.FastUnLock();
-                    currentNodeContainer->Find(result, filter);
-                    if (mux.FastLock(muxTimeout) == ErrorManagement::NoError) {
-                        //Something was found if the result size has changed
-                        if (sizeBeforeBranching == result.list.ListSize()) {
-                            //Nothing found. Remove the stored path (which led to nowhere).
-                            if (filter.IsStorePath()) {
-                                LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1u);
-                                delete node;
+                    if (ok) {
+                        ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
+                        uint32 sizeBeforeBranching = result.list.ListSize();
+                        UnLock();
+                        currentNodeContainer->Find(result, filter);
+                        if (Lock()) {
+                            //Something was found if the result size has changed
+                            if (sizeBeforeBranching == result.list.ListSize()) {
+                                //Nothing found. Remove the stored path (which led to nowhere).
+                                if (filter.IsStorePath()) {
+                                    LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1u);
+                                    delete node;
+                                }
                             }
                         }
+                        else {
+                            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+                        }
                     }
-                    else{
-                        REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed FastLock()");
+                    else {
+                        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                     }
                 }
-                else{
-                    REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed StaticList::Insert()");
+                if (!filter.IsReverse()) {
+                    index++;
                 }
-            }
-            if (!filter.IsReverse()) {
-                index++;
-            }
-            else {
-                index--;
+                else {
+                    index--;
+                }
             }
         }
     }
-    mux.FastUnLock();
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+    }
+
+    UnLock();
+}
+
+Reference ReferenceContainer::Find(const char8 * const path) {
+    Reference ret;
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::SHALLOW, path);
+    ReferenceContainer resultSingle;
+    Find(resultSingle, filter);
+    if (resultSingle.Size() > 0u) {
+        ret = resultSingle.Get(resultSingle.Size() - 1u);
+    }
+    return ret;
 }
 
 uint32 ReferenceContainer::Size() {
     uint32 size = 0u;
-    if (mux.FastLock(muxTimeout) == ErrorManagement::NoError) {
+    if (Lock()) {
         size = list.ListSize();
     }
-    else{
-        REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed FastLock()");
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
     }
-    mux.FastUnLock();
+    UnLock();
     return size;
+}
+
+bool ReferenceContainer::Initialise(StructuredDataI &data) {
+
+    // only one thread has to initialise.
+
+    // Recursive initialization
+    bool ok = true;
+    uint32 numberOfChildren = data.GetNumberOfChildren();
+    for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
+        const char8* childName = data.GetChildName(i);
+        ok = (childName != NULL);
+        if (ok) {
+            // case object
+            if ((childName[0] == '+') || (childName[0] == '$')) {
+                if (data.MoveRelative(childName)) {
+                    Reference newObject;
+                    ok = newObject.Initialise(data, false);
+                    if (ok) {
+                        ok = (newObject.IsValid());
+                        if (ok) {
+                            if (childName[0] == '$') {
+                                newObject->SetDomain(true);
+                            }
+                            newObject->SetName(&childName[1]);
+                            ok = ReferenceContainer::Insert(newObject);
+                        }
+                        if (ok) {
+                            ok = data.MoveToAncestor(1u);
+                        }
+                    }
+                }
+                else {
+                    ok = false;
+                }
+            }
+        }
+    }
+    return ok;
+}
+
+bool ReferenceContainer::ExportData(StructuredDataI & data) {
+
+    // no need to lock
+    const char8 * objName = GetName();
+    uint32 objNameLength = StringHelper::Length(objName);
+    //To include $ or +
+    objNameLength += 1u;
+    char8 *objNameToCreate = reinterpret_cast<char8 *>(HeapManager::Malloc(objNameLength));
+    objNameToCreate[0] = (IsDomain()) ? ('$') : ('+');
+    bool ret = StringHelper::Copy(&objNameToCreate[1], objName);
+
+    if (ret) {
+        ret = data.CreateRelative(objNameToCreate);
+        if (ret) {
+            ret = HeapManager::Free(reinterpret_cast<void*&>(objNameToCreate));
+            if (ret) {
+                const ClassProperties *properties = GetClassProperties();
+                ret = (properties != NULL);
+                if (ret) {
+                    ret = data.Write("Class", properties->GetName());
+                    uint32 numberOfChildren = Size();
+                    for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
+                        Reference child = Get(i);
+                        ret = child.IsValid();
+                        if (ret) {
+                            ret = child->ExportData(data);
+                        }
+                    }
+                }
+                if (!data.MoveToAncestor(1u)) {
+                    ret = false;
+                }
+            }
+        }
+    }
+    return ret;
+}
+
+bool ReferenceContainer::Lock() {
+    return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
+}
+
+void ReferenceContainer::UnLock() {
+    mux.FastUnLock();
 }
 
 CLASS_REGISTER(ReferenceContainer, "1.0")

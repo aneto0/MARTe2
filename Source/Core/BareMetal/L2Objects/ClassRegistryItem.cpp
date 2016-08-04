@@ -15,12 +15,14 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This source file contains the definition of all the methods for
  * the class ClassRegistryItem (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -28,63 +30,57 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
+#include "CallRegisteredMethodLauncher.h"
+#include "ClassProperties.h"
 #include "ClassRegistryDatabase.h"
 #include "ClassRegistryItem.h"
-#include "FastPollingMutexSem.h"
 #include "ErrorManagement.h"
+#include "Introspection.h"
+#include "LoadableLibrary.h"
+#include "ObjectBuilder.h"
+#include "SearchFilterT.h"
 
-namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-/*lint -e{9141} global declaration but only used to support the class implementation.
- * The symbol is not exported (static). This could also be replaced by an anonymous namespace.
- */
-static FastPollingMutexSem classRegistryItemMuxSem;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-//LCOV_EXCL_START
-ClassRegistryItem::ClassRegistryItem() :
-        classProperties() {
-    numberOfInstances = 0u;
+
+namespace MARTe {
+
+// TODO remove LCOV_EXCL_START
+ClassRegistryItem::ClassRegistryItem(ClassProperties &classProperties_in) :
+        LinkedListable(),
+        classProperties(classProperties_in),
+        classMethods() {
+    numberOfInstances = 0;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuildFn = NULL_PTR(ObjectBuildFn *);
+    objectBuilder = NULL_PTR(ObjectBuilder *);
     introspection = NULL_PTR(Introspection *);
 }
 
-//LCOV_EXCL_STOP
+ClassRegistryItem *ClassRegistryItem::Instance(ClassRegistryItem *&instance,
+                                               ClassProperties &classProperties_in) {
+    ClassRegistryDatabase* crd = ClassRegistryDatabase::Instance();
 
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
-                                     const ObjectBuildFn * const objBuildFn) {
-    numberOfInstances = 0u;
-    classProperties = clProperties;
-    loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuildFn = objBuildFn;
-    introspection = NULL_PTR(Introspection *);
-    ClassRegistryDatabase::Instance()->Add(this);
+    if ((crd != NULL_PTR(ClassRegistryDatabase*)) && (instance == NULL_PTR(ClassRegistryItem*))) {
+
+        instance = new ClassRegistryItem(classProperties_in);
+        crd->Add(instance);
+    }
+
+    return instance;
 }
 
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
-                                     Introspection &introspectionIn) {
-    numberOfInstances = 0u;
-    classProperties = clProperties;
-    loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuildFn = NULL_PTR(ObjectBuildFn *);
-    introspection = &introspectionIn;
-    ClassRegistryDatabase::Instance()->Add(this);
+void ClassRegistryItem::SetObjectBuilder(const ObjectBuilder * const objectBuilderIn) {
+    objectBuilder = objectBuilderIn;
 }
 
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
-                                     const ObjectBuildFn * const objBuildFn,
-                                     Introspection &introspectionIn) {
-    numberOfInstances = 0u;
-    classProperties = clProperties;
-    loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuildFn = objBuildFn;
-    introspection = &introspectionIn;
-    ClassRegistryDatabase::Instance()->Add(this);
+const ObjectBuilder *ClassRegistryItem::GetObjectBuilder() const {
+    return objectBuilder;
 }
 
 /*lint -e{1551} no exception should be thrown as loadableLibrary is properly initialised and
@@ -93,8 +89,10 @@ ClassRegistryItem::~ClassRegistryItem() {
     if (loadableLibrary != NULL_PTR(LoadableLibrary *)) {
         delete loadableLibrary;
     }
+
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     introspection = NULL_PTR(Introspection *);
+    objectBuilder = NULL_PTR(ObjectBuilder *);
 }
 
 void ClassRegistryItem::GetClassPropertiesCopy(ClassProperties &destination) const {
@@ -105,29 +103,12 @@ const ClassProperties *ClassRegistryItem::GetClassProperties() const {
     return &classProperties;
 }
 
+void ClassRegistryItem::SetIntrospection(const Introspection * const introspectionIn) {
+    introspection = introspectionIn;
+}
+
 const Introspection * ClassRegistryItem::GetIntrospection() const {
     return introspection;
-}
-
-void ClassRegistryItem::IncrementNumberOfInstances() {
-    if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
-        numberOfInstances++;
-    }
-    classRegistryItemMuxSem.FastUnLock();
-}
-
-void ClassRegistryItem::DecrementNumberOfInstances() {
-    if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
-        numberOfInstances--;
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryItem: Failed FastLock()");
-    }
-    classRegistryItemMuxSem.FastUnLock();
-}
-
-uint32 ClassRegistryItem::GetNumberOfInstances() const {
-    return numberOfInstances;
 }
 
 const LoadableLibrary *ClassRegistryItem::GetLoadableLibrary() const {
@@ -138,12 +119,57 @@ void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const loadLib
     this->loadableLibrary = loadLibrary;
 }
 
-const ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
-    return objectBuildFn;
+void ClassRegistryItem::RegisterMethods(ClassMethodsRegistryItem * const classMethodRecord) {
+    classMethods.ListAdd(classMethodRecord);
+}
+
+void ClassRegistryItem::IncrementNumberOfInstances() {
+    Atomic::Increment(&numberOfInstances);
+}
+
+void ClassRegistryItem::DecrementNumberOfInstances() {
+    Atomic::Decrement(&numberOfInstances);
+}
+
+uint32 ClassRegistryItem::GetNumberOfInstances() const {
+    return static_cast<uint32>(numberOfInstances);
 }
 
 void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {
     classProperties.SetUniqueIdentifier(uid);
+}
+
+ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object * const object,
+                                                                   CCString methodName) {
+    ErrorManagement::ErrorType ret;
+
+    if (object == NULL_PTR(Object*)) {
+        ret.parametersError = true;
+    }
+
+    if (methodName.GetList() == NULL_PTR(char8*)) {
+        ret.parametersError = true;
+    }
+
+    if (ret.NoError()) {
+        /*
+         * The launcher is passed as a filter to the ListSearch method of the
+         * classMethods list, which will execute the Test method of the launcher
+         * for each registered class method available in classMethods. Assuming
+         * that the launcher's Test method will try, each time it is executed,
+         * to call the target method methodName, the ListSearch method will
+         * finish as soon as a successful call happens, or it will return an
+         * unsupported feature error.
+         */
+        CallRegisteredMethodLauncher launcher(object, methodName);
+        if (classMethods.ListSearch(&launcher) != NULL) {
+            ret = launcher.GetResults();
+        }
+        else {
+            ret.unsupportedFeature = true;
+        }
+    }
+    return ret;
 }
 
 }

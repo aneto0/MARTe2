@@ -268,12 +268,12 @@ static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
 /**
  * Constant char pointer descriptor
  */
-static const TypeDescriptor ConstCharString(true, CCString, sizeof(const char8*) * 8u);
+static const TypeDescriptor ConstCharString(true, BT_CCString, sizeof(const char8*) * 8u);
 
 /**
  * Char pointer descriptor
  */
-static const TypeDescriptor CharString(false, CCString, sizeof(char8*) * 8u);
+static const TypeDescriptor CharString(false, BT_CCString, sizeof(char8*) * 8u);
 
 /**
  * ConfigurationDatabase node

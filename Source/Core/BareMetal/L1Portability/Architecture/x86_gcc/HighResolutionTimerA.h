@@ -56,8 +56,8 @@ inline uint32 Counter32() {
     return (uint32) perf;
 }
 
-inline int64 Counter() {
-    volatile int64 perf;
+inline uint64 Counter() {
+    volatile uint64 perf;
     uint32 *pperf = (uint32 *) &perf;
     asm volatile(
             "\n"

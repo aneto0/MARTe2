@@ -351,9 +351,10 @@ LexicalAnalyzer::LexicalAnalyzer(StreamI &stream,
 /*lint -e{1551} Justification: Memory has to be freed in the destructor.
  * No exceptions should be thrown given that the memory is managed exclusively managed by this class.". */
 LexicalAnalyzer::~LexicalAnalyzer() {
-    for (uint32 i = 0u; i < tokenQueue.GetSize(); i++) {
+    uint32 queueSize=tokenQueue.GetSize();
+    for (uint32 i = 0u; i < queueSize; i++) {
         Token *toDelete;
-        if (tokenQueue.Extract((tokenQueue.GetSize() - i) - 1u, toDelete)) {
+        if (tokenQueue.Extract((queueSize - i) - 1u, toDelete)) {
             delete toDelete;
         }
         else {

@@ -15,12 +15,14 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This source file contains the definition of all the methods for
  * the class ReferenceContainerFilterObjectName (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -28,10 +30,12 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "HeapManager.h"
 #include "MemoryOperationsHelper.h"
 #include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,6 +43,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName() :
@@ -119,8 +124,6 @@ void ReferenceContainerFilterObjectName::SetAddress(const char8 * const address)
     // and the path mode must be enabled (and it automatically enables the recursive mode)
     // So, if you want to search a path you have to be in path mode and you cannot search more than one path.
     if (addressNumberNodes > 1u) {
-        //Look for the first occurrence of the path
-        occurrence = 1;
         //Note: in this case IsSearchAll returns false
         // IsRecursive returns true
         // IsStorePath returns true
@@ -223,6 +226,9 @@ bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFoun
             /*lint -e{661} -e{662} safe given that addressToSearch is always created with the size of addressNumberNodes
              * and its size cannot be modified in runtime*/
             found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[addressNumberNodes - 1u]) == 0);
+        }
+        else {
+            found = false;
         }
     }
 

@@ -2,7 +2,7 @@
  * @file FastMathA.h
  * @brief Header file for module FastMathA
  * @date 26/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,11 +40,11 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 namespace FastMath {
 
-float Sin(float angle) {
+inline float Sin(const float angle) {
     volatile float output;
     __asm__ __volatile__(
             "fsin"
@@ -53,7 +53,7 @@ float Sin(float angle) {
     return output;
 }
 
-float Cos(float angle) {
+inline float Cos(const float angle) {
     volatile float output;
     __asm__ __volatile__(
             "fcos;"
@@ -62,7 +62,7 @@ float Cos(float angle) {
     return output;
 }
 
-int32 FloatToInt(float input) {
+inline int32 FloatToInt(const float input) {
     volatile int32 output;
     __asm__ __volatile__(
             "fld   %1;\n"

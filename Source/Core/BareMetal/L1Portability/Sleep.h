@@ -97,9 +97,9 @@ DLL_API void SemiBusy(const float64 totalSleepSec,
 /*---------------------------------------------------------------------------*/
 
 void Sleep::Busy(const float64 sec) {
-    int64 startCounter = HighResolutionTimer::Counter();
-    int64 endCounter = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
-    int64 sleepUntilCounter = startCounter + endCounter;
+    uint64 startCounter = HighResolutionTimer::Counter();
+    uint64 endCounter = static_cast<uint64>(sec) * HighResolutionTimer::Frequency();
+    uint64 sleepUntilCounter = startCounter + endCounter;
     while (HighResolutionTimer::Counter() < sleepUntilCounter) {
     }
 }

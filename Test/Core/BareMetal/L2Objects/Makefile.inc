@@ -24,13 +24,24 @@
 #
 #############################################################
 
+
 OBJSX=  AnyTypeTest.x\
+		CallRegisteredMethodLauncherTest.x \
+		CallRegisteredMethodLauncherTTest.x \
+		ClassMethodCallerTest.x \
+		ClassMethodCallerTTest.x \
+		ClassMethodInterfaceMapperTest.x \
+		ClassMethodsRegistryItemTest.x \
 		ClassPropertiesTest.x \
 		ClassRegistryDatabaseTest.x \
 		ClassRegistryItemTest.x \
+		ClassWithCallableMethods.x \
 		IntrospectionEntryTest.x\
 		IntrospectionTest.x \
+		ObjectBuilderTest.x \
+		ObjectBuilderTTest.x \
 		ObjectTest.x \
+		ObjectRegistryDatabaseTest.x \
 		ObjectTestHelper.x \
 		ReferenceContainerFilterObjectNameTest.x \
 		ReferenceContainerFilterReferencesTest.x \
@@ -39,7 +50,9 @@ OBJSX=  AnyTypeTest.x\
 		ReferenceTTest.x \
 		ReferenceTest.x \
 		TestObjectHelper1.x \
-		TestObjectHelper2.x
+		TestObjectHelper2.x \
+		TestObjectHelper3.x
+		
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
