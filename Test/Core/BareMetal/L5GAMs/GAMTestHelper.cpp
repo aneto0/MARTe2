@@ -84,7 +84,7 @@ DECLARE_STRUCT_INTROSPECTION(TestStructD, TestStructDEntries);
 
 GAM1::GAM1() :
         GAM() {
-
+    numberOfExecutions=0u;
 }
 
 GAM1::~GAM1() {
@@ -118,6 +118,7 @@ bool GAM1::Execute() {
         ReferenceT<ExecutableI> broker = outputBrokers->Get(b);
         broker->Execute();
     }
+    numberOfExecutions++;
 
     return true;
 }
@@ -133,7 +134,9 @@ CLASS_REGISTER(GAM1, "1.0");
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 
-void GAMGroup1::PrepareNextState(const RealTimeStateInfo &status) {
+bool GAMGroup1::PrepareNextState(const char8 * currentStateName,
+                                 const char8 * nextStateName) {
+    return true;
 
 }
 
@@ -203,7 +206,8 @@ const char8 *DS1::GetBrokerName(StructuredDataI &data,
 
 }
 
-bool DS1::PrepareNextState(const MARTe::RealTimeStateInfo&) {
+bool DS1::PrepareNextState(const char8 * const currentStateName,
+                           const char8 * const nextStateName) {
     return true;
 }
 
@@ -335,7 +339,8 @@ const char8 *Driver1::GetBrokerName(StructuredDataI &data,
 
 }
 
-bool Driver1::PrepareNextState(const RealTimeStateInfo &status) {
+bool Driver1::PrepareNextState(const char8 * const currentStateName,
+                               const char8 * const nextStateName) {
     return true;
 }
 
@@ -522,7 +527,8 @@ void PIDGAMGroup::SetUp() {
     context = 1u;
 }
 
-void PIDGAMGroup::PrepareNextState(const RealTimeStateInfo &status) {
+void PIDGAMGroup::PrepareNextState(const char8 * const currentStateName,
+                                   const char8 * const nextStateName) {
     if (StringHelper::Compare(status.currentState, "state1") == 0) {
         if (StringHelper::Compare(status.nextState, "state2") == 0) {
             context++;

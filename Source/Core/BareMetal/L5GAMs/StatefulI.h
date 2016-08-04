@@ -1,8 +1,8 @@
 /**
- * @file RealTimeStateInfo.h
- * @brief Header file for class RealTimeStateInfo
- * @date 25/02/2016
- * @author Giuseppe Ferrò
+ * @file StatefulI.h
+ * @brief Header file for class StatefulI
+ * @date 03/08/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RealTimeStateInfo
+ * @details This header file contains the declaration of the class StatefulI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMESTATEINFO_H_
-#define REALTIMESTATEINFO_H_
+#ifndef L5GAMS_STATEFULI_H_
+#define L5GAMS_STATEFULI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "StreamString.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -39,27 +39,33 @@
 namespace MARTe {
 
 /**
- * @brief Collects the information to be given to the GAMGroups in order to prepare
- * the new context before the change of state.
+ * @brief GAM classes that implement this method will be warned every time there is a state change.
  */
-struct RealTimeStateInfo {
-    /**
-     * The current active state
-     */
-    const char8* currentState;
+class StatefulI {
+public:
 
     /**
-     * The next state will be activated
+     * @brief NOOP
      */
-    const char8* nextState;
+    virtual ~StatefulI(){
+
+    }
+
+    /**
+     * @brief Function called every time there is state change request.
+     * @param[in] currentStateName the name of the current state being executed.
+     * @param[in] nextStateName the name of the next state to be executed.
+     * @return true if the state change is accepted by this component.
+     */
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateName)=0;
 
 };
 
 }
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMESTATEINFO_H_ */
+#endif /* L5GAMS_STATEFULI_H_ */
 

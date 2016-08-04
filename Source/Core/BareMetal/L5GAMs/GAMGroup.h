@@ -32,7 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
-#include "RealTimeStateInfo.h"
+#include "StatefulI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -56,7 +57,7 @@ namespace MARTe {
  *
  * and it has to be contained in the [RealTimeApplication].+Functions.[?ReferenceContainer?] declaration.
  */
-class DLL_API GAMGroup: public ReferenceContainer {
+class DLL_API GAMGroup: public ReferenceContainer , public StatefulI {
 public:
 
     /**
@@ -69,12 +70,6 @@ public:
      */
     virtual ~GAMGroup();
 
-    /**
-     * @brief Does all the necessary operations to prepare the context used for the
-     * next state.
-     * @param[in] status specifies the current and the next state.
-     */
-    virtual void PrepareNextState(const RealTimeStateInfo &status)=0;
 
 protected:
 

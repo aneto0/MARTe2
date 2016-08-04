@@ -502,7 +502,6 @@ public:
 
     bool VerifyConsumersAndProducers();
 
-
     /**
      * @brief For every signal in every Function compute the memory size and the memory offset (if Ranges are defined).
      * @details The memory size is given by sizeof(Type) multiplied by all the Ranges. Illegal Ranges definitions (see post condition).
@@ -890,7 +889,7 @@ private:
      * otherwise it shall have the value None.
      * @return true if FlattenSignal returns true for all signals in the functionsDatabase and in the dataSourcesDatabase tree.
      */
-    bool FlattenSignalsDatabase(const bool isFunctionsDatabase,
+    bool FlattenSignalsDatabase(ConfigurationDatabase &signalDatabase,
                                 const SignalDirection direction);
 
     /**
@@ -938,7 +937,7 @@ private:
      * @param[in] direction can be either InputSignals or OutputSignals.
      * @return @see ResolveFunctionSignals()
      */
-    bool ResolveFunctionSignals(SignalDirection direction);
+    bool ResolveFunctionSignals(const SignalDirection direction);
 
     /**
      * @brief Recursively adds a signal with an unknown type in the Function definition
@@ -963,39 +962,39 @@ private:
      * @param[in] direction can be either InputSignals or OutputSignals
      * @return true if all the signals can be successfully merged.
      */
-    bool VerifyFunctionSignals(SignalDirection direction);
+    bool VerifyFunctionSignals(const SignalDirection direction);
 
     /**
      * @brief @see ResolveConsumersAndProducers()
      * @param[in] consumers true if the function is being called to add Consumers, false if the function is being called to add Producers.
      * @return @see ResolveConsumersAndProducers()
      */
-    bool ResolveConsumersAndProducers(bool consumers);
+    bool ResolveConsumersAndProducers(const bool consumers);
 
     bool BuildProducersRanges();
 
-    bool CheckProducersRanges(uint32 *rangesArray,
-                              uint32 numberOfElements);
+    bool CheckProducersRanges(const uint32 * const rangesArray,
+                              const uint32 numberOfElements) const;
     /**
      * @brief @see ResolveFunctionSignalsMemorySize()
      * @param[in] direction can be either InputSignals or OutputSignals
      * @return @see ResolveFunctionSignalsMemorySize()
      */
-    bool ResolveFunctionSignalsMemorySize(SignalDirection direction);
+    bool ResolveFunctionSignalsMemorySize(const SignalDirection direction);
 
     /**
      * @brief @see ResolveFunctionsMemory()
      * @param[in] direction can be either InputSignals or OutputSignals
      * @return @see ResolveFunctionsMemory()
      */
-    bool ResolveFunctionsMemory(SignalDirection direction);
+    bool ResolveFunctionsMemory(const SignalDirection direction);
 
     /**
      * @brief @see AssignFunctionsMemoryToDataSource()
      * @param[in] direction can be either InputSignals or OutputSignals
      * @return @see AssignFunctionsMemoryToDataSource()
      */
-    bool AssignFunctionsMemoryToDataSource(SignalDirection direction);
+    bool AssignFunctionsMemoryToDataSource(const SignalDirection direction);
 
     /**
      * @brief @see AssignBrokersToSignals()
@@ -1003,7 +1002,7 @@ private:
      * @param[in] dataSource the DataSourceI to be queried.
      * @return @see AssignBrokersToSignals()
      */
-    bool AssignBrokersToSignals(SignalDirection direction,
+    bool AssignBrokersToSignals(const SignalDirection direction,
                                 ReferenceT<DataSourceI> dataSource);
 
     /**
@@ -1015,7 +1014,7 @@ private:
      * @return true if the signal is found.
      */
     bool FindSignalName(StreamString signalName,
-                        ConfigurationDatabase &database);
+                        ConfigurationDatabase &database) const ;
     /**
      * @brief Find the unique number associated to the DataSource with name = \a dataSourceName.
      * @param[in] dataSourceName the fully qualified name of the DataSource to search.
@@ -1034,20 +1033,20 @@ private:
                             StreamString &functionNumber);
 
     bool AddStateToFunction(ConfigurationDatabase &local,
-                            const char8 *functionName,
-                            const char8* stateName,
-                            const char8 * threadName,
+                            const char8 * const functionName,
+                            const char8 * const stateName,
+                            const char8 * const threadName,
                             uint32 &syncSignals);
 
-    bool AddStateToGAM(const char8* gamName,
-                       const char8* stateName,
-                       const char8 * threadName,
+    bool AddStateToGAM(const char8 * const gamName,
+                       const char8 * const stateName,
+                       const char8 * const threadName,
                        uint32 &syncSignals);
 
-    bool AddSignalTime(const char8* tDsName);
-    bool AddThreadCycleTime(const char8* threadFullName);
+    bool AddSignalTime();
+    bool AddThreadCycleTime(const char8 * const threadFullName);
 
-    bool WriteTimeSignalInfo(const char8*signalName);
+    bool WriteTimeSignalInfo(const char8 * const signalName);
     bool CheckTimeSignalInfo();
 
 };

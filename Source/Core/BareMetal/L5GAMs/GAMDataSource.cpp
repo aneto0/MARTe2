@@ -179,7 +179,8 @@ const char8 *GAMDataSource::GetBrokerName(StructuredDataI &data,
 
 }
 
-bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
+bool GAMDataSource::PrepareNextState(const char8 * const currentStateName,
+                                     const char8 * const nextStateName) {
 //Set the default value for all the input signals
     uint32 numberOfFunctions = GetNumberOfFunctions();
     bool ret = true;
@@ -198,7 +199,7 @@ bool GAMDataSource::PrepareNextState(const RealTimeStateInfo &status) {
             //Variable used in the current state?
             if (ret) {
                 uint32 numberOfProducersCurrentState;
-                if (!GetSignalNumberOfProducers(signalIdx, status.currentState, numberOfProducersCurrentState)) {
+                if (!GetSignalNumberOfProducers(signalIdx, currentStateName, numberOfProducersCurrentState)) {
                     numberOfProducersCurrentState = 0u;
                 }
                 //If the variable was not used update!
@@ -350,7 +351,7 @@ bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
             }
             if (!ret) {
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
-                                        "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be > 1 and is %d", GetName(),
+                                        "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be > 0 but is %d", GetName(),
                                         stateName.Buffer(), signalName.Buffer(), nProducers)
             }
         }

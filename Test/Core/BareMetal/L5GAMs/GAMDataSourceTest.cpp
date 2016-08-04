@@ -180,8 +180,8 @@ static const char8 * const config1 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -208,6 +208,7 @@ static const char8 * const config1 = ""
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = GAMDataSourceTestScheduler1"
         "    }"
         "}";
@@ -261,8 +262,8 @@ static const char8 * const config2 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -299,6 +300,7 @@ static const char8 * const config2 = ""
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = GAMDataSourceTestScheduler1"
         "    }"
         "}";
@@ -356,8 +358,8 @@ static const char8 * const config3 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -394,6 +396,7 @@ static const char8 * const config3 = ""
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = GAMDataSourceTestScheduler1"
         "    }"
         "}";
@@ -460,8 +463,8 @@ static const char8 * const config4 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -488,6 +491,7 @@ static const char8 * const config4 = ""
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = GAMDataSourceTestScheduler1"
         "    }"
         "}";
@@ -554,8 +558,8 @@ static const char8 * const config5 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -582,6 +586,7 @@ static const char8 * const config5 = ""
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = GAMDataSourceTestScheduler1"
         "    }"
         "}";
@@ -648,8 +653,8 @@ static const char8 * const config6 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -676,6 +681,7 @@ static const char8 * const config6 = ""
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = GAMDataSourceTestScheduler1"
         "    }"
         "}";
@@ -752,8 +758,8 @@ static const char8 * const config7 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -780,6 +786,7 @@ static const char8 * const config7 = ""
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = GAMDataSourceTestScheduler1"
         "    }"
         "}";
@@ -856,8 +863,8 @@ static const char8 * const config8 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -884,6 +891,7 @@ static const char8 * const config8 = ""
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = GAMDataSourceTestScheduler1"
         "    }"
         "}";
@@ -969,8 +977,8 @@ static const char8 * const config9 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -997,6 +1005,7 @@ static const char8 * const config9 = ""
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = GAMDataSourceTestScheduler1"
         "    }"
         "}";
@@ -1082,8 +1091,8 @@ static const char8 * const config10 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -1110,6 +1119,7 @@ static const char8 * const config10 = ""
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = GAMDataSourceTestScheduler1"
         "    }"
         "}";
@@ -1195,8 +1205,8 @@ static const char8 * const config11 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -1224,6 +1234,7 @@ static const char8 * const config11 = ""
         "    }"
         "    +Scheduler = {"
         "        Class = GAMDataSourceTestScheduler1"
+        "        TimingDataSource = Timings"
         "    }"
         "}";
 
@@ -1279,7 +1290,7 @@ bool GAMDataSourceTest::TestPrepareNextState_NoDefault() {
         ret = (signal3[i] == 0);
     }
 
-    RealTimeStateInfo stateInfo;
+
     if (ret) {
         //Dirty the memory
         *signal0 = 1u;
@@ -1288,9 +1299,7 @@ bool GAMDataSourceTest::TestPrepareNextState_NoDefault() {
             signal1[i] = (i + 1);
             signal3[i] = (i + 1);
         }
-        stateInfo.currentState = "State1";
-        stateInfo.nextState = "State2";
-        ret = gamDataSource->PrepareNextState(stateInfo);
+        ret = gamDataSource->PrepareNextState("State1", "State2");
     }
     if (ret) {
         //Signal was already being used keep the value
@@ -1332,14 +1341,11 @@ bool GAMDataSourceTest::TestPrepareNextState_Default_Basic() {
         ret = (*signal1 == 0u);
     }
 
-    RealTimeStateInfo stateInfo;
     if (ret) {
         //Dirty the memory
         *signal0 = 1u;
         *signal1 = 2u;
-        stateInfo.currentState = "State1";
-        stateInfo.nextState = "State2";
-        ret = gamDataSource->PrepareNextState(stateInfo);
+        ret = gamDataSource->PrepareNextState("State1", "State2");
     }
     if (ret) {
         //Signal was already being used keep the value
@@ -1353,9 +1359,7 @@ bool GAMDataSourceTest::TestPrepareNextState_Default_Basic() {
         //Dirty the memory
         *signal0 = 7u;
         *signal1 = 8u;
-        stateInfo.currentState = "State2";
-        stateInfo.nextState = "State3";
-        ret = gamDataSource->PrepareNextState(stateInfo);
+        ret = gamDataSource->PrepareNextState("State2", "State3");
     }
     if (ret) {
         //Signal was used. Keep the value
@@ -1369,9 +1373,7 @@ bool GAMDataSourceTest::TestPrepareNextState_Default_Basic() {
     if (ret) {
         //Dirty the memory
         *signal1 = 9u;
-        stateInfo.currentState = "State3";
-        stateInfo.nextState = "State1";
-        ret = gamDataSource->PrepareNextState(stateInfo);
+        ret = gamDataSource->PrepareNextState("State3", "State1");
     }
     if (ret) {
         //Signal was not used. Use default
@@ -1413,7 +1415,6 @@ bool GAMDataSourceTest::TestPrepareNextState_Default_Dimensions() {
         ret = (signal1[i] == 0);
     }
 
-    RealTimeStateInfo stateInfo;
     if (ret) {
         //Dirty the memory
         for (i = 0u; i < numberOfElements; i++) {
@@ -1422,9 +1423,7 @@ bool GAMDataSourceTest::TestPrepareNextState_Default_Dimensions() {
         for (i = 0u; i < numberOfElements; i++) {
             signal1[i] = i * 200;
         }
-        stateInfo.currentState = "State1";
-        stateInfo.nextState = "State2";
-        ret = gamDataSource->PrepareNextState(stateInfo);
+        ret = gamDataSource->PrepareNextState("State1", "State2");
     }
 
     //Signal was already being used keep the value
@@ -1446,9 +1445,7 @@ bool GAMDataSourceTest::TestPrepareNextState_Default_Dimensions() {
         for (i = 0u; i < numberOfElements; i++) {
             signal1[i] = i * 800;
         }
-        stateInfo.currentState = "State2";
-        stateInfo.nextState = "State3";
-        ret = gamDataSource->PrepareNextState(stateInfo);
+        ret = gamDataSource->PrepareNextState("State2", "State3");
     }
 
     //Signal was used. Keep the value
@@ -1466,9 +1463,7 @@ bool GAMDataSourceTest::TestPrepareNextState_Default_Dimensions() {
         for (i = 0u; i < numberOfElements; i++) {
             signal1[i] = i * 900;
         }
-        stateInfo.currentState = "State3";
-        stateInfo.nextState = "State1";
-        ret = gamDataSource->PrepareNextState(stateInfo);
+        ret = gamDataSource->PrepareNextState("State3", "State1");
     }
 
     //Signal was not used. Use default
@@ -1492,12 +1487,9 @@ bool GAMDataSourceTest::TestPrepareNextState_Default_Dimensions_Mismatch_1() {
         ret = gamDataSource.IsValid();
     }
 
-    RealTimeStateInfo stateInfo;
     if (ret) {
-        stateInfo.currentState = "State1";
-        stateInfo.nextState = "State2";
         //Dimension mismatch between default value of and NumberOfDimensions
-        ret = !gamDataSource->PrepareNextState(stateInfo);
+        ret = !gamDataSource->PrepareNextState("State1", "State2");
     }
 
     return ret;
@@ -1511,12 +1503,9 @@ bool GAMDataSourceTest::TestPrepareNextState_Default_Dimensions_Mismatch_2() {
         ret = gamDataSource.IsValid();
     }
 
-    RealTimeStateInfo stateInfo;
     if (ret) {
-        stateInfo.currentState = "State1";
-        stateInfo.nextState = "State2";
         //Dimension mismatch between default value of and NumberOfDimensions
-        ret = !gamDataSource->PrepareNextState(stateInfo);
+        ret = !gamDataSource->PrepareNextState("State1", "State2");
     }
 
     return ret;
@@ -1530,12 +1519,9 @@ bool GAMDataSourceTest::TestPrepareNextState_Default_Elements_Mismatch() {
         ret = gamDataSource.IsValid();
     }
 
-    RealTimeStateInfo stateInfo;
     if (ret) {
-        stateInfo.currentState = "State1";
-        stateInfo.nextState = "State2";
         //Dimension mismatch between the number of elements
-        ret = !gamDataSource->PrepareNextState(stateInfo);
+        ret = !gamDataSource->PrepareNextState("State1", "State2");
     }
 
     return ret;

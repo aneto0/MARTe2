@@ -52,7 +52,27 @@ TEST(GAMSchedulerIGTest,TestConfigureScheduler) {
     ASSERT_TRUE(test.TestConfigureScheduler());
 }
 
+TEST(GAMSchedulerIGTest,TestConfigureSchedulerFalse_InvalidStatesContainer) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestConfigureSchedulerFalse_InvalidStatesContainer());
+}
+
+TEST(GAMSchedulerIGTest,TestConfigureSchedulerFalse_InvalidState) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestConfigureSchedulerFalse_InvalidState());
+}
+
 TEST(GAMSchedulerIGTest,TestGetNumberOfExecutables) {
     GAMSchedulerITest test;
     ASSERT_TRUE(test.TestGetNumberOfExecutables());
+}
+
+TEST(GAMSchedulerIGTest,TestPrepareNextState) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestPrepareNextState());
+}
+
+TEST(GAMSchedulerIGTest,TestExecuteSingleCycle) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestExecuteSingleCycle());
 }

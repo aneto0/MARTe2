@@ -46,7 +46,7 @@ namespace MARTe {
 
 namespace MARTe {
 
-GAM::GAM() :
+GAM::GAM() : ReferenceContainer(),
         ExecutableI() {
     numberOfInputSignals = 0u;
     numberOfOutputSignals = 0u;

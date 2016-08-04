@@ -281,6 +281,7 @@ bool RealTimeApplicationTest::TestConfigureArchitectureFalse_NoStates() {
             "    }"
             "    +Scheduler = {"
             "        Class = DummyScheduler"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -480,6 +481,7 @@ bool RealTimeApplicationTest::TestConfigureDataSource() {
             "    }"
             "    +Scheduler = {"
             "        Class = DummyScheduler"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
     conf.Seek(0);
@@ -594,6 +596,7 @@ bool RealTimeApplicationTest::TestConfigureDataSourceFalse_NoFunctions() {
             "    }"
             "    +Scheduler = {"
             "        Class = DummyScheduler"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -836,6 +839,7 @@ bool RealTimeApplicationTest::TestValidateDataSourceFalse_MoreThanOneProducer() 
             "    }"
             "    +Scheduler = {"
             "        Class = DummyScheduler"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
     conf.Seek(0);
@@ -1348,6 +1352,7 @@ bool RealTimeApplicationTest::TestValidateDataSourceLinks() {
             "    }"
             "    +Scheduler = {"
             "        Class = DummyScheduler"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -1543,6 +1548,7 @@ bool RealTimeApplicationTest::TestValidateDataSourceLinksFalse_MoreSync() {
             "    }"
             "    +Scheduler = {"
             "        Class = DummyScheduler"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 

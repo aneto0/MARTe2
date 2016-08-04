@@ -121,15 +121,15 @@ public:
 
 RealTimeThreadTestGAMGroup1    ();
 
-    virtual void PrepareNextState(const RealTimeStateInfo &status);
+    virtual bool PrepareNextState(const char8 * currentStateName, const char8 * nextStateName);
 };
 
 RealTimeThreadTestGAMGroup1::RealTimeThreadTestGAMGroup1() :
         GAMGroup() {
 }
 
-void RealTimeThreadTestGAMGroup1::PrepareNextState(const RealTimeStateInfo &status) {
-
+bool RealTimeThreadTestGAMGroup1::PrepareNextState(const char8 * currentStateName, const char8 * nextStateName) {
+    return true;
 }
 CLASS_REGISTER(RealTimeThreadTestGAMGroup1, "1.0")
 
@@ -262,11 +262,12 @@ static const char8* config1 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = RealTimeThreadTestScheduler1"
         "    }"
         "}";
@@ -321,11 +322,12 @@ static const char8* config2 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = RealTimeThreadTestScheduler1"
         "    }"
         "}";
@@ -372,11 +374,12 @@ static const char8* config3 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = RealTimeThreadTestScheduler1"
         "    }"
         "}";
@@ -423,11 +426,12 @@ static const char8* config4 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = RealTimeThreadTestScheduler1"
         "    }"
         "}";

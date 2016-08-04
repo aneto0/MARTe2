@@ -38,6 +38,7 @@
 #include "RealTimeThread.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "Vector.h"
+#include "ReferenceContainerFilterReferencesTemplate.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -63,56 +64,6 @@ RealTimeThread::~RealTimeThread() {
         delete[] functions;
     }
 }
-
-bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric) {
-    bool ret = true;
-    // case GAMGroup (stateful gams)
-    ReferenceT<GAMGroup> functionGAMGroup = functionGeneric;
-    if (functionGAMGroup.IsValid()) {
-        uint32 nOfSubGAMs = functionGAMGroup->Size();
-        // add all the gams in the order of the configuration inside GAMGroup
-        for (uint32 j = 0u; (j < nOfSubGAMs) && (ret); j++) {
-            ReferenceT<GAM> subGam = functionGAMGroup->Get(j);
-            ret = subGam.IsValid();
-            if (ret) {
-                AddGAM(subGam);
-            }
-        }
-    }
-    else {
-        // case stateless GAM
-        ReferenceT<GAM> functionGAM = functionGeneric;
-        if (functionGAM.IsValid()) {
-            AddGAM(functionGAM);
-        }
-        else {
-            // a generic container
-            ReferenceT<ReferenceContainer> functionContainer = functionGeneric;
-            ret = functionContainer.IsValid();
-            if (ret) {
-                uint32 size = functionContainer->Size();
-                for (uint32 i = 0u; (i < size) && (ret); i++) {
-                    Reference newRef = functionContainer->Get(i);
-                    // go recursively
-                    ret = ConfigureArchitecturePrivate(newRef);
-                }
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::FatalError, "The function must be a GAM, GAMGroup or ReferenceContainer");
-            }
-        }
-
-    }
-    return ret;
-}
-
-void RealTimeThread::AddGAM(ReferenceT<GAM> element) {
-    if (element.IsValid()) {
-        GAMs.Insert(element);
-    }
-    numberOfGAMs = GAMs.Size();
-}
-
 bool RealTimeThread::ConfigureArchitecture() {
 
     bool ret = true;
@@ -124,8 +75,9 @@ bool RealTimeThread::ConfigureArchitecture() {
         uint32 numberOfNodes = path.Size();
         StreamString absoluteFunctionPath;
 
+        uint32 i;
         ReferenceT<RealTimeApplication> app;
-        for (uint32 i = 0u; (i < numberOfNodes) && (ret) && (!app.IsValid()); i++) {
+        for (i = 0u; (i < numberOfNodes) && (ret) && (!app.IsValid()); i++) {
             Reference node = path.Get(i);
             ret = node.IsValid();
             if (ret) {
@@ -134,6 +86,12 @@ bool RealTimeThread::ConfigureArchitecture() {
                 app = node;
             }
         }
+        ReferenceT<RealTimeState> state;
+        for(;(i<numberOfNodes) && !(state.IsValid()); i++){
+            state=path.Get(i);
+        }
+
+        ret=(app.IsValid()) && (state.IsValid());
         absoluteFunctionPath += "Functions.";
 
         for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
@@ -143,16 +101,43 @@ bool RealTimeThread::ConfigureArchitecture() {
 
             // find the functions specified in cdb
             /*lint -e{613} Never enters here if (functions == NULL) because (numberOfFunctions == 0) */
-            Reference functionGeneric = ObjectRegistryDatabase::Instance()->Find(functionPath.Buffer());
+            ReferenceT<ReferenceContainer> functionGeneric = ObjectRegistryDatabase::Instance()->Find(functionPath.Buffer());
             ret = functionGeneric.IsValid();
             if (ret) {
-                //Discombobulate GAMGroups
-                ret = ConfigureArchitecturePrivate(functionGeneric);
+                ReferenceT<GAM> gam = functionGeneric;
+                if (gam.IsValid()) {
+                    GAMs.Insert(gam);
+                }
+                //Look for all the GAMs inside the RealTimeApplication
+                ReferenceContainerFilterReferencesTemplate<GAM> gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+
+                functionGeneric->Find(GAMs, gamFilter);
+                numberOfGAMs = GAMs.Size();
+
+                //ret = ConfigureArchitecturePrivate(functionGeneric);
             }
             else {
                 /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
                 REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Undefined %s", functions[i].Buffer())
             }
+            if (ret) {
+                ReferenceContainer statefuls;
+                ReferenceT<StatefulI> stateful = functionGeneric;
+                if (stateful.IsValid()) {
+                    statefuls.Insert(stateful);
+                }
+                //Look for all the GAMs inside the RealTimeApplication
+                ReferenceContainerFilterReferencesTemplate<GAM> gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+
+                functionGeneric->Find(statefuls, gamFilter);
+                state->AddStatefuls(statefuls);
+                //ret = ConfigureArchitecturePrivate(functionGeneric);
+            }
+            else {
+                /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Undefined %s", functions[i].Buffer())
+            }
+
         }
         configured = true;
     }
@@ -178,17 +163,14 @@ bool RealTimeThread::Initialise(StructuredDataI & data) {
         ret = (data.Read("Functions", functionVector));
     }
     else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No functions defined for the RealTimeThread %s",
-                                GetName())
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No functions defined for the RealTimeThread %s", GetName())
     }
     if (ret) {
         if (!data.Read("CPUs", cpuMask)) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No CPUs defined for the RealTimeThread %s",
-                                    GetName())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No CPUs defined for the RealTimeThread %s", GetName())
         }
         if (!data.Read("StackSize", stackSize)) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No StackSize defined for the RealTimeThread %s",
-                                    GetName())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No StackSize defined for the RealTimeThread %s", GetName())
         }
     }
 

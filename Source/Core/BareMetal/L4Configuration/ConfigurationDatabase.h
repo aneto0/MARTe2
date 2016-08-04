@@ -171,7 +171,7 @@ public:
      */
     void Unlock();
 
-    // adds the possibility to use find, filters ecc ecc
+    // TODO. Test and Document! adds the possibility to use find, filters ecc ecc
     operator ReferenceT<ReferenceContainer>(){
         return currentNode;
     }

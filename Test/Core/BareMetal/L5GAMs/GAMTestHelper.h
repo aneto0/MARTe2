@@ -200,6 +200,8 @@ GAM1    ();
 
     virtual bool Execute();
 
+
+    uint32 numberOfExecutions;
 protected:
     virtual void SetUp();
 
@@ -207,7 +209,9 @@ protected:
 
 class GAMGroup1: public GAMGroup {
 public:
-    CLASS_REGISTER_DECLARATION()virtual void PrepareNextState(const RealTimeStateInfo &status);
+    CLASS_REGISTER_DECLARATION()
+virtual bool PrepareNextState(const char8 * currentStateName,
+                              const char8 * nextStateName);
 
 protected:
     virtual void SetUp();
@@ -263,7 +267,8 @@ DS1    ();
 
     virtual const char8 *GetBrokerName(StructuredDataI &data, const SignalDirection direction);
 
-    virtual bool PrepareNextState(const MARTe::RealTimeStateInfo&);
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateName);
 
     virtual bool ChangeState();
 
@@ -305,8 +310,8 @@ virtual bool AllocateMemory();
 
 virtual const char8 *GetBrokerName(StructuredDataI &data, const SignalDirection direction);
 
-virtual bool PrepareNextState(const RealTimeStateInfo &status);
-
+virtual bool PrepareNextState(const char8 * const currentStateName,
+                              const char8 * const nextStateName);
 virtual bool ChangeState();
 
 virtual bool GetInputBrokers(ReferenceContainer &inputBrokers,

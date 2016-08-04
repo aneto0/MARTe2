@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ObjectRegistryDatabase.h"
-#include "RealTimeStateInfo.h"
 #include "GAMGroup.h"
 #include "RealTimeApplication.h"
 /*---------------------------------------------------------------------------*/
@@ -61,7 +60,7 @@ namespace MARTe {
  *      }\n
  * }\n
  */
-class DLL_API RealTimeState: public ReferenceContainer {
+class DLL_API RealTimeState: public ReferenceContainer, public StatefulI {
 
 public:
     CLASS_REGISTER_DECLARATION()
@@ -85,65 +84,16 @@ public:
     virtual ~RealTimeState();
 
 
-    /**
-     * @brief Prepare the context for the state in each registered GAMGroup.
-     * @param[in] status contains informations about the current and the next state.
-     */
-    void PrepareState(const RealTimeStateInfo &status);
-#if 0
-    /**
-     * @brief Propagates the configuration setup request to the declared RealTimeThreads.
-     * @details Calls RealTimeThread.ConfigureArchitecture(rtApp) in each of the declared RealTimeThread elements.
-     * @param[in] rtApp is the RealTimeApplication where this state is declared into.
-     * @return true if one and only one child element named "Threads" exits AND is of type ReferenceContainer AND
-     * if RealTimeThread.ConfigureArchitecture is true for all the "Threads" elements.
-     */
-    bool ConfigureArchitecture(RealTimeApplication & rtApp);
+    bool AddStatefuls(ReferenceContainer &statefulsIn);
 
-    /**
-     * @see RealTimeApplication::ValidateDataSourceLinks()
-     */
-    bool ValidateDataSourceLinks();
 
-    /**
-     * @brief Inserts a function.
-     * @details If the container called "+Functions" it is not present, it will be created and \a functionReference
-     * will be inserted into.
-     * @param[in] functionReference is the reference to be inserted.
-     */
-    bool InsertFunction(Reference functionReference);
-
-    /**
-     * @brief Stores a stateful GAMGroup into the internal array.
-     * @param[in] element is the new GAMGroup to be added.
-     * @return true if the memory allocation succeeds, false otherwise.
-     */
-    void AddGAMGroup(ReferenceT<GAMGroup> element);
-
-    /**
-     * @brief Returns the stateful GAMGroups array.
-     * @return the stateful GAMGroups array.
-     */
-    ReferenceT<GAMGroup> * GetGAMGroups();
-
-    /**
-     * @brief Returns the number of GAMGroups currently registered.
-     * @return the number of GAMGroups currently registered.
-     */
-    uint32 GetNumberOfGAMGroups() const;
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateName);
 
 private:
 
-    /**
-     * The stateful GAMGroups array.
-     */
-    ReferenceT<GAMGroup> * statefulGAMGroups;
 
-    /**
-     * The number of stateful GAMGroups registered.
-     */
-    uint32 numberOfGAMGroups;
-#endif
+    ReferenceContainer statefuls;
 
 };
 

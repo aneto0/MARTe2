@@ -99,7 +99,10 @@ virtual    bool Init(SignalDirection direction,
     }
 };
 
-bool BrokerITestHelper::Init(SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName, void *gamMemoryAddress) {
+bool BrokerITestHelper::Init(SignalDirection direction,
+                             DataSourceI &dataSourceIn,
+                             const char8 * const functionName,
+                             void *gamMemoryAddress) {
     return InitFunctionPointers(direction, dataSourceIn, functionName, gamMemoryAddress);
 }
 CLASS_REGISTER(BrokerITestHelper, "1.0");
@@ -123,7 +126,8 @@ BrokerIDataSourceTestHelper    ();
     virtual const char8 *GetBrokerName(StructuredDataI &data,
             const SignalDirection direction);
 
-    virtual bool PrepareNextState(const RealTimeStateInfo &status);
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+            const char8 * const nextStateName);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
@@ -156,22 +160,28 @@ uint32 BrokerIDataSourceTestHelper::GetNumberOfMemoryBuffers() {
     return 0u;
 }
 
-bool BrokerIDataSourceTestHelper::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
+bool BrokerIDataSourceTestHelper::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                                        const uint32 bufferIdx,
+                                                        void *&signalAddress) {
     return true;
 }
 
-const char8 *BrokerIDataSourceTestHelper::GetBrokerName(StructuredDataI &data, const SignalDirection direction) {
+const char8 *BrokerIDataSourceTestHelper::GetBrokerName(StructuredDataI &data,
+                                                        const SignalDirection direction) {
     if (direction == InputSignals) {
         return "BrokerITestHelper";
     }
     return "BrokerITestHelper";
 }
 
-bool BrokerIDataSourceTestHelper::PrepareNextState(const RealTimeStateInfo &status) {
+bool BrokerIDataSourceTestHelper::PrepareNextState(const char8 * const currentStateName,
+                                                   const char8 * const nextStateName) {
     return true;
 }
 
-bool BrokerIDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers, const char8* const functionName, void * const gamMemPtr) {
+bool BrokerIDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
+                                                  const char8* const functionName,
+                                                  void * const gamMemPtr) {
     ReferenceT<BrokerITestHelper> broker("BrokerITestHelper");
     bool ret = broker.IsValid();
     if (ret) {
@@ -183,7 +193,9 @@ bool BrokerIDataSourceTestHelper::GetInputBrokers(ReferenceContainer &inputBroke
     return ret;
 }
 
-bool BrokerIDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers, const char8* const functionName, void * const gamMemPtr) {
+bool BrokerIDataSourceTestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
+                                                   const char8* const functionName,
+                                                   void * const gamMemPtr) {
     ReferenceT<BrokerITestHelper> broker("BrokerITestHelper");
     bool ret = broker.IsValid();
     if (ret) {
@@ -348,8 +360,8 @@ static const char8 * const config1 = ""
         "        +DDB1 = {"
         "            Class = GAMDataSource"
         "        }"
-        "        +Times = {"
-        "            Class = TimesDataSource"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
         "        }"
         "    }"
         "    +States = {"
@@ -376,6 +388,7 @@ static const char8 * const config1 = ""
         "        }"
         "    }"
         "    +Scheduler = {"
+        "        TimingDataSource = Timings"
         "        Class = BrokerITestScheduler1"
         "    }"
         "}";
@@ -478,10 +491,10 @@ bool BrokerITest::TestGetCopyByteSize() {
     uint32 numberOfFunctions = 6;
     const uint32 maxNumberOfCopyByteSize = 5;
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
-    uint32 copyByteSizeInput[][maxNumberOfCopyByteSize] = { { 4, 16, 4, 12, 4 }, { 4, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, {
-            0, 0, 0, 0, 0 }, { 4, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
-    uint32 copyByteSizeOutput[][maxNumberOfCopyByteSize] = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 4, 4, 16, 4, 12 },
-            { 4, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 24, 0, 0, 0, 0 } };
+    uint32 copyByteSizeInput[][maxNumberOfCopyByteSize] = { { 4, 16, 4, 12, 4 }, { 4, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 4, 0, 0, 0, 0 }, {
+            0, 0, 0, 0, 0 } };
+    uint32 copyByteSizeOutput[][maxNumberOfCopyByteSize] = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 4, 4, 16, 4, 12 }, { 4, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, {
+            24, 0, 0, 0, 0 } };
 
     uint32 n;
     for (n = 0; (n < numberOfFunctions) && (ret); n++) {
@@ -540,10 +553,10 @@ bool BrokerITest::TestGetCopyOffset() {
     uint32 numberOfFunctions = 6;
     const uint32 maxNumberOfCopyByteSize = 5;
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
-    uint32 copyOffsetInput[][maxNumberOfCopyByteSize] = { { 0, 8, 36, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0,
-            0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
-    uint32 copyOffsetOutput[][maxNumberOfCopyByteSize] = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 8, 36, 0 }, {
-            0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
+    uint32 copyOffsetInput[][maxNumberOfCopyByteSize] = { { 0, 8, 36, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0,
+            0, 0, 0, 0 } };
+    uint32 copyOffsetOutput[][maxNumberOfCopyByteSize] = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 8, 36, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0,
+            0, 0, 0, 0 } };
 
     uint32 n;
     for (n = 0; (n < numberOfFunctions) && (ret); n++) {
@@ -604,13 +617,11 @@ bool BrokerITest::TestGetFunctionPointer() {
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
 
     const char *basePointer = reinterpret_cast<const char *>(0xA);
-    const char *pointerInput[][maxNumberOfCopyByteSize] = { { basePointer, basePointer + 4, basePointer + 20,
-            basePointer + 24, basePointer + 40 }, { basePointer, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, {
-            basePointer, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
+    const char *pointerInput[][maxNumberOfCopyByteSize] = { { basePointer, basePointer + 4, basePointer + 20, basePointer + 24, basePointer + 40 }, {
+            basePointer, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { basePointer, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
 
-    const char *pointerOutput[][maxNumberOfCopyByteSize] = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { basePointer,
-            basePointer + 8, basePointer + 12, basePointer + 28, basePointer + 32 }, { basePointer, 0, 0, 0, 0 }, { 0,
-            0, 0, 0, 0 }, { basePointer, 0, 0, 0, 0 } };
+    const char *pointerOutput[][maxNumberOfCopyByteSize] = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { basePointer, basePointer + 8, basePointer + 12, basePointer
+            + 28, basePointer + 32 }, { basePointer, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { basePointer, 0, 0, 0, 0 } };
 
     uint32 n;
     for (n = 0; (n < numberOfFunctions) && (ret); n++) {

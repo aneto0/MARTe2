@@ -39,20 +39,12 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-ExecutableI::ExecutableI() : ReferenceContainer() {
+ExecutableI::ExecutableI() {
     lastExecutionCounter = 0u;
 }
 
 ExecutableI::~ExecutableI() {
 
-}
-
-void ExecutableI::SetLastExecutionTime(uint64 counter) {
-    lastExecutionCounter = counter;
-}
-
-uint64 ExecutableI::GetLastExecutionTime() {
-    return lastExecutionCounter;
 }
 
 }
