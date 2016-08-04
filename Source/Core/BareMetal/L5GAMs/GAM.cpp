@@ -266,7 +266,7 @@ bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
  * this is a default implementation, i.e. it is expected to be
  * implemented on derived classes.
  */
-bool GAM::SetContext(Reference context) {
+bool GAM::SetContext(ConstReference context) {
     return true;
 }
 

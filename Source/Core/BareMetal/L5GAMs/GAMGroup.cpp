@@ -52,15 +52,23 @@ GAMGroup::GAMGroup() :
 GAMGroup::~GAMGroup() {
 }
 
-bool GAMGroup::SetContext(Reference context) {
-    ReferenceContainerFilterReferencesTemplate<GAM> gamsFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
-    ReferenceContainer gamsList;
-    Find(gamsList, gamsFilter);
-    uint32 numberOfGAMs = gamsList.Size();
-    uint32 i;
+bool GAMGroup::Initialise(StructuredDataI & data){
+    bool ret=ReferenceContainer::Initialise(data);
+    if(ret){
+        //Look for all the GAMs inside the RealTimeApplication
+        ReferenceContainerFilterReferencesTemplate<GAM> gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+        Find(GAMs, gamFilter);
+    }
+    return ret;
+}
+
+
+
+bool GAMGroup::SetContext(ConstReference context) {
+    uint32 numberOfGAMs = GAMs.Size();
     bool ret = true;
-    for (i = 0u; (i < numberOfGAMs) && (ret); i++) {
-        ReferenceT<GAM> gam = gamsList.Get(i);
+    for (uint32 i = 0u; (i < numberOfGAMs) && (ret); i++) {
+        ReferenceT<GAM> gam = GAMs.Get(i);
         ret = gam.IsValid();
         if(ret){
             ret = gam->SetContext(context);

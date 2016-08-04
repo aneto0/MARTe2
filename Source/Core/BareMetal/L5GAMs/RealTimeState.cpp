@@ -34,14 +34,13 @@
 #include "RealTimeState.h"
 #include "RealTimeThread.h"
 #include "AdvancedErrorManagement.h"
-
+#include "ReferenceContainerFilterReferences.h"
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-// the allocation granularity
-static const uint32 functionArrayGranularity = 8u;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -54,16 +53,22 @@ RealTimeState::RealTimeState() :
 
 /*lint -e{1551} no exception should be thrown*/
 RealTimeState::~RealTimeState() {
-    /* if (statefulGAMGroups != NULL) {
-     delete[] statefulGAMGroups;
-     }*/
 }
 
 bool RealTimeState::AddStatefuls(ReferenceContainer &statefulsIn) {
     uint32 numberOfStatefuls = statefulsIn.Size();
     bool ret = true;
-    for (uint32 i = 0u; i < numberOfStatefuls; i++) {
-        ret = statefuls.Insert(statefulsIn.Get(i));
+    for (uint32 i = 0u; i < numberOfStatefuls && ret; i++) {
+        ReferenceT<StatefulI> toAdd = statefulsIn.Get(i);
+        ret = toAdd.IsValid();
+        if (ret) {
+            ReferenceContainer result;
+            ReferenceContainerFilterReferences filter(-1, ReferenceContainerFilterMode::SHALLOW, toAdd);
+            statefuls.Find(result, filter);
+            if (result.Size() == 0u) {
+                ret = statefuls.Insert(toAdd);
+            }
+        }
     }
     return ret;
 }
@@ -80,6 +85,10 @@ bool RealTimeState::PrepareNextState(const char8 * const currentStateName,
         }
     }
     return ret;
+}
+
+uint32 RealTimeState::GetNumberOfStatefuls() {
+    return statefuls.Size();
 }
 
 CLASS_REGISTER(RealTimeState, "1.0");

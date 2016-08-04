@@ -46,6 +46,11 @@ class RealTimeStateTest {
 
 public:
 
+
+
+
+
+
     /**
      * @brief Creates a configuration database used in tests.
      */
@@ -56,56 +61,14 @@ public:
      */
     ~RealTimeStateTest();
 
-    /**
-     * @brief Tests the constructor.
-     */
     bool TestConstructor();
 
-    /**
-     * @brief Tests if the function adds the gam group defined in threads to the state.
-     */
-    bool TestConfigureArchitecture();
+    bool TestAddStatefuls();
 
-    /**
-     * @brief Tests if the function adds the correct gam group specifying in the thread
-     * the single specific gams.
-     */
-    bool TestConfigureArchitecture_SingleInGAMGroup();
+    bool TestPrepareNextState();
 
-    /**
-     * @brief Tests if the function fails if the state does not contain the "+Threads" container.
-     */
-    bool TestConfigureArchitectureFalse_NoThreads();
+    bool TestGetNumberOfStatefuls();
 
-    /**
-     * @brief Tests if the function inserts functions correctly creating the "+Functions" container.
-     */
-    bool TestInsertFunction();
-
-    /**
-     * @brief Tests if the function adds gam groups to the internal array.
-     */
-    bool TestAddGAMGroup();
-
-    /**
-     * @brief Tests if the function returns correctly the gam groups vector.
-     */
-    bool TestGetGAMGroups();
-
-    /**
-     * @brief Tests if the function returns the number of gam groups set.
-     */
-    bool TestGetNumberOfGAMGroups();
-
-    /**
-     * @brief Tests if the function calls PrepareState for each GAMGroup.
-     */
-    bool TestPrepareState();
-
-
-    bool TestValidateDataSourceLinks();
-
-    bool TestValidateDataSourceLinksFalse_MoreThanOneSyncPerThread();
 
 };
 

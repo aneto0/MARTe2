@@ -268,7 +268,8 @@ private:
     /**
      * The current state name.
      */
-    StreamString currentStateName;
+    StreamString stateNameHolder[2];
+
 
 
     /**
@@ -290,6 +291,8 @@ private:
      * The +Data container
      */
     ReferenceT<ReferenceContainer> dataSourceContainer;
+
+    ReferenceContainer statefulsInData;
 
 
     ConfigurationDatabase functionsDatabase;
