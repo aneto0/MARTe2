@@ -3753,10 +3753,11 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToFunctions() {
     uint32 numberOfDataSources = dataSourcesDatabase.GetNumberOfChildren();
     if (ret) {
         ret = (realTimeApplication != NULL);
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::InitialisationError, "Invalid RealTimeApplication set");
+        }
     }
-    if (!ret) {
-        REPORT_ERROR(ErrorManagement::InitialisationError, "Invalid RealTimeApplication set");
-    }
+
 
     for (uint32 i = 0u; (i < numberOfDataSources) && (ret); i++) {
         const char8 *dsId = dataSourcesDatabase.GetChildName(i);

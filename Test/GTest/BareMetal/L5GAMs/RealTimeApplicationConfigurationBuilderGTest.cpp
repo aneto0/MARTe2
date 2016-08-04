@@ -685,4 +685,3 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisat
     ASSERT_TRUE(test.TestConfigureBeforeInitialisation());
 }
 
-

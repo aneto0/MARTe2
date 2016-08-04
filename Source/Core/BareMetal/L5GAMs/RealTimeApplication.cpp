@@ -41,6 +41,7 @@
 #include "AdvancedErrorManagement.h"
 #include "Matrix.h"
 #include "RealTimeApplicationConfigurationBuilder.h"
+#include "RealTimeThread.h"
 #include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
@@ -269,7 +270,7 @@ bool RealTimeApplication::PrepareNextState(const char8 * stateNameHolder,
         }
     }
     if (ret) {
-        ReferenceT<GAMSchedulerI> scheduler = schedulerContainer;
+        ReferenceT<GAMSchedulerI> scheduler = scheduler;
         ret = scheduler.IsValid();
         // save the accelerator to the next group of threads to be executed
         if (ret) {
@@ -285,7 +286,7 @@ bool RealTimeApplication::PrepareNextState(const char8 * stateNameHolder,
 }
 
 bool RealTimeApplication::StopExecution() {
-    ReferenceT<GAMSchedulerI> scheduler = schedulerContainer;
+    ReferenceT<GAMSchedulerI> scheduler = scheduler;
     bool ret = scheduler.IsValid();
     if (ret) {
         scheduler->StopExecution();
@@ -294,90 +295,85 @@ bool RealTimeApplication::StopExecution() {
 }
 #endif
 
-static void PrintDatabases(RealTimeApplicationConfigurationBuilder &rtAppBuilder) {
-    return;
-    static uint32 i = 0u;
-    static uint32 j = 1u;
-    ConfigurationDatabase fdb;
-    ConfigurationDatabase dsdb;
-    rtAppBuilder.Copy(fdb, dsdb);
+bool RealTimeApplication::Initialise(StructuredDataI & data) {
+    bool ret = ReferenceContainer::Initialise(data);
+    if (data.MoveRelative("+Data")) {
+        if (!data.Read("DefaultDataSource", defaultDataSourceName)) {
+            defaultDataSourceName = "";
+        }
+        data.MoveToAncestor(1u);
+    }
+    defaultDataSourceName.Seek(0u);
 
-    StreamString temp;
-    temp.Printf("[%d]\n%s%s[%d]\n", i, fdb, dsdb, j);
-    i += 2;
-    j += 2;
-    temp.Seek(0);
-    printf("%s", temp.Buffer());
+    if (ret) {
+        uint32 numberOfContainers = Size();
+        ret = false;
+        for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+            Reference item = Get(i);
+            if (item.IsValid()) {
+                if (StringHelper::Compare(item->GetName(), "States") == 0) {
+                    statesContainer = item;
+                    ret = statesContainer.IsValid();
+                }
+            }
+        }
+        if (ret) {
+            ret = false;
+            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+                Reference container = Get(i);
+                if (container.IsValid()) {
+                    if (StringHelper::Compare(container->GetName(), "Data") == 0) {
+                        dataSourceContainer = container;
+                        ret = dataSourceContainer.IsValid();
+                    }
+                }
+            }
+        }
+        if (ret) {
+            ret = false;
+            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+                Reference item = Get(i);
+                if (item.IsValid()) {
+                    if (StringHelper::Compare(item->GetName(), "Functions") == 0) {
+                        functionsContainer = item;
+                        ret = functionsContainer.IsValid();
+                    }
+                }
+            }
+        }
+
+        if (ret) {
+            ret = false;
+            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+                Reference container = Get(i);
+                if (container.IsValid()) {
+                    if (StringHelper::Compare(container->GetName(), "Scheduler") == 0) {
+                        scheduler = container;
+                        ret = scheduler.IsValid();
+                    }
+                }
+            }
+        }
+    }
+
+    return ret;
 }
+
 
 bool RealTimeApplication::ConfigureApplication() {
     RealTimeApplicationConfigurationBuilder rtAppBuilder(*this, "DDB1");
-    bool ret = rtAppBuilder.InitialiseSignalsDatabase();
-    if (ret) {
-        PrintDatabases(rtAppBuilder);
-    }
-    if (ret) {
-        ret = rtAppBuilder.FlattenSignalsDatabases();
-        PrintDatabases(rtAppBuilder);
-    }
-    if (ret) {
-        ret = rtAppBuilder.ResolveDataSources();
-        PrintDatabases(rtAppBuilder);
-    }
-    if (ret) {
-        ret = rtAppBuilder.VerifyDataSourcesSignals();
-        PrintDatabases(rtAppBuilder);
-    }
-    if (ret) {
-        ret = rtAppBuilder.ResolveFunctionSignals();
-        PrintDatabases(rtAppBuilder);
-    }
-    if (ret) {
-        ret = rtAppBuilder.VerifyFunctionSignals();
-        PrintDatabases(rtAppBuilder);
-    }
-    if (ret) {
-        ret = rtAppBuilder.ResolveStates();
-        PrintDatabases(rtAppBuilder);
-    }
-    if (ret) {
-        ret = rtAppBuilder.ResolveConsumersAndProducers();
-        PrintDatabases(rtAppBuilder);
-    }
-    if (ret) {
-        ret = rtAppBuilder.VerifyConsumersAndProducers();
-        PrintDatabases(rtAppBuilder);
-    }
-    if (ret) {
-        ret = rtAppBuilder.ResolveFunctionSignalsMemorySize();
-        PrintDatabases(rtAppBuilder);
-    }
-    if (ret) {
-        ret = rtAppBuilder.ResolveFunctionsMemory();
-        PrintDatabases(rtAppBuilder);
-    }
-    if (ret) {
-        ret = rtAppBuilder.AssignFunctionsMemoryToDataSource();
-        PrintDatabases(rtAppBuilder);
-    }
-    if (ret) {
-        ret = rtAppBuilder.AssignBrokersToFunctions();
-        PrintDatabases(rtAppBuilder);
-    }
+    bool ret = rtAppBuilder.ConfigureAfterInitialisation();
+
     if (ret) {
         ret = rtAppBuilder.PostConfigureDataSources();
-        PrintDatabases(rtAppBuilder);
     }
     if (ret) {
         ret = rtAppBuilder.PostConfigureFunctions();
-        PrintDatabases(rtAppBuilder);
     }
-    //<<<<<<<<<<<<<<Mine
 
     if (ret) {
         rtAppBuilder.Copy(functionsDatabase, dataSourcesDatabase);
     }
-    //TODO Add brokers to GAMs allocating GAM memory
     if (ret) {
         ret = AllocateGAMMemory();
     }
@@ -387,364 +383,18 @@ bool RealTimeApplication::ConfigureApplication() {
     if (ret) {
         ret = AddBrokersToFunctions();
     }
-
-
-
-    //<<<<<<<<<<<<<<Mine
-    return ret;
-#if 0
-    //Andre's stuff
     if (ret) {
-        ret = rtAppBuilder.AddBrokersToFunctions();
-    }
-    if (ret) {
-        ReferenceContainer dataSourcesFound;
-        //Look for all the DataSources
-        ReferenceContainerFilterReferencesTemplate<DataSourceI> dataSourceFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
-        Find(dataSourcesFound, dataSourceFilter);
-        uint32 numberOfDataSources = dataSourcesFound.Size();
-        uint32 i;
-        RealTimeStateInfo stateInfo;
-        stateInfo.currentState = "";
-        stateInfo.nextState = "State1";
-
-        for (i = 0u; i < numberOfDataSources; i++) {
-            ReferenceT<DataSourceI> dataSource = dataSourcesFound.Get(i);
-            dataSource->PrepareNextState(stateInfo);
-            printf("[%s]\n", dataSource->GetName());
-            dataSource->ChangeState();
-
-            uint32 numberOfSignals = dataSource->GetNumberOfSignals();
-            printf("Number of signals: %d\n", numberOfSignals);
-            uint32 s;
-            for (s = 0u; s < numberOfSignals; s++) {
-                StreamString signalName;
-                dataSource->GetSignalName(s, signalName);
-                printf("  Signal: %s\n", signalName.Buffer());
-                TypeDescriptor type = dataSource->GetSignalType(s);
-                printf("    Type: %s\n", TypeDescriptor::GetTypeNameFromTypeDescriptor(type));
-                uint32 n;
-                dataSource->GetSignalNumberOfDimensions(s, n);
-                printf("    NumberOfDimensions: %d\n", n);
-                dataSource->GetSignalNumberElements(s, n);
-                printf("    NumberOfElements: %d\n", n);
-                dataSource->GetSignalByteSize(s, n);
-                printf("    ByteSize: %d\n", n);
-                uint32 numberOfStates;
-                dataSource->GetSignalNumberOfStates(s, numberOfStates);
-                printf("    Number of states: %d\n", numberOfStates);
-                for (n = 0u; n < numberOfStates; n++) {
-                    StreamString stateName;
-                    dataSource->GetSignalStateName(s, n, stateName);
-                    printf("      State: %s\n", stateName.Buffer());
-                    uint32 numberOfConsumers;
-                    dataSource->GetSignalNumberOfConsumers(s, stateName.Buffer(), numberOfConsumers);
-                    printf("      Number of consumers: %d\n", numberOfConsumers);
-                    uint32 c;
-                    for (c = 0u; c < numberOfConsumers; c++) {
-                        StreamString consumerName;
-                        dataSource->GetSignalConsumerName(s, stateName.Buffer(), c, consumerName);
-                        printf("        %s\n", consumerName.Buffer());
-                    }
-                    uint32 numberOfProducers;
-                    dataSource->GetSignalNumberOfProducers(s, stateName.Buffer(), numberOfProducers);
-                    printf("      Number of producers: %d\n", numberOfProducers);
-                    uint32 p;
-                    for (p = 0u; p < numberOfProducers; p++) {
-                        StreamString producerName;
-                        dataSource->GetSignalProducerName(s, stateName.Buffer(), p, producerName);
-                        printf("        %s\n", producerName.Buffer());
-                    }
-                }
-            }
-
-            uint32 numberOfFunctions = dataSource->GetNumberOfFunctions();
-            printf("Number of functions: %d\n", numberOfFunctions);
-            uint32 f;
-            for (f = 0u; f < numberOfFunctions; f++) {
-                StreamString functionName;
-                dataSource->GetFunctionName(f, functionName);
-                printf("  Function: %s\n", functionName.Buffer());
-                printf("    InputSignals: \n");
-                uint32 byteSize;
-                dataSource->GetFunctionSignalsByteSize(InputSignals, f, byteSize);
-                printf("      ByteSize: %d\n", byteSize);
-                void *address;
-                dataSource->GetFunctionSignalsAddress(InputSignals, f, address);
-                printf("      Address: %p\n", address);
-                uint32 numberOfFunctionSignals = 0u;
-                dataSource->GetFunctionNumberOfSignals(InputSignals, f, numberOfFunctionSignals);
-                for (s = 0u; s < numberOfFunctionSignals; s++) {
-                    StreamString functionSignalName;
-                    dataSource->GetFunctionSignalName(InputSignals, f, s, functionSignalName);
-                    printf("      Signal: %s\n", functionSignalName.Buffer());
-                    uint32 numberOfByteOffsets = 0u;
-                    dataSource->GetFunctionSignalNumberOfByteOffsets(InputSignals, f, s, numberOfByteOffsets);
-                    uint32 b;
-                    for (b = 0u; b < numberOfByteOffsets; b++) {
-                        uint32 start;
-                        uint32 size;
-                        dataSource->GetFunctionSignalByteOffsetInfo(InputSignals, f, s, b, start, size);
-                        printf("        Offset[%d]: [%d %d]\n", b, start, size);
-                    }
-                    uint32 timeCycles;
-                    uint32 timeSamples;
-                    dataSource->GetFunctionSignalTimeCyclesInfo(InputSignals, f, s, timeCycles, timeSamples);
-                    printf("        TimeCyclesSamples: [%d %d]\n", timeCycles, timeSamples);
-                }
-            }
+        ret = scheduler.IsValid();
+        if (ret) {
+            ret = scheduler->ConfigureScheduler();
         }
     }
 
-    if (ret) {
-        ReferenceContainer gamsFound;
-        ReferenceContainerFilterReferencesTemplate<GAM> gamsFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
-        Find(gamsFound, gamsFilter);
-        uint32 numberOfGAMs = gamsFound.Size();
-        uint32 i;
-        for (i = 0u; i < numberOfGAMs; i++) {
-            ReferenceT<GAM> gam = gamsFound.Get(i);
-            gam->Execute();
-        }
-        for (i = 0u; i < numberOfGAMs; i++) {
-            ReferenceT<GAM> gam = gamsFound.Get(i);
-            gam->Execute();
-        }
-    }
     return ret;
-
-#endif
-
-#if 0
-//Create the Function and the Data nodes. Add all the signals by querying the GAMs and the DataSourceI
-    bool ret = InitialiseSignalsDatabase();
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
-    }
-    StreamString temp;
-    temp.Printf("[1]\n%s%s[2]\n", functionsDatabase, dataSourcesDatabase);
-    temp.Seek(0);
-    printf("%s", temp.Buffer());
-
-//Expand all the introspections inside all the signals in the Function.FUNCTION_NAME.Signals and Data.DATA_SOURCE_NAME.Signals nodes.
-    if (ret) {
-        ret = functionsDatabase.MoveAbsolute("Functions");
-    }
-    if (ret) {
-        ret = FlattenSignalsDatabase(functionsDatabase, "InputSignals");
-    }
-    if (ret) {
-        ret = functionsDatabase.MoveAbsolute("Functions");
-    }
-    if (ret) {
-        ret = FlattenSignalsDatabase(functionsDatabase, "OutputSignals");
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveAbsolute("Data");
-    }
-    if (ret) {
-        ret = FlattenSignalsDatabase(dataSourcesDatabase, "Signals");
-    }
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
-    }
-    temp = "";
-    temp.Printf("[3]\n%s%s[4]\n", functionsDatabase, dataSourcesDatabase);
-    temp.Seek(0);
-    printf("%s", temp.Buffer());
-
-//Add, or check compatibility, for all the Signals from Function.FUNCTION_NAME.Signals in the correct Data.DATA_SOURCE_NAME.
-//Verify compatibility issues (i.e. FUNCTION_NAME asking for a given definition (e.g. Type) and DATA_SOURCE_NAME having another definition)
-    if (ret) {
-        ret = ResolveDataSources("InputSignals");
-    }
-    if (ret) {
-        ret = ResolveDataSources("OutputSignals");
-    }
-
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
-    }
-    temp = "";
-    temp.Printf("[5]\n%s%s[6]\n", functionsDatabase, dataSourcesDatabase);
-    temp.Seek(0);
-    printf("%s", temp.Buffer());
-
-//Verify that for every Signal in every DATA_SOURCE_NAME the Type is defined. Add the default values for NumberOfElements and NumberOfDimensions if needed
-    if (ret) {
-        ret = VerifyDataSourcesSignals();
-    }
-
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
-    }
-    temp = "";
-    temp.Printf("[7]\n%s%s[8]\n", functionsDatabase, dataSourcesDatabase);
-    temp.Seek(0);
-    printf("%s", temp.Buffer());
-
-//For every Signal in every FUNCTION_NAME: if Type, NumberOfElements or NumberOfDimensions are not defined, try to get this property from the correspondent DATA_SOURCE_NAME (which might have to be guessed!)
-    if (ret) {
-        ret = ResolveFunctionSignals("InputSignals");
-    }
-    if (ret) {
-        ret = ResolveFunctionSignals("OutputSignals");
-    }
-
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
-    }
-    temp = "";
-    temp.Printf("[9]\n%s%s[10]\n", functionsDatabase, dataSourcesDatabase);
-    temp.Seek(0);
-    printf("%s", temp.Buffer());
-
-//At this stage all signal definition for Functions and DataSources is fully defined (i.e. the properties Type, NumberOfElements and NumberOfDimensions exist).
-    if (ret) {
-        ret = VerifyFunctionSignals("InputSignals");
-    }
-    if (ret) {
-        ret = VerifyFunctionSignals("OutputSignals");
-    }
-
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
-    }
-    temp = "";
-    temp.Printf("[11]\n%s%s[12]\n", functionsDatabase, dataSourcesDatabase);
-    temp.Seek(0);
-    printf("%s", temp.Buffer());
-
-//Add to Function.FUNCTION_NAME.States all the states where FUNCTION_NAME is executed
-    if (ret) {
-        ret = ResolveStates();
-    }
-
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
-    }
-    temp = "";
-    temp.Printf("[13]\n%s%s[14]\n", functionsDatabase, dataSourcesDatabase);
-    temp.Seek(0);
-    printf("%s", temp.Buffer());
-
-//Add consumers and producers
-    if (ret) {
-        ret = ResolveConsumersAndProducers(true);
-    }
-    if (ret) {
-        ret = ResolveConsumersAndProducers(false);
-    }
-
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
-    }
-    temp = "";
-    temp.Printf("[15]\n%s%s[16]\n", functionsDatabase, dataSourcesDatabase);
-    temp.Seek(0);
-    printf("%s", temp.Buffer());
-
-//Compute memory sizes
-    if (ret) {
-        ret = ResolveFunctionSignalsMemorySize("InputSignals");
-    }
-    if (ret) {
-        ret = ResolveFunctionSignalsMemorySize("OutputSignals");
-    }
-
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
-    }
-    temp = "";
-    temp.Printf("[17]\n%s%s[18]\n", functionsDatabase, dataSourcesDatabase);
-    temp.Seek(0);
-    printf("%s", temp.Buffer());
-
-//Compute the memory required for each GAM in every DataSource
-    if (ret) {
-        ret = ResolveFunctionsMemory("InputSignals");
-    }
-    if (ret) {
-        ret = ResolveFunctionsMemory("OutputSignals");
-    }
-
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
-    }
-    temp = "";
-    temp.Printf("[19]\n%s%s[20]\n", functionsDatabase, dataSourcesDatabase);
-    temp.Seek(0);
-    printf("%s", temp.Buffer());
-
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
-    }
-
-//Write the GAM memory information in each DataSource
-    if (ret) {
-        ret = AssignFunctionsMemoryToDataSource("InputSignals");
-    }
-    if (ret) {
-        ret = AssignFunctionsMemoryToDataSource("OutputSignals");
-    }
-
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
-    }
-    temp = "";
-    temp.Printf("[21]\n%s%s[22]\n", functionsDatabase, dataSourcesDatabase);
-    temp.Seek(0);
-    printf("%s", temp.Buffer());
-
-    if (ret) {
-        ret = functionsDatabase.MoveToRoot();
-    }
-    if (ret) {
-        ret = dataSourcesDatabase.MoveToRoot();
-    }
-
-    return ret;
-#endif
 }
 
-bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsDatabase,
-                                               ConfigurationDatabase &dataDatabase) {
+bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn,
+                                               ConfigurationDatabase &dataDatabaseIn) {
     // no check..someone else did it
 
     //-External compiling
@@ -758,7 +408,7 @@ bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsD
     //TODO
 
     RealTimeApplicationConfigurationBuilder configuration(*this, "DDB1");
-    bool ret = configuration.Set(functionsDatabase, dataDatabase);
+    bool ret = configuration.Set(functionsDatabaseIn, dataDatabaseIn);
     if (ret) {
         ret = configuration.AssignBrokersToFunctions();
     }
@@ -775,7 +425,21 @@ bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsD
     if (ret) {
         ret = ConfigureArchitecture();
     }
-
+    if (ret) {
+        ret = AllocateGAMMemory();
+    }
+    if (ret) {
+        ret = AllocateDataSourceMemory();
+    }
+    if (ret) {
+        ret = AddBrokersToFunctions();
+    }
+    if (ret) {
+        ret = scheduler.IsValid();
+        if (ret) {
+            ret = scheduler->ConfigureScheduler();
+        }
+    }
     return ret;
 }
 
@@ -883,96 +547,34 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
         }
     }
 
-    uint32 numberOfStatefulsInData=statefulsInData.Size();
-    for(uint32 i=0u; i<numberOfStatefulsInData && ret; i++){
-        ReferenceT<StatefulI> statefulInData=statefulsInData.Get(i);
-        ret=statefulInData.IsValid();
-        if(ret){
-            ret=statefulInData->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
+    uint32 numberOfStatefulsInData = statefulsInData.Size();
+    for (uint32 i = 0u; i < numberOfStatefulsInData && ret; i++) {
+        ReferenceT<StatefulI> statefulInData = statefulsInData.Get(i);
+        ret = statefulInData.IsValid();
+        if (ret) {
+            ret = statefulInData->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
         }
     }
-
-    if(ret){
-        ReferenceT<GAMSchedulerI> scheduler=schedulerContainer;
-        ret=scheduler.IsValid();
-        if(ret){
-            ret=scheduler->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
-        }
-    }
-    stateNameHolder[(index + 1u) % 2u]=nextStateName;
-    return ret;
-
-}
-
-bool RealTimeApplication::StartExecution() {
-    index = (index + 1u) % 2u;
-    //TODO Start scheduler execution
-    return true;
-}
-
-bool RealTimeApplication::Initialise(StructuredDataI & data) {
-    bool ret = ReferenceContainer::Initialise(data);
-    if (data.MoveRelative("+Data")) {
-        if (!data.Read("DefaultDataSource", defaultDataSourceName)) {
-            defaultDataSourceName = "";
-        }
-        data.MoveToAncestor(1u);
-    }
-    defaultDataSourceName.Seek(0u);
 
     if (ret) {
-        uint32 numberOfContainers = Size();
-        ret = false;
-        for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-            Reference item = Get(i);
-            if (item.IsValid()) {
-                if (StringHelper::Compare(item->GetName(), "States") == 0) {
-                    statesContainer = item;
-                    ret = statesContainer.IsValid();
-                }
-            }
-        }
+        ret = scheduler.IsValid();
         if (ret) {
-            ret = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                Reference container = Get(i);
-                if (container.IsValid()) {
-                    if (StringHelper::Compare(container->GetName(), "Data") == 0) {
-                        dataSourceContainer = container;
-                        ret = dataSourceContainer.IsValid();
-                    }
-                }
-            }
+            ret = scheduler->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
         }
-        if (ret) {
-            ret = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                Reference item = Get(i);
-                if (item.IsValid()) {
-                    if (StringHelper::Compare(item->GetName(), "Functions") == 0) {
-                        functionsContainer = item;
-                        ret = functionsContainer.IsValid();
-                    }
-                }
-            }
-        }
-
-        //TODO
-        /* if (ret) {
-         ret = false;
-         for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-         Reference container = Get(i);
-         if (container.IsValid()) {
-         if (StringHelper::Compare(container->GetName(), "Scheduler") == 0) {
-         schedulerContainer = container;
-         ret = schedulerContainer.IsValid();
-         }
-         }
-         }
-         }*/
     }
-
+    stateNameHolder[(index + 1u) % 2u] = nextStateName;
     return ret;
+
+}
+
+void RealTimeApplication::StartExecution() {
+    index = (index + 1u) % 2u;
+
+    scheduler->StartExecution();
+}
+
+void RealTimeApplication::StopExecution() {
+    scheduler->StopExecution();
 }
 
 bool RealTimeApplication::ConfigureArchitecture() {
@@ -1009,19 +611,17 @@ bool RealTimeApplication::ConfigureArchitecture() {
         dataSourceContainer->Find(statefulsInData, dataFilter);
     }
 
-#if 0
     if (ret) {
-        ReferenceT<GAMSchedulerI> scheduler = schedulerContainer;
         ret = (scheduler.IsValid());
         if (ret) {
-            scheduler->SetApplication(*this);
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "+Scheduler container not found");
+            ret = scheduler->ConfigureScheduler();
         }
     }
-#endif
     return ret;
+}
+
+uint32 RealTimeApplication::GetIndex() {
+    return index;
 }
 
 #if 0

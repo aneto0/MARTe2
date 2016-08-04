@@ -37,6 +37,7 @@
 #include "DataSourceI.h"
 #include "GAM.h"
 #include "ReferenceContainerFilterReferences.h"
+#include "RealTimeThread.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -74,7 +75,7 @@ GAMSchedulerI::~GAMSchedulerI() {
 bool GAMSchedulerI::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (ret) {
-        timeDsAddress="Data.";
+        timeDsAddress = "Data.";
         ret = data.Read("TimingDataSource", timeDsAddress);
         if (!ret) {
             REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify the TimingDataSource address");
@@ -83,7 +84,7 @@ bool GAMSchedulerI::Initialise(StructuredDataI & data) {
     return ret;
 }
 
-bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesContainer) {
+bool GAMSchedulerI::ConfigureScheduler() {
 
     /*
      * struct ScheduledState (array) {
@@ -100,20 +101,23 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
      *     numberOfThreads
      * }
      */
-    bool ret = statesContainer.IsValid();
 
     ReferenceT<RealTimeApplication> app;
 
-    if (ret) {
-        ReferenceContainerFilterReferences findme(1, ReferenceContainerFilterMode::PATH, this);
-        ReferenceContainer path;
-        ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(path, findme);
-        uint32 numberOfNodes = path.Size();
+    ReferenceContainerFilterReferences findme(1, ReferenceContainerFilterMode::PATH, this);
+    ReferenceContainer path;
+    ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(path, findme);
+    uint32 numberOfNodes = path.Size();
 
-        for (uint32 i = 0u; (i < numberOfNodes) && (!app.IsValid()); i++) {
-            app = path.Get(i);
-        }
-        ret = app.IsValid();
+    for (uint32 i = 0u; (i < numberOfNodes) && (!app.IsValid()); i++) {
+        app = path.Get(i);
+    }
+    bool ret = app.IsValid();
+
+    ReferenceT<ReferenceContainer> statesContainer;
+    if (ret) {
+        statesContainer = app->Find("States");
+        ret = statesContainer.IsValid();
     }
 
     if (ret) {
@@ -215,9 +219,6 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
             }
         }
     }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Invalid States container in input");
-    }
 
     return ret;
 }
@@ -315,7 +316,7 @@ bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
                                      const char8 * const nextStateName) {
 
     // Find the next state and prepare the pointer to
-    uint32 nextBuffer = (RealTimeApplication::index + 1u) % 2u;
+    uint32 nextBuffer = (RealTimeApplication::GetIndex() + 1u) % 2u;
 
     bool ret = false;
     for (uint32 i = 0u; i < numberOfStates && !ret; i++) {

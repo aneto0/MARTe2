@@ -36,7 +36,8 @@
 #include "IntrospectionT.h"
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"
-
+#include "RealTimeApplication.h"
+#include "ObjectRegistryDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

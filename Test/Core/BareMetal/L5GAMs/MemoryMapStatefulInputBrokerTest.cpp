@@ -169,7 +169,7 @@ MemoryMapStatefulInputBrokerDataSourceTestHelper    ();
             const SignalDirection direction);
 
     virtual bool PrepareNextState(const char8 * const currentStateName,
-                                  const char8 * const nextStateName);
+            const char8 * const nextStateName);
 
     virtual bool GetInputBrokers(
             ReferenceContainer &inputBrokers,
@@ -572,8 +572,15 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_0() {
         broker = brokers.Get(0);
         ret = broker.IsValid();
     }
-
-    RealTimeApplication::index = 0u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    if (ret) {
+        app->StartExecution();
+    }
+    //RealTimeApplication::index = 0u;
     uint32 numberOfCopies;
     if (ret) {
         numberOfCopies = broker->GetNumberOfCopies();
@@ -624,8 +631,15 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_1() {
         broker = brokers.Get(0);
         ret = broker.IsValid();
     }
-
-    RealTimeApplication::index = 1u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    if (ret) {
+        app->StartExecution();
+    }
+    //RealTimeApplication::index = 1u;
     uint32 numberOfCopies;
     if (ret) {
         numberOfCopies = broker->GetNumberOfCopies();
@@ -680,8 +694,15 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_ChangeState() {
     if (ret) {
         ret = dataSource->PrepareNextState("", "");
     }
-
-    RealTimeApplication::index = 0u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    if (ret) {
+        app->StartExecution();
+    }
+    //RealTimeApplication::index = 0u;
     uint32 numberOfCopies;
     if (ret) {
         numberOfCopies = broker->GetNumberOfCopies();
@@ -747,7 +768,12 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Ranges_0() {
         numberOfCopies = broker->GetNumberOfCopies();
         ret = (numberOfCopies == 5u);
     }
-    RealTimeApplication::index = 0u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+
     if (ret) {
         ret = broker->Execute();
     }
@@ -807,7 +833,16 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Ranges_1() {
         numberOfCopies = broker->GetNumberOfCopies();
         ret = (numberOfCopies == 5u);
     }
-    RealTimeApplication::index = 1u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    if (ret) {
+        app->StartExecution();
+    }
+
+    //RealTimeApplication::index = 1u;
     if (ret) {
         ret = broker->Execute();
     }
@@ -870,7 +905,15 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Ranges_ChangeState() {
     if (ret) {
         ret = dataSource->PrepareNextState("", "");
     }
-    RealTimeApplication::index = 0u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    if (ret) {
+        app->StartExecution();
+    }
+    //RealTimeApplication::index = 0u;
     if (ret) {
         ret = broker->Execute();
     }
@@ -951,7 +994,12 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Samples_0() {
         numberOfCopies = broker->GetNumberOfCopies();
         ret = (numberOfCopies == 5u);
     }
-    RealTimeApplication::index = 0u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    //RealTimeApplication::index = 0u;
     if (ret) {
         ret = broker->Execute();
     }
@@ -999,7 +1047,15 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Samples_1() {
         numberOfCopies = broker->GetNumberOfCopies();
         ret = (numberOfCopies == 5u);
     }
-    RealTimeApplication::index = 1u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    if (ret) {
+        app->StartExecution();
+    }
+    //RealTimeApplication::index = 1u;
     if (ret) {
         ret = broker->Execute();
     }
@@ -1050,7 +1106,15 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Samples_ChangeState() {
     if (ret) {
         ret = dataSource->PrepareNextState("", "");
     }
-    RealTimeApplication::index = 0u;
+    ReferenceT<RealTimeApplication> app;
+    if (ret) {
+        app = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ret = app.IsValid();
+    }
+    if (ret) {
+        app->StartExecution();
+    }
+    //RealTimeApplication::index = 0u;
     if (ret) {
         ret = broker->Execute();
     }

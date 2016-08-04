@@ -33,6 +33,8 @@
 #include "GAMGroupTest.h"
 #include "GAMSchedulerI.h"
 #include "StandardParser.h"
+#include "ObjectRegistryDatabase.h"
+#include "RealTimeApplication.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

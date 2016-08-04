@@ -35,6 +35,8 @@
 #include "ConfigurationDatabase.h"
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"
+#include "GAMSchedulerI.h"
+
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -393,6 +395,24 @@ bool Driver1::Synchronise() {
 
 CLASS_REGISTER(Driver1, "1.0");
 
+
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+
+
+DefaultSchedulerForTests::DefaultSchedulerForTests() :
+        GAMSchedulerI() {
+}
+void DefaultSchedulerForTests::StartExecution() {
+
+}
+
+void DefaultSchedulerForTests::StopExecution() {
+}
+
+CLASS_REGISTER(DefaultSchedulerForTests, "1.0")
 #if 0
 
 DECLARE_CLASS_MEMBER(TrackError, Par1, uint32, "", "");

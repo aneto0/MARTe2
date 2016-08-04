@@ -35,6 +35,8 @@
 #include "ErrorManagement.h"
 #include "Vector.h"
 #include "stdio.h"
+#include "RealTimeApplication.h"
+#include "ObjectRegistryDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -502,6 +504,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase1
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -670,6 +676,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase2
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -847,6 +857,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase_
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -1006,6 +1020,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseF
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     ConfigurationDatabase cdb;
@@ -1101,6 +1119,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseF
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     if (fromConfig) {
@@ -1181,6 +1203,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseF
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -1273,6 +1299,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseF
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
     if (fromConfig) {
         return TestBuilder(config, "$Application1", "DDB1", "", "", InitialiseSignalsDatabase, true, true);
@@ -1356,6 +1386,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseF
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
     if (fromConfig) {
@@ -1443,6 +1477,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases1()
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -1674,6 +1712,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases2()
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -1881,6 +1923,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases3()
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "", "", "", FlattenSignalsDatabase, true);
@@ -1958,6 +2004,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases4()
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -2180,6 +2230,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases5()
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -2423,6 +2477,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases6()
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -2674,6 +2732,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Lo
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
     const char8 * const expectedFunctionsConfig = ""
             "Functions = {"
@@ -2916,6 +2978,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Co
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -3191,6 +3257,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Me
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -3472,6 +3542,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_De
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -3739,6 +3813,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_De
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -3996,6 +4074,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_In
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", FlattenSignalsDatabase, true);
@@ -4088,6 +4170,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_In
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", FlattenSignalsDatabase, true);
@@ -4175,6 +4261,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_On
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -4268,6 +4358,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_On
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", FlattenSignalsDatabase, true);
@@ -4357,6 +4451,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_In
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", FlattenSignalsDatabase, true);
@@ -4440,6 +4538,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Un
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -4535,6 +4637,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources1() {
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -4823,6 +4929,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources2() {
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -5132,6 +5242,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources3() {
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -5387,6 +5501,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -5631,6 +5749,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -5879,6 +6001,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructN
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -6096,6 +6222,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_Typ
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveDataSources, true);
@@ -6199,6 +6329,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_Typ
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveDataSources, true);
@@ -6296,6 +6430,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NEl
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -6400,6 +6538,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NEl
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveDataSources, true);
@@ -6497,6 +6639,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NDi
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -6602,6 +6748,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NDi
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveDataSources, true);
@@ -6704,6 +6854,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_Def
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -6810,6 +6964,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_Def
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveDataSources, true);
@@ -6911,6 +7069,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_Def
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveDataSources, true);
@@ -7004,6 +7166,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsF
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -7100,6 +7266,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsF
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveDataSources, true);
@@ -7189,6 +7359,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsF
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -7285,7 +7459,12 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsF
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
+
 
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveDataSources, true);
 }
@@ -7379,6 +7558,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsF
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveDataSources, true);
@@ -7474,6 +7657,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals1(
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -7758,6 +7945,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_P
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -8054,6 +8245,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_D
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -8348,6 +8543,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_A
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -8631,6 +8830,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_A
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -8926,6 +9129,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFa
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", VerifyDataSources, true);
@@ -9013,6 +9220,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFa
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -9110,6 +9321,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFa
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", VerifyDataSources, true);
@@ -9204,6 +9419,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFa
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -9300,6 +9519,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFa
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", VerifyDataSources, true);
@@ -9382,6 +9605,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignals1() 
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -9641,6 +9868,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignals2() 
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -9869,6 +10100,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignals3() 
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -10076,6 +10311,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsFals
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveFunctions, true);
 
@@ -10158,6 +10397,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyFunctionSignals() {
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -10887,6 +11130,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates(bool fromCon
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -11186,7 +11433,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates2(bool fromCo
             "                }"
             "            }"
             "        }"
-
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -11519,7 +11769,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates_FunctionGrou
             "                }"
             "            }"
             "        }"
-
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -11863,6 +12116,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates_MoreThreads(
             "            }"
             "        }"
 
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -12250,6 +12507,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_SameGAM
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
     if (fromConfig) {
         return TestBuilder(config, "$Application1", "DDB1", "", "", ResolveStates, true, true);
@@ -12381,6 +12642,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_MoreSyn
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
     if (fromConfig) {
         return TestBuilder(config, "$Application1", "DDB1", "", "", ResolveStates, true, true);
@@ -12510,6 +12775,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_MoreSyn
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
     if (fromConfig) {
@@ -12642,6 +12911,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_MoreSyn
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
     if (fromConfig) {
         return TestBuilder(config, "$Application1", "DDB1", "", "", ResolveStates, true, true);
@@ -12734,6 +13007,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_Invalid
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
     ConfigurationDatabase cdb;
@@ -12860,6 +13137,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyStates() {
             "            }"
             "        }"
 
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -13159,6 +13440,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyStatesFalse_GAMNever
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
     return TestBuilder(config, "Application1", "DDB1", "", "", VerifyStates, true);
 
@@ -13246,6 +13531,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveConsumersAndProduce
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -13564,6 +13853,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveConsumersAndProduce
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -13880,6 +14173,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveConsumersAndProduce
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -14221,6 +14518,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveConsumersAndProduce
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -14565,6 +14866,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveConsumersAndProduce
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -14890,6 +15195,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -15319,6 +15628,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -15762,6 +16075,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -16204,6 +16521,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -16657,6 +16978,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -17117,6 +17442,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", VerifyConsumersAndProducers, true);
@@ -17195,6 +17524,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -17294,6 +17627,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", VerifyConsumersAndProducers, true);
@@ -17388,6 +17725,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -17487,6 +17828,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", VerifyConsumersAndProducers, true);
@@ -17575,6 +17920,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemo
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -18007,6 +18356,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemo
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -18444,6 +18797,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemo
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveFunctionSignalsMemorySize, true);
@@ -18532,6 +18889,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemo
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -18625,6 +18986,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemo
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveFunctionSignalsMemorySize, true);
@@ -18712,6 +19077,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionsMemory() {
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -19271,6 +19640,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionsMemory_Sam
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -19846,6 +20219,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionsMemory_Int
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -20444,6 +20821,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionsMemory_Sam
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -21019,6 +21400,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionsMemoryFals
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveFunctionsMemory, true);
@@ -21106,6 +21491,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignFunctionsMemoryToDat
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -21762,6 +22151,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignFunctionsMemoryToDat
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -22414,6 +22807,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignBrokersToFunctions()
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -23087,6 +23484,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignBrokersToFunctionsFa
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -23684,6 +24085,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignBrokersToFunctionsFa
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     return TestBuilder(config, "Application1", "DDB1", "", "", AssignBrokersToFunctions, true);
@@ -23775,6 +24180,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignBrokersToFunctionsFa
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -24020,6 +24429,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureDataSource() 
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -24692,6 +25105,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureDataSourceFal
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -25408,6 +25825,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureFunctions() {
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -26079,6 +26500,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureFunctionsFals
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 
@@ -26795,6 +27220,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureAfterInitialisati
             "            }"
             "        }"
             "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
             "}";
 
     const char8 * const expectedFunctionsConfig = ""
@@ -27462,6 +27891,10 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureBeforeInitialisat
             "                }"
             "            }"
             "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
             "    }"
             "}";
 

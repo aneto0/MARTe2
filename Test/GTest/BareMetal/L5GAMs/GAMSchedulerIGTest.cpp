@@ -52,11 +52,6 @@ TEST(GAMSchedulerIGTest,TestConfigureScheduler) {
     ASSERT_TRUE(test.TestConfigureScheduler());
 }
 
-TEST(GAMSchedulerIGTest,TestConfigureSchedulerFalse_InvalidStatesContainer) {
-    GAMSchedulerITest test;
-    ASSERT_TRUE(test.TestConfigureSchedulerFalse_InvalidStatesContainer());
-}
-
 TEST(GAMSchedulerIGTest,TestConfigureSchedulerFalse_InvalidState) {
     GAMSchedulerITest test;
     ASSERT_TRUE(test.TestConfigureSchedulerFalse_InvalidState());
