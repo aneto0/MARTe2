@@ -262,7 +262,7 @@ bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
     return ret;
 }
 
-bool GAM::SetContext(Reference context) {
+bool GAM::SetContext(ReferenceT<const Object> context) {
     return true;
 }
 

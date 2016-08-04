@@ -51,6 +51,11 @@ public:
     bool TestConstructor();
 
     /**
+     * @brief Tests the initialise
+     */
+    bool TestInitialise();
+
+    /**
      * @brief Tests if the context is correctly propagated.
      */
     bool TestSetContext();

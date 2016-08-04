@@ -895,6 +895,15 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
         }
     }
 
+    uint32 numberOfStatefulsInData=statefulsInData.Size();
+    for(uint32 i=0u; i<numberOfStatefulsInData && ret; i++){
+        ReferenceT<StatefulI> statefulInData=statefulsInData.Get(i);
+        ret=statefulInData.IsValid();
+        if(ret){
+            ret=statefulInData->PrepareNextState(currentStateName.Buffer(), nextStateName);
+        }
+    }
+
     return ret;
 
 }
@@ -980,6 +989,7 @@ bool RealTimeApplication::ConfigureArchitecture() {
         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
             ReferenceT<RealTimeState> state = statesContainer->Get(i);
             if (state.IsValid()) {
+
                 // for each state call the configuration function
                 uint32 numberOfThreads = state->Size();
                 for (uint32 j = 0u; (j < numberOfThreads) && (ret); j++) {
@@ -991,9 +1001,16 @@ bool RealTimeApplication::ConfigureArchitecture() {
             }
         }
     }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Invalid States container");
+
+    if (ret) {
+        ret = dataSourceContainer.IsValid();
     }
+    if (ret) {
+        //Look for all the GAMs inside the RealTimeApplication
+        ReferenceContainerFilterReferencesTemplate<StatefulI> dataFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+        dataSourceContainer->Find(statefulsInData, dataFilter);
+    }
+
 #if 0
     if (ret) {
         ReferenceT<GAMSchedulerI> scheduler = schedulerContainer;

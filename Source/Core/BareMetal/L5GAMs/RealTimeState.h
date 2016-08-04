@@ -90,6 +90,8 @@ public:
     virtual bool PrepareNextState(const char8 * const currentStateName,
                                   const char8 * const nextStateName);
 
+    uint32 GetNumberOfStatefuls();
+
 private:
 
 

@@ -29,7 +29,9 @@ OBJSX= BrokerITest.x \
        DataSourceITest.x\
        GAMDataSourceTest.x\
        GAMGroupTest.x\
+       GAMSchedulerITest.x \
        GAMTest.x\
+       GAMTestHelper.x\
        MemoryMapBrokerTest.x\
        MemoryMapInputBrokerTest.x\
        MemoryMapOutputBrokerTest.x\
@@ -38,9 +40,8 @@ OBJSX= BrokerITest.x \
        MemoryMapStatefulOutputBrokerTest.x\
        MemoryMapSynchronisedInputBrokerTest.x\
        RealTimeApplicationConfigurationBuilderTest.x\
-       GAMSchedulerITest.x \
-       RealTimeThreadTest.x\
-       GAMTestHelper.x 
+       RealTimeStateTest.x\
+       RealTimeThreadTest.x
 
 #BrokerContainerTest.x \
 		DataSourceContainerTest.x \

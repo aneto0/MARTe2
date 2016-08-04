@@ -40,6 +40,10 @@
 
 namespace MARTe {
 
+
+#define ConstReferenceT(x) ReferenceT<const x>
+#define ConstReference ReferenceT<const Object>
+
 /**
  * @brief Template version of the shared pointer implementation (see Reference).
  * @tparam T the base type of the objects referenced by instances of this class

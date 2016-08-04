@@ -291,6 +291,8 @@ private:
      */
     ReferenceT<ReferenceContainer> dataSourceContainer;
 
+    ReferenceContainer statefulsInData;
+
 
     ConfigurationDatabase functionsDatabase;
     ConfigurationDatabase dataSourcesDatabase;

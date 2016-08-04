@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
 #include "StatefulI.h"
-
+#include "ReferenceT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -65,10 +65,15 @@ public:
      */
     GAMGroup();
 
+
+    virtual bool Initialise(StructuredDataI & data);
+
+
     /**
      * @brief Destructor. NOOP
      */
     virtual ~GAMGroup();
+
 
 
 protected:
@@ -78,7 +83,9 @@ protected:
      * @param[in] context The context to be set on all GAMs.
      * @return true if GAM::SetContext returns true for all the GAMs.
      */
-    bool SetContext(Reference context);
+    virtual bool SetContext(ConstReference context);
+
+    ReferenceContainer GAMs;
 
 };
 }
