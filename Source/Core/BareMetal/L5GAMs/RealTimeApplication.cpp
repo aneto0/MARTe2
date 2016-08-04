@@ -240,11 +240,11 @@ bool RealTimeApplication::ValidateDataSourceLinks() {
 
     return ret;
 }
-bool RealTimeApplication::PrepareNextState(const char8 * currentStateName,
+bool RealTimeApplication::PrepareNextState(const char8 * stateNameHolder,
         const char8 * nextStateName) {
 
     RealTimeStateInfo status;
-    status.currentState = currentStateName.Buffer();
+    status.currentState = stateNameHolder.Buffer();
     status.nextState = nextStateName;
     status.activeBuffer = activeBuffer;
 
@@ -388,19 +388,7 @@ bool RealTimeApplication::ConfigureApplication() {
         ret = AddBrokersToFunctions();
     }
 
-    /*   if (ret) {
-     ret = false;
-     for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-     Reference container = Get(i);
-     if (container.IsValid()) {
-     if (StringHelper::Compare(container->GetName(), "Scheduler") == 0) {
-     schedulerContainer = container;
-     ret = schedulerContainer.IsValid();
-     }
-     }
-     }
-     }
-     */
+
 
     //<<<<<<<<<<<<<<Mine
     return ret;
@@ -888,7 +876,7 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
             ret = state.IsValid();
             if (ret) {
                 if (StringHelper::Compare(state->GetName(), nextStateName) == 0) {
-                    ret = state->PrepareNextState(currentStateName.Buffer(), nextStateName);
+                    ret = state->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
                     break;
                 }
             }
@@ -900,10 +888,18 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
         ReferenceT<StatefulI> statefulInData=statefulsInData.Get(i);
         ret=statefulInData.IsValid();
         if(ret){
-            ret=statefulInData->PrepareNextState(currentStateName.Buffer(), nextStateName);
+            ret=statefulInData->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
         }
     }
 
+    if(ret){
+        ReferenceT<GAMSchedulerI> scheduler=schedulerContainer;
+        ret=scheduler.IsValid();
+        if(ret){
+            ret=scheduler->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
+        }
+    }
+    stateNameHolder[(index + 1u) % 2u]=nextStateName;
     return ret;
 
 }
@@ -960,6 +956,8 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                 }
             }
         }
+
+        //TODO
         /* if (ret) {
          ret = false;
          for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {

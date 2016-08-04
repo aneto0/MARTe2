@@ -268,7 +268,8 @@ private:
     /**
      * The current state name.
      */
-    StreamString currentStateName;
+    StreamString stateNameHolder[2];
+
 
 
     /**
