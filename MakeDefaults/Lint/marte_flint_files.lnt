@@ -1,4 +1,5 @@
-AdvancedErrorManagement.h
+GAMSchedulerI.cpp
+/*AdvancedErrorManagement.h
 AnyObject.cpp
 AnyType.cpp
 AnyTypeCreator.cpp
@@ -54,6 +55,8 @@ FormatDescriptor.cpp
 FractionalInteger.h
 GAM.cpp
 GAMDataSource.cpp
+GAMGroup.cpp
+GAMSchedulerI.cpp
 GeneralDefinitions.h
 GlobalObjectI.cpp
 GlobalObjectsDatabase.cpp
@@ -110,6 +113,7 @@ ParserI.cpp
 Processor.cpp
 ProcessorType.cpp
 RealTimeApplicationConfigurationBuilder.cpp
+RealTimeState.cpp
 RealTimeThread.cpp
 Reference.cpp
 ReferenceContainer.cpp
@@ -165,4 +169,4 @@ ValidateBasicType.h
 ValidateBasicType.cpp
 Vector.h
 XMLParser.cpp
-ZeroTerminatedArray.h
+ZeroTerminatedArray.h*/

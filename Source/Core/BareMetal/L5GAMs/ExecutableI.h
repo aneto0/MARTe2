@@ -47,13 +47,13 @@ public:
 
     virtual bool Execute() = 0;
 
-    inline void SetLastExecutionTime(uint64 counter);
+    inline void SetLastExecutionTime(const uint32 lastExecutionTimeMicroSecIn);
 
     inline uint64 GetLastExecutionTime();
 
 private:
 
-    uint64 lastExecutionCounter;
+    uint32 lastExecutionTimeMicroSec;
 };
 
 
@@ -61,12 +61,12 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-void ExecutableI::SetLastExecutionTime(uint64 counter) {
-    lastExecutionCounter = counter;
+void ExecutableI::SetLastExecutionTime(const uint32 lastExecutionTimeMicroSecIn) {
+    lastExecutionTimeMicroSec = lastExecutionTimeMicroSecIn;
 }
 
 uint64 ExecutableI::GetLastExecutionTime() {
-    return lastExecutionCounter;
+    return lastExecutionTimeMicroSec;
 }
 }
 #endif /* EXECUTORI_H_ */

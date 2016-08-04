@@ -40,13 +40,18 @@
 
 namespace MARTe {
 
-
+/**
+ * Reference to a constant T::Object.
+ */
 #define ConstReferenceT(x) ReferenceT<const x>
+/**
+ * Reference to a constant Object.
+ */
 #define ConstReference ReferenceT<const Object>
 
 /**
  * @brief Template version of the shared pointer implementation (see Reference).
- * @tparam T the base type of the objects referenced by instances of this class
+ * @param T the base type of the objects referenced by instances of this class
  */
 template<typename T>
 class DLL_API ReferenceT: public Reference {

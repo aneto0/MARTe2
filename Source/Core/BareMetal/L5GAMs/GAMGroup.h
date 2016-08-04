@@ -85,6 +85,9 @@ protected:
      */
     virtual bool SetContext(ConstReference context);
 
+    /**
+     * All the GAMs that belong to this GAMGroup
+     */
     ReferenceContainer GAMs;
 
 };

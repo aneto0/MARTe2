@@ -86,9 +86,9 @@ public:
     virtual bool PrepareNextState(const char8 * const currentStateName,
                                   const char8 * const nextStateName);
 
-    uint64 ExecuteSingleCycle(ExecutableI** executables,
-                              uint32 **timeAddress,
-                              uint32 numberOfExecutables);
+    uint64 ExecuteSingleCycle(ExecutableI * const * const executables,
+                              uint32 * const * const timeAddress,
+                              const uint32 numberOfExecutables) const ;
 
     /**
      * @brief Starts the execution of the next state threads.
@@ -100,8 +100,8 @@ public:
      */
     virtual void StopExecution()=0;
 
-    uint32 GetNumberOfExecutables(const char8* stateName,
-                                  const char8 *threadName);
+    uint32 GetNumberOfExecutables(const char8 * const stateName,
+                                  const char8 * const threadName) const;
 
 protected:
 
@@ -152,21 +152,21 @@ protected:
 private:
 
     bool InsertInputBrokers(ReferenceT<GAM> gam,
-                            const char8 * gamFullName,
-                            uint32 i,
-                            uint32 j,
+                            const char8 * const gamFullName,
+                            const uint32 i,
+                            const uint32 j,
                             uint32 &index);
 
-    bool InsertGam(ReferenceT<GAM> gam,
-                   const char8 * gamFullName,
-                   uint32 i,
-                   uint32 j,
+    bool InsertGAM(ReferenceT<GAM> gam,
+                   const char8 * const gamFullName,
+                   const uint32 i,
+                   const uint32 j,
                    uint32 &index);
 
     bool InsertOutputBrokers(ReferenceT<GAM> gam,
-                             const char8 * gamFullName,
-                             uint32 i,
-                             uint32 j,
+                             const char8 * const gamFullName,
+                             const uint32 i,
+                             const uint32 j,
                              uint32 &index);
 };
 

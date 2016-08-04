@@ -40,7 +40,7 @@
 namespace MARTe {
 
 ExecutableI::ExecutableI() {
-    lastExecutionCounter = 0u;
+    lastExecutionTimeMicroSec = 0u;
 }
 
 ExecutableI::~ExecutableI() {

@@ -31,13 +31,13 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GAMSchedulerI.h"
-#include "ConfigurationDatabase.h"
 #include "AdvancedErrorManagement.h"
+#include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
 #include "GAM.h"
+#include "GAMSchedulerI.h"
 #include "ReferenceContainerFilterReferences.h"
-#include "stdio.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -48,7 +48,8 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAMSchedulerI::GAMSchedulerI() {
+GAMSchedulerI::GAMSchedulerI() :
+        ReferenceContainer() {
     states = NULL_PTR(ScheduledState *);
     statesInExecution[0] = NULL_PTR(ScheduledState *);
     statesInExecution[1] = NULL_PTR(ScheduledState *);
@@ -58,23 +59,23 @@ GAMSchedulerI::GAMSchedulerI() {
 
 GAMSchedulerI::~GAMSchedulerI() {
     if (states != NULL) {
-        if(states->threads!=NULL) {
-            if(states->threads->executables!=NULL) {
-                delete [] states->threads->executables;
+        if (states->threads != NULL) {
+            if (states->threads->executables != NULL) {
+                delete[] states->threads->executables;
             }
-            if(states->threads->timeAddresses!=NULL) {
-                delete [] states->threads->timeAddresses;
+            if (states->threads->timeAddresses != NULL) {
+                delete[] states->threads->timeAddresses;
             }
             delete[] states->threads;
         }
-        delete [] states;
+        delete[] states;
     }
 }
 
 bool GAMSchedulerI::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (ret) {
-        timeDsAddress="Data.";
+        timeDsAddress = "Data.";
         ret = data.Read("TimingDataSource", timeDsAddress);
         if (!ret) {
             REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify the TimingDataSource address");
@@ -110,8 +111,10 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
         ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(path, findme);
         uint32 numberOfNodes = path.Size();
 
-        for (uint32 i = 0u; (i < numberOfNodes) && (!app.IsValid()); i++) {
+        bool appIsValid = false;
+        for (uint32 i = 0u; (i < numberOfNodes) && (!appIsValid); i++) {
             app = path.Get(i);
+            appIsValid = app.IsValid();
         }
         ret = app.IsValid();
     }
@@ -127,7 +130,7 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
     if (ret) {
         numberOfStates = statesContainer->Size();
         states = new ScheduledState[numberOfStates];
-        for (uint32 i = 0u; i < numberOfStates && ret; i++) {
+        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
             ReferenceT<RealTimeState> stateElement = statesContainer->Get(i);
             ret = stateElement.IsValid();
             if (ret) {
@@ -141,17 +144,17 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
 
                     states[i].threads = new ScheduledThread[numberOfThreads];
 
-                    for (uint32 j = 0u; j < numberOfThreads && ret; j++) {
+                    for (uint32 j = 0u; (j < numberOfThreads) && (ret); j++) {
                         ReferenceT<RealTimeThread> threadElement = threadContainer->Get(j);
                         ret = threadElement.IsValid();
                         if (ret) {
 
                             ReferenceContainer gams;
-                            threadElement->GetGAMs(gams);
+                            ret = threadElement->GetGAMs(gams);
                             uint32 numberOfGams = threadElement->GetNumberOfGAMs();
                             uint32 numberOfExecutables = numberOfGams;
 
-                            for (uint32 k = 0u; k < numberOfGams && ret; k++) {
+                            for (uint32 k = 0u; (k < numberOfGams) && (ret); k++) {
                                 ReferenceT<GAM> gam = gams.Get(k);
                                 ret = gam.IsValid();
                                 if (ret) {
@@ -178,13 +181,13 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
                                 states[i].threads[j].name = threadElement->GetName();
                             }
                             uint32 c = 0u;
-                            for (uint32 k = 0u; k < numberOfGams && ret; k++) {
+                            for (uint32 k = 0u; (k < numberOfGams) && (ret); k++) {
                                 //add input brokers
                                 StreamString gamFullName = threadElement->GetFunctions()[k];
                                 ret = InsertInputBrokers(gams.Get(k), gamFullName.Buffer(), i, j, c);
                                 //add gam
                                 if (ret) {
-                                    ret = InsertGam(gams.Get(k), gamFullName.Buffer(), i, j, c);
+                                    ret = InsertGAM(gams.Get(k), gamFullName.Buffer(), i, j, c);
                                 }
 
                                 //add output brokers
@@ -203,7 +206,6 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
                                 ret = timeDataSource->GetSignalIndex(signalIdx, threadFullName.Buffer());
                                 if (ret) {
                                     ret = timeDataSource->GetSignalMemoryBuffer(signalIdx, 0u, reinterpret_cast<void*&>(states[i].threads[j].cycleTime));
-                                    printf("\nInserted CycleTime\n");
                                 }
                             }
                         }
@@ -223,12 +225,12 @@ bool GAMSchedulerI::ConfigureScheduler(ReferenceT<ReferenceContainer> statesCont
 }
 
 bool GAMSchedulerI::InsertInputBrokers(ReferenceT<GAM> gam,
-                                       const char8 * gamFullName,
-                                       uint32 i,
-                                       uint32 j,
+                                       const char8 * const gamFullName,
+                                       const uint32 i,
+                                       const uint32 j,
                                        uint32 &index) {
     ReferenceT<ReferenceContainer> inputBrokers = gam->GetInputBrokers();
-    uint32 numberOfIB = inputBrokers->Size();
+    uint32 numberOfInputBrokers = inputBrokers->Size();
     //add input brokers
     StreamString timeSignalName = gamFullName;
     timeSignalName += "_ReadTime";
@@ -241,25 +243,32 @@ bool GAMSchedulerI::InsertInputBrokers(ReferenceT<GAM> gam,
     if (ret) {
         ret = (signalAddress != NULL);
     }
-    for (uint32 n = 0u; n < numberOfIB && ret; n++) {
+    if (ret) {
+        ret = (states != NULL_PTR(ScheduledState *));
+    }
+    for (uint32 n = 0u; (n < numberOfInputBrokers) && (ret); n++) {
         ReferenceT<ExecutableI> input = inputBrokers->Get(n);
         ret = input.IsValid();
         if (ret) {
-            states[i].threads[j].executables[index] = input.operator->();
-            states[i].threads[j].timeAddresses[index] = reinterpret_cast<uint32*>(signalAddress);
-
-            index++;
-
+            //lint -e{613} states != NULL checked before entering here.
+            ret = (states[i].threads != NULL_PTR(ScheduledThread *));
         }
-
+        if (ret) {
+            //lint -e{613} states != NULL checked before entering here.
+            states[i].threads[j].executables[index] = input.operator->();
+            //lint -e{613} states != NULL checked before entering here.
+            states[i].threads[j].timeAddresses[index] = reinterpret_cast<uint32*>(signalAddress);
+        }
+        index++;
     }
+
     return ret;
 }
 
-bool GAMSchedulerI::InsertGam(ReferenceT<GAM> gam,
-                              const char8 * gamFullName,
-                              uint32 i,
-                              uint32 j,
+bool GAMSchedulerI::InsertGAM(ReferenceT<GAM> gam,
+                              const char8 * const gamFullName,
+                              const uint32 i,
+                              const uint32 j,
                               uint32 &index) {
 
     StreamString timeSignalName = gamFullName;
@@ -272,18 +281,29 @@ bool GAMSchedulerI::InsertGam(ReferenceT<GAM> gam,
         ret = timeDataSource->GetSignalMemoryBuffer(signalIdx, 0u, signalAddress);
     }
     if (ret) {
-        ret = signalAddress != NULL;
+        ret = (signalAddress != NULL);
     }
-    states[i].threads[j].executables[index] = gam.operator->();
-    states[i].threads[j].timeAddresses[index] = reinterpret_cast<uint32*>(signalAddress);
+    if (ret) {
+        ret = (states != NULL_PTR(ScheduledState *));
+    }
+    if (ret) {
+        //lint -e{613} states != NULL checked before entering here.
+        ret = (states[i].threads != NULL_PTR(ScheduledThread *));
+    }
+    if (ret) {
+        //lint -e{613} states != NULL checked before entering here.
+        states[i].threads[j].executables[index] = gam.operator->();
+        //lint -e{613} states != NULL checked before entering here.
+        states[i].threads[j].timeAddresses[index] = reinterpret_cast<uint32*>(signalAddress);
+    }
     index++;
     return ret;
 }
 
 bool GAMSchedulerI::InsertOutputBrokers(ReferenceT<GAM> gam,
-                                        const char8 * gamFullName,
-                                        uint32 i,
-                                        uint32 j,
+                                        const char8 * const gamFullName,
+                                        const uint32 i,
+                                        const uint32 j,
                                         uint32 &index) {
     StreamString timeSignalName = gamFullName;
     timeSignalName += "_WriteTime";
@@ -296,72 +316,99 @@ bool GAMSchedulerI::InsertOutputBrokers(ReferenceT<GAM> gam,
     if (ret) {
         ret = signalAddress != NULL;
     }
-
+    if (ret) {
+        ret = (states != NULL_PTR(ScheduledState *));
+    }
+    if (ret) {
+        //lint -e{613} states != NULL checked before entering here.
+        ret = (states[i].threads != NULL_PTR(ScheduledThread *));
+    }
     ReferenceT<ReferenceContainer> outputBrokers = gam->GetOutputBrokers();
-    uint32 numberOfOB = outputBrokers->Size();
-    for (uint32 n = 0u; n < numberOfOB && ret; n++) {
+    uint32 numberOfOutputBrokers = outputBrokers->Size();
+    for (uint32 n = 0u; (n < numberOfOutputBrokers) && (ret); n++) {
         ReferenceT<ExecutableI> output = outputBrokers->Get(n);
         ret = output.IsValid();
         if (ret) {
+            //lint -e{613} states != NULL checked before entering here.
             states[i].threads[j].executables[index] = output.operator->();
+            //lint -e{613} states != NULL checked before entering here.
             states[i].threads[j].timeAddresses[index] = reinterpret_cast<uint32*>(signalAddress);
-            index++;
         }
     }
+    index++;
     return ret;
 }
 
+/**
+ * lint -e{715}
+ */
 bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
                                      const char8 * const nextStateName) {
 
     // Find the next state and prepare the pointer to
     uint32 nextBuffer = (RealTimeApplication::index + 1u) % 2u;
 
-    bool ret = false;
-    for (uint32 i = 0u; i < numberOfStates && !ret; i++) {
-        ret = (StringHelper::Compare(nextStateName, states[i].name) == 0);
-        if (ret) {
+    bool ret = (states != NULL_PTR(ScheduledState *));
+
+    bool found = false;
+
+    for (uint32 i = 0u; (i < numberOfStates) && (ret) && (!found); i++) {
+        //lint -e{613} states != NULL checked before entering here.
+        found = (StringHelper::Compare(nextStateName, states[i].name) == 0);
+        if (found) {
+            //lint -e{613} states != NULL checked before entering here.
             statesInExecution[nextBuffer] = &states[i];
         }
+    }
+    if (ret) {
+        ret = found;
     }
 
     return ret;
 }
 
-uint64 GAMSchedulerI::ExecuteSingleCycle(ExecutableI** executables,
-                                         uint32 **timeAddress,
-                                         uint32 numberOfExecutables) {
+uint64 GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
+                                         uint32 * const * const timeAddress,
+                                         const uint32 numberOfExecutables) const {
     // warning: possible segmentation faults if the previous operations
     // lack or fail and the pointers are invalid.
 
-    uint64 absTic = HighResolutionTimer::Counter();
-    for (uint32 i = 0u; i < numberOfExecutables; i++) {
+    bool ret = true;
+    uint64 absTicks = HighResolutionTimer::Counter();
+    for (uint32 i = 0u; (i < numberOfExecutables) && (ret); i++) {
         // save the time before
         // execute the gam
-        executables[i]->Execute();
-        uint32 absTime = static_cast<uint32>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), absTic) * 10e6);        //us
-        MemoryOperationsHelper::Copy(timeAddress[i], &absTime, sizeof(uint32));
-        executables[i]->SetLastExecutionTime(absTime);
+        ret = executables[i]->Execute();
+        float64 ticksToTime = HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), absTicks);
+        ticksToTime *= 1e6;
+        uint32 absTime = static_cast<uint32>(ticksToTime);  //us
+        if (ret) {
+            uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
+            ret = MemoryOperationsHelper::Copy(timeAddress[i], &absTime, sizeToCopy);
+        }
+        if (ret) {
+            executables[i]->SetLastExecutionTime(absTime);
+        }
     }
-    return absTic;
+    return absTicks;
 }
 
-uint32 GAMSchedulerI::GetNumberOfExecutables(const char8* stateName,
-                                             const char8 *threadName) {
+uint32 GAMSchedulerI::GetNumberOfExecutables(const char8 * const stateName,
+                                             const char8 * const threadName) const {
     uint32 numberOfExecutables = 0u;
     if (states != NULL) {
-        bool foundState= false;
-        for(uint32 i=0u;i<numberOfStates && !foundState; i++) {
-            foundState = StringHelper::Compare(stateName, states[i].name)==0;
-            if(foundState) {
-                uint32 numberOfThreads= states[i].numberOfThreads;
-                if(states[i].threads!=NULL) {
-                    bool foundThread=false;
-                    for(uint32 j=0u; j<numberOfThreads && !foundThread; j++) {
+        bool foundState = false;
+        for (uint32 i = 0u; (i < numberOfStates) && (!foundState); i++) {
+            foundState = StringHelper::Compare(stateName, states[i].name) == 0;
+            if (foundState) {
+                uint32 numberOfThreads = states[i].numberOfThreads;
+                if (states[i].threads != NULL) {
+                    bool foundThread = false;
+                    for (uint32 j = 0u; (j < numberOfThreads) && (!foundThread); j++) {
 
-                        foundThread=StringHelper::Compare(threadName, states[i].threads[j].name)==0;
-                        if(foundThread) {
-                            numberOfExecutables=states[i].threads[j].numberOfExecutables;
+                        foundThread = StringHelper::Compare(threadName, states[i].threads[j].name) == 0;
+                        if (foundThread) {
+                            numberOfExecutables = states[i].threads[j].numberOfExecutables;
                         }
                     }
                 }
@@ -371,5 +418,6 @@ uint32 GAMSchedulerI::GetNumberOfExecutables(const char8* stateName,
     }
     return numberOfExecutables;
 }
+
 }
 

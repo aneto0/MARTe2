@@ -48,7 +48,6 @@ GAMGroup::GAMGroup() :
         ReferenceContainer() {
 }
 
-/*lint -e{1551} no exception should be thrown*/
 GAMGroup::~GAMGroup() {
 }
 
@@ -61,8 +60,6 @@ bool GAMGroup::Initialise(StructuredDataI & data){
     }
     return ret;
 }
-
-
 
 bool GAMGroup::SetContext(ConstReference context) {
     uint32 numberOfGAMs = GAMs.Size();
