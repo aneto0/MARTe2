@@ -21,11 +21,11 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
-#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -75,28 +75,36 @@ bool RealTimeThread::ConfigureArchitecture() {
         uint32 numberOfNodes = path.Size();
         StreamString absoluteFunctionPath;
 
-        uint32 i;
         ReferenceT<RealTimeApplication> app;
-        for (i = 0u; (i < numberOfNodes) && (ret) && (!app.IsValid()); i++) {
-            Reference node = path.Get(i);
-            ret = node.IsValid();
-            if (ret) {
-                absoluteFunctionPath += node->GetName();
-                absoluteFunctionPath += ".";
-                app = node;
+        ReferenceT<RealTimeState> state;
+        bool isAppFound = false;
+        bool isStateFound = false;
+        {
+            uint32 index = 0u;
+            while ((index < numberOfNodes) && ret && (!isAppFound)) {
+                Reference node = path.Get(index);
+                ret = node.IsValid();
+                if (ret) {
+                    absoluteFunctionPath += node->GetName();
+                    absoluteFunctionPath += ".";
+                    app = node;
+                }
+                index++;
+                isAppFound = app.IsValid();
+            }
+            while ((index < numberOfNodes) && (!isStateFound)) {
+                state = path.Get(index);
+                index++;
+                isStateFound = state.IsValid();
             }
         }
-        ReferenceT<RealTimeState> state;
-        for(;(i<numberOfNodes) && !(state.IsValid()); i++){
-            state=path.Get(i);
-        }
-
-        ret=(app.IsValid()) && (state.IsValid());
+        ret = isAppFound && isStateFound;
         absoluteFunctionPath += "Functions.";
 
         for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
 
             StreamString functionPath = absoluteFunctionPath;
+            /*lint -e{613} Never NULL if (functions == NULL) because (numberOfFunctions == 0) */
             functionPath += functions[i].Buffer();
 
             // find the functions specified in cdb
@@ -106,15 +114,20 @@ bool RealTimeThread::ConfigureArchitecture() {
             if (ret) {
                 ReferenceT<GAM> gam = functionGeneric;
                 if (gam.IsValid()) {
-                    GAMs.Insert(gam);
+                    ret = GAMs.Insert(gam);
                 }
-                //Look for all the GAMs inside the RealTimeApplication
-                ReferenceContainerFilterReferencesTemplate<GAM> gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+                if (ret) {
+                    //Look for all the GAMs inside the RealTimeApplication
+                    ReferenceContainerFilterReferencesTemplate<GAM> gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
 
-                functionGeneric->Find(GAMs, gamFilter);
-                numberOfGAMs = GAMs.Size();
+                    functionGeneric->Find(GAMs, gamFilter);
+                    numberOfGAMs = GAMs.Size();
 
-                //ret = ConfigureArchitecturePrivate(functionGeneric);
+                    //ret = ConfigureArchitecturePrivate(functionGeneric);
+                }
+                else {
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Insert into GAMs failed", "")
+                }
             }
             else {
                 /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
@@ -124,14 +137,22 @@ bool RealTimeThread::ConfigureArchitecture() {
                 ReferenceContainer statefuls;
                 ReferenceT<StatefulI> stateful = functionGeneric;
                 if (stateful.IsValid()) {
-                    statefuls.Insert(stateful);
+                    ret = statefuls.Insert(stateful);
                 }
-                //Look for all the GAMs inside the RealTimeApplication
-                ReferenceContainerFilterReferencesTemplate<GAM> gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+                if (ret) {
+                    //Look for all the GAMs inside the RealTimeApplication
+                    ReferenceContainerFilterReferencesTemplate<GAM> gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
 
-                functionGeneric->Find(statefuls, gamFilter);
-                state->AddStatefuls(statefuls);
-                //ret = ConfigureArchitecturePrivate(functionGeneric);
+                    functionGeneric->Find(statefuls, gamFilter);
+                    ret = state->AddStatefuls(statefuls);
+                    if (!ret) {
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Insert into state failed", "")
+                    }
+                    //ret = ConfigureArchitecturePrivate(functionGeneric);
+                }
+                else {
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Insert into statefuls failed", "")
+                }
             }
             else {
                 /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
@@ -154,7 +175,7 @@ bool RealTimeThread::Initialise(StructuredDataI & data) {
 
     if (ret) {
         numberOfFunctions = functionsArray.GetNumberOfElements(0u);
-        ret = (numberOfFunctions > 0);
+        ret = (numberOfFunctions > 0u);
     }
     if (ret) {
         functions = new StreamString[numberOfFunctions];
@@ -186,11 +207,12 @@ uint32 RealTimeThread::GetNumberOfFunctions() const {
     return numberOfFunctions;
 }
 
-void RealTimeThread::GetGAMs(ReferenceContainer &gamList) {
-    uint32 n;
-    for (n = 0u; n < GAMs.Size(); n++) {
-        gamList.Insert(GAMs.Get(n));
+bool RealTimeThread::GetGAMs(ReferenceContainer &gamList) {
+    bool ret = true;
+    for (uint32 n = 0u; (n < GAMs.Size()) && ret; n++) {
+        ret = gamList.Insert(GAMs.Get(n));
     }
+    return ret;
 }
 
 uint32 RealTimeThread::GetNumberOfGAMs() const {
@@ -237,9 +259,7 @@ bool RealTimeThread::ToStructuredData(StructuredDataI& data) {
             Reference child = Get(i);
             ret = child.IsValid();
             if (ret) {
-                if (ret) {
-                    ret = child->ExportData(data);
-                }
+                ret = child->ExportData(data);
             }
         }
     }
@@ -249,6 +269,7 @@ bool RealTimeThread::ToStructuredData(StructuredDataI& data) {
 
     return ret;
 }
+
 CLASS_REGISTER(RealTimeThread, "1.0");
 
 }
