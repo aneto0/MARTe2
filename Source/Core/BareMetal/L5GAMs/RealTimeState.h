@@ -42,8 +42,7 @@ namespace MARTe {
 
 /**
  * @brief A container of one (and only one) ReferenceContainer of RealTimeThread elements.
- * @details The RealTimeState contains one RealTimeThread container which
- * shall be named Threads. The RealTimeState lists the threads which are
+ * @details The RealTimeState lists the threads which are
  * allowed in any given state of the application. Switching state will enable
  * different threads to be executed.
  *
@@ -64,37 +63,46 @@ class DLL_API RealTimeState: public ReferenceContainer, public StatefulI {
 
 public:
     CLASS_REGISTER_DECLARATION()
-    ;
 
     /**
      * @brief Constructor
      * @post
-     *   GetStatefulGAMGroups() == NULL &&
-     *   GetNumberOfElements() == 0 &&
-     *   GetContextActiveBuffer() == 0;
+     *   GetNumberOfStatefuls() == 0u
      */
-    RealTimeState();
+RealTimeState    ();
 
     /**
-     * @brief Destructor.
-     * @post
-     *   free(GetStatefulGAMGroups()) &&
-     *   GetStatefulGAMGroups() = NULL
+     * @brief Destructor. NOOP.
      */
     virtual ~RealTimeState();
 
-
+    /**
+     * @brief Registers all the StatefulI Functions (GAM and GAMGroup components that implement StatefulI)  that are executed by all the RealTimeThreads that are owned by this RealTimeState.
+     * @param[in] statefulsIn StatefulI Functions that are executed by all the RealTimeThreads that are owned by this RealTimeState.
+     * @return true if all the elements in \a statefulsIn implement the StatefulI interface.
+     */
     bool AddStatefuls(ReferenceContainer &statefulsIn);
 
-
+    /**
+     * @brief Calls PrepareNextState on all the StatefulI Functions (GAM and GAMGroup components that implement StatefulI) that are executed by all the RealTimeThreads that are owned by this RealTimeState.
+     * @param[in] currentStateName the name of the current state being executed.
+     * @param[in] nextStateName the name of the next state to be executed.
+     * @return true if the state change is accepted by all the StatefulI Functions.
+     */
     virtual bool PrepareNextState(const char8 * const currentStateName,
-                                  const char8 * const nextStateName);
+            const char8 * const nextStateName);
 
+    /**
+     * @brief Gets the number of StatefulI Functions (GAM and GAMGroup components that implement StatefulI) that are that are executed by all the RealTimeThreads that are owned by this RealTimeState.
+     * @return  the number of StatefulI Functions that are that are executed by all the RealTimeThreads that are owned by this RealTimeState.
+     */
     uint32 GetNumberOfStatefuls();
 
 private:
 
-
+    /**
+     * Container of StatefulI Functions that are that are executed by all the RealTimeThreads that are owned by this RealTimeState.
+     */
     ReferenceContainer statefuls;
 
 };

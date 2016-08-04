@@ -122,8 +122,6 @@ bool RealTimeThread::ConfigureArchitecture() {
 
                     functionGeneric->Find(GAMs, gamFilter);
                     numberOfGAMs = GAMs.Size();
-
-                    //ret = ConfigureArchitecturePrivate(functionGeneric);
                 }
                 else {
                     REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Insert into GAMs failed", "")

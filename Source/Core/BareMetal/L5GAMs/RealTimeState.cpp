@@ -31,11 +31,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
 #include "RealTimeState.h"
 #include "RealTimeThread.h"
-#include "AdvancedErrorManagement.h"
 #include "ReferenceContainerFilterReferences.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -47,18 +46,15 @@ namespace MARTe {
 
 RealTimeState::RealTimeState() :
         ReferenceContainer() {
-    // statefulGAMGroups = reinterpret_cast<ReferenceT<GAMGroup>*>(NULL);
-    // numberOfGAMGroups = 0u;
 }
 
-/*lint -e{1551} no exception should be thrown*/
 RealTimeState::~RealTimeState() {
 }
 
 bool RealTimeState::AddStatefuls(ReferenceContainer &statefulsIn) {
     uint32 numberOfStatefuls = statefulsIn.Size();
     bool ret = true;
-    for (uint32 i = 0u; i < numberOfStatefuls && ret; i++) {
+    for (uint32 i = 0u; (i < numberOfStatefuls) && (ret); i++) {
         ReferenceT<StatefulI> toAdd = statefulsIn.Get(i);
         ret = toAdd.IsValid();
         if (ret) {
@@ -77,7 +73,7 @@ bool RealTimeState::PrepareNextState(const char8 * const currentStateName,
                                      const char8 * const nextStateName) {
     uint32 numberOfStatefuls = statefuls.Size();
     bool ret = true;
-    for (uint32 i = 0u; i < numberOfStatefuls && ret; i++) {
+    for (uint32 i = 0u; (i < numberOfStatefuls) && (ret); i++) {
         ReferenceT<StatefulI> stateful = statefuls.Get(i);
         ret = stateful.IsValid();
         if (ret) {
