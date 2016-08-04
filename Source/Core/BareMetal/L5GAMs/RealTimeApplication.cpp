@@ -295,7 +295,7 @@ bool RealTimeApplication::StopExecution() {
 #endif
 
 static void PrintDatabases(RealTimeApplicationConfigurationBuilder &rtAppBuilder) {
-    return;
+    //return;
     static uint32 i = 0u;
     static uint32 j = 1u;
     ConfigurationDatabase fdb;

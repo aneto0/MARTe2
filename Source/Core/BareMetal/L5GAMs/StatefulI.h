@@ -39,7 +39,7 @@
 namespace MARTe {
 
 /**
- * @brief GAM classes that implement this method will be warned every time there is a state change.
+ * @brief Classes that implement this interface will be warned every time there is a state change.
  */
 class StatefulI {
 public:
