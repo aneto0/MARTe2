@@ -91,8 +91,6 @@ static bool CompareConfigurationDatabases(ConfigurationDatabase &db1,
 
                         for (uint32 i = 0u; i < numberOfRows && ok; i++) {
                             for (uint32 j = 0u; j < numberOfColumns && ok; j++) {
-                                printf("\n2 %s %s\n", currentNodeName, childName);
-
                                 ok = (valueInDb1[i][j] == valueInDb2[i][j]);
                                 if (!ok) {
                                     printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName, valueInDb1[i][j].Buffer(),
@@ -120,8 +118,6 @@ static bool CompareConfigurationDatabases(ConfigurationDatabase &db1,
                             printf("Found mismatch @ key [%s.%s]\n", currentNodeName, childName);
                         }
                         for (uint32 i = 0u; i < numberOfElements && ok; i++) {
-                            printf("\n2 %s %s\n", currentNodeName, childName);
-
                             ok = (valueInDb1[i] == valueInDb2[i]);
                             if (!ok) {
                                 printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName, valueInDb1[i].Buffer(), valueInDb2[i].Buffer());
@@ -578,7 +574,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase1
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -757,7 +753,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase2
             "   }"
             "   \"3\" = {"
             "       QualifiedName = Node.Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -931,7 +927,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase_
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -1625,7 +1621,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases1()
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -1839,7 +1835,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases2()
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -2132,7 +2128,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases4()
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -2373,7 +2369,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases5()
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -2625,7 +2621,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases6()
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -2879,7 +2875,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Lo
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -3144,7 +3140,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Co
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -3438,7 +3434,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Me
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -3709,7 +3705,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_De
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -3980,7 +3976,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_De
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -4815,7 +4811,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources1() {
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -5133,7 +5129,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources2() {
             "   }"
             "   \"3\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -5422,7 +5418,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources3() {
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -5656,7 +5652,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "   }"
             "   \"1\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -5926,7 +5922,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "   }"
             "   \"1\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -6118,7 +6114,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructN
             "   }"
             "   \"1\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -7846,7 +7842,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals1(
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -8134,7 +8130,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_P
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -8444,7 +8440,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_D
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -8732,7 +8728,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_A
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -9020,7 +9016,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_A
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -9781,7 +9777,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignals1() 
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -10043,7 +10039,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignals2() 
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -10205,7 +10201,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignals3() 
             "   }"
             "   \"1\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -10573,7 +10569,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyFunctionSignals() {
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "          IgnoreEmptyNode = 1"
             "       }"
@@ -11304,7 +11300,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates(bool fromCon
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.Thread1_CycleTime"
@@ -11611,7 +11607,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates2(bool fromCo
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.ThreadA_CycleTime"
@@ -11947,7 +11943,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates_FunctionGrou
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.ThreadA_CycleTime"
@@ -12297,7 +12293,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates_MoreThreads(
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.ThreadA_CycleTime"
@@ -13315,7 +13311,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyStates() {
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.ThreadA_CycleTime"
@@ -13753,7 +13749,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveConsumersAndProduce
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.Thread1_CycleTime"
@@ -14066,7 +14062,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveConsumersAndProduce
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.Thread1_CycleTime"
@@ -14387,7 +14383,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveConsumersAndProduce
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.Thread1_CycleTime"
@@ -14749,7 +14745,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveConsumersAndProduce
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.Thread1_CycleTime"
@@ -15093,7 +15089,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveConsumersAndProduce
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.Thread1_CycleTime"
@@ -15417,7 +15413,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.Thread1_CycleTime"
@@ -15863,7 +15859,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.Thread1_CycleTime"
@@ -16309,7 +16305,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.Thread1_CycleTime"
@@ -16757,7 +16753,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.Thread1_CycleTime"
@@ -17225,7 +17221,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"GAMB_ReadTime\""
@@ -18151,7 +18147,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemo
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.Thread1_CycleTime"
@@ -18591,7 +18587,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemo
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = State1.Thread1_CycleTime"
@@ -19431,7 +19427,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionsMemory() {
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"State1.Thread1_CycleTime\""
@@ -20004,7 +20000,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionsMemory_Sam
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"State1.Thread1_CycleTime\""
@@ -20608,7 +20604,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionsMemory_Int
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"State1.Thread1_CycleTime\""
@@ -21186,7 +21182,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionsMemory_Sam
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"State1.Thread1_CycleTime\""
@@ -21951,7 +21947,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignFunctionsMemoryToDat
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"State1.Thread1_CycleTime\""
@@ -22602,7 +22598,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignFunctionsMemoryToDat
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"State1.Thread1_CycleTime\""
@@ -23278,7 +23274,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignBrokersToFunctions()
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"State1.Thread1_CycleTime\""
@@ -24900,7 +24896,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureDataSource() 
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"State1.Thread1_CycleTime\""
@@ -25576,7 +25572,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureDataSourceFal
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"State1.Thread1_CycleTime\""
@@ -26295,7 +26291,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureFunctions() {
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"State1.Thread1_CycleTime\""
@@ -26971,7 +26967,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureFunctionsFals
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"State1.Thread1_CycleTime\""
@@ -27690,7 +27686,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureAfterInitialisati
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"State1.Thread1_CycleTime\""
@@ -28351,7 +28347,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureBeforeInitialisat
             "   }"
             "   \"2\" = {"
             "       QualifiedName = Timings"
-            "       IsTimeDataSource = 1"
+            "       IsTimingDataSource = 1"
             "       Signals = {"
             "           \"0\" = {"
             "               QualifiedName = \"State1.Thread1_CycleTime\""
@@ -28469,138 +28465,3 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureBeforeInitialisat
 
     return TestBuilder(config, "$Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, ConfigureInitialisation, false, true);
 }
-
-/*
-
- bool RealTimeApplicationConfigurationBuilderTest::TestAllocateGAMMemory() {
-
- static StreamString config1 = ""
- "$Fibonacci = {"
- "    Class = RealTimeApplication"
- "    +Functions = {"
- "        Class = ReferenceContainer"
- "        +GAMA = {"
- "            Class = GAM1"
- "            InputSignals = {"
- "                SignalIn1 = {"
- "                    DataSource = DDB1"
- "                    Type = uint32"
- "                    Alias = add1"
- "                    Default = 1"
- "                }"
- "                SignalIn2 = {"
- "                    DataSource = DDB2"
- "                    Type = uint32"
- "                    Alias = add2"
- "                    Default = 2"
- "                }"
- "            }"
- "            OutputSignals = {"
- "                SignalOut = {"
- "                    DataSource = DDB1"
- "                    Alias = add1"
- "                    Type = uint32"
- "                }"
- "            }"
- "        }"
- "        +GAMB = {"
- "            Class = GAM1"
- "            InputSignals = {"
- "                SignalIn1 = {"
- "                    DataSource = DDB2"
- "                    Type = uint32"
- "                    Alias = add2"
- "                }"
- "                SignalIn2 = {"
- "                    DataSource = DDB1"
- "                    Type = uint32"
- "                    Alias = add1"
- "                }"
- "            }"
- "            OutputSignals = {"
- "                SignalOut = {"
- "                    DataSource = DDB2"
- "                    Alias = add2"
- "                    Type = uint32"
- "                }"
- "            }"
- "        }"
- "    }"
- "    +Data = {"
- "        Class = ReferenceContainer"
- "        DefaultDataSource = DDB1"
- "        +DDB1 = {"
- "            Class = GAMDataSource"
- "        }"
- "        +DDB2 = {"
- "            Class = GAMDataSource"
- "        }"
- "    }"
- "    +States = {"
- "        Class = ReferenceContainer"
- "        +State1 = {"
- "            Class = RealTimeState"
- "            +Threads = {"
- "                Class = ReferenceContainer"
- "                +Thread1 = {"
- "                    Class = RealTimeThread"
- "                    Functions = {GAMA, GAMB}"
- "                }"
- "            }"
- "        }"
- "    }"
- "}";
-
- ConfigurationDatabase cdb;
- config1.Seek(0);
- StandardParser parser(config1, cdb);
-
- if (!parser.Parse()) {
- return false;
- }
- ObjectRegistryDatabase::Instance()->CleanUp();
-
- if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
- return false;
- }
- ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
- ReferenceT<RealTimeApplication> application = god->Find("Fibonacci");
- if (!application.IsValid()) {
- return false;
- }
-
- if (!application->ConfigureApplication()) {
- return false;
- }
- if (!application->AllocateGAMMemory()) {
- return false;
- }
- if (!application->AllocateDataSourceMemory()) {
- return false;
- }
-
- if (!application->AddBrokersToFunctions()) {
- return false;
- }
-
- if (!application->PrepareNextState("State1")) {
- return false;
- }
-
- application->StartExecution();
-
- ReferenceT<GAM> gam1 = application->Find("Functions.GAMA");
-
- ReferenceT<GAM> gam2 = application->Find("Functions.GAMB");
-
- gam1->Execute();
-
- gam2->Execute();
-
- gam1->Execute();
-
- gam2->Execute();
-
- return true;
- }
- */

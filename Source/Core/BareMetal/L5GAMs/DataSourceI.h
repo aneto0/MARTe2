@@ -97,9 +97,6 @@ public:
      */
     bool AddSignals(StructuredDataI & data);
 
-
-    bool IsLocked();
-
     /**
      * @brief Assigns a valid and StructuredDataI to this DataSourceI.
      * @details This method is called by the RealTimeApplicationConfigurationBuilder once all

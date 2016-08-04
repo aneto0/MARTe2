@@ -67,12 +67,8 @@ class RealTimeApplication;
 class DLL_API RealTimeApplicationConfigurationBuilder {
 public:
 
-    bool ConfigureAfterInitialisation();
-
-    bool ConfigureBeforeInitialisation();
-
     /**
-     * @brief Default constructor. Sets the RealTimeApplication
+     * @brief Constructor for RealTimeApplicationConfigurationBuilders which should work over an already existing RealTimeApplication.
      * @param[in] realTimeApplicationIn the RealTimeApplication associated to this RealTimeApplicationConfigurationBuilder.
      * @param[in] defaultDataSourceNameIn default DataSource name to be used when the DataSource in not defined in any of the signals.
      * @post
@@ -82,10 +78,16 @@ public:
     RealTimeApplicationConfigurationBuilder(RealTimeApplication &realTimeApplicationIn,
                                             const char8 * const defaultDataSourceNameIn);
 
+    /**
+     * @brief Constructor for RealTimeApplicationConfigurationBuilders which should work over a ConfigurationDatabase (i.e. without needing to access live objects).
+     * @param[in] globalDatabaseIn the ConfigurationDatabase where to load all the information required to construct the application information..
+     * @param[in] defaultDataSourceNameIn default DataSource name to be used when the DataSource in not defined in any of the signals.
+     * @post
+     *   realTimeApplication = realTimeApplicationIn
+     *   defaultDataSourceName = defaultDataSourceNameIn
+     */
     RealTimeApplicationConfigurationBuilder(ConfigurationDatabase &globalDatabaseIn,
                                             const char8 * const defaultDataSourceNameIn);
-
-    bool InitialiseSignalsDatabaseFromConfiguration();
 
     /**
      * @brief Adds all the GAM signals to the Functions database and adds all the DataSource signals to the DataSource database.
@@ -141,7 +143,13 @@ public:
      *            }
      *          }
      *        }
-     *      }
+     *        NUMBER = { //The DataSource to store the GAM timings is searched and added
+     *           QualifiedName = "Name of the Timing DataSource as specified by the Scheduler"
+     *           IsTimingDataSource = +1
+     *              Signals = {
+     *              }
+     *           }
+     *       }
      */
     bool InitialiseSignalsDatabase();
 
@@ -164,7 +172,7 @@ public:
      *                 QualifiedName = "QualifiedName of the signal"
      *                 DataSource = "QualifiedName of the DataSource"
      *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
-     *                 +Type = BasicType
+     *                 +FullType = BasicType (including nested path to the variable if it belongs to a structure).
      *                 +NumberOfDimensions = 0|1|2
      *                 +NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
@@ -182,11 +190,17 @@ public:
      *          Signals = {
      *            +*NUMBER ={
      *              QualifiedName = "QualifiedName of the signal"
-     *              +Type = BasicType
+     *              +FullType = BasicType (including nested path to the variable if it belongs to a structure).
      *              +NumberOfDimensions = 0|1|2
      *              +NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
      *            }
+     *          }
+     *        }
+     *        NUMBER = {
+     *          QualifiedName = "Name of the Timing DataSource as specified by the Scheduler"
+     *          IsTimingDataSource = +1
+     *          Signals = {
      *          }
      *        }
      *      }
@@ -213,7 +227,7 @@ public:
      *                 QualifiedName = "QualifiedName of the signal"
      *                 DataSource = "QualifiedName of the DataSource"
      *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
-     *                 +Type = BasicType
+     *                 +FullType = BasicType
      *                 +NumberOfDimensions = 0|1|2
      *                 +NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
@@ -231,11 +245,17 @@ public:
      *          Signals = {
      *            *NUMBER = {
      *              QualifiedName = "QualifiedName of the signal"
-     *              Type = BasicType
+     *              FullType = BasicType (including nested path to the variable if it belongs to a structure). The type must be known at this stage.
      *              +NumberOfDimensions = 0|1|2
      *              +NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
      *            }
+     *          }
+     *        }
+     *        NUMBER = {
+     *          QualifiedName = "Name of the Timing DataSource as specified by the Scheduler"
+     *          IsTimingDataSource = +1
+     *          Signals = {
      *          }
      *        }
      *      }
@@ -277,12 +297,19 @@ public:
      *          Signals = {
      *            *NUMBER = {
      *              QualifiedName = "QualifiedName of the signal"
-     *              Type = BasicType
+     *              FullType = BasicType (including nested path to the variable if it belongs to a structure). The type must be known at this stage.
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
      *              ByteSize = NUMBER > 0
      *              +Frequency = -1|NUMBER>0
      *            }
+     *          }
+     *        }
+     *      }
+     *      NUMBER = {
+     *          QualifiedName = "Name of the Timing DataSource as specified by the Scheduler"
+     *          IsTimingDataSource = +1
+     *          Signals = {
      *          }
      *        }
      *      }
@@ -310,7 +337,7 @@ public:
      *                 QualifiedName = "QualifiedName of the signal"
      *                 DataSource = "QualifiedName of the DataSource"
      *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
-     *                 Type = BasicType
+     *                 FullType = BasicType
      *                 NumberOfDimensions = 0|1|2
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
@@ -328,11 +355,18 @@ public:
      *          Signals = {
      *            *NUMBER = {
      *              QualifiedName = "QualifiedName of the signal"
-     *              Type = BasicType
+     *              FullType = BasicType
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
      *            }
+     *          }
+     *        }
+     *      }
+     *      NUMBER = {
+     *          QualifiedName = "Name of the Timing DataSource as specified by the Scheduler"
+     *          IsTimingDataSource = +1
+     *          Signals = {
      *          }
      *        }
      *      }
@@ -355,7 +389,7 @@ public:
      *                 QualifiedName = "QualifiedName of the signal"
      *                 DataSource = "QualifiedName of the DataSource"
      *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
-     *                 Type = BasicType
+     *                 FullType = BasicType
      *                 NumberOfDimensions = 0|1|2
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
@@ -373,11 +407,18 @@ public:
      *          Signals = {
      *            *NUMBER = {
      *              QualifiedName = "QualifiedName of the signal"
-     *              Type = BasicType
+     *              FullType = BasicType
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
      *            }
+     *          }
+     *        }
+     *      }
+     *      NUMBER = {
+     *          QualifiedName = "Name of the Timing DataSource as specified by the Scheduler"
+     *          IsTimingDataSource = +1
+     *          Signals = {
      *          }
      *        }
      *      }
@@ -401,7 +442,7 @@ public:
      *                 QualifiedName = "QualifiedName of the signal"
      *                 DataSource = "QualifiedName of the DataSource"
      *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
-     *                 Type = BasicType
+     *                 FullType = BasicType
      *                 NumberOfDimensions = 0|1|2
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
@@ -422,7 +463,7 @@ public:
      *          Signals = {
      *            *NUMBER = {
      *              QualifiedName = "QualifiedName of the signal"
-     *              Type = BasicType
+     *              FullType = BasicType
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
@@ -430,10 +471,20 @@ public:
      *          }
      *        }
      *      }
+     *      NUMBER = {
+     *          QualifiedName = "Name of the Timing DataSource as specified by the Scheduler"
+     *          IsTimingDataSource = +1
+     *          Signals = {
+     *          }
+     *        }
+     *      }
      */
-    //TODO Add the cycle times to the time data source
     bool ResolveStates();
 
+    /**
+     * @brief As ResolveStates but using a ConfigurationDatabase as the data source (see ConfigureBeforeInitialision).
+     * @return As in ResolveStates.
+     */
     bool ResolveStatesFromConfiguration();
 
     /**
@@ -500,6 +551,10 @@ public:
      */
     bool ResolveConsumersAndProducers();
 
+    /**
+     * @brief Verify that there is at most one producer for each signal Range and that no no producing signals are declared in the TimingDataSource.
+     * @return true if there is at most one producer for each signal Range and that no producing signals are declared in the TimingDataSource.
+     */
     bool VerifyConsumersAndProducers();
 
     /**
@@ -509,7 +564,7 @@ public:
      * If the Ranges are defined, the memory offset is also computed and stored directly in bytes.
      * @return true if all the Ranges definitions are correctly defined and if the memory size can be successfully computed.
      * @pre
-     *   ResolveConsumersAndProducers()
+     *   VerifyConsumersAndProducers()
      * @post
      *   functionsDatabase =
      *     Functions = {
@@ -842,6 +897,44 @@ public:
     bool PostConfigureFunctions();
 
     /**
+     * @brief Initialises the SignalDatabae (see InitialiseSignalsDatabase) using directly a
+     *  ConfigurationDatabase as the data source.
+     * @return (see InitialiseSignalsDatabase)
+     */
+    bool InitialiseSignalsDatabaseFromConfiguration();
+
+    /**
+     * @brief Compiles all the information required to build a RealTimeApplicaiton after the
+     * ObjectRegistryDatabase::Initialise has been successfully called (i.e. it requires access to the live objects).
+     * @return true if the following functions, called in order, return true:
+     *   InitialiseSignalsDatabase(), FlattenSignalsDatabases(), ResolveDataSources(),
+     * VerifyDataSourcesSignals(), ResolveFunctionSignals(), VerifyFunctionSignals(), ResolveStates(),
+     * ResolveConsumersAndProducers(), VerifyConsumersAndProducers(), ResolveFunctionSignalsMemorySize(), ResolveFunctionsMemory(),
+     * AssignFunctionsMemoryToDataSource)() and AssignBrokersToFunctions()
+     * @post
+     *   The functions PostConfigureDataSources() and PostConfigureFunctions() can now be called.
+     */
+    bool ConfigureAfterInitialisation();
+
+    /**
+     * @brief Compiles all the information required to build a RealTimeApplicaiton without
+     * requiring the ObjectRegistryDatabase::Initialise to be called to load all the Objects (i.e. it works only
+     *  with configuration data).
+     * @details This allows to generate compiled databases with Function and DataSource databases
+     * that can be then exported to be later executed in e.g. another system (i.e. these can be directly fed to a
+     * ObjectRegistryDatabase::Initialise without needing to execute a builder). (See Copy)
+     * @return true if the following functions, called in order, return true:
+     *   InitialiseSignalsDatabaseFromConfiguration(), FlattenSignalsDatabases(), ResolveDataSources(),
+     * VerifyDataSourcesSignals(), ResolveFunctionSignals(), VerifyFunctionSignals(), ResolveStatesFromConfiguration(),
+     * ResolveConsumersAndProducers(), VerifyConsumersAndProducers(), ResolveFunctionSignalsMemorySize(), ResolveFunctionsMemory()
+     * and AssignFunctionsMemoryToDataSource();
+     * @post
+     *   The ObjectRegistryDatabase can now be initialised (typically this is to be performed in another application, see Set).
+     *   The functions PostConfigureDataSources() and PostConfigureFunctions() can then be called.
+     */
+    bool ConfigureBeforeInitialisation();
+
+    /**
      * @brief Copies the Function and DataSource databases.
      * @param[out] functionsDatabaseOut where to copy the Functions database into.
      * @param[out] dataSourcesDatabaseOut where to copy the DataSource database into.
@@ -850,8 +943,14 @@ public:
     bool Copy(ConfigurationDatabase &functionsDatabaseOut,
               ConfigurationDatabase &dataSourcesDatabaseOut);
 
-    bool Set(ConfigurationDatabase &functionsDatabaseOut,
-             ConfigurationDatabase &dataSourcesDatabaseOut);
+    /**
+     * @brief Sets the Functions and Data databases.
+     * @param[in] functionsDatabaseIn where to copy the Functions database from.
+     * @param[in] dataSourcesDatabaseIn where to copy the DataSource database from.
+     * @return true if both ConfigurationDatabase::Copy are successful.
+     */
+    bool Set(ConfigurationDatabase &functionsDatabaseIn,
+             ConfigurationDatabase &dataSourcesDatabaseIn);
 
 private:
     /**
@@ -864,6 +963,9 @@ private:
      */
     ConfigurationDatabase dataSourcesDatabase;
 
+    /**
+     * ConfigurationDatabase that was already pre-initialised.
+     */
     ConfigurationDatabase globalDatabase;
 
     /**
@@ -971,8 +1073,17 @@ private:
      */
     bool ResolveConsumersAndProducers(const bool consumers);
 
+    /**
+     * @brief Allows to distribute the same Producer across different ranges, i.e. the same Signal might have more than one
+     *  producer, provided that the Ranges do not overlap.
+     * @return true if for the same producing signal the Ranges do not overlap;
+     */
     bool BuildProducersRanges();
 
+    /**
+     * @brief Verifies if for the same signal the Ranges do not overlap.
+     * @return true if for the same producing signal the Ranges do not overlap.
+     */
     bool CheckProducersRanges(const uint32 * const rangesArray,
                               const uint32 numberOfElements) const;
     /**
@@ -1014,7 +1125,7 @@ private:
      * @return true if the signal is found.
      */
     bool FindSignalName(StreamString signalName,
-                        ConfigurationDatabase &database) const ;
+                        ConfigurationDatabase &database) const;
     /**
      * @brief Find the unique number associated to the DataSource with name = \a dataSourceName.
      * @param[in] dataSourceName the fully qualified name of the DataSource to search.
@@ -1032,21 +1143,139 @@ private:
     bool FindFunctionNumber(StreamString functionName,
                             StreamString &functionNumber);
 
+    /**
+     * @brief Check that two types are compatible. Notice that the two types can belong to different structures  and
+     *  they will be compatible iff the full structure path is equivalent.
+     * @param[in] fullType the first type being checked.
+     * @param[in] otherFullType the other type being checked.
+     * @param[in] signalName the name of the GAM signal being checked.
+     * @param[in] dataSourceSignalName the name of the DataSourceI signal being checked.
+     */
+    bool CheckTypeCompatibility(StreamString &fullType,
+                                StreamString &otherFullType,
+                                StreamString &signalName,
+                                StreamString &dataSourceSignalName) const;
+
+    /**
+     * @brief Expands a structure into a flat database where each member of the structure is stored as an entry with a name in
+     * the form x.y.z, where x is structure y, and y is a structure that contains the basic signal z.
+     * @brief[in] typeName the signal type.
+     * @brief[in] signalName the signal name.
+     * @brief[in] dataSourceName the DataSourceI object name.
+     * @brief[in] syncSignalName used in recursion. The name of the signal that provides synchronisation for the structured signal (every member inherits this property).
+     * @brief[in] fullTypeName used in recursion. The typeName including in path all the types leading to the signal.
+     * @brief[in] ranges used in recursion. The signal ranges that was set for the structured signal (every member inherits this property).
+     * @brief[in] samples used in recursion. The signal number of samples that was set for the structured signal (every member inherits this property).
+     * @brief[in] frequency used in recursion. The signal frequency that was set for the structured signal (every member inherits this property).
+     * @brief[out] data where to write the configuration information.
+     * @brief[out] signalNumber used in recursion. The current signal index, w.r.t. to the number of signals declared for this structure.
+     * @brief[out] syncSet used in recursion. True if a synchronising signal was already set.
+     * @brief[out] isFunctionDatabase true if the function is being called in the context of the Functions ConfigurationDatabase.
+     * @return true if all the structure signals can be successfully flattened.
+     */
+    bool SignalIntrospectionToStructuredData(ConfigurationDatabase &signalDatabase,
+                                             const char8 * const typeName,
+                                             const char8 * const signalName,
+                                             const char8 * const alias,
+                                             const char8 * const dataSourceName,
+                                             const char8 * const syncSignalName,
+                                             const char8 * const fullTypeName,
+                                             const AnyType & ranges,
+                                             const AnyType & samples,
+                                             const AnyType & frequency,
+                                             StructuredDataI & data,
+                                             uint32 &signalNumber,
+                                             bool &syncSet,
+                                             const bool isFunctionDatabase);
+
+    /**
+     * @brief Search for all the declared GAM classes without using the GlobalObjectRegistryDatabase.
+     * @param[in] inputDatabase where to look for the GAMs.
+     * @param[out] inputDatabase where to write the information related to each GAM that is found.
+     * @param[in] fullPath used in recursion, contains the full path from the root of the \a inputDatabase to the current GAM.
+     * @param[in] index used in recursion, incremented for each GAM that is found.
+     * @param[in] bool used in recursion to detect for nested GAMs, i.e. GAMs contained inside GAMs.
+     * @return true if all the GAMs declared in \a inputDatabase are found.
+     */
+    bool SearchGAMs(ConfigurationDatabase &inputDatabase,
+                    ConfigurationDatabase &outputDatabase,
+                    StreamString & fullPath,
+                    uint32 &index,
+                    bool found);
+
+    /**
+     * @brief Finds the number of declared synchronous signals (i.e. where Frequency >= 0).
+     * @param[in] direction the signal direction.
+     * @param[ok] ok true if the Number of synchronous signals could be successfully queried.
+     * @return the number of declared synchronous signals (i.e. where Frequency >= 0).
+     */
+    uint32 GetNumberOfSyncSignals(const char8 * const direction,
+                                  bool &ok);
+
+    /**
+     * @brief Search for all the declared DataSourceI classes without using the GlobalObjectRegistryDatabase.
+     * @param[in] inputDatabase where to look for the DataSources.
+     * @param[out] inputDatabase where to write the information related to each DataSources that is found.
+     * @param[in] fullPath used in recursion, contains the full path from the root of the \a inputDatabase to the current DataSources.
+     * @param[in] index used in recursion, incremented for each DataSources that is found.
+     * @param[in] timingDataSourceCounter used in recursion, the number of TimingDataSource objects found.
+     * @return true if all the GAMs declared in \a inputDatabase are found.
+     */
+    bool SearchDataSources(ConfigurationDatabase &inputDatabase,
+                           ConfigurationDatabase &outputDatabase,
+                           StreamString & fullPath,
+                           uint32 &index,
+                           uint32 &timingDataSourceCounter);
+
+    /**
+     * @brief Adds the \a threadName and the \a stateName to the \a functionName and writes to \a local  ConfigurationDatabase.
+     * @param[in] functionName the Function name.
+     * @param[in] stateName the state name.
+     * @param[in] threadName the thread name.
+     * @param[out] syncSignals the number of Signals declared with Frequency >= 0.0.
+     * @return true if all the states can be successfully assigned to \a functionName.
+     */
     bool AddStateToFunction(ConfigurationDatabase &local,
                             const char8 * const functionName,
                             const char8 * const stateName,
                             const char8 * const threadName,
                             uint32 &syncSignals);
-
+    /**
+     * @brief Adds the \a threadName and the \a stateName to the \a gamName and writes to \a local  ConfigurationDatabase.
+     * @param[in] functionName the Function name.
+     * @param[in] stateName the state name.
+     * @param[in] threadName the thread name.
+     * @param[out] syncSignals the number of Signals declared with Frequency >= 0.0.
+     * @return true if all the states can be successfully assigned to \a functionName.
+     */
     bool AddStateToGAM(const char8 * const gamName,
                        const char8 * const stateName,
                        const char8 * const threadName,
                        uint32 &syncSignals);
 
-    bool AddSignalTime();
+    /**
+     * @brief Adds to the TimingDataSource all the GAM timing signals (x__ReadTime, x_ExecTime and, x_WriteTime where x is the GAM name).
+     * @return true if all the timing signals can be successfully added.
+     */
+    bool AddTimingSignals();
+
+    /**
+     * @brief Adds to the TimingDataSource all the RealTimeThread cycle time signals (x_CycleTime where x is the RealTimeThread name).
+     * @return true if all the RealTimeThread cycle time signals can be successfully added.
+     */
     bool AddThreadCycleTime(const char8 * const threadFullName);
 
+    /**
+     * @brief Writes all the properties related to the TimingDataSource signals.
+     * @param[in] signalName the signal name to be updated.
+     * @return true if the signal properties could be successfully added to all the signals.
+     */
     bool WriteTimeSignalInfo(const char8 * const signalName);
+
+    /**
+     * @brief Verifies if all the TimingDataSource signals have the correct properties (type = uint32, NumberOfElements = 1).
+     * @return true if all the TimingDataSource signals have the correct properties.
+     */
     bool CheckTimeSignalInfo();
 
 };
