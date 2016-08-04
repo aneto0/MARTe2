@@ -96,7 +96,6 @@ OperatingSystemCallbacksI.h
 ParserI.cpp
 Processor.cpp
 ProcessorType.cpp
-QueuedMessageI.cpp
 Reference.cpp
 Reference.h
 ReferenceContainer.cpp
