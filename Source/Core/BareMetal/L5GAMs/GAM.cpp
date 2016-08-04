@@ -262,7 +262,11 @@ bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
     return ret;
 }
 
-bool GAM::SetContext(ReferenceT<const Object> context) {
+/*lint -e{715} The symbol 'context' is not referenced because
+ * this is a default implementation, i.e. it is expected to be
+ * implemented on derived classes.
+ */
+bool GAM::SetContext(ConstReference context) {
     return true;
 }
 
