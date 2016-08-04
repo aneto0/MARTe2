@@ -36,6 +36,7 @@
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 #include "StatefulI.h"
+#include "GAMSchedulerI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -163,16 +164,10 @@ public:
     bool ConfigureApplication();
 
     //TODO
-    bool ConfigureApplication(ConfigurationDatabase &functionsDatabase, ConfigurationDatabase &dataDatabase);
+    bool ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn,
+                              ConfigurationDatabase &dataDatabaseIn);
 
 
-    bool AllocateGAMMemory();
-
-
-    bool AllocateDataSourceMemory();
-
-
-    bool AddBrokersToFunctions();
 
     /**
        * @brief Prepares the environment for the next state and starts the new execution.
@@ -186,20 +181,15 @@ public:
       virtual bool PrepareNextState(const char8 * const nextStateName);
 
 
-      bool StartExecution();
+      void StartExecution();
 
       /**
        * @brief Stops the application execution.
        * @details Calls the Scheduler::StopExecution() to terminate the threads running in the current active state.
        * @return true if the scheduler container is valid, false otherwise.
        */
-      bool StopExecution();
-    /**
-     * @brief Configuration of the main application environment.
-     * @details Propagates the configuration setup request to the States (RealTimeState.ConfigureArchitecture) and Scheduler entries (@see Initialise).
-     * @return true if all the declared States and Scheduler elements are valid, false otherwise.
-     */
-    bool ConfigureArchitecture();
+      void StopExecution();
+
 #if 0
     /**
      * @brief Configuration of the data sources.
@@ -260,16 +250,35 @@ public:
      * @return the RealTimeDataSourceContainer (initialised with +Data) of this RealTimeApplication.
      */
     ReferenceT<ReferenceContainer> GetDataSourceContainer();
-
-private:
 #endif
 
+
+    static uint32 GetIndex();
+
+private:
+    /**
+     * @brief Configuration of the main application environment.
+     * @details Propagates the configuration setup request to the States (RealTimeState.ConfigureArchitecture) and Scheduler entries (@see Initialise).
+     * @return true if all the declared States and Scheduler elements are valid, false otherwise.
+     */
+    bool ConfigureArchitecture();
+
+
+
+    bool AllocateGAMMemory();
+
+
+    bool AllocateDataSourceMemory();
+
+
+    bool AddBrokersToFunctions();
 
     /**
      * The current state name.
      */
     StreamString stateNameHolder[2];
 
+    static uint32 index;
 
 
     /**
@@ -285,7 +294,7 @@ private:
     /**
      * The +Scheduler container.
      */
-    ReferenceT<ReferenceContainer> schedulerContainer;
+    ReferenceT<GAMSchedulerI> scheduler;
 
     /**
      * The +Data container
@@ -300,7 +309,7 @@ private:
 
     StreamString defaultDataSourceName;
 
-    static uint32 index;
+
 };
 
 }

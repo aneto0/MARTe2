@@ -34,7 +34,6 @@
 
 #include "DataSourceI.h"
 #include "MemoryArea.h"
-#include "RealTimeApplication.h"
 #include "ReferenceT.h"
 #include "StatefulI.h"
 

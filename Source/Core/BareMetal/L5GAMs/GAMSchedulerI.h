@@ -33,12 +33,10 @@
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
-#include "RealTimeThread.h"
-#include "GAMSchedulerRecord.h"
-#include "MemoryMapBroker.h"
 #include "GAMDataSource.h"
 #include "StatefulI.h"
-
+#include "ExecutableI.h"
+#include "GAM.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -75,7 +73,7 @@ public:
 
     virtual bool Initialise(StructuredDataI & data);
 
-    bool ConfigureScheduler(ReferenceT<ReferenceContainer> statesContainer);
+    bool ConfigureScheduler();
 
     /**
      * @brief Stores the GAMSchedulerRecord for the new state in the next buffer.
