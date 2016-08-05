@@ -348,7 +348,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
                     //Declare all the signals with which this GAM interacts
                     ret = dataSource->AddSignals(dataSourcesDatabase);
                 }
-                const ClassProperties *prop = NULL;
+                const ClassProperties *prop = NULL_PTR(const ClassProperties *);
                 if (ret) {
                     prop = dataSource->GetClassProperties();
                     ret = (prop != NULL);
@@ -1883,12 +1883,12 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::AddStateToGAM(const char8 * const gamName,
+bool RealTimeApplicationConfigurationBuilder::AddStateToGAM(const char8 * const gamNameIn,
                                                             const char8 * const stateName,
                                                             const char8 * const threadName,
                                                             uint32 &syncSignals) {
     StreamString functionNumber;
-    StreamString gamNameStr = gamName;
+    StreamString gamNameStr = gamNameIn;
     bool ret = FindFunctionNumber(gamNameStr, functionNumber);
     if (ret) {
         ret = functionsDatabase.MoveAbsolute("Functions");
@@ -4039,6 +4039,7 @@ bool RealTimeApplicationConfigurationBuilder::ConfigureThreads() {
     ReferenceContainer statesContainer;
     bool ret = (realTimeApplication != NULL);
     if(ret){
+        /*lint -e{613} realTimeApplication != NULL is checked in the line above*/
         ret = realTimeApplication->GetStates(statesContainer);
     }
 

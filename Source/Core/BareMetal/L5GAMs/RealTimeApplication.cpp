@@ -74,9 +74,9 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
     if (ret) {
         ret = defaultDataSourceName.Seek(0ull);
     }
-
+    uint32 numberOfContainers = 0u;
     if (ret) {
-        uint32 numberOfContainers = Size();
+        numberOfContainers = Size();
         ret = false;
         for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
             Reference item = Get(i);
@@ -124,7 +124,7 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
         }
 
         if (ret) {
-            uint32 numberOfContainers = Size();
+            numberOfContainers = Size();
             ret = false;
             for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
                 Reference item = Get(i);
@@ -191,9 +191,8 @@ bool RealTimeApplication::ConfigureApplication() {
     if (ret) {
         ret = rtAppBuilder.PostConfigureFunctions();
     }
-
     if (ret) {
-        rtAppBuilder.Copy(functionsDatabase, dataSourcesDatabase);
+        ret = rtAppBuilder.Copy(functionsDatabase, dataSourcesDatabase);
     }
     if (ret) {
         ret = AllocateGAMMemory();
@@ -415,7 +414,7 @@ bool RealTimeApplication::GetStates(ReferenceContainer &states) {
         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
             ReferenceT<RealTimeState> state = statesContainer->Get(i);
             if (state.IsValid()) {
-                states.Insert(state);
+                ret = states.Insert(state);
             }
         }
     }

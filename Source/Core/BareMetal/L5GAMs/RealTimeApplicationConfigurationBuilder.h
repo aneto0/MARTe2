@@ -1248,13 +1248,13 @@ private:
                             uint32 &syncSignals);
     /**
      * @brief Adds the \a threadName and the \a stateName to the \a gamName and writes to \a local  ConfigurationDatabase.
-     * @param[in] functionName the Function name.
+     * @param[in] gamNameIn the GAM name.
      * @param[in] stateName the state name.
      * @param[in] threadName the thread name.
      * @param[out] syncSignals the number of Signals declared with Frequency >= 0.0.
      * @return true if all the states can be successfully assigned to \a functionName.
      */
-    bool AddStateToGAM(const char8 * const gamName,
+    bool AddStateToGAM(const char8 * const gamNameIn,
                        const char8 * const stateName,
                        const char8 * const threadName,
                        uint32 &syncSignals);
