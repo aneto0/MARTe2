@@ -38,22 +38,46 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe{
 
+/**
+ * @brief Classes that implement this interface are schedulable and can be
+ *  executed by a GAMSchedulerI.
+ */
 class ExecutableI {
 
 public:
+    /**
+     * @brief Constructor. NOOP.
+     */
     ExecutableI();
 
+    /**
+     * @brief Destructor. NOOP.
+     */
     virtual ~ExecutableI();
 
+    /**
+     * @brief Method called by a GAMSchedulerI to trigger the execution of the component.
+     * @return true if the component is successsfully executed.
+     */
     virtual bool Execute() = 0;
 
-    inline void SetLastExecutionTime(const uint32 lastExecutionTimeMicroSecIn);
+    /**
+     * @brief Sets the address in memory where the signal which contains the last execution time of this component is stored.
+     * @details The last execution time units are micro-seconds and are measured w.r.t. to the start of a cycle.
+     * @param[in] timingSignalAddressIn the address of the timing signal.
+     */
+    void SetTimingSignalAddress(uint32 * timingSignalAddressIn);
 
-    inline uint64 GetLastExecutionTime();
+    /**
+     * @brief Gets the address in memory where the signal which contains the last execution time is stored.
+     * @details The last execution time units are micro-seconds and are measured w.r.t. to the start of a cycle.
+     * @return the address in memory where the signal which contains the last execution time is stored.
+     */
+    inline uint32 *GetTimingSignalAddress();
 
 private:
 
-    uint32 lastExecutionTimeMicroSec;
+    uint32 *timingSignalAddress;
 };
 
 
@@ -61,13 +85,10 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-void ExecutableI::SetLastExecutionTime(const uint32 lastExecutionTimeMicroSecIn) {
-    lastExecutionTimeMicroSec = lastExecutionTimeMicroSecIn;
+uint32 * ExecutableI::GetTimingSignalAddress() {
+    return timingSignalAddress;
 }
 
-uint64 ExecutableI::GetLastExecutionTime() {
-    return lastExecutionTimeMicroSec;
-}
 }
 #endif /* EXECUTORI_H_ */
 	

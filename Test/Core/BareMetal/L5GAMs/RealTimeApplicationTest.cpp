@@ -56,33 +56,43 @@ RealTimeApplicationTestScheduler    ();
 
     void ExecuteThreadCycle(uint32 threadId);
 
+    virtual bool ConfigureScheduler();
+
     bool Started();
 private:
     uint32 threadId;
     bool started;
-
+    ScheduledState * const * scheduledStates;
 };
 
 RealTimeApplicationTestScheduler::RealTimeApplicationTestScheduler() :
         GAMSchedulerI() {
     threadId = 0u;
-    started=false;
+    started = false;
+    scheduledStates = NULL_PTR(ScheduledState * const *);
 }
 
-bool RealTimeApplicationTestScheduler::Started(){
+bool RealTimeApplicationTestScheduler::ConfigureScheduler() {
+    bool ret = GAMSchedulerI::ConfigureScheduler();
+    if(ret){
+        scheduledStates = GetSchedulableStates();
+    }
+    return ret;
+}
+
+bool RealTimeApplicationTestScheduler::Started() {
     return started;
 }
 void RealTimeApplicationTestScheduler::StartExecution() {
-    started=true;
+    started = true;
 
-    ExecuteSingleCycle(statesInExecution[RealTimeApplication::GetIndex()]->threads[threadId].executables,
-                           statesInExecution[RealTimeApplication::GetIndex()]->threads[threadId].timeAddresses,
-                           statesInExecution[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
+    ExecuteSingleCycle(scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].executables,
+                       scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
 
 }
 
 void RealTimeApplicationTestScheduler::StopExecution() {
-    started=false;
+    started = false;
 
 }
 
@@ -452,23 +462,23 @@ bool RealTimeApplicationTest::TestStartExecution() {
     if (!app->ConfigureApplication()) {
         return false;
     }
-    if(app->GetIndex()!=1){
+    if (app->GetIndex() != 1) {
         return false;
     }
 
-    if(!app->PrepareNextState("State1")){
+    if (!app->PrepareNextState("State1")) {
         return false;
     }
     app->StartExecution();
-    ReferenceT<RealTimeApplicationTestScheduler> scheduler=app->Find("Scheduler");
-    if(!scheduler.IsValid()){
+    ReferenceT<RealTimeApplicationTestScheduler> scheduler = app->Find("Scheduler");
+    if (!scheduler.IsValid()) {
         return false;
     }
-    if(!scheduler->Started()){
+    if (!scheduler->Started()) {
         return false;
     }
 
-    return app->GetIndex()==0;
+    return app->GetIndex() == 0;
 
 }
 

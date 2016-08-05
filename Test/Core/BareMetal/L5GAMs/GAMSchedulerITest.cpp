@@ -49,20 +49,32 @@ DummyScheduler    ();
     virtual void StopExecution();
 
     void ExecuteThreadCycle(uint32 threadId);
+
+    virtual bool ConfigureScheduler();
+private:
+
+    ScheduledState * const * scheduledStates;
 };
 
 DummyScheduler::DummyScheduler() :
         GAMSchedulerI() {
+    scheduledStates = NULL_PTR(ScheduledState * const *);
 }
 void DummyScheduler::StartExecution() {
+}
 
+bool DummyScheduler::ConfigureScheduler() {
+    bool ret = GAMSchedulerI::ConfigureScheduler();
+    if(ret){
+        scheduledStates = GetSchedulableStates();
+    }
+    return ret;
 }
 
 void DummyScheduler::ExecuteThreadCycle(uint32 threadId) {
 
-    ExecuteSingleCycle(statesInExecution[RealTimeApplication::GetIndex()]->threads[threadId].executables,
-                       statesInExecution[RealTimeApplication::GetIndex()]->threads[threadId].timeAddresses,
-                       statesInExecution[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
+    ExecuteSingleCycle(scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].executables,
+                       scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
 
 }
 void DummyScheduler::StopExecution() {
