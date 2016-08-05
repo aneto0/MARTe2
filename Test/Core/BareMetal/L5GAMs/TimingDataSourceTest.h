@@ -1,8 +1,8 @@
 /**
- * @file GAMSchedulerRecord.h
- * @brief Header file for class GAMSchedulerRecord
- * @date 22/mar/2016
- * @author pc
+ * @file TimingDataSourceTest.h
+ * @brief Header file for class TimingDataSourceTest
+ * @date 28/07/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMSchedulerRecord
+ * @details This header file contains the declaration of the class TimingDataSourceTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMSCHEDULERRECORD_H_
-#define GAMSCHEDULERRECORD_H_
+#ifndef TIMINGDATASOURCETEST_H_
+#define TIMINGDATASOURCETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,73 +31,39 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
-#include "ReferenceT.h"
-#include "RealTimeThread.h"
+#include "TimingDataSource.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
-namespace MARTe{
+using namespace MARTe;
 
 /**
- * @brief Contains the RealTimeThreads to be executed in a specific RealTimeState.
+ * @brief Tests the DataSourceI public methods.
  */
-class DLL_API GAMSchedulerRecord: public ReferenceContainer {
-
+class TimingDataSourceTest {
 public:
+    /**
+     * @brief Tests the Constructor method.
+     */
+    bool TestConstructor();
 
     /**
-     * @brief Constructor
-     *   GetNumberOfThreads() == 0 &&
+     * @brief Tests the SetConfiguredDatabase method.
      */
-    GAMSchedulerRecord();
+    bool TestSetConfiguredDatabase();
 
     /**
-     * @brief Destructor. Frees the threads array memory.
+     * @brief Tests the SetConfiguredDatabase method and verifies that an error is issued if a producer was added to the TimingDataSource.
      */
-    virtual ~GAMSchedulerRecord();
-
-    /**
-     * @brief Adds a new thread to the internal array.
-     * @param[in] newThread is the new RealTimeThread to be added.
-     */
-    void AddThread(ReferenceT<RealTimeThread> newThread);
-
-    /**
-     * @brief Peeks a specific thread from the internal array.
-     * @param[in] index is the position for the required thread inside the array.
-     * @return a Reference to the thread in the \a index position of the internal array. The Reference
-     * will be invalid if \a index > GetNumberOfThreads.
-     */
-    ReferenceT<RealTimeThread> Peek(uint32 index);
-
-    /**
-     * @brief Retrieves the number of threads stored in the internal array.
-     * @return the number of threads stored in the internal array.
-     */
-    uint32 GetNumberOfThreads() const;
-
-protected:
-
-    /**
-     * The RealTimeThread array.
-     */
-    ReferenceT<RealTimeThread> *threads;
-
-    /**
-     * The number of stored RealTimeThreads.
-     */
-    uint32 numberOfThreads;
+    bool TestSetConfiguredDatabase_False_Producers();
 
 };
-
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMSCHEDULERRECORD_H_ */
+#endif /* TIMINGDATASOURCETEST_H_ */
 

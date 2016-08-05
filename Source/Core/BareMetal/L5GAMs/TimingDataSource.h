@@ -43,7 +43,7 @@ namespace MARTe {
 /**
  * @brief GAMDataSource implementation that is used to store the executions timing of the MARTe components.
  */
-class TimingDataSource: public GAMDataSource {
+class DLL_API TimingDataSource: public GAMDataSource {
 public:
     CLASS_REGISTER_DECLARATION()
 

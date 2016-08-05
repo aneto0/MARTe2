@@ -42,7 +42,7 @@ namespace MARTe{
  * @brief Classes that implement this interface are schedulable and can be
  *  executed by a GAMSchedulerI.
  */
-class ExecutableI {
+class DLL_API ExecutableI {
 
 public:
     /**
@@ -66,7 +66,7 @@ public:
      * @details The last execution time units are micro-seconds and are measured w.r.t. to the start of a cycle.
      * @param[in] timingSignalAddressIn the address of the timing signal.
      */
-    void SetTimingSignalAddress(uint32 * timingSignalAddressIn);
+    void SetTimingSignalAddress(uint32 * const timingSignalAddressIn);
 
     /**
      * @brief Gets the address in memory where the signal which contains the last execution time is stored.
@@ -77,7 +77,7 @@ public:
 
 private:
 
-    uint32 *timingSignalAddress;
+    uint32 * timingSignalAddress;
 };
 
 

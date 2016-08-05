@@ -1,8 +1,8 @@
 /**
- * @file DataSourceSignal.cpp
+ * @file GAMDataSource.cpp
  * @brief Source file for class DataSourceSignal
- * @date 11/apr/2016
- * @author pc
+ * @date 11/04/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -179,6 +179,7 @@ const char8 *GAMDataSource::GetBrokerName(StructuredDataI &data,
 
 }
 
+/* lint -e{183} this implementation of the StatefulI interface does not need to know about the nextStateName*/
 bool GAMDataSource::PrepareNextState(const char8 * const currentStateName,
                                      const char8 * const nextStateName) {
 //Set the default value for all the input signals

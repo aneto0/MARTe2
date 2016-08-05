@@ -21,6 +21,8 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -40,14 +42,14 @@
 namespace MARTe {
 
 ExecutableI::ExecutableI() {
-    timingSignalAddress = NULL_PTR(uint32 *);
+    timingSignalAddress = NULL_PTR(uint32 * const);
 }
 
+/*lint -e{1540} the timingSignalAddress is to freed by the class that uses the ExecutableI, typically a GAMSchedulerI.*/
 ExecutableI::~ExecutableI() {
-
 }
 
-void ExecutableI::SetTimingSignalAddress(uint32 * timingSignalAddressIn) {
+void ExecutableI::SetTimingSignalAddress(uint32 * const timingSignalAddressIn) {
     timingSignalAddress = timingSignalAddressIn;
 }
 
