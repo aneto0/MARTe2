@@ -137,6 +137,9 @@ public:
     //Structures Remapping using namespace
     bool TestResolveDataSources_StructNamespaceMap();
 
+    //Structures Remapping using namespace in ds
+    bool TestResolveDataSources_StructNamespaceMapInDs();
+
     //Type mismatch
     bool TestResolveDataSourceFalse_TypeMismatch();
 

@@ -162,7 +162,6 @@ bool RealTimeThread::ConfigureArchitecture() {
     }
     return ret;
 }
-#include "stdio.h"
 
 bool RealTimeThread::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);

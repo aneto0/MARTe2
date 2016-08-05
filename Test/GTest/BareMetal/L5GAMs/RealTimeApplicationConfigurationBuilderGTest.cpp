@@ -289,6 +289,11 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructN
     ASSERT_TRUE(test.TestResolveDataSources_StructNamespaceMap());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructNamespaceMapInDs) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources_StructNamespaceMapInDs());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourcesSignalsFalse_LeafMappedOnNode) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveDataSourcesSignalsFalse_LeafMappedOnNode());

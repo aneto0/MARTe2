@@ -42,7 +42,6 @@
 #include "Matrix.h"
 #include "RealTimeApplicationConfigurationBuilder.h"
 #include "RealTimeThread.h"
-#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -56,336 +55,349 @@ uint32 RealTimeApplication::index = 1u;
 /*---------------------------------------------------------------------------*/
 
 RealTimeApplication::RealTimeApplication() :
-        ReferenceContainer() {
+		ReferenceContainer() {
 }
 
 RealTimeApplication::~RealTimeApplication() {
 
 }
 bool RealTimeApplication::Initialise(StructuredDataI & data) {
-    bool ret = ReferenceContainer::Initialise(data);
-    if (data.MoveRelative("+Data")) {
-        if (!data.Read("DefaultDataSource", defaultDataSourceName)) {
-            defaultDataSourceName = "";
-        }
-        data.MoveToAncestor(1u);
-    }
-    defaultDataSourceName.Seek(0u);
+	bool ret = ReferenceContainer::Initialise(data);
+	if (data.MoveRelative("+Data")) {
+		if (!data.Read("DefaultDataSource", defaultDataSourceName)) {
+			defaultDataSourceName = "";
+		}
+		ret = data.MoveToAncestor(1u);
+	}
+	if (ret) {
+		ret = defaultDataSourceName.Seek(0ull);
+	}
 
-    if (ret) {
-        uint32 numberOfContainers = Size();
-        ret = false;
-        for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-            Reference item = Get(i);
-            if (item.IsValid()) {
-                if (StringHelper::Compare(item->GetName(), "States") == 0) {
-                    statesContainer = item;
-                    ret = statesContainer.IsValid();
-                }
-            }
-        }
-        if (ret) {
-            ret = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                Reference container = Get(i);
-                if (container.IsValid()) {
-                    if (StringHelper::Compare(container->GetName(), "Data") == 0) {
-                        dataSourceContainer = container;
-                        ret = dataSourceContainer.IsValid();
-                    }
-                }
-            }
-        }
-        if (ret) {
-            ret = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                Reference item = Get(i);
-                if (item.IsValid()) {
-                    if (StringHelper::Compare(item->GetName(), "Functions") == 0) {
-                        functionsContainer = item;
-                        ret = functionsContainer.IsValid();
-                    }
-                }
-            }
-        }
+	if (ret) {
+		uint32 numberOfContainers = Size();
+		ret = false;
+		for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+			Reference item = Get(i);
+			if (item.IsValid()) {
+				if (StringHelper::Compare(item->GetName(), "States") == 0) {
+					statesContainer = item;
+					ret = statesContainer.IsValid();
+				}
+			}
+		}
+		if (ret) {
+			ret = false;
+			for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+				Reference container = Get(i);
+				if (container.IsValid()) {
+					if (StringHelper::Compare(container->GetName(), "Data")
+							== 0) {
+						dataSourceContainer = container;
+						ret = dataSourceContainer.IsValid();
+					}
+				}
+			}
+		}
+		if (ret) {
+			ret = false;
+			for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+				Reference item = Get(i);
+				if (item.IsValid()) {
+					if (StringHelper::Compare(item->GetName(), "Functions")
+							== 0) {
+						functionsContainer = item;
+						ret = functionsContainer.IsValid();
+					}
+				}
+			}
+		}
 
-        if (ret) {
-            ret = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                Reference container = Get(i);
-                if (container.IsValid()) {
-                    if (StringHelper::Compare(container->GetName(), "Scheduler") == 0) {
-                        scheduler = container;
-                        ret = scheduler.IsValid();
-                    }
-                }
-            }
-        }
-    }
+		if (ret) {
+			ret = false;
+			for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+				Reference container = Get(i);
+				if (container.IsValid()) {
+					if (StringHelper::Compare(container->GetName(), "Scheduler")
+							== 0) {
+						scheduler = container;
+						ret = scheduler.IsValid();
+					}
+				}
+			}
+		}
+	}
 
-    return ret;
+	return ret;
 }
-
 
 bool RealTimeApplication::ConfigureApplication() {
-    RealTimeApplicationConfigurationBuilder rtAppBuilder(*this, "DDB1");
-    bool ret = rtAppBuilder.ConfigureAfterInitialisation();
+	RealTimeApplicationConfigurationBuilder rtAppBuilder(*this, "DDB1");
+	bool ret = rtAppBuilder.ConfigureAfterInitialisation();
 
-    if (ret) {
-        ret = rtAppBuilder.PostConfigureDataSources();
-    }
-    if (ret) {
-        ret = rtAppBuilder.PostConfigureFunctions();
-    }
+	if (ret) {
+		ret = rtAppBuilder.PostConfigureDataSources();
+	}
+	if (ret) {
+		ret = rtAppBuilder.PostConfigureFunctions();
+	}
 
-    if (ret) {
-        rtAppBuilder.Copy(functionsDatabase, dataSourcesDatabase);
-    }
-    if (ret) {
-        ret = AllocateGAMMemory();
-    }
-    if (ret) {
-        ret = AllocateDataSourceMemory();
-    }
-    if (ret) {
-        ret = AddBrokersToFunctions();
-    }
-    if (ret) {
-        ret = scheduler.IsValid();
-        if (ret) {
-            ret = scheduler->ConfigureScheduler();
-        }
-    }
+	if (ret) {
+		ret=rtAppBuilder.Copy(functionsDatabase, dataSourcesDatabase);
+	}
+	if (ret) {
+		ret = AllocateGAMMemory();
+	}
+	if (ret) {
+		ret = AllocateDataSourceMemory();
+	}
+	if (ret) {
+		ret = AddBrokersToFunctions();
+	}
+	if (ret) {
+		ret = scheduler.IsValid();
+		if (ret) {
+			ret = scheduler->ConfigureScheduler();
+		}
+	}
 
-    return ret;
+	return ret;
 }
 
-bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn,
-                                               ConfigurationDatabase &dataDatabaseIn) {
-    // no check..someone else did it
+bool RealTimeApplication::ConfigureApplication(
+		ConfigurationDatabase &functionsDatabaseIn,
+		ConfigurationDatabase &dataDatabaseIn) {
+	// no check..someone else did it
 
-    //-External compiling
-    //-Initialization
-    // This Function {
-    //    -Brokers negotiation
-    //    -PostConfig
-    // }
+	//-External compiling
+	//-Initialization
+	// This Function {
+	//    -Brokers negotiation
+	//    -PostConfig
+	// }
 
-    // TODO Standard checks can be done (the Verifies)
-    //TODO
+	// TODO Standard checks can be done (the Verifies)
+	//TODO
 
-    RealTimeApplicationConfigurationBuilder configuration(*this, "DDB1");
-    bool ret = configuration.Set(functionsDatabaseIn, dataDatabaseIn);
-    if (ret) {
-        ret = configuration.AssignBrokersToFunctions();
-    }
-    if (ret) {
-        ret = configuration.Copy(functionsDatabase, dataSourcesDatabase);
-    }
+	RealTimeApplicationConfigurationBuilder configuration(*this, "DDB1");
+	bool ret = configuration.Set(functionsDatabaseIn, dataDatabaseIn);
+	if (ret) {
+		ret = configuration.AssignBrokersToFunctions();
+	}
+	if (ret) {
+		ret = configuration.Copy(functionsDatabase, dataSourcesDatabase);
+	}
 
-    if (ret) {
-        ret = configuration.PostConfigureDataSources();
-    }
-    if (ret) {
-        ret = configuration.PostConfigureFunctions();
-    }
-    if (ret) {
-        ret = ConfigureArchitecture();
-    }
-    if (ret) {
-        ret = AllocateGAMMemory();
-    }
-    if (ret) {
-        ret = AllocateDataSourceMemory();
-    }
-    if (ret) {
-        ret = AddBrokersToFunctions();
-    }
+	if (ret) {
+		ret = configuration.PostConfigureDataSources();
+	}
+	if (ret) {
+		ret = configuration.PostConfigureFunctions();
+	}
+	if (ret) {
+		ret = ConfigureArchitecture();
+	}
+	if (ret) {
+		ret = AllocateGAMMemory();
+	}
+	if (ret) {
+		ret = AllocateDataSourceMemory();
+	}
+	if (ret) {
+		ret = AddBrokersToFunctions();
+	}
 
-    if (ret) {
-        ret = scheduler.IsValid();
-        if (ret) {
-            ret = scheduler->ConfigureScheduler();
-        }
-    }
-    return ret;
+	if (ret) {
+		ret = scheduler.IsValid();
+		if (ret) {
+			ret = scheduler->ConfigureScheduler();
+		}
+	}
+	return ret;
 }
 
 bool RealTimeApplication::AllocateGAMMemory() {
 
-    bool ret = functionsDatabase.MoveAbsolute("Functions");
-    uint32 numberOfFunctions = functionsDatabase.GetNumberOfChildren();
-    for (uint32 i = 0u; i < numberOfFunctions && ret; i++) {
-        const char8 * functionId = functionsDatabase.GetChildName(i);
-        ret = functionsDatabase.MoveRelative(functionId);
-        if (ret) {
-            StreamString fullGAMName = "Functions.";
-            ret = functionsDatabase.Read("QualifiedName", fullGAMName);
-            if (ret) {
-                ReferenceT<GAM> gam = Find(fullGAMName.Buffer());
-                ret = gam.IsValid();
+	bool ret = functionsDatabase.MoveAbsolute("Functions");
+	uint32 numberOfFunctions = functionsDatabase.GetNumberOfChildren();
+	for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
+		const char8 * functionId = functionsDatabase.GetChildName(i);
+		ret = functionsDatabase.MoveRelative(functionId);
+		if (ret) {
+			StreamString fullGAMName = "Functions.";
+			ret = functionsDatabase.Read("QualifiedName", fullGAMName);
+			if (ret) {
+				ReferenceT<GAM> gam = Find(fullGAMName.Buffer());
+				ret = gam.IsValid();
 
-                if (ret) {
+				if (ret) {
 
-                    ret = gam->AllocateInputSignalsMemory();
-                    if (ret) {
-                        ret = gam->AllocateOutputSignalsMemory();
-                    }
-                }
-            }
-        }
-        if (ret) {
-            ret = functionsDatabase.MoveToAncestor(1u);
-        }
-    }
-    return ret;
+					ret = gam->AllocateInputSignalsMemory();
+					if (ret) {
+						ret = gam->AllocateOutputSignalsMemory();
+					}
+				}
+			}
+		}
+		if (ret) {
+			ret = functionsDatabase.MoveToAncestor(1u);
+		}
+	}
+	return ret;
 }
 
 bool RealTimeApplication::AllocateDataSourceMemory() {
-    bool ret = dataSourcesDatabase.MoveAbsolute("Data");
-    uint32 numberOfDs = dataSourcesDatabase.GetNumberOfChildren();
-    for (uint32 i = 0u; i < numberOfDs && ret; i++) {
-        const char8* dsId = dataSourcesDatabase.GetChildName(i);
-        ret = dataSourcesDatabase.MoveRelative(dsId);
-        if (ret) {
-            StreamString fullDsName = "Data.";
-            ret = dataSourcesDatabase.Read("QualifiedName", fullDsName);
-            if (ret) {
-                ReferenceT<DataSourceI> ds = Find(fullDsName.Buffer());
-                ret = ds.IsValid();
-                if (ret) {
-                    ret = ds->AllocateMemory();
-                }
-            }
-        }
-        if (ret) {
-            ret = dataSourcesDatabase.MoveToAncestor(1u);
-        }
-    }
-    return ret;
+	bool ret = dataSourcesDatabase.MoveAbsolute("Data");
+	uint32 numberOfDs = dataSourcesDatabase.GetNumberOfChildren();
+	for (uint32 i = 0u; (i < numberOfDs) && (ret); i++) {
+		const char8* dsId = dataSourcesDatabase.GetChildName(i);
+		ret = dataSourcesDatabase.MoveRelative(dsId);
+		if (ret) {
+			StreamString fullDsName = "Data.";
+			ret = dataSourcesDatabase.Read("QualifiedName", fullDsName);
+			if (ret) {
+				ReferenceT<DataSourceI> ds = Find(fullDsName.Buffer());
+				ret = ds.IsValid();
+				if (ret) {
+					ret = ds->AllocateMemory();
+				}
+			}
+		}
+		if (ret) {
+			ret = dataSourcesDatabase.MoveToAncestor(1u);
+		}
+	}
+	return ret;
 }
 
 bool RealTimeApplication::AddBrokersToFunctions() {
-    //pre: called after ConfigureApplication(*)
-    bool ret = dataSourcesDatabase.MoveAbsolute("Data");
-    if (ret) {
-        uint32 numberOfDataSources = dataSourcesDatabase.GetNumberOfChildren();
-        for (uint32 i = 0u; i < numberOfDataSources && ret; i++) {
-            const char8 * dataSourceId = dataSourcesDatabase.GetChildName(i);
-            ret = dataSourcesDatabase.MoveRelative(dataSourceId);
-            StreamString fullDataSourcePath = "Data.";
-            if (ret) {
-                ret = dataSourcesDatabase.Read("QualifiedName", fullDataSourcePath);
-            }
-            ReferenceT<DataSourceI> dataSource;
-            if (ret) {
-                dataSource = Find(fullDataSourcePath.Buffer());
-                ret = dataSource.IsValid();
-            }
-            if (ret) {
+	//pre: called after ConfigureApplication(*)
+	bool ret = dataSourcesDatabase.MoveAbsolute("Data");
+	if (ret) {
+		uint32 numberOfDataSources = dataSourcesDatabase.GetNumberOfChildren();
+		for (uint32 i = 0u; (i < numberOfDataSources) && (ret); i++) {
+			const char8 * dataSourceId = dataSourcesDatabase.GetChildName(i);
+			ret = dataSourcesDatabase.MoveRelative(dataSourceId);
+			StreamString fullDataSourcePath = "Data.";
+			if (ret) {
+				ret = dataSourcesDatabase.Read("QualifiedName",
+						fullDataSourcePath);
+			}
+			ReferenceT<DataSourceI> dataSource;
+			if (ret) {
+				dataSource = Find(fullDataSourcePath.Buffer());
+				ret = dataSource.IsValid();
+			}
+			if (ret) {
 
-                ret = dataSource->AddBrokers(InputSignals);
-                if (ret) {
-                    ret = dataSource->AddBrokers(OutputSignals);
-                }
+				ret = dataSource->AddBrokers(InputSignals);
+				if (ret) {
+					ret = dataSource->AddBrokers(OutputSignals);
+				}
 
-            }
-            if (ret) {
-                ret = dataSourcesDatabase.MoveToAncestor(1u);
-            }
-        }
-    }
-    return ret;
+			}
+			if (ret) {
+				ret = dataSourcesDatabase.MoveToAncestor(1u);
+			}
+		}
+	}
+	return ret;
 }
 
 bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
 
-    bool ret = statesContainer.IsValid();
-    if (ret) {
-        uint32 numberOfStates = statesContainer->Size();
-        for (uint32 i = 0u; i < numberOfStates && ret; i++) {
-            ReferenceT<RealTimeState> state = statesContainer->Get(i);
-            ret = state.IsValid();
-            if (ret) {
-                if (StringHelper::Compare(state->GetName(), nextStateName) == 0) {
-                    ret = state->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
-                    break;
-                }
-            }
-        }
-    }
+	bool ret = statesContainer.IsValid();
+	if (ret) {
+		uint32 numberOfStates = statesContainer->Size();
+		for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+			ReferenceT<RealTimeState> state = statesContainer->Get(i);
+			ret = state.IsValid();
+			if (ret) {
+				if (StringHelper::Compare(state->GetName(), nextStateName)
+						== 0) {
+					ret = state->PrepareNextState(
+							stateNameHolder[index].Buffer(), nextStateName);
+					break;
+				}
+			}
+		}
+	}
 
-    uint32 numberOfStatefulsInData = statefulsInData.Size();
-    for (uint32 i = 0u; i < numberOfStatefulsInData && ret; i++) {
-        ReferenceT<StatefulI> statefulInData = statefulsInData.Get(i);
-        ret = statefulInData.IsValid();
-        if (ret) {
-            ret = statefulInData->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
-        }
-    }
+	uint32 numberOfStatefulsInData = statefulsInData.Size();
+	for (uint32 i = 0u; (i < numberOfStatefulsInData) && (ret); i++) {
+		ReferenceT<StatefulI> statefulInData = statefulsInData.Get(i);
+		ret = statefulInData.IsValid();
+		if (ret) {
+			ret = statefulInData->PrepareNextState(
+					stateNameHolder[index].Buffer(), nextStateName);
+		}
+	}
 
-    if (ret) {
-        ret = scheduler.IsValid();
-        if (ret) {
-            ret = scheduler->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
-        }
-    }
-    stateNameHolder[(index + 1u) % 2u] = nextStateName;
-    return ret;
+	if (ret) {
+		ret = scheduler.IsValid();
+		if (ret) {
+			ret = scheduler->PrepareNextState(stateNameHolder[index].Buffer(),
+					nextStateName);
+		}
+	}
+	uint32 nextIndex=(index + 1u) % 2u;
+	stateNameHolder[nextIndex] = nextStateName;
+	return ret;
 
 }
 
 void RealTimeApplication::StartExecution() {
-    index = (index + 1u) % 2u;
+	index = (index + 1u) % 2u;
 
-    scheduler->StartExecution();
+	scheduler->StartExecution();
 }
 
 void RealTimeApplication::StopExecution() {
-    scheduler->StopExecution();
+	scheduler->StopExecution();
 }
 
 bool RealTimeApplication::ConfigureArchitecture() {
 
-    // there must be the container called "States"
-    bool ret = statesContainer.IsValid();
+	// there must be the container called "States"
+	bool ret = statesContainer.IsValid();
 
-    if (ret) {
-        // States contains RealTimeState references
-        // for each of them call Validate(*)
-        uint32 numberOfStates = statesContainer->Size();
-        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-            ReferenceT<RealTimeState> state = statesContainer->Get(i);
-            if (state.IsValid()) {
-            	ReferenceT<ReferenceContainer> threadsContainer=state->Find("Threads");
+	if (ret) {
+		// States contains RealTimeState references
+		// for each of them call Validate(*)
+		uint32 numberOfStates = statesContainer->Size();
+		for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+			ReferenceT<RealTimeState> state = statesContainer->Get(i);
+			if (state.IsValid()) {
+				ReferenceT<ReferenceContainer> threadsContainer = state->Find(
+						"Threads");
 
-                // for each state call the configuration function
-                uint32 numberOfThreads = threadsContainer->Size();
-                for (uint32 j = 0u; (j < numberOfThreads) && (ret); j++) {
-                    ReferenceT<RealTimeThread> thread = threadsContainer->Get(j);
-                    if (thread.IsValid()) {
-                        ret = thread->ConfigureArchitecture();
-                    }
-                }
-            }
-        }
-    }
+				// for each state call the configuration function
+				uint32 numberOfThreads = threadsContainer->Size();
+				for (uint32 j = 0u; (j < numberOfThreads) && (ret); j++) {
+					ReferenceT<RealTimeThread> thread = threadsContainer->Get(
+							j);
+					if (thread.IsValid()) {
+						ret = thread->ConfigureArchitecture();
+					}
+				}
+			}
+		}
+	}
 
-    if (ret) {
-        ret = dataSourceContainer.IsValid();
-    }
-    if (ret) {
-        //Look for all the GAMs inside the RealTimeApplication
-        ReferenceContainerFilterReferencesTemplate<StatefulI> dataFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
-        dataSourceContainer->Find(statefulsInData, dataFilter);
-    }
+	if (ret) {
+		ret = dataSourceContainer.IsValid();
+	}
+	if (ret) {
+		//Look for all the GAMs inside the RealTimeApplication
+		ReferenceContainerFilterReferencesTemplate<StatefulI> dataFilter(-1,
+				ReferenceContainerFilterMode::RECURSIVE);
+		dataSourceContainer->Find(statefulsInData, dataFilter);
+	}
 
-
-    return ret;
+	return ret;
 }
 
 uint32 RealTimeApplication::GetIndex() {
-    return index;
+	return index;
 }
 
 CLASS_REGISTER(RealTimeApplication, "1.0");

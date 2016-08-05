@@ -111,6 +111,7 @@ ParserI.h
 ParserI.cpp
 Processor.cpp
 ProcessorType.cpp
+RealTimeApplication.cpp
 RealTimeApplicationConfigurationBuilder.cpp
 RealTimeState.cpp
 RealTimeThread.cpp
