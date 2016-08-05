@@ -685,3 +685,7 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisat
     ASSERT_TRUE(test.TestConfigureBeforeInitialisation());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureThreads) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureThreads());
+}

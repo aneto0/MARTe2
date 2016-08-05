@@ -1,8 +1,8 @@
 /**
  * @file RealTimeApplicationConfigurationBuilderTest.h
  * @brief Header file for class RealTimeApplicationConfigurationBuilderTest
- * @date 13/lug/2016
- * @author pc
+ * @date 13/07/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -38,353 +38,591 @@
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
-
+/**
+ * @brief Tests all the RealTimeApplicationConfigurationBuilder functions.
+ */
 class RealTimeApplicationConfigurationBuilderTest {
 
 public:
+    /**
+     * Constructor
+     */
     RealTimeApplicationConfigurationBuilderTest();
 
-    //basic
+    /**
+     * @brief Tests the InitialiseSignalsDatabase method.
+     */
     bool TestInitialiseSignalsDatabase1(bool fromConfig);
 
-    //nested datasources
+    /**
+     * @brief Tests the InitialiseSignalsDatabase method with nested data sources.
+     */
     bool TestInitialiseSignalsDatabase2(bool fromConfig);
 
-    //flag to specify that is not a datasource
+    /**
+     * @brief Tests the InitialiseSignalsDatabase method to specify that is not a data source.
+     */
     bool TestInitialiseSignalsDatabase_IgnoreDataSource();
 
-    //invalid application
+    /**
+     * @brief Tests the InitialiseSignalsDatabase method with an invalid application.
+     */
     bool TestInitialiseSignalsDatabaseFalse_InvalidApplication();
 
-    //invalid nested gams
+    /**
+     * @brief Tests the InitialiseSignalsDatabase method with invalid nested gams.
+     */
     bool TestInitialiseSignalsDatabaseFalse_InvalidNestedGAMs(bool fromConfig);
 
-    //gam with no IO signals
+    /**
+     * @brief Tests the InitialiseSignalsDatabase method with a GAM with no IO signals.
+     */
     bool TestInitialiseSignalsDatabaseFalse_GAMsNoIO(bool fromConfig);
 
-    //more than one time ds defined
+    /**
+     * @brief Tests the InitialiseSignalsDatabase method with more than one TimingDataSource defined.
+     */
     bool TestInitialiseSignalsDatabaseFalse_TooManyTimeDataSources(bool fromConfig);
 
-    //no time ds defined
+    /**
+     * @brief Tests the InitialiseSignalsDatabaseFalse method with no TimingDataSource defined.
+     */
     bool TestInitialiseSignalsDatabaseFalse_NoTimeDataSource(bool fromConfig);
 
-    //Basic
+    /**
+     * @brief Tests the FlattenSignalsDatabases.
+     */
     bool TestFlattenSignalsDatabases1();
 
-    //With nested names
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with nested names.
+     */
     bool TestFlattenSignalsDatabases2();
 
-    //Unspecified DataSource
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with unspecified DataSource.
+     */
     bool TestFlattenSignalsDatabases3();
 
-    //Alias
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with Alias.
+     */
     bool TestFlattenSignalsDatabases4();
 
-    //With deep nested names
+    /**
+     * @brief Tests the FlattenSignalsDatabases method With deep nested names.
+     */
     bool TestFlattenSignalsDatabases5();
 
-    //With deep nested names in data source
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with deep nested names in data source.
+     */
     bool TestFlattenSignalsDatabases6();
 
-    //Put Locked flag in data source
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with the Locked flag in data source.
+     */
     bool TestFlattenSignalsDatabases_LockedDataSource();
 
-    //Known signal properties
+    /**
+     * @brief Tests the FlattenSignalsDatabases and check all known properties.
+     */
     bool TestFlattenSignalsDatabases_CopyAllKnownSignalsProperties();
 
-    //Member aliases in struct
+    /**
+     * @brief Tests the FlattenSignalsDatabases method and check Member aliases in struct.
+     */
     bool TestFlattenSignalsDatabases_MemberAliases();
 
-    //Defaults in struct in GAM
+    /**
+     * @brief Tests the FlattenSignalsDatabases method and check Defaults in struct in GAM.
+     */
     bool TestFlattenSignalsDatabases_Defaults();
 
-    //Defaults in struct in ds
+    /**
+     * @brief Tests the FlattenSignalsDatabases method and check Defaults in struct in DataSourceI.
+     */
     bool TestFlattenSignalsDatabases_Defaults2();
 
-    //dimensions>0 in struct
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with dimensions>0 in struct.
+     */
     bool TestFlattenSignalsDatabases_InvalidNDimensionsInStruct();
 
-    //elements>1 in struct
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with elements>1 in struct.
+     */
     bool TestFlattenSignalsDatabases_InvalidNElementsInStruct();
 
-    //Only frequency specified in struct
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with only frequency specified in struct.
+     */
     bool TestFlattenSignalsDatabases_OnlyFrequencyInStruct();
 
-    //Only sync signal specified in struct
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with only sync signal specified in struct.
+     */
     bool TestFlattenSignalsDatabases_OnlySyncSignalInStruct();
 
-    //Invalid sync signal specified in struct
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with an invalid sync signal specified in struct.
+     */
     bool TestFlattenSignalsDatabases_InvalidSyncSignalInStruct();
 
-    //unregistered type
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with an unregistered type.
+     */
     bool TestFlattenSignalsDatabases_UnregisteredType();
 
-    //Basic
+    /**
+     * @brief Tests the ResolveDataSources method.
+     */
     bool TestResolveDataSources1();
 
-    //Different data sources
+    /**
+     * @brief Tests the ResolveDataSources method with different data sources.
+     */
     bool TestResolveDataSources2();
 
-    //Merge properties
+    /**
+     * @brief Tests the ResolveDataSources method with Merge properties.
+     */
     bool TestResolveDataSources3();
 
-    //Structures Remapping
+    /**
+     * @brief Tests the ResolveDataSources method with structures remapping.
+     */
     bool TestResolveDataSources_StructMap();
 
-    //Structures Remapping with ds namespaces
+    /**
+     * @brief Tests the ResolveDataSources method with structures remapping with DataSourceI namespaces.
+     */
     bool TestResolveDataSources_StructMapNamespaces();
 
-    //Structures Remapping using namespace
+    /**
+     * @brief Tests the ResolveDataSources method with structures remapping using namespace.
+     */
     bool TestResolveDataSources_StructNamespaceMap();
 
-    //Type mismatch
+    /**
+     * @brief Tests the ResolveDataSource method with Type mismatch.
+     */
     bool TestResolveDataSourceFalse_TypeMismatch();
 
-    //Type mismatch directly from ds
+    /**
+     * @brief Tests the ResolveDataSource method Type with mismatch directly from DataSource.
+     */
     bool TestResolveDataSourceFalse_TypeMismatch1();
 
-    //NElements mismatch
+    /**
+     * @brief Tests the ResolveDataSource method with NElements mismatch.
+     */
     bool TestResolveDataSourceFalse_NElementsMismatch();
 
-    //NElements mismatch directly from ds
+    /**
+     * @brief Tests the ResolveDataSource method with NElements mismatch directly from DataSource.
+     */
     bool TestResolveDataSourceFalse_NElementsMismatch1();
 
-    //NDimensions mismatch
+    /**
+     * @brief Tests the ResolveDataSource method with NDimensions mismatch.
+     */
     bool TestResolveDataSourceFalse_NDimensionsMismatch();
 
-    //NDimensions mismatch directly from ds
+    /**
+     * @brief Tests the ResolveDataSource method with NDimensions mismatch directly from DataSource.
+     */
     bool TestResolveDataSourceFalse_NDimensionsMismatch1();
 
-    //Default mismatch
+    /**
+     * @brief Tests the ResolveDataSource method with Default mismatch.
+     */
     bool TestResolveDataSourceFalse_DefaultMismatch();
 
-    //Default mismatch directly from ds
+    /**
+     * @brief Tests the ResolveDataSource method with Default mismatch directly from DataSource.
+     */
     bool TestResolveDataSourceFalse_DefaultMismatch1();
 
-    //Default mismatch with structures
+    /**
+     * @brief Tests the ResolveDataSource method with Default mismatch with structures.
+     */
     bool TestResolveDataSourceFalse_DefaultMismatch3();
 
-    //assignment of a leaf on a node
+    /**
+     * @brief Tests the ResolveDataSources method assignment of a leaf on a node.
+     */
     bool TestResolveDataSourcesSignalsFalse_LeafMappedOnNode();
 
-    //incompatible struct map
+    /**
+     * @brief Tests the ResolveDataSourcesSignals method with an incompatible struct map.
+     */
     bool TestResolveDataSourcesSignalsFalse_IncompatibleMap();
 
-    //incompatible struct map
+    /**
+     * @brief Tests the ResolveDataSourcesSignals method with an incompatible struct map.
+     */
     bool TestResolveDataSourcesSignalsFalse_IncompatibleMap1();
 
-    //pre-existent ds with type not allowed (map a structure on a leaf basically)
+    /**
+     * @brief Tests the ResolveDataSourcesSignals method with a pre-existent DataSource with type not allowed (map a structure on a leaf basically).
+     */
     bool TestResolveDataSourcesSignalsFalse_PartialDataSourceWithType();
 
-    //Locked ds
+    /**
+     * @brief Tests the ResolveDataSourcesSignals method with a Locked DataSource.
+     */
     bool TestResolveDataSourcesSignalsFalse_AddSignalToLockedDataSource();
 
-    //bool TestVerifyDataSourcesSignals();
-
-    //Basic
+    /**
+     * @brief Tests the VerifyDataSourcesSignals.
+     */
     bool TestVerifyDataSourcesSignals1();
 
-    //Partial struct node defined
+    /**
+     * @brief Tests the VerifyDataSourcesSignals method with a partial struct node defined.
+     */
     bool TestVerifyDataSourcesSignals_PartialDataSource();
 
-    //Match of various defaults
+    /**
+     * @brief Tests the VerifyDataSourcesSignals method with matching of various defaults.
+     */
     bool TestVerifyDataSourcesSignals_DefaultValuesMatch();
 
-    //Automatic assignment of NumberOfElements
+    /**
+     * @brief Tests the VerifyDataSourcesSignals method with automatic assignment of NumberOfElements.
+     */
     bool TestVerifyDataSourcesSignals_AssignNumberOfElements();
 
-    //Automatic assignment of NumberOfDimensions
+    /**
+     * @brief Tests the VerifyDataSourcesSignals method with automatic assignment of NumberOfDimensions.
+     */
     bool TestVerifyDataSourcesSignals_AssignNumberOfDimensions();
 
-    //DS without type
+    /**
+     * @brief Tests the VerifyDataSourcesSignals method with a DataSource with type.
+     */
     bool TestVerifyDataSourcesSignalsFalse_NoType();
 
-    //no type
+    /**
+     * @brief Tests the VerifyDataSourcesSignals method with no type.
+     */
     bool TestVerifyDataSourcesSignalsFalse_NoType2();
 
-    //NumberOfElements = 0
+    /**
+     * @brief Tests the VerifyDataSourcesSignals method with NumberOfElements = 0.
+     */
     bool TestVerifyDataSourcesSignalsFalse_InvalidNElements();
 
-    //Incompatible defaults
+    /**
+     * @brief Tests the VerifyDataSourcesSignals method with incompatible defaults/
+     */
     bool TestVerifyDataSourcesSignalsFalse_IncompatibleDefaults();
 
-    //Incompatible defaults
+    /**
+     * @brief Tests the VerifyDataSourcesSignals method with incompatible defaults.
+     */
     bool TestVerifyDataSourcesSignalsFalse_IncompatibleDefaultsMultiVarAsArray();
 
-    //Basic
+    /**
+     * @brief Tests the ResolveFunctionSignals.
+     */
     bool TestResolveFunctionSignals1();
 
-    //merge a struct
+    /**
+     * @brief Tests the ResolveFunctionSignals.
+     */
     bool TestResolveFunctionSignals2();
 
-    //merge a struct
+    /**
+     * @brief Tests the ResolveFunctionSignals.
+     */
     bool TestResolveFunctionSignals3();
 
-    //locked ds
+    /**
+     * @brief Tests the ResolveFunctionSignals method with a locked DataSource.
+     */
     bool TestResolveFunctionSignalsFalse_CompleteSignalInLockedDataSource();
 
-    //TODO The verify is useless??
-    //basic
+    /**
+     * @brief Tests VerifyFunctionSignals method.
+     */
     bool TestVerifyFunctionSignals();
 
-    //no type
+    /**
+     * @brief Tests the VerifyFunctionSignals method with with no type.
+     */
     bool TestVerifyFunctionSignalsFalse_FalseNoType();
 
-    //no #elements
+    /**
+     * @brief Tests the VerifyFunctionSignals method with no #elements.
+     */
     bool TestVerifyFunctionSignalsFalse_FalseNoNumberOfElements();
 
-    //no #dimensions
+    /**
+     * @brief Tests the VerifyFunctionSignals method with no #dimensions.
+     */
     bool TestVerifyFunctionSignalsFalse_FalseNoNumberOfDimensions();
 
-    //no qualified name
+    /**
+     * @brief Tests the VerifyFunctionSignals method with no qualified name.
+     */
     bool TestVerifyFunctionSignalsFalse_FalseNoQualifiedName();
 
-    //basic
+    /**
+     * @brief Tests the ResolveStates method.
+     */
     bool TestResolveStates(bool fromConfig);
 
-    //same gam in more states
+    /**
+     * @brief Tests the ResolveStates method with same gam in more states.
+     */
     bool TestResolveStates2(bool fromConfig);
 
-    //gam groups
+    /**
+     * @brief Tests the ResolveStates method with gam groups.
+     */
     bool TestResolveStates_FunctionGroups(bool fromConfig);
 
-    //more threads per state
+    /**
+     * @brief Tests the ResolveStates method with more threads per state.
+     */
     bool TestResolveStates_MoreThreads(bool fromConfig);
 
-    //same gam in more than one thread in the same state
+    /**
+     * @brief Tests the ResolveStates method with the same GAM in more than one thread in the same state.
+     */
     bool TestResolveStatesFalse_SameGAMInMoreThreads(bool fromConfig);
 
-    //more than one sync point in a thread
+    /**
+     * @brief Tests the ResolveStates method with more than one sync point in a thread.
+     */
     bool TestResolveStatesFalse_MoreSyncs1(bool fromConfig);
 
-    //more than one sync point in a thread
+    /**
+     * @brief Tests the ResolveStates method with more than one sync point in a thread.
+     */
     bool TestResolveStatesFalse_MoreSyncs2(bool fromConfig);
 
-    //more than one sync point in a thread
+    /**
+     * @brief Tests the ResolveStates method with more than one sync point in a thread.
+     */
     bool TestResolveStatesFalse_MoreSyncs3(bool fromConfig);
 
-    //invalid application
+    /**
+     * @brief Tests the ResolveStates method with an invalid application.
+     */
     bool TestResolveStatesFalse_InvalidApplication();
 
-    //basic
+    /**
+     * @brief Tests the VerifyStates method.
+     */
     bool TestVerifyStates();
 
-    //GAM never called
+    /**
+     * @brief Tests the VerifyStates method with a GAM that is never called.
+     */
     bool TestVerifyStatesFalse_GAMNeverCalled();
 
-    //basic
+    /**
+     * @brief Tests the ResolveConsumersAndProducers method.
+     */
     bool TestResolveConsumersAndProducers();
 
-    //more gam signals
+    /**
+     * @brief Tests the ResolveConsumersAndProducers method with more gam signals.
+     */
     bool TestResolveConsumersAndProducers_MoreSignalsSameGAM();
 
-    //more threads
+    /**
+     * @brief Tests the ResolveConsumersAndProducers method with more threads.
+     */
     bool TestResolveConsumersAndProducers_MoreThreads();
 
-    //more states
+    /**
+     * @brief Tests the ResolveConsumersAndProducers method with more states.
+     */
     bool TestResolveConsumersAndProducers_MoreStates();
 
-    //more producers
+    /**
+     * @brief Tests the ResolveConsumersAndProducers method with more producers.
+     */
     bool TestResolveConsumersAndProducers_MoreProducers();
 
-    //basic
+    /**
+     * @brief Tests the VerifyConsumersAndProducers method.
+     */
     bool TestVerifyConsumersAndProducers();
 
-    //ranges
+    /**
+     * @brief Tests the VerifyConsumersAndProducers method with ranges.
+     */
     bool TestVerifyConsumersAndProducers_Ranges();
 
-    //ranges in structure
+    /**
+     * @brief Tests the VerifyConsumersAndProducers method with ranges in structure.
+     */
     bool TestVerifyConsumersAndProducers_Ranges2();
 
-    //ranges overlap but in input
+    /**
+     * @brief Tests the VerifyConsumersAndProducers method with ranges overlap (but in input).
+     */
     bool TestVerifyConsumersAndProducers_Ranges3();
 
-    //merging of time signals
+    /**
+     * @brief Tests the VerifyConsumersAndProducers method with merging of timing signals.
+     */
     bool TestVerifyConsumersAndProducers_TimingSignals();
 
-    //more than one producer
+    /**
+     * @brief Tests the VerifyConsumersAndProducers method with more than one producer.
+     */
     bool TestVerifyConsumersAndProducersFalse_MoreProducers();
 
-    //more than one producer
+    /**
+     * @brief Tests the VerifyConsumersAndProducers method more than one producer.
+     */
     bool TestVerifyConsumersAndProducersFalse_MoreProducers2();
 
-    //range overlap fail
+    /**
+     * @brief Tests the VerifyConsumersAndProducers method with range overlap fail.
+     */
     bool TestVerifyConsumersAndProducersFalse_RangeOverlap();
 
-    //range overlap fail same signal
+    /**
+     * @brief Tests the VerifyConsumersAndProducers method with range overlap fail same signal.
+     */
     bool TestVerifyConsumersAndProducersFalse_RangeOverlap2();
 
-    //producer in time signals
+    /**
+     * @brief Tests the VerifyConsumersAndProducers method with producer in timing signals.
+     */
     bool TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals();
 
-    //basic
+    /**
+     * @brief Tests the ResolveFunctionSignalsMemorySize.
+     */
     bool TestResolveFunctionSignalsMemorySize();
 
-    //ranges
+    /**
+     * @brief Tests the ResolveFunctionSignalsMemorySize method with ranges.
+     */
     bool TestResolveFunctionSignalsMemorySize_Ranges();
 
-    //invalid ranges min>max
+    /**
+     * @brief Tests the ResolveFunctionSignalsMemorySize method with invalid ranges min>max.
+     */
     bool TestResolveFunctionSignalsMemorySize_FalseInvalidRanges();
 
-    //invalid ranges max>#elements
+    /**
+     * @brief Tests the ResolveFunctionSignalsMemorySize method with invalid ranges max>#elements.
+     */
     bool TestResolveFunctionSignalsMemorySize_FalseInvalidRanges2();
 
-    //invalid ranges field 3 columns
+    /**
+     * @brief Tests the ResolveFunctionSignalsMemorySize method with invalid ranges field 3 columns.
+     */
     bool TestResolveFunctionSignalsMemorySize_FalseInvalidRanges3();
 
-    //basic
+    /**
+     * @brief Tests the ResolveFunctionsMemory method.
+     */
     bool TestResolveFunctionsMemory();
 
-    //samples
+    /**
+     * @brief Tests the ResolveFunctionsMemory method with samples.
+     */
     bool TestResolveFunctionsMemory_Samples();
 
-    //interleaved ds
+    /**
+     * @brief Tests the ResolveFunctionsMemory method with interleaved DataSource.
+     */
     bool TestResolveFunctionsMemory_InterleavedDs();
 
-    //samples and blocks
+    /**
+     * @brief Tests the ResolveFunctionsMemory method with samples and blocks.
+     */
     bool TestResolveFunctionsMemory_SamplesAndBlocks();
 
-    //Samples =0
+    /**
+     * @brief Tests the ResolveFunctionsMemory method with Samples =0.
+     */
     bool TestResolveFunctionsMemoryFalse_InvalidSamples();
 
-    //basic
+    /**
+     * @brief Tests the AssignFunctionsMemoryToDataSource.
+     */
     bool TestAssignFunctionsMemoryToDataSource();
 
-    //same gam is producer and consumer
+    /**
+     * @brief Tests the AssignFunctionsMemoryToDataSource method with the same gam as producer and consumer
+     */
     bool TestAssignFunctionsMemoryToDataSource_GamIO();
 
-    //basic
+    /**
+     * @brief Tests the AssignBrokersToFunctions.
+     */
     bool TestAssignBrokersToFunctions();
 
-    //unregistered ds if initialised from config
+    /**
+     * @brief Tests the AssignBrokersToFunctions method with an unregistered DataSource and initialised from configuration.
+     */
     bool TestAssignBrokersToFunctionsFalse_UnregisteredDataSource();
 
-    //unsupported broker
+    /**
+     * @brief Tests the AssignBrokersToFunctions method with an  unsupported broker.
+     */
     bool TestAssignBrokersToFunctionsFalse_UnsupportedBroker();
 
-    //invalid application
+    /**
+     * @brief Tests the AssignBrokersToFunctions method with an invalid application.
+     */
     bool TestAssignBrokersToFunctionsFalse_InvalidApplication();
 
+    /**
+     * @brief Tests the Set method.
+     */
     bool TestSet();
 
+    /**
+     * @brief Tests the Copy method.
+     */
     bool TestCopy();
 
-    //basic
+    /**
+     * @brief Tests the PostConfigureDataSource.
+     */
     bool TestPostConfigureDataSource();
 
-    //invalid data source
+    /**
+     * @brief Tests the PostConfigureDataSource method with an invalid data source
+     */
     bool TestPostConfigureDataSourceFalse_InvalidDataSource();
 
-    //basic
+    /**
+     * @brief Tests the PostConfigureFunctions.
+     */
     bool TestPostConfigureFunctions();
 
-    //invalid GAM
+    /**
+     * @brief Tests the PostConfigureFunctions method invalid GAM.
+     */
     bool TestPostConfigureFunctionsFalse_InvalidDataSource();
 
-
+    /**
+     * @brief Tests the ConfigureAfterInitialisation method.
+     */
     bool TestConfigureAfterInitialisation();
 
+    /**
+     * @brief Tests the ConfigureBeforeInitialisation method.
+     */
     bool TestConfigureBeforeInitialisation();
+
+    /**
+     * @brief Tests the ConfigureThreads method (tested implicitly).
+     */
+    bool TestConfigureThreads();
 
 };
 

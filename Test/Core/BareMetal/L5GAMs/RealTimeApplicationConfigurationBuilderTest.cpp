@@ -7467,7 +7467,6 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsF
             "    }"
             "}";
 
-
     return TestBuilder(config, "Application1", "DDB1", "", "", ResolveDataSources, true);
 }
 
@@ -17838,7 +17837,6 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
 
     return TestBuilder(config, "Application1", "DDB1", "", "", VerifyConsumersAndProducers, true);
 }
-
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveFunctionSignalsMemorySize() {
     const char8 * const config = ""
@@ -28470,4 +28468,8 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureBeforeInitialisat
             "}";
 
     return TestBuilder(config, "$Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, ConfigureInitialisation, false, true);
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestConfigureThreads() {
+    return TestConfigureBeforeInitialisation();
 }

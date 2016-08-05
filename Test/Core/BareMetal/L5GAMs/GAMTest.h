@@ -62,6 +62,11 @@ public:
     bool TestAddSignals();
 
     /**
+     * @brief Tests the GetQualifiedName method.
+     */
+    bool TestGetQualifiedName();
+
+    /**
      * @brief Tests the SetConfiguredDatabase method (this is tested implicitly)
      */
     bool TestSetConfiguredDatabase();

@@ -126,7 +126,6 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
     return ret;
 }
 
-
 bool RealTimeApplication::ConfigureApplication() {
     RealTimeApplicationConfigurationBuilder rtAppBuilder(*this, "DDB1");
     bool ret = rtAppBuilder.ConfigureAfterInitialisation();
@@ -151,6 +150,9 @@ bool RealTimeApplication::ConfigureApplication() {
         ret = AddBrokersToFunctions();
     }
     if (ret) {
+        ret = FindStatefulDataSources();
+    }
+    if (ret) {
         ret = scheduler.IsValid();
         if (ret) {
             ret = scheduler->ConfigureScheduler();
@@ -162,17 +164,6 @@ bool RealTimeApplication::ConfigureApplication() {
 
 bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn,
                                                ConfigurationDatabase &dataDatabaseIn) {
-    // no check..someone else did it
-
-    //-External compiling
-    //-Initialization
-    // This Function {
-    //    -Brokers negotiation
-    //    -PostConfig
-    // }
-
-    // TODO Standard checks can be done (the Verifies)
-    //TODO
 
     RealTimeApplicationConfigurationBuilder configuration(*this, "DDB1");
     bool ret = configuration.Set(functionsDatabaseIn, dataDatabaseIn);
@@ -190,7 +181,7 @@ bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsD
         ret = configuration.PostConfigureFunctions();
     }
     if (ret) {
-        ret = ConfigureArchitecture();
+        ret = configuration.ConfigureThreads();
     }
     if (ret) {
         ret = AllocateGAMMemory();
@@ -201,7 +192,9 @@ bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsD
     if (ret) {
         ret = AddBrokersToFunctions();
     }
-
+    if (ret) {
+        ret = FindStatefulDataSources();
+    }
     if (ret) {
         ret = scheduler.IsValid();
         if (ret) {
@@ -345,9 +338,18 @@ void RealTimeApplication::StopExecution() {
     scheduler->StopExecution();
 }
 
-bool RealTimeApplication::ConfigureArchitecture() {
+bool RealTimeApplication::FindStatefulDataSources() {
+    bool ret = dataSourceContainer.IsValid();
+    if (ret) {
+        //Look for all the StatefulI inside the Data node
+        ReferenceContainerFilterReferencesTemplate<StatefulI> dataFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+        dataSourceContainer->Find(statefulsInData, dataFilter);
+    }
 
-    // there must be the container called "States"
+    return ret;
+}
+
+bool RealTimeApplication::GetStates(ReferenceContainer &states) {
     bool ret = statesContainer.IsValid();
 
     if (ret) {
@@ -357,30 +359,10 @@ bool RealTimeApplication::ConfigureArchitecture() {
         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
             ReferenceT<RealTimeState> state = statesContainer->Get(i);
             if (state.IsValid()) {
-            	ReferenceT<ReferenceContainer> threadsContainer=state->Find("Threads");
-
-                // for each state call the configuration function
-                uint32 numberOfThreads = threadsContainer->Size();
-                for (uint32 j = 0u; (j < numberOfThreads) && (ret); j++) {
-                    ReferenceT<RealTimeThread> thread = threadsContainer->Get(j);
-                    if (thread.IsValid()) {
-                        ret = thread->ConfigureArchitecture();
-                    }
-                }
+                states.Insert(state);
             }
         }
     }
-
-    if (ret) {
-        ret = dataSourceContainer.IsValid();
-    }
-    if (ret) {
-        //Look for all the GAMs inside the RealTimeApplication
-        ReferenceContainerFilterReferencesTemplate<StatefulI> dataFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
-        dataSourceContainer->Find(statefulsInData, dataFilter);
-    }
-
-
     return ret;
 }
 

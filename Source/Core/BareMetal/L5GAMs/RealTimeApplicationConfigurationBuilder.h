@@ -904,7 +904,13 @@ public:
     bool InitialiseSignalsDatabaseFromConfiguration();
 
     /**
-     * @brief Compiles all the information required to build a RealTimeApplicaiton after the
+     * @brief Calls RealTimeThread::ConfigureArchitecture on all the threads.
+     * @return true if RealTimeThread::ConfigureArchitecture returns true on all RealTimeThread elements.
+     */
+    bool ConfigureThreads();
+
+    /**
+     * @brief Compiles all the information required to build a RealTimeApplication after the
      * ObjectRegistryDatabase::Initialise has been successfully called (i.e. it requires access to the live objects).
      * @return true if the following functions, called in order, return true:
      *   InitialiseSignalsDatabase(), FlattenSignalsDatabases(), ResolveDataSources(),
@@ -917,7 +923,7 @@ public:
     bool ConfigureAfterInitialisation();
 
     /**
-     * @brief Compiles all the information required to build a RealTimeApplicaiton without
+     * @brief Compiles all the information required to build a RealTimeApplication without
      * requiring the ObjectRegistryDatabase::Initialise to be called to load all the Objects (i.e. it works only
      *  with configuration data).
      * @details This allows to generate compiled databases with Function and DataSource databases
@@ -1277,6 +1283,8 @@ private:
      * @return true if all the TimingDataSource signals have the correct properties.
      */
     bool CheckTimeSignalInfo();
+
+
 /*lint -e{1712} this class does not have a default constructor because either
  * the ConfigurationDatabase or the RealTimeApplication must be defined in construction.
  */

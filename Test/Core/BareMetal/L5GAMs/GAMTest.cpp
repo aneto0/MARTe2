@@ -878,6 +878,65 @@ static const char8 * const gamTestConfig6 = ""
         "    }"
         "}";
 
+static const char8 * const gamTestConfig7 = ""
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +MyGAMCollection = {"
+        "            Class = ReferenceContainer"
+        "            +MyGAMCollection2 = {"
+        "                Class = ReferenceContainer"
+        "                +GAMA = {"
+        "                   Class = GAMTestGAM1"
+        "                   OutputSignals = {"
+        "                        Signal0 = {"
+        "                            DataSource = DDB1"
+        "                            Type = uint32"
+        "                        }"
+        "                    }"
+        "                }"
+        "            }"
+        "        }"
+        "        +GAMB = {"
+        "            Class = GAMTestGAM1"
+        "            InputSignals = {"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        Class = ReferenceContainer"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
+        "        }"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
+        "        }"
+
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {GAMB MyGAMCollection}"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = GAMTestScheduler1"
+        "        TimingDataSource = Timings"
+        "    }"
+        "}";
+
 bool GAMTest::TestConstructor() {
     GAMTestGAM1 gam;
     bool ret = (gam.GetNumberOfInputSignals() == 0u);
@@ -2452,4 +2511,37 @@ bool GAMTest::TestGetInputBrokers() {
 
 bool GAMTest::TestGetOutputBrokers() {
     return TestAddOutputBrokers();
+}
+
+bool GAMTest::TestGetQualifiedName() {
+    bool ret = InitialiseGAMEnviroment(gamTestConfig7);
+
+    ReferenceT<GAMTestGAM1> gamA;
+    ReferenceT<GAMTestGAM1> gamB;
+    if (ret) {
+        StreamString gamFullName;
+        gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.MyGAMCollection.MyGAMCollection2.GAMA");
+        ret = gamA.IsValid();
+    }
+    if (ret) {
+        StreamString gamFullName;
+        gamB = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMB");
+        ret = gamB.IsValid();
+    }
+    if (ret) {
+        StreamString qualifiedName;
+        ret = gamA->GetQualifiedName(qualifiedName);
+        if (ret) {
+            ret = qualifiedName = "MyGAMCollection.MyGAMCollection2.GAMA";
+        }
+    }
+    if (ret) {
+        StreamString qualifiedName;
+        ret = gamB->GetQualifiedName(qualifiedName);
+        if (ret) {
+            ret = qualifiedName = "GAMB";
+        }
+    }
+
+    return ret;
 }

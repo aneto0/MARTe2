@@ -1748,7 +1748,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
 
     bool ret = (realTimeApplication != NULL);
     if (ret) {
-        ret = realTimeApplication->ConfigureArchitecture();
+        ret = ConfigureThreads();
         if (ret) {
             ReferenceContainer statesFound;
             //Look for all the RealTimeStates
@@ -4031,6 +4031,38 @@ bool RealTimeApplicationConfigurationBuilder::SearchDataSources(ConfigurationDat
         }
 
     }
+    return ret;
+}
+
+bool RealTimeApplicationConfigurationBuilder::ConfigureThreads() {
+
+    ReferenceContainer statesContainer;
+    bool ret = (realTimeApplication != NULL);
+    if(ret){
+        ret = realTimeApplication->GetStates(statesContainer);
+    }
+
+    if (ret) {
+        // States contains RealTimeState references
+        // for each of them call Validate(*)
+        uint32 numberOfStates = statesContainer.Size();
+        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+            ReferenceT<RealTimeState> state = statesContainer.Get(i);
+            if (state.IsValid()) {
+                ReferenceT<ReferenceContainer> threadsContainer = state->Find("Threads");
+
+                // for each state call the configuration function
+                uint32 numberOfThreads = threadsContainer->Size();
+                for (uint32 j = 0u; (j < numberOfThreads) && (ret); j++) {
+                    ReferenceT<RealTimeThread> thread = threadsContainer->Get(j);
+                    if (thread.IsValid()) {
+                        ret = thread->ConfigureArchitecture();
+                    }
+                }
+            }
+        }
+    }
+
     return ret;
 }
 

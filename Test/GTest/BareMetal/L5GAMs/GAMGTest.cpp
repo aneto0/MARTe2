@@ -213,3 +213,8 @@ TEST(GAMGTest,TestGetOutputBrokers) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetOutputBrokers());
 }
+
+TEST(GAMGTest,TestGetQualifiedName) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestGetQualifiedName());
+}

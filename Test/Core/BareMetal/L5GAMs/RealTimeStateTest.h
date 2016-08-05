@@ -46,11 +46,6 @@ class RealTimeStateTest {
 
 public:
 
-
-
-
-
-
     /**
      * @brief Creates a configuration database used in tests.
      */
@@ -61,14 +56,25 @@ public:
      */
     ~RealTimeStateTest();
 
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests the AddStatefuls method.
+     */
     bool TestAddStatefuls();
 
+    /**
+     * @brief Tests the PrepareNextState method.
+     */
     bool TestPrepareNextState();
 
+    /**
+     * @brief Tests the GetNumberOfStatefuls method.
+     */
     bool TestGetNumberOfStatefuls();
-
 
 };
 

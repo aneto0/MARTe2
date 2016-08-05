@@ -56,21 +56,55 @@ public:
      */
     ~RealTimeApplicationTest();
 
+    /**
+     * @brief Inits the application environment.
+     */
     bool Init();
 
+    /**
+     * @brief Tests the Constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests the Initialise method.
+     */
     bool TestInitialise();
 
+    /**
+     * @brief Tests the ConfigureApplication method starting from a configuration file (i.e. using the RealTimeApplicationConfigurationBuilder to generate the configuration).
+     */
     bool TestConfigureApplication();
 
+    /**
+     * @brief Tests the ConfigureApplication method with pre-compiled ConfigurationDatabases .
+     */
     bool TestConfigureApplicationNoInit();
 
+    /**
+     * @brief Tests the PrepareNextState method.
+     */
     bool TestPrepareNextState();
 
+    /**
+     * @brief Tests the StartExecution method.
+     */
     bool TestStartExecution();
 
+    /**
+     * @brief Tests the StopExecution method.
+     */
     bool TestStopExecution();
+
+    /**
+     * @brief Tests the GetStates method.
+     */
+    bool TestGetStates();
+
+    /**
+     * @brief Tests the GetIndex method.
+     */
+    bool TestGetIndex();
 
     StreamString config;
 };
