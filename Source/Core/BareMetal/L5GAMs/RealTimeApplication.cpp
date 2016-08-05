@@ -62,6 +62,8 @@ RealTimeApplication::~RealTimeApplication() {
 
 }
 bool RealTimeApplication::Initialise(StructuredDataI & data) {
+	index = 1u;
+
 	bool ret = ReferenceContainer::Initialise(data);
 	if (data.MoveRelative("+Data")) {
 		if (!data.Read("DefaultDataSource", defaultDataSourceName)) {

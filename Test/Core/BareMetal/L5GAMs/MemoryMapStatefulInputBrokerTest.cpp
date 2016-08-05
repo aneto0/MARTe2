@@ -636,10 +636,6 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_1() {
         app = ObjectRegistryDatabase::Instance()->Find("Application1");
         ret = app.IsValid();
     }
-    if (ret) {
-        app->StartExecution();
-    }
-    //RealTimeApplication::index = 1u;
     uint32 numberOfCopies;
     if (ret) {
         numberOfCopies = broker->GetNumberOfCopies();
@@ -773,6 +769,9 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Ranges_0() {
         app = ObjectRegistryDatabase::Instance()->Find("Application1");
         ret = app.IsValid();
     }
+    if (ret) {
+        app->StartExecution();
+    }
 
     if (ret) {
         ret = broker->Execute();
@@ -838,9 +837,7 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Ranges_1() {
         app = ObjectRegistryDatabase::Instance()->Find("Application1");
         ret = app.IsValid();
     }
-    if (ret) {
-        app->StartExecution();
-    }
+
 
     //RealTimeApplication::index = 1u;
     if (ret) {
@@ -999,7 +996,9 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Samples_0() {
         app = ObjectRegistryDatabase::Instance()->Find("Application1");
         ret = app.IsValid();
     }
-    //RealTimeApplication::index = 0u;
+    if (ret) {
+        app->StartExecution();
+    }
     if (ret) {
         ret = broker->Execute();
     }
@@ -1052,10 +1051,6 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Samples_1() {
         app = ObjectRegistryDatabase::Instance()->Find("Application1");
         ret = app.IsValid();
     }
-    if (ret) {
-        app->StartExecution();
-    }
-    //RealTimeApplication::index = 1u;
     if (ret) {
         ret = broker->Execute();
     }
