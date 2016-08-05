@@ -87,10 +87,11 @@ DECLARE_STRUCT_INTROSPECTION(TestStructD, TestStructDEntries);
 GAM1::GAM1() :
         GAM() {
     numberOfExecutions = 0u;
+	context=0u;
+
 }
 
 GAM1::~GAM1() {
-	context=0u;
 }
 
 bool GAM1::Initialise(StructuredDataI & data) {

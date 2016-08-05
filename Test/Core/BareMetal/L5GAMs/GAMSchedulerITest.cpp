@@ -517,9 +517,6 @@ bool GAMSchedulerITest::TestConfigureSchedulerFalse_InvalidState(){
         return false;
     }
 
-    if (!app->ConfigureApplication()) {
-        return false;
-    }
 
     ReferenceT<GAMSchedulerI> scheduler = app->Find("Scheduler");
     if (!scheduler.IsValid()) {
