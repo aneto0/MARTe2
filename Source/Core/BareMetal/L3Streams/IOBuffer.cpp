@@ -398,8 +398,8 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
 
         AnyType toPrint = structuredData->GetType(childName);
         if (toPrint.GetDataPointer() != NULL) {
-            uint32 j = 0;
-            for (j = 0; (j < nodeLevel) && (ret); j++) {
+            uint32 j;
+            for (j = 0u; (j < nodeLevel) && (ret); j++) {
                 AnyType noneType = voidAnyType;
                 ret = (iobuff.PrintFormatted("    ", &noneType));
             }
@@ -413,22 +413,23 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
         else {
             // a node
             if (structuredData->MoveRelative(childName)) {
-                uint32 j = 0;
-                for (j = 0; (j < nodeLevel) && (ret); j++) {
+                uint32 j;
+                for (j = 0u; (j < nodeLevel) && (ret); j++) {
                     AnyType noneType = voidAnyType;
                     ret = (iobuff.PrintFormatted("    ", &noneType));
                 }
                 AnyType printLeftSide[] = {childName, "= {", voidAnyType};
                 ret = (iobuff.PrintFormatted("%s %s\n", &printLeftSide[0]));
                 if (ret) {
-                    ret = PrintStructuredDataInterface(iobuff, structuredData, ++nodeLevel);
+                    nodeLevel++;
+                    ret = PrintStructuredDataInterface(iobuff, structuredData, nodeLevel);
                 }
                 if (ret) {
                     ret = (structuredData->MoveToAncestor(1u));
                     nodeLevel--;
                 }
                 if (ret) {
-                    for (j = 0; (j < nodeLevel) && (ret); j++) {
+                    for (j = 0u; (j < nodeLevel) && (ret); j++) {
                         AnyType noneType = voidAnyType;
                         ret = (iobuff.PrintFormatted("    ", &noneType));
                     }

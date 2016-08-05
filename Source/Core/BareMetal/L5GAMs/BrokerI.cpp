@@ -45,6 +45,7 @@
 
 namespace MARTe {
 BrokerI::BrokerI() :
+        Object(),
         ExecutableI() {
 
     numberOfCopies = 0u;
@@ -99,7 +100,10 @@ void *BrokerI::GetFunctionPointer(const uint32 copyIdx) const {
     return ret;
 }
 
-bool BrokerI::InitFunctionPointers(const SignalDirection direction, DataSourceI &dataSource, const char8 * const functionName, void * const gamMemoryAddress) {
+bool BrokerI::InitFunctionPointers(const SignalDirection direction,
+                                   DataSourceI &dataSource,
+                                   const char8 * const functionName,
+                                   void * const gamMemoryAddress) {
 
     //Need to check the broker class name. This function loops through all the signals of the
     //functionName and should only react to the signals which are related to this BrokerI instance.

@@ -179,7 +179,7 @@ const char8 *GAMDataSource::GetBrokerName(StructuredDataI &data,
 
 }
 
-/* lint -e{183} this implementation of the StatefulI interface does not need to know about the nextStateName*/
+/*lint -e{715} this implementation of the StatefulI interface does not need to know about the nextStateName*/
 bool GAMDataSource::PrepareNextState(const char8 * const currentStateName,
                                      const char8 * const nextStateName) {
 //Set the default value for all the input signals

@@ -143,6 +143,7 @@ bool Reference::Initialise(StructuredDataI &data,
 
     if (ok) {
         if (data.GetName() != NULL) {
+            /*lint -e{613} checking of NULL pointer done before entering here. */
             objectPointer->SetName(&data.GetName()[1]);
         }
     }
@@ -205,7 +206,7 @@ Object *Reference::CreateByName(const char8 * const className,
 
     const ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance()->Find(className);
     if ((classRegistryItem != NULL)) {
-    	const ObjectBuilder *builder=classRegistryItem->GetObjectBuilder();
+        const ObjectBuilder *builder = classRegistryItem->GetObjectBuilder();
         if (builder != NULL) {
             obj = builder->Build(heap);
         }
