@@ -46,11 +46,6 @@ class RealTimeStateTest {
 
 public:
 
-
-
-
-
-
     /**
      * @brief Creates a configuration database used in tests.
      */
@@ -61,12 +56,30 @@ public:
      */
     ~RealTimeStateTest();
 
+    /**
+     * @brief Tests the constructor
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the the function inserts statefuls in the internal container
+     * checking if they already are present to avoi duplications
+     */
     bool TestAddStatefuls();
 
+    /**
+     * @brief Tests if the function fails trying to add a not StatefulI reference
+     */
+    bool TestAddStatefulsFalse_InvalidStateful();
+
+    /**
+     * @brief Tests if the function refreshes the context of the StatefulI involved in the next state
+     */
     bool TestPrepareNextState();
 
+    /**
+     * @brief Tests if the function returns how many StatefulI are involved in this state
+     */
     bool TestGetNumberOfStatefuls();
 
 

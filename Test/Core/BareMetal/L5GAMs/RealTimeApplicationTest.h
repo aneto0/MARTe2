@@ -46,33 +46,77 @@ using namespace MARTe;
 class RealTimeApplicationTest {
 public:
 
-    /**
-     * @brief Initialises the ObjectRegistryDatabase.
-     */
-    RealTimeApplicationTest();
+	/**
+	 * @brief Initialises the configuration stream
+	 */
+	RealTimeApplicationTest();
 
-    /**
-     * @brief Destroys the ObjectRegistryDatabase.
-     */
-    ~RealTimeApplicationTest();
+	/**
+	 * @brief Destroys the ObjectRegistryDatabase.
+	 */
+	~RealTimeApplicationTest();
 
-    bool Init();
+	/**
+	 * @brief Initialises the ObhectRegistryDatabase
+	 */
+	bool Init();
 
-    bool TestConstructor();
+	/**
+	 * @brief Tests the constructor
+	 */
+	bool TestConstructor();
 
-    bool TestInitialise();
+	/**
+	 * @brief Tests the Initialise function
+	 */
+	bool TestInitialise();
 
-    bool TestConfigureApplication();
+	/**
+	 * @brief Tests the Initialise failing if no States container declared
+	 */
+	bool TestInitialiseFalse_NoStatesFound();
 
-    bool TestConfigureApplicationNoInit();
+	/**
+	 * @brief Tests the Initialise failing if no Data container declared
+	 */
+	bool TestInitialiseFalse_NoDataFound();
 
-    bool TestPrepareNextState();
+	/**
+	 * @brief Tests the Initialise failing if no Functions container declared
+	 */
+	bool TestInitialiseFalse_NoFunctionsFound();
 
-    bool TestStartExecution();
+	/**
+	 * @brief Tests the Initialise failing if no Scheduler container declared
+	 */
+	bool TestInitialiseFalse_NoSchedulerFound();
 
-    bool TestStopExecution();
+	/**
+	 * @brief Tests the ConfigureApplication compiling the ConfigurationDatabase after initialisation
+	 */
+	bool TestConfigureApplication();
 
-    StreamString config;
+	/**
+	 * @brief Tests the ConfigureApplication compiling the ConfigurationDatabase before initialisation
+	 */
+	bool TestConfigureApplicationNoInit();
+
+	/**
+	 * @brief Tests if the function refreshes the correct GAMs, DataSources and Scheduler for a state switch
+	 */
+	bool TestPrepareNextState();
+
+	/**
+	 * @brief Tests if the function launches the scheduler execution
+	 */
+	bool TestStartExecution();
+
+	/**
+	 * @brief Tests if the function stops the scheduler execution
+	 */
+	bool TestStopExecution();
+
+	StreamString config;
 };
 
 /*---------------------------------------------------------------------------*/

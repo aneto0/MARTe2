@@ -37,7 +37,6 @@
 #include "RealTimeThread.h"
 #include "ObjectRegistryDatabase.h"
 #include "GAMTestHelper.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -361,10 +360,7 @@ bool RealTimeApplicationTest::Init() {
 		ObjectRegistryDatabase::Instance()->CleanUp();
 		ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
 		if (!ret) {
-			printf("\nFAILED INITIALISATION\n");
 		}
-	} else {
-		printf("\nFAILED PARSING\n");
 	}
 	return ret;
 }
@@ -388,6 +384,375 @@ bool RealTimeApplicationTest::TestInitialise() {
 
 	return true;
 
+}
+
+bool RealTimeApplicationTest::TestInitialiseFalse_NoStatesFound() {
+
+	StreamString config = ""
+			"$Fibonacci = {"
+			"    Class = RealTimeApplication"
+			"    +Functions = {"
+			"        Class = ReferenceContainer"
+			"        +GAMA = {"
+			"            Class = GAM1"
+			"            InputSignals = {"
+			"                SignalIn1 = {"
+			"                    DataSource = DDB1"
+			"                    Type = uint32"
+			"                    Alias = add1"
+			"                    Default = 1"
+			"                }"
+			"                SignalIn2 = {"
+			"                    DataSource = DDB2"
+			"                    Type = uint32"
+			"                    Alias = add2"
+			"                    Default = 2"
+			"                }"
+			"            }"
+			"            OutputSignals = {"
+			"                SignalOut = {"
+			"                    DataSource = DDB1"
+			"                    Alias = add1"
+			"                    Type = uint32"
+			"                }"
+			"            }"
+			"        }"
+			"        +GAMB = {"
+			"            Class = GAM1"
+			"            InputSignals = {"
+			"                SignalIn1 = {"
+			"                    DataSource = DDB2"
+			"                    Type = uint32"
+			"                    Alias = add2"
+			"                }"
+			"                SignalIn2 = {"
+			"                    DataSource = DDB1"
+			"                    Type = uint32"
+			"                    Alias = add1"
+			"                }"
+			"            }"
+			"            OutputSignals = {"
+			"                SignalOut = {"
+			"                    DataSource = DDB2"
+			"                    Alias = add2"
+			"                    Type = uint32"
+			"                }"
+			"            }"
+			"        }"
+			"    }"
+			"    +Data = {"
+			"        Class = ReferenceContainer"
+			"        DefaultDataSource = DDB1"
+			"        +DDB1 = {"
+			"            Class = GAMDataSource"
+			"        }"
+			"        +DDB2 = {"
+			"            Class = GAMDataSource"
+			"        }"
+			"        +Timings = {"
+			"            Class = TimingDataSource"
+			"        }"
+			"    }"
+			"    +Scheduler = {"
+			"        Class = RealTimeApplicationTestScheduler"
+			"        TimingDataSource = Timings"
+			"    }"
+			"}";
+	config.Seek(0ull);
+	ConfigurationDatabase cdb;
+	StandardParser parser(config, cdb);
+	if (!parser.Parse()) {
+		return false;
+	}
+
+	cdb.MoveAbsolute("$Fibonacci");
+
+	RealTimeApplication app;
+
+	return (!app.Initialise(cdb));
+}
+
+bool RealTimeApplicationTest::TestInitialiseFalse_NoDataFound() {
+
+	StreamString config = ""
+			"$Fibonacci = {"
+			"    Class = RealTimeApplication"
+			"    +Functions = {"
+			"        Class = ReferenceContainer"
+			"        +GAMA = {"
+			"            Class = GAM1"
+			"            InputSignals = {"
+			"                SignalIn1 = {"
+			"                    DataSource = DDB1"
+			"                    Type = uint32"
+			"                    Alias = add1"
+			"                    Default = 1"
+			"                }"
+			"                SignalIn2 = {"
+			"                    DataSource = DDB2"
+			"                    Type = uint32"
+			"                    Alias = add2"
+			"                    Default = 2"
+			"                }"
+			"            }"
+			"            OutputSignals = {"
+			"                SignalOut = {"
+			"                    DataSource = DDB1"
+			"                    Alias = add1"
+			"                    Type = uint32"
+			"                }"
+			"            }"
+			"        }"
+			"        +GAMB = {"
+			"            Class = GAM1"
+			"            InputSignals = {"
+			"                SignalIn1 = {"
+			"                    DataSource = DDB2"
+			"                    Type = uint32"
+			"                    Alias = add2"
+			"                }"
+			"                SignalIn2 = {"
+			"                    DataSource = DDB1"
+			"                    Type = uint32"
+			"                    Alias = add1"
+			"                }"
+			"            }"
+			"            OutputSignals = {"
+			"                SignalOut = {"
+			"                    DataSource = DDB2"
+			"                    Alias = add2"
+			"                    Type = uint32"
+			"                }"
+			"            }"
+			"        }"
+			"    }"
+			"    +States = {"
+			"        Class = ReferenceContainer"
+			"        +State1 = {"
+			"            Class = RealTimeState"
+			"            +Threads = {"
+			"                Class = ReferenceContainer"
+			"                +Thread1 = {"
+			"                    Class = RealTimeThread"
+			"                    Functions = {GAMA, GAMB}"
+			"                }"
+			"                +Thread2 = {"
+			"                    Class = RealTimeThread"
+			"                    Functions = {GAMC, GAMD, GAME, GAMF}"
+			"                }"
+			"            }"
+			"        }"
+			"        +State2 = {"
+			"            Class = RealTimeState"
+			"            +Threads = {"
+			"                Class = ReferenceContainer"
+			"                +Thread1 = {"
+			"                    Class = RealTimeThread"
+			"                    Functions = {GAMG, GAMH, GAMA, GAMB}"
+			"                }"
+			"                +Thread2 = {"
+			"                    Class = RealTimeThread"
+			"                    Functions = {GAMC, GAMD}"
+			"                }"
+			"            }"
+			"        }"
+			"    }"
+			"    +Scheduler = {"
+			"        Class = RealTimeApplicationTestScheduler"
+			"        TimingDataSource = Timings"
+			"    }"
+			"}";
+	config.Seek(0ull);
+	ConfigurationDatabase cdb;
+	StandardParser parser(config, cdb);
+	if (!parser.Parse()) {
+		return false;
+	}
+
+	cdb.MoveAbsolute("$Fibonacci");
+
+	RealTimeApplication app;
+
+	return (!app.Initialise(cdb));
+}
+
+bool RealTimeApplicationTest::TestInitialiseFalse_NoFunctionsFound() {
+	StreamString config = ""
+			"$Fibonacci = {"
+			"    Class = RealTimeApplication"
+			"    +Data = {"
+			"        Class = ReferenceContainer"
+			"        DefaultDataSource = DDB1"
+			"        +DDB1 = {"
+			"            Class = GAMDataSource"
+			"        }"
+			"        +DDB2 = {"
+			"            Class = GAMDataSource"
+			"        }"
+			"        +Timings = {"
+			"            Class = TimingDataSource"
+			"        }"
+			"    }"
+			"    +States = {"
+			"        Class = ReferenceContainer"
+			"        +State1 = {"
+			"            Class = RealTimeState"
+			"            +Threads = {"
+			"                Class = ReferenceContainer"
+			"                +Thread1 = {"
+			"                    Class = RealTimeThread"
+			"                    Functions = {GAMA, GAMB}"
+			"                }"
+			"                +Thread2 = {"
+			"                    Class = RealTimeThread"
+			"                    Functions = {GAMC, GAMD, GAME, GAMF}"
+			"                }"
+			"            }"
+			"        }"
+			"        +State2 = {"
+			"            Class = RealTimeState"
+			"            +Threads = {"
+			"                Class = ReferenceContainer"
+			"                +Thread1 = {"
+			"                    Class = RealTimeThread"
+			"                    Functions = {GAMG, GAMH, GAMA, GAMB}"
+			"                }"
+			"                +Thread2 = {"
+			"                    Class = RealTimeThread"
+			"                    Functions = {GAMC, GAMD}"
+			"                }"
+			"            }"
+			"        }"
+			"    }"
+			"    +Scheduler = {"
+			"        Class = RealTimeApplicationTestScheduler"
+			"        TimingDataSource = Timings"
+			"    }"
+			"}";
+	config.Seek(0ull);
+	ConfigurationDatabase cdb;
+	StandardParser parser(config, cdb);
+	if (!parser.Parse()) {
+		return false;
+	}
+
+	cdb.MoveAbsolute("$Fibonacci");
+
+	RealTimeApplication app;
+
+	return (!app.Initialise(cdb));
+}
+
+bool RealTimeApplicationTest::TestInitialiseFalse_NoSchedulerFound() {
+	StreamString config = ""
+			"$Fibonacci = {"
+			"    Class = RealTimeApplication"
+			"    +Functions = {"
+			"        Class = ReferenceContainer"
+			"        +GAMA = {"
+			"            Class = GAM1"
+			"            InputSignals = {"
+			"                SignalIn1 = {"
+			"                    DataSource = DDB1"
+			"                    Type = uint32"
+			"                    Alias = add1"
+			"                    Default = 1"
+			"                }"
+			"                SignalIn2 = {"
+			"                    DataSource = DDB2"
+			"                    Type = uint32"
+			"                    Alias = add2"
+			"                    Default = 2"
+			"                }"
+			"            }"
+			"            OutputSignals = {"
+			"                SignalOut = {"
+			"                    DataSource = DDB1"
+			"                    Alias = add1"
+			"                    Type = uint32"
+			"                }"
+			"            }"
+			"        }"
+			"        +GAMB = {"
+			"            Class = GAM1"
+			"            InputSignals = {"
+			"                SignalIn1 = {"
+			"                    DataSource = DDB2"
+			"                    Type = uint32"
+			"                    Alias = add2"
+			"                }"
+			"                SignalIn2 = {"
+			"                    DataSource = DDB1"
+			"                    Type = uint32"
+			"                    Alias = add1"
+			"                }"
+			"            }"
+			"            OutputSignals = {"
+			"                SignalOut = {"
+			"                    DataSource = DDB2"
+			"                    Alias = add2"
+			"                    Type = uint32"
+			"                }"
+			"            }"
+			"        }"
+			"    }"
+			"    +Data = {"
+			"        Class = ReferenceContainer"
+			"        DefaultDataSource = DDB1"
+			"        +DDB1 = {"
+			"            Class = GAMDataSource"
+			"        }"
+			"        +DDB2 = {"
+			"            Class = GAMDataSource"
+			"        }"
+			"        +Timings = {"
+			"            Class = TimingDataSource"
+			"        }"
+			"    }"
+			"    +States = {"
+			"        Class = ReferenceContainer"
+			"        +State1 = {"
+			"            Class = RealTimeState"
+			"            +Threads = {"
+			"                Class = ReferenceContainer"
+			"                +Thread1 = {"
+			"                    Class = RealTimeThread"
+			"                    Functions = {GAMA, GAMB}"
+			"                }"
+			"                +Thread2 = {"
+			"                    Class = RealTimeThread"
+			"                    Functions = {GAMC, GAMD, GAME, GAMF}"
+			"                }"
+			"            }"
+			"        }"
+			"        +State2 = {"
+			"            Class = RealTimeState"
+			"            +Threads = {"
+			"                Class = ReferenceContainer"
+			"                +Thread1 = {"
+			"                    Class = RealTimeThread"
+			"                    Functions = {GAMG, GAMH, GAMA, GAMB}"
+			"                }"
+			"                +Thread2 = {"
+			"                    Class = RealTimeThread"
+			"                    Functions = {GAMC, GAMD}"
+			"                }"
+			"            }"
+			"        }"
+			"    }"
+			"}";
+	config.Seek(0ull);
+	ConfigurationDatabase cdb;
+	StandardParser parser(config, cdb);
+	if (!parser.Parse()) {
+		return false;
+	}
+
+	cdb.MoveAbsolute("$Fibonacci");
+
+	RealTimeApplication app;
+
+	return (!app.Initialise(cdb));
 }
 
 bool RealTimeApplicationTest::TestConfigureApplication() {
@@ -547,40 +912,34 @@ bool RealTimeApplicationTest::TestPrepareNextState() {
 	}
 
 	if (GetDsDefault(ddb1, "add1") != 3) {
-		printf("\n0 %d\n", GetDsDefault(ddb1, "add1"));
 		return false;
 	}
 
 	if (GetDsDefault(ddb2, "add2") != 5) {
-		printf("\n1 %d\n", GetDsDefault(ddb2, "add2"));
 		return false;
 	}
 
 	if (GetDsDefault(ddb1, "add3") != 3) {
-		printf("\n2 %d\n", GetDsDefault(ddb1, "add3"));
 		return false;
 	}
 
 	if (GetDsDefault(ddb2, "add4") != 5) {
-		printf("\n3 %d\n", GetDsDefault(ddb2, "add4"));
 		return false;
 	}
 
 	if (GetDsDefault(ddb1, "add7") != 21) {
-		printf("\n4 %d\n", GetDsDefault(ddb1, "add7"));
 		return false;
 	}
 
 	if (GetDsDefault(ddb2, "add8") != 34) {
-		printf("\n5 %d\n", GetDsDefault(ddb2, "add8"));
 		return false;
 	}
 
 	app->StartExecution();
 
 	if (StringHelper::Compare(scheduler->GetStateName(), "State2") != 0) {
-			return false;
-		}
+		return false;
+	}
 	return true;
 
 }

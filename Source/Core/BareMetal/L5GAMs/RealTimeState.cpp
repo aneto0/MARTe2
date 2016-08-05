@@ -65,6 +65,9 @@ bool RealTimeState::AddStatefuls(ReferenceContainer &statefulsIn) {
                 ret = statefuls.Insert(toAdd);
             }
         }
+        else{
+	    	REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,"Trying to add a not StatefulI object in RealTimeState %s", GetName())
+        }
     }
     return ret;
 }
