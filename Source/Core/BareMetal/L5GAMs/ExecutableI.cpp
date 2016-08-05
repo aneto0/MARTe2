@@ -40,11 +40,15 @@
 namespace MARTe {
 
 ExecutableI::ExecutableI() {
-    lastExecutionTimeMicroSec = 0u;
+    timingSignalAddress = NULL_PTR(uint32 *);
 }
 
 ExecutableI::~ExecutableI() {
 
+}
+
+void ExecutableI::SetTimingSignalAddress(uint32 * timingSignalAddressIn) {
+    timingSignalAddress = timingSignalAddressIn;
 }
 
 }

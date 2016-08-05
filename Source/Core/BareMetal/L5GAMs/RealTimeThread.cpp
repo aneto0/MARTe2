@@ -183,14 +183,14 @@ bool RealTimeThread::Initialise(StructuredDataI & data) {
         ret = (data.Read("Functions", functionVector));
     }
     else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No functions defined for the RealTimeThread %s", data.GetName()[1])
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No functions defined for the RealTimeThread %s", GetName())
     }
     if (ret) {
         if (!data.Read("CPUs", cpuMask)) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No CPUs defined for the RealTimeThread %s", data.GetName()[1])
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No CPUs defined for the RealTimeThread %s", GetName())
         }
         if (!data.Read("StackSize", stackSize)) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No StackSize defined for the RealTimeThread %s", data.GetName()[1])
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No StackSize defined for the RealTimeThread %s", GetName())
         }
     }
 

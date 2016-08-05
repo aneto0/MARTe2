@@ -142,6 +142,11 @@ bool Reference::Initialise(StructuredDataI &data,
     }
 
     if (ok) {
+        if (data.GetName() != NULL) {
+            objectPointer->SetName(&data.GetName()[1]);
+        }
+    }
+    if (ok) {
         /*lint -e{613} checking of NULL pointer done before entering here. */
         ok = objectPointer->Initialise(data);
     }

@@ -184,3 +184,32 @@ TEST(GAMGTest,TestGetOutputSignalMemoryPointer_Samples) {
     ASSERT_TRUE(test.TestGetOutputSignalMemory_Samples());
 }
 
+TEST(GAMGTest,TestAddInputBrokers) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestAddInputBrokers());
+}
+
+TEST(GAMGTest,TestAddInputBrokers_InvalidBroker) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestAddInputBrokers_InvalidBroker());
+}
+
+TEST(GAMGTest,TestAddOutputBrokers) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestAddOutputBrokers());
+}
+
+TEST(GAMGTest,TestAddOutputBrokers_InvalidBroker) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestAddOutputBrokers_InvalidBroker());
+}
+
+TEST(GAMGTest,TestGetInputBrokers) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestGetInputBrokers());
+}
+
+TEST(GAMGTest,TestGetOutputBrokers) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestGetOutputBrokers());
+}

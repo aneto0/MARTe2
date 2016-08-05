@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "ExecutableI.h"
 #include "GAM.h"
-#include "GAMDataSource.h"
+#include "TimingDataSource.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 #include "StatefulI.h"
@@ -44,18 +44,62 @@
 namespace MARTe {
 
 /**
+ * @brief POD to store information about a thread that is schedulable by a GAMSchedulerI.
+ */
+struct ScheduledThread {
+    /**
+     * List of pointers to the ExecutableI components (typically GAM and BrokerI) that belong to this thread.
+     */
+    ExecutableI ** executables;
+
+    /**
+     * Number of ExecutableI components that belong to this thread.
+     */
+    uint32 numberOfExecutables;
+
+    /**
+     * Memory address where the total cycle time signal is stored.
+     */
+    uint32 *cycleTime;
+
+    /**
+     * This thread name.
+     */
+    const char8 * name;
+};
+
+/**
+ * @brief POD to store information about a state that is schedulable by a GAMSchedulerI.
+ */
+struct ScheduledState {
+    /**
+     * List of threads that are executed during this state.
+     */
+    ScheduledThread * threads;
+
+    /**
+     * Number of threads that are executed during this state.
+     */
+    uint32 numberOfThreads;
+
+    /**
+     * The name of this state.
+     */
+    const char8 * name;
+};
+
+/**
  * @brief The GAM scheduler interface.
  *
  * @details Provides methods to link the scheduler to the threads to be executed and
- * the mechanisms of the state switch. The methods to start and stops the execution
- * are pure virtual to be implemented by custom schedulers which inherits from this
- * interface.
+ * the mechanisms to allow a swiftly change of state.
  *
  * @details The syntax in the configuration stream has to be:
  *
  * +Scheduler = {\n
  *    Class = Scheduler_name
  *     ...\n
+ *    TimingDataSource = "Name of the TimingDataSource"
  * }\n
  *
  * and it has to be contained in the [RealTimeApplication] declaration.
@@ -65,15 +109,27 @@ class DLL_API GAMSchedulerI: public ReferenceContainer, public StatefulI {
 public:
 
     /**
-     * @brief Constructor
+     * @brief Constructor.
      */
     GAMSchedulerI();
 
+    /**
+     * @brief Destructor. Frees the SchedulableTable.
+     */
     virtual ~GAMSchedulerI();
 
+    /**
+     * @brief Reads the TimingDataSource name.
+     * @return false if the TimingDataSource is not defined.
+     */
     virtual bool Initialise(StructuredDataI & data);
 
-    bool ConfigureScheduler();
+    /**
+     * @brief Generates a SchedulableTable containing the information the states which can be executed by this GAMSchedulerI.
+     * @details The SchedulableTable is a dual-buffer array of ScheduledState PODs.
+     * @return true if the SchedulableTable can be successfully constructed.
+     */
+    virtual bool ConfigureScheduler();
 
     /**
      * @brief Stores the GAMSchedulerRecord for the new state in the next buffer.
@@ -85,8 +141,16 @@ public:
                                   const char8 * const nextStateName);
 
     uint64 ExecuteSingleCycle(ExecutableI * const * const executables,
-                              uint32 * const * const timeAddress,
-                              const uint32 numberOfExecutables) const ;
+                              const uint32 numberOfExecutables) const;
+
+    /**
+     * @brief Gets the number of ExecutableI components for this \a threadName in this \a stateName.
+     * @param[in] stateName the name of the state.
+     * @param[in] threadName the name of the thread.
+     * @return the number of ExecutableI components for this \a threadName in this \a stateName.
+     */
+    uint32 GetNumberOfExecutables(const char8 * const stateName,
+                                  const char8 * const threadName) const;
 
     /**
      * @brief Starts the execution of the next state threads.
@@ -98,75 +162,88 @@ public:
      */
     virtual void StopExecution()=0;
 
-    uint32 GetNumberOfExecutables(const char8 * const stateName,
-                                  const char8 * const threadName) const;
-
 protected:
-
-    /*
-     * struct ScheduledState (array) {
-     *     Struct ScheduledThread (array) {
-     *         Struct ScheduledExecutable (array){
-     *             ExecutableI
-     *             bool SumOrReset
-     *             void* TimeAddress
-     *         }
-     *         name
-     *         numberOfExecutables
-     *     }
-     *     name
-     *     numberOfThreads
-     * }
+    /**
+     * @brief Gets a pointer to the address of the two possible ScheduledStates (the current and the next).
+     * @details Upon a PrepareNextState this table is automatically updated in order to
+     * have ScheduledState[RealTimeApplication->GetIndex()] pointing at the correct ScheduledState to be executed.
+     * @return a pointer to address of the two possible ScheduledStates (the current and the next).
      */
+    ScheduledState * const * GetSchedulableStates();
 
-    struct ScheduledThread {
-        ExecutableI ** executables;
-        uint32 **timeAddresses;
-
-        uint32 *cycleTime;
-        uint32 numberOfExecutables;
-        const char8 * name;
-    };
-
-    struct ScheduledState {
-        ScheduledThread * threads;
-        uint32 numberOfThreads;
-        const char8 * name;
-    };
+private:
 
     /**
      * Double buffer accelerator to the threads to be executed for the current
      * and next state.
      */
-    ScheduledState *statesInExecution[2];
+    ScheduledState *scheduledStates[2];
 
-    //TODO Change to TimingDataSource
-    ReferenceT<GAMDataSource> timeDataSource;
+    /**
+     * The name of the TimingDataSource where the execution times are to be stored.
+     */
+    StreamString timingDataSourceAddress;
 
+    /**
+     * The TimingDataSource where the execution times are to be stored.
+     */
+    ReferenceT<TimingDataSource> timingDataSource;
+
+    /**
+     * List of all the possible application states.
+     */
     ScheduledState *states;
+
+    /**
+     * Number of possible application states.
+     */
     uint32 numberOfStates;
-    StreamString timeDsAddress;
 
-private:
-
+    /**
+     * @brief Helper function to add the input brokers of the \a gam to the table of states to be executed.
+     * @param[in] gamFullName the GAM fully qualified name.
+     * @param[in] stateIdx the index of the state to which this GAM input brokers is being added to.
+     * @param[in] threadIdx the index of the thread to which this GAM input brokers is being added to.
+     * @param[out] executableIdx the index number of the executable (it will be incremented by the number of input brokers that were added).
+     * @return true if the GAM input brokers could be successfully added.
+     */
     bool InsertInputBrokers(ReferenceT<GAM> gam,
                             const char8 * const gamFullName,
-                            const uint32 i,
-                            const uint32 j,
-                            uint32 &index);
+                            const uint32 stateIdx,
+                            const uint32 threadIdx,
+                            uint32 &executableIdx);
 
-    bool InsertGAM(ReferenceT<GAM> gam,
-                   const char8 * const gamFullName,
-                   const uint32 i,
-                   const uint32 j,
-                   uint32 &index);
-
+    /**
+     * @brief Helper function to add the output brokers of the \a gam to the table of states to be executed.
+     * @param[in] gamFullName the GAM fully qualified name.
+     * @param[in] stateIdx the index of the state to which this GAM output brokers is being added to.
+     * @param[in] threadIdx the index of the thread to which this GAM output brokers is being added to.
+     * @param[out] executableIdx the index number of the executable (it will be incremented by the number of output brokers that were added).
+     * @return true if the GAM output brokers could be successfully added.
+     */
     bool InsertOutputBrokers(ReferenceT<GAM> gam,
                              const char8 * const gamFullName,
-                             const uint32 i,
-                             const uint32 j,
-                             uint32 &index);
+                             const uint32 stateIdx,
+                             const uint32 threadIdx,
+                             uint32 &executableIdx);
 
+    /**
+     * @brief Helper function to add this \a gam to the table of states to be executed.
+     * @param[in] gamFullName the GAM fully qualified name.
+     * @param[in] stateIdx the index of the state to which this GAM is being added to.
+     * @param[in] threadIdx the index of the thread to which this GAM is being added to.
+     * @param[in] executableIdx the index number of the executable.
+     * @return true if the GAM could be successfully added.
+     */
+    bool InsertGAM(ReferenceT<GAM> gam,
+                   const char8 * const gamFullName,
+                   const uint32 stateIdx,
+                   const uint32 threadIdx,
+                   const uint32 executableIdx);
+
+    /**
+     * Reference to the RealTimeApplication to which this scheduler belongs to.
+     */
     Reference realTimeApplication;
 };
 

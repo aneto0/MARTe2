@@ -2336,3 +2336,120 @@ bool GAMTest::TestGetOutputSignalMemory_Samples() {
     return ret;
 }
 
+bool GAMTest::TestAddInputBrokers() {
+    GAMTestGAM1 gam;
+    ReferenceT<BrokerITestGAMTest1> broker1("BrokerITestGAMTest1");
+    ReferenceT<BrokerITestGAMTest1> broker2("BrokerITestGAMTest1");
+    ReferenceT<BrokerITestGAMTest1> broker3("BrokerITestGAMTest1");
+    ReferenceContainer twoBrokers;
+    twoBrokers.Insert(broker1);
+    twoBrokers.Insert(broker2);
+    ReferenceContainer oneBroker;
+    oneBroker.Insert(broker3);
+    bool ret = gam.AddInputBrokers(twoBrokers);
+    if (ret) {
+        ReferenceContainer inputBrokers;
+        ret = gam.GetInputBrokers(inputBrokers);
+        if (ret) {
+            ret = (inputBrokers.Size() == 2u);
+        }
+        if (ret) {
+            ret = (inputBrokers.Get(0) == broker1);
+        }
+        if (ret) {
+            ret = (inputBrokers.Get(1) == broker2);
+        }
+    }
+    ret = gam.AddInputBrokers(oneBroker);
+    if (ret) {
+        ReferenceContainer inputBrokers;
+        ret = gam.GetInputBrokers(inputBrokers);
+        if (ret) {
+            ret = (inputBrokers.Size() == 3u);
+        }
+        if (ret) {
+            ret = (inputBrokers.Get(0) == broker1);
+        }
+        if (ret) {
+            ret = (inputBrokers.Get(1) == broker2);
+        }
+        if (ret) {
+            ret = (inputBrokers.Get(2) == broker3);
+        }
+    }
+
+    return ret;
+}
+
+bool GAMTest::TestAddInputBrokers_InvalidBroker() {
+    GAMTestGAM1 gam;
+    ReferenceT<BrokerITestGAMTest1> broker1("BrokerITestGAMTest1");
+    ReferenceT<GAMTestGAM1> broker2("GAMTestGAM1");
+    ReferenceContainer twoBrokers;
+    twoBrokers.Insert(broker1);
+    twoBrokers.Insert(broker2);
+    return !gam.AddInputBrokers(twoBrokers);
+}
+
+bool GAMTest::TestAddOutputBrokers() {
+    GAMTestGAM1 gam;
+    ReferenceT<BrokerITestGAMTest1> broker1("BrokerITestGAMTest1");
+    ReferenceT<BrokerITestGAMTest1> broker2("BrokerITestGAMTest1");
+    ReferenceT<BrokerITestGAMTest1> broker3("BrokerITestGAMTest1");
+    ReferenceContainer twoBrokers;
+    twoBrokers.Insert(broker1);
+    twoBrokers.Insert(broker2);
+    ReferenceContainer oneBroker;
+    oneBroker.Insert(broker3);
+    bool ret = gam.AddOutputBrokers(twoBrokers);
+    if (ret) {
+        ReferenceContainer outputBrokers;
+        ret = gam.GetInputBrokers(outputBrokers);
+        if (ret) {
+            ret = (outputBrokers.Size() == 2u);
+        }
+        if (ret) {
+            ret = (outputBrokers.Get(0) == broker1);
+        }
+        if (ret) {
+            ret = (outputBrokers.Get(1) == broker2);
+        }
+    }
+    ret = gam.AddOutputBrokers(oneBroker);
+    if (ret) {
+        ReferenceContainer outputBrokers;
+        ret = gam.GetOutputBrokers(outputBrokers);
+        if (ret) {
+            ret = (outputBrokers.Size() == 3u);
+        }
+        if (ret) {
+            ret = (outputBrokers.Get(0) == broker1);
+        }
+        if (ret) {
+            ret = (outputBrokers.Get(1) == broker2);
+        }
+        if (ret) {
+            ret = (outputBrokers.Get(2) == broker3);
+        }
+    }
+
+    return ret;
+}
+
+bool GAMTest::TestAddOutputBrokers_InvalidBroker() {
+    GAMTestGAM1 gam;
+    ReferenceT<BrokerITestGAMTest1> broker1("BrokerITestGAMTest1");
+    ReferenceT<GAMTestGAM1> broker2("GAMTestGAM1");
+    ReferenceContainer twoBrokers;
+    twoBrokers.Insert(broker1);
+    twoBrokers.Insert(broker2);
+    return !gam.AddOutputBrokers(twoBrokers);
+}
+
+bool GAMTest::TestGetInputBrokers() {
+    return TestAddInputBrokers();
+}
+
+bool GAMTest::TestGetOutputBrokers() {
+    return TestAddOutputBrokers();
+}

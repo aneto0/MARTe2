@@ -436,7 +436,6 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
                             if (childName[0] == '$') {
                                 newObject->SetDomain(true);
                             }
-                            newObject->SetName(&childName[1]);
                             ok = ReferenceContainer::Insert(newObject);
                         }
                         if (ok) {
