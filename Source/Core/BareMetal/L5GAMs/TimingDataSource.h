@@ -1,8 +1,8 @@
 /**
  * @file TimingDataSource.h
  * @brief Header file for class TimingDataSource
- * @date 01/ago/2016
- * @author pc
+ * @date 01/08/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,12 +40,30 @@
 
 namespace MARTe {
 
+/**
+ * @brief GAMDataSource implementation that is used to store the executions timing of the MARTe components.
+ */
 class TimingDataSource: public GAMDataSource {
 public:
     CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Constructor. NOOP.
+     */
     TimingDataSource();
 
+    /**
+     * @brief Destructor. NOOP.
+     */
     virtual ~TimingDataSource();
+
+    /**
+     * @brief see GAMDataSource::Initialise.
+     * @details Verifies that there are no producers assigned to this DataSourceI. The timing data will be produced by
+     * the GAMSchedulerI and not by GAM instances.
+     * @param[in] data see GAMDataSource::Initialise.
+     * @return true if GAMDataSource::Initialise returns true and if there are no producers assigned to this DataSourceI.
+     */
     virtual bool SetConfiguredDatabase(StructuredDataI & data);
 };
 

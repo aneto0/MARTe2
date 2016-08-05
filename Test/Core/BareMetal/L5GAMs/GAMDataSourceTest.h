@@ -40,7 +40,7 @@
 using namespace MARTe;
 
 /**
- * @brief Tests the DataSourceI public methods.
+ * @brief Tests the GAMDataSource public methods.
  */
 class GAMDataSourceTest {
 public:
