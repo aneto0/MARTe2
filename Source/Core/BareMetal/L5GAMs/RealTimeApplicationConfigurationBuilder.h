@@ -1277,7 +1277,9 @@ private:
      * @return true if all the TimingDataSource signals have the correct properties.
      */
     bool CheckTimeSignalInfo();
-
+/*lint -e{1712} this class does not have a default constructor because either
+ * the ConfigurationDatabase or the RealTimeApplication must be defined in construction.
+ */
 };
 
 }

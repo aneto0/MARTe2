@@ -1,8 +1,8 @@
 /**
  * @file TimingDataSource.cpp
  * @brief Source file for class TimingDataSource
- * @date 01/ago/2016
- * @author pc
+ * @date 01/08/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -20,6 +20,8 @@
  * the class TimingDataSource (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
+
+#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */

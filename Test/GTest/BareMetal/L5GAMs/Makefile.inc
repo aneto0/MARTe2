@@ -39,18 +39,14 @@ OBJSX=  BrokerIGTest.x\
         RealTimeApplicationGTest.x\
         RealTimeApplicationConfigurationBuilderGTest.x\
         RealTimeStateGTest.x\
-        RealTimeThreadGTest.x
-
-
-
+        RealTimeThreadGTest.x\
+        TimingDataSourceGTest.x
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
-
 
 INCLUDES += -I../../../
 INCLUDES += -I../../../Core/BareMetal/L0Types

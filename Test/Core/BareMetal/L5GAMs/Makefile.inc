@@ -42,48 +42,8 @@ OBJSX= BrokerITest.x \
        RealTimeApplicationTest.x\
        RealTimeApplicationConfigurationBuilderTest.x\
        RealTimeStateTest.x\
-       RealTimeThreadTest.x
-
-#BrokerContainerTest.x \
-		DataSourceContainerTest.x \
-		DataSourceSignalRecordTest.x \
-		DataSourceSignalTest.x \
-		DataSourceSignalITest.x\
-		DataSourceTest.x \
-		GAMGenericSignalTest.x \
-		GAMGroupTest.x \
-		GAMSampledSignalTest.x \
-		GAMSchedulerITest.x \
-		GAMSchedulerRecordTest.x \
-		GAMSignalsContainerTest.x \
-		GAMSignalITest.x \
-		GAMTest.x \
-		MemoryMapDataSourceBrokerTest.x \
-		MemoryMapInputReaderTest.x \
-		MemoryMapOutputWriterTest.x \
-		RealTimeApplicationTest.x \
-		RealTimeStateTest.x \
-		RealTimeThreadTest.x
-		
-#BasicGAMTest.x \
- 		BasicGAMSchedulerTest.x \
-		BasicRealTimeDataSourceDefTest.x \
-		BasicRealTimeDataSourceInputReaderTest.x \
-		BasicRealTimeDataSourceOutputWriterTest.x \
-		GAMGroupTest.x \
-		GAMITest.x \
-		GAMSchedulerITest.x \
-		GAMSchedulerRecordTest.x \
-		RealTimeApplicationTest.x \
-		RealTimeDataDefContainerTest.x \
-		RealTimeDataSourceTest.x \
-		RealTimeDataSourceBrokerTest.x \
-		RealTimeDataSourceContainerTest.x \
-		RealTimeDataSourceDefRecordTest.x \
-		RealTimeGenericDataDefTest.x \
-		RealTimeSampledDataDefTest.x \
-		RealTimeStateTest.x \
-		RealTimeThreadTest.x
+       RealTimeThreadTest.x\
+       TimingDataSourceTest.x
 			
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
