@@ -276,6 +276,14 @@ uint32 GAM::GetNumberOfOutputSignals() const {
     return numberOfOutputSignals;
 }
 
+bool GAM::GetQualifiedName(StreamString &qualifiedName) {
+    bool ret = configuredDatabase.MoveToRoot();
+    if (ret) {
+        ret = configuredDatabase.Read("QualifiedName", qualifiedName);
+    }
+    return ret;
+}
+
 bool GAM::GetSignalName(const SignalDirection direction,
                         const uint32 signalIdx,
                         StreamString &signalName) {

@@ -160,35 +160,31 @@ public:
      */
     virtual bool Initialise(StructuredDataI & data);
 
-
     bool ConfigureApplication();
 
     //TODO
     bool ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn,
-                              ConfigurationDatabase &dataDatabaseIn);
-
-
+            ConfigurationDatabase &dataDatabaseIn);
 
     /**
-       * @brief Prepares the environment for the next state and starts the new execution.
-       * @details This function has to be executed in a low-priority thread in order to prepare the context for the contextful GAMs
-       * and resets the variables in the RealTimeDataSource to the default values if they will be used in the next state but are not
-       * used in the current (the value is supposed to be consistent if it is used in both two consecutive states). When all is ready,
-       * this function calls the scheduler to stop the current state execution and starts the next state execution.
-       * @param[in] status contains informations about the current and the next state.
-       * @return false in case of errors, true otherwise.
-       */
-      virtual bool PrepareNextState(const char8 * const nextStateName);
+     * @brief Prepares the environment for the next state and starts the new execution.
+     * @details This function has to be executed in a low-priority thread in order to prepare the context for the contextful GAMs
+     * and resets the variables in the RealTimeDataSource to the default values if they will be used in the next state but are not
+     * used in the current (the value is supposed to be consistent if it is used in both two consecutive states). When all is ready,
+     * this function calls the scheduler to stop the current state execution and starts the next state execution.
+     * @param[in] status contains informations about the current and the next state.
+     * @return false in case of errors, true otherwise.
+     */
+    virtual bool PrepareNextState(const char8 * const nextStateName);
 
+    void StartExecution();
 
-      void StartExecution();
-
-      /**
-       * @brief Stops the application execution.
-       * @details Calls the Scheduler::StopExecution() to terminate the threads running in the current active state.
-       * @return true if the scheduler container is valid, false otherwise.
-       */
-      void StopExecution();
+    /**
+     * @brief Stops the application execution.
+     * @details Calls the Scheduler::StopExecution() to terminate the threads running in the current active state.
+     * @return true if the scheduler container is valid, false otherwise.
+     */
+    void StopExecution();
 
 #if 0
     /**
@@ -236,9 +232,6 @@ public:
      */
     bool ValidateDataSourceLinks();
 
-
-
-
     /**
      * @brief Retrieves the current active buffer index.
      * @return the value of the current buffer index (0 or 1).
@@ -252,7 +245,6 @@ public:
     ReferenceT<ReferenceContainer> GetDataSourceContainer();
 #endif
 
-
     static uint32 GetIndex();
 
 private:
@@ -263,13 +255,9 @@ private:
      */
     bool ConfigureArchitecture();
 
-
-
     bool AllocateGAMMemory();
 
-
     bool AllocateDataSourceMemory();
-
 
     bool AddBrokersToFunctions();
 
@@ -279,7 +267,6 @@ private:
     StreamString stateNameHolder[2];
 
     static uint32 index;
-
 
     /**
      * The +States container.
@@ -303,12 +290,10 @@ private:
 
     ReferenceContainer statefulsInData;
 
-
     ConfigurationDatabase functionsDatabase;
     ConfigurationDatabase dataSourcesDatabase;
 
     StreamString defaultDataSourceName;
-
 
 };
 

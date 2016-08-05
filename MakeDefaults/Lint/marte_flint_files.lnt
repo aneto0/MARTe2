@@ -1,5 +1,4 @@
-GAMSchedulerI.cpp
-/*AdvancedErrorManagement.h
+AdvancedErrorManagement.h
 AnyObject.cpp
 AnyType.cpp
 AnyTypeCreator.cpp
@@ -169,4 +168,4 @@ ValidateBasicType.h
 ValidateBasicType.cpp
 Vector.h
 XMLParser.cpp
-ZeroTerminatedArray.h*/
+ZeroTerminatedArray.h

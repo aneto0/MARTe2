@@ -159,6 +159,15 @@ public:
     uint32 GetNumberOfOutputSignals() const;
 
     /**
+     * @brief Returns the GAM fully qualified name.
+     * @param[out] qualifiedName where to write the GAM qualified name.
+     * @return false if the GAM qualified name does not exist.
+     * @pre
+     *   The ConfiguredDatabase must be set
+     */
+    bool GetQualifiedName(StreamString &qualifiedName);
+
+    /**
      * @brief Gets the name of the signal at position \a signalIdx.
      * @param[in] direction the signal direction.
      * @param[in] signalIdx the index of the signal.

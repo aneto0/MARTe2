@@ -167,11 +167,17 @@ bool GAMSchedulerI::ConfigureScheduler() {
                             uint32 c = 0u;
                             for (uint32 k = 0u; (k < numberOfGams) && (ret); k++) {
                                 //add input brokers
-                                StreamString gamFullName = threadElement->GetFunctions()[k];
-                                ret = InsertInputBrokers(gams.Get(k), gamFullName.Buffer(), i, j, c);
+                                StreamString gamFullName;
+                                ReferenceT<GAM> gam = gams.Get(k);
+                                if (ret) {
+                                    ret = gam->GetQualifiedName(gamFullName);
+                                }
+                                if (ret) {
+                                    ret = InsertInputBrokers(gam, gamFullName.Buffer(), i, j, c);
+                                }
                                 //add gam
                                 if (ret) {
-                                    ret = InsertGAM(gams.Get(k), gamFullName.Buffer(), i, j, c);
+                                    ret = InsertGAM(gam, gamFullName.Buffer(), i, j, c);
                                     if (ret) {
                                         c++;
                                     }
@@ -179,7 +185,7 @@ bool GAMSchedulerI::ConfigureScheduler() {
 
                                 //add output brokers
                                 if (ret) {
-                                    ret = InsertOutputBrokers(gams.Get(k), gamFullName.Buffer(), i, j, c);
+                                    ret = InsertOutputBrokers(gam, gamFullName.Buffer(), i, j, c);
                                 }
                             }
 
