@@ -36,11 +36,12 @@ OBJSX=  BrokerIGTest.x\
         MemoryMapStatefulInputBrokerGTest.x\
         MemoryMapStatefulOutputBrokerGTest.x\
         MemoryMapSynchronisedInputBrokerGTest.x\
+        RealTimeApplicationGTest.x\
         RealTimeApplicationConfigurationBuilderGTest.x\
         RealTimeStateGTest.x\
         RealTimeThreadGTest.x
 
-#RealTimeApplicationGTest.x\
+
 
 
 PACKAGE=GTest/BareMetal

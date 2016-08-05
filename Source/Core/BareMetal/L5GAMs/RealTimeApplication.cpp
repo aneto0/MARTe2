@@ -51,103 +51,6 @@ namespace MARTe {
 
 uint32 RealTimeApplication::index = 1u;
 
-#if 0
-static bool ConfigureDataSourcePrivate(ReferenceT<ReferenceContainer> functions) {
-
-    bool ret = functions.IsValid();
-
-    if (ret) {
-        uint32 numberOfFunctions = functions->Size();
-        for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
-            Reference genericFunction = functions->Get(i);
-
-            ReferenceT<GAM> gam = genericFunction;
-            // a GAM
-            if (gam.IsValid()) {
-                // call the single gam configuration
-                ret = gam->ConfigureDataSource();
-            }
-            else {
-                // a GAMGroup
-                ReferenceT<GAMGroup> gamGroup = genericFunction;
-                if (gamGroup.IsValid()) {
-                    uint32 numberOfSubGams = gamGroup->Size();
-                    for (uint32 j = 0u; (j < numberOfSubGams) && (ret); j++) {
-                        ReferenceT<GAM> subGam = gamGroup->Get(j);
-                        ret = subGam.IsValid();
-                        if (ret) {
-                            // call the single gam configuration
-                            ret = subGam->ConfigureDataSource();
-                        }
-                    }
-                }
-                else {
-                    // a ReferenceContainer
-                    ReferenceT<ReferenceContainer> gamContainer = genericFunction;
-                    ret = gamContainer.IsValid();
-                    if (ret) {
-                        // go recursively
-                        ret = ConfigureDataSourcePrivate(gamContainer);
-                    }
-                    else {
-                        REPORT_ERROR(ErrorManagement::FatalError, "+Functions must contain GAM, GAMGroup or ReferenceContainer references");
-                    }
-                }
-            }
-        }
-    }
-
-    return ret;
-}
-
-static bool ConfigureDataSourceLinksPrivate(ReferenceT<ReferenceContainer> functions) {
-
-    bool ret = functions.IsValid();
-
-    if (ret) {
-        uint32 numberOfFunctions = functions->Size();
-        for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
-            Reference genericFunction = functions->Get(i);
-
-            ReferenceT<GAM> gam = genericFunction;
-            // a GAM
-            if (gam.IsValid()) {
-                // call the single gam configuration
-                ret = gam->ConfigureDataSourceLinks();
-            }
-            else {
-                // a GAMGroup
-                ReferenceT<GAMGroup> gamGroup = genericFunction;
-                if (gamGroup.IsValid()) {
-                    uint32 numberOfSubGams = gamGroup->Size();
-                    for (uint32 j = 0u; (j < numberOfSubGams) && (ret); j++) {
-                        ReferenceT<GAM> subGam = gamGroup->Get(j);
-                        ret = subGam.IsValid();
-                        if (ret) {
-                            // call the single gam configuration
-                            ret = subGam->ConfigureDataSourceLinks();
-                        }
-                    }
-                }
-                else {
-                    // a ReferenceContainer
-                    ReferenceT<ReferenceContainer> gamContainer = genericFunction;
-                    ret = gamContainer.IsValid();
-                    if (ret) {
-                        // go recursively
-                        ret = ConfigureDataSourceLinksPrivate(gamContainer);
-                    }
-                    else {
-                        REPORT_ERROR(ErrorManagement::FatalError, "+Functions must contain GAM, GAMGroup or ReferenceContainer references");
-                    }
-                }
-            }
-        }
-    }
-
-    return ret;
-}
-#endif
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -159,142 +62,6 @@ RealTimeApplication::RealTimeApplication() :
 RealTimeApplication::~RealTimeApplication() {
 
 }
-#if 0
-
-bool RealTimeApplication::ConfigureDataSource() {
-
-    bool ret = functionsContainer.IsValid();
-
-    if (ret) {
-        // configure
-        ret = ConfigureDataSourcePrivate(functionsContainer);
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "+Functions container not found");
-    }
-
-    return ret;
-
-}
-
-bool RealTimeApplication::ValidateDataSource() {
-    ReferenceT<DataSourceContainer> data = dataSourceContainer;
-
-    bool ret = data.IsValid();
-    // there must be the container called "States"
-
-    if (ret) {
-        // States contains RealTimeState references
-        // for each of them call Validate(*)
-        ret = data->Verify();
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "+Data container not found");
-    }
-    return ret;
-}
-
-bool RealTimeApplication::AllocateDataSource() {
-    ReferenceT<DataSourceContainer> data = dataSourceContainer;
-
-    bool ret = data.IsValid();
-    if (ret) {
-        ret = data->Allocate();
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "+Data container not found");
-    }
-    return ret;
-}
-
-bool RealTimeApplication::ConfigureDataSourceLinks() {
-    // there must be the container called "States"
-    bool ret = functionsContainer.IsValid();
-    if (ret) {
-        // configure
-        ret = ConfigureDataSourceLinksPrivate(functionsContainer);
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "+Functions container not found");
-    }
-
-    return ret;
-}
-
-bool RealTimeApplication::ValidateDataSourceLinks() {
-    // there must be the container called "States"
-    bool ret = statesContainer.IsValid();
-    if (ret) {
-        uint32 numberOfStates = statesContainer->Size();
-        for (uint32 i = 0u; (i < numberOfStates) && ret; i++) {
-            ReferenceT<RealTimeState> state = statesContainer->Get(i);
-            ret = state.IsValid();
-            if (ret) {
-                ret = state->ValidateDataSourceLinks();
-            }
-        }
-
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "+States container not found");
-    }
-
-    return ret;
-}
-bool RealTimeApplication::PrepareNextState(const char8 * stateNameHolder,
-        const char8 * nextStateName) {
-
-    RealTimeStateInfo status;
-    status.currentState = stateNameHolder.Buffer();
-    status.nextState = nextStateName;
-    status.activeBuffer = activeBuffer;
-
-    StreamString nextStatePath = "States.";
-    nextStatePath += nextStateName;
-
-    ReferenceT<RealTimeState> nextState = Find(nextStatePath.Buffer());
-    bool ret = nextState.IsValid();
-    if (ret) {
-        // change the context in gam groups if needed
-        nextState->PrepareState(status);
-    }
-    if (ret) {
-        ReferenceT<DataSourceContainer> dataSource = dataSourceContainer;
-        ret = dataSource.IsValid();
-        if (ret) {
-            // resets the default value in data sources if needed
-            ret = dataSource->PrepareNextState(status);
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "+Data container not found");
-        }
-    }
-    if (ret) {
-        ReferenceT<GAMSchedulerI> scheduler = scheduler;
-        ret = scheduler.IsValid();
-        // save the accelerator to the next group of threads to be executed
-        if (ret) {
-            ret = scheduler->PrepareNextState(status);
-        }
-        if (ret) {
-            scheduler->ChangeState(activeBuffer);
-        }
-    }
-    activeBuffer = (activeBuffer + 1u) % 2u;
-
-    return ret;
-}
-
-bool RealTimeApplication::StopExecution() {
-    ReferenceT<GAMSchedulerI> scheduler = scheduler;
-    bool ret = scheduler.IsValid();
-    if (ret) {
-        scheduler->StopExecution();
-    }
-    return ret;
-}
-#endif
-
 bool RealTimeApplication::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (data.MoveRelative("+Data")) {
@@ -434,6 +201,7 @@ bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsD
     if (ret) {
         ret = AddBrokersToFunctions();
     }
+
     if (ret) {
         ret = scheduler.IsValid();
         if (ret) {
@@ -589,11 +357,12 @@ bool RealTimeApplication::ConfigureArchitecture() {
         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
             ReferenceT<RealTimeState> state = statesContainer->Get(i);
             if (state.IsValid()) {
+            	ReferenceT<ReferenceContainer> threadsContainer=state->Find("Threads");
 
                 // for each state call the configuration function
-                uint32 numberOfThreads = state->Size();
+                uint32 numberOfThreads = threadsContainer->Size();
                 for (uint32 j = 0u; (j < numberOfThreads) && (ret); j++) {
-                    ReferenceT<RealTimeThread> thread = state->Get(j);
+                    ReferenceT<RealTimeThread> thread = threadsContainer->Get(j);
                     if (thread.IsValid()) {
                         ret = thread->ConfigureArchitecture();
                     }
@@ -611,28 +380,13 @@ bool RealTimeApplication::ConfigureArchitecture() {
         dataSourceContainer->Find(statefulsInData, dataFilter);
     }
 
-    if (ret) {
-        ret = (scheduler.IsValid());
-        if (ret) {
-            ret = scheduler->ConfigureScheduler();
-        }
-    }
+
     return ret;
 }
 
 uint32 RealTimeApplication::GetIndex() {
     return index;
 }
-
-#if 0
-uint8 RealTimeApplication::GetActiveBuffer() const {
-    return activeBuffer;
-}
-
-ReferenceT<ReferenceContainer> RealTimeApplication::GetDataSourceContainer() {
-    return dataSourceContainer;
-}
-#endif
 
 CLASS_REGISTER(RealTimeApplication, "1.0");
 }

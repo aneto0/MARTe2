@@ -96,219 +96,145 @@ namespace MARTe {
  */
 class DLL_API RealTimeApplication: public ReferenceContainer {
 public:
-    CLASS_REGISTER_DECLARATION()
+	CLASS_REGISTER_DECLARATION()
 
-    /**
-     * @brief Constructor
-     * @post
-     *    GetActiveBuffer() = 1
-     */
-    RealTimeApplication();
+	/**
+	 * @brief Constructor
+	 * @post
+	 *    GetActiveBuffer() = 1
+	 */
+RealTimeApplication	();
 
-    /**
-     * @brief Destructor. NOOP.
-     */
-    virtual ~RealTimeApplication();
+	/**
+	 * @brief Destructor. NOOP.
+	 */
+	virtual ~RealTimeApplication();
 
-    /**
-     * @brief Initialises the application from a StructuredDataI in input.
-     * @details The following fields must be specified:
-     *
-     *   FirstState = (the name of the first state to be executed) //TODO (State Machine ?)
-     *     Class = RealTimeApplication\n
-     *     +Functions = {\n
-     *         Class = ReferenceContainer\n
-     *         GAM_name = {\n
-     *             Class = GAM\n
-     *             ...\n
-     *         }\n
-     *         GAM_Group_name = {\n
-     *             Class = GAMGroup\n
-     *             ...\n
-     *         }\n
-     *         ...\n
-     *     }\n
-     *     +States = {\n
-     *         Class = ReferenceContainer\n
-     *         State_name = {\n
-     *             Class = RealTimeState\n
-     *             +Threads = {\n
-     *                 Class = RealTimeThread\n
-     *                 ...\n
-     *             }\n
-     *             ...\n
-     *         }\n
-     *         ...\n
-     *     }\n
-     *     +Data = {\n
-     *         Class = RealTimeDataSourceContainer
-     *         IsFinal = true v false\n
-     *         DataSource_name = {\n
-     *             ...\n
-     *         }\n
-     *         ...
-     *     }\n
-     *     +Scheduler = {\n
-     *         Class = Scheduler_class_name (inherited from GAMSchedulerI)\n
-     *         ...\n
-     *     }\n
-     *
-     * @param[in] data contains the initialisation data.
-     * @return true if the FirstState field is specified and if the parameters +Functions, +States, +Data and +Scheduler all
-     * exist and each inherit from ReferenceContainer.
-     * TODO: FirstState is not implemented yet
-     */
-    virtual bool Initialise(StructuredDataI & data);
+	/**
+	 * @brief Initialises the application from a StructuredDataI in input.
+	 * @details The following fields must be specified:
+	 *
+	 *   FirstState = (the name of the first state to be executed) //TODO (State Machine ?)
+	 *     Class = RealTimeApplication\n
+	 *     +Functions = {\n
+	 *         Class = ReferenceContainer\n
+	 *         GAM_name = {\n
+	 *             Class = GAM\n
+	 *             ...\n
+	 *         }\n
+	 *         GAM_Group_name = {\n
+	 *             Class = GAMGroup\n
+	 *             ...\n
+	 *         }\n
+	 *         ...\n
+	 *     }\n
+	 *     +States = {\n
+	 *         Class = ReferenceContainer\n
+	 *         State_name = {\n
+	 *             Class = RealTimeState\n
+	 *             +Threads = {\n
+	 *                 Class = RealTimeThread\n
+	 *                 ...\n
+	 *             }\n
+	 *             ...\n
+	 *         }\n
+	 *         ...\n
+	 *     }\n
+	 *     +Data = {\n
+	 *         Class = RealTimeDataSourceContainer
+	 *         IsFinal = true v false\n
+	 *         DataSource_name = {\n
+	 *             ...\n
+	 *         }\n
+	 *         ...
+	 *     }\n
+	 *     +Scheduler = {\n
+	 *         Class = Scheduler_class_name (inherited from GAMSchedulerI)\n
+	 *         ...\n
+	 *     }\n
+	 *
+	 * @param[in] data contains the initialisation data.
+	 * @return true if the FirstState field is specified and if the parameters +Functions, +States, +Data and +Scheduler all
+	 * exist and each inherit from ReferenceContainer.
+	 */
+	virtual bool Initialise(StructuredDataI & data);
 
+	bool ConfigureApplication();
 
-    bool ConfigureApplication();
+	bool ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn,
+			ConfigurationDatabase &dataDatabaseIn);
 
-    //TODO
-    bool ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn,
-                              ConfigurationDatabase &dataDatabaseIn);
+	/**
+	 * @brief Prepares the environment for the next state and starts the new execution.
+	 * @details This function has to be executed in a low-priority thread in order to prepare the context for the contextful GAMs
+	 * and resets the variables in the RealTimeDataSource to the default values if they will be used in the next state but are not
+	 * used in the current (the value is supposed to be consistent if it is used in both two consecutive states). When all is ready,
+	 * this function calls the scheduler to stop the current state execution and starts the next state execution.
+	 * @param[in] status contains informations about the current and the next state.
+	 * @return false in case of errors, true otherwise.
+	 */
+	virtual bool PrepareNextState(const char8 * const nextStateName);
 
+	void StartExecution();
 
+	/**
+	 * @brief Stops the application execution.
+	 * @details Calls the Scheduler::StopExecution() to terminate the threads running in the current active state.
+	 * @return true if the scheduler container is valid, false otherwise.
+	 */
+	void StopExecution();
 
-    /**
-       * @brief Prepares the environment for the next state and starts the new execution.
-       * @details This function has to be executed in a low-priority thread in order to prepare the context for the contextful GAMs
-       * and resets the variables in the RealTimeDataSource to the default values if they will be used in the next state but are not
-       * used in the current (the value is supposed to be consistent if it is used in both two consecutive states). When all is ready,
-       * this function calls the scheduler to stop the current state execution and starts the next state execution.
-       * @param[in] status contains informations about the current and the next state.
-       * @return false in case of errors, true otherwise.
-       */
-      virtual bool PrepareNextState(const char8 * const nextStateName);
-
-
-      void StartExecution();
-
-      /**
-       * @brief Stops the application execution.
-       * @details Calls the Scheduler::StopExecution() to terminate the threads running in the current active state.
-       * @return true if the scheduler container is valid, false otherwise.
-       */
-      void StopExecution();
-
-#if 0
-    /**
-     * @brief Configuration of the data sources.
-     * @details Generates the data source definitions from the RealTimeDataDef definitions in each GAM. If the
-     * container "+Data" is declared as final (i.e IsFinal=true in the configuration), it is not possible add
-     * other data sources over the ones already defined by configuration. Inside the "+Data" container will be added
-     * the definitions of data source types as trees generated accordingly with the field "Path" in each RealTimeDataDef
-     * in the GAMs. Each leaf of these trees is a RealTimeDataSourceDef containing, for each state, the GAMs which will produce
-     * and consume that specific data.
-     * @return false in case of errors, true otherwise.
-     */
-    bool ConfigureDataSource();
-
-    /**
-     * @brief Validates the data sources.
-     * @details Checks if for each state there is only a single GAM producer for each data source definition. Moreover
-     * if there are not GAM consumer, a warning will be generated (that source will be never read).
-     * @return true if for each state there is an unique GAM producer, false otherwise.
-     */
-    bool ValidateDataSource();
-
-    /**
-     * @brief Allocates the data sources memory.
-     * @details Browses the RealTimeDataSourceDef tree (+Data is the root) built using ConfigureDataSource() function and for each
-     * definition (leaf of the tree) allocates the memory for the specified type and dimension (scalar, vector or matrix). For each variable
-     * a double buffer of memory is provided, in order to reset the variable in safe mode in case of state switching. See PrepareNextState(*)
-     * for more documentation.
-     * @return false in case of errors, true otherwise.
-     */
-    bool AllocateDataSource();
-
-    /**
-     * @brief Creates the interfaces for read and write operations between GAMs and RealTimeDataSource.
-     * @details Browses the +Functions tree and for each GAM (leaf of the tree) configures its internally RealTimeDataSourceInputReader
-     * and RealTimeDataSourceOutputWriter. See GAM::ConfigureDataSourceLinks(*) for more documentation.
-     * @return false in case of errors, true otherwise.
-     */
-    bool ConfigureDataSourceLinks();
-
-    /**
-     * @brief Validates the data source links.
-     * @details Checks for each thread if there is no more than one synchronization point (i.e a GAM with a synchronized RealTimeDataSourceInputReader).
-     * return true if for each RealTimeThread there is an unique synchronization point in the cycle.
-     */
-    bool ValidateDataSourceLinks();
+	/**
+	 * @brief Configuration of the main application environment.
+	 * @details Propagates the configuration setup request to the States (RealTimeState.ConfigureArchitecture) and Scheduler entries (@see Initialise).
+	 * @return true if all the declared States and Scheduler elements are valid, false otherwise.
+	 */
+	bool ConfigureArchitecture();
 
 
-
-
-    /**
-     * @brief Retrieves the current active buffer index.
-     * @return the value of the current buffer index (0 or 1).
-     */
-    uint8 GetActiveBuffer() const;
-
-    /**
-     * @brief Gets the RealTimeDataSourceContainer (initialised with +Data) of this RealTimeApplication.
-     * @return the RealTimeDataSourceContainer (initialised with +Data) of this RealTimeApplication.
-     */
-    ReferenceT<ReferenceContainer> GetDataSourceContainer();
-#endif
-
-
-    static uint32 GetIndex();
+	static uint32 GetIndex();
 
 private:
-    /**
-     * @brief Configuration of the main application environment.
-     * @details Propagates the configuration setup request to the States (RealTimeState.ConfigureArchitecture) and Scheduler entries (@see Initialise).
-     * @return true if all the declared States and Scheduler elements are valid, false otherwise.
-     */
-    bool ConfigureArchitecture();
 
+	bool AllocateGAMMemory();
 
+	bool AllocateDataSourceMemory();
 
-    bool AllocateGAMMemory();
+	bool AddBrokersToFunctions();
 
+	/**
+	 * The current state name.
+	 */
+	StreamString stateNameHolder[2];
 
-    bool AllocateDataSourceMemory();
+	static uint32 index;
 
+	/**
+	 * The +States container.
+	 */
+	ReferenceT<ReferenceContainer> statesContainer;
 
-    bool AddBrokersToFunctions();
+	/**
+	 * The +Functions container.
+	 */
+	ReferenceT<ReferenceContainer> functionsContainer;
 
-    /**
-     * The current state name.
-     */
-    StreamString stateNameHolder[2];
+	/**
+	 * The +Scheduler container.
+	 */
+	ReferenceT<GAMSchedulerI> scheduler;
 
-    static uint32 index;
+	/**
+	 * The +Data container
+	 */
+	ReferenceT<ReferenceContainer> dataSourceContainer;
 
+	ReferenceContainer statefulsInData;
 
-    /**
-     * The +States container.
-     */
-    ReferenceT<ReferenceContainer> statesContainer;
+	ConfigurationDatabase functionsDatabase;
+	ConfigurationDatabase dataSourcesDatabase;
 
-    /**
-     * The +Functions container.
-     */
-    ReferenceT<ReferenceContainer> functionsContainer;
-
-    /**
-     * The +Scheduler container.
-     */
-    ReferenceT<GAMSchedulerI> scheduler;
-
-    /**
-     * The +Data container
-     */
-    ReferenceT<ReferenceContainer> dataSourceContainer;
-
-    ReferenceContainer statefulsInData;
-
-
-    ConfigurationDatabase functionsDatabase;
-    ConfigurationDatabase dataSourcesDatabase;
-
-    StreamString defaultDataSourceName;
-
+	StreamString defaultDataSourceName;
 
 };
 

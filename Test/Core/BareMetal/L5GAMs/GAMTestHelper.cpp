@@ -90,11 +90,16 @@ GAM1::GAM1() :
 }
 
 GAM1::~GAM1() {
-
+	context=0u;
 }
 
 bool GAM1::Initialise(StructuredDataI & data) {
     return GAM::Initialise(data);
+}
+
+bool GAM1::PrepareNextState(const char8 * currentStateName, const char8 * nextStateName) {
+	context++;
+	return true;
 }
 
 bool GAM1::Execute() {

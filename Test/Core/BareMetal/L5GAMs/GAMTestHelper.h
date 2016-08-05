@@ -190,7 +190,7 @@ static StreamString config1 = ""
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
-class GAM1: public GAM {
+class GAM1: public GAM, public StatefulI {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -202,8 +202,11 @@ GAM1    ();
 
     virtual bool Execute();
 
+    bool PrepareNextState(const char8 * currentStateName, const char8 * nextStateName);
 
     uint32 numberOfExecutions;
+    uint32 context;
+
 protected:
     virtual void SetUp();
 
