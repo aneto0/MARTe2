@@ -43,8 +43,7 @@ OBJSX=  AnyType.x \
 		ReferenceContainerNode.x \
 		ReferenceContainerFilter.x \
 		ReferenceContainerFilterReferences.x \
-		ReferenceContainerFilterObjectName.x \
-		ReferenceT.x
+		ReferenceContainerFilterObjectName.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

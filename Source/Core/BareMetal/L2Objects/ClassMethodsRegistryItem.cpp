@@ -44,27 +44,24 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 ClassMethodsRegistryItem::ClassMethodsRegistryItem(ClassRegistryItem * const cri,
                                                    ClassMethodInterfaceMapper * const functionTable_In,
                                                    const char8 * const functionNames_In) :
-    LinkedListable(),
-    functionTable(functionTable_In) {
-    functionNames = functionNames_In;
-    // register in Object the record
+        LinkedListable(),
+        functionTable(functionTable_In),
+        functionNames(functionNames_In) {
+    //Registers itself into the in RegisterMethods instance passed as argument:
     if (cri != NULL) {
         cri->RegisterMethods(this);
     }
 }
 
 ClassMethodsRegistryItem::~ClassMethodsRegistryItem() {
-    /*
-     * TODO
-     */
 }
 
 int32 ClassMethodsRegistryItem::FindFunction(const char8 * const name,
-                                             int32 minIndex) {
-
+                                             const int32 minIndex) {
     const char8 *list = functionNames;
 
     uint32 nameSize = StringHelper::Length(name);
@@ -105,18 +102,22 @@ int32 ClassMethodsRegistryItem::FindFunction(const char8 * const name,
             found = (cursor[0] == ':') && (cursor[1] == ':');
             cursor = &cursor[2];
             if (found) {
-                found = (functionIndex >= minIndex) && (StringHelper::CompareN(cursor, name, nameSize) == 0);
+                bool indexOk = (functionIndex >= minIndex);
+                bool compOk = (StringHelper::CompareN(cursor, name, nameSize) == 0);
+                found = (indexOk && compOk);
             }
         }
 
         if (!found) {
+            uint32 index = 0u;
             functionIndex++;
             if (list[fullTokenSize] != '\0') {
-                list = &list[fullTokenSize + 1];
+                index = (fullTokenSize + 1u);
             }
             else {
-                list = &list[fullTokenSize];
+                index = fullTokenSize;
             }
+            list = &list[index];
             listSize = StringHelper::Length(list);
         }
     }
@@ -154,7 +155,7 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * const
             if (returnValue.NoError()) {
                 /*lint -e{613} .The NULL checking has been done before entering here*/
                 returnValue = fmp->Call(context);
-                if (returnValue.unsupportedFeature == true) {
+                if (bool(returnValue.unsupportedFeature)) {
                     // allow function overload, try again to search!!
                     minIndex = functionIndex + 1;
                 }

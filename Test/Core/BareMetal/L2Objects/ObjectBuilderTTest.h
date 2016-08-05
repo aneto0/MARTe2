@@ -1,6 +1,6 @@
 /**
- * @file ObjectBuilderT.cpp
- * @brief Source file for class ObjectBuilderT
+ * @file ObjectBuilderTTest.h
+ * @brief Header file for class ObjectBuilderTTest
  * @date 17/06/2016
  * @author Giuseppe Ferrò
  *
@@ -15,29 +15,58 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
- * @details This source file contains the definition of all the methods for
- * the class ObjectBuilderT (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+
+ * @details This header file contains the declaration of the class ObjectBuilderTTest
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
-#define DLL_API
+#ifndef OBJECTBUILDERTTEST_H_
+#define OBJECTBUILDERTTEST_H_
 
 /*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
-/*---------------------------------------------------------------------------*/
-
-#include "ObjectBuilderT.h"
-
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
+/*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+/**
+ * Tests the ObjectBuilderT public methods.
+ */
+class ObjectBuilderTTest {
+public:
+
+    /**
+     * @brief Default constructor
+     */
+    ObjectBuilderTTest();
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~ObjectBuilderTTest();
+
+    /**
+     * @brief Tests the default constructor
+     */
+    bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests the build
+     */
+    bool TestBuild();
+
+};
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* OBJECTBUILDERTTEST_H_ */
 

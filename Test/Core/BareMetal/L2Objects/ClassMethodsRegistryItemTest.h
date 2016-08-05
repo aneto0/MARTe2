@@ -36,16 +36,35 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * @brief Unit tests for the public methods of ClassMethodsRegistryItemTest.
+ */
 class ClassMethodsRegistryItemTest {
-//TODO Add the macro DLL_API to the class declaration (i.e. class DLL_API ClassMethodCallerTest)
 public:
+
+    /**
+     * @brief Default constructor.
+     **/
     ClassMethodsRegistryItemTest();
+
+    /**
+     * @brief Destructor.
+     **/
     virtual ~ClassMethodsRegistryItemTest();
 
+    /**
+     * @brief Tests the default constructor
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests calling a function
+     */
     bool TestCallFunction();
 
+    /**
+     * @brief Tests calling a function with macro support
+     */
     bool TestCallFunction_WithMacroSupport();
 };
 

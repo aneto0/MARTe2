@@ -36,12 +36,30 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * @brief Unit tests for the public methods of ClassMethodCallerT.
+ */
 class ClassMethodCallerTTest {
-//TODO Add the macro DLL_API to the class declaration (i.e. class DLL_API ClassMethodCallerTTest)
 public:
+
+    /**
+     * @brief Default constructor.
+     **/
     ClassMethodCallerTTest();
+
+    /**
+     * @brief Destructor.
+     **/
     virtual ~ClassMethodCallerTTest();
+
+    /**
+     * @brief Tests the default constructor
+     */
     bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests the Call method
+     */
     bool TestCall();
 };
 

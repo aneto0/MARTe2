@@ -1,8 +1,8 @@
 /**
- * @file QueuedMessageI.h
- * @brief Header file for class QueuedMessageI
- * @date Apr 22, 2016
- * @author fsartori
+ * @file CallRegisteredMethodLauncherTest.h
+ * @brief Header file for class CallRegisteredMethodLauncherTest
+ * @date 27/07/2016
+ * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class QueuedMessageI
+ * @details This header file contains the declaration of the class CallRegisteredMethodLauncherTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef QUEUEDMESSAGEI_H_
-#define QUEUEDMESSAGEI_H_
+#ifndef CALLREGISTEREDMETHODLAUNCHERTEST_H_
+#define CALLREGISTEREDMETHODLAUNCHERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,83 +32,47 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "MessageI.h"
-#include "MutexSem.h"
-#include "EventSem.h"
-#include "ReferenceContainer.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
 /**
- * TODO
- * */
-class QueuedMessageI: public MessageI{
+ * @brief Unit tests for the public methods of the class
+ * CallRegisteredMethodLauncherTest
+ */
+class CallRegisteredMethodLauncherTest {
 public:
 
     /**
-       * TODO
-       * Default message handling mechanism
-       * Handles the reception of a message
-       * By default simply calls SortMessage
-       * Can be overridden to implement message Queues etc...
-       * in the case of a specialised method where queued message handling is implemented
-       * when the immediate return message is requested then the wait is performed here and a timeout+communication error may be produced here
-      * */
-    virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
-
+     * @brief Default constructor.
+     */
+    CallRegisteredMethodLauncherTest();
 
     /**
-     *     sets all up and starts the message handler thread
+     * @brief Destructor.
      */
-    QueuedMessageI();
+    virtual ~CallRegisteredMethodLauncherTest();
 
     /**
-     * TODO
-     *     kills the message handler thread
+     * @brief Tests the default constructor
      */
-   virtual ~QueuedMessageI();
+    bool TestDefaultConstructor();
 
-private:
+    /**
+     * @brief Tests the Test method
+     */
+    bool TestTest();
 
-   void MessageProcessingThread();
-
-   /*
-    * to protect access to both queues
-    */
-   MutexSem           queuesAccessControl;
-
-   /*
-    * This is where the messages are piled up
-    */
-   ReferenceContainer messageProcessQueue;
-
-   /*
-    * triggered whenever a new message is inserted
-    */
-   EventSem           newMessageInQueue;
-
-   /*
-    * This is where the senders may wait for a reply
-    */
-   ReferenceContainer messageReplyWaitList;
-
-   /*
-    * triggered whenever a new reply is available
-    */
-   EventSem           newReplyInWaitList;
+    /**
+     * @brief Tests the GetResults method
+     */
+    bool TestGetResults();
 
 };
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+#endif /* CALLREGISTEREDMETHODLAUNCHERTEST_H_ */
 
-}
-#endif /* QUEUEDMESSAGEI_H_ */
-	

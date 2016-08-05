@@ -48,11 +48,12 @@ class DLL_API ReferenceContainerNode: public LinkedListable {
 public:
 
     /**
-     * @brief Constructor. NOOP.
+     * @brief Constructor.
      */
     ReferenceContainerNode();
+
     /**
-     * @brief Destructor. NOOP.
+     * @brief Destructor.
      */
     ~ReferenceContainerNode();
 

@@ -231,7 +231,7 @@ public:
      * @brief Gets the pointer at the beginning of the buffer in read-write mode.
      * @return the pointer at the beginning of the buffer.
      */
-    inline char8 *BufferReference() const;
+    inline char8 *BufferReference();
 
     /**
      * @brief Gets the allocation granularity
@@ -545,7 +545,7 @@ const char8 *IOBuffer::Buffer() const {
     return internalBuffer.Buffer();
 }
 
-char8 *IOBuffer::BufferReference() const {
+char8 *IOBuffer::BufferReference() {
     return internalBuffer.BufferReference();
 }
 

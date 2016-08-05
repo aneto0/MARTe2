@@ -1,8 +1,8 @@
 /**
- * @file ObjectBuilderTest.cpp
- * @brief Source file for class ObjectBuilderTest
- * @date 27/07/2016
- * @author Ivan Herrero
+ * @file ObjectBuilderTTest.cpp
+ * @brief Source file for class ObjectBuilderTTest
+ * @date 17/06/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,9 +17,11 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ObjectBuilderTest (public, protected, and private). Be aware that some 
+ * the class ObjectBuilderTTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
+#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -29,11 +31,12 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ObjectBuilderTest.h"
+#include "ObjectBuilderTTest.h"
 
+#include "GlobalObjectsDatabase.h"
 #include "HeapI.h"
 #include "Object.h"
-#include "ObjectBuilder.h"
+#include "ObjectBuilderT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,29 +44,45 @@
 
 namespace {
 
+class NotBuildableAgainObj: public MARTe::Object {
+public:
+    CLASS_REGISTER_DECLARATION();
+};
+
+CLASS_REGISTER(NotBuildableAgainObj, "1.0");
+
 }
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ObjectBuilderTest::ObjectBuilderTest() {
+ObjectBuilderTTest::ObjectBuilderTTest() {
 }
 
-ObjectBuilderTest::~ObjectBuilderTest() {
+ObjectBuilderTTest::~ObjectBuilderTTest() {
 }
 
-bool ObjectBuilderTest::TestDefaultConstructor() {
-    //Remark: The default constructor of ObjectBuilder does nothing.
-    return true;
-}
-
-bool ObjectBuilderTest::TestBuild() {
-    //Remark: The Build method always return a NULL and does not use the heap.
+bool ObjectBuilderTTest::TestDefaultConstructor() {
     using namespace MARTe;
     bool result;
-    ObjectBuilder target;
-    Object *obj = target.Build(NULL_PTR(HeapI *));
-    result = (obj == NULL_PTR(Object *));
+    ObjectBuilderT<NotBuildableAgainObj> target;
+    result = (NotBuildableAgainObj::GetClassRegistryItem_Static()->GetObjectBuilder() == &target);
+    return result;
+}
+
+bool ObjectBuilderTTest::TestBuild() {
+    using namespace MARTe;
+    bool result;
+    ObjectBuilderT<NotBuildableAgainObj> target;
+    HeapI* heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
+    NotBuildableAgainObj *obj = (NotBuildableAgainObj *) target.Build(heap);
+    if (obj == NULL) {
+        result = false;
+    }
+    else {
+        delete obj;
+        result = true;
+    }
     return result;
 }

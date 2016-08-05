@@ -1,7 +1,7 @@
 /**
- * @file StaticList.cpp
- * @brief Source file for class StaticList
- * @date 14/09/2015
+ * @file CallRegisteredMethodLauncherTGTest.cpp
+ * @brief Source file for class CallRegisteredMethodLauncherTGTest
+ * @date 27/07/2016
  * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StaticList (public, protected, and private). Be aware that some 
+ * the class CallRegisteredMethodLauncherTGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,12 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "StaticList.h"
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+#include "CallRegisteredMethodLauncherTTest.h"
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,7 +44,17 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
+TEST(CallRegisteredMethodLauncherTGTest,TestDefaultConstructor) {
+    CallRegisteredMethodLauncherTTest target;
+    ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
+TEST(CallRegisteredMethodLauncherTGTest,TestTest) {
+    CallRegisteredMethodLauncherTTest target;
+    ASSERT_TRUE(target.TestTest());
+}
+
+TEST(CallRegisteredMethodLauncherTGTest,TestGetResults) {
+    CallRegisteredMethodLauncherTTest target;
+    ASSERT_TRUE(target.TestGetResults());
+}

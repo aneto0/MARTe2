@@ -1,7 +1,7 @@
 /**
- * @file ClassMethodCallerTest.h
- * @brief Header file for class ClassMethodCallerTest
- * @date 27/06/2016
+ * @file CallRegisteredMethodLauncherTTest.h
+ * @brief Header file for class CallRegisteredMethodLauncherTTest
+ * @date 27/07/2016
  * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ClassMethodCallerTest
+ * @details This header file contains the declaration of the class CallRegisteredMethodLauncherTTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CLASSMETHODCALLERTEST_H_
-#define CLASSMETHODCALLERTEST_H_
+#ifndef CALLREGISTEREDMETHODLAUNCHERTTEST_H_
+#define CALLREGISTEREDMETHODLAUNCHERTTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -37,20 +37,21 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Unit tests for the public methods of ClassMethodCaller.
+ * @brief Unit tests for the public methods of the class
+ * CallRegisteredMethodLauncherTTest
  */
-class ClassMethodCallerTest {
+class CallRegisteredMethodLauncherTTest {
 public:
 
     /**
      * @brief Default constructor.
-     **/
-    ClassMethodCallerTest();
+     */
+    CallRegisteredMethodLauncherTTest();
 
     /**
      * @brief Destructor.
-     **/
-    virtual ~ClassMethodCallerTest();
+     */
+    virtual ~CallRegisteredMethodLauncherTTest();
 
     /**
      * @brief Tests the default constructor
@@ -58,14 +59,19 @@ public:
     bool TestDefaultConstructor();
 
     /**
-     * @brief Tests the Call method
+     * @brief Tests the Test method
      */
-    bool TestCall();
+    bool TestTest();
+
+    /**
+     * @brief Tests the GetResults method
+     */
+    bool TestGetResults();
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* CLASSMETHODCALLERTEST_H_ */
+#endif /* CALLREGISTEREDMETHODLAUNCHERTTEST_H_ */
 

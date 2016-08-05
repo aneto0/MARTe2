@@ -36,15 +36,45 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * @brief Unit tests for the public methods of ClassMethodInterfaceMapperTest.
+ */
 class ClassMethodInterfaceMapperTest {
-//TODO Add the macro DLL_API to the class declaration (i.e. class DLL_API ClassMethodCallerTest)
 public:
+
+    /**
+     * @brief Default constructor.
+     **/
     ClassMethodInterfaceMapperTest();
+
+    /**
+     * @brief Destructor.
+     **/
     virtual ~ClassMethodInterfaceMapperTest();
+
+    /**
+     * @brief Tests the default constructor
+     */
     bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests the constructor for a method without arguments.
+     */
     bool TestConstructorForMethodWithNoArguments();
+
+    /**
+     * @brief Tests the constructor for a method with 1 argument by copy.
+     */
     bool TestConstructorForMethodWith1ArgumentByCopy();
+
+    /**
+     * @brief Tests the constructor for a method with 1 argument by reference.
+     */
     bool TestConstructorForMethodWith1ArgumentByRef();
+
+    /**
+     * @brief Tests the Call method
+     */
     bool TestCall();
 };
 

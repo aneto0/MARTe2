@@ -74,7 +74,7 @@ namespace MARTe {
  * called method.
  */
 template<typename argType>
-class DLL_API CallRegisteredMethodLauncherT: public CallRegisteredMethodLauncher {
+class CallRegisteredMethodLauncherT: public CallRegisteredMethodLauncher {
 public:
 
     /**

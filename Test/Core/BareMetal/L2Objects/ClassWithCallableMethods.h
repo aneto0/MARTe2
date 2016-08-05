@@ -42,89 +42,110 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * @brief Registered class with registered methods meant to be used in unit
+ * tests of the calling mechanism.
+ */
 class ClassWithCallableMethods: public MARTe::Object {
-//TODO Add the macro DLL_API to the class declaration (i.e. class DLL_API ClassWithCallableMethods)
 
 public:
 
     CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief DEfault constructor
+     */
     ClassWithCallableMethods();
 
+    /**
+     * @brief Destructor
+     */
     virtual ~ClassWithCallableMethods();
 
     /**
-     *
+     * @brief Method that is not going to be registered.
      */
     bool NonRegisteredMethod(MARTe::ReferenceContainer& data);
 
     /**
-     * Method which simulates an error execution (i.e. returns false)
+     * @brief Method which simulates an error execution (i.e. returns false)
      */
     bool FaultyMethod(MARTe::ReferenceContainer& data);
 
     /**
-     *
+     * @brief Method overloaded with 3 versions, being this the one without
+     * arguments.
      */
     bool OverloadedMethod();
 
     /**
-     *
+     * @brief Method overloaded with 3 versions, being this the one with 1
+     * argument of type integer passed by reference.
      */
     bool OverloadedMethod(int& data);
 
     /**
-     *
+     * @brief Method overloaded with 3 versions, being this the one with 1
+     * argument of type ReferenceContainer passed by reference.
      */
     bool OverloadedMethod(MARTe::ReferenceContainer& data);
 
     /**
-     * consumes input from a ReferenceContainer
+     * @brief Method which consumes input from a ReferenceContainer passed
+     * by reference.
      */
     bool MethodWithInputReferenceContainer(MARTe::ReferenceContainer& data);
 
     /**
-     * produces output into a ReferenceContainer
+     * @brief Method which produces output into a ReferenceContainer passed
+     * by reference.
      */
     bool MethodWithOutputReferenceContainer(MARTe::ReferenceContainer& data);
 
     /**
-     * consumes/produces from/into a ReferenceContainer
+     * @brief Method which consumes/produces from/into a ReferenceContainer
+     * passed by reference.
      */
     bool MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer& data);
 
     /**
-     * consumes input from an integer
+     * @brief Method which consumes input from an integer passed by reference.
      */
     bool MethodWithInputInteger(int& data);
 
     /**
-     * produces output into an integer
+     * @brief Method which produces output into an integer passed by reference.
      */
     bool MethodWithOutputInteger(int& data);
 
     /**
-     * consumes/produces from/into an integer
+     * @brief Method which consumes/produces from/into an integer passed by
+     * reference.
      */
     bool MethodWithInputOutputInteger(int& data);
 
     /**
-     * consumes input from an integer
+     * @brief Method which consumes input from an integer passed by copy.
      */
     bool MethodWithInputIntegerByCopy(int data);
 
     /**
-     * consumes input from a ReferenceContainer
+     * @brief Method which consumes input from a ReferenceContainer passed by
+     * copy.
      */
     bool MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer data);
 
     /**
-     * Returns a string with the name and signature of the last executed method
+     * @brief Gets a string with the name and signature of the last executed
+     * method.
      */
     MARTe::StreamString GetLastMethodExecuted();
 
 private:
 
+    /**
+     * The name of the last executed method.
+     */
     MARTe::StreamString lastMethodExecuted;
 };
 

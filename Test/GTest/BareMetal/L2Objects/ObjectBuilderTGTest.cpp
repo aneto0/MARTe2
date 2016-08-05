@@ -1,8 +1,8 @@
 /**
- * @file QueuedMessageI.cpp
- * @brief Source file for class QueuedMessageI
- * @date Apr 22, 2016
- * @author fsartori
+ * @file ObjectBuilderGTest.cpp
+ * @brief Source file for class ObjectBuilderGTest
+ * @date 17/06/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class QueuedMessageI (public, protected, and private). Be aware that some 
+ * the class ObjectBuilderGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,11 +25,14 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <limits.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "QueuedMessageI.h"
+#include "ObjectBuilderTTest.h"
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,41 +42,12 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
-
-ErrorManagement::ErrorType QueuedMessageI::ReceiveMessage(ReferenceT<Message> &message){
-    ErrorManagement::ErrorType ret;
-
-
-    return ret;
+TEST(ObjectBuilderTGTest,TestConstructor) {
+    ObjectBuilderTTest test;
+    ASSERT_TRUE(test.TestDefaultConstructor());
 }
 
-
-void QueuedMessageI::MessageProcessingThread(){
-
-
+TEST(ObjectBuilderTGTest,TestBuild) {
+    ObjectBuilderTTest test;
+    ASSERT_TRUE(test.TestBuild());
 }
-
-
-/**
- *     sets all up and starts the message handler thread
- */
-QueuedMessageI::QueuedMessageI(){
-
-}
-
-/**
- * TODO
- *     kills the message handler thread
- */
-QueuedMessageI::~QueuedMessageI(){
-
-}
-
-
-
-
-}
-
-	

@@ -37,47 +37,94 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Tests all the TokenInfo functions
+ * Tests the MessageI public methods.
  */
 class MessageITest {
 public:
+
+    /**
+     * @brief Default constructor
+     */
+    MessageITest();
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~MessageITest();
 
     /**
      * @brief Tests the default constructor.
      */
     bool TestDefaultConstructor();
 
+    /**
+     * @brief Tests the SendMessage method
+     */
     bool TestSendMessage();
 
+    /**
+     * @brief Tests the SendMessage method with a NULL source
+     */
     bool TestSendMessage_NULL_Source();
 
+    /**
+     * @brief Tests the SendMessage method with an invalid messages
+     */
     bool TestSendMessage_False_InvalidMessage();
 
-
-    // trying to send a reply message but the destination will not expect it!!
+    /**
+     * @brief Tests the SendMessage method with not expected late reply
+     */
     bool TestSendMessage_False_NotExpectedLateReply();
 
+    /**
+     * @brief Tests the SendMessage method with no destination for reply
+     */
     bool TestSendMessage_False_NoDestinationForReply();
 
+    /**
+     * @brief Tests the SendMessage method with no destination for expected reply
+     */
     bool TestSendMessage_False_NoDestinationForExpectedReply();
 
+    /**
+     * @brief Tests the SendMessage method with invalid destination
+     */
     bool TestSendMessage_False_InvalidDestination();
 
+    /**
+     * @brief Tests the SendMessage method with invalid function
+     */
     bool TestSendMessage_False_InvalidFunction();
 
-    // bool TestSendMessage_False_NotReplyButImmediateReplayExpected();
-
-
+    /**
+     * @brief Tests the SendMessageAndWaitReply method
+     */
     bool TestSendMessageAndWaitReply();
 
+    /**
+     * @brief Tests the SendMessageAndWaitReply method with invalid message
+     */
     bool TestSendMessageAndWaitReply_False_InvalidMessage();
 
+    /**
+     * @brief Tests the SendMessageAndWaitReply method with reply of reply
+     */
     bool TestSendMessageAndWaitReply_False_ReplyOfReply();
 
+    /**
+     * @brief Tests the SendMessageAndExpectReplyLater method
+     */
     bool TestSendMessageAndExpectReplyLater();
 
+    /**
+     * @brief Tests the SendMessageAndExpectReplyLater method with invalid message
+     */
     bool TestSendMessageAndExpectReplyLater_False_InvalidMessage();
 
+    /**
+     * @brief Tests the SendMessageAndExpectReplyLater method with reply of reply
+     */
     bool TestSendMessageAndExpectReplyLater_False_ReplyOfReply();
 
 };

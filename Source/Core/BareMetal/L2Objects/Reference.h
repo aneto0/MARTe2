@@ -87,7 +87,7 @@ public:
     Reference(Object * const pointer);
 
     /**
-     * @brief Removes the reference to the underlying object.
+     * @brief Destructor. Removes the reference to the underlying object.
      * @see RemoveReference.
      */
     virtual ~Reference();
@@ -188,14 +188,19 @@ private:
                          HeapI* const heap) const;
 };
 
+}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 Object* Reference::operator->() {
     return objectPointer;
 }
 
 }
+
 #endif /* REFERENCE_H_ */
 

@@ -21,8 +21,6 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
-#define DLL_API
-
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -35,6 +33,7 @@
 #include "ClassWithCallableMethods.h"
 #include "ClassMethodsRegistryItem.h"
 #include "Reference.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -48,11 +47,9 @@ namespace {
 /*---------------------------------------------------------------------------*/
 
 ClassWithCallableMethods::ClassWithCallableMethods() {
-
 }
 
 ClassWithCallableMethods::~ClassWithCallableMethods() {
-
 }
 
 bool ClassWithCallableMethods::NonRegisteredMethod(MARTe::ReferenceContainer& data) {
