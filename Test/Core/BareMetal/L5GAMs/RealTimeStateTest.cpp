@@ -1,8 +1,8 @@
 /**
  * @file RealTimeStateTest.cpp
  * @brief Source file for class RealTimeStateTest
- * @date 07/mar/2016
- * @author pc
+ * @date 07/03/2016
+ * @author Giusepppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -32,7 +32,6 @@
 #include "RealTimeStateTest.h"
 #include "GAMTestHelper.h"
 #include "ReferenceContainerFilterReferencesTemplate.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -100,13 +99,13 @@ private:
 };
 
 RealTimeStateTestGAMGroup1::RealTimeStateTestGAMGroup1() :
-        GAMGroup(){
+        GAMGroup() {
 }
 
 bool RealTimeStateTestGAMGroup1::PrepareNextState(const char8 * currentStateName,
                                                   const char8 * nextStateName) {
 
-    context= ReferenceT<RealTimeStateTestContext1>("RealTimeStateTestContext1") ;
+    context = ReferenceT<RealTimeStateTestContext1>("RealTimeStateTestContext1");
 
     context->SetProperty1(1);
     context->SetProperty2(2.0);
@@ -134,14 +133,14 @@ private:
 };
 
 RealTimeStateTestGAMGroup2::RealTimeStateTestGAMGroup2() :
-        GAMGroup(){
+        GAMGroup() {
 
 }
 
 bool RealTimeStateTestGAMGroup2::PrepareNextState(const char8 * currentStateName,
                                                   const char8 * nextStateName) {
 
-    context= ReferenceT<RealTimeStateTestContext1>("RealTimeStateTestContext1") ;
+    context = ReferenceT<RealTimeStateTestContext1>("RealTimeStateTestContext1");
 
     context->SetProperty1(3);
     context->SetProperty2(4.0);
@@ -177,7 +176,7 @@ private:
 
 RealTimeStateStateLessGAM::RealTimeStateStateLessGAM() :
         GAM() {
-    index=0;
+    index = 0;
 }
 
 bool RealTimeStateStateLessGAM::Execute() {
@@ -185,8 +184,6 @@ bool RealTimeStateStateLessGAM::Execute() {
 }
 
 bool RealTimeStateStateLessGAM::SetContext(ConstReference contextIn) {
-
-    printf("Set to %s index=%d\n", GetName(), index);
 
     context[index] = contextIn;
     index++;
@@ -225,13 +222,12 @@ private:
     ConstReference context2[2];
     uint32 index;
 
-
 };
 
 RealTimeStateStateFulGAM::RealTimeStateStateFulGAM() :
         GAM() {
     context = 0u;
-    index=0;
+    index = 0;
 
 }
 
@@ -240,7 +236,6 @@ bool RealTimeStateStateFulGAM::Execute() {
 }
 
 bool RealTimeStateStateFulGAM::SetContext(ConstReference contextIn) {
-    printf("Set to %s index=%d\n", GetName(), index);
 
     context2[index] = contextIn;
     index++;
@@ -555,14 +550,12 @@ RealTimeStateTest::RealTimeStateTest() {
     ConfigurationDatabase cdb;
     StandardParser parser(config, cdb);
     if (!parser.Parse()) {
-        printf("\nFAILED PARSING\n");
     }
 
     cdb.MoveToRoot();
     ObjectRegistryDatabase::Instance()->CleanUp();
 
     if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
-        printf("\nFAILED INITIALISATION\n");
     }
 }
 
@@ -602,8 +595,24 @@ bool RealTimeStateTest::TestAddStatefuls() {
         return false;
     }
 
-    printf("\n#statefuls = %d\n", state1->GetNumberOfStatefuls());
     return state1->GetNumberOfStatefuls() == 6;
+}
+
+bool RealTimeStateTest::TestAddStatefulsFalse_InvalidStateful() {
+    ReferenceT<RealTimeState> state1 = ObjectRegistryDatabase::Instance()->Find("Fibonacci.States.State1");
+    if (!state1.IsValid()) {
+        return false;
+    }
+    ReferenceT<RealTimeStateStateLessGAM> notStateful = ObjectRegistryDatabase::Instance()->Find("Fibonacci.Functions.GAMGroup1.GAMB");
+    if (!notStateful.IsValid()) {
+        return false;
+    }
+
+    ReferenceContainer statefuls;
+
+    statefuls.Insert(notStateful);
+    return (!state1->AddStatefuls(statefuls));
+
 }
 
 bool RealTimeStateTest::TestPrepareNextState() {
@@ -646,92 +655,89 @@ bool RealTimeStateTest::TestPrepareNextState() {
     ReferenceT<RealTimeStateStateLessGAM> gamg = functions->Find("GAMGroup3.GAMG");
     ReferenceT<RealTimeStateStateFulGAM> gamh = functions->Find("GAMGroup3.GAMH");
 
-    ConstReferenceT(RealTimeStateTestContext1) context[2];
-    context[0]=gama->GetContext2(0);
-    context[1]=gama->GetContext2(1);
-    if(context[0]->GetProperty1()!=1 && context[0]->GetProperty2()!=2.0){
+    ConstReferenceT(RealTimeStateTestContext1)context[2];
+    context[0] = gama->GetContext2(0);
+    context[1] = gama->GetContext2(1);
+    if (context[0]->GetProperty1() != 1 && context[0]->GetProperty2() != 2.0) {
         return false;
     }
-    if(gama->GetContext1()!=1){
+    if (gama->GetContext1() != 1) {
         return false;
     }
-    if(context[1].IsValid()){
-        return false;
-    }
-
-
-    context[0]=gamb->GetContext(0);
-    context[1]=gamb->GetContext(1);
-    if(context[0]->GetProperty1()!=1 && context[0]->GetProperty2()!=2.0){
-        return false;
-    }
-    if(context[1].IsValid()){
+    if (context[1].IsValid()) {
         return false;
     }
 
-    context[0]=gamc->GetContext(0);
-    context[1]=gamc->GetContext(1);
-    if(context[0]->GetProperty1()!=1 && context[0]->GetProperty2()!=2.0){
+    context[0] = gamb->GetContext(0);
+    context[1] = gamb->GetContext(1);
+    if (context[0]->GetProperty1() != 1 && context[0]->GetProperty2() != 2.0) {
         return false;
     }
-    if(context[1]->GetProperty1()!=3 && context[1]->GetProperty2()!=4.0){
-        return false;
-    }
-
-    context[0]=gamd->GetContext(0);
-    context[1]=gamd->GetContext(1);
-    if(context[0]->GetProperty1()!=1 && context[0]->GetProperty2()!=2.0){
-        return false;
-    }
-    if(context[1]->GetProperty1()!=3 && context[1]->GetProperty2()!=4.0){
+    if (context[1].IsValid()) {
         return false;
     }
 
-    context[0]=game->GetContext(0);
-    context[1]=game->GetContext(1);
-    if(context[0]->GetProperty1()!=3 && context[0]->GetProperty2()!=4.0){
+    context[0] = gamc->GetContext(0);
+    context[1] = gamc->GetContext(1);
+    if (context[0]->GetProperty1() != 1 && context[0]->GetProperty2() != 2.0) {
+        return false;
+    }
+    if (context[1]->GetProperty1() != 3 && context[1]->GetProperty2() != 4.0) {
         return false;
     }
 
-    if(context[1]->GetProperty1()!=1 && context[1]->GetProperty2()!=2.0){
+    context[0] = gamd->GetContext(0);
+    context[1] = gamd->GetContext(1);
+    if (context[0]->GetProperty1() != 1 && context[0]->GetProperty2() != 2.0) {
+        return false;
+    }
+    if (context[1]->GetProperty1() != 3 && context[1]->GetProperty2() != 4.0) {
         return false;
     }
 
-
-    context[0]=gamf->GetContext(0);
-    context[1]=gamf->GetContext(1);
-    if(context[0]->GetProperty1()!=3 && context[0]->GetProperty2()!=4.0){
+    context[0] = game->GetContext(0);
+    context[1] = game->GetContext(1);
+    if (context[0]->GetProperty1() != 3 && context[0]->GetProperty2() != 4.0) {
         return false;
     }
 
-    if(context[1].IsValid()){
+    if (context[1]->GetProperty1() != 1 && context[1]->GetProperty2() != 2.0) {
         return false;
     }
 
-    context[0]=gamg->GetContext(0);
-    context[1]=gamg->GetContext(1);
-    if(context[0]->GetProperty1()!=3 && context[0]->GetProperty2()!=4.0){
+    context[0] = gamf->GetContext(0);
+    context[1] = gamf->GetContext(1);
+    if (context[0]->GetProperty1() != 3 && context[0]->GetProperty2() != 4.0) {
         return false;
     }
 
-    if(context[1].IsValid()){
+    if (context[1].IsValid()) {
         return false;
     }
 
-    context[0]=gamh->GetContext2(0);
-    context[1]=gamh->GetContext2(1);
-
-    if(context[0]->GetProperty1()!=3 && context[0]->GetProperty2()!=4.0){
+    context[0] = gamg->GetContext(0);
+    context[1] = gamg->GetContext(1);
+    if (context[0]->GetProperty1() != 3 && context[0]->GetProperty2() != 4.0) {
         return false;
     }
 
-    if(context[1].IsValid()){
-        return false;
-    }
-    if(gamh->GetContext1()!=1){
+    if (context[1].IsValid()) {
         return false;
     }
 
+    context[0] = gamh->GetContext2(0);
+    context[1] = gamh->GetContext2(1);
+
+    if (context[0]->GetProperty1() != 3 && context[0]->GetProperty2() != 4.0) {
+        return false;
+    }
+
+    if (context[1].IsValid()) {
+        return false;
+    }
+    if (gamh->GetContext1() != 1) {
+        return false;
+    }
 
     return true;
 }

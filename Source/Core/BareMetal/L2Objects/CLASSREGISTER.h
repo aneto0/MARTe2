@@ -28,10 +28,20 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include <typeinfo>
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ClassRegistryItemT.h"
+
+#include "ClassProperties.h"
+#include "ClassRegistryItem.h"
+#include "ClassRegistryItemT.h"
+#include "GeneralDefinitions.h"
+#include "HeapI.h"
+#include "HeapManager.h"
+#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

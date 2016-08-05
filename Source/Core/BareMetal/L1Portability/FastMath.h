@@ -33,108 +33,113 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
+#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,FastMathA.h)
 
 /*---------------------------------------------------------------------------*/
-/*                           Module declaration                               */
+/*                           Module declaration                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
-namespace FastMath {
+    namespace FastMath {
 
-/**
- * The constant for e
- */
-const float64 E = 2.7182818284590452354;
+        /**
+         * The constant for e
+         */
+        const float64 E = 2.7182818284590452354;
 
-/**
- * The constant for log2(e)
- */
-const float64 LOG2E = 1.4426950408889634074;
+        /**
+         * The constant for log2(e)
+         */
+        const float64 LOG2E = 1.4426950408889634074;
 
-/**
- * The constant for log10(e)
- */
-const float64 LOG10E = 0.43429448190325182765;
+        /**
+         * The constant for log10(e)
+         */
+        const float64 LOG10E = 0.43429448190325182765;
 
-/**
- * The constant for log(2)
- */
-const float64 LN2 = 0.69314718055994530942;
+        /**
+         * The constant for log(2)
+         */
+        const float64 LN2 = 0.69314718055994530942;
 
-/**
- * The constant for log(10)
- */
-const float64 LN10 = 2.30258509299404568402;
+        /**
+         * The constant for log(10)
+         */
+        const float64 LN10 = 2.30258509299404568402;
 
-/**
- * The constant for pi
- */
-const float64 PI = 3.14159265358979323846;
+        /**
+         * The constant for pi
+         */
+        const float64 PI = 3.14159265358979323846;
 
-/**
- * The constant for pi/2
- */
-const float64 PI_2 = 1.57079632679489661923;
+        /**
+         * The constant for pi/2
+         */
+        const float64 PI_2 = 1.57079632679489661923;
 
-/**
- * The constant for pi/4
- */
-const float64 PI_4 = 0.78539816339744830962;
+        /**
+         * The constant for pi/4
+         */
+        const float64 PI_4 = 0.78539816339744830962;
 
-/**
- * The constant for 1/pi
- */
-const float64 ONE_PI = 0.31830988618379067154;
+        /**
+         * The constant for 1/pi
+         */
+        const float64 ONE_PI = 0.31830988618379067154;
 
-/**
- * The constant for 2/pi
- */
-const float64 TWO_PI = 0.63661977236758134308;
+        /**
+         * The constant for 2/pi
+         */
+        const float64 TWO_PI = 0.63661977236758134308;
 
-/**
- * The constant for 2/sqrt(pi)
- */
-const float64 TWO_SQRTPI = 1.12837916709551257390;
+        /**
+         * The constant for 2/sqrt(pi)
+         */
+        const float64 TWO_SQRTPI = 1.12837916709551257390;
 
-/**
- * The constant for sqrt(2)
- */
-const float64 SQRT2 = 1.41421356237309504880;
+        /**
+         * The constant for sqrt(2)
+         */
+        const float64 SQRT2 = 1.41421356237309504880;
 
-/**
- * The constant for sqrt(1/2)
- */
-const float64 SQRT1_2 = 0.70710678118654752440;
+        /**
+         * The constant for sqrt(1/2)
+         */
+        const float64 SQRT1_2 = 0.70710678118654752440;
 
-/**
- * @brief Converts a float to an integer using a processor instruction.
- * @param[in] input the value to convert
- * @return the input as an integer
- */
-inline int32 FloatToInt(const float32 input);
+        /**
+         * @brief Converts a float to an integer using a processor instruction.
+         * @param[in] input the value to convert
+         * @return the input as an integer
+         */
+        /*lint -e(762) This declaration is redundant. */
+        inline int32 FloatToInt(const float32 input);
 
-/**
- * @brief Computes the cosine of an angle using a processor instruction.
- * @param[in] angle the angle to compute
- * @return the cosine of angle
- */
-inline float32 Cos(const float32 angle);
+        /**
+         * @brief Computes the cosine of an angle using a processor instruction.
+         * @param[in] angle the angle to compute
+         * @return the cosine of angle
+         */
+        /*lint -e(762) This declaration is redundant. */
+        inline float32 Cos(const float32 angle);
 
-/**
- * @brief Computes the sine of an angle using a processor instruction.
- * @param[in] angle the angle to compute
- * @return the sine of angle
- */
-inline float32 Sin(const float32 angle);
+        /**
+         * @brief Computes the sine of an angle using a processor instruction.
+         * @param[in] angle the angle to compute
+         * @return the sine of angle
+         */
+        /*lint -e(762) This declaration is redundant. */
+        inline float32 Sin(const float32 angle);
+    }
+
+    /*---------------------------------------------------------------------------*/
+    /*                        Inline method definitions                          */
+    /*---------------------------------------------------------------------------*/
+
 }
-
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-}
-
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,FastMathA.h)
 
 #endif /* FASTMATH_H_ */
+
+/*lint -e(766) The header file FastMathA.h is not used here. This file is just for
+ * declaration and documentation. */

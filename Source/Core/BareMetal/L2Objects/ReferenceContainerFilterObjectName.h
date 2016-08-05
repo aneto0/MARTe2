@@ -46,6 +46,7 @@ namespace MARTe {
  */
 class DLL_API ReferenceContainerFilterObjectName: public ReferenceContainerFilter {
 public:
+
     /**
      * @brief Default constructor.
      */
@@ -123,6 +124,7 @@ private:
      * the address parameter of the constructor.
      */
     bool TestPath(ReferenceContainer &previouslyFound) const;
+
 };
 
 }

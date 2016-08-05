@@ -75,6 +75,7 @@ public:
                       Reference &referenceToTest);
 
 private:
+
     /**
      * The reference to be found.
      */

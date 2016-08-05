@@ -21,6 +21,8 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -42,12 +44,16 @@
 
 namespace MARTe {
 
-Message::Message():ReferenceContainer() {
-
+Message::Message() :
+        ReferenceContainer(),
+        sender(),
+        destination(),
+        function(),
+        maxWait(),
+        flags() {
 }
 
 Message::~Message() {
-
 }
 
 void Message::MarkAsReply(const bool flag) {
@@ -71,14 +77,14 @@ bool Message::ReplyExpected() const {
 }
 
 bool Message::ImmediateReplyExpected() const {
-    bool expectsReply=flags.expectsReply;
-    bool expectsImmediateReply=flags.expectsImmediateReply;
+    bool expectsReply = flags.expectsReply;
+    bool expectsImmediateReply = flags.expectsImmediateReply;
     return (expectsReply && expectsImmediateReply);
 }
 
 bool Message::LateReplyExpected() const {
-    bool expectsReply=flags.expectsReply;
-    bool expectsImmediateReply=flags.expectsImmediateReply;
+    bool expectsReply = flags.expectsReply;
+    bool expectsImmediateReply = flags.expectsImmediateReply;
     return (expectsReply && (!expectsImmediateReply));
 }
 
@@ -123,6 +129,21 @@ bool Message::Initialise(StructuredDataI &data) {
     }
 
     return ret;
+}
+
+Message::MessageFlags::MessageFlags() {
+    expectsReply = false;
+    expectsImmediateReply = false;
+    isReply = false;
+}
+
+Message::MessageFlags::MessageFlags(CCString asString) {
+    expectsReply = (StringHelper::Compare(asString.GetList(), "ExpectsReply") == 0);
+    expectsImmediateReply = (StringHelper::Compare(asString.GetList(), "ExpectsImmediateReply") == 0);
+    if (bool(expectsImmediateReply)) {
+        expectsReply = true;
+    }
+    isReply = false;
 }
 
 CLASS_REGISTER(Message, "1.0")

@@ -39,6 +39,8 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+/*lint -e{9109} forward declaration in ReferenceContainerFilter.h is required to define the class*/
+/*lint -e{763} forward declaration in ReferenceContainerFilter.h is required to define the class*/
 class ReferenceContainer;
 }
 
@@ -92,6 +94,7 @@ const uint32 REMOVE = 0x8u;
  */
 class DLL_API ReferenceContainerFilter {
 public:
+
     /**
      * @brief Default constructor
      */
@@ -112,8 +115,9 @@ public:
      */
     ReferenceContainerFilter(const int32 &occurrenceNumber,
                              const uint32 &modeToSet);
+
     /**
-     * @brief Destructor. NOOP
+     * @brief Destructor.
      */
     virtual ~ReferenceContainerFilter();
 
@@ -222,6 +226,7 @@ private:
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

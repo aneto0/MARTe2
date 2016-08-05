@@ -46,20 +46,45 @@ class GAMSchedulerITest {
 
 public:
 
+	/**
+	 * @brief Initialise ObjectRegistryDatabase
+	 */
     GAMSchedulerITest();
 
+	/**
+	 * @brief Destroys ObjectRegistryDatabase
+	 */
     ~GAMSchedulerITest();
 
+    /**
+     * @brief Tests the constructor
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function configures correctly the scheduler
+     */
     bool TestConfigureScheduler();
 
+    /**
+     * @brief Tests if the scheduler configuration fails if not a RealTimeState is present
+     * in States container
+     */
     bool TestConfigureSchedulerFalse_InvalidState();
 
+    /**
+     * @brief Tests if the function returns the number of executables in the specified state
+     */
     bool TestGetNumberOfExecutables();
 
+    /**
+     * @brief Tests if the function prepares the set of threads to be executed in the next state
+     */
     bool TestPrepareNextState();
 
+    /**
+     * @brief Tests if the function executes a cycle of Executables defined in a RealTimeThreads
+     */
     bool TestExecuteSingleCycle();
 
 };

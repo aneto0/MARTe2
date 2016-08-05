@@ -1,8 +1,8 @@
 /**
  * @file ObjectBuilder.h
  * @brief Header file for class ObjectBuilder
- * @date Apr 11, 2016
- * @author fsartori
+ * @date 11/04/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -49,25 +49,42 @@ class Object;
 namespace MARTe {
 
 /**
- * @brief Implements an invalid object builder that can be re-implemented by descendants.
+ * @brief This class represents an abstract object builder.
+ *
+ * @details An object builder is an object whose purpose is to build another
+ * object. In order to build an object, an object builder needs:
+ * + A HeapI object which will allocate the memory for the object to be built.
+ * + An overloaded new operator for creating a new instance for a specific
+ * class using the HeapI object.
+ *
+ * @warning This class must be considered as a pure abstract class, i.e. an
+ * interface, although it does not declare any of its methods as pure virtual.
+ * Instead, it implements the Build method forcing it to return a default
+ * value (NULL). The reason to this is that derived classes are expected to
+ * implement the Build method, while the abstract class can be used as an
+ * invalid object builder (useful for setting a default builder).
  */
 class DLL_API ObjectBuilder {
 public:
 
     /**
-     * @brief invalid object builder function.
-     * @param[in] heap is the heap where the memory for the new instance must be allocated.
-     * @return a NULL pointer to MARTe::Object.
+     * @brief Default constructor
      */
-    virtual Object *Build(HeapI* const heap) const {
-        return NULL_PTR(Object *);
-    }
+    ObjectBuilder();
 
     /**
      * @brief Destructor.
      */
-    virtual ~ObjectBuilder() {
-    }
+    virtual ~ObjectBuilder();
+
+    /**
+     * @brief invalid object builder function.
+     * @param[in] heap is the heap where the memory for the new instance must
+     * be allocated.
+     * @return a NULL pointer to MARTe::Object.
+     */
+    virtual Object *Build(HeapI* const heap) const;
+
 };
 
 }
@@ -76,5 +93,18 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* OBJECTBUILDER_H_ */
+namespace MARTe {
 
+inline ObjectBuilder::ObjectBuilder() {
+}
+
+inline ObjectBuilder::~ObjectBuilder() {
+}
+
+inline Object *ObjectBuilder::Build(HeapI* const heap) const {
+    return NULL_PTR(Object *);
+}
+
+}
+
+#endif /* OBJECTBUILDER_H_ */

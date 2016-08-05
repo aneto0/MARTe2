@@ -57,22 +57,28 @@ public:
     ~RealTimeStateTest();
 
     /**
-     * @brief Tests the constructor.
+     * @brief Tests the constructor
      */
     bool TestConstructor();
 
     /**
-     * @brief Tests the AddStatefuls method.
+     * @brief Tests if the the function inserts statefuls in the internal container
+     * checking if they already are present to avoi duplications
      */
     bool TestAddStatefuls();
 
     /**
-     * @brief Tests the PrepareNextState method.
+     * @brief Tests if the function fails trying to add a not StatefulI reference
+     */
+    bool TestAddStatefulsFalse_InvalidStateful();
+
+    /**
+     * @brief Tests if the function refreshes the context of the StatefulI involved in the next state
      */
     bool TestPrepareNextState();
 
     /**
-     * @brief Tests the GetNumberOfStatefuls method.
+     * @brief Tests if the function returns how many StatefulI are involved in this state
      */
     bool TestGetNumberOfStatefuls();
 

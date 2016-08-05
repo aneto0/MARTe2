@@ -50,6 +50,25 @@ TEST(RealTimeApplicationGTest,TestInitialise) {
     ASSERT_TRUE(test.TestInitialise());
 }
 
+TEST(RealTimeApplicationGTest,TestInitialiseFalse_NoStatesFound) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestInitialiseFalse_NoStatesFound());
+}
+
+TEST(RealTimeApplicationGTest,TestInitialiseFalse_NoDataFound) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestInitialiseFalse_NoDataFound());
+}
+
+TEST(RealTimeApplicationGTest,TestInitialiseFalse_NoFunctionsFound) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestInitialiseFalse_NoFunctionsFound());
+}
+
+TEST(RealTimeApplicationGTest,TestInitialiseFalse_NoSchedulerFound) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestInitialiseFalse_NoSchedulerFound());
+}
 
 TEST(RealTimeApplicationGTest,TestConfigureApplication) {
     RealTimeApplicationTest test;

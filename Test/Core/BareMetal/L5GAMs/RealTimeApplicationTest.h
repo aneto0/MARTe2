@@ -47,7 +47,7 @@ class RealTimeApplicationTest {
 public:
 
     /**
-     * @brief Initialises the ObjectRegistryDatabase.
+     * @brief Initialises the configuration stream
      */
     RealTimeApplicationTest();
 
@@ -57,42 +57,62 @@ public:
     ~RealTimeApplicationTest();
 
     /**
-     * @brief Inits the application environment.
+     * @brief Initialises the ObhectRegistryDatabase
      */
     bool Init();
 
     /**
-     * @brief Tests the Constructor.
+     * @brief Tests the constructor
      */
     bool TestConstructor();
 
     /**
-     * @brief Tests the Initialise method.
+     * @brief Tests the Initialise function
      */
     bool TestInitialise();
 
     /**
-     * @brief Tests the ConfigureApplication method starting from a configuration file (i.e. using the RealTimeApplicationConfigurationBuilder to generate the configuration).
+     * @brief Tests the Initialise failing if no States container declared
+     */
+    bool TestInitialiseFalse_NoStatesFound();
+
+    /**
+     * @brief Tests the Initialise failing if no Data container declared
+     */
+    bool TestInitialiseFalse_NoDataFound();
+
+    /**
+     * @brief Tests the Initialise failing if no Functions container declared
+     */
+    bool TestInitialiseFalse_NoFunctionsFound();
+
+    /**
+     * @brief Tests the Initialise failing if no Scheduler container declared
+     */
+    bool TestInitialiseFalse_NoSchedulerFound();
+
+    /**
+     * @brief Tests the ConfigureApplication compiling the ConfigurationDatabase after initialisation
      */
     bool TestConfigureApplication();
 
     /**
-     * @brief Tests the ConfigureApplication method with pre-compiled ConfigurationDatabases .
+     * @brief Tests the ConfigureApplication compiling the ConfigurationDatabase before initialisation
      */
     bool TestConfigureApplicationNoInit();
 
     /**
-     * @brief Tests the PrepareNextState method.
+     * @brief Tests if the function refreshes the correct GAMs, DataSources and Scheduler for a state switch
      */
     bool TestPrepareNextState();
 
     /**
-     * @brief Tests the StartExecution method.
+     * @brief Tests if the function launches the scheduler execution
      */
     bool TestStartExecution();
 
     /**
-     * @brief Tests the StopExecution method.
+     * @brief Tests if the function stops the scheduler execution
      */
     bool TestStopExecution();
 

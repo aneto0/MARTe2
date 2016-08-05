@@ -26,6 +26,8 @@
 
 
 OBJSX=  AnyTypeTest.x\
+		CallRegisteredMethodLauncherTest.x \
+		CallRegisteredMethodLauncherTTest.x \
 		ClassMethodCallerTest.x \
 		ClassMethodCallerTTest.x \
 		ClassMethodInterfaceMapperTest.x \
@@ -37,6 +39,7 @@ OBJSX=  AnyTypeTest.x\
 		IntrospectionEntryTest.x\
 		IntrospectionTest.x \
 		ObjectBuilderTest.x \
+		ObjectBuilderTTest.x \
 		ObjectTest.x \
 		ObjectRegistryDatabaseTest.x \
 		ObjectTestHelper.x \

@@ -1,8 +1,8 @@
 /**
  * @file ClassMethodInterfaceMapper.cpp
  * @brief Source file for class ClassMethodInterfaceMapper
- * @date 13/giu/2016
- * @author pc
+ * @date 13/06/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -45,6 +45,7 @@ namespace MARTe {
 
 ClassMethodInterfaceMapper::ClassMethodInterfaceMapper() {
     caller = NULL_PTR(ClassMethodCaller *);
+    byCopy = false;
 }
 
 /*lint -e {1551} */

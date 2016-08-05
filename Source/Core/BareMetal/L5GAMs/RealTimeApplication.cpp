@@ -42,7 +42,6 @@
 #include "Matrix.h"
 #include "RealTimeApplicationConfigurationBuilder.h"
 #include "RealTimeThread.h"
-#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -63,14 +62,18 @@ RealTimeApplication::~RealTimeApplication() {
 
 }
 bool RealTimeApplication::Initialise(StructuredDataI & data) {
+    index = 1u;
+
     bool ret = ReferenceContainer::Initialise(data);
     if (data.MoveRelative("+Data")) {
         if (!data.Read("DefaultDataSource", defaultDataSourceName)) {
             defaultDataSourceName = "";
         }
-        data.MoveToAncestor(1u);
+        ret = data.MoveToAncestor(1u);
     }
-    defaultDataSourceName.Seek(0u);
+    if (ret) {
+        ret = defaultDataSourceName.Seek(0ull);
+    }
 
     if (ret) {
         uint32 numberOfContainers = Size();
@@ -83,7 +86,11 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     ret = statesContainer.IsValid();
                 }
             }
+            if (!ret) {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No States block found in RealTimeApplication %s", GetName())
+            }
         }
+
         if (ret) {
             ret = false;
             for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
@@ -95,7 +102,11 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     }
                 }
             }
+            if (!ret) {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Data block found in RealTimeApplication %s", GetName())
+            }
         }
+
         if (ret) {
             ret = false;
             for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
@@ -107,23 +118,67 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     }
                 }
             }
+            if (!ret) {
+                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Functions block found in RealTimeApplication %s", GetName())
+            }
         }
 
         if (ret) {
+            uint32 numberOfContainers = Size();
             ret = false;
             for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                Reference container = Get(i);
-                if (container.IsValid()) {
-                    if (StringHelper::Compare(container->GetName(), "Scheduler") == 0) {
-                        scheduler = container;
-                        ret = scheduler.IsValid();
+                Reference item = Get(i);
+                if (item.IsValid()) {
+                    if (StringHelper::Compare(item->GetName(), "States") == 0) {
+                        statesContainer = item;
+                        ret = statesContainer.IsValid();
                     }
+                }
+            }
+            if (ret) {
+                ret = false;
+                for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+                    Reference container = Get(i);
+                    if (container.IsValid()) {
+                        if (StringHelper::Compare(container->GetName(), "Data") == 0) {
+                            dataSourceContainer = container;
+                            ret = dataSourceContainer.IsValid();
+                        }
+                    }
+                }
+            }
+            if (ret) {
+                ret = false;
+                for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+                    Reference item = Get(i);
+                    if (item.IsValid()) {
+                        if (StringHelper::Compare(item->GetName(), "Functions") == 0) {
+                            functionsContainer = item;
+                            ret = functionsContainer.IsValid();
+                        }
+                    }
+                }
+            }
+
+            if (ret) {
+                ret = false;
+                for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+                    Reference container = Get(i);
+                    if (container.IsValid()) {
+                        if (StringHelper::Compare(container->GetName(), "Scheduler") == 0) {
+                            scheduler = container;
+                            ret = scheduler.IsValid();
+                        }
+                    }
+                }
+                if (!ret) {
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Scheduler block in RealTimeApplication %s", GetName())
                 }
             }
         }
     }
-
     return ret;
+
 }
 
 bool RealTimeApplication::ConfigureApplication() {
@@ -208,7 +263,7 @@ bool RealTimeApplication::AllocateGAMMemory() {
 
     bool ret = functionsDatabase.MoveAbsolute("Functions");
     uint32 numberOfFunctions = functionsDatabase.GetNumberOfChildren();
-    for (uint32 i = 0u; i < numberOfFunctions && ret; i++) {
+    for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
         const char8 * functionId = functionsDatabase.GetChildName(i);
         ret = functionsDatabase.MoveRelative(functionId);
         if (ret) {
@@ -237,7 +292,7 @@ bool RealTimeApplication::AllocateGAMMemory() {
 bool RealTimeApplication::AllocateDataSourceMemory() {
     bool ret = dataSourcesDatabase.MoveAbsolute("Data");
     uint32 numberOfDs = dataSourcesDatabase.GetNumberOfChildren();
-    for (uint32 i = 0u; i < numberOfDs && ret; i++) {
+    for (uint32 i = 0u; (i < numberOfDs) && (ret); i++) {
         const char8* dsId = dataSourcesDatabase.GetChildName(i);
         ret = dataSourcesDatabase.MoveRelative(dsId);
         if (ret) {
@@ -263,7 +318,7 @@ bool RealTimeApplication::AddBrokersToFunctions() {
     bool ret = dataSourcesDatabase.MoveAbsolute("Data");
     if (ret) {
         uint32 numberOfDataSources = dataSourcesDatabase.GetNumberOfChildren();
-        for (uint32 i = 0u; i < numberOfDataSources && ret; i++) {
+        for (uint32 i = 0u; (i < numberOfDataSources) && (ret); i++) {
             const char8 * dataSourceId = dataSourcesDatabase.GetChildName(i);
             ret = dataSourcesDatabase.MoveRelative(dataSourceId);
             StreamString fullDataSourcePath = "Data.";
@@ -296,7 +351,7 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
     bool ret = statesContainer.IsValid();
     if (ret) {
         uint32 numberOfStates = statesContainer->Size();
-        for (uint32 i = 0u; i < numberOfStates && ret; i++) {
+        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
             ReferenceT<RealTimeState> state = statesContainer->Get(i);
             ret = state.IsValid();
             if (ret) {
@@ -309,7 +364,7 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
     }
 
     uint32 numberOfStatefulsInData = statefulsInData.Size();
-    for (uint32 i = 0u; i < numberOfStatefulsInData && ret; i++) {
+    for (uint32 i = 0u; (i < numberOfStatefulsInData) && (ret); i++) {
         ReferenceT<StatefulI> statefulInData = statefulsInData.Get(i);
         ret = statefulInData.IsValid();
         if (ret) {
@@ -323,7 +378,8 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
             ret = scheduler->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
         }
     }
-    stateNameHolder[(index + 1u) % 2u] = nextStateName;
+    uint32 nextIndex = (index + 1u) % 2u;
+    stateNameHolder[nextIndex] = nextStateName;
     return ret;
 
 }

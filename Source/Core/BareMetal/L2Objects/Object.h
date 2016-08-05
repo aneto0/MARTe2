@@ -63,8 +63,7 @@ namespace MARTe {
  *  - Is introspectable and enables reflection of derived classes;
  *  - The allocation heap for the object can be selected by the end-user.
  */
-/*lint -e{9109} Object is forward declared in ClassRegistryItem (in order to be able to have access the function pointer to
- * create new instances.*/
+/*lint -e{9109} forward declaration of this class is required in other modules*/
 class DLL_API Object {
     /**
      * This allows the Reference class to be the only interface to manage the number of instances pointing to this object.

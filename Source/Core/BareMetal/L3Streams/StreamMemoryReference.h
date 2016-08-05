@@ -234,7 +234,7 @@ public:
      * write access.
      * @return The pointer to the internal buffer.
      */
-    inline char8 *BufferReference() const;
+    inline char8 *BufferReference();
 
     /**
      * @brief Gets a pointer to the tail of the internal buffer with read only
@@ -278,14 +278,21 @@ const char8 *StreamMemoryReference::Buffer() const {
     return buffer.Buffer();
 }
 
-char8 *StreamMemoryReference::BufferReference() const {
+char8 *StreamMemoryReference::BufferReference() {
     return buffer.BufferReference();
 }
 
 const char8 *StreamMemoryReference::Tail(const uint32 ix) const {
+    const char8* result;
     bool ok = (ix <= (buffer.UsedSize() - 1u));
-
-    return (ok) ? (&(buffer.BufferReference()[(buffer.UsedSize() - ix) - 1u])) : static_cast<const char8 *>(NULL);
+    if (ok) {
+        const char8* bufref = buffer.Buffer();
+        result = &(bufref[(buffer.UsedSize() - ix) - 1u]);
+    }
+    else {
+        result = static_cast<const char8 *>(NULL);
+    }
+    return result;
 }
 
 }

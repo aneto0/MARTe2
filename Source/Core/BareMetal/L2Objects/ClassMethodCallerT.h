@@ -41,18 +41,33 @@
 namespace MARTe {
 
 /**
- * @brief Automatic overload of ClassMethodCaller methods using templates.
+ * @brief This class template is a helper for building specific versions of
+ * class method callers for target methods with one argument.
  *
- * @details Registers and calls a class method taking one parameter.
+ * @details This specialisation of the template generates a pair of "Call"
+ * methods for target methods which accept exactly one argument. One is the
+ * version for by reference arguments and the other for by copy arguments.
  *
- * @tparam className is the class owning the registered method.
- * @tparam argType1 is the type of the input parameter to be passed as the class method argument
+ * This specialisation expects the name of the target class as the first
+ * class template parameter, followed by the type of the argument to be passed
+ * to the target method.
+ *
+ * E.g.:
+ * + ClassMethodCallerT<ClassA, ReferenceContainer&> mc(&ClassA::MethodX);
+ * + ClassMethodCallerT<ClassA, int&> mc(&ClassA::MethodY);
+ *
+ * @tparam className is the class owning the target method.
+ * @tparam argType1 is the type of the input parameter to be passed to the
+ * target method.
  */
 template<typename className, typename argType1 = void>
-class DLL_API ClassMethodCallerT: public ClassMethodCaller {
+class ClassMethodCallerT: public ClassMethodCaller {
 
 public:
 
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
     typedef bool (className::*MethodPointer)(argType1);
 
     /**
@@ -69,23 +84,32 @@ public:
 
     /**
      * @brief Calls the class method with one argument passed by reference.
-     * @param[in] context is the object which must call the method.
+     * @param[in] context is the pointer to the object owning the method.
      * @param[in] ref is the class method argument.
-     * @return ErrorManagement::FatalError if the class method returns false, ErrorManagement::NoError if it returns true.
+     * @return
+     * + ErrorManagement::FatalError if the class method returns false
+     * + ErrorManagement::NoError if it returns true
      */
     virtual ErrorManagement::ErrorType Call(Object * context,
                                             argType1 ref);
 
     /**
      * @brief Calls the class method with one argument passed by copy.
-     * @param[in] context is the object which must call the method.
+     * @param[in] context is the pointer to the object owning the method.
      * @param[in] ref is the class method argument.
-     * @return ErrorManagement::FatalError if the class method returns false, ErrorManagement::NoError if it returns true.
+     * @param[in] byCopy states if the x argument is actually passed by copy
+     * (meaningful when used from templates, helping on overloading resolution)
+     * @return
+     * + ErrorManagement::FatalError if the class method returns false
+     * + ErrorManagement::NoError if it returns true
      */
     virtual ErrorManagement::ErrorType Call(Object * context,
                                             argType1 ref,
                                             bool ByCopy);
 
+    /**
+     * @brief Gets the pointer to the method
+     */
     MethodPointer GetMethodPointer();
 
 private:
@@ -98,16 +122,29 @@ private:
 };
 
 /**
- * @brief Automatic overload of ClassMethodCaller methods using templates.
+ * @brief This class template is a helper for building specific versions of
+ * class method callers for target methods without arguments.
  *
- * @details Registers and calls a class method without arguments
- * @tparam className is the class owning the registered method.
+ * @details This specialisation of the template generates a "Call" method
+ * for target methods which do not accept arguments.
+ *
+ * This specialisation expects only the name of the target class in the list
+ * of class template parameters, because the target method will not receive
+ * any argument.
+ *
+ * E.g.:
+ * + ClassMethodCallerT<ClassA> mc(&ClassA::MethodZ);
+ *
+ * @tparam className is the class owning the target method.
  */
 template<typename className>
-class DLL_API ClassMethodCallerT<className> : public ClassMethodCaller {
+class ClassMethodCallerT<className> : public ClassMethodCaller {
 
 public:
 
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
     typedef bool (className::*MethodPointer)();
 
     /**
@@ -124,11 +161,16 @@ public:
 
     /**
      * @brief Calls the class method.
-     * @param[in] context is the object which must call the method.
-     * @return ErrorManagement::FatalError if the class method returns false, ErrorManagement::NoError if it returns true.
+     * @param[in] context is the pointer to the object owning the method.
+     * @return
+     * + ErrorManagement::FatalError if the class method returns false
+     * + ErrorManagement::NoError if it returns true
      */
     virtual ErrorManagement::ErrorType Call(Object * context);
 
+    /**
+     * @brief Gets the pointer to the method
+     */
     MethodPointer GetMethodPointer();
 
 private:
@@ -136,13 +178,17 @@ private:
     /**
      * Pointer to the class method
      */
-    bool (className::*pFun)();
+    MethodPointer pFun;
 
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 /***************
  * 0 arguments *
@@ -154,13 +200,11 @@ ClassMethodCallerT<className, void>::ClassMethodCallerT(MethodPointer f) {
 
 template<typename className>
 ClassMethodCallerT<className, void>::~ClassMethodCallerT() {
-
 }
 
 template<typename className>
 ErrorManagement::ErrorType ClassMethodCallerT<className, void>::Call(Object * context) {
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
-
     className *actualContext = dynamic_cast<className *>(context);
     if (actualContext == NULL_PTR(className *)) {
         err = ErrorManagement::UnsupportedFeature;
@@ -186,14 +230,12 @@ ClassMethodCallerT<className, argType1>::ClassMethodCallerT(MethodPointer f) {
 
 template<typename className, typename argType1>
 ClassMethodCallerT<className, argType1>::~ClassMethodCallerT() {
-
 }
 
 template<typename className, typename argType1>
 ErrorManagement::ErrorType ClassMethodCallerT<className, argType1>::Call(Object * context,
                                                                          argType1 ref) {
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
-
     className *actualContext = dynamic_cast<className *>(context);
     if (actualContext == NULL_PTR(className *)) {
         err = ErrorManagement::UnsupportedFeature;
@@ -209,7 +251,6 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, argType1>::Call(Object 
                                                                          argType1 ref,
                                                                          bool ByCopy) {
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
-
     className *actualContext = dynamic_cast<className *>(context);
     if (actualContext == NULL_PTR(className *)) {
         err = ErrorManagement::UnsupportedFeature;

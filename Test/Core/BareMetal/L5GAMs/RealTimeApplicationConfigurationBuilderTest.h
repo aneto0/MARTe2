@@ -200,9 +200,14 @@ public:
     bool TestResolveDataSources_StructMapNamespaces();
 
     /**
-     * @brief Tests the ResolveDataSources method with structures remapping using namespace.
+     * @brief Tests the ResolveDataSources method with structures remapping using namespaces.
      */
     bool TestResolveDataSources_StructNamespaceMap();
+
+    /**
+     * @brief Tests the ResolveDataSources method with structures remapping using namespaces.
+     */
+    bool TestResolveDataSources_StructNamespaceMapInDs();
 
     /**
      * @brief Tests the ResolveDataSource method with Type mismatch.

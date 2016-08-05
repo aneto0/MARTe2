@@ -205,8 +205,9 @@ Object *Reference::CreateByName(const char8 * const className,
 
     const ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance()->Find(className);
     if ((classRegistryItem != NULL)) {
-        if (classRegistryItem->GetObjectBuilder() != NULL) {
-            obj = classRegistryItem->GetObjectBuilder()->Build(heap);
+    	const ObjectBuilder *builder=classRegistryItem->GetObjectBuilder();
+        if (builder != NULL) {
+            obj = builder->Build(heap);
         }
     }
 
