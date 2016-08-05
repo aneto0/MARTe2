@@ -31,14 +31,13 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "BrokerI.h"
 #include "GAM.h"
+#include "Reference.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe {
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -46,7 +45,8 @@ namespace MARTe {
 
 namespace MARTe {
 
-GAM::GAM() : ReferenceContainer(),
+GAM::GAM() :
+        ReferenceContainer(),
         ExecutableI() {
     numberOfInputSignals = 0u;
     numberOfOutputSignals = 0u;
@@ -54,8 +54,6 @@ GAM::GAM() : ReferenceContainer(),
     outputSignalsMemory = NULL_PTR(void *);
     inputSignalsMemoryIndexer = NULL_PTR(void **);
     outputSignalsMemoryIndexer = NULL_PTR(void **);
-    inputBrokers = ReferenceT<ReferenceContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    outputBrokers = ReferenceT<ReferenceContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
 }
 
@@ -421,8 +419,8 @@ bool GAM::GetSignalByteOffsetInfo(const SignalDirection direction,
         ret = configuredDatabase.Read("ByteOffset", byteOffsetMat);
     }
     if (ret) {
-        byteOffsetStart = byteOffsetMat(byteOffsetIndex,0u);
-        byteOffsetSize = byteOffsetMat(byteOffsetIndex,1u);
+        byteOffsetStart = byteOffsetMat(byteOffsetIndex, 0u);
+        byteOffsetSize = byteOffsetMat(byteOffsetIndex, 1u);
     }
 
     return ret;
@@ -465,8 +463,8 @@ bool GAM::GetSignalRangesInfo(const SignalDirection direction,
         ret = configuredDatabase.Read("Ranges", rangesMat);
     }
     if (ret) {
-        rangeStart = rangesMat(rangeIndex,0u);
-        rangeEnd = rangesMat(rangeIndex,1u);
+        rangeStart = rangesMat(rangeIndex, 0u);
+        rangeEnd = rangesMat(rangeIndex, 1u);
     }
 
     return ret;
@@ -597,8 +595,13 @@ bool GAM::MoveToSignalIndex(const SignalDirection direction,
 bool GAM::AddInputBrokers(ReferenceContainer brokers) {
     bool ret = true;
     uint32 n = 0u;
-    while ((n < brokers.Size()) && ret) {
-        ret = inputBrokers->Insert(brokers.Get(n));
+    uint32 size = brokers.Size();
+    while ((n < size) && (ret)) {
+        ReferenceT<BrokerI> broker = brokers.Get(n);
+        ret = broker.IsValid();
+        if (ret) {
+            ret = inputBrokers.Insert(broker);
+        }
         n++;
     }
     return ret;
@@ -607,19 +610,38 @@ bool GAM::AddInputBrokers(ReferenceContainer brokers) {
 bool GAM::AddOutputBrokers(ReferenceContainer brokers) {
     bool ret = true;
     uint32 n = 0u;
-    while ((n < brokers.Size()) && ret) {
-        ret = outputBrokers->Insert(brokers.Get(n));
+    uint32 size = brokers.Size();
+    while ((n < size) && ret) {
+        ReferenceT<BrokerI> broker = brokers.Get(n);
+        ret = broker.IsValid();
+        if (ret) {
+            ret = outputBrokers.Insert(broker);
+        }
         n++;
     }
     return ret;
 }
 
-ReferenceT<ReferenceContainer> GAM::GetInputBrokers() const {
-    return inputBrokers;
+bool GAM::GetInputBrokers(ReferenceContainer &brokers) {
+    bool ret = true;
+    uint32 n = 0u;
+    uint32 size = inputBrokers.Size();
+    while ((n < size) && ret) {
+        ret = brokers.Insert(inputBrokers.Get(n));
+        n++;
+    }
+    return ret;
 }
 
-ReferenceT<ReferenceContainer> GAM::GetOutputBrokers() const {
-    return outputBrokers;
+bool GAM::GetOutputBrokers(ReferenceContainer &brokers) {
+    bool ret = true;
+    uint32 n = 0u;
+    uint32 size = outputBrokers.Size();
+    while ((n < size) && ret) {
+        ret = brokers.Insert(outputBrokers.Get(n));
+        n++;
+    }
+    return ret;
 }
 
 }

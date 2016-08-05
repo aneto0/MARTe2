@@ -374,25 +374,40 @@ public:
     bool AllocateOutputSignalsMemory();
 
     /**
-     * TODO
+     * @brief Adds a list of input BrokerI components to this GAM.
+     * @details These BrokerI components will be responsible from copying the data from the
+     * DataSourceI memory to the GAM memory.
+     * @param[in] brokers the list of input BrokerI components to be added.
+     * @return true if all the components in brokers implement the BrokerI interface if these can be successfully to the input broker list.
      */
     bool AddInputBrokers(ReferenceContainer brokers);
 
     /**
-     * TODO
+     * @brief Adds a list of output BrokerI components to this GAM.
+     * @details These BrokerI components will be responsible from copying the data from the
+     * GAM memory to the DataSourceImemory.
+     * @param[in] brokers the list of output BrokerI components to be added.
+     * @return true if all the components in brokers implement the BrokerI interface if these can be successfully to the output broker list.
      */
     bool AddOutputBrokers(ReferenceContainer brokers);
 
     /**
-     * TODO
+     * @brief Gets the list of input BrokerI components that are associated to this GAM.
+     * @details These BrokerI components will be responsible from copying the data from the
+     * DataSourceI memory to the GAM memory.
+     * @param[out] brokers the list where the input BrokerI are to be added.
+     * @return true if all brokers can be successfully to the input broker list.
      */
-    ReferenceT<ReferenceContainer> GetInputBrokers() const;
+    bool GetInputBrokers(ReferenceContainer &brokers);
 
     /**
-     * TODO
+     * @brief Gets the list of output BrokerI components that are associated to this GAM.
+     * @details These BrokerI components will be responsible from copying the data from the
+     * GAM memory to the DataSourceI memory.
+     * @param[out] brokers the list where the input BrokerI are to be added.
+     * @return true if all brokers can be successfully to the output broker list.
      */
-    ReferenceT<ReferenceContainer> GetOutputBrokers() const;
-
+    bool GetOutputBrokers(ReferenceContainer &brokers);
 
     /**
      * @brief Sets a GAM shared context.
@@ -402,7 +417,6 @@ public:
      * @param[in] context the context to be shared. Its final type is to be defined on each specific GAM application.
      * @return true if the provided context is accepted by the GAM.
      */
-    //TODO Use a member ConstReference or ConstReferenceT(type) is mandatory to maintain the read-only property of the context!
     virtual bool SetContext(ConstReference context);
 
 protected:
@@ -495,12 +509,12 @@ protected:
     /**
      * Brokers for signal reading.
      */
-    ReferenceT<ReferenceContainer> inputBrokers;
+    ReferenceContainer inputBrokers;
 
     /**
      * Brokers for signal writing.
      */
-    ReferenceT<ReferenceContainer> outputBrokers;
+    ReferenceContainer outputBrokers;
 
     /**
      * The heap that is used to malloc the input and output signals.

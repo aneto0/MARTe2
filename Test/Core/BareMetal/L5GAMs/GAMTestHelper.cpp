@@ -86,7 +86,7 @@ DECLARE_STRUCT_INTROSPECTION(TestStructD, TestStructDEntries);
 
 GAM1::GAM1() :
         GAM() {
-    numberOfExecutions=0u;
+    numberOfExecutions = 0u;
 }
 
 GAM1::~GAM1() {
@@ -99,8 +99,8 @@ bool GAM1::Initialise(StructuredDataI & data) {
 
 bool GAM1::Execute() {
     uint32 b;
-    for (b = 0u; b < inputBrokers->Size(); b++) {
-        ReferenceT<ExecutableI> broker = inputBrokers->Get(b);
+    for (b = 0u; b < inputBrokers.Size(); b++) {
+        ReferenceT<ExecutableI> broker = inputBrokers.Get(b);
         broker->Execute();
     }
     const char8 *name = GetName();
@@ -116,8 +116,8 @@ bool GAM1::Execute() {
     outputBuffer[0] = inputBuffer[0] + inputBuffer[1];
     printf("  %d + %d = %d\n", inputBuffer[0], inputBuffer[1], outputBuffer[0]);
 
-    for (b = 0u; b < outputBrokers->Size(); b++) {
-        ReferenceT<ExecutableI> broker = outputBrokers->Get(b);
+    for (b = 0u; b < outputBrokers.Size(); b++) {
+        ReferenceT<ExecutableI> broker = outputBrokers.Get(b);
         broker->Execute();
     }
     numberOfExecutions++;
@@ -218,7 +218,7 @@ bool DS1::ChangeState() {
 }
 
 bool DS1::GetInputBrokers(ReferenceContainer &inputBrokers,
-                          const char8 * const  functionName,
+                          const char8 * const functionName,
                           void* const gamMemPtr) {
     bool ret = true;
     //generally a loop for each supported broker
@@ -395,12 +395,10 @@ bool Driver1::Synchronise() {
 
 CLASS_REGISTER(Driver1, "1.0");
 
-
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
-
 
 DefaultSchedulerForTests::DefaultSchedulerForTests() :
         GAMSchedulerI() {
@@ -548,7 +546,7 @@ void PIDGAMGroup::SetUp() {
 }
 
 void PIDGAMGroup::PrepareNextState(const char8 * const currentStateName,
-                                   const char8 * const nextStateName) {
+        const char8 * const nextStateName) {
     if (StringHelper::Compare(status.currentState, "state1") == 0) {
         if (StringHelper::Compare(status.nextState, "state2") == 0) {
             context++;

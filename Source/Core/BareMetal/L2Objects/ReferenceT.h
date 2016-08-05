@@ -44,10 +44,6 @@ namespace MARTe {
  * Reference to a constant T::Object.
  */
 #define ConstReferenceT(x) ReferenceT<const x>
-/**
- * Reference to a constant Object.
- */
-#define ConstReference ReferenceT<const Object>
 
 /**
  * @brief Template version of the shared pointer implementation (see Reference).

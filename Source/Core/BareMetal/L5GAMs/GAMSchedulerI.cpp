@@ -143,17 +143,17 @@ bool GAMSchedulerI::ConfigureScheduler() {
                                 ReferenceT<GAM> gam = gams.Get(k);
                                 ret = gam.IsValid();
                                 if (ret) {
-                                    ReferenceT<ReferenceContainer> ib = gam->GetInputBrokers();
-                                    ret = ib.IsValid();
+                                    ReferenceContainer inputBrokers;
+                                    ret = gam->GetInputBrokers(inputBrokers);
                                     if (ret) {
-                                        numberOfExecutables += ib->Size();
+                                        numberOfExecutables += inputBrokers.Size();
 
                                     }
                                     if (ret) {
-                                        ReferenceT<ReferenceContainer> ob = gam->GetOutputBrokers();
-                                        ret = ob.IsValid();
+                                        ReferenceContainer outputBrokers;
+                                        ret = gam->GetOutputBrokers(outputBrokers);
                                         if (ret) {
-                                            numberOfExecutables += ob->Size();
+                                            numberOfExecutables += outputBrokers.Size();
                                         }
                                     }
                                 }
@@ -214,8 +214,6 @@ bool GAMSchedulerI::InsertInputBrokers(ReferenceT<GAM> gam,
                                        const uint32 threadIdx,
                                        uint32 &executableIdx) {
 
-    ReferenceT<ReferenceContainer> inputBrokers = gam->GetInputBrokers();
-    uint32 numberOfInputBrokers = inputBrokers->Size();
     //add input brokers
     StreamString timeSignalName = gamFullName;
     timeSignalName += "_ReadTime";
@@ -231,8 +229,16 @@ bool GAMSchedulerI::InsertInputBrokers(ReferenceT<GAM> gam,
     if (ret) {
         ret = (states != NULL_PTR(ScheduledState *));
     }
+    ReferenceContainer inputBrokers;
+    if (ret) {
+        ret = gam->GetInputBrokers(inputBrokers);
+    }
+    uint32 numberOfInputBrokers = 0u;
+    if (ret) {
+        numberOfInputBrokers = inputBrokers.Size();
+    }
     for (uint32 n = 0u; (n < numberOfInputBrokers) && (ret); n++) {
-        ReferenceT<ExecutableI> input = inputBrokers->Get(n);
+        ReferenceT<ExecutableI> input = inputBrokers.Get(n);
         ret = input.IsValid();
         if (ret) {
             //lint -e{613} states != NULL checked before entering here.
@@ -307,10 +313,16 @@ bool GAMSchedulerI::InsertOutputBrokers(ReferenceT<GAM> gam,
         //lint -e{613} states != NULL checked before entering here.
         ret = (states[stateIdx].threads != NULL_PTR(ScheduledThread *));
     }
-    ReferenceT<ReferenceContainer> outputBrokers = gam->GetOutputBrokers();
-    uint32 numberOfOutputBrokers = outputBrokers->Size();
+    ReferenceContainer outputBrokers;
+    if (ret) {
+        ret = gam->GetOutputBrokers(outputBrokers);
+    }
+    uint32 numberOfOutputBrokers = 0u;
+    if (ret) {
+        numberOfOutputBrokers = outputBrokers.Size();
+    }
     for (uint32 n = 0u; (n < numberOfOutputBrokers) && (ret); n++) {
-        ReferenceT<ExecutableI> output = outputBrokers->Get(n);
+        ReferenceT<ExecutableI> output = outputBrokers.Get(n);
         ret = output.IsValid();
         if (ret) {
             //lint -e{613} states != NULL checked before entering here.

@@ -60,7 +60,7 @@ public:
      * @brief Tests the AddSignals method.
      */
     bool TestAddSignals();
-    
+
     /**
      * @brief Tests the SetConfiguredDatabase method (this is tested implicitly)
      */
@@ -191,6 +191,35 @@ public:
      */
     bool TestGetOutputSignalMemory_Samples();
 
+    /**
+     * @brief Tests the AddInputBrokers method.
+     */
+    bool TestAddInputBrokers();
+
+    /**
+     * @brief Tests the AddInputBrokers with an invalid broker.
+     */
+    bool TestAddInputBrokers_InvalidBroker();
+
+    /**
+     * @brief Tests the AddOutputBrokers method.
+     */
+    bool TestAddOutputBrokers();
+
+    /**
+     * @brief Tests the AddOutputBrokers with an invalid broker.
+     */
+    bool TestAddOutputBrokers_InvalidBroker();
+
+    /**
+     * @brief Tests the GetInputBrokers method.
+     */
+    bool TestGetInputBrokers();
+
+    /**
+     * @brief Tests the GetOutputBrokers method.
+     */
+    bool TestGetOutputBrokers();
 };
 
 /*---------------------------------------------------------------------------*/

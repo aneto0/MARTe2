@@ -42,6 +42,11 @@
 namespace MARTe {
 
 /**
+ * Reference to a constant Object.
+ */
+#define ConstReference ReferenceT<const Object>
+
+/**
  * @brief Shared pointer implementation.
  * @details The Reference class is a smart pointer implementation where the shared
  * ownership of an underlying object is enabled. This guarantees that the life-cycle
