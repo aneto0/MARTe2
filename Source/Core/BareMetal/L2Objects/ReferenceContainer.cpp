@@ -59,6 +59,7 @@ ReferenceContainer::ReferenceContainer() :
 
 ReferenceContainer::ReferenceContainer(ReferenceContainer &copy) :
         Object(copy) {
+    SetTimeout(copy.GetTimeout());
     uint32 nChildren = copy.Size();
     for (uint32 i = 0u; i < nChildren; i++) {
         Reference toInsert = copy.Get(i);
@@ -69,6 +70,7 @@ ReferenceContainer::ReferenceContainer(ReferenceContainer &copy) :
 }
 
 ReferenceContainer& ReferenceContainer::operator =(ReferenceContainer &copy) {
+    SetTimeout(copy.GetTimeout());
     if (this != &copy) {
         uint32 nChildren = copy.Size();
         for (uint32 i = 0u; i < nChildren; i++) {
