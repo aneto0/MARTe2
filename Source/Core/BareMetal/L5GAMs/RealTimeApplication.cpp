@@ -86,11 +86,10 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     ret = statesContainer.IsValid();
                 }
             }
-            if (!ret) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No States block found in RealTimeApplication %s", GetName())
-            }
         }
-
+        if (!ret) {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No States block found in RealTimeApplication %s", GetName())
+        }
         if (ret) {
             ret = false;
             for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
@@ -102,11 +101,10 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     }
                 }
             }
-            if (!ret) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Data block found in RealTimeApplication %s", GetName())
-            }
         }
-
+        if (!ret) {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Data block found in RealTimeApplication %s", GetName())
+        }
         if (ret) {
             ret = false;
             for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
@@ -118,11 +116,10 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     }
                 }
             }
-            if (!ret) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Functions block found in RealTimeApplication %s", GetName())
-            }
         }
-
+        if (!ret) {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Functions block found in RealTimeApplication %s", GetName())
+        }
         if (ret) {
             numberOfContainers = Size();
             ret = false;
