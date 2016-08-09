@@ -280,6 +280,11 @@ public:
     bool TestResolveDataSourcesSignalsFalse_AddSignalToLockedDataSource();
 
     /**
+     * @brief Tests the ResolveFunctionSignals method with a locked DataSource.
+     */
+    bool TestResolveDataSourcesSignalsFalse_CompleteSignalInLockedDataSource();
+
+    /**
      * @brief Tests the VerifyDataSourcesSignals.
      */
     bool TestVerifyDataSourcesSignals1();
@@ -343,11 +348,6 @@ public:
      * @brief Tests the ResolveFunctionSignals.
      */
     bool TestResolveFunctionSignals3();
-
-    /**
-     * @brief Tests the ResolveFunctionSignals method with a locked DataSource.
-     */
-    bool TestResolveFunctionSignalsFalse_CompleteSignalInLockedDataSource();
 
     /**
      * @brief Tests VerifyFunctionSignals method.
@@ -563,6 +563,11 @@ public:
      * @brief Tests the AssignFunctionsMemoryToDataSource method with the same gam as producer and consumer
      */
     bool TestAssignFunctionsMemoryToDataSource_GamIO();
+
+    /**
+     * @brief Tests the ResolveFunctionSignalsMemorySize with a structure aligned with unused memory.
+     */
+    bool TestAssignFunctionsMemoryToDataSource_AlignedStruct();
 
     /**
      * @brief Tests the AssignBrokersToFunctions.

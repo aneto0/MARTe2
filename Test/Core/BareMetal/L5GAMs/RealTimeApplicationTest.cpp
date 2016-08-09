@@ -58,6 +58,11 @@ RealTimeApplicationTestScheduler    ();
     bool Started();
 
     const char8 *GetStateName();
+
+    virtual void CustomPrepareNextState(){
+
+    }
+
 private:
     uint32 threadId;
     bool started;

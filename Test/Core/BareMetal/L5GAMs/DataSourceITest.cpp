@@ -50,6 +50,8 @@ DataSourceITestScheduler1    ();
     virtual void StartExecution();
 
     virtual void StopExecution();
+    virtual void CustomPrepareNextState();
+
 };
 
 DataSourceITestScheduler1::DataSourceITestScheduler1() :
@@ -62,6 +64,10 @@ void DataSourceITestScheduler1::StartExecution() {
 }
 
 void DataSourceITestScheduler1::StopExecution() {
+
+}
+
+void DataSourceITestScheduler1::CustomPrepareNextState(){
 
 }
 

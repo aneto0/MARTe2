@@ -244,6 +244,19 @@ struct TestStructD {
     float32 c2[3];
     int32 c3[2][4];
 };
+
+
+
+struct TestStructBB {
+    int8 b1;
+    int64 b2;
+};
+
+struct TestStructCC {
+    TestStructBB c1;
+    float32 c2[3];
+    int32 c3[2][4];
+};
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
@@ -345,6 +358,9 @@ DefaultSchedulerForTests    ();
     virtual void StartExecution();
 
     virtual void StopExecution();
+
+    virtual void CustomPrepareNextState();
+
 
 };
 

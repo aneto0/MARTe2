@@ -49,6 +49,9 @@ BrokerITestScheduler1    ();
     virtual void StartExecution();
 
     virtual void StopExecution();
+
+    virtual void CustomPrepareNextState();
+
 };
 
 BrokerITestScheduler1::BrokerITestScheduler1() :
@@ -63,6 +66,11 @@ void BrokerITestScheduler1::StartExecution() {
 void BrokerITestScheduler1::StopExecution() {
 
 }
+
+void BrokerITestScheduler1::CustomPrepareNextState(){
+
+}
+
 
 CLASS_REGISTER(BrokerITestScheduler1, "1.0")
 

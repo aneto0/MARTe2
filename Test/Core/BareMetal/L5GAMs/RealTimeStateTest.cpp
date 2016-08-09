@@ -273,6 +273,11 @@ RealTimeStateTestScheduler    ();
 
     virtual void StopExecution();
 
+    virtual void CustomPrepareNextState(){
+
+    }
+
+
 };
 
 RealTimeStateTestScheduler::RealTimeStateTestScheduler() :

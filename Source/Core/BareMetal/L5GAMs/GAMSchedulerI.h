@@ -63,6 +63,16 @@ struct ScheduledThread {
     uint32 *cycleTime;
 
     /**
+     * The cpus where is possible to run the thread
+     */
+    uint32 cpu;
+
+    /**
+     * The thread stack size
+     */
+    uint32 stackSize;
+
+    /**
      * This thread name.
      */
     const char8 * name;
@@ -140,8 +150,8 @@ public:
     virtual bool PrepareNextState(const char8 * const currentStateName,
                                   const char8 * const nextStateName);
 
-    uint64 ExecuteSingleCycle(ExecutableI * const * const executables,
-                              const uint32 numberOfExecutables) const;
+    bool ExecuteSingleCycle(ExecutableI * const * const executables,
+                            const uint32 numberOfExecutables);
 
     /**
      * @brief Gets the number of ExecutableI components for this \a threadName in this \a stateName.
@@ -171,6 +181,9 @@ protected:
      */
     ScheduledState * const * GetSchedulableStates();
 
+    //TODO
+    virtual void CustomPrepareNextState()=0;
+
 private:
 
     /**
@@ -198,6 +211,11 @@ private:
      * Number of possible application states.
      */
     uint32 numberOfStates;
+
+    /**
+     * Clock period
+     */
+    const float64 clockPeriod;
 
     /**
      * @brief Helper function to add the input brokers of the \a gam to the table of states to be executed.

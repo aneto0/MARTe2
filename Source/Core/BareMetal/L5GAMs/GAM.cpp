@@ -384,7 +384,9 @@ bool GAM::GetSignalByteSize(const SignalDirection direction,
 
     bool ret = MoveToSignalIndex(direction, signalIdx);
     if (ret) {
-        ret = configuredDatabase.Read("ByteSize", byteSize);
+        if (!configuredDatabase.Read("MemberSize", byteSize)) {
+            ret = configuredDatabase.Read("ByteSize", byteSize);
+        }
     }
     return ret;
 }

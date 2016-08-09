@@ -52,6 +52,11 @@ MemoryMapSynchronisedInputBrokerTestScheduler1    ();
     virtual void StartExecution();
 
     virtual void StopExecution();
+
+    virtual void CustomPrepareNextState(){
+
+    }
+
 };
 
 MemoryMapSynchronisedInputBrokerTestScheduler1::MemoryMapSynchronisedInputBrokerTestScheduler1() :

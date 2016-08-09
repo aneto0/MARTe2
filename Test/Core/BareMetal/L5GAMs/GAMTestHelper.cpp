@@ -79,6 +79,29 @@ static const IntrospectionEntry* TestStructDEntries[] = { &TestStructD_c1_intros
         &TestStructD_c3_introspectionEntry, 0 };
 
 DECLARE_STRUCT_INTROSPECTION(TestStructD, TestStructDEntries);
+
+
+DECLARE_CLASS_MEMBER(TestStructBB, b1, int8, "", "");
+
+DECLARE_CLASS_MEMBER(TestStructBB, b2, int64, "", "");
+
+static const IntrospectionEntry* TestStructBBEntries[] = { &TestStructBB_b1_introspectionEntry, &TestStructBB_b2_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructBB, TestStructBBEntries)
+
+
+
+DECLARE_CLASS_MEMBER(TestStructCC, c1, TestStructBB, "", "");
+
+DECLARE_CLASS_MEMBER(TestStructCC, c2, float32, "[3]", "");
+
+DECLARE_CLASS_MEMBER(TestStructCC, c3, int32, "[2][4]", "");
+
+static const IntrospectionEntry* TestStructCCEntries[] = { &TestStructCC_c1_introspectionEntry, &TestStructCC_c2_introspectionEntry,
+        &TestStructCC_c3_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructCC, TestStructCCEntries);
+
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
@@ -415,6 +438,11 @@ void DefaultSchedulerForTests::StartExecution() {
 
 void DefaultSchedulerForTests::StopExecution() {
 }
+
+void DefaultSchedulerForTests::CustomPrepareNextState(){
+
+}
+
 
 CLASS_REGISTER(DefaultSchedulerForTests, "1.0")
 

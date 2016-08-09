@@ -50,7 +50,8 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 GAMSchedulerI::GAMSchedulerI() :
-        ReferenceContainer() {
+        ReferenceContainer(),
+        clockPeriod(HighResolutionTimer::Period()) {
     states = NULL_PTR(ScheduledState *);
     scheduledStates[0] = NULL_PTR(ScheduledState *);
     scheduledStates[1] = NULL_PTR(ScheduledState *);
@@ -79,6 +80,7 @@ bool GAMSchedulerI::Initialise(StructuredDataI & data) {
             REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify the TimingDataSource address");
         }
     }
+
     return ret;
 }
 
@@ -163,6 +165,8 @@ bool GAMSchedulerI::ConfigureScheduler() {
 
                                 states[i].threads[j].numberOfExecutables = numberOfExecutables;
                                 states[i].threads[j].name = threadElement->GetName();
+                                states[i].threads[j].cpu = threadElement->GetCPU().GetProcessorMask();
+                                states[i].threads[j].stackSize = threadElement->GetStackSize();
                             }
                             uint32 c = 0u;
                             for (uint32 k = 0u; (k < numberOfGams) && (ret); k++) {
@@ -375,8 +379,8 @@ bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
     return ret;
 }
 
-uint64 GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
-                                         const uint32 numberOfExecutables) const {
+bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
+                                       const uint32 numberOfExecutables) {
     // warning: possible segmentation faults if the previous operations
     // lack or fail and the pointers are invalid.
 
@@ -386,15 +390,15 @@ uint64 GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables
         // save the time before
         // execute the gam
         ret = executables[i]->Execute();
-        float64 ticksToTime = HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), absTicks);
-        ticksToTime *= 1e6;
+        float64 ticksToTime = ((HighResolutionTimer::Counter() - absTicks) * clockPeriod) * 1e6;
         uint32 absTime = static_cast<uint32>(ticksToTime);  //us
         if (ret) {
             uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
             ret = MemoryOperationsHelper::Copy(executables[i]->GetTimingSignalAddress(), &absTime, sizeToCopy);
         }
     }
-    return absTicks;
+
+    return ret;
 }
 
 uint32 GAMSchedulerI::GetNumberOfExecutables(const char8 * const stateName,
@@ -427,6 +431,8 @@ ScheduledState * const * GAMSchedulerI::GetSchedulableStates() {
     return scheduledStates;
 
 }
+
+
 
 }
 
