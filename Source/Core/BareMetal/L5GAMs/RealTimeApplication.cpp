@@ -88,8 +88,10 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
             }
         }
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No States block found in RealTimeApplication %s", GetName())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
+                                    "No States block found in RealTimeApplication %s", GetName())
         }
+
         if (ret) {
             ret = false;
             for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
@@ -103,8 +105,10 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
             }
         }
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Data block found in RealTimeApplication %s", GetName())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
+                                    "No Data block found in RealTimeApplication %s", GetName())
         }
+
         if (ret) {
             ret = false;
             for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
@@ -118,8 +122,10 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
             }
         }
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Functions block found in RealTimeApplication %s", GetName())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
+                                    "No Functions block found in RealTimeApplication %s", GetName())
         }
+
         if (ret) {
             numberOfContainers = Size();
             ret = false;
@@ -169,7 +175,8 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     }
                 }
                 if (!ret) {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Scheduler block in RealTimeApplication %s", GetName())
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
+                                            "No Scheduler block in RealTimeApplication %s", GetName())
                 }
             }
         }
@@ -213,8 +220,7 @@ bool RealTimeApplication::ConfigureApplication() {
     return ret;
 }
 
-bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn,
-                                               ConfigurationDatabase &dataDatabaseIn) {
+bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn, ConfigurationDatabase &dataDatabaseIn) {
 
     RealTimeApplicationConfigurationBuilder configuration(*this, "DDB1");
     bool ret = configuration.Set(functionsDatabaseIn, dataDatabaseIn);

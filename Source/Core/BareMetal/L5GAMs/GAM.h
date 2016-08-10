@@ -144,7 +144,7 @@ public:
      *  @param[in] data the configured database of parameters.
      *  @return true if the \a data can be successfully copied.
      */
-    bool SetConfiguredDatabase(StructuredDataI & data);
+    virtual bool SetConfiguredDatabase(StructuredDataI & data);
 
     /**
      * @brief Returns the number of input signals.

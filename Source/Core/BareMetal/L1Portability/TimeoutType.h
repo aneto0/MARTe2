@@ -132,7 +132,7 @@ private:
 const TimeoutType TTNoWait(0x00000000u);
 
 /** Infinite wait timeout */
-const TimeoutType TTInfiniteWait(0xFFFFFFFFu);
+const uint32 TTInfiniteWait = 0xFFFFFFFFu;
 
 /** Used in semaphore protected codes to specify to bypass the check! */
 const TimeoutType TTUnProtected(0xFFFFFFFDu);

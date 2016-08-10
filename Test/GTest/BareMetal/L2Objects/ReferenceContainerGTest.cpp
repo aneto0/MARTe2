@@ -52,16 +52,6 @@ TEST(ReferenceContainerGTest,TestConstructor) {
     ASSERT_TRUE(referenceContainerTest.TestConstructor());
 }
 
-TEST(ReferenceContainerGTest,TestCopyConstructor) {
-    ReferenceContainerTest referenceContainerTest;
-    ASSERT_TRUE(referenceContainerTest.TestCopyConstructor());
-}
-
-TEST(ReferenceContainerGTest,TestOperatorEqual) {
-    ReferenceContainerTest referenceContainerTest;
-    ASSERT_TRUE(referenceContainerTest.TestOperatorEqual());
-}
-
 //TEST(ReferenceContainerGTest,TestGetClassPropertiesCopy) {
 //    ReferenceContainerTest referenceContainerTest;
 //    ASSERT_TRUE(referenceContainerTest.TestGetClassPropertiesCopy());

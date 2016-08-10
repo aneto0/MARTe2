@@ -425,7 +425,6 @@ uint32 GAMSchedulerI::GetNumberOfExecutables(const char8 * const stateName,
 
 ScheduledState * const * GAMSchedulerI::GetSchedulableStates() {
     return scheduledStates;
-
 }
 
 }

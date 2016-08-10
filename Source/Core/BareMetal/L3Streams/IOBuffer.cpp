@@ -407,7 +407,7 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
             ret = (iobuff.PrintFormatted("%s %s", &printLeftSide[0]));
             if (ret) {
                 AnyType printLeaf[] = {toPrint, voidAnyType};
-                ret = (iobuff.PrintFormatted("%#!\r\n", &printLeaf[0]));
+                ret = (iobuff.PrintFormatted("%#!\n", &printLeaf[0]));
             }
         }
         else {
@@ -419,7 +419,7 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
                     ret = (iobuff.PrintFormatted("    ", &noneType));
                 }
                 AnyType printLeftSide[] = {childName, "= {", voidAnyType};
-                ret = (iobuff.PrintFormatted("%s %s\r\n", &printLeftSide[0]));
+                ret = (iobuff.PrintFormatted("%s %s\n", &printLeftSide[0]));
                 if (ret) {
                     nodeLevel++;
                     ret = PrintStructuredDataInterface(iobuff, structuredData, nodeLevel);
@@ -434,7 +434,7 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
                         ret = (iobuff.PrintFormatted("    ", &noneType));
                     }
                     AnyType printClose[] = {"}", voidAnyType};
-                    ret = (iobuff.PrintFormatted("%s\r\n", &printClose[0]));
+                    ret = (iobuff.PrintFormatted("%s\n", &printClose[0]));
                 }
             }
         }

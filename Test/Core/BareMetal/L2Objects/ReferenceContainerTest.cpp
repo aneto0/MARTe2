@@ -43,7 +43,7 @@
 ReferenceContainerTest::ReferenceContainerTest() {
     h = NULL;
     tree = GenerateTestTree();
-    spinLock = 0;
+    spinLock=0;
 }
 
 bool ReferenceContainerTest::TestConstructor() {
@@ -58,48 +58,6 @@ bool ReferenceContainerTest::TestConstructor() {
     return ok;
 }
 
-bool ReferenceContainerTest::TestCopyConstructor() {
-    ReferenceT<ReferenceContainer> otherContainer("ReferenceContainer", h);
-    ReferenceContainer rc;
-    bool ok = (rc.Size() == 0u);
-    if (ok) {
-        ok &= (rc.GetTimeout() == TTInfiniteWait);
-    }
-    if (ok) {
-        ok &= rc.Insert(otherContainer);
-    }
-    if (ok) {
-        rc.SetTimeout(100);
-        ReferenceContainer rc2 = rc;
-        ok = (rc2.Size() == 1u);
-        if (ok) {
-            ok &= (rc2.GetTimeout() == rc.GetTimeout());
-        }
-    }
-    return ok;
-}
-
-bool ReferenceContainerTest::TestOperatorEqual() {
-    ReferenceT<ReferenceContainer> otherContainer("ReferenceContainer", h);
-    ReferenceContainer rc;
-    bool ok = (rc.Size() == 0u);
-    if (ok) {
-        ok &= (rc.GetTimeout() == TTInfiniteWait);
-    }
-    if (ok) {
-        ok &= rc.Insert(otherContainer);
-    }
-    if (ok) {
-        rc.SetTimeout(100);
-        ReferenceContainer rc2;
-        rc2 = rc;
-        ok = (rc2.Size() == 1u);
-        if (ok) {
-            ok &= (rc2.GetTimeout() == rc.GetTimeout());
-        }
-    }
-    return ok;
-}
 //bool ReferenceContainerTest::TestGetClassPropertiesCopy() {
 //    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
 //    ClassProperties cp;
@@ -851,8 +809,6 @@ bool ReferenceContainerTest::TestExportData() {
     simpleCDB.Write("leaf", leaf);
     simpleCDB.CreateAbsolute("+B");
     simpleCDB.Write("Class", "ReferenceContainer");
-    simpleCDB.CreateAbsolute("+B.+C");
-    simpleCDB.Write("Class", "ReferenceContainer");
     simpleCDB.MoveToRoot();
 
     container.Initialise(simpleCDB);
@@ -863,26 +819,27 @@ bool ReferenceContainerTest::TestExportData() {
     }
     StreamString output;
     output.Printf("%!", out);
+    printf("\n%s\n", output.Buffer());
 
-    const char8 *test = ""
-            "+root = {\r\n"
-            "    Class = \"ReferenceContainer\"\r\n"
-            "    +A = {\r\n"
-            "        Class = \"ReferenceContainer\"\r\n"
-            "        +B = {\r\n"
-            "            Class = \"ReferenceContainer\"\r\n"
-            "            +C = {\r\n"
-            "                Class = \"ReferenceContainer\"\r\n"
-            "            }\r\n"
-            "        }\r\n"
-            "    }\r\n"
-            "    +B = {\r\n"
-            "        Class = \"ReferenceContainer\"\r\n"
-            "        +C = {\r\n"
-            "            Class = \"ReferenceContainer\"\r\n"
-            "        }\r\n"
-            "    }\r\n"
+    const char8 *test = "+root = {\r\n"
+            "Class = \"ReferenceContainer\"\r\n"
+            "+A = {\r\n"
+            "Class = \"ReferenceContainer\"\r\n"
+            "+B = {\r\n"
+            "Class = \"ReferenceContainer\"\r\n"
+            "+C = {\r\n"
+            "Class = \"ReferenceContainer\"\r\n"
+            "}\r\n"
+            "}\r\n"
+            "}\r\n"
+            "+B = {\r\n"
+            "Class = \"ReferenceContainer\"\r\n"
+            "+C = {\r\n"
+            "Class = \"ReferenceContainer\"\r\n"
+            "}\r\n"
+            "}\r\n"
             "}\r\n";
+
     return output == test;
 }
 
