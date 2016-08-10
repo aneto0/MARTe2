@@ -147,7 +147,7 @@ public:
      * and the active buffer index.
      * @return true if the next state name is found, false otherwise.
      */
-    virtual bool PrepareNextState(const char8 * const currentStateName,
+    bool PrepareNextState(const char8 * const currentStateName,
                                   const char8 * const nextStateName);
 
     bool ExecuteSingleCycle(ExecutableI * const * const executables,
@@ -259,10 +259,6 @@ private:
                    const uint32 threadIdx,
                    const uint32 executableIdx);
 
-    /**
-     * Reference to the RealTimeApplication to which this scheduler belongs to.
-     */
-    Reference realTimeApplication;
 };
 
 }

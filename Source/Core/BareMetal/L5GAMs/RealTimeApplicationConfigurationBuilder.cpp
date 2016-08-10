@@ -1567,10 +1567,6 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignal(const char8 
                     if (elementDataSourceDatabase.GetTypeDescriptor() != VoidType) {
                         ret = functionsDatabase.Write(properties[p], elementDataSourceDatabase);
                     }
-                    else {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "%s was not defined for signal: %s in %s", properties[p], aliasName,
-                                                functionName)
-                    }
                 }
                 //Check for compatibility
                 else {

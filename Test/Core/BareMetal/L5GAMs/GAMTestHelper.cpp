@@ -36,7 +36,7 @@
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"
 #include "GAMSchedulerI.h"
-
+#include "Sleep.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -143,13 +143,14 @@ bool GAM1::Execute() {
     uint32 *outputBuffer = (uint32 *) GetOutputSignalsMemory();
 
     outputBuffer[0] = inputBuffer[0] + inputBuffer[1];
-    printf("  %d + %d = %d\n", inputBuffer[0], inputBuffer[1], outputBuffer[0]);
+    printf("  %llu + %llu = %llu\n", inputBuffer[0], inputBuffer[1], outputBuffer[0]);
 
     for (b = 0u; b < outputBrokers.Size(); b++) {
         ReferenceT<ExecutableI> broker = outputBrokers.Get(b);
         broker->Execute();
     }
     numberOfExecutions++;
+    Sleep::MSec(100);
 
     return true;
 }

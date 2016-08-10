@@ -96,9 +96,6 @@ bool GAMSchedulerI::ConfigureScheduler() {
         isRtAppValid = rtApp.IsValid();
     }
     bool ret = isRtAppValid;
-    if (ret) {
-        realTimeApplication = rtApp;
-    }
 
     ReferenceT<ReferenceContainer> statesContainer;
     if (ret) {
@@ -351,11 +348,7 @@ bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
                                      const char8 * const nextStateName) {
 
     // Find the next state and prepare the pointer to
-    ReferenceT<RealTimeApplication> rtApp = realTimeApplication;
     bool ret = (states != NULL_PTR(ScheduledState *));
-    if (ret) {
-        ret = rtApp.IsValid();
-    }
 
     uint32 nextBuffer = 0u;
     if (ret) {
@@ -374,6 +367,9 @@ bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
     }
     if (ret) {
         ret = found;
+    }
+    if (ret) {
+        CustomPrepareNextState();
     }
 
     return ret;
@@ -431,8 +427,6 @@ ScheduledState * const * GAMSchedulerI::GetSchedulableStates() {
     return scheduledStates;
 
 }
-
-
 
 }
 

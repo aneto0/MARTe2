@@ -1,6 +1,6 @@
 /**
- * @file GAMScheduler.h
- * @brief Header file for class GAMScheduler
+ * @file GAMSchedulerTest.h
+ * @brief Header file for class GAMSchedulerTest
  * @date 09/ago/2016
  * @author pc
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMScheduler
+ * @details This header file contains the declaration of the class GAMSchedulerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMSCHEDULER_H_
-#define GAMSCHEDULER_H_
+#ifndef GAMSCHEDULERTEST_H_
+#define GAMSCHEDULERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,89 +31,36 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GAMSchedulerI.h"
-#include "EventSem.h"
+#include "GAMScheduler.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+using namespace MARTe;
 
-struct RTThreadParam {
-    GAMSchedulerI *scheduler;
-    ExecutableI **executables;
-    uint32 numberOfExecutables;
-    uint32* cycleTime;
-    volatile int32 *spinLock;
-    EventSem *eventSem;
-};
-
-/**
- * @brief The GAM scheduler
- */
-class GAMScheduler: public GAMSchedulerI {
+class GAMSchedulerTest {
 
 public:
-    CLASS_REGISTER_DECLARATION()
 
-    /**
-     * @brief Constructor
-     */
-    GAMScheduler();
+    GAMSchedulerTest();
 
-    /**
-     * @brief Destructor
-     */
-    virtual ~GAMScheduler();
+    ~GAMSchedulerTest();
 
-    /**
-     * @brief Starts the multi-thread execution for the current state.
-     */
-    virtual void StartExecution();
+    bool Init();
 
-    /**
-     * @brief Stops the execution.Application
-     */
-    virtual void StopExecution();
+    bool TestConstructor();
 
-protected:
+    bool TestStartExecution();
 
-    /**
-     * @brief Starts the threads for the next state
-     */
-    virtual void CustomPrepareNextState();
+    bool TestStopExecution();
 
 
-private:
-
-    /**
-     * The array of identifiers of the thread in execution.
-     */
-    ThreadIdentifier *tid[2];
-
-    /**
-     * Synchronization spin-lock
-     */
-    volatile int32 spinLock[2];
-
-    /**
-     * The array of the thread parameters
-     */
-    RTThreadParam *param[2];
-
-    /**
-     * The eventSemaphore
-     */
-    EventSem eventSem;
-
+    StreamString config;
 };
-
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMSCHEDULER_H_ */
-
+#endif /* GAMSCHEDULERTEST_H_ */
 

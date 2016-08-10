@@ -39,9 +39,8 @@
 namespace MARTe {
 
 static void RTThreadRoutine(RTThreadParam &par) {
-    while ((*par.spinLock) == 0) {
-        Sleep::MSec(1); //???
-    }
+    par.eventSem->Wait(TTInfiniteWait);
+
     uint32 clockPeriod = HighResolutionTimer::Period();
     uint64 cycleTimeStamp = HighResolutionTimer::Counter();
     while ((*par.spinLock) == 1) {
@@ -69,6 +68,7 @@ GAMScheduler::GAMScheduler() :
     tid[1] = NULL_PTR(ThreadIdentifier *);
     param[0] = NULL_PTR(RTThreadParam *);
     param[1] = NULL_PTR(RTThreadParam *);
+    eventSem.Create();
 }
 
 GAMScheduler::~GAMScheduler() {
@@ -87,8 +87,8 @@ GAMScheduler::~GAMScheduler() {
 }
 
 void GAMScheduler::StartExecution() {
-
     Atomic::Increment(&spinLock[RealTimeApplication::GetIndex()]);
+    eventSem.Post();
 }
 
 void GAMScheduler::StopExecution() {
@@ -110,6 +110,9 @@ void GAMScheduler::StopExecution() {
 }
 
 void GAMScheduler::CustomPrepareNextState() {
+
+    eventSem.Reset();
+
     //Launches the threads for the next state
     uint32 nextBuffer = (RealTimeApplication::GetIndex() + 1u) % 2u;
     ScheduledState *nextState = GetSchedulableStates()[nextBuffer];
@@ -129,6 +132,7 @@ void GAMScheduler::CustomPrepareNextState() {
         param[nextBuffer][i].executables = nextState->threads[i].executables;
         param[nextBuffer][i].numberOfExecutables = nextState->threads[i].numberOfExecutables;
         param[nextBuffer][i].cycleTime = nextState->threads[i].cycleTime;
+        param[nextBuffer][i].eventSem = &eventSem;
         tid[nextBuffer][i] = Threads::BeginThread(reinterpret_cast<ThreadFunctionType>(RTThreadRoutine), &param[nextBuffer][i], nextState->threads[i].stackSize,
                                                   nextState->threads[i].name, ExceptionHandler::NotHandled, nextState->threads[i].cpu);
     }
