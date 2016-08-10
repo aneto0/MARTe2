@@ -150,8 +150,13 @@ public:
     bool PrepareNextState(const char8 * const currentStateName,
                                   const char8 * const nextStateName);
 
+    /**
+     * @brief Executes a list of ExecutableIs storing their execution times with respect the start time instant.
+     * @param[in] executables the list of ExecutablesIs to be executed
+     * @param[in] numberOfExecutables how many ExecutableIs have to be executed.
+     */
     bool ExecuteSingleCycle(ExecutableI * const * const executables,
-                            const uint32 numberOfExecutables);
+                            const uint32 numberOfExecutables) const;
 
     /**
      * @brief Gets the number of ExecutableI components for this \a threadName in this \a stateName.
@@ -181,7 +186,9 @@ protected:
      */
     ScheduledState * const * GetSchedulableStates();
 
-    //TODO
+    /**
+     * @brief Custom routine to prepare the specific scheduler for the next state execution.
+     */
     virtual void CustomPrepareNextState()=0;
 
 private:

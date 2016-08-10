@@ -39,12 +39,34 @@
 
 namespace MARTe {
 
+/**
+ * @brief Thread parameter structure
+ */
 struct RTThreadParam {
+    /**
+     * The scheduler
+     */
     GAMSchedulerI *scheduler;
+    /**
+     * The list of executables
+     */
     ExecutableI **executables;
+    /**
+     * The number of executables
+     */
     uint32 numberOfExecutables;
+    /**
+     * The cycle time
+     */
     uint32* cycleTime;
+    /**
+     * A spinlock allowing to stop the thread execution
+     */
     volatile int32 *spinLock;
+
+    /**
+     * The event semaphore where threads wait before start their execution
+     */
     EventSem *eventSem;
 };
 
@@ -72,7 +94,7 @@ public:
     virtual void StartExecution();
 
     /**
-     * @brief Stops the execution.Application
+     * @brief Stops the execution application
      */
     virtual void StopExecution();
 

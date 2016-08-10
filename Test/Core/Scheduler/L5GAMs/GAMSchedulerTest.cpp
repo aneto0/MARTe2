@@ -334,7 +334,7 @@ bool GAMSchedulerTest::TestStartExecution() {
         return false;
     }
 
-// the start execution is inside the prepare next state
+    // the start execution is inside the prepare next state
     if (!app->PrepareNextState("State1")) {
         return false;
     }

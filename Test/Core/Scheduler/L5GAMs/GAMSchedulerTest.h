@@ -38,23 +38,46 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the GAMScheduler functions
+ */
 class GAMSchedulerTest {
 
 public:
 
+    /**
+     * @brief Creates the application configuration stream
+     */
     GAMSchedulerTest();
 
+    /**
+     * @brief Destroys the ObjectRegistryDatabase
+     */
     ~GAMSchedulerTest();
 
+    /**
+     * @brief Initialises the ObjectRegistryDatabase
+     */
     bool Init();
 
+    /**
+     * @brief Tests the scheduler constructor
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests the execution of a multi-thread MARTe application
+     */
     bool TestStartExecution();
 
+    /**
+     * @brief Tests the execution of a multi-thread MARTe application
+     */
     bool TestStopExecution();
 
-
+    /**
+     * @brief The application configuration stream
+     */
     StreamString config;
 };
 
