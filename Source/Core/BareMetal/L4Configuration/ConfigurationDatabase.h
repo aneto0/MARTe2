@@ -83,9 +83,6 @@ public:
     virtual bool Read(const char8 * const name,
                       const AnyType &value);
 
-
-  //  virtual Reference Read(const char8 * const name);
-
     /**
      * @see StructuredDataI::GetType
      */
@@ -99,8 +96,6 @@ public:
      */
     virtual bool Write(const char8 * const name,
                        const AnyType &value);
-
-//    virtual bool Write(const Reference & reference);
 
     /**
      * @see StructuredDataI::Copy

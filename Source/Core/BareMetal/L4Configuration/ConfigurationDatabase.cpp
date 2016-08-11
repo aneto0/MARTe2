@@ -105,11 +105,6 @@ bool ConfigurationDatabase::Write(const char8 * const name,
     }
     return ok;
 }
-/*
-bool ConfigurationDatabase::Write(const Reference &reference){
-    return false;
-}*/
-
 
 AnyType ConfigurationDatabase::GetType(const char8 * const name) {
     bool found = false;
@@ -211,12 +206,6 @@ bool ConfigurationDatabase::Read(const char8 * const name,
 
     return ok;
 }
-
-/*
-Reference ConfigurationDatabase::Read(const char8 * const name){
-    Reference ref;
-    return ref;
-}*/
 
 bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
 

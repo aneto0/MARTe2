@@ -85,7 +85,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
      */
 
     if (!message.IsValid()) {
-        ret.parametersError= true;
+        ret.parametersError = true;
         // TODO produce error message
     }
 

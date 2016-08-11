@@ -421,6 +421,7 @@ bool ReferenceTTest::TestNumberOfReferences() {
 
 bool ReferenceTTest::TestEqualOperator() {
 
+
     ReferenceT<IntegerObject> buildObj("IntegerObject");
 
     ReferenceT<IntegerObject> copy(buildObj);
