@@ -47,7 +47,7 @@ class RealTimeApplicationTest {
 public:
 
     /**
-     * @brief Initialises the ObjectRegistryDatabase.
+     * @brief Initialises the configuration stream
      */
     RealTimeApplicationTest();
 
@@ -57,113 +57,76 @@ public:
     ~RealTimeApplicationTest();
 
     /**
-     * @brief Tests the constructor.
+     * @brief Initialises the ObhectRegistryDatabase
+     */
+    bool Init();
+
+    /**
+     * @brief Tests the constructor
      */
     bool TestConstructor();
 
     /**
-     * @brief Tests if the function initialises correctly the object from configuration data.
+     * @brief Tests the Initialise function
      */
     bool TestInitialise();
 
     /**
-     * @brief Tests if the function configures correctly the desired environment calling the ConfigureArchitecture(*) for
-     * each internally declared thread.
+     * @brief Tests the Initialise failing if no States container declared
      */
-    bool TestConfigureArchitecture();
+    bool TestInitialiseFalse_NoStatesFound();
 
     /**
-     * @brief Tests if the function fails if the application does not contain the "+States" container.
+     * @brief Tests the Initialise failing if no Data container declared
      */
-    bool TestConfigureArchitectureFalse_NoStates();
+    bool TestInitialiseFalse_NoDataFound();
 
     /**
-     * @brief Tests if the function creates correctly all the RealTimeDataSourceDefs calling ConfigureDataSource(*)
-     * for each internally declared GAM.
+     * @brief Tests the Initialise failing if no Functions container declared
      */
-    bool TestConfigureDataSource();
+    bool TestInitialiseFalse_NoFunctionsFound();
 
     /**
-     * @brief Tests if the function fails if the application does not contain the "+Functions" container.
+     * @brief Tests the Initialise failing if no Scheduler container declared
      */
-    bool TestConfigureDataSourceFalse_NoFunctions();
+    bool TestInitialiseFalse_NoSchedulerFound();
 
     /**
-     * @brief Tests if the function fails if "+Functions" is not a ReferenceContainer.
+     * @brief Tests the ConfigureApplication compiling the ConfigurationDatabase after initialisation
      */
-    bool TestConfigureDataSourceFalse_InvalidFunction();
+    bool TestConfigureApplication();
 
     /**
-     * @brief Tests if the function returns true if there is no more than one producer GAM per state.
+     * @brief Tests the ConfigureApplication compiling the ConfigurationDatabase before initialisation
      */
-    bool TestValidateDataSource();
+    bool TestConfigureApplicationNoInit();
 
     /**
-     * @brief Tests if the function returns false if there is more than one producer GAM in a state.
-     */
-    bool TestValidateDataSourceFalse_MoreThanOneProducer();
-
-    /**
-     * @brief Tests if the function returns false if the application does not contain the "+Data" container.
-     */
-    bool TestValidateDataSourceFalse_NoData();
-
-    /**
-     * @brief Tests if the function allocates correctly the RealTimeDataSource memory.
-     */
-    bool TestAllocateDataSource();
-
-    /**
-     * @brief Tests if the function fails if the application does not contain the "+Data" container.
-     */
-    bool TestAllocateDataSourceFalse_NoData();
-
-    /**
-     * @brief Tests if the function creates for each gam its RealTimeInputReader and RealTimeOutputWriter.
-     */
-    bool TestConfigureDataSourceLinks();
-
-    /**
-     * @brief Tests if the function fails if the application does not contain the "+Functions" container.
-     */
-    bool TestConfigureDataSourceLinksFalse_NoFunctions();
-
-    /**
-     * @brief Tests if the function fails if the "+Functions" is not a container.
-     */
-    bool TestConfigureDataSourceLinksFalse_InvalidFunction();
-
-    /**
-     * @brief Tests if the function can set the default values of the RealTimeDataSource variables
-     * if it is requested by the change of state.
+     * @brief Tests if the function refreshes the correct GAMs, DataSources and Scheduler for a state switch
      */
     bool TestPrepareNextState();
 
     /**
-     * @brief Tests if the function fails if the application does not contain the "+Data" container.
+     * @brief Tests if the function launches the scheduler execution
      */
-    bool TestPrepareNextStateFalse_NoData();
+    bool TestStartExecution();
 
     /**
-     * @brief Tests if the function returns correctly the current active buffer number.
-     */
-    bool TestGetActiveBuffer();
-
-    /**
-     * @brief Tests if the function returns true if there is no more than one synchronised GAM per thread.
-     */
-    bool TestValidateDataSourceLinks();
-
-    /**
-     * @brief Tests if the function returns false if there is more than one synchronised gam in some threads.
-     */
-    bool TestValidateDataSourceLinksFalse_MoreSync();
-
-    /**
-     * @brief Tests if the function stops the current scheduler execution.
+     * @brief Tests if the function stops the scheduler execution
      */
     bool TestStopExecution();
 
+    /**
+     * @brief Tests the GetStates method.
+     */
+    bool TestGetStates();
+
+    /**
+     * @brief Tests the GetIndex method.
+     */
+    bool TestGetIndex();
+
+    StreamString config;
 };
 
 /*---------------------------------------------------------------------------*/

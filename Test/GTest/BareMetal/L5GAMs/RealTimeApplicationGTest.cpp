@@ -1,8 +1,8 @@
 /**
  * @file RealTimeApplicationGTest.cpp
  * @brief Source file for class RealTimeApplicationGTest
- * @date 01/03/2016
- * @author Giuseppe Ferrò
+ * @date 04/ago/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,108 +40,58 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 TEST(RealTimeApplicationGTest,TestConstructor) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestConstructor());
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConstructor());
 }
 
 TEST(RealTimeApplicationGTest,TestInitialise) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestInitialise());
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(RealTimeApplicationGTest,TestConfigureArchitecture) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestConfigureArchitecture());
+TEST(RealTimeApplicationGTest,TestInitialiseFalse_NoStatesFound) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestInitialiseFalse_NoStatesFound());
 }
 
-TEST(RealTimeApplicationGTest,TestConfigureArchitectureFalse_NoStates) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestConfigureArchitectureFalse_NoStates());
+TEST(RealTimeApplicationGTest,TestInitialiseFalse_NoDataFound) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestInitialiseFalse_NoDataFound());
 }
 
-TEST(RealTimeApplicationGTest,TestConfigureDataSource) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestConfigureDataSource());
+TEST(RealTimeApplicationGTest,TestInitialiseFalse_NoFunctionsFound) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestInitialiseFalse_NoFunctionsFound());
 }
 
-TEST(RealTimeApplicationGTest,TestConfigureDataSourceFalse_NoFunctions) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestConfigureDataSourceFalse_NoFunctions());
+TEST(RealTimeApplicationGTest,TestInitialiseFalse_NoSchedulerFound) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestInitialiseFalse_NoSchedulerFound());
 }
 
-TEST(RealTimeApplicationGTest,TestConfigureDataSourceFalse_InvalidFunction) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestConfigureDataSourceFalse_InvalidFunction());
+TEST(RealTimeApplicationGTest,TestConfigureApplication) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplication());
+}
+TEST(RealTimeApplicationGTest,TestConfigureApplicationNoInit) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplicationNoInit());
 }
 
-TEST(RealTimeApplicationGTest,TestValidateDataSource) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestValidateDataSource());
-}
-
-TEST(RealTimeApplicationGTest,TestValidateDataSourceFalse_NoData) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestValidateDataSourceFalse_NoData());
-}
-
-TEST(RealTimeApplicationGTest,TestValidateDataSourceFalse_MoreThanOneProducer) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestValidateDataSourceFalse_MoreThanOneProducer());
-}
-
-TEST(RealTimeApplicationGTest,TestAllocateDataSource) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestAllocateDataSource());
-}
-
-TEST(RealTimeApplicationGTest,TestAllocateDataSourceFalse_NoData) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestAllocateDataSourceFalse_NoData());
-}
-
-TEST(RealTimeApplicationGTest,TestConfigureDataSourceLinks) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestConfigureDataSourceLinks());
-}
-
-TEST(RealTimeApplicationGTest,TestConfigureDataSourceLinksFalse_NoFunctions) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestConfigureDataSourceLinksFalse_NoFunctions());
-}
-
-TEST(RealTimeApplicationGTest,TestConfigureDataSourceLinksFalse_InvalidFunction) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestConfigureDataSourceLinksFalse_InvalidFunction());
-}
 
 TEST(RealTimeApplicationGTest,TestPrepareNextState) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestPrepareNextState());
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestPrepareNextState());
 }
 
-TEST(RealTimeApplicationGTest,TestPrepareNextStateFalse_NoData) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestPrepareNextStateFalse_NoData());
-}
-
-TEST(RealTimeApplicationGTest,TestGetActiveBuffer) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestGetActiveBuffer());
-}
-
-TEST(RealTimeApplicationGTest,TestValidateDataSourceLinks) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestValidateDataSourceLinks());
-}
-
-TEST(RealTimeApplicationGTest,TestValidateDataSourceLinksFalse_MoreSync) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestValidateDataSourceLinksFalse_MoreSync());
+TEST(RealTimeApplicationGTest,TestStartExecution) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestStartExecution());
 }
 
 TEST(RealTimeApplicationGTest,TestStopExecution) {
-    RealTimeApplicationTest rtappTest;
-    ASSERT_TRUE(rtappTest.TestStopExecution());
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestStopExecution());
 }
+

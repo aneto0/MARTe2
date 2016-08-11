@@ -31,10 +31,13 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GAMSchedulerI.h"
-#include "ConfigurationDatabase.h"
-#include "RealTimeGenericDataDef.h"
 #include "AdvancedErrorManagement.h"
+#include "ConfigurationDatabase.h"
+#include "DataSourceI.h"
+#include "GAM.h"
+#include "GAMSchedulerI.h"
+#include "RealTimeThread.h"
+#include "ReferenceContainerFilterReferences.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -46,142 +49,385 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAMSchedulerI::GAMSchedulerI() {
-    writer[0] = NULL_PTR(BasicRealTimeDataSourceOutputWriter*);
-    writer[1] = NULL_PTR(BasicRealTimeDataSourceOutputWriter*);
-    application = NULL_PTR(RealTimeApplication*);
+GAMSchedulerI::GAMSchedulerI() :
+        ReferenceContainer(),
+        clockPeriod(HighResolutionTimer::Period()) {
+    states = NULL_PTR(ScheduledState *);
+    scheduledStates[0] = NULL_PTR(ScheduledState *);
+    scheduledStates[1] = NULL_PTR(ScheduledState *);
+    numberOfStates = 0u;
+
 }
 
-bool GAMSchedulerI::InsertRecord(const char8 * stateName,
-                                 ReferenceT<RealTimeThread> thread) {
-    uint32 numberOfStates = Size();
-    ReferenceT<GAMSchedulerRecord> record;
-    bool found = false;
-    for (uint32 i = 0u; (i < numberOfStates) && (!found); i++) {
-        record = Get(i);
-        if (record.IsValid()) {
-            found = (StringHelper::Compare(stateName, record->GetName()) == 0);
+GAMSchedulerI::~GAMSchedulerI() {
+    if (states != NULL) {
+        if (states->threads != NULL) {
+            if (states->threads->executables != NULL) {
+                delete[] states->threads->executables;
+            }
+            delete[] states->threads;
         }
+        delete[] states;
     }
-    bool ret = true;
+}
 
-    // set the accelerator
-    if (found) {
-        record->AddThread(thread);
-    }
-    else {
-        ReferenceT<GAMSchedulerRecord> newRecord = ReferenceT<GAMSchedulerRecord>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-        ret = newRecord.IsValid();
-        if (ret) {
-            newRecord->SetName(stateName);
-            newRecord->AddThread(thread);
-            ret = Insert(newRecord);
+bool GAMSchedulerI::Initialise(StructuredDataI & data) {
+    bool ret = ReferenceContainer::Initialise(data);
+    if (ret) {
+        timingDataSourceAddress = "Data.";
+        ret = data.Read("TimingDataSource", timingDataSourceAddress);
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify the TimingDataSource address");
         }
     }
 
     return ret;
 }
 
-bool GAMSchedulerI::PrepareNextState(RealTimeStateInfo info) {
-    uint32 numberOfStates = Size();
-    StreamString newStateName = info.nextState;
-    ReferenceT<GAMSchedulerRecord> record;
-    bool ret = false;
-    for (uint32 i = 0u; (i < numberOfStates) && (!ret); i++) {
-        record = Get(i);
-        if (record.IsValid()) {
-            ret = (newStateName == record->GetName());
+bool GAMSchedulerI::ConfigureScheduler() {
+    ReferenceContainerFilterReferences findme(1, ReferenceContainerFilterMode::PATH, this);
+    ReferenceContainer path;
+    ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(path, findme);
+    uint32 numberOfNodes = path.Size();
+    ReferenceT<RealTimeApplication> rtApp;
+    bool isRtAppValid = false;
+    for (uint32 i = 0u; (i < numberOfNodes) && (!isRtAppValid); i++) {
+        rtApp = path.Get(i);
+        isRtAppValid = rtApp.IsValid();
+    }
+    bool ret = isRtAppValid;
+
+    ReferenceT<ReferenceContainer> statesContainer;
+    if (ret) {
+        statesContainer = rtApp->Find("States");
+        ret = statesContainer.IsValid();
+    }
+
+    if (ret) {
+        timingDataSource = rtApp->Find(timingDataSourceAddress.Buffer());
+        ret = timingDataSource.IsValid();
+        if (!ret) {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "TimingDataSource %s not found", timingDataSourceAddress.Buffer())
         }
     }
-    // set the accelerator
+
     if (ret) {
-        uint32 nextBuffer = (info.activeBuffer + 1u) % 2u;
-        statesInExecution[nextBuffer] = record;
-
-        // generate the output writer
-        if (writer[nextBuffer] != NULL) {
-            delete[] writer[nextBuffer];
-        }
-        uint32 numberOfThreads = record->GetNumberOfThreads();
-
-        // creates a writer for each thread
-        writer[nextBuffer] = new BasicRealTimeDataSourceOutputWriter[numberOfThreads];
-        ret = (application != NULL);
-        if (ret) {
-            for (uint32 i = 0u; (i < numberOfThreads) && (ret); i++) {
-                (writer[nextBuffer])[i].SetApplication(*application);
-                ReferenceT<RealTimeThread> thread = record->Peek(i);
-                ret = thread.IsValid();
+        numberOfStates = statesContainer->Size();
+        states = new ScheduledState[numberOfStates];
+        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+            ReferenceT<RealTimeState> stateElement = statesContainer->Get(i);
+            ret = stateElement.IsValid();
+            if (ret) {
+                ReferenceT<ReferenceContainer> threadContainer = stateElement->Find("Threads");
+                ret = threadContainer.IsValid();
                 if (ret) {
-                    uint32 numberOfGAMs = thread->GetNumberOfGAMs();
-                    ReferenceT<GAMI> *gamArray = thread->GetGAMs();
-                    // adds for each gam the relative and absolute time definitions to the
-                    // specific writer.
-                    for (uint32 j = 0u; (j < numberOfGAMs) && (ret); j++) {
-                        ReferenceT<GAMI> gam = gamArray[j];
-                        ret = gam.IsValid();
-                        if (ret) {
-                            ConfigurationDatabase defCDBAbs;
-                            defCDBAbs.Write("Class", "RealTimeGenericDataDef");
-                            defCDBAbs.Write("Type", "uint64");
-                            defCDBAbs.Write("Default", "0");
-                            defCDBAbs.Write("IsFinal", "true");
-                            StreamString path = "GAM_Times.";
-                            path += gam->GetName();
-                            path += ".AbsoluteUsecTime";
-                            defCDBAbs.Write("Path", path.Buffer());
-                            defCDBAbs.MoveToRoot();
+                    uint32 numberOfThreads = threadContainer->Size();
 
-                            RealTimeGenericDataDef defAbs;
-                            ret = defAbs.Initialise(defCDBAbs);
-                            if (ret) {
-                                ret = (writer[nextBuffer])[i].AddVariable(ReferenceT<RealTimeGenericDataDef>(&defAbs));
+                    states[i].numberOfThreads = numberOfThreads;
+                    states[i].name = stateElement->GetName();
+
+                    states[i].threads = new ScheduledThread[numberOfThreads];
+
+                    for (uint32 j = 0u; (j < numberOfThreads) && (ret); j++) {
+                        ReferenceT<RealTimeThread> threadElement = threadContainer->Get(j);
+                        ret = threadElement.IsValid();
+                        if (ret) {
+
+                            ReferenceContainer gams;
+                            ret = threadElement->GetGAMs(gams);
+                            uint32 numberOfGams = threadElement->GetNumberOfGAMs();
+                            uint32 numberOfExecutables = numberOfGams;
+
+                            for (uint32 k = 0u; (k < numberOfGams) && (ret); k++) {
+                                ReferenceT<GAM> gam = gams.Get(k);
+                                ret = gam.IsValid();
+                                if (ret) {
+                                    ReferenceContainer inputBrokers;
+                                    ret = gam->GetInputBrokers(inputBrokers);
+                                    if (ret) {
+                                        numberOfExecutables += inputBrokers.Size();
+
+                                    }
+                                    if (ret) {
+                                        ReferenceContainer outputBrokers;
+                                        ret = gam->GetOutputBrokers(outputBrokers);
+                                        if (ret) {
+                                            numberOfExecutables += outputBrokers.Size();
+                                        }
+                                    }
+                                }
                             }
                             if (ret) {
-                                ConfigurationDatabase defCDBRel;
-                                defCDBRel.Write("Class", "RealTimeGenericDataDef");
-                                defCDBRel.Write("Type", "uint64");
-                                defCDBRel.Write("Default", "0");
-                                defCDBRel.Write("IsFinal", "true");
-                                path = "GAM_Times.";
-                                path += gam->GetName();
-                                path += ".RelativeUsecTime";
-                                defCDBRel.Write("Path", path.Buffer());
-                                defCDBRel.MoveToRoot();
+                                states[i].threads[j].executables = new ExecutableI*[numberOfExecutables];
 
-                                RealTimeGenericDataDef defRel;
-                                ret = defRel.Initialise(defCDBRel);
+                                states[i].threads[j].numberOfExecutables = numberOfExecutables;
+                                states[i].threads[j].name = threadElement->GetName();
+                                states[i].threads[j].cpu = threadElement->GetCPU().GetProcessorMask();
+                                states[i].threads[j].stackSize = threadElement->GetStackSize();
+                            }
+                            uint32 c = 0u;
+                            for (uint32 k = 0u; (k < numberOfGams) && (ret); k++) {
+                                //add input brokers
+                                StreamString gamFullName;
+                                ReferenceT<GAM> gam = gams.Get(k);
                                 if (ret) {
-                                    ret = (writer[nextBuffer])[i].AddVariable(ReferenceT<RealTimeGenericDataDef>(&defRel));
+                                    ret = gam->GetQualifiedName(gamFullName);
+                                }
+                                if (ret) {
+                                    ret = InsertInputBrokers(gam, gamFullName.Buffer(), i, j, c);
+                                }
+                                //add gam
+                                if (ret) {
+                                    ret = InsertGAM(gam, gamFullName.Buffer(), i, j, c);
+                                    if (ret) {
+                                        c++;
+                                    }
+                                }
+
+                                //add output brokers
+                                if (ret) {
+                                    ret = InsertOutputBrokers(gam, gamFullName.Buffer(), i, j, c);
+                                }
+                            }
+
+                            //Add the cycle time
+                            if (ret) {
+                                StreamString threadFullName = states[i].name;
+                                threadFullName += ".";
+                                threadFullName += states[i].threads[j].name;
+                                threadFullName += "_CycleTime";
+                                uint32 signalIdx;
+                                ret = timingDataSource->GetSignalIndex(signalIdx, threadFullName.Buffer());
+                                if (ret) {
+                                    ret = timingDataSource->GetSignalMemoryBuffer(signalIdx, 0u, reinterpret_cast<void*&>(states[i].threads[j].cycleTime));
                                 }
                             }
                         }
                     }
-                    if (ret) {
-                        ret = (writer[nextBuffer])[i].Finalise();
-                    }
                 }
-                REPORT_ERROR(ErrorManagement::FatalError, "Invalid Thread in GAMSchedulerRecord");
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::FatalError, "Invalid RealTimeState in states container");
             }
         }
-        REPORT_ERROR(ErrorManagement::FatalError, "Application not set");
     }
-    else{
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Next state %s not found", newStateName)
+
+    return ret;
+}
+
+bool GAMSchedulerI::InsertInputBrokers(ReferenceT<GAM> gam,
+                                       const char8 * const gamFullName,
+                                       const uint32 stateIdx,
+                                       const uint32 threadIdx,
+                                       uint32 &executableIdx) {
+
+    //add input brokers
+    StreamString timeSignalName = gamFullName;
+    timeSignalName += "_ReadTime";
+    uint32 signalIdx;
+    bool ret = timingDataSource->GetSignalIndex(signalIdx, timeSignalName.Buffer());
+    void* signalAddress = NULL_PTR(void*);
+    if (ret) {
+        ret = timingDataSource->GetSignalMemoryBuffer(signalIdx, 0u, signalAddress);
+    }
+    if (ret) {
+        ret = (signalAddress != NULL);
+    }
+    if (ret) {
+        ret = (states != NULL_PTR(ScheduledState *));
+    }
+    ReferenceContainer inputBrokers;
+    if (ret) {
+        ret = gam->GetInputBrokers(inputBrokers);
+    }
+    uint32 numberOfInputBrokers = 0u;
+    if (ret) {
+        numberOfInputBrokers = inputBrokers.Size();
+    }
+    for (uint32 n = 0u; (n < numberOfInputBrokers) && (ret); n++) {
+        ReferenceT<ExecutableI> input = inputBrokers.Get(n);
+        ret = input.IsValid();
+        if (ret) {
+            //lint -e{613} states != NULL checked before entering here.
+            ret = (states[stateIdx].threads != NULL_PTR(ScheduledThread *));
+        }
+        if (ret) {
+            //lint -e{613} states != NULL checked before entering here.
+            states[stateIdx].threads[threadIdx].executables[executableIdx] = input.operator->();
+            //lint -e{613} states != NULL checked before entering here.
+            states[stateIdx].threads[threadIdx].executables[executableIdx]->SetTimingSignalAddress(reinterpret_cast<uint32*>(signalAddress));
+        }
+        executableIdx++;
+    }
+
+    return ret;
+}
+
+bool GAMSchedulerI::InsertGAM(ReferenceT<GAM> gam,
+                              const char8 * const gamFullName,
+                              const uint32 stateIdx,
+                              const uint32 threadIdx,
+                              const uint32 executableIdx) {
+
+    StreamString timeSignalName = gamFullName;
+    timeSignalName += "_ExecTime";
+
+    uint32 signalIdx;
+    bool ret = timingDataSource->GetSignalIndex(signalIdx, timeSignalName.Buffer());
+    void* signalAddress = NULL_PTR(void*);
+    if (ret) {
+        ret = timingDataSource->GetSignalMemoryBuffer(signalIdx, 0u, signalAddress);
+    }
+    if (ret) {
+        ret = (signalAddress != NULL);
+    }
+    if (ret) {
+        ret = (states != NULL_PTR(ScheduledState *));
+    }
+    if (ret) {
+        //lint -e{613} states != NULL checked before entering here.
+        ret = (states[stateIdx].threads != NULL_PTR(ScheduledThread *));
+    }
+    if (ret) {
+        //lint -e{613} states != NULL checked before entering here.
+        states[stateIdx].threads[threadIdx].executables[executableIdx] = gam.operator->();
+        //lint -e{613} states != NULL checked before entering here.
+        states[stateIdx].threads[threadIdx].executables[executableIdx]->SetTimingSignalAddress(reinterpret_cast<uint32*>(signalAddress));
     }
     return ret;
 }
 
-void GAMSchedulerI::ChangeState(const uint32 activeBuffer) {
-    uint32 nextBuffer = (activeBuffer + 1u) % 2u;
+bool GAMSchedulerI::InsertOutputBrokers(ReferenceT<GAM> gam,
+                                        const char8 * const gamFullName,
+                                        const uint32 stateIdx,
+                                        const uint32 threadIdx,
+                                        uint32 &executableIdx) {
+    StreamString timeSignalName = gamFullName;
+    timeSignalName += "_WriteTime";
+    uint32 signalIdx;
+    bool ret = timingDataSource->GetSignalIndex(signalIdx, timeSignalName.Buffer());
+    void* signalAddress = NULL_PTR(void*);
+    if (ret) {
+        ret = timingDataSource->GetSignalMemoryBuffer(signalIdx, 0u, signalAddress);
+    }
+    if (ret) {
+        ret = signalAddress != NULL;
+    }
+    if (ret) {
+        ret = (states != NULL_PTR(ScheduledState *));
+    }
+    if (ret) {
+        //lint -e{613} states != NULL checked before entering here.
+        ret = (states[stateIdx].threads != NULL_PTR(ScheduledThread *));
+    }
+    ReferenceContainer outputBrokers;
+    if (ret) {
+        ret = gam->GetOutputBrokers(outputBrokers);
+    }
+    uint32 numberOfOutputBrokers = 0u;
+    if (ret) {
+        numberOfOutputBrokers = outputBrokers.Size();
+    }
+    for (uint32 n = 0u; (n < numberOfOutputBrokers) && (ret); n++) {
+        ReferenceT<ExecutableI> output = outputBrokers.Get(n);
+        ret = output.IsValid();
+        if (ret) {
+            //lint -e{613} states != NULL checked before entering here.
+            states[stateIdx].threads[threadIdx].executables[executableIdx] = output.operator->();
+            //lint -e{613} states != NULL checked before entering here.
+            states[stateIdx].threads[threadIdx].executables[executableIdx]->SetTimingSignalAddress(reinterpret_cast<uint32*>(signalAddress));
+        }
+        executableIdx++;
+    }
+    return ret;
+}
 
-    StopExecution();
-    StartExecution(nextBuffer);
+/*lint -e{715}  [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: The GAMSchedulerI implementation does not need
+ to know the currentStateName (but other implementations of the GAMSchedulerI might need to know).*/
+bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
+                                     const char8 * const nextStateName) {
+
+    // Find the next state and prepare the pointer to
+    bool ret = (states != NULL_PTR(ScheduledState *));
+
+    uint32 nextBuffer = 0u;
+    if (ret) {
+        nextBuffer = (RealTimeApplication::GetIndex() + 1u) % 2u;
+    }
+
+    bool found = false;
+
+    for (uint32 i = 0u; (i < numberOfStates) && (ret) && (!found); i++) {
+        //lint -e{613} states != NULL checked before entering here.
+        found = (StringHelper::Compare(nextStateName, states[i].name) == 0);
+        if (found) {
+            //lint -e{613} states != NULL checked before entering here.
+            scheduledStates[nextBuffer] = &states[i];
+        }
+    }
+    if (ret) {
+        ret = found;
+    }
+    if (ret) {
+        CustomPrepareNextState();
+    }
+
+    return ret;
+}
+
+bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
+                                       const uint32 numberOfExecutables) const{
+    // warning: possible segmentation faults if the previous operations
+    // lack or fail and the pointers are invalid.
+
+    bool ret = true;
+    uint64 absTicks = HighResolutionTimer::Counter();
+    for (uint32 i = 0u; (i < numberOfExecutables) && (ret); i++) {
+        // save the time before
+        // execute the gam
+        ret = executables[i]->Execute();
+        uint64 tmp=(HighResolutionTimer::Counter() - absTicks);
+        float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
+        uint32 absTime = static_cast<uint32>(ticksToTime);  //us
+        if (ret) {
+            uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
+            ret = MemoryOperationsHelper::Copy(executables[i]->GetTimingSignalAddress(), &absTime, sizeToCopy);
+        }
+    }
+
+    return ret;
+}
+
+uint32 GAMSchedulerI::GetNumberOfExecutables(const char8 * const stateName,
+                                             const char8 * const threadName) const {
+    uint32 numberOfExecutables = 0u;
+    if (states != NULL) {
+        bool foundState = false;
+        for (uint32 i = 0u; (i < numberOfStates) && (!foundState); i++) {
+            foundState = StringHelper::Compare(stateName, states[i].name) == 0;
+            if (foundState) {
+                uint32 numberOfThreads = states[i].numberOfThreads;
+                if (states[i].threads != NULL) {
+                    bool foundThread = false;
+                    for (uint32 j = 0u; (j < numberOfThreads) && (!foundThread); j++) {
+
+                        foundThread = StringHelper::Compare(threadName, states[i].threads[j].name) == 0;
+                        if (foundThread) {
+                            numberOfExecutables = states[i].threads[j].numberOfExecutables;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    return numberOfExecutables;
+}
+
+ScheduledState * const * GAMSchedulerI::GetSchedulableStates() {
+    return scheduledStates;
 
 }
 
-void GAMSchedulerI::SetApplication(RealTimeApplication &rtApp) {
-    application = &rtApp;
 }
 
-}

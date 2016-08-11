@@ -1,8 +1,8 @@
 /**
  * @file GAMScheduler.h
  * @brief Header file for class GAMScheduler
- * @date 23/03/2016
- * @author Giuseppe Ferrò
+ * @date 09/ago/2016
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GAMSchedulerI.h"
+#include "EventSem.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -39,11 +40,43 @@
 namespace MARTe {
 
 /**
+ * @brief Thread parameter structure
+ */
+struct RTThreadParam {
+    /**
+     * The scheduler
+     */
+    GAMSchedulerI *scheduler;
+    /**
+     * The list of executables
+     */
+    ExecutableI **executables;
+    /**
+     * The number of executables
+     */
+    uint32 numberOfExecutables;
+    /**
+     * The cycle time
+     */
+    uint32* cycleTime;
+    /**
+     * A spinlock allowing to stop the thread execution
+     */
+    volatile int32 *spinLock;
+
+    /**
+     * The event semaphore where threads wait before start their execution
+     */
+    EventSem *eventSem;
+};
+
+/**
  * @brief The GAM scheduler
  */
 class GAMScheduler: public GAMSchedulerI {
 
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Constructor
@@ -58,29 +91,43 @@ public:
     /**
      * @brief Starts the multi-thread execution for the current state.
      */
-    virtual void StartExecution(const uint32 activeBuffer);
+    virtual void StartExecution();
 
     /**
-     * @brief Stops the execution.
+     * @brief Stops the execution application
      */
     virtual void StopExecution();
+
+protected:
+
+    /**
+     * @brief Starts the threads for the next state
+     */
+    virtual void CustomPrepareNextState();
+
 
 private:
 
     /**
      * The array of identifiers of the thread in execution.
      */
-    ThreadIdentifier *tid;
-
-    /**
-     * The number of thread in execution.
-     */
-    uint32 numberOfThreads;
+    ThreadIdentifier *tid[2];
 
     /**
      * Synchronization spin-lock
      */
-    volatile int32 spinLock;
+    volatile int32 spinLock[2];
+
+    /**
+     * The array of the thread parameters
+     */
+    RTThreadParam *param[2];
+
+    /**
+     * The eventSemaphore
+     */
+    EventSem eventSem;
+
 };
 
 }
@@ -89,5 +136,6 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_SCHEDULER_L5GAMS_GAMSCHEDULER_H_ */
+#endif /* GAMSCHEDULER_H_ */
+
 

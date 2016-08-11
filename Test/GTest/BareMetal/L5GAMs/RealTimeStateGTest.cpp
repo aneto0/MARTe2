@@ -1,7 +1,7 @@
 /**
  * @file RealTimeStateGTest.cpp
  * @brief Source file for class RealTimeStateGTest
- * @date 07/mar/2016
+ * @date 04/ago/2016
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -26,12 +26,12 @@
 /*---------------------------------------------------------------------------*/
 #include <limits.h>
 #include "gtest/gtest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
 #include "RealTimeStateTest.h"
-#include "ConfigurationDatabase.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,54 +39,27 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 TEST(RealTimeStateGTest,TestConstructor) {
-    RealTimeStateTest rtsTest;
-    ASSERT_TRUE(rtsTest.TestConstructor());
+    RealTimeStateTest test;
+    ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(RealTimeStateGTest,TestConfigureArchitecture) {
-    RealTimeStateTest rtsTest;
-    ASSERT_TRUE(rtsTest.TestConfigureArchitecture());
+TEST(RealTimeStateGTest,TestAddStatefuls) {
+    RealTimeStateTest test;
+    ASSERT_TRUE(test.TestAddStatefuls());
 }
 
-TEST(RealTimeStateGTest,TestConfigureArchitectureFalse_NoThreads) {
-    RealTimeStateTest rtsTest;
-    ASSERT_TRUE(rtsTest.TestConfigureArchitectureFalse_NoThreads());
+TEST(RealTimeStateGTest,TestAddStatefulsFalse_InvalidStateful) {
+    RealTimeStateTest test;
+    ASSERT_TRUE(test.TestAddStatefulsFalse_InvalidStateful());
 }
 
-TEST(RealTimeStateGTest,TestConfigureArchitecture_SingleInGAMGroup) {
-    RealTimeStateTest rtsTest;
-    ASSERT_TRUE(rtsTest.TestConfigureArchitecture_SingleInGAMGroup());
+TEST(RealTimeStateGTest,TestPrepareNextState) {
+    RealTimeStateTest test;
+    ASSERT_TRUE(test.TestPrepareNextState());
 }
 
-TEST(RealTimeStateGTest,TestInsertFunction) {
-    RealTimeStateTest rtsTest;
-    ASSERT_TRUE(rtsTest.TestInsertFunction());
+TEST(RealTimeStateGTest,TestGetNumberOfStatefuls) {
+    RealTimeStateTest test;
+    ASSERT_TRUE(test.TestGetNumberOfStatefuls());
 }
-
-TEST(RealTimeStateGTest,TestAddGAMGroup) {
-    RealTimeStateTest rtsTest;
-    ASSERT_TRUE(rtsTest.TestAddGAMGroup());
-}
-
-TEST(RealTimeStateGTest,TestGetGAMGroups) {
-    RealTimeStateTest rtsTest;
-    ASSERT_TRUE(rtsTest.TestGetGAMGroups());
-}
-
-TEST(RealTimeStateGTest,TestGetNumberOfGAMGroups) {
-    RealTimeStateTest rtsTest;
-    ASSERT_TRUE(rtsTest.TestGetNumberOfGAMGroups());
-}
-
-TEST(RealTimeStateGTest,TestPrepareState) {
-    RealTimeStateTest rtsTest;
-    ASSERT_TRUE(rtsTest.TestPrepareState());
-}
-
-TEST(RealTimeStateGTest,TestValidateDataSourceLinks) {
-    RealTimeStateTest rtsTest;
-    ASSERT_TRUE(rtsTest.TestValidateDataSourceLinks());
-}
-

@@ -31,114 +31,572 @@
 
 #include "GAMSchedulerITest.h"
 #include "GAMTestHelper.h"
+#include "GAMGroup.h"
+#include "RealTimeApplication.h"
+#include "ObjectRegistryDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+class DummyScheduler: public GAMSchedulerI {
+public:
+
+    CLASS_REGISTER_DECLARATION()
+
+DummyScheduler    ();
+
+    virtual void StartExecution();
+
+    virtual void StopExecution();
+
+    void ExecuteThreadCycle(uint32 threadId);
+
+    virtual bool ConfigureScheduler();
+
+    virtual void CustomPrepareNextState();
+
+private:
+
+    ScheduledState * const * scheduledStates;
+};
+
+DummyScheduler::DummyScheduler() :
+        GAMSchedulerI() {
+    scheduledStates = NULL_PTR(ScheduledState * const *);
+}
+void DummyScheduler::StartExecution() {
+}
+
+bool DummyScheduler::ConfigureScheduler() {
+    bool ret = GAMSchedulerI::ConfigureScheduler();
+    if (ret) {
+        scheduledStates = GetSchedulableStates();
+    }
+    return ret;
+}
+
+void DummyScheduler::ExecuteThreadCycle(uint32 threadId) {
+
+    ExecuteSingleCycle(scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].executables,
+                       scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
+
+}
+void DummyScheduler::StopExecution() {
+}
+
+void DummyScheduler::CustomPrepareNextState(){
+
+}
 
 
+CLASS_REGISTER(DummyScheduler, "1.0")
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+GAMSchedulerITest::GAMSchedulerITest() {
+
+    static StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add1"
+            "                    Default = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add2"
+            "                    Default = 2"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add1"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add2"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB2"
+            "                    Alias = add2"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMC = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add3"
+            "                    Default = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add4"
+            "                    Default = 2"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add3"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMD = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add4"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add3"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB2"
+            "                    Alias = add4"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAME = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add5"
+            "                    Default = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add6"
+            "                    Default = 2"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add5"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMF = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add6"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add5"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB2"
+            "                    Alias = add6"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMG = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add7"
+            "                    Default = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add8"
+            "                    Default = 2"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add7"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMH = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add8"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add7"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB2"
+            "                    Alias = add8"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +DDB2 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA, GAMB}"
+            "                }"
+            "                +Thread2 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMC, GAMD, GAME, GAMF}"
+            "                }"
+            "            }"
+            "        }"
+            "        +State2 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMG, GAMH, GAMA, GAMB}"
+            "                }"
+            "                +Thread2 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMC, GAMD}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DummyScheduler"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    if (!parser.Parse()) {
+        printf("\nFAILED PARSING\n");
+    }
+
+    cdb.MoveToRoot();
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        printf("\nFAILED INITIALISATION\n");
+    }
+
+}
+
+GAMSchedulerITest::~GAMSchedulerITest() {
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+}
 
 bool GAMSchedulerITest::TestConstructor() {
-    BasicGAMScheduler sched;
+    DummyScheduler sched;
     return true;
 }
 
-bool GAMSchedulerITest::TestInsertRecord() {
+bool GAMSchedulerITest::TestConfigureScheduler() {
 
-    const uint32 size = 32;
-    ReferenceT<RealTimeThread> threadsS1[size];
-    ReferenceT<RealTimeThread> threadsS2[size];
-    BasicGAMScheduler sched;
-    for (uint32 i = 0u; i < size; i++) {
-        threadsS1[i] = ReferenceT<RealTimeThread>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-        threadsS2[i] = ReferenceT<RealTimeThread>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-
-        sched.InsertRecord("state1", threadsS1[i]);
-        sched.InsertRecord("state2", threadsS2[i]);
-    }
-
-    ReferenceT<GAMSchedulerRecord> rec1 = sched.Get(0);
-    ReferenceT<GAMSchedulerRecord> rec2 = sched.Get(1);
-
-    if (StringHelper::Compare(rec1->GetName(), "state1") != 0) {
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (!app.IsValid()) {
         return false;
     }
 
-    if (StringHelper::Compare(rec2->GetName(), "state2") != 0) {
+    if (!app->ConfigureApplication()) {
         return false;
     }
 
-    for (uint32 i = 0u; i < size; i++) {
-        ReferenceT<RealTimeThread> test = rec1->Peek(i);
-        if (test != threadsS1[i]) {
-            return false;
-        }
-        test = rec2->Peek(i);
-        if (test != threadsS2[i]) {
-            return false;
-        }
+    ReferenceT<GAMSchedulerI> scheduler = app->Find("Scheduler");
+    if (!scheduler.IsValid()) {
+        return false;
     }
-    return (rec1->GetNumberOfThreads() == size) && (rec2->GetNumberOfThreads() == size);
+
+    if (!scheduler->ConfigureScheduler()) {
+        return false;
+    }
+
+    uint32 numberOfExecutables = scheduler->GetNumberOfExecutables("State1", "Thread1");
+
+    if (numberOfExecutables != 8) {
+        return false;
+    }
+    numberOfExecutables = scheduler->GetNumberOfExecutables("State1", "Thread2");
+
+    if (numberOfExecutables != 16) {
+        return false;
+    }
+    numberOfExecutables = scheduler->GetNumberOfExecutables("State2", "Thread1");
+
+    if (numberOfExecutables != 16) {
+        return false;
+    }
+    numberOfExecutables = scheduler->GetNumberOfExecutables("State2", "Thread2");
+
+    if (numberOfExecutables != 8) {
+        return false;
+    }
+    return true;
+}
+
+bool GAMSchedulerITest::TestConfigureSchedulerFalse_InvalidState() {
+
+    static StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add1"
+            "                    Default = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add2"
+            "                    Default = 2"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add1"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Alias = add2"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB2"
+            "                    Alias = add2"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +DDB2 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA GAMB}"
+            "                }"
+            "            }"
+            "        }"
+            "        +State2 = {"
+            "            Class = ReferenceContainer"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DummyScheduler"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    if (!parser.Parse()) {
+        return false;
+    }
+
+    cdb.MoveToRoot();
+    ObjectRegistryDatabase::Instance()->CleanUp();
+
+    if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
+        return false;
+    }
+
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (!app.IsValid()) {
+        return false;
+    }
+
+    ReferenceT<GAMSchedulerI> scheduler = app->Find("Scheduler");
+    if (!scheduler.IsValid()) {
+        return false;
+    }
+
+    return (!scheduler->ConfigureScheduler());
+}
+
+bool GAMSchedulerITest::TestGetNumberOfExecutables() {
+    return TestConfigureScheduler();
 }
 
 bool GAMSchedulerITest::TestPrepareNextState() {
-    RealTimeStateInfo info;
-    info.activeBuffer = 0;
-    info.currentState = "";
-    info.nextState = "state1";
-    ReferenceT<RealTimeThread> threadsS1 = ReferenceT<RealTimeThread>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    BasicGAMScheduler sched;
-    sched.InsertRecord("state1", threadsS1);
 
-    RealTimeApplication app;
-    sched.SetApplication(app);
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (!app.IsValid()) {
+        return false;
+    }
 
-    return (sched.PrepareNextState(info));
-}
+    if (!app->ConfigureApplication()) {
+        return false;
+    }
 
-bool GAMSchedulerITest::TestPrepareNextStateFalse_NoAppSet() {
-    RealTimeStateInfo info;
-    info.activeBuffer = 0;
-    info.currentState = "";
-    info.nextState = "state1";
-    ReferenceT<RealTimeThread> threadsS1 = ReferenceT<RealTimeThread>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    BasicGAMScheduler sched;
-    sched.InsertRecord("state1", threadsS1);
+    ReferenceT<DummyScheduler> scheduler = app->Find("Scheduler");
+    if (!scheduler.IsValid()) {
+        return false;
+    }
 
-    return (!sched.PrepareNextState(info));
+    if (!scheduler->ConfigureScheduler()) {
+        return false;
+    }
 
-}
+    if (!scheduler->PrepareNextState("", "State1")) {
+        printf("\nFailed pns\n");
+        return false;
+    }
 
-bool GAMSchedulerITest::TestPrepareNextStateFalse_InvalidNextState() {
-    RealTimeStateInfo info;
-    info.activeBuffer = 0;
-    info.currentState = "state1";
-    info.nextState = "state2";
-    ReferenceT<RealTimeThread> threadsS1 = ReferenceT<RealTimeThread>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    BasicGAMScheduler sched;
-    sched.InsertRecord("state1", threadsS1);
+    ReferenceT<GAM1> gama = app->Find("Functions.GAMA");
+    ReferenceT<GAM1> gamb = app->Find("Functions.GAMB");
+    ReferenceT<GAM1> gamc = app->Find("Functions.GAMC");
+    ReferenceT<GAM1> gamd = app->Find("Functions.GAMD");
+    ReferenceT<GAM1> game = app->Find("Functions.GAME");
+    ReferenceT<GAM1> gamf = app->Find("Functions.GAMF");
+    ReferenceT<GAM1> gamg = app->Find("Functions.GAMG");
+    ReferenceT<GAM1> gamh = app->Find("Functions.GAMH");
+    app->StartExecution();
 
-    RealTimeApplication app;
-    sched.SetApplication(app);
+    scheduler->ExecuteThreadCycle(0);
 
-    return (!sched.PrepareNextState(info));
-}
+    if (gama->numberOfExecutions != 1u || gamb->numberOfExecutions != 1u) {
+        return false;
+    }
+    scheduler->ExecuteThreadCycle(1);
 
-bool GAMSchedulerITest::TestSetApplication() {
-    BasicGAMScheduler sched;
-    RealTimeApplication app;
-    sched.SetApplication(app);
+    if (gamc->numberOfExecutions != 1u || gamd->numberOfExecutions != 1u || game->numberOfExecutions != 1u || gamf->numberOfExecutions != 1u) {
+        return false;
+    }
+
+    if (!scheduler->PrepareNextState("State1", "State2")) {
+        printf("\nFailed pns\n");
+        return false;
+    }
+    app->StartExecution();
+
+    scheduler->ExecuteThreadCycle(0);
+
+    if (gamg->numberOfExecutions != 1u || gamh->numberOfExecutions != 1u || gama->numberOfExecutions != 2u || gamb->numberOfExecutions != 2u) {
+        return false;
+    }
+
+    scheduler->ExecuteThreadCycle(1);
+
+    if (gamc->numberOfExecutions != 2u || gamd->numberOfExecutions != 2u) {
+        return false;
+    }
     return true;
 }
 
-
-bool GAMSchedulerITest::TestChangeState(){
-    DummyScheduler sched;
-
-    // stops and starts again the execution
-    sched.ChangeState(0);
-
-    return (sched.numberOfExecutions==2);
+bool GAMSchedulerITest::TestExecuteSingleCycle() {
+    return TestPrepareNextState();
 }

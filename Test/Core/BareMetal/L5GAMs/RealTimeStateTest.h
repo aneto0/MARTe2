@@ -57,53 +57,30 @@ public:
     ~RealTimeStateTest();
 
     /**
-     * @brief Tests the constructor.
+     * @brief Tests the constructor
      */
     bool TestConstructor();
 
     /**
-     * @brief Tests if the function adds the gam group defined in threads to the state.
+     * @brief Tests if the the function inserts statefuls in the internal container
+     * checking if they already are present to avoi duplications
      */
-    bool TestConfigureArchitecture();
+    bool TestAddStatefuls();
 
     /**
-     * @brief Tests if the function adds the correct gam group specifying in the thread
-     * the single specific gams.
+     * @brief Tests if the function fails trying to add a not StatefulI reference
      */
-    bool TestConfigureArchitecture_SingleInGAMGroup();
+    bool TestAddStatefulsFalse_InvalidStateful();
 
     /**
-     * @brief Tests if the function fails if the state does not contain the "+Threads" container.
+     * @brief Tests if the function refreshes the context of the StatefulI involved in the next state
      */
-    bool TestConfigureArchitectureFalse_NoThreads();
+    bool TestPrepareNextState();
 
     /**
-     * @brief Tests if the function inserts functions correctly creating the "+Functions" container.
+     * @brief Tests if the function returns how many StatefulI are involved in this state
      */
-    bool TestInsertFunction();
-
-    /**
-     * @brief Tests if the function adds gam groups to the internal array.
-     */
-    bool TestAddGAMGroup();
-
-    /**
-     * @brief Tests if the function returns correctly the gam groups vector.
-     */
-    bool TestGetGAMGroups();
-
-    /**
-     * @brief Tests if the function returns the number of gam groups set.
-     */
-    bool TestGetNumberOfGAMGroups();
-
-    /**
-     * @brief Tests if the function calls PrepareState for each GAMGroup.
-     */
-    bool TestPrepareState();
-
-
-    bool TestValidateDataSourceLinks();
+    bool TestGetNumberOfStatefuls();
 
 };
 

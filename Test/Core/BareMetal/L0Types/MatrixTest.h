@@ -98,6 +98,16 @@ public:
     bool TestMatrixOperator_Heap();
 
     /**
+     * @brief Tests the (i,j) operator on a static matrix
+     */
+    bool TestMatrixFunctionCallOperator_Static();
+
+    /**
+     * @brief Tests the (i,j) operator on a heap matrix
+     */
+    bool TestMatrixFunctionCallOperator_Heap();
+
+    /**
      * @brief Tests if the function returns the pointer to the matrix memory.
      */
     bool TestGetDataPointer();

@@ -1,7 +1,7 @@
 /**
  * @file GAMSchedulerIGTest.cpp
  * @brief Source file for class GAMSchedulerIGTest
- * @date 04/apr/2016
+ * @date 02/ago/2016
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -25,10 +25,6 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
-/*---------------------------------------------------------------------------*/
-
 #include <limits.h>
 #include "gtest/gtest.h"
 
@@ -36,6 +32,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "GAMSchedulerITest.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -46,36 +43,31 @@
 /*---------------------------------------------------------------------------*/
 
 TEST(GAMSchedulerIGTest,TestConstructor) {
-    GAMSchedulerITest schedTest;
-    ASSERT_TRUE(schedTest.TestConstructor());
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(GAMSchedulerIGTest,TestInsertRecord) {
-    GAMSchedulerITest schedTest;
-    ASSERT_TRUE(schedTest.TestInsertRecord());
+TEST(GAMSchedulerIGTest,TestConfigureScheduler) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestConfigureScheduler());
+}
+
+TEST(GAMSchedulerIGTest,TestConfigureSchedulerFalse_InvalidState) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestConfigureSchedulerFalse_InvalidState());
+}
+
+TEST(GAMSchedulerIGTest,TestGetNumberOfExecutables) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestGetNumberOfExecutables());
 }
 
 TEST(GAMSchedulerIGTest,TestPrepareNextState) {
-    GAMSchedulerITest schedTest;
-    ASSERT_TRUE(schedTest.TestPrepareNextState());
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestPrepareNextState());
 }
 
-TEST(GAMSchedulerIGTest,TestPrepareNextStateFalse_InvalidNextState) {
-    GAMSchedulerITest schedTest;
-    ASSERT_TRUE(schedTest.TestPrepareNextStateFalse_InvalidNextState());
-}
-
-TEST(GAMSchedulerIGTest,TestPrepareNextStateFalse_NoAppSet) {
-    GAMSchedulerITest schedTest;
-    ASSERT_TRUE(schedTest.TestPrepareNextStateFalse_NoAppSet());
-}
-
-TEST(GAMSchedulerIGTest,TestSetApplication) {
-    GAMSchedulerITest schedTest;
-    ASSERT_TRUE(schedTest.TestSetApplication());
-}
-
-TEST(GAMSchedulerIGTest,TestChangeState) {
-    GAMSchedulerITest schedTest;
-    ASSERT_TRUE(schedTest.TestChangeState());
+TEST(GAMSchedulerIGTest,TestExecuteSingleCycle) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestExecuteSingleCycle());
 }

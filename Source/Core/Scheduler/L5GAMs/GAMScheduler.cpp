@@ -1,7 +1,7 @@
 /**
  * @file GAMScheduler.cpp
  * @brief Source file for class GAMScheduler
- * @date 23/mar/2016
+ * @date 09/ago/2016
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -31,44 +31,26 @@
 
 #include "GAMScheduler.h"
 #include "Threads.h"
-#include "RealTimeDataSourceOutputWriter.h"
+#include "RealTimeApplication.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-struct RTThreadParam {
-    ReferenceT<RealTimeThread> thread;
-    uint32 activeBuffer;
-    ReferenceT<RealTimeDataSourceOutputWriter> writer;
-    volatile int32 *spinLock;
-};
+static void RTThreadRoutine(const RTThreadParam &par) {
+    (void) par.eventSem->Wait(TTInfiniteWait);
 
-static void RTThreadRoutine(RTThreadParam &par) {
-
-    ReferenceT<GAMI> *gamArray = par.thread->GetGAMs();
-    uint32 numberOfGAMs = par.thread->GetNumberOfGAMs();
-    while (*(par.spinLock) == 0) {
-        uint64 absTic = HighResolutionTimer::Counter();
-        for (uint32 i = 0u; i < numberOfGAMs; i++) {
-            if (gamArray[i].IsValid()) {
-                gamArray[i]->Execute(par.activeBuffer);
-                // save the time before
-                uint64 relTic = HighResolutionTimer::Counter();
-                // execute the gam
-                gamArray[i]->Execute(par.activeBuffer);
-                // writes the time stamps
-                // 2*i because for each gam we have absolute and relative variable inserted
-                uint64 * absTime = reinterpret_cast<uint64 *>((par.writer)->GetData(2 * i));
-                *absTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), absTic) * 1e6);
-                uint64 * relTime = reinterpret_cast<uint64 *>((par.writer)->GetData((2 * i) + 1u));
-                *relTime = static_cast<uint64>(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), relTic) * 1e6);
-                (par.writer)->Write(par.activeBuffer);
-            }
-            else {
-                //TODO Invalid gam?
-            }
-        }
+    float64 clockPeriod = HighResolutionTimer::Period();
+    uint64 cycleTimeStamp = HighResolutionTimer::Counter();
+    while ((*par.spinLock) == 1) {
+        //TODO
+        (void) par.scheduler->ExecuteSingleCycle(par.executables, par.numberOfExecutables);
+        uint64 tmp=(HighResolutionTimer::Counter() - cycleTimeStamp);
+        float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
+        uint32 absTime = static_cast<uint32>(ticksToTime);  //us
+        uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
+        (void) MemoryOperationsHelper::Copy(par.cycleTime, &absTime, sizeToCopy);
+        cycleTimeStamp = HighResolutionTimer::Counter();
     }
 
     Threads::EndThread();
@@ -80,66 +62,92 @@ static void RTThreadRoutine(RTThreadParam &par) {
 
 GAMScheduler::GAMScheduler() :
         GAMSchedulerI() {
-    spinLock = 0;
-    tid = NULL_PTR(ThreadIdentifier *);
-    numberOfThreads = 0u;
+    spinLock[0] = 0;
+    spinLock[1] = 0;
+
+    tid[0] = NULL_PTR(ThreadIdentifier *);
+    tid[1] = NULL_PTR(ThreadIdentifier *);
+    param[0] = NULL_PTR(RTThreadParam *);
+    param[1] = NULL_PTR(RTThreadParam *);
+    if (!eventSem.Create()) {
+        REPORT_ERROR(ErrorManagement::FatalError, "Failer Create(*) of the event semaphore");
+    }
 }
 
 GAMScheduler::~GAMScheduler() {
-    if (tid != NULL) {
-        delete [] tid;
-        tid=NULL_PTR(ThreadIdentifier *);
+    if (tid[0] != NULL) {
+        delete[] tid[0];
+    }
+    if (tid[1] != NULL) {
+        delete[] tid[1];
+    }
+    if (param[0] != NULL) {
+        delete[] param[0];
+    }
+    if (param[1] != NULL) {
+        delete[] param[1];
     }
 }
 
-void GAMScheduler::StartExecution(const uint32 activeBuffer) {
-
-    if (statesInExecution[activeBuffer]->GetNumberOfThreads() > 1u) {
-        //TODO Warning
-    }
-
-    numberOfThreads = statesInExecution[activeBuffer]->GetNumberOfThreads();
-    tid = new ThreadIdentifier[numberOfThreads];
-    for (uint32 i = 0u; i < numberOfThreads; i++) {
-        ReferenceT<RealTimeThread> thread = statesInExecution[activeBuffer]->Peek(i);
-        if (thread.IsValid()) {
-            RTThreadParam param;
-            param.activeBuffer = activeBuffer;
-            param.thread = thread;
-            param.spinLock = &spinLock;
-            param.writer = ReferenceT<RealTimeDataSourceOutputWriter>(&((writer[activeBuffer])[i]));
-            if (param.writer.IsValid()) {
-
-                uint32 stackSize = thread->GetStackSize();
-                tid[i] = Threads::BeginThread(reinterpret_cast<ThreadFunctionType>(RTThreadRoutine), &param, stackSize, thread->GetName(),
-                                              ExceptionHandler::NotHandled, thread->GetCPU());
-            }
-            else {
-                //TODO Invalid writer
-            }
-        }
-        else {
-            //TODO Invalid thread?
-        }
+void GAMScheduler::StartExecution() {
+    Atomic::Increment(&spinLock[RealTimeApplication::GetIndex()]);
+    if(!eventSem.Post()){
+        REPORT_ERROR(ErrorManagement::FatalError, "Failer Post(*) of the event semaphore");
     }
 }
 
 void GAMScheduler::StopExecution() {
 
-    if (tid != NULL) {
-        Atomic::Increment(&spinLock);
+    uint32 currentIndex = RealTimeApplication::GetIndex();
 
+    if (tid[currentIndex] != NULL) {
+        Atomic::Decrement(&spinLock[RealTimeApplication::GetIndex()]);
+        uint32 numberOfThreads=GetSchedulableStates()[currentIndex]->numberOfThreads;
         for (uint32 i = 0u; i < numberOfThreads; i++) {
             // safe exit
-            while (Threads::IsAlive(tid[i])) {
+            while (Threads::IsAlive(tid[currentIndex][i])) {
                 Sleep::MSec(1);
             }
         }
-        delete[] tid;
-        tid=NULL_PTR(ThreadIdentifier *);
-        Atomic::Decrement(&spinLock);
     }
 
 }
+
+void GAMScheduler::CustomPrepareNextState() {
+
+    if (eventSem.Reset()) {
+
+        //Launches the threads for the next state
+        uint32 nextBuffer = (RealTimeApplication::GetIndex() + 1u) % 2u;
+        ScheduledState *nextState = GetSchedulableStates()[nextBuffer];
+        uint32 numberOfThreads = nextState->numberOfThreads;
+        if (tid[nextBuffer] != NULL) {
+            delete[] tid[nextBuffer];
+        }
+        tid[nextBuffer] = new ThreadIdentifier[numberOfThreads];
+        if (param[nextBuffer] != NULL) {
+            delete [] param[nextBuffer];
+        }
+        param[nextBuffer] = new RTThreadParam[numberOfThreads];
+
+        for (uint32 i = 0u; i < numberOfThreads; i++) {
+            param[nextBuffer][i].scheduler = this;
+            param[nextBuffer][i].spinLock = &spinLock[nextBuffer];
+            param[nextBuffer][i].executables = nextState->threads[i].executables;
+            param[nextBuffer][i].numberOfExecutables = nextState->threads[i].numberOfExecutables;
+            param[nextBuffer][i].cycleTime = nextState->threads[i].cycleTime;
+            param[nextBuffer][i].eventSem = &eventSem;
+            tid[nextBuffer][i] = Threads::BeginThread(reinterpret_cast<ThreadFunctionType>(&RTThreadRoutine), &param[nextBuffer][i],
+                                                      nextState->threads[i].stackSize, nextState->threads[i].name, ExceptionHandler::NotHandled,
+                                                      nextState->threads[i].cpu);
+        }
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::FatalError, "Failer Reset(*) of the event semaphore");
+    }
+
+}
+
+CLASS_REGISTER(GAMScheduler, "1.0")
 
 }

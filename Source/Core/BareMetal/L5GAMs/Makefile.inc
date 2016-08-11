@@ -24,27 +24,25 @@
 #
 #############################################################
 
-OBJSX=	BasicGAM.x \
-		BasicGAMScheduler.x \
-		BasicRealTimeDataSourceDef.x \
-		BasicRealTimeDataSourceInputReader.x \
-		BasicRealTimeDataSourceOutputWriter.x \
-		GAMGroup.x \
-		GAMI.x \
-		GAMSchedulerI.x \
-		GAMSchedulerRecord.x \
-		RealTimeApplication.x \
-		RealTimeDataDefContainer.x \
-		RealTimeDataDefI.x \
-		RealTimeDataSource.x \
-		RealTimeDataSourceBroker.x \
-		RealTimeDataSourceContainer.x \
-		RealTimeDataSourceDefRecord.x \
-		RealTimeGenericDataDef.x \
-		RealTimeSampledDataDef.x \
-		RealTimeState.x \
-		RealTimeThread.x 
-		
+OBJSX=BrokerI.x \
+    DataSourceI.x \
+    ExecutableI.x \
+    GAM.x \
+    GAMGroup.x \
+    GAMSchedulerI.x \
+    GAMDataSource.x \
+    MemoryMapBroker.x \
+    MemoryMapInputBroker.x \
+    MemoryMapOutputBroker.x \
+    MemoryMapStatefulBroker.x \
+    MemoryMapStatefulInputBroker.x \
+    MemoryMapStatefulOutputBroker.x \
+    MemoryMapSynchronisedInputBroker.x \
+    RealTimeApplication.x \
+    RealTimeApplicationConfigurationBuilder.x \
+    RealTimeState.x \
+    RealTimeThread.x \
+    TimingDataSource.x
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

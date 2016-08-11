@@ -70,6 +70,7 @@ public:
     virtual ~ConfigurationDatabase();
 
 
+    //TODO test and document
     void CleanUp();
 
 
@@ -169,6 +170,12 @@ public:
      * @return true if the shared semaphore is successfully unlocked.
      */
     void Unlock();
+
+    // TODO. Test and Document! adds the possibility to use find, filters ecc ecc
+    operator ReferenceT<ReferenceContainer>(){
+        return currentNode;
+    }
+
 
 private:
 

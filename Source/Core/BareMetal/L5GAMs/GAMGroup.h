@@ -32,7 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
-#include "RealTimeStateInfo.h"
+#include "StatefulI.h"
+#include "ReferenceT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -40,17 +41,13 @@ namespace MARTe {
 
 /**
  * @brief A group of GAMs sharing the same context.
- * @details In order to allow custom implementations of the shared context, some of the methods
- * of this class are pure virtual. The derived class can generally
- * add a context (see ContextT) and implements the specific procedures in order
- * to prepare the context for the next state (PrepareNextState(*) function) and
- * to switch to the new context (ChangeState(*) function).
+ * @details This class allows GAMs to share a common context. GAMs which are referenced
+ *  by a GAMGroup will have their SetContext method called.
  *
  * @details The syntax in the configuration stream has to be:
  *
- * GAMGroup_name = {\n
+ * +GAMGroup_name = {\n
  *    Class = GAMGroup\n
- *    ... // context definition, ecc\n
  *    GAM_name = {\n
  *        Class = GAM\n
  *        ...\n
@@ -60,89 +57,38 @@ namespace MARTe {
  *
  * and it has to be contained in the [RealTimeApplication].+Functions.[?ReferenceContainer?] declaration.
  */
-class DLL_API GAMGroup: public ReferenceContainer {
+class DLL_API GAMGroup: public ReferenceContainer , public StatefulI {
 public:
 
     /**
-     * @brief Constructor
-     * @post
-     *   GetSupportedStates() == NULL &&
-     *   GetNumberOfSupportedStates() == 0;
+     * @brief Constructor. NOOP
      */
     GAMGroup();
 
+
+    virtual bool Initialise(StructuredDataI & data);
+
+
     /**
-     * @brief Destructor. Frees the array of the supported state names.
+     * @brief Destructor. NOOP
      */
     virtual ~GAMGroup();
 
-    /**
-     * @brief Does all the necessary operations to prepare the context used for the
-     * next state.
-     * @param[in] status specifies the current and the next state.
-     */
-    virtual void PrepareNextState(const RealTimeStateInfo &status)=0;
 
-    /**
-     * @brief Returns the array with the names of the states in which this GAMGroup is involved.
-     * @return the names of the supported states.
-     */
-    StreamString *GetSupportedStates();
-
-    /**
-     * @brief Returns the array with the names of the threads in which this GAMGroup is involved. The
-     * thread names are related one by one with the state names returned by GetSupportedStates().
-     * @return the names of the supported threads.
-     */
-    StreamString *GetSupportedThreads();
-
-    /**
-     * @brief Returns the number of the supported states.
-     * @return the number of the supported states.
-     */
-    uint32 GetNumberOfSupportedStates() const;
-
-    /**
-     * @brief Adds the name of a RealTimeState where this GAMGroup is declared into.
-     * @details This function checks if a GAMGroup is declared in more than one thread inside a state.
-     * In this case the function returns false.
-     * @param[in] stateName is the RealTimeState name.
-     * @param[in] threadName is the RealTimeThread name.
-     * @return false if the \a stateName was already set but related with a different \a threadName, true otherwise.
-     */
-    bool AddState(const char8 * const stateName,
-                  const char8 * const threadName);
-
-    /**
-     * @brief Initialises all the sub-nodes, then call SetUp(*) to setup the environment.
-     * @return true if no errors occur, false otherwise.
-     */
-    virtual bool Initialise(StructuredDataI &data);
 
 protected:
 
     /**
-     * @brief Setup the GAMGroup. This function can be custom
-     * implemented to initialise the context, make accelerators, ecc.
+     * @brief Sets the context on all the GAMs that belong to this GAMGroup.
+     * @param[in] context The context to be set on all GAMs.
+     * @return true if GAM::SetContext returns true for all the GAMs.
      */
-    virtual void SetUp()=0;
+    virtual bool SetContext(ConstReference context);
 
     /**
-     * The names of the supported states
+     * All the GAMs that belong to this GAMGroup
      */
-    StreamString *supportedStates;
-
-    /**
-     * The names of the supported threads
-     */
-    StreamString *supportedThreads;
-
-    /**
-     * How many supported states
-     */
-    uint32 numberOfSupportedStates;
-
-    //? Possible specific GAMContexts
+    ReferenceContainer GAMs;
 
 };
 }

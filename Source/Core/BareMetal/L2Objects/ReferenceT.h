@@ -41,11 +41,16 @@
 namespace MARTe {
 
 /**
+ * Reference to a constant T::Object.
+ */
+#define ConstReferenceT(x) ReferenceT<const x>
+
+/**
  * @brief Template version of the shared pointer implementation (see Reference).
- * @tparam T the base type of the objects referenced by instances of this class
+ * @param T the base type of the objects referenced by instances of this class
  */
 template<typename T>
-class ReferenceT: public Reference {
+class DLL_API ReferenceT: public Reference {
 public:
 
     /**
@@ -91,7 +96,7 @@ public:
                HeapI* const heap = static_cast<HeapI *>(NULL));
 
     /**
-     * @brief Destructor. Removes the reference to the underlying object. @see RemoveReference.
+     * @brief Removes the reference to the underlying object. @see RemoveReference.
      */
     virtual ~ReferenceT();
 
@@ -166,13 +171,9 @@ private:
     T* typeTObjectPointer;
 };
 
-}
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe {
 
 template<typename T>
 void ReferenceT<T>::Init() {
@@ -244,7 +245,6 @@ ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);
         if (typeTObjectPointer == NULL) {
             RemoveReference();
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
         }
     }
 
@@ -337,5 +337,4 @@ bool ReferenceT<T>::operator==(const ReferenceT<T>& sourceReference) const {
 }
 
 }
-
 #endif /* REFERENCET_H_ */

@@ -25,27 +25,25 @@
 #############################################################
 
 
-OBJSX=	BasicGAMTest.x \
- 		BasicGAMSchedulerTest.x \
-		BasicRealTimeDataSourceDefTest.x \
-		BasicRealTimeDataSourceInputReaderTest.x \
-		BasicRealTimeDataSourceOutputWriterTest.x \
-		GAMGroupTest.x \
-		GAMITest.x \
-		GAMSchedulerITest.x \
-		GAMSchedulerRecordTest.x \
-		GAMTestHelper.x\
-		RealTimeApplicationTest.x \
-		RealTimeDataDefContainerTest.x \
-		RealTimeDataDefITest.x \
-		RealTimeDataSourceTest.x \
-		RealTimeDataSourceBrokerTest.x \
-		RealTimeDataSourceContainerTest.x \
-		RealTimeDataSourceDefRecordTest.x \
-		RealTimeGenericDataDefTest.x \
-		RealTimeSampledDataDefTest.x \
-		RealTimeStateTest.x \
-		RealTimeThreadTest.x
+OBJSX= BrokerITest.x \
+       DataSourceITest.x\
+       GAMDataSourceTest.x\
+       GAMGroupTest.x\
+       GAMSchedulerITest.x \
+       GAMTest.x\
+       GAMTestHelper.x\
+       MemoryMapBrokerTest.x\
+       MemoryMapInputBrokerTest.x\
+       MemoryMapOutputBrokerTest.x\
+       MemoryMapStatefulBrokerTest.x\
+       MemoryMapStatefulInputBrokerTest.x\
+       MemoryMapStatefulOutputBrokerTest.x\
+       MemoryMapSynchronisedInputBrokerTest.x\
+       RealTimeApplicationTest.x\
+       RealTimeApplicationConfigurationBuilderTest.x\
+       RealTimeStateTest.x\
+       RealTimeThreadTest.x\
+       TimingDataSourceTest.x
 			
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

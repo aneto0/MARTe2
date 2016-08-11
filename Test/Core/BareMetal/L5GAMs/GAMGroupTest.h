@@ -51,31 +51,19 @@ public:
     bool TestConstructor();
 
     /**
-     * @brief Tests if the function adds the state name passes in input into its internal array.
-     */
-    bool TestAddState();
-
-
-    /**
-     * @brief Tests if the function returns false if the same gam group is called by more than one
-     * thread in the same state.
-     */
-    bool TestAddStateFalse_MoreThreadsPerGAM();
-
-    /**
-     * @brief Tests if the function returns correctly the state names where the gam group is involved in.
-     */
-    bool TestGetSupportedStates();
-
-    /**
-     * @brief Tests if the function returns correctly the number of states where the gam group is involved in.
-     */
-    bool TestGetNumberOfSupportedStates();
-
-    /**
-     * @brief Tests if the function initialises correctly the gam group from a StructuredDataI.
+     * @brief Tests the initialise
      */
     bool TestInitialise();
+
+    /**
+     * @brief Tests if the context is correctly propagated.
+     */
+    bool TestSetContext();
+
+    /**
+     * @brief Tests if a context propagation failure is correctly detected.
+     */
+    bool TestSetContext_Failure();
 
 };
 

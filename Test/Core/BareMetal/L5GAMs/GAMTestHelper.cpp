@@ -1,8 +1,8 @@
 /**
  * @file GAMTestHelper.cpp
  * @brief Source file for class GAMTestHelper
- * @date 01/mar/2016
- * @author pc
+ * @date 01/03/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -30,279 +30,420 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAMTestHelper.h"
+#include "Introspection.h"
+#include "IntrospectionT.h"
 #include "ConfigurationDatabase.h"
+#include "MemoryMapInputBroker.h"
+#include "MemoryMapOutputBroker.h"
+#include "GAMSchedulerI.h"
+#include "Sleep.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-DECLARE_CLASS_MEMBER(TrackError, Par1, uint32, "", "");
 
-DECLARE_CLASS_MEMBER(TrackError, Par2, uint32, "", "");
+DECLARE_CLASS_MEMBER(TestStructB, b1, int32, "", "");
 
-static const IntrospectionEntry* TrackErrorEntries[] = { &TrackError_Par1_introspectionEntry, &TrackError_Par2_introspectionEntry, 0 };
+DECLARE_CLASS_MEMBER(TestStructB, b2, int32, "", "");
 
-DECLARE_CLASS_INTROSPECTION(TrackError, TrackErrorEntries);
-INTROSPECTION_REGISTER(TrackError, "1.0", TrackError_introspection)
+static const IntrospectionEntry* TestStructBEntries[] = { &TestStructB_b1_introspectionEntry, &TestStructB_b2_introspectionEntry, 0 };
 
-DECLARE_CLASS_MEMBER(ControlIn, Par1, uint32, "", "");
+DECLARE_STRUCT_INTROSPECTION(TestStructB, TestStructBEntries)
 
-DECLARE_CLASS_MEMBER(ControlIn, Par2, uint32, "", "");
+DECLARE_CLASS_MEMBER(TestStructA, a1, TestStructB, "", "");
 
-static const IntrospectionEntry* ControlInEntries[] = { &ControlIn_Par1_introspectionEntry, &ControlIn_Par2_introspectionEntry, 0 };
+DECLARE_CLASS_MEMBER(TestStructA, a2, float32, "", "");
 
-DECLARE_CLASS_INTROSPECTION(ControlIn, ControlInEntries);
-INTROSPECTION_REGISTER(ControlIn, "1.0", ControlIn_introspection)
+static const IntrospectionEntry* TestStructAEntries[] = { &TestStructA_a1_introspectionEntry, &TestStructA_a2_introspectionEntry, 0 };
 
-DECLARE_CLASS_MEMBER(ControlNoise, noiseValue, float32, "", "");
-static const IntrospectionEntry* ControlNoiseEntries[] = { &ControlNoise_noiseValue_introspectionEntry, 0 };
-DECLARE_CLASS_INTROSPECTION(ControlNoise, ControlNoiseEntries);
-INTROSPECTION_REGISTER(ControlNoise, "1.0", ControlNoise_introspection)
+DECLARE_STRUCT_INTROSPECTION(TestStructA, TestStructAEntries);
 
-DECLARE_CLASS_MEMBER(TrackErrorArray, Pars, uint32, "[2]", "");
-static const IntrospectionEntry* TrackErrorArrayEntries[] = { &TrackErrorArray_Pars_introspectionEntry, 0 };
-DECLARE_CLASS_INTROSPECTION(TrackErrorArray, TrackErrorArrayEntries);
-INTROSPECTION_REGISTER(TrackErrorArray, "1.0", TrackErrorArray_introspection)
+DECLARE_CLASS_MEMBER(TestStructC, c1, TestStructB, "", "");
 
-DECLARE_CLASS_MEMBER(ControlInArray, Pars, uint32, "[2]", "");
-static const IntrospectionEntry* ControlInArrayEntries[] = { &ControlInArray_Pars_introspectionEntry, 0 };
-DECLARE_CLASS_INTROSPECTION(ControlInArray, ControlInArrayEntries);
-INTROSPECTION_REGISTER(ControlInArray, "1.0", ControlInArray_introspection)
+DECLARE_CLASS_MEMBER(TestStructC, c2, float32, "[3]", "");
 
-DECLARE_CLASS_MEMBER(TrackErrorMatrix, Pars, uint32, "[3][2]", "");
-static const IntrospectionEntry* TrackErrorMatrixEntries[] = { &TrackErrorMatrix_Pars_introspectionEntry, 0 };
-DECLARE_CLASS_INTROSPECTION(TrackErrorMatrix, TrackErrorMatrixEntries);
-INTROSPECTION_REGISTER(TrackErrorMatrix, "1.0", TrackErrorMatrix_introspection)
+DECLARE_CLASS_MEMBER(TestStructC, c3, int32, "[2][4]", "");
 
-DECLARE_CLASS_MEMBER(ControlInMatrix, Pars, uint32, "[3][2]", "");
-static const IntrospectionEntry* ControlInMatrixEntries[] = { &ControlInMatrix_Pars_introspectionEntry, 0 };
-DECLARE_CLASS_INTROSPECTION(ControlInMatrix, ControlInMatrixEntries);
-INTROSPECTION_REGISTER(ControlInMatrix, "1.0", ControlInMatrix_introspection)
+static const IntrospectionEntry* TestStructCEntries[] = { &TestStructC_c1_introspectionEntry, &TestStructC_c2_introspectionEntry,
+        &TestStructC_c3_introspectionEntry, 0 };
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
+DECLARE_STRUCT_INTROSPECTION(TestStructC, TestStructCEntries);
 
-PIDGAM::PIDGAM() :
-        BasicGAM() {
+DECLARE_CLASS_MEMBER(TestStructD, c1, TestStructB, "", "");
+
+DECLARE_CLASS_MEMBER(TestStructD, c2, float32, "[3]", "");
+
+DECLARE_CLASS_MEMBER(TestStructD, c3, int32, "[2][4]", "");
+
+static const IntrospectionEntry* TestStructDEntries[] = { &TestStructD_c1_introspectionEntry, &TestStructD_c2_introspectionEntry,
+        &TestStructD_c3_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructD, TestStructDEntries);
+
+
+DECLARE_CLASS_MEMBER(TestStructBB, b1, int8, "", "");
+
+DECLARE_CLASS_MEMBER(TestStructBB, b2, int64, "", "");
+
+static const IntrospectionEntry* TestStructBBEntries[] = { &TestStructBB_b1_introspectionEntry, &TestStructBB_b2_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructBB, TestStructBBEntries)
+
+
+
+DECLARE_CLASS_MEMBER(TestStructCC, c1, TestStructBB, "", "");
+
+DECLARE_CLASS_MEMBER(TestStructCC, c2, float32, "[3]", "");
+
+DECLARE_CLASS_MEMBER(TestStructCC, c3, int32, "[2][4]", "");
+
+static const IntrospectionEntry* TestStructCCEntries[] = { &TestStructCC_c1_introspectionEntry, &TestStructCC_c2_introspectionEntry,
+        &TestStructCC_c3_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructCC, TestStructCCEntries);
+
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+
+GAM1::GAM1() :
+        GAM() {
+    numberOfExecutions = 0u;
+	context=0u;
 
 }
 
-void PIDGAM::Execute(uint8 activeContextBuffer) {
+GAM1::~GAM1() {
+}
 
-    inputReader->Read(activeContextBuffer);
+bool GAM1::Initialise(StructuredDataI & data) {
+    return GAM::Initialise(data);
+}
 
-    TrackError *error = (TrackError*) inputReader->GetData(0);
+bool GAM1::PrepareNextState(const char8 * currentStateName, const char8 * nextStateName) {
+	context++;
+	return true;
+}
 
-    if (error != NULL) {
-        printf("\nExecuting: error.par1= %d, error.par2= %d\n", error->Par1, error->Par2);
-
-        ControlIn *control = (ControlIn*) outputWriter->GetData(0);
-        ControlNoise *noise = (ControlNoise*) outputWriter->GetData(1);
-        uint32 Kp = 10;
-
-        control->Par1 = Kp * error->Par1;
-        control->Par2 = Kp * error->Par2;
-
-        if (noise->noiseValue > 0) {
-            noise->noiseValue = -noise->noiseValue;
-        }
-
+bool GAM1::Execute() {
+    uint32 b;
+    for (b = 0u; b < inputBrokers.Size(); b++) {
+        ReferenceT<ExecutableI> broker = inputBrokers.Get(b);
+        broker->Execute();
     }
+    const char8 *name = GetName();
+    printf("%s:\n", name);
+    uint32 numberOfInputSignals = GetNumberOfInputSignals();
+    uint32 numberOfOutputSignals = GetNumberOfOutputSignals();
+    printf("Inputs %d\n", numberOfInputSignals);
+    printf("Outputs %d\n", numberOfOutputSignals);
+    uint32 *inputBuffer = (uint32 *) GetInputSignalsMemory();
 
-    outputWriter->Write(activeContextBuffer);
-}
+    uint32 *outputBuffer = (uint32 *) GetOutputSignalsMemory();
 
-PIDGAM::~PIDGAM() {
-    if (localData != NULL) {
-        delete localData;
+    outputBuffer[0] = inputBuffer[0] + inputBuffer[1];
+    printf("  %llu + %llu = %llu\n", inputBuffer[0], inputBuffer[1], outputBuffer[0]);
+
+    for (b = 0u; b < outputBrokers.Size(); b++) {
+        ReferenceT<ExecutableI> broker = outputBrokers.Get(b);
+        broker->Execute();
     }
-}
-
-void PIDGAM::SetUp() {
-    localData = new ConfigurationDatabase();
-    localData->CreateAbsolute("+Inputs");
-    localData->Write("Class", "RealTimeDataDefContainer");
-    localData->Write("IsInput", "true");
-    localData->Write("IsFinal", "false");
-    localData->CreateAbsolute("+Inputs.+Error");
-    localData->Write("Class", "RealTimeGenericDataDef");
-    localData->Write("Type", "TrackError");
-    localData->Write("IsFinal", "false");
-    localData->CreateAbsolute("+Inputs.+Error.+Par1");
-    localData->Write("Class", "RealTimeGenericDataDef");
-    localData->Write("Type", "uint32");
-    localData->Write("Default", "1");
-    localData->Write("Path", "+DDB1.PidError1");
-    localData->Write("IsFinal", "true");
-
-    localData->CreateAbsolute("+Outputs");
-    localData->Write("Class", "RealTimeDataDefContainer");
-    localData->Write("IsOutput", "true");
-    localData->Write("IsFinal", "false");
-    localData->CreateAbsolute("+Outputs.+Control");
-    localData->Write("Class", "RealTimeGenericDataDef");
-    localData->Write("Type", "ControlIn");
-    localData->Write("IsFinal", "false");
-    localData->CreateAbsolute("+Outputs.+Control.+Par1");
-    localData->Write("Class", "RealTimeGenericDataDef");
-    localData->Write("Type", "uint32");
-    localData->Write("Path", "+DDB2.PidControl1");
-    localData->Write("Default", "1");
-    localData->Write("IsFinal", "true");
-    localData->MoveToRoot();
-}
-CLASS_REGISTER(PIDGAM, "1.0")
-
-PIDGAMGroup::PIDGAMGroup() {
-    context = 1u;
-
-}
-
-void PIDGAMGroup::SetUp() {
-    context = 1u;
-}
-
-void PIDGAMGroup::PrepareNextState(const RealTimeStateInfo &status) {
-    if (StringHelper::Compare(status.currentState, "state1") == 0) {
-        if (StringHelper::Compare(status.nextState, "state2") == 0) {
-            context++;
-        }
-    }
-    if (StringHelper::Compare(status.currentState, "state2") == 0) {
-        if (StringHelper::Compare(status.nextState, "state1") == 0) {
-            context--;
-        }
-    }
-}
-
-uint32 PIDGAMGroup::GetContext() {
-    return context;
-}
-CLASS_REGISTER(PIDGAMGroup, "1.0")
-
-PlantGAM::PlantGAM() {
-
-}
-
-void PlantGAM::SetUp() {
-
-}
-
-void PlantGAM::Execute(uint8 activeContextBuffer) {
-
-}
-
-CLASS_REGISTER(PlantGAM, "1.0")
-
-PIDGAM2::PIDGAM2() {
-
-}
-
-void PIDGAM2::Execute(uint8 activeContextBuffer) {
-
-    inputReader->Read(activeContextBuffer);
-    TrackErrorArray *error = (TrackErrorArray*) inputReader->GetData(0);
-
-    printf("\nExecuting: error.par1= %d, error.par2= %d\n", error->Pars[0], error->Pars[1]);
-
-    ControlInArray *control = (ControlInArray*) outputWriter->GetData(0);
-    uint32 Kp = 10;
-
-    control->Pars[0] = Kp * error->Pars[0];
-    control->Pars[1] = Kp * error->Pars[1];
-
-    outputWriter->Write(activeContextBuffer);
-}
-
-PIDGAM2::~PIDGAM2() {
-
-}
-
-void PIDGAM2::SetUp() {
-
-}
-CLASS_REGISTER(PIDGAM2, "1.0")
-
-PIDGAM3::PIDGAM3() {
-
-}
-
-void PIDGAM3::Execute(uint8 activeContextBuffer) {
-
-    inputReader->Read(activeContextBuffer);
-    TrackErrorMatrix *error = (TrackErrorMatrix*) inputReader->GetData(0);
-
-    ControlInMatrix*control = (ControlInMatrix*) outputWriter->GetData(0);
-    uint32 Kp = 10;
-
-    control->Pars[0][0] = Kp * error->Pars[0][0];
-    control->Pars[0][1] = Kp * error->Pars[0][1];
-    control->Pars[1][0] = Kp * error->Pars[1][0];
-    control->Pars[1][1] = Kp * error->Pars[1][1];
-    control->Pars[2][0] = Kp * error->Pars[2][0];
-    control->Pars[2][1] = Kp * error->Pars[2][1];
-
-    outputWriter->Write(activeContextBuffer);
-}
-
-PIDGAM3::~PIDGAM3() {
-
-}
-
-void PIDGAM3::SetUp() {
-
-}
-
-CLASS_REGISTER(PIDGAM3, "1.0")
-
-SharedDataSource::SharedDataSource() {
-    spinLockSem = new FastPollingEventSem;
-    spinLockSem->Create();
-    printf("\nCreated SharedDataSource\n");
-}
-
-SharedDataSource::~SharedDataSource() {
-    delete spinLockSem;
-}
-
-void SharedDataSource::WriteEnd() {
-    spinLockSem->FastPost();
-}
-
-CLASS_REGISTER(SharedDataSource, "1.0")
-
-DummyGAM::DummyGAM() {
-
-}
-
-void DummyGAM::Execute(uint8 activeContextBuffer) {
-    inputReader->Read(activeContextBuffer);
-    uint32 *counterIn = (uint32*) inputReader->GetData(0);
-    uint32 *counterOut = (uint32*) outputWriter->GetData(0);
-    *counterOut = (*counterIn)+1;
-    printf("\nExecute: Input=%d, Output=%d\n", *counterIn, *counterOut);
-
-    outputWriter->Write(activeContextBuffer);
-}
-
-
-void DummyGAM::SetUp() {
-
-}
-CLASS_REGISTER(DummyGAM, "1.0")
-
-
-
-DummyScheduler::DummyScheduler() {
-    numberOfExecutions = 0;
-}
-void DummyScheduler::StartExecution(const uint32 activeBuffer) {
     numberOfExecutions++;
-}
-void DummyScheduler::StopExecution() {
-    numberOfExecutions++;
+    Sleep::MSec(100);
+
+    return true;
 }
 
-CLASS_REGISTER(DummyScheduler, "1.0")
+void GAM1::SetUp() {
 
+}
+
+CLASS_REGISTER(GAM1, "1.0");
+
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+
+bool GAMGroup1::PrepareNextState(const char8 * currentStateName,
+                                 const char8 * nextStateName) {
+    return true;
+
+}
+
+void GAMGroup1::SetUp() {
+
+}
+CLASS_REGISTER(GAMGroup1, "1.0");
+
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+
+DS1::DS1() :
+        DataSourceI() {
+
+}
+
+DS1::~DS1() {
+
+}
+
+bool DS1::Initialise(StructuredDataI & data) {
+    return DataSourceI::Initialise(data);
+}
+
+uint32 DS1::GetCurrentBufferIndex() {
+    return 0u;
+}
+
+uint32 DS1::GetNumberOfMemoryBuffers() {
+    return 1u;
+}
+
+bool DS1::AllocateMemory() {
+    return false;
+}
+
+bool DS1::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                const uint32 bufferIdx,
+                                void *&signalAddress) {
+    return true;
+}
+
+const char8 *DS1::GetBrokerName(StructuredDataI &data,
+                                const SignalDirection direction) {
+    const char8* brokerName = NULL_PTR(const char8 *);
+
+    float32 freq;
+    if (!data.Read("Frequency", freq)) {
+        freq = -1;
+    }
+    uint32 samples;
+    if (!data.Read("Samples", samples)) {
+        samples = 1u;
+    }
+
+    if ((freq < 0.) && (samples == 1u)) {
+        if (direction == InputSignals) {
+            brokerName = "MemoryMapInputBroker";
+        }
+        else {
+            brokerName = "MemoryMapOutputBroker";
+        }
+    }
+    return brokerName;
+
+}
+
+bool DS1::PrepareNextState(const char8 * const currentStateName,
+                           const char8 * const nextStateName) {
+    return true;
+}
+
+bool DS1::ChangeState() {
+    return true;
+}
+
+bool DS1::GetInputBrokers(ReferenceContainer &inputBrokers,
+                          const char8 * const functionName,
+                          void* const gamMemPtr) {
+    bool ret = true;
+    //generally a loop for each supported broker
+    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+    ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = inputBrokers.Insert(broker);
+        }
+    }
+    return ret;
+}
+
+bool DS1::GetOutputBrokers(ReferenceContainer &outputBrokers,
+                           const char8 * const functionName,
+                           void* const gamMemPtr) {
+
+    bool ret = true;
+    //generally a loop for each supported broker
+    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+
+    ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = outputBrokers.Insert(broker);
+        }
+    }
+    return ret;
+
+}
+
+bool DS1::Synchronise() {
+    return false;
+}
+
+CLASS_REGISTER(DS1, "1.0");
+
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+
+Driver1::Driver1() :
+        DataSourceI() {
+
+}
+
+Driver1::~Driver1() {
+
+}
+
+bool Driver1::Initialise(StructuredDataI & data) {
+    return DataSourceI::Initialise(data);
+}
+
+uint32 Driver1::GetCurrentBufferIndex() {
+    return 0u;
+}
+
+uint32 Driver1::GetNumberOfMemoryBuffers() {
+    return 1u;
+}
+
+bool Driver1::AllocateMemory() {
+    return false;
+}
+
+bool Driver1::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                    const uint32 bufferIdx,
+                                    void *&signalAddress) {
+    return true;
+}
+
+const char8 *Driver1::GetBrokerName(StructuredDataI &data,
+                                    const SignalDirection direction) {
+    const char8* brokerName = NULL_PTR(const char8 *);
+
+    float32 freq;
+    if (!data.Read("Frequency", freq)) {
+        freq = -1;
+    }
+    uint32 samples;
+    if (!data.Read("Samples", samples)) {
+        samples = 1u;
+    }
+
+    if (freq < 0.) {
+        if (samples == 1) {
+            if (direction == InputSignals) {
+                brokerName = "MemoryMapInputBroker";
+            }
+            else {
+                brokerName = "MemoryMapOutputBroker";
+            }
+        }
+        else {
+            if (direction == InputSignals) {
+                brokerName = "SampleInputBroker";
+            }
+            else {
+                brokerName = "SampleOutputBroker";
+            }
+        }
+    }
+    else {
+        if (direction == InputSignals) {
+            brokerName = "SyncInputBroker";
+        }
+        else {
+            brokerName = "SyncOutputBroker";
+        }
+    }
+    return brokerName;
+
+}
+
+bool Driver1::PrepareNextState(const char8 * const currentStateName,
+                               const char8 * const nextStateName) {
+    return true;
+}
+
+bool Driver1::ChangeState() {
+    return true;
+}
+
+bool Driver1::GetInputBrokers(ReferenceContainer &inputBrokers,
+                              const char8 * const functionName,
+                              void* const gamMemPtr) {
+    bool ret = true;
+    //generally a loop for each supported broker
+    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+    ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = inputBrokers.Insert(broker);
+        }
+    }
+    return ret;
+}
+
+bool Driver1::GetOutputBrokers(ReferenceContainer &outputBrokers,
+                               const char8 * const functionName,
+                               void* const gamMemPtr) {
+
+    bool ret = true;
+    //generally a loop for each supported broker
+    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+
+    ret = broker.IsValid();
+    if (ret) {
+        ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
+    }
+    if (ret) {
+        if (broker->GetNumberOfCopies() > 0u) {
+            ret = outputBrokers.Insert(broker);
+        }
+    }
+    return ret;
+
+}
+
+bool Driver1::Synchronise() {
+    return false;
+}
+
+CLASS_REGISTER(Driver1, "1.0");
+
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+
+DefaultSchedulerForTests::DefaultSchedulerForTests() :
+        GAMSchedulerI() {
+}
+void DefaultSchedulerForTests::StartExecution() {
+
+}
+
+void DefaultSchedulerForTests::StopExecution() {
+}
+
+void DefaultSchedulerForTests::CustomPrepareNextState(){
+
+}
+
+
+CLASS_REGISTER(DefaultSchedulerForTests, "1.0")
 

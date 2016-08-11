@@ -30,17 +30,15 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "GAM.h"
 #include "GAMGroup.h"
+#include "ReferenceContainerFilterReferencesTemplate.h"
 #include "ReferenceT.h"
-#include "BasicGAM.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-
-static const uint32 stateNamesGranularity = 4u;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -48,93 +46,30 @@ static const uint32 stateNamesGranularity = 4u;
 
 GAMGroup::GAMGroup() :
         ReferenceContainer() {
-    supportedStates = NULL_PTR(StreamString*);
-    supportedThreads = NULL_PTR(StreamString*);
-    numberOfSupportedStates = 0u;
 }
 
-/*lint -e{1551} no exception should be thrown*/
 GAMGroup::~GAMGroup() {
-    if (supportedStates != NULL) {
-        delete[] supportedStates;
-    }
-    if (supportedThreads!= NULL) {
-        delete[] supportedThreads;
-    }
 }
 
-/*
- void GAMGroup::SetUp() {
- // initialise the context here
- }
-
- */
-/*
- void GAMGroup::PrepareNextState(const RealTimeStateInfo &status) {
- // Use the two buffers in GAMContext
- // preparing the next buffer for the next state
- }
- */
-
-StreamString *GAMGroup::GetSupportedStates() {
-    return supportedStates;
-}
-
-StreamString *GAMGroup::GetSupportedThreads() {
-    return supportedThreads;
-}
-
-uint32 GAMGroup::GetNumberOfSupportedStates() const {
-    return numberOfSupportedStates;
-}
-
-bool GAMGroup::AddState(const char8 * const stateName,
-                        const char8 * const threadName) {
-
-    bool ret = true;
-    bool found = false;
-    for (uint32 i = 0u; (i < numberOfSupportedStates) && (!found); i++) {
-        /*lint -e{613} never enter here if supportedStates is NULL (because numberOfSupportedStates == 0) */
-        found = (supportedStates[i] == stateName);
-        if (found) {
-            ret = (supportedThreads[i] == threadName);
-            if (!ret) {
-                //TODO same gam in two different threads!
-            }
-
-        }
-    }
-
-    if (!found) {
-        if ((numberOfSupportedStates % stateNamesGranularity) == 0u) {
-            uint32 newSize = numberOfSupportedStates + stateNamesGranularity;
-            StreamString *tempStates = new StreamString[newSize];
-            StreamString *tempThreads = new StreamString[newSize];
-            if (supportedStates != NULL) {
-                for (uint32 i = 0u; i < numberOfSupportedStates; i++) {
-                    tempStates[i] = supportedStates[i];
-                    tempThreads[i] = supportedThreads[i];
-                }
-                delete[] supportedStates;
-                delete[] supportedThreads;
-            }
-            supportedStates = tempStates;
-            supportedThreads = tempThreads;
-        }
-        /*lint -e{613} the memory of supportedStates is already allocated (numberOfSupportedStates == 0) */
-        supportedStates[numberOfSupportedStates] = stateName;
-        supportedThreads[numberOfSupportedStates] = threadName;
-        numberOfSupportedStates++;
+bool GAMGroup::Initialise(StructuredDataI & data){
+    bool ret=ReferenceContainer::Initialise(data);
+    if(ret){
+        //Look for all the GAMs inside the RealTimeApplication
+        ReferenceContainerFilterReferencesTemplate<GAM> gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+        Find(GAMs, gamFilter);
     }
     return ret;
 }
 
-bool GAMGroup::Initialise(StructuredDataI &data) {
-    bool ret = ReferenceContainer::Initialise(data);
-
-    if (ret) {
-        // Setup the context
-        SetUp();
+bool GAMGroup::SetContext(ConstReference context) {
+    uint32 numberOfGAMs = GAMs.Size();
+    bool ret = true;
+    for (uint32 i = 0u; (i < numberOfGAMs) && (ret); i++) {
+        ReferenceT<GAM> gam = GAMs.Get(i);
+        ret = gam.IsValid();
+        if(ret){
+            ret = gam->SetContext(context);
+        }
     }
     return ret;
 }

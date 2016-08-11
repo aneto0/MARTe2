@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BasicGAMScheduler.h"
+#include "GAMSchedulerI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -46,40 +46,46 @@ class GAMSchedulerITest {
 
 public:
 
+	/**
+	 * @brief Initialise ObjectRegistryDatabase
+	 */
+    GAMSchedulerITest();
+
+	/**
+	 * @brief Destroys ObjectRegistryDatabase
+	 */
+    ~GAMSchedulerITest();
+
     /**
      * @brief Tests the constructor
      */
     bool TestConstructor();
 
     /**
-     * @brief Tests if the function inserts a new GAMSchedulerRecord.
+     * @brief Tests if the function configures correctly the scheduler
      */
-    bool TestInsertRecord();
+    bool TestConfigureScheduler();
 
     /**
-     * @brief Tests if the function creates the accelerator to the next GAMSchedulerRecord.
+     * @brief Tests if the scheduler configuration fails if not a RealTimeState is present
+     * in States container
+     */
+    bool TestConfigureSchedulerFalse_InvalidState();
+
+    /**
+     * @brief Tests if the function returns the number of executables in the specified state
+     */
+    bool TestGetNumberOfExecutables();
+
+    /**
+     * @brief Tests if the function prepares the set of threads to be executed in the next state
      */
     bool TestPrepareNextState();
 
     /**
-     * @brief Tests if the function fails when the next state name is not found.
+     * @brief Tests if the function executes a cycle of Executables defined in a RealTimeThreads
      */
-    bool TestPrepareNextStateFalse_InvalidNextState();
-
-    /**
-     * @brief Tests if the function fails if the application is not set.
-     */
-    bool TestPrepareNextStateFalse_NoAppSet();
-
-    /**
-     * @brief Tests if the function sets the application.
-     */
-    bool TestSetApplication();
-
-    /**
-     * @brief Tests if the function stops the current execution and starts a new one.
-     */
-    bool TestChangeState();
+    bool TestExecuteSingleCycle();
 
 };
 

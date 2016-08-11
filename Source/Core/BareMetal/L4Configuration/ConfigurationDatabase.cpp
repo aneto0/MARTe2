@@ -77,12 +77,9 @@ bool ConfigurationDatabase::Write(const char8 * const name,
         currentNode = storeCurrentNode;
     }
     else {
-        ok = (name != NULL_PTR(const char8 *));
-        AnyType existentType = GetType(name);
+        ok = (StringHelper::Length(name) > 0u);
         if (ok) {
-            ok = (StringHelper::Length(name) > 0u);
-        }
-        if (ok) {
+            AnyType existentType = GetType(name);
             if (existentType.GetTypeDescriptor().type != VoidType.type) {
                 ok = Delete(name);
             }
@@ -209,7 +206,7 @@ bool ConfigurationDatabase::Read(const char8 * const name,
 
 bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
 
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
+    ReferenceContainerFilterObjectName filter(1, 0u, path);
     ReferenceContainer resultSingle;
     rootNode->Find(resultSingle, filter);
 
@@ -217,7 +214,8 @@ bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
     if (ok) {
         //Invalidate move to leafs
         ReferenceT < ReferenceContainer > container = resultSingle.Get(resultSingle.Size() - 1u);
-        if (container.IsValid()) {
+        ok=container.IsValid();
+        if (ok) {
             currentNode = container;
         }
     }
@@ -227,7 +225,7 @@ bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
 
 bool ConfigurationDatabase::MoveRelative(const char8 * const path) {
 
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
+    ReferenceContainerFilterObjectName filter(1, 0u, path);
     ReferenceContainer resultSingle;
     currentNode->Find(resultSingle, filter);
 
@@ -235,7 +233,8 @@ bool ConfigurationDatabase::MoveRelative(const char8 * const path) {
     if (ok) {
         //Invalidate move to leafs
         ReferenceT < ReferenceContainer > container = resultSingle.Get(resultSingle.Size() - 1u);
-        if (container.IsValid()) {
+        ok=container.IsValid();
+        if (ok) {
             currentNode = container;
         }
     }

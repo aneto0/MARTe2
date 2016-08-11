@@ -20,38 +20,33 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2016-03-23 14:26:07Z aneto $
-#
 #############################################################
 
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX= GAM.x \
-    RealTimeDataSourceDef.x \
-    RealTimeDataSourceInputReader.x \
-    RealTimeDataSourceOutputWriter.x
 
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+OBJSX = GAMScheduler.x
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES+=-I../../
-INCLUDES+=-I../../BareMetal/L0Types/
-INCLUDES+=-I../../BareMetal/L1Portability/
-INCLUDES+=-I../../BareMetal/L2Objects/
-INCLUDES+=-I../../BareMetal/L3Streams/
-INCLUDES+=-I../../BareMetal/L4Configuration/
-INCLUDES+=-I../../BareMetal/L5GAMs/
-INCLUDES+=-I../../Scheduler/L1Portability/
-INCLUDES+=-I../../Scheduler/L1Portability/$(ENVIRONMENT)/
+INCLUDES+=-I../../BareMetal/L0Types
+INCLUDES+=-I../../BareMetal/L1Portability 
+INCLUDES += -I../../BareMetal/L2Objects
+INCLUDES += -I../../BareMetal/L3Streams
+INCLUDES += -I../../BareMetal/L4Configuration
+INCLUDES += -I../../BareMetal/L4Messages
+INCLUDES += -I../../BareMetal/L5GAMs
+INCLUDES += -I../../Scheduler/L1Portability
 
-all: $(OBJS)   \
-    $(BUILD_DIR)/L5GAMsS$(LIBEXT) \
-    $(BUILD_DIR)/L5GAMsS.def
+
+
+all: $(OBJS) $(SUBPROJ)   \
+	$(BUILD_DIR)/L5GAMsS$(LIBEXT) \
+	$(BUILD_DIR)/L5GAMsS.def
 	echo  $(OBJS)
 
 include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
-

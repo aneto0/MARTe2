@@ -1,21 +1,4 @@
-<<<<<<< HEAD
-/cov/
 /depends.linux
 /dependsRaw.linux
-/temp/
-/CreateMSCDepends.sed
-/title
-/vc120.pdb
-/depends.msc
-/dependsRaw.msc
-=======
-/temp/
-/CreateMSCDepends.sed
-/title
-/vc120.pdb
-/depends.msc
-/dependsRaw.msc
-/cov/
-/depends.linux
-/dependsRaw.linux
->>>>>>> refs/remotes/origin/Messages
+/depends.cov
+/dependsRaw.cov

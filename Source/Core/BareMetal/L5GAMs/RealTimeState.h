@@ -1,8 +1,8 @@
 /**
  * @file RealTimeState.h
  * @brief Header file for class RealTimeState
- * @date 19/feb/2016
- * @author pc
+ * @date 19/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -32,21 +32,25 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ObjectRegistryDatabase.h"
-#include "RealTimeStateInfo.h"
 #include "GAMGroup.h"
 #include "RealTimeApplication.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /**
- * @brief A container of RealTimeThread references.
- * @details The syntax in the configuration stream should be:
+ * @brief A container of one (and only one) ReferenceContainer of RealTimeThread elements.
+ * @details The RealTimeState lists the threads which are
+ * allowed in any given state of the application. Switching state will enable
+ * different threads to be executed.
+ *
+ * The syntax in the configuration stream shall be:
  * State_name = {\n
  *     Class = RealTimeState\n
  *     +Threads = {
+ *         Class = ReferenceContainer
  *         RealTimeThread_name = {\n
  *             Class = RealTimeThread\n
  *             ...\n
@@ -55,85 +59,51 @@ namespace MARTe{
  *      }\n
  * }\n
  */
-class DLL_API RealTimeState: public ReferenceContainer {
+class DLL_API RealTimeState: public ReferenceContainer, public StatefulI {
 
 public:
-    CLASS_REGISTER_DECLARATION();
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Constructor
      * @post
-     *   GetStatefulGAMGroups() == NULL &&
-     *   GetNumberOfElements() == 0 &&
-     *   GetContextActiveBuffer() == 0;
+     *   GetNumberOfStatefuls() == 0u
      */
-    RealTimeState();
+RealTimeState    ();
 
     /**
-     * @brief Destructor. Frees the stateful GAMGroups array.
+     * @brief Destructor. NOOP.
      */
     virtual ~RealTimeState();
 
     /**
-     * @see RealTimeApplication::ConfigureArchitecture(*).
-     * @details After the configuration, all the references to the GAMs declared into this state
-     * will be inserted into a container called "+Functions".
-     * @param[in] rtApp is the RealTimeApplication where this state is declared into.
+     * @brief Registers all the StatefulI Functions (GAM and GAMGroup components that implement StatefulI)  that are executed by all the RealTimeThreads that are owned by this RealTimeState.
+     * @param[in] statefulsIn StatefulI Functions that are executed by all the RealTimeThreads that are owned by this RealTimeState.
+     * @return true if all the elements in \a statefulsIn implement the StatefulI interface.
      */
-    bool ConfigureArchitecture(RealTimeApplication & rtApp);
-
+    bool AddStatefuls(ReferenceContainer &statefulsIn);
 
     /**
-     * @see RealTimeApplication::ValidateDataSourceLinks()
+     * @brief Calls PrepareNextState on all the StatefulI Functions (GAM and GAMGroup components that implement StatefulI) that are executed by all the RealTimeThreads that are owned by this RealTimeState.
+     * @param[in] currentStateName the name of the current state being executed.
+     * @param[in] nextStateName the name of the next state to be executed.
+     * @return true if the state change is accepted by all the StatefulI Functions.
      */
-    bool ValidateDataSourceLinks();
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+            const char8 * const nextStateName);
 
     /**
-     * @brief Inserts a function.
-     * @details If the container called "+Functions" it is not present, it will be created and \a functionReference
-     * will be inserted into.
-     * @param[in] functionReference is the reference to be inserted.
+     * @brief Gets the number of StatefulI Functions (GAM and GAMGroup components that implement StatefulI) that are that are executed by all the RealTimeThreads that are owned by this RealTimeState.
+     * @return  the number of StatefulI Functions that are that are executed by all the RealTimeThreads that are owned by this RealTimeState.
      */
-    bool InsertFunction(Reference functionReference);
-
-    /**
-     * @brief Stores a stateful GAMGroup into the internal array.
-     * @param[in] element is the new GAMGroup to be added.
-     * @return true if the memory allocation succeeds, false otherwise.
-     */
-    void AddGAMGroup(ReferenceT<GAMGroup> element);
-
-    /**
-     * @brief Prepare the context for the state in each registered GAMGroup.
-     * @param[in] status contains informations about the current and the next state.
-     */
-    void PrepareState(const RealTimeStateInfo &status);
-
-    /**
-     * @brief Returns the stateful GAMGroups array.
-     * @return the stateful GAMGroups array.
-     */
-    ReferenceT<GAMGroup> * GetGAMGroups();
-
-    /**
-     * @brief Returns the number of GAMGroups currently registered.
-     * @return the number of GAMGroups currently registered.
-     */
-    uint32 GetNumberOfGAMGroups() const;
+    uint32 GetNumberOfStatefuls();
 
 private:
 
     /**
-     * The stateful GAMGroups array.
+     * Container of StatefulI Functions that are that are executed by all the RealTimeThreads that are owned by this RealTimeState.
      */
-    ReferenceT<GAMGroup> * statefulGAMGroups;
-
-    /**
-     * The number of stateful GAMGroups registered.
-     */
-    uint32 numberOfGAMGroups;
-
-
+    ReferenceContainer statefuls;
 
 };
 

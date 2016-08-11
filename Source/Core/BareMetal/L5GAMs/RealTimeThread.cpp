@@ -1,8 +1,8 @@
 /**
  * @file RealTimeThread.cpp
  * @brief Source file for class RealTimeThread
- * @date 19/feb/2016
- * @author pc
+ * @date 19/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,31 +21,29 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
-#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RealTimeThread.h"
-#include "Vector.h"
-#include "ObjectRegistryDatabase.h"
-#include "ReferenceContainerFilterObjectName.h"
-#include "ReferenceContainerFilterReferences.h"
-#include "GAMI.h"
 #include "AdvancedErrorManagement.h"
+#include "GAM.h"
 #include "GAMSchedulerI.h"
+#include "ObjectRegistryDatabase.h"
+#include "RealTimeThread.h"
+#include "ReferenceContainerFilterReferences.h"
+#include "Vector.h"
+#include "ReferenceContainerFilterReferencesTemplate.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-// the allocation granularity
-static const uint32 gamsArrayGranularity = 4u;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -54,10 +52,10 @@ RealTimeThread::RealTimeThread() :
         ReferenceContainer() {
     functions = NULL_PTR(StreamString*);
     numberOfFunctions = 0u;
-    GAMs = reinterpret_cast<ReferenceT<GAMI>*>(NULL);
     numberOfGAMs = 0u;
     cpuMask = ProcessorType::GetDefaultCPUs();
     stackSize = THREADS_DEFAULT_STACKSIZE;
+    configured = false;
 }
 
 /*lint -e{1551} no exception should be thrown*/
@@ -65,220 +63,138 @@ RealTimeThread::~RealTimeThread() {
     if (functions != NULL) {
         delete[] functions;
     }
-    if (GAMs != NULL) {
-        delete[] GAMs;
-    }
 }
-
-bool RealTimeThread::ConfigureArchitecturePrivate(Reference functionGeneric,
-                                                  RealTimeApplication &rtApp,
-                                                  RealTimeState &rtState) {
+bool RealTimeThread::ConfigureArchitecture() {
 
     bool ret = true;
-    // case GAMGroup (stateful gams)
-    ReferenceT<GAMGroup> functionGAMGroup = functionGeneric;
-    if (functionGAMGroup.IsValid()) {
-        // add the GAMGroup to the RealTimeState accelerator array
-        functionGAMGroup->AddState(rtState.GetName(), GetName());
-        rtState.AddGAMGroup(functionGAMGroup);
-        uint32 nOfSubGAMs = functionGAMGroup->Size();
-        // add all the gams in the order of the configuration inside GAMGroup
-        for (uint32 j = 0u; (j < nOfSubGAMs) && (ret); j++) {
-            ReferenceT<GAMI> subGam = functionGAMGroup->Get(j);
-            ret = subGam.IsValid();
-            if (ret) {
-                AddGAM(subGam);
-                subGam->SetApplication(rtApp);
-                subGam->SetGAMGroup(functionGAMGroup);
+
+    if (!configured) {
+        ReferenceContainerFilterReferences findme(1, ReferenceContainerFilterMode::PATH, this);
+        ReferenceContainer path;
+        ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(path, findme);
+        uint32 numberOfNodes = path.Size();
+        StreamString absoluteFunctionPath;
+
+        ReferenceT<RealTimeApplication> app;
+        ReferenceT<RealTimeState> state;
+        bool isAppFound = false;
+        bool isStateFound = false;
+        {
+            uint32 index = 0u;
+            while ((index < numberOfNodes) && ret && (!isAppFound)) {
+                Reference node = path.Get(index);
+                ret = node.IsValid();
+                if (ret) {
+                    absoluteFunctionPath += node->GetName();
+                    absoluteFunctionPath += ".";
+                    app = node;
+                }
+                index++;
+                isAppFound = app.IsValid();
+            }
+            while ((index < numberOfNodes) && (!isStateFound)) {
+                state = path.Get(index);
+                index++;
+                isStateFound = state.IsValid();
             }
         }
-    }
-    else {
-        // case stateless GAMI
-        ReferenceT<GAMI> functionGAM = functionGeneric;
-        if (functionGAM.IsValid()) {
-            AddGAM(functionGAM);
-            functionGAM->SetApplication(rtApp);
-            // if it is a stateful GAMI, add its GAMGroup
-            ReferenceContainerFilterReferences filterGAM(1, ReferenceContainerFilterMode::PATH, functionGAM);
-            ReferenceContainer result;
-            ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(result, filterGAM);
-            ret = (result.Size() > 1u); //there must be the father!
+        ret = isAppFound && isStateFound;
+        absoluteFunctionPath += "Functions.";
+
+        for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
+
+            StreamString functionPath = absoluteFunctionPath;
+            /*lint -e{613} Never NULL if (functions == NULL) because (numberOfFunctions == 0) */
+            functionPath += functions[i].Buffer();
+
+            // find the functions specified in cdb
+            /*lint -e{613} Never enters here if (functions == NULL) because (numberOfFunctions == 0) */
+            ReferenceT<ReferenceContainer> functionGeneric = ObjectRegistryDatabase::Instance()->Find(functionPath.Buffer());
+            ret = functionGeneric.IsValid();
             if (ret) {
-                ReferenceT<GAMGroup> gamGroup = result.Get(result.Size() - 2u);
-                if (gamGroup.IsValid()) {
-                    rtState.AddGAMGroup(gamGroup);
-                    functionGAM->SetGAMGroup(gamGroup);
-                    ret=gamGroup->AddState(rtState.GetName(), GetName());
+                ReferenceT<GAM> gam = functionGeneric;
+                if (gam.IsValid()) {
+                    ret = GAMs.Insert(gam);
+                }
+                if (ret) {
+                    //Look for all the GAMs inside the RealTimeApplication
+                    ReferenceContainerFilterReferencesTemplate<GAM> gamFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+
+                    functionGeneric->Find(GAMs, gamFilter);
+                    numberOfGAMs = GAMs.Size();
                 }
                 else {
-                    ret=functionGAM->AddState(rtState.GetName(), GetName());
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Insert into GAMs failed", "")
                 }
             }
             else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAMI %s must be defined in the +Function container of the application",
-                                        functionGAM->GetName())
+                /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Undefined %s", functions[i].Buffer())
             }
-        }
-        else {
-            // a generic container
-            ReferenceT<ReferenceContainer> functionContainer = functionGeneric;
-            ret = functionContainer.IsValid();
             if (ret) {
-                uint32 size = functionContainer->Size();
-                for (uint32 i = 0u; (i < size) && (ret); i++) {
-                    Reference newRef = functionContainer->Get(i);
-                    // go recursively
-                    ret = ConfigureArchitecturePrivate(newRef, rtApp, rtState);
+                ReferenceContainer statefuls;
+                ReferenceT<StatefulI> stateful = functionGeneric;
+                if (stateful.IsValid()) {
+                    ret = statefuls.Insert(stateful);
+                }
+                if (ret) {
+                    //Look for all the statefuls
+                    ReferenceContainerFilterReferencesTemplate<StatefulI> statefulFilter(-1, ReferenceContainerFilterMode::RECURSIVE);
+
+                    functionGeneric->Find(statefuls, statefulFilter);
+                    ret = state->AddStatefuls(statefuls);
+                    if (!ret) {
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Insert into state failed", "")
+                    }
+                    //ret = ConfigureArchitecturePrivate(functionGeneric);
+                }
+                else {
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Insert into statefuls failed", "")
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError, "The function be a GAMI, GAMGroups or ReferenceContainer");
+                /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Undefined %s", functions[i].Buffer())
             }
+
         }
-
+        configured = true;
     }
-    return ret;
-}
-
-bool RealTimeThread::ValidateDataSourceLinks() {
-    bool ret = true;
-    uint32 contSyncGAMs = 0u;
-    for (uint32 i = 0u; (i < numberOfGAMs) && (ret); i++) {
-        if (GAMs[i]->IsSync()) {
-            contSyncGAMs++;
-        }
-    }
-    if (contSyncGAMs > 1u) {
-        //TODO Error
-        ret = false;
-    }
-    return ret;
-
-}
-
-void RealTimeThread::AddGAM(ReferenceT<GAMI> element) {
-    if (element.IsValid()) {
-        if ((numberOfGAMs % gamsArrayGranularity) == 0u) {
-            uint32 newSize = numberOfGAMs + gamsArrayGranularity;
-            ReferenceT<GAMI> *temp = new ReferenceT<GAMI> [newSize];
-
-            if (GAMs != NULL) {
-                for (uint32 i = 0u; i < numberOfGAMs; i++) {
-                    temp[i] = GAMs[i];
-                }
-                delete[] GAMs;
-            }
-            GAMs = temp;
-        }
-        /*lint -e{613} before entering the memory for GAMs is allocated because (numberOfGAMs == 0)*/
-        GAMs[numberOfGAMs] = element;
-        numberOfGAMs++;
-
-    }
-}
-
-bool RealTimeThread::ConfigureArchitecture(RealTimeApplication &rtApp,
-                                           RealTimeState &rtState) {
-
-    bool ret = true;
-
-    for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
-
-        // find the functions specified in cdb
-        /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
-        Reference functionGeneric = ObjectRegistryDatabase::Instance()->Find(functions[i].Buffer(), Reference(this));
-        ret = functionGeneric.IsValid();
-        if (ret) {
-            // configure
-            ret = ConfigureArchitecturePrivate(functionGeneric, rtApp, rtState);
-            if (ret) {
-                bool found = false;
-                uint32 numberOfFunctions = Size();
-                for (uint32 i = 0u; (i < numberOfFunctions) && (!found); i++) {
-                    Reference function = Get(i);
-                    if (function.IsValid()) {
-                        found = (StringHelper::Compare(function->GetName(), functionGeneric->GetName()) == 0);
-                    }
-                }
-                if (!found) {
-                    // insert here the reference
-                    ret = Insert(functionGeneric);
-                }
-                if (ret) {
-                    found = false;
-                    uint32 stateNumberOfFunctions = rtState.Size();
-                    for (uint32 i = 0u; (i < stateNumberOfFunctions) && (!found); i++) {
-                        Reference stateFunction = rtState.Get(i);
-                        if (stateFunction.IsValid()) {
-                            found = (StringHelper::Compare(stateFunction->GetName(), functionGeneric->GetName()) == 0);
-                        }
-                    }
-                    if (!found) {
-                        // insert the reference into the state
-                        ret = rtState.InsertFunction(functionGeneric);
-                    }
-                }
-                // insert this thread in the scheduler
-                if (ret) {
-                    //search the scheduler
-                    uint32 numberOfItems = rtApp.Size();
-                    ret = false;
-                    ReferenceT<GAMSchedulerI> scheduler;
-                    for (uint32 i = 0u; (i < numberOfItems) && (!ret); i++) {
-                        Reference item = rtApp.Get(i);
-                        if (item.IsValid()) {
-                            if (StringHelper::Compare(item->GetName(), "+Scheduler") == 0) {
-                                scheduler = item;
-                                ret = scheduler.IsValid();
-                            }
-                        }
-                    }
-
-                    if (ret) {
-                        ret = scheduler->InsertRecord(rtState.GetName(), ReferenceT<RealTimeThread>(this));
-                    }
-                    else {
-                        //TODO Scheduler not found or invalid
-                    }
-                }
-            }
-        }
-        else {
-            /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
-            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Undefined %s", functions[i].Buffer())
-        }
-    }
-
     return ret;
 }
 
 bool RealTimeThread::Initialise(StructuredDataI & data) {
-    // set up the string array
+    bool ret = ReferenceContainer::Initialise(data);
+
     AnyType functionsArray = data.GetType("Functions");
-    bool ret = (functionsArray.GetDataPointer() != NULL);
+    if (ret) {
+        ret = (functionsArray.GetDataPointer() != NULL);
+    }
 
     if (ret) {
         numberOfFunctions = functionsArray.GetNumberOfElements(0u);
+        ret = (numberOfFunctions > 0u);
+    }
+    if (ret) {
         functions = new StreamString[numberOfFunctions];
 
         Vector<StreamString> functionVector(functions, numberOfFunctions);
-
         ret = (data.Read("Functions", functionVector));
-        if (ret) {
-            if (data.Read("CPUs", cpuMask)) {
-
-            }
-            if (data.Read("StackSize", stackSize)) {
-
-            }
-        }
-
     }
     else {
         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No functions defined for the RealTimeThread %s", GetName())
     }
+    if (ret) {
+        if (!data.Read("CPUs", cpuMask)) {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No CPUs defined for the RealTimeThread %s", GetName())
+        }
+        if (!data.Read("StackSize", stackSize)) {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No StackSize defined for the RealTimeThread %s", GetName())
+        }
+    }
+
     return ret;
+
 }
 
 StreamString * RealTimeThread::GetFunctions() {
@@ -289,8 +205,12 @@ uint32 RealTimeThread::GetNumberOfFunctions() const {
     return numberOfFunctions;
 }
 
-ReferenceT<GAMI> *RealTimeThread::GetGAMs() {
-    return GAMs;
+bool RealTimeThread::GetGAMs(ReferenceContainer &gamList) {
+    bool ret = true;
+    for (uint32 n = 0u; (n < GAMs.Size()) && ret; n++) {
+        ret = gamList.Insert(GAMs.Get(n));
+    }
+    return ret;
 }
 
 uint32 RealTimeThread::GetNumberOfGAMs() const {
@@ -307,31 +227,44 @@ ProcessorType RealTimeThread::GetCPU() const {
 
 bool RealTimeThread::ToStructuredData(StructuredDataI& data) {
     const char8 * objName = GetName();
-    bool ret = data.CreateRelative(objName);
+    StreamString objNameToPrint = (IsDomain()) ? ("$") : ("+");
+    objNameToPrint += objName;
+    bool ret = data.CreateRelative(objNameToPrint.Buffer());
     if (ret) {
         ret = data.Write("Class", "RealTimeThread");
-        if (ret) {
-            if (functions != NULL) {
-                Vector<StreamString> functionVector(functions, numberOfFunctions);
-                ret = data.Write("Functions", functionVector);
-            }
-        }
-        if (ret) {
-            uint32 numberOfChildren = Size();
-            for (uint32 i = 0u; i < numberOfChildren; i++) {
-                Reference child = Get(i);
-                ret = child.IsValid();
-                if (ret) {
-                    if (ret) {
-                        ret = child->ToStructuredData(data);
-                    }
-                }
-            }
-        }
-        if (!data.MoveToAncestor(1u)) {
-            ret = false;
+    }
+    if (ret) {
+        if (functions != NULL) {
+            Vector<StreamString> functionVector(functions, numberOfFunctions);
+            ret = data.Write("Functions", functionVector);
         }
     }
+    if (ret) {
+        if (numberOfGAMs > 0u) {
+            StreamString *gamList = new StreamString[numberOfGAMs];
+            uint32 n;
+            for (n = 0u; n < numberOfGAMs; n++) {
+                gamList[n] = GAMs.Get(n)->GetName();
+            }
+            Vector<StreamString> gamsVector(gamList, numberOfGAMs);
+            ret = data.Write("GAMs", gamsVector);
+            delete[] gamList;
+        }
+    }
+    if (ret) {
+        uint32 numberOfChildren = Size();
+        for (uint32 i = 0u; i < numberOfChildren; i++) {
+            Reference child = Get(i);
+            ret = child.IsValid();
+            if (ret) {
+                ret = child->ExportData(data);
+            }
+        }
+    }
+    if (!data.MoveToAncestor(1u)) {
+        ret = false;
+    }
+
     return ret;
 }
 

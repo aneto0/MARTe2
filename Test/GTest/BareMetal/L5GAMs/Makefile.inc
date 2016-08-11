@@ -21,35 +21,32 @@
 # permissions and limitations under the Licence. 
 #
 #############################################################
+
+
+OBJSX=  BrokerIGTest.x\
+        DataSourceIGTest.x\
+        GAMDataSourceGTest.x\
+        GAMGroupGTest.x\
+        GAMGTest.x\
+        GAMSchedulerIGTest.x\
+        MemoryMapBrokerGTest.x\
+        MemoryMapInputBrokerGTest.x\
+        MemoryMapOutputBrokerGTest.x\
+        MemoryMapStatefulBrokerGTest.x\
+        MemoryMapStatefulInputBrokerGTest.x\
+        MemoryMapStatefulOutputBrokerGTest.x\
+        MemoryMapSynchronisedInputBrokerGTest.x\
+        RealTimeApplicationGTest.x\
+        RealTimeApplicationConfigurationBuilderGTest.x\
+        RealTimeStateGTest.x\
+        RealTimeThreadGTest.x\
+        TimingDataSourceGTest.x
+
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-
-OBJSX= BasicGAMGTest.x \
-BasicGAMSchedulerGTest.x \
-BasicRealTimeDataSourceDefGTest.x \
-BasicRealTimeDataSourceInputReaderGTest.x \
-BasicRealTimeDataSourceOutputWriterGTest.x \
-GAMGroupGTest.x \
-GAMIGTest.x \
-GAMSchedulerIGTest.x \
-GAMSchedulerRecordGTest.x \
-		RealTimeApplicationGTest.x \
-		RealTimeDataDefContainerGTest.x \
-		RealTimeDataDefIGTest.x \
-		RealTimeGenericDataDefGTest.x \
-		RealTimeSampledDataDefGTest.x	\
-		RealTimeDataSourceGTest.x \
-		RealTimeDataSourceBrokerGTest.x \
-		RealTimeDataSourceContainerGTest.x \
-		RealTimeDataSourceDefRecordGTest.x \
-		RealTimeStateGTest.x \
-		RealTimeThreadGTest.x
-
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
-
 
 INCLUDES += -I../../../
 INCLUDES += -I../../../Core/BareMetal/L0Types
@@ -67,7 +64,6 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 INCLUDES += -I../../../../Source/Core/BareMetal/L5GAMs
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
-INCLUDES += -I../../../../Source/Core/Scheduler/L5GAMs
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 

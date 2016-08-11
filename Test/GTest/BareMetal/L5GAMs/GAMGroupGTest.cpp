@@ -1,8 +1,8 @@
 /**
  * @file GAMGroupGTest.cpp
  * @brief Source file for class GAMGroupGTest
- * @date 07/mar/2016
- * @author pc
+ * @date 27/07/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,14 +17,13 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMGroupGTest (public, protected, and private). Be aware that some 
+ * the class GAMGroupGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
 #include <limits.h>
 #include "gtest/gtest.h"
 
@@ -40,32 +39,22 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 TEST(GAMGroupGTest,TestConstructor) {
-    GAMGroupTest gamGroupTest;
-    ASSERT_TRUE(gamGroupTest.TestConstructor());
+    GAMGroupTest test;
+    ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(GAMGroupGTest,TestAddState) {
-    GAMGroupTest gamGroupTest;
-    ASSERT_TRUE(gamGroupTest.TestAddState());
-}
-
-TEST(GAMGroupGTest,TestAddStateFalse_MoreThreadsPerGAM) {
-    GAMGroupTest gamGroupTest;
-    ASSERT_TRUE(gamGroupTest.TestAddStateFalse_MoreThreadsPerGAM());
-}
-
-TEST(GAMGroupGTest,TestGetSupportedStates) {
-    GAMGroupTest gamGroupTest;
-    ASSERT_TRUE(gamGroupTest.TestGetSupportedStates());
-}
-
-TEST(GAMGroupGTest,TestGetNumberOfSupportedStates) {
-    GAMGroupTest gamGroupTest;
-    ASSERT_TRUE(gamGroupTest.TestGetNumberOfSupportedStates());
-}
 TEST(GAMGroupGTest,TestInitialise) {
-    GAMGroupTest gamGroupTest;
-    ASSERT_TRUE(gamGroupTest.TestInitialise());
+    GAMGroupTest test;
+    ASSERT_TRUE(test.TestInitialise());
+}
+
+TEST(GAMGroupGTest,TestSetContext) {
+    GAMGroupTest test;
+    ASSERT_TRUE(test.TestSetContext());
+}
+
+TEST(GAMGroupGTest,TestSetContext_Failure) {
+    GAMGroupTest test;
+    ASSERT_TRUE(test.TestSetContext_Failure());
 }
