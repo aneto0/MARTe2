@@ -143,16 +143,16 @@ void SetPriority(const ThreadIdentifier &threadId,
 
             uint32 priorityClassNumber = 0u;
             switch (priorityClass) {
-                case UnknownPriorityClass:
+            case UnknownPriorityClass:
                 priorityClassNumber = 0u;
                 break;
-                case IdlePriorityClass:
+            case IdlePriorityClass:
                 priorityClassNumber = 1u;
                 break;
-                case NormalPriorityClass:
+            case NormalPriorityClass:
                 priorityClassNumber = 2u;
                 break;
-                case RealTimePriorityClass:
+            case RealTimePriorityClass:
                 priorityClassNumber = 3u;
                 break;
             }
@@ -234,12 +234,16 @@ bool IsAlive(const ThreadIdentifier &threadId) {
  */
 bool Kill(const ThreadIdentifier &threadId) {
     bool ok = false;
+
     if (IsAlive(threadId)) {
         ok = ThreadsDatabase::Lock();
         if (ok) {
             ThreadInformation *threadInfo = ThreadsDatabase::RemoveEntry(threadId);
             if (threadInfo == NULL) {
                 ok = false;
+            }
+            else {
+                delete threadInfo;
             }
         }
         ThreadsDatabase::UnLock();
@@ -344,8 +348,10 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         }
         if (!ok) {
             threadId = InvalidThreadIdentifier;
+            delete threadInfo;
         }
     }
+
     return threadId;
 }
 

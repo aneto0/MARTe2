@@ -31,7 +31,20 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
+#include "CompilerTypes.h"
 #include "LinkedListable.h"
+
+/*---------------------------------------------------------------------------*/
+/*                         Forward declarations                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+    class Iterator;
+    class SearchFilter;
+    class SortFilter;
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -61,12 +74,12 @@ public:
      * @details This functions sets the size of the list to 0 and the root element to NULL.
      * Note that the element of the list are not destroyed. This could lead to memory leaks.
      */
-    virtual void Reset();
+    void Reset();
 
     /**
      * @brief Constructor.
      */
-    LinkedListHolder();
+    LinkedListHolder(const bool destroyIn=true);
 
     /**
      * @brief Destructor.
@@ -221,6 +234,8 @@ private:
      * List size
      */
     uint32 llhSize;
+
+    bool destroy;
 };
 
 /*---------------------------------------------------------------------------*/

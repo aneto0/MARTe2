@@ -32,20 +32,17 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
-/*
- * Forward declaration of MARTe::LinkedListable, which is needed in Iterator.h
- * because there is a circular dependency between this header and Iterator.h.
- */
-class LinkedListable;
-
-}
-
 #include "CompilerTypes.h"
-#include "Iterator.h"
-#include "SearchFilter.h"
-#include "SortFilter.h"
+
+/*---------------------------------------------------------------------------*/
+/*                         Forward declarations                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+    class Iterator;
+    class SearchFilter;
+    class SortFilter;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

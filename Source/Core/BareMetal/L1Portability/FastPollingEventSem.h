@@ -1,8 +1,8 @@
 /**
  * @file FastPollingEventSem.h
  * @brief Header file for class FastPollingEventSem
- * @date 08/ago/2015
- * @author pc
+ * @date 20/04/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -43,60 +43,64 @@
 namespace MARTe {
 
 /**
- * @brief This class is an event semaphore based on spin locks.
+ * @brief This class is an event semaphore based on spin locks which can be used
+ * without depending on the operating system scheduler.
+ * @details The FastPollingEventSem offers the possibility to block any number of threads in
+ * a spin-lock based barrier (i.e  without depending to the operating system scheduler).
  */
 class DLL_API FastPollingEventSem {
 public:
 
     /**
-     * @brief Constructor.
-     * @details This constructor initialized the internal spin-lock such that the FastWait()
-     * operation will be blocking waiting for the FastPost().
+     * @brief Initialises the semaphore as unlocked.
      */
     FastPollingEventSem();
 
     /**
-     * @brief Constructor by external spin-lock.
-     * @param[in] the external spin-lock which will drive the semaphore.
+     * @brief Initialises the semaphore against an external spin-lock variable.
+     * @param[in] externalFlag the external spin-lock which will drive the semaphore.
      */
     FastPollingEventSem(volatile int32 &externalFlag);
 
     /**
-     * @brief Sets the spin-lock value.
-     * @param[in] wait specifies if the next FastWait() operation will blocking (true), or if
-     * the semaphore is supposed to be posted and it is necessary a Reset() before the next reuse (false).
+     * @brief Sets the spin-lock barrier value.
+     * @param[in] wait if true the semaphore starts in a blocking state, i.e. with a lowered barrier.
+     * If the semaphore is not started in a blocking state then Reset must be called in order to lower the barrier.
      */
     void Create(const bool wait = true);
 
     /**
-     * @brief Waits until the spin-lock will be set by a FastPost (or the timeout expire).
-     * @param[in] msecTimeout is the maximum amount of time to wait for the FastPost() before exiting.
-     * @param[in] sleepTime is the amount of time to release the CPU in each waiting loop cycle.
-     * @return ErrorManagement::NoError if the spin-lock is set by a FastPost(), ErrorManagement::Timeout if
+     * @brief Waits until the spin-lock barrier is raised by a FastPost (or if the timeout expire).
+     * @param[in] timeout is the maximum amount of time to wait for the FastPost() before exiting.
+     * @param[in] sleepTime is the amount of time the CPU is to be released in-between each polling loop cycle.
+     * If sleepTime = 0 the CPU is never released and the spin-lock is continuously polled.
+     * @return ErrorManagement::NoError if the spin-lock barrier is raised by a FastPost(), ErrorManagement::Timeout if
      * the timeout expires before the FastPost().
+     * @pre Reset is called to lower the barrier.
      */
-    ErrorManagement::ErrorType FastWait(const TimeoutType &msecTimeout = TTInfiniteWait,
-                                        float64 sleepTime = 1e-3);
+    ErrorManagement::ErrorType FastWait(const TimeoutType &timeout = TTInfiniteWait,
+                                        float64 sleepTime = 1e-3) const;
 
     /**
-     * @brief Posts the semaphore.
+     * @brief Posts the semaphore raising the spin-lock barrier.
      */
     void FastPost();
 
     /**
-     * @brief Resets the semaphore in oreder to be reused again.
+     * @brief Resets the semaphore and lowers the spin-lock barrier.
      */
     void Reset();
 
     /**
-     * @brief Resets the semaphore and waits on the post.
-     * @param[in] msecTimeout is the maximum amount of time to wait for the FastPost() before exiting.
-     * @param[in] sleepTime is the amount of time to release the CPU in each waiting loop cycle.
+     * @brief Resets the semaphore and waits.
+     * @param[in] timeout is the maximum amount of time to wait for the FastPost() before exiting.
+     * @param[in] sleepTime is the amount of time the CPU is to be released in-between each polling loop cycle.
+     * If sleepTime = 0 the CPU is never released and the spin-lock is continuously polled.
      * @return ErrorManagement::NoError if the spin-lock is set by a FastPost(), ErrorManagement::Timeout if
      * the timeout expires before the FastPost().
      */
-    ErrorManagement::ErrorType FastResetWait(const TimeoutType &msecTimeout = TTInfiniteWait,
-                                             float64 sleepTime = 1e-3);
+    ErrorManagement::ErrorType FastResetWait(const TimeoutType &timeout = TTInfiniteWait,
+                                             const float64 &sleepTime = 1e-3);
 
 private:
 

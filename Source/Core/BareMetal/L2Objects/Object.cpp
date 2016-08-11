@@ -15,12 +15,14 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This source file contains the definition of all the methods for
  * the class Object (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -28,189 +30,199 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
+#include "ClassRegistryItemT.h"
 #include "Object.h"
-#include "FastPollingMutexSem.h"
 #include "StringHelper.h"
 #include "HeapI.h"
 #include "Introspection.h"
+#include "ReferenceContainer.h"
+#include "MemoryOperationsHelper.h"
+#include "Atomic.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
-CLASS_REGISTER(Object,"1.0")
-
-static bool ConvertToStructuredData(void* ptr,
-                                    const char8 * const className,
-                                    StructuredDataI &data,
-                                    const char8 *objName = NULL) {
+bool Object::ConvertDataToStructuredData(void* const ptr,
+                                         const char8* const className,
+                                         StructuredDataI& data,
+                                         const char8* const objName) {
     bool ret = false;
 
-    const ClassRegistryItem *sourceItem = ClassRegistryDatabase::Instance()->Find(className);
+    const ClassRegistryItem* sourceItem = ClassRegistryDatabase::Instance()->Find(className);
 
     if (sourceItem != NULL) {
-        const Introspection *sourceIntrospection=sourceItem->GetIntrospection();
+        const Introspection *sourceIntrospection = sourceItem->GetIntrospection();
         if (sourceIntrospection != NULL) {
-            ret=true;
-            if(objName!=NULL) {
-                ret=data.CreateRelative(objName);
+            ret = true;
+            if (objName != NULL) {
+                ret = data.CreateRelative(objName);
             }
-            if((data.Write("Class", sourceItem->GetClassProperties()->GetName())) && (ret)) {
-                uint32 numberOfMembers=sourceIntrospection->GetNumberOfMembers();
+            if ((data.Write("Class", sourceItem->GetClassProperties()->GetName())) && (ret)) {
+                uint32 numberOfMembers = sourceIntrospection->GetNumberOfMembers();
 
-                for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
-                    IntrospectionEntry sourceMemberIntrospection=(*sourceIntrospection)[i];
+                for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
+                    IntrospectionEntry sourceMemberIntrospection = (*sourceIntrospection)[i];
 
-                    TypeDescriptor sourceMemberDescriptor=sourceMemberIntrospection.GetMemberTypeDescriptor();
+                    TypeDescriptor sourceMemberDescriptor = sourceMemberIntrospection.GetMemberTypeDescriptor();
 
-                    TypeDescriptor newSourceDescriptor=sourceMemberDescriptor;
+                    TypeDescriptor newSourceDescriptor = sourceMemberDescriptor;
                     // source is a pointer!
-                    if(sourceMemberIntrospection.GetMemberPointerLevel()>0u) {
-                        newSourceDescriptor=TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*))*8u);
+                    if (sourceMemberIntrospection.GetMemberPointerLevel() > 0u) {
+                        newSourceDescriptor = TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*)) * 8u);
                     }
 
-                    char8* sourceMemberDataPointer=&(reinterpret_cast<char8*>(ptr)[sourceMemberIntrospection.GetMemberByteOffset()]);
+                    char8* sourceMemberDataPointer = &(reinterpret_cast<char8*>(ptr)[sourceMemberIntrospection.GetMemberByteOffset()]);
                     AnyType newSource(newSourceDescriptor, 0u, sourceMemberDataPointer);
                     // special case char* string because is a pointer
-                    if(newSourceDescriptor==CharString) {
-                        if(sourceMemberIntrospection.GetNumberOfDimensions()==0u) {
-                            newSource=AnyType(*reinterpret_cast<char8**>(sourceMemberDataPointer));
+                    if (newSourceDescriptor == CharString) {
+                        if (sourceMemberIntrospection.GetNumberOfDimensions() == 0u) {
+                            newSource = AnyType(*reinterpret_cast<char8**>(sourceMemberDataPointer));
                         }
                     }
-                    for(uint32 j=0u; j<3u; j++) {
+                    for (uint32 j = 0u; j < 3u; j++) {
                         newSource.SetNumberOfElements(j, sourceMemberIntrospection.GetNumberOfElements(j));
                     }
                     newSource.SetNumberOfDimensions(sourceMemberIntrospection.GetNumberOfDimensions());
 
-                    bool isNewSourceStructured=newSourceDescriptor.isStructuredData;
-                    if(isNewSourceStructured) {
-                        if(newSource.GetNumberOfDimensions()>0) {
-                            //TODO Unsupported
+                    bool isNewSourceStructured = newSourceDescriptor.isStructuredData;
+                    if (isNewSourceStructured) {
+                        if (newSource.GetNumberOfDimensions() > 0u) {
+                            REPORT_ERROR(ErrorManagement::FatalError, "ConvertDataToStructuredData: Number of dimensions greater than 0 not supported.");
                         }
                         else {
                             // structured data again! Create a node and go recursively
-                            ret=data.CreateRelative(sourceMemberIntrospection.GetMemberName());
-                            if(ret) {
-                                ret=ConvertToStructuredData(newSource.GetDataPointer(), sourceMemberIntrospection.GetMemberTypeName(), data);
-                                if(!data.MoveToAncestor(1u)) {
-                                    ret=false;
+                            ret = data.CreateRelative(sourceMemberIntrospection.GetMemberName());
+                            if (ret) {
+                                ret = ConvertDataToStructuredData(newSource.GetDataPointer(), sourceMemberIntrospection.GetMemberTypeName(), data);
+                                if (!data.MoveToAncestor(1u)) {
+                                    ret = false;
                                 }
                             }
                         }
                     }
                     else {
                         // in this case only write
-                        ret=data.Write(sourceMemberIntrospection.GetMemberName(), newSource);
+                        ret = data.Write(sourceMemberIntrospection.GetMemberName(), newSource);
                     }
                 }
             }
-            if(objName!=NULL) {
-                ret=data.MoveToAncestor(1u);
+            if (objName != NULL) {
+                ret = data.MoveToAncestor(1u);
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"ToStructuredData: Introspection not found for the specified class");
+            REPORT_ERROR(ErrorManagement::FatalError, "ConvertDataToStructuredData: Introspection not found for the specified class");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"ToStructuredData: Class not registered");
+        REPORT_ERROR(ErrorManagement::FatalError, "ConvertDataToStructuredData: Class not registered");
     }
-
     return ret;
 }
 
-static bool ConvertIntrospectionToStructuredData(void* ptr,
-                                                 const char8 * const className,
-                                                 StructuredDataI &data,
-                                                 int32 recursionLevel = 0) {
+bool Object::ConvertMetadataToStructuredData(void * const ptr,
+                                             const char8 * const className,
+                                             StructuredDataI &data,
+                                             const int32 recursionLevel) {
     bool ret = false;
 
     const ClassRegistryItem *sourceItem = ClassRegistryDatabase::Instance()->Find(className);
 
     if (sourceItem != NULL) {
-        const Introspection *sourceIntrospection=sourceItem->GetIntrospection();
+        const Introspection *sourceIntrospection = sourceItem->GetIntrospection();
         if (sourceIntrospection != NULL) {
             // create the class node
-            if(data.CreateRelative(className)) {
-                uint32 numberOfMembers=sourceIntrospection->GetNumberOfMembers();
-                ret=true;
-                for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
-                    IntrospectionEntry sourceMemberIntrospection=(*sourceIntrospection)[i];
+            if (data.CreateRelative(className)) {
+                uint32 numberOfMembers = sourceIntrospection->GetNumberOfMembers();
+                ret = true;
+                for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
+                    IntrospectionEntry sourceMemberIntrospection = (*sourceIntrospection)[i];
                     // create the member node
-                    if(data.CreateRelative(sourceMemberIntrospection.GetMemberName())) {
-                        const char8* memberTypeName=sourceMemberIntrospection.GetMemberTypeName();
+                    if (data.CreateRelative(sourceMemberIntrospection.GetMemberName())) {
+                        const char8* memberTypeName = sourceMemberIntrospection.GetMemberTypeName();
                         // write the type name
-                        if(!data.Write("type", memberTypeName)) {
-                            //TODO
-                            ret=false;
+                        if (!data.Write("type", memberTypeName)) {
+                            REPORT_ERROR(ErrorManagement::FatalError,
+                                         "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
+                            ret = false;
                         }
-                        if(ret) {
-                            const char8* memberModifiers=sourceMemberIntrospection.GetMemberModifiers();
-                            if(!data.Write("modifiers", memberModifiers)) {
-                                //TODO
-                                ret=false;
+                        if (ret) {
+                            const char8* memberModifiers = sourceMemberIntrospection.GetMemberModifiers();
+                            if (!data.Write("modifiers", memberModifiers)) {
+                                REPORT_ERROR(ErrorManagement::FatalError,
+                                             "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
+                                ret = false;
                             }
                         }
-                        if(ret) {
-                            const char8* memberAttributes=sourceMemberIntrospection.GetMemberAttributes();
-                            if(!data.Write("attributes", memberAttributes)) {
-                                //TODO
-                                ret=false;
+                        if (ret) {
+                            const char8* memberAttributes = sourceMemberIntrospection.GetMemberAttributes();
+                            if (!data.Write("attributes", memberAttributes)) {
+                                REPORT_ERROR(ErrorManagement::FatalError,
+                                             "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
+                                ret = false;
                             }
                         }
-                        if(ret) {
-                            uint32 memberSize=sourceMemberIntrospection.GetMemberSize();
-                            if(!data.Write("size", memberSize)) {
-                                //TODO
-                                ret=false;
+                        if (ret) {
+                            uint32 memberSize = sourceMemberIntrospection.GetMemberSize();
+                            if (!data.Write("size", memberSize)) {
+                                REPORT_ERROR(ErrorManagement::FatalError,
+                                             "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
+                                ret = false;
                             }
                         }
-                        if(ret) {
-                            uint32 memberOffset=sourceMemberIntrospection.GetMemberByteOffset();
-                            if(!data.Write("pointer", (reinterpret_cast<uintp>(ptr)+memberOffset))) {
-                                //TODO
-                                ret=false;
+                        if (ret) {
+                            uint32 memberOffset = sourceMemberIntrospection.GetMemberByteOffset();
+                            /*lint -e{9091} -e{923} the casting from pointer type to integer type is
+                             * required in order to be able to get a numeric address of the pointer.*/
+                            if (!data.Write("pointer", (reinterpret_cast<uintp>(ptr) + memberOffset))) {
+                                REPORT_ERROR(ErrorManagement::FatalError,
+                                             "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
+                                ret = false;
                             }
                         }
 
-                        if(recursionLevel!=0) {
-                            bool isNewSourceStructured=sourceMemberIntrospection.GetMemberTypeDescriptor().isStructuredData;
-                            if((isNewSourceStructured) && (ret)) {
-                                uint32 nPointers=sourceMemberIntrospection.GetMemberPointerLevel();
-                                char8* sourceMemberDataPointer=&(reinterpret_cast<char8*>(ptr)[sourceMemberIntrospection.GetMemberByteOffset()]);
-                                void* newSource=reinterpret_cast<void *>(sourceMemberDataPointer);
+                        if (recursionLevel != 0) {
+                            bool isNewSourceStructured = sourceMemberIntrospection.GetMemberTypeDescriptor().isStructuredData;
+                            if ((isNewSourceStructured) && (ret)) {
+                                int32 newRecursionLevel = recursionLevel;
+                                uint32 nPointers = sourceMemberIntrospection.GetMemberPointerLevel();
+                                char8* sourceMemberDataPointer = &(reinterpret_cast<char8*>(ptr)[sourceMemberIntrospection.GetMemberByteOffset()]);
+                                void* newSource = reinterpret_cast<void *>(sourceMemberDataPointer);
                                 // take the pointer to the real object
-                                for(uint32 j=0u; j<nPointers; j++) {
-                                    void** temp=reinterpret_cast<void**>(newSource);
-                                    newSource=*temp;
+                                for (uint32 j = 0u; j < nPointers; j++) {
+                                    void** temp = reinterpret_cast<void**>(newSource);
+                                    newSource = *temp;
                                 }
-                                if(recursionLevel>0) {
-                                    recursionLevel--;
+                                if (newRecursionLevel > 0) {
+                                    newRecursionLevel--;
                                 }
-                                ret=ConvertIntrospectionToStructuredData(newSource,memberTypeName, data, recursionLevel);
+                                ret = ConvertMetadataToStructuredData(newSource, memberTypeName, data, newRecursionLevel);
                             }
                         }
                         // move up to write the next member
-                        if(ret) {
-                            if(!data.MoveToAncestor(1u)) {
-                                ret=false;
+                        if (ret) {
+                            if (!data.MoveToAncestor(1u)) {
+                                ret = false;
                             }
                         }
 
                     }
                 }
-                if(!data.MoveToAncestor(1u)) {
-                    ret=false;
+                if (!data.MoveToAncestor(1u)) {
+                    ret = false;
                 }
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"ToStructuredData: Introspection not found for the specified class");
+            REPORT_ERROR(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Introspection not found for the specified class");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"ToStructuredData: Class not registered");
+        REPORT_ERROR(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Class not registered");
     }
 
     return ret;
@@ -221,8 +233,15 @@ static bool ConvertIntrospectionToStructuredData(void* ptr,
 /*---------------------------------------------------------------------------*/
 
 Object::Object() {
-    referenceCounter = 0u;
+    referenceCounter = 0;
     name = NULL_PTR(char8 *);
+    isDomain = false;
+}
+
+Object::Object(const Object &copy) {
+    referenceCounter = 0;
+    name = StringHelper::StringDup(copy.name);
+    isDomain = false;
 }
 
 /*lint -e{1551} the destructor must guarantee that the named is freed. No exception should be
@@ -238,32 +257,15 @@ Object::~Object() {
     }
 }
 
-/*lint -e{9141} global declaration but only used to support the class implementation.
- * The symbol is not exported (static). This could also be replaced by an anonymous namespace.
- */
-static FastPollingMutexSem refMux;
-
 uint32 Object::DecrementReferences() {
-    uint32 ret = 0u;
-    if (refMux.FastLock() == ErrorManagement::NoError) {
-        --referenceCounter;
-        ret = referenceCounter;
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed FastLock()");
-    }
-    refMux.FastUnLock();
+    Atomic::Decrement(&referenceCounter);
+    uint32 ret = static_cast<uint32>(referenceCounter);
     return ret;
 }
 
 void Object::IncrementReferences() {
-    if (refMux.FastLock() == ErrorManagement::NoError) {
-        ++referenceCounter;
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed FastLock()");
-    }
-    refMux.FastUnLock();
+    Atomic::Increment(&referenceCounter);
+
 }
 
 Object *Object::Clone() const {
@@ -271,7 +273,7 @@ Object *Object::Clone() const {
 }
 
 uint32 Object::NumberOfReferences() const {
-    return referenceCounter;
+    return static_cast<uint32>(referenceCounter);
 }
 
 /*lint -e{715} data is not used as this is not implemented on purpose*/
@@ -292,6 +294,9 @@ const char8 * const Object::GetName() const {
 
 void Object::GetUniqueName(char8 * const destination,
                            const uint32 &size) const {
+    if (!MemoryOperationsHelper::Set(destination, '\0', size)) {
+        REPORT_ERROR(ErrorManagement::Warning, "Failed initialization of the object name in output");
+    }
     /*lint -e{9091} -e{923} the casting from pointer type to integer type is required in order to be able to get a
      * numeric address of the pointer.*/
     uintp ptrHex = reinterpret_cast<uintp>(this);
@@ -365,80 +370,63 @@ void Object::SetName(const char8 * const newName) {
     }
     name = StringHelper::StringDup(newName);
 }
-#if 0
-bool Object::ProcessMessage(const MessageI & message, MessageI & data) {
 
-    bool ret = false;
-    uint32 code = message.GetRequestCode();
-    const char8* className = NULL_PTR(const char8*);
-    const ClassProperties *myProperties = GetClassProperties();
-    if (myProperties != NULL) {
-        className=myProperties->GetName();
-    }
-
-    if (code == InformationRequest) {
-        // get only the first level
-        ret = ConvertIntrospectionToStructuredData(reinterpret_cast<void*>(this), className, *data.GetContent(), 0);
-    }
-    else if (code == DataRequest) {
-        ret = ConvertToStructuredData(reinterpret_cast<void*>(this), myProperties->GetName(), *data.GetContent(), GetName());
-    }
-    else {
-        //TODO Warning unexpected code
-    }
-    return ret;
-}
-#endif
-
-bool Object::ToStructuredData(StructuredDataI & data) {
+bool Object::ExportData(StructuredDataI & data) {
     bool ret = false;
 
     const ClassProperties *myProperties = GetClassProperties();
     if (myProperties != NULL) {
-        ret=ConvertToStructuredData(reinterpret_cast<void*>(this), myProperties->GetName(), data, GetName());
+        ret = ConvertDataToStructuredData(reinterpret_cast<void*>(this), myProperties->GetName(), data, GetName());
     }
     return ret;
 }
 
-bool Object::IntrospectionToStructuredData(StructuredDataI & data,
-                                           int32 level) {
+bool Object::ExportMetadata(StructuredDataI & data,
+                            const int32 level) {
     bool ret = false;
 
     const ClassProperties *myProperties = GetClassProperties();
     if (myProperties != NULL) {
-        const char8* className=myProperties->GetName();
+        const char8* className = myProperties->GetName();
 
-        ret=ConvertIntrospectionToStructuredData(reinterpret_cast<void*>(this), className, data, level);
+        ret = ConvertMetadataToStructuredData(reinterpret_cast<void*>(this), className, data, level);
     }
     return ret;
 }
 
-ReturnType Object::CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters){
-    ReturnType ret(true);
+const ClassProperties *Object::GetClassProperties() const {
+    const ClassProperties *cp = NULL_PTR(ClassProperties *);
     ClassRegistryItem * cri = GetClassRegistryItem();
 
-    if (cri!=NULL_PTR(ClassRegistryItem *)){
-        ret = cri->CallRegisteredMethod(this,methodName,parameters);
-    } else {
-        ret.error.notInternalSetupError = false;
+    if (cri != NULL_PTR(ClassRegistryItem *)) {
+        cp = cri->GetClassProperties();
+    }
+
+    return cp;
+}
+
+void Object::SetDomain(const bool isDomainFlag) {
+    isDomain = isDomainFlag;
+}
+
+bool Object::IsDomain() const {
+    return isDomain;
+}
+
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName) {
+    ErrorManagement::ErrorType ret;
+    ClassRegistryItem * cri = GetClassRegistryItem();
+
+    if (cri != NULL_PTR(ClassRegistryItem *)) {
+        ret = cri->CallRegisteredMethod(this, methodName);
+    }
+    else {
+        ret.internalSetupError = true;
     }
 
     return ret;
-
 }
 
- const ClassProperties *Object::GetClassProperties() const{
-     const ClassProperties *cp = NULL_PTR(ClassProperties *);
-     ClassRegistryItem * cri = GetClassRegistryItem();
-
-     if (cri!=NULL_PTR(ClassRegistryItem *)){
-         cp = cri->GetClassProperties();
-     }
-
-     return cp;
- }
-
-
-
+CLASS_REGISTER(Object, "1.0")
 
 }

@@ -37,10 +37,13 @@
 #include "MemoryOperationsHelper.h"
 #include "ConfigurationDatabase.h"
 #include "ObjectTestHelper.h"
+#include "Threads.h"
+#include "stdio.h"
 
 ReferenceContainerTest::ReferenceContainerTest() {
     h = NULL;
     tree = GenerateTestTree();
+    spinLock=0;
 }
 
 bool ReferenceContainerTest::TestConstructor() {
@@ -55,11 +58,17 @@ bool ReferenceContainerTest::TestConstructor() {
     return ok;
 }
 
-bool ReferenceContainerTest::TestGetClassPropertiesCopy() {
+//bool ReferenceContainerTest::TestGetClassPropertiesCopy() {
+//    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
+//    ClassProperties cp;
+//    container->GetClassPropertiesCopy(cp);
+//    return (StringHelper::Compare(cp.GetName(), "ReferenceContainer") == 0);
+//}
+
+bool ReferenceContainerTest::TestGetClassProperties() {
     ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
-    ClassProperties cp;
-    container->GetClassPropertiesCopy(cp);
-    return (StringHelper::Compare(cp.GetName(), "ReferenceContainer") == 0);
+    const ClassProperties* cp = container->GetClassProperties();
+    return (StringHelper::Compare(cp->GetName(), "ReferenceContainer") == 0);
 }
 
 bool ReferenceContainerTest::TestGetTimeout(TimeoutType timeout) {
@@ -83,8 +92,8 @@ bool ReferenceContainerTest::TestSetTimeout(TimeoutType timeout) {
 }
 
 bool ReferenceContainerTest::TestFind() {
-    Reference result = tree->Find("E");
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, "E");
+    Reference result = tree->Find("H");
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::SHALLOW, "H");
     ReferenceContainer resTest;
     tree->Find(resTest, filter);
 
@@ -212,12 +221,12 @@ bool ReferenceContainerTest::TestFindAllOfASingleInstance(ReferenceContainerFilt
         filter.SetMode(i);
         filter.Reset();
         if (filter.IsRecursive()) {
-            if (!filter.IsStorePath()) {
-                ok &= TestFindFilter(tree, filter, "G");
+            if (filter.IsStorePath()) {
+                ok &= TestFindFilter(tree, filter, "D.F.G");
             }
             //It should never get here given that find all => !StorePath
             else {
-                ok &= TestFindFilter(tree, filter, "");
+                ok &= TestFindFilter(tree, filter, "G");
             }
         }
         else {
@@ -234,17 +243,23 @@ bool ReferenceContainerTest::TestFindAllOfMultipleInstance(ReferenceContainerFil
     for (i = 0; i < 8; i++) {
         filter.SetMode(i);
         filter.Reset();
-        if (!filter.IsRecursive()) {
-            ok &= TestFindFilter(tree, filter, "H");
-        }
-        else {
-            if (!filter.IsStorePath()) {
-                ok &= TestFindFilter(tree, filter, "H.H.H");
+        if (filter.IsRecursive()) {
+            if (filter.IsStorePath()) {
+                if (filter.IsReverse()) {
+                    ok &= TestFindFilter(tree, filter, "H");
+                }
+                else {
+                    ok &= TestFindFilter(tree, filter, "C.E.H");
+                }
             }
             //It should never get here given that find all => !StorePath
             else {
-                ok &= TestFindFilter(tree, filter, "");
+                ok &= TestFindFilter(tree, filter, "H.H.H");
             }
+
+        }
+        else {
+            ok &= TestFindFilter(tree, filter, "H");
         }
     }
 
@@ -496,6 +511,10 @@ bool ReferenceContainerTest::TestFindFilter(ReferenceT<ReferenceContainer> tree,
     return ok;
 }
 
+bool ReferenceContainerTest::TestFindWithPath() {
+    return TestInsertWithPath();
+}
+
 bool ReferenceContainerTest::TestInsertWithPath() {
     ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
     Reference ref("Object");
@@ -657,7 +676,7 @@ bool ReferenceContainerTest::TestInitialise() {
         return false;
     }
 
-    ReferenceContainerFilterObjectName filter1(1, ReferenceContainerFilterMode::RECURSIVE, "+intObj1");
+    ReferenceContainerFilterObjectName filter1(1, ReferenceContainerFilterMode::RECURSIVE, "intObj1");
     ReferenceContainer resultSingle1;
     container.Find(resultSingle1, filter1);
     ReferenceT<IntegerObject> test1 = (resultSingle1.Get(0));
@@ -665,7 +684,7 @@ bool ReferenceContainerTest::TestInitialise() {
         return false;
     }
 
-    ReferenceContainerFilterObjectName filter2(1, ReferenceContainerFilterMode::RECURSIVE, "$container.+intObj2");
+    ReferenceContainerFilterObjectName filter2(1, ReferenceContainerFilterMode::RECURSIVE, "container.intObj2");
     ReferenceContainer resultSingle2;
     container.Find(resultSingle2, filter2);
     ReferenceT<IntegerObject> test2 = (resultSingle2.Get(1));
@@ -673,7 +692,7 @@ bool ReferenceContainerTest::TestInitialise() {
         return false;
     }
 
-    ReferenceContainerFilterObjectName filter3(1, ReferenceContainerFilterMode::RECURSIVE, "$container.+specIntObj3");
+    ReferenceContainerFilterObjectName filter3(1, ReferenceContainerFilterMode::RECURSIVE, "container.specIntObj3");
     ReferenceContainer resultSingle3;
     container.Find(resultSingle3, filter3);
     ReferenceT<SpecialIntegerObject> test3 = (resultSingle3.Get(1));
@@ -681,6 +700,147 @@ bool ReferenceContainerTest::TestInitialise() {
         return false;
     }
     return true;
+}
+
+bool ReferenceContainerTest::TestCleanUp() {
+    ReferenceContainer container;
+    ConfigurationDatabase simpleCDB;
+    simpleCDB.CreateAbsolute("+A");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("+A.+B");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("+A.+B.+C");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    uint32 leaf = 1;
+    simpleCDB.Write("leaf", leaf);
+    simpleCDB.CreateAbsolute("+B");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.MoveToRoot();
+
+    container.Initialise(simpleCDB);
+
+    Reference recursiveLeaf = container.Find("A");
+
+    ReferenceT<ReferenceContainer> toLeaf = container.Find("A.B.C");
+    toLeaf->Insert(recursiveLeaf);
+
+    if (toLeaf.NumberOfReferences() != 2) {
+        return false;
+    }
+
+    container.CleanUp();
+
+    if (toLeaf.NumberOfReferences() != 1) {
+        return false;
+    }
+    return (container.Size() == 0);
+}
+
+static void CleanRoutine(ReferenceContainerTest &param) {
+    while (param.spinLock != 1) {
+        Sleep::MSec(10);
+    }
+    param.containerU1->CleanUp();
+    Threads::EndThread();
+}
+
+bool ReferenceContainerTest::TestCleanUp_Shared() {
+    ReferenceT<ReferenceContainer> container = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
+    containerU1 = container;
+
+    ReferenceT<ReferenceContainer> nodeU1;
+    ReferenceT<ReferenceContainer> nodeU2;
+    for (uint32 i = 0; i < 100; i++) {
+        nodeU1 = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
+        nodeU2 = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
+        nodeU1->SetName("");
+        nodeU2->SetName("");
+        container->Insert(nodeU1);
+        container->Insert(nodeU2);
+        container = nodeU1;
+    }
+    //recursive assignement
+    container->Insert(containerU1);
+
+    if (containerU1->NumberOfReferences() != 2) {
+        return false;
+    }
+
+    for (uint32 i = 0u; i < 3u; i++) {
+        Threads::BeginThread((ThreadFunctionType) CleanRoutine, this);
+    }
+
+    Atomic::Increment(&spinLock);
+
+    while (Threads::NumberOfThreads() > 0u) {
+        Sleep::MSec(100);
+    }
+
+    if (containerU1.NumberOfReferences() != 1) {
+        return false;
+    }
+    return (containerU1->Size() == 0);
+}
+
+bool ReferenceContainerTest::TestDeleteWithPath() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+    ReferenceT<Object> ref("Object", h);
+    containerRoot->Insert("A.B.C.D", ref);
+    bool ok = (containerRoot->Delete("A.B.C.D"));
+
+    ReferenceT<ReferenceContainer> C = containerRoot->Find("A.B.C");
+    ok &= C->Size() == 0u;
+    ok &= (containerRoot->Delete("A.B"));
+    ReferenceT<ReferenceContainer> A = containerRoot->Get(0);
+    ok &= A->Size() == 0u;
+    return ok;
+}
+
+bool ReferenceContainerTest::TestExportData() {
+    ReferenceContainer container;
+    ConfigurationDatabase simpleCDB;
+    simpleCDB.CreateAbsolute("+A");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("+A.+B");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("+A.+B.+C");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    uint32 leaf = 1;
+    simpleCDB.Write("leaf", leaf);
+    simpleCDB.CreateAbsolute("+B");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.MoveToRoot();
+
+    container.Initialise(simpleCDB);
+    container.SetName("root");
+    ConfigurationDatabase out;
+    if (!container.ExportData(out)) {
+        // return false;
+    }
+    StreamString output;
+    output.Printf("%!", out);
+    printf("\n%s\n", output.Buffer());
+
+    const char8 *test = "+root = {\r\n"
+            "Class = \"ReferenceContainer\"\r\n"
+            "+A = {\r\n"
+            "Class = \"ReferenceContainer\"\r\n"
+            "+B = {\r\n"
+            "Class = \"ReferenceContainer\"\r\n"
+            "+C = {\r\n"
+            "Class = \"ReferenceContainer\"\r\n"
+            "}\r\n"
+            "}\r\n"
+            "}\r\n"
+            "+B = {\r\n"
+            "Class = \"ReferenceContainer\"\r\n"
+            "+C = {\r\n"
+            "Class = \"ReferenceContainer\"\r\n"
+            "}\r\n"
+            "}\r\n"
+            "}\r\n";
+
+    return output == test;
 }
 
 ReferenceT<ReferenceContainer> ReferenceContainerTest::GenerateTestTree() {

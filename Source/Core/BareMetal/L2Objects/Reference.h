@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class Reference
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -38,7 +38,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
+
 /**
  * @brief Shared pointer implementation.
  * @details The Reference class is a smart pointer implementation where the shared
@@ -80,7 +82,7 @@ public:
     Reference(Object * const pointer);
 
     /**
-     * @brief Removes the reference to the underlying object.
+     * @brief Destructor. Removes the reference to the underlying object.
      * @see RemoveReference.
      */
     virtual ~Reference();
@@ -92,7 +94,7 @@ public:
      * @return true if the object was successfully created and initialized, false otherwise.
      */
     virtual bool Initialise(StructuredDataI &data,
-    const bool &initOnly);
+                            const bool &initOnly);
 
     /**
      * @brief Removes the reference to the underlying object.
@@ -150,8 +152,8 @@ public:
      */
     inline Object* operator->();
 
-
 protected:
+
     /**
      * The pointer to the referenced object.
      */
@@ -160,6 +162,7 @@ protected:
     Object* objectPointer;
 
 private:
+
     /**
      * @brief Prevents the copying of a reference by taking its address.
      * @return a copy of this reference.
@@ -177,18 +180,22 @@ private:
      * @return a new object of the specified class or NULL if the \a className does not exist.
      */
     Object *CreateByName(const char8 * const className,
-    HeapI* const heap) const;
-
+                         HeapI* const heap) const;
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-Object* Reference::operator->(){
+namespace MARTe {
+
+Object* Reference::operator->() {
     return objectPointer;
 }
 
 }
+
 #endif /* REFERENCE_H_ */
 

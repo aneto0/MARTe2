@@ -60,11 +60,18 @@ public:
      */
     bool TestConstructor();
 
+//    /**
+//     * @brief Tests the TestGetClassPropertiesCopy function.
+//     * @return true if ClassProperties::GetName == "ReferenceContainer".
+//     */
+//    bool TestGetClassPropertiesCopy();
+
     /**
-     * @brief Tests the TestGetClassPropertiesCopy function.
+     * @brief Tests the TestGetClassProperties function.
      * @return true if ClassProperties::GetName == "ReferenceContainer".
      */
-    bool TestGetClassPropertiesCopy();
+
+    bool TestGetClassProperties();
 
     /**
      * @brief Tests the ReferenceContainer::GetTimeout function.
@@ -297,6 +304,9 @@ public:
                               ReferenceContainerFilter &filter);
 
 
+
+    bool TestFindWithPath();
+
     /**
      * @brief Tests the ReferenceContainer::Insert with the full path as parameter.
      * @return true if the function inserts the reference at the specified path
@@ -375,13 +385,28 @@ public:
     bool TestDelete();
 
 
+    bool TestDeleteWithPath();
+
+
+
     /**
      * @brief Tests if for each of the marked nodes of \a data a new Object
      * will be created and its Reference added to the container.
      */
     bool TestInitialise();
 
-    /**
+
+
+    bool TestCleanUp();
+
+
+    bool TestCleanUp_Shared();
+
+
+    bool TestExportData();
+
+
+   /**
      * List of nodes for the tree described in the GenerateTestTree function
      */
     ReferenceT<ReferenceContainer> tree;
@@ -434,7 +459,7 @@ public:
     ReferenceT<ReferenceContainer> GenerateTestTreeLarge(uint32 depth);
 
 
-
+    volatile int32 spinLock;
 
 private:
     /**

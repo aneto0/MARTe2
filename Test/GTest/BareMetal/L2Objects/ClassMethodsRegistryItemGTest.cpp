@@ -1,8 +1,8 @@
 /**
- * @file ReferenceT.cpp
- * @brief Source file for class ReferenceT
- * @date 07/08/2015
- * @author Andre Neto
+ * @file ClassMethodsRegistryItemGTest.cpp
+ * @brief Source file for class ClassMethodsRegistryItemGTest
+ * @date 24/05/2016
+ * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,9 +17,10 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ReferenceT (public, protected, and private). Be aware that some 
+ * the class ClassMethodsRegistryItemGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -27,8 +28,13 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ClassRegistryItem.h"
-#include "ReferenceT.h"
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+#include "ClassMethodsRegistryItemTest.h"
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -37,7 +43,18 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
 
+TEST(ClassMethodsRegistryItemGTest,TestConstructor) {
+    ClassMethodsRegistryItemTest target;
+    ASSERT_TRUE(target.TestConstructor());
+}
 
+TEST(ClassMethodsRegistryItemGTest,TestCallFunction) {
+    ClassMethodsRegistryItemTest target;
+    ASSERT_TRUE(target.TestCallFunction());
+}
+
+TEST(ClassMethodsRegistryItemGTest,TestCallFunction_WithMacroSupport) {
+    ClassMethodsRegistryItemTest target;
+    ASSERT_TRUE(target.TestCallFunction_WithMacroSupport());
 }

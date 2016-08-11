@@ -378,7 +378,7 @@ void StartServer_Read(BasicUDPSocketTest &param) {
             serverSocket.SetDestination(serverSocket.GetSource());
 
             //uint32 sizeWrite = 64;
-            char8 input[64];
+            char8 input[64] = { 0 };
             StringHelper::Copy(input, param.string);
             uint32 sizeWrite = param.size;
             if (!serverSocket.Write(input, sizeWrite)) {
@@ -564,7 +564,7 @@ void ClientJob_Peek(BasicUDPSocketTest &param) {
                     }
 
                     char8 output[64] = { 0 };
-                    uint32 sizeRead = 64;//param.size;
+                    uint32 sizeRead = 64; //param.size;
 
                     for (uint32 i = 0; i < 4; i++) {
                         ret = clientSocket.Peek(output, sizeRead);
@@ -740,6 +740,7 @@ void ClientJob_Write(BasicUDPSocketTest &param) {
                 }
 
                 char8 input[128];
+                MemoryOperationsHelper::Set(input, 0, 128);
                 StringHelper::Copy(input, param.string);
                 uint32 sizeWrite = param.size;
                 if (param.isTimeout) {
@@ -763,7 +764,7 @@ void ClientJob_Write(BasicUDPSocketTest &param) {
 
 bool BasicUDPSocketTest::TestWrite(const ReadWriteUDPTestTable* table) {
     uint32 i = 0;
-    while (table[i].port != 0) {
+    while (table[i].string != NULL) {
         server.SetPort(table[i].port);
         server.SetAddress("127.0.0.1");
 

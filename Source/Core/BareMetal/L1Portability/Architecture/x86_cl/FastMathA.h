@@ -2,7 +2,7 @@
  * @file FastMathA.h
  * @brief Header file for module FastMathA
  * @date 26/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,11 +22,12 @@
  */
 
 #ifndef FASTMATHA_H_
-#define 		FASTMATHA_H_
+#define FASTMATHA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include <math.h>
 
 /*---------------------------------------------------------------------------*/
@@ -40,24 +41,26 @@
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
+
+namespace MARTe {
 
 namespace FastMath {
 
-float32 Sin(float angle) {
+inline float32 Sin(const float angle) {
     return sin(angle);
 }
 
-float32 Cos(float angle) {
+inline float32 Cos(const float angle) {
     return cos(angle);
 }
 
-int32 FloatToInt(float input) {
+inline int32 FloatToInt(const float input) {
     return input > 0 ? floor(input) : -floor(-input);
 }
 
 }
 
 }
+
 #endif /* FASTMATHA_H_ */
 

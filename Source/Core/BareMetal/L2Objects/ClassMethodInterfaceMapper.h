@@ -1,8 +1,8 @@
 /**
  * @file ClassMethodInterfaceMapper.h
  * @brief Header file for class ClassMethodInterfaceMapper
- * @date Apr 11, 2016
- * @author fsartori
+ * @date 11/04/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class ClassMethodInterfaceMapper
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -32,7 +32,17 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ReturnType.h"
+#include "ErrorType.h"
+#include "ClassMethodCaller.h"
+#include "ClassMethodCallerT.h"
+
+/*---------------------------------------------------------------------------*/
+/*                          Forward declarations                             */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+class Object;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -40,108 +50,131 @@
 
 namespace MARTe {
 
-
-class ClassMethodCaller{
-
-public:
-
-    virtual ~ClassMethodCaller(){}
-    /**
-     * TODO
-     * To be case by case remapped by the descendant
-     * */
-    virtual ReturnType Call(Object * context){
-        return ReturnType(false);
-    };
-
-    /**
-     * TODO
-     * To be case by case remapped by the descendant
-     * */
-    virtual ReturnType Call(Object * context,int x){
-        return ReturnType(false);
-    };
-
-    /**
-     * TODO
-     * To be case by case remapped by the descendant
-     * */
-    virtual ReturnType Call(Object * context,ReferenceContainer & x){
-        return ReturnType(false);
-    };
-
-};
-
-template <class X,class Y>
-class ClassMethodCallerCT: public ClassMethodCaller{
-public:
-    bool (X::*pFun)(Y ref);
-
-    ClassMethodCallerCT(bool (X::*f)(Y ref)){
-        pFun = f;
-    }
-
-
-    virtual ReturnType Call(Object * context,Y ref){
-        ReturnType fr(true);
-
-        X *actualContext = dynamic_cast<X *> (context);
-        if (actualContext == NULL_PTR (X *) ) {
-            fr.error.notUnsupportedFeature = false;
-        }
-
-        if (fr.AllOk()){
-            fr.error.functionReturn = (actualContext->*pFun)(ref);
-        }
-        return fr;
-    }
-};
-
 /**
- * TODO
- * */
-class ClassMethodInterfaceMapper {
-
-        ClassMethodCaller *caller;
+ * @brief Implementation of an object which stores and calls a class method.
+ * @details The class allows to create an implicit class method caller whose
+ * actual target method is inferred from the constructor (this class has 3
+ * templated constructors, which allow to bind the each instance with a target
+ * method). The target method can have a prototype without arguments or with
+ * one argument at most (with by reference and by copy versions).
+ */
+class DLL_API ClassMethodInterfaceMapper {
 
 public:
 
     /**
-     * TODO
-     * */
-    ClassMethodInterfaceMapper(){
-        caller = NULL;
-    };
-
-    template <class C,typename T>
-    ClassMethodInterfaceMapper(bool (C::*f)(T ref)){
-        caller = new ClassMethodCallerCT<C,T>(f);
-    };
-
-    template <typename T>
-    ReturnType Call(Object *context,T ref){
-        ReturnType fr(true);
-        fr.error.notUnsupportedFeature = false;
-        if (caller != NULL ) fr = caller->Call(context,ref);
-        return fr;
-    };
+     * @brief Default constructor.
+     */
+    ClassMethodInterfaceMapper();
 
     /**
-     * TODO
-     * */
-    virtual ~ClassMethodInterfaceMapper(){};
+     * @brief Constructor by a class method with no arguments.
+     * @tparam C is the class name.
+     */
+    template<typename C>
+    ClassMethodInterfaceMapper(bool (C::*f)());
 
-protected:
+    /**
+     * @brief Constructor by a class method with one argument passed by copy.
+     * @param[in] f is a pointer to the class method to be registered.
+     * @tparam C is the class name.
+     * @tparam T is the type name of the class method argument.
+     */
+    template<typename C, typename T>
+    ClassMethodInterfaceMapper(bool (C::*f)(T));
 
+    /**
+     * @brief Constructor by a class method with one argument passed by
+     * reference.
+     * @param[in] f is a pointer to the class method to be registered.
+     * @tparam C is the class name.
+     * @tparam T is the type name of the class method argument.
+     */
+    template<typename C, typename T>
+    ClassMethodInterfaceMapper(bool (C::*f)(T&));
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~ClassMethodInterfaceMapper();
+
+    /**
+     * @brief Calls the function with no arguments.
+     * @param[in] context is the object which must call the function.
+     * @return
+     * + ErrorManagement::UnsupportedFeature if no function has been registered
+     * + ErrorManagement::FatalError if the class method returns false
+     * + ErrorManagement::NoError if it returns true.
+     */
+    ErrorManagement::ErrorType Call(Object * const context);
+
+    /**
+     * @brief Calls the function with one argument.
+     * @tparam T is the type name of the class method argument.
+     * @param[in] context is the object which must call the function.
+     * @param[in,out] ref is the class method argument.
+     * @return
+     * + ErrorManagement::UnsupportedFeature if no function has been registered
+     * + ErrorManagement::FatalError if the class method returns false
+     * + ErrorManagement::NoError if it returns true.
+     */
+    template<typename T>
+    ErrorManagement::ErrorType Call(Object * const context,
+                                    T ref);
+
+private:
+
+    /**
+     * The class method caller
+     */
+    ClassMethodCaller *caller;
+
+    /**
+     * Specify if the method argument is passed by copy
+     */
+    bool byCopy;
 
 };
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+template<typename className>
+ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)()) {
+    caller = new ClassMethodCallerT<className>(f);
+    byCopy = false;
+}
+
+template<typename className, typename T>
+ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)(T)) {
+    caller = new ClassMethodCallerT<className, T>(f);
+    byCopy = true;
+}
+
+template<typename className, typename T>
+ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)(T&)) {
+    caller = new ClassMethodCallerT<className, T&>(f);
+    byCopy = false;
+}
+
+template<typename T>
+ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object *context,
+                                                            T ref) {
+    ErrorManagement::ErrorType ret;
+    ret.unsupportedFeature = true;
+    if (caller != NULL ) {
+        if(byCopy) {
+            ret = caller->Call(context,ref, byCopy);
+        }
+        else {
+            ret = caller->Call(context,ref);
+        }
+    }
+    return ret;
+}
+
 }
 
 #endif /* CLASSMETHODINTERFACEMAPPER_H_ */
-	
+

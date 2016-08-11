@@ -30,13 +30,13 @@
 /*---------------------------------------------------------------------------*/
 #define DLL_API
 
+#include "ClassRegistryItemT.h"
 #include "AnyObject.h"
 #include "Vector.h"
 #include "Matrix.h"
 #include "StreamString.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -217,12 +217,12 @@ static bool SerializeVector(const AnyType &typeIn,
                 token = reinterpret_cast<const char8 **>(sourcePointer)[i];
                 tokenLength = StringHelper::Length(token) + 1u;
             }
-            if(isCArrayOnHeap) {
+            if (isCArrayOnHeap) {
                 token = reinterpret_cast<const char8 **>(sourcePointer)[i];
                 tokenLength = typeIn.GetByteSize();
             }
             if (isString) {
-                token=(reinterpret_cast<StreamString *>(sourcePointer)[i]).Buffer();
+                token = (reinterpret_cast<StreamString *>(sourcePointer)[i]).Buffer();
                 tokenLength = StringHelper::Length(token) + 1u;
             }
             char8 **destBegin = reinterpret_cast<char8 **>(destPointer);
@@ -232,7 +232,7 @@ static bool SerializeVector(const AnyType &typeIn,
     }
     else {
         // it works also for static matrix of characters!!
-        ret=MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
+        ret = MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
     }
 
     return ret;
@@ -277,12 +277,7 @@ static bool SerializeScalar(const AnyType &typeIn,
         ret = MemoryOperationsHelper::Copy(destPointer, token, tokenLength);
     }
     else if (isPointer) {
-        void *oldSourcePointer = sourcePointer;
-        void* newSourcePointer = reinterpret_cast<void*>(&oldSourcePointer);
-        uint32 memoryAllocationSize = typeIn.GetByteSize();
-        void* destPointerPointer = HeapManager::Malloc(memoryAllocationSize);
-        ret = MemoryOperationsHelper::Copy(destPointerPointer, newSourcePointer, memoryAllocationSize);
-        destPointer = *reinterpret_cast<void**>(destPointerPointer);
+        destPointer = sourcePointer;
     }
     else {
         uint32 memoryAllocationSize = typeIn.GetByteSize();
@@ -356,6 +351,7 @@ void AnyObject::CleanUp() {
     bool cArray = (type.GetTypeDescriptor().type == CArray);
     bool staticDeclared = type.IsStaticDeclared();
     bool cArrayOnHeap = ((cArray) && (!staticDeclared));
+    bool isPointer = (type.GetTypeDescriptor().type == Pointer);
 
     if (typePointer != NULL) {
         if (type.GetNumberOfDimensions() == 1u) {
@@ -410,9 +406,10 @@ void AnyObject::CleanUp() {
                 }
             }
         }
-
-        if (!HeapManager::Free(typePointer)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
+        if(!isPointer) {
+            if (!HeapManager::Free(typePointer)) {
+                REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
+            }
         }
         type = voidAnyType;
     }

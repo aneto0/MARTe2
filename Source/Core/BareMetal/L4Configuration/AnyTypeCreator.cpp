@@ -62,9 +62,11 @@ AnyTypeCreator::~AnyTypeCreator() {
 void AnyTypeCreator::CleanUp(const uint32 granularityIn) {
     if (memory != NULL) {
         // in this case delete the string on heap
-        if (memory->GetSize() > 0u) {
-            if (TypeDescriptor::GetTypeDescriptorFromStaticTable(typeIndex) == CharString) {
-                char8* stringElement = reinterpret_cast<char8 **>(memory->GetAllocatedMemory())[0];
+        if (TypeDescriptor::GetTypeDescriptorFromStaticTable(typeIndex) == CharString) {
+            uint32 listSize=memory->GetSize();
+            for (uint32 i=0u; i<listSize; i++) {
+
+                char8* stringElement = reinterpret_cast<char8 **>(memory->GetAllocatedMemory())[i];
                 if (!HeapManager::Free(reinterpret_cast<void* &>(stringElement))) {
                     REPORT_ERROR(ErrorManagement::FatalError, "ReadMatrix: Failed HeapManager::Free()");
                 }

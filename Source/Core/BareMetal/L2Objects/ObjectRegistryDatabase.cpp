@@ -15,11 +15,12 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This source file contains the definition of all the methods for
  * the class ObjectRegistryDatabase (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
 
 /*---------------------------------------------------------------------------*/
@@ -49,7 +50,7 @@ ObjectRegistryDatabase *ObjectRegistryDatabase::Instance() {
 
     static ObjectRegistryDatabase *instance = NULL_PTR(ObjectRegistryDatabase *);
     if (instance == NULL) {
-        instance=new ObjectRegistryDatabase(); //dynamic_cast<ObjectRegistryDatabase*>(ObjectRegistryDatabase_BuildFn());
+        instance = new ObjectRegistryDatabase(); //dynamic_cast<ObjectRegistryDatabase*>(ObjectRegistryDatabase_BuildFn());
         GlobalObjectsDatabase::Instance()->Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 3u);
     }
     return instance;
@@ -59,18 +60,10 @@ ObjectRegistryDatabase::ObjectRegistryDatabase() :
         ReferenceContainer() {
 }
 
+/*lint -e{1551} .*/
 ObjectRegistryDatabase::~ObjectRegistryDatabase() {
+    ReferenceContainer::CleanUp();
     // The ReferenceContainer destructor does the work
-}
-
-bool ObjectRegistryDatabase::CleanUp() {
-    bool ret = true;
-    uint32 numberOfElements = Size();
-    for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
-        Reference toBeRemoved = Get(0u);
-        ret = ReferenceContainer::Delete(toBeRemoved);
-    }
-    return ret;
 }
 
 Reference ObjectRegistryDatabase::Find(const char8 * const path,
@@ -99,7 +92,7 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
                     ok = Lock();
                     if (ok) {
                         /*lint -e{613} cheking of NULL pointer done before entering here. */
-                        if (test->GetName()[0] == '$') {
+                        if (test->IsDomain()) {
                             domain = test;
                             stepsCounter--;
                         }
@@ -118,7 +111,7 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
     // now search from the domain forward
     Reference ret;
     if (ok) {
-        ReferenceContainerFilterObjectName filterName(1, ReferenceContainerFilterMode::RECURSIVE, &path[backSteps]);
+        ReferenceContainerFilterObjectName filterName(1, ReferenceContainerFilterMode::SHALLOW, &path[backSteps]);
         ReferenceContainer resultSingle;
 
         if (isSearchDomain) {
@@ -151,6 +144,11 @@ const char8 * const ObjectRegistryDatabase::GetClassName() const {
 /*lint -e{1550} */
 void *ObjectRegistryDatabase::operator new(const osulong size) throw () {
     return GlobalObjectI::operator new(size);
+}
+
+/*lint -e{1550} */
+void ObjectRegistryDatabase::operator delete(void * const p) {
+    return GlobalObjectI::operator delete(p);
 }
 
 }

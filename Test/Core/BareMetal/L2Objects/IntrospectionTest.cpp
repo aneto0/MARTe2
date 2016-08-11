@@ -25,10 +25,14 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <typeinfo>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassRegistryItemT.h"
+#include "HeapManager.h"
 #include "IntrospectionTest.h"
 #include "StringHelper.h"
 #include "Object.h"
@@ -70,17 +74,19 @@ public:
 
 };
 
+CLASS_REGISTER(DummyObject, "1.0")
+
 DECLARE_CLASS_MEMBER(DummyObject, member, int32, "", "");
 static const IntrospectionEntry* objFields[] = { &DummyObject_member_introspectionEntry, 0 };
 DECLARE_CLASS_INTROSPECTION(DummyObject, objFields);
-CLASS_INTROSPECTION_REGISTER(DummyObject, "1.0", DummyObject_introspection)
+//CLASS_INTROSPECTION_REGISTER(DummyObject, "1.0", DummyObject_introspection)
 
 DECLARE_CLASS_MEMBER(TestIntrospectionNestedStructure, nestedMember1, uint32, "", "");
 
 static const IntrospectionEntry* nestedFields[] = { &TestIntrospectionNestedStructure_nestedMember1_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(TestIntrospectionNestedStructure, nestedFields);
-INTROSPECTION_REGISTER(TestIntrospectionNestedStructure, "1.0", TestIntrospectionNestedStructure_introspection)
+DECLARE_STRUCT_INTROSPECTION(TestIntrospectionNestedStructure, nestedFields);
+//INTROSPECTION_REGISTER(TestIntrospectionNestedStructure, "1.0", TestIntrospectionNestedStructure_introspection)
 
 static IntrospectionEntry member1Field("member1", "uint32", "", "", INTROSPECTION_MEMBER_SIZE(TestIntrospectionStructure, member1),
                                        INTROSPECTION_MEMBER_INDEX(TestIntrospectionStructure, member1));
@@ -97,8 +103,8 @@ static const IntrospectionEntry* fields[] = { &member1Field, &TestIntrospectionS
         &TestIntrospectionStructure_member3_introspectionEntry, &TestIntrospectionStructure_member4_introspectionEntry,
         &TestIntrospectionStructure_member5_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(TestIntrospectionStructure, fields);
-INTROSPECTION_REGISTER(TestIntrospectionStructure, "1.0", TestIntrospectionStructure_introspection)
+DECLARE_STRUCT_INTROSPECTION(TestIntrospectionStructure, fields);
+//INTROSPECTION_REGISTER(TestIntrospectionStructure, "1.0", TestIntrospectionStructure_introspection)
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

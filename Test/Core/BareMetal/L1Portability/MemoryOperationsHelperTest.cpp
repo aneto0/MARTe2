@@ -225,6 +225,7 @@ bool MemoryOperationsHelperTest::TestSet() {
         HeapManager::Free((void*&) buffPointer);
         return false;
     }
+    HeapManager::Free((void*&) buffPointer);
 
     size = 1;
     return !MemoryOperationsHelper::Set(NULL, myFavouriteChar, size);

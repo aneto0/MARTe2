@@ -1,8 +1,8 @@
 /**
  * @file FastPollingEventSem.cpp
  * @brief Source file for class FastPollingEventSem
- * @date 08/ago/2015
- * @author pc
+ * @date 20/04/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -46,6 +46,7 @@ FastPollingEventSem::FastPollingEventSem() {
 }
 
 FastPollingEventSem::FastPollingEventSem(volatile int32 &externalFlag) {
+    internalFlag = 0;
     flag = &externalFlag;
 }
 
@@ -58,10 +59,10 @@ void FastPollingEventSem::Create(const bool wait) {
     }
 }
 
-ErrorManagement::ErrorType FastPollingEventSem::FastWait(const TimeoutType &msecTimeout,
-                                                         float64 sleepTime) {
+ErrorManagement::ErrorType FastPollingEventSem::FastWait(const TimeoutType &timeout,
+                                                         float64 sleepTime) const {
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
-    uint64 ticksStop = msecTimeout.HighResolutionTimerTicks();
+    uint64 ticksStop = timeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
 
     // sets the default if negative
@@ -72,7 +73,7 @@ ErrorManagement::ErrorType FastPollingEventSem::FastWait(const TimeoutType &msec
     bool noSleep = IsEqual(sleepTime, 0.0);
 
     while (*flag == 0) {
-        if (msecTimeout != TTInfiniteWait) {
+        if (timeout != TTInfiniteWait) {
             if (HighResolutionTimer::Counter() > ticksStop) {
                 err = ErrorManagement::Timeout;
                 break;
@@ -94,10 +95,10 @@ void FastPollingEventSem::Reset() {
     *flag = 0;
 }
 
-ErrorManagement::ErrorType FastPollingEventSem::FastResetWait(const TimeoutType &msecTimeout,
-                                                              float64 sleepTime) {
+ErrorManagement::ErrorType FastPollingEventSem::FastResetWait(const TimeoutType &timeout,
+                                                              const float64 &sleepTime) {
     Reset();
-    return FastWait(msecTimeout, sleepTime);
+    return FastWait(timeout, sleepTime);
 }
 
 }

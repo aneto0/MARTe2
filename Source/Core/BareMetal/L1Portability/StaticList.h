@@ -119,8 +119,22 @@ public:
     bool Extract(const uint32 position,
                  elementType &value);
 
+    /**
+     * @see StaticListHolder::Set()
+     */
     bool Set(const uint32 position,
              elementType &value);
+
+    /**
+     * @brief Fast peek of the element in \a pos position
+     * @param[in] pos is the position of the required element in the list.
+     * @return the element in \a pos position.
+     * @post
+     *   if (pos >= GetSize())
+     *      return last element in the list
+     */
+    elementType operator[](uint32 pos);
+
 private:
 
     /**
@@ -202,7 +216,12 @@ bool StaticList<elementType, listAllocationGranularity>::Set(const uint32 positi
     return slh.Set(position, static_cast<void *>(&value));
 }
 
+template<typename elementType, uint32 listAllocationGranularity>
+elementType StaticList<elementType, listAllocationGranularity>::operator[](uint32 pos) {
+    return (pos > (slh.GetSize() - 1u)) ?
+            (reinterpret_cast<elementType*>(slh.GetAllocatedMemory())[slh.GetSize() - 1u]) : (reinterpret_cast<elementType*>(slh.GetAllocatedMemory())[pos]);
+}
+
 }
 
 #endif /* STATICLIST_H_ */
-

@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class Introspection
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -34,20 +34,27 @@
 
 #include "IntrospectionEntry.h"
 #include "ZeroTerminatedArray.h"
-#include "ClassRegistryItem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
  * @brief Groups the information about each member of a class or a structure.
  */
-
+/*lint -e{9109} forward declaration of this class is required in other modules*/
 class DLL_API Introspection {
 
 public:
+
+    /**
+     * @brief Default constructor
+     * @post
+     *   GetClassSize()==0u
+     */
+    Introspection();
 
     /**
      * @brief Constructor.
@@ -55,8 +62,11 @@ public:
      * @param[in] classSizeIn is the class size.
      * @pre
      *   introspectionListIn must be a zero-terminated array.
+     * @post
+     *   GetClassSize()==classSizeIn
      */
-    Introspection(const IntrospectionEntry ** const introspectionListIn, const uint32 classSizeIn);
+    Introspection(const IntrospectionEntry ** const introspectionListIn,
+                  const uint32 classSizeIn);
 
     /**
      * @brief Retrieves the information about a specific member.
@@ -93,80 +103,7 @@ private:
 
 };
 
-
-
-/**
- * TODO
- */
-template <class T>
-class IntrospectionT: public Introspection{
-public:
-
-    /**
-     * TODO
-     */
-    IntrospectionT(const IntrospectionEntry ** const introspectionListIn, const uint32 classSizeIn):
-        Introspection(introspectionListIn,classSizeIn){
-
-        ClassRegistryItem *cri;
-        cri = T::GetClassRegistryItem_Static();
-        if (cri != NULL)cri->SetIntrospection(this);
-
-    }
-};
-
-
-
 }
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-/**
- * This macro retrieves the member address with respect to the class begin.
- */
-#define INTROSPECTION_MEMBER_INDEX(className, memberName) \
-    (intptr)&(((className *)0)->memberName)
-
-/**
- * This macro retrieves the member size.
- */
-#define INTROSPECTION_MEMBER_SIZE(className, memberName) \
-    sizeof(((className *)0)->memberName)
-
-/**
- * This macro creates a static instance of IntrospectionEntry with the provided inputs.
- */
-#define DECLARE_CLASS_MEMBER(className, memberName, type, modifierString, attributeString ) \
-    static const MARTe::IntrospectionEntry className ## _ ## memberName ## _introspectionEntry =   \
-    MARTe::IntrospectionEntry(                                                                     \
-        #memberName,                                                                        \
-        #type,                                                                              \
-        modifierString,                                                                     \
-        attributeString,                                                                    \
-        INTROSPECTION_MEMBER_SIZE(className, memberName),                                   \
-        INTROSPECTION_MEMBER_INDEX(className, memberName)                                   \
-    )
-
-
-/**
- * This macro creates a static instance of Introspection with the provided inputs.
- */
-#define DECLARE_CLASS_INTROSPECTION(className, introEntryArray) \
-    static MARTe::IntrospectionT<className> className ## _ ## introspection(introEntryArray, sizeof(className));
-
-#define DECLARE_STRUCT_INTROSPECTION(structName, introEntryArray)                                                              \
-class structName ## _Registrable: public structName {                                                                          \
-public:                                                                                                                        \
-    static MARTe::ClassProperties classProperties;                                                                             \
-    static MARTe::ClassRegistryItem * GetClassRegistryItem_Static() {                                                          \
-        return ClassRegistryItemT<structName ## _Registrable>::Instance();                                                    \
-    }                                                                                                                          \
-};                                                                                                                             \
-MARTe::ClassProperties structName ## _Registrable::classProperties                                                             \
-                                  ( #structName, typeid(structName).name(), "", static_cast<uint32>(sizeof(structName)));      \
-static MARTe::IntrospectionT<structName ## _Registrable> structName ## _ ## introspection(introEntryArray, sizeof(structName));
-
 
 #endif /* INTROSPECTION_H_ */
 

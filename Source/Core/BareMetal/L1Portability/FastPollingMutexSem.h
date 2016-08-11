@@ -46,7 +46,8 @@
 namespace MARTe {
 
 /**
- * @brief This class is a mutex semaphore based on spin locks.
+ * @brief This class is a mutex semaphore based on spin locks which can be used
+ * without depending on the operating system scheduler.
  *
  * @details This semaphore is not recursive i.e is the same thread locks two times sequentially causes a deadlock.
  * Moreover a thread can unlock the semaphore locked by another thread.
@@ -70,7 +71,7 @@ public:
 
     /**
      * @brief Initializes the semaphore as locked or unlocked.
-     * @param[in] locked defines if the semaphore must be initialized locked or unlocked (default locked=false)
+     * @param[in] locked defines if the semaphore is to be initialized in a locked in an unlocked state (default locked=false)
      */
     void Create(const bool locked = false);
 
@@ -84,11 +85,13 @@ public:
      * @brief Locks the semaphore.
      * @details If the semaphore is locked tries to lock until the timeout expire. A double consecutive lock
      * by the same thread causes a deadlock.
-     * @param[in] msecTimeout is the desired timeout.
+     * @param[in] timeout is the desired timeout.
+     * @param[in] sleepTime is the amount of time the CPU is to be released in-between each polling loop cycle.
+     * If sleepTime = 0 the CPU is never released and the spin-lock is continuously polled.
      * @return ErrorManagement::Timeout if the semaphore is locked for a period which is greater than the
      * specified timeout. Otherwise ErrorManagement::NoError is returned.
      */
-    ErrorManagement::ErrorType FastLock(const TimeoutType &msecTimeout = TTInfiniteWait,
+    ErrorManagement::ErrorType FastLock(const TimeoutType &timeout = TTInfiniteWait,
                                         float64 sleepTime = 1e-3);
 
     /**

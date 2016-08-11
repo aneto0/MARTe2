@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class ClassRegistryDatabase
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -83,7 +83,7 @@ public:
      * @param[in] className the name of the class to be searched.
      * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
-    ClassRegistryItem *Find(const char8 *className)  ;
+    ClassRegistryItem *Find(const char8 *className);
 
     /**
      * @brief Returns the ClassRegistryItem associated to the class with typeid(class).name() equal to \a typeidName.
@@ -91,7 +91,7 @@ public:
      * @param[in] typeidName the typeid().name() of the class to be searched.
      * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
-    ClassRegistryItem *FindTypeIdName(const char8 * const typeidName)  ;
+    ClassRegistryItem *FindTypeIdName(const char8 * const typeidName);
 
     /**
      * @brief Returns the number of classes registered in the database.
@@ -114,9 +114,22 @@ public:
      */
     virtual const char8 * const GetClassName() const;
 
+    /**
+     * @brief Cleanup the database.
+     */
+    void CleanUp();
 
+protected:
 
-private:
+    /**
+     * @brief Locks the internal spin-lock mutex semaphore.
+     */
+    bool Lock();
+
+    /**
+     * @brief Unlocks the internal spin-lock mutex semaphore.
+     */
+    void UnLock();
 
     /**
      * @brief Private Constructor.
@@ -124,11 +137,13 @@ private:
     /*lint -e{1704} private constructor for singleton implementation*/
     ClassRegistryDatabase();
 
+private:
+
     /**
      * The database is implemented as a StaticList.
      * The destructor of the list will clean its elements.
      */
-    StaticList<ClassRegistryItem *,512> classDatabase;
+    LinkedListHolderT<ClassRegistryItem> classDatabase;
 
     /**
      * Protects the concurrent access to the database

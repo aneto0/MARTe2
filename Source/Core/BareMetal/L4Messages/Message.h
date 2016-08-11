@@ -28,7 +28,6 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -36,8 +35,8 @@
 #include "ReferenceContainer.h"
 #include "CString.h"
 #include "StreamString.h"
-#include "TimeoutType.h"
-
+#include "BitBoolean.h"
+#include "BitRange.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -46,201 +45,242 @@
 namespace MARTe {
 
 /**
- *
- * */
-class DLL_API Message: public ReferenceContainer{
+ * @brief Implementation of a message that can be sent to or received from MARTe::Object instances.
+ * @details The Message is a ReferenceContainer, so it can contain a generic pay-load.
+ */
+class DLL_API Message: public ReferenceContainer {
 
-    /**
-     * who is the originator of the message
-     * empty means anonymous
-     * */
-    StreamString sender;
-
-    /**
-     * who is the destination of the message
-     * addressed from GODB forward
-     * */
-    StreamString destination;
-
-    /**
-     * what is the function of this message
-     * */
-    StreamString function;
-
-    /**
-     * in case of synchronous communication, how long to wait
-     * */
-    TimeoutType maxWait;
-
-    struct MessageFlags {
-        /**
-         * init:false
-         * true if reply is required
-         * set by the sender
-         */
-        bool expectsReply:1;
-
-        /**
-         * init:false
-         * true if reply is required
-         * and I am going to wait for it in the call itself
-         * set by the sender
-         */
-        bool expectsImmediateReply:1;
-
-
-        /**
-         * init:false
-         * true for a reply message, false for a normal message
-         * in a reply message sender and destination are implicitly flipped
-         * set by the recipient:HandleMessage or by the caller of the recipient::SortMessage
-         * if this message is sent than it will call the sender.HandleReply function
-        */
-        bool isReply:1;
-
-
-
-
-        /// default initialisation
-        MessageFlags(){
-            expectsReply          = false;
-            expectsImmediateReply = false;
-            isReply               = false;
-        }
-
-       /// initialisation from string
-        MessageFlags(CCString asString){
-            expectsReply          = (StringHelper::Compare(asString,"ExpectsReply")==0);
-            expectsImmediateReply = (StringHelper::Compare(asString,"ExpectsImmediateReply")==0);
-            if (expectsImmediateReply) expectsReply = true;
-            isReply               = false;
-        }
-
-    } flags;
 public:
 
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * TODO
-     * */
-    Message(){}
+     * @brief Default constructor.
+     */
+    Message();
 
     /**
-     * TODO
-     * */
-    virtual ~Message(){
-
-    }
+     * @brief Destructor
+     */
+    virtual ~Message();
 
     /**
-     * TODO
-     * sets payload, Destination and Function
-     * */
+     * @see ReferenceContainer::Initialise(*)
+     * @detail The following parameters have to be specified in the StructuredDataI which initialises the
+     * Message:
+     *   Destination = "Address in the ObjectRegistryDatabase of the Object which must receive this Message"
+     *   Function = "The name of the destination method which has to be called" (this method has to be registered in the ClassRegistryDatabase)
+     *   MaxWait (optional) = "The timeout in milliseconds" (default is TTInfiniteWait, namely infinite timeout)
+     *   Mode (optional) = "The message type". Can be one of the following;
+     *     "ExpectsReply": after sending the message, the sender waits for a reply.
+     *     "ExpectsImmediateReply": after sending the message the sender waits for an immediate reply.
+     *   By default, the sender will not wait for a message reply.
+     */
     virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * TODO
-     * marked to be a reply
-     * */
-    void MarkAsReply(){
-        flags.isReply = true;
-    }
+     * @brief Sets or Unsets this Message as a Reply.
+     * @param[in] flag if true the message is set as a reply, otherwise it is not considered as a reply.
+     */
+    void MarkAsReply(const bool flag=true);
 
     /**
-     * TODO
+     * @brief Specifies if this message requires an immediate reply.
      * marked by send when requiring reply
-     * */
-    void MarkImmediateReplyExpected(){
-        flags.expectsReply = true;
-        flags.expectsImmediateReply = true;
-    }
+     * @param[in] flag if true means that this messages requires a reply after being received, if false id does needs a reply.
+     */
+    void MarkImmediateReplyExpected(const bool flag=true);
 
     /**
-     * TODO
+     * @brief Specifies if this message requires a reply.
      * marked by send when requiring reply
-     * */
-    void MarkLateReplyExpected(){
-        flags.expectsReply = true;
-        flags.expectsImmediateReply = false;
-    }
+     * @param[in] flag if true means that this messages requires a reply after being received, if false id does needs a reply.
+     */
+    void MarkLateReplyExpected(const bool flag=true);
 
     /**
-     * TODO
-     * marked by send when requiring reply
-     * */
-    bool ReplyExpected(){
-        return (flags.expectsReply );
-    }
+     * @brief Checks if this message requires a reply (immediate or not).
+     * @return true if this message requires a reply, false otherwise.
+     */
+    bool ReplyExpected() const;
 
     /**
-     * TODO
-     * marked by send when requiring reply
-     * */
-    bool ImmediateReplyExpected(){
-        return (flags.expectsReply && flags.expectsImmediateReply);
-    }
+     * @brief Checks if this message requires an immediate reply.
+     * @return true if this message requires an immediate reply, false otherwise.
+     */
+    bool ImmediateReplyExpected() const;
 
     /**
-     * TODO
-     * marked by send when requiring reply
-     * */
-    bool LateReplyExpected(){
-        return (flags.expectsReply && !flags.expectsImmediateReply);
-    }
+     * @brief Checks if this message requires a late reply.
+     * @return true if this message requires a late reply, false otherwise.
+     */
+    bool LateReplyExpected() const;
 
     /**
-     * TODO
-     * */
-    bool IsReplyMessage(){
-        return flags.isReply;
-    }
-
+     * @brief Checks if this message is a reply.
+     * @return true if this message is a reply, false otherwise.
+     */
+    bool IsReplyMessage() const;
 
     /**
-     * TODO
-     * */
-    CCString GetDestination(){
-        return destination.Buffer();
-    }
+     * @brief Retrieved the address of the destination Object in the ObjectRegistryDatabase.
+     * @return the address of the destination Object in the ObjectRegistryDatabase.
+     */
+    CCString GetDestination();
 
     /**
-     * TODO
-     * */
-    inline CCString GetSender(){
-        return sender.Buffer();
-    }
+     * @brief Retrieved the address of the sender Object in the ObjectRegistryDatabase.
+     * @details After that the destination received a message expecting a reply, it will call this function to get the
+     * destination of the reply (namely the address of the sender Object).
+     * @return the address of the sender Object in the ObjectRegistryDatabase.
+     */
+    inline CCString GetSender();
 
     /**
-     * TODO
-     * */
-    inline void SetSender(CCString senderName){
-        sender = senderName;
-    }
+     * @brief Sets the sender Object address in the ObjectRegistryDatabase.
+     * @param[in] senderName is the address of the sender Object in the ObjectRegistryDatabase.
+     */
+    inline void SetSender(CCString senderName);
 
     /**
-     * TODO
-     * */
-    inline CCString GetFunction(){
-        return function.Buffer();
-    }
+     * @brief Retrieves the name of the registered class method of the destination Object which has to be called.
+     * @return the name of the registered class method of the destination Object which has to be called.
+     */
+    inline CCString GetFunction();
 
     /**
-     * TODO
+     * @brief Sets the time to wait for a reply.
+     * @param[in] maxWaitIn is the timeout time in milliseconds.
+     */
+    inline void SetReplyTimeout(const TimeoutType &maxWaitIn);
+
+    /**
+     * @brief Gets the timeout for the reply
+     */
+    inline TimeoutType GetReplyTimeout() const;
+
+private:
+
+    struct MessageFlags {
+
+        /**
+         * @brief Default Constructor.
+         * @post
+         *   Message::IsReply() == false &&
+         *   Message::ExpectsReply() == false &&
+         *   Message::ExpectsImmediateReply() == false &&
+         *   Message::ExpectsLateReply() == false;
+         */
+        MessageFlags();
+
+        /**
+         * @brief Constructor from string.
+         * @param[in] asString specifies the Message type.
+         * @post
+         *   if(asString == "ExpectsReply") then
+         *     Message::ExpectsReply() == true &&
+         *     Message::ExpectsLateReply() == true &&
+         *     Message::ExpectsImmediateReply() == false;
+         *
+         *   if(asString == "ExpectsImmediateReply") then
+         *     Message::ExpectsReply() == true &&
+         *     Message::ExpectsLateReply() == false &&
+         *     Message::ExpectsImmediateReply() == true;
+         */
+        MessageFlags(CCString asString);
+
+        /*lint ++flb*/
+        union {
+
+            /**
+             * True if reply is required
+             * Set by the sender
+             */
+            BitBoolean<uint8, 0u> expectsReply;
+
+            /**
+             * True if reply is required
+             * and I am going to wait for it in the call itself
+             * set by the sender
+             */
+            BitBoolean<uint8, 1u> expectsImmediateReply;
+
+            /**
+             * True for a reply message, false for a normal message
+             * in a reply message sender and destination are implicitly flipped
+             * set by the recipient::HandleMessage() or by the caller of the recipient::SortMessage()
+             * if this message is sent than it will call the sender::HandleReply() function
+             */
+            BitBoolean<uint8, 2u> isReply;
+
+            /**
+             * Unmapped area
+             */
+            BitRange<uint8,4u ,3u> unMapped;
+
+            /**
+             * To set the Message mode using an 8-bit integer.
+             */
+            uint8 format_as_uint8;
+        };
+        /*lint --flb*/
+
+    };
+
+    /**
+     * The originator of the message
+     * empty means anonymous
      * */
-    inline void SetReplyTimeout(TimeoutType maxWaitIn){
-        maxWait = maxWaitIn;
-    }
+    StreamString sender;
+
+    /**
+     * The destination of the message
+     * addressed from ObjectRegistryDatabase forward
+     * */
+    StreamString destination;
+
+    /**
+     * The function to be called
+     * */
+    StreamString function;
+
+    /**
+     * In case of synchronous communication, how long to wait
+     * */
+    TimeoutType maxWait;
+
+    /**
+     * @brief Defines the Message types.
+     */
+    MessageFlags flags;
 
 };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+CCString Message::GetSender() {
+    return sender.Buffer();
+}
 
+void Message::SetSender(CCString senderName) {
+    sender = senderName.GetList();
+}
 
+CCString Message::GetFunction() {
+    return function.Buffer();
+}
+
+void Message::SetReplyTimeout(const TimeoutType &maxWaitIn) {
+    maxWait = maxWaitIn;
+}
+
+TimeoutType Message::GetReplyTimeout() const {
+    return maxWait;
+}
+
+}
 
 #endif /* MESSAGE_H_ */
-	
+

@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class Object
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -31,150 +31,27 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
+#include "CLASSREGISTER.h"
 #include "HeapI.h"
 #include "HeapManager.h"
-#include "GeneralDefinitions.h"
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
-#include "StructuredDataI.h"
-#include "AnyType.h"
-#include "ReturnType.h"
-
+#include "ErrorType.h"
+#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
-/*                        Macro definitions                                  */
+/*                         Forward declarations                              */
 /*---------------------------------------------------------------------------*/
-/**
- * These macros are required for the application to automatically register in the ClassRegistryDatabase
- * the information associated to every class that inherits from Object.
- * These have to be defined as macros given that the new and delete functions are specific for each
- * final class that inherits from Object (new and delete are static and thus cannot be virtual).
- */
-/**
- * The function GetClassPropertiesCopy has to be virtual in order to guarantee that
- * there will be a virtual member in all inherited classes.
- * This macro has to be inserted in every class that inherits from Object.
- */
-/*lint -save -e9026 -e9024 -e9023 -e9141 -estring(1960,"*6-2-1*")
- * 9026: function-like macro defined.
- * 9024: '#/##' operators used in macro.
- * 9023: (Multiple use of '#/##' operators in definition of macro) an exception to this rule.
- * is only applied in the definition of the ClassRegistryItem_.
- * 9141: Disable global declaration of symbols.
- * 1960: lint is confused with the placement new and reporting a false alarm.
- */
-#define CLASS_REGISTER_DECLARATION()                                                                                   \
-    static ClassProperties classProperties;                                                                            \
-    /*                                                                                                                 \
-     * TODO                                                                                                            \
-     */                                                                                                                \
-     virtual MARTe::ClassRegistryItem * GetClassRegistryItem() const ;                                                 \
-    /*                                                                                                                 \
-     * TODO                                                                                                            \
-     */                                                                                                                \
-     static MARTe::ClassRegistryItem * GetClassRegistryItem_Static()  ;                                                \
-    /*                                                                                                                 \
-     * @brief Allocates a new instance of the class type in the provided heap. Note that this                          \
-     * is automatically called by the compiler (given that we use placement new).                                      \
-     * Note that the selected heap might be different for each type of class.                                          \
-     * @param[in, out] destination the destination where to copy the class properties to.                              \
-     */                                                                                                                \
-     /*lint -e{1511} This function will be redeclared in descendants */                                                \
-     static void * operator new(const MARTe::osulong size, MARTe::HeapI *heap = static_cast<MARTe::HeapI *>(NULL));    \
-    /*                                                                                                                 \
-     * @brief Delete the object.                                                                                       \
-     * @details Will delegate the deleting of the object to the correct heap. Note that the delete function            \
-     * cannot call non-static members and as a consequence the heap variable must have global                          \
-     * scope in the unit file (but is not exported) (see CLASS_REGISTER).                                              \
-     * @param[in] p the pointer to the object to be deleted.                                                           \
-     */                                                                                                                \
-     /*lint -e{1511} This function will be redeclared in descendants */                                                \
-      static void operator delete(void *p);
 
-/**
- * This macro has to be inserted in every unit file.
- * The definition of the  _## className ## ClassRegistryItem variable will
- * instantiate a new ClassRegistryItem for every unit file compiled in the application.
- * Upon instantiation each ClassRegistryItem will automatically add itself to the ClassRegistryDatabase.
- * When required the ClassRegistryItem will instantiate new objects by asking the ClassRegistryItem
- * for the build function related to the class it is representing.
- * Note that new and delete are static functions and as a consequence they cannot call member
- * functions in the class (or its derived classes). Because their implementation is specific to the final
- * class they had to be written as part of the macro as well.
- */
-#define CLASS_REGISTER(className,ver)                                                                                  \
-    /*                                                                                                                 \
-     * Class properties of this class type. One instance per class type automatically instantiated at the start        \
-     * of an application or loading of a loadable library.                                                             \
-     * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
-     */                                                                                                                \
-    MARTe::ClassProperties className::classProperties( #className , typeid(className).name(), ver, static_cast<uint32>(sizeof(className)));                 \
-    /*  TODO                                                                                                           \
-     */                                                                                                                \
-    MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                              \
-        return ClassRegistryItemT<className>::Instance();                                                              \
-    }                                                                                                                  \
-    /*  TODO                                                                                                           \
-     */                                                                                                                \
-    MARTe::ClassRegistryItem * className::GetClassRegistryItem() const {                                               \
-        return GetClassRegistryItem_Static();                                                                          \
-    }                                                                                                                  \
-    /*                                                                                                                 \
-     * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
-     */                                                                                                                \
-    void * className::operator new(const size_t size, MARTe::HeapI* const heap) {                                      \
-        void *obj = NULL_PTR(void *);                                                                                  \
-        if (heap != NULL) {                                                                                            \
-            obj = heap->Malloc(static_cast<uint32>(size));                                                             \
-        } else {                                                                                                       \
-            obj = MARTe::HeapManager::Malloc(static_cast<uint32>(size));                                               \
-        }                                                                                                              \
-        GetClassRegistryItem_Static()->IncrementNumberOfInstances();                                                   \
-        return obj;                                                                                                    \
-    }                                                                                                                  \
-    /*                                                                                                                 \
-     * e.g. void *MyClassType::operator delete(void *p);                                                               \
-     */                                                                                                                \
-    void className::operator delete(void *p) {                                                                         \
-        bool ok = MARTe::HeapManager::Free(p);                                                                         \
-        if(!ok){                                                                                                       \
-            /* TODO error here */                                                                                      \
-        }                                                                                                              \
-        GetClassRegistryItem_Static()->DecrementNumberOfInstances();                                                   \
-    }
-
-#if 0
-    /*                                                                                                                 \
-     * @brief Returns the class properties associated with this class type.                                            \
-     * @param[in, out] destination the destination where to copy the class properties to.                              \
-     */                                                                                                                \
-     virtual const MARTe::ClassProperties *GetClassProperties() const;                                                 \
-    /*                                                                                                                 \
-     * @brief Returns the class properties associated with this class type.                                            \
-     * @param[in, out] destination the destination where to copy the class properties to.                              \
-     */                                                                                                                \
-     const MARTe::ClassProperties *GetClassProperties_Static() ;                                                       \
-
-
-/*                                                                                                                 \
-     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
-     */                                                                                                                \
-    const MARTe::ClassProperties *className::GetClassProperties_Static() {                                             \
-        return &classProperties;                                                                                       \
-    }                                                                                                                  \
-    /*                                                                                                                 \
-     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
-     */                                                                                                                \
-    const MARTe::ClassProperties *className::GetClassProperties() const {                                              \
-        return 0; /*className::GetClassProperties_Static();*/                                                          \
-    }
-#endif
-
-/*lint -restore */
+namespace MARTe {
+class StructuredDataI;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 /**
  * @brief The root object of the framework.
@@ -186,19 +63,33 @@ namespace MARTe {
  *  - Is introspectable and enables reflection of derived classes;
  *  - The allocation heap for the object can be selected by the end-user.
  */
-/*lint -e{9109} Object is forward declared in ClassRegistryItem (in order to be able to have access the function pointer to
- * create new instances.*/
+/*lint -e{9109} forward declaration of this class is required in other modules*/
 class DLL_API Object {
     /**
      * This allows the Reference class to be the only interface to manage the number of instances pointing to this object.
      */
     friend class Reference;
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Default constructor. Sets the number of references to zero.
+     * @post
+     *   GetName() == copy.GetName()
+     *   NumberOfReference() == 0
+     *   IsDomain() == false
      */
-    Object();
+Object    ();
+
+    /**
+     * @brief Copy constructor.
+     * @param[in] copy is the Object to be copied.
+     * @post
+     *   GetName() == copy.GetName()
+     *   NumberOfReference() == 0
+     *   IsDomain() == false
+     */
+    Object(const Object &copy);
 
     /**
      * @brief Virtual destructor. No operation.
@@ -219,12 +110,86 @@ public:
 
     //virtual bool ProcessMessage(const MessageI & message, MessageI & data);
 
-    // TODO
-    virtual bool ToStructuredData(StructuredDataI & data);
+    /**
+     * @brief Extracts the data of the object and puts it into an object which
+     * implements the StructuredDataI interface.
+     *
+     * @details The returned StructuredDataI object is a tree which contains
+     * a single node which represents the object's data. This node is named
+     * with the object's name and has a leaf for the object's class name, plus
+     * a leaf for each one of the class's members. If any of the members is of
+     * complex type, then a new node is created instead of a leaf and a subtree
+     * is created. This happens recursively for all members.
+     * Below is pseudogrammar representing the tree with a textual syntax,
+     * where "+" means a node and "-" a leaf. Each node has a name, while each
+     * leaf has a name and a value.
+     *
+     * root
+     *  |+<object's name>
+     *   |-"Class": <object's class name>
+     *   (|-<simple member's name>: <simple member's value>)*
+     *   (|+<complex member's name>
+     *     |-"Class": <object's class name>
+     *     (|-<simple submember's name>: <simple member's value>)*
+     *     (|+<complex submember's name>
+     *       |..)*)*
+     *
+     * @param[out] data The holder for the tree that contains the extracted
+     * data of the object.
+     */
+    virtual bool ExportData(StructuredDataI & data);
 
-    // TODO
-    virtual bool IntrospectionToStructuredData(StructuredDataI & data,
-                                               int32 level = -1);
+    /**
+     * @brief Extracts the metadata of the object and puts it into an object
+     * which implements the StructuredDataI interface.
+     *
+     * @details The returned StructuredDataI object is a tree which contains
+     * a single node which represents the object's metadata.  This node is
+     * named with the object's class name and has a sub node for each one of
+     * the class's members. Those sub nodes, which represent each one a member,
+     * have leaves for the metadata of the member, i.e. the type, the
+     * modifiers, the attributes, the size, and the pointer to the member's
+     * position. This happens recursively for all members, as deep as the
+     * level parameter allows.
+     * Below is pseudogrammar representing the tree with a textual syntax,
+     * where "+" means a node and "-" a leaf. Each node has a name, while each
+     * leaf has a name and a value.
+     *
+     * root
+     *  |+<object's class name>
+     *   (|+<member's name>
+     *     |-"type": <type's value>
+     *     |-"modifiers": <modifiers' value>
+     *     |-"attributes": <attributes' value>
+     *     |-"size": <size's value>
+     *     |-"pointer": <object's address>+<member's offset>)*
+     *
+     * @param[out] data The holder for the tree that contains the extracted
+     * metadata of the object.
+     * @param[in] level The level of recursion, hence the depth of the tree.
+     * Its values are between 0 and MAX_INT32. The -1 value means no limit,
+     * so it will export recursively all the metadata.
+     */
+    virtual bool ExportMetadata(StructuredDataI & data,
+            const int32 level = -1);
+
+    /**
+     * @brief Sets/unsets this object as a domain.
+     * @detail In a tree of objects, a domain object is a local root of a sub-tree.
+     * Domain objects are identified with a prefix $ in their name.
+     * @param[in] isDomainFlag true if the object is a domain.
+     * @post
+     *    IsDomain() == isDomainFlag
+     */
+    void SetDomain(const bool isDomainFlag);
+
+    /**
+     * @brief Returns true if this object is a domain.
+     * @details The definition of a domain is related to the ObjectRegistryDatabase. A domain object can be used as a start research point
+     * in ObjectRegistryDatabase::Find(*) to find objects in the ObjectRegistryDatabase.
+     * @return true if this object is a domain.
+     */
+    bool IsDomain() const;
 
     /**
      * @brief Returns the number of references.
@@ -251,7 +216,7 @@ public:
      * @param[in] size the size of the \a destination input string.
      */
     void GetUniqueName(char8 * const destination,
-                       const uint32 &size) const;
+            const uint32 &size) const;
 
     /**
      * @brief Sets the object name.
@@ -262,23 +227,28 @@ public:
     void SetName(const char8 * const newName);
 
     /**
-     * TODO
+     * @brief Calls a registered method without arguments.
+     * @param[in] methodName is the method name.
+     * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
+     * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
-    ReturnType CallRegisteredMethod(CCString methodName,ReferenceContainer & parameters);
+    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName);
+
+    /**
+     * @brief Calls a registered method with one argument.
+     * @param[in] methodName is the method name.
+     * @param[in] parameters is the method argument
+     * @tparam argType is the method argument type
+     * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
+     * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
+     */
+    template <typename argType>
+    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName,argType parameters);
 
     /*
      * @brief Returns the class properties associated with this class type.
      */
-     const ClassProperties *GetClassProperties() const;
-
-#if 0
-     /*
-      * @brief Returns the record containing all class information.
-      */
-     virtual ClassRegistryItem * GetClassRegistryItem() const = 0;
-#endif
-
-     CLASS_REGISTER_DECLARATION()
+    const ClassProperties *GetClassProperties() const;
 
 private:
 
@@ -310,20 +280,92 @@ private:
     static void *operator new(osulong size) throw ();
 
     /**
+     * @brief Extracts the data of an input object and puts it into an object
+     * which implements the StructuredDataI interface.
+     * @details The returned StructuredDataI object is a tree which contains a
+     * single node which represents the *ptr's data. This node is named with
+     * the value of the objName parameter and has a leaf with the className
+     * parameter as a value, plus a leaf for each one of the class's members.
+     * If any of the members is of complex type, then a new node is created
+     * instead of a leaf and a subtree is created. This happens recursively
+     * for all members.
+     * @param[in] ptr The pointer to the object whose data is expected to be
+     * extracted.
+     * @param[in] className The name of the class of the object pointed by ptr.
+     * @param[out] data The holder for the tree that contains the extracted
+     * data of the object.
+     * @param[in] objName The name of the object, i.e. the root's name.
+     */
+    bool ConvertDataToStructuredData(void* const ptr,
+            const char8* const className,
+            StructuredDataI& data,
+            const char8* const objName = NULL);
+
+    /**
+     * @brief Extracts the metadata of an input object and puts it into an
+     * object which implements the StructuredDataI interface.
+     * @details The returned StructuredDataI object is a tree which contains
+     * a single node which represents the *ptr's metadata.  This node is
+     * named with the className parameter and has a sub node for each one of
+     * the class's members. Those sub nodes, which represent each one a member,
+     * have leaves for the metadata of the member, i.e. the type, the
+     * modifiers, the attributes, the size, and the pointer to the member's
+     * position. This happens recursively for all members, as deep as the
+     * recursionlevel parameter allows.
+     * @param[in] ptr The pointer to the object whose metadata is expected to
+     * be extracted.
+     * @param[in] className The name of the class of the object pointed by ptr.
+     * @param[out] data The holder for the tree that contains the extracted
+     * metadata of the object.
+     * @param[in] level The level of recursion, hence the depth of the tree.
+     */
+    bool ConvertMetadataToStructuredData(void * const ptr,
+            const char8 * const className,
+            StructuredDataI &data,
+            const int32 recursionLevel = -1);
+
+    /**
      * The number of references to this object.
      */
-    volatile uint32 referenceCounter;
+    volatile int32 referenceCounter;
 
     /**
      * The name of this object.
      */
     char8 *name;
+
+    /**
+     * Specifies if the object is a domain
+     */
+    bool isDomain;
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+template<typename argType>
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName,
+                                                        argType parameters) {
+ErrorManagement::ErrorType ret;
+ClassRegistryItem * cri = GetClassRegistryItem();
+
+if (cri != NULL_PTR(ClassRegistryItem *)) {
+    ret = cri->CallRegisteredMethod<argType>(this, methodName, parameters);
+}
+else {
+    ret.internalSetupError = true;
+}
+
+return ret;
+
+}
+
+}
 
 #endif /* OBJECT_H_ */
 

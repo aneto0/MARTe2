@@ -1,8 +1,8 @@
 /**
  * @file TestObjectHelper3.h
  * @brief Header file for class TestObjectHelper3
- * @date 22/feb/2016
- * @author pc
+ * @date 22/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -45,6 +45,8 @@ public:
 
     NestedObjectHelper3();
 
+    virtual ~NestedObjectHelper3();
+
     int32 x;
 };
 
@@ -55,7 +57,7 @@ public:
 
     TestObjectHelper3();
 
-    ~TestObjectHelper3();
+    virtual ~TestObjectHelper3();
 
     uint32 a;
     const char8* b;

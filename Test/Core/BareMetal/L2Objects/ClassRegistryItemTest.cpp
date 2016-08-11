@@ -30,35 +30,70 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassRegistryItemTest.h"
+#include "ClassRegistryItemT.h"
 #include "MemoryCheck.h"
 #include "StringHelper.h"
 #include "ClassRegistryDatabase.h"
+#include "IntrospectionEntry.h"
+#include "Introspection.h"
+#include "LoadableLibrary.h"
+#include "Object.h"
 #include <typeinfo>
+#include "ReferenceContainer.h"
+#include "ClassWithCallableMethods.h"
+#include "ErrorType.h"
+#include "Reference.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-Object* dummyBuildFcn(HeapI * const h) {
-    Object *p = (Object*) HeapManager::Malloc(sizeof(Object));
-    char *pp = (char*) p;
-    (*pp) = 9;
-    return p;
-}
 
-static ClassProperties testClassPropertiesNormal("TestNormalCRI", typeid(Object).name(), "World");
+class MyObject: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+};
+CLASS_REGISTER(MyObject, "1.0")
+
+
+class MyObject2: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+};
+CLASS_REGISTER(MyObject2, "1.0")
+
+class DummyObjectBuilder: public ObjectBuilderT<MyObject2> {
+    Object *Build(HeapI* const heap) const {
+        Object *p = (Object*) HeapManager::Malloc(sizeof(MyObject2));
+        char *pp = (char*) p;
+        (*pp) = 9;
+        return p;
+    }
+};
+
+class TestIntrospectionCRI: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+};
+CLASS_REGISTER(TestIntrospectionCRI, "1.1")
+
+static DummyObjectBuilder dummyObjectBuilder;
+
+//static ClassProperties testClassPropertiesNormal("TestNormalCRI", typeid(Object).name(), "World");
 
 //myItem cannot be destroyed until the end of the execution of the program.
-static ClassRegistryItem myItem = ClassRegistryItem(testClassPropertiesNormal, dummyBuildFcn);
+static ClassRegistryItem myItem = *(ClassRegistryItemT<MyObject2>::Instance());
 
-static ClassProperties testClassPropertiesIntro("TestIntrospectionCRI", "TestIntrospectionCRI", "1.1");
+//static ClassProperties testClassPropertiesIntro("TestIntrospectionCRI", "TestIntrospectionCRI", "1.1");
 
 static IntrospectionEntry member1Field("member1", "uint32", "", "", 4, 0);
 
 static const IntrospectionEntry* fields[] = { &member1Field, 0 };
 static Introspection introspectionTest(fields, 4);
 
-static ClassRegistryItem myItemIntro(testClassPropertiesIntro, introspectionTest);
+static ClassRegistryItem myItemIntro = *(ClassRegistryItemT<TestIntrospectionCRI>::Instance());
 
-static ClassRegistryItem myItemFull(testClassPropertiesIntro, dummyBuildFcn, introspectionTest);
+static ClassRegistryItem myItemFull = *(ClassRegistryItemT<MyObject>::Instance());
+
+class ClassWithCallableMethods3: public ClassWithCallableMethods {};
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -79,29 +114,33 @@ bool ClassRegistryItemTest::TestConstructor() {
         return false;
     }
 
-    if (StringHelper::Compare((myItem.GetClassProperties())->GetName(), "TestNormalCRI") != 0) {
+    if (StringHelper::Compare((myItem.GetClassProperties())->GetName(), "MyObject2") != 0) {
         return false;
     }
 
-    if (StringHelper::Compare((myItem.GetClassProperties())->GetTypeIdName(), typeid(Object).name()) != 0) {
+    if (StringHelper::Compare((myItem.GetClassProperties())->GetTypeIdName(), typeid(MyObject2).name()) != 0) {
         return false;
     }
 
-    if (StringHelper::Compare((myItem.GetClassProperties())->GetVersion(), "World") != 0) {
+    if (StringHelper::Compare((myItem.GetClassProperties())->GetVersion(), "1.0") != 0) {
+        return false;
+    }
+
+    if (myItem.GetObjectBuilder() != &dummyObjectBuilder) {
         return false;
     }
 
     //checks if the class is in the database
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    if (db->Find("TestNormalCRI") == NULL) {
+    if (db->Find("TestNormalCRI") != NULL) {
         return false;
     }
 
     HeapI * h = NULL;
 
     //check if the correct function is saved
-    Object *instance = myItem.GetObjectBuildFunction()(h);
+    Object *instance = myItem.GetObjectBuilder()->Build(h);
 
     if (instance == NULL) {
         return false;
@@ -114,11 +153,18 @@ bool ClassRegistryItemTest::TestConstructor() {
 
     HeapManager::Free((void*&) instance);
 
+
+    myItemIntro.SetIntrospection(&introspectionTest);
+
+    myItemFull.SetIntrospection(&introspectionTest);
+//    myItemFull.SetObjectBuilder(&dummyObjectBuilder);
+
+
     return retVal;
 
 }
 
-bool ClassRegistryItemTest::TestIntrospectionCostructor() {
+bool ClassRegistryItemTest::TestIntrospectionConstructor() {
     // checks the attributes.
     if (myItemIntro.GetNumberOfInstances() != 0) {
         return false;
@@ -136,7 +182,7 @@ bool ClassRegistryItemTest::TestIntrospectionCostructor() {
         return false;
     }
 
-    if (StringHelper::Compare((myItemIntro.GetClassProperties())->GetTypeIdName(), "TestIntrospectionCRI") != 0) {
+    if (StringHelper::Compare((myItemIntro.GetClassProperties())->GetTypeIdName(), typeid(TestIntrospectionCRI).name()) != 0) {
         return false;
     }
 
@@ -144,7 +190,7 @@ bool ClassRegistryItemTest::TestIntrospectionCostructor() {
         return false;
     }
 
-    if (myItemIntro.GetObjectBuildFunction() != NULL) {
+    if (myItemIntro.GetObjectBuilder() == NULL) {
         return false;
     }
     //checks if the class is in the database
@@ -156,7 +202,7 @@ bool ClassRegistryItemTest::TestIntrospectionCostructor() {
     return true;
 }
 
-bool ClassRegistryItemTest::TestFullCostructor() {
+bool ClassRegistryItemTest::TestFullConstructor() {
     // checks the attributes.
     if (myItemFull.GetNumberOfInstances() != 0) {
         return false;
@@ -170,21 +216,18 @@ bool ClassRegistryItemTest::TestFullCostructor() {
         return false;
     }
 
-    if (StringHelper::Compare((myItemFull.GetClassProperties())->GetName(), "TestIntrospectionCRI") != 0) {
+    if (StringHelper::Compare((myItemFull.GetClassProperties())->GetName(), "MyObject") != 0) {
         return false;
     }
 
-    if (StringHelper::Compare((myItemFull.GetClassProperties())->GetTypeIdName(), "TestIntrospectionCRI") != 0) {
+    if (StringHelper::Compare((myItemFull.GetClassProperties())->GetTypeIdName(), typeid(MyObject).name()) != 0) {
         return false;
     }
 
-    if (StringHelper::Compare((myItemFull.GetClassProperties())->GetVersion(), "1.1") != 0) {
+    if (StringHelper::Compare((myItemFull.GetClassProperties())->GetVersion(), "1.0") != 0) {
         return false;
     }
 
-    if (myItemFull.GetObjectBuildFunction() != dummyBuildFcn) {
-        return false;
-    }
     //checks if the class is in the database
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
@@ -194,24 +237,51 @@ bool ClassRegistryItemTest::TestFullCostructor() {
     return true;
 }
 
-bool ClassRegistryItemTest::TestDestructor() {
+//bool ClassRegistryItemTest::TestDestructor() {
+//
+//    //Checks if the class is in the database. The item cannot be destroyed until the end of the execution of the program.
+//    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+//
+//    if (db->Find("TestNormalCRI") != NULL) {
+//        return false;
+//    }
+//
+//    //Create a LoadableLibray
+//    const LoadableLibrary *dummy = new LoadableLibrary();
+//    myItem.SetLoadableLibrary(dummy);
+//
+//    myItem.~ClassRegistryItem();
+//    dummy = myItem.GetLoadableLibrary();
+//
+//    //checks that dummy was destructed
+//    return (dummy == NULL);
+//}
 
-    //Checks if the class is in the database. The item cannot be destroyed until the end of the execution of the program.
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+bool ClassRegistryItemTest::TestRegisterMethods() {
+    bool result = true;
 
-    if (db->Find("TestNormalCRI") == NULL) {
-        return false;
+    //Sets the target of this test to the global ClassRegistryItem of ClassWithCallableMethods3
+    ClassRegistryItem* const target = ClassRegistryItemT<ClassWithCallableMethods3>::Instance();
+
+    //Specifies the methods to be registered
+    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods3::MethodWithInputInteger };
+    const char* names = "&ClassWithCallableMethods3::MethodWithInputInteger";
+    ClassMethodsRegistryItem cmri(NULL, cmim, names);
+
+    //Registers the methods specified in cmri to be registered
+    target->RegisterMethods(&cmri);
+
+    //Check if the method has been registered (calling it)
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 10;
+        status = target->CallRegisteredMethod<int&>(&context, "MethodWithInputInteger", params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "MethodWithInputInteger(int&)");
     }
 
-    //Create a LoadableLibray
-    const LoadableLibrary *dummy = new LoadableLibrary();
-    myItem.SetLoadableLibrary(dummy);
-
-    myItem.~ClassRegistryItem();
-    dummy = myItem.GetLoadableLibrary();
-
-    //checks that dummy was destructed
-    return (dummy == NULL);
+    return result;
 }
 
 bool ClassRegistryItemTest::TestIncrementNumberOfInstances() {
@@ -265,9 +335,9 @@ bool ClassRegistryItemTest::TestGetClassPropertiesCopy() {
 
     myItem.GetClassPropertiesCopy(propertiesCopy);
 
-    bool ok = (StringHelper::Compare(propertiesCopy.GetName(), "TestNormalCRI") == 0);
-    ok &= (StringHelper::Compare(propertiesCopy.GetTypeIdName(), typeid(Object).name()) == 0);
-    ok &= (StringHelper::Compare(propertiesCopy.GetVersion(), "World") == 0);
+    bool ok = (StringHelper::Compare(propertiesCopy.GetName(), "MyObject2") == 0);
+    ok &= (StringHelper::Compare(propertiesCopy.GetTypeIdName(), typeid(MyObject2).name()) == 0);
+    ok &= (StringHelper::Compare(propertiesCopy.GetVersion(), "1.0") == 0);
     return ok;
 }
 
@@ -275,9 +345,9 @@ bool ClassRegistryItemTest::TestGetClassProperties() {
 
     const ClassProperties *propertiesCopy = myItem.GetClassProperties();
 
-    bool ok = (StringHelper::Compare(propertiesCopy->GetName(), "TestNormalCRI") == 0);
-    ok &= (StringHelper::Compare(propertiesCopy->GetTypeIdName(), typeid(Object).name()) == 0);
-    ok &= (StringHelper::Compare(propertiesCopy->GetVersion(), "World") == 0);
+    bool ok = (StringHelper::Compare(propertiesCopy->GetName(), "MyObject2") == 0);
+    ok &= (StringHelper::Compare(propertiesCopy->GetTypeIdName(), typeid(MyObject2).name()) == 0);
+    ok &= (StringHelper::Compare(propertiesCopy->GetVersion(), "1.0") == 0);
     return ok;
 }
 
@@ -298,13 +368,13 @@ bool ClassRegistryItemTest::TestSetGetLoadableLibrary(const char8 *llname) {
 
 bool ClassRegistryItemTest::TestGetObjectBuildFunction() {
 
-    if (myItem.GetObjectBuildFunction() != dummyBuildFcn) {
+    if (myItem.GetObjectBuilder() != &dummyObjectBuilder) {
         return false;
     }
 
     HeapI * h = NULL;
     //call the function to see if it behaves as expected
-    Object* instance = myItem.GetObjectBuildFunction()(h);
+    Object* instance = myItem.GetObjectBuilder()->Build(h);
     bool retVal = true;
     if ((*((char*) instance)) != 9) {
         retVal = false;
@@ -318,6 +388,149 @@ bool ClassRegistryItemTest::TestGetObjectBuildFunction() {
 bool ClassRegistryItemTest::TestGetIntrospection() {
 
     return myItemIntro.GetIntrospection() == &introspectionTest;
+}
+
+bool ClassRegistryItemTest::TestCallRegisteredMethod() {
+    bool result = true;
+    ClassRegistryItem* target = ClassRegistryItemT<ClassWithCallableMethods>::Instance();
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "NonRegisteredMethod", params);
+        result &= status.unsupportedFeature;
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "FaultyMethod", params);
+        result &= status.functionError;
+        result &= (context.GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        status = target->CallRegisteredMethod(&context, "OverloadedMethod");
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod()");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 0;
+        status = target->CallRegisteredMethod<int&>(&context, "OverloadedMethod", params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(int&)");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "OverloadedMethod", params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 10;
+        status = target->CallRegisteredMethod<int&>(&context, "MethodWithInputInteger", params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "MethodWithInputInteger(int&)");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 0;
+        status = target->CallRegisteredMethod<int&>(&context, "MethodWithOutputInteger", params);
+        result &= status;
+        result &= (params == 20);
+        result &= (context.GetLastMethodExecuted() == "MethodWithOutputInteger(int&)");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 30;
+        status = target->CallRegisteredMethod<int&>(&context, "MethodWithInputOutputInteger", params);
+        result &= status;
+        result &= (params == (30 + 5));
+        result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputInteger(int&)");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("TestObject", obj);
+        if (success) {
+            status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodWithInputReferenceContainer", params);
+            result &= status;
+            result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainer(MARTe::ReferenceContainer&)");
+        }
+        else {
+            result = false;
+        }
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        Reference obj;
+        status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodWithOutputReferenceContainer", params);
+        result &= status;
+        obj = params.Find("TestObject2");
+        result &= obj.IsValid();
+        result &= (context.GetLastMethodExecuted() == "MethodWithOutputReferenceContainer(MARTe::ReferenceContainer&)");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("TestObject", obj);
+        if (success) {
+            Reference objDel;
+            Reference objNew;
+            status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodWithInputOutputReferenceContainer", params);
+            result &= status;
+            objDel = params.Find("TestObject");
+            result &= !objDel.IsValid();
+            objNew = params.Find("TestObject2");
+            result &= objNew.IsValid();
+            result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer&)");
+        }
+        else {
+            result = false;
+        }
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        int params = 80;
+        status = target->CallRegisteredMethod<int>(&context, "MethodWithInputIntegerByCopy", params);
+        result &= status;
+        result &= (context.GetLastMethodExecuted() == "MethodWithInputIntegerByCopy(int)");
+    }
+    {
+        ErrorManagement::ErrorType status;
+        ClassWithCallableMethods context;
+        ReferenceContainer params;
+        Reference obj("Object");
+        bool success;
+        success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
+        if (success) {
+            status = target->CallRegisteredMethod<ReferenceContainer>(&context, "MethodWithInputReferenceContainerByCopy", params);
+            result &= status;
+            result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer)");
+        }
+        else {
+            result = false;
+        }
+    }
+    return result;
 }
 
 bool ClassRegistryItemTest::TestSetUniqueIdentifier(uint32 uid) {

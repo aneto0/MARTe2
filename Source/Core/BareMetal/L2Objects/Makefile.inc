@@ -26,8 +26,11 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  AnyType.x\
-                ClassMethodsRegistryItem.x \
+OBJSX=  AnyType.x \
+		CallRegisteredMethodLauncher.x \
+        ClassMethodsRegistryItem.x \
+        ClassMethodCaller.x\
+        ClassMethodInterfaceMapper.x\
 		ClassProperties.x \
 		ClassRegistryDatabase.x \
 		ClassRegistryItem.x \
@@ -40,13 +43,7 @@ OBJSX=  AnyType.x\
 		ReferenceContainerNode.x \
 		ReferenceContainerFilter.x \
 		ReferenceContainerFilterReferences.x \
-		ReferenceContainerFilterObjectName.x \
-		ReferenceT.x
-
-# Envelope.x \
-#		MessageI.x \
-#        MessageBroker.x \
-
+		ReferenceContainerFilterObjectName.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

@@ -1,8 +1,8 @@
 /**
  * @file TestObjectHelper3.cpp
  * @brief Source file for class TestObjectHelper3
- * @date 22/feb/2016
- * @author pc
+ * @date 22/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -25,20 +25,30 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <typeinfo>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassRegistryItemT.h"
+#include "HeapManager.h"
+#include "StringHelper.h"
 #include "TestObjectHelper3.h"
+#include "IntrospectionT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+CLASS_REGISTER(TestObjectHelper3, "1.0")
+
+CLASS_REGISTER(NestedObjectHelper3, "1.0")
+
 DECLARE_CLASS_MEMBER(NestedObjectHelper3, x, int32, "", "nested");
 
 static const IntrospectionEntry* nestedObj3[] = { &NestedObjectHelper3_x_introspectionEntry, 0 };
 DECLARE_CLASS_INTROSPECTION(NestedObjectHelper3, nestedObj3);
-CLASS_INTROSPECTION_REGISTER(NestedObjectHelper3, "1.0", NestedObjectHelper3_introspection)
+//CLASS_INTROSPECTION_REGISTER(NestedObjectHelper3, "1.0", NestedObjectHelper3_introspection)
 
 DECLARE_CLASS_MEMBER(TestObjectHelper3, a, uint32, "", "hello");
 
@@ -54,7 +64,7 @@ static const IntrospectionEntry* fieldsObj3[] = { &TestObjectHelper3_a_introspec
         &TestObjectHelper3_c_introspectionEntry, &TestObjectHelper3_d_introspectionEntry, &TestObjectHelper3_e_introspectionEntry, 0 };
 
 DECLARE_CLASS_INTROSPECTION(TestObjectHelper3, fieldsObj3);
-CLASS_INTROSPECTION_REGISTER(TestObjectHelper3, "1.0", TestObjectHelper3_introspection)
+//CLASS_INTROSPECTION_REGISTER(TestObjectHelper3, "1.0", TestObjectHelper3_introspection)
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -80,3 +90,6 @@ NestedObjectHelper3::NestedObjectHelper3() {
     x = 4;
 }
 
+NestedObjectHelper3::~NestedObjectHelper3() {
+
+}

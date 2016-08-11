@@ -354,7 +354,8 @@ bool BasicTCPSocket::Read(char8* const output,
         else {
             bool ewouldblock = (sock_errno() == EWOULDBLOCK);
             bool eagain = (sock_errno() == EAGAIN);
-            if ((ewouldblock || eagain) && (IsBlocking())) {
+            bool blocking = IsBlocking();
+            if ((ewouldblock || eagain) && (blocking)) {
                 REPORT_ERROR(ErrorManagement::Timeout, "BasicTCPSocket: Timeout expired in recv()");
             }
             else {
@@ -383,7 +384,8 @@ bool BasicTCPSocket::Write(const char8* const input,
         else {
             bool ewouldblock = (sock_errno() == EWOULDBLOCK);
             bool eagain = (sock_errno() == EAGAIN);
-            if ((ewouldblock || eagain) && (IsBlocking())) {
+            bool blocking = IsBlocking();
+            if ((ewouldblock || eagain) && (blocking)) {
                 REPORT_ERROR(ErrorManagement::Timeout, "BasicTCPSocket: Timeout expired in send()");
             }
             else {

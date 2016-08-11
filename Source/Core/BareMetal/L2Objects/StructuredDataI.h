@@ -31,14 +31,23 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "AnyType.h"
+
+/*---------------------------------------------------------------------------*/
+/*                         Forward declarations                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+class Reference;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-class DLL_API Reference;
+
 /**
  * @brief Interface definition for any database that can store and retrieve AnyType values.
  * @details Classes that implement this interface are capable of storing and retrieving,
@@ -63,13 +72,14 @@ class DLL_API Reference;
  * - The database shall know at any time what is the current node (i.e. the node against which the latest Move or
  * Create operation was performed).
  */
+/*lint -e{9109} forward declaration of this class is required in other modules*/
 class DLL_API StructuredDataI {
 public:
+
     /**
-     * Default destructor. NOOP.
+     * @brief Destructor.
      */
-    virtual ~StructuredDataI() {
-    }
+    virtual ~StructuredDataI();
 
     /**
      * @brief Reads a previously stored AnyType. The node with this name has to be a child of the current node.
@@ -82,9 +92,6 @@ public:
      */
     virtual bool Read(const char8 * const name,
                       const AnyType &value) = 0;
-
-
- //   virtual Reference Read(const char8* const name)=0;
 
     /**
      * @brief Gets the type of a previously stored AnyType.
@@ -106,9 +113,7 @@ public:
     virtual bool Write(const char8 * const name,
                        const AnyType &value) = 0;
 
-
-   // virtual bool Write(const Reference &reference)=0;
-
+    // virtual bool Write(const Reference &reference)=0;
 
     /**
      * @brief Copies the content of the current node to the provided destination.
@@ -212,15 +217,22 @@ public:
     /**
      * @brief Automatic cast to AnyType.
      */
-    inline operator AnyType();
+    operator AnyType();
 
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-StructuredDataI::operator AnyType() {
+namespace MARTe {
+
+inline StructuredDataI::~StructuredDataI() {
+}
+
+inline StructuredDataI::operator AnyType() {
     AnyType anyTypeConversion(StructuredDataInterfaceType, 0u, this);
     return anyTypeConversion;
 }
@@ -228,4 +240,3 @@ StructuredDataI::operator AnyType() {
 }
 
 #endif /* CONFIGURATION_DATABASE_H_ */
-

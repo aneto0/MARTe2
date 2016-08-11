@@ -49,6 +49,7 @@ FastPollingMutexSem::FastPollingMutexSem() {
 }
 
 FastPollingMutexSem::FastPollingMutexSem(volatile int32 &externalFlag) {
+    internalFlag = 0;
     flag = &externalFlag;
 }
 
@@ -65,9 +66,9 @@ bool FastPollingMutexSem::Locked() const {
     return *flag == 1;
 }
 
-ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msecTimeout,
+ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &timeout,
                                                          float64 sleepTime ) {
-    uint64 ticksStop = msecTimeout.HighResolutionTimerTicks();
+    uint64 ticksStop = timeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
 
@@ -78,7 +79,7 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msec
     bool noSleep = IsEqual(sleepTime, 0.0);
 
     while (!Atomic::TestAndSet(flag)) {
-        if (msecTimeout != TTInfiniteWait) {
+        if (timeout != TTInfiniteWait) {
             uint64 ticks = HighResolutionTimer::Counter();
             if (ticks > ticksStop) {
                 err = ErrorManagement::Timeout;

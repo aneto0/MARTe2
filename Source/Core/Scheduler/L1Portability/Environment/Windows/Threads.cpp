@@ -317,7 +317,6 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
     return (ThreadIdentifier) threadId;
 }
 
-
 void EndThread() {
 }
 

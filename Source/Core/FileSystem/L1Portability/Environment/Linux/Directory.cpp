@@ -48,14 +48,22 @@ namespace MARTe {
 Directory::Directory(const char8 * const path) :
         LinkedListable() {
 
-    fname = StringHelper::StringDup(path);
+    if (path != NULL) {
+        fname = StringHelper::StringDup(path);
 
-    // fill the struct with the file informations
-    if (stat(path, &directoryHandle) != 0) {
-        //errno = 2 => No such file or directory
-        if (errno != 2) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
+        // fill the struct with the file informations
+        if (stat(path, &directoryHandle) != 0) {
+            //errno = 2 => No such file or directory
+            if (errno != 2) {
+                REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
+            }
         }
+    }
+    else {
+        if(!MemoryOperationsHelper::Set(&directoryHandle, '\0', static_cast<uint32>(sizeof(DirectoryCore)))) {
+            REPORT_ERROR(ErrorManagement::Warning, "Failed initialization of directory handle");
+        }
+        fname=NULL_PTR(char8*);
     }
     /*
      directoryHandle.st_dev = 0u; // ID of device containing file
@@ -85,8 +93,7 @@ Directory::~Directory() {
 }
 
 bool Directory::SetByName(const char8 * const path) {
-    bool ret = true;
-
+    bool ret = (path != NULL);
     if (fname != NULL) {
         if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
             ret = false;
@@ -118,7 +125,7 @@ bool Directory::IsFile() const {
 
 uint64 Directory::GetSize() {
     uint64 size = 0u;
-    if (stat(GetName(), &directoryHandle ) == 0) {
+    if (stat(GetName(), &directoryHandle) == 0) {
         size = static_cast<uint64>(directoryHandle.st_size);
     }
     return size;
@@ -126,15 +133,15 @@ uint64 Directory::GetSize() {
 
 TimeStamp Directory::GetLastWriteTime() {
     TimeStamp timeStamp;
-    
+
     if (stat(GetName(), &directoryHandle) == 0) {
         time_t secondsFromEpoch32 = static_cast<time_t>(directoryHandle.st_mtime);
-        if(!timeStamp.ConvertFromEpoch(secondsFromEpoch32)){
+        if (!timeStamp.ConvertFromEpoch(secondsFromEpoch32)) {
             REPORT_ERROR(ErrorManagement::FatalError, "Error: Failed TimeStamp::ConvertFromEpoch");
         }
     }
     else {
-    	REPORT_ERROR(ErrorManagement::OSError, "Error: stat()");
+        REPORT_ERROR(ErrorManagement::OSError, "Error: stat()");
     }
 
     return timeStamp;
@@ -144,14 +151,14 @@ TimeStamp Directory::GetLastAccessTime() {
     TimeStamp timeStamp;
     if (stat(GetName(), &directoryHandle) == 0) {
         time_t secondsFromEpoch32 = static_cast<int32>(directoryHandle.st_atime);
-	if(!timeStamp.ConvertFromEpoch(secondsFromEpoch32)){
+        if (!timeStamp.ConvertFromEpoch(secondsFromEpoch32)) {
             REPORT_ERROR(ErrorManagement::FatalError, "Error: Failed TimeStamp::ConvertFromEpoch");
         }
-    } 
+    }
     else {
         REPORT_ERROR(ErrorManagement::OSError, "Error: stat()");
     }
-    
+
     return timeStamp;
 }
 
@@ -161,7 +168,7 @@ bool Directory::Create(const bool isFile) {
     if (ret) {
         if (isFile) {
             /*lint -e{9130} -e{9117} [MISRA C++ Rule 5-0-21]  [MISRA C++ Rule 5-0-4]. Justification: Operating system APIs are not linted.*/
-            int32 fd = open(fname, static_cast<mode_t>(00777|O_EXCL|O_CREAT|O_WRONLY|O_TRUNC));
+            int32 fd = open(fname, static_cast<mode_t>(00777 | O_EXCL | O_CREAT | O_WRONLY | O_TRUNC));
             if (fd < 0) {
                 ret = false;
                 REPORT_ERROR(ErrorManagement::OSError, "Error: Failed creat()");

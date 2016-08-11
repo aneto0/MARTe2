@@ -177,10 +177,10 @@ public:
      */
     bool TestGetClassProperties();
 
-    /**
-     * @brief Tests the GetClassPropertiesCopy (from Object)
-     */
-    bool TestGetClassPropertiesCopy();
+//    /**
+//     * @brief Tests the GetClassPropertiesCopy (from Object)
+//     */
+//    bool TestGetClassPropertiesCopy();
 
     /**
      * @brief Tests the TestGetObjectBuildFunction (from Object)

@@ -21,6 +21,8 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -30,6 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Message.h"
+#include "ClassRegistryItemT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,35 +44,108 @@
 
 namespace MARTe {
 
-bool Message::Initialise(StructuredDataI &data){
-    bool ret = true;
+Message::Message() :
+        ReferenceContainer(),
+        sender(),
+        destination(),
+        function(),
+        maxWait(),
+        flags() {
+}
 
-    // TODO handle errors
-    ret = data.Read("Destination",destination);
+Message::~Message() {
+}
 
-    // TODO handle errors
-    ret &= data.Read("Function",function);
+void Message::MarkAsReply(const bool flag) {
+    flags.isReply = flag;
+}
 
-    uint32 msecWait;
-    if (data.Read("MaxWait",msecWait)){
-        maxWait = msecWait;
-    } else {
-        maxWait = TTInfiniteWait;
-        // TODO warning about maxWait set to infinite
+void Message::MarkImmediateReplyExpected(const bool flag) {
+    flags.expectsReply = flag;
+    flags.expectsImmediateReply = flag;
+}
+
+void Message::MarkLateReplyExpected(const bool flag) {
+    flags.expectsReply = flag;
+    if (flag) {
+        flags.expectsImmediateReply = false;
     }
+}
 
-    StreamString messageFlags;
-    if (data.Read("Mode",messageFlags)){
-        flags = MessageFlags(messageFlags.Buffer());
-    } else {
-        // TODO warning about flags set to default
+bool Message::ReplyExpected() const {
+    return (flags.expectsReply);
+}
+
+bool Message::ImmediateReplyExpected() const {
+    bool expectsReply = flags.expectsReply;
+    bool expectsImmediateReply = flags.expectsImmediateReply;
+    return (expectsReply && expectsImmediateReply);
+}
+
+bool Message::LateReplyExpected() const {
+    bool expectsReply = flags.expectsReply;
+    bool expectsImmediateReply = flags.expectsImmediateReply;
+    return (expectsReply && (!expectsImmediateReply));
+}
+
+bool Message::IsReplyMessage() const {
+    return flags.isReply;
+}
+
+CCString Message::GetDestination() {
+    return destination.Buffer();
+}
+
+bool Message::Initialise(StructuredDataI &data) {
+    bool ret = (ReferenceContainer::Initialise(data));
+    if (ret) {
+
+        // TODO handle errors
+        ret = data.Read("Destination", destination);
+
+        if (ret) {
+            // TODO handle errors
+            ret = data.Read("Function", function);
+        }
+        if (ret) {
+            uint32 msecWait;
+            if (data.Read("MaxWait", msecWait)) {
+                maxWait = msecWait;
+            }
+            else {
+                maxWait = TTInfiniteWait;
+                // TODO warning about maxWait set to infinite
+            }
+
+            StreamString messageFlags;
+            if (data.Read("Mode", messageFlags)) {
+                flags = MessageFlags(messageFlags.Buffer());
+            }
+            else {
+                // TODO warning about flags set to default
+            }
+        }
+
     }
-
-    ret &= ReferenceContainer::Initialise(data);
 
     return ret;
 }
 
+Message::MessageFlags::MessageFlags() {
+    expectsReply = false;
+    expectsImmediateReply = false;
+    isReply = false;
+}
 
-	
+Message::MessageFlags::MessageFlags(CCString asString) {
+    expectsReply = (StringHelper::Compare(asString.GetList(), "ExpectsReply") == 0);
+    expectsImmediateReply = (StringHelper::Compare(asString.GetList(), "ExpectsImmediateReply") == 0);
+    if (bool(expectsImmediateReply)) {
+        expectsReply = true;
+    }
+    isReply = false;
+}
+
+CLASS_REGISTER(Message, "1.0")
+
 }

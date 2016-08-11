@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class ClassRegistryItem
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -31,27 +31,33 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "HeapI.h"
+
+#include "CallRegisteredMethodLauncherT.h"
 #include "LinkedListHolderT.h"
-#include "LoadableLibrary.h"
-#include "ClassProperties.h"
-#include "FractionalInteger.h"
-#include "ObjectBuilder.h"
+#include "FractionalInteger.h"    //using ClassUID typedef
 #include "CString.h"
-#include "ReturnType.h"
+#include "LinkedListable.h"
+
+/*---------------------------------------------------------------------------*/
+/*                         Forward declarations                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+/*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
+class Object;
+class ClassMethodsRegistryItem;
+class ClassProperties;
+class Introspection;
+class LoadableLibrary;
+class ObjectBuilder;
+class ReferenceContainer;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-class Introspection;
-class ClassMethodsRegistryItem;
-class ReferenceContainer;
-
-/*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
-class Object;
 
 /**
  * @brief Descriptor of framework base classes.
@@ -60,15 +66,13 @@ class Object;
  * Every class that inherits from Object will be described by a ClassRegistryItem and
  * automatically added to a ClassRegistryDatabase.
  */
-class DLL_API ClassRegistryItem {
+class DLL_API ClassRegistryItem: public LinkedListable {
 public:
 
-
     /**
-     * Destructor.
-     * Responsible for destroying the assigned loadable library.
+     * @brief Destructor. Responsible for destroying the assigned loadable library.
      */
-    ~ClassRegistryItem();
+    virtual ~ClassRegistryItem();
 
     /**
      * @brief Increments the number of instantiated objects of the class type represented by this registry item.
@@ -101,9 +105,11 @@ public:
     const ClassProperties *GetClassProperties() const;
 
     /**
-     * todo
+     * @brief Adds the introspection data.
+     * @param[in] introspectioIn is the pointer to the object containing the informations
+     * about the registered class attributes.
      */
-    void SetIntrospection(Introspection *introspectionIn);
+    void SetIntrospection(const Introspection * const introspectionIn);
 
     /**
      * @brief Returns a pointer to the class introspection.
@@ -124,13 +130,20 @@ public:
     const LoadableLibrary *GetLoadableLibrary() const;
 
     /**
-     * todo
+     * @brief Adds a list of registered class methods.
+     * @param[in] classMethodRecord contains a list of registered class methods
+     * to add to the class registry item instance. The class of this argument
+     * must be a descendant of LinkedListable.
      */
-    void RegisterMethods(ClassMethodsRegistryItem *classMethodRecord);
+    void RegisterMethods(ClassMethodsRegistryItem * const classMethodRecord);
+
     /**
-     * todo
+     * @brief Sets the object builder defining the way to allocate the memory when creating a new
+     * instance of the registered class.
+     * @param[in] objectBuilderIn is the object builder to be used to build new instances of the
+     * registered class.
      */
-    void SetObjectBuilder(ObjectBuilder *objectBuilderIn);
+    void SetObjectBuilder(const ObjectBuilder * const objectBuilderIn);
 
     /**
      * @brief Returns a pointer to object build function.
@@ -147,13 +160,39 @@ public:
     void SetUniqueIdentifier(const ClassUID &uid);
 
     /**
-     * TODO
+     * @brief Calls a registered method of the registered class without arguments.
+     * @param[in] object is the object which must call the method.
+     * @param[in] methodName is the name of the class method to be called.
+     * @return the status value of the execution, being one of the following:
+     * + ErrorManagement::UnsupportedFeature if \a methodName is not
+     * + registered or the class has not declared the method;
+     * + ErrorManagement::FatalError if the class method returns false;
+     * + ErrorManagement::NoError if the class method returns true.
      */
-    ReturnType CallRegisteredMethod(Object *object,CCString methodName,ReferenceContainer & parameters);
+    ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
+                                                    CCString methodName);
+
+    /**
+     * @brief Calls a registered method of the registered class with one argument.
+     * @tparam argType is the type of the class method argument.
+     * @param[in] object is the object which must call the method.
+     * @param[in] methodName is the name of the class method to be called.
+     * @param[in] parameters is the class method argument.
+     * @return the status value of the execution, being one of the following:
+     * + ErrorManagement::UnsupportedFeature if \a methodName is not
+     * + registered or the class has not declared the method;
+     * + ErrorManagement::FatalError if the class method returns false;
+     * + ErrorManagement::NoError if the class method returns true.
+     */
+    template<typename argType>
+    ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
+                                                    CCString methodName,
+                                                    argType parameters);
 
 protected:
+
     /**
-    // singleton approach - usable only by descendant methods
+     // singleton approach - usable only by descendant methods
      * @brief Default constructor
      */
     ClassRegistryItem(ClassProperties &classProperties_in);
@@ -162,9 +201,11 @@ protected:
      * common code
      * static ptr is specialised in the templetised descendant
      */
-    static ClassRegistryItem *Instance(ClassRegistryItem *&instance,ClassProperties &classProperties_in);
+    static ClassRegistryItem *Instance(ClassRegistryItem *&instance,
+                                       ClassProperties &classProperties_in);
 
 private:
+
     /**
      * The properties of the class represented by this registry item.
      */
@@ -173,7 +214,7 @@ private:
     /**
      * The number of instantiated objects of the class type represented by this registry item.
      */
-    uint32 numberOfInstances;
+    volatile int32 numberOfInstances;
 
     /**
      * Library (dll) holding the class type represented by this registry item.
@@ -186,52 +227,54 @@ private:
      */
     const ObjectBuilder *objectBuilder;
 
-
     /**
      * The introspection associated to the class.
      */
     const Introspection *introspection;
 
     /**
-     * TODO
-     * */
-    LinkedListHolderT<ClassMethodsRegistryItem> classMethods;
+     * A list of lists of registered class methods.
+     */
+    LinkedListHolderT<ClassMethodsRegistryItem, false> classMethods;
 
 };
-
-
-
-/**
- * TODO
- */
-template <class T>
-class ClassRegistryItemT: public ClassRegistryItem{
-
-public:
-
-    /**
-     * TODO
-     */
-    ClassRegistryItemT( ClassProperties &classProperties_in): ClassRegistryItem(classProperties_in){}
-
-    /**
-     * @brief Singleton access to the database.
-     * @return a reference to the database.
-     * TODO
-     */
-    static inline ClassRegistryItem *Instance(){
-        static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
-        return ClassRegistryItem::Instance(instance,T::classProperties);
-    }
-
-
-};
-
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+template<typename argType>
+ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object * const object,
+                                                                   CCString methodName,
+                                                                   argType parameters) {
+    ErrorManagement::ErrorType ret;
+
+    if (object == NULL_PTR(Object*)) {
+        ret.parametersError = true;
+    }
+
+    if (methodName.GetList() == NULL_PTR(char8*)) {
+        ret.parametersError = true;
+    }
+
+    if (ret.NoError()) {
+        // search in the list the first function returning without unsupported feature
+        CallRegisteredMethodLauncherT<argType> launcher(object, methodName, parameters);
+        if (classMethods.ListSearch(&launcher)) {
+            ret = launcher.GetResults();
+        }
+        else {
+            ret.unsupportedFeature = true;
+        }
+    }
+    return ret;
+}
+
+}
 
 #endif /* CLASSREGISTRYITEM_H_ */
 

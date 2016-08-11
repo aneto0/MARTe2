@@ -69,25 +69,23 @@ bool VectorTest::TestConstructorCreateOnHeap(uint32 nElements) {
     return true;
 }
 
-
-
 bool VectorTest::TestGetNumberOfElements() {
 
     const uint32 nElements = 32;
-
+    bool ret = true;
     int32 staticArray[nElements];
 
     Vector<int32> vector1(staticArray);
 
     if (vector1.GetNumberOfElements() != nElements) {
-        return false;
+        ret = false;
     }
 
     int32 *staticPointer = staticArray;
     Vector<int32> vector2(staticPointer, nElements);
 
     if (vector2.GetNumberOfElements() != nElements) {
-        return false;
+        ret = false;
     }
 
     int32 *heapPointer = (int32*) HeapManager::Malloc(sizeof(int32) * nElements);
@@ -95,31 +93,32 @@ bool VectorTest::TestGetNumberOfElements() {
     Vector<int32> vector3(heapPointer, nElements);
 
     if (vector3.GetNumberOfElements() != nElements) {
-        return false;
+        ret = false;
     }
 
     Vector<int32> vector4(nElements);
 
-    return (vector4.GetNumberOfElements() == nElements);
-
+    ret &= (vector4.GetNumberOfElements() == nElements);
+    HeapManager::Free((void*&) heapPointer);
+    return ret;
 }
 
 bool VectorTest::TestGetDataPointer() {
     const uint32 nElements = 32;
-
+    bool ret=true;
     int32 staticArray[nElements];
 
     Vector<int32> vector1(staticArray);
 
     if (vector1.GetDataPointer() != staticArray) {
-        return false;
+        ret= false;
     }
 
     int32 *staticPointer = staticArray;
     Vector<int32> vector2(staticPointer, nElements);
 
     if (vector2.GetDataPointer() != staticPointer) {
-        return false;
+        ret= false;
     }
 
     int32 *heapPointer = (int32*) HeapManager::Malloc(sizeof(int32) * nElements);
@@ -127,13 +126,14 @@ bool VectorTest::TestGetDataPointer() {
     Vector<int32> vector3(heapPointer, nElements);
 
     if (vector3.GetDataPointer() != heapPointer) {
-        return false;
+        ret= false;
     }
 
     Vector<int32> vector4(nElements);
 
-    return (vector4.GetDataPointer() != NULL);
-
+    ret&= (vector4.GetDataPointer() != NULL);
+    HeapManager::Free((void*&) heapPointer);
+    return ret;
 }
 
 bool VectorTest::TestVectorOperator_Static() {
@@ -168,9 +168,11 @@ bool VectorTest::TestVectorOperator_Heap() {
 
     for (uint32 i = 0; i < nElements; i++) {
         if (array[i] != vector1[i]) {
+            HeapManager::Free((void*&)array);
             return false;
         }
     }
+    HeapManager::Free((void*&)array);
     return true;
 }
 

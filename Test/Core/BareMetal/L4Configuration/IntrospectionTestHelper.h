@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
+#include "Object.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -90,7 +91,9 @@ struct TestIntrospectionObjectNoCompatibility {
 /**
  * @brief Utility for tests which uses Introspection
  */
-struct TestNoIntrospectionObject {
+class TestNoIntrospectionObject: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
     uint32 member1_from;
     float32 *member2_from;
     float64 member3_from[32];

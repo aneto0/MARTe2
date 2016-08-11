@@ -31,7 +31,17 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
+
+#include "SearchFilter.h"
+
+/*---------------------------------------------------------------------------*/
+/*                         Forward declarations                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+    class LinkedListable;
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -44,6 +54,7 @@ namespace MARTe {
  * SearchFilter, parameterising the type of the object that the Test method
  * will check for compliance, with respect to a given searching criteria.
  * @tparam T the type of the object which will be checked by the Test method.
+ * @warning It is expected that T be descendant of LinkedListable.
  */
 template<typename T>
 class SearchFilterT: public SearchFilter {
@@ -52,9 +63,7 @@ public:
     /**
      * @brief Destructor.
      */
-    virtual ~SearchFilterT() {
-
-    }
+    virtual ~SearchFilterT();
 
     /**
      * @brief LinkedListable searching callback function.
@@ -64,15 +73,35 @@ public:
      */
     virtual bool Test(T *data)=0;
 
-    virtual bool Test(LinkedListable *data){
-        return Test(static_cast<T *>(data));
-    }
+    virtual bool Test(LinkedListable *data);
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+template<typename T>
+SearchFilterT<T>::~SearchFilterT() {
+}
+
+template<typename T>
+bool SearchFilterT<T>::Test(LinkedListable *data) {
+	bool ret = true;
+	T* target = dynamic_cast<T*>(data);
+	if (target == NULL_PTR(T*)) {
+		ret = false;
+	}
+	if (ret) {
+		ret = Test(target);
+	}
+	return ret;
+}
+
+}
 
 #endif /* SEARCHFILTERT_H_ */
 

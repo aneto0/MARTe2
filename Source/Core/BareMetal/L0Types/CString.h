@@ -1,8 +1,8 @@
 /**
  * @file CString.h
  * @brief Header file for class CString
- * @date Apr 5, 2016
- * @author fsartori
+ * @date 05/04/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

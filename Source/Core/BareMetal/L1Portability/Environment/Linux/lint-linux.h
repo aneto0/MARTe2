@@ -108,4 +108,6 @@ extern double atof(const char *nptr);
 
 extern float strtof(const char *nptr, char **endptr);
 
+extern size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
+
 #endif /* LINUX_LINT_LINUX_H_ */

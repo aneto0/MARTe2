@@ -79,13 +79,8 @@ public:
      */
     T * GetList();
 
-    /**
-     * @brief Returns the pointer to the beginning of the array.
-     * @return the pointer to the beginning of the array.
-     */
-    operator T * (){
-        return array;
-    }
+
+    operator T*();
 
 private:
 
@@ -102,7 +97,6 @@ private:
      * The array
      */
     T * array;
-
 
 };
 
@@ -142,6 +136,12 @@ T * ZeroTerminatedArray<T>::GetList() {
 template<typename T>
 bool ZeroTerminatedArray<T>::Zero(const T & data) const {
     return (data == static_cast<T>(0));
+}
+
+
+template<typename T>
+ZeroTerminatedArray<T>::operator T*(){
+    return GetList();
 }
 
 }

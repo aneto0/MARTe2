@@ -1,8 +1,8 @@
 /**
  * @file MemoryArea.cpp
  * @brief Source file for class MemoryArea
- * @date 23/feb/2016
- * @author pc
+ * @date 23/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -34,6 +34,7 @@
 #include "MemoryArea.h"
 #include "MemoryOperationsHelper.h"
 #include "StringHelper.h"
+#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -55,22 +56,36 @@ MemoryArea::~MemoryArea() {
     Free();
 }
 
+bool MemoryArea::InitMemory(void * const initialMemory,
+                            const uint32 initialSize) {
+    bool ret = (memory == NULL);
+    if (ret) {
+        memory = initialMemory;
+        size = initialSize;
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::RecoverableError, "The memory is already in use. Call MemoryArea::Free(*) before");
+    }
+    return ret;
+}
+
+/*lint -e{929} cast required to be able to use Memory::Free interface.*/
 void MemoryArea::Free() {
     if (memory != NULL) {
-        if(HeapManager::Free(reinterpret_cast<void*&>(memory))) {
-            memory=NULL_PTR(void*);
+        if (HeapManager::Free(reinterpret_cast<void*&>(memory))) {
+            memory = NULL_PTR(void*);
         }
     }
-    if(heapName!=NULL) {
-        if(HeapManager::Free(reinterpret_cast<void*&>(heapName))) {
-            heapName=NULL_PTR(char8*);
+    if (heapName != NULL) {
+        if (HeapManager::Free(reinterpret_cast<void*&>(heapName))) {
+            heapName = NULL_PTR(char8*);
         }
     }
     size = 0u;
 }
 
-void MemoryArea::SetHeapName(const char8 * heapName) {
-    heapName = StringHelper::StringDup(heapName);
+void MemoryArea::SetHeapName(const char8 * const name) {
+    heapName = StringHelper::StringDup(name);
 }
 
 bool MemoryArea::Add(const uint32 memorySize,
@@ -80,29 +95,30 @@ bool MemoryArea::Add(const uint32 memorySize,
     if (size == 0u) {
         memory = HeapManager::Malloc(memorySize, heapName);
         if (memory != NULL) {
+            offset = 0u;
             size += memorySize;
-            offset=0u;
-            ret=true;
+            ret = true;
         }
     }
     else {
         void* temp = memory;
         memory = HeapManager::Realloc(temp, (size + memorySize));
         if (memory != NULL) {
-            offset=size;
-            size+=memorySize;
-            ret=true;
+            offset = size;
+            size += memorySize;
+            ret = true;
         }
     }
     return ret;
 }
 
-bool MemoryArea::Add(const void * const element,
+/*lint -e{925} [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9] cast required for pointer arithmetics.*/
+bool MemoryArea::Add(const void * const source,
                      const uint32 memorySize,
                      uint32 &offset) {
     bool ret = Add(memorySize, offset);
     if (ret) {
-        ret = (MemoryOperationsHelper::Copy(&reinterpret_cast<char8*>(memory)[offset], element, memorySize));
+        ret = (MemoryOperationsHelper::Copy(&reinterpret_cast<char8*>(memory)[offset], source, memorySize));
     }
     return ret;
 }
@@ -115,6 +131,7 @@ uint32 MemoryArea::GetMemorySize() const {
     return size;
 }
 
+/*lint -e{925} [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9] cast required for pointer arithmetics.*/
 void* MemoryArea::GetPointer(const uint32 offset) {
     void* ret = NULL_PTR(void*);
     if (offset < size) {

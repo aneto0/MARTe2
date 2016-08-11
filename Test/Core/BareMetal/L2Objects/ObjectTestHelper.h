@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Object.h"
+#include "StructuredDataI.h"
 
 using namespace MARTe;
 /*---------------------------------------------------------------------------*/
@@ -60,7 +61,7 @@ public:
     /**
      * @return the value of the dummy variable.
      */
-    int32 GetVariable() const {
+    uint32 GetVariable() const {
         return dummyVariable;
     }
 
@@ -232,6 +233,162 @@ public:
     int32 GetSpecialInteger() {
         return oneSpecialInteger.GetVariable();
     }
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class NonRegisteredIntegerObject: public Object {
+public:
+
+    /**
+     * @brief Default constructor
+     */
+    NonRegisteredIntegerObject() {
+        member = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~NonRegisteredIntegerObject() {
+    }
+
+    /**
+     * Member attribute
+     */
+    int32 member;
+
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class NonIntrospectableIntegerObject: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    NonIntrospectableIntegerObject() {
+        member = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~NonIntrospectableIntegerObject() {
+    }
+
+    /**
+     * Member attribute
+     */
+    int32 member;
+
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class IntrospectableIntegerObject: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    IntrospectableIntegerObject() {
+        member = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~IntrospectableIntegerObject() {
+    }
+
+    /**
+     * Member attribute
+     */
+    int32 member;
+
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class IntrospectableObjectWith2Members: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    IntrospectableObjectWith2Members() {
+        member1 = 0;
+        member2 = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~IntrospectableObjectWith2Members() {
+    }
+
+    /**
+     * Member 1 attribute
+     */
+    int32 member1;
+
+    /**
+     * Member 2 attribute
+     */
+    uint64 member2;
+
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class IntrospectableObjectWith3Members: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    IntrospectableObjectWith3Members() {
+        member1 = 0;
+        member2 = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~IntrospectableObjectWith3Members() {
+    }
+
+    /**
+     * Member 1 attribute
+     */
+    int32 member1;
+
+    /**
+     * Member 2 attribute
+     */
+    uint64 member2;
+
+    /**
+     * Member 3 atribute
+     */
+    IntrospectableIntegerObject member3;
+
 };
 
 #endif /* OBJECTTESTHELPER_H_ */

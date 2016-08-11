@@ -28,23 +28,32 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include <typeinfo>
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
+#include "ClassProperties.h"
 #include "ClassRegistryDatabase.h"
-#include "TypeDescriptor.h"
-#include "BitBoolean.h"
-#include "FractionalInteger.h"
-#include "BitRange.h"
 #include "Matrix.h"
-#include <typeinfo>
+#include "TypeDescriptor.h"
+
+/*---------------------------------------------------------------------------*/
+/*                         Forward declarations                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+class Object;
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /*lint -sem(MARTe::AnyType::Init,initializer)*/
 namespace MARTe {
+
 /**
  * @brief Class which provides a smart mechanism for the generic representation
  * of types.
@@ -781,7 +790,6 @@ public:
      */
     inline uint32 GetBitSize() const;
 
-
     /**
      * @brief Retrieves the element in the specified position.
      * @param[in] position is the position of the required element.
@@ -1383,9 +1391,6 @@ uint32 AnyType::GetByteSize() const {
 uint32 AnyType::GetBitSize() const {
     return (dataDescriptor.numberOfBits + bitAddress);
 }
-
-
-
 
 /**
  * Definition of the void AnyType (empty constructor).

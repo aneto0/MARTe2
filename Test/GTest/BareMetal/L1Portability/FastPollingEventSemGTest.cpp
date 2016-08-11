@@ -1,8 +1,8 @@
 /**
  * @file FastPollingEventSemGTest.cpp
  * @brief Source file for class FastPollingEventSemGTest
- * @date 24/mar/2016
- * @author pc
+ * @date 24/03/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

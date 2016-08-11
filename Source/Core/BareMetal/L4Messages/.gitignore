@@ -1,2 +1,14 @@
 /depends.linux
 /dependsRaw.linux
+/depends.msc
+/dependsRaw.msc
+/CreateMSCDepends.sed
+/vc140.pdb
+/title
+/temp/
+/dllGenerator.def
+/dummy.cpp
+/dummy.obj
+/cov/
+/depends.cov
+/dependsRaw.cov

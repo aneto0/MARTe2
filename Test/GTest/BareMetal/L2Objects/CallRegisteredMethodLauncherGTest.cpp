@@ -1,8 +1,8 @@
 /**
- * @file FastMath.cpp
- * @brief Source file for class FastMath
- * @date 26/06/2015
- * @author Giuseppe Ferr�
+ * @file CallRegisteredMethodLauncherGTest.cpp
+ * @brief Source file for class CallRegisteredMethodLauncherGTest
+ * @date 27/07/2016
+ * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,10 +17,10 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class FastMath (public, protected, and private). Be aware that some 
+ * the class CallRegisteredMethodLauncherGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
-#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -29,14 +29,32 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "FastMath.h"
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+#include "CallRegisteredMethodLauncherTest.h"
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+TEST(CallRegisteredMethodLauncherGTest,TestDefaultConstructor) {
+    CallRegisteredMethodLauncherTest target;
+    ASSERT_TRUE(target.TestDefaultConstructor());
+}
+
+TEST(CallRegisteredMethodLauncherGTest,TestTest) {
+    CallRegisteredMethodLauncherTest target;
+    ASSERT_TRUE(target.TestTest());
+}
+
+TEST(CallRegisteredMethodLauncherGTest,TestGetResults) {
+    CallRegisteredMethodLauncherTest target;
+    ASSERT_TRUE(target.TestGetResults());
+}

@@ -368,7 +368,7 @@ bool BasicConsoleTest::TestSetGetWindowSize(uint32 numberOfColumns,
     uint32 nCols = 0;
 
     error = myConsole.GetWindowSize(nCols, nRows);
-    if (error != true) {
+    if (!error) {
         return false;
     }
     if ((nRows != (numberOfRows - 2) || nCols != (numberOfColumns - 2))) {
@@ -376,11 +376,11 @@ bool BasicConsoleTest::TestSetGetWindowSize(uint32 numberOfColumns,
     }
 
     error = myConsole.SetWindowSize(numberOfColumns + 10, numberOfRows + 10);
-    if (error != true) {
+    if (!error) {
         return false;
     }
     error = myConsole.GetWindowSize(nCols, nRows);
-    if (error != true) {
+    if (!error) {
         return false;
     }
 

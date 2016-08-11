@@ -107,12 +107,17 @@ TEST(ObjectGTest,TestGetUniqueName2) {
     ASSERT_TRUE(objectTest.TestGetUniqueName2());
 }
 
-TEST(ObjectGTest,TestToStructuredData) {
+TEST(ObjectGTest,TestExportData) {
     ObjectTest objectTest;
-    ASSERT_TRUE(objectTest.TestToStructuredData());
+    ASSERT_TRUE(objectTest.TestExportData());
 }
 
-TEST(ObjectGTest,TestToIntrospectionToStructuredData) {
+TEST(ObjectGTest,TestExportMetadata) {
     ObjectTest objectTest;
-    ASSERT_TRUE(objectTest.TestToIntrospectionToStructuredData());
+    ASSERT_TRUE(objectTest.TestExportMetadata());
+}
+
+TEST(ObjectGTest,TestCallRegisteredMethod) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestCallRegisteredMethod());
 }

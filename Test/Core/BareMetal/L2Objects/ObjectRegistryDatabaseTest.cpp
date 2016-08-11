@@ -1,8 +1,8 @@
 /**
  * @file ObjectRegistryDatabaseTest.cpp
  * @brief Source file for class ObjectRegistryDatabaseTest
- * @date 18/feb/2016
- * @author pc
+ * @date 18/02/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassRegistryItemT.h"
 #include "ObjectRegistryDatabaseTest.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
@@ -82,8 +83,11 @@ bool ObjectRegistryDatabaseTest::TestInstance() {
 }
 
 bool ObjectRegistryDatabaseTest::TestFind() {
-    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("$A.$B.$C.+PID");
+    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
 
+    if (!test.IsValid()) {
+        return false;
+    }
     if (test->Kp != 1) {
         return false;
     }
@@ -98,9 +102,15 @@ bool ObjectRegistryDatabaseTest::TestFind() {
 }
 
 bool ObjectRegistryDatabaseTest::TestFind_Relative() {
-    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("$A.$B.$C.+PID");
+    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
 
-    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find(":::+PID", test);
+    if (!test.IsValid()) {
+        return false;
+    }
+    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find(":::PID", test);
+    if (!test2.IsValid()) {
+        return false;
+    }
     if (test2->Kp != 7) {
         return false;
     }
@@ -111,9 +121,15 @@ bool ObjectRegistryDatabaseTest::TestFind_Relative() {
         return false;
     }
 
-    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("$A.$B");
+    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("A.B");
+    if (!start.IsValid()) {
+        return false;
+    }
     // relative search
-    ReferenceT<PID> test4 = ObjectRegistryDatabase::Instance()->Find(":$C.+PID", start);
+    ReferenceT<PID> test4 = ObjectRegistryDatabase::Instance()->Find(":C.PID", start);
+    if (!test4.IsValid()) {
+        return false;
+    }
     if (test4->Kp != 1) {
         return false;
     }
@@ -127,10 +143,15 @@ bool ObjectRegistryDatabaseTest::TestFind_Relative() {
 }
 
 bool ObjectRegistryDatabaseTest::TestFind_Absolute() {
-    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("$A.$B");
-
+    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("A.B");
+    if (!start.IsValid()) {
+        return false;
+    }
 // absolute search
-    ReferenceT<PID> test5 = ObjectRegistryDatabase::Instance()->Find("$A.$B.$C.+PID", start);
+    ReferenceT<PID> test5 = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID", start);
+    if (!test5.IsValid()) {
+        return false;
+    }
     if (test5->Kp != 1) {
         return false;
     }
@@ -146,13 +167,16 @@ bool ObjectRegistryDatabaseTest::TestFind_Absolute() {
 }
 
 bool ObjectRegistryDatabaseTest::TestFindTooManyBackSteps() {
-    ReferenceT<PID> start = ObjectRegistryDatabase::Instance()->Find("$A.$B.$C.+PID");
+    ReferenceT<PID> start = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
     if (!start.IsValid()) {
         return false;
     }
 
 // searches from the beginning
-    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find("::::+PID", start);
+    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find(":::::A.PID", start);
+    if (!test2.IsValid()) {
+        return false;
+    }
     if (test2->Kp != 7) {
         return false;
     }
@@ -168,32 +192,5 @@ bool ObjectRegistryDatabaseTest::TestFindTooManyBackSteps() {
 
 bool ObjectRegistryDatabaseTest::TestGetClassName() {
     return StringHelper::Compare(ObjectRegistryDatabase::Instance()->GetClassName(), "ObjectRegistryDatabase") == 0;
-}
-
-bool ObjectRegistryDatabaseTest::TestCleanUp() {
-    ObjectRegistryDatabase::Instance()->CleanUp();
-
-    ConfigurationDatabase simpleCDB;
-    simpleCDB.CreateAbsolute("+A");
-    simpleCDB.Write("Class", "ReferenceContainer");
-    simpleCDB.CreateAbsolute("+A.+B");
-    simpleCDB.Write("Class", "ReferenceContainer");
-    simpleCDB.CreateAbsolute("+A.+B.+C");
-    simpleCDB.Write("Class", "ReferenceContainer");
-    uint32 leaf = 1;
-    simpleCDB.Write("leaf", leaf);
-    simpleCDB.CreateAbsolute("+B");
-    simpleCDB.Write("Class", "ReferenceContainer");
-    simpleCDB.MoveToRoot();
-
-    ObjectRegistryDatabase::Instance()->Initialise(simpleCDB);
-    Reference toLeaf = ObjectRegistryDatabase::Instance()->Find("+A.+B.+C");
-    if (toLeaf.NumberOfReferences() != 2) {
-        return false;
-    }
-
-    ObjectRegistryDatabase::Instance()->CleanUp();
-
-    return (toLeaf.NumberOfReferences() == 1) && (ObjectRegistryDatabase::Instance()->Size() == 0);
 }
 

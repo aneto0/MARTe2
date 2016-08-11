@@ -244,13 +244,24 @@ public:
      * }
      * @pre Peek'pre && Remove'pre
      * @post Peek'post && Remove'post
-     * @return false if precondition is broken or memory operation fails.
+     * @return false if the precondition is broken or the memory operation fails.
      */
     bool Extract(const uint32 position,
                  void * const copyTo);
 
 
     bool Set(const uint32 position, const void *const value);
+
+    /**
+     * @brief Replaces the element at the specified position
+     * @param[in] position The index of the element to replace
+     * @param[in] value pointer to the memory address where the requested element will be copied from.
+     * @pre position < GetSize()
+     * @post Peek(position, element) => *element = *value
+     * @return false if the precondition is broken or the memory operation fails.
+     */
+    bool Set(const uint32 position,
+             const void * const value);
 
     /**
      * @brief Retrieves the pointer to the allocated memory area.

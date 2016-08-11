@@ -24,12 +24,22 @@
 #
 #############################################################
 
+
 OBJSX=  AnyTypeTest.x\
+		CallRegisteredMethodLauncherTest.x \
+		CallRegisteredMethodLauncherTTest.x \
+		ClassMethodCallerTest.x \
+		ClassMethodCallerTTest.x \
+		ClassMethodInterfaceMapperTest.x \
+		ClassMethodsRegistryItemTest.x \
 		ClassPropertiesTest.x \
 		ClassRegistryDatabaseTest.x \
 		ClassRegistryItemTest.x \
+		ClassWithCallableMethods.x \
 		IntrospectionEntryTest.x\
 		IntrospectionTest.x \
+		ObjectBuilderTest.x \
+		ObjectBuilderTTest.x \
 		ObjectTest.x \
 		ObjectRegistryDatabaseTest.x \
 		ObjectTestHelper.x \
@@ -55,7 +65,6 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
-
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 
 all: $(OBJS) \

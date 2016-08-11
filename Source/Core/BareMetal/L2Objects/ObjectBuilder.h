@@ -1,8 +1,8 @@
 /**
  * @file ObjectBuilder.h
  * @brief Header file for class ObjectBuilder
- * @date Apr 11, 2016
- * @author fsartori
+ * @date 11/04/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class ObjectBuilder
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -35,69 +35,76 @@
 #include "HeapI.h"
 
 /*---------------------------------------------------------------------------*/
+/*                          Forward declarations                             */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+class Object;
+}
+
+/*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
-class Object;
-
 /**
- * TODO
- * */
-class ObjectBuilder{
+ * @brief This class represents an abstract object builder.
+ *
+ * @details An object builder is an object whose purpose is to build another
+ * object. In order to build an object, an object builder needs:
+ * + A HeapI object which will allocate the memory for the object to be built.
+ * + An overloaded new operator for creating a new instance for a specific
+ * class using the HeapI object.
+ *
+ * @warning This class must be considered as a pure abstract class, i.e. an
+ * interface, although it does not declare any of its methods as pure virtual.
+ * Instead, it implements the Build method forcing it to return a default
+ * value (NULL). The reason to this is that derived classes are expected to
+ * implement the Build method, while the abstract class can be used as an
+ * invalid object builder (useful for setting a default builder).
+ */
+class DLL_API ObjectBuilder {
 public:
 
     /**
-     * TODO
-     * */
-    virtual Object *Build(HeapI* const heap) const = 0;
+     * @brief Default constructor
+     */
+    ObjectBuilder();
 
     /**
-     * TODO
-     * */
-    virtual ~ObjectBuilder(){}
-};
-
-/**
- * TODO
- * */
-template <class T>
-class ObjectBuilderT: public ObjectBuilder{
-
-public:
-    /**
-     * TODO
-     * */
-    Object *Build(HeapI* const heap) const {
-        T *p = new (heap) T ();
-        return p;
-    }
+     * @brief Destructor.
+     */
+    virtual ~ObjectBuilder();
 
     /**
-     * TODO
-     * */
-    virtual ~ObjectBuilderT(){}
+     * @brief invalid object builder function.
+     * @param[in] heap is the heap where the memory for the new instance must
+     * be allocated.
+     * @return a NULL pointer to MARTe::Object.
+     */
+    virtual Object *Build(HeapI* const heap) const;
 
-    /**
-     * TODO
-     * */
-    ObjectBuilderT(){
-        T::GetClassRegistryItem_Static()->SetObjectBuilder(this);
-    }
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * TODO
- */
-#define ADD_OBJECTBUILDER(className) \
-    static MARTe::ObjectBuilderT<className> className ## _ ## objectBuilder();
+namespace MARTe {
 
+inline ObjectBuilder::ObjectBuilder() {
+}
+
+inline ObjectBuilder::~ObjectBuilder() {
+}
+
+inline Object *ObjectBuilder::Build(HeapI* const heap) const {
+    return NULL_PTR(Object *);
+}
+
+}
 
 #endif /* OBJECTBUILDER_H_ */
-	

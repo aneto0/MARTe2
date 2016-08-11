@@ -113,10 +113,6 @@ public:
      */
     bool TestGetClassName();
 
-    /**
-     * @brief Tests if the function empties the database.
-     */
-    bool TestCleanUp();
 
 private:
 
