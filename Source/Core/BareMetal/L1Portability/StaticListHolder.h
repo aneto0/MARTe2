@@ -249,9 +249,6 @@ public:
     bool Extract(const uint32 position,
                  void * const copyTo);
 
-
-    bool Set(const uint32 position, const void *const value);
-
     /**
      * @brief Replaces the element at the specified position
      * @param[in] position The index of the element to replace

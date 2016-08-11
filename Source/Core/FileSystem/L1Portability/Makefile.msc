@@ -34,7 +34,6 @@ LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L1Portability\L1Portabil
 LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L2Objects\L2ObjectsB$(LIBEXT)
 LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L3Streams\L3StreamsB$(LIBEXT)
 LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L4Configuration\L4ConfigurationB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L5GAMs\L5GAMsB$(LIBEXT)
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 

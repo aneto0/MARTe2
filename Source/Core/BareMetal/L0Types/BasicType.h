@@ -95,7 +95,6 @@ const BasicType Stream = 8u;
  */
 const BasicType StructuredDataNode = 9u;
 
-
 }
 
 /*---------------------------------------------------------------------------*/
