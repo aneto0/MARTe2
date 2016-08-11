@@ -27,6 +27,7 @@
 
 OBJSX=	AnyObjectTest.x \
 	AnyTypeCreatorTest.x \
+	BasicTypeStandardValidatorTest.x \
 	ConfigurationDatabaseTest.x \
 	IntrospectionTestHelper.x \
 	JsonParserTest.x \
@@ -35,7 +36,7 @@ OBJSX=	AnyObjectTest.x \
 	TypeConversionTest.x \
 	TokenInfoTest.x \
 	TokenTest.x \
-	ValidateBasicTypeTest.x\
+	ValidateTest.x\
 	XMLParserTest.x
 					
 PACKAGE=Core/BareMetal

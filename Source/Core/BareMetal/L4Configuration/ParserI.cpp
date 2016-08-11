@@ -178,7 +178,6 @@ void ParserI::AddLeaf() {
         numberOfColumns = firstNumberOfColumns;
     }
 
-    ;
     uint32 dimSizes[3] = { numberOfColumns, numberOfRows, 1u };
     /*lint -e{613} . Justification: if (memory==NULL) ---> (ret==false) */
     AnyType element = memory.Create(numberOfDimensions, &dimSizes[0]);

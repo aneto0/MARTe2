@@ -64,7 +64,7 @@ public:
      * @brief Default constructor.
      * @details Initialises the semaphore and set the default timeout to infinite.
      */
-    ReferenceContainer();
+ReferenceContainer    ();
 
     /**
      * @brief Copy Constructor
@@ -138,6 +138,18 @@ public:
      * @return the element if it is found or an invalid reference if not.
      */
     Reference Find(const char8 * const path);
+
+    /**
+     * @brief Retrieves the Reference at the given address.
+     * @param[in] path is the address of the Reference into the database. The syntax is
+     * "A.B.C" where A, B and C must be replaced with the specific object names.
+     * param[in] current is the research start point. In this case we admit the syntax "::A.B.C"
+     * where the ':' symbol set the search start point to the previous domain with respect to \a current.
+     * If no ':' is found at the beginning of the path, the start point is the root.
+     * @return the reference found at the provided \a path or an invalid reference in case of failure.
+     */
+    /*lint -e{1511} [MISRA C++ Rule 2-10-2].*/
+    Reference Find(const char8 * const path, const Reference current);
 
     /**
      * @brief Checks if \a ref holds a container.

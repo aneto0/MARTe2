@@ -332,3 +332,23 @@ TEST(ConfigurationDatabaseGTest,TestUnlock) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestUnlock());
 }
+
+TEST(ConfigurationDatabaseGTest,TestAdvancedRead) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestAdvancedRead());
+}
+
+TEST(ConfigurationDatabaseGTest,TestAdvancedWrite) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestAdvancedWrite());
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetFullPath) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetFullPath());
+}
+
+TEST(ConfigurationDatabaseGTest,TestAdvancedMove) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestAdvancedMove());
+}

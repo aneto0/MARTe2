@@ -291,7 +291,7 @@ bool ConfigurationDatabaseTest::TestDelete() {
 
 bool ConfigurationDatabaseTest::TestRead_Invalid() {
     ConfigurationDatabase cdb;
-    uint32 readValue=0;
+    uint32 readValue = 0;
     bool ok = !cdb.Read("", readValue);
     ok = !cdb.Read(NULL, readValue);
     ok = cdb.CreateAbsolute("A.B.C");
@@ -329,17 +329,17 @@ bool ConfigurationDatabaseTest::TestRead_Object() {
     uint32 member1 = 1;
     source.Write("member1_from", member1);
     float32 member2_x = 1;
-    source.Write("member2_from",  &member2_x);
+    source.Write("member2_from", &member2_x);
     float64 member3[32];
     for (uint32 i = 0u; i < 32; i++) {
         member3[i] = i;
     }
     source.Write("member3_from", member3);
     const char8* member4[2][2];
-    member4[0][0] =(char8*) "1";
-    member4[0][1] =(char8*) "2";
-    member4[1][0] =(char8*) "3";
-    member4[1][1] =(char8*) "4";
+    member4[0][0] = (char8*) "1";
+    member4[0][1] = (char8*) "2";
+    member4[1][0] = (char8*) "3";
+    member4[1][1] = (char8*) "4";
 
     source.Write("member4_from", member4);
     uint32 member5Ref = 5;
@@ -451,8 +451,8 @@ bool ConfigurationDatabaseTest::TestWrite_Object() {
         sourceTest.member3_from[i] = i;
     }
     sourceTest.member4_from[0][0] = (char8*) "1";
-    sourceTest.member4_from[0][1] = (char8*)"2";
-    sourceTest.member4_from[1][0] = (char8*)"3";
+    sourceTest.member4_from[0][1] = (char8*) "2";
+    sourceTest.member4_from[1][0] = (char8*) "3";
     sourceTest.member4_from[1][1] = (char8*) "4";
 
     uint32 member5Ref = 5;
@@ -543,36 +543,34 @@ bool ConfigurationDatabaseTest::TestGetChildName() {
     ok &= cdb.MoveToRoot();
     i = 0u;
     while (childNames[i] != NULL) {
-        ok &= StringHelper::Compare(childNames[i],cdb.GetChildName(i))==0;
+        ok &= StringHelper::Compare(childNames[i], cdb.GetChildName(i)) == 0;
         i++;
     }
     ok &= cdb.MoveAbsolute(childNames[0]);
     i = 0u;
     while (nephewNames[i] != NULL) {
-        ok &= StringHelper::Compare(nephewNames[i],cdb.GetChildName(i))==0;
+        ok &= StringHelper::Compare(nephewNames[i], cdb.GetChildName(i)) == 0;
         i++;
     }
     ok &= cdb.GetChildName(i) == NULL;
     return ok;
 }
 
-
-bool ConfigurationDatabaseTest::TestGetName(){
+bool ConfigurationDatabaseTest::TestGetName() {
     ConfigurationDatabase cdb;
-    if(cdb.GetName()!=NULL){
+    if (cdb.GetName() != NULL) {
         return false;
     }
 
     cdb.CreateAbsolute("A.B.C");
     cdb.MoveAbsolute("A");
-    bool ret=(StringHelper::Compare(cdb.GetName(), "A")==0);
+    bool ret = (StringHelper::Compare(cdb.GetName(), "A") == 0);
     cdb.MoveAbsolute("A.B");
-    ret&=(StringHelper::Compare(cdb.GetName(), "B")==0);
+    ret &= (StringHelper::Compare(cdb.GetName(), "B") == 0);
     cdb.MoveAbsolute("A.B.C");
-    ret&=(StringHelper::Compare(cdb.GetName(), "C")==0);
+    ret &= (StringHelper::Compare(cdb.GetName(), "C") == 0);
     return ret;
 }
-
 
 bool ConfigurationDatabaseTest::TestGetType_Invalid() {
     ConfigurationDatabase cdb;
@@ -605,6 +603,68 @@ bool ConfigurationDatabaseTest::TestCopy() {
     ok &= destinationCDB.MoveAbsolute("B.D");
     ok &= destinationCDB.Read("value", readValue);
     ok &= (readValue == 2);
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestAdvancedRead() {
+    ConfigurationDatabase sourceCDB;
+    sourceCDB.CreateAbsolute("$A.$B.C");
+    uint32 value = 2;
+    bool ok = sourceCDB.Write("value", value);
+    ok &= sourceCDB.MoveAbsolute("$A");
+    value = 1;
+    ok &= sourceCDB.Write("value", value);
+    ok &= sourceCDB.CreateAbsolute("$A.$B.D");
+    ok &= sourceCDB.AdvancedRead("::.value", value);
+    ok &= value == 1;
+    ok &= sourceCDB.AdvancedRead(":C.value", value);
+    ok &= value == 2;
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestAdvancedWrite() {
+    ConfigurationDatabase sourceCDB;
+    sourceCDB.CreateAbsolute("$A.$B.C");
+    bool ok = sourceCDB.CreateAbsolute("$A.$B.D");
+    uint32 value = 2;
+    ok &= sourceCDB.AdvancedWrite("::.value", value);
+    value = 1;
+    ok &= sourceCDB.AdvancedWrite(":C.value", value);
+    ok &= sourceCDB.MoveAbsolute("$A");
+    ok &= sourceCDB.Read("value", value);
+    ok &= value == 2;
+    ok &= sourceCDB.MoveAbsolute("$A.$B.C");
+    ok &= sourceCDB.Read("value", value);
+    ok &= value == 1;
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestGetFullPath() {
+    ConfigurationDatabase sourceCDB;
+    sourceCDB.CreateAbsolute("$A.$B.C");
+    bool ok = sourceCDB.CreateAbsolute("$A.$B.D");
+    StreamString path;
+    ok &= sourceCDB.GetFullPath(path);
+    ok &= path == "$A.$B.D";
+    ok &= sourceCDB.MoveAbsolute("$A.$B.C");
+    ok &= sourceCDB.GetFullPath(path);
+    ok &= path == "$A.$B.C";
+    ok &= sourceCDB.MoveAbsolute("$A.$B");
+    ok &= sourceCDB.GetFullPath(path);
+    ok &= path == "$A.$B";
+    return ok;
+
+}
+bool ConfigurationDatabaseTest::TestAdvancedMove() {
+    ConfigurationDatabase sourceCDB;
+    sourceCDB.CreateAbsolute("$A.$B.C");
+    uint32 value = 2;
+    bool ok = sourceCDB.Write("value", value);
+    ok &= sourceCDB.CreateAbsolute("$A.$B.D");
+    ok &= sourceCDB.AdvancedMove(":C");
+    value = 0;
+    ok &= sourceCDB.Read("value", value);
+    ok &= value == 2;
     return ok;
 }
 

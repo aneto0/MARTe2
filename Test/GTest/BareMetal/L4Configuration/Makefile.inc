@@ -25,6 +25,7 @@
 
 OBJSX=  AnyObjectGTest.x \
 		AnyTypeCreatorGTest.x \
+		BasicTypeStandardValidatorGTest.x\
 		ConfigurationDatabaseGTest.x \
 		JsonParserGTest.x \
 		LexicalAnalyzerGTest.x \
@@ -32,7 +33,7 @@ OBJSX=  AnyObjectGTest.x \
 		TokenGTest.x \
 		TokenInfoGTest.x \
 		TypeConversionGTest.x\
-		ValidateBasicTypeGTest.x\
+		ValidateGTest.x\
 		XMLParserGTest.x
 		 
 

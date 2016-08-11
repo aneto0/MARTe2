@@ -384,6 +384,82 @@ Reference ReferenceContainer::Find(const char8 * const path) {
     return ret;
 }
 
+Reference ReferenceContainer::Find(const char8 * const path,
+                                   const Reference current) {
+    ReferenceT<ReferenceContainer> domain = current;
+    bool isSearchDomain = current.IsValid();
+    uint32 backSteps = 0u;
+    bool ok = true;
+    if (isSearchDomain) {
+        while (path[backSteps] == ':') {
+            backSteps++;
+        }
+        isSearchDomain = (backSteps > 0u);
+        if (isSearchDomain) {
+            uint32 stepsCounter = backSteps;
+            // search the current remembering the path
+            ReferenceContainerFilterReferences filterRef(1, ReferenceContainerFilterMode::PATH, current);
+            ReferenceContainer resultPath;
+            ReferenceContainer::Find(resultPath, filterRef);
+            for (uint32 i = 0u; i < resultPath.Size(); i++) {
+                Reference test = resultPath.Get((resultPath.Size() - i) - 1u);
+                if (stepsCounter == 0u) {
+                    break;
+                }
+                if (test.IsValid()) {
+                    ok = Lock();
+                    if (ok) {
+                        /*lint -e{613} cheking of NULL pointer done before entering here. */
+                        if (test->IsDomain()) {
+                            domain = test;
+                            stepsCounter--;
+                        }
+                    }
+                    UnLock();
+                }
+            }
+
+            if (stepsCounter > 0u) {
+                REPORT_ERROR(ErrorManagement::Warning, "Find: Too many back steps in the path. The searching will start from the root");
+                isSearchDomain = false;
+            }
+        }
+
+    }
+    // now search from the domain forward
+    Reference ret;
+    if (ok) {
+        if (StringHelper::Length(&path[backSteps]) > 0u) {
+            ReferenceContainerFilterObjectName filterName(1, ReferenceContainerFilterMode::SHALLOW, &path[backSteps]);
+            ReferenceContainer resultSingle;
+
+            if (isSearchDomain) {
+                if (domain.IsValid()) {
+                    // already safe
+                    domain->Find(resultSingle, filterName);
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Find: Invalid domain");
+                }
+            }
+            else {
+                // search from the beginning
+                ReferenceContainer::Find(resultSingle, filterName);
+            }
+
+            ok = (resultSingle.Size() > 0u);
+            if (ok) {
+                //Invalidate move to leafs
+                ret = resultSingle.Get(resultSingle.Size() - 1u);
+            }
+        }
+        else {
+            ret = domain;
+        }
+    }
+    return ret;
+}
+
 uint32 ReferenceContainer::Size() {
     uint32 size = 0u;
     if (Lock()) {

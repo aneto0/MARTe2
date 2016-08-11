@@ -194,6 +194,26 @@ public:
     bool TestCopy();
 
     /**
+     * @brief Tests the AdvancedRead function
+     */
+    bool TestAdvancedRead();
+
+    /**
+     * @brief Tests the AdvancedWrite function
+     */
+    bool TestAdvancedWrite();
+
+    /**
+     * @brief Tests the GetFullPath function
+     */
+    bool TestGetFullPath();
+
+    /**
+     * @brief Tests the AdvancedMove function
+     */
+    bool TestAdvancedMove();
+
+    /**
      * @brief Tests the Lock function
      */
     bool TestLock();

@@ -69,9 +69,10 @@ public:
      */
     virtual ~ConfigurationDatabase();
 
-
+    /**
+     * @brief Destroys all the entries in the tree.
+     */
     void CleanUp();
-
 
     /**
      * @see StructuredDataI::Read
@@ -82,6 +83,17 @@ public:
      */
     virtual bool Read(const char8 * const name,
                       const AnyType &value);
+
+    /**
+     * @brief Reads the value in input in the desired path. The path can be
+     * specified in order to use the domain node concept to find the path where the data must
+     * be read from.
+     * @param[in] The path where \a value must be read from.
+     * @param[in] value is the value to be read.
+     * @return true if \a value is correct and \value is read correctly.
+     */
+    virtual bool AdvancedRead(const char8 * const path,
+                              const AnyType &value);
 
     /**
      * @see StructuredDataI::GetType
@@ -96,6 +108,17 @@ public:
      */
     virtual bool Write(const char8 * const name,
                        const AnyType &value);
+
+    /**
+     * @brief Writes the value in input in the desired path. The path can be
+     * specified in order to use the domain node concept to find the path where the data must
+     * be written to.
+     * @param[in] The path where \a value must be written to.
+     * @param[in] value is the value to be written.
+     * @return true if \a value is correct and \value is written correctly.
+     */
+    virtual bool AdvancedWrite(const char8 * const path,
+                              const AnyType &value);
 
     /**
      * @see StructuredDataI::Copy
@@ -116,6 +139,17 @@ public:
      * @see StructuredDataI::MoveAbsolute
      */
     virtual bool MoveAbsolute(const char8 * const path);
+
+    /**
+     * @brief Moves in the tree in absolute or relative mode using the concept of domains as start points (a domain is defined
+     * when the first character of the node name is a '$' symbol).
+     * @param[in] path is the address of the node in the tree. The syntax is
+     * "A.B.C" where A, B and C must be replaced with the specific node names.
+     * We admit the syntax "::A.B.C" where the ':' symbol set the search start point to the previous domain with
+     * respect to the current node. If no ':' is found at the beginning of the path, the start point is the root.
+     * @return the reference found at the provided \a path or an invalid reference in case of failure.
+     */
+    virtual bool AdvancedMove(const char8 * const path);
 
     /**
      * @see StructuredDataI::MoveRelative
@@ -156,6 +190,13 @@ public:
      * @brief StructuredDataI::GetNumberOfChildren
      */
     virtual uint32 GetNumberOfChildren();
+
+    /**
+     * @brief Retrieves the path of the current node with respect to the root.
+     * @param[out] path the path of the current node with respect to the root.
+     * @return true
+     */
+    virtual bool GetFullPath(StreamString &path);
 
     /**
      * @brief Locks the shared semaphore.

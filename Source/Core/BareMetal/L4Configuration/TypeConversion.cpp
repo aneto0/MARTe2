@@ -36,7 +36,7 @@
 #include "StreamString.h"
 #include "ClassRegistryDatabase.h"
 #include "StructuredDataI.h"
-#include "ValidateBasicType.h"
+#include "Validate.h"
 #include "Introspection.h"
 
 /*---------------------------------------------------------------------------*/
@@ -478,7 +478,7 @@ static bool ObjectToObject(const AnyType &destination,
                     ret= TypeConvert(newDestination, newSource);
                     if(ret) {
                         // validate the output
-                        ret=ValidateBasicType(newDestination, destinationMemberIntrospection.GetMemberAttributes());
+                        ret=Validate(newDestination, destinationMemberIntrospection.GetMemberAttributes());
                     }
                 }
             }
@@ -604,7 +604,7 @@ static bool StructuredDataToObject(const AnyType &destination,
                         ret= TypeConvert(newDestination, newSource);
                         if(ret) {
                             // validate the output
-                            ret=ValidateBasicType(newDestination, destinationMemberIntrospection.GetMemberAttributes());
+                            ret=Validate(newDestination, destinationMemberIntrospection.GetMemberAttributes());
                         }
                     }
                 }

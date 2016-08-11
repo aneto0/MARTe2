@@ -106,6 +106,50 @@ bool ConfigurationDatabase::Write(const char8 * const name,
     return ok;
 }
 
+bool ConfigurationDatabase::AdvancedWrite(const char8 * const path,
+                                          const AnyType &value) {
+
+    //store the current node
+    //make the advanced find with domains
+    //read the value
+    //restore the old current node
+    ReferenceT<ReferenceContainer> storeCurrent = currentNode;
+
+    StreamString fullPath = path;
+    bool ret = fullPath.Seek(0ull);
+    char8 terminator;
+    StreamString token;
+    StreamString nodePath;
+    StreamString valueName;
+    if (ret) {
+        while (fullPath.GetToken(token, ".", terminator)) {
+            if (terminator == '.') {
+                if (nodePath.Size() > 0u) {
+                    nodePath += terminator;
+                }
+                nodePath += token;
+            }
+            else {
+                valueName = token;
+            }
+            token = "";
+        }
+    }
+    if (ret) {
+        ReferenceT<ReferenceContainer> node = rootNode->Find(nodePath.Buffer(), currentNode);
+        ret = node.IsValid();
+        if (ret) {
+            currentNode = node;
+            ret = Write(valueName.Buffer(), value);
+        }
+        if (ret) {
+            currentNode = storeCurrent;
+        }
+    }
+    return ret;
+
+}
+
 AnyType ConfigurationDatabase::GetType(const char8 * const name) {
     bool found = false;
     Reference foundReference;
@@ -206,6 +250,52 @@ bool ConfigurationDatabase::Read(const char8 * const name,
 
     return ok;
 }
+#include "stdio.h"
+
+bool ConfigurationDatabase::AdvancedRead(const char8 * const path,
+                                         const AnyType &value) {
+
+    //store the current node
+    //make the advanced find with domains
+    //read the value
+    //restore the old current node
+    ReferenceT<ReferenceContainer> storeCurrent = currentNode;
+
+    StreamString fullPath = path;
+    bool ret = fullPath.Seek(0ull);
+    char8 terminator;
+    StreamString token;
+    StreamString nodePath;
+    StreamString valueName;
+    if (ret) {
+        while (fullPath.GetToken(token, ".", terminator)) {
+            if (terminator == '.') {
+                if (nodePath.Size() > 0u) {
+                    nodePath += terminator;
+                }
+                nodePath += token;
+            }
+            else {
+                valueName = token;
+            }
+            token = "";
+        }
+    }
+
+    if (ret) {
+        ReferenceT<ReferenceContainer> node = rootNode->Find(nodePath.Buffer(), currentNode);
+        ret = node.IsValid();
+        if (ret) {
+            currentNode = node;
+            ret = Read(valueName.Buffer(), value);
+        }
+        if (ret) {
+            currentNode = storeCurrent;
+        }
+    }
+    return ret;
+
+}
 
 bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
 
@@ -223,6 +313,15 @@ bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
     }
 
     return ok;
+}
+
+bool ConfigurationDatabase::AdvancedMove(const char8 * const path) {
+    ReferenceT<ReferenceContainer> node = rootNode->Find(path, currentNode);
+    bool ret = node.IsValid();
+    if (ret) {
+        currentNode = node;
+    }
+    return ret;
 }
 
 bool ConfigurationDatabase::MoveRelative(const char8 * const path) {
@@ -296,6 +395,9 @@ bool ConfigurationDatabase::CreateNodes(const char8 * const path) {
             else {
                 ReferenceT<ReferenceContainer> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                 container->SetName(token.Buffer());
+                if (token[0] == '$') {
+                    container->SetDomain(true);
+                }
                 ok = currentNode->Insert(container);
                 if (ok) {
                     currentNode = container;
@@ -366,6 +468,26 @@ const char8 *ConfigurationDatabase::GetChildName(const uint32 index) {
 
 uint32 ConfigurationDatabase::GetNumberOfChildren() {
     return currentNode->Size();
+}
+
+bool ConfigurationDatabase::GetFullPath(StreamString &path) {
+    ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH, currentNode);
+    ReferenceContainer resultPath;
+    rootNode->Find(resultPath, filter);
+    uint32 numberOfNodes = resultPath.Size();
+    path = "";
+    bool ret = true;
+    for (uint32 i = 0u; i < numberOfNodes && ret; i++) {
+        Reference ref = resultPath.Get(i);
+        ret = ref.IsValid();
+        if (ret) {
+            if (path.Size() > 0u) {
+                path += ".";
+            }
+            path += ref->GetName();
+        }
+    }
+    return ret;
 }
 
 bool ConfigurationDatabase::Lock(const TimeoutType &timeout) {

@@ -54,6 +54,13 @@ class Object;
 /*lint -sem(MARTe::AnyType::Init,initializer)*/
 namespace MARTe {
 
+#define ANY_TYPE_STRUCT_BUILDER(structName, value) \
+const ClassRegistryItem * structName##_item = ClassRegistryDatabase::Instance()->Find(#structName) \
+if(structName##_item!=NULL) {\
+     TypeDescriptor structName##_descriptor(false, item->GetClassProperties()->GetUniqueIdentifier());\
+     AnyType structName##_at(structName##_descriptor, 0u, &value);\
+}
+
 /**
  * @brief Class which provides a smart mechanism for the generic representation
  * of types.
