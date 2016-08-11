@@ -25,12 +25,19 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <typeinfo>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassRegistryItemT.h"
+#include "HeapManager.h"
 #include "IntrospectionTestHelper.h"
 #include "Object.h"
+#include "StringHelper.h"
+#include "IntrospectionT.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -49,8 +56,8 @@ DECLARE_CLASS_MEMBER(TestIntrospectionNestedStructureFrom, nestedMember2_from, u
 static const IntrospectionEntry* nestedFields[] = { &TestIntrospectionNestedStructureFrom_nestedMember1_from_introspectionEntry,
         &TestIntrospectionNestedStructureFrom_nestedMember2_from_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(TestIntrospectionNestedStructureFrom , nestedFields);
-INTROSPECTION_REGISTER(TestIntrospectionNestedStructureFrom, "1.0", TestIntrospectionNestedStructureFrom_introspection)
+DECLARE_STRUCT_INTROSPECTION(TestIntrospectionNestedStructureFrom , nestedFields);
+//INTROSPECTION_REGISTER(TestIntrospectionNestedStructureFrom, "1.0", TestIntrospectionNestedStructureFrom_introspection)
 
 DECLARE_CLASS_MEMBER(TestIntrospectionObjectFrom, member1_from, uint32, "", "");
 
@@ -66,8 +73,8 @@ static const IntrospectionEntry* fieldsFrom[] = { &TestIntrospectionObjectFrom_m
         &TestIntrospectionObjectFrom_member2_from_introspectionEntry, &TestIntrospectionObjectFrom_member3_from_introspectionEntry,
         &TestIntrospectionObjectFrom_member4_from_introspectionEntry, &TestIntrospectionObjectFrom_member5_from_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(TestIntrospectionObjectFrom , fieldsFrom);
-INTROSPECTION_REGISTER(TestIntrospectionObjectFrom, "1.0", TestIntrospectionObjectFrom_introspection)
+DECLARE_STRUCT_INTROSPECTION(TestIntrospectionObjectFrom , fieldsFrom);
+//INTROSPECTION_REGISTER(TestIntrospectionObjectFrom, "1.0", TestIntrospectionObjectFrom_introspection)
 
 //the to introspection
 DECLARE_CLASS_MEMBER(TestIntrospectionNestedStructureTo, nestedMember1_to, uint32, "*", "");
@@ -77,8 +84,8 @@ DECLARE_CLASS_MEMBER(TestIntrospectionNestedStructureTo, nestedMember2_to, strin
 static const IntrospectionEntry* nestedFieldsTo[] = { &TestIntrospectionNestedStructureTo_nestedMember1_to_introspectionEntry,
         &TestIntrospectionNestedStructureTo_nestedMember2_to_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(TestIntrospectionNestedStructureTo , nestedFieldsTo);
-INTROSPECTION_REGISTER(TestIntrospectionNestedStructureTo, "1.0", TestIntrospectionNestedStructureTo_introspection)
+DECLARE_STRUCT_INTROSPECTION(TestIntrospectionNestedStructureTo , nestedFieldsTo);
+//INTROSPECTION_REGISTER(TestIntrospectionNestedStructureTo, "1.0", TestIntrospectionNestedStructureTo_introspection)
 
 DECLARE_CLASS_MEMBER(TestIntrospectionObjectTo, member1_to, char8, "[32]", "");
 
@@ -94,8 +101,8 @@ static const IntrospectionEntry* fieldsTo[] = { &TestIntrospectionObjectTo_membe
         &TestIntrospectionObjectTo_member2_to_introspectionEntry, &TestIntrospectionObjectTo_member3_to_introspectionEntry,
         &TestIntrospectionObjectTo_member4_to_introspectionEntry, &TestIntrospectionObjectTo_member5_to_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(TestIntrospectionObjectTo , fieldsTo);
-INTROSPECTION_REGISTER(TestIntrospectionObjectTo, "1.0", TestIntrospectionObjectTo_introspection)
+DECLARE_STRUCT_INTROSPECTION(TestIntrospectionObjectTo , fieldsTo);
+//INTROSPECTION_REGISTER(TestIntrospectionObjectTo, "1.0", TestIntrospectionObjectTo_introspection)
 
 DECLARE_CLASS_MEMBER(TestIntrospectionObjectNoCompatibility, member1_to, char8, "[32]", "");
 
@@ -114,9 +121,9 @@ static const IntrospectionEntry* fieldsNoCompatibility[] = { &TestIntrospectionO
         &TestIntrospectionObjectNoCompatibility_member4_to_introspectionEntry, &TestIntrospectionObjectNoCompatibility_x_introspectionEntry,
         &TestIntrospectionObjectNoCompatibility_member5_to_introspectionEntry, 0 };
 
-DECLARE_CLASS_INTROSPECTION(TestIntrospectionObjectNoCompatibility , fieldsNoCompatibility);
-INTROSPECTION_REGISTER(TestIntrospectionObjectNoCompatibility, "1.0", TestIntrospectionObjectNoCompatibility_introspection)
+DECLARE_STRUCT_INTROSPECTION(TestIntrospectionObjectNoCompatibility , fieldsNoCompatibility);
+//INTROSPECTION_REGISTER(TestIntrospectionObjectNoCompatibility, "1.0", TestIntrospectionObjectNoCompatibility_introspection)
 
-static const ClassProperties properties("TestNoIntrospectionObject", "TestNoIntrospectionObject", "1.0");
-static const ClassRegistryItem item(properties, (ObjectBuildFn*)NULL);
-
+//static const ClassProperties properties("TestNoIntrospectionObject", "TestNoIntrospectionObject", "1.0");
+//static const ClassRegistryItem item(properties, NULL);
+CLASS_REGISTER(TestNoIntrospectionObject, "1.0")

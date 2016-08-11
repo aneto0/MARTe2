@@ -71,9 +71,9 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_Int8) {
 
     ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
     for (int32 i = 0; i < nRows; i++) {
-        HeapManager::Free((void*&) matrix[i]);
+        delete [] matrix[i];
     }
-    HeapManager::Free((void*&) matrix);
+    delete [] matrix;
 }
 
 TEST(MatrixGTest,TestConstructorByPointerHeap_UInt8) {
@@ -91,9 +91,9 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_UInt8) {
 
     ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
     for (int32 i = 0; i < nRows; i++) {
-        HeapManager::Free((void*&) matrix[i]);
+        delete [] matrix[i];
     }
-    HeapManager::Free((void*&) matrix);
+    delete [] matrix;
 }
 
 TEST(MatrixGTest,TestConstructorByPointerHeap_Int16) {
@@ -111,9 +111,9 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_Int16) {
 
     ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
     for (int32 i = 0; i < nRows; i++) {
-        HeapManager::Free((void*&) matrix[i]);
+        delete [] matrix[i];
     }
-    HeapManager::Free((void*&) matrix);
+    delete [] matrix;
 }
 
 TEST(MatrixGTest,TestConstructorByPointerHeap_UInt16) {
@@ -131,9 +131,9 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_UInt16) {
 
     ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
     for (int32 i = 0; i < nRows; i++) {
-        HeapManager::Free((void*&) matrix[i]);
+        delete [] matrix[i];
     }
-    HeapManager::Free((void*&) matrix);
+    delete [] matrix;
 }
 
 TEST(MatrixGTest,TestConstructorByPointerHeap_Int32) {
@@ -151,9 +151,9 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_Int32) {
 
     ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
     for (int32 i = 0; i < nRows; i++) {
-        HeapManager::Free((void*&) matrix[i]);
+        delete [] matrix[i];
     }
-    HeapManager::Free((void*&) matrix);
+    delete [] matrix;
 }
 
 TEST(MatrixGTest,TestConstructorByPointerHeap_UInt32) {
@@ -171,9 +171,9 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_UInt32) {
 
     ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
     for (int32 i = 0; i < nRows; i++) {
-        HeapManager::Free((void*&) matrix[i]);
+        delete [] matrix[i];
     }
-    HeapManager::Free((void*&) matrix);
+    delete [] matrix;
 }
 
 TEST(MatrixGTest,TestConstructorByPointerHeap_Int64) {
@@ -191,9 +191,9 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_Int64) {
 
     ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
     for (int32 i = 0; i < nRows; i++) {
-        HeapManager::Free((void*&) matrix[i]);
+        delete [] matrix[i];
     }
-    HeapManager::Free((void*&) matrix);
+    delete [] matrix;
 }
 
 TEST(MatrixGTest,TestConstructorByPointerHeap_UInt64) {
@@ -212,9 +212,9 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_UInt64) {
     ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
 
     for (int32 i = 0; i < nRows; i++) {
-        HeapManager::Free((void*&) matrix[i]);
+        delete [] matrix[i];
     }
-    HeapManager::Free((void*&) matrix);
+    delete [] matrix;
 }
 
 TEST(MatrixGTest,TestConstructorByPointerHeap_Float32) {
@@ -232,9 +232,9 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_Float32) {
 
     ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
     for (int32 i = 0; i < nRows; i++) {
-        HeapManager::Free((void*&) matrix[i]);
+        delete [] matrix[i];
     }
-    HeapManager::Free((void*&) matrix);
+    delete [] matrix;
 }
 
 TEST(MatrixGTest,TestConstructorByPointerHeap_Float64) {
@@ -253,10 +253,10 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_Float64) {
     ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
 
     for (int32 i = 0; i < nRows; i++) {
-        HeapManager::Free((void*&) matrix[i]);
+        delete [] matrix[i];
     }
 
-    HeapManager::Free((void*&) matrix);
+    delete [] matrix;
 }
 
 
