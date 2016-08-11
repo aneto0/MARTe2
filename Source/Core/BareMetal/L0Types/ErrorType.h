@@ -105,7 +105,7 @@ static const uint32 ExceptionBit(8u);
 static const uint32 TimeoutBit(9u);
 
 /**
- * Error during comunication
+ * Error during communication
  */
 static const uint32 CommunicationErrorBit(10u);
 
@@ -148,7 +148,8 @@ static const uint32 LastErrorBit(16u);
 /**
  * To generate the constants representing a specific error type
  */
-#define GENERATE_ERROR_CONSTANTS(errorName)   static const ErrorIntegerFormat errorName(errorName ## Bit);
+#define GENERATE_ERROR_CONSTANTS(errorName)   static const ErrorIntegerFormat errorName =(1 >> errorName ## Bit);
+
 
 /**
  * To generate the constants representing a specific error type
@@ -159,7 +160,7 @@ static const uint32 LastErrorBit(16u);
 /**
  * No error to report
  */
-static const ErrorIntegerFormat NoError(0u);
+static const ErrorIntegerFormat NoError = 0u;
 
 
 /**
@@ -173,7 +174,7 @@ GENERATE_ERROR_CONSTANTS(FatalError)
 GENERATE_ERROR_CONSTANTS(RecoverableError)
 
 /**
- * Initialization error
+ * Initialisation error
  */
 GENERATE_ERROR_CONSTANTS(InitialisationError)
 
@@ -213,7 +214,7 @@ GENERATE_ERROR_CONSTANTS(Exception)
 GENERATE_ERROR_CONSTANTS(Timeout)
 
 /**
- * Error during comunication
+ * Error during communication
  */
 GENERATE_ERROR_CONSTANTS(CommunicationError)
 
@@ -272,19 +273,19 @@ public:
      * is no error is flagged
      * warnings maybe set
      * */
-    inline bool NoError() const ;
+    inline bool ErrorsCleared() const ;
 
     /**
      * TODO
      * allows mixing with other booleans
      * */
-    inline operator bool();
+    inline operator bool() const;
 
     /**
      * TODO
      * allows using as a mask;
      * */
-    inline operator ErrorIntegerFormat();
+    inline operator ErrorIntegerFormat() const;
 
     /**
      * TODO
@@ -370,7 +371,7 @@ public:
         GENERATE_ERROR_BITRANGE(Timeout,timeout)
 
         /**
-         * Error during comunication
+         * Error during communication
          */
         GENERATE_ERROR_BITRANGE(CommunicationError,communicationError)
 
@@ -407,7 +408,7 @@ public:
         /**
          * unmapped
          * */
-        BitRange<uint32, LastErrorBit+1, ErrorIntegerFormatBitSize - LastErrorBit -1 > unmapped;
+        BitRange<ErrorIntegerFormat, LastErrorBit+1, ErrorIntegerFormatBitSize - LastErrorBit -1 > unmapped;
 
     };
 
@@ -423,19 +424,19 @@ inline ErrorType::ErrorType(const ErrorIntegerFormat errorBitSet) {
 
 inline ErrorType::ErrorType(bool allOk) {
     format_as_integer = NoError;
-    FatalError = !allOk;
+    fatalError = !allOk;
 }
 
 
-inline bool ErrorType::NoError() const {
+inline bool ErrorType::ErrorsCleared() const {
     return (format_as_integer == 0);
 }
 
-inline ErrorType::operator bool() {
+inline ErrorType::operator bool() const {
     return (format_as_integer == 0);
 }
 
-inline ErrorType::operator ErrorIntegerFormat(){
+inline ErrorType::operator ErrorIntegerFormat() const{
     return format_as_integer ;
 }
 

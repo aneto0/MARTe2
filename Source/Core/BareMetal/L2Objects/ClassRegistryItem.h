@@ -261,7 +261,7 @@ ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object * cons
         ret.parametersError = true;
     }
 
-    if (ret.NoError()) {
+    if (ret.ErrorsCleared()) {
         // search in the list the first function returning without unsupported feature
         CallRegisteredMethodLauncherT<argType> launcher(object, methodName, parameters);
         if (classMethods.ListSearch(&launcher)) {

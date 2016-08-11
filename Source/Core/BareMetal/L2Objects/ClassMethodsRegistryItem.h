@@ -201,7 +201,7 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * conte
         returnValue.parametersError = true;
     }
 
-    if (returnValue.NoError()) {
+    if (returnValue.ErrorsCleared()) {
         ClassMethodInterfaceMapper * fmp = NULL_PTR(ClassMethodInterfaceMapper *);
         int32 minIndex = 0;
         int32 functionIndex = 0;
@@ -215,7 +215,7 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * conte
                 returnValue.unsupportedFeature = true;
             }
 
-            if (returnValue.NoError()) {
+            if (returnValue.ErrorsCleared()) {
                 /*lint -e{613} .The NULL checking has been done before entering here*/
                 returnValue = fmp->Call<argType>(context, ref);
                 if (returnValue.unsupportedFeature == true) {

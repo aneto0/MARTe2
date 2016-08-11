@@ -151,7 +151,7 @@ ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object * cons
         ret.parametersError = true;
     }
 
-    if (ret.NoError()) {
+    if (ret.ErrorsCleared()) {
         /*
          * The launcher is passed as a filter to the ListSearch method of the
          * classMethods list, which will execute the Test method of the launcher

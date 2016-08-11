@@ -90,7 +90,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
     }
 
     // compute actual message parameters
-    if (ret.NoError()) {
+    if (ret.ErrorsCleared()) {
         // is this is a reply (must be a late reply)
         if (message->IsReplyMessage()) {
 
@@ -126,7 +126,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
         }
     }
 
-    if (ret.NoError()) {
+    if (ret.ErrorsCleared()) {
         ReferenceT<MessageI> destinationObject = FindDestination(destination);
 
         if (destinationObject.IsValid()) {
@@ -138,7 +138,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
         }
     }
 
-    if (ret.NoError()) {
+    if (ret.ErrorsCleared()) {
         // if we wanted an immediate reply then we should have one
         bool isImmediateReplyExpected=message->ImmediateReplyExpected();
         bool isReply=message->IsReplyMessage();
@@ -167,7 +167,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
         // TODO produce error message
     }
 
-    if (ret.NoError()) {
+    if (ret.ErrorsCleared()) {
         // reply to a reply NOT possible
         if (message->IsReplyMessage()) {
             // TODO emit error
@@ -175,7 +175,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
         }
     }
 
-    if (ret.NoError()) {
+    if (ret.ErrorsCleared()) {
         // true means immediate reply
         message->MarkImmediateReplyExpected();
         message->SetReplyTimeout(maxWait);
@@ -206,7 +206,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndExpectReplyLater(ReferenceT<M
         // TODO produce error message
     }
 
-    if (ret.NoError()) {
+    if (ret.ErrorsCleared()) {
         // reply to a reply NOT possible
         if (message->IsReplyMessage()) {
             // TODO emit error
@@ -214,7 +214,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndExpectReplyLater(ReferenceT<M
         }
     }
 
-    if (ret.NoError()) {
+    if (ret.ErrorsCleared()) {
         // false means decoupled reply
         message->MarkLateReplyExpected();
 
@@ -264,7 +264,7 @@ ErrorManagement::ErrorType MessageI::SortMessage(ReferenceT<Message> &message) {
         // TODO produce error message
     }
 
-    if (ret.NoError()) {
+    if (ret.ErrorsCleared()) {
         CCString function = message->GetFunction();
         if (message->IsReplyMessage()) {
             function = "HandleReply";
@@ -281,12 +281,12 @@ ErrorManagement::ErrorType MessageI::SortMessage(ReferenceT<Message> &message) {
     }
 
     // check if errors are only of function mismatch
-    if (!ret.NoError()) {
+    if (!ret.ErrorsCleared()) {
         ErrorManagement::ErrorType saveRet = ret;
         // try resetting the "good" errors
         ret.unsupportedFeature = false;
         ret.parametersError = false;
-        if (ret.NoError()) {
+        if (ret.ErrorsCleared()) {
             ret = HandleMessage(message);
         }
         else {
@@ -297,7 +297,7 @@ ErrorManagement::ErrorType MessageI::SortMessage(ReferenceT<Message> &message) {
     // shall we send a reply?
     bool isLateReplyExpected=(message->LateReplyExpected());
     bool isReply=(message->IsReplyMessage());
-    if ((ret.NoError()) && (isLateReplyExpected) && (isReply)) {
+    if ((ret.ErrorsCleared()) && (isLateReplyExpected) && (isReply)) {
         ret = MessageI::SendMessage(message);
     }
 
