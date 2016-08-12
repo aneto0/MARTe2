@@ -33,6 +33,7 @@ OBJSX=	AnyObjectTest.x \
 	JsonParserTest.x \
 	LexicalAnalyzerTest.x \
 	StandardParserTest.x \
+	StringAliasAllTest.x\
 	TypeConversionTest.x \
 	TokenInfoTest.x \
 	TokenTest.x \

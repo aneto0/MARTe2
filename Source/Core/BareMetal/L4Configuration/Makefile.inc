@@ -24,7 +24,8 @@
 #
 #############################################################
 
-OBJSX=	AnyObject.x \
+OBJSX=	AliasConverterI.x\
+		AnyObject.x \
 		AnyTypeCreator.x \
 		ConfigurationDatabase.x\
 		FloatToInteger.x \
@@ -41,6 +42,7 @@ OBJSX=	AnyObject.x \
 		Validate.x \
 		ValidatorI.x\
 		BasicTypeStandardValidator.x\
+		StringAliasAll.x\
 		XMLParser.x 
         
 PACKAGE=Core/BareMetal

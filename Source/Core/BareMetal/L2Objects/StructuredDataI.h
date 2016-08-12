@@ -123,6 +123,10 @@ public:
      */
     virtual bool Copy(StructuredDataI &destination) = 0;
 
+
+    virtual bool Link(StructuredDataI &destination)=0;
+
+
     /**
      * @brief Adds a node to the current node.
      * @param[in] node a reference to the node to add.

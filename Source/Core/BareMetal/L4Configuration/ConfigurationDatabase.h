@@ -125,6 +125,9 @@ public:
      */
     virtual bool Copy(StructuredDataI &destination);
 
+    virtual bool Link(StructuredDataI &destination);
+
+
     /**
      * @see StructuredDataI::MoveToRoot
      */

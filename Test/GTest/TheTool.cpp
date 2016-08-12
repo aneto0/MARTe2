@@ -269,6 +269,11 @@ static void ReadTheType(const char8 *paramName,
         PrintOnFile(objSource, "        }\n");
 
     }
+    PrintOnFile(objSource, "        if(!ret) {\n"
+                "            REPORT_ERROR(ErrorManagement::FatalError, \"Failed loading the parameter ");
+    PrintOnFile(objSource, paramAddress);
+    PrintOnFile(objSource, "\");\n");
+    PrintOnFile(objSource, "        }\n");
     PrintOnFile(objSource, "    }\n");
 
 }
@@ -373,8 +378,17 @@ static void ReadTheTypeArray(const char8 *paramName,
 
     }
     PrintOnFile(objSource, "        }\n"
-                "        data.MoveAbsolute(currentPath.Buffer());\n"
-                "    }\n");
+                "        data.MoveAbsolute(currentPath.Buffer());\n");
+    PrintOnFile(objSource, "        if(!ret) {\n"
+                "            REPORT_ERROR(ErrorManagement::FatalError, \"Failed loading the parameters *");
+    if (StringHelper::Length(paramAddress) > 0u) {
+        PrintOnFile(objSource, paramAddress);
+        PrintOnFile(objSource, ".");
+    }
+    PrintOnFile(objSource, paramName);
+    PrintOnFile(objSource, "\");\n");
+    PrintOnFile(objSource, "        }\n");
+    PrintOnFile(objSource, "    }\n");
 }
 
 static void GenerateInitialiseFunction(ConfigurationDatabase &database,
@@ -382,14 +396,15 @@ static void GenerateInitialiseFunction(ConfigurationDatabase &database,
                                        BasicFile &objSource,
                                        const char8 * className) {
 
-    PrintOnFile(objHeader, "    virtual bool Initialise(StructuredDataI &data);\n\n");
+    PrintOnFile(objHeader, "    virtual bool ConfigureToolMembers(StructuredDataI &data);\n");
+
     PrintOnFile(objSource, "bool ");
     PrintOnFile(objSource, className);
     PrintOnFile(objSource, "::");
-    PrintOnFile(objSource, "Initialise(StructuredDataI &data){\n");
-    PrintOnFile(objSource, "    bool ret = ReferenceContainer::Initialise(data);\n");
+    PrintOnFile(objSource, "ConfigureToolMembers(StructuredDataI &data){\n");
+    PrintOnFile(objSource, "    bool ret = true;\n");
 
-    PrintOnFile(objHeader, "protected:\n\n");
+    PrintOnFile(objHeader, "#define TOOL_MEMBERS_DECLARATION()");
 
     if (database.MoveRelative("Parameters")) {
         uint32 numberOfPars = database.GetNumberOfChildren();
@@ -403,15 +418,15 @@ static void GenerateInitialiseFunction(ConfigurationDatabase &database,
                     printf("\nError, undefined type for %s", paramName);
                 }
                 else {
-                    PrintOnFile(objHeader, "    ");
+                    PrintOnFile(objHeader, "\\\n    ");
                     PrintOnFile(objHeader, typeName.Buffer());
                     PrintOnFile(objHeader, " ");
                     PrintOnFile(objHeader, paramName);
-                    PrintOnFile(objHeader, ";\n");
+                    PrintOnFile(objHeader, ";");
                     if (paramName[0] == '*') {
-                        PrintOnFile(objHeader, "    uint32 NumberOf");
+                        PrintOnFile(objHeader, "\\\n    uint32 NumberOf");
                         PrintOnFile(objHeader, paramName + 1);
-                        PrintOnFile(objHeader, ";\n");
+                        PrintOnFile(objHeader, ";");
                     }
                     StreamString paramPath;
                     StreamString paramAddress;
@@ -457,9 +472,9 @@ static void AssignSignalArray(const char8 *signalName,
     PrintOnFile(objSource, signalName);
     PrintOnFile(objSource, "= 0u;\n");
     PrintOnFile(objSource, "        for(uint32 i=0u; (i<numberOfSignals) && ret && ok; i++){\n"
-                "            StreamString signalName = ");
+                "            StreamString signalName = \"");
     PrintOnFile(objSource, signalAlias);
-    PrintOnFile(objSource, ";\n");
+    PrintOnFile(objSource, "\";\n");
     PrintOnFile(objSource, "            signalName.Printf(\"%d\", i);\n");
     PrintOnFile(objSource, "            uint32 signalId;\n"
                 "            ok = GetSignalIndex(");
@@ -480,9 +495,9 @@ static void AssignSignalArray(const char8 *signalName,
     PrintOnFile(objSource, "];\n");
     PrintOnFile(objSource, "        ok = true;\n");
     PrintOnFile(objSource, "        for(uint32 i=0u; (i<numberOfSignals) && ret && ok; i++){\n"
-                "            StreamString signalName = ");
+                "            StreamString signalName = \"");
     PrintOnFile(objSource, signalAlias);
-    PrintOnFile(objSource, ";\n");
+    PrintOnFile(objSource, "\";\n");
     PrintOnFile(objSource, "            signalName.Printf(\"%d\", i);\n");
     PrintOnFile(objSource, "            uint32 signalId;\n"
                 "            ok = GetSignalIndex(");
@@ -515,6 +530,11 @@ static void AssignSignalArray(const char8 *signalName,
     PrintOnFile(objSource, "                }\n");
     PrintOnFile(objSource, "            }\n"
                 "        }\n");
+    PrintOnFile(objSource, "        if(!ret) {\n"
+                "            REPORT_ERROR(ErrorManagement::FatalError, \"Failed loading the signals *");
+    PrintOnFile(objSource, signalAlias);
+    PrintOnFile(objSource, "\");\n");
+    PrintOnFile(objSource, "        }\n");
     PrintOnFile(objSource, "    }\n");
 }
 
@@ -556,6 +576,11 @@ static void AssignSignal(const char8 *signalName,
     PrintOnFile(objSource, signalName);
     PrintOnFile(objSource, " != NULL);\n");
     PrintOnFile(objSource, "        }\n");
+    PrintOnFile(objSource, "        if(!ret) {\n"
+                "            REPORT_ERROR(ErrorManagement::FatalError, \"Failed loading the signal ");
+    PrintOnFile(objSource, signalAlias);
+    PrintOnFile(objSource, "\");\n");
+    PrintOnFile(objSource, "        }\n");
     PrintOnFile(objSource, "    }\n");
 }
 
@@ -565,7 +590,7 @@ static void GenerateConfigureFunction(ConfigurationDatabase &database,
                                       const char8 * className) {
     PrintOnFile(objSource, "bool ");
     PrintOnFile(objSource, className);
-    PrintOnFile(objSource, "::Setup() {\n");
+    PrintOnFile(objSource, "::ConfigureToolSignals() {\n");
     PrintOnFile(objSource, "    bool ret = true;\n");
 
     const char8 * signalsNode[] = { "InputSignals", "OutputSignals", 0 };
@@ -587,16 +612,16 @@ static void GenerateConfigureFunction(ConfigurationDatabase &database,
                             uint32 begin = signalName[0] == '*';
                             signalAlias = signalName + begin;
                         }
-                        PrintOnFile(objHeader, "    ");
+                        PrintOnFile(objHeader, "\\\n    ");
                         PrintOnFile(objHeader, typeName.Buffer());
                         PrintOnFile(objHeader, " *");
                         PrintOnFile(objHeader, signalName);
-                        PrintOnFile(objHeader, ";\n");
+                        PrintOnFile(objHeader, ";");
 
                         if (signalName[0] == '*') {
-                            PrintOnFile(objHeader, "    uint32 NumberOf");
+                            PrintOnFile(objHeader, "\\\n    uint32 NumberOf");
                             PrintOnFile(objHeader, signalName + 1);
-                            PrintOnFile(objHeader, ";\n");
+                            PrintOnFile(objHeader, ";");
                             AssignSignalArray(signalName + 1, signalAlias.Buffer(), signalsNode[n], typeName.Buffer(), objSource);
                         }
                         else {
@@ -620,55 +645,13 @@ static void GenerateObjFile(ConfigurationDatabase &database,
                             BasicFile &objSource,
                             const char8 * className) {
 
-    AnyType at1 = database.GetType("Inherits");
-    if (!at1.IsVoid()) {
+    //generate the .cpp and .h files with all the object configuration
+    //implementing the Object::Initialise() function
 
-        if (at1.GetNumberOfDimensions() != 1) {
-            printf("\n[Inherits] has to be a vector");
-        }
-        uint32 numberOfInherits = at1.GetNumberOfElements(0u);
-        Vector<StreamString> inheritances(numberOfInherits);
-        if (!database.Read("Inherits", inheritances)) {
-            printf("\nCannot read [Inherits]\n");
-        }
 
-        // print the header in the header file
-        PrintOnFile(objHeader, "#include \"Object.h\"\n");
-        PrintOnFile(objHeader, "#include \"");
-        PrintOnFile(objHeader, className);
-        PrintOnFile(objHeader, "_Params.h\"\n");
 
-        for (uint32 i = 0u; i < numberOfInherits; i++) {
-            PrintOnFile(objHeader, "#include \"");
-            PrintOnFile(objHeader, inheritances[i].Buffer());
-            PrintOnFile(objHeader, ".h\"\n");
-        }
-        PrintOnFile(objHeader, "namespace MARTe { \n\n");
-        PrintOnFile(objHeader, "class ");
-        PrintOnFile(objHeader, className);
-        PrintOnFile(objHeader, " : ");
 
-        for (uint32 i = 0u; i < numberOfInherits; i++) {
-            PrintOnFile(objHeader, "public ");
-            PrintOnFile(objHeader, inheritances[i].Buffer());
-
-            if (i != numberOfInherits - 1u) {
-                PrintOnFile(objHeader, ", ");
-            }
-            else {
-                PrintOnFile(objHeader, " {\n\n");
-            }
-        }
-    }
-
-    PrintOnFile(objHeader, "public:\n\n");
-    PrintOnFile(objHeader, "CLASS_REGISTER_DECLARATION()\n\n");
-
-    PrintOnFile(objSource, "#include \"");
-    PrintOnFile(objSource, className);
-    PrintOnFile(objSource, ".h\"\n");
-    PrintOnFile(objSource, "namespace MARTe {\n\n");
-
+    PrintOnFile(objHeader, "#define TOOL_METHODS_DECLARATION() \\ \n");
     bool isSignal = true;
     if (!database.MoveRelative("InputSignals")) {
         if (!database.MoveRelative("InputSignals")) {
@@ -676,18 +659,24 @@ static void GenerateObjFile(ConfigurationDatabase &database,
         }
     }
     if (isSignal) {
-        PrintOnFile(objHeader, "    virtual bool Setup();\n\n");
+        PrintOnFile(objHeader, "    virtual bool ConfigureToolSignals();\\ \n");
         database.MoveToAncestor(1u);
     }
 
-    GenerateInitialiseFunction(database, objHeader, objSource, className);
-    GenerateConfigureFunction(database, objHeader, objSource, className);
+
+    PrintOnFile(objHeader, "    virtual bool ToolMembersConstructor();\\ \n");
+    PrintOnFile(objHeader, "    virtual bool ToolMembersDestructor(); \\ \n");
+
+    PrintOnFile(objSource, "#include \"");
+    PrintOnFile(objSource, className);
+    PrintOnFile(objSource, ".h\"\n");
+    PrintOnFile(objSource, "namespace MARTe {\n\n");
 
     // Constructor and destructor
-
+    PrintOnFile(objSource, "void ");
     PrintOnFile(objSource, className);
     PrintOnFile(objSource, "::");
-    PrintOnFile(objSource, className);
+    PrintOnFile(objSource, "ToolMembersConstructor");
     PrintOnFile(objSource, "() {\n");
 
     uint32 n = 0u;
@@ -716,10 +705,10 @@ static void GenerateObjFile(ConfigurationDatabase &database,
 
     PrintOnFile(objSource, "}\n\n");
 
+    PrintOnFile(objSource, "void ");
     PrintOnFile(objSource, className);
     PrintOnFile(objSource, "::");
-    PrintOnFile(objSource, "~");
-    PrintOnFile(objSource, className);
+    PrintOnFile(objSource, "ToolMembersDestructor");
     PrintOnFile(objSource, "() {\n");
     n = 0u;
     while (nodeNames[n] != NULL) {
@@ -745,14 +734,15 @@ static void GenerateObjFile(ConfigurationDatabase &database,
         }
         n++;
     }
-
     PrintOnFile(objSource, "}\n\n");
 
-    PrintOnFile(objSource, "CLASS_REGISTER(");
-    PrintOnFile(objSource, className);
-    PrintOnFile(objSource, ",\"1.0\")\n}\n");
 
-    PrintOnFile(objHeader, "};\n}\n");
+    //Populates the Initialise function in the cpp file
+    GenerateInitialiseFunction(database, objHeader, objSource, className);
+    //Populates the Setup function in the cpp file
+    GenerateConfigureFunction(database, objHeader, objSource, className);
+    PrintOnFile(objSource, "}\n\n");
+
 
 }
 
@@ -802,7 +792,7 @@ static void GenerateOutputFiles(ConfigurationDatabase &database) {
 
     BasicFile objHeader;
     StreamString objheaderName = className;
-    objheaderName += ".h";
+    objheaderName += "_macros.h";
 // open the .h gam file
     if (!objHeader.Open(objheaderName.Buffer(),
                         BasicFile::FLAG_APPEND | BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
@@ -812,7 +802,7 @@ static void GenerateOutputFiles(ConfigurationDatabase &database) {
 
     BasicFile objSource;
     StreamString objSourceName = className;
-    objSourceName += ".cpp";
+    objSourceName += "_aux.cpp";
 // open the .cpp gam file
     if (!objSource.Open(objSourceName.Buffer(),
                         BasicFile::FLAG_APPEND | BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {

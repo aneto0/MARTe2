@@ -454,6 +454,22 @@ bool ConfigurationDatabase::AddToCurrentNode(Reference node) {
     if (ok) {
         ok = currentNode->Insert(nodeToAdd);
     }
+    else {
+        ReferenceT<AnyObject> leafToAdd = node;
+        ok = leafToAdd.IsValid();
+        if (ok) {
+            ok = currentNode->Insert(leafToAdd);
+        }
+    }
+    return ok;
+}
+
+bool ConfigurationDatabase::Link(StructuredDataI &destination) {
+    uint32 numberOfChildren = GetNumberOfChildren();
+    bool ok = true;
+    for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
+        ok = destination.AddToCurrentNode(currentNode->Get(i));
+    }
     return ok;
 }
 

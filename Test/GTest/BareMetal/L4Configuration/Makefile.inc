@@ -30,6 +30,7 @@ OBJSX=  AnyObjectGTest.x \
 		JsonParserGTest.x \
 		LexicalAnalyzerGTest.x \
 		StandardParserGTest.x \
+		StringAliasAllGTest.x\
 		TokenGTest.x \
 		TokenInfoGTest.x \
 		TypeConversionGTest.x\
