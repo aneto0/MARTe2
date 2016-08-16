@@ -72,7 +72,7 @@ void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
     if (p != NULL) {
 
         if (!Lock()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
+            REPORT_ERROR(ErrorManagement::fatalError, "ClassRegistryDatabase: Failed FastLock()");
         }
 
         p->SetUniqueIdentifier(classUniqueIdentifier);
@@ -87,7 +87,7 @@ void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
 ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
     ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
     if (!Lock()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
+        REPORT_ERROR(ErrorManagement::fatalError, "ClassRegistryDatabase: Failed FastLock()");
     }
 
     const uint32 maxSize = 129u;
@@ -127,7 +127,7 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: NULL pointer in input");
+        REPORT_ERROR(ErrorManagement::fatalError, "ClassRegistryDatabase: NULL pointer in input");
     }
 
     //registryItem still not found. Try to look inside the dll (if it exists)
@@ -193,7 +193,7 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
 ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(const char8 * const typeidName) {
     ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
     if (!Lock()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
+        REPORT_ERROR(ErrorManagement::fatalError, "ClassRegistryDatabase: Failed FastLock()");
     }
     bool found = false;
     if (typeidName != NULL) {
@@ -213,7 +213,7 @@ ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(const char8 * const typ
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: NULL pointer in input");
+        REPORT_ERROR(ErrorManagement::fatalError, "ClassRegistryDatabase: NULL pointer in input");
     }
 
     UnLock();
@@ -226,7 +226,7 @@ uint32 ClassRegistryDatabase::GetSize() {
         size = classDatabase.ListSize();
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
+        REPORT_ERROR(ErrorManagement::fatalError, "ClassRegistryDatabase: Failed FastLock()");
     }
     UnLock();
     return size;
@@ -238,7 +238,7 @@ const ClassRegistryItem *ClassRegistryDatabase::Peek(const uint32 &idx) {
         item = classDatabase.ListPeek(idx);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
+        REPORT_ERROR(ErrorManagement::fatalError, "ClassRegistryDatabase: Failed FastLock()");
     }
     UnLock();
     return item;
@@ -253,7 +253,7 @@ void ClassRegistryDatabase::CleanUp() {
 }
 
 bool ClassRegistryDatabase::Lock() {
-    return (mux.FastLock() == ErrorManagement::NoError);
+    return (mux.FastLock() == ErrorManagement::noError);
 }
 
 void ClassRegistryDatabase::UnLock() {

@@ -72,10 +72,10 @@ public:
      * @param[in] sender is the Object sending the message.
 
      * @return
-     *   ErrorManagement::NoError() if the destination object is found and the called function returns true.
-     *   ErrorManagement::FatalError if the function to be called returns false.
-     *   ErrorManagement::UnsupportedFeature if the message was refused
-     *   ErrorManagement::Timeout if a wait for reply timesOut
+     *   ErrorManagement::noError() if the destination object is found and the called function returns true.
+     *   ErrorManagement::fatalError if the function to be called returns false.
+     *   ErrorManagement::unsupportedFeature if the message was refused
+     *   ErrorManagement::timeout if a wait for reply timesOut
      *   ErrorManagement::CommunicationError if the reply was not produced when requested
      *   ErrorManagement::ParametersError if the message is invalid or if sender is NULL and reply was expected
      */
@@ -107,8 +107,8 @@ protected:
      * @details Handles the reception of a message and by default simply calls SortMessage(). Can be overridden to implement message Queues etc...
      * @param[in,out] message is the received to be received.
      * @return
-     *   ErrorManagement::NoError if the function specified in \a message is called correctly and returns true.
-     *   ErrorManagement::UnsupportedFeature if something goes wrong trying to call the registered function.
+     *   ErrorManagement::noError if the function specified in \a message is called correctly and returns true.
+     *   ErrorManagement::unsupportedFeature if something goes wrong trying to call the registered function.
      *
      */
     virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
@@ -130,7 +130,10 @@ protected:
     virtual ErrorManagement::ErrorType HandleMessage(ReferenceT<Message> &message);
 
 private:
-
+    /**
+     * TODO
+     *
+     * */
     static ReferenceT<MessageI> FindDestination(CCString destination);
 
 };

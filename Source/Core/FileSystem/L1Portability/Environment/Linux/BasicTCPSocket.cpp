@@ -110,7 +110,7 @@ bool BasicTCPSocket::Listen(const uint16 port,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: The socked handle is not valid");
+        REPORT_ERROR(ErrorManagement::fatalError, "BasicTCPSocket: The socked handle is not valid");
     }
 
     return ret;
@@ -174,7 +174,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                                 }
                                 else {
                                     if (valopt > 0) {
-                                        REPORT_ERROR(ErrorManagement::Timeout, "BasicTCPSocket: connection with timeout failed");
+                                        REPORT_ERROR(ErrorManagement::timeout, "BasicTCPSocket: connection with timeout failed");
                                         ret = false;
                                     }
                                 }
@@ -201,18 +201,18 @@ bool BasicTCPSocket::Connect(const char8 * const address,
             if (timeout.IsFinite()) {
                 if (wasBlocking) {
                     if (!SetBlocking(true)) {
-                        REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: Socket reset to blocking mode failed");
+                        REPORT_ERROR(ErrorManagement::fatalError, "BasicTCPSocket: Socket reset to blocking mode failed");
                         ret = false;
                     }
                 }
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: Failed setting the destination address");
+            REPORT_ERROR(ErrorManagement::fatalError, "BasicTCPSocket: Failed setting the destination address");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: The socked handle is not valid");
+        REPORT_ERROR(ErrorManagement::fatalError, "BasicTCPSocket: The socked handle is not valid");
     }
 
     return ret;
@@ -229,7 +229,7 @@ bool BasicTCPSocket::IsConnected() const {
         ret = getpeername(connectionSocket, reinterpret_cast<struct sockaddr *>(information.GetInternetHost()), &len);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: The socked handle is not valid");
+        REPORT_ERROR(ErrorManagement::fatalError, "BasicTCPSocket: The socked handle is not valid");
     }
     return (ret == 0);
 
@@ -290,11 +290,11 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
                     }
                     else {
 
-                        REPORT_ERROR(ErrorManagement::Timeout, "BasicTCPSocket: Timeout expired");
+                        REPORT_ERROR(ErrorManagement::timeout, "BasicTCPSocket: Timeout expired");
                     }
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: Failed accept in unblocking mode");
+                    REPORT_ERROR(ErrorManagement::fatalError, "BasicTCPSocket: Failed accept in unblocking mode");
                 }
 
             }
@@ -313,7 +313,7 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
     }
     else {
 
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: The socked handle is not valid");
+        REPORT_ERROR(ErrorManagement::fatalError, "BasicTCPSocket: The socked handle is not valid");
     }
 
     return ret;
@@ -333,7 +333,7 @@ bool BasicTCPSocket::Peek(char8* const buffer,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: The socked handle is not valid");
+        REPORT_ERROR(ErrorManagement::fatalError, "BasicTCPSocket: The socked handle is not valid");
     }
     return (ret > 0);
 }
@@ -356,7 +356,7 @@ bool BasicTCPSocket::Read(char8* const output,
             bool eagain = (sock_errno() == EAGAIN);
             bool blocking = IsBlocking();
             if ((ewouldblock || eagain) && (blocking)) {
-                REPORT_ERROR(ErrorManagement::Timeout, "BasicTCPSocket: Timeout expired in recv()");
+                REPORT_ERROR(ErrorManagement::timeout, "BasicTCPSocket: Timeout expired in recv()");
             }
             else {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed recv()");
@@ -364,7 +364,7 @@ bool BasicTCPSocket::Read(char8* const output,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: The socked handle is not valid");
+        REPORT_ERROR(ErrorManagement::fatalError, "BasicTCPSocket: The socked handle is not valid");
     }
     return (readBytes > 0);
 }
@@ -386,7 +386,7 @@ bool BasicTCPSocket::Write(const char8* const input,
             bool eagain = (sock_errno() == EAGAIN);
             bool blocking = IsBlocking();
             if ((ewouldblock || eagain) && (blocking)) {
-                REPORT_ERROR(ErrorManagement::Timeout, "BasicTCPSocket: Timeout expired in send()");
+                REPORT_ERROR(ErrorManagement::timeout, "BasicTCPSocket: Timeout expired in send()");
             }
             else {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed send()");
@@ -394,7 +394,7 @@ bool BasicTCPSocket::Write(const char8* const input,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: The socked handle is not valid");
+        REPORT_ERROR(ErrorManagement::fatalError, "BasicTCPSocket: The socked handle is not valid");
     }
     return (writtenBytes > 0);
 }
@@ -437,7 +437,7 @@ bool BasicTCPSocket::Read(char8* const output,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: The socked handle is not valid");
+        REPORT_ERROR(ErrorManagement::fatalError, "BasicTCPSocket: The socked handle is not valid");
     }
     return (size > 0u);
 }
@@ -479,7 +479,7 @@ bool BasicTCPSocket::Write(const char8* const input,
     }
 
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: The socked handle is not valid");
+        REPORT_ERROR(ErrorManagement::fatalError, "BasicTCPSocket: The socked handle is not valid");
     }
     return (size > 0u);
 }

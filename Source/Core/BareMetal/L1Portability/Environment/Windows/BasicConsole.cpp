@@ -199,7 +199,7 @@ bool BasicConsole::Open(const FlagsType &mode) {
 //    con.selectedStream      = NormalStreamMode;
     int32 shortMask = 0xffff;
 
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
     handle->openingMode = mode;
 
     if (handle->openingMode & BasicConsoleMode::CreateNewBuffer) {
@@ -225,14 +225,14 @@ bool BasicConsole::Open(const FlagsType &mode) {
         }
     }
 
-    if (error == ErrorManagement::NoError) {
+    if (error == ErrorManagement::noError) {
         CONSOLE_SCREEN_BUFFER_INFO info;
         if (GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &(handle->initialInfo)) == 0) {
             error = ErrorManagement::OSError;
         }
     }
 
-    if (error == ErrorManagement::NoError) {
+    if (error == ErrorManagement::noError) {
         int stdConsoleColumns;
         int stdConsoleRows;
         stdConsoleColumns = handle->initialInfo.dwSize.X;
@@ -266,7 +266,7 @@ bool BasicConsole::Open(const FlagsType &mode) {
 
     }
 
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 }
 
 FlagsType BasicConsole::GetOpeningMode() const {
@@ -274,13 +274,13 @@ FlagsType BasicConsole::GetOpeningMode() const {
 }
 
 bool BasicConsole::ShowBuffer() {
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
 
     if (SetConsoleActiveScreenBuffer(handle->outputConsoleHandle) == FALSE) {
         error = ErrorManagement::OSError;
     }
 
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 
 }
 
@@ -304,7 +304,7 @@ bool BasicConsole::Write(const char8* buffer,
 bool BasicConsole::OSWrite(const char8* const buffer,
                            uint32 &size,
                            const TimeoutType &timeout) {
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
 
     if ((size > 0) && (buffer != NULL)) {
 
@@ -315,10 +315,10 @@ bool BasicConsole::OSWrite(const char8* const buffer,
 
     }
     else {
-        error = ErrorManagement::Warning;
+        error = ErrorManagement::warning;
     }
 
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 
 }
 
@@ -335,7 +335,7 @@ bool BasicConsole::Write(const char8* const buffer,
 bool BasicConsole::Read(char8* const buffer,
                         uint32 &size,
                         const TimeoutType &timeout) {
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
     DWORD ret = 0;
 
     if (timeout.IsFinite()) {
@@ -344,11 +344,11 @@ bool BasicConsole::Read(char8* const buffer,
         ret = WaitForSingleObject(handle->inputConsoleHandle, (DWORD) timeout.GetTimeoutMSec());
         if (ret != 0) {
             size = 0;
-            error = ErrorManagement::Timeout;
+            error = ErrorManagement::timeout;
         }
     }
 
-    if (error == ErrorManagement::NoError) {
+    if (error == ErrorManagement::noError) {
         if (handle->openingMode & BasicConsoleMode::PerformCharacterInput) {
             size = 1;
             if (!ReadConsole(handle->inputConsoleHandle, buffer, size, (unsigned long *) &size, NULL)) {
@@ -363,23 +363,23 @@ bool BasicConsole::Read(char8* const buffer,
         }
 
     }
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 
 }
 
 bool BasicConsole::SetTitleBar(const char8 *title) {
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
 
     if (!SetConsoleTitle(title)) {
         error = ErrorManagement::OSError;
     }
 
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 }
 
 bool BasicConsole::GetTitleBar(char8 *title,
                                const uint32 &size) const {
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
 
     if (title == NULL) {
         return false;
@@ -387,14 +387,14 @@ bool BasicConsole::GetTitleBar(char8 *title,
 
     GetConsoleTitle(title, size);
 
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 
 }
 
 bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
                                  const uint32 &numberOfRows) {
 
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
 
     COORD max = GetLargestConsoleWindowSize(handle->outputConsoleHandle);
 
@@ -408,7 +408,7 @@ bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
         error = ErrorManagement::OSError;
     }
 
-    if (error == ErrorManagement::NoError) {
+    if (error == ErrorManagement::noError) {
         //saturate values at the max or at the buffer size
         if (numberOfColumnsUsed > max.X) {
             numberOfColumnsUsed = max.X;
@@ -442,70 +442,70 @@ bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
         }
     }
 
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 }
 
 bool BasicConsole::GetWindowSize(uint32 &numberOfColumns,
                                  uint32 &numberOfRows) const {
 
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info);
 
     numberOfColumns = info.srWindow.Right - info.srWindow.Left + 1;
     numberOfRows = info.srWindow.Bottom - info.srWindow.Top + 1;
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 }
 
 bool BasicConsole::GetSceneSize(uint32 &numberOfColumns,
                                 uint32 &numberOfRows) const {
 
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
     CONSOLE_SCREEN_BUFFER_INFO info;
     if (GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info) == FALSE) {
         //  CStaticAssertPlatformErrorCondition(Errors::ErrorManagement::OSError,"BasicConsole:GetSize:failed GetConsoleScreenBufferInfo ");
         error = ErrorManagement::OSError;
     }
 
-    if (error == ErrorManagement::NoError) {
+    if (error == ErrorManagement::noError) {
         numberOfColumns = info.dwSize.X;
         numberOfRows = info.dwSize.Y;
     }
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 }
 
 bool BasicConsole::SetCursorPosition(const uint32 &column,
                                      const uint32 &row) {
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
     COORD c = { column, row };
     if (SetConsoleCursorPosition(handle->outputConsoleHandle, c) == FALSE) {
         error = ErrorManagement::OSError;
     }
 
-    return (error == ErrorManagement::NoError);;
+    return (error == ErrorManagement::noError);;
 }
 
 bool BasicConsole::GetCursorPosition(uint32 &column,
                                      uint32 &row) const {
 
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
     CONSOLE_SCREEN_BUFFER_INFO info;
     if (GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info) == FALSE) {
         error = ErrorManagement::OSError;
     }
 
-    if (error == ErrorManagement::NoError) {
+    if (error == ErrorManagement::noError) {
         column = info.dwCursorPosition.X;
         row = info.dwCursorPosition.Y;
     }
 
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 }
 
 bool BasicConsole::SetColour(const Colours &foregroundColour,
                              const Colours &backgroundColour) {
 
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
 
     WORD attribute;
     attribute = (int) foregroundColour & 0xF;
@@ -515,13 +515,13 @@ bool BasicConsole::SetColour(const Colours &foregroundColour,
         error = ErrorManagement::OSError;
     }
 
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 
 }
 
 bool BasicConsole::Clear() {
 
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
 
     COORD c;
     c.X = 0;
@@ -536,7 +536,7 @@ bool BasicConsole::Clear() {
         error = ErrorManagement::OSError;
     }
 
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 
 }
 
@@ -546,7 +546,7 @@ bool BasicConsole::PlotChar(const char8 &c,
                             const uint32 &column,
                             const uint32 &row) {
 
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
     COORD coord;
     coord.X = 0;
     coord.Y = 0;
@@ -573,13 +573,13 @@ bool BasicConsole::PlotChar(const char8 &c,
         error = ErrorManagement::OSError;
     }
 
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 
 }
 
 bool BasicConsole::Close() {
 
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
     DWORD consoleMode = ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT;
     if (handle->openingMode & BasicConsoleMode::CreateNewBuffer) {
         CloseHandle(handle->outputConsoleHandle);
@@ -594,7 +594,7 @@ bool BasicConsole::Close() {
         SetConsoleTextAttribute(handle->outputConsoleHandle, handle->initialInfo.wAttributes);
     }
 
-    return (error == ErrorManagement::NoError);
+    return (error == ErrorManagement::noError);
 }
 
 bool BasicConsole::CursorPositionSupported() const {

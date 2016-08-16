@@ -189,7 +189,7 @@ static bool PrintCCString(IOBuffer & iobuff,
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Not Enough space for double quotes");
+            REPORT_ERROR(ErrorManagement::fatalError, "IOBuffer: Not Enough space for double quotes");
         }
     }
 
@@ -246,7 +246,7 @@ static bool PrintStream(IOBuffer & iobuff,
         }
         //limit within 32 bit and further limit to 10000 chars
         if (streamSizeL > 10000u) {
-            REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Size too big");
+            REPORT_ERROR(ErrorManagement::fatalError, "IOBuffer: Size too big");
             ret = PrintCCString(iobuff, "!! too big > 10000 characters!!", fd);
         }
         else {
@@ -294,12 +294,12 @@ static bool PrintStream(IOBuffer & iobuff,
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Not Enough space for double quotes");
+                REPORT_ERROR(ErrorManagement::fatalError, "IOBuffer: Not Enough space for double quotes");
             }
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: The stream is not seekable");
+        REPORT_ERROR(ErrorManagement::fatalError, "IOBuffer: The stream is not seekable");
         ret = PrintCCString(iobuff, "!!stream !seek!!", fd);
     }
 
@@ -368,15 +368,15 @@ static bool PrintObjectIntrospection(IOBuffer & iobuff,
                         ret = false;
                     }
                 }
-                REPORT_ERROR(ErrorManagement::FatalError, "PrintObjectIntrospection: The object is not introspectable");
+                REPORT_ERROR(ErrorManagement::fatalError, "PrintObjectIntrospection: The object is not introspectable");
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "PrintObjectIntrospection: The object is not registered");
+            REPORT_ERROR(ErrorManagement::fatalError, "PrintObjectIntrospection: The object is not registered");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "PrintObjectIntrospection: The object is not registered");
+        REPORT_ERROR(ErrorManagement::fatalError, "PrintObjectIntrospection: The object is not registered");
     }
     return ret;
 }
@@ -522,16 +522,16 @@ static bool PrintObject(IOBuffer & iobuff,
                     }
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::FatalError, "PrintObjectIntrospection: The object is not introspectable");
+                    REPORT_ERROR(ErrorManagement::fatalError, "PrintObjectIntrospection: The object is not introspectable");
                 }
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "PrintObjectIntrospection: The object is not registered");
+            REPORT_ERROR(ErrorManagement::fatalError, "PrintObjectIntrospection: The object is not registered");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "PrintObjectIntrospection: The object is not registered");
+        REPORT_ERROR(ErrorManagement::fatalError, "PrintObjectIntrospection: The object is not registered");
     }
     return ret;
 }
@@ -560,7 +560,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
             else {
                 if (fd.desiredAction != PrintAnything) {
                     if (fd.desiredAction != PrintStruct) {
-                        REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a struct will be printed");
+                        REPORT_ERROR(ErrorManagement::warning, "IOBuffer: Type mismatch: a struct will be printed");
                     }
                 }
                 ret = PrintObject(iobuff, parIn);
@@ -578,7 +578,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                 else {
                     if (fd.desiredAction != PrintAnything) {
                         if (fd.desiredAction != PrintInteger) {
-                            REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: an unsigned integer will be printed");
+                            REPORT_ERROR(ErrorManagement::warning, "IOBuffer: Type mismatch: an unsigned integer will be printed");
                         }
                     }
                     //native unsigned integer types.
@@ -634,7 +634,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                 else {
                     if (fd.desiredAction != PrintAnything) {
                         if (fd.desiredAction != PrintInteger) {
-                            REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a signed integer will be printed");
+                            REPORT_ERROR(ErrorManagement::warning, "IOBuffer: Type mismatch: a signed integer will be printed");
                         }
                     }
                     //native signed integer types.
@@ -689,7 +689,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                 else {
                     if (fd.desiredAction != PrintAnything) {
                         if (fd.desiredAction != PrintFloat) {
-                            REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a float number will be printed");
+                            REPORT_ERROR(ErrorManagement::warning, "IOBuffer: Type mismatch: a float number will be printed");
                         }
                     }
                     //native float32 types. Float 128 bit is not supported.
@@ -705,7 +705,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                         }
                         break;
                         case 128u: {
-                            REPORT_ERROR(ErrorManagement::UnsupportedFeature, "IOBuffer: Unsupported 128 bit floats");
+                            REPORT_ERROR(ErrorManagement::unsupportedFeature, "IOBuffer: Unsupported 128 bit floats");
                             ret = false;
                         }
                         break;
@@ -729,7 +729,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                 else {
                     if (fd.desiredAction != PrintAnything) {
                         if (fd.desiredAction != PrintPointer) {
-                            REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a pointer will be printed");
+                            REPORT_ERROR(ErrorManagement::warning, "IOBuffer: Type mismatch: a pointer will be printed");
                         }
                     }
                     TypeDescriptor newTypeDes(par.GetTypeDescriptor().isConstant, UnsignedInteger, par.GetTypeDescriptor().numberOfBits);
@@ -761,7 +761,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                     else {
                         if (fd.desiredAction != PrintAnything) {
                             if (fd.desiredAction != PrintString) {
-                                REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a string will be printed");
+                                REPORT_ERROR(ErrorManagement::warning, "IOBuffer: Type mismatch: a string will be printed");
                             }
                         }
                         const char8 *string = static_cast<const char8 *>(dataPointer);
@@ -782,7 +782,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                 else {
                     if (fd.desiredAction != PrintAnything) {
                         if (fd.desiredAction != PrintString) {
-                            REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a string will be printed");
+                            REPORT_ERROR(ErrorManagement::warning, "IOBuffer: Type mismatch: a string will be printed");
                         }
                     }
                     const char8 *string = static_cast<const char8 *>(dataPointer);
@@ -804,7 +804,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                 else {
                     if (fd.desiredAction != PrintAnything) {
                         if (fd.desiredAction != PrintString) {
-                            REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a stream will be printed");
+                            REPORT_ERROR(ErrorManagement::warning, "IOBuffer: Type mismatch: a stream will be printed");
                         }
                     }
                     StreamI * stream = static_cast<StreamI *>(dataPointer);
@@ -948,7 +948,7 @@ static bool PrintToStream(IOBuffer & iobuff,
             ret = PrintToStreamScalar(iobuff, parIn, fd);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "PrintToStream: Print of type with dimension > 2 not supported");
+            REPORT_ERROR(ErrorManagement::fatalError, "PrintToStream: Print of type with dimension > 2 not supported");
         }
     }
     return ret;
@@ -1183,7 +1183,7 @@ bool IOBuffer::Seek(const uint32 position) {
         positionPtr = &((BufferReference())[position]);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Position in input greater than the buffer size");
+        REPORT_ERROR(ErrorManagement::fatalError, "IOBuffer: Position in input greater than the buffer size");
     }
     return retval;
 }
@@ -1200,7 +1200,7 @@ bool IOBuffer::RelativeSeek(const int32 delta) {
             //  saturate at the end
             gap = actualLeft;
             ret = false;
-            REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Final position greater than the buffer used size: move to the end");
+            REPORT_ERROR(ErrorManagement::fatalError, "IOBuffer: Final position greater than the buffer used size: move to the end");
         }
         amountLeft -= gap;
         positionPtr = &positionPtr[gap];
@@ -1213,7 +1213,7 @@ bool IOBuffer::RelativeSeek(const int32 delta) {
             //  saturate at the beginning
             ret = false;
             gap = Position();
-            REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Final position less than zero: move to the beginning");
+            REPORT_ERROR(ErrorManagement::fatalError, "IOBuffer: Final position less than zero: move to the beginning");
         }
         amountLeft += gap;
         positionPtr = &((BufferReference())[Position() - gap]);
@@ -1255,7 +1255,7 @@ bool IOBuffer::SetBufferHeapMemory(const uint32 desiredSize,
     //between two unsigned integers we can obtain bigger numbers (overflow).
     if (desiredSize < reservedSpaceAtEnd) {
         usedSize = 0u;
-        REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: The reserved space at end is greater than the size to be allocated: set the used size to zero");
+        REPORT_ERROR(ErrorManagement::warning, "IOBuffer: The reserved space at end is greater than the size to be allocated: set the used size to zero");
     }
 
     // truncating
@@ -1337,7 +1337,7 @@ bool IOBuffer::Write(const char8 * const buffer,
         // fill the buffer with the remainder
         if (size > 0u) {
             if (!MemoryOperationsHelper::Copy(positionPtr, buffer, size)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Failed MemoryOperationsHelper::Copy()");
+                REPORT_ERROR(ErrorManagement::fatalError, "IOBuffer: Failed MemoryOperationsHelper::Copy()");
                 retval = false;
             }
 
@@ -1351,7 +1351,7 @@ bool IOBuffer::Write(const char8 * const buffer,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Failed CharBuffer::CanWrite()");
+        REPORT_ERROR(ErrorManagement::fatalError, "IOBuffer: Failed CharBuffer::CanWrite()");
     }
 
     return retval;
@@ -1405,7 +1405,7 @@ bool IOBuffer::Read(char8 * const buffer,
     if (size > 0u) {
         if (!MemoryOperationsHelper::Copy(buffer, positionPtr, size)) {
             retval = false;
-            REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Failed MemoryOperationsHelper::Copy()");
+            REPORT_ERROR(ErrorManagement::fatalError, "IOBuffer: Failed MemoryOperationsHelper::Copy()");
         }
         if (retval) {
             amountLeft -= size;

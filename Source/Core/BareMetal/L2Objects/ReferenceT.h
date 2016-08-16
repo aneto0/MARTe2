@@ -212,7 +212,7 @@ ReferenceT<T>::ReferenceT(HeapI* const heap) :
             typeTObjectPointer = p;
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
+            REPORT_ERROR(ErrorManagement::fatalError, "ReferenceT: Dynamic cast failed.");
         }
     }
 }
@@ -273,7 +273,7 @@ bool ReferenceT<T>::Initialise(StructuredDataI &data,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Failed Reference::Initialise()");
+        REPORT_ERROR(ErrorManagement::fatalError, "ReferenceT: Failed Reference::Initialise()");
         ok = false;
     }
     return ok;
@@ -314,7 +314,7 @@ ReferenceT<T>::ReferenceT(const char8* const typeName,
         if (typeTObjectPointer == NULL) {
             Reference::RemoveReference();
             typeTObjectPointer = static_cast<T *>(NULL);
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
+            REPORT_ERROR(ErrorManagement::fatalError, "ReferenceT: Dynamic cast failed.");
         }
     }
 }

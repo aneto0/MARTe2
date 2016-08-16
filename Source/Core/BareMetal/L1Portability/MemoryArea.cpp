@@ -64,7 +64,7 @@ bool MemoryArea::InitMemory(void * const initialMemory,
         size = initialSize;
     }
     else {
-        REPORT_ERROR(ErrorManagement::RecoverableError, "The memory is already in use. Call MemoryArea::Free(*) before");
+        REPORT_ERROR(ErrorManagement::recoverableError, "The memory is already in use. Call MemoryArea::Free(*) before");
     }
     return ret;
 }

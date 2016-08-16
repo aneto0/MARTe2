@@ -88,7 +88,7 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
             }
         }
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No States block found in RealTimeApplication %s", GetName())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "No States block found in RealTimeApplication %s", GetName())
         }
         if (ret) {
             ret = false;
@@ -103,7 +103,7 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
             }
         }
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Data block found in RealTimeApplication %s", GetName())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "No Data block found in RealTimeApplication %s", GetName())
         }
         if (ret) {
             ret = false;
@@ -118,7 +118,7 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
             }
         }
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Functions block found in RealTimeApplication %s", GetName())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "No Functions block found in RealTimeApplication %s", GetName())
         }
         if (ret) {
             numberOfContainers = Size();
@@ -169,7 +169,7 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     }
                 }
                 if (!ret) {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Scheduler block in RealTimeApplication %s", GetName())
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "No Scheduler block in RealTimeApplication %s", GetName())
                 }
             }
         }

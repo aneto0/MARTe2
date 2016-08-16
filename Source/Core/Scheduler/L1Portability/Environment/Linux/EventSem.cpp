@@ -192,7 +192,7 @@ bool EventSem::Close() {
  * reference to handle*/
 ErrorManagement::ErrorType EventSem::Wait() {
     bool ok = false;
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+    ErrorManagement::ErrorType err = ErrorManagement::noError;
     if (!handle->closed) {
         bool okLock = (pthread_mutex_lock(&handle->mutexHandle) == 0);
         if (!okLock) {
@@ -217,7 +217,7 @@ ErrorManagement::ErrorType EventSem::Wait() {
         }
     }
     else {
-        err = ErrorManagement::FatalError;
+        err = ErrorManagement::fatalError;
         REPORT_ERROR(err, "Error: the semaphore handle is closed");
     }
 
@@ -228,7 +228,7 @@ ErrorManagement::ErrorType EventSem::Wait() {
  * reference to handle*/
 ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
     bool ok = !handle->closed;
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+    ErrorManagement::ErrorType err = ErrorManagement::noError;
     if (timeout == TTInfiniteWait) {
         err = Wait();
     }
@@ -254,7 +254,7 @@ ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
                     if (handle->stop) {
                         ok = (pthread_cond_timedwait(&handle->eventVariable, &handle->mutexHandle, &timesValues) == 0);
                         if (!ok) {
-                            err = ErrorManagement::Timeout;
+                            err = ErrorManagement::timeout;
                             REPORT_ERROR(err, "Information: timeout occurred");
                         }
                     }
@@ -273,7 +273,7 @@ ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
             }
         }
         else {
-            err = ErrorManagement::FatalError;
+            err = ErrorManagement::fatalError;
             REPORT_ERROR(err, "Error: the semaphore handle is closed");
         }
     }

@@ -310,7 +310,7 @@ Token * LexicalAnalyzer::GetToken() {
     }
     TokenizeInput();
     if (!tokenQueue.Extract(0u, token)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Extract() of the token from the token stack");
+        REPORT_ERROR(ErrorManagement::fatalError, "StaticList<Token *>: Failed Extract() of the token from the token stack");
     }
     return token;
 }
@@ -321,7 +321,7 @@ Token *LexicalAnalyzer::PeekToken(const uint32 position) {
     TokenizeInput(position);
     Token *peekToken = static_cast<Token*>(NULL);
     if (!tokenQueue.Peek(position, peekToken)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Peek() of the token from the token stack");
+        REPORT_ERROR(ErrorManagement::fatalError, "StaticList<Token *>: Failed Peek() of the token from the token stack");
     }
     return peekToken;
 
@@ -358,7 +358,7 @@ LexicalAnalyzer::~LexicalAnalyzer() {
             delete toDelete;
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Extract() of the token from the token stack");
+            REPORT_ERROR(ErrorManagement::fatalError, "StaticList<Token *>: Failed Extract() of the token from the token stack");
         }
     }
     if (token != NULL) {
@@ -399,7 +399,7 @@ void LexicalAnalyzer::AddToken(char8 * const tokenBuffer,
             /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
             Token *toAdd = new Token(tokenInfo[STRING_TOKEN], &tokenBuffer[begin], lineNumber);
             if (!tokenQueue.Add(toAdd)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
+                REPORT_ERROR(ErrorManagement::fatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
             }
             converted = true;
         }
@@ -411,7 +411,7 @@ void LexicalAnalyzer::AddToken(char8 * const tokenBuffer,
                 /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
                 Token *toAdd = new Token(tokenInfo[NUMBER_TOKEN], &tokenBuffer[0], lineNumber);
                 if (!tokenQueue.Add(toAdd)) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
+                    REPORT_ERROR(ErrorManagement::fatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
                 }
                 converted = true;
             }
@@ -422,7 +422,7 @@ void LexicalAnalyzer::AddToken(char8 * const tokenBuffer,
             /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
             Token *toAdd = new Token(tokenInfo[ERROR_TOKEN], "", lineNumber);
             if (!tokenQueue.Add(toAdd)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
+                REPORT_ERROR(ErrorManagement::fatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
             }
         }
     }
@@ -436,7 +436,7 @@ void LexicalAnalyzer::AddTerminal(const char8 terminal) {
     /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
     Token *toAdd = new Token(tokenInfo[TERMINAL_TOKEN], &terminalBuffer[0], lineNumber);
     if (!tokenQueue.Add(toAdd)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
+        REPORT_ERROR(ErrorManagement::fatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
     }
 }
 
@@ -572,7 +572,7 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
             /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
             Token *toAdd = new Token(tokenInfo[EOF_TOKEN], "", lineNumber);
             if (!tokenQueue.Add(toAdd)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
+                REPORT_ERROR(ErrorManagement::fatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
             }
         }
 

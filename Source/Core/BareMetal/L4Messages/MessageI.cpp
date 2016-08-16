@@ -306,7 +306,7 @@ ErrorManagement::ErrorType MessageI::SortMessage(ReferenceT<Message> &message) {
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Default implementation does not concern about input parameters */
 ErrorManagement::ErrorType MessageI::HandleMessage(ReferenceT<Message> &message) {
-    return ErrorManagement::UnsupportedFeature;
+    return ErrorManagement::unsupportedFeature;
 }
 
 }

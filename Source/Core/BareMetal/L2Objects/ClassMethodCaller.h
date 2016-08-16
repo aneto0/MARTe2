@@ -93,9 +93,9 @@ public:
      * @brief Calls a class method without parameters.
      * @param[in] context is the pointer to the object owning the method.
      * @return
-     * + ErrorManagement::FatalError if the registered function returns false
-     * + ErrorManagement::NoError if it returns true
-     * + ErrorManagement::UnsupportedFeature if the call is not registered
+     * + ErrorManagement::fatalError if the registered function returns false
+     * + ErrorManagement::noError if it returns true
+     * + ErrorManagement::unsupportedFeature if the call is not registered
      * @warning The object pointed by context could be modified by the actual
      * class method called.
      */
@@ -106,9 +106,9 @@ public:
      * @param[in] context is the pointer to the object owning the method.
      * @param[in, out] x is the integer in input.
      * @return
-     * + ErrorManagement::FatalError if the registered function returns false
-     * + ErrorManagement::NoError if it returns true
-     * + ErrorManagement::UnsupportedFeature if the call is not registered
+     * + ErrorManagement::fatalError if the registered function returns false
+     * + ErrorManagement::noError if it returns true
+     * + ErrorManagement::unsupportedFeature if the call is not registered
      * @warning The object pointed by context could be modified by the actual
      * class method called.
      */
@@ -120,9 +120,9 @@ public:
      * @param[in] context is the pointer to the object owning the method.
      * @param[in, out] x is the ReferenceContainer in input.
      * @return
-     * + ErrorManagement::FatalError if the registered function returns false
-     * + ErrorManagement::NoError if it returns true
-     * + ErrorManagement::UnsupportedFeature if the call is not registered
+     * + ErrorManagement::fatalError if the registered function returns false
+     * + ErrorManagement::noError if it returns true
+     * + ErrorManagement::unsupportedFeature if the call is not registered
      * @warning The object pointed by context could be modified by the actual
      * class method called.
      */
@@ -136,9 +136,9 @@ public:
      * @param[in] byCopy states if the x argument is actually passed by copy
      * (meaningful when used from templates, helping on overloading resolution)
      * @return
-     * + ErrorManagement::FatalError if the registered function returns false
-     * + ErrorManagement::NoError if it returns true
-     * + ErrorManagement::UnsupportedFeature if the call is not registered
+     * + ErrorManagement::fatalError if the registered function returns false
+     * + ErrorManagement::noError if it returns true
+     * + ErrorManagement::unsupportedFeature if the call is not registered
      * @warning The object pointed by context could be modified by the actual
      * class method called.
      */
@@ -153,9 +153,9 @@ public:
      * @param[in] byCopy states if the x argument is actually passed by copy
      * (meaningful when used from templates, helping on overloading resolution)
      * @return
-     * + ErrorManagement::FatalError if the registered function returns false
-     * + ErrorManagement::NoError if it returns true
-     * + ErrorManagement::UnsupportedFeature if the call is not registered
+     * + ErrorManagement::fatalError if the registered function returns false
+     * + ErrorManagement::noError if it returns true
+     * + ErrorManagement::unsupportedFeature if the call is not registered
      * @warning The object pointed by context could be modified by the actual
      * class method called.
      */

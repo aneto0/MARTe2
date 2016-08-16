@@ -64,13 +64,13 @@ ThreadInformation::ThreadInformation(const ThreadFunctionType threadFunction,
     if (threadName != NULL) {
         this->name = StringHelper::StringDup(threadName);
         if (this->name == NULL) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: duplication of thread name failed");
+            REPORT_ERROR(ErrorManagement::fatalError, "Error: duplication of thread name failed");
         }
     }
     else {
         this->name = StringHelper::StringDup("Unknown");
         if (this->name == NULL) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: duplication of thread name \"Unknown\" failed");
+            REPORT_ERROR(ErrorManagement::fatalError, "Error: duplication of thread name \"Unknown\" failed");
         }
     }
     threadId = InvalidThreadIdentifier;

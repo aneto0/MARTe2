@@ -86,7 +86,7 @@ namespace MARTe {
  *
  * @warning All the methods of the provided list have to belong to the class
  * we want to register, otherwise at the moment of calling the function,
- * through the CallFunction method, it will return ErrorManagement::UnsupportedFeature.
+ * through the CallFunction method, it will return ErrorManagement::unsupportedFeature.
  *
  *
  * method without argument and 1 argument
@@ -126,10 +126,10 @@ public:
      * @param[in] name is the name of the class method to be called. The name
      * has to be only the name of the function without any extra mangling.
      * @return
-     * + ErrorManagement::UnsupportedFeature if \a name does not match with
+     * + ErrorManagement::unsupportedFeature if \a name does not match with
      * any of the names in the function names list or if the class method does
      * not belong to \a context.
-     * + ErrorManagement::FatalError if the class method returns false
+     * + ErrorManagement::fatalError if the class method returns false
      * + ErrorManagemenr::NoError if the class method returns true.
      */
     ErrorManagement::ErrorType CallFunction(Object * const context,
@@ -142,10 +142,10 @@ public:
      * has to be only the name of the function without any extra mangling.
      * @param[in,out] ref is the class method argument.
      * @return
-     * + ErrorManagement::UnsupportedFeature if \a name does not match with
+     * + ErrorManagement::unsupportedFeature if \a name does not match with
      * any of the names in the function names list or if the class method does
      * not belong to \a context.
-     * + ErrorManagement::FatalError if the class method returns false
+     * + ErrorManagement::fatalError if the class method returns false
      * + ErrorManagemenr::NoError if the class method returns true.
      * @tparam argType is the type of the argument to pass to the class method.
      */

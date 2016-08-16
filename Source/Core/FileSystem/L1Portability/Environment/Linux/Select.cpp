@@ -90,12 +90,12 @@ bool Select::AddReadHandle(const HandleI &handle) {
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::Information, "Select::AddReadHandle(). The descriptor is still in the readHandle.");
+            REPORT_ERROR(ErrorManagement::information, "Select::AddReadHandle(). The descriptor is still in the readHandle.");
             retVal = false;
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddReadHandle(). Invalid descriptor.");
+        REPORT_ERROR(ErrorManagement::fatalError, "Select::AddReadHandle(). Invalid descriptor.");
         retVal = false;
     }
     return retVal;
@@ -116,12 +116,12 @@ bool Select::AddWriteHandle(const HandleI &handle) {
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::Information, "Select::AddWriteHandle(). The descriptor is still in the writeHandle.");
+            REPORT_ERROR(ErrorManagement::information, "Select::AddWriteHandle(). The descriptor is still in the writeHandle.");
             retVal = false;
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddWriteHandle(). Invalid descriptor.");
+        REPORT_ERROR(ErrorManagement::fatalError, "Select::AddWriteHandle(). Invalid descriptor.");
         retVal = false;
     }
     return retVal;
@@ -142,12 +142,12 @@ bool Select::AddExceptionHandle(const HandleI &handle) {
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::Information, "Select::AddExceptionHandle(). The descriptor is still in the exceptionHandle.");
+            REPORT_ERROR(ErrorManagement::information, "Select::AddExceptionHandle(). The descriptor is still in the exceptionHandle.");
             retVal = false;
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddExceptionHandle(). Invalid descriptor.");
+        REPORT_ERROR(ErrorManagement::fatalError, "Select::AddExceptionHandle(). Invalid descriptor.");
         retVal = false;
     }
     //In the case of the BasicConsle also the write is added to exception
@@ -165,12 +165,12 @@ bool Select::AddExceptionHandle(const HandleI &handle) {
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::Information, "Select::AddExceptionHandle(). The descriptor is still in the exceptionHandle.");
+                REPORT_ERROR(ErrorManagement::information, "Select::AddExceptionHandle(). The descriptor is still in the exceptionHandle.");
                 retVal = false;
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Select::AddExceptionHandle(). Invalid descriptor.");
+            REPORT_ERROR(ErrorManagement::fatalError, "Select::AddExceptionHandle(). Invalid descriptor.");
             retVal = false;
         }
     }
@@ -190,13 +190,13 @@ bool Select::RemoveReadHandle(const HandleI &handle) {
             FD_CLR(descriptor, &readHandle);
         }
         else {
-            REPORT_ERROR(ErrorManagement::Information, "Select::RemoveReadHandle(). The descriptor is not in the readHandle.");
+            REPORT_ERROR(ErrorManagement::information, "Select::RemoveReadHandle(). The descriptor is not in the readHandle.");
             retVal = false;
         }
     }
     else {
         retVal = false;
-        REPORT_ERROR(ErrorManagement::Information, "Select::RemoveReadHandle(). The descriptor is invalid.");
+        REPORT_ERROR(ErrorManagement::information, "Select::RemoveReadHandle(). The descriptor is invalid.");
     }
     return retVal;
 }
@@ -214,13 +214,13 @@ bool Select::RemoveWriteHandle(const HandleI &handle) {
             FD_CLR(descriptor, &writeHandle);
         }
         else {
-            REPORT_ERROR(ErrorManagement::Information, "Select::RemoveWriteHandle(). The descriptor is not in the writeHandle.");
+            REPORT_ERROR(ErrorManagement::information, "Select::RemoveWriteHandle(). The descriptor is not in the writeHandle.");
             retVal = false;
         }
     }
     else {
         retVal = false;
-        REPORT_ERROR(ErrorManagement::Information, "Select::RemoveWriteHandle(). The descriptor is invalid.");
+        REPORT_ERROR(ErrorManagement::information, "Select::RemoveWriteHandle(). The descriptor is invalid.");
     }
     return retVal;
 }
@@ -238,13 +238,13 @@ bool Select::RemoveExceptionHandle(const HandleI &handle) {
             FD_CLR(descriptor, &exceptionHandle);
         }
         else {
-            REPORT_ERROR(ErrorManagement::Information, "Select::RemoveExceptionHandle(). The descriptor is not in the exceptionHandle.");
+            REPORT_ERROR(ErrorManagement::information, "Select::RemoveExceptionHandle(). The descriptor is not in the exceptionHandle.");
             retVal = false;
         }
     }
     else {
         retVal = false;
-        REPORT_ERROR(ErrorManagement::Information, "Select::RemoveExceptionHandle(). The descriptor is invalid.");
+        REPORT_ERROR(ErrorManagement::information, "Select::RemoveExceptionHandle(). The descriptor is invalid.");
     }
     //In the case of the BasicConsle also the write is removed from exception
     if (descriptor != handle.GetWriteHandle()) {
@@ -259,13 +259,13 @@ bool Select::RemoveExceptionHandle(const HandleI &handle) {
                 FD_CLR(descriptor, &exceptionHandle);
             }
             else {
-                REPORT_ERROR(ErrorManagement::Information, "Select::RemoveExceptionHandle(). The descriptor is not in the exceptionHandle.");
+                REPORT_ERROR(ErrorManagement::information, "Select::RemoveExceptionHandle(). The descriptor is not in the exceptionHandle.");
                 retVal = false;
             }
         }
         else {
             retVal = false;
-            REPORT_ERROR(ErrorManagement::Information, "Select::RemoveExceptionHandle(). The descriptor is invalid.");
+            REPORT_ERROR(ErrorManagement::information, "Select::RemoveExceptionHandle(). The descriptor is invalid.");
         }
     }
     return retVal;
@@ -358,7 +358,7 @@ int32 Select::WaitUntil(const TimeoutType &timeout) {
         highestHandle--;
     }
     if (highestHandle < 0) {
-        REPORT_ERROR(ErrorManagement::Information, "Select::WaitAll(). The highestHandle is negative.");
+        REPORT_ERROR(ErrorManagement::information, "Select::WaitAll(). The highestHandle is negative.");
     }
     else {
         if (timeout.IsFinite()) {

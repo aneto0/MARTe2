@@ -151,7 +151,7 @@ EventSem::~EventSem() {
 }
 
 ErrorManagement::ErrorType EventSem::Wait() {
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
     int ret = WaitForSingleObject(handle->eventHandle, INFINITE);
 
     if (ret == WAIT_FAILED) {
@@ -162,7 +162,7 @@ ErrorManagement::ErrorType EventSem::Wait() {
 }
 
 ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::noError;
     int ret = WaitForSingleObject(handle->eventHandle, timeout.GetTimeoutMSec());
 
     if (ret == WAIT_FAILED) {
@@ -170,7 +170,7 @@ ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
     }
 
     if (ret == WAIT_TIMEOUT) {
-        error = ErrorManagement::Timeout;
+        error = ErrorManagement::timeout;
     }
 
     return error;

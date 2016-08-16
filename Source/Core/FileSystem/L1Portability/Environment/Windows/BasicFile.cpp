@@ -170,7 +170,7 @@ bool BasicFile::SetFlags(const uint32 setFlags) {
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR(ErrorManagement::fatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -243,7 +243,7 @@ bool BasicFile::Open(const char * pathname,
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR(ErrorManagement::fatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -288,12 +288,12 @@ bool BasicFile::Read(char8* const output,
         //Reads the data setting an infinite timeout
         ok = Read(output, size, TTInfiniteWait);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: Read()");
+            REPORT_ERROR(ErrorManagement::fatalError, "Error: Read()");
         }
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR(ErrorManagement::fatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -344,7 +344,7 @@ bool BasicFile::Read(char8 * const output,
             ok = (waitVal == WAIT_OBJECT_0);
             if (!ok) {
                 if (waitVal == WAIT_TIMEOUT) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "Error: Timeout while reading");
+                    REPORT_ERROR(ErrorManagement::fatalError, "Error: Timeout while reading");
                 }
                 else {
                     REPORT_ERROR(ErrorManagement::OSError, "Error: WaitForSingleObject()");
@@ -376,7 +376,7 @@ bool BasicFile::Read(char8 * const output,
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR(ErrorManagement::fatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -390,12 +390,12 @@ bool BasicFile::Write(const char8 * const input,
         //Writes the data setting an infinite timeout
         ok = Write(input, size, TTInfiniteWait);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: Write()");
+            REPORT_ERROR(ErrorManagement::fatalError, "Error: Write()");
         }
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR(ErrorManagement::fatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -460,7 +460,7 @@ bool BasicFile::Write(const char8 * const input,
             ok = (waitVal == WAIT_OBJECT_0);
             if (!ok) {
                 if (waitVal == WAIT_TIMEOUT) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "Error: Timeout while writing");
+                    REPORT_ERROR(ErrorManagement::fatalError, "Error: Timeout while writing");
                 }
                 else {
                     REPORT_ERROR(ErrorManagement::OSError, "Error: WaitForSingleObject()");
@@ -492,7 +492,7 @@ bool BasicFile::Write(const char8 * const input,
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR(ErrorManagement::fatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -529,7 +529,7 @@ bool BasicFile::Seek(const uint64 pos) {
         size = Size();
         ok = (size != 0xFFFFFFFF);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: Size()");
+            REPORT_ERROR(ErrorManagement::fatalError, "Error: Size()");
         }
 
         //Calculates the absolute position value
@@ -552,7 +552,7 @@ bool BasicFile::Seek(const uint64 pos) {
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR(ErrorManagement::fatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -571,7 +571,7 @@ bool BasicFile::RelativeSeek(const int64 deltaPos) {
             size = Size();
             ok = (size != 0xFFFFFFFF);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Error: Size()");
+                REPORT_ERROR(ErrorManagement::fatalError, "Error: Size()");
             }
         }
 
@@ -580,7 +580,7 @@ bool BasicFile::RelativeSeek(const int64 deltaPos) {
             position = Position();
             ok = (position != 0xFFFFFFFF);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Error: Position()");
+                REPORT_ERROR(ErrorManagement::fatalError, "Error: Position()");
             }
         }
 
@@ -608,7 +608,7 @@ bool BasicFile::RelativeSeek(const int64 deltaPos) {
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR(ErrorManagement::fatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -675,7 +675,7 @@ bool BasicFile::SetSize(uint64 size) {
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR(ErrorManagement::fatalError, "Error: Precondition violated");
     }
 
     return ok;

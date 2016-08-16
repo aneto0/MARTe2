@@ -277,7 +277,7 @@ bool BasicFile::Open(const char8 * const pathname,
         /*lint -e{9130} Signed value*/
         properties.identifier = open(pathname, static_cast<int32>(linuxFlags), (S_IRWXU | S_IRWXG | S_IRWXO));
         if (!IsOpen()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Open(). File cannot be opened");
+            REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::Open(). File cannot be opened");
             retVal = false;
         }
         else {
@@ -287,7 +287,7 @@ bool BasicFile::Open(const char8 * const pathname,
     }
     else {
         retVal = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Open(). File is already opened");
+        REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::Open(). File is already opened");
     }
     return retVal;
 }
@@ -301,7 +301,7 @@ bool BasicFile::Close() {
     if (IsOpen()) {
         int32 retClose = close(properties.identifier);
         if (retClose == -1) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Close().File cannot be closed");
+            REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::Close().File cannot be closed");
             retVal = false;
         }
         else {
@@ -311,7 +311,7 @@ bool BasicFile::Close() {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::Information, "BasicFile::Close().The file is not open");
+        REPORT_ERROR(ErrorManagement::information, "BasicFile::Close().The file is not open");
     }
     return retVal;
 }
@@ -323,7 +323,7 @@ bool BasicFile::Read(char8* const output,
         size = static_cast<uint32>(read(properties.identifier, output, static_cast<size_t>(size)));
         retVal = (size != 0xFFFFFFFFU);
         if (retVal == false) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Read().File cannot be read");
+            REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::Read().File cannot be read");
         }
     }
     else {
@@ -360,11 +360,11 @@ bool BasicFile::Read(char8 * const output,
         timeout.tv_usec = static_cast<int64>(usecs);
         retSelect = select((properties.identifier + 1), &set1, static_cast<fd_set *>(NULL), static_cast<fd_set *>(NULL), &timeout);
         if (retSelect == -1) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Read(). Error while waiting to read a file");
+            REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::Read(). Error while waiting to read a file");
             retVal = false;
         }
         else if (retSelect == 0) {
-            REPORT_ERROR(ErrorManagement::Timeout, "BasicFile::Read(). Timeout file not read");
+            REPORT_ERROR(ErrorManagement::timeout, "BasicFile::Read(). Timeout file not read");
             retVal = false;
         }
         else {
@@ -383,7 +383,7 @@ bool BasicFile::Write(const char8 * const input,
     if (CanWrite()) {
         size = static_cast<uint32>(write(properties.identifier, input, static_cast<size_t>(size)));
         if (size == 0xFFFFFFFFU) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Write(). File cannot be written");
+            REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::Write(). File cannot be written");
             retVal = false;
         }
     }
@@ -421,11 +421,11 @@ bool BasicFile::Write(const char8 * const input,
         timeout.tv_usec = static_cast<int64>(usecs);
         retSelect = select(properties.identifier + 1, static_cast<fd_set *>(NULL), &set, static_cast<fd_set *>(NULL), &timeout);
         if (retSelect == -1) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Write. Error while waiting to write a file");
+            REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::Write. Error while waiting to write a file");
             retVal = false;
         }
         else if (retSelect == 0) {
-            REPORT_ERROR(ErrorManagement::Timeout, "BasicFile::Write(). Timeout file not written");
+            REPORT_ERROR(ErrorManagement::timeout, "BasicFile::Write(). Timeout file not written");
             retVal = false;
         }
         else {
@@ -444,7 +444,7 @@ uint64 BasicFile::Size() {
         struct stat statusFile;
         int32 retFstat = fstat(properties.identifier, &statusFile);
         if (retFstat < 0) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Size(). Error while reading size");
+            REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::Size(). Error while reading size");
             numberOfCharactersFile = 0xFFFFFFFFU;
         }
         else {
@@ -460,7 +460,7 @@ bool BasicFile::Seek(const uint64 pos) {
     if (CanSeek()) {
         //The offset of lseek is long int which is 8 signed bit in 64bit architecture.
         if (pos > static_cast<uint64>(MAX_INT64)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Seek(). Too large position");
+            REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::Seek(). Too large position");
             retVal = false;
         }
         else {
@@ -474,7 +474,7 @@ bool BasicFile::Seek(const uint64 pos) {
             }
             retSeek = lseek64(properties.identifier, localPos, SEEK_SET);
             if (retSeek < 0) {
-                REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Seek(). The position cannot be set");
+                REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::Seek(). The position cannot be set");
                 retVal = false;
             }
         }
@@ -503,7 +503,7 @@ bool BasicFile::RelativeSeek(const int64 deltaPos) {
         }
         retSeek = lseek(properties.identifier, localPos, SEEK_SET);
         if (retSeek < 0) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::RelativeSeek(). The position cannot be set");
+            REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::RelativeSeek(). The position cannot be set");
             retVal = false;
         }
     }
@@ -518,7 +518,7 @@ uint64 BasicFile::Position() {
     if (IsOpen()) {
         pos = lseek(properties.identifier, static_cast<int64>(0), SEEK_CUR);
         if (pos < 0) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Position(). The position cannot be read");
+            REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::Position(). The position cannot be read");
         }
     }
     return (static_cast<uint64>(pos));
@@ -529,11 +529,11 @@ bool BasicFile::SetSize(const uint64 size) {
     int32 ret = -1;
     if (IsOpen()) {
         if (size >= static_cast<uint64>(MAX_INT64)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::SetSize(). The size is too large");
+            REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::SetSize(). The size is too large");
         }
         ret = ftruncate(properties.identifier, static_cast<off_t>(size));
         if (ret == -1) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::SetSize(). The size cannot be set");
+            REPORT_ERROR(ErrorManagement::fatalError, "BasicFile::SetSize(). The size cannot be set");
             retVal = false;
         }
         //Update the new position if it is pointing outside of the size

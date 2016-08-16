@@ -66,7 +66,7 @@ void AtLeast(const float64 sec) {
                 REPORT_ERROR(ErrorManagement::OSError, "Sleep: Failed nanosleep()");
                 break;
             }
-            REPORT_ERROR(ErrorManagement::Warning, "Sleep: nanosleep() interrupted by signal");
+            REPORT_ERROR(ErrorManagement::warning, "Sleep: nanosleep() interrupted by signal");
             memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
         }
 
@@ -99,7 +99,7 @@ void NoMore(const float64 sec) {
                 REPORT_ERROR(ErrorManagement::OSError, "Sleep: Failed nanosleep()");
                 break;
             }
-            REPORT_ERROR(ErrorManagement::Warning, "Sleep: nanosleep() interrupted by signal");
+            REPORT_ERROR(ErrorManagement::warning, "Sleep: nanosleep() interrupted by signal");
             memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
         }
     }
@@ -123,7 +123,7 @@ void Sec(const float64 sec) {
                 REPORT_ERROR(ErrorManagement::OSError, "Sleep: Failed nanosleep()");
                 break;
             }
-            REPORT_ERROR(ErrorManagement::Warning, "Sleep: nanosleep() interrupted by signal");
+            REPORT_ERROR(ErrorManagement::warning, "Sleep: nanosleep() interrupted by signal");
             memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
         }
     }
@@ -150,7 +150,7 @@ void MSec(const int32 msec) {
                 REPORT_ERROR(ErrorManagement::OSError, "Sleep: Failed nanosleep()");
                 break;
             }
-            REPORT_ERROR(ErrorManagement::Warning, "Sleep: nanosleep() interrupted by signal");
+            REPORT_ERROR(ErrorManagement::warning, "Sleep: nanosleep() interrupted by signal");
             memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
         }
     }
@@ -174,7 +174,7 @@ void SemiBusy(const float64 totalSleepSec,
                 REPORT_ERROR(ErrorManagement::OSError, "Sleep: Failed nanosleep()");
                 break;
             }
-            REPORT_ERROR(ErrorManagement::Warning, "Sleep: nanosleep() interrupted by signal");
+            REPORT_ERROR(ErrorManagement::warning, "Sleep: nanosleep() interrupted by signal");
             memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
         }
     }

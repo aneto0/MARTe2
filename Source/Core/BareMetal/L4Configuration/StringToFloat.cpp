@@ -168,13 +168,13 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
                 else {
                     canReturn = true;
                     ret = false;
-                    REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                    REPORT_ERROR(ErrorManagement::fatalError, "StringToFloatPrivate: Overflow");
                 }
             }
             else {
                 canReturn = true;
                 ret = false;
-                REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                REPORT_ERROR(ErrorManagement::fatalError, "StringToFloatPrivate: Overflow");
             }
         }
         else {
@@ -184,7 +184,7 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
             else {
                 if (digit != '\0') {
                     ret = false;
-                    REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
+                    REPORT_ERROR(ErrorManagement::fatalError, "StringToFloatPrivate: Invalid Token");
                 }
                 //return false is nothing is read
                 canReturn = true;
@@ -214,7 +214,7 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
                     }
                     else {
                         canReturn = true;
-                        REPORT_ERROR(ErrorManagement::Warning, "StringToFloatPrivate: Too much decimal precision for this float type");
+                        REPORT_ERROR(ErrorManagement::warning, "StringToFloatPrivate: Too much decimal precision for this float type");
                     }
                 }
                 else {
@@ -225,7 +225,7 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
                     else {
                         if (digit != '\0') {
                             ret = false;
-                            REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
+                            REPORT_ERROR(ErrorManagement::fatalError, "StringToFloatPrivate: Invalid Token");
                         }
                         canReturn = true;
                     }
@@ -241,7 +241,7 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
             else {
                 canReturn = true;
                 ret = false;
-                REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                REPORT_ERROR(ErrorManagement::fatalError, "StringToFloatPrivate: Overflow");
             }
         }
 
@@ -270,14 +270,14 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
                     exponent += newDigit;
                     if (exponent >= 512) {
                         ret = false;
-                        REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                        REPORT_ERROR(ErrorManagement::fatalError, "StringToFloatPrivate: Overflow");
                         canReturn = true;
                     }
                 }
                 else {
                     if (digit != '\0') {
                         ret = false;
-                        REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
+                        REPORT_ERROR(ErrorManagement::fatalError, "StringToFloatPrivate: Invalid Token");
                     }
                     break;
                 }
@@ -292,7 +292,7 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
                 }
                 else {
                     ret = false;
-                    REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                    REPORT_ERROR(ErrorManagement::fatalError, "StringToFloatPrivate: Overflow");
                 }
             }
         }

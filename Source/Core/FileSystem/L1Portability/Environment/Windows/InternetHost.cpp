@@ -94,13 +94,13 @@ private:
         // Initialize Winsock
         iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
         if (iResult != 0) {
-            REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed WSAStartup");
+            REPORT_ERROR(ErrorManagement::fatalError,"LocalHostInfo: Failed WSAStartup");
         }
 
         if (!internetAddressInfoInitialised) {
 
-            if(internalFastSem.FastLock()!=ErrorManagement::NoError) {
-                REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed FastPollingMutexSem::FastLock() in initialization of local address");
+            if(internalFastSem.FastLock()!=ErrorManagement::noError) {
+                REPORT_ERROR(ErrorManagement::fatalError,"LocalHostInfo: Failed FastPollingMutexSem::FastLock() in initialization of local address");
             }
 
             localHostName = static_cast<const char8*>(NULL);
@@ -125,11 +125,11 @@ private:
                     internalFastSem.FastUnLock();
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed local address initialization");
+                    REPORT_ERROR(ErrorManagement::fatalError,"LocalHostInfo: Failed local address initialization");
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed local address initialization");
+                REPORT_ERROR(ErrorManagement::fatalError,"LocalHostInfo: Failed local address initialization");
             }
         }
         return;
@@ -138,8 +138,8 @@ private:
 
 StreamString InternetHost::GetHostName() const {
 
-    if (hostnameFastSem.FastLock() != ErrorManagement::NoError) {
-        REPORT_ERROR(ErrorManagement::FatalError, "InternetHost: Failed FastPollingMutexSem::FastLock() in initialization of local address");
+    if (hostnameFastSem.FastLock() != ErrorManagement::noError) {
+        REPORT_ERROR(ErrorManagement::fatalError, "InternetHost: Failed FastPollingMutexSem::FastLock() in initialization of local address");
     }
 
     StreamString hostName = GetAddress();
@@ -182,7 +182,7 @@ InternetHost::InternetHost(const uint16 port,
     WSADATA wsaData;
     int32 iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
-        REPORT_ERROR(ErrorManagement::FatalError, "LocalHostInfo: Failed WSAStartup");
+        REPORT_ERROR(ErrorManagement::fatalError, "LocalHostInfo: Failed WSAStartup");
     }
     address.sin_family = static_cast<uint16>(AF_INET);
     SetPort(port);

@@ -70,7 +70,7 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &time
                                                          float64 sleepTime ) {
     uint64 ticksStop = timeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+    ErrorManagement::ErrorType err = ErrorManagement::noError;
 
     // sets the default if it is negative
     if (sleepTime < 0.0) {
@@ -82,8 +82,8 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &time
         if (timeout != TTInfiniteWait) {
             uint64 ticks = HighResolutionTimer::Counter();
             if (ticks > ticksStop) {
-                err = ErrorManagement::Timeout;
-                REPORT_ERROR(ErrorManagement::Timeout, "FastPollingMutexSem: Timeout expired");
+                err = ErrorManagement::timeout;
+                REPORT_ERROR(ErrorManagement::timeout, "FastPollingMutexSem: Timeout expired");
                 break;
             }
         }

@@ -134,7 +134,7 @@ public:
 
     /**
      * @brief Tests the FastPollingMutexSem::FastWait function and checks that the error code is correctly set.
-     * @return true if the error code is set to ErrorManagement::NoError when the call succeeds and to ErrorManagement::Timeout when
+     * @return true if the error code is set to ErrorManagement::noError when the call succeeds and to ErrorManagement::timeout when
      * there is a timeout in the wait.
      */
     bool TestFastWaitErrorCode();

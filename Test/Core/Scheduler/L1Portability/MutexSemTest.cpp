@@ -104,7 +104,7 @@ void TestLockCallback(MutexSemTest &mt) {
     mt.synchSem.Wait();
     while (!mt.stop) {
         ErrorManagement::ErrorType err = mt.testMutex.Lock(mt.testMutexTimeout);
-        mt.failed |= (err != ErrorManagement::NoError);
+        mt.failed |= (err != ErrorManagement::noError);
         int32 state = mt.sharedVariable;
         mt.sharedVariable++;
         Sleep::MSec(10);
@@ -134,7 +134,7 @@ void TestUnLockCallback(MutexSemTest &mt) {
 
     while (!mt.stop) {
         ErrorManagement::ErrorType err = mt.testMutex.Lock(mt.testMutexTimeout);
-        mt.failed |= (err != ErrorManagement::NoError);
+        mt.failed |= (err != ErrorManagement::noError);
         int32 state = mt.sharedVariable;
         mt.sharedVariable++;
         Sleep::MSec(10);
@@ -163,7 +163,7 @@ void TestLockErrorCodeCallback(MutexSemTest &mt) {
     mt.failed = false;
     //This should fail because it was already locked in the TestLockErrorCode
     ErrorManagement::ErrorType err = mt.testMutex.Lock(mt.testMutexTimeout);
-    if (err != ErrorManagement::Timeout) {
+    if (err != ErrorManagement::timeout) {
         mt.failed = true;
     }
     Atomic::Decrement(&mt.nOfExecutingThreads);
@@ -174,7 +174,7 @@ void TestLockErrorCodeCallback(MutexSemTest &mt) {
 bool MutexSemTest::TestLockErrorCode() {
     bool ok = false;
     ErrorManagement::ErrorType err = testMutex.Lock();
-    if (err == ErrorManagement::NoError) {
+    if (err == ErrorManagement::noError) {
         ok = GenericMutexSemTestCaller(1, 1, (ThreadFunctionType) TestLockErrorCodeCallback);
     }
     testMutex.UnLock();
@@ -259,7 +259,7 @@ bool MutexSemTest::TestCopyConstructor() {
         test = false;
     }
 
-    test &= (testMutex.Lock() == ErrorManagement::NoError);
+    test &= (testMutex.Lock() == ErrorManagement::noError);
     test &= copyTestMutex.UnLock();
 
     return test;

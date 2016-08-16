@@ -77,7 +77,7 @@ bool GAMSchedulerI::Initialise(StructuredDataI & data) {
         timingDataSourceAddress = "Data.";
         ret = data.Read("TimingDataSource", timingDataSourceAddress);
         if (!ret) {
-            REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify the TimingDataSource address");
+            REPORT_ERROR(ErrorManagement::initialisationError, "Please specify the TimingDataSource address");
         }
     }
 
@@ -107,7 +107,7 @@ bool GAMSchedulerI::ConfigureScheduler() {
         timingDataSource = rtApp->Find(timingDataSourceAddress.Buffer());
         ret = timingDataSource.IsValid();
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "TimingDataSource %s not found", timingDataSourceAddress.Buffer())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "TimingDataSource %s not found", timingDataSourceAddress.Buffer())
         }
     }
 
@@ -207,7 +207,7 @@ bool GAMSchedulerI::ConfigureScheduler() {
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError, "Invalid RealTimeState in states container");
+                REPORT_ERROR(ErrorManagement::fatalError, "Invalid RealTimeState in states container");
             }
         }
     }

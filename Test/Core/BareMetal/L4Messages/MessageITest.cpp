@@ -78,7 +78,7 @@ bool MessageITest::TestSendMessage() {
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessage(mess, sender.operator->());
-    if (status != ErrorManagement::NoError) {
+    if (status != ErrorManagement::noError) {
         return false;
     }
 
@@ -107,7 +107,7 @@ bool MessageITest::TestSendMessage_NULL_Source() {
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessage(mess, NULL);
-    if (status != ErrorManagement::NoError) {
+    if (status != ErrorManagement::noError) {
         return false;
     }
 
@@ -190,7 +190,7 @@ bool MessageITest::TestSendMessage_False_NoDestinationForReply() {
 
     status = MessageI::SendMessage(mess, NULL);
 
-    result = (status == ErrorManagement::UnsupportedFeature);
+    result = (status == ErrorManagement::unsupportedFeature);
 
     return result;
 
@@ -249,7 +249,7 @@ bool MessageITest::TestSendMessage_False_InvalidDestination() {
 
     status = MessageI::SendMessage(mess, sender.operator->());
 
-    result = (status == ErrorManagement::UnsupportedFeature);
+    result = (status == ErrorManagement::unsupportedFeature);
 
     return result;
 
@@ -279,7 +279,7 @@ bool MessageITest::TestSendMessage_False_InvalidFunction() {
 
     status = MessageI::SendMessage(mess, sender.operator->());
 
-    result = (status == ErrorManagement::UnsupportedFeature);
+    result = (status == ErrorManagement::unsupportedFeature);
 
     return result;
 
@@ -308,7 +308,7 @@ bool MessageITest::TestSendMessageAndWaitReply() {
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessageAndWaitReply(mess, sender.operator->());
-    if (status != ErrorManagement::NoError) {
+    if (status != ErrorManagement::noError) {
         return false;
     }
     if (!mess->IsReplyMessage()) {
@@ -399,7 +399,7 @@ bool MessageITest::TestSendMessageAndExpectReplyLater() {
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessageAndExpectReplyLater(mess, sender.operator->());
-    if (status != ErrorManagement::NoError) {
+    if (status != ErrorManagement::noError) {
         return false;
     }
 

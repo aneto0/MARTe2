@@ -229,8 +229,8 @@ Object    ();
     /**
      * @brief Calls a registered method without arguments.
      * @param[in] methodName is the method name.
-     * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
-     * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
+     * @return ErrorManagement::unsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
+     * ErrorManagement::fatalError will be returned if the function returns false, ErrorManagement::noError otherwise.
      */
     ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName);
 
@@ -239,8 +239,8 @@ Object    ();
      * @param[in] methodName is the method name.
      * @param[in] parameters is the method argument
      * @tparam argType is the method argument type
-     * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
-     * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
+     * @return ErrorManagement::unsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
+     * ErrorManagement::fatalError will be returned if the function returns false, ErrorManagement::noError otherwise.
      */
     template <typename argType>
     ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName,argType parameters);

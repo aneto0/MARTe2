@@ -164,10 +164,10 @@ public:
      * @param[in] object is the object which must call the method.
      * @param[in] methodName is the name of the class method to be called.
      * @return the status value of the execution, being one of the following:
-     * + ErrorManagement::UnsupportedFeature if \a methodName is not
+     * + ErrorManagement::unsupportedFeature if \a methodName is not
      * + registered or the class has not declared the method;
-     * + ErrorManagement::FatalError if the class method returns false;
-     * + ErrorManagement::NoError if the class method returns true.
+     * + ErrorManagement::fatalError if the class method returns false;
+     * + ErrorManagement::noError if the class method returns true.
      */
     ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
                                                     CCString methodName);
@@ -179,10 +179,10 @@ public:
      * @param[in] methodName is the name of the class method to be called.
      * @param[in] parameters is the class method argument.
      * @return the status value of the execution, being one of the following:
-     * + ErrorManagement::UnsupportedFeature if \a methodName is not
+     * + ErrorManagement::unsupportedFeature if \a methodName is not
      * + registered or the class has not declared the method;
-     * + ErrorManagement::FatalError if the class method returns false;
-     * + ErrorManagement::NoError if the class method returns true.
+     * + ErrorManagement::fatalError if the class method returns false;
+     * + ErrorManagement::noError if the class method returns true.
      */
     template<typename argType>
     ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,

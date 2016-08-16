@@ -77,7 +77,7 @@ bool GAMDataSource::Initialise(StructuredDataI & data) {
         if (data.Read("HeapName", heapName)) {
             memoryHeap = HeapManager::FindHeap(heapName.Buffer());
             if (memoryHeap == NULL_PTR(HeapI *)) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Could not instantiate an memoryHeap with the name: %s", heapName.Buffer())
+                REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError, "Could not instantiate an memoryHeap with the name: %s", heapName.Buffer())
                 ret = false;
             }
         }
@@ -123,7 +123,7 @@ bool GAMDataSource::AllocateMemory() {
         ret = (signalMemory == NULL_PTR(void *));
     }
     else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No signals defined for DataSource with name %s", GetName())
+        REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError, "No signals defined for DataSource with name %s", GetName())
     }
     if (ret) {
         signalOffsets = new uint32[nOfSignals];
@@ -254,7 +254,7 @@ bool GAMDataSource::PrepareNextState(const char8 * const currentStateName,
                         thisSignal.SetNumberOfDimensions(thisSignalNumberOfDimensions);
                     }
                     else {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Default value has different number of dimensions w.r.t. to the signal %s",
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError, "Default value has different number of dimensions w.r.t. to the signal %s",
                                                 signalName)
                     }
 
@@ -268,7 +268,7 @@ bool GAMDataSource::PrepareNextState(const char8 * const currentStateName,
                         ret = (thisSignalNumberOfElements == defaultValueNumberOfElements);
                     }
                     else {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Default value has different number of elements w.r.t. to the signal %s",
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError, "Default value has different number of elements w.r.t. to the signal %s",
                                                 signalName)
                     }
                     for (d = 0u; (d < thisSignalNumberOfDimensions) && (ret); d++) {
@@ -277,7 +277,7 @@ bool GAMDataSource::PrepareNextState(const char8 * const currentStateName,
                     }
                     if (!GetSignalDefaultValue(signalIdx, thisSignal)) {
                         ret = false;
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Could not read existent Default value for signal %s", signalName)
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError, "Could not read existent Default value for signal %s", signalName)
                     }
 
                 }
@@ -334,7 +334,7 @@ bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
             }
             if (nStates == 0u) {
                 REPORT_ERROR_PARAMETERS(
-                        ErrorManagement::Information,
+                        ErrorManagement::information,
                         "In GAMDataSource %s, signal %s will never be produced nor consumed because there is no GAM with this signal being executed in any state.",
                         GetName(), signalName.Buffer())
             }
@@ -351,7 +351,7 @@ bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
                 ret = (nProducers > 0u);
             }
             if (!ret) {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
+                REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError,
                                         "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be > 0 but is %d", GetName(),
                                         stateName.Buffer(), signalName.Buffer(), nProducers)
             }

@@ -76,11 +76,11 @@ bool FloatToInteger(const FloatType floatNumber,
         }
 
         if (floatNumber >= static_cast<FloatType>(max)) {
-            REPORT_ERROR(ErrorManagement::Warning, "FloatToInteger: Saturation to the maximum value");
+            REPORT_ERROR(ErrorManagement::warning, "FloatToInteger: Saturation to the maximum value");
             integerNumber = max;
         }
         else if (floatNumber <= static_cast<FloatType>(min)) {
-            REPORT_ERROR(ErrorManagement::Warning, "FloatToInteger: Saturation to the minimum value");
+            REPORT_ERROR(ErrorManagement::warning, "FloatToInteger: Saturation to the minimum value");
             integerNumber = min;
         }
         else {
@@ -103,7 +103,7 @@ bool FloatToInteger(const FloatType floatNumber,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::Warning, "FloatToInteger: Assignment of negative float to unsigned integer type; saturation to 0");
+        REPORT_ERROR(ErrorManagement::warning, "FloatToInteger: Assignment of negative float to unsigned integer type; saturation to 0");
     }
 
     return ret;

@@ -87,8 +87,8 @@ public:
      * @param[in] context is the pointer to the object owning the method.
      * @param[in] ref is the class method argument.
      * @return
-     * + ErrorManagement::FatalError if the class method returns false
-     * + ErrorManagement::NoError if it returns true
+     * + ErrorManagement::fatalError if the class method returns false
+     * + ErrorManagement::noError if it returns true
      */
     virtual ErrorManagement::ErrorType Call(Object * context,
                                             argType1 ref);
@@ -100,8 +100,8 @@ public:
      * @param[in] byCopy states if the x argument is actually passed by copy
      * (meaningful when used from templates, helping on overloading resolution)
      * @return
-     * + ErrorManagement::FatalError if the class method returns false
-     * + ErrorManagement::NoError if it returns true
+     * + ErrorManagement::fatalError if the class method returns false
+     * + ErrorManagement::noError if it returns true
      */
     virtual ErrorManagement::ErrorType Call(Object * context,
                                             argType1 ref,
@@ -163,8 +163,8 @@ public:
      * @brief Calls the class method.
      * @param[in] context is the pointer to the object owning the method.
      * @return
-     * + ErrorManagement::FatalError if the class method returns false
-     * + ErrorManagement::NoError if it returns true
+     * + ErrorManagement::fatalError if the class method returns false
+     * + ErrorManagement::noError if it returns true
      */
     virtual ErrorManagement::ErrorType Call(Object * context);
 
@@ -204,13 +204,13 @@ ClassMethodCallerT<className, void>::~ClassMethodCallerT() {
 
 template<typename className>
 ErrorManagement::ErrorType ClassMethodCallerT<className, void>::Call(Object * context) {
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+    ErrorManagement::ErrorType err = ErrorManagement::noError;
     className *actualContext = dynamic_cast<className *>(context);
     if (actualContext == NULL_PTR(className *)) {
-        err = ErrorManagement::UnsupportedFeature;
+        err = ErrorManagement::unsupportedFeature;
     }
     else {
-        (actualContext->*pFun)() ? (err = ErrorManagement::NoError) : (err = ErrorManagement::FatalError);
+        (actualContext->*pFun)() ? (err = ErrorManagement::noError) : (err = ErrorManagement::fatalError);
     }
     return err;
 }
@@ -235,13 +235,13 @@ ClassMethodCallerT<className, argType1>::~ClassMethodCallerT() {
 template<typename className, typename argType1>
 ErrorManagement::ErrorType ClassMethodCallerT<className, argType1>::Call(Object * context,
                                                                          argType1 ref) {
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+    ErrorManagement::ErrorType err = ErrorManagement::noError;
     className *actualContext = dynamic_cast<className *>(context);
     if (actualContext == NULL_PTR(className *)) {
-        err = ErrorManagement::UnsupportedFeature;
+        err = ErrorManagement::unsupportedFeature;
     }
     else {
-        (actualContext->*pFun)(ref) ? (err = ErrorManagement::NoError) : (err = ErrorManagement::FatalError);
+        (actualContext->*pFun)(ref) ? (err = ErrorManagement::noError) : (err = ErrorManagement::fatalError);
     }
     return err;
 }
@@ -250,13 +250,13 @@ template<typename className, typename argType1>
 ErrorManagement::ErrorType ClassMethodCallerT<className, argType1>::Call(Object * context,
                                                                          argType1 ref,
                                                                          bool ByCopy) {
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+    ErrorManagement::ErrorType err = ErrorManagement::noError;
     className *actualContext = dynamic_cast<className *>(context);
     if (actualContext == NULL_PTR(className *)) {
-        err = ErrorManagement::UnsupportedFeature;
+        err = ErrorManagement::unsupportedFeature;
     }
     else {
-        (actualContext->*pFun)(ref) ? (err = ErrorManagement::NoError) : (err = ErrorManagement::FatalError);
+        (actualContext->*pFun)(ref) ? (err = ErrorManagement::noError) : (err = ErrorManagement::fatalError);
     }
     return err;
 }

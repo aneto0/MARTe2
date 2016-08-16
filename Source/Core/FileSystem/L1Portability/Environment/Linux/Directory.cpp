@@ -61,7 +61,7 @@ Directory::Directory(const char8 * const path) :
     }
     else {
         if(!MemoryOperationsHelper::Set(&directoryHandle, '\0', static_cast<uint32>(sizeof(DirectoryCore)))) {
-            REPORT_ERROR(ErrorManagement::Warning, "Failed initialization of directory handle");
+            REPORT_ERROR(ErrorManagement::warning, "Failed initialization of directory handle");
         }
         fname=NULL_PTR(char8*);
     }
@@ -137,7 +137,7 @@ TimeStamp Directory::GetLastWriteTime() {
     if (stat(GetName(), &directoryHandle) == 0) {
         time_t secondsFromEpoch32 = static_cast<time_t>(directoryHandle.st_mtime);
         if (!timeStamp.ConvertFromEpoch(secondsFromEpoch32)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: Failed TimeStamp::ConvertFromEpoch");
+            REPORT_ERROR(ErrorManagement::fatalError, "Error: Failed TimeStamp::ConvertFromEpoch");
         }
     }
     else {
@@ -152,7 +152,7 @@ TimeStamp Directory::GetLastAccessTime() {
     if (stat(GetName(), &directoryHandle) == 0) {
         time_t secondsFromEpoch32 = static_cast<int32>(directoryHandle.st_atime);
         if (!timeStamp.ConvertFromEpoch(secondsFromEpoch32)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: Failed TimeStamp::ConvertFromEpoch");
+            REPORT_ERROR(ErrorManagement::fatalError, "Error: Failed TimeStamp::ConvertFromEpoch");
         }
     }
     else {

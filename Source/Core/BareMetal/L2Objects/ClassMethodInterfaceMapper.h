@@ -102,9 +102,9 @@ public:
      * @brief Calls the function with no arguments.
      * @param[in] context is the object which must call the function.
      * @return
-     * + ErrorManagement::UnsupportedFeature if no function has been registered
-     * + ErrorManagement::FatalError if the class method returns false
-     * + ErrorManagement::NoError if it returns true.
+     * + ErrorManagement::unsupportedFeature if no function has been registered
+     * + ErrorManagement::fatalError if the class method returns false
+     * + ErrorManagement::noError if it returns true.
      */
     ErrorManagement::ErrorType Call(Object * const context);
 
@@ -114,9 +114,9 @@ public:
      * @param[in] context is the object which must call the function.
      * @param[in,out] ref is the class method argument.
      * @return
-     * + ErrorManagement::UnsupportedFeature if no function has been registered
-     * + ErrorManagement::FatalError if the class method returns false
-     * + ErrorManagement::NoError if it returns true.
+     * + ErrorManagement::unsupportedFeature if no function has been registered
+     * + ErrorManagement::fatalError if the class method returns false
+     * + ErrorManagement::noError if it returns true.
      */
     template<typename T>
     ErrorManagement::ErrorType Call(Object * const context,

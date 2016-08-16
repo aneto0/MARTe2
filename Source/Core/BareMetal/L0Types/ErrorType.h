@@ -52,22 +52,22 @@ typedef uint32 ErrorIntegerFormat ;
 TODO
  * to allow manage bit size of error type
  */
-static const uint32 ErrorIntegerFormatBitSize(sizeof(ErrorIntegerFormat)*8);
+static const uint32 errorIntegerFormatBitSize(sizeof(ErrorIntegerFormat)*8);
 
 /**
  * Bit for Fatal Error
  */
-static const uint32 FatalErrorBit(0u);
+static const uint32 fatalErrorBit(0u);
 
 /**
  * Bit for Recoverable error
  */
-static const uint32 RecoverableErrorBit(1u);
+static const uint32 recoverableErrorBit(1u);
 
 /**
  * Bit for Initialisation error
  */
-static const uint32 InitialisationErrorBit(2u);
+static const uint32 initialisationErrorBit(2u);
 
 /**
  * Bit for Operating system error
@@ -77,72 +77,72 @@ static const uint32 OSErrorBit(3u);
 /**
  * Parameters error
  */
-static const uint32 ParametersErrorBit(4u);
+static const uint32 parametersErrorBit(4u);
 
 /**
  * Illegal operation
  */
-static const uint32 IllegalOperationBit(5u);
+static const uint32 illegalOperationBit(5u);
 
 /**
  * Sharing error
  */
-static const uint32 ErrorSharingBit(6u);
+static const uint32 errorSharingBit(6u);
 
 /**
  * Access denied
  */
-static const uint32 ErrorAccessDeniedBit(7u);
+static const uint32 errorAccessDeniedBit(7u);
 
 /**
  * Exception
  */
-static const uint32 ExceptionBit(8u);
+static const uint32 exceptionBit(8u);
 
 /**
  * Timeout occurred
  */
-static const uint32 TimeoutBit(9u);
+static const uint32 timeoutBit(9u);
 
 /**
  * Error during communication
  */
-static const uint32 CommunicationErrorBit(10u);
+static const uint32 communicationErrorBit(10u);
 
 /**
  * Syntax error
  */
-static const uint32 SyntaxErrorBit(11u);
+static const uint32 syntaxErrorBit(11u);
 
 /**
  * Unsupported feature
  */
-static const uint32 UnsupportedFeatureBit(12u);
+static const uint32 unsupportedFeatureBit(12u);
 
 /**
  * Internal setup error
  */
-static const uint32 InternalSetupErrorBit(13u);
+static const uint32 internalSetupErrorBit(13u);
 
 /**
  * Bit for Debug information
  */
-static const uint32 DebugBit(14u);
+static const uint32 debugBit(14u);
 
 /**
  * Bit for General information
  */
-static const uint32 InformationBit(15u);
+static const uint32 informationBit(15u);
 
 /**
  * Bit for Warning
  */
-static const uint32 WarningBit(16u);
+static const uint32 warningBit(16u);
 
 /**
  * last used Bit
  */
-static const uint32 LastErrorBit(16u);
+static const uint32 lastErrorBit(16u);
 
 
 /**
@@ -154,29 +154,29 @@ static const uint32 LastErrorBit(16u);
 /**
  * To generate the constants representing a specific error type
  */
-#define GENERATE_ERROR_BITRANGE(errorName,errorNameLC)    BitBoolean<ErrorIntegerFormat, errorName ## Bit> errorNameLC;
+#define GENERATE_ERROR_BITRANGE(errorName)    BitBoolean<ErrorIntegerFormat, errorName ## Bit> errorName;
 
 
 /**
  * No error to report
  */
-static const ErrorIntegerFormat NoError = 0u;
+static const ErrorIntegerFormat noError = 0u;
 
 
 /**
  * Fatal Error
  */
-GENERATE_ERROR_CONSTANTS(FatalError)
+GENERATE_ERROR_CONSTANTS(fatalError)
 
 /**
  * Recoverable error
  */
-GENERATE_ERROR_CONSTANTS(RecoverableError)
+GENERATE_ERROR_CONSTANTS(recoverableError)
 
 /**
  * Initialisation error
  */
-GENERATE_ERROR_CONSTANTS(InitialisationError)
+GENERATE_ERROR_CONSTANTS(initialisationError)
 
 /**
  * Operating system error
@@ -186,67 +186,67 @@ GENERATE_ERROR_CONSTANTS(OSError)
 /**
  * Parameters error
  */
-GENERATE_ERROR_CONSTANTS(ParametersError)
+GENERATE_ERROR_CONSTANTS(parametersError)
 
 /**
  * Illegal operation
  */
-GENERATE_ERROR_CONSTANTS(IllegalOperation)
+GENERATE_ERROR_CONSTANTS(illegalOperation)
 
 /**
  * Sharing error
  */
-GENERATE_ERROR_CONSTANTS(ErrorSharing)
+GENERATE_ERROR_CONSTANTS(errorSharing)
 
 /**
  * Access denied
  */
-GENERATE_ERROR_CONSTANTS(ErrorAccessDenied);
+GENERATE_ERROR_CONSTANTS(errorAccessDenied);
 
 /**
  * Exception
  */
-GENERATE_ERROR_CONSTANTS(Exception)
+GENERATE_ERROR_CONSTANTS(exception)
 
 /**
  * Timeout occurred
  */
-GENERATE_ERROR_CONSTANTS(Timeout)
+GENERATE_ERROR_CONSTANTS(timeout)
 
 /**
  * Error during communication
  */
-GENERATE_ERROR_CONSTANTS(CommunicationError)
+GENERATE_ERROR_CONSTANTS(communicationError)
 
 /**
  * Syntax error
  */
-GENERATE_ERROR_CONSTANTS(SyntaxError)
+GENERATE_ERROR_CONSTANTS(syntaxError)
 
 /**
  * Unsupported feature
  */
-GENERATE_ERROR_CONSTANTS(UnsupportedFeature)
+GENERATE_ERROR_CONSTANTS(unsupportedFeature)
 
 /**
  * Internal setup error
  */
-GENERATE_ERROR_CONSTANTS(InternalSetupError);
+GENERATE_ERROR_CONSTANTS(internalSetupError);
 
 /**
  * Debug information
  */
-GENERATE_ERROR_CONSTANTS(Debug)
+GENERATE_ERROR_CONSTANTS(debug)
 
 /**
  * General information
  */
-GENERATE_ERROR_CONSTANTS(Information)
+GENERATE_ERROR_CONSTANTS(information)
 
 /**
- * ErrorManagement::Warning
+ * ErrorManagement::warning
  */
-GENERATE_ERROR_CONSTANTS(Warning)
+GENERATE_ERROR_CONSTANTS(warning)
 
 
 
@@ -312,6 +312,13 @@ public:
      * */
     inline void ClearError(const ErrorIntegerFormat errorBitSet);
 
+    /**
+     * TODO
+     * True if all the bits of errorBitSet are contained in this
+     * */
+    inline bool Contains(const ErrorIntegerFormat errorBitSet) const;
+
+
     /*lint -e{9018} Use of union allows to use this memory to describe both objects and basic types.*/
     union {
 
@@ -323,92 +330,92 @@ public:
         /**
          * Fatal Error
          */
-        GENERATE_ERROR_BITRANGE(FatalError,fatalError)
+        GENERATE_ERROR_BITRANGE(fatalError)
 
         /**
          * Recoverable error
          */
-        GENERATE_ERROR_BITRANGE(RecoverableError,recoverableError)
+        GENERATE_ERROR_BITRANGE(recoverableError)
 
         /**
          * Initialization error
          */
-        GENERATE_ERROR_BITRANGE(InitialisationError,initialisationError)
+        GENERATE_ERROR_BITRANGE(initialisationError)
 
         /**
          * Operating system error
          */
-        GENERATE_ERROR_BITRANGE(OSError,OSError)
+        GENERATE_ERROR_BITRANGE(OSError)
 
         /**
          * Parameters error
          */
-        GENERATE_ERROR_BITRANGE(ParametersError,parametersError)
+        GENERATE_ERROR_BITRANGE(parametersError)
 
         /**
          * Illegal operation
          */
-        GENERATE_ERROR_BITRANGE(IllegalOperation,illegalOperation)
+        GENERATE_ERROR_BITRANGE(illegalOperation)
 
         /**
          * Sharing error
          */
-        GENERATE_ERROR_BITRANGE(ErrorSharing,errorSharing)
+        GENERATE_ERROR_BITRANGE(errorSharing)
 
         /**
          * Access denied
          */
-        GENERATE_ERROR_BITRANGE(ErrorAccessDenied,errorAccessDenied);
+        GENERATE_ERROR_BITRANGE(errorAccessDenied);
 
         /**
          * Exception
          */
-        GENERATE_ERROR_BITRANGE(Exception,exception)
+        GENERATE_ERROR_BITRANGE(exception)
 
         /**
          * Timeout occurred
          */
-        GENERATE_ERROR_BITRANGE(Timeout,timeout)
+        GENERATE_ERROR_BITRANGE(timeout)
 
         /**
          * Error during communication
          */
-        GENERATE_ERROR_BITRANGE(CommunicationError,communicationError)
+        GENERATE_ERROR_BITRANGE(communicationError)
 
         /**
          * Syntax error
          */
-        GENERATE_ERROR_BITRANGE(SyntaxError,syntaxError)
+        GENERATE_ERROR_BITRANGE(syntaxError)
 
         /**
          * Unsupported feature
          */
-        GENERATE_ERROR_BITRANGE(UnsupportedFeature,unsupportedFeature)
+        GENERATE_ERROR_BITRANGE(unsupportedFeature)
 
         /**
          * Internal setup error
          */
-        GENERATE_ERROR_BITRANGE(InternalSetupError,internalSetupError);
+        GENERATE_ERROR_BITRANGE(internalSetupError);
 
         /**
          * Debug information
          */
-        GENERATE_ERROR_BITRANGE(Debug,debug)
+        GENERATE_ERROR_BITRANGE(debug)
 
         /**
          * General information
          */
-        GENERATE_ERROR_BITRANGE(Information,information)
+        GENERATE_ERROR_BITRANGE(information)
 
         /**
-         * ErrorManagement::Warning
+         * ErrorManagement::warning
          */
-        GENERATE_ERROR_BITRANGE(Warning,warning)
+        GENERATE_ERROR_BITRANGE(warning)
 
         /**
          * unmapped
          * */
-        BitRange<ErrorIntegerFormat, LastErrorBit+1, ErrorIntegerFormatBitSize - LastErrorBit -1 > unmapped;
+        BitRange<ErrorIntegerFormat, lastErrorBit+1, errorIntegerFormatBitSize - lastErrorBit -1 > unmapped;
 
     };
 
@@ -423,7 +430,7 @@ inline ErrorType::ErrorType(const ErrorIntegerFormat errorBitSet) {
 }
 
 inline ErrorType::ErrorType(bool allOk) {
-    format_as_integer = NoError;
+    format_as_integer = noError;
     fatalError = !allOk;
 }
 
@@ -460,6 +467,11 @@ inline void ErrorType::SetError(const ErrorIntegerFormat errorBitSet) {
 inline void ErrorType::ClearError(const ErrorIntegerFormat errorBitSet) {
     format_as_integer &= ~errorBitSet;
 }
+
+inline bool ErrorType::Contains(const ErrorIntegerFormat errorBitSet)const{
+    return   ((format_as_integer & errorBitSet) == errorBitSet);
+}
+
 
 }
 

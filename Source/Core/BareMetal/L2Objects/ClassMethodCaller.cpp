@@ -54,33 +54,33 @@ ClassMethodCaller::~ClassMethodCaller() {
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object * const context) {
-    return ErrorManagement::UnsupportedFeature;
+    return ErrorManagement::unsupportedFeature;
 }
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object * const context,
                                                    int32& x) {
-    return ErrorManagement::UnsupportedFeature;
+    return ErrorManagement::unsupportedFeature;
 }
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object * const context,
                                                    ReferenceContainer & x) {
-    return ErrorManagement::UnsupportedFeature;
+    return ErrorManagement::unsupportedFeature;
 }
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object * const context,
                                                    int32 x,
                                                    bool byCopy) {
-    return ErrorManagement::UnsupportedFeature;
+    return ErrorManagement::unsupportedFeature;
 }
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object * const context,
                                                    ReferenceContainer x,
                                                    bool byCopy) {
-    return ErrorManagement::UnsupportedFeature;
+    return ErrorManagement::unsupportedFeature;
 }
 
 }
