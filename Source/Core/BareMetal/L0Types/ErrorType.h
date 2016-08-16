@@ -55,7 +55,7 @@ TODO
 static const uint32 errorIntegerFormatBitSize(sizeof(ErrorIntegerFormat)*8);
 
 /**
- * Bit for Fatal Error
+ * Bit for Fatal Error (was called funcvtionError) Generic unspecified error. Used when a simple GO no GO
  */
 static const uint32 fatalErrorBit(0u);
 

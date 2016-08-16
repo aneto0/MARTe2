@@ -130,7 +130,7 @@ bool MessageITest::TestSendMessage_False_InvalidMessage() {
 
     status = MessageI::SendMessage(mess, NULL);
 
-    result = (status == ErrorManagement::ParametersError);
+    result = (status == ErrorManagement::parametersError);
 
     return result;
 }
@@ -161,7 +161,7 @@ bool MessageITest::TestSendMessage_False_NotExpectedLateReply() {
 
     status = MessageI::SendMessage(mess, sender.operator->());
 
-    result = (status == ErrorManagement::CommunicationError);
+    result = (status == ErrorManagement::communicationError);
 
     return result;
 }
@@ -219,7 +219,7 @@ bool MessageITest::TestSendMessage_False_NoDestinationForExpectedReply() {
 
     status = MessageI::SendMessage(mess, NULL);
 
-    result = (status == ErrorManagement::ParametersError);
+    result = (status == ErrorManagement::parametersError);
 
     return result;
 
@@ -340,7 +340,7 @@ bool MessageITest::TestSendMessageAndWaitReply_False_InvalidMessage() {
 
     status = MessageI::SendMessageAndWaitReply(mess, sender.operator->());
 
-    result = (status == ErrorManagement::ParametersError);
+    result = (status == ErrorManagement::parametersError);
 
     return result;
 }
@@ -371,7 +371,7 @@ bool MessageITest::TestSendMessageAndWaitReply_False_ReplyOfReply() {
 
     status = MessageI::SendMessageAndWaitReply(mess, sender.operator->());
 
-    result = (status == ErrorManagement::CommunicationError);
+    result = (status == ErrorManagement::communicationError);
 
     return result;
 }
@@ -425,7 +425,7 @@ bool MessageITest::TestSendMessageAndExpectReplyLater_False_InvalidMessage() {
 
     status = MessageI::SendMessageAndExpectReplyLater(mess, sender.operator->());
 
-    result = (status == ErrorManagement::ParametersError);
+    result = (status == ErrorManagement::parametersError);
 
     return result;
 }
@@ -456,7 +456,7 @@ bool MessageITest::TestSendMessageAndExpectReplyLater_False_ReplyOfReply() {
 
     status = MessageI::SendMessageAndExpectReplyLater(mess, sender.operator->());
 
-    result = (status == ErrorManagement::CommunicationError);
+    result = (status == ErrorManagement::communicationError);
 
     return result;
 }

@@ -104,7 +104,7 @@ bool CallRegisteredMethodLauncherTTest::TestTest() {
         ReferenceContainer params;
         CallRegisteredMethodLauncherT<ReferenceContainer&> target(&context, "FaultyMethod", params);
         status = target.Test(&cmri);
-        result &= (status && target.GetResults().functionError);
+        result &= (status && target.GetResults().fatalError);
         result &= (context.GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
     }
     {
@@ -272,7 +272,7 @@ bool CallRegisteredMethodLauncherTTest::TestGetResults() {
         ReferenceContainer params;
         CallRegisteredMethodLauncherT<ReferenceContainer&> target(&context, "FaultyMethod", params);
         status = target.Test(&cmri);
-        result &= (status && target.GetResults().functionError);
+        result &= (status && target.GetResults().fatalError);
         result &= (context.GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
     }
     {

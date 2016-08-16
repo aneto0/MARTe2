@@ -78,7 +78,7 @@ bool ClassMethodCallerTTest::TestCall() {
         ClassWithCallableMethods context;
         ReferenceContainer params;
         status = target.Call(&context, params);
-        result &= status.functionError;
+        result &= status.fatalError;
         result &= (context.GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
     }
     {
@@ -86,7 +86,7 @@ bool ClassMethodCallerTTest::TestCall() {
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         status = target.Call(&context);
-        result &= status;
+        result &= bool(status);
         result &= (context.GetLastMethodExecuted() == "OverloadedMethod()");
     }
     {
@@ -95,7 +95,7 @@ bool ClassMethodCallerTTest::TestCall() {
         ClassWithCallableMethods context;
         int params = 0;
         status = target.Call(&context, params);
-        result &= status;
+        result &= bool(status);
         result &= (context.GetLastMethodExecuted() == "OverloadedMethod(int&)");
     }
     {
@@ -104,7 +104,7 @@ bool ClassMethodCallerTTest::TestCall() {
         ClassWithCallableMethods context;
         ReferenceContainer params;
         status = target.Call(&context, params);
-        result &= status;
+        result &= bool(status);
         result &= (context.GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
     }
     {
@@ -113,7 +113,7 @@ bool ClassMethodCallerTTest::TestCall() {
         ClassWithCallableMethods context;
         int params = 10;
         status = target.Call(&context, params);
-        result &= status;
+        result &= bool(status);
         result &= (context.GetLastMethodExecuted() == "MethodWithInputInteger(int&)");
     }
     {
@@ -122,7 +122,7 @@ bool ClassMethodCallerTTest::TestCall() {
         ClassWithCallableMethods context;
         int params = 0;
         status = target.Call(&context, params);
-        result &= status;
+        result &= bool(status);
         result &= (params == 20);
         result &= (context.GetLastMethodExecuted() == "MethodWithOutputInteger(int&)");
     }
@@ -132,7 +132,7 @@ bool ClassMethodCallerTTest::TestCall() {
         ClassWithCallableMethods context;
         int params = 30;
         status = target.Call(&context, params);
-        result &= status;
+        result &= bool(status);
         result &= (params == (30 + 5));
         result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputInteger(int&)");
     }
@@ -146,7 +146,7 @@ bool ClassMethodCallerTTest::TestCall() {
         success = params.Insert("TestObject", obj);
         if (success) {
             status = target.Call(&context, params);
-            result &= status;
+            result &= bool(status);
             result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainer(MARTe::ReferenceContainer&)");
         }
         else {
@@ -160,7 +160,7 @@ bool ClassMethodCallerTTest::TestCall() {
         ReferenceContainer params;
         Reference obj;
         status = target.Call(&context, params);
-        result &= status;
+        result &= bool(status);
         obj = params.Find("TestObject2");
         result &= obj.IsValid();
         result &= (context.GetLastMethodExecuted() == "MethodWithOutputReferenceContainer(MARTe::ReferenceContainer&)");
@@ -175,7 +175,7 @@ bool ClassMethodCallerTTest::TestCall() {
         success = params.Insert("TestObject", obj);
         if (success) {
             status = target.Call(&context, params);
-            result &= status;
+            result &= bool(status);
             obj = params.Find("TestObject");
             result &= !obj.IsValid();
             obj = params.Find("TestObject2");
@@ -192,7 +192,7 @@ bool ClassMethodCallerTTest::TestCall() {
         ClassWithCallableMethods context;
         int params = 80;
         status = target.Call(&context, params);
-        result &= status;
+        result &= bool(status);
         result &= (context.GetLastMethodExecuted() == "MethodWithInputIntegerByCopy(int)");
     }
     {
@@ -205,7 +205,7 @@ bool ClassMethodCallerTTest::TestCall() {
         success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
         if (success) {
             status = target.Call(&context, params);
-            result &= status;
+            result &= bool(status);
             result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer)");
         }
         else {
