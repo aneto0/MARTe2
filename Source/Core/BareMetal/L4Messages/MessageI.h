@@ -66,27 +66,26 @@ public:
      * @brief Sends a Message to the destination (specified in Message).
      * @details Depending on the flags to be read from \a message, this function can behave in synchronous or asynchronous mode,
      * wait or not for a reply, ecc.
-     * If Message::ExpectsReply() == true then reply message will requested but not waited for
-     * if Message::ExpectsImmediateReply() == true then reply message will be waited for at the destination
-     * @param[in,out] message is the message to be sent. It can be modified if the destination re-sends it to the sender as a reply.
+     * If Message::ExpectsReply() == true then a reply message is requested and expected to be sent asynchronously to this object.
+     * if Message::ExpectsImmediateReply() == true then reply message is requested and expected to be returned at the end of this call.
+     * @param[in,out] message is the message to be sent. It will be modified to contain the destination reply if ExpectsImmediateReply is true.
      * @param[in] sender is the Object sending the message.
 
      * @return
      *   ErrorManagement::noError() if the destination object is found and the called function returns true.
      *   ErrorManagement::fatalError if the function to be called returns false.
      *   ErrorManagement::unsupportedFeature if the message was refused
-     *   ErrorManagement::timeout if a wait for reply timesOut
-     *   ErrorManagement::CommunicationError if the reply was not produced when requested
-     *   ErrorManagement::ParametersError if the message is invalid or if sender is NULL and reply was expected
+     *   ErrorManagement::timeout if a wait for reply times out
+     *   ErrorManagement::communicationError if the reply was not produced when requested
+     *   ErrorManagement::parametersError if the message is invalid or if sender is NULL and reply was expected
      */
-    static ErrorManagement::ErrorType SendMessage(ReferenceT<Message> &message,
-                                                  const Object * const sender = NULL_PTR(Object *));
+    static ErrorManagement::ErrorType SendMessage(ReferenceT<Message> &message,const Object * const sender = NULL_PTR(Object *));
 
     /**
-     * @brief Marks the message to be sent requiring an immediate reply before sending it.
-     * @param[in,out] message is the message to be sent. It can be modified if the destination re-sends it to the sender as a reply.
+     * @brief Before calling SendMessage, the message flag ExpectsImmediateReply() is set and the message timeout is set as maxWait.
+     * @param[in,out] message is the message to be sent. It will be modified to contain the reply.
      * @param[in] sender is the Object sending the message.
-     * @param[in] maxWait is the maximum time allowed waiting the message reply.
+     * @param[in] maxWait is the maximum time allowed waiting for the message reply.
      */
     static ErrorManagement::ErrorType SendMessageAndWaitReply(ReferenceT<Message> &message,
                                                               const Object * const sender = NULL_PTR(Object *),
@@ -118,14 +117,15 @@ protected:
      * Default message sorting mechanism
      * By default checks if there are usable registered methods
      * Otherwise calls HandleMessage.
-     * in the case of delayed reply, the reply is sent from here
+     * in the case of delayed reply, the reply will be sent from here if a reply message is returned from the user code.
+     * otherwise the user has to Send the reply independently
      * */
     virtual ErrorManagement::ErrorType SortMessage(ReferenceT<Message> &message);
 
     /**
      * TODO
      * Default message handling mechanism
-     * By default refuses messages returning false
+     * By default refuses messages and returns false
      * */
     virtual ErrorManagement::ErrorType HandleMessage(ReferenceT<Message> &message);
 

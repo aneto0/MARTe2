@@ -49,14 +49,18 @@ public:
 
     /**
        * TODO
-       * Default message handling mechanism
-       * Handles the reception of a message
-       * By default simply calls SortMessage
-       * Can be overridden to implement message Queues etc...
-       * in the case of a specialised method where queued message handling is implemented
-       * when the immediate return message is requested then the wait is performed here and a timeout+communication error may be produced here
+       * the main job is to add messages to the message Q
+       * first checks for any message filter. If message matches then adds message to filter, removes and trigger the filter
+       * if no filter adds to main Q
       * */
-    virtual ReturnType ReceiveMessage(ReferenceT<Message> &message);
+    virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
+
+    /**
+     * TODO
+     * called by the main thread to sort messages taken from Q
+     *
+     * */
+    virtual ErrorManagement::ErrorType SortMessage(ReferenceT<Message> &message);
 
 
     /**

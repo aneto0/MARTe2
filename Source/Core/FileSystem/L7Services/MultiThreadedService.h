@@ -80,7 +80,7 @@ class MultiThreadedService: public ReferenceContainer{
      * Returns true on connection establishment. In this case clientInfo contains the client information
      *
      */
-    virtual bool WaitForClientCOnnection(const TimeoutType &timeout,void *&clientInfo)=0; // could be templated to avoid void *
+    virtual bool WaitForClientConnection(const TimeoutType &timeout,void *&clientInfo)=0; // could be templated to avoid void *
 
     /**
      * Waits no more than timeout for a client request to connect

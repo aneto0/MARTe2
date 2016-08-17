@@ -92,6 +92,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
     // compute actual message parameters
     if (ret.ErrorsCleared()) {
         // is this is a reply (must be a late reply)
+        // an immediate reply is performed automatically
         if (message->IsReplyMessage()) {
 
             if (!message->LateReplyExpected()) {
@@ -99,17 +100,18 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
                 // TODO produce error message
             }
             else {
+                // disables the LateReplyExpected flag to convert this a message ???WHY???
                 message->MarkLateReplyExpected(false);
                 //{message->IsReplyMessage() and message->LateReplyExpected()}
                 // if it is a reply then the destination is the original sender
                 destination = message->GetSender();
             }
 
-            // not a reply
-        }
-        else {
 
-            // if it is a reply then the destination is the original sender
+        }
+        else { // not a reply
+
+            // if it is not a reply then use the proper destination
             destination = message->GetDestination();
 
             // assigns the sender
@@ -127,6 +129,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
     }
 
     if (ret.ErrorsCleared()) {
+        // implicit dynamic cast here
         ReferenceT<MessageI> destinationObject = FindDestination(destination);
 
         if (destinationObject.IsValid()) {
@@ -135,11 +138,12 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
         else {
             ret.unsupportedFeature = true;
             // TODO produce error message
+            // the object being addressed does not have the MessageI interface
         }
     }
 
     if (ret.ErrorsCleared()) {
-        // if we wanted an immediate reply then we should have one
+        // check that the destinationObject has given us a reply if we asked for an immediate reply
         bool isImmediateReplyExpected=message->ImmediateReplyExpected();
         bool isReply=message->IsReplyMessage();
         if ((isImmediateReplyExpected) && (!isReply)) {
@@ -157,7 +161,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
     ErrorManagement::ErrorType ret(true);
 
     /*
-     * TODO: Verify all the error conditions at the beginning:
+     * Verify all the error conditions at the beginning (Ivan's proposal):
      * !message.IsValid() => error
      * message->IsReplyMessage() => error
      */
@@ -167,12 +171,11 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
         // TODO produce error message
     }
 
-    if (ret.ErrorsCleared()) {
-        // reply to a reply NOT possible
-        if (message->IsReplyMessage()) {
-            // TODO emit error
-            ret.communicationError = true;
-        }
+    // do not condition this check - so we can get both errors
+    // reply to a reply NOT possible
+    if (message->IsReplyMessage()) {
+        // TODO emit error
+        ret.communicationError = true;
     }
 
     if (ret.ErrorsCleared()) {
@@ -206,12 +209,11 @@ ErrorManagement::ErrorType MessageI::SendMessageAndExpectReplyLater(ReferenceT<M
         // TODO produce error message
     }
 
-    if (ret.ErrorsCleared()) {
-        // reply to a reply NOT possible
-        if (message->IsReplyMessage()) {
-            // TODO emit error
-            ret.communicationError = true;
-        }
+    // do not condition this check - so we can get both errors
+    // reply to a reply NOT possible
+    if (message->IsReplyMessage()) {
+        // TODO emit error
+        ret.communicationError = true;
     }
 
     if (ret.ErrorsCleared()) {
