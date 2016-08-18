@@ -91,6 +91,8 @@ MemoryMapSynchronisedInputBrokerTestGAM1    ();
 
     void *GetOutputSignalMemory(uint32 signalIdx);
 
+    virtual bool Setup();
+
     virtual bool Execute();
 };
 
@@ -112,6 +114,10 @@ void *MemoryMapSynchronisedInputBrokerTestGAM1::GetInputSignalMemory(uint32 sign
 
 void *MemoryMapSynchronisedInputBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
     return GAM::GetOutputSignalMemory(signalIdx);
+}
+
+bool MemoryMapSynchronisedInputBrokerTestGAM1::Setup() {
+    return true;
 }
 
 bool MemoryMapSynchronisedInputBrokerTestGAM1::Execute() {

@@ -155,8 +155,8 @@ bool GAM1::Execute() {
     return true;
 }
 
-void GAM1::SetUp() {
-
+bool GAM1::Setup() {
+    return true;
 }
 
 CLASS_REGISTER(GAM1, "1.0");

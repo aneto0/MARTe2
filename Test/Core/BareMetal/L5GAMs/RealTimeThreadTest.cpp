@@ -83,11 +83,17 @@ public:
 
 RealTimeThreadTestGAM1    ();
 
+    virtual bool Setup();
+
     virtual bool Execute();
 };
 
 RealTimeThreadTestGAM1::RealTimeThreadTestGAM1() :
         GAM() {
+}
+
+bool RealTimeThreadTestGAM1::Setup() {
+    return true;
 }
 
 bool RealTimeThreadTestGAM1::Execute() {

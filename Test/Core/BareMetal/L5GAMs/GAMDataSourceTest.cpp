@@ -103,13 +103,17 @@ public:
     CLASS_REGISTER_DECLARATION()
 
 GAMDataSourceTestGAM1    ();
-
+    virtual bool Setup();
     virtual bool Execute();
 };
 
 GAMDataSourceTestGAM1::GAMDataSourceTestGAM1() :
         GAM() {
 
+}
+
+bool GAMDataSourceTestGAM1::Setup() {
+    return true;
 }
 
 bool GAMDataSourceTestGAM1::Execute() {

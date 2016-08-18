@@ -192,6 +192,8 @@ public:
 
 GAMTestGAM1    ();
 
+    virtual bool Setup();
+
     virtual bool Execute();
 
     void *GetInputSignalsMemory();
@@ -221,6 +223,10 @@ void *GAMTestGAM1::GetInputSignalMemory(uint32 signalIdx) {
 
 void *GAMTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
     return GAM::GetOutputSignalMemory(signalIdx);
+}
+
+bool GAMTestGAM1::Setup() {
+    return true;
 }
 
 bool GAMTestGAM1::Execute() {

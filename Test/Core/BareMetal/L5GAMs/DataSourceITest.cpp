@@ -78,13 +78,17 @@ public:
     CLASS_REGISTER_DECLARATION()
 
 DataSourceITestGAM1    ();
-
+    virtual bool Setup();
     virtual bool Execute();
 };
 
 DataSourceITestGAM1::DataSourceITestGAM1() :
         GAM() {
 
+}
+
+bool DataSourceITestGAM1::Setup() {
+    return true;
 }
 
 bool DataSourceITestGAM1::Execute() {

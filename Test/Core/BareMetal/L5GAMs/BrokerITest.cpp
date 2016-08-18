@@ -79,13 +79,17 @@ public:
     CLASS_REGISTER_DECLARATION()
 
 BrokerITestGAM1    ();
-
+    virtual bool Setup();
     virtual bool Execute();
 };
 
 BrokerITestGAM1::BrokerITestGAM1() :
         GAM() {
 
+}
+
+bool BrokerITestGAM1::Setup() {
+    return true;
 }
 
 bool BrokerITestGAM1::Execute() {
