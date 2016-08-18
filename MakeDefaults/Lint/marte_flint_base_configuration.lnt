@@ -17,6 +17,7 @@
 -i./Source/Core/Scheduler/L1Portability/Environment/Linux
 -i./Source/Core/Scheduler/L1Portability/Environment/Generic
 -i./Source/Core/Scheduler/L4Messages/
+-i./Source/Core/Scheduler/L5GAMs/
 
 
 -i./Source/Core/FileSystem/L1Portability/

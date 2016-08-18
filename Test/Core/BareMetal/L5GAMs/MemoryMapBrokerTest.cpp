@@ -52,6 +52,11 @@ MemoryMapBrokerTestScheduler1    ();
     virtual void StartExecution();
 
     virtual void StopExecution();
+
+    virtual void CustomPrepareNextState(){
+
+    }
+
 };
 
 MemoryMapBrokerTestScheduler1::MemoryMapBrokerTestScheduler1() :

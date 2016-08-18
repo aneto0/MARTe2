@@ -20,25 +20,26 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-OBJSX=
-SPB    = L1Portability.x L5GAMs.x
-PACKAGE=Core
-MAKEDEFAULTDIR=../../../MakeDefaults
+TARGET=msc
 
-ROOT_DIR=../../..
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include Makefile.inc
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityTest$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L5GAMs/L5GAMsTest$(LIBEXT)
-
-all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTeCoreSTest$(LIBEXT)
-	echo  $(OBJS)
+LIBRARIES += $(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L0Types\L0TypesB$(LIBEXT) 
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L1Portability\L1PortabilityB$(LIBEXT) 
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L2Objects\L2ObjectsB$(LIBEXT)
 
 
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+IMPDEFS += $(BUILD_DIR)/$(ENVIRONMENT)/L1Portability.def
+
+
+
+
+
+
+
 

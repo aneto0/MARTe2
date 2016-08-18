@@ -384,7 +384,6 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
 
 void RealTimeApplication::StartExecution() {
     index = (index + 1u) % 2u;
-
     scheduler->StartExecution();
 }
 

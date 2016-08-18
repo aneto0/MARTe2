@@ -63,6 +63,16 @@ struct ScheduledThread {
     uint32 *cycleTime;
 
     /**
+     * The cpus where is possible to run the thread
+     */
+    uint32 cpu;
+
+    /**
+     * The thread stack size
+     */
+    uint32 stackSize;
+
+    /**
      * This thread name.
      */
     const char8 * name;
@@ -137,11 +147,16 @@ public:
      * and the active buffer index.
      * @return true if the next state name is found, false otherwise.
      */
-    virtual bool PrepareNextState(const char8 * const currentStateName,
+    bool PrepareNextState(const char8 * const currentStateName,
                                   const char8 * const nextStateName);
 
-    uint64 ExecuteSingleCycle(ExecutableI * const * const executables,
-                              const uint32 numberOfExecutables) const;
+    /**
+     * @brief Executes a list of ExecutableIs storing their execution times with respect the start time instant.
+     * @param[in] executables the list of ExecutablesIs to be executed
+     * @param[in] numberOfExecutables how many ExecutableIs have to be executed.
+     */
+    bool ExecuteSingleCycle(ExecutableI * const * const executables,
+                            const uint32 numberOfExecutables) const;
 
     /**
      * @brief Gets the number of ExecutableI components for this \a threadName in this \a stateName.
@@ -171,6 +186,11 @@ protected:
      */
     ScheduledState * const * GetSchedulableStates();
 
+    /**
+     * @brief Custom routine to prepare the specific scheduler for the next state execution.
+     */
+    virtual void CustomPrepareNextState()=0;
+
 private:
 
     /**
@@ -198,6 +218,11 @@ private:
      * Number of possible application states.
      */
     uint32 numberOfStates;
+
+    /**
+     * Clock period
+     */
+    const float64 clockPeriod;
 
     /**
      * @brief Helper function to add the input brokers of the \a gam to the table of states to be executed.
@@ -241,10 +266,6 @@ private:
                    const uint32 threadIdx,
                    const uint32 executableIdx);
 
-    /**
-     * Reference to the RealTimeApplication to which this scheduler belongs to.
-     */
-    Reference realTimeApplication;
 };
 
 }

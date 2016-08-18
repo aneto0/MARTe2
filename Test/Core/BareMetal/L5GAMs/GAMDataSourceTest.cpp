@@ -73,6 +73,8 @@ GAMDataSourceTestScheduler1    ();
     virtual void StartExecution();
 
     virtual void StopExecution();
+    virtual void CustomPrepareNextState();
+
 };
 
 GAMDataSourceTestScheduler1::GAMDataSourceTestScheduler1() :
@@ -85,6 +87,12 @@ void GAMDataSourceTestScheduler1::StartExecution() {
 }
 
 void GAMDataSourceTestScheduler1::StopExecution() {
+
+}
+
+
+
+void GAMDataSourceTestScheduler1::CustomPrepareNextState(){
 
 }
 

@@ -165,7 +165,9 @@ bool DataSourceI::GetSignalByteSize(const uint32 signalIdx,
                                     uint32 &byteSize) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
-        ret = configuredDatabase.Read("ByteSize", byteSize);
+        if (!configuredDatabase.Read("MemberSize", byteSize)) {
+            ret = configuredDatabase.Read("ByteSize", byteSize);
+        }
     }
     return ret;
 }
@@ -534,8 +536,8 @@ bool DataSourceI::GetFunctionSignalByteOffsetInfo(const SignalDirection directio
         ret = configuredDatabase.Read("ByteOffset", byteOffsetMat);
     }
     if (ret) {
-        byteOffsetStart = byteOffsetMat(byteOffsetIndex,0u);
-        byteOffsetSize = byteOffsetMat(byteOffsetIndex,1u);
+        byteOffsetStart = byteOffsetMat(byteOffsetIndex, 0u);
+        byteOffsetSize = byteOffsetMat(byteOffsetIndex, 1u);
     }
 
     return ret;

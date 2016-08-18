@@ -52,6 +52,9 @@ MemoryMapInputBrokerTestScheduler1    ();
     virtual void StartExecution();
 
     virtual void StopExecution();
+
+    virtual void CustomPrepareNextState();
+
 };
 
 MemoryMapInputBrokerTestScheduler1::MemoryMapInputBrokerTestScheduler1() :
@@ -66,6 +69,11 @@ void MemoryMapInputBrokerTestScheduler1::StartExecution() {
 void MemoryMapInputBrokerTestScheduler1::StopExecution() {
 
 }
+
+void MemoryMapInputBrokerTestScheduler1::CustomPrepareNextState(){
+
+}
+
 
 CLASS_REGISTER(MemoryMapInputBrokerTestScheduler1, "1.0")
 

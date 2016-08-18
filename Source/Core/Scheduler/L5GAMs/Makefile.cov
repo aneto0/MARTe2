@@ -26,8 +26,7 @@ TARGET=cov
 
 include Makefile.inc
 
-LIBRARIES_STATIC=L1Portability/cov/L1PortabilityS$(LIBEXT)
-LIBRARIES_STATIC=L5GAMs/cov/L5GAMsS$(LIBEXT)
+LIBRARIES_STATIC=Environment/Linux/cov/L1Portability$(LIBEXT)
 
 LIBRARIES += -lm
 

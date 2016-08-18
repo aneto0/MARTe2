@@ -237,6 +237,9 @@ GAMTestScheduler1    ();
     virtual void StartExecution();
 
     virtual void StopExecution();
+
+    virtual void CustomPrepareNextState();
+
 };
 
 GAMTestScheduler1::GAMTestScheduler1() :
@@ -251,6 +254,11 @@ void GAMTestScheduler1::StartExecution() {
 void GAMTestScheduler1::StopExecution() {
 
 }
+
+void GAMTestScheduler1::CustomPrepareNextState(){
+
+}
+
 
 CLASS_REGISTER(GAMTestScheduler1, "1.0")
 

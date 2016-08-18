@@ -57,6 +57,7 @@ FractionalInteger.h
 GAM.cpp
 GAMDataSource.cpp
 GAMGroup.cpp
+GAMScheduler.cpp
 GAMSchedulerI.cpp
 GeneralDefinitions.h
 GlobalObjectI.cpp

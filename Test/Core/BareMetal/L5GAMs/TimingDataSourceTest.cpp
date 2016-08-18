@@ -73,6 +73,11 @@ TimingDataSourceTestScheduler1    ();
     virtual void StartExecution();
 
     virtual void StopExecution();
+
+    virtual void CustomPrepareNextState(){
+
+    }
+
 };
 
 TimingDataSourceTestScheduler1::TimingDataSourceTestScheduler1() :
