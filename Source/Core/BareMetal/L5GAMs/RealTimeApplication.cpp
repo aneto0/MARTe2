@@ -270,10 +270,12 @@ bool RealTimeApplication::AllocateGAMMemory() {
                 ret = gam.IsValid();
 
                 if (ret) {
-
                     ret = gam->AllocateInputSignalsMemory();
                     if (ret) {
                         ret = gam->AllocateOutputSignalsMemory();
+                    }
+                    if (ret) {
+                        ret = gam->Setup();
                     }
                 }
             }

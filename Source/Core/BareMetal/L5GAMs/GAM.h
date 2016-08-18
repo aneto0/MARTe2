@@ -428,6 +428,9 @@ public:
      */
     virtual bool SetContext(ConstReference context);
 
+
+    virtual bool Setup()=0;
+
 protected:
 
     /**
