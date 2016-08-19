@@ -81,9 +81,190 @@ static uint32 GetModifierString(char8* data,
     return i;
 }
 
+static void IntrospectionOnHeader(const char8 *memberName,
+                                  StreamString &modifiers,
+                                  StreamString &type,
+                                  StreamString &attributes,
+                                  StreamString &comments,
+                                  BasicFile &structHeader) {
+    // print the attributes as comment before the member on the header file
+    if (attributes.Size() > 0u) {
+        PrintOnFile(structHeader, "    ");
+        PrintOnFile(structHeader, "/** ");
+        PrintOnFile(structHeader, attributes.Buffer());
+        PrintOnFile(structHeader, " */\n");
+    }
+
+    // print the comments before the member on the header file
+    if (comments.Size() > 0u) {
+        PrintOnFile(structHeader, "    ");
+        PrintOnFile(structHeader, "/** ");
+        PrintOnFile(structHeader, comments.Buffer());
+        PrintOnFile(structHeader, " */\n");
+    }
+
+    // print the type
+    PrintOnFile(structHeader, "    ");
+
+    PrintOnFile(structHeader, type.Buffer());
+    PrintOnFile(structHeader, " ");
+    StreamString modifiersString;
+
+    uint32 nextIndex = GetModifierString(modifiers.BufferReference(), modifiersString);
+    // print the modifiers
+    PrintOnFile(structHeader, modifiersString.Buffer());
+
+    // print the member name
+    PrintOnFile(structHeader, memberName);
+    while (modifiers[nextIndex] != '\0') {
+        PrintOnFile(structHeader, modifiers[nextIndex]);
+        nextIndex++;
+    }
+    PrintOnFile(structHeader, ";");
+
+}
+
+static void IntrospectionOnSourceBefore(const char8 *memberName,
+                                        StreamString &modifiers,
+                                        StreamString &structType,
+                                        StreamString &type,
+                                        StreamString &attributes,
+                                        BasicFile &structSource) {
+    PrintOnFile(structSource, "DECLARE_CLASS_MEMBER(");
+    PrintOnFile(structSource, structType.Buffer());
+    PrintOnFile(structSource, ", ");
+    PrintOnFile(structSource, memberName);
+    PrintOnFile(structSource, ", ");
+    PrintOnFile(structSource, type.Buffer());
+    PrintOnFile(structSource, ", ");
+    PrintOnFile(structSource, "\"");
+    PrintOnFile(structSource, modifiers.Buffer());
+    PrintOnFile(structSource, "\"");
+    PrintOnFile(structSource, ", ");
+    PrintOnFile(structSource, "\"");
+    PrintOnFile(structSource, attributes.Buffer());
+    PrintOnFile(structSource, "\"");
+
+    PrintOnFile(structSource, ");\n");
+
+}
+
+static void IntrospectionOnSourceAfter(ConfigurationDatabase &database,
+                                       StreamString &structType,
+                                       BasicFile &structSource) {
+
+    PrintOnFile(structSource, "\nstatic const IntrospectionEntry * ");
+    PrintOnFile(structSource, structType.Buffer());
+    PrintOnFile(structSource, "_array[] = {\n");
+
+    for (uint32 j = 0u; j < database.GetNumberOfChildren(); j++) {
+        const char8 *memberName = database.GetChildName(j);
+        if (database.MoveRelative(memberName)) {
+            if (memberName[0] != '*') {
+                PrintOnFile(structSource, "&");
+                PrintOnFile(structSource, structType.Buffer());
+                PrintOnFile(structSource, "_");
+                PrintOnFile(structSource, memberName);
+                PrintOnFile(structSource, "_introspectionEntry, \n");
+            }
+            database.MoveToAncestor(1u);
+        }
+    }
+    PrintOnFile(structSource, "0 };\n\n");
+
+    // declare the class introspection
+    PrintOnFile(structSource, "DECLARE_CLASS_INTROSPECTION(");
+    PrintOnFile(structSource, structType.Buffer());
+    PrintOnFile(structSource, ", ");
+    PrintOnFile(structSource, structType.Buffer());
+    PrintOnFile(structSource, "_array);\n");
+    PrintOnFile(structSource, "INTROSPECTION_CLASS_REGISTER(");
+    PrintOnFile(structSource, structType.Buffer());
+    PrintOnFile(structSource, ", ");
+    PrintOnFile(structSource, "\"1.0\", ");
+    PrintOnFile(structSource, structType.Buffer());
+    PrintOnFile(structSource, "_introspection)\n\n");
+
+}
+
+static void ReadIntrospectionAttributes(ConfigurationDatabase &database,
+                                        StreamString &modifiers,
+                                        StreamString &type,
+                                        StreamString &attributes,
+                                        StreamString &comments,
+                                        const char8* structName,
+                                        const char8* memberName) {
+
+    // print the attributes as comment before the member on the header file
+    if (!database.Read("attributes", attributes)) {
+        printf("\n[%s.%s][attributes] lacks: the attributes is considered as an empty string", structName, memberName);
+        attributes = "";
+    }
+
+    // print the comments before the member on the header file
+    if (!database.Read("comments", comments)) {
+        printf("\n[%s.%s][comments] lacks: the comments is considered as an empty string", structName, memberName);
+        comments = "";
+    }
+
+    if (!database.Read("type", type)) {
+        printf("\n[%s.%s][type] lacks: the member type is considered void", structName, memberName);
+        type = "void";
+    }
+
+    if (!database.Read("modifiers", modifiers)) {
+        printf("\n[%s.%s][modifiers] lacks: the modifiers is considered as an empty string", structName, memberName);
+        modifiers = "";
+    }
+
+}
+
+static void PrintIntrospection(ConfigurationDatabase &database,
+                               const char8 * structName,
+                               BasicFile &structHeader,
+                               BasicFile &structSource) {
+    StreamString structType;
+    if (database.Read("type", structType)) {
+
+        PrintOnFile(structHeader, "struct ");
+        PrintOnFile(structHeader, structType.Buffer());
+        PrintOnFile(structHeader, " { \n");
+        for (uint32 j = 0u; j < database.GetNumberOfChildren(); j++) {
+            // HEADER FILE MANAGEMENT
+            const char8 *memberName = database.GetChildName(j);
+            if (database.MoveRelative(memberName)) {
+
+                StreamString modifiers;
+                StreamString type;
+                StreamString attributes;
+                StreamString comments;
+
+                ReadIntrospectionAttributes(database, modifiers, type, attributes, comments, structName, memberName);
+
+                IntrospectionOnHeader(memberName, modifiers, type, attributes, comments, structHeader);
+                PrintOnFile(structHeader, "\n");
+
+                // SOURCE FILE MANAGEMENT
+                // declare the member introspection
+                IntrospectionOnSourceBefore(memberName, modifiers, structType, type, attributes, structSource);
+
+                database.MoveToAncestor(1);
+            }
+        }
+
+        IntrospectionOnSourceAfter(database, structType, structSource);
+
+        PrintOnFile(structHeader, "}; \n\n");
+    }
+    else {
+        printf("\nError, undefined type for %s", structName);
+    }
+}
+
 static void GenerateStructFileRecursive(ConfigurationDatabase &database,
                                         BasicFile &structHeader,
-                                        BasicFile &structSource) {
+                                        BasicFile &structSource,
+                                        bool &foundStruct) {
 
     const char8* structName = database.GetName();
 
@@ -92,12 +273,13 @@ static void GenerateStructFileRecursive(ConfigurationDatabase &database,
         // HEADER FILE MANAGEMENT
         const char8 *memberName = database.GetChildName(j);
         if (database.MoveRelative(memberName)) {
+            foundStruct = true;
 
             for (uint32 k = 0u; k < database.GetNumberOfChildren(); k++) {
                 const char8 * subStructName = database.GetChildName(k);
 
                 if (database.MoveRelative(subStructName)) {
-                    GenerateStructFileRecursive(database, structHeader, structSource);
+                    GenerateStructFileRecursive(database, structHeader, structSource, foundStruct);
                     database.MoveToAncestor(1u);
                 }
             }
@@ -105,132 +287,8 @@ static void GenerateStructFileRecursive(ConfigurationDatabase &database,
         }
     }
 
-    StreamString structType;
-    if (database.Read("type", structType)) {
-
-        PrintOnFile(structHeader, "struct ");
-        PrintOnFile(structHeader, structType.Buffer());
-        PrintOnFile(structHeader, " { \n");
-
-        for (uint32 j = 0u; j < database.GetNumberOfChildren(); j++) {
-            // HEADER FILE MANAGEMENT
-            const char8 *memberName = database.GetChildName(j);
-            if (database.MoveRelative(memberName)) {
-
-                StreamString modifiers;
-                StreamString modifiersString;
-                StreamString type;
-                StreamString attributes;
-                StreamString comments;
-
-                // print the attributes as comment before the member on the header file
-                if (!database.Read("attributes", attributes)) {
-                    printf("\n[%s.%s][attributes] lacks: the attributes is considered as an empty string", structName, memberName);
-                    attributes = "";
-                }
-                else {
-                    PrintOnFile(structHeader, "    ");
-                    PrintOnFile(structHeader, "/** ");
-                    PrintOnFile(structHeader, attributes.Buffer());
-                    PrintOnFile(structHeader, " */\n");
-                }
-
-                // print the comments before the member on the header file
-                if (!database.Read("comments", comments)) {
-                    printf("\n[%s.%s][comments] lacks: the comments is considered as an empty string", structName, memberName);
-                    comments = "";
-                }
-                else {
-                    PrintOnFile(structHeader, "    ");
-                    PrintOnFile(structHeader, "/** ");
-                    PrintOnFile(structHeader, comments.Buffer());
-                    PrintOnFile(structHeader, " */\n");
-                }
-
-                // print the type
-                PrintOnFile(structHeader, "    ");
-                if (!database.Read("type", type)) {
-                    printf("\n[%s.%s][type] lacks: the member type is considered void", structName, memberName);
-                    type = "void";
-                }
-
-                PrintOnFile(structHeader, type.Buffer());
-                PrintOnFile(structHeader, " ");
-
-                if (!database.Read("modifiers", modifiers)) {
-                    printf("\n[%s.%s][modifiers] lacks: the modifiers is considered as an empty string", structName, memberName);
-                    modifiers = "";
-                }
-
-                uint32 nextIndex = GetModifierString(modifiers.BufferReference(), modifiersString);
-                // print the modifiers
-                PrintOnFile(structHeader, modifiersString.Buffer());
-
-                // print the member name
-                PrintOnFile(structHeader, memberName);
-                while (modifiers[nextIndex] != '\0') {
-                    PrintOnFile(structHeader, modifiers[nextIndex]);
-                    nextIndex++;
-                }
-                PrintOnFile(structHeader, ";\n");
-
-                // SOURCE FILE MANAGEMENT
-                // declare the member introspection
-                PrintOnFile(structSource, "DECLARE_CLASS_MEMBER(");
-                PrintOnFile(structSource, structType.Buffer());
-                PrintOnFile(structSource, ", ");
-                PrintOnFile(structSource, memberName);
-                PrintOnFile(structSource, ", ");
-                PrintOnFile(structSource, type.Buffer());
-                PrintOnFile(structSource, ", ");
-                PrintOnFile(structSource, "\"");
-                PrintOnFile(structSource, modifiers.Buffer());
-                PrintOnFile(structSource, "\"");
-                PrintOnFile(structSource, ", ");
-                PrintOnFile(structSource, "\"");
-                PrintOnFile(structSource, attributes.Buffer());
-                PrintOnFile(structSource, "\"");
-
-                PrintOnFile(structSource, ");\n");
-
-                database.MoveToAncestor(1);
-            }
-        }
-        PrintOnFile(structSource, "\n");
-        PrintOnFile(structHeader, "}; \n\n");
-
-        PrintOnFile(structSource, "static const IntrospectionEntry * ");
-        PrintOnFile(structSource, structType.Buffer());
-        PrintOnFile(structSource, "_array[] = {\n");
-
-        for (uint32 j = 0u; j < database.GetNumberOfChildren(); j++) {
-            const char8 *memberName = database.GetChildName(j);
-            if (database.MoveRelative(memberName)) {
-                PrintOnFile(structSource, "&");
-                PrintOnFile(structSource, structType.Buffer());
-                PrintOnFile(structSource, "_");
-                PrintOnFile(structSource, memberName);
-                PrintOnFile(structSource, "_introspectionEntry, \n");
-                database.MoveToAncestor(1u);
-            }
-        }
-        PrintOnFile(structSource, "0 };\n\n");
-
-        // declare the class introspection
-        PrintOnFile(structSource, "DECLARE_CLASS_INTROSPECTION(");
-        PrintOnFile(structSource, structType.Buffer());
-        PrintOnFile(structSource, ", ");
-        PrintOnFile(structSource, structType.Buffer());
-        PrintOnFile(structSource, "_array);\n");
-        PrintOnFile(structSource, "INTROSPECTION_CLASS_REGISTER(");
-        PrintOnFile(structSource, structType.Buffer());
-        PrintOnFile(structSource, ", ");
-        PrintOnFile(structSource, "\"1.0\", ");
-        PrintOnFile(structSource, structType.Buffer());
-        PrintOnFile(structSource, "_introspection)\n\n");
-    }
-    else {
-        printf("\nError, undefined type for %s", structName);
+    if (foundStruct) {
+        PrintIntrospection(database, structName, structHeader, structSource);
     }
 }
 
@@ -394,7 +452,9 @@ static void ReadTheTypeArray(const char8 *paramName,
 static void GenerateInitialiseFunction(ConfigurationDatabase &database,
                                        BasicFile &objHeader,
                                        BasicFile &objSource,
+                                       BasicFile &structSource,
                                        const char8 * className) {
+    StreamString classNameStr = className;
 
     PrintOnFile(objHeader, "    virtual bool ConfigureToolMembers(StructuredDataI &data);\n");
 
@@ -413,16 +473,21 @@ static void GenerateInitialiseFunction(ConfigurationDatabase &database,
         for (uint32 i = 0u; i < numberOfPars; i++) {
             const char8 * paramName = database.GetChildName(i);
             if (database.MoveRelative(paramName)) {
-                StreamString typeName;
-                if (!database.Read("type", typeName)) {
+
+                StreamString modifiers;
+                StreamString type;
+                StreamString attributes;
+                StreamString comments;
+
+                ReadIntrospectionAttributes(database, modifiers, type, attributes, comments, className, paramName);
+
+                if (type.Size() == 0u) {
                     printf("\nError, undefined type for %s", paramName);
                 }
                 else {
-                    PrintOnFile(objHeader, "\\\n    ");
-                    PrintOnFile(objHeader, typeName.Buffer());
-                    PrintOnFile(objHeader, " ");
-                    PrintOnFile(objHeader, paramName);
-                    PrintOnFile(objHeader, ";");
+                    PrintOnFile(objHeader, "\\\n");
+                    IntrospectionOnHeader(paramName, modifiers, type, attributes, comments, objHeader);
+
                     if (paramName[0] == '*') {
                         PrintOnFile(objHeader, "\\\n    uint32 NumberOf");
                         PrintOnFile(objHeader, paramName + 1);
@@ -438,18 +503,27 @@ static void GenerateInitialiseFunction(ConfigurationDatabase &database,
                         if (!database.Read("source", paramAddress)) {
                             paramAddress = "";
                         }
-                        ReadTheTypeArray(&paramName[1], typeName.Buffer(), paramAddress.Buffer(), attributes.Buffer(), objSource);
+                        ReadTheTypeArray(&paramName[1], type.Buffer(), paramAddress.Buffer(), attributes.Buffer(), objSource);
                     }
                     else {
                         if (!database.Read("source", paramAddress)) {
                             paramAddress = paramName;
                         }
-                        ReadTheType(paramName, typeName.Buffer(), paramAddress.Buffer(), attributes.Buffer(), objSource);
+                        ReadTheType(paramName, type.Buffer(), paramAddress.Buffer(), attributes.Buffer(), objSource);
                     }
+                }
+                //Manage the parameter introspection
+
+                if (paramName[0] != '*') {
+                    // SOURCE FILE MANAGEMENT
+                    // declare the member introspection
+                    IntrospectionOnSourceBefore(paramName, modifiers, classNameStr, type, attributes, structSource);
                 }
                 database.MoveToAncestor(1u);
             }
         }
+        IntrospectionOnSourceAfter(database, classNameStr, structSource);
+
         database.MoveToAncestor(1u);
 
     }
@@ -643,13 +717,11 @@ static void GenerateConfigureFunction(ConfigurationDatabase &database,
 static void GenerateObjFile(ConfigurationDatabase &database,
                             BasicFile &objHeader,
                             BasicFile &objSource,
+                            BasicFile &structSource,
                             const char8 * className) {
 
     //generate the .cpp and .h files with all the object configuration
     //implementing the Object::Initialise() function
-
-
-
 
     PrintOnFile(objHeader, "#define TOOL_METHODS_DECLARATION() \\ \n");
     bool isSignal = true;
@@ -662,7 +734,6 @@ static void GenerateObjFile(ConfigurationDatabase &database,
         PrintOnFile(objHeader, "    virtual bool ConfigureToolSignals();\\ \n");
         database.MoveToAncestor(1u);
     }
-
 
     PrintOnFile(objHeader, "    virtual bool ToolMembersConstructor();\\ \n");
     PrintOnFile(objHeader, "    virtual bool ToolMembersDestructor(); \\ \n");
@@ -736,13 +807,11 @@ static void GenerateObjFile(ConfigurationDatabase &database,
     }
     PrintOnFile(objSource, "}\n\n");
 
-
     //Populates the Initialise function in the cpp file
-    GenerateInitialiseFunction(database, objHeader, objSource, className);
+    GenerateInitialiseFunction(database, objHeader, objSource, structSource, className);
     //Populates the Setup function in the cpp file
     GenerateConfigureFunction(database, objHeader, objSource, className);
     PrintOnFile(objSource, "}\n\n");
-
 
 }
 
@@ -810,7 +879,7 @@ static void GenerateOutputFiles(ConfigurationDatabase &database) {
         return;
     }
 
-    GenerateObjFile(database, objHeader, objSource, className.Buffer());
+    GenerateObjFile(database, objHeader, objSource, structSource, className.Buffer());
 
     uint32 n = 0u;
     while (nodeNames[n] != NULL) {
@@ -819,7 +888,8 @@ static void GenerateOutputFiles(ConfigurationDatabase &database) {
                 const char8* structName = database.GetChildName(i);
 
                 if (database.MoveRelative(structName)) {
-                    GenerateStructFileRecursive(database, structHeader, structSource);
+                    bool isStruct = false;
+                    GenerateStructFileRecursive(database, structHeader, structSource, isStruct);
                     database.MoveToAncestor(1u);
                 }
             }

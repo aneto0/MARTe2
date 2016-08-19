@@ -39,7 +39,7 @@ INCLUDES += -I../../Source/Core/BareMetal/L4Configuration
 INCLUDES += -I../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS) $(SUBPROJ)   \
-        $(BUILD_DIR)/MainGTest$(EXEEXT) 
+        $(BUILD_DIR)/TheTool$(EXEEXT) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

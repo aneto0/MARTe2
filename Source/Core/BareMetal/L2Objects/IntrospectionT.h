@@ -77,6 +77,13 @@ public:
 #define INTROSPECTION_MEMBER_INDEX(className, memberName) \
     (intptr)(&(((className *)0)->memberName))
 
+/**
+ * @brief Retrieves the member address with respect to the class begin.
+ */
+#define INTROSPECTION_PARENT_INDEX(className, parentClassNAme) \
+    (intptr)((parentClassNAme *)((className *)(sizeof(className))))-(intptr)((className *)(sizeof(className)))
+
+
                 /**
                  * @brief Retrieves the member size.
                  */
@@ -95,6 +102,21 @@ public:
         attributeString,                                                                    \
         INTROSPECTION_MEMBER_SIZE(className, memberName),                                   \
         INTROSPECTION_MEMBER_INDEX(className, memberName)                                   \
+    )
+
+
+/**
+ * @brief Creates a static instance of IntrospectionEntry with the provided inputs.
+ */
+#define DECLARE_CLASS_PARENT(className, parentClassName, modifierString, attributeString ) \
+        static const MARTe::IntrospectionEntry className ## _ ## parentClassName ## _introspectionEntry =   \
+    MARTe::IntrospectionEntry(                                                                     \
+        #parentClassName,                                                                        \
+        #parentClassName,                                                                              \
+        modifierString,                                                                     \
+        attributeString,                                                                    \
+        sizeof(parentClassName),                                   \
+        INTROSPECTION_PARENT_INDEX(className, parentClassName)                                   \
     )
 
                 /**
