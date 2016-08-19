@@ -34,6 +34,7 @@
 #include "MessageI.h"
 #include "Object.h"
 #include "ObjectRegistryDatabase.h"
+#include "ReplyMessageCatcherMessageFilter.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,6 +43,7 @@
 namespace MARTe {
 
 MessageI::MessageI() {
+    messageFilters.SetTimeout(TTInfiniteWait);
 
 }
 
@@ -69,8 +71,7 @@ ReferenceT<MessageI> MessageI::FindDestination(CCString destination) {
     return destinationObject_MessageI;
 }
 
-ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
-                                                 const Object * const sender) {
+ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message, const Object * const sender) {
     CCString destination = "";
     ErrorManagement::ErrorType ret;
 
@@ -91,22 +92,22 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
 
     // compute actual message parameters
     if (ret.ErrorsCleared()) {
-        // is this is a reply (must be a late reply)
-        // an immediate reply is performed automatically
-        if (message->IsReplyMessage()) {
 
-            if (!message->LateReplyExpected()) {
+        // is this is a reply (must be an indirect reply)
+        // a direct reply does not need sending
+        // therefore we will refuse sending it
+        if (message->IsReply()) {
+
+            if (!message->ExpectsIndirectReply()) {
                 ret.communicationError = true;
                 // TODO produce error message
             }
             else {
-                // disables the LateReplyExpected flag to convert this a message ???WHY???
-                message->MarkLateReplyExpected(false);
-                //{message->IsReplyMessage() and message->LateReplyExpected()}
+
+                //{message->IsReply() and message->ExpectsIndirectReply()}
                 // if it is a reply then the destination is the original sender
                 destination = message->GetSender();
             }
-
 
         }
         else { // not a reply
@@ -120,7 +121,8 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
             }
             else {
                 // no Object ==> no reply possible
-                if (message->ReplyExpected()) {
+                // therefore refuse sending
+                if (message->ExpectsReply()) {
                     // TODO produce error message
                     ret.parametersError = true;
                 }
@@ -142,22 +144,43 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
         }
     }
 
-    if (ret.ErrorsCleared()) {
-        // check that the destinationObject has given us a reply if we asked for an immediate reply
-        bool isImmediateReplyExpected=message->ImmediateReplyExpected();
-        bool isReply=message->IsReplyMessage();
-        if ((isImmediateReplyExpected) && (!isReply)) {
-            ret.communicationError = true;
-            // TODO produce error message
+    return ret;
+}
+
+
+
+ErrorManagement::ErrorType MessageI::WaitForReply(ReferenceT<Message> &message,const TimeoutType &maxWait, const uint32 pollingTimeUsec){
+
+    uint64 start = HighResolutionTimer::Counter();
+    float32 pollingTime = (float)pollingTimeUsec * 1.0e-6;
+    ErrorManagement::ErrorType err(true);
+
+    if (!message.IsValid()) {
+        err.parametersError = true;
+        // TODO produce error message
+    }
+
+    // no reply expected. why am I here?
+    if (!message->ExpectsReply()) {
+        // TODO emit error
+        err.communicationError = true;
+    }
+
+
+    while(err.ErrorsCleared() && !message->IsReply() ){
+        Sleep::NoMore(pollingTime);
+        if (maxWait != TTInfiniteWait){
+            uint64 deltaT = HighResolutionTimer::Counter() - start;
+            err.timeout = maxWait.HighResolutionTimerTicks() > deltaT;
         }
     }
 
-    return ret;
+    return err;
 }
 
-ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,
-                                                             const Object * const sender,
-                                                             const TimeoutType &maxWait) {
+
+ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,const Object * const sender,
+                                                             const TimeoutType &maxWait, const uint32 pollingTimeUsec) {
     ErrorManagement::ErrorType ret(true);
 
     /*
@@ -171,56 +194,122 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
         // TODO produce error message
     }
 
-    // do not condition this check - so we can get both errors
-    // reply to a reply NOT possible
-    if (message->IsReplyMessage()) {
-        // TODO emit error
-        ret.communicationError = true;
+    if (ret.ErrorsCleared()) {
+
+        // mark that reply is expected
+        message->SetExpectsReply(true);
+
+        ret = SendMessage(message,sender);
     }
 
     if (ret.ErrorsCleared()) {
-        // true means immediate reply
-        message->MarkImmediateReplyExpected();
-        message->SetReplyTimeout(maxWait);
 
-        ret = SendMessage(message, sender);
+        ret = WaitForReply(message,maxWait, pollingTimeUsec);
+
     }
+
     return ret;
 }
 
-/**
- * TODO
- * Finds the target object
- * Calls the ReceiveMessage function of the target
- * Reply is expected but does not Waits for a reply and returns
- * */
-ErrorManagement::ErrorType MessageI::SendMessageAndExpectReplyLater(ReferenceT<Message> &message,
-                                                                    const Object * const sender) {
+ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilter> &messageFilter,CCString name){
+
+    messageFilter->SetName(name);
+
+    ErrorManagement::ErrorType err;
+    err.timeout = messageFilters.Lock();
+
+    if (err.ErrorsCleared()){
+        err.fatalError = messageFilters.Insert(messageFilter,0);
+
+        // UnLock must be done also on error
+        err.fatalError |= messageFilters.UnLock();
+    }
+
+    return err;
+}
+
+ErrorManagement::ErrorType MessageI::RemoveMessageFilter(ReferenceT<MessageFilter> &messageFilter){
+    ErrorManagement::ErrorType err;
+    err.timeout = messageFilters.Lock();
+
+    if (err.ErrorsCleared()){
+        err.fatalError = messageFilters.Delete(messageFilter);
+
+        // UnLock must be done also on error
+        err.fatalError |= messageFilters.UnLock();
+    }
+
+    return err;
+}
+
+ErrorManagement::ErrorType MessageI::RemoveMessageFilter(CCString name){
+    ErrorManagement::ErrorType err;
+    err.timeout = messageFilters.Lock();
+
+    if (err.ErrorsCleared()){
+        err.fatalError = messageFilters.Delete(name);
+
+        // UnLock must be done also on error
+        err.fatalError |= messageFilters.UnLock();
+    }
+
+    return err;
+}
+
+
+ErrorManagement::ErrorType MessageI::SendMessageAndWaitForIndirectReply(ReferenceT<Message> &message,const TimeoutType &maxWait,
+                                                                  const uint32 pollingTimeUsec){
+
     ErrorManagement::ErrorType ret(true);
 
     /*
      * Verify all the error conditions at the beginning (Ivan's proposal):
      * !message.IsValid() => error
-     * message->IsReplyMessage() => error
      */
 
     if (!message.IsValid()) {
         ret.parametersError = true;
         // TODO produce error message
+
+        message->SetExpectsIndirectReply();
+        message->SetExpectsReply();
     }
 
-    // do not condition this check - so we can get both errors
-    // reply to a reply NOT possible
-    if (message->IsReplyMessage()) {
-        // TODO emit error
-        ret.communicationError = true;
+
+    ReferenceT<ReplyMessageCatcherMessageFilter> replyMessageCatcher;
+    ReferenceT<MessageFilter> messageCatcher;
+    if (ret.ErrorsCleared()) {
+        //Install message catcher
+        ReferenceT<ReplyMessageCatcherMessageFilter> rmc(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        replyMessageCatcher = rmc;
+
+        ret.fatalError = !replyMessageCatcher.IsValid();
     }
 
     if (ret.ErrorsCleared()) {
-        // false means decoupled reply
-        message->MarkLateReplyExpected();
+        replyMessageCatcher->SetMessageToCatch(message);
 
-        ret = SendMessage(message, sender);
+        messageCatcher = replyMessageCatcher;
+
+        ret = InstallMessageFilter(messageCatcher,"");
+    }
+
+    // send message
+
+    if (ret.ErrorsCleared()) {
+        Object *thisObject = dynamic_cast<Object *> (this);
+
+        if (thisObject != NULL){
+            ret = SendMessage(message,thisObject);
+        }
+
+        if (ret.ErrorsCleared()){
+            ret = replyMessageCatcher->Wait(maxWait,pollingTimeUsec);
+        }
+
+        // try remove the message filter in any case whatever happened ..
+        ret = ret | RemoveMessageFilter(messageCatcher);
+
     }
     return ret;
 }

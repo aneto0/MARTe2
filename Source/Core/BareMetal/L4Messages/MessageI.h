@@ -64,40 +64,79 @@ public:
 
     /**
      * @brief Sends a Message to the destination (specified in Message).
-     * @details Depending on the flags to be read from \a message, this function can behave in synchronous or asynchronous mode,
-     * wait or not for a reply, ecc.
-     * If Message::ExpectsReply() == true then a reply message is requested and expected to be sent asynchronously to this object.
-     * if Message::ExpectsImmediateReply() == true then reply message is requested and expected to be returned at the end of this call.
+     * @details Depending on the flags to be read from \a message, this function can behave in a sort of synchronous or asynchronous mode,
+     * wait or not for a reply, etc.
+     * If Message::ExpectsReply() == true then a reply message is requested. The reply message is the same message marked as reply and with additional or modified content.
+     * if Message::ExpectsIndirectReply() == true then the message after being modified to be a reply is also sent back to the sender
+     * Synchronous communication is performed when the message is handled by the same thread of the caller. In this case the transformation to reply message has already happened at the end of the sendmessage call
+     * Asynchronous communication is performed when the message is handled by a different thread . In this case the transformation to reply message happens asynchronously.
      * @param[in,out] message is the message to be sent. It will be modified to contain the destination reply if ExpectsImmediateReply is true.
      * @param[in] sender is the Object sending the message.
 
      * @return
      *   ErrorManagement::noError() if the destination object is found and the called function returns true.
      *   ErrorManagement::fatalError if the function to be called returns false.
-     *   ErrorManagement::unsupportedFeature if the message was refused
+     *   ErrorManagement::unsupportedFeature if no receiver for this message was found
      *   ErrorManagement::timeout if a wait for reply times out
-     *   ErrorManagement::communicationError if the reply was not produced when requested
+     *   ErrorManagement::communicationError if trying to send a direct reply
      *   ErrorManagement::parametersError if the message is invalid or if sender is NULL and reply was expected
      */
     static ErrorManagement::ErrorType SendMessage(ReferenceT<Message> &message,const Object * const sender = NULL_PTR(Object *));
 
+//    * Deals with indirect replies by polling the status of a ReplyMessageCatcher
+
     /**
-     * @brief Before calling SendMessage, the message flag ExpectsImmediateReply() is set and the message timeout is set as maxWait.
+     * @brief wait for the reply.
+     * @details Deals only with direct replies by polling the status of the Message until it is marked as a reply
+     * @param[in,out] message is the message that was sent. It will contain the reply.
+     * @param[in] maxWait is the maximum time allowed waiting for the message reply.
+     * @param[in] pollingTimeUsec is the period between check of the arrival as us
+     * @return
+     *   ErrorManagement::noError() if the reply is obtained on time.
+     *   ErrorManagement::timeout if a wait for reply times out
+     *   ErrorManagement::communicationError if no reply expected
+     */
+    static ErrorManagement::ErrorType WaitForReply(ReferenceT<Message> &message,const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec=1000);
+
+    /**
+     * @brief sends a message expecting direct reply and waits for it
+     * @details Before calling SendMessage, the message flag ExpectReply() is set and the message timeout is set as maxWait.
+     * @details Combines SendMessage and WaitForReply
      * @param[in,out] message is the message to be sent. It will be modified to contain the reply.
      * @param[in] sender is the Object sending the message.
      * @param[in] maxWait is the maximum time allowed waiting for the message reply.
+     * @return
+     *   ErrorManagement::noError() if the reply is obtained on time.
+     *   ErrorManagement::parametersError if message is no valid pointer
+     *   ErrorManagement::timeout if a wait for reply times out
+     *   ErrorManagement::communicationError if no reply expected
      */
-    static ErrorManagement::ErrorType SendMessageAndWaitReply(ReferenceT<Message> &message,
-                                                              const Object * const sender = NULL_PTR(Object *),
-                                                              const TimeoutType &maxWait = TTInfiniteWait);
+    static ErrorManagement::ErrorType SendMessageAndWaitReply(ReferenceT<Message> &message,const Object * const sender = NULL_PTR(Object *),
+                                                              const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec=1000);
 
     /**
-     * @brief Marks the message to be sent requiring a late reply before sending it.
+     * TODO
+     */
+    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> &messageFilter,CCString name="");
+
+    /**
+     * TODO
+     */
+    ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> &messageFilter);
+
+    /**
+     * TODO
+     */
+    ErrorManagement::ErrorType RemoveMessageFilter(CCString name);
+
+    /**
+     * @brief a message is sent requiring indirect reply. A Reply message is waited for.
+     * @details installs a message Filter. Sends The message. Wait on filter.
      * @param[in,out] message is the message to be sent. It can be modified if the destination re-sends it to the sender as a reply.
      * @param[in] sender is the Object sending the message.
      */
-    static ErrorManagement::ErrorType SendMessageAndExpectReplyLater(ReferenceT<Message> &message,
-                                                                     const Object * const sender = NULL_PTR(Object*));
+    ErrorManagement::ErrorType SendMessageAndWaitForIndirectReply(ReferenceT<Message> &message,const TimeoutType &maxWait = TTInfiniteWait,
+                                                                  const uint32 pollingTimeUsec=1000);
 
 protected:
 
@@ -136,7 +175,17 @@ private:
      * */
     static ReferenceT<MessageI> FindDestination(CCString destination);
 
+    /**
+     * TODO
+     * The message consuming filters
+     * used by SortMessage
+     *
+     * */
+    ReferenceContainer messageFilters;
+
+
 };
+
 
 }
 /*---------------------------------------------------------------------------*/

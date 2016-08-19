@@ -53,6 +53,8 @@ DLL_API int32 GetDateSeconds(void);
  * @brief Sleeps for the time requested or more.
  * @details This function uses HighResolutionTimer functions.
  * @param[in] sec is the time in seconds to sleep (at least).
+ * TODO float64 is absolutely excessive!!! Change to float32
+ * TODO this will cause unnecessary burden for small embedded systems
  */
 DLL_API void AtLeast(const float64 sec);
 

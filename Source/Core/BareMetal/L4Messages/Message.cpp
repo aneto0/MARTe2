@@ -56,36 +56,24 @@ Message::Message() :
 Message::~Message() {
 }
 
-void Message::MarkAsReply(const bool flag) {
+void Message::SetAsReply(const bool flag) {
     flags.isReply = flag;
 }
 
-void Message::MarkImmediateReplyExpected(const bool flag) {
+void Message::SetExpectsReply(const bool flag) {
     flags.expectsReply = flag;
-    flags.expectsImmediateReply = flag;
 }
 
-void Message::MarkLateReplyExpected(const bool flag) {
-    flags.expectsReply = flag;
-    if (flag) {
-        flags.expectsImmediateReply = false;
-    }
+void Message::SetExpectsIndirectReply(const bool flag) {
+    flags.expectsIndirectReply = flag;
 }
 
-bool Message::ReplyExpected() const {
+bool Message::ExpectsReply() const {
     return (flags.expectsReply);
 }
 
-bool Message::ImmediateReplyExpected() const {
-    bool expectsReply = flags.expectsReply;
-    bool expectsImmediateReply = flags.expectsImmediateReply;
-    return (expectsReply && expectsImmediateReply);
-}
-
-bool Message::LateReplyExpected() const {
-    bool expectsReply = flags.expectsReply;
-    bool expectsImmediateReply = flags.expectsImmediateReply;
-    return (expectsReply && (!expectsImmediateReply));
+bool Message::ExpectsIndirectReply() const {
+    return flags.expectsIndirectReply;
 }
 
 bool Message::IsReplyMessage() const {
@@ -139,8 +127,8 @@ Message::MessageFlags::MessageFlags() {
 
 Message::MessageFlags::MessageFlags(CCString asString) {
     expectsReply = (StringHelper::Compare(asString.GetList(), "ExpectsReply") == 0);
-    expectsImmediateReply = (StringHelper::Compare(asString.GetList(), "ExpectsImmediateReply") == 0);
-    if (bool(expectsImmediateReply)) {
+    expectsIndirectReply = (StringHelper::Compare(asString.GetList(), "ExpectsIndirectReply") == 0);
+    if (bool(expectsIndirectReply)) {
         expectsReply = true;
     }
     isReply = false;
