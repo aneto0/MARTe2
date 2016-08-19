@@ -151,6 +151,7 @@ protected:
      */
     virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
 
+#if 0
     /**
      * TODO
      * Default message sorting mechanism
@@ -168,6 +169,8 @@ protected:
      * */
     virtual ErrorManagement::ErrorType HandleMessage(ReferenceT<Message> &message);
 
+
+#endif
 private:
     /**
      * TODO

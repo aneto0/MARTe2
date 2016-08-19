@@ -211,6 +211,11 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
     return ret;
 }
 
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
 ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilter> &messageFilter,CCString name){
 
     messageFilter->SetName(name);
@@ -314,13 +319,69 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitForIndirectReply(Referenc
     return ret;
 }
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
+
+
+
+class MessageFilterFinder: public ReferenceContainerFilter{
+private:
+    ReferenceT<Message> messageToTest;
+public:
+
+    MessageFilterFinder(ReferenceT<Message> &message):ReferenceContainerFilter(1,ReferenceContainerFilterMode::SHALLOW){
+        messageToTest = message;
+    }
+
+    virtual ~MessageFilterFinder(){}
+
+    virtual bool Test(ReferenceContainer &previouslyFound,Reference &referenceToTest){
+        ReferenceT<MessageFilter> messageFilter = referenceToTest;
+        bool ret = false;
+        if (messageFilter.IsValid()){
+            ret  = messageFilter->Matched(messageFilter->TestMessage(messageToTest));
+        }
+        return ret;
+    }
+
+};
 
 ErrorManagement::ErrorType MessageI::ReceiveMessage(ReferenceT<Message> &message) {
-    return SortMessage(message);
+    bool matched = false;
+    ErrorManagement::ErrorType err;
+    ReferenceT<MessageFilter> messageFilter;
+
+    int i;
+    for (i=0;(i<messageFilters.Size() && !matched);i++){
+        bool locked = messageFilters.Lock();
+
+        if (locked){
+            messageFilter =  messageFilters.Get(i);
+            messageFilters.UnLock();
+        }
+
+        if (messageFilter.IsValid()){
+            err = messageFilter->TestMessage(message);
+            matched = messageFilter->Matched(err);
+        }
+    }
+
+    if (matched){
+        if (!messageFilter->IsPermanentFilter()){
+            bool locked = messageFilters.Lock();
+
+            if (locked){
+                messageFilters.Delete(messageFilter);
+
+                messageFilters.UnLock();
+            }
+        }
+    } else {
+        err.unsupportedFeature = true;
+    }
+
+    return err;
 }
+
+#if 0
 
 /**
  * TODO
@@ -399,6 +460,8 @@ ErrorManagement::ErrorType MessageI::SortMessage(ReferenceT<Message> &message) {
 ErrorManagement::ErrorType MessageI::HandleMessage(ReferenceT<Message> &message) {
     return ErrorManagement::unsupportedFeature;
 }
+
+#endif
 
 }
 
