@@ -51,7 +51,7 @@ namespace MARTe{
 
 namespace MemoryCheck {
 
-/*lint -e{715}  [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: This implementation does not requires
+/*lint -e{715}  [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: This implementation does not require
  all the input parameters.*/
 bool Check(const void * const address,
            const MemoryTestAccessMode accessMode,

@@ -69,9 +69,14 @@ public:
      */
     virtual ~ConfigurationDatabase();
 
+<<<<<<< HEAD
     /**
      * @brief Destroys all the entries in the tree.
      */
+=======
+
+    //TODO test and document
+>>>>>>> refs/remotes/origin/#44_GAM_Infrastructure
     void CleanUp();
 
     /**
@@ -217,6 +222,12 @@ public:
      * @return true if the shared semaphore is successfully unlocked.
      */
     void Unlock();
+
+    // TODO. Test and Document! adds the possibility to use find, filters ecc ecc
+    operator ReferenceT<ReferenceContainer>(){
+        return currentNode;
+    }
+
 
 private:
 

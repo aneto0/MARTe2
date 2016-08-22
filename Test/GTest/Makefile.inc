@@ -36,7 +36,9 @@ INCLUDES += -I../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../Source/Core/BareMetal/L4Configuration
+INCLUDES += -I../../Source/Core/BareMetal/L5GAMs
 INCLUDES += -I../../Source/Core/FileSystem/L1Portability
+INCLUDES += -I../../Source/Core/Scheduler/L1Portability
 
 all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/TheTool$(EXEEXT) 

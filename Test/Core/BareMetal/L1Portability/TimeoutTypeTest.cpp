@@ -78,9 +78,9 @@ bool TimeoutTypeTest::TestSetTimeoutHighResolutionTimerTicks() {
 bool TimeoutTypeTest::TestHighResolutionTimerTicks() {
     TimeoutType timeout;
     int32 msecTimeout = 100;
-    int64 expectedTicks;
+    uint64 expectedTicks;
     timeout.SetTimeoutSec(double(msecTimeout)*1e-3);
-    expectedTicks = int64(1e-3*msecTimeout*HighResolutionTimer::Frequency());
+    expectedTicks = uint64(1e-3*msecTimeout*HighResolutionTimer::Frequency());
     return (expectedTicks == timeout.HighResolutionTimerTicks());
 }
 

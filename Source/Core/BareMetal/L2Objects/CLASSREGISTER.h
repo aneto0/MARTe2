@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "ClassRegistryItemT.h"
 
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
@@ -149,12 +150,14 @@
      */                                                                                                                \
     void * className::operator new(const size_t size, MARTe::HeapI* const heap) {                                      \
         void *obj = NULL_PTR(void *);                                                                                  \
-        if (heap != NULL) {                                                                                            \
-            obj = heap->Malloc(static_cast<MARTe::uint32>(size));                                                      \
-        } else {                                                                                                       \
-            obj = MARTe::HeapManager::Malloc(static_cast<MARTe::uint32>(size));                                        \
+        if(size == sizeof(className)){                                                                                 \
+            if (heap != NULL) {                                                                                        \
+                obj = heap->Malloc(static_cast<MARTe::uint32>(size));                                                  \
+            } else {                                                                                                   \
+                obj = MARTe::HeapManager::Malloc(static_cast<MARTe::uint32>(size));                                    \
+            }                                                                                                          \
+            GetClassRegistryItem_Static()->IncrementNumberOfInstances();                                               \
         }                                                                                                              \
-        GetClassRegistryItem_Static()->IncrementNumberOfInstances();                                                   \
         return obj;                                                                                                    \
     }                                                                                                                  \
     /*                                                                                                                 \

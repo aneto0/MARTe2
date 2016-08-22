@@ -33,4 +33,5 @@ LIBRARIES_STATIC+=L2Objects/cov/L2ObjectsTest$(LIBEXT)
 LIBRARIES_STATIC+=L3Streams/cov/L3StreamsTest$(LIBEXT)
 LIBRARIES_STATIC+=L4Configuration/cov/L4ConfigurationTest$(LIBEXT)
 LIBRARIES_STATIC+=L4Messages/cov/L4MessagesTest$(LIBEXT)
+LIBRARIES_STATIC+=L5GAMs/cov/L5GAMsTest$(LIBEXT)
 

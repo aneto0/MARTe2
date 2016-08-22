@@ -77,12 +77,9 @@ bool ConfigurationDatabase::Write(const char8 * const name,
         currentNode = storeCurrentNode;
     }
     else {
-        ok = (name != NULL_PTR(const char8 *));
-        AnyType existentType = GetType(name);
+        ok = (StringHelper::Length(name) > 0u);
         if (ok) {
-            ok = (StringHelper::Length(name) > 0u);
-        }
-        if (ok) {
+            AnyType existentType = GetType(name);
             if (existentType.GetTypeDescriptor().type != VoidType.type) {
                 ok = Delete(name);
             }
@@ -262,7 +259,6 @@ bool ConfigurationDatabase::Read(const char8 * const name,
 
     return ok;
 }
-#include "stdio.h"
 
 bool ConfigurationDatabase::AdvancedRead(const char8 * const path,
                                          const AnyType &value) {
@@ -311,15 +307,16 @@ bool ConfigurationDatabase::AdvancedRead(const char8 * const path,
 
 bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
 
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
+    ReferenceContainerFilterObjectName filter(1, 0u, path);
     ReferenceContainer resultSingle;
     rootNode->Find(resultSingle, filter);
 
     bool ok = (resultSingle.Size() > 0u);
     if (ok) {
         //Invalidate move to leafs
-        ReferenceT<ReferenceContainer> container = resultSingle.Get(resultSingle.Size() - 1u);
-        if (container.IsValid()) {
+        ReferenceT < ReferenceContainer > container = resultSingle.Get(resultSingle.Size() - 1u);
+        ok=container.IsValid();
+        if (ok) {
             currentNode = container;
         }
     }
@@ -338,7 +335,7 @@ bool ConfigurationDatabase::AdvancedMove(const char8 * const path) {
 
 bool ConfigurationDatabase::MoveRelative(const char8 * const path) {
 
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
+    ReferenceContainerFilterObjectName filter(1, 0u, path);
     ReferenceContainer resultSingle;
     currentNode->Find(resultSingle, filter);
 

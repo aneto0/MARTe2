@@ -63,15 +63,28 @@ public:
     /**
      * @brief Default constructor.
      * @details Initialises the semaphore and set the default timeout to infinite.
+     * @post
+     *   GetTimeout() == TTInfiniteWait
      */
 ReferenceContainer    ();
 
     /**
      * @brief Copy Constructor
      * @details Inserts all the references contained by \a copy in this.
+     * @post
+     *   GetTimeout() == copy.GetTimeout() &&
+     *   GetSize() == copy.GetSize()
      */
     /*lint -e{1724} Parameter of copy constructor is not modified, but can not be declared const.*/
     ReferenceContainer(ReferenceContainer &copy);
+
+    /**
+     * @brief Inserts all the references contained by \a copy in this.
+     * @post
+     *   GetTimeout() == copy.GetTimeout() &&
+     *   GetSize() == copy.GetSize()
+     */
+    ReferenceContainer& operator=(ReferenceContainer &copy);
 
     /**
      * @brief Destructor. Deletes all the elements hold by the container.
@@ -137,7 +150,7 @@ ReferenceContainer    ();
      * @param[in] path is the name of the element to be found or its full path.
      * @return the element if it is found or an invalid reference if not.
      */
-    Reference Find(const char8 * const path);
+    Reference Find(const char8 * const path, const bool recursive=false);
 
     /**
      * @brief Retrieves the Reference at the given address.

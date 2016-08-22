@@ -162,7 +162,6 @@ public:
      * tokens into.
      * @param[in] terminator a list of terminator characters, i.e. characters
      * that allow to distinguish tokens.
-     * @param[in] outputBufferSize the maximum size of the output buffer.
      * @param[out] saveTerminator if not NULL the found terminator (from the
      * terminator list) is stored in this variable.
      * @param[in] skipCharacters a list of characters to be removed from the
@@ -331,6 +330,16 @@ public:
                        const AnyType& par3,
                        const AnyType& par4);
 
+    /**
+     * @see PrintFormatted.
+     */
+    inline bool Printf(const char8 * const format,
+                       const AnyType& par1,
+                       const AnyType& par2,
+                       const AnyType& par3,
+                       const AnyType& par4,
+                       const AnyType& par5);
+
 protected:
 
     /**
@@ -387,6 +396,16 @@ bool BufferedStreamI::Printf(const char8 * const format,
                              const AnyType& par3,
                              const AnyType& par4) {
     AnyType pars[5] = { par1, par2, par3, par4, voidAnyType };
+    return PrintFormatted(format, &pars[0]);
+}
+
+bool BufferedStreamI::Printf(const char8 * const format,
+                             const AnyType& par1,
+                             const AnyType& par2,
+                             const AnyType& par3,
+                             const AnyType& par4,
+                             const AnyType& par5) {
+    AnyType pars[6] = { par1, par2, par3, par4, par5, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
 

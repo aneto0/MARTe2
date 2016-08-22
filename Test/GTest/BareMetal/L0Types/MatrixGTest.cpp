@@ -411,10 +411,6 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_Float64) {
     ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
 }
 
-
-
-
-
 TEST(MatrixGTest,TestConstructorByTable_Int8) {
     MatrixTest matrixTest;
 
@@ -533,6 +529,16 @@ TEST(MatrixGTest,TestMatrixOperator_Static) {
 TEST(MatrixGTest,TestMatrixOperator_Heap) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestMatrixOperator_Heap());
+}
+
+TEST(MatrixGTest,TestMatrixFunctionCallOperator_Static) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestMatrixFunctionCallOperator_Static());
+}
+
+TEST(MatrixGTest,TestMatrixFunctionCallOperator_Heap) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestMatrixFunctionCallOperator_Heap());
 }
 
 TEST(MatrixGTest,TestGetDataPointer) {
