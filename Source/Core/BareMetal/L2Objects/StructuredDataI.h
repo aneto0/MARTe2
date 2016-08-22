@@ -100,6 +100,11 @@ public:
      */
     virtual AnyType GetType(const char8 * const name) = 0;
 
+    virtual uint8 GetNumberOfDimensions(const char8 * const name)=0;
+
+    virtual uint32 GetNumberOfElements(const char8 * const name,
+                                       uint8 dimension)=0;
+
     /**
      * @brief Writes an AnyType against the provided \a name and adds it to the current node.
      * @details If the name already exists the value will be overridden.
@@ -123,9 +128,7 @@ public:
      */
     virtual bool Copy(StructuredDataI &destination) = 0;
 
-
     virtual bool Link(StructuredDataI &destination)=0;
-
 
     /**
      * @brief Adds a node to the current node.

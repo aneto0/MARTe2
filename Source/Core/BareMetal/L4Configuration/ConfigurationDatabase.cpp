@@ -170,6 +170,18 @@ AnyType ConfigurationDatabase::GetType(const char8 * const name) {
     return retType;
 }
 
+
+uint8 ConfigurationDatabase::GetNumberOfDimensions(const char8 * const name){
+    AnyType at= GetType(name);
+    return at.GetNumberOfDimensions();
+}
+
+uint32 ConfigurationDatabase::GetNumberOfElements(const char8 * const name, uint8 dimension){
+    AnyType at= GetType(name);
+    return at.GetNumberOfElements(dimension);
+}
+
+
 bool ConfigurationDatabase::Copy(StructuredDataI &destination) {
     ReferenceT<ReferenceContainer> foundNode;
     bool ok = true;

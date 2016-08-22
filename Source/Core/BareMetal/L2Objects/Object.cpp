@@ -50,14 +50,14 @@ bool Object::ConvertDataToStructuredData(void* const ptr,
                                          const char8* const className,
                                          StructuredDataI& data,
                                          const char8* const objName) {
-    bool ret = false;
+    bool ret = true;
 
     const ClassRegistryItem* sourceItem = ClassRegistryDatabase::Instance()->Find(className);
 
     if (sourceItem != NULL) {
         const Introspection *sourceIntrospection = sourceItem->GetIntrospection();
         if (sourceIntrospection != NULL) {
-            ret = true;
+
             if (objName != NULL) {
                 ret = data.CreateRelative(objName);
             }
@@ -115,11 +115,11 @@ bool Object::ConvertDataToStructuredData(void* const ptr,
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "ConvertDataToStructuredData: Introspection not found for the specified class");
+            REPORT_ERROR(ErrorManagement::Warning, "ConvertDataToStructuredData: Introspection not found for struct or class");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ConvertDataToStructuredData: Class not registered");
+        REPORT_ERROR(ErrorManagement::Warning, "Struct or class not registered");
     }
     return ret;
 }
@@ -128,7 +128,7 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
                                              const char8 * const className,
                                              StructuredDataI &data,
                                              const int32 recursionLevel) {
-    bool ret = false;
+    bool ret = true;
 
     const ClassRegistryItem *sourceItem = ClassRegistryDatabase::Instance()->Find(className);
 
@@ -138,7 +138,6 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
             // create the class node
             if (data.CreateRelative(className)) {
                 uint32 numberOfMembers = sourceIntrospection->GetNumberOfMembers();
-                ret = true;
                 for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
                     IntrospectionEntry sourceMemberIntrospection = (*sourceIntrospection)[i];
                     // create the member node
@@ -218,11 +217,11 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Introspection not found for the specified class");
+            REPORT_ERROR(ErrorManagement::Warning, "ConvertDataToStructuredData: Introspection not found for struct or class");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Class not registered");
+        REPORT_ERROR(ErrorManagement::Warning, "Struct or class not registered");
     }
 
     return ret;

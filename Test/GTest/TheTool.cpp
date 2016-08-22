@@ -129,14 +129,22 @@ static void IntrospectionOnSourceBefore(const char8 *memberName,
                                         StreamString &structType,
                                         StreamString &type,
                                         StreamString &attributes,
-                                        BasicFile &structSource) {
-    PrintOnFile(structSource, "DECLARE_CLASS_MEMBER(");
+                                        BasicFile &structSource,
+                                        bool isParent = false) {
+    if (isParent) {
+        PrintOnFile(structSource, "DECLARE_CLASS_PARENT(");
+    }
+    else {
+        PrintOnFile(structSource, "DECLARE_CLASS_MEMBER(");
+    }
     PrintOnFile(structSource, structType.Buffer());
     PrintOnFile(structSource, ", ");
     PrintOnFile(structSource, memberName);
     PrintOnFile(structSource, ", ");
-    PrintOnFile(structSource, type.Buffer());
-    PrintOnFile(structSource, ", ");
+    if (!isParent) {
+        PrintOnFile(structSource, type.Buffer());
+        PrintOnFile(structSource, ", ");
+    }
     PrintOnFile(structSource, "\"");
     PrintOnFile(structSource, modifiers.Buffer());
     PrintOnFile(structSource, "\"");
@@ -164,7 +172,7 @@ static void IntrospectionOnSourceAfter(ConfigurationDatabase &database,
                 PrintOnFile(structSource, "&");
                 PrintOnFile(structSource, structType.Buffer());
                 PrintOnFile(structSource, "_");
-                PrintOnFile(structSource, memberName);
+                PrintOnFile(structSource, &memberName[memberName[0] == '$']);
                 PrintOnFile(structSource, "_introspectionEntry, \n");
             }
             database.MoveToAncestor(1u);
@@ -260,6 +268,90 @@ static void PrintIntrospection(ConfigurationDatabase &database,
         printf("\nError, undefined type for %s", structName);
     }
 }
+
+#if 0
+static void GenerateParentsIntrospectionNode(ConfigurationDatabase &database,
+        BasicFile &structSource,
+        const char8 *className) {
+    uint32 numberOfParents = database.GetNumberOfChildren();
+    StreamString classNameStr = className;
+
+    //flat view on the parameters
+    for (uint32 i = 0u; i < numberOfParents; i++) {
+        const char8 * parentName = database.GetChildName(i);
+        if (database.MoveRelative(parentName)) {
+
+            StreamString modifiers;
+            StreamString type;
+            StreamString attributes;
+            StreamString comments;
+
+            ReadIntrospectionAttributes(database, modifiers, type, attributes, comments, className, parentName);
+
+            if (type.Size() == 0u) {
+                type = parentName;
+            }
+
+            //Manage the parent introspection
+
+            // SOURCE FILE MANAGEMENT
+            // declare the member introspection
+            IntrospectionOnSourceBefore(parentName, modifiers, classNameStr, type, attributes, structSource, true);
+            database.MoveToAncestor(1u);
+        }
+    }
+    IntrospectionOnSourceAfter(database, classNameStr, structSource);
+
+}
+
+static void GenerateParentsIntrospectionVector(ConfigurationDatabase &database,
+        BasicFile &structSource,
+        const char8 *className) {
+    uint32 numberOfParents = database.GetNumberOfElements("Parents", 0u);
+    Vector<StreamString> parentNames(numberOfParents);
+    StreamString classNameStr = className;
+
+    if (database.Read("Parents", parentNames)) {
+
+        //flat view on the parameters
+        for (uint32 i = 0u; i < numberOfParents; i++) {
+
+            StreamString modifiers;
+            StreamString type;
+            StreamString attributes;
+            StreamString comments;
+
+            type = parentNames[i];
+
+            //Manage the parent introspection
+
+            // SOURCE FILE MANAGEMENT
+            // declare the member introspection
+            IntrospectionOnSourceBefore(parentNames[i].Buffer(), modifiers, classNameStr, type, attributes, structSource, true);
+
+        }
+    }
+    else {
+        printf("No Parents Introspection declared");
+    }
+    IntrospectionOnSourceAfter(database, classNameStr, structSource);
+
+}
+
+static void GenerateParentsIntrospection(ConfigurationDatabase &database,
+        BasicFile &structSource,
+        const char8 * className) {
+
+    if (database.MoveRelative("Parents")) {
+        GenerateParentsIntrospectionNode(database, structSource, className);
+        database.MoveToAncestor(1u);
+    }
+    else {
+        GenerateParentsIntrospectionVector(database, structSource, className);
+    }
+
+}
+#endif
 
 static void GenerateStructFileRecursive(ConfigurationDatabase &database,
                                         BasicFile &structHeader,
@@ -481,43 +573,42 @@ static void GenerateInitialiseFunction(ConfigurationDatabase &database,
 
                 ReadIntrospectionAttributes(database, modifiers, type, attributes, comments, className, paramName);
 
-                if (type.Size() == 0u) {
-                    printf("\nError, undefined type for %s", paramName);
-                }
-                else {
-                    PrintOnFile(objHeader, "\\\n");
-                    IntrospectionOnHeader(paramName, modifiers, type, attributes, comments, objHeader);
-
-                    if (paramName[0] == '*') {
-                        PrintOnFile(objHeader, "\\\n    uint32 NumberOf");
-                        PrintOnFile(objHeader, paramName + 1);
-                        PrintOnFile(objHeader, ";");
-                    }
-                    StreamString paramPath;
-                    StreamString paramAddress;
-                    StreamString attributes;
-                    if (!database.Read("attributes", attributes)) {
-                        attributes = "";
-                    }
-                    if (paramName[0] == '*') {
-                        if (!database.Read("source", paramAddress)) {
-                            paramAddress = "";
-                        }
-                        ReadTheTypeArray(&paramName[1], type.Buffer(), paramAddress.Buffer(), attributes.Buffer(), objSource);
+                if (paramName[0] != '$') {
+                    if (type.Size() == 0u) {
+                        printf("\nError, undefined type for %s", paramName);
                     }
                     else {
-                        if (!database.Read("source", paramAddress)) {
-                            paramAddress = paramName;
+                        PrintOnFile(objHeader, "\\\n");
+                        IntrospectionOnHeader(paramName, modifiers, type, attributes, comments, objHeader);
+
+                        if (paramName[0] == '*') {
+                            PrintOnFile(objHeader, "\\\n    uint32 NumberOf");
+                            PrintOnFile(objHeader, paramName + 1);
+                            PrintOnFile(objHeader, ";");
                         }
-                        ReadTheType(paramName, type.Buffer(), paramAddress.Buffer(), attributes.Buffer(), objSource);
+                        StreamString paramPath;
+                        StreamString paramAddress;
+                        if (paramName[0] == '*') {
+                            if (!database.Read("source", paramAddress)) {
+                                paramAddress = "";
+                            }
+                            ReadTheTypeArray(&paramName[1], type.Buffer(), paramAddress.Buffer(), attributes.Buffer(), objSource);
+                        }
+                        else {
+                            if (!database.Read("source", paramAddress)) {
+                                paramAddress = paramName;
+                            }
+                            ReadTheType(paramName, type.Buffer(), paramAddress.Buffer(), attributes.Buffer(), objSource);
+                        }
                     }
                 }
                 //Manage the parameter introspection
 
                 if (paramName[0] != '*') {
+                    uint32 begin = paramName[0] == '$';
                     // SOURCE FILE MANAGEMENT
                     // declare the member introspection
-                    IntrospectionOnSourceBefore(paramName, modifiers, classNameStr, type, attributes, structSource);
+                    IntrospectionOnSourceBefore(&paramName[begin], modifiers, classNameStr, type, attributes, structSource, begin);
                 }
                 database.MoveToAncestor(1u);
             }
@@ -897,6 +988,7 @@ static void GenerateOutputFiles(ConfigurationDatabase &database) {
         }
         n++;
     }
+
     PrintOnFile(structHeader, "\n}");
     PrintOnFile(structSource, "\n}");
 }

@@ -100,6 +100,11 @@ public:
      */
     virtual AnyType GetType(const char8 * const name);
 
+    virtual uint8 GetNumberOfDimensions(const char8 * const name);
+
+    virtual uint32 GetNumberOfElements(const char8 * const name,
+                                       uint8 dimension);
+
     /**
      * @see StructuredDataI::Write
      * @details It is possible write directly a structure or a class
@@ -118,7 +123,7 @@ public:
      * @return true if \a value is correct and \value is written correctly.
      */
     virtual bool AdvancedWrite(const char8 * const path,
-                              const AnyType &value);
+                               const AnyType &value);
 
     /**
      * @see StructuredDataI::Copy
@@ -126,7 +131,6 @@ public:
     virtual bool Copy(StructuredDataI &destination);
 
     virtual bool Link(StructuredDataI &destination);
-
 
     /**
      * @see StructuredDataI::MoveToRoot
