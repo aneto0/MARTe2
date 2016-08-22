@@ -57,7 +57,7 @@ public:
  * Initialises basic search filter
  *
  */
-RegisteredMethodsMessageFilter(Object *destination);
+RegisteredMethodsMessageFilter();
 
 /**
  * TODO
@@ -77,13 +77,7 @@ protected:
      * TODO
      * on every match will also consume the message and handles both reply mechanisms
     */
-    virtual ErrorManagement::ErrorType TestMessage(ReferenceT<Message> &messageToTest);
-
-    /**
-     * TODO
-     * Interpret errors to say whether the message was consumed
-     */
-    virtual bool Matched(ErrorManagement::ErrorType ret);
+    virtual ErrorManagement::ErrorType ProcessMessage(ReferenceT<Message> &messageToTest,MessageI *receiver);
 
 };
 

@@ -216,7 +216,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilter> &messageFilter,CCString name){
+ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilter> &messageFilter,CCString name,int32 position){
 
     messageFilter->SetName(name);
 
@@ -224,7 +224,7 @@ ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilt
     err.timeout = messageFilters.Lock();
 
     if (err.ErrorsCleared()){
-        err.fatalError = messageFilters.Insert(messageFilter,0);
+        err.fatalError = messageFilters.Insert(messageFilter,position);
 
         // UnLock must be done also on error
         err.fatalError |= messageFilters.UnLock();
@@ -320,30 +320,6 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitForIndirectReply(Referenc
 }
 
 
-
-
-class MessageFilterFinder: public ReferenceContainerFilter{
-private:
-    ReferenceT<Message> messageToTest;
-public:
-
-    MessageFilterFinder(ReferenceT<Message> &message):ReferenceContainerFilter(1,ReferenceContainerFilterMode::SHALLOW){
-        messageToTest = message;
-    }
-
-    virtual ~MessageFilterFinder(){}
-
-    virtual bool Test(ReferenceContainer &previouslyFound,Reference &referenceToTest){
-        ReferenceT<MessageFilter> messageFilter = referenceToTest;
-        bool ret = false;
-        if (messageFilter.IsValid()){
-            ret  = messageFilter->Matched(messageFilter->TestMessage(messageToTest));
-        }
-        return ret;
-    }
-
-};
-
 ErrorManagement::ErrorType MessageI::ReceiveMessage(ReferenceT<Message> &message) {
     bool matched = false;
     ErrorManagement::ErrorType err;
@@ -359,8 +335,8 @@ ErrorManagement::ErrorType MessageI::ReceiveMessage(ReferenceT<Message> &message
         }
 
         if (messageFilter.IsValid()){
-            err = messageFilter->TestMessage(message);
-            matched = messageFilter->Matched(err);
+            err = messageFilter->ProcessMessage(message,this);
+            matched = messageFilter->MessageConsumed(err);
         }
     }
 

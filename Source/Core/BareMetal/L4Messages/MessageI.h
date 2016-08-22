@@ -117,7 +117,7 @@ public:
     /**
      * TODO
      */
-    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> &messageFilter,CCString name="");
+    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> &messageFilter,CCString name="",int32 position=0);
 
     /**
      * TODO
@@ -151,26 +151,7 @@ protected:
      */
     virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
 
-#if 0
-    /**
-     * TODO
-     * Default message sorting mechanism
-     * By default checks if there are usable registered methods
-     * Otherwise calls HandleMessage.
-     * in the case of delayed reply, the reply will be sent from here if a reply message is returned from the user code.
-     * otherwise the user has to Send the reply independently
-     * */
-    virtual ErrorManagement::ErrorType SortMessage(ReferenceT<Message> &message);
 
-    /**
-     * TODO
-     * Default message handling mechanism
-     * By default refuses messages and returns false
-     * */
-    virtual ErrorManagement::ErrorType HandleMessage(ReferenceT<Message> &message);
-
-
-#endif
 private:
     /**
      * TODO

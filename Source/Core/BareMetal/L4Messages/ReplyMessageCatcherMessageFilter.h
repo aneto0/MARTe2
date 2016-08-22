@@ -76,7 +76,7 @@ protected:
      * TODO
      * on every match will also consume the message and handles both reply mechanisms
     */
-    virtual ErrorManagement::ErrorType TestMessage(ReferenceT<Message> &messageToTest);
+    virtual ErrorManagement::ErrorType ProcessMessage(ReferenceT<Message> &messageToTest,MessageI *receiver);
 
     /**
      * TODO

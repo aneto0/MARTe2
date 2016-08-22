@@ -52,9 +52,10 @@ ReplyMessageCatcherMessageFilter::~ReplyMessageCatcherMessageFilter(){
 
 
 
-ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::TestMessage(ReferenceT<Message> &messageToTest){
+ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::ProcessMessage(ReferenceT<Message> &messageToTest,MessageI *receiver){
 
-    ErrorManagement::ErrorType ret(false);
+    ErrorManagement::ErrorType ret(true);
+
 
     if (messageToTest == originalMessage){
 
@@ -66,6 +67,8 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::TestMessage(Referen
         HandleReplyMessage(messageToTest);
 
         ret = true;
+    } else {
+        ret.unsupportedFeature = true;
     }
 
     return ret;

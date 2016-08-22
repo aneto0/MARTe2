@@ -40,27 +40,17 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RegisteredMethodsMessageFilter::RegisteredMethodsMessageFilter(Object *destination):MessageFilter(true){
-    destinationObject = destination;
+RegisteredMethodsMessageFilter::RegisteredMethodsMessageFilter():MessageFilter(true){
 }
 
 RegisteredMethodsMessageFilter::~RegisteredMethodsMessageFilter(){
 }
 
-bool RegisteredMethodsMessageFilter::Matched(ErrorManagement::ErrorType ret){
-    bool matched;
-
-    // check for any error associated with matching of function
-    if ((ret.unsupportedFeature == false) && (ret.parametersError == false)){
-        matched = true;
-    }
-
-    return matched;
-}
-
-ErrorManagement::ErrorType RegisteredMethodsMessageFilter::TestMessage(ReferenceT<Message> &messageToTest){
+ErrorManagement::ErrorType RegisteredMethodsMessageFilter::ProcessMessage(ReferenceT<Message> &messageToTest,MessageI *receiver){
 
     ErrorManagement::ErrorType ret;
+
+    Object *destinationObject = dynamic_cast<Object *>(receiver);
 
     if ((destinationObject != NULL_PTR(Object *)) && (messageToTest.IsValid())){
 
@@ -69,7 +59,7 @@ ErrorManagement::ErrorType RegisteredMethodsMessageFilter::TestMessage(Reference
 
         // the registered method has no responsibility to handle the reply mechanism
         // therefore it is handled here
-        if (Matched(ret) && messageToTest->ExpectsReply()){
+        if (MessageConsumed(ret) && messageToTest->ExpectsReply()){
             messageToTest->SetAsReply();
 
             // TODO handling other error messages resulting from the call
@@ -81,6 +71,8 @@ ErrorManagement::ErrorType RegisteredMethodsMessageFilter::TestMessage(Reference
                 MessageI::SendMessage(messageToTest,destinationObject);
             }
         }
+    } else {
+        ret.unsupportedFeature = true;
     }
 
     return ret;

@@ -1,7 +1,7 @@
 /**
- * @file MessageFilter.h
- * @brief Header file for class MessageFilter
- * @date Aug 17, 2016
+ * @file QueueingMessageFilter.h
+ * @brief Header file for class QueueingMessageFilter
+ * @date August 22, 2016
  * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MessageFilter
+ * @details This header file contains the declaration of the class MessageI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MESSAGEFILTER_H_
-#define L4MESSAGES_MESSAGEFILTER_H_
+#ifndef QUEUEINGMESSAGEFILTER_H_
+#define QUEUEINGMESSAGEFILTER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,64 +31,60 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Object.h"
-#include "CString.h"
-#include "Message.h"
-#include "StringHelper.h"
 
-namespace MARTe {
+#include "MessageFilter.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 /**
- * @brief class to implement a filter on Messages.
+ * @brief TODO
+ * @details TODO
  */
-class MessageFilter: public Object{
+class DLL_API QueueingMessageFilter: public MessageFilter {
 public:
-    CLASS_REGISTER_DECLARATION()
 
     /**
-     * TODO
-     * Initialises basic search filter
-     *
+     * @brief Constructor.
      */
-    inline MessageFilter(bool isPermanentFilter);
+    QueueingMessageFilter();
 
     /**
-     * TODO
-     * Initialises basic search filter
-     *
+     * @brief Destructor.
      */
-    virtual ~MessageFilter();
+    virtual ~QueueingMessageFilter();
 
     /**
      * TODO
-     */
-    inline bool IsPermanentFilter(){
-        return permanentFilter;
-    }
-
-    /**
-     * TODO
-     * Single test of a message.
-     * Also try consuming (uses and does not delete it) the message if matched
+     * Simply consumes all messages and puts them in a Q
     */
-    virtual ErrorManagement::ErrorType ProcessMessage(ReferenceT<Message> &messageToTest,MessageI *receiver)= 0;
+    virtual ErrorManagement::ErrorType ProcessMessage(ReferenceT<Message> &messageToTest,MessageI *receiver);
 
     /**
      * TODO
-     * Was the message consumed?
     */
-    inline bool MessageConsumed(ErrorManagement::ErrorType ret);
+    ErrorManagement::ErrorType GetMessage(ReferenceT<Message> &message,const TimeoutType &timeout=TTInfiniteWait);
 
 private:
 
     /**
-     * True if it remains active after a successful match
-     */
-    bool permanentFilter;
+     * TODO
+     * The message consuming filters
+     * used by SortMessage
+     *
+     * */
+    ReferenceContainer messageQ;
+
+    /**
+     * TODO
+     * To wake consuming threads
+     *
+     * */
+    EventSem newMessagesAlarm;
+
 
 };
 
@@ -97,29 +93,9 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * TODO
-   */
-MessageFilter::MessageFilter(bool isPermanentFilter):ReferenceContainerFilter(-1,ReferenceContainerFilterMode::REMOVE){
-    permanentFilter = isPermanentFilter;
-}
-
-/**
- * TODO
-   */
-MessageFilter::~MessageFilter(){
 
 }
 
 
+#endif /* QUEUEINGMESSAGEFILTER_H_ */
 
-inline bool MessageFilter::MessageConsumed(ErrorManagement::ErrorType ret){
-    return !ret.unsupportedFeature && !ret.parametersError;
-}
-
-
-} // namespace
-
-
-#endif /* L4MESSAGES_MESSAGEFILTER_H_ */
-	
