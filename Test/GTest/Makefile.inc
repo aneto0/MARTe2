@@ -22,7 +22,7 @@
 #
 #############################################################
 
-OBJSX=
+OBJSX=ToolGeneratorTest.x GAMFromTool.x GAMFromTool_aux.x GAMFromTool_params.x
 SPB = BareMetal.x Scheduler.x FileSystem.x
 PACKAGE=
 ROOT_DIR=../..
@@ -41,7 +41,7 @@ INCLUDES += -I../../Source/Core/FileSystem/L1Portability
 INCLUDES += -I../../Source/Core/Scheduler/L1Portability
 
 all: $(OBJS) $(SUBPROJ)   \
-        $(BUILD_DIR)/TheTool$(EXEEXT) 
+        $(BUILD_DIR)/ToolGeneratorTest$(EXEEXT) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

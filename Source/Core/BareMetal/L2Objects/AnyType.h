@@ -55,10 +55,11 @@ class Object;
 namespace MARTe {
 
 #define ANY_TYPE_STRUCT_BUILDER(structName, value) \
-const ClassRegistryItem * structName##_item = ClassRegistryDatabase::Instance()->Find(#structName) \
+const ClassRegistryItem * structName##_item = ClassRegistryDatabase::Instance()->Find(#structName); \
+AnyType structName##_at;\
 if(structName##_item!=NULL) {\
-     TypeDescriptor structName##_descriptor(false, item->GetClassProperties()->GetUniqueIdentifier());\
-     AnyType structName##_at(structName##_descriptor, 0u, &value);\
+     TypeDescriptor structName##_descriptor(false, structName##_item->GetClassProperties()->GetUniqueIdentifier());\
+     structName##_at=AnyType(structName##_descriptor, 0u, &value);\
 }
 
 /**

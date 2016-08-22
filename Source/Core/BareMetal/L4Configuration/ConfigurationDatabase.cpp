@@ -37,6 +37,7 @@
 #include "ReferenceContainerFilterReferences.h"
 #include "StreamString.h"
 #include "TypeConversion.h"
+#include "Validate.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -104,6 +105,7 @@ bool ConfigurationDatabase::Write(const char8 * const name,
 }
 
 bool ConfigurationDatabase::AdvancedWrite(const char8 * const path,
+                                          const char8 * const attributes,
                                           const AnyType &value) {
 
     //store the current node
@@ -137,7 +139,15 @@ bool ConfigurationDatabase::AdvancedWrite(const char8 * const path,
         ret = node.IsValid();
         if (ret) {
             currentNode = node;
-            ret = Write(valueName.Buffer(), value);
+            if (ret) {
+                ret = Validate(value, attributes);
+            }
+            if (ret) {
+                ret = Write(valueName.Buffer(), value);
+            }
+            if (ret) {
+                ret = InvertAlias(*this, valueName.Buffer(), attributes);
+            }
         }
         if (ret) {
             currentNode = storeCurrent;
@@ -167,17 +177,16 @@ AnyType ConfigurationDatabase::GetType(const char8 * const name) {
     return retType;
 }
 
-
-uint8 ConfigurationDatabase::GetNumberOfDimensions(const char8 * const name){
-    AnyType at= GetType(name);
+uint8 ConfigurationDatabase::GetNumberOfDimensions(const char8 * const name) {
+    AnyType at = GetType(name);
     return at.GetNumberOfDimensions();
 }
 
-uint32 ConfigurationDatabase::GetNumberOfElements(const char8 * const name, uint8 dimension){
-    AnyType at= GetType(name);
+uint32 ConfigurationDatabase::GetNumberOfElements(const char8 * const name,
+                                                  uint8 dimension) {
+    AnyType at = GetType(name);
     return at.GetNumberOfElements(dimension);
 }
-
 
 bool ConfigurationDatabase::Copy(StructuredDataI &destination) {
     ReferenceT<ReferenceContainer> foundNode;
@@ -261,6 +270,7 @@ bool ConfigurationDatabase::Read(const char8 * const name,
 }
 
 bool ConfigurationDatabase::AdvancedRead(const char8 * const path,
+                                         const char8 *attributes,
                                          const AnyType &value) {
 
     //store the current node
@@ -295,7 +305,13 @@ bool ConfigurationDatabase::AdvancedRead(const char8 * const path,
         ret = node.IsValid();
         if (ret) {
             currentNode = node;
-            ret = Read(valueName.Buffer(), value);
+            ret = Alias(*this, valueName.Buffer(), attributes);
+            if (ret) {
+                ret = Read(valueName.Buffer(), value);
+            }
+            if (ret) {
+                ret = Validate(value, attributes);
+            }
         }
         if (ret) {
             currentNode = storeCurrent;
@@ -314,8 +330,8 @@ bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
     bool ok = (resultSingle.Size() > 0u);
     if (ok) {
         //Invalidate move to leafs
-        ReferenceT < ReferenceContainer > container = resultSingle.Get(resultSingle.Size() - 1u);
-        ok=container.IsValid();
+        ReferenceT<ReferenceContainer> container = resultSingle.Get(resultSingle.Size() - 1u);
+        ok = container.IsValid();
         if (ok) {
             currentNode = container;
         }

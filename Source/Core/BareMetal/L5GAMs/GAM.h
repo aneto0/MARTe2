@@ -76,7 +76,7 @@ namespace MARTe {
  *     }
  * }
  */
-class DLL_API GAM:  public ReferenceContainer,public ExecutableI {
+class DLL_API GAM: public ReferenceContainer, public ExecutableI {
 public:
 
     /**
@@ -189,9 +189,9 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalIndex(const SignalDirection direction,
-                        uint32 &signalIdx,
-                        const char8* const signalName);
+    int32 GetSignalIndex(const SignalDirection direction,
+                         uint32 &signalIdx,
+                         const char8* const signalName);
 
     /**
      * @brief Gets the DataSourceI name of the signal with name \a signalIdx.
@@ -216,6 +216,11 @@ public:
      */
     TypeDescriptor GetSignalType(const SignalDirection direction,
                                  const uint32 signalIdx);
+
+    bool GetSignalType(const SignalDirection direction,
+                       const uint32 signalIdx,
+                       StreamString &typeName,
+                       int32 level);
 
     /**
      * @brief Gets the number of dimensions of the signal at position \a signalIdx.
@@ -428,7 +433,6 @@ public:
      */
     virtual bool SetContext(ConstReference context);
 
-
     virtual bool Setup()=0;
 
 protected:
@@ -516,7 +520,7 @@ protected:
      * @return true if the Move is successful.
      */
     bool MoveToSignalIndex(const SignalDirection direction,
-                           const uint32 signalIdx);
+    const uint32 signalIdx);
 
     /**
      * Brokers for signal reading.

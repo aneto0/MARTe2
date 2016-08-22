@@ -108,5 +108,6 @@ bool StringAliasAll::DestinationToSource(const AnyType &destination,
     }
     return ret;
 }
+CLASS_REGISTER(StringAliasAll, "1.0");
 
 }

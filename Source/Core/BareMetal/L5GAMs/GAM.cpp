@@ -294,9 +294,9 @@ bool GAM::GetSignalName(const SignalDirection direction,
     return ret;
 }
 
-bool GAM::GetSignalIndex(const SignalDirection direction,
-                         uint32 &signalIdx,
-                         const char8* const signalName) {
+int32 GAM::GetSignalIndex(const SignalDirection direction,
+                          uint32 &signalIdx,
+                          const char8* const signalName) {
     uint32 numberOfSignals = 0u;
     if (direction == InputSignals) {
         numberOfSignals = GetNumberOfInputSignals();
@@ -304,20 +304,37 @@ bool GAM::GetSignalIndex(const SignalDirection direction,
     else {
         numberOfSignals = GetNumberOfOutputSignals();
     }
-    bool ret = true;
+    bool ok = true;
     bool found = false;
+    int32 ret = 0;
+    uint32 sizeToCompare = StringHelper::Length(signalName);
+    StreamString signalNameStr = signalName;
     uint32 i;
-    for (i = 0u; (i < numberOfSignals) && (ret) && (!found); i++) {
+
+    for (i = 0u; (i < numberOfSignals) && (ok) && (!found); i++) {
         StreamString searchName;
-        ret = GetSignalName(direction, i, searchName);
-        if (ret) {
-            found = (StringHelper::Compare(signalName, searchName.Buffer()) == 0);
+        ok = GetSignalName(direction, i, searchName);
+        if (ok) {
+            found = (StringHelper::CompareN(signalName, searchName.Buffer(), sizeToCompare) == 0);
+            if (found) {
+                found = (searchName[sizeToCompare] == '.') || (searchName[sizeToCompare] == '\0');
+            }
+            if (found) {
+                StreamString signalNameStr = signalName;
+                while (signalNameStr.SkipTokens(1u, ".")) {
+                    ret++;
+                }
+            }
             signalIdx = i;
         }
     }
-    if (ret) {
-        ret = found;
+    if (ok) {
+        ok = found;
     }
+    if (!ok) {
+        ret = -1;
+    }
+
     return ret;
 }
 
@@ -344,6 +361,27 @@ TypeDescriptor GAM::GetSignalType(const SignalDirection direction,
         signalTypeDescriptor = TypeDescriptor::GetTypeDescriptorFromTypeName(signalType.Buffer());
     }
     return signalTypeDescriptor;
+}
+
+bool GAM::GetSignalType(const SignalDirection direction,
+                        const uint32 signalIdx,
+                        StreamString &typeName,
+                        int32 level) {
+    TypeDescriptor signalTypeDescriptor = InvalidType;
+    bool ret = MoveToSignalIndex(direction, signalIdx);
+    StreamString signalType;
+    if (ret) {
+        ret = configuredDatabase.Read("FullType", signalType);
+
+    }
+    if (ret) {
+        StreamString token;
+
+        signalType.SkipTokens(level, ".");
+        char8 terminator;
+        ret = signalType.GetToken(token, ".", terminator);
+    }
+    return ret;
 }
 
 bool GAM::GetSignalNumberOfDimensions(const SignalDirection direction,

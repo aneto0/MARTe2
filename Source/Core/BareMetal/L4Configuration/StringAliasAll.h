@@ -42,6 +42,9 @@
 namespace MARTe {
 class StringAliasAll: public AliasConverterI {
 public:
+    CLASS_REGISTER_DECLARATION();
+
+
     StringAliasAll();
     virtual ~StringAliasAll();
 

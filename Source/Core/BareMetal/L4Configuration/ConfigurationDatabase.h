@@ -69,14 +69,9 @@ public:
      */
     virtual ~ConfigurationDatabase();
 
-<<<<<<< HEAD
     /**
      * @brief Destroys all the entries in the tree.
      */
-=======
-
-    //TODO test and document
->>>>>>> refs/remotes/origin/#44_GAM_Infrastructure
     void CleanUp();
 
     /**
@@ -98,6 +93,7 @@ public:
      * @return true if \a value is correct and \value is read correctly.
      */
     virtual bool AdvancedRead(const char8 * const path,
+                              const char8 *attributes,
                               const AnyType &value);
 
     /**
@@ -128,6 +124,7 @@ public:
      * @return true if \a value is correct and \value is written correctly.
      */
     virtual bool AdvancedWrite(const char8 * const path,
+                               const char8 *attributes,
                                const AnyType &value);
 
     /**
@@ -224,10 +221,9 @@ public:
     void Unlock();
 
     // TODO. Test and Document! adds the possibility to use find, filters ecc ecc
-    operator ReferenceT<ReferenceContainer>(){
+    operator ReferenceT<ReferenceContainer>() {
         return currentNode;
     }
-
 
 private:
 
