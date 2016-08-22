@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "QueuedMessageI.h"
+#include "ErrorType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,33 +42,127 @@
 
 namespace MARTe {
 
-
-ReturnType QueuedMessageI::ReceiveMessage(ReferenceT<Message> &message){
-    ReturnType ret;
-
-
-    return ret;
-}
-
-
-void QueuedMessageI::MessageProcessingThread(){
-
-
-}
-
-
 /**
  *     sets all up and starts the message handler thread
  */
-QueuedMessageI::QueuedMessageI(){
-
-}
-
+QueuedMessageI::QueuedMessageI(){}
 /**
  * TODO
  *     kills the message handler thread
  */
 QueuedMessageI::~QueuedMessageI(){
+
+}
+
+ErrorManagement::ErrorType QueuedMessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,CCString name,int32 position,bool afterQueue){
+    ErrorManagement::ErrorType err;
+    if (afterQueue) {
+        err = queuedMessageFilters.InstallMessageFilter(messageFilter,name,position);
+    } else {
+        err = messageFilters.InstallMessageFilter(messageFilter,name,position);
+    }
+
+    return err;
+}
+
+ErrorManagement::ErrorType QueuedMessageI::RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter){
+    ErrorManagement::ErrorType err;
+
+    err = messageFilters.RemoveMessageFilter(messageFilter);
+
+    if (!err.ErrorsCleared()){
+        err = queuedMessageFilters.RemoveMessageFilter(messageFilter);
+    }
+    return err;
+}
+
+ErrorManagement::ErrorType QueuedMessageI::RemoveMessageFilter(CCString name){
+    ErrorManagement::ErrorType err;
+
+    err = messageFilters.RemoveMessageFilter(name);
+
+    if (!err.ErrorsCleared()){
+        err = queuedMessageFilters.RemoveMessageFilter(name);
+    }
+    return err;
+}
+
+
+
+
+void QueuedMessageI::MessageProcessingThread(){
+    ErrorManagement::ErrorType err;
+    ReferenceT<Message> &message;
+    ReferenceT<QueueingMessageFilter> queue;
+    const TimeoutType timeout = 1000;
+
+    err = messageFilters.FindMessageFilter("QUEUE",queue);
+    err.unsupportedFeature = !queue.IsValid();
+
+    if (err.ErrorsCleared()){
+
+        // loop here
+        while (){
+
+
+
+            err = queue->GetMessage(message,timeout);
+            // timeout is normal
+            err.timeout = false;
+
+            err = queuedMessageFilters.ReceiveMessage(message);
+
+
+        }
+
+
+
+    }
+
+
+    ErrorManagement::ErrorType MessageFilterPool::FindMessageFilter(CCString name,ReferenceT<MessageFilter> messageFilter){
+
+
+
+    err = queuedMessageFilters.ReceiveMessage(message );
+
+
+}
+
+
+
+ErrorManagement::ErrorType QueuedMessageI::Start(){
+    ErrorManagement::ErrorType err;
+
+    ReferenceT<QueueingMessageFilter> queue(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+    err.fatalError = !queue.IsValid();
+
+    if (err.ErrorsCleared()){
+        // installs as last in the filter queue
+        err = InstallMessageFilter(queue,"QUEUE",-1);
+    }
+
+    if (err.ErrorsCleared()){
+
+        // starts thread
+
+    }
+
+    return err;
+
+}
+
+ErrorManagement::ErrorType QueuedMessageI::Stop(){
+    ErrorManagement::ErrorType err;
+
+    if (err.ErrorsCleared()){
+
+        // starts thread
+
+    }
+
+    return err;
 
 }
 

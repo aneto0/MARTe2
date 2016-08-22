@@ -135,7 +135,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message, c
         ReferenceT<MessageI> destinationObject = FindDestination(destination);
 
         if (destinationObject.IsValid()) {
-            ret = destinationObject->ReceiveMessage(message);
+            ret = destinationObject->messageFilters.ReceiveMessage(message);
         }
         else {
             ret.unsupportedFeature = true;
@@ -216,49 +216,18 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilter> &messageFilter,CCString name,int32 position){
+ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,CCString name,int32 position){
 
-    messageFilter->SetName(name);
-
-    ErrorManagement::ErrorType err;
-    err.timeout = messageFilters.Lock();
-
-    if (err.ErrorsCleared()){
-        err.fatalError = messageFilters.Insert(messageFilter,position);
-
-        // UnLock must be done also on error
-        err.fatalError |= messageFilters.UnLock();
-    }
-
-    return err;
+    return messageFilters.InstallMessageFilter(messageFilter,name,position);
 }
 
-ErrorManagement::ErrorType MessageI::RemoveMessageFilter(ReferenceT<MessageFilter> &messageFilter){
-    ErrorManagement::ErrorType err;
-    err.timeout = messageFilters.Lock();
+ErrorManagement::ErrorType MessageI::RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter){
+    return messageFilters.RemoveMessageFilter(messageFilter);
 
-    if (err.ErrorsCleared()){
-        err.fatalError = messageFilters.Delete(messageFilter);
-
-        // UnLock must be done also on error
-        err.fatalError |= messageFilters.UnLock();
-    }
-
-    return err;
 }
 
 ErrorManagement::ErrorType MessageI::RemoveMessageFilter(CCString name){
-    ErrorManagement::ErrorType err;
-    err.timeout = messageFilters.Lock();
-
-    if (err.ErrorsCleared()){
-        err.fatalError = messageFilters.Delete(name);
-
-        // UnLock must be done also on error
-        err.fatalError |= messageFilters.UnLock();
-    }
-
-    return err;
+    return messageFilters.RemoveMessageFilter(name);
 }
 
 
@@ -320,124 +289,6 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitForIndirectReply(Referenc
 }
 
 
-ErrorManagement::ErrorType MessageI::ReceiveMessage(ReferenceT<Message> &message) {
-    bool matched = false;
-    ErrorManagement::ErrorType err;
-    ReferenceT<MessageFilter> messageFilter;
-
-    int i;
-    for (i=0;(i<messageFilters.Size() && !matched);i++){
-        bool locked = messageFilters.Lock();
-
-        if (locked){
-            messageFilter =  messageFilters.Get(i);
-            messageFilters.UnLock();
-        }
-
-        if (messageFilter.IsValid()){
-            err = messageFilter->ProcessMessage(message,this);
-            matched = messageFilter->MessageConsumed(err);
-        }
-    }
-
-    if (matched){
-        if (!messageFilter->IsPermanentFilter()){
-            bool locked = messageFilters.Lock();
-
-            if (locked){
-                messageFilters.Delete(messageFilter);
-
-                messageFilters.UnLock();
-            }
-        }
-    } else {
-        err.unsupportedFeature = true;
-    }
-
-    return err;
-}
-
-#if 0
-
-/**
- * TODO
- * Default message sorting mechanism
- * By default checks if there are usable registered methods
- * Otherwise calls HandleMessage
- * */
-ErrorManagement::ErrorType MessageI::SortMessage(ReferenceT<Message> &message) {
-
-    ErrorManagement::ErrorType ret;
-
-    /*
-     * TODO: Verify all the error conditions at the beginning:
-     * !message.IsValid() => error
-     * thisAsObject == NULL_PTR(Object *) => error
-     */
-
-    Object *thisAsObject = dynamic_cast<Object *>(this);
-
-    // why? The Send already controls this-
-    if (!message.IsValid()) {
-        ret.parametersError = true;
-        // TODO produce error message
-    }
-
-    //if this is an Object derived class then we can look for a registered method to call
-
-    // why? If the Send finds in the ORD, it returns a Reference which points always to an Object, then there is
-    // no need of this check
-    if (thisAsObject == NULL_PTR(Object *)) {
-        ret.parametersError = true;
-        // TODO produce error message
-    }
-
-    if (ret.ErrorsCleared()) {
-        CCString function = message->GetFunction();
-        if (message->IsReplyMessage()) {
-            function = "HandleReply";
-        }
-
-        /*lint -e{613} .NULL check has been done before entering here*/
-        ret = thisAsObject->CallRegisteredMethod(function, *(message.operator->()));
-        bool isReplyExpected=message->ReplyExpected();
-        // automatically mark the message as reply
-        if (ret && isReplyExpected) {
-            message->MarkAsReply();
-        }
-
-    }
-
-    // check if errors are only of function mismatch
-    if (!ret.ErrorsCleared()) {
-        ErrorManagement::ErrorType saveRet = ret;
-        // try resetting the "good" errors
-        ret.unsupportedFeature = false;
-        ret.parametersError = false;
-        if (ret.ErrorsCleared()) {
-            ret = HandleMessage(message);
-        }
-        else {
-            ret = saveRet;
-        }
-    }
-
-    // shall we send a reply?
-    bool isLateReplyExpected=(message->LateReplyExpected());
-    bool isReply=(message->IsReplyMessage());
-    if ((ret.ErrorsCleared()) && (isLateReplyExpected) && (isReply)) {
-        ret = MessageI::SendMessage(message);
-    }
-
-    return ret;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Default implementation does not concern about input parameters */
-ErrorManagement::ErrorType MessageI::HandleMessage(ReferenceT<Message> &message) {
-    return ErrorManagement::unsupportedFeature;
-}
-
-#endif
 
 }
 

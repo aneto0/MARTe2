@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Message.h"
+#include "MessageFilterPool.h"
 #include "TimeoutType.h"
 #include "ReferenceT.h"
 #include "ErrorType.h"
@@ -115,14 +116,15 @@ public:
                                                               const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec=1000);
 
     /**
+     * @brief installs a message filter in a given position
      * TODO
      */
-    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> &messageFilter,CCString name="",int32 position=0);
+    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,CCString name="",int32 position=0);
 
     /**
      * TODO
      */
-    ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> &messageFilter);
+    ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter);
 
     /**
      * TODO
@@ -138,18 +140,6 @@ public:
     ErrorManagement::ErrorType SendMessageAndWaitForIndirectReply(ReferenceT<Message> &message,const TimeoutType &maxWait = TTInfiniteWait,
                                                                   const uint32 pollingTimeUsec=1000);
 
-protected:
-
-    /**
-     * @brief Default message handling mechanism.
-     * @details Handles the reception of a message and by default simply calls SortMessage(). Can be overridden to implement message Queues etc...
-     * @param[in,out] message is the received to be received.
-     * @return
-     *   ErrorManagement::noError if the function specified in \a message is called correctly and returns true.
-     *   ErrorManagement::unsupportedFeature if something goes wrong trying to call the registered function.
-     *
-     */
-    virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
 
 
 private:
@@ -165,7 +155,7 @@ private:
      * used by SortMessage
      *
      * */
-    ReferenceContainer messageFilters;
+    MessageFilterPool messageFilters;
 
 
 };

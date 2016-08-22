@@ -1,7 +1,7 @@
 /**
- * @file QueuedMessageI.h
- * @brief Header file for class QueuedMessageI
- * @date Apr 22, 2016
+ * @file MessageFilterPool.h
+ * @brief Header file for class MessageFilterPool
+ * @date Aug 22, 2016
  * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class QueuedMessageI
+ * @details This header file contains the declaration of the class MessageFilterPool
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef QUEUEDMESSAGEI_H_
-#define QUEUEDMESSAGEI_H_
+#ifndef L4MESSAGES_MESSAGEFILTERPOOL_H_
+#define L4MESSAGES_MESSAGEFILTERPOOL_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,89 +32,48 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "MessageI.h"
 #include "ReferenceContainer.h"
+#include "MessageFilter.h"
 
+namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+class MessageFilterPool: public ReferenceContainer {
 
-/**
- * TODO
- * */
-class QueuedMessageI: public MessageI{
 public:
 
     /**
-       * TODO
-       * the main job is to add messages to the message Q
-       * first checks for any message filter. If message matches then adds message to filter, removes and trigger the filter
-       * if no filter adds to main Q
-      * */
-//    virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
+     * @brief Default message handling mechanism.
+     * @details Handles the reception of a message and by default simply calls SortMessage(). Can be overridden to implement message Queues etc...
+     * @param[in,out] message is the received to be received.
+     * @return
+     *   ErrorManagement::noError if the function specified in \a message is called correctly and returns true.
+     *   ErrorManagement::unsupportedFeature if something goes wrong trying to call the registered function.
+     */
+    ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
+
+    /**
+     * @brief installs a message filter in a given position
+     * TODO
+     */
+    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,CCString name="",int32 position=0);
 
     /**
      * TODO
-     * called by the main thread to sort messages taken from Q
-     *
-     * */
-//    virtual ErrorManagement::ErrorType SortMessage(ReferenceT<Message> &message);
-
-
-    /**
-     *     sets all up and starts the message handler thread
      */
-    QueuedMessageI();
+    ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter);
 
     /**
      * TODO
-     *     kills the message handler thread
      */
-   virtual ~QueuedMessageI();
+    ErrorManagement::ErrorType RemoveMessageFilter(CCString name);
 
-   /**
-    * TODO
-    *     installs message queue
-    *     starts the thread
-    */
-   ErrorManagement::ErrorType Start();
-   /**
-    * TODO
-    *     installs message queue
-    *     starts the thread
-    */
-   ErrorManagement::ErrorType Stop();
-
-   /**
-    * @brief installs a message filter in a given position
-    * TODO
-    */
-   ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,CCString name="",int32 position=0,bool afterQueue=true);
-
-   /**
-    * TODO
-    */
-   ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter);
-
-   /**
-    * TODO
-    */
-   ErrorManagement::ErrorType RemoveMessageFilter(CCString name);
-
-
-private:
-
-   void MessageProcessingThread();
-
-   /**
-    * TODO
-    * The message consuming filters
-    * used by SortMessage
-    *
-    * */
-   MessageFilterPool queuedMessageFilters;
+    /**
+     * TODO
+     */
+    ErrorManagement::ErrorType FindMessageFilter(CCString name,ReferenceT<MessageFilter> messageFilter);
 
 };
 
@@ -125,5 +84,5 @@ private:
 
 
 }
-#endif /* QUEUEDMESSAGEI_H_ */
+#endif /* L4MESSAGES_MESSAGEFILTERPOOL_H_ */
 	

@@ -75,7 +75,7 @@ public:
      * Single test of a message.
      * Also try consuming (uses and does not delete it) the message if matched
     */
-    virtual ErrorManagement::ErrorType ProcessMessage(ReferenceT<Message> &messageToTest,MessageI *receiver)= 0;
+    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest)= 0;
 
     /**
      * TODO

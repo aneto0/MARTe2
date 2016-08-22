@@ -62,7 +62,6 @@ void SetMessageToCatch(const ReferenceT<Message> &message){
     originalMessage = message;
 }
 
-
 /**
  * TODO
  * Initialises basic search filter

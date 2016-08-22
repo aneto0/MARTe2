@@ -42,9 +42,14 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 
-ReplyMessageCatcherMessageFilter::ReplyMessageCatcherMessageFilter(const ReferenceT<Message> &message ):MessageFilter(false){
-    originalMessage = message;
+ReplyMessageCatcherMessageFilter::ReplyMessageCatcherMessageFilter(){
     caught = false;
+}
+
+
+
+void ReplyMessageCatcherMessageFilter::SetMessageToCatch(const ReferenceT<Message> &message ):MessageFilter(false){
+    originalMessage = message;
 }
 
 ReplyMessageCatcherMessageFilter::~ReplyMessageCatcherMessageFilter(){
