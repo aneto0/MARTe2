@@ -33,8 +33,10 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ErrorType.h"
+#include "Threads.h"
 
 namespace MARTe{
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -56,14 +58,19 @@ enum EmbeddedThreadObjectStates {
     Off,
 
     /**
-     * (threadId != 0) && TODO
-     */
-    Running,
-
-    /**
      *TODO
      */
     Starting,
+
+    /**
+     * TODO
+     */
+    TimeoutStarting,
+
+    /**
+     * (threadId != 0) && TODO
+     */
+    Running,
 
     /**
      * TODO
@@ -73,12 +80,17 @@ enum EmbeddedThreadObjectStates {
     /**
      * TODO
      */
-    TimeoutStarting,
+    TimeoutStopping,
 
     /**
      * TODO
      */
-    TimeoutStopping
+    Killing,
+    /**
+     * TODO
+     */
+    TimeoutKilling
+
 };
 
 /**
@@ -96,17 +108,24 @@ enum EmbeddedThreadObjectCommands {
     KeepRunning,
 
     /**
-     * (threadId != 0) && TODO
+     * nice request to stop
      */
-    Stop
+    Stop,
+
+    /**
+     * Stop called twice - performing async killing
+     */
+    Kill
 
 };
 
 /**
  * TODO
+ * a container for a thread
  */
 class EmbeddedThreadObject {
 
+public:
     /**
      * TODO
      */
@@ -117,7 +136,11 @@ class EmbeddedThreadObject {
      */
     virtual ~EmbeddedThreadObject();
 
-public:
+    /**
+    * TODO
+    * same as object interface
+    */
+    virtual bool Initialise(StructuredDataI &data);
 
     /**
      * TODO
@@ -158,7 +181,13 @@ protected:
      */
     virtual ErrorManagement::ErrorType Loop()=0;
 
+
 private:
+    /**
+     * TODO
+     */
+    void ThreadStartUp();
+
 
     /**
      * TODO
@@ -198,6 +227,8 @@ private:
 EmbeddedThreadObject::EmbeddedThreadObject(){
     threadId = (ThreadIdentifier)0;
     commands = Stop;
+    maxCommandCompletionHRT = 0;
+    timeoutHRT = -1;
 }
 
 /**
@@ -208,18 +239,22 @@ virtual EmbeddedThreadObject::~EmbeddedThreadObject(){
 
 }
 
+virtual bool Initialise(StructuredDataI &data){
+	return false;
+}
+
+
 EmbeddedThreadObjectStates EmbeddedThreadObject::GetStatus(){
     EmbeddedThreadObjectStates  etos = None;
 
-    if (ThreadIdentifier == 0) {
+    if (threadId == 0) {
                 etos = Off;
     }
 
     if (etos == None){
         if (commands == KeepRunning)  {
                 etos = Running;
-        }
-        if (commands == Start) {
+        } else if (commands == Start) {
             int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
             if ((deltaT > 0) && (timeoutHRT != -1)) {
                 etos = TimeoutStarting;
@@ -227,8 +262,7 @@ EmbeddedThreadObjectStates EmbeddedThreadObject::GetStatus(){
             else            {
                 etos = Starting;
             }
-        }
-        if (commands == Stop) {
+        } else if (commands == Stop) {
             int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
             if ((deltaT > 0) && (timeoutHRT != -1)) {
                 etos = TimeoutStopping;
@@ -236,12 +270,43 @@ EmbeddedThreadObjectStates EmbeddedThreadObject::GetStatus(){
             else            {
                 etos = Stopping;
             }
+        } else if (commands == Kill){
+        	if (Threads::IsAlive(threadId)){
+                int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
+                if ((deltaT > 0) && (timeoutHRT != -1)) {
+                    etos = TimeoutKilling;
+                }
+                else {
+                    etos = Killing;
+                }
+
+        	} else {
+        		etos = Off;
+        		threadId = 0;
+        	}
         }
     }
     return etos;
 }
 
-static void  EmbeddedThreadObjectThreadLauncher(const void * const parameters){}
+static void  EmbeddedThreadObjectThreadLauncher(const void * const parameters){
+	EmbeddedThreadObject *thread;
+	// get object
+
+	// call
+	thread->ThreadStartUp();
+}
+
+void EmbeddedThreadObject::ThreadStartUp(){
+	commands = KeepRunning;
+
+    ErrorManagement::ErrorType err;
+
+    while (err.ErrorsCleared() && (commands == KeepRunning)){
+    	err = Loop();
+    }
+
+}
 
 
 ErrorManagement::ErrorType EmbeddedThreadObject::Start(){
@@ -265,18 +330,45 @@ ErrorManagement::ErrorType EmbeddedThreadObject::Start(){
 
 /**
  * TODO
+ * First time attempt gentle Stop
+ * Second time called Kills thread
  */
 ErrorManagement::ErrorType EmbeddedThreadObject::Stop(){
     ErrorManagement::ErrorType err;
+    EmbeddedThreadObjectStates status = GetStatus();
 
     //check if thread already running
-    if (GetStatus() != Running ){
-        err.illegalOperation = true;
+    if (status == Off ){
+
+    } else if (status == Running ) {
+        commands = Stop;
+        maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
+
+        while(GetStatus() == Stopping){
+        	Sleep::MSec(1);
+        }
+
+        err.timeout = (GetStatus() != Off);
+
+    } else if ((status == TimeoutStopping) || (status == Stopping)){
+        commands = Kill;
+
+        maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
+        err.fatalError = Threads::Kill(threadId);
+
+        if (err.ErrorsCleared()){
+
+            while(GetStatus() == Killing){
+            	Sleep::MSec(1);
+            }
+
+        }
+
+        err.timeout = (GetStatus() != Off);
+
+    } else  {
+    	err.illegalOperation = true;
     }
-
-
-    TODO
-
 
     return err;
 }
