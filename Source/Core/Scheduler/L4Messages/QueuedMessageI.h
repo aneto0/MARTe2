@@ -34,6 +34,7 @@
 
 #include "MessageI.h"
 #include "ReferenceContainer.h"
+#include "EmbeddedThread.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -106,7 +107,10 @@ public:
 
 private:
 
-   void MessageProcessingThread();
+   /**
+    * TODO
+    * */
+   ErrorManagement::ErrorType QueueProcessing();
 
    /**
     * TODO
@@ -115,6 +119,19 @@ private:
     *
     * */
    MessageFilterPool queuedMessageFilters;
+
+   /**
+    * TODO
+    * */
+   ReferenceT<QueueingMessageFilter> queue;
+
+   /**
+    * TODO
+    * The message consuming filters
+    * used by SortMessage
+    *
+    * */
+   EmbeddedThreadMethodCaller    queueProcessingThread;
 
 };
 

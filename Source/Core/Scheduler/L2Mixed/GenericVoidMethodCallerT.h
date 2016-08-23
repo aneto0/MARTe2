@@ -1,7 +1,7 @@
 /**
- * @file MessageFilter.h
- * @brief Header file for class MessageFilter
- * @date Aug 17, 2016
+ * @file GenericVoidMethodCallerT.h
+ * @brief Header file for class GenericVoidMethodCallerT
+ * @date Aug 23, 2016
  * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MessageFilter
+ * @details This header file contains the declaration of the class GenericVoidMethodCallerT
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MESSAGEFILTER_H_
-#define L4MESSAGES_MESSAGEFILTER_H_
+#ifndef L2MIXED_GENERICVOIDMETHODCALLERT_H_
+#define L2MIXED_GENERICVOIDMETHODCALLERT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,10 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Object.h"
-#include "CString.h"
-#include "Message.h"
-#include "StringHelper.h"
+
+#include "GenericVoidMethodCallerI.h"
 
 namespace MARTe {
 
@@ -43,68 +41,73 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief class to implement a filter on Messages.
+ * TODO
  */
-class MessageFilter: public Object{
+template <typename className>
+class GenericVoidMethodCallerT: public GenericVoidMethodCallerI{
+
 public:
-    CLASS_REGISTER_DECLARATION()
 
     /**
-     * TODO
-     * Initialises basic search filter
-     *
+     * @brief Type definition for the method pointer prototype
      */
-    inline MessageFilter(bool isPermanentFilter);
-
-    /**
-     * TODO
-     * Initialises basic search filter
-     *
-     */
-    virtual ~MessageFilter();
+    typedef bool (className::*MethodPointer)(void);
 
     /**
      * TODO
      */
-    inline bool IsPermanentFilter(){
-        return permanentFilter;
+    GenericVoidMethodCallerT(className &o, MethodPointer f);
+
+    /**
+     * TODO
+     */
+    virtual ~GenericVoidMethodCallerT();
+
+    /**
+     * TODO
+     */
+    virtual ErrorManagement::ErrorType Call(){
+        return object.function();
     }
-
-    /**
-     * TODO
-     * Single test of a message.
-     * Also try consuming (uses and does not delete it) the message if matched
-    */
-    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest)= 0;
-
-    /**
-     * TODO
-     * Was the message consumed?
-    */
-    inline bool MessageConsumed(ErrorManagement::ErrorType ret);
 
 private:
 
     /**
-     * True if it remains active after a successful match
+     * TODO
      */
-    bool permanentFilter;
+    className &object;
 
+    /**
+     * TODO
+     */
+    MethodPointer function;
 };
+
+
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+template <typename className>
+GenericVoidMethodCallerT<className>::GenericVoidMethodCallerT (className &o, MethodPointer f):object(o),function(f){
+}
 
+/**
+ * TODO
+ */
+template <typename className>
+virtual GenericVoidMethodCallerT<className>::~GenericVoidMethodCallerT(){
+}
 
-inline bool MessageFilter::MessageConsumed(ErrorManagement::ErrorType ret){
-    return !ret.unsupportedFeature && !ret.parametersError;
+template <typename className>
+virtual ErrorManagement::ErrorType GenericVoidMethodCallerT<className>::Call(){
+    return object.function();
 }
 
 
-} // namespace
 
+}
 
-#endif /* L4MESSAGES_MESSAGEFILTER_H_ */
+#endif /* L2MIXED_GENERICVOIDMETHODCALLERT_H_ */
 	

@@ -1,7 +1,7 @@
 /**
- * @file MessageFilter.h
- * @brief Header file for class MessageFilter
- * @date Aug 17, 2016
+ * @file EmbeddedThreadMethodCaller.h
+ * @brief Header file for class EmbeddedThreadMethodCaller
+ * @date Aug 23, 2016
  * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MessageFilter
+ * @details This header file contains the declaration of the class EmbeddedThreadMethodCaller
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MESSAGEFILTER_H_
-#define L4MESSAGES_MESSAGEFILTER_H_
+#ifndef L2MIXED_EMBEDDEDTHREADMETHODCALLER_H_
+#define L2MIXED_EMBEDDEDTHREADMETHODCALLER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,10 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Object.h"
-#include "CString.h"
-#include "Message.h"
-#include "StringHelper.h"
+
+#include "EmbeddedThread.h"
+#include "GenericVoidMethodCallerI.h"
 
 namespace MARTe {
 
@@ -43,68 +42,64 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief class to implement a filter on Messages.
+     * TODO
  */
-class MessageFilter: public Object{
+class EmbeddedThreadMethodCaller: public EmbeddedThread{
 public:
-    CLASS_REGISTER_DECLARATION()
-
     /**
      * TODO
-     * Initialises basic search filter
-     *
+     * callerTool is deleted (memory freed) when this object is destroyed
      */
-    inline MessageFilter(bool isPermanentFilter);
-
+    EmbeddedThreadMethodCaller(GenericVoidMethodCallerI *callerTool);
     /**
      * TODO
-     * Initialises basic search filter
-     *
      */
-    virtual ~MessageFilter();
+    virtual ~EmbeddedThreadMethodCaller();
+protected:
 
     /**
      * TODO
      */
-    inline bool IsPermanentFilter(){
-        return permanentFilter;
-    }
+    virtual ErrorManagement::ErrorType Loop();
 
     /**
      * TODO
-     * Single test of a message.
-     * Also try consuming (uses and does not delete it) the message if matched
-    */
-    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest)= 0;
-
-    /**
-     * TODO
-     * Was the message consumed?
-    */
-    inline bool MessageConsumed(ErrorManagement::ErrorType ret);
-
-private:
-
-    /**
-     * True if it remains active after a successful match
      */
-    bool permanentFilter;
-
+    GenericVoidMethodCallerI *caller;
 };
+
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+EmbeddedThreadMethodCaller::EmbeddedThreadMethodCaller(GenericVoidMethodCallerI *callerTool){
+    caller = callerTool;
+}
 
-inline bool MessageFilter::MessageConsumed(ErrorManagement::ErrorType ret){
-    return !ret.unsupportedFeature && !ret.parametersError;
+/**
+ * TODO
+ */
+virtual EmbeddedThreadMethodCaller::~EmbeddedThreadMethodCaller(){
+    if (caller != static_cast<GenericVoidMethodCallerI *>(NULL)){
+        delete caller;
+    }
 }
 
 
-} // namespace
+virtual ErrorManagement::ErrorType EmbeddedThreadMethodCaller::Loop(){
+    ErrorManagement::ErrorType ret;
+    if (caller == static_cast<GenericVoidMethodCallerI *>(NULL)){
+        ret.fatalError = true;
+    } else {
+        ret = caller->Call();
+    }
+
+    return ret;
+}
 
 
-#endif /* L4MESSAGES_MESSAGEFILTER_H_ */
+}
+#endif /* L2MIXED_EMBEDDEDTHREADMETHODCALLER_H_ */
 	
