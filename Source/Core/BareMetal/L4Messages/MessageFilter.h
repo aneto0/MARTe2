@@ -35,6 +35,7 @@
 #include "CString.h"
 #include "Message.h"
 #include "StringHelper.h"
+#include "ReferenceT.h"
 
 namespace MARTe {
 
@@ -100,6 +101,10 @@ private:
 
 inline bool MessageFilter::MessageConsumed(ErrorManagement::ErrorType ret){
     return !ret.unsupportedFeature && !ret.parametersError;
+}
+
+MessageFilter::MessageFilter(bool isPermanentFilter){
+    permanentFilter = isPermanentFilter;
 }
 
 

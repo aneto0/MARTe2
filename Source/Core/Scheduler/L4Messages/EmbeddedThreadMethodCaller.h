@@ -81,14 +81,14 @@ EmbeddedThreadMethodCaller::EmbeddedThreadMethodCaller(GenericVoidMethodCallerI 
 /**
  * TODO
  */
-virtual EmbeddedThreadMethodCaller::~EmbeddedThreadMethodCaller(){
+EmbeddedThreadMethodCaller::~EmbeddedThreadMethodCaller(){
     if (caller != static_cast<GenericVoidMethodCallerI *>(NULL)){
         delete caller;
     }
 }
 
 
-virtual ErrorManagement::ErrorType EmbeddedThreadMethodCaller::Loop(){
+ErrorManagement::ErrorType EmbeddedThreadMethodCaller::Loop(){
     ErrorManagement::ErrorType ret;
     if (caller == static_cast<GenericVoidMethodCallerI *>(NULL)){
         ret.fatalError = true;

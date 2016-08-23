@@ -41,12 +41,6 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-/**
- * TODO
-   */
-MessageFilter::MessageFilter(bool isPermanentFilter):ReferenceContainerFilter(-1,ReferenceContainerFilterMode::REMOVE){
-    permanentFilter = isPermanentFilter;
-}
 
 /**
  * TODO

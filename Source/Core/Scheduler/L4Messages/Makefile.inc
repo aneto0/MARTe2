@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX=	QueuedMessageI.x
+OBJSX=	QueuedMessageI.x EmbeddedThread.x QueueingMessageFilter.x
         
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..
@@ -32,11 +32,14 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I.
-INCLUDES += -I../L0Types
-INCLUDES += -I../L1Portability
-INCLUDES += -I../L2Objects
-INCLUDES += -I../L3Streams
-
+INCLUDES += -I../../BareMetal/L0Types
+INCLUDES += -I../../BareMetal/L1Portability
+INCLUDES += -I../../BareMetal/L2Objects
+INCLUDES += -I../../BareMetal/L3Streams
+INCLUDES += -I../../BareMetal/L4Configuration
+INCLUDES += -I../../BareMetal/L4Messages
+INCLUDES += -I../../BareMetal/L5GAMs
+INCLUDES += -I../../Scheduler/L1Portability
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L4MessagesB$(LIBEXT) \
 	        $(BUILD_DIR)/L4MessagesB.def

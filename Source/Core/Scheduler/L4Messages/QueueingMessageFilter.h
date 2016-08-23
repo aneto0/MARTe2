@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MessageFilter.h"
+#include "EventSem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -61,7 +62,7 @@ public:
      * TODO
      * Simply consumes all messages and puts them in a Q
     */
-    virtual ErrorManagement::ErrorType ProcessMessage(ReferenceT<Message> &messageToTest,MessageI *receiver);
+    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 
     /**
      * TODO

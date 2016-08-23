@@ -58,9 +58,7 @@ ReplyMessageCatcherMessageFilter();
 /**
  * TODO
  */
-void SetMessageToCatch(const ReferenceT<Message> &message){
-    originalMessage = message;
-}
+void SetMessageToCatch(const ReferenceT<Message> &message);
 
 /**
  * TODO
@@ -69,13 +67,20 @@ void SetMessageToCatch(const ReferenceT<Message> &message){
  */
 virtual ~ReplyMessageCatcherMessageFilter();
 
+/**
+ * TODO
+ * to be overridden to implement different synchronisation mechanism
+ * Wait for caught
+ */
+virtual ErrorManagement::ErrorType Wait(const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec=1000);
+
 protected:
 
     /**
      * TODO
      * on every match will also consume the message and handles both reply mechanisms
     */
-    virtual ErrorManagement::ErrorType ProcessMessage(ReferenceT<Message> &messageToTest,MessageI *receiver);
+    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 
     /**
      * TODO
@@ -84,13 +89,6 @@ protected:
     virtual void HandleReplyMessage(ReferenceT<Message> &replyMessage){
         caught = true;
     }
-
-    /**
-     * TODO
-     * to be overridden to implement different synchronisation mechanism
-     * Wait for caught
-     */
-    virtual ErrorManagement::ErrorType Wait(const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec=1000);
 
     /*
      * TODO
@@ -109,7 +107,7 @@ private:
     /**
      * TODO
      */
-    const ReferenceT<Message> &originalMessage ;
+    ReferenceT<Message> originalMessage ;
 
 };
 

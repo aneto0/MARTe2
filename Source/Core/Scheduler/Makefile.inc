@@ -24,7 +24,7 @@
 #
 #############################################################
 OBJSX= 
-SPB    = L1Portability.x L4Messages L5GAMs.x
+SPB    = L1Portability.x L4Messages.x L5GAMs.x
 PACKAGE=Core
 MAKEDEFAULTDIR=../../../MakeDefaults
 

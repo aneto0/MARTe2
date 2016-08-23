@@ -51,7 +51,7 @@ public:
     /**
      * @brief Type definition for the method pointer prototype
      */
-    typedef bool (className::*MethodPointer)(void);
+    typedef ErrorManagement::ErrorType  (className::*MethodPointer)(void);
 
     /**
      * TODO
@@ -66,9 +66,7 @@ public:
     /**
      * TODO
      */
-    virtual ErrorManagement::ErrorType Call(){
-        return object.function();
-    }
+    virtual ErrorManagement::ErrorType Call();
 
 private:
 
@@ -97,12 +95,12 @@ GenericVoidMethodCallerT<className>::GenericVoidMethodCallerT (className &o, Met
  * TODO
  */
 template <typename className>
-virtual GenericVoidMethodCallerT<className>::~GenericVoidMethodCallerT(){
+GenericVoidMethodCallerT<className>::~GenericVoidMethodCallerT(){
 }
 
 template <typename className>
-virtual ErrorManagement::ErrorType GenericVoidMethodCallerT<className>::Call(){
-    return object.function();
+ErrorManagement::ErrorType GenericVoidMethodCallerT<className>::Call(){
+    return (object.*function)();
 }
 
 

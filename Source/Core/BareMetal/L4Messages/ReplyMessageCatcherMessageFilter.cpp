@@ -42,13 +42,12 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 
-ReplyMessageCatcherMessageFilter::ReplyMessageCatcherMessageFilter(){
+ReplyMessageCatcherMessageFilter::ReplyMessageCatcherMessageFilter():MessageFilter(false){
     caught = false;
 }
 
 
-
-void ReplyMessageCatcherMessageFilter::SetMessageToCatch(const ReferenceT<Message> &message ):MessageFilter(false){
+void ReplyMessageCatcherMessageFilter::SetMessageToCatch(const ReferenceT<Message> &message ){
     originalMessage = message;
 }
 
@@ -56,11 +55,9 @@ ReplyMessageCatcherMessageFilter::~ReplyMessageCatcherMessageFilter(){
 }
 
 
-
-ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::ProcessMessage(ReferenceT<Message> &messageToTest,MessageI *receiver){
+ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest){
 
     ErrorManagement::ErrorType ret(true);
-
 
     if (messageToTest == originalMessage){
 

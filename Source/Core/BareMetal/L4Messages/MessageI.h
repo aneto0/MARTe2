@@ -140,10 +140,7 @@ public:
     ErrorManagement::ErrorType SendMessageAndWaitForIndirectReply(ReferenceT<Message> &message,const TimeoutType &maxWait = TTInfiniteWait,
                                                                   const uint32 pollingTimeUsec=1000);
 
-
-
-private:
-    /**
+protected:    /**
      * TODO
      *
      * */

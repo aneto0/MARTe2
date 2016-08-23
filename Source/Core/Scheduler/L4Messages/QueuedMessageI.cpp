@@ -31,7 +31,8 @@
 
 #include "QueuedMessageI.h"
 #include "ErrorType.h"
-
+#include "EmbeddedThreadMethodCaller.h"
+#include "GenericVoidMethodCallerT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -42,21 +43,6 @@
 
 namespace MARTe {
 
-/**
- *     sets all up and starts the message handler thread
- */
-QueuedMessageI::QueuedMessageI():queue(GlobalObjectsDatabase::Instance()->GetStandardHeap(),queueProcessingThread(new GenericVoidMethodCallerT<QueuedMessageI> (this, QueueProcessing))){
-    ErrorManagement::ErrorType err;
-
-    err.fatalError = !queue.IsValid();
-
-    if (err.ErrorsCleared()){
-        // installs as last in the filter queue
-        err = MessageI::InstallMessageFilter(queue,"QUEUE",-1);
-    }
-
-
-}
 
 
 /**
@@ -66,6 +52,26 @@ QueuedMessageI::QueuedMessageI():queue(GlobalObjectsDatabase::Instance()->GetSta
 QueuedMessageI::~QueuedMessageI(){
 
 }
+
+
+
+/**
+ *     sets all up and starts the message handler thread
+ */
+QueuedMessageI::QueuedMessageI():
+        queue(GlobalObjectsDatabase::Instance()->GetStandardHeap()),
+        queueProcessingThread(new GenericVoidMethodCallerT<QueuedMessageI> (*this, &QueuedMessageI::QueueProcessing)){
+    ErrorManagement::ErrorType err;
+
+    err.fatalError = !queue.IsValid();
+
+    if (err.ErrorsCleared()){
+        // installs as last in the filter queue
+        err = MessageI::InstallMessageFilter(queue,"QUEUE",-1);
+    }
+}
+
+
 
 ErrorManagement::ErrorType QueuedMessageI::Start(){
     ErrorManagement::ErrorType err;
@@ -99,7 +105,7 @@ ErrorManagement::ErrorType QueuedMessageI::Stop(){
 
 ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(){
     ErrorManagement::ErrorType err;
-    ReferenceT<Message> &message;
+    ReferenceT<Message> message;
     const TimeoutType timeout = 1000;
 
     err.unsupportedFeature = !queue.IsValid();

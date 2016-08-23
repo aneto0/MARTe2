@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX=	MessageI.x Message.x
+OBJSX=	MessageI.x Message.x MessageFilter.x MessageFilterPool.x RegisteredMethodsMessageFilter.x ReplyMessageCatcherMessageFilter.x
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

@@ -76,7 +76,7 @@ bool Message::ExpectsIndirectReply() const {
     return flags.expectsIndirectReply;
 }
 
-bool Message::IsReplyMessage() const {
+bool Message::IsReply() const {
     return flags.isReply;
 }
 
@@ -121,7 +121,7 @@ bool Message::Initialise(StructuredDataI &data) {
 
 Message::MessageFlags::MessageFlags() {
     expectsReply = false;
-    expectsImmediateReply = false;
+    expectsIndirectReply = false;
     isReply = false;
 }
 

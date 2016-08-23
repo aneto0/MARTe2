@@ -51,7 +51,7 @@ virtual QueueingMessageFilter::~QueueingMessageFilter(){
 
 }
 
-virtual ErrorManagement::ErrorType QueueingMessageFilter::ProcessMessage(ReferenceT<Message> &messageToTest,MessageI *receiver){
+virtual ErrorManagement::ErrorType QueueingMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest){
     ErrorManagement::ErrorType err;
     err.timeout = messageQ.Lock();
     if (err.ErrorsCleared()){

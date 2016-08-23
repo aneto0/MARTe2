@@ -282,7 +282,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitForIndirectReply(Referenc
         }
 
         // try remove the message filter in any case whatever happened ..
-        ret = ret | RemoveMessageFilter(messageCatcher);
+        ret = (int)ret | (int)RemoveMessageFilter(messageCatcher);
 
     }
     return ret;

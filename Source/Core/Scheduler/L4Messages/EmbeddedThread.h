@@ -34,6 +34,7 @@
 
 #include "ErrorType.h"
 #include "Threads.h"
+#include "StructuredDataI.h"
 
 namespace MARTe{
 

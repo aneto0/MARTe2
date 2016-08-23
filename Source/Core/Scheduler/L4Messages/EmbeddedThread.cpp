@@ -40,21 +40,6 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-void EmbeddedThread::SetTimeout(TimeoutType msecTimeout){
-    if (msecTimeout == TTInfiniteWait) {
-        timeoutHRT = -1;
-    } else {
-        uint64 tt64 = msecTimeout.HighResolutionTimerTicks();
-        if (tt64 < 0x7FFFFFFF){
-            timeoutHRT = tt64;
-        } else {
-            timeoutHRT = 0x7FFFFFFF;
-        }
-    }
-}
-
-
-
 
 /**
  * TODO
@@ -71,8 +56,8 @@ EmbeddedThread::EmbeddedThread(){
  */
 virtual EmbeddedThread::~EmbeddedThread(){
     Stop();
-
 }
+
 
 virtual bool EmbeddedThread::Initialise(StructuredDataI &data){
     uint32  msecTimeout;
@@ -85,10 +70,21 @@ virtual bool EmbeddedThread::Initialise(StructuredDataI &data){
         SetTimeout(msecTimeout);
     }
 
-
     return false;
 }
 
+void EmbeddedThread::SetTimeout(TimeoutType msecTimeout){
+    if (msecTimeout == TTInfiniteWait) {
+        timeoutHRT = -1;
+    } else {
+        uint64 tt64 = msecTimeout.HighResolutionTimerTicks();
+        if (tt64 < 0x7FFFFFFF){
+            timeoutHRT = tt64;
+        } else {
+            timeoutHRT = 0x7FFFFFFF;
+        }
+    }
+}
 
 
 EmbeddedThreadStates EmbeddedThread::GetStatus(){

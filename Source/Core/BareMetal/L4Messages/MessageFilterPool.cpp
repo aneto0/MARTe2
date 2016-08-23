@@ -53,7 +53,7 @@ ErrorManagement::ErrorType MessageFilterPool::InstallMessageFilter(ReferenceT<Me
         err.fatalError = Insert(messageFilter,position);
 
         // UnLock must be done also on error
-        err.fatalError |= UnLock();
+        UnLock();
     }
 
     return err;
@@ -67,7 +67,7 @@ ErrorManagement::ErrorType MessageFilterPool::RemoveMessageFilter(ReferenceT<Mes
         err.fatalError = Delete(messageFilter);
 
         // UnLock must be done also on error
-        err.fatalError |= UnLock();
+        UnLock();
     }
 
     return err;
@@ -81,7 +81,7 @@ ErrorManagement::ErrorType MessageFilterPool::RemoveMessageFilter(CCString name)
         err.fatalError = Delete(name);
 
         // UnLock must be done also on error
-        err.fatalError |= UnLock();
+        UnLock();
     }
 
     return err;
@@ -97,7 +97,7 @@ ErrorManagement::ErrorType MessageFilterPool::FindMessageFilter(CCString name,Re
         err.unsupportedFeature = !messageFilter.IsValid();
 
         // UnLock must be done also on error
-        err.fatalError |= UnLock();
+        UnLock();
     }
 
     return err;

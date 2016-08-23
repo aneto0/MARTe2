@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RegisteredMethodsMessageFilter.h"
+#include "MessageI.h"
+
 
 namespace MARTe {
 /*---------------------------------------------------------------------------*/
@@ -40,17 +42,18 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RegisteredMethodsMessageFilter::RegisteredMethodsMessageFilter():MessageFilter(true){
+RegisteredMethodsMessageFilter::RegisteredMethodsMessageFilter(Object * object):MessageFilter(true){
+    destinationObject = object;
 }
 
 RegisteredMethodsMessageFilter::~RegisteredMethodsMessageFilter(){
 }
 
-ErrorManagement::ErrorType RegisteredMethodsMessageFilter::ProcessMessage(ReferenceT<Message> &messageToTest,MessageI *receiver){
+ErrorManagement::ErrorType RegisteredMethodsMessageFilter::ProcessMessage(ReferenceT<Message> &messageToTest){
 
     ErrorManagement::ErrorType ret;
 
-    Object *destinationObject = dynamic_cast<Object *>(receiver);
+//    Object *destinationObject = dynamic_cast<Object *>(receiver);
 
     if ((destinationObject != NULL_PTR(Object *)) && (messageToTest.IsValid())){
 

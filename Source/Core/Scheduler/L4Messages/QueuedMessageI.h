@@ -35,6 +35,8 @@
 #include "MessageI.h"
 #include "ReferenceContainer.h"
 #include "EmbeddedThread.h"
+#include "QueueingMessageFilter.h"
+#include "EmbeddedThreadMethodCaller.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
