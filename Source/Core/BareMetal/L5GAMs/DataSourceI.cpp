@@ -60,9 +60,15 @@ DataSourceI::~DataSourceI() {
 bool DataSourceI::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (data.MoveRelative("Signals")) {
-        ret = signalsDatabase.Write("Signals", data);
+        ret=signalsDatabase.CreateRelative("Signals");
+        if(ret){
+        ret = data.Link(signalsDatabase);
+        }
         if (ret) {
             ret = data.MoveToAncestor(1u);
+        }
+        if(ret){
+            ret=signalsDatabase.MoveToRoot();
         }
     }
     if (ret) {
@@ -83,7 +89,7 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
 }
 
 bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
-    bool ret = data.Copy(configuredDatabase);
+    bool ret = data.Link(configuredDatabase);
     if (ret) {
         ret = configuredDatabase.MoveToRoot();
     }

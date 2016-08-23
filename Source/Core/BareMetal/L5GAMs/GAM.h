@@ -180,6 +180,12 @@ public:
                        const uint32 signalIdx,
                        StreamString &signalName);
 
+
+    bool GetSignalAlias(const SignalDirection direction,
+                       const uint32 signalIdx,
+                       StreamString &signalAlias);
+
+
     /**
      * @brief Gets the index of the signal with name \a signalIdx.
      * @param[in] direction the signal direction.
@@ -336,6 +342,10 @@ public:
                              const uint32 rangeIndex,
                              uint32 &rangeStart,
                              uint32 &rangeEnd);
+
+    bool GetSignalMemoryOffset(const SignalDirection direction,
+                               uint32 &signalIdx,
+                               uint32 &signalOffset);
 
     /**
      * @brief Gets the number of samples that were set for the signal with index \a signalIdx.

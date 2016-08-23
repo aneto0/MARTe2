@@ -135,7 +135,13 @@ bool ConfigurationDatabase::AdvancedWrite(const char8 * const path,
         }
     }
     if (ret) {
-        ReferenceT<ReferenceContainer> node = rootNode->Find(nodePath.Buffer(), currentNode);
+        ReferenceT<ReferenceContainer> node;
+        if (nodePath.Size() > 0u) {
+            node = rootNode->Find(nodePath.Buffer(), currentNode, true);
+        }
+        else {
+            node = currentNode;
+        }
         ret = node.IsValid();
         if (ret) {
             currentNode = node;
@@ -301,7 +307,13 @@ bool ConfigurationDatabase::AdvancedRead(const char8 * const path,
     }
 
     if (ret) {
-        ReferenceT<ReferenceContainer> node = rootNode->Find(nodePath.Buffer(), currentNode);
+        ReferenceT<ReferenceContainer> node;
+        if (nodePath.Size() > 0u) {
+            node = rootNode->Find(nodePath.Buffer(), currentNode, true);
+        }
+        else {
+            node = currentNode;
+        }
         ret = node.IsValid();
         if (ret) {
             currentNode = node;
@@ -322,29 +334,32 @@ bool ConfigurationDatabase::AdvancedRead(const char8 * const path,
 }
 
 bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
+    bool ok = true;
+        ReferenceContainerFilterObjectName filter(1, 0u, path);
+        ReferenceContainer resultSingle;
+        rootNode->Find(resultSingle, filter);
 
-    ReferenceContainerFilterObjectName filter(1, 0u, path);
-    ReferenceContainer resultSingle;
-    rootNode->Find(resultSingle, filter);
-
-    bool ok = (resultSingle.Size() > 0u);
-    if (ok) {
-        //Invalidate move to leafs
-        ReferenceT<ReferenceContainer> container = resultSingle.Get(resultSingle.Size() - 1u);
-        ok = container.IsValid();
+        ok = (resultSingle.Size() > 0u);
         if (ok) {
-            currentNode = container;
+            //Invalidate move to leafs
+            ReferenceT<ReferenceContainer> container = resultSingle.Get(resultSingle.Size() - 1u);
+            ok = container.IsValid();
+            if (ok) {
+                currentNode = container;
+            }
         }
-    }
 
     return ok;
 }
 
 bool ConfigurationDatabase::AdvancedMove(const char8 * const path) {
-    ReferenceT<ReferenceContainer> node = rootNode->Find(path, currentNode);
-    bool ret = node.IsValid();
-    if (ret) {
-        currentNode = node;
+    bool ret = true;
+    if (StringHelper::Length(path) != 0u) {
+        ReferenceT<ReferenceContainer> node = rootNode->Find(path, currentNode, true);
+        ret = node.IsValid();
+        if (ret) {
+            currentNode = node;
+        }
     }
     return ret;
 }
@@ -512,20 +527,24 @@ uint32 ConfigurationDatabase::GetNumberOfChildren() {
 }
 
 bool ConfigurationDatabase::GetFullPath(StreamString &path) {
-    ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH, currentNode);
-    ReferenceContainer resultPath;
-    rootNode->Find(resultPath, filter);
-    uint32 numberOfNodes = resultPath.Size();
-    path = "";
     bool ret = true;
-    for (uint32 i = 0u; i < numberOfNodes && ret; i++) {
-        Reference ref = resultPath.Get(i);
-        ret = ref.IsValid();
-        if (ret) {
-            if (path.Size() > 0u) {
-                path += ".";
+
+    if (currentNode != rootNode) {
+        ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH, currentNode);
+        ReferenceContainer resultPath;
+
+        rootNode->Find(resultPath, filter);
+        uint32 numberOfNodes = resultPath.Size();
+        path = "";
+        for (uint32 i = 0u; i < numberOfNodes && ret; i++) {
+            Reference ref = resultPath.Get(i);
+            ret = ref.IsValid();
+            if (ret) {
+                if (path.Size() > 0u) {
+                    path += ".";
+                }
+                path += ref->GetName();
             }
-            path += ref->GetName();
         }
     }
     return ret;

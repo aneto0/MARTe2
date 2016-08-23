@@ -76,18 +76,23 @@ struct StringAliasAllTestTableMatrix {
 class StringAliasAllTest {
 public:
 
-    /**
-     * @brief Tests the Validate with a scalar AnyType
-     */
     template<typename T>
     bool TestSourceToDestination(const StringAliasAllTestTable<T>* table);
 
-    /**
-     * @brief Tests the Validate with a scalar AnyType
-     */
     template<typename T, uint32 nElements>
     bool TestSourceToDestinationVector(const StringAliasAllTestTableVector<T, nElements>* table);
 
+    template<typename T, uint32 nRows, uint32 nCols>
+    bool TestSourceToDestinationMatrix(const StringAliasAllTestTableMatrix<T, nRows, nCols>* table);
+
+    template<typename T>
+    bool TestDestinationToSource(const StringAliasAllTestTable<T>* table);
+
+    template<typename T, uint32 nElements>
+    bool TestDestinationToSourceVector(const StringAliasAllTestTableVector<T, nElements>* table);
+
+    template<typename T, uint32 nRows, uint32 nCols>
+    bool TestDestinationToSourceMatrix(const StringAliasAllTestTableMatrix<T, nRows, nCols>* table);
 
 };
 
@@ -108,7 +113,6 @@ bool StringAliasAllTest::TestSourceToDestination(const StringAliasAllTestTable<T
         StandardParser parser(conf, cdb);
         parser.Parse();
         cdb.MoveToRoot();
-        printf("#children = %d", cdb.GetNumberOfChildren());
         if (!aliasMaker.Initialise(cdb)) {
             return false;
         }
@@ -147,7 +151,6 @@ bool StringAliasAllTest::TestSourceToDestinationVector(const StringAliasAllTestT
         StandardParser parser(conf, cdb);
         parser.Parse();
         cdb.MoveToRoot();
-        printf("#children = %d", cdb.GetNumberOfChildren());
         if (!aliasMaker.Initialise(cdb)) {
             return false;
         }
@@ -173,6 +176,170 @@ bool StringAliasAllTest::TestSourceToDestinationVector(const StringAliasAllTestT
         i++;
     }
 
+    return true;
+}
+
+template<typename T, uint32 nRows, uint32 nCols>
+bool StringAliasAllTest::TestSourceToDestinationMatrix(const StringAliasAllTestTableMatrix<T, nRows, nCols>* table) {
+    uint32 i = 0;
+
+    while (table[i].attributes != NULL) {
+        StringAliasAll aliasMaker;
+        StreamString conf = table[i].attributes;
+        conf.Seek(0ull);
+        ConfigurationDatabase cdb;
+        StandardParser parser(conf, cdb);
+        parser.Parse();
+        cdb.MoveToRoot();
+        if (!aliasMaker.Initialise(cdb)) {
+            return false;
+        }
+
+        AnyType source(table[i].source);
+        AnyObject valAO;
+        if (aliasMaker.SourceToDestination(source, valAO) != table[i].expected) {
+            printf("\n%d\n", i);
+            return false;
+        }
+        if (table[i].expected) {
+            T val[nRows][nCols];
+            TypeConvert(val, valAO.GetType());
+
+            for (uint32 j = 0u; j < nRows; j++) {
+                for (uint32 k = 0u; k < nCols; k++) {
+                    T dest = table[i].dest[j][k];
+                    if (dest != val[j][k]) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        i++;
+    }
+
+    return true;
+}
+
+template<typename T>
+bool StringAliasAllTest::TestDestinationToSource(const StringAliasAllTestTable<T>* table) {
+
+    uint32 i = 0;
+
+    while (table[i].attributes != NULL) {
+        StringAliasAll aliasMaker;
+        StreamString conf = table[i].attributes;
+        conf.Seek(0ull);
+        ConfigurationDatabase cdb;
+        StandardParser parser(conf, cdb);
+        parser.Parse();
+        cdb.MoveToRoot();
+        if (!aliasMaker.Initialise(cdb)) {
+            return false;
+        }
+
+        AnyObject valAO;
+        T dest = table[i].dest;
+        if (aliasMaker.DestinationToSource(dest, valAO) != table[i].expected) {
+            printf("\n%d\n", i);
+            return false;
+        }
+        if (table[i].expected) {
+            StreamString sourceTest;
+            TypeConvert(sourceTest, valAO.GetType());
+            printf("\nsource= %s\n", sourceTest.Buffer());
+            if (sourceTest != table[i].source) {
+                return false;
+            }
+        }
+
+        i++;
+    }
+
+    return true;
+}
+
+template<typename T, uint32 nElements>
+bool StringAliasAllTest::TestDestinationToSourceVector(const StringAliasAllTestTableVector<T, nElements>* table) {
+
+    uint32 i = 0;
+
+    while (table[i].attributes != NULL) {
+        StringAliasAll aliasMaker;
+        StreamString conf = table[i].attributes;
+        conf.Seek(0ull);
+        ConfigurationDatabase cdb;
+        StandardParser parser(conf, cdb);
+        parser.Parse();
+        cdb.MoveToRoot();
+        if (!aliasMaker.Initialise(cdb)) {
+            return false;
+        }
+
+        AnyObject valAO;
+        T dest[nElements];
+        for (uint32 j = 0u; j < nElements; j++) {
+            dest[j] = table[i].dest[j];
+        }
+        if (aliasMaker.DestinationToSource(dest, valAO) != table[i].expected) {
+            printf("\n%d\n", i);
+            return false;
+        }
+        if (table[i].expected) {
+            StreamString sourceTest;
+            TypeConvert(sourceTest, valAO.GetType());
+            printf("\nsource= %s\n", sourceTest.Buffer());
+            if (sourceTest != table[i].source) {
+                return false;
+            }
+        }
+
+        i++;
+    }
+
+    return true;
+}
+
+template<typename T, uint32 nRows, uint32 nCols>
+bool StringAliasAllTest::TestDestinationToSourceMatrix(const StringAliasAllTestTableMatrix<T, nRows, nCols>* table) {
+
+    uint32 i = 0;
+
+    while (table[i].attributes != NULL) {
+        StringAliasAll aliasMaker;
+        StreamString conf = table[i].attributes;
+        conf.Seek(0ull);
+        ConfigurationDatabase cdb;
+        StandardParser parser(conf, cdb);
+        parser.Parse();
+        cdb.MoveToRoot();
+        if (!aliasMaker.Initialise(cdb)) {
+            return false;
+        }
+
+        AnyObject valAO;
+        T dest[nRows][nCols];
+        for (uint32 j = 0u; j < nRows; j++) {
+            for (uint32 k = 0u; k < nCols; k++) {
+
+                dest[j][k] = table[i].dest[j][k];
+            }
+        }
+        if (aliasMaker.DestinationToSource(dest, valAO) != table[i].expected) {
+            printf("\n%d\n", i);
+            return false;
+        }
+        if (table[i].expected) {
+            StreamString sourceTest;
+            TypeConvert(sourceTest, valAO.GetType());
+            printf("\nsource= %s\n", sourceTest.Buffer());
+            if (sourceTest != table[i].source) {
+                return false;
+            }
+        }
+
+        i++;
+    }
 
     return true;
 }

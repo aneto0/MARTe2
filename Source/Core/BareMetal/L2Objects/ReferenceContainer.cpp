@@ -405,12 +405,13 @@ Reference ReferenceContainer::Find(const char8 * const path,
 }
 
 Reference ReferenceContainer::Find(const char8 * const path,
-                                   const Reference current) {
+                                   const Reference current,
+                                   bool relative) {
     ReferenceT<ReferenceContainer> domain = current;
     bool isSearchDomain = current.IsValid();
     uint32 backSteps = 0u;
-    bool ok = true;
-    if (isSearchDomain) {
+    bool ok = (path != NULL);
+    if (isSearchDomain && ok) {
         while (path[backSteps] == ':') {
             backSteps++;
         }
@@ -464,7 +465,13 @@ Reference ReferenceContainer::Find(const char8 * const path,
             }
             else {
                 // search from the beginning
-                ReferenceContainer::Find(resultSingle, filterName);
+                if (relative) {
+                    domain = current;
+                    domain->Find(resultSingle, filterName);
+                }
+                else {
+                    ReferenceContainer::Find(resultSingle, filterName);
+                }
             }
 
             ok = (resultSingle.Size() > 0u);

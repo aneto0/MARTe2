@@ -3520,13 +3520,13 @@ bool RealTimeApplicationConfigurationBuilder::Copy(ConfigurationDatabase &functi
                                                    ConfigurationDatabase &dataSourcesDatabaseOut) {
     bool ret = functionsDatabase.MoveToRoot();
     if (ret) {
-        ret = functionsDatabase.Copy(functionsDatabaseOut);
+        ret = functionsDatabase.Link(functionsDatabaseOut);
     }
     if (ret) {
         ret = dataSourcesDatabase.MoveToRoot();
     }
     if (ret) {
-        ret = dataSourcesDatabase.Copy(dataSourcesDatabaseOut);
+        ret = dataSourcesDatabase.Link(dataSourcesDatabaseOut);
     }
     return ret;
 }
@@ -3534,10 +3534,10 @@ bool RealTimeApplicationConfigurationBuilder::Copy(ConfigurationDatabase &functi
 bool RealTimeApplicationConfigurationBuilder::Set(ConfigurationDatabase &functionsDatabaseIn,
                                                   ConfigurationDatabase &dataSourcesDatabaseIn) {
     functionsDatabase.CleanUp();
-    bool ret = functionsDatabaseIn.Copy(functionsDatabase);
+    bool ret = functionsDatabaseIn.Link(functionsDatabase);
     if (ret) {
         dataSourcesDatabase.CleanUp();
-        ret = dataSourcesDatabaseIn.Copy(dataSourcesDatabase);
+        ret = dataSourcesDatabaseIn.Link(dataSourcesDatabase);
     }
     return ret;
 }

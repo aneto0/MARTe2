@@ -162,7 +162,7 @@ ReferenceContainer    ();
      * @return the reference found at the provided \a path or an invalid reference in case of failure.
      */
     /*lint -e{1511} [MISRA C++ Rule 2-10-2].*/
-    Reference Find(const char8 * const path, const Reference current);
+    Reference Find(const char8 * const path, const Reference current, bool relative=false);
 
     /**
      * @brief Checks if \a ref holds a container.

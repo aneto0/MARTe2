@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StringAliasAll.h"
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -59,14 +60,12 @@ bool StringAliasAll::Initialise(StructuredDataI & data) {
 bool StringAliasAll::SourceToDestination(const AnyType &source,
                                          AnyObject &destination) {
 
-    TypeDescriptor tdes = source.GetTypeDescriptor();
-
     StreamString buff;
     bool ret = TypeConvert(buff, source);
 
     if (ret) {
         AnyType toSerialise = parameters.GetType(buff.Buffer());
-        if(ret){
+        if (ret) {
             destination.Serialise(toSerialise);
         }
         else {
@@ -82,30 +81,48 @@ bool StringAliasAll::SourceToDestination(const AnyType &source,
 bool StringAliasAll::DestinationToSource(const AnyType &destination,
                                          AnyObject &source) {
 
+    TypeDescriptor desttd = destination.GetTypeDescriptor();
+    bool isString = (desttd.type == SString);
+
+    uint64 pos = 0u;
+    StreamString *strPtr = NULL;
+//    bool isStructured = (desttd.type == StructuredDataNode);
     StreamString destPrint;
-    destPrint.Printf("%!", destination);
 
     //allocates the memory for the destination's values
-    ConfigurationDatabase temp;
-    bool ret = temp.Write("temp", destination);
+    AnyObject temp;
+    bool ret = temp.Serialise(destination);
 
-    AnyType tempAt = temp.GetType("temp");
-    ret = (!tempAt.IsVoid());
+    //if SString becomes a CString and the seek is done automatically (great trick!)
+    AnyType tempAt = temp.GetType();
+
+    destPrint.Printf("%!", tempAt);
+
+
     uint32 numberOfAliases = parameters.GetNumberOfChildren();
-    for (uint32 i = 0u; (i < numberOfAliases) && ret; i++) {
 
-        const char8 * childName = parameters.GetChildName(i);
-        ret = parameters.Read(childName, tempAt);
+    for (uint32 i = 0u; (i < numberOfAliases) && ret; i++) {
         StreamString alias;
+        const char8 * childName = parameters.GetChildName(i);
+        // need to do this shit??
+
         //printing two equal values we should obtain the same string in result!
-        alias.Printf("%!", tempAt);
+        if (isString) {
+            alias.Printf("%!", parameters.GetType(childName));
+        }
+        else {
+            ret = parameters.Read(childName, destination);
+            alias.Printf("%!", destination);
+        }
+
         if (ret) {
             if (alias == destPrint) {
-                source.Serialise(tempAt);
+                source.Serialise(childName);
                 break;
             }
         }
     }
+    TypeConvert(destination, tempAt);
     return ret;
 }
 CLASS_REGISTER(StringAliasAll, "1.0");

@@ -94,8 +94,6 @@ public:
     virtual bool Read(const char8 * const name,
                       const AnyType &value) = 0;
 
-
-
     /**
      * @brief Reads the value in input in the desired path. The path can be
      * specified in order to use the domain node concept to find the path where the data must
@@ -104,9 +102,9 @@ public:
      * @param[in] value is the value to be read.
      * @return true if \a value is correct and \value is read correctly.
      */
-    virtual bool AdvancedRead(const char8 * const path,const char8 *attributes,
+    virtual bool AdvancedRead(const char8 * const path,
+                              const char8 *attributes,
                               const AnyType &value)=0;
-
 
     /**
      * @brief Writes the value in input in the desired path. The path can be
@@ -116,7 +114,8 @@ public:
      * @param[in] value is the value to be written.
      * @return true if \a value is correct and \value is written correctly.
      */
-    virtual bool AdvancedWrite(const char8 * const path, const char8 *attributes,
+    virtual bool AdvancedWrite(const char8 * const path,
+                               const char8 *attributes,
                                const AnyType &value)=0;
     /**
      * @brief Gets the type of a previously stored AnyType.
@@ -204,7 +203,6 @@ public:
      * @return the reference found at the provided \a path or an invalid reference in case of failure.
      */
     virtual bool AdvancedMove(const char8 * const path)=0;
-
 
     /**
      * @brief Create a new series of nodes based on the provided absolute path.

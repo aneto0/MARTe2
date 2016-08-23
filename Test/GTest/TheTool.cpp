@@ -448,10 +448,10 @@ static void ReadTheTypeArray(const char8 *paramName,
     }
 
     PrintOnFile(objSource, "    if(ret) {\n");
-    PrintOnFile(objSource, "        StreamString currentPath;\n"
-                "        data.GetFullPath(currentPath);\n");
 
     if (paramPath.Size() > 0u) {
+        PrintOnFile(objSource, "        StreamString currentPath;\n"
+                    "        data.GetFullPath(currentPath);\n");
         PrintOnFile(objSource, "        data.AdvancedMove(\"");
         PrintOnFile(objSource, paramPath.Buffer());
         PrintOnFile(objSource, "\");\n");
@@ -464,83 +464,107 @@ static void ReadTheTypeArray(const char8 *paramName,
                 "            StreamString childName = \"");
     PrintOnFile(objSource, paramAlias.Buffer());
     PrintOnFile(objSource, "\";\n");
-    PrintOnFile(objSource, "            childName.Printf(\"%d\", i);\n");
+    PrintOnFile(objSource, "            childName.Printf(\"%d\", numberOf");
+    PrintOnFile(objSource, paramName);
+    PrintOnFile(objSource, ");\n");
     bool isStructType = (TypeDescriptor::GetTypeDescriptorFromTypeName(typeName) == InvalidType);
     if (isStructType) {
-        PrintOnFile(objSource, "            if(data.MoveRelative(childName.Buffer())){\n"
-                    "                StreamString type;\n"
-                    "                if(data.Read(\"Class\", type)){\n"
-                    "                    if(type == \"");
-        PrintOnFile(objSource, typeName);
-        PrintOnFile(objSource, "\"){\n");
-        PrintOnFile(objSource, "                        numberOf");
+        PrintOnFile(objSource, "            if(data.MoveRelative(childName.Buffer())){\n");
+        PrintOnFile(objSource, "                numberOf");
         PrintOnFile(objSource, paramName);
-        PrintOnFile(objSource, "++;\n");
-        PrintOnFile(objSource, "                    }\n"
-                    "                }\n"
+        PrintOnFile(objSource, "++;\n"
                     "                data.MoveToAncestor(1u);\n"
                     "            }\n");
     }
     else {
         PrintOnFile(objSource, "            AnyType at=data.GetType(childName.Buffer());\n"
-                    "            if(at.GetTypeDescriptor() == TypeDescriptor::GetTypeDescriptorFromTypeName(\"");
-        PrintOnFile(objSource, typeName);
-        PrintOnFile(objSource, "\")) {\n");
+                    "            if(!at.IsVoid()) {\n");
         PrintOnFile(objSource, "                numberOf");
         PrintOnFile(objSource, paramName);
         PrintOnFile(objSource, "++;\n"
                     "            }\n");
     }
 
-    PrintOnFile(objSource, "        }\n        ");
+    PrintOnFile(objSource, "        }\n");
+    if (paramPath.Size() > 0u) {
+        PrintOnFile(objSource, "        data.MoveAbsolute(currentPath.Buffer());\n");
+    }
+    PrintOnFile(objSource, "        ");
     PrintOnFile(objSource, paramName);
     PrintOnFile(objSource, " = new ");
     PrintOnFile(objSource, typeName);
     PrintOnFile(objSource, "[numberOf");
     PrintOnFile(objSource, paramName);
     PrintOnFile(objSource, "];\n");
-    PrintOnFile(objSource, "        for(uint32 i=0u; i < data.GetNumberOfChildren() && ret; i++){\n"
+    PrintOnFile(objSource, "        for(uint32 i=0u; i < numberOf");
+    PrintOnFile(objSource, paramName);
+    PrintOnFile(objSource, " && ret; i++){\n"
                 "            StreamString childName = \"");
-    PrintOnFile(objSource, paramAlias.Buffer());
+    PrintOnFile(objSource, paramAddress);
     PrintOnFile(objSource, "\";\n");
     PrintOnFile(objSource, "            childName.Printf(\"%d\", i);\n");
+
     if (isStructType) {
-        PrintOnFile(objSource, "            if(data.MoveRelative(childName.Buffer())){\n"
-                    "                StreamString type;\n"
-                    "                if(data.Read(\"Class\", type)){\n"
-                    "                    if(type == \"");
-        PrintOnFile(objSource, typeName);
-        PrintOnFile(objSource, "\"){\n"
-                    "                        ANY_TYPE_STRUCT_BUILDER(");
+
+        PrintOnFile(objSource, "            ANY_TYPE_STRUCT_BUILDER(");
         PrintOnFile(objSource, typeName);
         PrintOnFile(objSource, ", ");
         PrintOnFile(objSource, paramName);
-        PrintOnFile(objSource, "[i]);\n"
-                    "                        data.MoveToAncestor(1u);\n"
-                    "                        ret = data.Read(childName.Buffer(), ");
+        PrintOnFile(objSource, "[i]);\n");
+
+        PrintOnFile(objSource, "            ret = data.AdvancedRead(childName.Buffer(), \"");
+        PrintOnFile(objSource, attributes);
+        PrintOnFile(objSource, "\", ");
         PrintOnFile(objSource, typeName);
-        PrintOnFile(objSource, "_at);\n"
-                    "                        data.MoveRelative(childName.Buffer());\n"
-                    "                    }\n"
-                    "                }\n"
-                    "                data.MoveToAncestor(1u);\n"
-                    "            }\n");
+        PrintOnFile(objSource, "_at);\n");
     }
     else {
-        PrintOnFile(objSource, "            AnyType at=data.GetType(childName.Buffer());\n"
-                    "            if(at.GetTypeDescriptor() == TypeDescriptor::GetTypeDescriptorFromTypeName(\"");
-        PrintOnFile(objSource, typeName);
-        PrintOnFile(objSource, "\")) {\n"
-                    "                ret = data.AdvancedRead(childName.Buffer(), \"");
+
+        PrintOnFile(objSource, "            ret = data.AdvancedRead(childName.Buffer(), \"");
         PrintOnFile(objSource, attributes);
         PrintOnFile(objSource, "\", ");
         PrintOnFile(objSource, paramName);
-        PrintOnFile(objSource, ");\n");
-        PrintOnFile(objSource, "            }\n");
-
+        PrintOnFile(objSource, "[i]);\n");
     }
-    PrintOnFile(objSource, "        }\n"
-                "        data.MoveAbsolute(currentPath.Buffer());\n");
+    PrintOnFile(objSource, "        }\n");
+    /*
+     if (isStructType) {
+     PrintOnFile(objSource, "            if(data.MoveRelative(childName.Buffer())){\n"
+     "                StreamString type;\n"
+     "                if(data.Read(\"Class\", type)){\n"
+     "                    if(type == \"");
+     PrintOnFile(objSource, typeName);
+     PrintOnFile(objSource, "\"){\n"
+     "                        ANY_TYPE_STRUCT_BUILDER(");
+     PrintOnFile(objSource, typeName);
+     PrintOnFile(objSource, ", ");
+     PrintOnFile(objSource, paramName);
+     PrintOnFile(objSource, "[i]);\n"
+     "                        data.MoveToAncestor(1u);\n"
+     "                        ret = data.Read(childName.Buffer(), ");
+     PrintOnFile(objSource, typeName);
+     PrintOnFile(objSource, "_at);\n"
+     "                        data.MoveRelative(childName.Buffer());\n"
+     "                    }\n"
+     "                }\n"
+     "                data.MoveToAncestor(1u);\n"
+     "            }\n");
+     }
+     else {
+     PrintOnFile(objSource, "            AnyType at=data.GetType(childName.Buffer());\n"
+     "            if(at.GetTypeDescriptor() == TypeDescriptor::GetTypeDescriptorFromTypeName(\"");
+     PrintOnFile(objSource, typeName);
+     PrintOnFile(objSource, "\")) {\n"
+     "                ret = data.Read(childName.Buffer(), \"");
+     PrintOnFile(objSource, attributes);
+     PrintOnFile(objSource, "\", ");
+     PrintOnFile(objSource, paramName);
+     PrintOnFile(objSource, ");\n");
+     PrintOnFile(objSource, "            }\n");
+
+     }
+     PrintOnFile(objSource, "        }\n");
+     */
     PrintOnFile(objSource, "        if(!ret) {\n"
                 "            REPORT_ERROR(ErrorManagement::FatalError, \"Failed loading the parameters *");
     if (paramPath.Size() > 0u) {
@@ -652,11 +676,13 @@ static void AssignSignalArray(const char8 *signalName,
                 "            StreamString signalName = \"");
     PrintOnFile(objSource, signalAlias);
     PrintOnFile(objSource, "\";\n");
-    PrintOnFile(objSource, "            signalName.Printf(\"%d\", i);\n");
+    PrintOnFile(objSource, "            signalName.Printf(\"%d\", numberOf");
+    PrintOnFile(objSource, signalName);
+    PrintOnFile(objSource, ");\n");
     PrintOnFile(objSource, "            uint32 signalId;\n"
                 "            ok = GetSignalIndex(");
     PrintOnFile(objSource, direction);
-    PrintOnFile(objSource, ", signalId, signalName.Buffer()) > 0;\n");
+    PrintOnFile(objSource, ", signalId, signalName.Buffer()) >= 0;\n");
     PrintOnFile(objSource, "            if(ok) {\n"
                 "                numberOf");
     PrintOnFile(objSource, signalName);
@@ -671,7 +697,9 @@ static void AssignSignalArray(const char8 *signalName,
     PrintOnFile(objSource, signalName);
     PrintOnFile(objSource, "];\n");
     PrintOnFile(objSource, "        ok = true;\n");
-    PrintOnFile(objSource, "        for(uint32 i=0u; (i<numberOfSignals) && ret && ok; i++){\n"
+    PrintOnFile(objSource, "        for(uint32 i=0u; (i<numberOf");
+    PrintOnFile(objSource, signalName);
+    PrintOnFile(objSource, ") && ret && ok; i++){\n"
                 "            StreamString signalName = \"");
     PrintOnFile(objSource, signalAlias);
     PrintOnFile(objSource, "\";\n");
@@ -680,7 +708,7 @@ static void AssignSignalArray(const char8 *signalName,
                 "            int32 level = GetSignalIndex(");
     PrintOnFile(objSource, direction);
     PrintOnFile(objSource, ", signalId, signalName.Buffer());\n");
-    PrintOnFile(objSource, "            ret = (level > 0);\n");
+    PrintOnFile(objSource, "            ret = (level >= 0);\n");
 
     PrintOnFile(objSource, "            if(ret) {\n"
                 "                StreamString typeName;\n"
@@ -706,7 +734,7 @@ static void AssignSignalArray(const char8 *signalName,
         PrintOnFile(objSource, " = (");
         PrintOnFile(objSource, type);
         PrintOnFile(objSource, " *) ");
-        PrintOnFile(objSource, " = GetOutputSignalMemory(signalId);\n");
+        PrintOnFile(objSource, "GetOutputSignalMemory(signalId);\n");
     }
     PrintOnFile(objSource, "                    ret = (");
     PrintOnFile(objSource, signalName);
@@ -736,7 +764,7 @@ static void AssignSignal(const char8 *signalName,
     PrintOnFile(objSource, ", signalId, \"");
     PrintOnFile(objSource, signalAlias);
     PrintOnFile(objSource, "\");\n");
-    PrintOnFile(objSource, "        ret = (level > 0);\n");
+    PrintOnFile(objSource, "        ret = (level >= 0);\n");
 
     PrintOnFile(objSource, "        if(ret) {\n"
                 "            StreamString typeName;\n"
@@ -753,10 +781,16 @@ static void AssignSignal(const char8 *signalName,
     PrintOnFile(objSource, "            ");
     PrintOnFile(objSource, signalName);
     if (dir == "InputSignals") {
-        PrintOnFile(objSource, " = GetInputSignalMemory(signalId);\n");
+        PrintOnFile(objSource, " = (");
+        PrintOnFile(objSource, type);
+        PrintOnFile(objSource, " *) ");
+        PrintOnFile(objSource, "GetInputSignalMemory(signalId);\n");
     }
     else {
-        PrintOnFile(objSource, " = GetOutputSignalMemory(signalId);\n");
+        PrintOnFile(objSource, " = (");
+        PrintOnFile(objSource, type);
+        PrintOnFile(objSource, " *) ");
+        PrintOnFile(objSource, "GetOutputSignalMemory(signalId);\n");
     }
     PrintOnFile(objSource, "            ret = (");
     PrintOnFile(objSource, signalName);
@@ -794,7 +828,7 @@ static void GenerateConfigureFunction(ConfigurationDatabase &database,
                     }
                     else {
                         StreamString signalAlias;
-                        if (!database.Read("Source", signalAlias)) {
+                        if (!database.Read("source", signalAlias)) {
                             uint32 begin = signalName[0] == '*';
                             signalAlias = signalName + begin;
                         }

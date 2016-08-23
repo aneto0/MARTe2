@@ -517,14 +517,13 @@ static bool StructuredDataToObject(const AnyType &destination,
     StreamString sourceStructName;
     bool isSourceIntrospection = true;
     const ClassRegistryItem *sourceItem = NULL_PTR(const ClassRegistryItem *);
-    uint32 beginIndex = 0u;
+    uint32 considerClassMember = 0u;
     // if the Class field does not exists, the introspection for the source does not exists
     if (!sourcePointer->Read("Class", sourceStructName)) {
         isSourceIntrospection = false;
     }
     else {
-        // Assume that Class is the first field
-        beginIndex++;
+        considerClassMember = 1u;
         sourceItem = ClassRegistryDatabase::Instance()->Find(sourceStructName.Buffer());
         isSourceIntrospection = (sourceItem != NULL);
     }
@@ -538,18 +537,18 @@ static bool StructuredDataToObject(const AnyType &destination,
         }
         const Introspection *destinationIntrospection = destinationItem->GetIntrospection();
         if (destinationIntrospection != NULL) {
-            uint32 numberOfFields = sourcePointer->GetNumberOfChildren();
+            uint32 numberOfMembers = sourcePointer->GetNumberOfChildren();
 
             if (isSourceIntrospection) {
                 // if there is the introspection get the number of members
-                numberOfFields = sourceIntrospection->GetNumberOfMembers();
-                beginIndex = 0u;
+                numberOfMembers = sourceIntrospection->GetNumberOfMembers();
+                considerClassMember=0u;
             }
-            uint32 numberOfMembers = (numberOfFields - beginIndex);
-            if (numberOfMembers == destinationIntrospection->GetNumberOfMembers()) {
+            if ((numberOfMembers - considerClassMember) == destinationIntrospection->GetNumberOfMembers()) {
 
                 ret = true;
-                for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
+                uint32 i = 0u;
+                for (uint32 n = 0u; (n < numberOfMembers) && (ret); n++) {
                     IntrospectionEntry destinationMemberIntrospection = (*destinationIntrospection)[i];
 
                     TypeDescriptor destinationMemberDescriptor = destinationMemberIntrospection.GetMemberTypeDescriptor();
@@ -586,7 +585,10 @@ static bool StructuredDataToObject(const AnyType &destination,
                         newSource = sourcePointer->GetType(childName);
                     }
                     else {
-                        childName = sourcePointer->GetChildName(i + beginIndex);
+                        childName = sourcePointer->GetChildName(n);
+                        if (StringHelper::Compare(childName, "Class") == 0) {
+                            continue;
+                        }
                         newSource = sourcePointer->GetType(childName);
                     }
 
@@ -609,14 +611,15 @@ static bool StructuredDataToObject(const AnyType &destination,
                             // call the conversion recursively !
                             ret = TypeConvert(newDestination, newSource);
                         }
-                        if(ret){
-                            ret=InvertAlias(*sourcePointer, childName, destinationMemberIntrospection.GetMemberAttributes());
+                        if (ret) {
+                            ret = InvertAlias(*sourcePointer, childName, destinationMemberIntrospection.GetMemberAttributes());
                         }
                         if (ret) {
                             // validate the output
                             ret = Validate(newDestination, destinationMemberIntrospection.GetMemberAttributes());
                         }
                     }
+                    i++;
                 }
             }
             else {
@@ -697,8 +700,8 @@ static bool ObjectToStructuredData(const AnyType &destination,
                             // in this case only write
                             ret = destinationPointer->Write(sourceMemberIntrospection.GetMemberName(), newSource);
                         }
-                        if(ret){
-                            ret=InvertAlias(*destinationPointer, sourceMemberIntrospection.GetMemberName(), sourceMemberIntrospection.GetMemberAttributes());
+                        if (ret) {
+                            ret = InvertAlias(*destinationPointer, sourceMemberIntrospection.GetMemberName(), sourceMemberIntrospection.GetMemberAttributes());
                         }
                     }
                 }

@@ -34,7 +34,7 @@
 #include "BrokerI.h"
 #include "GAM.h"
 #include "Reference.h"
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -79,7 +79,10 @@ bool GAM::Initialise(StructuredDataI & data) {
 
     bool ret = ReferenceContainer::Initialise(data);
     if (data.MoveRelative("InputSignals")) {
-        ret = signalsDatabase.Write("InputSignals", data);
+        ret = signalsDatabase.CreateAbsolute("InputSignals");
+        if (ret) {
+            ret = data.Link(signalsDatabase);
+        }
         if (ret) {
             ret = data.MoveToAncestor(1u);
         }
@@ -88,12 +91,21 @@ bool GAM::Initialise(StructuredDataI & data) {
         ret = signalsDatabase.MoveToRoot();
     }
     if (ret) {
+        ret = signalsDatabase.MoveToRoot();
+    }
+    if (ret) {
         if (data.MoveRelative("OutputSignals")) {
-            ret = signalsDatabase.Write("OutputSignals", data);
+            ret = signalsDatabase.CreateAbsolute("OutputSignals");
+            if (ret) {
+                ret = data.Link(signalsDatabase);
+            }
             if (ret) {
                 ret = data.MoveToAncestor(1u);
             }
         }
+    }
+    if (ret) {
+        ret = signalsDatabase.MoveToRoot();
     }
     if (ret) {
         ret = signalsDatabase.MoveToRoot();
@@ -244,7 +256,7 @@ void *GAM::GetOutputSignalMemory(const uint32 signalIdx) const {
 }
 
 bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
-    bool ret = data.Copy(configuredDatabase);
+    bool ret = data.Link(configuredDatabase);
     if (ret) {
         ret = configuredDatabase.MoveToRoot();
     }
@@ -294,6 +306,18 @@ bool GAM::GetSignalName(const SignalDirection direction,
     return ret;
 }
 
+bool GAM::GetSignalAlias(const SignalDirection direction,
+                         const uint32 signalIdx,
+                         StreamString &signalAlias) {
+    bool ret = MoveToSignalIndex(direction, signalIdx);
+    if (ret) {
+        if (!configuredDatabase.Read("Alias", signalAlias)) {
+            ret = configuredDatabase.Read("QualifiedName", signalAlias);
+        }
+    }
+    return ret;
+}
+
 int32 GAM::GetSignalIndex(const SignalDirection direction,
                           uint32 &signalIdx,
                           const char8* const signalName) {
@@ -306,36 +330,67 @@ int32 GAM::GetSignalIndex(const SignalDirection direction,
     }
     bool ok = true;
     bool found = false;
-    int32 ret = 0;
     uint32 sizeToCompare = StringHelper::Length(signalName);
     StreamString signalNameStr = signalName;
+    int32 level = -1;
     uint32 i;
-
-    for (i = 0u; (i < numberOfSignals) && (ok) && (!found); i++) {
+    uint32 minOffset = MAX_UINT32;
+    for (i = 0u; (i < numberOfSignals) && (ok); i++) {
         StreamString searchName;
         ok = GetSignalName(direction, i, searchName);
         if (ok) {
+            printf("\nComparing %s %s\n", signalName, searchName.Buffer());
             found = (StringHelper::CompareN(signalName, searchName.Buffer(), sizeToCompare) == 0);
             if (found) {
                 found = (searchName[sizeToCompare] == '.') || (searchName[sizeToCompare] == '\0');
             }
             if (found) {
-                StreamString signalNameStr = signalName;
-                while (signalNameStr.SkipTokens(1u, ".")) {
-                    ret++;
+                StreamString alias;
+                ok = GetSignalAlias(direction, i, alias);
+                if (ok) {
+                    uint32 numberOfDotsInAlias = 0u;
+                    alias.Seek(0ull);
+                    while (alias.SkipTokens(1u, ".")) {
+                        numberOfDotsInAlias++;
+                    }
+                    uint32 numberOfDotsInName = 0u;
+                    searchName.Seek(0ull);
+                    while (searchName.SkipTokens(1u, ".")) {
+                        numberOfDotsInName++;
+                    }
+                    uint32 numberOfDotsInPartialName = 0u;
+                    StreamString signalNameStr = signalName;
+                    signalNameStr.Seek(0ull);
+                    while (signalNameStr.SkipTokens(1u, ".")) {
+                        numberOfDotsInPartialName++;
+                    }
+                    printf("\n alias=%d, sn=%d, psn=%d", numberOfDotsInAlias, numberOfDotsInName, numberOfDotsInPartialName);
+                    uint32 diff = numberOfDotsInName - numberOfDotsInPartialName;
+
+                    found = (numberOfDotsInAlias >= diff);
+                    if (found) {
+                        int32 tempLevel = numberOfDotsInAlias - diff;
+
+                        uint32 signalOffset = minOffset;
+                        ok = GetSignalMemoryOffset(direction, i, signalOffset);
+
+                        if (signalOffset < minOffset) {
+                            minOffset = signalOffset;
+                            signalIdx = i;
+                            level = tempLevel;
+                            printf("\nlevel=%d\n", level);
+
+                        }
+                    }
                 }
             }
-            signalIdx = i;
         }
     }
-    if (ok) {
-        ok = found;
-    }
     if (!ok) {
-        ret = -1;
+        level = -1;
     }
 
-    return ret;
+    return level;
 }
 
 bool GAM::GetSignalDataSourceName(const SignalDirection direction,
@@ -367,19 +422,16 @@ bool GAM::GetSignalType(const SignalDirection direction,
                         const uint32 signalIdx,
                         StreamString &typeName,
                         int32 level) {
-    TypeDescriptor signalTypeDescriptor = InvalidType;
     bool ret = MoveToSignalIndex(direction, signalIdx);
     StreamString signalType;
     if (ret) {
         ret = configuredDatabase.Read("FullType", signalType);
-
     }
     if (ret) {
-        StreamString token;
-
+        signalType.Seek(0ull);
         signalType.SkipTokens(level, ".");
         char8 terminator;
-        ret = signalType.GetToken(token, ".", terminator);
+        ret = signalType.GetToken(typeName, ".", terminator);
     }
     return ret;
 }
@@ -515,6 +567,58 @@ bool GAM::GetSignalRangesInfo(const SignalDirection direction,
         rangeEnd = rangesMat(rangeIndex, 1u);
     }
 
+    return ret;
+}
+
+bool GAM::GetSignalMemoryOffset(const SignalDirection direction,
+                                uint32 &signalIdx,
+                                uint32 &signalOffset) {
+    StreamString dataSourceName;
+
+    bool ret = GetSignalDataSourceName(direction, signalIdx, dataSourceName);
+
+    if (ret) {
+        ret = configuredDatabase.MoveToRoot();
+    }
+    //This information is stored in the Memory node
+    const char8 * signalDirection = "Memory.InputSignals";
+    if (direction == OutputSignals) {
+        signalDirection = "Memory.OutputSignals";
+    }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative(signalDirection);
+    }
+
+    uint32 n;
+    uint32 numberOfDataSources = configuredDatabase.GetNumberOfChildren();
+    bool found = false;
+    for (n = 0u; (n < numberOfDataSources) && (!found) && (ret); n++) {
+        //Move to the next DataSource
+        ret = configuredDatabase.MoveRelative(configuredDatabase.GetChildName(n));
+        StreamString thisDataSourceName;
+        if (ret) {
+            ret = configuredDatabase.Read("DataSource", thisDataSourceName);
+        }
+        if (ret) {
+            found = (thisDataSourceName == dataSourceName);
+            if (found) {
+                ret = configuredDatabase.MoveRelative("Signals");
+                if (ret) {
+                    StreamString signalIdxStr;
+                    ret = signalIdxStr.Printf("%d", signalIdx);
+                    if (ret) {
+                        ret = configuredDatabase.MoveRelative(signalIdxStr.Buffer());
+                    }
+                }
+                if (ret) {
+                    ret = configuredDatabase.Read("GAMMemoryOffset", signalOffset);
+                }
+            }
+        }
+        if (ret) {
+            ret = configuredDatabase.MoveToAncestor(1u);
+        }
+    }
     return ret;
 }
 

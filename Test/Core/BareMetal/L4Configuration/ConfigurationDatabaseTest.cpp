@@ -615,9 +615,12 @@ bool ConfigurationDatabaseTest::TestAdvancedRead() {
     value = 1;
     ok &= sourceCDB.Write("value", value);
     ok &= sourceCDB.CreateAbsolute("$A.$B.D");
-    ok &= sourceCDB.AdvancedRead("::.value","", value);
+    ok &= sourceCDB.AdvancedRead("::.value", "", value);
     ok &= value == 1;
-    ok &= sourceCDB.AdvancedRead(":C.value","", value);
+    ok &= sourceCDB.AdvancedRead(":C.value", "", value);
+    ok &= value == 2;
+    sourceCDB.MoveAbsolute("$A.$B.C");
+    ok &= sourceCDB.AdvancedRead("value", "", value);
     ok &= value == 2;
     return ok;
 }
@@ -627,15 +630,18 @@ bool ConfigurationDatabaseTest::TestAdvancedWrite() {
     sourceCDB.CreateAbsolute("$A.$B.C");
     bool ok = sourceCDB.CreateAbsolute("$A.$B.D");
     uint32 value = 2;
-    ok &= sourceCDB.AdvancedWrite("::.value","", value);
+    ok &= sourceCDB.AdvancedWrite("::.value", "", value);
     value = 1;
-    ok &= sourceCDB.AdvancedWrite(":C.value","", value);
+    ok &= sourceCDB.AdvancedWrite(":C.value", "", value);
     ok &= sourceCDB.MoveAbsolute("$A");
     ok &= sourceCDB.Read("value", value);
     ok &= value == 2;
     ok &= sourceCDB.MoveAbsolute("$A.$B.C");
     ok &= sourceCDB.Read("value", value);
-    ok &= value == 1;
+    value = 3;
+    ok &= sourceCDB.AdvancedWrite("value", "", value);
+    ok &= sourceCDB.Read("value", value);
+    ok &= value == 3;
     return ok;
 }
 
