@@ -83,9 +83,6 @@ bool StringAliasAll::DestinationToSource(const AnyType &destination,
 
     TypeDescriptor desttd = destination.GetTypeDescriptor();
     bool isString = (desttd.type == SString);
-
-    uint64 pos = 0u;
-    StreamString *strPtr = NULL;
 //    bool isStructured = (desttd.type == StructuredDataNode);
     StreamString destPrint;
 
@@ -98,27 +95,28 @@ bool StringAliasAll::DestinationToSource(const AnyType &destination,
 
     destPrint.Printf("%!", tempAt);
 
-
     uint32 numberOfAliases = parameters.GetNumberOfChildren();
 
     for (uint32 i = 0u; (i < numberOfAliases) && ret; i++) {
         StreamString alias;
         const char8 * childName = parameters.GetChildName(i);
-        // need to do this shit??
+        if (StringHelper::Compare(childName, "Class") != 0) {
 
-        //printing two equal values we should obtain the same string in result!
-        if (isString) {
-            alias.Printf("%!", parameters.GetType(childName));
-        }
-        else {
-            ret = parameters.Read(childName, destination);
-            alias.Printf("%!", destination);
-        }
+            //printing two equal values we should obtain the same string in result!
+            //need to do this for seek problem (in cdb is always a const char*)
+            if (isString) {
+                alias.Printf("%!", parameters.GetType(childName));
+            }
+            else {
+                ret = parameters.Read(childName, destination);
+                alias.Printf("%!", destination);
+            }
 
-        if (ret) {
-            if (alias == destPrint) {
-                source.Serialise(childName);
-                break;
+            if (ret) {
+                if (alias == destPrint) {
+                    source.Serialise(childName);
+                    break;
+                }
             }
         }
     }

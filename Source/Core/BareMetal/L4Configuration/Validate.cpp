@@ -37,7 +37,7 @@
 #include "StringHelper.h"
 #include "StandardParser.h"
 #include "ConfigurationDatabase.h"
-#include "ErrorManagement.h"
+#include "AdvancedErrorManagement.h"
 #include "ValidatorI.h"
 #include "AliasConverterI.h"
 
@@ -66,10 +66,8 @@ bool Validate(const AnyType &value,
             ret = parser.Parse();
         }
         if (ret) {
-
             ReferenceContainer validatorContainer;
             ret = validatorContainer.Initialise(cdb);
-
             if (ret) {
                 uint32 numberOfValidators = validatorContainer.Size();
                 for (uint32 i = 0u; (i < numberOfValidators) && (ret); i++) {
@@ -79,7 +77,6 @@ bool Validate(const AnyType &value,
                     }
                 }
             }
-
         }
     }
     return ret;
@@ -126,6 +123,9 @@ bool Alias(StructuredDataI& data,
                                 data.Write(memberName, destination);
                             }
                         }
+                        else{
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Required member %s not found", memberName)
+                        }
                     }
                 }
             }
@@ -166,7 +166,7 @@ bool InvertAlias(StructuredDataI& data,
                             AnyObject sourceOut;
 
                             ret = aliasConverter->DestinationToSource(destination, sourceOut);
-                            AnyType source = sourceOut;
+                            AnyType source = sourceOut.GetType();
                             if (ret) {
                                 ret = !source.IsVoid();
                             }
@@ -176,6 +176,9 @@ bool InvertAlias(StructuredDataI& data,
                             if (ret) {
                                 data.Write(memberName, source);
                             }
+                        }
+                        else{
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Required member %s not found", memberName)
                         }
                     }
                 }

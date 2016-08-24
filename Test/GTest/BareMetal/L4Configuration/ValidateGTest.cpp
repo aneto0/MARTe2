@@ -46,4 +46,22 @@ TEST(ValidateGTest,TestValidate) {
     ASSERT_TRUE(validateTest.TestValidate());
 }
 
+TEST(ValidateGTest,TestAlias) {
+    ValidateTest validateTest;
+    ASSERT_TRUE(validateTest.TestAlias());
+}
 
+TEST(ValidateGTest,TestInvertAlias) {
+    ValidateTest validateTest;
+    ASSERT_TRUE(validateTest.TestInvertAlias());
+}
+
+TEST(ValidateGTest,TestAliasFalse_MemberNotFound) {
+    ValidateTest validateTest;
+    ASSERT_TRUE(validateTest.TestAliasFalse_MemberNotFound());
+}
+
+TEST(ValidateGTest,TestInvertAlias_MemberNotFound) {
+    ValidateTest validateTest;
+    ASSERT_TRUE(validateTest.TestInvertAlias_MemberNotFound());
+}

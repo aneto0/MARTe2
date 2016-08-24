@@ -48,7 +48,7 @@ public:
     /**
      * @brief Default constructor
      */
-    IntegerObject() {
+IntegerObject    () {
         dummyVariable = 0;
     }
 
@@ -99,7 +99,7 @@ public:
     /**
      * @brief Default constructor
      */
-    SpecialIntegerObject() {
+SpecialIntegerObject    () {
     }
 
     /**
@@ -137,7 +137,7 @@ public:
     /**
      * @brief Default constructor
      */
-    FloatObject() {
+FloatObject    () {
         dummyFVariable = 0;
     }
 
@@ -197,7 +197,7 @@ public:
     /**
      * @brief Constructor.
      */
-    CollectInts() {
+CollectInts    () {
         oneInteger.SetVariable(0);
         oneSpecialInteger.SetVariable(0);
     }
@@ -273,7 +273,7 @@ public:
     /**
      * @brief Default constructor
      */
-    NonIntrospectableIntegerObject() {
+NonIntrospectableIntegerObject    () {
         member = 0;
     }
 
@@ -301,7 +301,7 @@ public:
     /**
      * @brief Default constructor
      */
-    IntrospectableIntegerObject() {
+IntrospectableIntegerObject    () {
         member = 0;
     }
 
@@ -329,7 +329,7 @@ public:
     /**
      * @brief Default constructor
      */
-    IntrospectableObjectWith2Members() {
+IntrospectableObjectWith2Members    () {
         member1 = 0;
         member2 = 0;
     }
@@ -363,7 +363,7 @@ public:
     /**
      * @brief Default constructor
      */
-    IntrospectableObjectWith3Members() {
+IntrospectableObjectWith3Members    () {
         member1 = 0;
         member2 = 0;
     }
@@ -388,6 +388,51 @@ public:
      * Member 3 atribute
      */
     IntrospectableIntegerObject member3;
+
+};
+
+struct IntrospectableStructWith3Members {
+    /**
+     * Member 1 attribute
+     */
+    int32 member1;
+
+    /**
+     * Member 2 attribute
+     */
+    uint64 member2;
+
+    /**
+     * Member 3 atribute
+     */
+    IntrospectableIntegerObject member3;
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class IntrospectableObjectWith6Members: public IntrospectableObjectWith2Members, public IntrospectableStructWith3Members {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    IntrospectableObjectWith6Members() {
+        member1 = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~IntrospectableObjectWith6Members() {
+    }
+
+    /**
+     * Member 1 attribute
+     */
+    int32 member1;
 
 };
 

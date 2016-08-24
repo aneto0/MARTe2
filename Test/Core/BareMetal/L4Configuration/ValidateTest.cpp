@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ValidateTest.h"
-
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -65,4 +65,71 @@ bool ValidateTest::TestValidate() {
     return true;
 }
 
+bool ValidateTest::TestAlias() {
+    const char8 * attributes = "+AliasMaker = {Class = StringAliasAll A=1 B=3 C=2 D=8}";
+    const char8 * initVal[] = { "A", "B", "C", "D", 0 };
+    uint8 endVal[] = { 1, 3, 2, 8, 0 };
 
+    uint32 i = 0u;
+    while (initVal[i] != NULL) {
+        ConfigurationDatabase cdb;
+
+        cdb.Write("memberToChange", initVal[i]);
+
+        if (!Alias(cdb, "memberToChange", attributes)) {
+            return false;
+        }
+
+        uint8 testVal;
+        cdb.Read("memberToChange", testVal);
+        if (testVal != endVal[i]) {
+            return false;
+        }
+        i++;
+    }
+    return true;
+
+}
+
+bool ValidateTest::TestAliasFalse_MemberNotFound() {
+    const char8 * attributes = "+AliasMaker = {Class = StringAliasAll A=1 B=3 C=2 D=8}";
+    ConfigurationDatabase cdb;
+
+    cdb.Write("memberToChange", "A");
+
+    return (!Alias(cdb, "memberToChange_not_present", attributes));
+}
+
+bool ValidateTest::TestInvertAlias() {
+    const char8 * attributes = "+AliasMaker = {Class = StringAliasAll A=1 B=3 C=2 D=8}";
+    const char8 * initVal[] = { "A", "B", "C", "D", 0 };
+    uint8 endVal[] = { 1, 3, 2, 8, 0 };
+
+    uint32 i = 0u;
+    while (initVal[i] != NULL) {
+        ConfigurationDatabase cdb;
+
+        cdb.Write("memberToChange", endVal[i]);
+
+        if (!InvertAlias(cdb, "memberToChange", attributes)) {
+            return false;
+        }
+
+        StreamString testVal;
+        cdb.Read("memberToChange", testVal);
+        if (testVal != initVal[i]) {
+            return false;
+        }
+        i++;
+    }
+    return true;
+}
+
+bool ValidateTest::TestInvertAlias_MemberNotFound() {
+    const char8 * attributes = "+AliasMaker = {Class = StringAliasAll A=1 B=3 C=2 D=8}";
+    ConfigurationDatabase cdb;
+
+    cdb.Write("memberToChange", "A");
+
+    return (!InvertAlias(cdb, "memberToChange_not_present", attributes));
+}

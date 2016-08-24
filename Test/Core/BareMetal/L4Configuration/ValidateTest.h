@@ -50,6 +50,13 @@ public:
     bool TestValidate();
 
 
+    bool TestAlias();
+
+    bool TestAliasFalse_MemberNotFound();
+
+    bool TestInvertAlias();
+
+    bool TestInvertAlias_MemberNotFound();
 };
 
 /*---------------------------------------------------------------------------*/

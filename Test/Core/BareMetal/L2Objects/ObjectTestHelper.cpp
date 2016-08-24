@@ -43,44 +43,57 @@
 
 CLASS_REGISTER(IntegerObject, "1.0")
 
-
 CLASS_REGISTER(SpecialIntegerObject, "1.0")
-
 
 CLASS_REGISTER(FloatObject, "1.0")
 
-
 CLASS_REGISTER(CollectInts, "1.0")
-
 
 CLASS_REGISTER(NonIntrospectableIntegerObject, "1.0")
 
-
 CLASS_REGISTER(IntrospectableIntegerObject, "1.0")
-
 
 CLASS_REGISTER(IntrospectableObjectWith2Members, "1.0")
 
-
 CLASS_REGISTER(IntrospectableObjectWith3Members, "1.0")
 
+CLASS_REGISTER(IntrospectableObjectWith6Members, "1.0")
 
 DECLARE_CLASS_MEMBER(IntrospectableIntegerObject, member, int32, "", "");
 static const IntrospectionEntry* objFields[] = { &IntrospectableIntegerObject_member_introspectionEntry, 0 };
 DECLARE_CLASS_INTROSPECTION(IntrospectableIntegerObject, objFields);
 //CLASS_INTROSPECTION_REGISTER(IntrospectableIntegerObject, "1.0", IntrospectableIntegerObject_introspection)
 
-
 DECLARE_CLASS_MEMBER(IntrospectableObjectWith2Members, member1, int32, "", "");
 DECLARE_CLASS_MEMBER(IntrospectableObjectWith2Members, member2, uint64, "", "");
-static const IntrospectionEntry* IntrospectableObjectWith2Members_objFields[] = { &IntrospectableObjectWith2Members_member1_introspectionEntry, &IntrospectableObjectWith2Members_member2_introspectionEntry, 0 };
+static const IntrospectionEntry* IntrospectableObjectWith2Members_objFields[] = { &IntrospectableObjectWith2Members_member1_introspectionEntry,
+        &IntrospectableObjectWith2Members_member2_introspectionEntry, 0 };
 DECLARE_CLASS_INTROSPECTION(IntrospectableObjectWith2Members, IntrospectableObjectWith2Members_objFields);
 //CLASS_INTROSPECTION_REGISTER(IntrospectableObjectWith2Members, "1.0", IntrospectableObjectWith2Members_introspection)
-
 
 DECLARE_CLASS_MEMBER(IntrospectableObjectWith3Members, member1, int32, "", "");
 DECLARE_CLASS_MEMBER(IntrospectableObjectWith3Members, member2, uint64, "", "");
 DECLARE_CLASS_MEMBER(IntrospectableObjectWith3Members, member3, IntrospectableIntegerObject, "", "");
-static const IntrospectionEntry* IntrospectableObjectWith3Members_objFields[] = { &IntrospectableObjectWith3Members_member1_introspectionEntry, &IntrospectableObjectWith3Members_member2_introspectionEntry, &IntrospectableObjectWith3Members_member3_introspectionEntry, 0 };
+static const IntrospectionEntry* IntrospectableObjectWith3Members_objFields[] = { &IntrospectableObjectWith3Members_member1_introspectionEntry,
+        &IntrospectableObjectWith3Members_member2_introspectionEntry, &IntrospectableObjectWith3Members_member3_introspectionEntry, 0 };
 DECLARE_CLASS_INTROSPECTION(IntrospectableObjectWith3Members, IntrospectableObjectWith3Members_objFields);
 //CLASS_INTROSPECTION_REGISTER(IntrospectableObjectWith3Members, "1.0", IntrospectableObjectWith3Members_introspection)
+
+
+DECLARE_CLASS_MEMBER(IntrospectableStructWith3Members, member1, int32, "", "");
+DECLARE_CLASS_MEMBER(IntrospectableStructWith3Members, member2, uint64, "", "");
+DECLARE_CLASS_MEMBER(IntrospectableStructWith3Members, member3, IntrospectableIntegerObject, "", "");
+static const IntrospectionEntry* IntrospectableStructWith3Members_objFields[] = { &IntrospectableStructWith3Members_member1_introspectionEntry,
+        &IntrospectableStructWith3Members_member2_introspectionEntry, &IntrospectableStructWith3Members_member3_introspectionEntry, 0 };
+DECLARE_STRUCT_INTROSPECTION(IntrospectableStructWith3Members, IntrospectableStructWith3Members_objFields);
+//CLASS_INTROSPECTION_REGISTER(IntrospectableObjectWith3Members, "1.0", IntrospectableObjectWith3Members_introspection)
+
+
+DECLARE_CLASS_MEMBER(IntrospectableObjectWith6Members, member1, int32, "", "");
+DECLARE_CLASS_PARENT(IntrospectableObjectWith6Members, IntrospectableObjectWith2Members, "", "");
+DECLARE_CLASS_PARENT(IntrospectableObjectWith6Members, IntrospectableStructWith3Members, "", "");
+static const IntrospectionEntry* IntrospectableObjectWith6Members_objFields[] = { &IntrospectableObjectWith6Members_member1_introspectionEntry,
+        &IntrospectableObjectWith6Members_IntrospectableObjectWith2Members_introspectionEntry,
+        &IntrospectableObjectWith6Members_IntrospectableStructWith3Members_introspectionEntry, 0 };
+
+DECLARE_CLASS_INTROSPECTION(IntrospectableObjectWith6Members, IntrospectableObjectWith6Members_objFields);
