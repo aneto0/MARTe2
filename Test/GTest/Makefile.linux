@@ -37,4 +37,7 @@ LIBRARIES   += ../../Build/$(TARGET)/Core/FileSystem/MARTeCoreFTest$(LIBEXT)
 LIBRARIES   += ../../Build/$(TARGET)/GTest/BareMetal/MARTeBGTest$(LIBEXT)
 LIBRARIES   += ../../Build/$(TARGET)/GTest/Scheduler/MARTeSGTest$(LIBEXT)
 LIBRARIES   += ../../Build/$(TARGET)/GTest/FileSystem/MARTeFGTest$(LIBEXT)
+LIBRARIES   += ../../Build/$(TARGET)/GAMs/GAMFromTool/GAMFromTool$(LIBEXT)
+LIBRARIES   += ../../Build/$(TARGET)/GAMs/GAMFromTool2/GAMFromTool2$(LIBEXT)
+
 LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 

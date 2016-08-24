@@ -40,30 +40,37 @@
 namespace MARTe {
 
 /**
- * @brief Checks the \a value in input looking to the specified \a attributes.
- * @details
- * The string attributes must be written in the standard MARTe configuration language and provides a series
- * of attributes to be associated to a basic type member. Most common attributes are:
- *
- *   min        = ...    ---> the minimum value;\n
- *   max        = ...    ---> the maximum value;\n
- *   values     = {...}  ---> the list of possible values;\n
- *   min_size   = ...    ---> the minimum size;\n
- *   max_size   = ...    ---> the maximum size;
- *
- * @details
- * If the AnyType in input is multi-dimensional (i.e a matrix or a vector), the function returns true only if
- * the constraints are respected by each element.
- *
- * @return true if \a value respects the constraints specified by the \a attributes, false otherwise.
+ * @brief Parses \a attributes and calls the function ValidatorI::Validate(*) for each ValidatorI
+ * found after calling its Initialise(*)
+ * @param[in] value is the element to be validated.
+ * @param[in] attributes is the configuration stream to be parsed which should contain declarations of ValidatorI to
+ * be instantiated.
  */
 DLL_API bool Validate(const AnyType &value,
                       const char8* const attributes);
 
+/**
+ * @brief Parses \a attributes and calls the function AliasConverter::SourceToDestination(*) for each AliasConverter
+ * found after calling its Initialise(*). The member \a membername in \a data will be replaced by the destination
+ * returned by AliasConverter::SourceToDestination(*).
+ * @param[in] data is the structured data containing the element which has to be replaced.
+ * @param[in] memberName is the name of the element which has to be replaced (in case of matching with an alias).
+ * @param[in] attributes is the configuration stream to be parsed which should contain declarations of AliasConverter to
+ * be instantiated.
+ */
 DLL_API bool Alias(StructuredDataI& data,
                    const char8* const memberName,
                    const char8* const attributes);
 
+/**
+ * @brief Parses \a attributes and calls the function AliasConverter::DestinationToSource(*) for each AliasConverter
+ * found after calling its Initialise(*). The member \a membername in \a data will be replaced by the element
+ * returned by AliasConverter::DestinationToSource(*).
+ * @param[in] data is the structured data containing the element which has to be replaced.
+ * @param[in] memberName is the name of the element which has to be replaced (in case of matching with an alias).
+ * @param[in] attributes is the configuration stream to be parsed which should contain declarations of AliasConverter to
+ * be instantiated.
+ */
 DLL_API bool InvertAlias(StructuredDataI& data,
                          const char8* const memberName,
                          const char8* const attributes);

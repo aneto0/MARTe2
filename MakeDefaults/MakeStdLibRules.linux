@@ -31,7 +31,16 @@ ctags : %.cpp %.c %.h
 createLibrary :
 	touch createLibrary
 
-$(BUILD_DIR)/%.o : %.cpp
+tool.info: $(CONFIG_NAME)
+	ls $(ROOT_DIR) | grep -q TheTool.ex && $(ROOT_DIR)/TheTool.ex $(CONFIG_NAME) > tool.info
+	ls | grep -q tool.info || touch tool.info
+#if we decide that the user can write everything in a '.h' file with the tool input inside a comment
+#it is possible use this commands to generate automatically the real header file and the real tool input
+#sed -i '1,/beg_pattern/ s/[^$]//g' -i '/end_pattern/,$ s/[^$]//g' input >> tool_input
+#sed -i '/beg_pattern/,/end_pattern/ s/[^$]/(tool_macros)/g' input >> header
+	
+
+$(BUILD_DIR)/%.o : %.cpp tool.info
 	mkdir -p $(BUILD_DIR)
 	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -S $(OPTIM) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
@@ -113,6 +122,7 @@ clean:  $(SUBPROJC)
 	@rm -f $(BUILD_DIR)/*$(GCNOEXT)
 	@rm -f $(BUILD_DIR)/*$(GCDAEXT)
 	@rm -f $(BUILD_DIR)/*$(DEFEXT)
+	rm -f
 	@rm -f *_Gen.cpp
 	@rm -f *_Gen.c
 

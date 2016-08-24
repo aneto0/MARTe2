@@ -41,12 +41,33 @@ namespace MARTe{
 
 class AliasConverterI: public ReferenceContainer {
 public:
+
+    /**
+     * @brief Constructor
+     */
     AliasConverterI();
 
+    /**
+     * @brief Destructor
+     */
     virtual ~AliasConverterI();
 
+    /**
+     * @brief Performs the conversion from the source (always a string in this case) in input to the destination type
+     * if it matches one of the element in the enum.
+     * @param[in] source is the value which has to be converted
+     * @param[in] destination is the converted value in output.
+     * @return true if source has been matched in the enumeration, false otherwise.
+     */
     virtual bool SourceToDestination(const AnyType &source, AnyObject &destination)=0;
 
+    /**
+     * @brief Performs the conversion from the destination value in input to the source (always a string in this case)
+     * if it matches one of the element in the enum.
+     * @param[in] destination is the value which has to match with one of the enum fields
+     * @param[in] source is the name of the enum field which has matched with \a destination.
+     * @return true if destination has been found in the enumeration, false otherwise.
+     */
     virtual bool DestinationToSource(const AnyType &destination, AnyObject &source)=0;
 
 };

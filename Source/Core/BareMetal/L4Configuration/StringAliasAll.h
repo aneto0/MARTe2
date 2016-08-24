@@ -38,24 +38,62 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
+/**
+ * @brief Converts a string to a type depending on the configuration provided in input.
+ * @details In the configuration data an enumeration of string(source) = type(destination)
+ * must be provided and this object is capable to convert a source to a destination and vice-versa
+ * if it will be matched in the enumeration.
+ * @details For instance, imagine to provide the following StructuredDataI to the Initialise(*)
+ * function:
+ *    A = 1
+ *    B = 2
+ *    C = 3
+ *    E = 8
+ * then passing "A" to SourceToDestination(*) function, it will return "1" in the destination and so on.
+ * The function DestinationToSource(*) performs the opposite conversion (passing "1" it retrieves "A").
+ */
 namespace MARTe {
 class StringAliasAll: public AliasConverterI {
 public:
     CLASS_REGISTER_DECLARATION();
 
-
+    /**
+     * @brief Constructor
+     */
     StringAliasAll();
+
+    /**
+     * @brief Destructor
+     */
     virtual ~StringAliasAll();
 
+    /**
+     * @see Object::Initialise(*)
+     * @details data has to be in the following format
+     *    source (string) = destination (any uni or multidimensional type)
+     *    ...
+     */
     virtual bool Initialise(StructuredDataI & data);
 
+    /**
+     * @see AliasConverterI::SourceToDestination(*)
+     * @details Performs the conversion from the source (always a string in this case) in input to the destination type
+     * if it matches one of the element in the enum.
+     */
     virtual bool SourceToDestination(const AnyType &source, AnyObject &destination);
 
+    /**
+     * @see AliasConverterI::DestinationToSource(*)
+     * @details Performs the conversion from the destination value in input to the source (always a string in this case)
+     * if it matches one of the element in the enum.
+     */
     virtual bool DestinationToSource(const AnyType &destination, AnyObject &source);
 
 private:
 
+    /**
+     * Stores the enumeration alias list.
+     */
     ConfigurationDatabase parameters;
 };
 }

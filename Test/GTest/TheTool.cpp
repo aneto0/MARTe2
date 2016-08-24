@@ -277,90 +277,6 @@ static void PrintIntrospection(ConfigurationDatabase &database,
     }
 }
 
-#if 0
-static void GenerateParentsIntrospectionNode(ConfigurationDatabase &database,
-        BasicFile &structSource,
-        const char8 *className) {
-    uint32 numberOfParents = database.GetNumberOfChildren();
-    StreamString classNameStr = className;
-
-    //flat view on the parameters
-    for (uint32 i = 0u; i < numberOfParents; i++) {
-        const char8 * parentName = database.GetChildName(i);
-        if (database.MoveRelative(parentName)) {
-
-            StreamString modifiers;
-            StreamString type;
-            StreamString attributes;
-            StreamString comments;
-
-            ReadIntrospectionAttributes(database, modifiers, type, attributes, comments, className, parentName);
-
-            if (type.Size() == 0u) {
-                type = parentName;
-            }
-
-            //Manage the parent introspection
-
-            // SOURCE FILE MANAGEMENT
-            // declare the member introspection
-            IntrospectionOnSourceBefore(parentName, modifiers, classNameStr, type, attributes, structSource, true);
-            database.MoveToAncestor(1u);
-        }
-    }
-    IntrospectionOnSourceAfter(database, classNameStr, structSource);
-
-}
-
-static void GenerateParentsIntrospectionVector(ConfigurationDatabase &database,
-        BasicFile &structSource,
-        const char8 *className) {
-    uint32 numberOfParents = database.GetNumberOfElements("Parents", 0u);
-    Vector<StreamString> parentNames(numberOfParents);
-    StreamString classNameStr = className;
-
-    if (database.Read("Parents", parentNames)) {
-
-        //flat view on the parameters
-        for (uint32 i = 0u; i < numberOfParents; i++) {
-
-            StreamString modifiers;
-            StreamString type;
-            StreamString attributes;
-            StreamString comments;
-
-            type = parentNames[i];
-
-            //Manage the parent introspection
-
-            // SOURCE FILE MANAGEMENT
-            // declare the member introspection
-            IntrospectionOnSourceBefore(parentNames[i].Buffer(), modifiers, classNameStr, type, attributes, structSource, true);
-
-        }
-    }
-    else {
-        printf("No Parents Introspection declared");
-    }
-    IntrospectionOnSourceAfter(database, classNameStr, structSource);
-
-}
-
-static void GenerateParentsIntrospection(ConfigurationDatabase &database,
-        BasicFile &structSource,
-        const char8 * className) {
-
-    if (database.MoveRelative("Parents")) {
-        GenerateParentsIntrospectionNode(database, structSource, className);
-        database.MoveToAncestor(1u);
-    }
-    else {
-        GenerateParentsIntrospectionVector(database, structSource, className);
-    }
-
-}
-#endif
-
 static void GenerateStructFile(ConfigurationDatabase &database,
                                BasicFile &structHeader,
                                BasicFile &structSource) {
@@ -527,44 +443,6 @@ static void ReadTheTypeArray(const char8 *paramName,
         PrintOnFile(objSource, "[i]);\n");
     }
     PrintOnFile(objSource, "        }\n");
-    /*
-     if (isStructType) {
-     PrintOnFile(objSource, "            if(data.MoveRelative(childName.Buffer())){\n"
-     "                StreamString type;\n"
-     "                if(data.Read(\"Class\", type)){\n"
-     "                    if(type == \"");
-     PrintOnFile(objSource, typeName);
-     PrintOnFile(objSource, "\"){\n"
-     "                        ANY_TYPE_STRUCT_BUILDER(");
-     PrintOnFile(objSource, typeName);
-     PrintOnFile(objSource, ", ");
-     PrintOnFile(objSource, paramName);
-     PrintOnFile(objSource, "[i]);\n"
-     "                        data.MoveToAncestor(1u);\n"
-     "                        ret = data.Read(childName.Buffer(), ");
-     PrintOnFile(objSource, typeName);
-     PrintOnFile(objSource, "_at);\n"
-     "                        data.MoveRelative(childName.Buffer());\n"
-     "                    }\n"
-     "                }\n"
-     "                data.MoveToAncestor(1u);\n"
-     "            }\n");
-     }
-     else {
-     PrintOnFile(objSource, "            AnyType at=data.GetType(childName.Buffer());\n"
-     "            if(at.GetTypeDescriptor() == TypeDescriptor::GetTypeDescriptorFromTypeName(\"");
-     PrintOnFile(objSource, typeName);
-     PrintOnFile(objSource, "\")) {\n"
-     "                ret = data.Read(childName.Buffer(), \"");
-     PrintOnFile(objSource, attributes);
-     PrintOnFile(objSource, "\", ");
-     PrintOnFile(objSource, paramName);
-     PrintOnFile(objSource, ");\n");
-     PrintOnFile(objSource, "            }\n");
-
-     }
-     PrintOnFile(objSource, "        }\n");
-     */
     PrintOnFile(objSource, "        if(!ret) {\n"
                 "            REPORT_ERROR(ErrorManagement::FatalError, \"Failed loading the parameters *");
     if (paramPath.Size() > 0u) {
@@ -966,7 +844,7 @@ static void GenerateObjFile(ConfigurationDatabase &database,
 }
 
 static void GenerateOutputFiles(ConfigurationDatabase &database) {
-// output files
+    // files for introspection
     BasicFile structHeader;
     BasicFile structSource;
 
@@ -981,28 +859,28 @@ static void GenerateOutputFiles(ConfigurationDatabase &database) {
     StreamString structHeaderName = classStructName;
     structHeaderName += ".h";
 
-// open the .h output file
+    // open the .h output file
     if (!structHeader.Open(structHeaderName.Buffer(),
                            BasicFile::FLAG_APPEND | BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
-        printf("\nUnable to open the output header file");
+        printf("\nUnable to open %s", structHeaderName.Buffer());
         return;
     }
 
     StreamString structSourceName = classStructName;
     structSourceName += ".cpp";
 
-// open the .cpp output file
+    // open the .cpp output file
     if (!structSource.Open(structSourceName.Buffer(),
                            BasicFile::FLAG_APPEND | BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
-        printf("\nUnable to open the output source file");
+        printf("\nUnable to open %s", structSourceName.Buffer());
         return;
     }
 
-// print the header in the header file
+    // print the header in the header file
     PrintOnFile(structHeader, "#include \"GeneralDefinitions.h\"\n\n");
     PrintOnFile(structHeader, "namespace MARTe{ \n\n");
 
-// print the header in the source file
+    // print the header in the source file
     PrintOnFile(structSource, "#include \"Object.h\"\n#include \"ClassRegistryDatabase.h\"\n");
     PrintOnFile(structSource, "#include \"IntrospectionT.h\"\n#include \"");
     PrintOnFile(structSource, className.Buffer());
@@ -1012,7 +890,7 @@ static void GenerateOutputFiles(ConfigurationDatabase &database) {
     BasicFile objHeader;
     StreamString objheaderName = className;
     objheaderName += "_macros.h";
-// open the .h gam file
+    // open the .h gam file
     if (!objHeader.Open(objheaderName.Buffer(),
                         BasicFile::FLAG_APPEND | BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
         printf("\nUnable to open the gam header file");
@@ -1022,7 +900,7 @@ static void GenerateOutputFiles(ConfigurationDatabase &database) {
     BasicFile objSource;
     StreamString objSourceName = className;
     objSourceName += "_aux.cpp";
-// open the .cpp gam file
+    // open the .cpp gam file
     if (!objSource.Open(objSourceName.Buffer(),
                         BasicFile::FLAG_APPEND | BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
         printf("\nUnable to open the gam source file");
@@ -1054,16 +932,16 @@ static void GenerateOutputFiles(ConfigurationDatabase &database) {
 int main(int argc,
          char** argv) {
 
-// the parser
+    // the parser
     ParserI *myParser = NULL;
 
-// the database created by the parser
+    // the database created by the parser
     ConfigurationDatabase database;
 
-// the parser errors
+    // the parser errors
     StreamString errors;
 
-// configuration input file
+    // configuration input file
     BasicFile configFile;
 
     bool canReturn = false;
@@ -1081,7 +959,7 @@ int main(int argc,
             canReturn = true;
         }
     }
-
+    // choose the parser
     if (!canReturn) {
         configFile.Seek(0);
         if (argc > 3) {
@@ -1111,6 +989,7 @@ int main(int argc,
     }
 
     if (!canReturn) {
+        // generates the files
         GenerateOutputFiles(database);
     }
     if (myParser != NULL) {
