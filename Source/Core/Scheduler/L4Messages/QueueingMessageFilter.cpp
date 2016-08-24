@@ -40,18 +40,18 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-QueueingMessageFilter::QueueingMessageFilter(){
+QueueingMessageFilter::QueueingMessageFilter():MessageFilter(true){
 
 }
 
 /**
  * @brief Destructor.
  */
-virtual QueueingMessageFilter::~QueueingMessageFilter(){
+QueueingMessageFilter::~QueueingMessageFilter(){
 
 }
 
-virtual ErrorManagement::ErrorType QueueingMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest){
+ErrorManagement::ErrorType QueueingMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest){
     ErrorManagement::ErrorType err;
     err.timeout = messageQ.Lock();
     if (err.ErrorsCleared()){
@@ -62,7 +62,7 @@ virtual ErrorManagement::ErrorType QueueingMessageFilter::ConsumeMessage(Referen
             newMessagesAlarm.Post();
         }
 
-        err.fatalError |= messageQ.UnLock();
+        messageQ.UnLock();
     }
     return err;
 }
@@ -70,7 +70,7 @@ virtual ErrorManagement::ErrorType QueueingMessageFilter::ConsumeMessage(Referen
 /**
  * TODO
 */
-ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message> &message,const TimeoutType &timeout=TTInfiniteWait){
+ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message> &message,const TimeoutType &timeout){
     ErrorManagement::ErrorType err;
     bool locked = false;
     err.timeout = !messageQ.Lock();
@@ -82,8 +82,8 @@ ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message>
             err.fatalError = newMessagesAlarm.Reset();
         }
         if (locked && err.ErrorsCleared()){
-            err.fatalError = !messageQ.UnLock();
-            locked = err.fatalError;
+            messageQ.UnLock();
+            locked = false;
         }
         if (err.ErrorsCleared()){
             err.timeout = newMessagesAlarm.Wait(timeout);
@@ -108,7 +108,7 @@ ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message>
     }
 
     if (locked) {
-         err.fatalError |= messageQ.UnLock();
+         messageQ.UnLock();
    }
     return err;
 

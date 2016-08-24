@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "EmbeddedThread.h"
 
 /*---------------------------------------------------------------------------*/
@@ -46,7 +47,7 @@ namespace MARTe {
  */
 EmbeddedThread::EmbeddedThread(){
     threadId = InvalidThreadIdentifier;
-    commands = Stop;
+    commands = StopCommand;
     maxCommandCompletionHRT = 0;
     timeoutHRT = -1;
 }
@@ -54,12 +55,12 @@ EmbeddedThread::EmbeddedThread(){
 /**
  * TODO
  */
-virtual EmbeddedThread::~EmbeddedThread(){
+EmbeddedThread::~EmbeddedThread(){
     Stop();
 }
 
 
-virtual bool EmbeddedThread::Initialise(StructuredDataI &data){
+bool EmbeddedThread::Initialise(StructuredDataI &data){
     uint32  msecTimeout;
     bool ret = data.Read("Timeout",msecTimeout);
     if (ret){
@@ -87,47 +88,46 @@ void EmbeddedThread::SetTimeout(TimeoutType msecTimeout){
 }
 
 
-EmbeddedThreadStates EmbeddedThread::GetStatus(){
-    EmbeddedThreadStates  etos = None;
+EmbeddedThread::States EmbeddedThread::GetStatus(){
+    EmbeddedThread::States  etos = NoneState;
 
     if (threadId == InvalidThreadIdentifier) {
-                etos = Off;
+                etos = OffState;
     }
-
-    if (etos == None){
-        if (commands == KeepRunning)  {
-                etos = Running;
-        } else if (commands == Start) {
+    if (etos == NoneState){
+        if (commands == KeepRunningCommand)  {
+                etos = RunningState;
+        } else if (commands == StartCommand) {
             int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
             if ((deltaT > 0) && (timeoutHRT != -1)) {
-                etos = TimeoutStarting;
+                etos = TimeoutStartingState;
             }
             else            {
-                etos = Starting;
+                etos = StartingState;
             }
-        } else if (commands == Stop) {
+        } else if (commands == StopCommand) {
             int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
             if ((deltaT > 0) && (timeoutHRT != -1)) {
-                etos = TimeoutStopping;
+                etos = TimeoutStoppingState;
             }
             else            {
-                etos = Stopping;
+                etos = StoppingState;
             }
-        } else if (commands == Kill){
-        if (Threads::IsAlive(threadId)){
+        } else if (commands == KillCommand){
+            if (Threads::IsAlive(threadId)){
                 int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
                 if ((deltaT > 0) && (timeoutHRT != -1)) {
-                    etos = TimeoutKilling;
+                    etos = TimeoutKillingState;
                 }
                 else {
-                    etos = Killing;
+                    etos = KillingState;
                 }
+            } else {
+                etos = OffState;
+                threadId = InvalidThreadIdentifier;
+            }
+        }
 
-        } else {
-        etos = Off;
-        threadId = InvalidThreadIdentifier;
-        }
-        }
     }
     return etos;
 }
@@ -142,12 +142,12 @@ static void  EmbeddedThreadThreadLauncher(const void * const parameters){
 }
 
 void EmbeddedThread::ThreadStartUp(){
-    commands = KeepRunning;
+    commands = KeepRunningCommand;
 
     ErrorManagement::ErrorType err;
 
-    while (err.ErrorsCleared() && (commands == KeepRunning)){
-    err = Loop();
+    while (err.ErrorsCleared() && (commands == KeepRunningCommand)){
+        err = Loop();
     }
 }
 
@@ -156,12 +156,12 @@ ErrorManagement::ErrorType EmbeddedThread::Start(){
     ErrorManagement::ErrorType err;
 
     //check if thread already running
-    if (GetStatus() != Off ){
+    if (GetStatus() != OffState ){
         err.illegalOperation = true;
     }
 
     if (err.ErrorsCleared()){
-        commands = Start;
+        commands = StartCommand;
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
         const void * const parameters = static_cast<void *> (this);
 
@@ -180,39 +180,39 @@ ErrorManagement::ErrorType EmbeddedThread::Start(){
  */
 ErrorManagement::ErrorType EmbeddedThread::Stop(){
     ErrorManagement::ErrorType err;
-    EmbeddedThreadStates status = GetStatus();
+    States status = GetStatus();
 
     //check if thread already running
-    if (status == Off ){
+    if (status == OffState ){
 
-    } else if (status == Running ) {
-        commands = Stop;
+    } else if (status == RunningState ) {
+        commands = StopCommand;
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
 
-        while(GetStatus() == Stopping){
-        Sleep::MSec(1);
+        while(GetStatus() == StoppingState){
+            Sleep::MSec(1);
         }
 
-        err.timeout = (GetStatus() != Off);
+        err.timeout = (GetStatus() != OffState);
 
-    } else if ((status == TimeoutStopping) || (status == Stopping)){
-        commands = Kill;
+    } else if ((status == TimeoutStoppingState) || (status == StoppingState)){
+        commands = KillCommand;
 
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
         err.fatalError = Threads::Kill(threadId);
 
         if (err.ErrorsCleared()){
 
-            while(GetStatus() == Killing){
-            Sleep::MSec(1);
+            while(GetStatus() == KillingState){
+                Sleep::MSec(1);
             }
 
         }
 
-        err.timeout = (GetStatus() != Off);
+        err.timeout = (GetStatus() != OffState);
 
     } else  {
-    err.illegalOperation = true;
+        err.illegalOperation = true;
     }
 
     return err;

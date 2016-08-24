@@ -44,81 +44,6 @@ namespace MARTe{
 /*---------------------------------------------------------------------------*/
 
 
-/**
- * @brief States of an EmbeddedThread
-
- */
-enum EmbeddedThreadStates {
-    /**
-     * No Status
-     */
-    None,
-    /**
-     * No Thread running =  (threadId = 0)
-     */
-    Off,
-
-    /**
-     *TODO
-     */
-    Starting,
-
-    /**
-     * TODO
-     */
-    TimeoutStarting,
-
-    /**
-     * (threadId != 0) && TODO
-     */
-    Running,
-
-    /**
-     * TODO
-     */
-    Stopping,
-
-    /**
-     * TODO
-     */
-    TimeoutStopping,
-
-    /**
-     * TODO
-     */
-    Killing,
-    /**
-     * TODO
-     */
-    TimeoutKilling
-
-};
-
-/**
- * @brief States of an EmbeddedThread
-
- */
-enum EmbeddedThreadCommands {
-    /**
-     * set by Start() at the start of thread life
-     */
-    Start,
-    /**
-     * set by thread before entering loop
-     */
-    KeepRunning,
-
-    /**
-     * nice request to stop
-     */
-    Stop,
-
-    /**
-     * Stop called twice - performing async killing
-     */
-    Kill
-
-};
 
 /**
  * TODO
@@ -127,6 +52,83 @@ enum EmbeddedThreadCommands {
 class EmbeddedThread {
 
 public:
+
+    /**
+     * @brief States of an EmbeddedThread
+
+     */
+    enum States {
+        /**
+         * No Status
+         */
+        NoneState,
+        /**
+         * No Thread running =  (threadId = 0)
+         */
+        OffState,
+
+        /**
+         *TODO
+         */
+        StartingState,
+
+        /**
+         * TODO
+         */
+        TimeoutStartingState,
+
+        /**
+         * (threadId != 0) && TODO
+         */
+        RunningState,
+
+        /**
+         * TODO
+         */
+        StoppingState,
+
+        /**
+         * TODO
+         */
+        TimeoutStoppingState,
+
+        /**
+         * TODO
+         */
+        KillingState,
+        /**
+         * TODO
+         */
+        TimeoutKillingState
+
+    };
+
+    /**
+     * @brief States of an EmbeddedThread
+
+     */
+    enum Commands {
+        /**
+         * set by Start() at the start of thread life
+         */
+        StartCommand,
+        /**
+         * set by thread before entering loop
+         */
+        KeepRunningCommand,
+
+        /**
+         * nice request to stop
+         */
+        StopCommand,
+
+        /**
+         * Stop called twice - performing async killing
+         */
+        KillCommand
+
+    };
+
     /**
      * TODO
      */
@@ -156,7 +158,7 @@ public:
     /**
      * TODO
      */
-    EmbeddedThreadStates GetStatus();
+    EmbeddedThread::States GetStatus();
 
     /**
      * TODO
@@ -168,6 +170,11 @@ public:
      */
     void SetTimeout(TimeoutType msecTimeout);
 
+    /**
+     * TODO
+     * Public to be accessed by the thread launcher subroutine
+     */
+    void ThreadStartUp();
 
 protected:
 
@@ -178,10 +185,6 @@ protected:
 
 
 private:
-    /**
-     * TODO
-     */
-    void ThreadStartUp();
 
     /**
      * TODO
@@ -191,7 +194,7 @@ private:
     /**
      * TODO
      */
-    EmbeddedThreadCommands commands;
+    Commands commands;
 
     /**
      * TODO
