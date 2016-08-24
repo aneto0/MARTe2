@@ -34,7 +34,6 @@
 #include "BrokerI.h"
 #include "GAM.h"
 #include "Reference.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -339,7 +338,6 @@ int32 GAM::GetSignalIndex(const SignalDirection direction,
         StreamString searchName;
         ok = GetSignalName(direction, i, searchName);
         if (ok) {
-            printf("\nComparing %s %s\n", signalName, searchName.Buffer());
             found = (StringHelper::CompareN(signalName, searchName.Buffer(), sizeToCompare) == 0);
             if (found) {
                 found = (searchName[sizeToCompare] == '.') || (searchName[sizeToCompare] == '\0');
@@ -364,7 +362,6 @@ int32 GAM::GetSignalIndex(const SignalDirection direction,
                     while (signalNameStr.SkipTokens(1u, ".")) {
                         numberOfDotsInPartialName++;
                     }
-                    printf("\n alias=%d, sn=%d, psn=%d", numberOfDotsInAlias, numberOfDotsInName, numberOfDotsInPartialName);
                     uint32 diff = numberOfDotsInName - numberOfDotsInPartialName;
 
                     found = (numberOfDotsInAlias >= diff);
@@ -378,7 +375,6 @@ int32 GAM::GetSignalIndex(const SignalDirection direction,
                             minOffset = signalOffset;
                             signalIdx = i;
                             level = tempLevel;
-                            printf("\nlevel=%d\n", level);
 
                         }
                     }
