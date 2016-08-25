@@ -592,12 +592,29 @@ static void AssignSignalArray(const char8 *signalName,
                 "                StreamString typeName;\n"
                 "                ret = GetSignalType(");
     PrintOnFile(objSource, direction);
-    PrintOnFile(objSource, ", signalId, typeName, level);\n"
+    PrintOnFile(objSource, ", signalId, typeName, level);\n");
+    PrintOnFile(objSource, "                uint32 byteSize;\n"
                 "                if(ret) {\n"
-                "                    ret = typeName == \"");
-    PrintOnFile(objSource, type);
-    PrintOnFile(objSource, "\";\n"
+                "                    ret = GetSignalTypeByteSize(");
+    PrintOnFile(objSource, direction);
+    PrintOnFile(objSource, ", signalId, byteSize, level);\n"
                 "                }\n");
+    PrintOnFile(objSource, "                if(ret) {\n"
+                "                    ret = byteSize == sizeof(");
+    PrintOnFile(objSource, type);
+    PrintOnFile(objSource, ");\n"
+                "                }\n");
+    PrintOnFile(objSource, "                if(ret) {\n"
+                "                    if(typeName != \"");
+    PrintOnFile(objSource, type);
+    PrintOnFile(objSource, "\") {\n"
+                "                        REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, \"Signal ");
+    PrintOnFile(objSource, signalAlias);
+    PrintOnFile(objSource, " with type %s assigned to type ");
+    PrintOnFile(objSource, type);
+    PrintOnFile(objSource, "\", typeName.Buffer())\n"
+                "                    }\n");
+    PrintOnFile(objSource, "                }\n");
     PrintOnFile(objSource, "                if(ret) {\n"
                 "                    ");
     PrintOnFile(objSource, signalName);
@@ -644,17 +661,35 @@ static void AssignSignal(const char8 *signalName,
     PrintOnFile(objSource, "\");\n");
     PrintOnFile(objSource, "        ret = (level >= 0);\n");
 
+
     PrintOnFile(objSource, "        if(ret) {\n"
                 "            StreamString typeName;\n"
                 "            ret = GetSignalType(");
     PrintOnFile(objSource, direction);
-    PrintOnFile(objSource, ", signalId, typeName, level);\n"
+    PrintOnFile(objSource, ", signalId, typeName, level);\n");
+    PrintOnFile(objSource, "            uint32 byteSize;\n"
                 "            if(ret) {\n"
-                "                ret = typeName == \"");
+                "                ret = GetSignalTypeByteSize(");
+    PrintOnFile(objSource, direction);
+    PrintOnFile(objSource, ", signalId, byteSize, level);\n"
+                "            }\n");
+    PrintOnFile(objSource, "            if(ret) {\n"
+                "                ret = byteSize == sizeof(");
     PrintOnFile(objSource, type);
-    PrintOnFile(objSource, "\";\n"
-                "            }\n"
-                "        }\n");
+    PrintOnFile(objSource, ");\n"
+                "            }\n");
+    PrintOnFile(objSource, "            if(ret) {\n"
+                "                if(typeName != \"");
+    PrintOnFile(objSource, type);
+    PrintOnFile(objSource, "\") {\n"
+                "                    REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, \"Signal ");
+    PrintOnFile(objSource, signalAlias);
+    PrintOnFile(objSource, " with type %s assigned to type ");
+    PrintOnFile(objSource, type);
+    PrintOnFile(objSource, "\", typeName.Buffer())\n"
+                "                }\n");
+    PrintOnFile(objSource, "            }\n");
+    PrintOnFile(objSource, "        }\n");
     PrintOnFile(objSource, "        if(ret) {\n");
     PrintOnFile(objSource, "            ");
     PrintOnFile(objSource, signalName);
@@ -764,7 +799,9 @@ static void GenerateObjFile(ConfigurationDatabase &database,
 
     PrintOnFile(objSource, "#include \"");
     PrintOnFile(objSource, className);
-    PrintOnFile(objSource, ".h\"\n\n");
+    PrintOnFile(objSource, ".h\"\n");
+
+    PrintOnFile(objSource, "#include \"AdvancedErrorManagement.h\"\n\n");
 
     // Constructor and destructor
     PrintOnFile(objSource, "void ");

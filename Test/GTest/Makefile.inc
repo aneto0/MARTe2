@@ -23,8 +23,8 @@
 #############################################################
 
 OBJSX=ToolGeneratorTest.x 
-#GAMFromTool.x GAMFromTool_aux.x GAMFromTool2.x GAMFromTool2_aux.x GAMFromTool_params.x
-#ToolGeneratorTest.x GAMFromTool.x GAMFromTool_aux.x GAMFromTool2.x GAMFromTool2_aux.x GAMFromTool_params.x
+#TheTool.x 
+#ToolGeneratorTest.x
 #MainGTest.x
 SPB = BareMetal.x Scheduler.x FileSystem.x 
 PACKAGE=

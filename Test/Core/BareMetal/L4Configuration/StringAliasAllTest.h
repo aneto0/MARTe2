@@ -73,24 +73,45 @@ struct StringAliasAllTestTableMatrix {
     bool expected;
 };
 
+/**
+ * @brief Tests all the StringAliasAll functions
+ */
 class StringAliasAllTest {
 public:
 
+    /**
+     * @brief Tests if the function retrieves correctly the alias
+     */
     template<typename T>
     bool TestSourceToDestination(const StringAliasAllTestTable<T>* table);
 
+    /**
+     * @brief Tests if the function retrieves correctly a vector alias
+     */
     template<typename T, uint32 nElements>
     bool TestSourceToDestinationVector(const StringAliasAllTestTableVector<T, nElements>* table);
 
+    /**
+     * @brief Tests if the function retrieves correctly a matrix alias
+     */
     template<typename T, uint32 nRows, uint32 nCols>
     bool TestSourceToDestinationMatrix(const StringAliasAllTestTableMatrix<T, nRows, nCols>* table);
 
+    /**
+     * @brief Tests if the function converts the alias to the original value
+     */
     template<typename T>
     bool TestDestinationToSource(const StringAliasAllTestTable<T>* table);
 
+    /**
+     * @brief Tests if the function converts a vector alias to the original value
+     */
     template<typename T, uint32 nElements>
     bool TestDestinationToSourceVector(const StringAliasAllTestTableVector<T, nElements>* table);
 
+    /**
+     * @brief Tests if the function converts a matrix alias to the original value
+     */
     template<typename T, uint32 nRows, uint32 nCols>
     bool TestDestinationToSourceMatrix(const StringAliasAllTestTableMatrix<T, nRows, nCols>* table);
 

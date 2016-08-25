@@ -554,21 +554,272 @@ bool ReferenceContainerTest::TestFindFilter(ReferenceT<ReferenceContainer> tree,
 }
 
 bool ReferenceContainerTest::TestFindWithPath() {
-    return TestInsertWithPath();
-}
-
-bool ReferenceContainerTest::TestInsertWithPath() {
     ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
     Reference ref("Object");
-    containerRoot->Insert("A.B.C.MyObject", ref);
+    ref->SetName("MyObject");
+    containerRoot->Insert("A.B.C", ref);
 
     if (containerRoot->Find("A.B.C.MyObject") != ref) {
         return false;
     }
 
     Reference ref2("Object");
-    containerRoot->Insert("A.B.C.MyObject2", ref2);
+    ref2->SetName("MyObject2");
+    containerRoot->Insert("A.B.C", ref2);
+
+    if (containerRoot->Find("A.B.C.MyObject2") != ref2) {
+        return false;
+    }
     containerRoot->Insert("", ref);
+    if (containerRoot->Find("MyObject") != ref) {
+        return false;
+    }
+
+    // not recursive!
+    if (containerRoot->Find("MyObject2").IsValid()) {
+        return false;
+    }
+
+    return containerRoot->Find("MyObject2", true) == ref2;
+}
+
+/**
+ * @brief Class used for tests
+ */
+class PID: public Object {
+    /**
+     * @brief Initialises the gains from cdb
+     */
+    virtual bool Initialise(StructuredDataI &data);
+public:
+    /**
+     * Proportional gain
+     */
+    uint32 Kp;
+    /**
+     * Integral gain
+     */
+    uint32 Ki;
+    /**
+     * Derivative gain
+     */
+    uint32 Kd;CLASS_REGISTER_DECLARATION()
+    ;
+};
+
+bool PID::Initialise(StructuredDataI & data) {
+    bool ok = data.Read("Kp", Kp);
+    ok &= data.Read("Ki", Ki);
+    ok &= data.Read("Kd", Kd);
+    return ok;
+}
+CLASS_REGISTER(PID, "1.0")
+
+bool ReferenceContainerTest::TestFindAdvanced_Relative() {
+
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("$A");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateRelative("+PID");
+    cdb.Write("Class", "PID");
+    cdb.Write("Kp", 7);
+    cdb.Write("Ki", 8);
+    cdb.Write("Kd", 9);
+    cdb.CreateAbsolute("$A.$B");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateRelative("+PID");
+    cdb.Write("Class", "PID");
+    cdb.Write("Kp", 4);
+    cdb.Write("Ki", 5);
+    cdb.Write("Kd", 6);
+    cdb.CreateAbsolute("$A.$B.$C");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateRelative("+PID");
+    cdb.Write("Class", "PID");
+    cdb.Write("Kp", 1);
+    cdb.Write("Ki", 2);
+    cdb.Write("Kd", 3);
+    cdb.MoveToRoot();
+
+    ReferenceT<ReferenceContainer> rc = ReferenceT<ReferenceContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rc->Initialise(cdb)) {
+        return false;
+    }
+
+    ReferenceT<PID> test = rc->Find("A.B.C.PID");
+
+    if (!test.IsValid()) {
+        return false;
+    }
+    ReferenceT<PID> test2 = rc->Find(":::PID", test);
+    if (!test2.IsValid()) {
+        return false;
+    }
+    if (test2->Kp != 7) {
+        return false;
+    }
+    if (test2->Ki != 8) {
+        return false;
+    }
+    if (test2->Kd != 9) {
+        return false;
+    }
+
+    ReferenceT<ReferenceContainer> start = rc->Find("A.B");
+    if (!start.IsValid()) {
+        return false;
+    }
+    // relative search
+    ReferenceT<PID> test4 = rc->Find(":C.PID", start);
+    if (!test4.IsValid()) {
+        return false;
+    }
+    if (test4->Kp != 1) {
+        return false;
+    }
+    if (test4->Ki != 2) {
+        return false;
+    }
+    if (test4->Kd != 3) {
+        return false;
+    }
+
+    // relative search
+    ReferenceT<PID> test5 = rc->Find("C.PID", start, true);
+    if (!test5.IsValid()) {
+        return false;
+    }
+    if (test5->Kp != 1) {
+        return false;
+    }
+    if (test5->Ki != 2) {
+        return false;
+    }
+    if (test5->Kd != 3) {
+        return false;
+    }
+
+    return true;
+}
+
+bool ReferenceContainerTest::TestFindAdvanced_Absolute() {
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("$A");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateRelative("+PID");
+    cdb.Write("Class", "PID");
+    cdb.Write("Kp", 7);
+    cdb.Write("Ki", 8);
+    cdb.Write("Kd", 9);
+    cdb.CreateAbsolute("$A.$B");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateRelative("+PID");
+    cdb.Write("Class", "PID");
+    cdb.Write("Kp", 4);
+    cdb.Write("Ki", 5);
+    cdb.Write("Kd", 6);
+    cdb.CreateAbsolute("$A.$B.$C");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateRelative("+PID");
+    cdb.Write("Class", "PID");
+    cdb.Write("Kp", 1);
+    cdb.Write("Ki", 2);
+    cdb.Write("Kd", 3);
+    cdb.MoveToRoot();
+
+    ReferenceT<ReferenceContainer> rc = ReferenceT<ReferenceContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rc->Initialise(cdb)) {
+        return false;
+    }
+    ReferenceT<ReferenceContainer> start = rc->Find("A.B");
+    if (!start.IsValid()) {
+        return false;
+    }
+// absolute search
+    ReferenceT<PID> test5 = rc->Find("A.B.C.PID", start);
+    if (!test5.IsValid()) {
+        return false;
+    }
+    if (test5->Kp != 1) {
+        return false;
+    }
+    if (test5->Ki != 2) {
+        return false;
+    }
+    if (test5->Kd != 3) {
+        return false;
+    }
+
+    return true;
+
+}
+
+bool ReferenceContainerTest::TestFindAdvanced_TooManyBackSteps() {
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("$A");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateRelative("+PID");
+    cdb.Write("Class", "PID");
+    cdb.Write("Kp", 7);
+    cdb.Write("Ki", 8);
+    cdb.Write("Kd", 9);
+    cdb.CreateAbsolute("$A.$B");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateRelative("+PID");
+    cdb.Write("Class", "PID");
+    cdb.Write("Kp", 4);
+    cdb.Write("Ki", 5);
+    cdb.Write("Kd", 6);
+    cdb.CreateAbsolute("$A.$B.$C");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateRelative("+PID");
+    cdb.Write("Class", "PID");
+    cdb.Write("Kp", 1);
+    cdb.Write("Ki", 2);
+    cdb.Write("Kd", 3);
+    cdb.MoveToRoot();
+
+    ReferenceT<ReferenceContainer> rc = ReferenceT<ReferenceContainer>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!rc->Initialise(cdb)) {
+        return false;
+    }
+
+    ReferenceT<PID> start = rc->Find("A.B.C.PID");
+    if (!start.IsValid()) {
+        return false;
+    }
+
+// searches from the beginning
+    ReferenceT<PID> test2 = rc->Find(":::::A.PID", start);
+    if (!test2.IsValid()) {
+        return false;
+    }
+    if (test2->Kp != 7) {
+        return false;
+    }
+    if (test2->Ki != 8) {
+        return false;
+    }
+    if (test2->Kd != 9) {
+        return false;
+    }
+
+    return true;
+}
+
+bool ReferenceContainerTest::TestInsertWithPath() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+    Reference ref("Object");
+    ref->SetName("MyObject");
+    containerRoot->Insert("A.B.C", ref);
+
+    if (containerRoot->Find("A.B.C.MyObject") != ref) {
+        return false;
+    }
+
+    Reference ref2("Object");
+    ref2->SetName("MyObject2");
+    containerRoot->Insert("A.B.C", ref2);
 
     if (containerRoot->Find("A.B.C.MyObject2") != ref2) {
         return false;

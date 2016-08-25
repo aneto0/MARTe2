@@ -698,3 +698,8 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureThreads) {
     ASSERT_TRUE(test.TestConfigureThreads());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestUndefinedSpaceForPartialIntrospectedStructures) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestUndefinedSpaceForPartialIntrospectedStructures());
+}
+

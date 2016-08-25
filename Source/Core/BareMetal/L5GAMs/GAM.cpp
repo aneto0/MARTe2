@@ -34,6 +34,7 @@
 #include "BrokerI.h"
 #include "GAM.h"
 #include "Reference.h"
+#include "Introspection.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -474,6 +475,33 @@ bool GAM::GetSignalByteSize(const SignalDirection direction,
             ret = configuredDatabase.Read("ByteSize", byteSize);
         }
     }
+    return ret;
+}
+
+bool GAM::GetSignalTypeByteSize(const SignalDirection direction,
+                                const uint32 signalIdx,
+                                uint32 &byteSize,
+                                uint32 level) {
+
+    StreamString type;
+    GetSignalType(direction, signalIdx, type, level);
+    bool ret = true;
+    TypeDescriptor tdes = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
+    if (tdes == InvalidType) {
+        const ClassRegistryItem * item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
+        ret = (item != NULL);
+        if (ret) {
+            const Introspection *intro = item->GetIntrospection();
+            ret = (intro != NULL);
+            if (ret) {
+                byteSize = intro->GetClassSize();
+            }
+        }
+    }
+    else {
+        byteSize = (tdes.numberOfBits / 8u);
+    }
+
     return ret;
 }
 

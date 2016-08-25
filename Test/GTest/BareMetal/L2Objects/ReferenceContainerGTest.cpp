@@ -96,10 +96,10 @@ TEST(ReferenceContainerGTest,TestSetTimeoutFinite) {
  * TestFindFirstOccurrenceAlways   *
  ***********************************/
 /*TEST(ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceFilter) {
-    ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterReferences filter(1, 0u, referenceContainerTest.leafB);
-    ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceAlways(filter));
-}*/
+ ReferenceContainerTest referenceContainerTest;
+ ReferenceContainerFilterReferences filter(1, 0u, referenceContainerTest.leafB);
+ ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceAlways(filter));
+ }*/
 
 TEST(ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceObject) {
     ReferenceContainerTest referenceContainerTest;
@@ -121,7 +121,6 @@ TEST(ReferenceContainerGTest,TestFindFirstOccurrenceBranchAlwaysReferenceObject)
     ReferenceContainerFilterObjectName filter(1, 0u, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceBranchAlways(filter));
 }
-
 
 /*****************************
  * TestFind  *
@@ -263,7 +262,6 @@ TEST(ReferenceContainerGTest,TestFindEmptyTreeObjectNameFilter) {
     ASSERT_TRUE(referenceContainerTest.TestFindEmptyTree(filter));
 }
 
-
 /***********************************************
  * TestFindObjectPath                          *
  ***********************************************/
@@ -300,7 +298,6 @@ TEST(ReferenceContainerGTest,TestFindRelativePathObjectNameFilter) {
 /***********************
  * TestFindPerformance *
  ***********************/
-
 
 #define Linux 1
 #define Windows 2
@@ -346,7 +343,8 @@ TEST(ReferenceContainerGTest,TestFindRemoveFirstOccurrenceObjectNameFilter) {
  ****************************************/
 TEST(ReferenceContainerGTest,TestFindRemoveFirstOccurrenceReverseReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REVERSE, referenceContainerTest.containerC);
+    ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REVERSE,
+                                              referenceContainerTest.containerC);
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveFirstOccurrenceReverse(filter));
 }
 
@@ -376,7 +374,8 @@ TEST(ReferenceContainerGTest,TestFindRemoveSecondOccurrenceObjectNameFilter) {
  ****************************************/
 TEST(ReferenceContainerGTest,TestFindRemoveSecondOccurrenceReverseReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterReferences filter(2, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REVERSE, referenceContainerTest.containerC);
+    ReferenceContainerFilterReferences filter(2, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REVERSE,
+                                              referenceContainerTest.containerC);
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveSecondOccurrenceReverse(filter));
 }
 
@@ -421,6 +420,24 @@ TEST(ReferenceContainerGTest,TestFindWithPath) {
     ASSERT_TRUE(referenceContainerTest.TestFindWithPath());
 }
 
+/****************************************
+ * TestAdvancedFind  *
+ ****************************************/
+
+TEST(ReferenceContainerGTest,TestFindAdvanced_Relative) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestFindAdvanced_Relative());
+}
+
+TEST(ReferenceContainerGTest,TestFindAdvanced_Absolute) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestFindAdvanced_Absolute());
+}
+
+TEST(ReferenceContainerGTest,TestFindAdvanced_TooManyBackSteps) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestFindAdvanced_TooManyBackSteps());
+}
 
 /***************
  * TestInsert  *

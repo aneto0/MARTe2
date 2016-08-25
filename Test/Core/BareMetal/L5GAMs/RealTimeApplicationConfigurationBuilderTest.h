@@ -634,6 +634,10 @@ public:
      */
     bool TestConfigureThreads();
 
+    /**
+     * @brief Tests if a signal with undefined type is added if the first member of a structure has no zero offset.
+     */
+    bool TestUndefinedSpaceForPartialIntrospectedStructures();
 };
 
 /*---------------------------------------------------------------------------*/

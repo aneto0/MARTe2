@@ -622,13 +622,25 @@ bool ConfigurationDatabaseTest::TestAdvancedRead() {
     sourceCDB.MoveAbsolute("$A.$B.C");
     ok &= sourceCDB.AdvancedRead("value", "", value);
     ok &= value == 2;
+    //test with attributes
+    ok &= sourceCDB.MoveAbsolute("$A.$B.D");
+    ok &= sourceCDB.AdvancedRead("::.value", "+Valid = {Class = BasicTypeStandardValidator min = 0 max=10} +Alias = {Class = StringAliasAll \"1\" = 2 \"2\"=1}",
+                                 value);
+    ok &= value == 2;
+    ok &= sourceCDB.AdvancedRead(":C.value", "+Valid = {Class = BasicTypeStandardValidator min = 1 max=2} +Alias = {Class = StringAliasAll \"1\" = 2 \"2\"=1}",
+                                 value);
+    ok &= value == 1;
+    sourceCDB.MoveAbsolute("$A.$B.C");
+    ok &= !sourceCDB.AdvancedRead("value", "+Valid = {Class = BasicTypeStandardValidator min = 2 max=3} +Alias = {Class = StringAliasAll \"1\" = 2 \"2\"=1}",
+                                  value);
+
     return ok;
 }
 
 bool ConfigurationDatabaseTest::TestAdvancedWrite() {
     ConfigurationDatabase sourceCDB;
-    sourceCDB.CreateAbsolute("$A.$B.C");
-    bool ok = sourceCDB.CreateAbsolute("$A.$B.D");
+    bool ok=sourceCDB.CreateAbsolute("$A.$B.C");
+    ok &= sourceCDB.CreateAbsolute("$A.$B.D");
     uint32 value = 2;
     ok &= sourceCDB.AdvancedWrite("::.value", "", value);
     value = 1;
@@ -638,10 +650,28 @@ bool ConfigurationDatabaseTest::TestAdvancedWrite() {
     ok &= value == 2;
     ok &= sourceCDB.MoveAbsolute("$A.$B.C");
     ok &= sourceCDB.Read("value", value);
+    ok &= value == 1;
     value = 3;
     ok &= sourceCDB.AdvancedWrite("value", "", value);
     ok &= sourceCDB.Read("value", value);
     ok &= value == 3;
+    //test with attributes
+    StreamString res;
+    ok&=sourceCDB.MoveAbsolute("$A.$B.D");
+    value = 2;
+    ok &= sourceCDB.AdvancedWrite("::.value", "+Valid = {Class = BasicTypeStandardValidator min = 1 max=2} +Alias = {Class = StringAliasAll A = 1 B=2 C=3}", value);
+    value = 1;
+    ok &= sourceCDB.AdvancedWrite(":C.value", "+Valid = {Class = BasicTypeStandardValidator min = 1 max=2} +Alias = {Class = StringAliasAll A = 1 B=2 C=3}", value);
+    ok &= sourceCDB.MoveAbsolute("$A");
+    ok &= sourceCDB.Read("value", res);
+    ok &= res == "B";
+    res="";
+    ok &= sourceCDB.MoveAbsolute("$A.$B.C");
+    ok &= sourceCDB.Read("value", res);
+    ok &= res == "A";
+    res="";
+    value = 3;
+    ok &= !sourceCDB.AdvancedWrite("value", "+Valid = {Class = BasicTypeStandardValidator min = 1 max=2} +Alias = {Class = StringAliasAll A = 1 B=2 C=3}", value);
     return ok;
 }
 

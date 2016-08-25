@@ -81,6 +81,9 @@ public:
      */
     bool TestOperatorEqual();
 
+    /**
+     * @brief Tests the GetClassProperties function
+     */
     bool TestGetClassProperties();
 
     /**
@@ -313,7 +316,28 @@ public:
     float TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
                               ReferenceContainerFilter &filter);
 
+    /**
+     * @brief Tests the find using the full path.
+     */
     bool TestFindWithPath();
+
+    /**
+     * @brief Tests the function behaves correctly searching the path relatively with respect to
+     * a provided node.
+     */
+    bool TestFindAdvanced_Relative();
+
+    /**
+     * @brief Tests if the function behaves in the correct way searching absolute path (passing reference start point in input)
+     */
+    bool TestFindAdvanced_Absolute();
+
+    /**
+     * @brief Tests if the function considers the root as the start search point when the number
+     * of back steps to the previous domain is too big.
+     */
+    bool TestFindAdvanced_TooManyBackSteps();
+
 
     /**
      * @brief Tests the ReferenceContainer::Insert with the full path as parameter.

@@ -39,6 +39,7 @@
 #include "ErrorManagement.h"
 #include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
+#include "MemoryOperationsHelper.h"
 #include <typeinfo>
 
 /*---------------------------------------------------------------------------*/
@@ -198,74 +199,55 @@ bool ReferenceContainer::Insert(const char8 * const path,
                                 Reference ref) {
     bool ok = ref.IsValid();
     if (ok) {
-        if (StringHelper::Length(path) == 0u) {
-            ok = Insert(ref);
-        }
-        else {
-            bool created = false;
-            ReferenceContainer* currentNode = this;
-            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
-            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+        ReferenceContainer* currentNode = this;
+        uint32 pathSize = StringHelper::Length(path);
+        char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * pathSize)));
+        //   char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * pathSize)));
+        MemoryOperationsHelper::Set(token, '\0', pathSize);
+        //   MemoryOperationsHelper::Set(nextToken, '\0', pathSize);
 
-            const char8* toTokenize = path;
-            const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
-            toTokenize = next;
+        const char8* toTokenize = path;
+        const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
+        toTokenize = next;
 
-            while ((token[0] != '\0') && (ok)) {
-                ok = (StringHelper::Length(token) > 0u);
-                if (ok) {
-                    //Check if a node with this name already exists
-                    bool found = false;
-                    Reference foundReference;
-                    uint32 i;
-                    for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
-                        foundReference = currentNode->Get(i);
-                        found = (StringHelper::Compare(foundReference->GetName(), token) == 0);
-                    }
-                    // take the next token
+        while ((StringHelper::Length(token) > 0u) && (ok)) {
+            //Check if a node with this name already exists
+            bool found = false;
+            Reference foundReference;
+            uint32 i;
+            for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
+                foundReference = currentNode->Get(i);
+                found = (StringHelper::Compare(foundReference->GetName(), token) == 0);
+            }
 
-                    next = StringHelper::TokenizeByChars(toTokenize, ".", nextToken);
-                    toTokenize = next;
-
-                    if (found) {
-                        currentNode = dynamic_cast<ReferenceContainer*>(foundReference.operator->());
-                        // if it is a leaf exit (and return false)
-                        if (currentNode == NULL) {
-                            ok = false;
-                        }
-                    }
-                    else {
-                        // insert the reference
-                        if (nextToken[0] == '\0') {
-                            ref->SetName(token);
-                            created = currentNode->Insert(ref);
-                        }
-                        // create a node
-                        else {
-                            ReferenceT<ReferenceContainer> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-                            container->SetName(token);
-                            ok = currentNode->Insert(container);
-                            if (ok) {
-                                currentNode = container.operator->();
-                            }
-                        }
-                    }
-                    if (ok) {
-                        ok = StringHelper::Copy(token, nextToken);
-                    }
+            if (found) {
+                currentNode = dynamic_cast<ReferenceContainer*>(foundReference.operator->());
+                // if it is a leaf exit (and return false)
+                if (currentNode == NULL) {
+                    ok = false;
                 }
             }
-
-            if (ok) {
-                ok = created;
+            else {
+                ReferenceT<ReferenceContainer> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                container->SetName(token);
+                ok = currentNode->Insert(container);
+                if (ok) {
+                    currentNode = container.operator->();
+                }
             }
+            // take the next token
 
-            if (HeapManager::Free(reinterpret_cast<void*&>(token))) {
+            next = StringHelper::TokenizeByChars(toTokenize, ".", token);
+            toTokenize = next;
+        }
 
-            }
-            if (HeapManager::Free(reinterpret_cast<void*&>(nextToken))) {
+        // insert the reference
+        if (ok) {
+            ok = currentNode->Insert(ref);
+        }
 
-            }
+        if (HeapManager::Free(reinterpret_cast<void*&>(token))) {
+
         }
     }
     return ok;

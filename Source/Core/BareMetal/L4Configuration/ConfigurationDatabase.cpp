@@ -324,6 +324,9 @@ bool ConfigurationDatabase::AdvancedRead(const char8 * const path,
             if (ret) {
                 ret = Validate(value, attributes);
             }
+            if(ret){
+                ret=InvertAlias(*this, valueName.Buffer(), attributes);
+            }
         }
         if (ret) {
             currentNode = storeCurrent;

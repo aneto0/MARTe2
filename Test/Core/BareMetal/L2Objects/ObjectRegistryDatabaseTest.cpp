@@ -35,13 +35,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-bool PID::Initialise(StructuredDataI & data) {
-    bool ok = data.Read("Kp", Kp);
-    ok &= data.Read("Ki", Ki);
-    ok &= data.Read("Kd", Kd);
-    return ok;
-}
-CLASS_REGISTER(PID, "1.0")
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -80,114 +73,6 @@ ObjectRegistryDatabaseTest::~ObjectRegistryDatabaseTest() {
 
 bool ObjectRegistryDatabaseTest::TestInstance() {
     return ObjectRegistryDatabase::Instance() != NULL;
-}
-
-bool ObjectRegistryDatabaseTest::TestFind() {
-    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
-
-    if (!test.IsValid()) {
-        return false;
-    }
-    if (test->Kp != 1) {
-        return false;
-    }
-    if (test->Ki != 2) {
-        return false;
-    }
-    if (test->Kd != 3) {
-        return false;
-    }
-
-    return true;
-}
-
-bool ObjectRegistryDatabaseTest::TestFind_Relative() {
-    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
-
-    if (!test.IsValid()) {
-        return false;
-    }
-    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find(":::PID", test);
-    if (!test2.IsValid()) {
-        return false;
-    }
-    if (test2->Kp != 7) {
-        return false;
-    }
-    if (test2->Ki != 8) {
-        return false;
-    }
-    if (test2->Kd != 9) {
-        return false;
-    }
-
-    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("A.B");
-    if (!start.IsValid()) {
-        return false;
-    }
-    // relative search
-    ReferenceT<PID> test4 = ObjectRegistryDatabase::Instance()->Find(":C.PID", start);
-    if (!test4.IsValid()) {
-        return false;
-    }
-    if (test4->Kp != 1) {
-        return false;
-    }
-    if (test4->Ki != 2) {
-        return false;
-    }
-    if (test4->Kd != 3) {
-        return false;
-    }
-    return true;
-}
-
-bool ObjectRegistryDatabaseTest::TestFind_Absolute() {
-    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("A.B");
-    if (!start.IsValid()) {
-        return false;
-    }
-// absolute search
-    ReferenceT<PID> test5 = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID", start);
-    if (!test5.IsValid()) {
-        return false;
-    }
-    if (test5->Kp != 1) {
-        return false;
-    }
-    if (test5->Ki != 2) {
-        return false;
-    }
-    if (test5->Kd != 3) {
-        return false;
-    }
-
-    return true;
-
-}
-
-bool ObjectRegistryDatabaseTest::TestFindTooManyBackSteps() {
-    ReferenceT<PID> start = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
-    if (!start.IsValid()) {
-        return false;
-    }
-
-// searches from the beginning
-    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find(":::::A.PID", start);
-    if (!test2.IsValid()) {
-        return false;
-    }
-    if (test2->Kp != 7) {
-        return false;
-    }
-    if (test2->Ki != 8) {
-        return false;
-    }
-    if (test2->Kd != 9) {
-        return false;
-    }
-
-    return true;
 }
 
 bool ObjectRegistryDatabaseTest::TestGetClassName() {

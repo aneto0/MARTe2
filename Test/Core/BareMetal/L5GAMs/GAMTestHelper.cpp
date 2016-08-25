@@ -102,6 +102,12 @@ static const IntrospectionEntry* TestStructCCEntries[] = { &TestStructCC_c1_intr
 
 DECLARE_STRUCT_INTROSPECTION(TestStructCC, TestStructCCEntries);
 
+
+DECLARE_CLASS_MEMBER(TestStructPartialIntrospected, a2, float32, "", "");
+
+static const IntrospectionEntry* TestStructPartialIntrospectedEntries[] = { &TestStructPartialIntrospected_a2_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructPartialIntrospected, TestStructPartialIntrospectedEntries);
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////

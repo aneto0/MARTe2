@@ -35,7 +35,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-#include "stdio.h"
 using namespace MARTe;
 
 /**
@@ -45,17 +44,28 @@ class ValidateTest {
 public:
 
     /**
-     * @brief Tests the Validate with a scalar AnyType
+     * @brief Tests the Validate function
      */
     bool TestValidate();
 
-
+    /**
+     * @brief Tests the Alias function
+     */
     bool TestAlias();
 
+    /**
+     * @brief Tests if the function fails if the member is not found
+     */
     bool TestAliasFalse_MemberNotFound();
 
+    /**
+     * @brief Tests the InvertAlias function
+     */
     bool TestInvertAlias();
 
+    /**
+     * @brief Tests if the function fails if the member is not found
+     */
     bool TestInvertAlias_MemberNotFound();
 };
 

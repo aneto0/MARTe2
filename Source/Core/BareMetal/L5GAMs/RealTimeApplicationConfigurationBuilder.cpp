@@ -275,7 +275,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
                                 ret = functionsDatabase.MoveRelative("OutputSignals");
                                 if (!ret) {
                                     REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Specified GAM %s with no input nor output",
-                                            qualifiedName.Buffer())
+                                                            qualifiedName.Buffer())
                                 }
                             }
                         }
@@ -820,8 +820,11 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources(const SignalDir
                     }
                     if (ret) {
                         //Add the signal to the Data.dataSourceName node (if the Type is defined)
-                        //StreamString type;
-                        //if (functionsDatabase.Read("Type", type)) {
+                        /*StreamString type;
+                         if (!functionsDatabase.Read("Type", type)) {
+                         type = "";
+                         }
+                         if (type != "Undefined") {*/
                         ret = AddSignalToDataSource(functionName, dataSourceName);
                         //}
                     }
@@ -1251,17 +1254,25 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                             ret = dataSourcesDatabase.Write("NumberOfDimensions", numberOfDimensions);
                         }
                     }
-
-                    //Compute the byte size
-                    TypeDescriptor signalTypeDescriptor;
-                    if (ret) {
-                        signalTypeDescriptor = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
-                        ret = (signalTypeDescriptor != InvalidType);
-                    }
                     uint32 signalNumberOfBytes = 0u;
-                    if (ret) {
-                        signalNumberOfBytes = ((numberOfElements * signalTypeDescriptor.numberOfBits) / 8u) ;
-                        ret = dataSourcesDatabase.Write("ByteSize", signalNumberOfBytes);
+                    TypeDescriptor signalTypeDescriptor;
+
+                    if (type == "Undefined") {
+                        ret = dataSourcesDatabase.Read("MemberSize", signalNumberOfBytes);
+                        if (ret) {
+                            ret = dataSourcesDatabase.Write("ByteSize", signalNumberOfBytes);
+                        }
+                    }
+                    else {
+                        //Compute the byte size
+                        if (ret) {
+                            signalTypeDescriptor = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
+                            ret = (signalTypeDescriptor != InvalidType);
+                        }
+                        if (ret) {
+                            signalNumberOfBytes = ((numberOfElements * signalTypeDescriptor.numberOfBits) / 8u);
+                            ret = dataSourcesDatabase.Write("ByteSize", signalNumberOfBytes);
+                        }
                     }
 
                     if (ret) {
@@ -1299,27 +1310,29 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                                                             signalName.Buffer(), dataSourceName.Buffer())
                                 }
                                 if (ret) {
-                                    void *ptr = HeapManager::Malloc(signalNumberOfBytes);
-                                    ret = (ptr != NULL);
-                                    if (ret) {
-                                        AnyType at = AnyType(signalTypeDescriptor, 0u, ptr);
-
-                                        at.SetNumberOfDimensions(usedDimensions);
-                                        at.SetNumberOfElements(0u, numberOfElements);
-
-                                        ret = parser.Parse();
+                                    if (type != "Undefined") {
+                                        void *ptr = HeapManager::Malloc(signalNumberOfBytes);
+                                        ret = (ptr != NULL);
                                         if (ret) {
-                                            ret = cdb.Read("Default", at);
+                                            AnyType at = AnyType(signalTypeDescriptor, 0u, ptr);
+
+                                            at.SetNumberOfDimensions(usedDimensions);
+                                            at.SetNumberOfElements(0u, numberOfElements);
+
+                                            ret = parser.Parse();
                                             if (ret) {
-                                                ret = dataSourcesDatabase.Delete("Default");
+                                                ret = cdb.Read("Default", at);
+                                                if (ret) {
+                                                    ret = dataSourcesDatabase.Delete("Default");
+                                                }
+                                                if (ret) {
+                                                    // write the default value as a value and not a string anymore!
+                                                    ret = dataSourcesDatabase.Write("Default", at);
+                                                }
                                             }
                                             if (ret) {
-                                                // write the default value as a value and not a string anymore!
-                                                ret = dataSourcesDatabase.Write("Default", at);
+                                                ret = HeapManager::Free(reinterpret_cast<void*&>(ptr));
                                             }
-                                        }
-                                        if (ret) {
-                                            ret = HeapManager::Free(reinterpret_cast<void*&>(ptr));
                                         }
                                     }
                                 }
@@ -1397,6 +1410,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignals(const Signa
                 while ((s < numberOfSignals) && (ret)) {
                     StreamString signalId;
                     signalId = functionsDatabase.GetChildName(s);
+
                     ret = functionsDatabase.MoveRelative(signalId.Buffer());
                     StreamString signalName = "";
                     StreamString aliasName = "";
@@ -1627,6 +1641,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignal(const char8 
             }
         }
     }
+
     return ret;
 }
 
@@ -1854,7 +1869,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                                                     }
                                                 }
                                                 REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
-                                                        "The GAM %s is declared in more than one thread in %s", gamName.Buffer(), stateName)
+                                                                        "The GAM %s is declared in more than one thread in %s", gamName.Buffer(), stateName)
                                             }
                                         }
                                     }
@@ -1864,7 +1879,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                                 ret = (syncSignals <= 1u);
                                 if (!ret) {
                                     REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "More than one synchronising signal found in %s.%s",
-                                            stateName, threadName)
+                                                            stateName, threadName)
                                 }
                             }
                         }
@@ -2370,6 +2385,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(const
                                 if (ret) {
                                     ret = functionsDatabase.Read("DataSource", dataSourceName);
                                 }
+
                                 //Move to the DataSource
                                 StreamString dataSourceNumber;
                                 if (ret) {
@@ -2814,101 +2830,112 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(c
                     if (ret) {
                         ret = functionsDatabase.Read("Type", signalType);
                     }
-                    if (ret) {
-                        //Get the signal type
-                        signalTypeDescriptor = TypeDescriptor::GetTypeDescriptorFromTypeName(signalType.Buffer());
-                    }
-                    if (ret) {
-                        ret = (signalTypeDescriptor != InvalidType);
-                    }
 
-                    uint32 *offsetMatrixBackend = NULL_PTR(uint32 *);
-                    uint32 numberOfRanges = 0u;
-                    if (ret) {
-                        //If Ranges are defined, compute the total signal size.
-                        AnyType ranges = functionsDatabase.GetType("Ranges");
-                        if (ranges.GetTypeDescriptor() != VoidType) {
-                            uint32 numberOfDimensions = ranges.GetNumberOfDimensions();
-                            ret = (numberOfDimensions == 2u);
-                            if (ret) {
-                                numberOfRanges = ranges.GetNumberOfElements(1u);
-                                if (numberOfRanges > 0u) {
-                                    const uint32 backendRangesSize = numberOfRanges * 2u;
-                                    uint32 *rangesMatBackend = new uint32[backendRangesSize];
-                                    offsetMatrixBackend = new uint32[backendRangesSize];
-                                    //The offset matrix stores, for each range and in bytes, the starting offset and the size of the range to copy.
-                                    Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfRanges, 2u);
-                                    //Read the Ranges matrix from the configuration data.
-                                    Matrix<uint32> rangesMat(rangesMatBackend, numberOfRanges, 2u);
-                                    ret = functionsDatabase.Read("Ranges", rangesMat);
-                                    if (ret) {
-                                        for (uint32 n = 0u; (n < numberOfRanges) && (ret); n++) {
-                                            uint32 minIdx = rangesMat(n, 0u);
-                                            uint32 maxIdx = rangesMat(n, 1u);
-                                            if (minIdx > maxIdx) {
-                                                ret = false;
-                                                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
-                                                                        "Illegal Ranges for signal %s in %s: minimum index must be <= maximum index",
-                                                                        signalName.Buffer(), functionName.Buffer())
-                                            }
-                                            if (ret) {
-                                                if (maxIdx >= numberOfElements) {
+                    if (signalType == "Undefined") {
+                        uint32 memberSize;
+                        ret = functionsDatabase.Read("MemberSize", memberSize);
+                        if (ret) {
+                            ret = functionsDatabase.Write("ByteSize", memberSize);
+                        }
+
+                    }
+                    else {
+                        if (ret) {
+                            //Get the signal type
+                            signalTypeDescriptor = TypeDescriptor::GetTypeDescriptorFromTypeName(signalType.Buffer());
+                        }
+                        if (ret) {
+                            ret = (signalTypeDescriptor != InvalidType);
+                        }
+                        uint32 *offsetMatrixBackend = NULL_PTR(uint32 *);
+                        uint32 numberOfRanges = 0u;
+                        if (ret) {
+                            //If Ranges are defined, compute the total signal size.
+                            AnyType ranges = functionsDatabase.GetType("Ranges");
+                            if (ranges.GetTypeDescriptor() != VoidType) {
+                                uint32 numberOfDimensions = ranges.GetNumberOfDimensions();
+                                ret = (numberOfDimensions == 2u);
+                                if (ret) {
+                                    numberOfRanges = ranges.GetNumberOfElements(1u);
+                                    if (numberOfRanges > 0u) {
+                                        const uint32 backendRangesSize = numberOfRanges * 2u;
+                                        uint32 *rangesMatBackend = new uint32[backendRangesSize];
+                                        offsetMatrixBackend = new uint32[backendRangesSize];
+                                        //The offset matrix stores, for each range and in bytes, the starting offset and the size of the range to copy.
+                                        Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfRanges, 2u);
+                                        //Read the Ranges matrix from the configuration data.
+                                        Matrix<uint32> rangesMat(rangesMatBackend, numberOfRanges, 2u);
+                                        ret = functionsDatabase.Read("Ranges", rangesMat);
+                                        if (ret) {
+                                            for (uint32 n = 0u; (n < numberOfRanges) && (ret); n++) {
+                                                uint32 minIdx = rangesMat(n, 0u);
+                                                uint32 maxIdx = rangesMat(n, 1u);
+                                                if (minIdx > maxIdx) {
                                                     ret = false;
                                                     REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
-                                                                            "Illegal Ranges for signal %s in %s: maximum index must be < NumberOfElements",
+                                                                            "Illegal Ranges for signal %s in %s: minimum index must be <= maximum index",
                                                                             signalName.Buffer(), functionName.Buffer())
                                                 }
-                                            }
-                                            if (ret) {
-                                                uint32 rangeByteSize = (((maxIdx - minIdx) + 1u) * signalTypeDescriptor.numberOfBits) / 8u;
-                                                signalNumberOfBytes += rangeByteSize;
-                                                offsetMat(n, 0u) = (minIdx * signalTypeDescriptor.numberOfBits) / 8u;
-                                                offsetMat(n, 1u) = rangeByteSize;
+                                                if (ret) {
+                                                    if (maxIdx >= numberOfElements) {
+                                                        ret = false;
+                                                        REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
+                                                                                "Illegal Ranges for signal %s in %s: maximum index must be < NumberOfElements",
+                                                                                signalName.Buffer(), functionName.Buffer())
+                                                    }
+                                                }
+                                                if (ret) {
+                                                    uint32 rangeByteSize = (((maxIdx - minIdx) + 1u) * signalTypeDescriptor.numberOfBits) / 8u;
+                                                    signalNumberOfBytes += rangeByteSize;
+                                                    offsetMat(n, 0u) = (minIdx * signalTypeDescriptor.numberOfBits) / 8u;
+                                                    offsetMat(n, 1u) = rangeByteSize;
+                                                }
                                             }
                                         }
+                                        else {
+                                            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Ranges must be a nx2 matrix for %s in %s",
+                                                                    signalName.Buffer(), functionName.Buffer())
+                                        }
+                                        delete[] rangesMatBackend;
                                     }
-                                    else {
-                                        REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Ranges must be a nx2 matrix for %s in %s",
-                                                                signalName.Buffer(), functionName.Buffer())
-                                    }
-                                    delete[] rangesMatBackend;
                                 }
                             }
+                            else {
+                                signalNumberOfBytes = (numberOfElements * signalTypeDescriptor.numberOfBits) / 8u;
+                            }
                         }
-                        else {
-                            signalNumberOfBytes = (numberOfElements * signalTypeDescriptor.numberOfBits) / 8u;
-                        }
-                    }
 
-                    if (ret) {
-                        uint32 elementOffset = 0u;
+                        if (ret) {
+                            uint32 elementOffset = 0u;
 
-                        if (dataSourcesDatabase.Read("MemberSize", elementOffset)) {
-                            elementOffset = ((numberOfElements * (signalTypeDescriptor.numberOfBits)) / 8u) - elementOffset;
-                            //allocate memory without considering ranges because it is considered as a struct
-                            signalNumberOfBytes = (numberOfElements * signalTypeDescriptor.numberOfBits) / 8u;
+                            if (dataSourcesDatabase.Read("MemberSize", elementOffset)) {
+                                elementOffset = ((numberOfElements * (signalTypeDescriptor.numberOfBits)) / 8u) - elementOffset;
+                                //allocate memory without considering ranges because it is considered as a struct
+                                signalNumberOfBytes = (numberOfElements * signalTypeDescriptor.numberOfBits) / 8u;
+                            }
+                            else {
+                                elementOffset = 0u;
+                            }
+                            signalNumberOfBytes += elementOffset;
                         }
-                        else {
-                            elementOffset = 0u;
+                        if (ret) {
+                            ret = functionsDatabase.Write("ByteSize", signalNumberOfBytes);
                         }
-                        signalNumberOfBytes += elementOffset;
-                    }
-                    if (ret) {
-                        ret = functionsDatabase.Write("ByteSize", signalNumberOfBytes);
-                    }
-                    if (ret) {
+                        if (ret) {
+                            if (offsetMatrixBackend != NULL_PTR(uint32 *)) {
+                                Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfRanges, 2u);
+                                ret = functionsDatabase.Write("ByteOffset", offsetMat);
+                            }
+                        }
                         if (offsetMatrixBackend != NULL_PTR(uint32 *)) {
-                            Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfRanges, 2u);
-                            ret = functionsDatabase.Write("ByteOffset", offsetMat);
+                            delete[] offsetMatrixBackend;
                         }
-                    }
-                    if (offsetMatrixBackend != NULL_PTR(uint32 *)) {
-                        delete[] offsetMatrixBackend;
                     }
                     if (ret) {
                         //Move to next Signal in this signalDirection
                         ret = functionsDatabase.MoveToAncestor(1u);
                     }
+
                 }
                 if (ret) {
                     //Move to Signals level
@@ -2981,7 +3008,6 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
                     uint32 samplesBackend = 1u;
                     uint32 byteSize = 0u;
                     float32 frequencyBackend = -1.0F;
-
 
                     signalId = functionsDatabase.GetChildName(s);
                     ret = functionsDatabase.MoveRelative(signalId.Buffer());
@@ -3289,13 +3315,12 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                             if (ret) {
                                 ret = functionsDatabase.Copy(dataSourcesDatabase);
                             }
-
+                            if (ret) {
+                                ret = dataSourcesDatabase.MoveToAncestor(1u);
+                            }
                             //Move to the next signal
                             if (ret) {
                                 ret = functionsDatabase.MoveToAncestor(1u);
-                            }
-                            if (ret) {
-                                ret = dataSourcesDatabase.MoveToAncestor(1u);
                             }
                         }
                     }
@@ -3649,6 +3674,66 @@ bool RealTimeApplicationConfigurationBuilder::CheckTypeCompatibility(StreamStrin
     return ret;
 }
 
+bool AddUnusedSignal(StructuredDataI & data,
+                     const char8 * const signalName,
+                     const char8 * const fullTypeName,
+                     const char8 * const dataSourceName,
+                     const char8 * const alias,
+                     uint32 signalNumber,
+                     uint32 byteSize) {
+    StreamString signalNumberStr;
+    bool ret = signalNumberStr.Printf("Signals.%d", signalNumber);
+    if (ret) {
+        ret = data.CreateAbsolute(signalNumberStr.Buffer());
+    }
+    StreamString signalNameStr = signalName;
+    if (signalNameStr.Size() > 0u) {
+        signalNameStr += ".";
+        signalNameStr += "UnusedMemory";
+    }
+
+    StreamString fullTypeNameStr = fullTypeName;
+    if (fullTypeNameStr.Size() > 0u) {
+        fullTypeNameStr += ".Undefined";
+    }
+    if (ret) {
+        ret = data.Write("QualifiedName", signalNameStr.Buffer());
+    }
+    if (ret) {
+        ret = data.Write("Type", "Undefined");
+    }
+    if (ret) {
+        ret = data.Write("FullType", fullTypeNameStr.Buffer());
+    }
+    if (ret) {
+        ret = data.Write("MemberSize", byteSize);
+    }
+    if (ret) {
+        if (StringHelper::Length(dataSourceName) > 0u) {
+            ret = data.Write("DataSource", dataSourceName);
+        }
+    }
+    if (ret) {
+        uint32 numberOfElements = 1u;
+        ret = data.Write("NumberOfElements", numberOfElements);
+    }
+    if (ret) {
+        uint32 numberOfDimensions = 0u;
+        ret = data.Write("NumberOfDimensions", numberOfDimensions);
+    }
+    if (ret) {
+        StreamString aliasStr = alias;
+        if (aliasStr.Size() > 0u) {
+            aliasStr += ".UnusedMemory";
+            ret = data.Write("Alias", aliasStr.Buffer());
+        }
+    }
+    if (ret) {
+        ret = data.MoveToAncestor(1u);
+    }
+    return ret;
+}
+
 bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredData(ConfigurationDatabase &signalDatabase,
                                                                                   const char8 * const typeName,
                                                                                   const char8 * const signalName,
@@ -3683,15 +3768,45 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
         if (intro != NULL_PTR(Introspection *)) {
             numberOfMembers = intro->GetNumberOfMembers();
         }
-        uint32 i;
+
+        uint32 indexes[numberOfMembers];
+        uint32 minOffset = MAX_UINT32;
+        uint32 indexToAdd = 0u;
+        IntrospectionEntry entries[numberOfMembers];
+        //be sure that the introspection entries are sorted correctly
+        for (uint32 n = 0u; n < numberOfMembers; n++) {
+            minOffset = MAX_UINT32;
+            for (uint32 i = 0u; i < numberOfMembers; i++) {
+                if (intro->operator[](i).GetMemberByteOffset() <= minOffset) {
+                    bool alreadyAdded = false;
+                    for (uint32 j = 0u; j < n && (!alreadyAdded); j++) {
+                        alreadyAdded = (indexes[j] == i);
+                    }
+                    if (!alreadyAdded) {
+                        minOffset = intro->operator[](i).GetMemberByteOffset();
+                        indexToAdd = i;
+                    }
+                }
+            }
+            entries[n] = intro->operator[](indexToAdd);
+            indexes[n] = indexToAdd;
+        }
+
+        //if the first offset is non zero we need to add an (unused) memory
+        uint32 unusedByteSize = entries[0].GetMemberByteOffset();
+        if (unusedByteSize > 0u) {
+            ret = AddUnusedSignal(data, signalName, fullTypeName, dataSourceName, alias, signalNumber, unusedByteSize);
+            signalNumber++;
+        }
+
         //For each of the structure members...
-        for (i = 0u; (i < numberOfMembers) && (ret); i++) {
+        for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
             StreamString typeNameStr = fullTypeName;
             if (typeNameStr.Size() > 0u) {
                 typeNameStr += ".";
             }
             //lint -e{613} intro cannot be NULL as it is checked above.
-            const IntrospectionEntry entry = intro->operator[](i);
+            const IntrospectionEntry entry = entries[i];
             StreamString fullSignalName;
             ret = fullSignalName.Printf("%s.%s", signalName, entry.GetMemberName());
             StreamString fullAliasName = "";
@@ -3748,7 +3863,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                 }
                 uint32 byteSize = 0u;
                 if ((i + 1u) < numberOfMembers) {
-                    const IntrospectionEntry nextEntry = intro->operator[](i + 1u);
+                    const IntrospectionEntry nextEntry = entries[i + 1u];
                     byteSize = nextEntry.GetMemberByteOffset() - entry.GetMemberByteOffset();
                 }
                 else {

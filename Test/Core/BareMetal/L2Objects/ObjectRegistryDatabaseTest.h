@@ -40,29 +40,6 @@
 
 using namespace MARTe;
 
-/**
- * @brief Class used for tests
- */
-class PID: public Object {
-    /**
-     * @brief Initialises the gains from cdb
-     */
-    virtual bool Initialise(StructuredDataI &data);
-public:
-    /**
-     * Proportional gain
-     */
-    uint32 Kp;
-    /**
-     * Integral gain
-     */
-    uint32 Ki;
-    /**
-     * Derivative gain
-     */
-    uint32 Kd;CLASS_REGISTER_DECLARATION()
-    ;
-};
 
 /**
  * @brief Tests all the ObjectRegistryDatabase functions
@@ -86,27 +63,6 @@ public:
      */
     bool TestInstance();
 
-    /**
-     * @brief Tests if the function behaves in the correct way searching absolute path (without passing reference start point in input)
-     */
-    bool TestFind();
-
-    /**
-     * @brief Tests the function behaves correctly searching the path relatively with respect to
-     * a provided node.
-     */
-    bool TestFind_Relative();
-
-    /**
-     * @brief Tests if the function behaves in the correct way searching absolute path (passing reference start point in input)
-     */
-    bool TestFind_Absolute();
-
-    /**
-     * @brief Tests if the function considers the root as the start search point when the number
-     * of back steps to the previous domain is too big.
-     */
-    bool TestFindTooManyBackSteps();
 
     /**
      * @brief Tests if the function returns "ObjectRegistryDatabase"

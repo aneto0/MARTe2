@@ -181,6 +181,7 @@ public:
                        StreamString &signalName);
 
 
+    //TODO
     bool GetSignalAlias(const SignalDirection direction,
                        const uint32 signalIdx,
                        StreamString &signalAlias);
@@ -223,6 +224,7 @@ public:
     TypeDescriptor GetSignalType(const SignalDirection direction,
                                  const uint32 signalIdx);
 
+    //TODO
     bool GetSignalType(const SignalDirection direction,
                        const uint32 signalIdx,
                        StreamString &typeName,
@@ -281,6 +283,14 @@ public:
     bool GetSignalByteSize(const SignalDirection direction,
                            const uint32 signalIdx,
                            uint32 &byteSize);
+
+
+    //TODO
+    bool GetSignalTypeByteSize(const SignalDirection direction,
+                           const uint32 signalIdx,
+                           uint32 &byteSize,
+                           uint32 level);
+
 
     /**
      * @brief Gets the number of different byte offsets (one for each different Range) that were set for the signal with index \a signalIdx.
