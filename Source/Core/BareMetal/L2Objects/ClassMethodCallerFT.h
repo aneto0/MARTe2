@@ -35,7 +35,9 @@
 #include "Object.h"
 #include "ErrorType.h"
 #include "StructuredDataI.h"
-#include "AnyObject.h"
+#include "ReferenceContainer.h"
+#include "ReferenceT.h"
+
 
 namespace MARTe{
 
@@ -43,18 +45,59 @@ namespace MARTe{
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-template <class T, typename arg1,typename arg2,typename arg3,typename arg4>
-class callerClassT{
-    virtual ~callerClassT(){}
+class CallerClass{
 public:
+    virtual ~CallerClass(){}
 
+
+    virtual ErrorManagement::ErrorType caller(Object *object, StreamI *stream){
+        return ErrorManagement::parametersError;
+    }
 
     virtual ErrorManagement::ErrorType caller(Object *object, StructuredDataI *parameters){
         return ErrorManagement::parametersError;
     }
 
     virtual ErrorManagement::ErrorType caller(Object *object, ReferenceContainer &parameters){
+        return ErrorManagement::parametersError;
+    }
+
+    virtual ErrorManagement::ErrorType caller(Object *object){
+        return ErrorManagement::parametersError;
+    }
+
+
+};
+
+template <class T, typename argType1,typename argType2,typename argType3,typename argType4>
+class CallerClassT: public CallerClass{
+public:
+
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+    typedef ErrorManagement::ErrorType (T::*MethodPointer)(argType1,argType2,argType3,argType4);
+
+    virtual ~CallerClassT(){}
+
+    CallerClassT(MethodPointer method){
+        pfunc = method;
+    }
+
+    virtual ErrorManagement::ErrorType caller(Object *object, StructuredDataI *parameters){
         T* actual = dynamic_cast<T *>(object);
+        argType1 param1;
+        argType2 param2;
+        argType3 param3;
+        argType4 param4;
+        parameters->Read("param1",param1);
+        parameters->Read("param2",param2);
+        parameters->Read("param3",param3);
+        parameters->Read("param4",param4);
+        return (actual->*pfunc)(param1,param2,param3,param4);
+    }
+
+    virtual ErrorManagement::ErrorType caller(Object *object, ReferenceContainer &parameters){
 
         Reference par = parameters.Get(0);
 
@@ -62,106 +105,157 @@ public:
         return caller (object, param.operator->());
     }
 
-    virtual ErrorManagement::ErrorType caller(Object *object){
-        return ErrorManagement::parametersError;
-    }
+    //TODO create class to generate a StructuredDataI from a StreamI
+    //TODO then call the caller(StructuredDataI)
+
+private:
+    MethodPointer pfunc;
+
 
 };
 
 
-
-template <class T, typename arg1,typename arg2,typename arg3,typename arg4>
-class callerClassT<T,arg1,arg2,arg3,arg4>{
-    ErrorManagement::ErrorType( T::*pfunc)(arg1 param1,arg2 param2,arg3 param3,arg4 param4);
+template <class T, typename argType1,typename argType2,typename argType3>
+class CallerClassT<T,argType1,argType2,argType3,void>:public CallerClass{
 public:
 
-    callerClassT(ErrorManagement::ErrorType( T::*func)(arg1 param1,arg2 param2,arg3 param3,arg4 param4)){
-        pfunc = func;
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+    typedef ErrorManagement::ErrorType (T::*MethodPointer)(argType1,argType2,argType3);
+
+
+    CallerClassT(MethodPointer method){
+        pfunc = method;
     }
-
-    virtual ErrorManagement::ErrorType caller(Object *object, StructuredDataI *parameters){
-        T* actual = dynamic_cast<T *>(object);
-        arg1 param1;
-        arg2 param2;
-        arg3 param3;
-        arg4 param4;
-        parameters->Read("param1",AnyType(arg1));
-        parameters->Read("param2",AnyType(arg2));
-        parameters->Read("param3",AnyType(arg3));
-        parameters->Read("param4",AnyType(arg4));
-        return actual->pfunc(param1,param2,param3,param4);
-    }
-
-};
-
-template <class T, typename arg1,typename arg2,typename arg3>
-class callerClassT<T,arg1,arg2,arg3,void>{
-    ErrorManagement::ErrorType( T::*pfunc)(arg1 param1,arg2 param2,arg3 param3);
-public:
-
-    callerClassT(ErrorManagement::ErrorType( T::*func)(arg1 param1,arg2 param2,arg3 param3)){
-        pfunc = func;
-    }
+    virtual ~CallerClassT(){}
 
     ErrorManagement::ErrorType caller(Object *object, StructuredDataI *parameters){
         T* actual = dynamic_cast<T *>(object);
-        arg1 param1;
-        arg2 param2;
-        arg3 param3;
-        parameters->Read("param1",arg1);
-        parameters->Read("param2",arg2);
-        parameters->Read("param3",arg3);
-        return actual->pfunc(param1,param2,param3);
+        argType1 param1;
+        argType2 param2;
+        argType3 param3;
+        parameters->Read("param1",param1);
+        parameters->Read("param2",param2);
+        parameters->Read("param3",param3);
+        return (actual->*pfunc)(param1,param2,param3);
     }
+
+    virtual ErrorManagement::ErrorType caller(Object *object, ReferenceContainer &parameters){
+
+        Reference par = parameters.Get(0);
+
+        ReferenceT<StructuredDataI> param = par;
+        return caller (object, param.operator->());
+    }
+
+    //TODO create class to generate a StructuredDataI from a StreamI
+    //TODO then call the caller(StructuredDataI)
+
+private:
+
+    MethodPointer pfunc;
+
 };
 
 
 
-template <class T, typename arg1,typename arg2>
-class callerClassT<T,arg1,arg2,void,void>{
-    ErrorManagement::ErrorType( T::*pfunc)(arg1 param1,arg2 param2);
+template <class T, typename argType1,typename argType2>
+class CallerClassT<T,argType1,argType2,void,void>:public CallerClass{
 public:
 
-    callerClassT(ErrorManagement::ErrorType( T::*func)(arg1 param1,arg2 param2)){
-        pfunc = func;
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+    typedef ErrorManagement::ErrorType (T::*MethodPointer)(argType1,argType2);
+
+
+    CallerClassT(MethodPointer method){
+        pfunc = method;
     }
+    virtual ~CallerClassT(){}
 
     ErrorManagement::ErrorType caller(Object *object, StructuredDataI *parameters){
         T* actual = dynamic_cast<T *>(object);
-        arg1 param1;
-        arg2 param2;
-        parameters->Read("param1",arg1);
-        parameters->Read("param2",arg2);
-        return actual->pfunc(param1,param2);
+        argType1 param1;
+        argType2 param2;
+        parameters->Read("param1",param1);
+        parameters->Read("param2",param2);
+        return (actual->*pfunc)(param1,param2);
     }
+
+    virtual ErrorManagement::ErrorType caller(Object *object, ReferenceContainer &parameters){
+
+        Reference par = parameters.Get(0);
+
+        ReferenceT<StructuredDataI> param = par;
+        return caller (object, param.operator->());
+    }
+
+    //TODO create class to generate a StructuredDataI from a StreamI
+    //TODO then call the caller(StructuredDataI)
+
+private:
+
+    MethodPointer pfunc;
 };
 
 
-template <class T, typename arg1>
-class callerClassT<T,arg1,void,void,void>{
-    ErrorManagement::ErrorType( T::*pfunc)(arg1 param1);
+template <class T, typename argType1>
+class CallerClassT<T,argType1,void,void,void>:public CallerClass{
 public:
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+    typedef ErrorManagement::ErrorType (T::*MethodPointer)(argType1);
 
-    callerClassT(ErrorManagement::ErrorType( T::*func)(arg1 param1)){
-        pfunc = func;
+
+    CallerClassT(MethodPointer method){
+        pfunc = method;
     }
+    virtual ~CallerClassT(){}
 
     ErrorManagement::ErrorType caller(Object *object, StructuredDataI *parameters){
         T* actual = dynamic_cast<T *>(object);
-        arg1 param1;
-        parameters->Read("param1",arg1);
-        return actual->pfunc(param1);
+        argType1 param1;
+        parameters->Read("param1",param1);
+        return (actual->*pfunc)(param1);
     }
+
+    virtual ErrorManagement::ErrorType caller(Object *object, ReferenceContainer &parameters){
+
+        Reference par = parameters.Get(0);
+
+        ReferenceT<StructuredDataI> param = par;
+        return caller (object, param.operator->());
+    }
+
+    //TODO create class to generate a StructuredDataI from a StreamI
+    //TODO then call the caller(StructuredDataI)
+
+private:
+
+    MethodPointer pfunc;
 };
 
 template <class T>
-class callerClassT<T,void,void,void,void>{
-    ErrorManagement::ErrorType( T::*pfunc)(void);
+class CallerClassT<T,void,void,void,void>:public CallerClass{
+public:
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+    typedef ErrorManagement::ErrorType (T::*MethodPointer)();
+
+private:
+
+    MethodPointer pfunc;
 public:
 
-    callerClassT(ErrorManagement::ErrorType( T::*func)(void)){
-        pfunc = func;
+    CallerClassT(MethodPointer method){
+        pfunc = method;
     }
+    virtual ~CallerClassT(){}
+
 
     virtual ErrorManagement::ErrorType caller(Object *object, StructuredDataI *parameters){
         return caller(object);
@@ -171,62 +265,100 @@ public:
         return caller(object);
     }
 
+    virtual ErrorManagement::ErrorType caller(Object *object, StreamI *stream){
+        return caller(object);
+    }
+
     virtual ErrorManagement::ErrorType caller(Object *object){
         T* actual = dynamic_cast<T *>(object);
-        return actual->pfunc();
+        return (actual->*pfunc)();
     }
 
 };
 
 template <class T>
-class callerClassT<T,StructuredDataI &,void,void,void>{
-    ErrorManagement::ErrorType( T::*pfunc)(StructuredDataI &parameters);
+class CallerClassT<T,StructuredDataI *,void,void,void>:public CallerClass{
 public:
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+    typedef ErrorManagement::ErrorType (T::*MethodPointer)(StructuredDataI *parameters);
 
-    callerClassT(ErrorManagement::ErrorType( T::*func)(void)){
-        pfunc = func;
+    CallerClassT(MethodPointer method){
+        pfunc = method;
     }
 
     ErrorManagement::ErrorType caller(Object *object, StructuredDataI *parameters){
         T* actual = dynamic_cast<T *>(object);
-        return actual->pfunc(*parameters);
+        return (actual->*pfunc)(parameters);
     }
+
+    virtual ErrorManagement::ErrorType caller(Object *object, ReferenceContainer &parameters){
+        ReferenceT<StructuredDataI> sI = parameters.Get(0);
+        return caller(object,sI.operator->());
+    }
+
+    //TODO create class to generate a StructuredDataI from a StreamI
+    //TODO then call the caller(StructuredDataI)
+
+private:
+
+    MethodPointer pfunc;
 };
 
 
 template <class T>
-class callerClassT<T,ReferenceContainer &,void,void,void>{
-    ErrorManagement::ErrorType( T::*pfunc)(ReferenceContainer &parameters);
+class CallerClassT<T,ReferenceContainer &,void,void,void>:public CallerClass{
 public:
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+    typedef ErrorManagement::ErrorType (T::*MethodPointer)(ReferenceContainer &parameters);
 
-    callerClassT(ErrorManagement::ErrorType( T::*func)(ReferenceContainer &parameters)){
-        pfunc = func;
+    CallerClassT(MethodPointer method){
+        pfunc = method;
     }
+    virtual ~CallerClassT(){}
 
     virtual ErrorManagement::ErrorType caller(Object *object, StructuredDataI *parameters){
 
         ReferenceContainer param1;
 
-        Reference ao(new AnyObject (*parameters));
-        param1.Insert(ao);
+        Object * o = dynamic_cast<Object *>(parameters);
+
+        Reference ref(o);
+
+        param1.Insert(ref);
 
         return caller (object ,param1);
     }
 
     virtual ErrorManagement::ErrorType caller(Object *object, ReferenceContainer &parameters){
         T* actual = dynamic_cast<T *>(object);
-        return actual->pfunc(parameters);
+        return (actual->*pfunc)(parameters);
     }
+
+private:
+
+    MethodPointer pfunc;
 
 };
 
 template <class T>
-class callerClassT<T,StreamI *,void,void,void>{
-    ErrorManagement::ErrorType( T::*pfunc)(StreamI *parameters);
+class CallerClassT<T,StreamI *,void,void,void>:public CallerClass{
 public:
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+    typedef ErrorManagement::ErrorType (T::*MethodPointer)(StreamI *);
 
-    callerClassT(ErrorManagement::ErrorType( T::*func)(StreamI *)){
-        pfunc = func;
+    CallerClassT(MethodPointer method){
+        pfunc = method;
+    }
+    virtual ~CallerClassT(){}
+
+    virtual ErrorManagement::ErrorType caller(Object *object, StructuredDataI *parameters){
+        return ErrorManagement::parametersError;
     }
 
     ErrorManagement::ErrorType caller(Object *object, ReferenceContainer &parameters){
@@ -236,9 +368,39 @@ public:
 
         ReferenceT<StreamI> param = par;
 
-        return actual->pfunc(param);
+        return (actual->*pfunc)(param.operator->());
     }
+private:
+
+    MethodPointer pfunc;
 };
+
+
+template <class T>
+CallerClass *CallerClassCreate(ErrorManagement::ErrorType (T::*MethodPointer)()){
+    CallerClass *p = new CallerClassT<T,void,void,void,void>(MethodPointer);
+    return p;
+}
+
+template <class T, typename argType1>
+CallerClass *CallerClassCreate(ErrorManagement::ErrorType (T::*MethodPointer)(argType1)){
+        return new CallerClassT<T,argType1,void,void,void>(MethodPointer);
+}
+
+template <class T, typename argType1,typename argType2>
+CallerClass *CallerClassCreate(ErrorManagement::ErrorType (T::*MethodPointer)(argType1,argType2)){
+        return new CallerClassT<T,argType1,argType2,void,void>(MethodPointer);
+}
+
+template <class T, typename argType1,typename argType2,typename argType3>
+CallerClass *CallerClassCreate(ErrorManagement::ErrorType (T::*MethodPointer)(argType1,argType2,argType3)){
+        return new CallerClassT<T,argType1,argType2,argType3,void>(MethodPointer);
+}
+
+template <class T, typename argType1,typename argType2,typename argType3,typename argType4>
+CallerClass *CallerClassCreate(ErrorManagement::ErrorType (T::*MethodPointer)(argType1,argType2,argType3,argType4)){
+        return new CallerClassT<T,argType1,argType2,argType3,argType4>(MethodPointer);
+}
 
 
 
