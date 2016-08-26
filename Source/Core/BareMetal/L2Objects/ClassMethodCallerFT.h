@@ -743,7 +743,20 @@ XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (classNa
         return new XClassMethodCallerT<className,argType1,argType2,argType3,argType4>(MethodPointer);
 }
 
-
+#if 0
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(argType1&,argType2,argType3,argType4)){
+        return XClassMethodCallerCreate2(MethodPointer,0x1);
+}
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,argType4),int flag){
+        return XClassMethodCallerCreate3(MethodPointer,0x1);
+}
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2&,argType3,argType4),int flag){
+        return XClassMethodCallerCreate3(MethodPointer,flag | 0x2);
+}
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
