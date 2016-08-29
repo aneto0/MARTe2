@@ -76,7 +76,7 @@ typedef int32 Handle;
 #endif
 
 /** Defines the default stack size for a thread. */
-#define THREADS_DEFAULT_STACKSIZE configMINIMAL_STACK_SIZE * 8
+#define THREADS_DEFAULT_STACKSIZE configMINIMAL_STACK_SIZE * 2
 
 /** Defines the maximum number of elements in the memory database */
 #define MAX_NO_OF_MEMORY_MONITORS 8
