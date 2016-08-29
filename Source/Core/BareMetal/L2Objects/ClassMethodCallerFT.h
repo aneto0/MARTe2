@@ -138,7 +138,7 @@ public:
      * @param[in] f is a pointer to the class method.
      * @post f == GetMethodPointer()
      */
-    XClassMethodCallerT(MethodPointer method){
+    XClassMethodCallerT(MethodPointer method,uint32 mask){
         pFun = method;
     }
 
@@ -227,7 +227,7 @@ public:
      * @param[in] f is a pointer to the class method.
      * @post f == GetMethodPointer()
      */
-    XClassMethodCallerT(MethodPointer method){
+    XClassMethodCallerT(MethodPointer method,uint32 mask){
         pFun = method;
     }
 
@@ -310,7 +310,7 @@ public:
      * @param[in] f is a pointer to the class method.
      * @post f == GetMethodPointer()
      */
-    XClassMethodCallerT(MethodPointer method){
+    XClassMethodCallerT(MethodPointer method,uint32 mask){
         pFun = method;
     }
 
@@ -387,7 +387,7 @@ public:
      * @param[in] f is a pointer to the class method.
      * @post f == GetMethodPointer()
      */
-    XClassMethodCallerT(MethodPointer method){
+    XClassMethodCallerT(MethodPointer method,uint32 mask){
         pFun = method;
     }
 
@@ -466,7 +466,7 @@ public:
      * @param[in] f is a pointer to the class method.
      * @post f == GetMethodPointer()
      */
-    XClassMethodCallerT(MethodPointer method){
+    XClassMethodCallerT(MethodPointer method,uint32 mask){
         pFun = method;
     }
 
@@ -535,7 +535,7 @@ public:
      * @param[in] f is a pointer to the class method.
      * @post f == GetMethodPointer()
      */
-    XClassMethodCallerT(MethodPointer method){
+    XClassMethodCallerT(MethodPointer method,uint32 mask){
         pFun = method;
     }
 
@@ -600,7 +600,7 @@ public:
      * @param[in] f is a pointer to the class method.
      * @post f == GetMethodPointer()
      */
-    XClassMethodCallerT(MethodPointer method){
+    XClassMethodCallerT(MethodPointer method,uint32 mask){
         pFun = method;
     }
 
@@ -671,7 +671,7 @@ public:
      * @param[in] f is a pointer to the class method.
      * @post f == GetMethodPointer()
      */
-    XClassMethodCallerT(MethodPointer method){
+    XClassMethodCallerT(MethodPointer method,uint32 mask){
         pFun = method;
     }
 
@@ -717,31 +717,190 @@ private:
 };
 
 
+// 0 params
+
 template <class className>
-XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)()){
-    XClassMethodCaller *p = new XClassMethodCallerT<className,void,void,void,void>(MethodPointer);
+XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(void)){
+    XClassMethodCaller *p = new XClassMethodCallerT<className,void,void,void,void>(MethodPointer,0x0000);
     return p;
+}
+
+// 1 params
+
+template <class className, typename argType1>
+XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(const argType1 &)){
+        return new XClassMethodCallerT<className,argType1,void,void,void>(MethodPointer,0x0000);
+}
+
+template <class className, typename argType1>
+XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(argType1 &)){
+        return new XClassMethodCallerT<className,argType1,void,void,void>(MethodPointer,0x1000);
 }
 
 template <class className, typename argType1>
 XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(argType1)){
-        return new XClassMethodCallerT<className,argType1,void,void,void>(MethodPointer);
+        return new XClassMethodCallerT<className,argType1,void,void,void>(MethodPointer,0x0000);
+}
+
+
+// 2 params
+
+template <class className, typename argType1,typename argType2>
+XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,const argType2 &)){
+        return XClassMethodCallerCreate2(MethodPointer,0x0000);
 }
 
 template <class className, typename argType1,typename argType2>
-XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2)){
-        return new XClassMethodCallerT<className,argType1,argType2,void,void>(MethodPointer);
+XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 &)){
+        return XClassMethodCallerCreate2(MethodPointer,0x0400);
+}
+
+template <class className, typename argType1,typename argType2>
+XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 )){
+        return XClassMethodCallerCreate2(MethodPointer,0x0000);
+}
+
+
+template <class className, typename argType1,typename argType2>
+XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(const argType1 &,argType2),uint32 mask){
+        return new XClassMethodCallerT<className,argType1,argType2,void,void>(MethodPointer,mask);
+}
+
+template <class className, typename argType1,typename argType2>
+XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1 &,argType2),uint32 mask){
+        return new XClassMethodCallerT<className,argType1,argType2,void,void>(MethodPointer,mask | 0x1000);
+}
+
+template <class className, typename argType1,typename argType2>
+XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2),uint32 mask){
+        return new XClassMethodCallerT<className,argType1,argType2,void,void>(MethodPointer,mask);
+}
+
+// 3 params
+
+template <class className, typename argType1,typename argType2,typename argType3>
+XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,const argType3 & )){
+        return XClassMethodCallerCreate2(MethodPointer,0x0000);
+}
+
+template <class className, typename argType1,typename argType2,typename argType3>
+XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3 &)){
+        return XClassMethodCallerCreate2(MethodPointer,0x0010);
 }
 
 template <class className, typename argType1,typename argType2,typename argType3>
 XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3)){
-        return new XClassMethodCallerT<className,argType1,argType2,argType3,void>(MethodPointer);
+        return XClassMethodCallerCreate2(MethodPointer,0x0000);
+}
+
+
+template <class className, typename argType1,typename argType2,typename argType3>
+XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,const argType2 &,argType3),uint32 mask){
+        return XClassMethodCallerCreate3(MethodPointer,mask);
+}
+
+template <class className, typename argType1,typename argType2,typename argType3>
+XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 &,argType3),uint32 mask){
+        return XClassMethodCallerCreate3(MethodPointer,mask | 0x0100);
+}
+
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3),uint32 mask){
+        return XClassMethodCallerCreate3(MethodPointer,mask);
+}
+
+
+template <class className, typename argType1,typename argType2,typename argType3>
+XClassMethodCaller *XClassMethodCallerCreate3(ErrorManagement::ErrorType (className::*MethodPointer)(const argType1 &,argType2,argType3),uint32 mask){
+        return new XClassMethodCallerT<className,argType1,argType2,argType3,void>(MethodPointer,mask);
+}
+
+template <class className, typename argType1,typename argType2,typename argType3>
+XClassMethodCaller *XClassMethodCallerCreate3(ErrorManagement::ErrorType (className::*MethodPointer)(argType1 &,argType2,argType3),uint32 mask){
+        return new XClassMethodCallerT<className,argType1,argType2,argType3,void>(MethodPointer,mask | 0x0010);
+}
+
+template <class className, typename argType1,typename argType2,typename argType3>
+XClassMethodCaller *XClassMethodCallerCreate3(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3),uint32 mask){
+        return new XClassMethodCallerT<className,argType1,argType2,argType3,void>(MethodPointer,mask);
+}
+
+
+// 4 params
+
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,const argType4 &)){
+        return XClassMethodCallerCreate2(MethodPointer,0x0000);
+}
+
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,argType4 &)){
+        return XClassMethodCallerCreate2(MethodPointer,0x0001);
 }
 
 template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
 XClassMethodCaller *XClassMethodCallerCreate(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,argType4)){
-        return new XClassMethodCallerT<className,argType1,argType2,argType3,argType4>(MethodPointer);
+        return XClassMethodCallerCreate2(MethodPointer,0x0000);
 }
+
+
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,const argType3 &,argType4 ),uint32 mask){
+        return XClassMethodCallerCreate3(MethodPointer,mask);
+}
+
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3 &,argType4),uint32 mask){
+        return XClassMethodCallerCreate3(MethodPointer,mask | 0x0010);
+}
+
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,argType4),uint32 mask){
+        return XClassMethodCallerCreate3(MethodPointer,mask);
+}
+
+
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate3(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,const argType2 &,argType3,argType4 ),uint32 mask){
+        return XClassMethodCallerCreate4(MethodPointer,mask);
+}
+
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate3(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 &,argType3,argType4),uint32 mask){
+        return XClassMethodCallerCreate4(MethodPointer,mask | 0x0100);
+}
+
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate3(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,argType4),uint32 mask){
+        return XClassMethodCallerCreate4(MethodPointer,mask);
+}
+
+
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate4(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,const argType2 &,argType3,argType4 ),uint32 mask){
+        return new XClassMethodCallerT<className,argType1,argType2,argType3,argType4>(MethodPointer,mask);
+}
+
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate4(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 &,argType3,argType4),uint32 mask){
+    return new XClassMethodCallerT<className,argType1,argType2,argType3,argType4>(MethodPointer,mask | 0x1000);
+}
+
+template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+XClassMethodCaller *XClassMethodCallerCreate4(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,argType4),uint32 mask){
+    return new XClassMethodCallerT<className,argType1,argType2,argType3,argType4>(MethodPointer,mask);
+}
+
+
+
+
+
+
+
+
+
+
+
 
 #if 0
 template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
