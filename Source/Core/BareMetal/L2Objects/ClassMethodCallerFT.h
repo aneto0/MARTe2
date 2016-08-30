@@ -588,7 +588,7 @@ private:
  * @param className is the class owning the target method.
  */
 template <class className>
-class XClassMethodCallerT<className,ReferenceContainer &,void,void,void>:public XClassMethodCaller{
+class XClassMethodCallerT<className,ReferenceContainer,void,void,void>:public XClassMethodCaller{
 public:
     /**
      * @brief Type definition for the method pointer prototype
@@ -804,7 +804,7 @@ XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (classN
         return XClassMethodCallerCreate3(MethodPointer,mask | 0x0100);
 }
 
-template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+template <class className, typename argType1,typename argType2,typename argType3>
 XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3),uint32 mask){
         return XClassMethodCallerCreate3(MethodPointer,mask);
 }
