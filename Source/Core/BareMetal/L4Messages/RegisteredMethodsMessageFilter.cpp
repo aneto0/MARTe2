@@ -42,6 +42,10 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+RegisteredMethodsMessageFilter::RegisteredMethodsMessageFilter() :MessageFilter(true){
+
+}
+
 RegisteredMethodsMessageFilter::RegisteredMethodsMessageFilter(Object * object):MessageFilter(true){
     destinationObject = object;
 }
@@ -49,7 +53,7 @@ RegisteredMethodsMessageFilter::RegisteredMethodsMessageFilter(Object * object):
 RegisteredMethodsMessageFilter::~RegisteredMethodsMessageFilter(){
 }
 
-ErrorManagement::ErrorType RegisteredMethodsMessageFilter::ProcessMessage(ReferenceT<Message> &messageToTest){
+ErrorManagement::ErrorType RegisteredMethodsMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest){
 
     ErrorManagement::ErrorType ret;
 
@@ -81,6 +85,8 @@ ErrorManagement::ErrorType RegisteredMethodsMessageFilter::ProcessMessage(Refere
     return ret;
 
 }
+
+CLASS_REGISTER(RegisteredMethodsMessageFilter, "1.0")
 
 }
 

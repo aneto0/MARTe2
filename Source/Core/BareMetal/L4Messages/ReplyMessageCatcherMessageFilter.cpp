@@ -94,6 +94,7 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::Wait(const TimeoutT
     return err;
 }
 
+CLASS_REGISTER(ReplyMessageCatcherMessageFilter, "1.0")
 
 
 }

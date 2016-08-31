@@ -211,7 +211,7 @@ private:
             /**
              * Unmapped area
              */
-            BitRange<uint8,4u ,3u> unMapped;
+            BitRange<uint8, 5u ,3u> unMapped;
 
             /**
              * To set the Message mode using an 8-bit integer.

@@ -49,6 +49,9 @@ namespace MARTe {
 */
 class RegisteredMethodsMessageFilter: public MessageFilter{
 public:
+    CLASS_REGISTER_DECLARATION()
+
+RegisteredMethodsMessageFilter();
 
 /**
  * TODO
@@ -75,7 +78,7 @@ protected:
      * TODO
      * on every match will also consume the message and handles both reply mechanisms
     */
-    virtual ErrorManagement::ErrorType ProcessMessage(ReferenceT<Message> &messageToTest);
+    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 
 };
 

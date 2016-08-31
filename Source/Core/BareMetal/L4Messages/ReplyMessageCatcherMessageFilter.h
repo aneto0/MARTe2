@@ -46,7 +46,7 @@ namespace MARTe {
 * */
 class ReplyMessageCatcherMessageFilter: public MessageFilter{
 public:
-
+    CLASS_REGISTER_DECLARATION()
 /**
  * TODO
  * Initialises basic search filter
