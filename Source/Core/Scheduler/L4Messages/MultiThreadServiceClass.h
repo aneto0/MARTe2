@@ -1,8 +1,8 @@
 /**
  * @file MultiThreadServiceClass.h
  * @brief Header file for class MultiThreadServerClass
- * @date Aug 30, 2016
- * @author fsartori
+ * @date 30/08/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

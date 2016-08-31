@@ -153,7 +153,7 @@ bool MessageITest::TestSendMessage_False_NotExpectedLateReply() {
         return false;
     }
 
-    mess->MarkAsReply();
+    mess->SetAsReply();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
     ObjectRegistryDatabase::Instance()->Insert(sender);
@@ -182,8 +182,8 @@ bool MessageITest::TestSendMessage_False_NoDestinationForReply() {
         return false;
     }
 
-    mess->MarkAsReply();
-    mess->MarkLateReplyExpected();
+    mess->SetAsReply();
+    mess->ExpectsIndirectReply();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
     ObjectRegistryDatabase::Instance()->Insert(receiver);
@@ -212,7 +212,7 @@ bool MessageITest::TestSendMessage_False_NoDestinationForExpectedReply() {
         return false;
     }
 
-    mess->MarkLateReplyExpected();
+    mess->SetExpectsReply(true);
 
     ObjectRegistryDatabase::Instance()->CleanUp();
     ObjectRegistryDatabase::Instance()->Insert(receiver);
@@ -311,10 +311,10 @@ bool MessageITest::TestSendMessageAndWaitReply() {
     if (status != ErrorManagement::noError) {
         return false;
     }
-    if (!mess->IsReplyMessage()) {
+    if (!mess->IsReply()) {
         return false;
     }
-    if (!mess->ImmediateReplyExpected()) {
+    if (!mess->ExpectsIndirectReply()) {
         return false;
     }
 
@@ -363,7 +363,7 @@ bool MessageITest::TestSendMessageAndWaitReply_False_ReplyOfReply() {
         return false;
     }
 
-    mess->MarkAsReply();
+    mess->SetAsReply();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
     ObjectRegistryDatabase::Instance()->Insert(sender);
@@ -398,7 +398,7 @@ bool MessageITest::TestSendMessageAndExpectReplyLater() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    status = MessageI::SendMessageAndExpectReplyLater(mess, sender.operator->());
+    status = MessageI::SendMessageAndWaitReply(mess, sender.operator->());
     if (status != ErrorManagement::noError) {
         return false;
     }
@@ -423,7 +423,7 @@ bool MessageITest::TestSendMessageAndExpectReplyLater_False_InvalidMessage() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    status = MessageI::SendMessageAndExpectReplyLater(mess, sender.operator->());
+    status = MessageI::SendMessageAndWaitReply(mess, sender.operator->());
 
     result = (status == ErrorManagement::parametersError);
 
@@ -448,13 +448,13 @@ bool MessageITest::TestSendMessageAndExpectReplyLater_False_ReplyOfReply() {
         return false;
     }
 
-    mess->MarkAsReply();
+    mess->SetAsReply();
 
     ObjectRegistryDatabase::Instance()->CleanUp();
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    status = MessageI::SendMessageAndExpectReplyLater(mess, sender.operator->());
+    status = MessageI::SendMessageAndWaitReply(mess, sender.operator->());
 
     result = (status == ErrorManagement::communicationError);
 

@@ -1,8 +1,8 @@
 /**
  * @file ThreadDatabase.h
  * @brief Source file for class ThreadDatabase
- * @date Aug 14, 2015
- * @author fsartori
+ * @date 14/08/2015
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "../Generic/ThreadsDatabase_Generic.h"
+#include "ThreadsDatabase_Generic.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

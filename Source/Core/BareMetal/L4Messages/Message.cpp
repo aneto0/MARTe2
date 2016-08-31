@@ -1,8 +1,8 @@
 /**
  * @file Message.cpp
  * @brief Source file for class Message
- * @date Apr 15, 2016
- * @author fsartori
+ * @date 15/04/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

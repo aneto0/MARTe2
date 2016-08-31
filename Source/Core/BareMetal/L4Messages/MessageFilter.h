@@ -1,8 +1,8 @@
 /**
  * @file MessageFilter.h
  * @brief Header file for class MessageFilter
- * @date Aug 17, 2016
- * @author fsartori
+ * @date 17/08/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -48,8 +48,6 @@ namespace MARTe {
  */
 class MessageFilter: public Object{
 public:
-    CLASS_REGISTER_DECLARATION()
-
     /**
      * TODO
      * Initialises basic search filter
