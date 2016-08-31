@@ -59,15 +59,13 @@ bool MessageTest::TestConstructor() {
 bool MessageTest::TestInitialise() {
     using namespace MARTe;
     bool result = false;
-    const MessageTest::MessageInitTableTest table[]={
-            {"dummyDestination", "dummyFunction", 1000,           "ExpectsReply",          "Destination=dummyDestination\n Function=dummyFunction\n MaxWait=1000\n Mode=ExpectsReply\n", true},
-            {"dummyDestination", "dummyFunction", 1000,           "",                      "Destination=dummyDestination\n Function=dummyFunction\n MaxWait=1000\n ", true},
-            {"dummyDestination", "dummyFunction", TTInfiniteWait, "ExpectsImmediateReply", "Destination=dummyDestination\n Function=dummyFunction\n Mode=ExpectsImmediateReply\n", true},
-            {"dummyDestination", "dummyFunction", TTInfiniteWait, "",                      "Destination=dummyDestination\n Function=dummyFunction\n ", true},
-            {"dummyDestination", "",              TTInfiniteWait, "",                      "Destination=dummyDestination\n ", false},
-            {"",                 "dummyFunction", TTInfiniteWait, "",                      "Function=dummyFunction\n ", false},
-            {NULL, NULL, 0, NULL, NULL, false}
-       };
+    const MessageTest::MessageInitTableTest table[] = { { "dummyDestination", "dummyFunction", 1000, "ExpectsReply",
+            "Destination=dummyDestination\n Function=dummyFunction\n MaxWait=1000\n Mode=ExpectsReply\n", true }, { "dummyDestination", "dummyFunction", 1000,
+            "", "Destination=dummyDestination\n Function=dummyFunction\n MaxWait=1000\n ", true }, { "dummyDestination", "dummyFunction", TTInfiniteWait,
+            "ExpectsImmediateReply", "Destination=dummyDestination\n Function=dummyFunction\n Mode=ExpectsImmediateReply\n", true }, { "dummyDestination",
+            "dummyFunction", TTInfiniteWait, "", "Destination=dummyDestination\n Function=dummyFunction\n ", true }, { "dummyDestination", "", TTInfiniteWait,
+            "", "Destination=dummyDestination\n ", false }, { "", "dummyFunction", TTInfiniteWait, "", "Function=dummyFunction\n ", false }, { NULL, NULL, 0,
+    NULL, NULL, false } };
     result = TestInitialise(table);
     return result;
 }
@@ -88,7 +86,7 @@ bool MessageTest::TestInitialise(const MessageInitTableTest * table) {
         {
             bool status;
             ConfigurationDatabase cdb;
-            StreamString confStr=table[i].configuration;
+            StreamString confStr = table[i].configuration;
             confStr.Seek(0ll);
             StandardParser parser(confStr, cdb);
             status = parser.Parse();
@@ -105,17 +103,17 @@ bool MessageTest::TestInitialise(const MessageInitTableTest * table) {
 
         //Verify data
         if (initOK) {
-            result &= (StringHelper::Compare(mess.GetDestination(),table[i].destination)==0);
-            result &= (StringHelper::Compare(mess.GetFunction(),table[i].function) == 0);
-            result &= (StringHelper::Compare(mess.GetSender(),"") == 0);
+            result &= (StringHelper::Compare(mess.GetDestination(), table[i].destination) == 0);
+            result &= (StringHelper::Compare(mess.GetFunction(), table[i].function) == 0);
+            result &= (StringHelper::Compare(mess.GetSender(), "") == 0);
             result &= (mess.GetReplyTimeout() == table[i].maxwait);
-            if (StringHelper::Compare(table[i].mode,"ExpectsReply")==0) {
-                result &= mess.ReplyExpected();
+            if (StringHelper::Compare(table[i].mode, "ExpectsReply") == 0) {
+                result &= mess.ExpectsReply();
             }
-            if (StringHelper::Compare(table[i].mode,"ExpectsImmediateReply")==0) {
-                result &= !mess.LateReplyExpected();
+            if (StringHelper::Compare(table[i].mode, "ExpectsImmediateReply") == 0) {
+                result &= !mess.ExpectsIndirectReply();
             }
-            result &= !mess.IsReplyMessage();
+            result &= !mess.IsReply();
         }
 
         mess.CleanUp(); //??
@@ -125,93 +123,88 @@ bool MessageTest::TestInitialise(const MessageInitTableTest * table) {
     return result;
 }
 
-bool MessageTest::TestMarkAsReply() {
+bool MessageTest::TestSetAsReply() {
     using namespace MARTe;
     bool result = true;
     Message mess;
-    mess.MarkAsReply();
-    result &= mess.IsReplyMessage();
-    mess.MarkAsReply(true);
-    result &= mess.IsReplyMessage();
-    mess.MarkAsReply(false);
-    result &= !mess.IsReplyMessage();
+    mess.SetAsReply();
+    result &= mess.IsReply();
+    mess.SetAsReply(true);
+    result &= mess.IsReply();
+    mess.SetAsReply(false);
+    result &= !mess.IsReply();
     return (result);
 }
 
-bool MessageTest::TestIsReplyMessage() {
+bool MessageTest::TestIsReply() {
     bool result;
-    result = TestMarkAsReply();
+    result = TestSetAsReply();
     return result;
 }
 
-bool MessageTest::TestMarkImmediateReplyExpected() {
+bool MessageTest::TestSetExpectsReply() {
     using namespace MARTe;
     bool result = true;
     Message mess;
-    mess.MarkImmediateReplyExpected();
-    result &= mess.ImmediateReplyExpected();
-    mess.MarkImmediateReplyExpected(true);
-    result &= mess.ImmediateReplyExpected();
-    mess.MarkImmediateReplyExpected(false);
-    result &= !mess.ImmediateReplyExpected();
+    result &= !mess.ExpectsReply();
+    result &= !mess.ExpectsIndirectReply();
+    mess.SetExpectsReply(false);
+    result &= !mess.ExpectsReply();
+    result &= !mess.ExpectsIndirectReply();
+    mess.SetExpectsReply(true);
+    result &= mess.ExpectsReply();
+    result &= !mess.ExpectsIndirectReply();
     return result;
 }
 
-bool MessageTest::TestMarkLateReplyExpected() {
+bool MessageTest::TestSetExpectsIndirectReply() {
     using namespace MARTe;
     bool result = true;
     Message mess;
-    mess.MarkLateReplyExpected();
-    result &= mess.LateReplyExpected();
-    mess.MarkLateReplyExpected(true);
-    result &= mess.LateReplyExpected();
-    mess.MarkLateReplyExpected(false);
-    result &= !mess.LateReplyExpected(); //!!
+    result &= !mess.ExpectsReply();
+    result &= !mess.ExpectsIndirectReply();
+    mess.SetExpectsIndirectReply(false);
+    result &= !mess.ExpectsReply();
+    result &= !mess.ExpectsIndirectReply();
+    mess.SetExpectsIndirectReply(true);
+    result &= mess.ExpectsReply();
+    result &= mess.ExpectsIndirectReply();
     return result;
 }
 
-bool MessageTest::TestReplyExpected() {
+bool MessageTest::TestExpectsReply() {
     using namespace MARTe;
     bool result = true;
     Message mess;
-    result &= !mess.ReplyExpected();
-
-    mess.MarkImmediateReplyExpected();
-    result &= mess.ReplyExpected();
-
-    mess.MarkLateReplyExpected();
-    result &= mess.ReplyExpected();
-
+    result &= !mess.ExpectsReply();
+    result &= !mess.ExpectsIndirectReply();
+    mess.SetExpectsReply(false);
+    result &= !mess.ExpectsReply();
+    result &= !mess.ExpectsIndirectReply();
+    mess.SetExpectsReply(true);
+    result &= mess.ExpectsReply();
+    result &= !mess.ExpectsIndirectReply();
+    mess.SetExpectsReply(false);
+    result &= !mess.ExpectsReply();
+    result &= !mess.ExpectsIndirectReply();
     return result;
 }
 
-bool MessageTest::TestImmediateReplyExpected() {
+bool MessageTest::TestExpectsIndirectReply() {
     using namespace MARTe;
     bool result = true;
     Message mess;
-    result &= !mess.ImmediateReplyExpected();
-
-    mess.MarkLateReplyExpected();
-    result &= !mess.ImmediateReplyExpected();
-
-    mess.MarkImmediateReplyExpected();
-    result &= mess.ImmediateReplyExpected();
-
-    return result;
-}
-
-bool MessageTest::TestLateReplyExpected() {
-    using namespace MARTe;
-    bool result = true;
-    Message mess;
-    result &= !mess.LateReplyExpected();
-
-    mess.MarkImmediateReplyExpected();
-    result &= !mess.LateReplyExpected();
-
-    mess.MarkLateReplyExpected();
-    result &= mess.LateReplyExpected();
-
+    result &= !mess.ExpectsReply();
+    result &= !mess.ExpectsIndirectReply();
+    mess.SetExpectsIndirectReply(false);
+    result &= !mess.ExpectsReply();
+    result &= !mess.ExpectsIndirectReply();
+    mess.SetExpectsIndirectReply(true);
+    result &= mess.ExpectsReply();
+    result &= mess.ExpectsIndirectReply();
+    mess.SetExpectsIndirectReply(false);
+    result &= !mess.ExpectsReply();
+    result &= !mess.ExpectsIndirectReply();
     return result;
 }
 

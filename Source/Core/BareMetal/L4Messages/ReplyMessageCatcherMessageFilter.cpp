@@ -1,8 +1,8 @@
 /**
  * @file ReplyMessageCatcherMessageFilter.cpp
  * @brief Source file for class ReplyMessageCatcherMessageFilter
- * @date Aug 19, 2016
- * @author fsartori
+ * @date 19/08/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

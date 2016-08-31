@@ -1,8 +1,8 @@
 /**
  * @file QueueingMessageFilter.cpp
  * @brief Source file for class QueueingMessageFilter
- * @date Aug 22, 2016
- * @author fsartori
+ * @date 22/08/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

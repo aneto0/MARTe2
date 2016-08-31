@@ -1,8 +1,8 @@
 /**
  * @file XClassMethodCallerFT.h
  * @brief Header file for class XClassMethodCallerFT
- * @date Aug 25, 2016
- * @author fsartori
+ * @date 25/08/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L2OBJECTS_CLASSMETHODCALLERFT_H_
-#define L2OBJECTS_CLASSMETHODCALLERFT_H_
+#ifndef CLASSMETHODCALLERFT_H_
+#define CLASSMETHODCALLERFT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -1370,5 +1370,5 @@ XClassMethodCaller *XClassMethodCallerCreate2(ErrorManagement::ErrorType (classN
 /*---------------------------------------------------------------------------*/
 
 }
-#endif /* L2OBJECTS_CLASSMETHODCALLERFT_H_ */
+#endif /* CLASSMETHODCALLERFT_H_ */
 	

@@ -66,39 +66,34 @@ public:
     bool TestInitialise();
 
     /**
-     * @brief Tests the MarkAsReply method
+     * @brief Tests the SetAsReply method
      */
-    bool TestMarkAsReply();
+    bool TestSetAsReply();
 
     /**
      * @brief Tests the IsReplyMessage method
      */
-    bool TestIsReplyMessage();
+    bool TestIsReply();
 
     /**
-     * @brief Tests the MarkImmediateReplyExpected method
+     * @brief Tests the TestSetExpectsReply method
      */
-    bool TestMarkImmediateReplyExpected();
+    bool TestSetExpectsReply();
 
     /**
-     * @brief Tests the MarkLateReplyExpected method
+     * @brief Tests the SetExpectsIndirectReply method
      */
-    bool TestMarkLateReplyExpected();
+    bool TestSetExpectsIndirectReply();
 
     /**
-     * @brief Tests the ReplyExpected method
+     * @brief Tests the ExpectsReply method
      */
-    bool TestReplyExpected();
+    bool TestExpectsReply();
 
     /**
-     * @brief Tests the ImmediateReplyExpected method
+     * @brief Tests the ExpectsIndirectReply method
      */
-    bool TestImmediateReplyExpected();
-
-    /**
-     * @brief Tests the LateReplyExpected method
-     */
-    bool TestLateReplyExpected();
+    bool TestExpectsIndirectReply();
 
     /**
      * @brief Tests the GetDestination method
