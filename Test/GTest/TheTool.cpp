@@ -282,9 +282,10 @@ static void GenerateStructFile(ConfigurationDatabase &database,
                                BasicFile &structSource) {
 
     const char8* structName = database.GetName();
+    StreamString comments;
+    database.Read("comments", comments);
     bool isStruct = false;
     for (uint32 j = 0u; j < database.GetNumberOfChildren(); j++) {
-
         // HEADER FILE MANAGEMENT
         const char8 *memberName = database.GetChildName(j);
         if (database.MoveRelative(memberName)) {
@@ -294,6 +295,11 @@ static void GenerateStructFile(ConfigurationDatabase &database,
         }
     }
     if (isStruct) {
+        if (comments.Size() > 0u) {
+            PrintOnFile(structHeader, "/*");
+            PrintOnFile(structHeader, comments.Buffer());
+            PrintOnFile(structHeader, "*/\n");
+        }
         PrintIntrospection(database, structName, structHeader, structSource);
     }
 
@@ -516,19 +522,23 @@ static void GenerateInitialiseFunction(ConfigurationDatabase &database,
                         }
                     }
                 }
-                //Manage the parameter introspection
 
+#ifndef SKIP_OBJECT_INTROSPECTION
+                //Manage the parameter introspection
                 if (paramName[0] != '*') {
                     uint32 begin = paramName[0] == '$';
                     // SOURCE FILE MANAGEMENT
                     // declare the member introspection
                     IntrospectionOnSourceBefore(&paramName[begin], modifiers, classNameStr, type, attributes, structSource, begin);
                 }
+#endif
                 database.MoveToAncestor(1u);
             }
         }
-        IntrospectionOnSourceAfter(database, classNameStr, structSource, true);
 
+#ifndef SKIP_OBJECT_INTROSPECTION
+        IntrospectionOnSourceAfter(database, classNameStr, structSource, true);
+#endif
         database.MoveToAncestor(1u);
 
     }
@@ -660,7 +670,6 @@ static void AssignSignal(const char8 *signalName,
     PrintOnFile(objSource, signalAlias);
     PrintOnFile(objSource, "\");\n");
     PrintOnFile(objSource, "        ret = (level >= 0);\n");
-
 
     PrintOnFile(objSource, "        if(ret) {\n"
                 "            StreamString typeName;\n"
@@ -887,7 +896,8 @@ static void GenerateOutputFiles(ConfigurationDatabase &database) {
 
     StreamString className;
     if (!database.Read("Class", className)) {
-        className = "Object";
+        printf("\nclass name not specified");
+        return;
     }
 
     StreamString classStructName = className;
@@ -966,6 +976,112 @@ static void GenerateOutputFiles(ConfigurationDatabase &database) {
     PrintOnFile(structSource, "\n}");
 }
 
+
+/**
+ * HOWTO:
+ * TheTool.ex [config_file_name.cfg] [parser_identifier]
+ * @param config_file_name.cfg is the name of the configuration file to be provided to the tool
+ * @parser_identifier specifies the parser to be used depending on the language. It can be 1 (MARTe cfg language) 2 (XML language) or 3 (Json language)
+ * @details The goal of the tool is generating automatically all the Introspection meta-data for structures in order to make the Object able to read
+ * them directly from a StructuredDataI (i.e a ConfigurationDatabase). The input configuration file has to be written in one of the supported parsable languages
+ * (MARTe CFG, XML or JSON). Assuming for example to use the MARTe CFG language, the input file has the following form:
+ *     Class = "the name of the Object class"
+ *     Parameters = {
+ *         ...
+ *     }
+ *     InputSignals = {
+ *         ...
+ *     }
+ *     OutputSignals = {
+ *         ...
+ *     }
+ * It is not mandatory define all the nodes. In particular if the Object is not a GAM there is no need to define InputSignals and OutputSignals nodes.
+ * All the structures defined inside the nodes will be declared in a file called [class_name]_Params.h and their introspections will be defined in
+ * [class_name]_Params.cpp. Inside the nodes, the user can specify the variables which can be structures or basic types. The structures, as explained before,
+ * will be declared and their introspection generated. A variable in the tool in put file has the following form
+ *     (*)Variable_Name = {
+ *         type = ...
+ *         comments = ...
+ *         modifiers = ...
+ *         attributes = ...
+ *         source = ... (the address of the variable in the StructuredDataI used for initialise the Object)
+ *         (other possible variables in case of structure)
+ *     }
+ * These fields can be omitted and they are considered empty, unless the type which has to be specified. If the "source" field is not specified, the address is
+ * the "Variable_Name" itself.
+ * A structure is simply a variable containing other variables. If a variable is a structure, the modifiers and attributes fields will populate the introspection
+ * declaration of members. The special character (*) can be:
+ *     - * : the variable is an array of undefined size, namely a pointer to a memory which has to be dynamically allocated.
+ *     - $ : (can be used only in "Parameters" node) the following name is the name of a parent class. It is used to define the introspection entry of
+ *     the parent classes, since the tool generates the introspection for the object itself and not only for the declared structures.
+ *
+ * The tool creates also two more files containing all the initialisation and configuration of the Object that can be generated from the tool input file.
+ * The file called [class_name]_macros.h contains the two following macros:
+ *     TOOL_MEMBERS_DECLARATION():
+ *         Contains the declarations of the class members, namely the variables defined in the tool input file. When a variable is
+ *         defined as a pointer ('*' before the name), the member is a pointer accordingly and a member called "numberOf[variable_name] is added to store the
+ *         size of the array. In this case an incremental index beginning from 0 will be appended at the end of the variable "source" field and it will be
+ *         incremented when the variable is found. For instance suppose that in the global configuration file we have a set of parameters declared as follows:
+ *
+ *         MyParameters = {
+ *             param_0 = ...
+ *             param_1 = ...
+ *             param_2 = ...
+ *             another_param
+ *             ...
+ *         }
+ *
+ *         If in the tool input file we declare:
+ *
+ *         *parameters_array = {
+ *             source = MyParameters.param_
+ *             type = uint32
+ *             ...
+ *         }
+ *
+ *         the tool generates the two class members:
+ *
+ *         uint32 *parameters_array;
+ *         uint32 numberOfparameters_array;
+ *
+ *         and during the configuration numberOfparameters_array can be calculated trying to read "MyParameters.param_(i)" and incrementing i until
+ *         the read fails. After that the memory associated to parameters_array can be allocated.
+ *         All the variables declared in the "InputSignals" and "OutputSignals" nodes will be added as GAM pointer members. For instance declaring
+ *
+ *         signal_x = {
+ *             type = uint32
+ *             ...
+ *         }
+ *
+ *         *signal_array = {
+ *             type = uint32
+ *             ...
+ *         }
+ *
+ *         the tool generates:
+ *
+ *         uint32 *signal_x;
+ *         uint32 **signal_array;
+ *         uint32 numberOfsignal_array;
+ *
+ *         During the configuration of the signals, the pointers to the signal memory will be associated to the related GAM pointer members.
+ *
+ *     TOOL_METHODS_DECLARATION(): Contains the declarations of the following functions:
+ *             virtual bool ConfigureToolMembers(StructuredDataI &data) :
+ *                 To be called in Object::Initialise(StructuredDataI &data), reads from \a data all the variables declared
+ *                 in the node "Parameters" of the tool input file (structures or basic types)
+ *             virtual bool ConfigureToolSignals() :
+ *                 To be called in GAM::Setup(), links the signals to the GAM members declared in the "InputSignals" and "OutputSignals" nodes.
+ *             virtual void ToolMembersConstructor() :
+ *                 To be called in the constructor, initialises all the members (namely the variables) defined in the tool input file.
+ *             virtual void ToolMembersDestructor() :
+ *                 To be called in the destructor, destroys all the memory allocated on heap for the variables declared as pointers in the tool input file.
+ *
+ *  The file [class_name]_aux.cpp contains the definition of the Object methods declared in the TOOL_METHODS_DECLARATION() macro.
+ *
+ *  @details In order to disable the generation of the Object introspection define the macro SKIP_OBJECT_INTROSPECTION.
+ */
+
 int main(int argc,
          char** argv) {
 
@@ -1010,6 +1126,7 @@ int main(int argc,
                 myParser = new JsonParser(configFile, database, &errors);
             }
             else {
+                printf("\nWrong parser option: use StandardParser by default\n");
                 myParser = new StandardParser(configFile, database, &errors);
             }
         }

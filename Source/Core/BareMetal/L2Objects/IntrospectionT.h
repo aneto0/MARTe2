@@ -80,8 +80,8 @@ public:
 /**
  * @brief Retrieves the member address with respect to the class begin.
  */
-#define INTROSPECTION_PARENT_INDEX(className, parentClassNAme) \
-    (intptr)((parentClassNAme *)((className *)(sizeof(className))))-(intptr)((className *)(sizeof(className)))
+#define INTROSPECTION_PARENT_INDEX(className, parentClassName) \
+    (intptr)((parentClassName *)((className *)(sizeof(className))))-(intptr)((className *)(sizeof(className)))
 
 
                 /**
