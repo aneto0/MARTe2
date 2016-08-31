@@ -1,8 +1,8 @@
 /**
- * @file MultiThreadServiceClass.h
+ * @file MultiThreadService.h
  * @brief Header file for class MultiThreadServerClass
  * @date Aug 30, 2016
- * @author fsartori
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MULTITHREADSERVICECLASS_H_
-#define L4MESSAGES_MULTITHREADSERVICECLASS_H_
+#ifndef L4MESSAGES_MULTITHREADSERVICE_H_
+#define L4MESSAGES_MULTITHREADSERVICE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,17 +32,37 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "EmbeddedThread.h"
+#include "ReferenceContainer.h"
+
+namespace MARTe{
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * Contains instances of specialised EmbeddedThreads
+ *
+ */
+class MultiThreadService: public ReferenceContainer{
 
+public:
+    ///
+    MultiThreadService(void * context, );
 
+private:
+    /// true means that the number of threads vary with the needs
+    bool dynamicThreadAllocation;
 
+    /// either the available working threads or the maximum
+    uint32 numberOfThreads;
+};
+
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* L4MESSAGES_MULTITHREADSERVICECLASS_H_ */
+#endif /* L4MESSAGES_MULTITHREADSERVICE_H_ */
 	
