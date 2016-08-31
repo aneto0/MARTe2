@@ -22,7 +22,7 @@
 #
 #############################################################
 
-OBJSX=MainGTest.x 
+OBJSX=ToolGeneratorTest.x 
 #TheTool.x 
 #ToolGeneratorTest.x
 #MainGTest.x
@@ -44,7 +44,7 @@ INCLUDES += -I../../Source/Core/FileSystem/L1Portability
 INCLUDES += -I../../Source/Core/Scheduler/L1Portability
 
 all: $(OBJS) $(SUBPROJ)   \
-        $(BUILD_DIR)/MainGTest$(EXEEXT) 
+        $(BUILD_DIR)/ToolGeneratorTest$(EXEEXT) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

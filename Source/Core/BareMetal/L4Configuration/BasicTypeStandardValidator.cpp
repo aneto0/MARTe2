@@ -849,7 +849,7 @@ static bool PrivateValidate(const char8 charValue,
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-BasicTypeStandardValidator::BasicTypeStandardValidator() {
+BasicTypeStandardValidator::BasicTypeStandardValidator():ValidatorI() {
 }
 
 BasicTypeStandardValidator::~BasicTypeStandardValidator() {

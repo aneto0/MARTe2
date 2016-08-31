@@ -33,14 +33,13 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AnyType.h"
-
+#include "StreamI.h"
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 class Reference;
-class StreamString;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -124,8 +123,18 @@ public:
      */
     virtual AnyType GetType(const char8 * const name) = 0;
 
+    /**
+     * @brief Gets the number of dimensions of the leaf named \a name
+     * @param[in] name the name of the leaf
+     * @return the number of dimensions of the leaf named \a name
+     */
     virtual uint8 GetNumberOfDimensions(const char8 * const name)=0;
 
+    /**
+     * @brief Gets the number of elements of the leaf named \a name
+     * @param[in] name the name of the leaf
+     * @return the number of elements of the leaf named \a name
+     */
     virtual uint32 GetNumberOfElements(const char8 * const name,
                                        uint8 dimension)=0;
 
@@ -150,6 +159,11 @@ public:
      */
     virtual bool Copy(StructuredDataI &destination) = 0;
 
+    /**
+     * @brief Fills destination with the References contained in the current node.
+     * @param[out] destination is the StructuredData in output.
+     * @return true if all the contained References are successfully inserted in \a destination.
+     */
     virtual bool Link(StructuredDataI &destination)=0;
 
     /**
@@ -264,7 +278,7 @@ public:
      * @param[out] path the path of the current node with respect to the root.
      * @return true
      */
-    virtual bool GetFullPath(StreamString &path) = 0;
+    virtual bool GetFullPath(StreamI &path) = 0;
 };
 
 }

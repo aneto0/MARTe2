@@ -331,7 +331,6 @@ int32 GAM::GetSignalIndex(const SignalDirection direction,
     bool ok = true;
     bool found = false;
     uint32 sizeToCompare = StringHelper::Length(signalName);
-    StreamString signalNameStr = signalName;
     int32 level = -1;
     uint32 i;
     uint32 minOffset = MAX_UINT32;
@@ -341,42 +340,54 @@ int32 GAM::GetSignalIndex(const SignalDirection direction,
         if (ok) {
             found = (StringHelper::CompareN(signalName, searchName.Buffer(), sizeToCompare) == 0);
             if (found) {
-                found = (searchName[sizeToCompare] == '.') || (searchName[sizeToCompare] == '\0');
+                bool isTerminated = (searchName[sizeToCompare] == '\0');
+                found = (searchName[sizeToCompare] == '.') || (isTerminated);
             }
             if (found) {
                 StreamString alias;
                 ok = GetSignalAlias(direction, i, alias);
+
                 if (ok) {
-                    uint32 numberOfDotsInAlias = 0u;
-                    alias.Seek(0ull);
-                    while (alias.SkipTokens(1u, ".")) {
-                        numberOfDotsInAlias++;
+                    int32 numberOfDotsInAlias = 0;
+                    ok = alias.Seek(0ull);
+                    if (ok) {
+                        ok = searchName.Seek(0ull);
                     }
-                    uint32 numberOfDotsInName = 0u;
-                    searchName.Seek(0ull);
-                    while (searchName.SkipTokens(1u, ".")) {
-                        numberOfDotsInName++;
-                    }
-                    uint32 numberOfDotsInPartialName = 0u;
-                    StreamString signalNameStr = signalName;
-                    signalNameStr.Seek(0ull);
-                    while (signalNameStr.SkipTokens(1u, ".")) {
-                        numberOfDotsInPartialName++;
-                    }
-                    uint32 diff = numberOfDotsInName - numberOfDotsInPartialName;
+                    if (ok) {
+                        while (alias.SkipTokens(1u, ".")) {
+                            numberOfDotsInAlias++;
+                        }
+                        int32 numberOfDotsInName = 0;
 
-                    found = (numberOfDotsInAlias >= diff);
-                    if (found) {
-                        int32 tempLevel = numberOfDotsInAlias - diff;
+                        while (searchName.SkipTokens(1u, ".")) {
+                            numberOfDotsInName++;
+                        }
+                        StreamString signalNameStr = signalName;
 
-                        uint32 signalOffset = minOffset;
-                        ok = GetSignalMemoryOffset(direction, i, signalOffset);
+                        ok = signalNameStr.Seek(0ull);
 
-                        if (signalOffset < minOffset) {
-                            minOffset = signalOffset;
-                            signalIdx = i;
-                            level = tempLevel;
+                        if (ok) {
+                            int32 numberOfDotsInPartialName = 0;
 
+                            while (signalNameStr.SkipTokens(1u, ".")) {
+                                numberOfDotsInPartialName++;
+                            }
+                            int32 diff = numberOfDotsInName - numberOfDotsInPartialName;
+
+                            found = (numberOfDotsInAlias >= diff);
+                            if (found) {
+                                int32 tempLevel = numberOfDotsInAlias - diff;
+
+                                uint32 signalOffset = minOffset;
+                                ok = GetSignalMemoryOffset(direction, i, signalOffset);
+
+                                if (signalOffset < minOffset) {
+                                    minOffset = signalOffset;
+                                    signalIdx = i;
+                                    level = tempLevel;
+
+                                }
+                            }
                         }
                     }
                 }
@@ -418,17 +429,24 @@ TypeDescriptor GAM::GetSignalType(const SignalDirection direction,
 bool GAM::GetSignalType(const SignalDirection direction,
                         const uint32 signalIdx,
                         StreamString &typeName,
-                        int32 level) {
+                        const int32 level) {
     bool ret = MoveToSignalIndex(direction, signalIdx);
+    if (ret) {
+        ret = (level >= 0);
+    }
     StreamString signalType;
     if (ret) {
         ret = configuredDatabase.Read("FullType", signalType);
     }
     if (ret) {
-        signalType.Seek(0ull);
-        signalType.SkipTokens(level, ".");
-        char8 terminator;
-        ret = signalType.GetToken(typeName, ".", terminator);
+        ret = signalType.Seek(0ull);
+        if (ret) {
+            ret = signalType.SkipTokens(static_cast<uint32>(level), ".");
+            if (ret) {
+                char8 terminator;
+                ret = signalType.GetToken(typeName, ".", terminator);
+            }
+        }
     }
     return ret;
 }
@@ -481,25 +499,30 @@ bool GAM::GetSignalByteSize(const SignalDirection direction,
 bool GAM::GetSignalTypeByteSize(const SignalDirection direction,
                                 const uint32 signalIdx,
                                 uint32 &byteSize,
-                                uint32 level) {
+                                const int32 level) {
 
     StreamString type;
-    GetSignalType(direction, signalIdx, type, level);
-    bool ret = true;
+    bool ret = (level>=0);
+    if(ret){
+        ret=GetSignalType(direction, signalIdx, type, level);
+
+    }
     TypeDescriptor tdes = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
     if (tdes == InvalidType) {
         const ClassRegistryItem * item = ClassRegistryDatabase::Instance()->Find(type.Buffer());
         ret = (item != NULL);
         if (ret) {
+            //lint -e{613} item cannot be NULL. Value checked
             const Introspection *intro = item->GetIntrospection();
             ret = (intro != NULL);
             if (ret) {
+                //lint -e{613} intro cannot be NULL. Value checked
                 byteSize = intro->GetClassSize();
             }
         }
     }
     else {
-        byteSize = (tdes.numberOfBits / 8u);
+        byteSize = static_cast<uint32>(tdes.numberOfBits) / 8u;
     }
 
     return ret;
@@ -595,7 +618,7 @@ bool GAM::GetSignalRangesInfo(const SignalDirection direction,
 }
 
 bool GAM::GetSignalMemoryOffset(const SignalDirection direction,
-                                uint32 &signalIdx,
+                                const uint32 &signalIdx,
                                 uint32 &signalOffset) {
     StreamString dataSourceName;
 

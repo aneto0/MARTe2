@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StringAliasAll.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -52,7 +51,7 @@ StringAliasAll::~StringAliasAll() {
 bool StringAliasAll::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (ret) {
-        data.Link(parameters);
+        ret = data.Link(parameters);
     }
     return ret;
 }
@@ -66,7 +65,7 @@ bool StringAliasAll::SourceToDestination(const AnyType &source,
     if (ret) {
         AnyType toSerialise = parameters.GetType(buff.Buffer());
         if (ret) {
-            destination.Serialise(toSerialise);
+            ret = destination.Serialise(toSerialise);
         }
         else {
             REPORT_ERROR(ErrorManagement::FatalError, "Alias not found or incompatible destination");
@@ -93,7 +92,9 @@ bool StringAliasAll::DestinationToSource(const AnyType &destination,
     //if SString becomes a CString and the seek is done automatically (great trick!)
     AnyType tempAt = temp.GetType();
 
-    destPrint.Printf("%!", tempAt);
+    if (ret) {
+        ret = destPrint.Printf("%!", tempAt);
+    }
 
     uint32 numberOfAliases = parameters.GetNumberOfChildren();
 
@@ -105,22 +106,26 @@ bool StringAliasAll::DestinationToSource(const AnyType &destination,
             //printing two equal values we should obtain the same string in result!
             //need to do this for seek problem (in cdb is always a const char*)
             if (isString) {
-                alias.Printf("%!", parameters.GetType(childName));
+                ret = alias.Printf("%!", parameters.GetType(childName));
             }
             else {
                 ret = parameters.Read(childName, destination);
-                alias.Printf("%!", destination);
+                if (ret) {
+                    ret = alias.Printf("%!", destination);
+                }
             }
 
             if (ret) {
                 if (alias == destPrint) {
-                    source.Serialise(childName);
+                    ret = source.Serialise(childName);
                     break;
                 }
             }
         }
     }
-    TypeConvert(destination, tempAt);
+    if (ret) {
+        ret = TypeConvert(destination, tempAt);
+    }
     return ret;
 }
 CLASS_REGISTER(StringAliasAll, "1.0");

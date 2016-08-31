@@ -247,7 +247,7 @@ public:
     bool GetSignalType(const SignalDirection direction,
                        const uint32 signalIdx,
                        StreamString &typeName,
-                       int32 level);
+                       const int32 level);
 
     /**
      * @brief Gets the number of dimensions of the signal at position \a signalIdx.
@@ -317,7 +317,7 @@ public:
     bool GetSignalTypeByteSize(const SignalDirection direction,
                            const uint32 signalIdx,
                            uint32 &byteSize,
-                           uint32 level);
+                           const int32 level);
 
 
     /**
@@ -381,8 +381,17 @@ public:
                              uint32 &rangeStart,
                              uint32 &rangeEnd);
 
+    /**
+     * @brief Gets the offset of the signal with respect to the pointer to the memory allocated.
+     * @param[in] direction the signal direction.
+     * @param[in] signalIdx the index of the signal in this function.
+     * @param[out] signalOffset the offset of the signal in the GAM memory.
+     * @return true if signalIdx exists in the specified direction.
+     * @pre
+     *   The ConfiguredDatabase must be set
+     */
     bool GetSignalMemoryOffset(const SignalDirection direction,
-                               uint32 &signalIdx,
+                               const uint32 &signalIdx,
                                uint32 &signalOffset);
 
     /**

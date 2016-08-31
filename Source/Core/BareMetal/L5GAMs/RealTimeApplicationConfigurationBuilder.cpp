@@ -1053,7 +1053,7 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
         StreamString dsSignalFullType;
         bool replace = (!dataSourcesDatabase.Read("FullType", dsSignalFullType));
 
-        if (!replace && ret) {
+        if ((!replace) && (ret)) {
             ret = dsSignalFullType.Seek(0LLU);
             if (fullType.Size() > 0u) {
                 if (ret) {
@@ -3764,12 +3764,12 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
 
     ret = (intro != NULL);
     if (ret) {
-        uint32 numberOfMembers = 0u;
-        if (intro != NULL_PTR(Introspection *)) {
-            numberOfMembers = intro->GetNumberOfMembers();
-        }
-
+        //lint -e{613} intro cannot be NULL. Value checked
+        uint32 numberOfMembers = intro->GetNumberOfMembers();
         uint32 indexes[numberOfMembers];
+        for (uint32 i = 0u; i < numberOfMembers; i++) {
+            indexes[i] = 0u;
+        }
         uint32 minOffset = MAX_UINT32;
         uint32 indexToAdd = 0u;
         IntrospectionEntry entries[numberOfMembers];
@@ -3777,17 +3777,21 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
         for (uint32 n = 0u; n < numberOfMembers; n++) {
             minOffset = MAX_UINT32;
             for (uint32 i = 0u; i < numberOfMembers; i++) {
+                //lint -e{613} intro cannot be NULL. Value checked
                 if (intro->operator[](i).GetMemberByteOffset() <= minOffset) {
                     bool alreadyAdded = false;
-                    for (uint32 j = 0u; j < n && (!alreadyAdded); j++) {
+                    for (uint32 j = 0u; (j < n) && (!alreadyAdded); j++) {
+                        //lint -e{771} indexes is initialised
                         alreadyAdded = (indexes[j] == i);
                     }
                     if (!alreadyAdded) {
+                        //lint -e{613} intro cannot be NULL. Value checked
                         minOffset = intro->operator[](i).GetMemberByteOffset();
                         indexToAdd = i;
                     }
                 }
             }
+            //lint -e{613} intro cannot be NULL. Value checked
             entries[n] = intro->operator[](indexToAdd);
             indexes[n] = indexToAdd;
         }
@@ -3862,11 +3866,13 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                     }
                 }
                 uint32 byteSize = 0u;
-                if ((i + 1u) < numberOfMembers) {
-                    const IntrospectionEntry nextEntry = entries[i + 1u];
+                uint32 nextIndex = (i + 1u);
+                if (nextIndex < numberOfMembers) {
+                    const IntrospectionEntry nextEntry = entries[nextIndex];
                     byteSize = nextEntry.GetMemberByteOffset() - entry.GetMemberByteOffset();
                 }
                 else {
+                    //lint -e{613} intro cannot be NULL as it is checked above.
                     byteSize = intro->GetClassSize() - entry.GetMemberByteOffset();
                 }
                 //Finally got to the BasicType. Write all the properties

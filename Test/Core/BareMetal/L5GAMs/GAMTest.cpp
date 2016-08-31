@@ -2471,6 +2471,87 @@ bool GAMTest::TestAllocateOutputSignalsMemory() {
 
 }
 
+bool GAMTest::TestGetSignalMemoryOffset() {
+    const uint32 numberOfGAMs = 4u;
+    const uint32 maxNumberOfSignalNames = 7u;
+    const char8 * const gamNames[] = { "GAMA", "GAMB", "GAMC", "GAMD" };
+    const char8 * const inputSignalsNames[][maxNumberOfSignalNames] = { { "Signal1", "Signal1.Par1", "Signal1.Par2", "Signal1.Par3", "Signal1.Par3.Par1",
+            "Signal2", "Signal3" }, { "Signal0",
+    NULL, NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL, NULL, NULL } };
+    const char8 * const outputSignalsNames[][maxNumberOfSignalNames] = { { "Signal0", NULL, NULL, NULL, NULL, NULL, NULL }, { "Signal3", "Signal2", "Signal1",
+            "Signal1.Par1", "Signal1.Par2", "Signal1.Par3", "Signal1.Par3.Par1" }, { NULL, NULL, NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL,
+            NULL, NULL, NULL } };
+    uint32 inputMemoryOffset[][maxNumberOfSignalNames] =
+            { { 0, 0, 4, 8, 8, 12, 16 }, { 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0 } };
+    uint32 outputMemoryOffset[][maxNumberOfSignalNames] = { { 0, 0, 0, 0, 0, 0, 0 }, { 0, 40, 44, 44, 48, 52, 52 }, { 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0,
+            0 } };
+
+    bool ret = InitialiseGAMEnviroment(gamTestConfig2);
+    uint32 n;
+
+    for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
+        ReferenceT<GAM> gam;
+        if (ret) {
+            StreamString gamFullName;
+            gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
+            gam = ObjectRegistryDatabase::Instance()->Find(gamFullName.Buffer());
+            ret = gam.IsValid();
+        }
+        if (ret) {
+            uint32 i;
+            uint32 signalIdx;
+            for (i = 0u; (i < maxNumberOfSignalNames) && (ret); i++) {
+                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i]) >= 0;
+                if (inputSignalsNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else {
+                    uint32 byteOffset = 2u;
+                    ret = gam->GetSignalMemoryOffset(InputSignals, signalIdx, byteOffset);
+                    if (ret) {
+                        ret = (byteOffset == inputMemoryOffset[n][i]);
+                    }
+                    else {
+                        printf("\nGAM %s signal %s %d\n", gamNames[n], inputSignalsNames[n][i], inputMemoryOffset[n][i]);
+                    }
+                }
+                if (ret) {
+                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i]) >= 0;
+                    if (outputSignalsNames[n][i] == NULL) {
+                        ret = !ret;
+                    }
+                    else {
+                        uint32 byteOffset = 2u;
+                        ret = gam->GetSignalMemoryOffset(OutputSignals, signalIdx, byteOffset);
+                        if (ret) {
+                            ret = (byteOffset == outputMemoryOffset[n][i]);
+                        }
+                        else {
+                            printf("\nGAM %s signal %s %d\n", gamNames[n], outputSignalsNames[n][i], outputMemoryOffset[n][i]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (ret) {
+        ReferenceT<GAM> gam;
+        if (ret) {
+            StreamString gamFullName;
+            gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+            ret = gam.IsValid();
+        }
+        uint32 numberOfBytes;
+        if (ret) {
+            ret = !gam->GetSignalMemoryOffset(InputSignals, 10000, numberOfBytes);
+        }
+        if (ret) {
+            ret = !gam->GetSignalMemoryOffset(OutputSignals, 10000, numberOfBytes);
+        }
+    }
+    return ret;
+}
+
 bool GAMTest::TestGetInputSignalsMemory() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig1);
 

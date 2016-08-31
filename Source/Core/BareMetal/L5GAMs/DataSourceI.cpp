@@ -60,15 +60,15 @@ DataSourceI::~DataSourceI() {
 bool DataSourceI::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
     if (data.MoveRelative("Signals")) {
-        ret=signalsDatabase.CreateRelative("Signals");
-        if(ret){
-        ret = data.Link(signalsDatabase);
+        ret = signalsDatabase.CreateRelative("Signals");
+        if (ret) {
+            ret = data.Link(signalsDatabase);
         }
         if (ret) {
             ret = data.MoveToAncestor(1u);
         }
-        if(ret){
-            ret=signalsDatabase.MoveToRoot();
+        if (ret) {
+            ret = signalsDatabase.MoveToRoot();
         }
     }
     if (ret) {

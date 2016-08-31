@@ -542,7 +542,7 @@ static bool StructuredDataToObject(const AnyType &destination,
             if (isSourceIntrospection) {
                 // if there is the introspection get the number of members
                 numberOfMembers = sourceIntrospection->GetNumberOfMembers();
-                considerClassMember=0u;
+                considerClassMember = 0u;
             }
             if ((numberOfMembers - considerClassMember) == destinationIntrospection->GetNumberOfMembers()) {
 
@@ -577,6 +577,7 @@ static bool StructuredDataToObject(const AnyType &destination,
 
                     AnyType newSource;
                     const char8* childName = NULL_PTR(const char8*);
+                    bool goToNext = false;
                     // get the member AnyType from the database if the member is a basic type!
                     if (isSourceIntrospection) {
                         // if the introspection for the source class exists find the member name
@@ -586,40 +587,43 @@ static bool StructuredDataToObject(const AnyType &destination,
                     }
                     else {
                         childName = sourcePointer->GetChildName(n);
-                        if (StringHelper::Compare(childName, "Class") == 0) {
-                            continue;
+                        goToNext = (StringHelper::Compare(childName, "Class") == 0);
+                        if (!goToNext) {
+                            newSource = sourcePointer->GetType(childName);
                         }
-                        newSource = sourcePointer->GetType(childName);
                     }
 
-                    if (newSource.GetDataPointer() == NULL) {
-                        // could be a structured node!
-                        ret = sourcePointer->MoveRelative(childName);
-                        if (ret) {
-                            // call the conversion recursively !
-                            ret = TypeConvert(newDestination, source);
-                            if (!sourcePointer->MoveToAncestor(1u)) {
-                                ret = false;
+                    if (!goToNext) {
+                        if (newSource.GetDataPointer() == NULL) {
+                            // could be a structured node!
+                            ret = sourcePointer->MoveRelative(childName);
+                            if (ret) {
+                                // call the conversion recursively !
+                                ret = TypeConvert(newDestination, source);
+                                if (!sourcePointer->MoveToAncestor(1u)) {
+                                    ret = false;
+                                }
                             }
                         }
-                    }
-                    // could be a leaf!
-                    else {
+                        // could be a leaf!
+                        else {
 
-                        ret = Alias(*sourcePointer, childName, destinationMemberIntrospection.GetMemberAttributes());
-                        if (ret) {
-                            // call the conversion recursively !
-                            ret = TypeConvert(newDestination, newSource);
+                            ret = Alias(*sourcePointer, childName, destinationMemberIntrospection.GetMemberAttributes());
+                            if (ret) {
+                                // call the conversion recursively !
+                                ret = TypeConvert(newDestination, newSource);
+                            }
+                            if (ret) {
+                                ret = InvertAlias(*sourcePointer, childName, destinationMemberIntrospection.GetMemberAttributes());
+                            }
+                            if (ret) {
+                                // validate the output
+                                ret = Validate(newDestination, destinationMemberIntrospection.GetMemberAttributes());
+                            }
                         }
-                        if (ret) {
-                            ret = InvertAlias(*sourcePointer, childName, destinationMemberIntrospection.GetMemberAttributes());
-                        }
-                        if (ret) {
-                            // validate the output
-                            ret = Validate(newDestination, destinationMemberIntrospection.GetMemberAttributes());
-                        }
+
+                        i++;
                     }
-                    i++;
                 }
             }
             else {

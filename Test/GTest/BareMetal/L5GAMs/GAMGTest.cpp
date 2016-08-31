@@ -164,6 +164,11 @@ TEST(GAMGTest,TestGetSignalFrequency_Output) {
     ASSERT_TRUE(test.TestGetSignalFrequency_Output());
 }
 
+TEST(GAMGTest,TestGetSignalMemoryOffset) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestGetSignalMemoryOffset());
+}
+
 TEST(GAMGTest,TestAllocateInputSignalsMemory) {
     GAMTest test;
     ASSERT_TRUE(test.TestAllocateInputSignalsMemory());

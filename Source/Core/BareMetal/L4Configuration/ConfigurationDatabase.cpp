@@ -189,7 +189,7 @@ uint8 ConfigurationDatabase::GetNumberOfDimensions(const char8 * const name) {
 }
 
 uint32 ConfigurationDatabase::GetNumberOfElements(const char8 * const name,
-                                                  uint8 dimension) {
+                                                  const uint8 dimension) {
     AnyType at = GetType(name);
     return at.GetNumberOfElements(dimension);
 }
@@ -276,7 +276,7 @@ bool ConfigurationDatabase::Read(const char8 * const name,
 }
 
 bool ConfigurationDatabase::AdvancedRead(const char8 * const path,
-                                         const char8 *attributes,
+                                         const char8 * const attributes,
                                          const AnyType &value) {
 
     //store the current node
@@ -324,8 +324,8 @@ bool ConfigurationDatabase::AdvancedRead(const char8 * const path,
             if (ret) {
                 ret = Validate(value, attributes);
             }
-            if(ret){
-                ret=InvertAlias(*this, valueName.Buffer(), attributes);
+            if (ret) {
+                ret = InvertAlias(*this, valueName.Buffer(), attributes);
             }
         }
         if (ret) {
@@ -337,20 +337,19 @@ bool ConfigurationDatabase::AdvancedRead(const char8 * const path,
 }
 
 bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
-    bool ok = true;
-        ReferenceContainerFilterObjectName filter(1, 0u, path);
-        ReferenceContainer resultSingle;
-        rootNode->Find(resultSingle, filter);
+    ReferenceContainerFilterObjectName filter(1, 0u, path);
+    ReferenceContainer resultSingle;
+    rootNode->Find(resultSingle, filter);
 
-        ok = (resultSingle.Size() > 0u);
+    bool ok = (resultSingle.Size() > 0u);
+    if (ok) {
+        //Invalidate move to leafs
+        ReferenceT<ReferenceContainer> container = resultSingle.Get(resultSingle.Size() - 1u);
+        ok = container.IsValid();
         if (ok) {
-            //Invalidate move to leafs
-            ReferenceT<ReferenceContainer> container = resultSingle.Get(resultSingle.Size() - 1u);
-            ok = container.IsValid();
-            if (ok) {
-                currentNode = container;
-            }
+            currentNode = container;
         }
+    }
 
     return ok;
 }
@@ -438,7 +437,7 @@ bool ConfigurationDatabase::CreateNodes(const char8 * const path) {
             else {
                 ReferenceT<ReferenceContainer> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                 container->SetName(token.Buffer());
-                if (token[0] == '$') {
+                if (token.Buffer()[0] == '$') {
                     container->SetDomain(true);
                 }
                 ok = currentNode->Insert(container);
@@ -450,9 +449,9 @@ bool ConfigurationDatabase::CreateNodes(const char8 * const path) {
         }
 
         if (ok) {
-            ok = token.Seek(0Lu);
+            ok = token.Seek(0LLU);
             if (ok) {
-                ok = token.SetSize(0Lu);
+                ok = token.SetSize(0LLu);
             }
 
         }
@@ -529,8 +528,8 @@ uint32 ConfigurationDatabase::GetNumberOfChildren() {
     return currentNode->Size();
 }
 
-bool ConfigurationDatabase::GetFullPath(StreamString &path) {
-    bool ret = true;
+bool ConfigurationDatabase::GetFullPath(StreamI &path) {
+    bool ret = path.CanWrite();
 
     if (currentNode != rootNode) {
         ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH, currentNode);
@@ -538,18 +537,24 @@ bool ConfigurationDatabase::GetFullPath(StreamString &path) {
 
         rootNode->Find(resultPath, filter);
         uint32 numberOfNodes = resultPath.Size();
-        path = "";
-        for (uint32 i = 0u; i < numberOfNodes && ret; i++) {
+        for (uint32 i = 0u; (i < numberOfNodes) && (ret); i++) {
             Reference ref = resultPath.Get(i);
             ret = ref.IsValid();
             if (ret) {
+
                 if (path.Size() > 0u) {
-                    path += ".";
+                    uint32 dotSize = 1u;
+                    char8 dot = '.';
+                    ret = path.Write(&dot, dotSize);
                 }
-                path += ref->GetName();
+                if (ret) {
+                    uint32 nameSize = StringHelper::Length(ref->GetName());
+                    ret = path.Write(ref->GetName(), nameSize);
+                }
             }
         }
     }
+
     return ret;
 }
 

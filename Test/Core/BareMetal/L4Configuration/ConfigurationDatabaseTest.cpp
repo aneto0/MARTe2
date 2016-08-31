@@ -639,7 +639,7 @@ bool ConfigurationDatabaseTest::TestAdvancedRead() {
 
 bool ConfigurationDatabaseTest::TestAdvancedWrite() {
     ConfigurationDatabase sourceCDB;
-    bool ok=sourceCDB.CreateAbsolute("$A.$B.C");
+    bool ok = sourceCDB.CreateAbsolute("$A.$B.C");
     ok &= sourceCDB.CreateAbsolute("$A.$B.D");
     uint32 value = 2;
     ok &= sourceCDB.AdvancedWrite("::.value", "", value);
@@ -657,21 +657,24 @@ bool ConfigurationDatabaseTest::TestAdvancedWrite() {
     ok &= value == 3;
     //test with attributes
     StreamString res;
-    ok&=sourceCDB.MoveAbsolute("$A.$B.D");
+    ok &= sourceCDB.MoveAbsolute("$A.$B.D");
     value = 2;
-    ok &= sourceCDB.AdvancedWrite("::.value", "+Valid = {Class = BasicTypeStandardValidator min = 1 max=2} +Alias = {Class = StringAliasAll A = 1 B=2 C=3}", value);
+    ok &= sourceCDB.AdvancedWrite("::.value", "+Valid = {Class = BasicTypeStandardValidator min = 1 max=2} +Alias = {Class = StringAliasAll A = 1 B=2 C=3}",
+                                  value);
     value = 1;
-    ok &= sourceCDB.AdvancedWrite(":C.value", "+Valid = {Class = BasicTypeStandardValidator min = 1 max=2} +Alias = {Class = StringAliasAll A = 1 B=2 C=3}", value);
+    ok &= sourceCDB.AdvancedWrite(":C.value", "+Valid = {Class = BasicTypeStandardValidator min = 1 max=2} +Alias = {Class = StringAliasAll A = 1 B=2 C=3}",
+                                  value);
     ok &= sourceCDB.MoveAbsolute("$A");
     ok &= sourceCDB.Read("value", res);
     ok &= res == "B";
-    res="";
+    res = "";
     ok &= sourceCDB.MoveAbsolute("$A.$B.C");
     ok &= sourceCDB.Read("value", res);
     ok &= res == "A";
-    res="";
+    res = "";
     value = 3;
-    ok &= !sourceCDB.AdvancedWrite("value", "+Valid = {Class = BasicTypeStandardValidator min = 1 max=2} +Alias = {Class = StringAliasAll A = 1 B=2 C=3}", value);
+    ok &= !sourceCDB.AdvancedWrite("value", "+Valid = {Class = BasicTypeStandardValidator min = 1 max=2} +Alias = {Class = StringAliasAll A = 1 B=2 C=3}",
+                                   value);
     return ok;
 }
 
@@ -683,9 +686,11 @@ bool ConfigurationDatabaseTest::TestGetFullPath() {
     ok &= sourceCDB.GetFullPath(path);
     ok &= path == "$A.$B.D";
     ok &= sourceCDB.MoveAbsolute("$A.$B.C");
+    path = "";
     ok &= sourceCDB.GetFullPath(path);
     ok &= path == "$A.$B.C";
     ok &= sourceCDB.MoveAbsolute("$A.$B");
+    path = "";
     ok &= sourceCDB.GetFullPath(path);
     ok &= path == "$A.$B";
     return ok;

@@ -203,8 +203,9 @@ bool ReferenceContainer::Insert(const char8 * const path,
         uint32 pathSize = StringHelper::Length(path);
         char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * pathSize)));
         //   char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * pathSize)));
-        MemoryOperationsHelper::Set(token, '\0', pathSize);
-        //   MemoryOperationsHelper::Set(nextToken, '\0', pathSize);
+        if (pathSize > 0u) {
+            ok = MemoryOperationsHelper::Set(token, '\0', pathSize);
+        }
 
         const char8* toTokenize = path;
         const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
@@ -388,7 +389,7 @@ Reference ReferenceContainer::Find(const char8 * const path,
 
 Reference ReferenceContainer::Find(const char8 * const path,
                                    const Reference current,
-                                   bool relative) {
+                                   const bool relative) {
     ReferenceT<ReferenceContainer> domain = current;
     bool isSearchDomain = current.IsValid();
     uint32 backSteps = 0u;

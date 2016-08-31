@@ -120,7 +120,7 @@ bool Alias(StructuredDataI& data,
                                 ret = data.Delete(memberName);
                             }
                             if (ret) {
-                                data.Write(memberName, destination);
+                                ret=data.Write(memberName, destination);
                             }
                         }
                         else{
@@ -174,7 +174,7 @@ bool InvertAlias(StructuredDataI& data,
                                 ret = data.Delete(memberName);
                             }
                             if (ret) {
-                                data.Write(memberName, source);
+                                ret=data.Write(memberName, source);
                             }
                         }
                         else{

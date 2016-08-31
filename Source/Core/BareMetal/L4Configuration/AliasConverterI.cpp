@@ -38,8 +38,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
-AliasConverterI::AliasConverterI():ReferenceContainer() {
+namespace MARTe {
+AliasConverterI::AliasConverterI() :
+        ReferenceContainer() {
 }
 
 AliasConverterI::~AliasConverterI() {

@@ -1,4 +1,5 @@
 AdvancedErrorManagement.h
+AliasConverterI.cpp
 AnyObject.cpp
 AnyType.cpp
 AnyTypeCreator.cpp
@@ -143,6 +144,7 @@ StreamI.h
 StreamMemoryReference.cpp
 StreamString.cpp
 StreamStringIOBuffer.cpp
+StringAliasAll.cpp
 StringHelper.cpp
 StringHelperExtras_Generic.cpp
 StringHelper_CLIB_Generic.cpp
@@ -164,7 +166,9 @@ TokenInfo.cpp
 TypeCharacteristics.h
 TypeConversion.cpp
 TypeDescriptor.cpp
-ValidateBasicType.cpp
+Validate.cpp
+ValidatorI.cpp
+BasicTypeStandardValidator.cpp
 Vector.h
 XMLParser.cpp
 ZeroTerminatedArray.h

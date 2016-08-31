@@ -188,6 +188,11 @@ public:
     bool TestAllocateOutputSignalsMemory();
 
     /**
+     * @brief Tests the GetSignalMemoryOffset method.
+     */
+    bool TestGetSignalMemoryOffset();
+
+    /**
      * @brief Tests the GetInputSignalsMemory method.
      */
     bool TestGetInputSignalsMemory();
