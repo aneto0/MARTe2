@@ -261,10 +261,9 @@ void GAMTestScheduler1::StopExecution() {
 
 }
 
-void GAMTestScheduler1::CustomPrepareNextState(){
+void GAMTestScheduler1::CustomPrepareNextState() {
 
 }
-
 
 CLASS_REGISTER(GAMTestScheduler1, "1.0")
 
@@ -396,6 +395,7 @@ static const char8 * const gamTestConfig2 = ""
         "               Signal1 = {"
         "                  DataSource = DDB2"
         "                  Type = GAMTestStruct1"
+        "                  Alias = A.B"
         "                  Defaults = {"
         "                      Signal1.Par3.Par1 = 5"
         "                  }"
@@ -439,8 +439,9 @@ static const char8 * const gamTestConfig2 = ""
         "                  Type = uint32"
         "               }"
         "               Signal1 = {"
+        "                  Alias = A.B"
         "                  DataSource = DDB2"
-        "                  Type = GAMTestStruct1"
+        "                   Type = GAMTestStruct1"
         "               }"
         "            }"
         "        }"
@@ -1176,7 +1177,7 @@ bool GAMTest::TestGetSignalName() {
             uint32 i;
             uint32 signalIdx;
             for (i = 0u; (i < maxNumberOfSignalNames) && (ret); i++) {
-                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i])>=0;
+                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i]) >= 0;
                 if (inputSignalsNames[n][i] == NULL) {
                     ret = !ret;
                 }
@@ -1188,7 +1189,7 @@ bool GAMTest::TestGetSignalName() {
                     }
                 }
                 if (ret) {
-                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i])>=0;
+                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i]) >= 0;
                     if (outputSignalsNames[n][i] == NULL) {
                         ret = !ret;
                     }
@@ -1222,6 +1223,34 @@ bool GAMTest::TestGetSignalName() {
     return ret;
 }
 
+bool GAMTest::TestGetSignalAlias() {
+    const char8 * signalNames[] = { "Signal1", "Signal1.Par1", "Signal1.Par2", "Signal1.Par3", "Signal1.Par3.Par1", 0 };
+    const char8 * signalAliases[] = { "A.B.Par1", "A.B.Par1", "A.B.Par2", "A.B.Par3.Par1", "A.B.Par3.Par1", 0 };
+
+    bool ret = InitialiseGAMEnviroment(gamTestConfig2);
+    if (ret) {
+        ReferenceT<GAM> gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gamA.IsValid();
+
+        uint32 i = 0u;
+        while (signalNames[i] != NULL && ret) {
+
+            uint32 signalIdx;
+            StreamString signalAlias;
+
+            ret = gamA->GetSignalIndex(InputSignals, signalIdx, signalNames[i]) >= 0;
+            if (ret) {
+                ret = gamA->GetSignalAlias(InputSignals, signalIdx, signalAlias);
+                if (ret) {
+                    ret = signalAlias == signalAliases[i];
+                }
+            }
+            i++;
+        }
+    }
+    return ret;
+}
+
 bool GAMTest::TestGetSignalIndex() {
     bool ret = TestGetSignalName();
     if (ret) {
@@ -1233,11 +1262,32 @@ bool GAMTest::TestGetSignalIndex() {
         }
         if (ret) {
             uint32 signalIdx;
-            ret = gam->GetSignalIndex(InputSignals, signalIdx, "DoesNotExist")<0;
+            ret = gam->GetSignalIndex(InputSignals, signalIdx, "DoesNotExist") < 0;
         }
         if (ret) {
             uint32 signalIdx;
-            ret = gam->GetSignalIndex(OutputSignals, signalIdx, "DoesNotExist")<0;
+            ret = gam->GetSignalIndex(OutputSignals, signalIdx, "DoesNotExist") < 0;
+        }
+    }
+    return ret;
+}
+
+bool GAMTest::TestGetSignalIndex_Levels() {
+    bool ret = InitialiseGAMEnviroment(gamTestConfig2);
+    if (ret) {
+        ReferenceT<GAM> gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gamA.IsValid();
+        if (ret) {
+            uint32 signalIdx;
+            ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal1") == 1;
+        }
+        if (ret) {
+            uint32 signalIdx;
+            ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal1.Par3") == 2;
+        }
+        if (ret) {
+            uint32 signalIdx;
+            ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal1.Par3.Par1") == 3;
         }
     }
     return ret;
@@ -1273,7 +1323,7 @@ bool GAMTest::TestGetSignalDataSourceName() {
             uint32 i;
             uint32 signalIdx;
             for (i = 0u; (i < maxNumberOfSignalNames) && (ret); i++) {
-                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i])>=0;
+                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i]) >= 0;
                 if (inputSignalsNames[n][i] == NULL) {
                     ret = !ret;
                 }
@@ -1285,7 +1335,7 @@ bool GAMTest::TestGetSignalDataSourceName() {
                     }
                 }
                 if (ret) {
-                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i])>=0;
+                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i]) >= 0;
                     if (outputSignalsNames[n][i] == NULL) {
                         ret = !ret;
                     }
@@ -1348,7 +1398,7 @@ bool GAMTest::TestGetSignalType() {
             uint32 i;
             uint32 signalIdx;
             for (i = 0u; (i < maxNumberOfSignalNames) && (ret); i++) {
-                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i])>=0;
+                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i]) >= 0;
                 if (inputSignalsNames[n][i] == NULL) {
                     ret = !ret;
                 }
@@ -1358,7 +1408,7 @@ bool GAMTest::TestGetSignalType() {
                     ret = (desc == TypeDescriptor::GetTypeDescriptorFromTypeName(inputSignalsType[n][i]));
                 }
                 if (ret) {
-                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i])>=0;
+                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i]) >= 0;
                     if (outputSignalsNames[n][i] == NULL) {
                         ret = !ret;
                     }
@@ -1385,6 +1435,95 @@ bool GAMTest::TestGetSignalType() {
         if (ret) {
             TypeDescriptor desc = gam->GetSignalType(OutputSignals, 10000);
             ret = (desc == InvalidType);
+        }
+    }
+    return ret;
+}
+
+bool GAMTest::TestGetSignalType_TypeName() {
+    const uint32 numberOfGAMs = 4u;
+    const uint32 maxNumberOfSignalNames = 7u;
+    const char8 * const gamNames[] = { "GAMA", "GAMB", "GAMC", "GAMD" };
+    const char8 * const inputSignalsNames[][maxNumberOfSignalNames] = { { "Signal1", "Signal1.Par1", "Signal1.Par2", "Signal1.Par3", "Signal1.Par3.Par1",
+            "Signal2", "Signal3" }, { "Signal0",
+    NULL, NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL, NULL, NULL } };
+    const char8 * const outputSignalsNames[][maxNumberOfSignalNames] = { { "Signal0", NULL, NULL, NULL, NULL, NULL, NULL }, { "Signal3", "Signal2", "Signal1",
+            "Signal1.Par1", "Signal1.Par2", "Signal1.Par3", "Signal1.Par3.Par1" }, { NULL, NULL, NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL,
+    NULL, NULL, NULL } };
+    const char8 * const inputSignalsType[][maxNumberOfSignalNames] = {
+            { "GAMTestStruct1", "uint32", "float32", "GAMTestStruct2", "uint32", "uint32", "uint32" }, { "uint32", NULL, NULL, NULL,
+            NULL, NULL, NULL }, { "uint32", NULL, NULL, NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL, NULL, NULL } };
+    const char8 * const outputSignalsType[][maxNumberOfSignalNames] = { { "uint32", NULL, NULL, NULL, NULL, NULL, NULL }, { "uint32", "uint32",
+            "GAMTestStruct1", "uint32", "float32", "GAMTestStruct2", "uint32" }, { NULL, NULL, NULL, NULL, NULL, NULL, NULL }, { "uint32", NULL, NULL, NULL,
+    NULL, NULL, NULL } };
+
+    bool ret = InitialiseGAMEnviroment(gamTestConfig2);
+    uint32 n;
+
+    for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
+        ReferenceT<GAM> gam;
+        if (ret) {
+            StreamString gamFullName;
+            gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
+            gam = ObjectRegistryDatabase::Instance()->Find(gamFullName.Buffer());
+            ret = gam.IsValid();
+        }
+        if (ret) {
+            uint32 i;
+            uint32 signalIdx;
+            int32 level;
+            for (i = 0u; (i < maxNumberOfSignalNames) && (ret); i++) {
+                level = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i]);
+                ret = level >= 0;
+                if (inputSignalsNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else {
+                    StreamString desc;
+                    ret = gam->GetSignalType(InputSignals, signalIdx, desc, level);
+                    if (ret) {
+                        ret = (desc == inputSignalsType[n][i]);
+                    }
+                }
+                if (ret) {
+                    level = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i]);
+                    ret = level >= 0;
+                    if (outputSignalsNames[n][i] == NULL) {
+                        ret = !ret;
+                    }
+                    else {
+                        StreamString desc;
+                        ret = gam->GetSignalType(OutputSignals, signalIdx, desc, level);
+                        if (ret) {
+                            ret = (desc == outputSignalsType[n][i]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (ret) {
+        ReferenceT<GAM> gam;
+        if (ret) {
+            StreamString gamFullName;
+            gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+            ret = gam.IsValid();
+        }
+        if (ret) {
+            StreamString desc;
+            ret = !gam->GetSignalType(InputSignals, 10000, desc, 0);
+        }
+        if (ret) {
+            StreamString desc;
+            ret = !gam->GetSignalType(OutputSignals, 10000, desc, 0);
+        }
+        if (ret) {
+            StreamString desc;
+            ret = !gam->GetSignalType(InputSignals, 0, desc, 1000);
+        }
+        if (ret) {
+            StreamString desc;
+            ret = !gam->GetSignalType(OutputSignals, 0, desc, 1000);
         }
     }
     return ret;
@@ -1417,7 +1556,7 @@ bool GAMTest::TestGetSignalNumberOfDimensions() {
             uint32 i;
             uint32 signalIdx;
             for (i = 0u; (i < maxNumberOfSignalNames) && (ret); i++) {
-                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i])>=0;
+                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i]) >= 0;
                 if (inputSignalsNames[n][i] == NULL) {
                     ret = !ret;
                 }
@@ -1429,7 +1568,7 @@ bool GAMTest::TestGetSignalNumberOfDimensions() {
                     }
                 }
                 if (ret) {
-                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i])>=0;
+                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i]) >= 0;
                     if (outputSignalsNames[n][i] == NULL) {
                         ret = !ret;
                     }
@@ -1491,7 +1630,7 @@ bool GAMTest::TestGetSignalNumberOfElements() {
             uint32 i;
             uint32 signalIdx;
             for (i = 0u; (i < maxNumberOfSignalNames) && (ret); i++) {
-                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i])>=0;
+                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i]) >= 0;
                 if (inputSignalsNames[n][i] == NULL) {
                     ret = !ret;
                 }
@@ -1503,7 +1642,7 @@ bool GAMTest::TestGetSignalNumberOfElements() {
                     }
                 }
                 if (ret) {
-                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i])>=0;
+                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i]) >= 0;
                     if (outputSignalsNames[n][i] == NULL) {
                         ret = !ret;
                     }
@@ -1565,7 +1704,7 @@ bool GAMTest::TestGetSignalByteSize() {
             uint32 i;
             uint32 signalIdx;
             for (i = 0u; (i < maxNumberOfSignalNames) && (ret); i++) {
-                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i])>=0;
+                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i]) >= 0;
                 if (inputSignalsNames[n][i] == NULL) {
                     ret = !ret;
                 }
@@ -1577,7 +1716,7 @@ bool GAMTest::TestGetSignalByteSize() {
                     }
                 }
                 if (ret) {
-                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i])>=0;
+                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i]) >= 0;
                     if (outputSignalsNames[n][i] == NULL) {
                         ret = !ret;
                     }
@@ -1601,12 +1740,95 @@ bool GAMTest::TestGetSignalByteSize() {
         }
         uint32 numberOfBytes;
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalByteSize(InputSignals, 10000, numberOfBytes);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalByteSize(InputSignals, 10000, numberOfBytes);
         }
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalByteSize(OutputSignals, 10000, numberOfBytes);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalByteSize(OutputSignals, 10000, numberOfBytes);
+        }
+    }
+    return ret;
+}
+
+bool GAMTest::GetSignalTypeByteSize() {
+    const uint32 numberOfGAMs = 4u;
+    const uint32 maxNumberOfSignalNames = 7u;
+    const char8 * const gamNames[] = { "GAMA", "GAMB", "GAMC", "GAMD" };
+    const char8 * const inputSignalsNames[][maxNumberOfSignalNames] = { { "Signal1", "Signal1.Par1", "Signal1.Par2", "Signal1.Par3", "Signal1.Par3.Par1",
+            "Signal2", "Signal3" }, { "Signal0",
+    NULL, NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL, NULL, NULL, NULL }, { NULL, NULL, NULL, NULL, NULL, NULL, NULL } };
+    const char8 * const outputSignalsNames[][maxNumberOfSignalNames] = { { "Signal0", NULL, NULL, NULL, NULL, NULL, NULL }, { "Signal3", "Signal2", "Signal1",
+            "Signal1.Par1", "Signal1.Par2", "Signal1.Par3", "Signal1.Par3.Par1" }, { NULL, NULL, NULL, NULL, NULL, NULL, NULL }, { "Signal4", NULL, NULL, NULL,
+    NULL, NULL, NULL } };
+    uint32 inputSignalsByteSize[][maxNumberOfSignalNames] = { { 12, 4, 4, 4, 4, 4, 4 }, { 4, 0, 0, 0, 0, 0, 0 }, { 4, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0 } };
+    uint32 outputSignalsByteSize[][maxNumberOfSignalNames] = { { 4, 0, 0, 0, 0, 0, 0 }, { 4, 4, 12, 4, 4, 4, 4 }, { 0, 0, 0, 0, 0, 0, 0 },
+            { 4, 0, 0, 0, 0, 0, 0 } };
+
+    bool ret = InitialiseGAMEnviroment(gamTestConfig2);
+    uint32 n;
+
+    for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
+        ReferenceT<GAM> gam;
+        if (ret) {
+            StreamString gamFullName;
+            gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
+            gam = ObjectRegistryDatabase::Instance()->Find(gamFullName.Buffer());
+            ret = gam.IsValid();
+        }
+        if (ret) {
+            uint32 i;
+            uint32 signalIdx;
+            int32 level;
+            for (i = 0u; (i < maxNumberOfSignalNames) && (ret); i++) {
+                level = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i]);
+                ret = level >= 0;
+                if (inputSignalsNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else {
+                    uint32 byteSize = 2u;
+                    ret = gam->GetSignalTypeByteSize(InputSignals, signalIdx, byteSize, level);
+                    if (ret) {
+                        ret = (byteSize == inputSignalsByteSize[n][i]);
+                    }
+                }
+                if (ret) {
+                    level = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i]);
+                    ret = level >= 0;
+                    if (outputSignalsNames[n][i] == NULL) {
+                        ret = !ret;
+                    }
+                    else {
+                        uint32 byteSize = 2u;
+                        ret = gam->GetSignalTypeByteSize(OutputSignals, signalIdx, byteSize, level);
+                        if (ret) {
+                            ret = (byteSize == outputSignalsByteSize[n][i]);
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+    if (ret) {
+        ReferenceT<GAM> gam;
+        if (ret) {
+            StreamString gamFullName;
+            gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+            ret = gam.IsValid();
+        }
+        uint32 numberOfBytes;
+        if (ret) {
+            ret = !gam->GetSignalTypeByteSize(InputSignals, 10000, numberOfBytes, 0);
+        }
+        if (ret) {
+            ret = !gam->GetSignalTypeByteSize(OutputSignals, 10000, numberOfBytes, 0);
+        }
+        if (ret) {
+            ret = !gam->GetSignalTypeByteSize(InputSignals, 0, numberOfBytes, 1000);
+        }
+        if (ret) {
+            ret = !gam->GetSignalTypeByteSize(OutputSignals, 0, numberOfBytes, 1000);
         }
     }
     return ret;
@@ -1625,13 +1847,13 @@ bool GAMTest::TestGetSignalDefaultValue() {
     uint32 signalIdx;
     uint32 defaultValueUInt32;
     if (ret) {
-        ret = gam->GetSignalIndex(InputSignals, signalIdx, "Signal1.Par1")>=0;
+        ret = gam->GetSignalIndex(InputSignals, signalIdx, "Signal1.Par1") >= 0;
     }
     if (ret) {
         ret = !gam->GetSignalDefaultValue(InputSignals, signalIdx, defaultValueUInt32);
     }
     if (ret) {
-        ret = gam->GetSignalIndex(InputSignals, signalIdx, "Signal1.Par3.Par1")>=0;
+        ret = gam->GetSignalIndex(InputSignals, signalIdx, "Signal1.Par3.Par1") >= 0;
     }
     if (ret) {
         ret = gam->GetSignalDefaultValue(InputSignals, signalIdx, defaultValueUInt32);
@@ -1640,7 +1862,7 @@ bool GAMTest::TestGetSignalDefaultValue() {
         ret = (defaultValueUInt32 == 5u);
     }
     if (ret) {
-        ret = gam->GetSignalIndex(InputSignals, signalIdx, "Signal2")>=0;
+        ret = gam->GetSignalIndex(InputSignals, signalIdx, "Signal2") >= 0;
     }
     if (ret) {
         ret = gam->GetSignalDefaultValue(InputSignals, signalIdx, defaultValueUInt32);
@@ -1650,7 +1872,7 @@ bool GAMTest::TestGetSignalDefaultValue() {
     }
     int32 defaultValueInt32Arr[10];
     if (ret) {
-        ret = gam->GetSignalIndex(InputSignals, signalIdx, "Signal3")>=0;
+        ret = gam->GetSignalIndex(InputSignals, signalIdx, "Signal3") >= 0;
     }
     if (ret) {
         ret = gam->GetSignalDefaultValue(InputSignals, signalIdx, defaultValueInt32Arr);
@@ -1697,7 +1919,7 @@ bool GAMTest::TestGetSignalNumberOfByteOffsets() {
             uint32 i;
             uint32 signalIdx;
             for (i = 0u; (i < maxNumberOfSignalNames) && (ret); i++) {
-                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i])>=0;
+                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i]) >= 0;
                 if (inputSignalsNames[n][i] == NULL) {
                     ret = !ret;
                 }
@@ -1709,7 +1931,7 @@ bool GAMTest::TestGetSignalNumberOfByteOffsets() {
                     }
                 }
                 if (ret) {
-                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i])>=0;
+                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i]) >= 0;
                     if (outputSignalsNames[n][i] == NULL) {
                         ret = !ret;
                     }
@@ -1782,7 +2004,7 @@ bool GAMTest::TestGetSignalByteOffsetInfo() {
             uint32 i;
             uint32 signalIdx;
             for (i = 0u; (i < maxNumberOfSignalNames) && (ret); i++) {
-                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i])>=0;
+                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i]) >= 0;
                 if (inputSignalsNames[n][i] == NULL) {
                     ret = !ret;
                 }
@@ -1803,7 +2025,7 @@ bool GAMTest::TestGetSignalByteOffsetInfo() {
                     }
                 }
                 if (ret) {
-                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i])>=0;
+                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i]) >= 0;
                     if (outputSignalsNames[n][i] == NULL) {
                         ret = !ret;
                     }
@@ -1883,7 +2105,7 @@ bool GAMTest::TestGetSignalNumberOfRanges() {
             uint32 i;
             uint32 signalIdx;
             for (i = 0u; (i < maxNumberOfSignalNames) && (ret); i++) {
-                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i])>=0;
+                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i]) >= 0;
                 if (inputSignalsNames[n][i] == NULL) {
                     ret = !ret;
                 }
@@ -1895,7 +2117,7 @@ bool GAMTest::TestGetSignalNumberOfRanges() {
                     }
                 }
                 if (ret) {
-                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i])>=0;
+                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i]) >= 0;
                     if (outputSignalsNames[n][i] == NULL) {
                         ret = !ret;
                     }
@@ -1968,7 +2190,7 @@ bool GAMTest::TestGetSignalRangesInfo() {
             uint32 i;
             uint32 signalIdx;
             for (i = 0u; (i < maxNumberOfSignalNames) && (ret); i++) {
-                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i])>=0;
+                ret = gam->GetSignalIndex(InputSignals, signalIdx, inputSignalsNames[n][i]) >= 0;
                 if (inputSignalsNames[n][i] == NULL) {
                     ret = !ret;
                 }
@@ -1989,7 +2211,7 @@ bool GAMTest::TestGetSignalRangesInfo() {
                     }
                 }
                 if (ret) {
-                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i])>=0;
+                    ret = gam->GetSignalIndex(OutputSignals, signalIdx, outputSignalsNames[n][i]) >= 0;
                     if (outputSignalsNames[n][i] == NULL) {
                         ret = !ret;
                     }
@@ -2061,7 +2283,7 @@ bool GAMTest::TestGetSignalNumberOfSamples() {
     uint32 signalIdx;
     uint32 numberOfSamples;
     if (ret) {
-        ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal0")>=0;
+        ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal0") >= 0;
     }
     if (ret) {
         ret = gamA->GetSignalNumberOfSamples(InputSignals, signalIdx, numberOfSamples);
@@ -2070,7 +2292,7 @@ bool GAMTest::TestGetSignalNumberOfSamples() {
         ret = (numberOfSamples == 1);
     }
     if (ret) {
-        ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal1")>=0;
+        ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal1") >= 0;
     }
     if (ret) {
         ret = gamA->GetSignalNumberOfSamples(InputSignals, signalIdx, numberOfSamples);
@@ -2079,7 +2301,7 @@ bool GAMTest::TestGetSignalNumberOfSamples() {
         ret = (numberOfSamples == 5u);
     }
     if (ret) {
-        ret = gamB->GetSignalIndex(OutputSignals, signalIdx, "Signal0")>=0;
+        ret = gamB->GetSignalIndex(OutputSignals, signalIdx, "Signal0") >= 0;
     }
     if (ret) {
         ret = gamB->GetSignalNumberOfSamples(OutputSignals, signalIdx, numberOfSamples);
@@ -2088,7 +2310,7 @@ bool GAMTest::TestGetSignalNumberOfSamples() {
         ret = (numberOfSamples == 1);
     }
     if (ret) {
-        ret = gamB->GetSignalIndex(OutputSignals, signalIdx, "Signal1")>=0;
+        ret = gamB->GetSignalIndex(OutputSignals, signalIdx, "Signal1") >= 0;
     }
     if (ret) {
         ret = gamB->GetSignalNumberOfSamples(OutputSignals, signalIdx, numberOfSamples);
@@ -2119,7 +2341,7 @@ bool GAMTest::TestGetSignalFrequency_Input() {
     uint32 signalIdx;
     float32 frequency;
     if (ret) {
-        ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal0")>=0;
+        ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal0") >= 0;
     }
     if (ret) {
         ret = gamA->GetSignalFrequency(InputSignals, signalIdx, frequency);
@@ -2128,7 +2350,7 @@ bool GAMTest::TestGetSignalFrequency_Input() {
         ret = (frequency == -1);
     }
     if (ret) {
-        ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal1")>=0;
+        ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal1") >= 0;
     }
     if (ret) {
         ret = gamA->GetSignalFrequency(InputSignals, signalIdx, frequency);
@@ -2137,7 +2359,7 @@ bool GAMTest::TestGetSignalFrequency_Input() {
         ret = (frequency == 10);
     }
     if (ret) {
-        ret = gamB->GetSignalIndex(OutputSignals, signalIdx, "Signal0")>=0;
+        ret = gamB->GetSignalIndex(OutputSignals, signalIdx, "Signal0") >= 0;
     }
     if (ret) {
         ret = gamB->GetSignalFrequency(OutputSignals, signalIdx, frequency);
@@ -2146,7 +2368,7 @@ bool GAMTest::TestGetSignalFrequency_Input() {
         ret = (frequency == -1);
     }
     if (ret) {
-        ret = gamB->GetSignalIndex(OutputSignals, signalIdx, "Signal1")>=0;
+        ret = gamB->GetSignalIndex(OutputSignals, signalIdx, "Signal1") >= 0;
     }
     if (ret) {
         ret = gamB->GetSignalFrequency(OutputSignals, signalIdx, frequency);
@@ -2177,7 +2399,7 @@ bool GAMTest::TestGetSignalFrequency_Output() {
     uint32 signalIdx;
     float32 frequency;
     if (ret) {
-        ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal0")>=0;
+        ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal0") >= 0;
     }
     if (ret) {
         ret = gamA->GetSignalFrequency(InputSignals, signalIdx, frequency);
@@ -2186,7 +2408,7 @@ bool GAMTest::TestGetSignalFrequency_Output() {
         ret = (frequency == -1);
     }
     if (ret) {
-        ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal1")>=0;
+        ret = gamA->GetSignalIndex(InputSignals, signalIdx, "Signal1") >= 0;
     }
     if (ret) {
         ret = gamA->GetSignalFrequency(InputSignals, signalIdx, frequency);
@@ -2195,7 +2417,7 @@ bool GAMTest::TestGetSignalFrequency_Output() {
         ret = (frequency == -1);
     }
     if (ret) {
-        ret = gamB->GetSignalIndex(OutputSignals, signalIdx, "Signal0")>=0;
+        ret = gamB->GetSignalIndex(OutputSignals, signalIdx, "Signal0") >= 0;
     }
     if (ret) {
         ret = gamB->GetSignalFrequency(OutputSignals, signalIdx, frequency);
@@ -2204,7 +2426,7 @@ bool GAMTest::TestGetSignalFrequency_Output() {
         ret = (frequency == -1);
     }
     if (ret) {
-        ret = gamB->GetSignalIndex(OutputSignals, signalIdx, "Signal1")>=0;
+        ret = gamB->GetSignalIndex(OutputSignals, signalIdx, "Signal1") >= 0;
     }
     if (ret) {
         ret = gamB->GetSignalFrequency(OutputSignals, signalIdx, frequency);

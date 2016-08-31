@@ -87,9 +87,20 @@ public:
     bool TestGetSignalName();
 
     /**
+     * @brief Tests the GetSignalAlias method.
+     */
+    bool TestGetSignalAlias();
+
+    /**
      * @brief Tests the GetSignalIndex method.
      */
     bool TestGetSignalIndex();
+
+    /**
+     * @brief Tests the GetSignalIndex method with the name of a structure in input
+     */
+    bool TestGetSignalIndex_Levels();
+
 
     /**
      * @brief Tests the GetSignalDataSourceName method.
@@ -100,6 +111,11 @@ public:
      * @brief Tests the GetSignalType method.
      */
     bool TestGetSignalType();
+
+    /**
+     * @brief Tests the GetSignalType method that returns the type name.
+     */
+    bool TestGetSignalType_TypeName();
 
     /**
      * @brief Tests the GetSignalNumberOfDimensions method.
@@ -115,6 +131,11 @@ public:
      * @brief Tests the GetSignalByteSize method.
      */
     bool TestGetSignalByteSize();
+
+    /**
+     * @brief Tests the GetSignalTypeByteSize method.
+     */
+    bool GetSignalTypeByteSize();
 
     /**
      * @brief Tests the GetSignalDefaultValue method.

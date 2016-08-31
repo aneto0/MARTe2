@@ -74,9 +74,19 @@ TEST(GAMGTest,TestGetSignalName) {
     ASSERT_TRUE(test.TestGetSignalName());
 }
 
+TEST(GAMGTest,TestGetSignalAlias) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestGetSignalAlias());
+}
+
 TEST(GAMGTest,TestGetSignalIndex) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalIndex());
+}
+
+TEST(GAMGTest,TestGetSignalIndex_Levels) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestGetSignalIndex_Levels());
 }
 
 TEST(GAMGTest,TestGetSignalDataSourceName) {
@@ -87,6 +97,11 @@ TEST(GAMGTest,TestGetSignalDataSourceName) {
 TEST(GAMGTest,TestGetSignalType) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalType());
+}
+
+TEST(GAMGTest,TestGetSignalType_TypeName) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestGetSignalType_TypeName());
 }
 
 TEST(GAMGTest,TestGetSignalNumberOfDimensions) {
@@ -102,6 +117,11 @@ TEST(GAMGTest,TestGetSignalNumberOfElements) {
 TEST(GAMGTest,TestGetSignalByteSize) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalByteSize());
+}
+
+TEST(GAMGTest,GetSignalTypeByteSize) {
+    GAMTest test;
+    ASSERT_TRUE(test.GetSignalTypeByteSize());
 }
 
 TEST(GAMGTest,TestGetSignalDefaultValue) {

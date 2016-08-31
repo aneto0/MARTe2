@@ -181,7 +181,15 @@ public:
                        StreamString &signalName);
 
 
-    //TODO
+    /**
+     * @brief Gets the signal alias, namely the address of the related data source.
+     * @param[in] direction the signal direction.
+     * @param[in] signalIdx the index of the signal
+     * @param[out] signalAlias where to write the signal alias.
+     * @return true if the signalIdx exists.
+     * @pre
+     *   The ConfigurationDatabase must be set
+     */
     bool GetSignalAlias(const SignalDirection direction,
                        const uint32 signalIdx,
                        StreamString &signalAlias);
@@ -189,10 +197,12 @@ public:
 
     /**
      * @brief Gets the index of the signal with name \a signalIdx.
+     * @details In case of partial matching of the signalName the match with the
+     * minimum GAMOffset will be returned.
      * @param[in] direction the signal direction.
      * @param[out] signalIdx the index of the signal.
      * @param[in] signalName the name of the signal.
-     * @return true if the signalName can be found.
+     * @return the index in Alias related to \a signalName.
      * @pre
      *   The ConfiguredDatabase must be set
      */
@@ -224,7 +234,16 @@ public:
     TypeDescriptor GetSignalType(const SignalDirection direction,
                                  const uint32 signalIdx);
 
-    //TODO
+    /**
+     * @brief Gets the type name of the signal at position \a signalIdx.
+     * @param[in] direction the signal direction.
+     * @param[in] signalIdx the index of the signal.
+     * @param[out] typeName where to write the signal type name.
+     * @param[in] level specifies the index in the FullType field.
+     * @return true if the signalIdx exists and \a level is minor than the number of type names in the FullType field.
+     * @pre
+     *   The ConfiguredDatabase must be set.
+     */
     bool GetSignalType(const SignalDirection direction,
                        const uint32 signalIdx,
                        StreamString &typeName,
@@ -285,7 +304,16 @@ public:
                            uint32 &byteSize);
 
 
-    //TODO
+    /**
+     * @brief Gets the byte size related to the signal type.
+     * @param[in] direction the signal direction.
+     * @param[in] signalIdx the index of the signal.
+     * @param[out] byteSize the size in bytes.
+     * @param[in] level the index of the type name in the FullType field.
+     * @return true if the signalIdx exists and \a level is minor than the number of type names in the FullType field.
+     * @pre
+     *   The ConfiguredDatabase must be set.
+     */
     bool GetSignalTypeByteSize(const SignalDirection direction,
                            const uint32 signalIdx,
                            uint32 &byteSize,
