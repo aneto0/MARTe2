@@ -147,7 +147,7 @@ static const uint32 completedBit(17u);
 /**
  * last used Bit
  */
-static const uint32 lastErrorBit(16u);
+static const uint32 lastErrorBit(17u);
 
 
 /**
