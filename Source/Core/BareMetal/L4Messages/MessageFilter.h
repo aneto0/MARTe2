@@ -53,7 +53,7 @@ public:
      * Initialises basic search filter
      *
      */
-    inline MessageFilter(bool isPermanentFilter);
+    MessageFilter(bool isPermanentFilter);
 
     /**
      * TODO
@@ -100,11 +100,6 @@ private:
 inline bool MessageFilter::MessageConsumed(ErrorManagement::ErrorType ret){
     return !ret.unsupportedFeature && !ret.parametersError;
 }
-
-MessageFilter::MessageFilter(bool isPermanentFilter){
-    permanentFilter = isPermanentFilter;
-}
-
 
 } // namespace
 

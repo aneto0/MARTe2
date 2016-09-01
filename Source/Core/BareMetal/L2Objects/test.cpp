@@ -33,8 +33,7 @@
 #include "Object.h"
 #include "StreamI.h"
 
-
-namespace MARTe{
+namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -43,99 +42,78 @@ namespace MARTe{
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-
-class Dummy: public Object{
-    CLASS_REGISTER_DECLARATION()
+#if 0
+class Dummy: public Object {
 public:
+    CLASS_REGISTER_DECLARATION()
 
-    ErrorManagement::ErrorType f1(){
-        return true;
-    }
-    ErrorManagement::ErrorType f2(float x){
-        return true;
-    }
-    ErrorManagement::ErrorType f2x(float &x){
-        return true;
-    }
-    ErrorManagement::ErrorType f2xx(const float &x){
-        return true;
-    }
-    ErrorManagement::ErrorType f2xxx(const float *x){
-        return true;
-    }
-    ErrorManagement::ErrorType f3(float x,int i){
-        return true;
-    }
-    ErrorManagement::ErrorType f4(float x,int i,const char *p){
-        return true;
-    }
-    ErrorManagement::ErrorType f5(float x,int i,const char *p,bool zeta){
-        return true;
-    }
-    ErrorManagement::ErrorType f6(StructuredDataI *si){
-        return true;
-    }
-    ErrorManagement::ErrorType f7(ReferenceContainer &rc){
-        return true;
+    Dummy() {
 
     }
-    ErrorManagement::ErrorType f8(StreamI *s){
+    ErrorManagement::ErrorType f1() {
+        return true;
+    }
+    ErrorManagement::ErrorType f2(float x) {
+        return true;
+    }
+    ErrorManagement::ErrorType f2x(float &x) {
+        return true;
+    }
+    ErrorManagement::ErrorType f2xx(const float &x) {
+        return true;
+    }
+    ErrorManagement::ErrorType f2xxx(const float *x) {
+        return true;
+    }
+    ErrorManagement::ErrorType f3(float x,int i) {
+        return true;
+    }
+    ErrorManagement::ErrorType f4(float x,int i,const char *p) {
+        return true;
+    }
+    ErrorManagement::ErrorType f5(float x,int i,const char *p,bool zeta) {
+        return true;
+    }
+    ErrorManagement::ErrorType f6(StructuredDataI *si) {
+        return true;
+    }
+    ErrorManagement::ErrorType f7(ReferenceContainer &rc) {
+        return true;
+
+    }
+    ErrorManagement::ErrorType f8(StreamI *s) {
         return true;
 
     }
 
 };
+CLASS_REGISTER(Dummy, "1.0")
 
-
-void test(){
+void test() {
     Object *p;
     StreamI *s;
     ReferenceContainer rc;
     StructuredDataI *sI;
-    XClassMethodCaller *c[] = {
-            XClassMethodCallerCreate(&Dummy::f1),
-            XClassMethodCallerCreate(&Dummy::f2),
-            XClassMethodCallerCreate(&Dummy::f2x),
-            XClassMethodCallerCreate(&Dummy::f2xx),
-            XClassMethodCallerCreate(&Dummy::f2xxx),
-            XClassMethodCallerCreate(&Dummy::f3),
-            XClassMethodCallerCreate(&Dummy::f4),
-            XClassMethodCallerCreate(&Dummy::f5),
-            XClassMethodCallerCreate(&Dummy::f6),
-            XClassMethodCallerCreate(&Dummy::f7),
-            XClassMethodCallerCreate(&Dummy::f8)
-    };
+    XClassMethodCaller *c[] = { XClassMethodCallerCreate(&Dummy::f1), XClassMethodCallerCreate(&Dummy::f2), XClassMethodCallerCreate(&Dummy::f2x),
+            XClassMethodCallerCreate(&Dummy::f2xx), XClassMethodCallerCreate(&Dummy::f2xxx), XClassMethodCallerCreate(&Dummy::f3), XClassMethodCallerCreate(
+                    &Dummy::f4), XClassMethodCallerCreate(&Dummy::f5), XClassMethodCallerCreate(&Dummy::f6), XClassMethodCallerCreate(&Dummy::f7),
+            XClassMethodCallerCreate(&Dummy::f8) };
 
-
-    XClassMethodInterfaceMapper cmim[] = {
-            &Dummy::f1,
-            &Dummy::f2,
-            &Dummy::f2x,
-            &Dummy::f2xx,
-            &Dummy::f2xxx,
-            &Dummy::f3,
-            &Dummy::f4,
-            &Dummy::f5,
-            &Dummy::f6,
-            &Dummy::f7,
-            &Dummy::f8
-    };
+    XClassMethodInterfaceMapper cmim[] = { &Dummy::f1, &Dummy::f2, &Dummy::f2x, &Dummy::f2xx, &Dummy::f2xxx, &Dummy::f3, &Dummy::f4, &Dummy::f5, &Dummy::f6,
+            &Dummy::f7, &Dummy::f8 };
 
     c[0]->Call(p);
-    c[1]->Call(p,s);
-    c[2]->Call(p,rc);
-    c[3]->Call(p,sI);
+    c[1]->Call(p, s);
+    c[2]->Call(p, rc);
+    c[3]->Call(p, sI);
     c[4]->Call(p);
 
-
-
     cmim[0].GetMethod()->Call(p);
-    cmim[1].GetMethod()->Call(p,s);
-    cmim[2].GetMethod()->Call(p,rc);
-    cmim[3].GetMethod()->Call(p,sI);
+    cmim[1].GetMethod()->Call(p, s);
+    cmim[2].GetMethod()->Call(p, rc);
+    cmim[3].GetMethod()->Call(p, sI);
     cmim[4].GetMethod()->Call(p);
 
 }
-	
+#endif
 }

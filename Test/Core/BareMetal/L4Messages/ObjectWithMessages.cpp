@@ -31,6 +31,7 @@
 
 #include "ClassRegistryItemT.h"
 #include "ObjectWithMessages.h"
+#include "RegisteredMethodsMessageFilter.h"
 #include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
@@ -43,8 +44,18 @@
 
 namespace MARTe {
 
-ObjectWithMessages::ObjectWithMessages(){
-    flag=-1;
+ObjectWithMessages::ObjectWithMessages() {
+    ReferenceT<RegisteredMethodsMessageFilter> registeredMethodsMessageFilter("RegisteredMethodsMessageFilter");
+    registeredMethodsMessageFilter->SetDestination(this);
+    Reference replyMessageCatcherMessageFilter("ReplyMessageCatcherMessageFilter");
+
+    if (registeredMethodsMessageFilter.IsValid()) {
+        InstallMessageFilter(registeredMethodsMessageFilter);
+    }
+    if (replyMessageCatcherMessageFilter.IsValid()) {
+        InstallMessageFilter(replyMessageCatcherMessageFilter);
+    }
+    flag = -1;
 }
 
 bool ObjectWithMessages::ReceiverMethod(ReferenceContainer& ref) {
@@ -61,7 +72,7 @@ int32 ObjectWithMessages::Flag() {
     return flag;
 }
 
-bool ObjectWithMessages::HandleReply(ReferenceContainer& ref){
+bool ObjectWithMessages::HandleReply(ReferenceContainer& ref) {
     flag = 2;
     return true;
 }

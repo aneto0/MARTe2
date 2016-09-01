@@ -41,58 +41,58 @@
 namespace MARTe {
 
 /**
-* Allows catching a specific message reply
-* The filters is removed after catching the reply
-* */
-class ReplyMessageCatcherMessageFilter: public MessageFilter{
+ * Allows catching a specific message reply
+ * The filters is removed after catching the reply
+ * */
+class ReplyMessageCatcherMessageFilter: public MessageFilter {
 public:
     CLASS_REGISTER_DECLARATION()
-/**
- * TODO
- * Initialises basic search filter
- *
- */
-ReplyMessageCatcherMessageFilter();
+    /**
+     * TODO
+     * Initialises basic search filter
+     *
+     */
+    ReplyMessageCatcherMessageFilter    ();
 
-/**
- * TODO
- */
-void SetMessageToCatch(const ReferenceT<Message> &message);
+    /**
+     * TODO
+     */
+    void SetMessageToCatch(const ReferenceT<Message> &message);
 
-/**
- * TODO
- * Initialises basic search filter
- *
- */
-virtual ~ReplyMessageCatcherMessageFilter();
+    /**
+     * TODO
+     * Initialises basic search filter
+     *
+     */
+    virtual ~ReplyMessageCatcherMessageFilter();
 
-/**
- * TODO
- * to be overridden to implement different synchronisation mechanism
- * Wait for caught
- */
-virtual ErrorManagement::ErrorType Wait(const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec=1000);
+    /**
+     * TODO
+     * to be overridden to implement different synchronisation mechanism
+     * Wait for caught
+     */
+    virtual ErrorManagement::ErrorType Wait(const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec=1000);
 
 protected:
 
     /**
      * TODO
      * on every match will also consume the message and handles both reply mechanisms
-    */
+     */
     virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 
     /**
      * TODO
      * to be overridden to implement synchronisation mechanisms
      */
-    virtual void HandleReplyMessage(ReferenceT<Message> &replyMessage){
+    virtual void HandleReplyMessage(ReferenceT<Message> &replyMessage) {
         caught = true;
     }
 
     /*
      * TODO
      */
-    bool ReplyCaught(){
+    bool ReplyCaught() {
         return caught;
     }
 
@@ -106,16 +106,15 @@ private:
     /**
      * TODO
      */
-    ReferenceT<Message> originalMessage ;
+    ReferenceT<Message> originalMessage;
 
 };
 
 }
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* L4MESSAGES_REPLYMESSAGECATCHERMESSAGEFILTER_H_ */
-	
+

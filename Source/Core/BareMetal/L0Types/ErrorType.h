@@ -148,7 +148,7 @@ static const uint32 lastErrorBit(16u);
 /**
  * To generate the constants representing a specific error type
  */
-#define GENERATE_ERROR_CONSTANTS(errorName)   static const ErrorIntegerFormat errorName =(1 >> errorName ## Bit);
+#define GENERATE_ERROR_CONSTANTS(errorName)   static const ErrorIntegerFormat errorName =(1 << errorName ## Bit);
 
 
 /**

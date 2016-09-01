@@ -42,11 +42,13 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 
-/**
- * TODO
-   */
-MessageFilter::~MessageFilter(){
 
+MessageFilter::MessageFilter(bool isPermanentFilter){
+    permanentFilter = isPermanentFilter;
+}
+
+
+MessageFilter::~MessageFilter(){
 }
 
 }
