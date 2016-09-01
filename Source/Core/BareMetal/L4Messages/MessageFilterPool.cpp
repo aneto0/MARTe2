@@ -41,106 +41,66 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-ErrorManagement::ErrorType MessageFilterPool::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,CCString name,int32 position){
+ErrorManagement::ErrorType MessageFilterPool::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,
+                                                                   CCString name,
+                                                                   int32 position) {
 
     messageFilter->SetName(name);
 
     ErrorManagement::ErrorType err;
-    err.timeout = Lock();
-
-    if (err.ErrorsCleared()){
-        err.fatalError = Insert(messageFilter,position);
-
-        // UnLock must be done also on error
-        UnLock();
-    }
-
+    err.timeout = !Insert(messageFilter, position);
     return err;
 }
 
-ErrorManagement::ErrorType MessageFilterPool::RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter){
+ErrorManagement::ErrorType MessageFilterPool::RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter) {
     ErrorManagement::ErrorType err;
-    err.timeout = Lock();
-
-    if (err.ErrorsCleared()){
-        err.fatalError = Delete(messageFilter);
-
-        // UnLock must be done also on error
-        UnLock();
-    }
+    err.timeout = !Delete(messageFilter);
 
     return err;
 }
 
-ErrorManagement::ErrorType MessageFilterPool::RemoveMessageFilter(CCString name){
+ErrorManagement::ErrorType MessageFilterPool::RemoveMessageFilter(CCString name) {
     ErrorManagement::ErrorType err;
-    err.timeout = Lock();
-
-    if (err.ErrorsCleared()){
-        err.fatalError = Delete(name);
-
-        // UnLock must be done also on error
-        UnLock();
-    }
+    err.timeout = !Delete(name);
 
     return err;
 }
 
-ErrorManagement::ErrorType MessageFilterPool::FindMessageFilter(CCString name,ReferenceT<MessageFilter> messageFilter){
+ErrorManagement::ErrorType MessageFilterPool::FindMessageFilter(CCString name,
+                                                                ReferenceT<MessageFilter> messageFilter) {
+    messageFilter = Find(name);
     ErrorManagement::ErrorType err;
-    err.timeout = Lock();
-
-    if (err.ErrorsCleared()){
-        messageFilter = Find(name);
-
-        err.unsupportedFeature = !messageFilter.IsValid();
-
-        // UnLock must be done also on error
-        UnLock();
-    }
+    err.unsupportedFeature = !messageFilter.IsValid();
 
     return err;
 
 }
-
 
 ErrorManagement::ErrorType MessageFilterPool::ReceiveMessage(ReferenceT<Message> &message) {
     bool matched = false;
     ErrorManagement::ErrorType err;
     ReferenceT<MessageFilter> messageFilter;
 
-    int i;
-    for (i=0;(i<Size() && !matched);i++){
-        bool locked = Lock();
+    uint32 i;
+    for (i = 0; (i < Size() && !matched); i++) {
+        messageFilter = Get(i);
 
-        if (locked){
-            messageFilter =  Get(i);
-            UnLock();
-        }
-
-        if (messageFilter.IsValid()){
+        if (messageFilter.IsValid()) {
             err = messageFilter->ConsumeMessage(message);
             matched = messageFilter->MessageConsumed(err);
         }
     }
 
-    if (matched){
-        if (!messageFilter->IsPermanentFilter()){
-            bool locked = Lock();
-
-            if (locked){
-                Delete(messageFilter);
-
-                UnLock();
-            }
+    if (matched) {
+        if (!messageFilter->IsPermanentFilter()) {
+            err.timeout = !Delete(messageFilter);
         }
-    } else {
+    }
+    else {
         err.unsupportedFeature = true;
     }
 
     return err;
 }
 
-	
 }

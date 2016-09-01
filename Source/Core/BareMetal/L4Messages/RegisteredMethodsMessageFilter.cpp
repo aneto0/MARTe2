@@ -43,14 +43,14 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 RegisteredMethodsMessageFilter::RegisteredMethodsMessageFilter() :MessageFilter(true){
-
-}
-
-RegisteredMethodsMessageFilter::RegisteredMethodsMessageFilter(Object * object):MessageFilter(true){
-    destinationObject = object;
+    destinationObject = NULL_PTR(Object *);
 }
 
 RegisteredMethodsMessageFilter::~RegisteredMethodsMessageFilter(){
+}
+
+void RegisteredMethodsMessageFilter::SetDestination(Object *destination){
+    destinationObject = destination;
 }
 
 ErrorManagement::ErrorType RegisteredMethodsMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest){

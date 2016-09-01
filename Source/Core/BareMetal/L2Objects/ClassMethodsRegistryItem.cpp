@@ -143,7 +143,7 @@ ErrorManagement::ErrorType ClassMethodsRegistryItem::CallFunction(Object * const
         int32 minIndex = 0;
         int32 functionIndex = 0;
         while (functionIndex >= 0) {
-            returnValue = true;
+            returnValue = ErrorManagement::noError;
             functionIndex = FindFunction(name, minIndex);
             if (functionIndex >= 0) {
                 fmp = &functionTable[functionIndex];

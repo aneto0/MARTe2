@@ -38,48 +38,42 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
-
 namespace MARTe {
 
 /**
-* TODO
-* Allows activating registered methods
-* The filters remains permanently active until expressly removed
-*/
-class RegisteredMethodsMessageFilter: public MessageFilter{
+ * TODO
+ * Allows activating registered methods
+ * The filters remains permanently active until expressly removed
+ */
+class RegisteredMethodsMessageFilter: public MessageFilter {
 public:
     CLASS_REGISTER_DECLARATION()
 
-RegisteredMethodsMessageFilter();
+RegisteredMethodsMessageFilter    ();
 
-/**
- * TODO
- * Initialises basic search filter
- *
- */
-RegisteredMethodsMessageFilter(Object *object);
+    /**
+     * TODO
+     * Initialises basic search filter
+     *
+     */
+    virtual ~RegisteredMethodsMessageFilter();
 
-/**
- * TODO
- * Initialises basic search filter
- *
- */
-virtual ~RegisteredMethodsMessageFilter();
-
+    /**
+     * TODO
+     */
+    void SetDestination(Object *destination);
 protected:
+
+    /**
+     * TODO
+     * on every match will also consume the message and handles both reply mechanisms
+     */
+    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 
     /**
      * TODO
      */
     Object *destinationObject;
-
-    /**
-     * TODO
-     * on every match will also consume the message and handles both reply mechanisms
-    */
-    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
-
 };
 
 }
@@ -88,4 +82,4 @@ protected:
 /*---------------------------------------------------------------------------*/
 
 #endif /* L4MESSAGES_REGISTEREDMETHODSMESSAGEFILTER_H_ */
-	
+
