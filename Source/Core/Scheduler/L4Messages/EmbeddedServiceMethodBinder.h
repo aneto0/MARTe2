@@ -1,8 +1,8 @@
 /**
- * @file MultiThreadService.h
- * @brief Header file for class MultiThreadServerClass
- * @date Aug 30, 2016
- * @author Filippo Sartori
+ * @file EmbeddedServiceMethodBinder.h
+ * @brief Header file for class EmbeddedServiceMethodBinder
+ * @date Sep 1, 2016
+ * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MultiThreadServerClass
+ * @details This header file contains the declaration of the class EmbeddedServiceMethodBinder
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MULTITHREADSERVICE_H_
-#define L4MESSAGES_MULTITHREADSERVICE_H_
+#ifndef L4MESSAGES_EMBEDDEDSERVICEMETHODBINDER_H_
+#define L4MESSAGES_EMBEDDEDSERVICEMETHODBINDER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,9 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+
 #include "EmbeddedServiceI.h"
-#include "EmbeddedThread.h"
-#include "ReferenceContainer.h"
+
 
 namespace MARTe{
 
@@ -42,92 +42,39 @@ namespace MARTe{
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
 /**
- * Contains instances of specialised EmbeddedThreads
- *
+ * TODO
  */
-class MultiThreadService: public EmbeddedServiceI{
-
-    /**
-     * EmbeddedServiceI::Status
-     * to be inherited and extended by derivatives
-     */
-    /*lint ++flb*/
-    union InfoEx{
-
-        /**
-         * Unmapped area
-         */
-        BitRange<uint32, 10u ,0u> threadNumber;
-
-        /**
-         * Unmapped area
-         */
-        BitRange<uint32, 2u ,10u> status;
-
-        /**
-         * Unmapped area
-         */
-        BitBoolean<uint32, 12u> waitForRequest;
-
-        /**
-         * Unmapped area
-         */
-        BitRange<uint32, 19u ,13u> unmapped;
-
-        /**
-         * To set the Message mode using an 8-bit integer.
-         */
-        uint32 format_as_uint32;
-    };
-    /*lint --flb*/
-
-    ReferenceContainer threads;
+class EmbeddedServiceMethodBinder{
 
 public:
-    ///
-    MultiThreadService(void * context, );
+    /**
+     * TODO
+     */
+    EmbeddedServiceMethodBinder(){}
 
-    virtual ErrorManagement::ErrorType Execute(int status){
+    /**
+     * TODO
+     */
+    virtual ~EmbeddedServiceMethodBinder(){}
 
-    }
-
-
-private:
-    /// true means that the number of threads vary with the needs
-    bool dynamicThreadAllocation;
-
-    /// either the available working threads or the maximum
-    uint32 numberOfThreads;
+    /**
+     * TODO
+     */
+    virtual ErrorManagement::ErrorType Call(EmbeddedServiceI::ExecutionInfo info)=0;
 };
 
-class ClientServerService: public MultiThreadService{
 
-public:
-
-    virtual ErrorManagement::ErrorType Execute(int status){
-        if (status == connecting){
-            WaitConnection()
-        } else {
-            ImplementConnection()
-        }
-    }
-
-    /**
-     * TODO
-     */
-    virtual ErrorManagement::ErrorType WaitConnection(int status)=0;
-
-    /**
-     * TODO
-     */
-    virtual ErrorManagement::ErrorType ImplementConnection(int status)=0;
-
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* L4MESSAGES_MULTITHREADSERVICE_H_ */
+
+}
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* L4MESSAGES_EMBEDDEDSERVICEMETHODBINDER_H_ */
 	
