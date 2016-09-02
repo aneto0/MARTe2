@@ -42,15 +42,6 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 
-/**
- * TODO
- */
-EmbeddedThread::EmbeddedThread(){
-    threadId = InvalidThreadIdentifier;
-    commands = StopCommand;
-    maxCommandCompletionHRT = 0;
-    timeoutHRT = -1;
-}
 
 /**
  * TODO
@@ -170,7 +161,7 @@ void EmbeddedThread::ThreadStartUp(){
     }
 
     bool completed = err.completed;
-    err.completed -= false;
+    err.completed = false;
     commands = StopCommand;
 
     if (err.ErrorsCleared() ){

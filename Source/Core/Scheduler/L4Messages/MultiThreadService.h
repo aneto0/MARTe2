@@ -49,58 +49,24 @@ namespace MARTe{
  */
 class MultiThreadService: public EmbeddedServiceI{
 
-    /**
-     * EmbeddedServiceI::Status
-     * to be inherited and extended by derivatives
-     */
-    /*lint ++flb*/
-    union InfoEx{
-
-        /**
-         * Unmapped area
-         */
-        BitRange<uint32, 10u ,0u> threadNumber;
-
-        /**
-         * Unmapped area
-         */
-        BitRange<uint32, 2u ,10u> status;
-
-        /**
-         * Unmapped area
-         */
-        BitBoolean<uint32, 12u> waitForRequest;
-
-        /**
-         * Unmapped area
-         */
-        BitRange<uint32, 19u ,13u> unmapped;
-
-        /**
-         * To set the Message mode using an 8-bit integer.
-         */
-        uint32 format_as_uint32;
-    };
-    /*lint --flb*/
 
     ReferenceContainer threads;
 
 public:
     ///
-    MultiThreadService(void * context, );
-
-    virtual ErrorManagement::ErrorType Execute(int status){
-
-    }
+    MultiThreadService();
 
 
-private:
-    /// true means that the number of threads vary with the needs
-    bool dynamicThreadAllocation;
+protected:
 
     /// either the available working threads or the maximum
-    uint32 numberOfThreads;
+    uint32 minNumberOfThreads;
 };
+
+
+
+
+
 
 class ClientServerService: public MultiThreadService{
 

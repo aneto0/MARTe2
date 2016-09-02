@@ -134,7 +134,9 @@ public:
     /**
      * TODO
      */
-    EmbeddedThread();
+//    EmbeddedThread(MethodBinder &binder);
+    template <typename className>
+    EmbeddedThread(MethodBinderT<className> &binder);
 
     /**
      * TODO
@@ -216,6 +218,17 @@ private:
 
 ThreadIdentifier EmbeddedThread::Id() {
     return threadId;
+}
+
+/**
+ * TODO
+ */
+template <typename className>
+EmbeddedThread::EmbeddedThread(MethodBinderT<className> &binder):EmbeddedServiceI(binder){
+    threadId = InvalidThreadIdentifier;
+    commands = StopCommand;
+    maxCommandCompletionHRT = 0;
+    timeoutHRT = -1;
 }
 
 

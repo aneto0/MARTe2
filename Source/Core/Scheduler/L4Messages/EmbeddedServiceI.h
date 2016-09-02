@@ -35,6 +35,7 @@
 #include "BitRange.h"
 #include "BitBoolean.h"
 #include "ErrorType.h"
+#include "StructuredDataI.h"
 
 namespace MARTe{
 
@@ -123,18 +124,61 @@ public:
 
     };
 
+    /**
+     * TODO
+     */
+    template <typename className>
+    class MethodBinderT: public MethodBinder{
+
+    public:
+
+        /**
+         * @brief Type definition for the method pointer prototype
+         */
+        typedef ErrorManagement::ErrorType  (className::*MethodPointer)(EmbeddedServiceI::ExecutionInfo info);
+
+        /**
+         * TODO
+         */
+        MethodBinderT(className &o, MethodPointer f);
+
+        /**
+         * TODO
+         */
+        virtual ~MethodBinderT();
+
+        /**
+         * TODO
+         */
+        virtual ErrorManagement::ErrorType Execute(EmbeddedServiceI::ExecutionInfo info);
+
+    private:
+
+        /**
+         * TODO
+         */
+        className &object;
+
+        /**
+         * TODO
+         */
+        MethodPointer function;
+    };
+
 
 public:
 
     /**
-     *
+     * allocated by the user.
+     * memory managed by object
      */
-    EmbeddedServiceI(MethodBinder &binder): method(binder){}
+    template <typename className>
+    EmbeddedServiceI(MethodBinderT<className> &binder):method(binder) {  }
 
     /**
      *
      */
-    virtual ~EmbeddedServiceI(){}
+    virtual ~EmbeddedServiceI(){    }
 
     /**
     * TODO
@@ -169,56 +213,16 @@ private:
 /*---------------------------------------------------------------------------*/
 
 
-/**
- * TODO
- */
-template <typename className>
-class MethodBinderT: public EmbeddedServiceI::MethodBinder{
-
-public:
-
-    /**
-     * @brief Type definition for the method pointer prototype
-     */
-    typedef ErrorManagement::ErrorType  (className::*MethodPointer)(EmbeddedServiceI::ExecutionInfo info);
-
-    /**
-     * TODO
-     */
-    MethodBinderT(className &o, MethodPointer f);
-
-    /**
-     * TODO
-     */
-    virtual ~MethodBinderT();
-
-    /**
-     * TODO
-     */
-    virtual ErrorManagement::ErrorType Execute(EmbeddedServiceI::ExecutionInfo info);
-
-private:
-
-    /**
-     * TODO
-     */
-    className &object;
-
-    /**
-     * TODO
-     */
-    MethodPointer function;
-};
 
 template <typename className>
-MethodBinderT<className>::MethodBinderT(className &o, MethodBinderT< className>::MethodPointer f):    object(o),    function(f){};
+EmbeddedServiceI::MethodBinderT<className>::MethodBinderT(className &o, MethodBinderT< className>::MethodPointer f):    object(o),    function(f){};
 
 template <typename className>
-MethodBinderT<className>::~MethodBinderT(){}
+EmbeddedServiceI::MethodBinderT<className>::~MethodBinderT(){}
 
 template <typename className>
-ErrorManagement::ErrorType MethodBinderT< className>::Execute(EmbeddedServiceI::ExecutionInfo info){
-    return object.*function(info);
+ErrorManagement::ErrorType EmbeddedServiceI::MethodBinderT< className>::Execute(EmbeddedServiceI::ExecutionInfo info){
+    return (object.*function)(info);
 }
 
 

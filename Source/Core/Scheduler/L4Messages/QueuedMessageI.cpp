@@ -29,10 +29,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include <old/GenericVoidMethodCallerT.h>
 #include "QueuedMessageI.h"
 #include "ErrorType.h"
-#include "EmbeddedThreadMethodCaller.h"
-#include "GenericVoidMethodCallerT.h"
+//#include "EmbeddedThreadMethodCaller.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -60,7 +60,10 @@ QueuedMessageI::~QueuedMessageI(){
  */
 QueuedMessageI::QueuedMessageI():
         queue(GlobalObjectsDatabase::Instance()->GetStandardHeap()),
-        queueProcessingThread(new GenericVoidMethodCallerT<QueuedMessageI> (*this, &QueuedMessageI::QueueProcessing)){
+        queueProcessingThread(binder),
+        binder(*this, &QueuedMessageI::QueueProcessing)
+{
+//        queueProcessingThread(EmbeddedServiceI::MethodBinderT<QueuedMessageI> (*this, &QueuedMessageI::QueueProcessing)){
     ErrorManagement::ErrorType err;
 
     err.fatalError = !queue.IsValid();
@@ -103,7 +106,7 @@ ErrorManagement::ErrorType QueuedMessageI::Stop(){
 
 }
 
-ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(){
+ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(EmbeddedServiceI::ExecutionInfo info){
     ErrorManagement::ErrorType err;
     ReferenceT<Message> message;
     const TimeoutType timeout = 1000;
