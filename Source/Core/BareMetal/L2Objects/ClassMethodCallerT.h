@@ -469,7 +469,7 @@ public:
  * @param className is the class owning the target method.
  */
 template <class className,typename MethodPointer>
-class ClassMethodCallerT<className,MethodPointer,StructuredDataI *,void,void,void>:public ClassMethodCaller{
+class ClassMethodCallerT<className,MethodPointer,StructuredDataI,void,void,void>:public ClassMethodCaller{
 public:
     /**
      * @brief Type definition for the method pointer prototype
@@ -502,8 +502,16 @@ public:
      * @brief See ClassMethodCaller
      */
     virtual ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters){
+        ErrorManagement::ErrorType err(true);
+
         ReferenceT<StructuredDataI> sI = parameters.Get(0);
-        return Call(object,*(sI.operator->()));
+
+        err.parametersError = !sI.IsValid();
+        if (err.ErrorsCleared()){
+            err = Call(object,*(sI.operator->()));
+        }
+
+        return err;
     }
 
     //TODO create class to generate a StructuredDataI from a StreamI
@@ -605,7 +613,7 @@ private:
  * NOTE only basic types with no modifiers can be used here!!! no * and no &
  */
 template <class className,typename MethodPointer>
-class ClassMethodCallerT<className,MethodPointer,StreamI *,void,void,void>:public ClassMethodCaller{
+class ClassMethodCallerT<className,MethodPointer,StreamI &,void,void,void>:public ClassMethodCaller{
 public:
     /**
      * @brief Type definition for the method pointer prototype
