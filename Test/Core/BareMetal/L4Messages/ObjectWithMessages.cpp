@@ -47,19 +47,18 @@ namespace MARTe {
 ObjectWithMessages::ObjectWithMessages() {
     ReferenceT<RegisteredMethodsMessageFilter> registeredMethodsMessageFilter("RegisteredMethodsMessageFilter");
     registeredMethodsMessageFilter->SetDestination(this);
-    Reference replyMessageCatcherMessageFilter("ReplyMessageCatcherMessageFilter");
 
     if (registeredMethodsMessageFilter.IsValid()) {
         InstallMessageFilter(registeredMethodsMessageFilter);
-    }
-    if (replyMessageCatcherMessageFilter.IsValid()) {
-        InstallMessageFilter(replyMessageCatcherMessageFilter);
     }
     flag = -1;
 }
 
 bool ObjectWithMessages::ReceiverMethod(ReferenceContainer& ref) {
     flag = 0;
+    ReferenceT<Object> obj = ReferenceT<Object>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    obj->SetName("REPLY");
+    ref.Insert(obj);
     return true;
 }
 
@@ -72,7 +71,7 @@ int32 ObjectWithMessages::Flag() {
     return flag;
 }
 
-bool ObjectWithMessages::HandleReply(ReferenceContainer& ref) {
+bool ObjectWithMessages::HandleReply() {
     flag = 2;
     return true;
 }

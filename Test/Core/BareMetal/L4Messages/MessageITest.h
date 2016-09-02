@@ -73,9 +73,9 @@ public:
     bool TestSendMessage_False_InvalidMessage();
 
     /**
-     * @brief Tests the SendMessage method with not expected late reply
+     * @brief Tests the SendMessage method with not expected Indirect reply
      */
-    bool TestSendMessage_False_NotExpectedLateReply();
+    bool TestSendMessage_False_NotExpectedIndirectReply();
 
     /**
      * @brief Tests the SendMessage method with no destination for reply
@@ -113,19 +113,19 @@ public:
     bool TestSendMessageAndWaitReply_False_ReplyOfReply();
 
     /**
-     * @brief Tests the SendMessageAndExpectReplyLater method
+     * @brief Tests the SendMessage using a custom catcher
      */
-    bool TestSendMessageAndExpectReplyLater();
+    bool TestSendMessage_ExpectsIndirectReply();
+
+    /**
+     * @brief Tests the TestSendMessageAndWaitIndirectReply
+    */
+    bool TestSendMessageAndWaitIndirectReply();
 
     /**
      * @brief Tests the SendMessageAndExpectReplyLater method with invalid message
      */
     bool TestSendMessageAndExpectReplyLater_False_InvalidMessage();
-
-    /**
-     * @brief Tests the SendMessageAndExpectReplyLater method with reply of reply
-     */
-    bool TestSendMessageAndExpectReplyLater_False_ReplyOfReply();
 
 };
 

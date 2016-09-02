@@ -57,9 +57,8 @@ ErrorManagement::ErrorType RegisteredMethodsMessageFilter::ConsumeMessage(Refere
 
     ErrorManagement::ErrorType ret;
 
-//    Object *destinationObject = dynamic_cast<Object *>(receiver);
-
-    if ((destinationObject != NULL_PTR(Object *)) && (messageToTest.IsValid())){
+    //This filter does not handle replies...
+    if ((destinationObject != NULL_PTR(Object *)) && (messageToTest.IsValid()) && (!messageToTest->IsReply())){
 
         // try calling the method
         ret = destinationObject->CallRegisteredMethod(messageToTest->GetFunction(), *(messageToTest.operator->()));
@@ -75,7 +74,8 @@ ErrorManagement::ErrorType RegisteredMethodsMessageFilter::ConsumeMessage(Refere
             if (messageToTest->ExpectsIndirectReply()){
                 // TODO handle error messages from SendMessage
                 // simply produce a warning
-                MessageI::SendMessage(messageToTest,destinationObject);
+                // destination in reply is known so should not be set
+                MessageI::SendMessage(messageToTest, NULL);
             }
         }
     } else {
