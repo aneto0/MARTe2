@@ -41,15 +41,10 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-class Object;
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe {
-
 /**
  * @brief Implementation of an object which stores and calls a class method.
  * @details The class allows to create an implicit class method caller whose
@@ -62,65 +57,255 @@ class DLL_API ClassMethodInterfaceMapper {
 
 public:
 
-    /**
-     * @brief Default constructor.
-     */
-    ClassMethodInterfaceMapper();
+
+
+// unsupported feature trapping
+
+    template <class className, typename argType1>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1 *)){
+    //    static_assert(false, "Do not use ClassMethodCallerCreate with method having pointer parameters!");
+        caller = NULL;
+    }
+
+    template <class className, typename argType1,typename argType2>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 *)){
+    //    static_assert(false, "Do not use ClassMethodCallerCreate with method having pointer parameters!");
+        caller = NULL;
+    }
+
+    template <class className, typename argType1,typename argType2>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1 *,argType2)){
+    //    static_assert(false, "Do not use ClassMethodCallerCreate with method having pointer parameters!");
+        caller = NULL;
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3 *)){
+    //    static_assert(false, "Do not use ClassMethodCallerCreate with method having pointer parameters!");
+        caller = NULL;
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 *,argType3)){
+    //    static_assert(false, "Do not use ClassMethodCallerCreate with method having pointer parameters!");
+        caller = NULL;
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1 *,argType2,argType3)){
+    //    static_assert(false, "Do not use ClassMethodCallerCreate with method having pointer parameters!");
+        caller = NULL;
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,argType4 *)){
+    //    static_assert(false, "Do not use ClassMethodCallerCreate with method having pointer parameters!");
+        caller = NULL;
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3 *,argType4)){
+    //    static_assert(false, "Do not use ClassMethodCallerCreate with method having pointer parameters!");
+        caller = NULL;
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 *,argType3,argType4)){
+    //    static_assert(false, "Do not use ClassMethodCallerCreate with method having pointer parameters!");
+        caller = NULL;
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1 *,argType2,argType3,argType4)){
+    //    static_assert(false, "Do not use ClassMethodCallerCreate with method having pointer parameters!");
+        caller = NULL;
+    }
+
+    // 0 params
+
+    template <class className>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(void)){
+        caller = new ClassMethodCallerT<className,ErrorManagement::ErrorType (className::*)(void),void,void,void,void>(MethodPointer,0x0000);
+    }
+
+    // 1 params
+
+    template <class className, typename argType1>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(const argType1 &)){
+        caller = new ClassMethodCallerT<className,ErrorManagement::ErrorType (className::*)(const argType1 &),argType1,void,void,void>(MethodPointer,0x0000);
+    }
+
+    template <class className, typename argType1>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1 &)){
+        caller = new ClassMethodCallerT<className,ErrorManagement::ErrorType (className::*)(argType1 &),argType1,void,void,void>(MethodPointer,0x1000);
+    }
+
+    template <class className, typename argType1>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1)){
+        caller = new ClassMethodCallerT<className,ErrorManagement::ErrorType (className::*)(argType1),argType1,void,void,void>(MethodPointer,0x0000);
+    }
+
+
+
+    // 2 params
+
+    template <class className, typename argType1,typename argType2>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,const argType2 &)){
+            caller = ClassMethodCallerCreate2(MethodPointer,0x0000);
+    }
+
+    template <class className, typename argType1,typename argType2>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 &)){
+            caller = ClassMethodCallerCreate2(MethodPointer,0x0400);
+    }
+
+    template <class className, typename argType1,typename argType2>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 )){
+            caller = ClassMethodCallerCreate2(MethodPointer,0x0000);
+    }
+
+
+    template <class className, typename argType1,typename argType2>
+    ClassMethodCaller &ClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(const argType1 &,argType2),uint32 mask){
+            return new ClassMethodCallerT<className,ErrorManagement::ErrorType (className::*)(const argType1 &,argType2),argType1,argType2,void,void>(MethodPointer,mask);
+    }
+
+    template <class className, typename argType1,typename argType2>
+    ClassMethodCaller *ClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1 &,argType2),uint32 mask){
+            return new ClassMethodCallerT<className,ErrorManagement::ErrorType (className::*)(argType1 &,argType2),argType1,argType2,void,void>(MethodPointer,mask | 0x1000);
+    }
+
+    template <class className, typename argType1,typename argType2>
+    ClassMethodCaller *ClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2),uint32 mask){
+            return new ClassMethodCallerT<className,ErrorManagement::ErrorType (className::*)(argType1,argType2),argType1,argType2,void,void>(MethodPointer,mask);
+    }
+
+    // 3 params
+
+    template <class className, typename argType1,typename argType2,typename argType3>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,const argType3 & )){
+            caller = ClassMethodCallerCreate2(MethodPointer,0x0000);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3 &)){
+            caller = ClassMethodCallerCreate2(MethodPointer,0x0010);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3)){
+            caller = ClassMethodCallerCreate2(MethodPointer,0x0000);
+    }
+
+
+    template <class className, typename argType1,typename argType2,typename argType3>
+    ClassMethodCaller *ClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,const argType2 &,argType3),uint32 mask){
+            return ClassMethodCallerCreate3(MethodPointer,mask);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3>
+    ClassMethodCaller *ClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 &,argType3),uint32 mask){
+            return ClassMethodCallerCreate3(MethodPointer,mask | 0x0100);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3>
+    ClassMethodCaller *ClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3),uint32 mask){
+            return ClassMethodCallerCreate3(MethodPointer,mask);
+    }
+
+
+    template <class className, typename argType1,typename argType2,typename argType3>
+    ClassMethodCaller *ClassMethodCallerCreate3(ErrorManagement::ErrorType (className::*MethodPointer)(const argType1 &,argType2,argType3),uint32 mask){
+            return new ClassMethodCallerT<className,ErrorManagement::ErrorType (className::*)(const argType1 &,argType2,argType3),argType1,argType2,argType3,void>(MethodPointer,mask);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3>
+    ClassMethodCaller *ClassMethodCallerCreate3(ErrorManagement::ErrorType (className::*MethodPointer)(argType1 &,argType2,argType3),uint32 mask){
+            return new ClassMethodCallerT<className,ErrorManagement::ErrorType (className::*)(argType1 &,argType2,argType3),argType1,argType2,argType3,void>(MethodPointer,mask | 0x0010);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3>
+    ClassMethodCaller *ClassMethodCallerCreate3(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3),uint32 mask){
+            return new ClassMethodCallerT<className,ErrorManagement::ErrorType (className::*)(argType1,argType2,argType3),argType1,argType2,argType3,void>(MethodPointer,mask);
+    }
+
+
+    // 4 params
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,const argType4 &)){
+            caller = ClassMethodCallerCreate2(MethodPointer,0x0000);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,argType4 &)){
+            caller = ClassMethodCallerCreate2(MethodPointer,0x0001);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,argType4)){
+            caller = ClassMethodCallerCreate2(MethodPointer,0x0000);
+    }
+
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodCaller *ClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,const argType3 &,argType4 ),uint32 mask){
+            return ClassMethodCallerCreate3(MethodPointer,mask);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodCaller *ClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3 &,argType4),uint32 mask){
+            return ClassMethodCallerCreate3(MethodPointer,mask | 0x0010);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodCaller *ClassMethodCallerCreate2(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,argType4),uint32 mask){
+            return ClassMethodCallerCreate3(MethodPointer,mask);
+    }
+
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodCaller *ClassMethodCallerCreate3(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,const argType2 &,argType3,argType4 ),uint32 mask){
+            return ClassMethodCallerCreate4(MethodPointer,mask);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodCaller *ClassMethodCallerCreate3(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 &,argType3,argType4),uint32 mask){
+            return ClassMethodCallerCreate4(MethodPointer,mask | 0x0100);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodCaller *ClassMethodCallerCreate3(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,argType4),uint32 mask){
+            return ClassMethodCallerCreate4(MethodPointer,mask);
+    }
+
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodCaller *ClassMethodCallerCreate4(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,const argType2 &,argType3,argType4 ),uint32 mask){
+            return new ClassMethodCallerT<className,ErrorManagement::ErrorType (className::*)(const argType1 &,argType2,argType3,argType4),argType1,argType2,argType3,argType4>(MethodPointer,mask);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodCaller *ClassMethodCallerCreate4(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 &,argType3,argType4),uint32 mask){
+        return new ClassMethodCallerT<className,ErrorManagement::ErrorType (className::*)(argType1 &,argType2,argType3,argType4),argType1,argType2,argType3,argType4>(MethodPointer,mask | 0x1000);
+    }
+
+    template <class className, typename argType1,typename argType2,typename argType3,typename argType4>
+    ClassMethodCaller *ClassMethodCallerCreate4(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,argType4),uint32 mask){
+        return new ClassMethodCallerT<className,ErrorManagement::ErrorType (className::*)(argType1,argType2,argType3,argType4),argType1,argType2,argType3,argType4>(MethodPointer,mask);
+    }
 
     /**
-     * @brief Constructor by a class method with no arguments.
-     * @tparam C is the class name.
+     *
      */
-    template<typename C>
-    ClassMethodInterfaceMapper(bool (C::*f)());
+    ClassMethodCaller *GetMethod(){ return caller; }
 
-    /**
-     * @brief Constructor by a class method with one argument passed by copy.
-     * @param[in] f is a pointer to the class method to be registered.
-     * @tparam C is the class name.
-     * @tparam T is the type name of the class method argument.
-     */
-    template<typename C, typename T>
-    ClassMethodInterfaceMapper(bool (C::*f)(T));
-
-    /**
-     * @brief Constructor by a class method with one argument passed by
-     * reference.
-     * @param[in] f is a pointer to the class method to be registered.
-     * @tparam C is the class name.
-     * @tparam T is the type name of the class method argument.
-     */
-    template<typename C, typename T>
-    ClassMethodInterfaceMapper(bool (C::*f)(T&));
 
     /**
      * @brief Destructor
      */
     virtual ~ClassMethodInterfaceMapper();
 
-    /**
-     * @brief Calls the function with no arguments.
-     * @param[in] context is the object which must call the function.
-     * @return
-     * + ErrorManagement::unsupportedFeature if no function has been registered
-     * + ErrorManagement::fatalError if the class method returns false
-     * + ErrorManagement::noError if it returns true.
-     */
-    ErrorManagement::ErrorType Call(Object * const context);
-
-    /**
-     * @brief Calls the function with one argument.
-     * @tparam T is the type name of the class method argument.
-     * @param[in] context is the object which must call the function.
-     * @param[in,out] ref is the class method argument.
-     * @return
-     * + ErrorManagement::unsupportedFeature if no function has been registered
-     * + ErrorManagement::fatalError if the class method returns false
-     * + ErrorManagement::noError if it returns true.
-     */
-    template<typename T>
-    ErrorManagement::ErrorType Call(Object * const context,
-                                    T ref);
 
 private:
 
@@ -129,50 +314,10 @@ private:
      */
     ClassMethodCaller *caller;
 
-    /**
-     * Specify if the method argument is passed by copy
-     */
-    bool byCopy;
+
 
 };
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-template<typename className>
-ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)()) {
-    caller = new ClassMethodCallerT<className>(f);
-    byCopy = false;
-}
-
-template<typename className, typename T>
-ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)(T)) {
-    caller = new ClassMethodCallerT<className, T>(f);
-    byCopy = true;
-}
-
-template<typename className, typename T>
-ClassMethodInterfaceMapper::ClassMethodInterfaceMapper(bool (className::*f)(T&)) {
-    caller = new ClassMethodCallerT<className, T&>(f);
-    byCopy = false;
-}
-
-template<typename T>
-ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object *context,
-                                                            T ref) {
-    ErrorManagement::ErrorType ret;
-    ret.unsupportedFeature = true;
-    if (caller != NULL ) {
-        if(byCopy) {
-            ret = caller->Call(context,ref, byCopy);
-        }
-        else {
-            ret = caller->Call(context,ref);
-        }
-    }
-    return ret;
-}
 
 }
 

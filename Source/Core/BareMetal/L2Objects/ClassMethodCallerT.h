@@ -34,6 +34,14 @@
 
 #include "ClassMethodCaller.h"
 
+//TODO
+//TODO
+//TODO
+//TODO   Separate inline into inline section
+//TODO
+//TODO
+//TODO
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -42,78 +50,170 @@ namespace MARTe {
 
 /**
  * @brief This class template is a helper for building specific versions of
- * class method callers for target methods with one argument.
+ * class method callers for target methods with four arguments.
  *
- * @details This specialisation of the template generates a pair of "Call"
- * methods for target methods which accept exactly one argument. One is the
- * version for by reference arguments and the other for by copy arguments.
+ * @details This specialisation of the template generates a number of "Call"
+ * methods for a variety of target methods .
  *
  * This specialisation expects the name of the target class as the first
- * class template parameter, followed by the type of the argument to be passed
+ * class template parameter, followed by the type of the arguments to be passed
  * to the target method.
  *
  * E.g.:
- * + ClassMethodCallerT<ClassA, ReferenceContainer&> mc(&ClassA::MethodX);
- * + ClassMethodCallerT<ClassA, int&> mc(&ClassA::MethodY);
+ * + ClassMethodCallerT<ClassA, int, float,char,short> mc(&ClassA::MethodX);
  *
- * @tparam className is the class owning the target method.
- * @tparam argType1 is the type of the input parameter to be passed to the
- * target method.
+ * @param className is the class owning the target method.
+ * @param argType1 is the type of the input parameter to be passed to the target method 1.
+ * @param argType2 is the type of the input parameter to be passed to the target method 2.
+ * @param argType3 is the type of the input parameter to be passed to the target method 3.
+ * @param argType4 is the type of the input parameter to be passed to the target method 4.
+ * NOTE only basic types with no modifiers can be used here!!! no * and no &
  */
-template<typename className, typename argType1 = void>
-class ClassMethodCallerT: public ClassMethodCaller {
-
+template <class className, typename MethodPointer, typename argType1,typename argType2,typename argType3,typename argType4>
+class ClassMethodCallerT: public ClassMethodCaller{
 public:
 
     /**
      * @brief Type definition for the method pointer prototype
      */
-    typedef bool (className::*MethodPointer)(argType1);
+//    typedef ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3,argType4);
 
     /**
      * @brief Constructor from a class method with one input parameter.
      * @param[in] f is a pointer to the class method.
      * @post f == GetMethodPointer()
      */
-    ClassMethodCallerT(MethodPointer f);
+    ClassMethodCallerT(MethodPointer method,uint32 mask){
+        pFun = method;
+    }
 
     /**
      * @brief Destructor.
      */
-    virtual ~ClassMethodCallerT();
+    virtual ~ClassMethodCallerT(){}
 
     /**
-     * @brief Calls the class method with one argument passed by reference.
-     * @param[in] context is the pointer to the object owning the method.
-     * @param[in] ref is the class method argument.
-     * @return
-     * + ErrorManagement::fatalError if the class method returns false
-     * + ErrorManagement::noError if it returns true
+     * @brief See ClassMethodCaller
      */
-    virtual ErrorManagement::ErrorType Call(Object * context,
-                                            argType1 ref);
+    virtual ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters){
+        ErrorManagement::ErrorType err(true);
+
+        className* actual = dynamic_cast<className *>(object);
+        err.unsupportedFeature = (actual == static_cast<className*>(0));
+
+        if (err.ErrorsCleared()){
+            argType1 param1;
+            parameters.Read("param1",param1);
+            argType2 param2;
+            parameters.Read("param2",param2);
+            argType3 param3;
+            parameters.Read("param3",param3);
+            argType4 param4;
+            parameters.Read("param4",param4);
+            err =  (actual->*pFun)(param1,param2,param3,param4);
+        }
+        return err;
+    }
 
     /**
-     * @brief Calls the class method with one argument passed by copy.
-     * @param[in] context is the pointer to the object owning the method.
-     * @param[in] ref is the class method argument.
-     * @param[in] byCopy states if the x argument is actually passed by copy
-     * (meaningful when used from templates, helping on overloading resolution)
-     * @return
-     * + ErrorManagement::fatalError if the class method returns false
-     * + ErrorManagement::noError if it returns true
+     * @brief See ClassMethodCaller
      */
-    virtual ErrorManagement::ErrorType Call(Object * context,
-                                            argType1 ref,
-                                            bool ByCopy);
+    virtual ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters){
 
-    /**
-     * @brief Gets the pointer to the method
-     */
-    MethodPointer GetMethodPointer();
+        // no need to check validity of
+        ReferenceT<StructuredDataI> param = parameters.Get(0);
+        return Call (object, *(param.operator->()));
+    }
+
+    //TODO create class to generate a StructuredDataI from a StreamI
+    //TODO then Call the Call(StructuredDataI)
 
 private:
+    /**
+     * Pointer to the class method
+     */
+    MethodPointer pFun;
 
+};
+
+
+/**
+ * @brief This class template is a helper for building specific versions of
+ * class method callers for target methods with three arguments.
+ *
+ * @details This specialisation of the template generates a number of "Call"
+ * methods for a variety of target methods .
+ *
+ * This specialisation expects the name of the target class as the first
+ * class template parameter, followed by the type of the arguments to be passed
+ * to the target method.
+ *
+ * E.g.:
+ * + ClassMethodCallerT<ClassA, int, float,char,short> mc(&ClassA::MethodX);
+ *
+ * @param className is the class owning the target method.
+ * @param argType1 is the type of the input parameter to be passed to the target method 1.
+ * @param argType2 is the type of the input parameter to be passed to the target method 2.
+ * @param argType3 is the type of the input parameter to be passed to the target method 3.
+ * NOTE only basic types with no modifiers can be used here!!! no * and no &
+ */
+template <class className,typename MethodPointer, typename argType1,typename argType2,typename argType3>
+class ClassMethodCallerT<className,MethodPointer,argType1,argType2,argType3,void>:public ClassMethodCaller{
+public:
+
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+//    typedef ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2,argType3);
+
+
+    /**
+     * @brief Constructor from a class method with one input parameter.
+     * @param[in] f is a pointer to the class method.
+     * @post f == GetMethodPointer()
+     */
+    ClassMethodCallerT(MethodPointer method,uint32 mask){
+        pFun = method;
+    }
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~ClassMethodCallerT(){}
+
+    /**
+     * @brief See ClassMethodCaller
+     */
+    ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters){
+        ErrorManagement::ErrorType err(true);
+
+        className* actual = dynamic_cast<className *>(object);
+        err.unsupportedFeature = (actual == static_cast<className*>(0));
+
+        if (err.ErrorsCleared()){
+            argType1 param1;
+            argType2 param2;
+            argType3 param3;
+            parameters.Read("param1",param1);
+            parameters.Read("param2",param2);
+            parameters.Read("param3",param3);
+            err =  (actual->*pFun)(param1,param2,param3);
+        }
+        return err;
+    }
+
+    /**
+     * @brief See ClassMethodCaller
+     */
+    virtual ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters){
+        ReferenceT<StructuredDataI> param = parameters.Get(0);
+        return Call (object, *(param.operator->()));
+    }
+
+    //TODO create class to generate a StructuredDataI from a StreamI
+    //TODO then Call the Call(StructuredDataI)
+
+private:
     /**
      * Pointer to the class method
      */
@@ -123,55 +223,181 @@ private:
 
 /**
  * @brief This class template is a helper for building specific versions of
- * class method callers for target methods without arguments.
+ * class method callers for target methods with two arguments.
  *
- * @details This specialisation of the template generates a "Call" method
- * for target methods which do not accept arguments.
+ * @details This specialisation of the template generates a number of "Call"
+ * methods for a variety of target methods .
  *
- * This specialisation expects only the name of the target class in the list
- * of class template parameters, because the target method will not receive
- * any argument.
+ * This specialisation expects the name of the target class as the first
+ * class template parameter, followed by the type of the arguments to be passed
+ * to the target method.
  *
  * E.g.:
- * + ClassMethodCallerT<ClassA> mc(&ClassA::MethodZ);
+ * + ClassMethodCallerT<ClassA, int, float,char,short> mc(&ClassA::MethodX);
  *
- * @tparam className is the class owning the target method.
+ * @param className is the class owning the target method.
+ * @param argType1 is the type of the input parameter to be passed to the target method 1.
+ * @param argType2 is the type of the input parameter to be passed to the target method 2.
+ * NOTE only basic types with no modifiers can be used here!!! no * and no &
  */
-template<typename className>
-class ClassMethodCallerT<className> : public ClassMethodCaller {
-
+template <class className, typename MethodPointer, typename argType1,typename argType2>
+class ClassMethodCallerT<className,MethodPointer,argType1,argType2,void,void>:public ClassMethodCaller{
 public:
 
     /**
      * @brief Type definition for the method pointer prototype
      */
-    typedef bool (className::*MethodPointer)();
+//    typedef ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2);
+
 
     /**
-     * @brief Constructor from a class method without arguments.
+     * @brief Constructor from a class method with one input parameter.
      * @param[in] f is a pointer to the class method.
      * @post f == GetMethodPointer()
      */
-    ClassMethodCallerT(MethodPointer f);
+    ClassMethodCallerT(MethodPointer method,uint32 mask){
+        pFun = method;
+    }
 
     /**
      * @brief Destructor.
      */
-    virtual ~ClassMethodCallerT();
+    virtual ~ClassMethodCallerT(){}
 
     /**
-     * @brief Calls the class method.
-     * @param[in] context is the pointer to the object owning the method.
-     * @return
-     * + ErrorManagement::fatalError if the class method returns false
-     * + ErrorManagement::noError if it returns true
+     * @brief See ClassMethodCaller
      */
-    virtual ErrorManagement::ErrorType Call(Object * context);
+    ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters){
+        ErrorManagement::ErrorType err(true);
+
+        className* actual = dynamic_cast<className *>(object);
+        err.unsupportedFeature = (actual == static_cast<className*>(0));
+
+        if (err.ErrorsCleared()){
+            argType1 param1;
+            argType2 param2;
+            parameters.Read("param1",param1);
+            parameters.Read("param2",param2);
+            err =  (actual->*pFun)(param1,param2);
+        }
+        return err;
+    }
 
     /**
-     * @brief Gets the pointer to the method
+     * @brief See ClassMethodCaller
      */
-    MethodPointer GetMethodPointer();
+    virtual ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters){
+        ReferenceT<StructuredDataI> param = parameters.Get(0);
+        return Call (object, *(param.operator->()));
+    }
+
+    //TODO create class to generate a StructuredDataI from a StreamI
+    //TODO then Call the Call(StructuredDataI)
+
+private:
+    /**
+     * Pointer to the class method
+     */
+    MethodPointer pFun;
+};
+
+/**
+ * @brief This class template is a helper for building specific versions of
+ * class method callers for target methods with one argument.
+ *
+ * @details This specialisation of the template generates a number of "Call"
+ * methods for a variety of target methods .
+ *
+ * This specialisation expects the name of the target class as the first
+ * class template parameter, followed by the type of the arguments to be passed
+ * to the target method.
+ *
+ * E.g.:
+ * + ClassMethodCallerT<ClassA, int, float,char,short> mc(&ClassA::MethodX);
+ *
+ * @param className is the class owning the target method.
+ * @param argType1 is the type of the input parameter to be passed to the target method 1.
+ * NOTE only basic types with no modifiers can be used here!!! no * and no &
+ */
+template <class className, typename MethodPointer, typename argType1>
+class ClassMethodCallerT<className,MethodPointer,argType1,void,void,void>:public ClassMethodCaller{
+public:
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+//    typedef ErrorManagement::ErrorType (className::*MethodPointer)(argType1);
+
+    /**
+     * @brief Constructor from a class method with one i            argType4 param4;
+     * nput parameter.
+     * @param[in] f is a pointer to the class method.
+     * @post f == GetMethodPointer()
+     */
+    ClassMethodCallerT(MethodPointer method,uint32 mask){
+        pFun = method;
+    }
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~ClassMethodCallerT(){}
+
+    /**
+     * @brief See ClassMethodCaller
+     */
+    ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters){
+        ErrorManagement::ErrorType err(true);
+
+        className* actual = dynamic_cast<className *>(object);
+        err.unsupportedFeature = (actual == static_cast<className*>(0));
+
+        if (err.ErrorsCleared()){
+            argType1 param1;
+            parameters.Read("param1",param1);
+            err =  (actual->*pFun)(param1);
+        }
+        return err;
+    }
+
+    virtual ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters){
+        ReferenceT<StructuredDataI> param = parameters.Get(0);
+        return Call (object, *(param.operator->()));
+    }
+
+    //TODO create class to generate a StructuredDataI from a StreamI
+    //TODO then Call the Call(StructuredDataI)
+
+private:
+    /**
+     * Pointer to the class method
+     */
+    MethodPointer pFun;
+};
+
+/**
+ * @brief This class template is a helper for building specific versions of
+ * class method callers for target methods with no arguments.
+ *
+ * @details This specialisation of the template generates a number of "Call"
+ * methods for a variety of target methods .
+ *
+ * This specialisation expects the name of the target class as the first
+ * class template parameter, followed by the type of the arguments to be passed
+ * to the target method.
+ *
+ * E.g.:
+ * + ClassMethodCallerT<ClassA, int, float,char,short> mc(&ClassA::MethodX);
+ *
+ * @param className is the class owning the target method.
+ * NOTE only basic types with no modifiers can be used here!!! no * and no &
+ */
+template <class className,typename MethodPointer>
+class ClassMethodCallerT<className,MethodPointer,void,void,void,void>:public ClassMethodCaller{
+public:
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+//    typedef ErrorManagement::ErrorType (className::*MethodPointer)();
 
 private:
 
@@ -179,92 +405,263 @@ private:
      * Pointer to the class method
      */
     MethodPointer pFun;
+public:
+
+    /**
+     * @brief Constructor from a class method with one input parameter.
+     * @param[in] f is a pointer to the class method.
+     * @post f == GetMethodPointer()
+     */
+    ClassMethodCallerT(MethodPointer method,uint32 mask){
+        pFun = method;
+    }
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~ClassMethodCallerT(){}
+
+    /**
+     * @brief See ClassMethodCaller
+     */
+    virtual ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters){
+        return Call(object);
+    }
+
+    /**
+     * @brief See ClassMethodCaller
+     */
+    virtual ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters){
+        return Call(object);
+    }
+
+    /**
+     * @brief See ClassMethodCaller
+     */
+    virtual ErrorManagement::ErrorType Call(Object *object, StreamI &stream){
+        return Call(object);
+    }
+
+    /**
+     * @brief See ClassMethodCaller
+     */
+    virtual ErrorManagement::ErrorType Call(Object *object){
+        className* actual = dynamic_cast<className *>(object);
+        return (actual->*pFun)();
+    }
 
 };
 
-}
+/**
+ * @brief This class template is a helper for building specific versions of
+ * class method callers for target methods with one StructuredDataI *argument.
+ *
+ * @details This specialisation of the template generates a number of "Call"
+ * methods for a variety of target methods .
+ *
+ * This specialisation expects the name of the target class as the first
+ * class template parameter, followed by the type of the arguments to be passed
+ * to the target method.
+ *
+ * E.g.:
+ * + ClassMethodCallerT<ClassA, int, float,char,short> mc(&ClassA::MethodX);
+ *
+ * @param className is the class owning the target method.
+ */
+template <class className,typename MethodPointer>
+class ClassMethodCallerT<className,MethodPointer,StructuredDataI *,void,void,void>:public ClassMethodCaller{
+public:
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+//    typedef ErrorManagement::ErrorType (className::*MethodPointer)(StructuredDataI *parameters);
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-namespace MARTe {
-
-/***************
- * 0 arguments *
- ***************/
-template<typename className>
-ClassMethodCallerT<className, void>::ClassMethodCallerT(MethodPointer f) {
-    pFun = f;
-}
-
-template<typename className>
-ClassMethodCallerT<className, void>::~ClassMethodCallerT() {
-}
-
-template<typename className>
-ErrorManagement::ErrorType ClassMethodCallerT<className, void>::Call(Object * context) {
-    ErrorManagement::ErrorType err = ErrorManagement::noError;
-    className *actualContext = dynamic_cast<className *>(context);
-    if (actualContext == NULL_PTR(className *)) {
-        err = ErrorManagement::unsupportedFeature;
+    /**
+     * @brief Constructor from a class method with one input parameter.
+     * @param[in] f is a pointer to the class method.
+     * @post f == GetMethodPointer()
+     */
+    ClassMethodCallerT(MethodPointer method,uint32 mask){
+        pFun = method;
     }
-    else {
-        (actualContext->*pFun)() ? (err = ErrorManagement::noError) : (err = ErrorManagement::fatalError);
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~ClassMethodCallerT(){}
+
+    /**
+     * @brief See ClassMethodCaller
+     */
+    ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters){
+        className* actual = dynamic_cast<className *>(object);
+        return (actual->*pFun)(parameters);
     }
-    return err;
-}
 
-template<typename className>
-typename ClassMethodCallerT<className, void>::MethodPointer ClassMethodCallerT<className, void>::GetMethodPointer() {
-    return pFun;
-}
-
-/***************
- * 1 argument  *
- ***************/
-template<typename className, typename argType1>
-ClassMethodCallerT<className, argType1>::ClassMethodCallerT(MethodPointer f) {
-    pFun = f;
-}
-
-template<typename className, typename argType1>
-ClassMethodCallerT<className, argType1>::~ClassMethodCallerT() {
-}
-
-template<typename className, typename argType1>
-ErrorManagement::ErrorType ClassMethodCallerT<className, argType1>::Call(Object * context,
-                                                                         argType1 ref) {
-    ErrorManagement::ErrorType err = ErrorManagement::noError;
-    className *actualContext = dynamic_cast<className *>(context);
-    if (actualContext == NULL_PTR(className *)) {
-        err = ErrorManagement::unsupportedFeature;
+    /**
+     * @brief See ClassMethodCaller
+     */
+    virtual ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters){
+        ReferenceT<StructuredDataI> sI = parameters.Get(0);
+        return Call(object,*(sI.operator->()));
     }
-    else {
-        (actualContext->*pFun)(ref) ? (err = ErrorManagement::noError) : (err = ErrorManagement::fatalError);
-    }
-    return err;
-}
 
-template<typename className, typename argType1>
-ErrorManagement::ErrorType ClassMethodCallerT<className, argType1>::Call(Object * context,
-                                                                         argType1 ref,
-                                                                         bool ByCopy) {
-    ErrorManagement::ErrorType err = ErrorManagement::noError;
-    className *actualContext = dynamic_cast<className *>(context);
-    if (actualContext == NULL_PTR(className *)) {
-        err = ErrorManagement::unsupportedFeature;
-    }
-    else {
-        (actualContext->*pFun)(ref) ? (err = ErrorManagement::noError) : (err = ErrorManagement::fatalError);
-    }
-    return err;
-}
+    //TODO create class to generate a StructuredDataI from a StreamI
+    //TODO then Call the Call(StructuredDataI)
 
-template<typename className, typename argType1>
-typename ClassMethodCallerT<className, argType1>::MethodPointer ClassMethodCallerT<className, argType1>::GetMethodPointer() {
-    return pFun;
-}
+private:
+    /**
+     * Pointer to the class method
+     */
+    MethodPointer pFun;
+};
+
+
+/**
+ * @brief This class template is a helper for building specific versions of
+ * class method callers for target methods with one ReferenceContainer &argument.
+ *
+ * @details This specialisation of the template generates a number of "Call"
+ * methods for a variety of target methods .
+ *
+ * This specialisation expects the name of the target class as the first
+ * class template parameter, followed by the type of the arguments to be passed
+ * to the target method.
+ *
+ * E.g.:
+ * + ClassMethodCallerT<ClassA, int, float,char,short> mc(&ClassA::MethodX);
+ *
+ * @param className is the class owning the target method.
+ */
+template <class className,typename MethodPointer>
+class ClassMethodCallerT<className,MethodPointer,ReferenceContainer,void,void,void>:public ClassMethodCaller{
+public:
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+//    typedef ErrorManagement::ErrorType (className::*MethodPointer)(ReferenceContainer &parameters);
+
+    /**
+     * @brief Constructor from a class method with one input parameter.
+     * @param[in] f is a pointer to the class method.
+     * @post f == GetMethodPointer()
+     */
+    ClassMethodCallerT(MethodPointer method,uint32 mask){
+        pFun = method;
+    }
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~ClassMethodCallerT(){}
+
+    /**
+     * @brief See ClassMethodCaller
+     */
+    virtual ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters){
+
+        ReferenceContainer param1;
+
+        Object * o = dynamic_cast<Object *>(&parameters);
+
+        Reference ref(o);
+
+        param1.Insert(ref);
+
+        return Call (object ,param1);
+    }
+
+    /**
+     * @brief See ClassMethodCaller
+     */
+    virtual ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters){
+        className* actual = dynamic_cast<className *>(object);
+        return (actual->*pFun)(parameters);
+    }
+
+private:
+    /**
+     * Pointer to the class method
+     */
+    MethodPointer pFun;
+
+};
+
+/**
+ * @brief This class template is a helper for building specific versions of
+ * class method callers for target methods with one StreamI *argument.
+ *
+ * @details This specialisation of the template generates a number of "Call"
+ * methods for a variety of target methods .
+ *
+ * This specialisation expects the name of the target class as the first
+ * class template parameter, followed by the type of the arguments to be passed
+ * to the target method.
+ *
+ * E.g.:
+ * + ClassMethodCallerT<ClassA, int, float,char,short> mc(&ClassA::MethodX);
+ *
+ * @param className is the class owning the target method.
+ * NOTE only basic types with no modifiers can be used here!!! no * and no &
+ */
+template <class className,typename MethodPointer>
+class ClassMethodCallerT<className,MethodPointer,StreamI *,void,void,void>:public ClassMethodCaller{
+public:
+    /**
+     * @brief Type definition for the method pointer prototype
+     */
+//    typedef ErrorManagement::ErrorType (className::*MethodPointer)(StreamI *);
+
+    /**
+     * @brief Constructor from a class method with one input parameter.
+     * @param[in] f is a pointer to the class method.
+     * @post f == GetMethodPointer()
+     */
+    ClassMethodCallerT(MethodPointer method,uint32 mask){
+        pFun = method;
+    }
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~ClassMethodCallerT(){}
+
+    /**
+     * @brief See ClassMethodCaller
+     */
+    virtual ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters){
+        return ErrorManagement::parametersError;
+    }
+
+    /**
+     * @brief See ClassMethodCaller
+     */
+    ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters){
+        className* actual = dynamic_cast<className *>(object);
+
+        Reference par = parameters.Get(0);
+
+        ReferenceT<StreamI> param = par;
+
+        return (actual->*pFun)(param.operator->());
+    }
+
+    /**
+     * @brief See ClassMethodCaller
+     */
+    ErrorManagement::ErrorType Call(Object *object, StreamI &stream){
+        className* actual = dynamic_cast<className *>(object);
+
+        return (actual->*pFun)(stream);
+    }
+
+private:
+    /**
+     * Pointer to the class method
+     */
+    MethodPointer pFun;
+};
+
 
 }
 
