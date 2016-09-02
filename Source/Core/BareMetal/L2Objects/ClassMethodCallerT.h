@@ -613,7 +613,7 @@ private:
  * NOTE only basic types with no modifiers can be used here!!! no * and no &
  */
 template <class className,typename MethodPointer>
-class ClassMethodCallerT<className,MethodPointer,StreamI &,void,void,void>:public ClassMethodCaller{
+class ClassMethodCallerT<className,MethodPointer,StreamI,void,void,void>:public ClassMethodCaller{
 public:
     /**
      * @brief Type definition for the method pointer prototype
