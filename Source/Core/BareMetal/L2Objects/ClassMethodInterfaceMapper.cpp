@@ -45,7 +45,6 @@ namespace MARTe {
 
 ClassMethodInterfaceMapper::ClassMethodInterfaceMapper() {
     caller = NULL_PTR(ClassMethodCaller *);
-    byCopy = false;
 }
 
 /*lint -e {1551} */
@@ -53,15 +52,6 @@ ClassMethodInterfaceMapper::~ClassMethodInterfaceMapper() {
     if (caller != NULL) {
         delete caller;
     }
-}
-
-ErrorManagement::ErrorType ClassMethodInterfaceMapper::Call(Object * const context) {
-    ErrorManagement::ErrorType ret;
-    ret.unsupportedFeature = true;
-    if (caller != NULL ) {
-        ret = caller->Call(context);
-    }
-    return ret;
 }
 
 }
