@@ -35,6 +35,7 @@
 #include "ErrorType.h"
 #include "ClassMethodCaller.h"
 #include "ClassMethodCallerT.h"
+#include "LinkedListable.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -53,7 +54,7 @@ namespace MARTe {
  * method). The target method can have a prototype without arguments or with
  * one argument at most (with by reference and by copy versions).
  */
-class DLL_API ClassMethodInterfaceMapper {
+class DLL_API ClassMethodInterfaceMapper: public LinkedListable {
 
 public:
 
@@ -306,6 +307,16 @@ public:
      */
     virtual ~ClassMethodInterfaceMapper();
 
+    /**
+     * TODO
+     */
+    void SetName(CCString name){
+        methodName = name;
+    }
+
+    CCString GetMethodName(){
+        return methodName;
+    }
 
 private:
 
@@ -314,7 +325,10 @@ private:
      */
     ClassMethodCaller *caller;
 
-
+    /**
+     * TODO
+     */
+    CCString methodName;
 
 };
 

@@ -29,9 +29,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassMethodCallerFT.h"
+
 #include "Object.h"
 #include "StreamI.h"
+#include "CLASSMETHODREGISTER.h"
 
 namespace MARTe {
 
@@ -42,7 +43,6 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-#if 0
 class Dummy: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
@@ -87,7 +87,21 @@ public:
     }
 
 };
+
 CLASS_REGISTER(Dummy, "1.0")
+
+CLASS_METHOD_REGISTER(Dummy, f1)
+CLASS_METHOD_REGISTER(Dummy, f2)
+CLASS_METHOD_REGISTER(Dummy, f3)
+CLASS_METHOD_REGISTER(Dummy, f4)
+CLASS_METHOD_REGISTER(Dummy, f5)
+CLASS_METHOD_REGISTER(Dummy, f6)
+CLASS_METHOD_REGISTER(Dummy, f7)
+
+//static ClassMethodInterfaceMapperLoader xx(CCString(""),CCString(""),Dummy::GetClassRegistryItem_Static(),new ClassMethodInterfaceMapper(&Dummy::f1));
+
+
+#if 0
 
 void test() {
     Object *p;

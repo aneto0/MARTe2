@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "CallRegisteredMethodLauncherT.h"
+//#include "CallRegisteredMethodLauncherT.h"
 #include "LinkedListHolderT.h"
 #include "FractionalInteger.h"    //using ClassUID typedef
 #include "CString.h"
@@ -45,12 +45,14 @@
 namespace MARTe {
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
 class Object;
-class ClassMethodsRegistryItem;
+//class ClassMethodsRegistryItem;
 class ClassProperties;
 class Introspection;
 class LoadableLibrary;
 class ObjectBuilder;
 class ReferenceContainer;
+class ClassMethodCaller;
+class ClassMethodInterfaceMapper;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -135,7 +137,7 @@ public:
      * to add to the class registry item instance. The class of this argument
      * must be a descendant of LinkedListable.
      */
-    void RegisterMethods(ClassMethodsRegistryItem * const classMethodRecord);
+//    void RegisterMethods(ClassMethodsRegistryItem * const classMethodRecord);
 
     /**
      * @brief Sets the object builder defining the way to allocate the memory when creating a new
@@ -160,34 +162,14 @@ public:
     void SetUniqueIdentifier(const ClassUID &uid);
 
     /**
-     * @brief Calls a registered method of the registered class without arguments.
-     * @param[in] object is the object which must call the method.
-     * @param[in] methodName is the name of the class method to be called.
-     * @return the status value of the execution, being one of the following:
-     * + ErrorManagement::unsupportedFeature if \a methodName is not
-     * + registered or the class has not declared the method;
-     * + ErrorManagement::fatalError if the class method returns false;
-     * + ErrorManagement::noError if the class method returns true.
+     * TODO
      */
-    ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
-                                                    CCString methodName);
+    ClassMethodCaller *FindMethod(CCString methodName);
 
     /**
-     * @brief Calls a registered method of the registered class with one argument.
-     * @tparam argType is the type of the class method argument.
-     * @param[in] object is the object which must call the method.
-     * @param[in] methodName is the name of the class method to be called.
-     * @param[in] parameters is the class method argument.
-     * @return the status value of the execution, being one of the following:
-     * + ErrorManagement::unsupportedFeature if \a methodName is not
-     * + registered or the class has not declared the method;
-     * + ErrorManagement::fatalError if the class method returns false;
-     * + ErrorManagement::noError if the class method returns true.
+     * TODO
      */
-    template<typename argType>
-    ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
-                                                    CCString methodName,
-                                                    argType parameters);
+    void AddMethod(ClassMethodInterfaceMapper *method);
 
 protected:
 
@@ -235,44 +217,19 @@ private:
     /**
      * A list of lists of registered class methods.
      */
-    LinkedListHolderT<ClassMethodsRegistryItem, false> classMethods;
+    LinkedListHolderT<ClassMethodInterfaceMapper, true> classMethods;
 
 };
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
 
-template<typename argType>
-ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object * const object,
-                                                                   CCString methodName,
-                                                                   argType parameters) {
-    ErrorManagement::ErrorType ret;
 
-    if (object == NULL_PTR(Object*)) {
-        ret.parametersError = true;
-    }
 
-    if (methodName.GetList() == NULL_PTR(char8*)) {
-        ret.parametersError = true;
-    }
 
-    if (ret.ErrorsCleared()) {
-        // search in the list the first function returning without unsupported feature
-        CallRegisteredMethodLauncherT<argType> launcher(object, methodName, parameters);
-        if (classMethods.ListSearch(&launcher)) {
-            ret = launcher.GetResults();
-        }
-        else {
-            ret.unsupportedFeature = true;
-        }
-    }
-    return ret;
-}
 
 }
 

@@ -39,12 +39,95 @@
 #include "ReferenceContainer.h"
 #include "MemoryOperationsHelper.h"
 #include "Atomic.h"
+#include "ClassMethodCaller.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName){
+    ErrorManagement::ErrorType err;
+
+    ClassRegistryItem * cri = GetClassRegistryItem();
+    ClassMethodCaller *caller = NULL;
+
+    err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
+
+    if (err.ErrorsCleared()){
+        caller = cri->FindMethod(methodName);
+        err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
+    }
+
+    if (err.ErrorsCleared()){
+        err = caller->Call(this);
+    }
+
+    return err;
+}
+
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName, ReferenceContainer &parameters){
+    ErrorManagement::ErrorType err;
+
+    ClassRegistryItem * cri = GetClassRegistryItem();
+    ClassMethodCaller *caller = NULL;
+
+    err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
+
+    if (err.ErrorsCleared()){
+        caller = cri->FindMethod(methodName);
+        err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
+    }
+
+    if (err.ErrorsCleared()){
+        err = caller->Call(this);
+    }
+
+    return err;
+}
+
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName, StructuredDataI &parameters){
+    ErrorManagement::ErrorType err;
+
+    ClassRegistryItem * cri = GetClassRegistryItem();
+    ClassMethodCaller *caller = NULL;
+
+    err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
+
+    if (err.ErrorsCleared()){
+        caller = cri->FindMethod(methodName);
+        err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
+    }
+
+    if (err.ErrorsCleared()){
+        err = caller->Call(this);
+    }
+
+    return err;
+}
+
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName, StreamI &stream){
+    ErrorManagement::ErrorType err;
+
+    ClassRegistryItem * cri = GetClassRegistryItem();
+    ClassMethodCaller *caller = NULL;
+
+    err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
+
+    if (err.ErrorsCleared()){
+        caller = cri->FindMethod(methodName);
+        err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
+    }
+
+    if (err.ErrorsCleared()){
+        err = caller->Call(this);
+    }
+
+    return err;
+}
+
+
 
 bool Object::ConvertDataToStructuredData(void* const ptr,
                                          const char8* const className,
@@ -413,19 +496,7 @@ bool Object::IsDomain() const {
     return isDomain;
 }
 
-ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName) {
-    ErrorManagement::ErrorType ret;
-    ClassRegistryItem * cri = GetClassRegistryItem();
 
-    if (cri != NULL_PTR(ClassRegistryItem *)) {
-        ret = cri->CallRegisteredMethod(this, methodName);
-    }
-    else {
-        ret.internalSetupError = true;
-    }
-
-    return ret;
-}
 
 CLASS_REGISTER(Object, "1.0")
 

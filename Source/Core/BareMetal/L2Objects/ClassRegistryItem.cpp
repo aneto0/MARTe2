@@ -31,7 +31,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "CallRegisteredMethodLauncher.h"
 #include "ClassProperties.h"
 #include "ClassRegistryDatabase.h"
 #include "ClassRegistryItem.h"
@@ -40,7 +39,7 @@
 #include "LoadableLibrary.h"
 #include "ObjectBuilder.h"
 #include "SearchFilterT.h"
-
+#include "ClassMethodInterfaceMapper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -119,9 +118,6 @@ void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const loadLib
     this->loadableLibrary = loadLibrary;
 }
 
-void ClassRegistryItem::RegisterMethods(ClassMethodsRegistryItem * const classMethodRecord) {
-    classMethods.ListAdd(classMethodRecord);
-}
 
 void ClassRegistryItem::IncrementNumberOfInstances() {
     Atomic::Increment(&numberOfInstances);
@@ -139,37 +135,35 @@ void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {
     classProperties.SetUniqueIdentifier(uid);
 }
 
-ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object * const object,
-                                                                   CCString methodName) {
-    ErrorManagement::ErrorType ret;
 
-    if (object == NULL_PTR(Object*)) {
-        ret.parametersError = true;
-    }
+/**
+ * TODO
+ */
+ClassMethodCaller *ClassRegistryItem::FindMethod(CCString methodName){
 
-    if (methodName.GetList() == NULL_PTR(char8*)) {
-        ret.parametersError = true;
-    }
-
-    if (ret.ErrorsCleared()) {
-        /*
-         * The launcher is passed as a filter to the ListSearch method of the
-         * classMethods list, which will execute the Test method of the launcher
-         * for each registered class method available in classMethods. Assuming
-         * that the launcher's Test method will try, each time it is executed,
-         * to call the target method methodName, the ListSearch method will
-         * finish as soon as a successful call happens, or it will return an
-         * unsupported feature error.
-         */
-        CallRegisteredMethodLauncher launcher(object, methodName);
-        if (classMethods.ListSearch(&launcher) != NULL) {
-            ret = launcher.GetResults();
-        }
-        else {
-            ret.unsupportedFeature = true;
+    uint32 i = 0;
+    uint32 end = classMethods.ListSize();
+    ClassMethodCaller *caller = NULL_PTR(ClassMethodCaller *);
+    while ((i < end) && (caller == NULL_PTR(ClassMethodCaller *))){
+        ClassMethodInterfaceMapper *cmim = classMethods.ListPeek(i);
+        if (cmim != NULL){
+            if (StringHelper::Compare(cmim->GetMethodName(),methodName)){
+                caller = cmim->GetMethod();
+            }
         }
     }
-    return ret;
+    return caller;
 }
+
+/**
+ * TODO
+ */
+void ClassRegistryItem::AddMethod(ClassMethodInterfaceMapper *method){
+    if (method != NULL){
+        classMethods.ListAdd(method);
+    }
+}
+
+
 
 }
