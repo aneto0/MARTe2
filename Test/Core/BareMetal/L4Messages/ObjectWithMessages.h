@@ -53,7 +53,7 @@ public:
 
     int32 Flag();
 
-    bool HandleReply(ReferenceContainer& ref);
+    bool HandleReply();
 private:
      int32 flag;
 

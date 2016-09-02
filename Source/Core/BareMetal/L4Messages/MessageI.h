@@ -137,7 +137,7 @@ public:
      * @param[in,out] message is the message to be sent. It can be modified if the destination re-sends it to the sender as a reply.
      * @param[in] sender is the Object sending the message.
      */
-    ErrorManagement::ErrorType SendMessageAndWaitForIndirectReply(ReferenceT<Message> &message,const TimeoutType &maxWait = TTInfiniteWait,
+    ErrorManagement::ErrorType SendMessageAndWaitIndirectReply(ReferenceT<Message> &message,const TimeoutType &maxWait = TTInfiniteWait,
                                                                   const uint32 pollingTimeUsec=1000);
 
 protected:    /**

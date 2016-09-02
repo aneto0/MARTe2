@@ -29,15 +29,39 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "MessageITest.h"
-#include "ObjectWithMessages.h"
-#include "Message.h"
 #include "ConfigurationDatabase.h"
+#include "Message.h"
+#include "MessageITest.h"
 #include "ObjectRegistryDatabase.h"
+#include "ObjectWithMessages.h"
+#include "ReplyMessageCatcherMessageFilter.h"
+#include "ReferenceT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+class ObjectWithMessagesCatcher: public ReplyMessageCatcherMessageFilter {
+public:
+    CLASS_REGISTER_DECLARATION()ObjectWithMessagesCatcher() {
+
+    }
+
+    void SetObjectToHandle(ReferenceT<ObjectWithMessages> objectToHandleIn) {
+        objectToHandle = objectToHandleIn;
+    }
+
+    virtual void HandleReplyMessage(ReferenceT<Message> &replyMessage) {
+        ReplyMessageCatcherMessageFilter::HandleReplyMessage(replyMessage);
+        objectToHandle->HandleReply();
+    }
+
+private:
+    ReferenceT<ObjectWithMessages> objectToHandle;
+};
+
+CLASS_REGISTER(ObjectWithMessagesCatcher, "1.0")
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -135,7 +159,7 @@ bool MessageITest::TestSendMessage_False_InvalidMessage() {
     return result;
 }
 
-bool MessageITest::TestSendMessage_False_NotExpectedLateReply() {
+bool MessageITest::TestSendMessage_False_NotExpectedIndirectReply() {
     using namespace MARTe;
     bool result = false;
     ErrorManagement::ErrorType status;
@@ -182,15 +206,14 @@ bool MessageITest::TestSendMessage_False_NoDestinationForReply() {
         return false;
     }
 
-    mess->SetAsReply();
-    mess->ExpectsIndirectReply();
+    mess->SetExpectsReply(true);
 
     ObjectRegistryDatabase::Instance()->CleanUp();
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessage(mess, NULL);
 
-    result = (status == ErrorManagement::unsupportedFeature);
+    result = (status == ErrorManagement::parametersError);
 
     return result;
 
@@ -298,6 +321,7 @@ bool MessageITest::TestSendMessageAndWaitReply() {
     ConfigurationDatabase cdb;
     cdb.Write("Destination", "receiver");
     cdb.Write("Function", "ReceiverMethod");
+    cdb.Write("Mode", "ExpectsReply");
 
     if (!mess->Initialise(cdb)) {
         return false;
@@ -314,7 +338,7 @@ bool MessageITest::TestSendMessageAndWaitReply() {
     if (!mess->IsReply()) {
         return false;
     }
-    if (!mess->ExpectsIndirectReply()) {
+    if (mess->ExpectsIndirectReply()) {
         return false;
     }
 
@@ -358,6 +382,7 @@ bool MessageITest::TestSendMessageAndWaitReply_False_ReplyOfReply() {
     ConfigurationDatabase cdb;
     cdb.Write("Destination", "receiver");
     cdb.Write("Function", "ReceiverMethod");
+    cdb.Write("Mode", "ExpectsReply");
 
     if (!mess->Initialise(cdb)) {
         return false;
@@ -376,7 +401,7 @@ bool MessageITest::TestSendMessageAndWaitReply_False_ReplyOfReply() {
     return result;
 }
 
-bool MessageITest::TestSendMessageAndExpectReplyLater() {
+bool MessageITest::TestSendMessage_ExpectsIndirectReply() {
     using namespace MARTe;
     bool result = false;
     ErrorManagement::ErrorType status;
@@ -389,6 +414,7 @@ bool MessageITest::TestSendMessageAndExpectReplyLater() {
     ConfigurationDatabase cdb;
     cdb.Write("Destination", "receiver");
     cdb.Write("Function", "ReceiverMethod");
+    cdb.Write("Mode", "ExpectsIndirectReply");
 
     if (!mess->Initialise(cdb)) {
         return false;
@@ -398,12 +424,64 @@ bool MessageITest::TestSendMessageAndExpectReplyLater() {
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    status = MessageI::SendMessageAndWaitReply(mess, sender.operator->());
+    ReferenceT<ObjectWithMessagesCatcher> catcherFilter = ReferenceT<ObjectWithMessagesCatcher>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!catcherFilter.IsValid()) {
+        return false;
+    }
+    catcherFilter->SetMessageToCatch(mess);
+    catcherFilter->SetObjectToHandle(sender);
+    sender->InstallMessageFilter(catcherFilter);
+
+    status = MessageI::SendMessage(mess, sender.operator->());
+    if (status != ErrorManagement::noError) {
+        return false;
+    }
+    status = catcherFilter->Wait(TTInfiniteWait);
     if (status != ErrorManagement::noError) {
         return false;
     }
 
     result = ((sender->Flag() == 2) && (receiver->Flag() == 0));
+
+    return result;
+}
+
+bool MessageITest::TestSendMessageAndWaitIndirectReply() {
+    using namespace MARTe;
+    bool result = false;
+    ErrorManagement::ErrorType status;
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiver");
+    cdb.Write("Function", "ReceiverMethod");
+    cdb.Write("Mode", "ExpectsIndirectReply");
+
+    if (!mess->Initialise(cdb)) {
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    status = sender->SendMessageAndWaitIndirectReply(mess);
+    if (status != ErrorManagement::noError) {
+        return false;
+    }
+    ReferenceT<Object> replyObj = mess->Get(0);
+    if (!replyObj.IsValid()) {
+        return false;
+    }
+    if(!StringHelper::Compare(replyObj->GetName(), "REPLY")){
+        return false;
+    }
+
+    result = (receiver->Flag() == 0);
 
     return result;
 }
@@ -430,33 +508,3 @@ bool MessageITest::TestSendMessageAndExpectReplyLater_False_InvalidMessage() {
     return result;
 }
 
-bool MessageITest::TestSendMessageAndExpectReplyLater_False_ReplyOfReply() {
-    using namespace MARTe;
-    bool result = false;
-    ErrorManagement::ErrorType status;
-    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    sender->SetName("sender");
-    receiver->SetName("receiver");
-
-    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    ConfigurationDatabase cdb;
-    cdb.Write("Destination", "receiver");
-    cdb.Write("Function", "ReceiverMethod");
-
-    if (!mess->Initialise(cdb)) {
-        return false;
-    }
-
-    mess->SetAsReply();
-
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    ObjectRegistryDatabase::Instance()->Insert(sender);
-    ObjectRegistryDatabase::Instance()->Insert(receiver);
-
-    status = MessageI::SendMessageAndWaitReply(mess, sender.operator->());
-
-    result = (status == ErrorManagement::communicationError);
-
-    return result;
-}

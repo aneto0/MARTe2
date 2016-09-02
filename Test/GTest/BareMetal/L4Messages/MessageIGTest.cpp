@@ -60,9 +60,9 @@ TEST(MessageIGTest,TestSendMessage_False_InvalidMessage) {
     ASSERT_TRUE(target.TestSendMessage_False_InvalidMessage());
 }
 
-TEST(MessageIGTest,TestSendMessage_False_NotExpectedLateReply) {
+TEST(MessageIGTest,TestSendMessage_False_NotExpectedIndirectReply) {
     MessageITest target;
-    ASSERT_TRUE(target.TestSendMessage_False_NotExpectedLateReply());
+    ASSERT_TRUE(target.TestSendMessage_False_NotExpectedIndirectReply());
 }
 
 TEST(MessageIGTest,TestSendMessage_False_NoDestinationForReply) {
@@ -85,11 +85,6 @@ TEST(MessageIGTest,TestSendMessage_False_InvalidFunction) {
     ASSERT_TRUE(target.TestSendMessage_False_InvalidFunction());
 }
 
-/*TEST(MessageIGTest,TestSendMessage_False_NotReplyButImmediateReplayExpected) {
-    MessageITest target;
-    ASSERT_TRUE(target.TestSendMessage_False_NotReplyButImmediateReplayExpected());
-}*/
-
 TEST(MessageIGTest,TestSendMessageAndWaitReply) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessageAndWaitReply());
@@ -101,24 +96,23 @@ TEST(MessageIGTest,TestSendMessageAndWaitReply_False_InvalidMessage) {
     ASSERT_TRUE(target.TestSendMessageAndWaitReply_False_InvalidMessage());
 }
 
-
 TEST(MessageIGTest,TestSendMessageAndWaitReply_False_ReplyOfReply) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessageAndWaitReply_False_ReplyOfReply());
 }
 
-TEST(MessageIGTest,TestSendMessageAndExpectReplyLater) {
+TEST(MessageIGTest,TestSendMessage_ExpectsIndirectReply) {
     MessageITest target;
-    ASSERT_TRUE(target.TestSendMessageAndExpectReplyLater());
+    ASSERT_TRUE(target.TestSendMessage_ExpectsIndirectReply());
+}
+
+TEST(MessageIGTest,TestSendMessageAndWaitIndirectReply) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessageAndWaitIndirectReply());
 }
 
 TEST(MessageIGTest,TestSendMessageAndExpectReplyLater_False_InvalidMessage) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessageAndExpectReplyLater_False_InvalidMessage());
-}
-
-TEST(MessageIGTest,TestSendMessageAndExpectReplyLater_False_ReplyOfReply) {
-    MessageITest target;
-    ASSERT_TRUE(target.TestSendMessageAndExpectReplyLater_False_ReplyOfReply());
 }
 

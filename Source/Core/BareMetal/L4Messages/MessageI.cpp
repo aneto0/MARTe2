@@ -34,6 +34,7 @@
 #include "MessageI.h"
 #include "Object.h"
 #include "ObjectRegistryDatabase.h"
+#include "ReferenceContainerFilterReferences.h"
 #include "ReplyMessageCatcherMessageFilter.h"
 
 /*---------------------------------------------------------------------------*/
@@ -71,7 +72,8 @@ ReferenceT<MessageI> MessageI::FindDestination(CCString destination) {
     return destinationObject_MessageI;
 }
 
-ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message, const Object * const sender) {
+ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
+                                                 const Object * const sender) {
     CCString destination = "";
     ErrorManagement::ErrorType ret;
 
@@ -147,12 +149,12 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message, c
     return ret;
 }
 
-
-
-ErrorManagement::ErrorType MessageI::WaitForReply(ReferenceT<Message> &message,const TimeoutType &maxWait, const uint32 pollingTimeUsec){
+ErrorManagement::ErrorType MessageI::WaitForReply(ReferenceT<Message> &message,
+                                                  const TimeoutType &maxWait,
+                                                  const uint32 pollingTimeUsec) {
 
     uint64 start = HighResolutionTimer::Counter();
-    float32 pollingTime = (float)pollingTimeUsec * 1.0e-6;
+    float32 pollingTime = (float) pollingTimeUsec * 1.0e-6;
     ErrorManagement::ErrorType err(true);
 
     if (!message.IsValid()) {
@@ -166,10 +168,9 @@ ErrorManagement::ErrorType MessageI::WaitForReply(ReferenceT<Message> &message,c
         err.communicationError = true;
     }
 
-
-    while(err.ErrorsCleared() && !message->IsReply() ){
+    while (err.ErrorsCleared() && !message->IsReply()) {
         Sleep::NoMore(pollingTime);
-        if (maxWait != TTInfiniteWait){
+        if (maxWait != TTInfiniteWait) {
             uint64 deltaT = HighResolutionTimer::Counter() - start;
             err.timeout = maxWait.HighResolutionTimerTicks() > deltaT;
         }
@@ -178,9 +179,10 @@ ErrorManagement::ErrorType MessageI::WaitForReply(ReferenceT<Message> &message,c
     return err;
 }
 
-
-ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,const Object * const sender,
-                                                             const TimeoutType &maxWait, const uint32 pollingTimeUsec) {
+ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,
+                                                             const Object * const sender,
+                                                             const TimeoutType &maxWait,
+                                                             const uint32 pollingTimeUsec) {
     ErrorManagement::ErrorType ret(true);
 
     /*
@@ -199,40 +201,41 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
         // mark that reply is expected
         message->SetExpectsReply(true);
 
-        ret = SendMessage(message,sender);
+        ret = SendMessage(message, sender);
     }
 
     if (ret.ErrorsCleared()) {
 
-        ret = WaitForReply(message,maxWait, pollingTimeUsec);
+        ret = WaitForReply(message, maxWait, pollingTimeUsec);
 
     }
 
     return ret;
 }
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,CCString name,int32 position){
+ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,
+                                                          CCString name,
+                                                          int32 position) {
 
-    return messageFilters.InstallMessageFilter(messageFilter,name,position);
+    return messageFilters.InstallMessageFilter(messageFilter, name, position);
 }
 
-ErrorManagement::ErrorType MessageI::RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter){
+ErrorManagement::ErrorType MessageI::RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter) {
     return messageFilters.RemoveMessageFilter(messageFilter);
 
 }
 
-ErrorManagement::ErrorType MessageI::RemoveMessageFilter(CCString name){
+ErrorManagement::ErrorType MessageI::RemoveMessageFilter(CCString name) {
     return messageFilters.RemoveMessageFilter(name);
 }
 
-
-ErrorManagement::ErrorType MessageI::SendMessageAndWaitForIndirectReply(ReferenceT<Message> &message,const TimeoutType &maxWait,
-                                                                  const uint32 pollingTimeUsec){
+ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<Message> &message,
+                                                                     const TimeoutType &maxWait,
+                                                                     const uint32 pollingTimeUsec) {
 
     ErrorManagement::ErrorType ret(true);
 
@@ -249,7 +252,6 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitForIndirectReply(Referenc
         message->SetExpectsReply();
     }
 
-
     ReferenceT<ReplyMessageCatcherMessageFilter> replyMessageCatcher;
     ReferenceT<MessageFilter> messageCatcher;
     if (ret.ErrorsCleared()) {
@@ -265,30 +267,31 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitForIndirectReply(Referenc
 
         messageCatcher = replyMessageCatcher;
 
-        ret = InstallMessageFilter(messageCatcher,"");
+        ret = InstallMessageFilter(messageCatcher, "");
     }
 
-    // send message
-
     if (ret.ErrorsCleared()) {
-        Object *thisObject = dynamic_cast<Object *> (this);
+        Object *thisObject = dynamic_cast<Object *>(this);
 
-        if (thisObject != NULL){
-            ret = SendMessage(message,thisObject);
+        if (thisObject != NULL) {
+            ret = SendMessage(message, thisObject);
         }
 
-        if (ret.ErrorsCleared()){
-            ret = replyMessageCatcher->Wait(maxWait,pollingTimeUsec);
+        if (ret.ErrorsCleared()) {
+            ret = replyMessageCatcher->Wait(maxWait, pollingTimeUsec);
         }
 
         // try remove the message filter in any case whatever happened ..
-        ret = (int)ret | (int)RemoveMessageFilter(messageCatcher);
-
+        ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE, messageCatcher);
+        ReferenceContainer result;
+        //Locking is already done inside the Find
+        messageFilters.Find(result, filter);
+        if (result.Size() > 0u) {
+            ret = static_cast<uint32>(ret) | static_cast<uint32>(RemoveMessageFilter(messageCatcher));
+        }
     }
     return ret;
 }
-
-
 
 }
 
