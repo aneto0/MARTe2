@@ -32,10 +32,12 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "Object.h"
 #include "EmbeddedServiceI.h"
 #include "ErrorType.h"
 #include "Threads.h"
 #include "StructuredDataI.h"
+
 namespace MARTe{
 
 
@@ -49,9 +51,12 @@ namespace MARTe{
  * TODO
  * a container for a thread
  */
-class EmbeddedThread: public EmbeddedServiceI {
+class EmbeddedThread: public Object,public EmbeddedServiceI {
+
 
 public:
+
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief States of an EmbeddedThread
@@ -134,9 +139,14 @@ public:
     /**
      * TODO
      */
-//    EmbeddedThread(MethodBinder &binder);
+    EmbeddedThread(MethodBinder &binder);
+
+    /**
+     * TODO
+     */
     template <typename className>
     EmbeddedThread(MethodBinderT<className> &binder);
+
 
     /**
      * TODO
@@ -148,7 +158,7 @@ public:
     * same as object interface
     * implementation of EmbeddedServiceI
     */
-    virtual ErrorManagement::ErrorType  Initialise(StructuredDataI &data);
+    virtual bool  Initialise(StructuredDataI &data);
 
     /**
      * TODO
@@ -230,7 +240,6 @@ EmbeddedThread::EmbeddedThread(MethodBinderT<className> &binder):EmbeddedService
     maxCommandCompletionHRT = 0;
     timeoutHRT = -1;
 }
-
 
 
 

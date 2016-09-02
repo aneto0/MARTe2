@@ -172,6 +172,12 @@ public:
      * allocated by the user.
      * memory managed by object
      */
+    EmbeddedServiceI(MethodBinder &binder):method(binder) {  }
+
+    /**
+     * allocated by the user.
+     * memory managed by object
+     */
     template <typename className>
     EmbeddedServiceI(MethodBinderT<className> &binder):method(binder) {  }
 
@@ -184,7 +190,7 @@ public:
     * TODO
     * same as object interface
     */
-    virtual ErrorManagement::ErrorType Initialise(StructuredDataI &data)=0;
+    virtual bool Initialise(StructuredDataI &data)=0;
 
     /**
      * TODO
@@ -204,7 +210,6 @@ protected:
         return method.Execute(information);
     }
 
-private:
     MethodBinder &method;
 };
 

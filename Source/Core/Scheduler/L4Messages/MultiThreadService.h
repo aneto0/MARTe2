@@ -49,12 +49,39 @@ namespace MARTe{
  */
 class MultiThreadService: public EmbeddedServiceI{
 
-
-    ReferenceContainer threads;
+    /**
+     *
+     */
+    ReferenceContainer threadPool;
 
 public:
-    ///
-    MultiThreadService();
+    /**
+     * TODO
+     */
+    template <typename className>
+    MultiThreadService(MethodBinderT<className> &binder);
+
+    /**
+     *
+     */
+    virtual ~MultiThreadService();
+
+    /**
+    * TODO
+    * same as object interface
+    * implementation of EmbeddedServiceI
+    */
+    virtual bool  Initialise(StructuredDataI &data);
+
+    /**
+     * TODO
+     */
+    virtual ErrorManagement::ErrorType Start();
+
+    /**
+     * TODO
+     */
+    virtual ErrorManagement::ErrorType Stop();
 
 
 protected:
@@ -66,7 +93,7 @@ protected:
 
 
 
-
+#if  0
 
 class ClientServerService: public MultiThreadService{
 
@@ -91,9 +118,21 @@ public:
     virtual ErrorManagement::ErrorType ImplementConnection(int status)=0;
 
 }
+
+#endif
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+/**
+ * TODO
+ */
+template <typename className>
+MultiThreadService::MultiThreadService(MethodBinderT<className> &binder):EmbeddedServiceI(binder){
+    minNumberOfThreads = 1;
+}
+
+}
 
 #endif /* L4MESSAGES_MULTITHREADSERVICE_H_ */
 	

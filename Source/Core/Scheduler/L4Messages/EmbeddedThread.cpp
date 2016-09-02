@@ -41,6 +41,13 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+EmbeddedThread::EmbeddedThread(MethodBinder &binder):EmbeddedServiceI(binder){
+    threadId = InvalidThreadIdentifier;
+    commands = StopCommand;
+    maxCommandCompletionHRT = 0;
+    timeoutHRT = -1;
+}
+
 
 
 /**
@@ -51,7 +58,7 @@ EmbeddedThread::~EmbeddedThread(){
 }
 
 
-ErrorManagement::ErrorType EmbeddedThread::Initialise(StructuredDataI &data){
+bool EmbeddedThread::Initialise(StructuredDataI &data){
     uint32  msecTimeout;
     ErrorManagement::ErrorType err;
     err.timeout = !data.Read("Timeout",msecTimeout);
@@ -160,7 +167,6 @@ void EmbeddedThread::ThreadStartUp(){
         }
     }
 
-    bool completed = err.completed;
     err.completed = false;
     commands = StopCommand;
 

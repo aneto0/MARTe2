@@ -119,6 +119,9 @@ private:
     * */
    EmbeddedThread    queueProcessingThread;
 
+   /**
+    * TODO
+    */
    EmbeddedServiceI::MethodBinderT<QueuedMessageI> binder;
 };
 
