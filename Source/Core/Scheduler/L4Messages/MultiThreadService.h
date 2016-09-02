@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "EmbeddedServiceI.h"
 #include "EmbeddedThread.h"
 #include "ReferenceContainer.h"
 
@@ -41,23 +42,53 @@ namespace MARTe{
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+
 /**
  * Contains instances of specialised EmbeddedThreads
  *
  */
-class MultiThreadService: public ReferenceContainer{
+class MultiThreadService: public EmbeddedServiceI{
+
+
+    ReferenceContainer threads;
 
 public:
     ///
-    MultiThreadService(void * context, );
+    MultiThreadService();
 
-private:
-    /// true means that the number of threads vary with the needs
-    bool dynamicThreadAllocation;
+
+protected:
 
     /// either the available working threads or the maximum
-    uint32 numberOfThreads;
+    uint32 minNumberOfThreads;
 };
+
+
+
+
+
+
+class ClientServerService: public MultiThreadService{
+
+public:
+
+    virtual ErrorManagement::ErrorType Execute(int status){
+        if (status == connecting){
+            WaitConnection()
+        } else {
+            ImplementConnection()
+        }
+    }
+
+    /**
+     * TODO
+     */
+    virtual ErrorManagement::ErrorType WaitConnection(int status)=0;
+
+    /**
+     * TODO
+     */
+    virtual ErrorManagement::ErrorType ImplementConnection(int status)=0;
 
 }
 /*---------------------------------------------------------------------------*/

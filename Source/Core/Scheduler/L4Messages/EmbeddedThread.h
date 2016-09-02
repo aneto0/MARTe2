@@ -32,10 +32,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "EmbeddedServiceI.h"
 #include "ErrorType.h"
 #include "Threads.h"
 #include "StructuredDataI.h"
-
 namespace MARTe{
 
 
@@ -49,7 +49,7 @@ namespace MARTe{
  * TODO
  * a container for a thread
  */
-class EmbeddedThread {
+class EmbeddedThread: public EmbeddedServiceI {
 
 public:
 
@@ -62,6 +62,7 @@ public:
          * No Status
          */
         NoneState,
+
         /**
          * No Thread running =  (threadId = 0)
          */
@@ -96,6 +97,7 @@ public:
          * TODO
          */
         KillingState,
+
         /**
          * TODO
          */
@@ -132,7 +134,9 @@ public:
     /**
      * TODO
      */
-    EmbeddedThread();
+//    EmbeddedThread(MethodBinder &binder);
+    template <typename className>
+    EmbeddedThread(MethodBinderT<className> &binder);
 
     /**
      * TODO
@@ -142,18 +146,19 @@ public:
     /**
     * TODO
     * same as object interface
+    * implementation of EmbeddedServiceI
     */
-    virtual bool Initialise(StructuredDataI &data);
+    virtual ErrorManagement::ErrorType  Initialise(StructuredDataI &data);
 
     /**
      * TODO
      */
-    ErrorManagement::ErrorType Start();
+    virtual ErrorManagement::ErrorType Start();
 
     /**
      * TODO
      */
-    ErrorManagement::ErrorType Stop();
+    virtual ErrorManagement::ErrorType Stop();
 
     /**
      * TODO
@@ -176,39 +181,32 @@ public:
      */
     void ThreadStartUp();
 
-protected:
-
-    /**
-     * TODO
-     */
-    virtual ErrorManagement::ErrorType Loop()=0;
-
 
 private:
 
     /**
      * TODO
      */
-    ThreadIdentifier threadId;
+    ThreadIdentifier      threadId;
 
     /**
      * TODO
      */
-    Commands commands;
+    Commands              commands;
 
     /**
      * TODO
      * maxCommandCompletionHRT = HighResolutionTimer::Counter32 + timeout
      *
      */
-    uint32 maxCommandCompletionHRT;
+    uint32                maxCommandCompletionHRT;
 
     /**
      * TODO
      * 2000000000 ticks max
      */
 
-    int32 timeoutHRT;
+    int32                 timeoutHRT;
 
 };
 
@@ -220,6 +218,17 @@ private:
 
 ThreadIdentifier EmbeddedThread::Id() {
     return threadId;
+}
+
+/**
+ * TODO
+ */
+template <typename className>
+EmbeddedThread::EmbeddedThread(MethodBinderT<className> &binder):EmbeddedServiceI(binder){
+    threadId = InvalidThreadIdentifier;
+    commands = StopCommand;
+    maxCommandCompletionHRT = 0;
+    timeoutHRT = -1;
 }
 
 

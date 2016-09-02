@@ -140,9 +140,14 @@ static const uint32 informationBit(15u);
 static const uint32 warningBit(16u);
 
 /**
+ * Bit to communicate that a cycling called function has finished and does not need to be called again
+ */
+static const uint32 completedBit(17u);
+
+/**
  * last used Bit
  */
-static const uint32 lastErrorBit(16u);
+static const uint32 lastErrorBit(17u);
 
 
 /**
@@ -247,6 +252,11 @@ GENERATE_ERROR_CONSTANTS(information)
  * ErrorManagement::warning
  */
 GENERATE_ERROR_CONSTANTS(warning)
+
+/**
+ * ErrorManagement::warning
+ */
+GENERATE_ERROR_CONSTANTS(completed)
 
 
 
@@ -411,6 +421,11 @@ public:
          * ErrorManagement::warning
          */
         GENERATE_ERROR_BITRANGE(warning)
+
+        /**
+         * ErrorManagement::warning
+         */
+        GENERATE_ERROR_BITRANGE(completed)
 
         /**
          * unmapped

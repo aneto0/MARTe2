@@ -36,7 +36,7 @@
 #include "ReferenceContainer.h"
 #include "EmbeddedThread.h"
 #include "QueueingMessageFilter.h"
-#include "EmbeddedThreadMethodCaller.h"
+//#include "EmbeddedThreadMethodCaller.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -49,22 +49,6 @@ namespace MARTe {
  * */
 class QueuedMessageI: public MessageI{
 public:
-
-    /**
-       * TODO
-       * the main job is to add messages to the message Q
-       * first checks for any message filter. If message matches then adds message to filter, removes and trigger the filter
-       * if no filter adds to main Q
-      * */
-//    virtual ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
-
-    /**
-     * TODO
-     * called by the main thread to sort messages taken from Q
-     *
-     * */
-//    virtual ErrorManagement::ErrorType SortMessage(ReferenceT<Message> &message);
-
 
     /**
      *     sets all up and starts the message handler thread
@@ -112,7 +96,7 @@ private:
    /**
     * TODO
     * */
-   ErrorManagement::ErrorType QueueProcessing();
+   ErrorManagement::ErrorType QueueProcessing(EmbeddedServiceI::ExecutionInfo info);
 
    /**
     * TODO
@@ -133,8 +117,9 @@ private:
     * used by SortMessage
     *
     * */
-   EmbeddedThreadMethodCaller    queueProcessingThread;
+   EmbeddedThread    queueProcessingThread;
 
+   EmbeddedServiceI::MethodBinderT<QueuedMessageI> binder;
 };
 
 
