@@ -1,6 +1,6 @@
 /**
- * @file EmbeddedThreadObject.h
- * @brief Header file for class EmbeddedThreadObject
+ * @file EmbeddedThreadObject.cpp
+ * @brief Source file for class EmbeddedThreadObject
  * @date Sep 5, 2016
  * @author fsartori
  *
@@ -16,63 +16,34 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class EmbeddedThreadObject
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class EmbeddedThreadObject (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef L4MESSAGES_EMBEDDEDTHREADOBJECT_H_
-#define L4MESSAGES_EMBEDDEDTHREADOBJECT_H_
-
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "EmbeddedThread.h"
+#include "EmbeddedThreadObject.h"
 
-namespace MARTe {
-/*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
-/*---------------------------------------------------------------------------*/
-
-class EmbeddedThreadObject: public EmbeddedThread{
-
-public:
-
-    CLASS_REGISTER_DECLARATION()
-
-
-    /**
-     * TODO
-     */
-    EmbeddedThreadObject(MethodBinderI &binder);
-
-    /**
-     * TODO
-     */
-    template <typename className>
-    EmbeddedThreadObject(MethodBinderT<className> &binder);
-
-    /**
-     * TODO
-     */
-    virtual ~EmbeddedThreadObject();
-
-};
+namespace MARTe{
 
 /*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
+/*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
-template <typename className>
-EmbeddedThreadObject::EmbeddedThreadObject(MethodBinderT<className> &binder): EmbeddedThread(binder) {}
+EmbeddedThreadObject::~EmbeddedThreadObject(){ }
+
+EmbeddedThreadObject::EmbeddedThreadObject(MethodBinderI &binder): EmbeddedThread(binder){ }
 
 }
-
-#endif /* L4MESSAGES_EMBEDDEDTHREADOBJECT_H_ */
 	

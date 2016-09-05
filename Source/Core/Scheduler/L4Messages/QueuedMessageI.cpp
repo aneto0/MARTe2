@@ -106,24 +106,28 @@ ErrorManagement::ErrorType QueuedMessageI::Stop(){
 
 }
 
-ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(EmbeddedServiceI::ExecutionInfo info){
+ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(EmbeddedServiceI::ExecutionInfo &info){
     ErrorManagement::ErrorType err;
     ReferenceT<Message> message;
     const TimeoutType timeout = 1000;
 
-    err.unsupportedFeature = !queue.IsValid();
+    // do not handle other stages
+    if (info.GetStage() == EmbeddedServiceI::mainStage){
 
-    if (err.ErrorsCleared()){
-
-        err = queue->GetMessage(message,timeout);
+        err.unsupportedFeature = !queue.IsValid();
 
         if (err.ErrorsCleared()){
-            err = queuedMessageFilters.ReceiveMessage(message);
-        }
-    }
 
-    // not a reason to abort this thread
-    err.timeout = false;
+            err = queue->GetMessage(message,timeout);
+
+            if (err.ErrorsCleared()){
+                err = queuedMessageFilters.ReceiveMessage(message);
+            }
+        }
+
+        // not a reason to abort this thread
+        err.timeout = false;
+    }
 
     return err;
 

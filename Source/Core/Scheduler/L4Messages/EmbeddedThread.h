@@ -49,7 +49,7 @@ namespace MARTe{
 
 /**
  * TODO
- * a container for a thread
+ * a thread component that can be associate with a class method
  */
 class EmbeddedThread: public EmbeddedServiceI {
 
@@ -137,14 +137,13 @@ public:
     /**
      * TODO
      */
-    EmbeddedThread(MethodBinder &binder);
+    EmbeddedThread(MethodBinderI &binder);
 
     /**
      * TODO
      */
     template <typename className>
     EmbeddedThread(MethodBinderT<className> &binder);
-
 
     /**
      * TODO
@@ -174,6 +173,11 @@ public:
     EmbeddedThread::States GetStatus();
 
     /**
+     * Allows recovering information like the current custom thread code and the stages of execution
+     */
+    EmbeddedServiceI::ExecutionInfo GetExecutionInfo();
+
+    /**
      * TODO
      */
     inline ThreadIdentifier Id();
@@ -190,7 +194,7 @@ public:
     virtual void ThreadLoop();
 
 
-private:
+protected:
 
     /**
      * TODO
@@ -201,6 +205,11 @@ private:
      * TODO
      */
     Commands              commands;
+
+    /**
+     * TODO
+     */
+    ExecutionInfo         information;
 
     /**
      * TODO
@@ -215,6 +224,8 @@ private:
      */
 
     int32                 timeoutHRT;
+
+
 
 };
 

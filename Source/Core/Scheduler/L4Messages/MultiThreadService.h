@@ -49,10 +49,6 @@ namespace MARTe{
  */
 class MultiThreadService: public EmbeddedServiceI{
 
-    /**
-     *
-     */
-    ReferenceContainer threadPool;
 
 public:
     /**
@@ -101,6 +97,10 @@ public:
     inline bool MoreThanEnoughThreads();
 
 protected:
+    /**
+     *
+     */
+    ReferenceContainer threadPool;
 
     /// either the available working threads or the maximum
     uint32 minNumberOfThreads;

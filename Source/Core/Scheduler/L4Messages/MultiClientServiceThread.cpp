@@ -43,16 +43,12 @@ namespace MARTe{
 
 MultiClientServiceThread::~MultiClientServiceThread(){ }
 
-MultiClientServiceThread::MultiClientServiceThread(MethodBinder &binder,MultiThreadService &managerIn): EmbeddedThread(binder),manager(managerIn){ }
-
+MultiClientServiceThread::MultiClientServiceThread(MethodBinderI &binder,MultiThreadService &managerIn): EmbeddedThread(binder),manager(managerIn){ }
 
 
 void MultiClientServiceThread::ThreadLoop(){
     commands = KeepRunningCommand;
-    ExecutionInfo information;
-    information.format_as_uint32 = 0;
-    information.threadNumber = 0;
-
+    information.Reset();
 
     // thread is decontextualised.
     // any error in execution will only abort the sequence - no the thread
@@ -60,16 +56,16 @@ void MultiClientServiceThread::ThreadLoop(){
     while((commands == KeepRunningCommand) && (!manager.MoreThanEnoughThreads())){
         ErrorManagement::ErrorType err;
 
-        information.stage = startupStage;
-        information.stage2 = nullStage2;
-        if (err.ErrorsCleared() && (commands == KeepRunningCommand)){
+        information.SetStage(startupStage);
+        information.SetStage2(nullStage2);
+        if (commands == KeepRunningCommand){
             err = Execute(information);
         } // start
 
         // main loop - wait for service request - service the request
         while (err.ErrorsCleared() && (commands == KeepRunningCommand)){
-            information.stage = mainStage;
-            information.stage2 = waitRequestStage2;
+            information.SetStage(mainStage);
+            information.SetStage2(waitRequestStage2);
 
             // simulate timeout to allow entering next loop
             err.timeout = true;
@@ -84,20 +80,22 @@ void MultiClientServiceThread::ThreadLoop(){
                 // Try start new service thread
                 manager.AddThread();
 
-                information.stage2 = serviceRequestStage2;
+                information.SetStage2(serviceRequestStage2);
                 // exit on error including ErrorManagement::completed
                 while (err.ErrorsCleared() && (commands == KeepRunningCommand)){
                     err = Execute(information);
                 }
             } // loop service
+        } // loop (wait service - loop (service) ) -
 
-            if ((err == ErrorManagement::completed) && (commands == KeepRunningCommand) ){
-                information.stage2 = nullStage2;
-                information.stage = terminationStage;
-                err = Execute(information);
-            } // end
-
-        } // single action sequence start - loop (wait service - loop (service) ) - end
+        // assuming one reason for exiting (not multiple errors together with a command change)
+        information.SetStage2(nullStage2);
+        if (err.completed) {
+            information.SetStage(terminationStage);
+        } else {
+            information.SetStage(badTerminationStage);
+        }
+        Execute(information);
 
     }// main loop (start - loop (wait service - loop (service) ) - end)
 

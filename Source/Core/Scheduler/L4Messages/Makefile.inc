@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX=	QueuedMessageI.x EmbeddedThread.x MultiThreadService.x QueueingMessageFilter.x
+OBJSX=	QueuedMessageI.x EmbeddedServiceI.x EmbeddedThread.x EmbeddedThreadObject.x MultiThreadService.x MultiClientServiceThread.x MultiClientService.x QueueingMessageFilter.x
         
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..

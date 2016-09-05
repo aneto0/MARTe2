@@ -41,22 +41,17 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-EmbeddedThread::EmbeddedThread(MethodBinder &binder):EmbeddedServiceI(binder){
+EmbeddedThread::EmbeddedThread(MethodBinderI &binder):EmbeddedServiceI(binder){
     threadId = InvalidThreadIdentifier;
     commands = StopCommand;
     maxCommandCompletionHRT = 0;
     timeoutHRT = -1;
+    information.Reset();
 }
 
-
-
-/**
- * TODO
- */
 EmbeddedThread::~EmbeddedThread(){
     Stop();
 }
-
 
 bool EmbeddedThread::Initialise(StructuredDataI &data){
     uint32  msecTimeout;
@@ -86,6 +81,9 @@ void EmbeddedThread::SetTimeout(TimeoutType msecTimeout){
     }
 }
 
+EmbeddedServiceI::ExecutionInfo EmbeddedThread::GetExecutionInfo(){
+    return information;
+}
 
 EmbeddedThread::States EmbeddedThread::GetStatus(){
     EmbeddedThread::States  etos = NoneState;
@@ -148,31 +146,31 @@ static void  EmbeddedThreadThreadLauncher(const void * const parameters){
 
 void EmbeddedThread::ThreadLoop(){
     commands = KeepRunningCommand;
-    ExecutionInfo information;
-    information.format_as_uint32 = 0;
-    information.threadNumber = 0;
-    information.stage = startupStage;
-
 
     ErrorManagement::ErrorType err;
 
-    if (err.ErrorsCleared() && (commands == KeepRunningCommand)){
-        err = Execute(information);
-    }
+    while  (commands == KeepRunningCommand){
+        information.Reset();
 
-    if (err.ErrorsCleared() && (commands == KeepRunningCommand)){
-        information.stage = mainStage;
-        while (err.ErrorsCleared() && (commands == KeepRunningCommand)){
-            err = Execute(information);
+        // startup
+        err = Execute(information);
+
+        // main stage
+        if (err.ErrorsCleared() && (commands == KeepRunningCommand)){
+
+            information.SetStage(mainStage);
+            while (err.ErrorsCleared() && (commands == KeepRunningCommand)){
+                err = Execute(information);
+            }
         }
-    }
 
-    err.completed = false;
-    commands = StopCommand;
-
-    if (err.ErrorsCleared() ){
-        information.stage = terminationStage;
-        err = Execute(information);
+        // assuming one reason for exiting (not multiple errors together with a command change)
+        if (err.completed) {
+            information.SetStage(terminationStage);
+        } else {
+            information.SetStage(badTerminationStage);
+        }
+        Execute(information);
     }
 }
 
@@ -235,6 +233,10 @@ ErrorManagement::ErrorType EmbeddedThread::Stop(){
         }
 
         err.timeout = (GetStatus() != OffState);
+
+        // in any case notify the main object of the fact that the thread has been killed
+        information.SetStage(asyncTerminationStage);
+        Execute(information);
 
     } else  {
         err.illegalOperation = true;

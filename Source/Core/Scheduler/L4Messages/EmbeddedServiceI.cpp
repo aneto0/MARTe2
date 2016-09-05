@@ -1,8 +1,8 @@
 /**
- * @file MultiClientServiceThread.cpp
- * @brief Source file for class MultiClientService
+ * @file EmbeddedServiceI.cpp
+ * @brief Source file for class EmbeddedServiceI
  * @date Sep 5, 2016
- * @author Filippo Sartori
+ * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MultiClientService (public, protected, and private). Be aware that some 
+ * the class EmbeddedServiceI (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,13 +28,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "EmbeddedServiceI.h"
 
-#include "MultiClientService.h"
-#include "MultiClientServiceThread.h"
-#include "ReferenceT.h"
+namespace MARTe {
 
-
-namespace MARTe{
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -42,33 +39,42 @@ namespace MARTe{
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+EmbeddedServiceI::ExecutionInfo::ExecutionInfo(){
+    Reset();
+}
 
-bool MultiClientService::Initialise(StructuredDataI &data){
 
-    ErrorManagement::ErrorType  err = MultiThreadService::Initialise(data);
-    if (err.ErrorsCleared()){
-        err = data.Read("MaxNumberOfThreads",maxNumberOfThreads);
+void EmbeddedServiceI::ExecutionInfo::SetThreadNumber(uint16 number){
+    if (stage == startupStage){
+        threadNumber = number;
     }
-    return err;
 }
 
-
-ErrorManagement::ErrorType MultiClientService::AddThread(){
-    ErrorManagement::ErrorType  err;
-    if ((threadPool.Size()< maxNumberOfThreads) && (err.ErrorsCleared())){
-        ReferenceT<MultiClientServiceThread> thread(new MultiClientServiceThread(method,*this));
-        err.fatalError = ! thread.IsValid();
-        if (err.ErrorsCleared()) {
-            err = thread->Start();
-        }
-        if (err.ErrorsCleared()) {
-            threadPool.Insert(thread);
-        }
-    }
-    return err;
+void EmbeddedServiceI::ExecutionInfo::SetStage(uint8 number){
+    stage = number;
 }
 
+void EmbeddedServiceI::ExecutionInfo::SetStage2(uint8 number){
+    stage2 = number;
+}
+
+uint16 EmbeddedServiceI::ExecutionInfo::GetThreadNumber(){
+    return threadNumber;
+}
+
+uint8 EmbeddedServiceI::ExecutionInfo::GetStage(){
+    return stage;
+}
+
+uint8 EmbeddedServiceI::ExecutionInfo::GetStage2(){
+    return stage2;
+}
+
+void EmbeddedServiceI::ExecutionInfo::Reset(){
+    threadNumber = 0;
+    stage = startupStage;
+    stage2 = nullStage2;
 
 }
 
-	
+}

@@ -45,10 +45,12 @@ class MultiClientServiceThread: public Object,public EmbeddedThread {
 
 public:
 
+    CLASS_REGISTER_DECLARATION()
+
     /**
      * TODO
      */
-    MultiClientServiceThread(MethodBinder &binder,MultiThreadService &managerIn);
+    MultiClientServiceThread(MethodBinderI &binder,MultiThreadService &managerIn);
 
     /**
      * TODO
