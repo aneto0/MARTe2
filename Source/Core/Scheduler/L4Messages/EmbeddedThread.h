@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L2MIXED_EMBEDDEDTHREADOBJECT_H_
-#define L2MIXED_EMBEDDEDTHREADOBJECT_H_
+#ifndef L2MIXED_EMBEDDEDTHREAD_H_
+#define L2MIXED_EMBEDDEDTHREAD_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -49,14 +49,12 @@ namespace MARTe{
 
 /**
  * TODO
- * a container for a thread
+ * a thread component that can be associate with a class method
  */
-class EmbeddedThread: public Object,public EmbeddedServiceI {
+class EmbeddedThread: public EmbeddedServiceI {
 
 
 public:
-
-    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief States of an EmbeddedThread
@@ -139,14 +137,13 @@ public:
     /**
      * TODO
      */
-    EmbeddedThread(MethodBinder &binder);
+    EmbeddedThread(MethodBinderI &binder);
 
     /**
      * TODO
      */
     template <typename className>
     EmbeddedThread(MethodBinderT<className> &binder);
-
 
     /**
      * TODO
@@ -176,6 +173,11 @@ public:
     EmbeddedThread::States GetStatus();
 
     /**
+     * Allows recovering information like the current custom thread code and the stages of execution
+     */
+    EmbeddedServiceI::ExecutionInfo GetExecutionInfo();
+
+    /**
      * TODO
      */
     inline ThreadIdentifier Id();
@@ -189,10 +191,10 @@ public:
      * TODO
      * Public to be accessed by the thread launcher subroutine
      */
-    void ThreadStartUp();
+    virtual void ThreadLoop();
 
 
-private:
+protected:
 
     /**
      * TODO
@@ -203,6 +205,11 @@ private:
      * TODO
      */
     Commands              commands;
+
+    /**
+     * TODO
+     */
+    ExecutionInfo         information;
 
     /**
      * TODO
@@ -217,6 +224,8 @@ private:
      */
 
     int32                 timeoutHRT;
+
+
 
 };
 
@@ -244,5 +253,5 @@ EmbeddedThread::EmbeddedThread(MethodBinderT<className> &binder):EmbeddedService
 
 
 }
-#endif /* L2MIXED_EMBEDDEDTHREADOBJECT_H_ */
+#endif /* L2MIXED_EMBEDDEDTHREAD_H_ */
 	

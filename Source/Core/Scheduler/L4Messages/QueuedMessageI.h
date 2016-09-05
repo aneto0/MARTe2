@@ -96,7 +96,7 @@ private:
    /**
     * TODO
     * */
-   ErrorManagement::ErrorType QueueProcessing(EmbeddedServiceI::ExecutionInfo info);
+   ErrorManagement::ErrorType QueueProcessing(EmbeddedServiceI::ExecutionInfo &info);
 
    /**
     * TODO

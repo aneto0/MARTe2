@@ -1,8 +1,8 @@
 /**
- * @file MultiThreadService.h
- * @brief Header file for class MultiThreadServerClass
- * @date Aug 30, 2016
- * @author Filippo Sartori
+ * @file HttpService.h
+ * @brief Header file for class HttpService
+ * @date Sep 5, 2016
+ * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MultiThreadServerClass
+ * @details This header file contains the declaration of the class HttpService
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MULTITHREADSERVICE_H_
-#define L4MESSAGES_MULTITHREADSERVICE_H_
+#ifndef L5HTTPSERVICE_HTTPSERVICE_H_
+#define L5HTTPSERVICE_HTTPSERVICE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,101 +32,88 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "EmbeddedServiceI.h"
-#include "EmbeddedThreadObject.h"
 #include "ReferenceContainer.h"
+#include "TCPSocket.h"
 
-namespace MARTe{
+namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+class HttpServiceConnector{
+
+private:
+    TCPSocket conectedSocket;
+
+
+};
 
 /**
- * Contains instances of specialised EmbeddedThreads
+ * The container may contain objects of any type.
+ * But only object of type HttpResourceContainer result in accessible pages
  *
  */
-class MultiThreadService: public EmbeddedServiceI{
-
-
+class HttpService: public ReferenceContainer{
 public:
-    /**
-     * TODO
-     */
-    template <typename className>
-    MultiThreadService(MethodBinderT<className> &binder);
-
-    /**
-     *
-     */
-    virtual ~MultiThreadService();
 
     /**
     * TODO
     * same as object interface
-    * implementation of EmbeddedServiceI
     */
-    virtual bool  Initialise(StructuredDataI &data);
+    virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * TODO
+     * Open socket
+     * launches threads
      */
     virtual ErrorManagement::ErrorType Start();
 
     /**
-     * TODO
+     * closes threads
+     * destroys all HttpServiceConnector
      */
     virtual ErrorManagement::ErrorType Stop();
 
+private:
 
-    /**
-     * just allows to add threads to the minNumberOfThreads
-     * called by Start
-     */
-    virtual ErrorManagement::ErrorType AddThread();
+    /// allows sending a message
+    static void SendHttpMessage(CCString url, Stream & content);
 
-    /**
-     *
-     */
-    inline bool TooManyThreads();
-
-    /**
-     *
-     */
-    inline bool MoreThanEnoughThreads();
-
-protected:
-    /**
-     *
-     */
-    ReferenceContainer threadPool;
-
-    /// either the available working threads or the maximum
-    uint32 minNumberOfThreads;
+    /// here to wait for connections
+    BasicTCPSocket listeningSocket;
 
 };
 
 
+/** may contain references to any object
+ * Objects of type HttpLinkResource are automatically transformed in links to an Object in GODB
+ * Object of type HttpRealm allows setting the security level. By default is no access!
+ *
+ * */
+class HttpResourceContainer: public ReferenceContainer{
+
+};
+
+/**
+ * allows mapping a simple URL into a full parametrised method call
+ */
+class HttpMapResource{
+
+};
+
+/**
+ * provides a streightforward reply to an URL
+ */
+class HttpResource{
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * TODO
- */
-template <typename className>
-MultiThreadService::MultiThreadService(MethodBinderT<className> &binder):EmbeddedServiceI(binder){
-    minNumberOfThreads = 1;
-}
-
-bool MultiThreadService::MoreThanEnoughThreads(){
-    return (threadPool.Size() > minNumberOfThreads);
-}
-
 
 }
-
-#endif /* L4MESSAGES_MULTITHREADSERVICE_H_ */
+#endif /* L5HTTPSERVICE_HTTPSERVICE_H_ */
 	

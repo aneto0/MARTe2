@@ -45,77 +45,134 @@ namespace MARTe{
 /*---------------------------------------------------------------------------*/
 
 /**
- *
+ * Interface to a family of objects that allow interfacing a class method to a thread or a pool of threads
+ * The method interface is specified in EmbeddedServiceI::MethodBinderT<class>::MethodPointer.
+ * It returns an ErrorType and has one parameter of type EmbeddedServiceI::ExecutionInfo&
  */
 class EmbeddedServiceI{
 public:
-    static const uint8  startupStage     = 0;
-    static const uint8  mainStage        = 1;
-    static const uint8  terminationStage = 2;
+    // start of a thread execution sequence
+    static const uint8  startupStage         = 0;
+
+    // main part of a sequence - looping unless an error or completed is returned
+    static const uint8  mainStage            = 1;
+
+    // normal termination stage - following the end of the mainStage
+    static const uint8  terminationStage     = 2;
+
+    // bad termination stage - after an error returned by the user code or following the Stop()
+    static const uint8  badTerminationStage  = 3;
+
+    // after a kill - called by the killing task
+    static const uint8  asyncTerminationStage= 4;
+
+    // sub-states of mainStage
+    // set when stage is startupStage or terminationStage
+    static const uint8  nullStage2           = 0;
+
+    // for client&server model - wait for service request
+    static const uint8  waitRequestStage2    = 1;
+
+    // for client&server model - servicing the client
+    static const uint8  serviceRequestStage2 = 2;
 
     /**
-     * EmbeddedServiceI::Info
-     * to be inherited and extended by derivatives
+     * I communicates to the user code the stage of the thread life, which evolves according to rules specific to the EmbeddedServiceI derived class
+     * In addition to stage, it provides a stage2 which is fully custom to the derived class.
+     * threadNumber is specific to the user code and allows
      */
     /*lint ++flb*/
-    union ExecutionInfo{
-
-        /**
-         * threadNumber is an unique id that identifies a thread within an EmbeddedService
-         * threadNumber is 0 for a single thread
-         * for dynamically created/destroyed threads thread-number is given sequentially up a the next multiple of 32 where max threads fits
-         */
-        BitRange<uint32, 10u ,0u> threadNumber;
-
-        /**
-         * Unmapped area
-         */
-        BitRange<uint32, 6u ,10u> unmapped1;
-
-        /**
-         * The operating stage of the thread.
-         * There are 3 main stages and 64 substages which are custom defined
-         */
-        BitRange<uint32, 2u ,16u> stage;
-
-        /**
-         * Unmapped area
-         */
-        BitRange<uint32, 6u ,18u> unmapped2;
-
-        /**
-         * The operating stage of the thread.
-         * There are 3 main stages and 64 substages which are custom defined
-         */
-        BitRange<uint32, 4u ,24u> subStage;
-
-        /**
-         * Unmapped area
-         */
-        BitRange<uint32, 4u ,28u> unmapped3;
-
-        /**
-         * To set the Message mode using an 8-bit integer.
-         */
-        uint32 format_as_uint32;
-    };
-    /*lint --flb*/
-
-    /**
-     *
-     */
-    class MethodBinder{
+    class ExecutionInfo{
 
     public:
         /**
          * TODO
          */
-        MethodBinder(){};
+        ExecutionInfo();
 
         /**
          * TODO
          */
-        virtual ~MethodBinder(){};
+        void SetThreadNumber(uint16 number);
+
+        /**
+         * TODO
+         */
+        void SetStage(uint8 number);
+
+        /**
+         * TODO
+         */
+        void SetStage2(uint8 number);
+
+        /**
+         * TODO
+         */
+        uint16 GetThreadNumber();
+
+        /**
+         * TODO
+         */
+        uint8 GetStage();
+
+        /**
+         * TODO
+         */
+        uint8 GetStage2();
+
+        /**
+         * set all to 0
+         */
+        void Reset();
+
+    private:
+        union {
+
+            /**
+             * threadNumber is an unique id that identifies a thread within an EmbeddedService
+             * threadNumber is initialised by the user routine during the startupStage
+             * it is set to 0 and at the return it can be changed to any value meaningful to the user.
+             */
+            BitRange<uint32, 16u ,0u> threadNumber;
+
+
+            /**
+             * The operating stage of the thread.
+             * There are 3 main stages and 64 substages which are custom defined
+             */
+            BitRange<uint32, 8u ,16u> stage;
+
+
+            /**
+             * The operating stage of the thread.
+             * There are 3 main stages and 64 substages which are custom defined
+             */
+            BitRange<uint32, 8u ,24u> stage2;
+
+            /**
+             * To set the Message mode using an 8-bit integer.
+             */
+//            uint32 formatAsUint32;
+        };
+    };
+    /*lint --flb*/
+
+    /**
+     * Interface to the Method Binders.
+     * Not usable
+     */
+    class MethodBinderI{
+
+    public:
+        /**
+         * TODO
+         */
+        MethodBinderI(){};
+
+        /**
+         * TODO
+         */
+        virtual ~MethodBinderI(){};
 
         /**
          *
@@ -128,14 +185,14 @@ public:
      * TODO
      */
     template <typename className>
-    class MethodBinderT: public MethodBinder{
+    class MethodBinderT: public MethodBinderI{
 
     public:
 
         /**
          * @brief Type definition for the method pointer prototype
          */
-        typedef ErrorManagement::ErrorType  (className::*MethodPointer)(EmbeddedServiceI::ExecutionInfo info);
+        typedef ErrorManagement::ErrorType  (className::*MethodPointer)(EmbeddedServiceI::ExecutionInfo &info);
 
         /**
          * TODO
@@ -172,7 +229,7 @@ public:
      * allocated by the user.
      * memory managed by object
      */
-    EmbeddedServiceI(MethodBinder &binder):method(binder) {  }
+    EmbeddedServiceI(MethodBinderI &binder):method(binder) {  }
 
     /**
      * allocated by the user.
@@ -210,7 +267,7 @@ protected:
         return method.Execute(information);
     }
 
-    MethodBinder &method;
+    MethodBinderI &method;
 };
 
 /*---------------------------------------------------------------------------*/

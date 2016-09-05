@@ -1,8 +1,8 @@
 /**
- * @file MultiThreadedService.h
- * @brief Header file for class MultiThreadedService
- * @date 17/03/2016
- * @author Filippo Sartori
+ * @file MultiClientService.h
+ * @brief Header file for class MultiClientService
+ * @date Sep 5, 2016
+ * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,104 +16,78 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MultiThreadedService
+ * @details This header file contains the declaration of the class MultiClientService
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MULTITHREADEDSERVICE_H_
-#define MULTITHREADEDSERVICE_H_
+#ifndef L4MESSAGES_MULTICLIENTSERVICE_H_
+#define L4MESSAGES_MULTICLIENTSERVICE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "Object.h"
-#include "ReferenceContainer.h"
-#include "Threads.h"
-
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "MultiThreadService.h"
+
+namespace MARTe{
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
 /**
- * one instance of a service handler
- * */
-class MultiThreadedServerInstance: public Object {
-
-    ThreadIdentifier threadID;
+ *
+ */
+class MultiClientService: public MultiThreadService{
 
 public:
-    CLASS_REGISTER_DECLARATION()
 
-   /**
-    * constructor : launches thread
+    template <typename className>
+    MultiClientService(MethodBinderT<className> &binder);
+
+    /**
+     *
+     */
+    virtual ~MultiClientService(){    }
+
+    /**
+    * TODO
+    * same as object interface
     */
-    MultiThreadedServerInstance(){
-
-    }
+    virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * destructor : destroys thread
+     * allows to add threads to the maxNumberOfThreads
+     * called by Start
      */
-    virtual ~MultiThreadedServerInstance(){
-
-    }
+    virtual ErrorManagement::ErrorType AddThread();
 
 
+protected:
+
+    /// either the available working threads or the maximum
+    uint32 maxNumberOfThreads;
 };
 
-/**
- * */
-class MultiThreadedService: public ReferenceContainer{
-
-
-    /**
-     * Waits no more than timeout for a client request to connect
-     * Returns true on connection establishment. In this case clientInfo contains the client information
-     *
-     */
-    virtual bool WaitForClientConnection(const TimeoutType &timeout,void *&clientInfo)=0; // could be templated to avoid void *
-
-    /**
-     * Waits no more than timeout for a client request to connect
-     * performs one interaction with the client
-     *
-     */
-    virtual bool ServeClientRequest(const TimeoutType &timeout,void *&clientInfo)=0; // could be templated to avoid void *
-
-public:
-    CLASS_REGISTER_DECLARATION()
-
-    MultiThreadedService(){
-
-    }
-
-    virtual MultiThreadedService(){
-
-    }
-
-    void Start(){
-
-    }
-
-    void Stop(){
-
-    }
-};
-
-} // end of namespace
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* MULTITHREADEDSERVICE_H_ */
+/**
+ * TODO
+ */
+template <typename className>
+MultiClientService::MultiClientService(MethodBinderT<className> &binder):MultiThreadService(binder){
+    maxNumberOfThreads = minNumberOfThreads;
+}
+
+
+}
+#endif /* L4MESSAGES_MULTICLIENTSERVICE_H_ */
 	
