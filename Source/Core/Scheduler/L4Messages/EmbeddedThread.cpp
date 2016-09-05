@@ -141,12 +141,12 @@ static void  EmbeddedThreadThreadLauncher(const void * const parameters){
     thread = reinterpret_cast<EmbeddedThread *>(const_cast<void *>(parameters));
 
     // call
-    thread->ThreadStartUp();
+    thread->ThreadLoop();
 
 
 }
 
-void EmbeddedThread::ThreadStartUp(){
+void EmbeddedThread::ThreadLoop(){
     commands = KeepRunningCommand;
     ExecutionInfo information;
     information.format_as_uint32 = 0;

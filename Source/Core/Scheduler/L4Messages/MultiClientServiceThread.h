@@ -1,8 +1,8 @@
 /**
- * @file MultiThreadService.h
- * @brief Header file for class MultiThreadServerClass
- * @date Aug 30, 2016
- * @author Filippo Sartori
+ * @file MultiClientServiceThread.h
+ * @brief Header file for class MultiClientServiceThread
+ * @date Sep 5, 2016
+ * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MultiThreadServerClass
+ * @details This header file contains the declaration of the class MultiClientServiceThread
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MULTITHREADSERVICE_H_
-#define L4MESSAGES_MULTITHREADSERVICE_H_
+#ifndef L4MESSAGES_MULTICLIENTSERVICETHREAD_H_
+#define L4MESSAGES_MULTICLIENTSERVICETHREAD_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,9 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "EmbeddedServiceI.h"
-#include "EmbeddedThreadObject.h"
-#include "ReferenceContainer.h"
+#include "EmbeddedThread.h"
+#include "MultiThreadService.h"
 
 namespace MARTe{
 
@@ -42,91 +41,48 @@ namespace MARTe{
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
-/**
- * Contains instances of specialised EmbeddedThreads
- *
- */
-class MultiThreadService: public EmbeddedServiceI{
-
-    /**
-     *
-     */
-    ReferenceContainer threadPool;
+class MultiClientServiceThread: public Object,public EmbeddedThread {
 
 public:
+
+    /**
+     * TODO
+     */
+    MultiClientServiceThread(MethodBinder &binder,MultiThreadService &managerIn);
+
     /**
      * TODO
      */
     template <typename className>
-    MultiThreadService(MethodBinderT<className> &binder);
+    MultiClientServiceThread(MethodBinderT<className> &binder,MultiThreadService &managerIn);
 
     /**
      *
      */
-    virtual ~MultiThreadService();
-
-    /**
-    * TODO
-    * same as object interface
-    * implementation of EmbeddedServiceI
-    */
-    virtual bool  Initialise(StructuredDataI &data);
+    virtual ~MultiClientServiceThread();
 
     /**
      * TODO
+     * Public to be accessed by the thread launcher subroutine
      */
-    virtual ErrorManagement::ErrorType Start();
-
-    /**
-     * TODO
-     */
-    virtual ErrorManagement::ErrorType Stop();
+    virtual void ThreadLoop();
 
 
-    /**
-     * just allows to add threads to the minNumberOfThreads
-     * called by Start
-     */
-    virtual ErrorManagement::ErrorType AddThread();
-
+private:
     /**
      *
      */
-    inline bool TooManyThreads();
-
-    /**
-     *
-     */
-    inline bool MoreThanEnoughThreads();
-
-protected:
-
-    /// either the available working threads or the maximum
-    uint32 minNumberOfThreads;
-
+    MultiThreadService &manager;
 };
-
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * TODO
- */
 template <typename className>
-MultiThreadService::MultiThreadService(MethodBinderT<className> &binder):EmbeddedServiceI(binder){
-    minNumberOfThreads = 1;
-}
-
-bool MultiThreadService::MoreThanEnoughThreads(){
-    return (threadPool.Size() > minNumberOfThreads);
-}
-
+MultiClientServiceThread::MultiClientServiceThread(MethodBinderT<className> &binder,MultiThreadService &managerIn): EmbeddedThread(binder),manager(managerIn) {}
 
 }
-
-#endif /* L4MESSAGES_MULTITHREADSERVICE_H_ */
+#endif /* L4MESSAGES_MULTICLIENTSERVICETHREAD_H_ */
 	

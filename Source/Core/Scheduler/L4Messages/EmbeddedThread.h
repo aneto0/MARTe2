@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L2MIXED_EMBEDDEDTHREADOBJECT_H_
-#define L2MIXED_EMBEDDEDTHREADOBJECT_H_
+#ifndef L2MIXED_EMBEDDEDTHREAD_H_
+#define L2MIXED_EMBEDDEDTHREAD_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -51,12 +51,10 @@ namespace MARTe{
  * TODO
  * a container for a thread
  */
-class EmbeddedThread: public Object,public EmbeddedServiceI {
+class EmbeddedThread: public EmbeddedServiceI {
 
 
 public:
-
-    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief States of an EmbeddedThread
@@ -189,7 +187,7 @@ public:
      * TODO
      * Public to be accessed by the thread launcher subroutine
      */
-    void ThreadStartUp();
+    virtual void ThreadLoop();
 
 
 private:
@@ -244,5 +242,5 @@ EmbeddedThread::EmbeddedThread(MethodBinderT<className> &binder):EmbeddedService
 
 
 }
-#endif /* L2MIXED_EMBEDDEDTHREADOBJECT_H_ */
+#endif /* L2MIXED_EMBEDDEDTHREAD_H_ */
 	

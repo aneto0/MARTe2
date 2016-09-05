@@ -1,8 +1,8 @@
 /**
- * @file MultiThreadService.h
- * @brief Header file for class MultiThreadServerClass
- * @date Aug 30, 2016
- * @author Filippo Sartori
+ * @file MultiClientService.h
+ * @brief Header file for class MultiClientService
+ * @date Sep 5, 2016
+ * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MultiThreadServerClass
+ * @details This header file contains the declaration of the class MultiClientService
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MULTITHREADSERVICE_H_
-#define L4MESSAGES_MULTITHREADSERVICE_H_
+#ifndef L4MESSAGES_MULTICLIENTSERVICE_H_
+#define L4MESSAGES_MULTICLIENTSERVICE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,81 +32,46 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "EmbeddedServiceI.h"
-#include "EmbeddedThreadObject.h"
-#include "ReferenceContainer.h"
+#include "MultiThreadService.h"
 
 namespace MARTe{
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-
 /**
- * Contains instances of specialised EmbeddedThreads
  *
  */
-class MultiThreadService: public EmbeddedServiceI{
-
-    /**
-     *
-     */
-    ReferenceContainer threadPool;
+class MultiClientService: public MultiThreadService{
 
 public:
-    /**
-     * TODO
-     */
+
     template <typename className>
-    MultiThreadService(MethodBinderT<className> &binder);
+    MultiClientService(MethodBinderT<className> &binder);
 
     /**
      *
      */
-    virtual ~MultiThreadService();
+    virtual ~MultiClientService(){    }
 
     /**
     * TODO
     * same as object interface
-    * implementation of EmbeddedServiceI
     */
-    virtual bool  Initialise(StructuredDataI &data);
+    virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * TODO
-     */
-    virtual ErrorManagement::ErrorType Start();
-
-    /**
-     * TODO
-     */
-    virtual ErrorManagement::ErrorType Stop();
-
-
-    /**
-     * just allows to add threads to the minNumberOfThreads
+     * allows to add threads to the maxNumberOfThreads
      * called by Start
      */
     virtual ErrorManagement::ErrorType AddThread();
 
-    /**
-     *
-     */
-    inline bool TooManyThreads();
-
-    /**
-     *
-     */
-    inline bool MoreThanEnoughThreads();
 
 protected:
 
     /// either the available working threads or the maximum
-    uint32 minNumberOfThreads;
-
+    uint32 maxNumberOfThreads;
 };
-
 
 
 /*---------------------------------------------------------------------------*/
@@ -117,16 +82,11 @@ protected:
  * TODO
  */
 template <typename className>
-MultiThreadService::MultiThreadService(MethodBinderT<className> &binder):EmbeddedServiceI(binder){
-    minNumberOfThreads = 1;
-}
-
-bool MultiThreadService::MoreThanEnoughThreads(){
-    return (threadPool.Size() > minNumberOfThreads);
+MultiClientService::MultiClientService(MethodBinderT<className> &binder):MultiThreadService(binder){
+    maxNumberOfThreads = minNumberOfThreads;
 }
 
 
 }
-
-#endif /* L4MESSAGES_MULTITHREADSERVICE_H_ */
+#endif /* L4MESSAGES_MULTICLIENTSERVICE_H_ */
 	

@@ -53,6 +53,12 @@ public:
     static const uint8  mainStage        = 1;
     static const uint8  terminationStage = 2;
 
+    // sub-states of mainStage
+    // set when stage is startupStage or terminationStage
+    static const uint8  nullStage2           = 0;
+    static const uint8  waitRequestStage2    = 1;
+    static const uint8  serviceRequestStage2 = 2;
+
     /**
      * EmbeddedServiceI::Info
      * to be inherited and extended by derivatives
@@ -65,34 +71,21 @@ public:
          * threadNumber is 0 for a single thread
          * for dynamically created/destroyed threads thread-number is given sequentially up a the next multiple of 32 where max threads fits
          */
-        BitRange<uint32, 10u ,0u> threadNumber;
+        BitRange<uint32, 16u ,0u> threadNumber;
 
-        /**
-         * Unmapped area
-         */
-        BitRange<uint32, 6u ,10u> unmapped1;
 
         /**
          * The operating stage of the thread.
          * There are 3 main stages and 64 substages which are custom defined
          */
-        BitRange<uint32, 2u ,16u> stage;
+        BitRange<uint32, 8u ,16u> stage;
 
-        /**
-         * Unmapped area
-         */
-        BitRange<uint32, 6u ,18u> unmapped2;
 
         /**
          * The operating stage of the thread.
          * There are 3 main stages and 64 substages which are custom defined
          */
-        BitRange<uint32, 4u ,24u> subStage;
-
-        /**
-         * Unmapped area
-         */
-        BitRange<uint32, 4u ,28u> unmapped3;
+        BitRange<uint32, 8u ,24u> stage2;
 
         /**
          * To set the Message mode using an 8-bit integer.
