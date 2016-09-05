@@ -1,8 +1,8 @@
 /**
- * @file MultiThreadedService.h
- * @brief Header file for class MultiThreadedService
- * @date 17/03/2016
- * @author Filippo Sartori
+ * @file HttpService.h
+ * @brief Header file for class HttpService
+ * @date Sep 5, 2016
+ * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,104 +16,104 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MultiThreadedService
+ * @details This header file contains the declaration of the class HttpService
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MULTITHREADEDSERVICE_H_
-#define MULTITHREADEDSERVICE_H_
+#ifndef L5HTTPSERVICE_HTTPSERVICE_H_
+#define L5HTTPSERVICE_HTTPSERVICE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "Object.h"
-#include "ReferenceContainer.h"
-#include "Threads.h"
-
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "ReferenceContainer.h"
+#include "TCPSocket.h"
+
+namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+class HttpServiceConnector{
+
+private:
+    TCPSocket conectedSocket;
+
+
+};
 
 /**
- * one instance of a service handler
- * */
-class MultiThreadedServerInstance: public Object {
-
-    ThreadIdentifier threadID;
-
+ * The container may contain objects of any type.
+ * But only object of type HttpResourceContainer result in accessible pages
+ *
+ */
+class HttpService: public ReferenceContainer{
 public:
-    CLASS_REGISTER_DECLARATION()
 
-   /**
-    * constructor : launches thread
+    /**
+    * TODO
+    * same as object interface
     */
-    MultiThreadedServerInstance(){
-
-    }
+    virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * destructor : destroys thread
+     * Open socket
+     * launches threads
      */
-    virtual ~MultiThreadedServerInstance(){
+    virtual ErrorManagement::ErrorType Start();
 
-    }
+    /**
+     * closes threads
+     * destroys all HttpServiceConnector
+     */
+    virtual ErrorManagement::ErrorType Stop();
 
+private:
+
+    /// allows sending a message
+    static void SendHttpMessage(CCString url, Stream & content);
+
+    /// here to wait for connections
+    BasicTCPSocket listeningSocket;
+
+};
+
+
+/** may contain references to any object
+ * Objects of type HttpLinkResource are automatically transformed in links to an Object in GODB
+ * Object of type HttpRealm allows setting the security level. By default is no access!
+ *
+ * */
+class HttpResourceContainer: public ReferenceContainer{
 
 };
 
 /**
- * */
-class MultiThreadedService: public ReferenceContainer{
+ * allows mapping a simple URL into a full parametrised method call
+ */
+class HttpMapResource{
 
-
-    /**
-     * Waits no more than timeout for a client request to connect
-     * Returns true on connection establishment. In this case clientInfo contains the client information
-     *
-     */
-    virtual bool WaitForClientConnection(const TimeoutType &timeout,void *&clientInfo)=0; // could be templated to avoid void *
-
-    /**
-     * Waits no more than timeout for a client request to connect
-     * performs one interaction with the client
-     *
-     */
-    virtual bool ServeClientRequest(const TimeoutType &timeout,void *&clientInfo)=0; // could be templated to avoid void *
-
-public:
-    CLASS_REGISTER_DECLARATION()
-
-    MultiThreadedService(){
-
-    }
-
-    virtual MultiThreadedService(){
-
-    }
-
-    void Start(){
-
-    }
-
-    void Stop(){
-
-    }
 };
 
-} // end of namespace
+/**
+ * provides a streightforward reply to an URL
+ */
+class HttpResource{
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* MULTITHREADEDSERVICE_H_ */
+
+}
+#endif /* L5HTTPSERVICE_HTTPSERVICE_H_ */
 	
