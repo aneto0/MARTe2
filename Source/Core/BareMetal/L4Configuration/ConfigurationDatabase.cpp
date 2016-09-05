@@ -374,4 +374,6 @@ void ConfigurationDatabase::Unlock() {
     mux.FastUnLock();
 }
 
+CLASS_REGISTER(ConfigurationDatabase, "1.0")
+
 }
