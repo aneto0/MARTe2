@@ -157,7 +157,7 @@ public:
 
     template <class className, typename argType1,typename argType2>
     ClassMethodInterfaceMapper(ErrorManagement::ErrorType (className::*MethodPointer)(argType1,argType2 &)){
-            caller = ClassMethodCallerCreate2(MethodPointer,0x0400);
+            caller = ClassMethodCallerCreate2(MethodPointer,0x0100);
     }
 
     template <class className, typename argType1,typename argType2>

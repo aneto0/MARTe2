@@ -1999,7 +1999,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStatesFromConfiguration() {
     }
     ConfigurationDatabase local;
     if (ret) {
-        ret = local.AddToCurrentNode(globalDatabase);
+        ret = local.AddToCurrentNode(globalDatabase.GetCurrentNode());
     }
     if (ret) {
         ret = globalDatabase.MoveAbsolute("+States");

@@ -31,6 +31,7 @@
 
 #include "ClassMethodCallerTest.h"
 #include "ClassMethodCaller.h"
+#include "ConfigurationDatabase.h"
 #include "ErrorType.h"
 #include "ReferenceContainer.h"
 
@@ -64,15 +65,7 @@ bool ClassMethodCallerTest::TestCall() {
         ErrorManagement::ErrorType status;
         Object context;
         status = target.Call(&context);
-        result &= (status == ErrorManagement::unsupportedFeature);
-    }
-    {
-        ClassMethodCaller target;
-        ErrorManagement::ErrorType status;
-        Object context;
-        int32 param = 0;
-        status = target.Call(&context, param);
-        result &= (status == ErrorManagement::unsupportedFeature);
+        result &= (status == ErrorManagement::parametersError);
     }
     {
         ClassMethodCaller target;
@@ -80,27 +73,23 @@ bool ClassMethodCallerTest::TestCall() {
         Object context;
         ReferenceContainer param;
         status = target.Call(&context, param);
-        result &= (status == ErrorManagement::unsupportedFeature);
+        result &= (status == ErrorManagement::parametersError);
     }
     {
         ClassMethodCaller target;
         ErrorManagement::ErrorType status;
         Object context;
-        int32 param = 0;
-        status = target.Call(&context, param, true);
-        result &= (status == ErrorManagement::unsupportedFeature);
-        status = target.Call(&context, param, false);
-        result &= (status == ErrorManagement::unsupportedFeature);
+        ConfigurationDatabase param;
+        status = target.Call(&context, param);
+        result &= (status == ErrorManagement::parametersError);
     }
     {
         ClassMethodCaller target;
         ErrorManagement::ErrorType status;
         Object context;
-        ReferenceContainer param;
-        status = target.Call(&context, param, true);
-        result &= (status == ErrorManagement::unsupportedFeature);
-        status = target.Call(&context, param, false);
-        result &= (status == ErrorManagement::unsupportedFeature);
+        StreamString param;
+        status = target.Call(&context, param);
+        result &= (status == ErrorManagement::parametersError);
     }
     return result;
 }

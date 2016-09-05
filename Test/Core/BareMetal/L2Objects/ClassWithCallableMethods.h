@@ -32,10 +32,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassMethodInterfaceMapper.h"
+#include "ErrorType.h"
 #include "Object.h"
 #include "ReferenceContainer.h"
-#include "ClassMethodInterfaceMapper.h"
-#include "ClassMethodsRegistryItem.h"
 #include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
@@ -55,7 +55,7 @@ public:
     /**
      * @brief DEfault constructor
      */
-    ClassWithCallableMethods();
+ClassWithCallableMethods    ();
 
     /**
      * @brief Destructor
@@ -70,70 +70,76 @@ public:
     /**
      * @brief Method which simulates an error execution (i.e. returns false)
      */
-    bool FaultyMethod(MARTe::ReferenceContainer& data);
+    MARTe::ErrorManagement::ErrorType FaultyMethod(MARTe::ReferenceContainer& data);
 
     /**
-     * @brief Method overloaded with 3 versions, being this the one without
-     * arguments.
+     * @brief Method with no input parameters.
      */
-    bool OverloadedMethod();
+    MARTe::ErrorManagement::ErrorType MethodWithVoidParameters(void);
 
     /**
-     * @brief Method overloaded with 3 versions, being this the one with 1
-     * argument of type integer passed by reference.
+     * @brief Method which consumes input from an integer by reference.
      */
-    bool OverloadedMethod(int& data);
-
-    /**
-     * @brief Method overloaded with 3 versions, being this the one with 1
-     * argument of type ReferenceContainer passed by reference.
-     */
-    bool OverloadedMethod(MARTe::ReferenceContainer& data);
-
-    /**
-     * @brief Method which consumes input from a ReferenceContainer passed
-     * by reference.
-     */
-    bool MethodWithInputReferenceContainer(MARTe::ReferenceContainer& data);
-
-    /**
-     * @brief Method which produces output into a ReferenceContainer passed
-     * by reference.
-     */
-    bool MethodWithOutputReferenceContainer(MARTe::ReferenceContainer& data);
-
-    /**
-     * @brief Method which consumes/produces from/into a ReferenceContainer
-     * passed by reference.
-     */
-    bool MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer& data);
-
-    /**
-     * @brief Method which consumes input from an integer passed by reference.
-     */
-    bool MethodWithInputInteger(int& data);
+    MARTe::ErrorManagement::ErrorType MethodWithConstInputInteger(const MARTe::int32 &data);
 
     /**
      * @brief Method which produces output into an integer passed by reference.
      */
-    bool MethodWithOutputInteger(int& data);
+    MARTe::ErrorManagement::ErrorType MethodWithOutputInteger(MARTe::int32& data);
 
     /**
-     * @brief Method which consumes/produces from/into an integer passed by
-     * reference.
+     * @brief Method which produces output into an integer passed by reference.
      */
-    bool MethodWithInputOutputInteger(int& data);
+    MARTe::ErrorManagement::ErrorType MethodWithInputOutputInteger(MARTe::int32& data);
 
     /**
      * @brief Method which consumes input from an integer passed by copy.
      */
-    bool MethodWithInputIntegerByCopy(int data);
+    MARTe::ErrorManagement::ErrorType MethodWithInputIntegerByCopy(MARTe::int32 data);
+
+    /**
+     * @brief Method which has a StructuredDataI has an input.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithConstInputStructuredDataI(const MARTe::StructuredDataI &data);
+
+    /**
+     * @brief Method which changes the input StructuredDataI.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithOutputStructuredDataI(MARTe::StructuredDataI &data);
 
     /**
      * @brief Method which consumes input from a ReferenceContainer passed by
      * copy.
      */
-    bool MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer data);
+    MARTe::ErrorManagement::ErrorType MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer data);
+
+    /**
+     * @brief Method which consumes input from a ReferenceContainer and that expects to have a StructuredDataI at its 0 position
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithInputReferenceContainerAndStructuredDataIAt0(MARTe::ReferenceContainer &data);
+
+    /**
+     * @brief Method which adds an StructuredDataI to data at position 0
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithOutputReferenceContainerAndStructuredDataIAt0(MARTe::ReferenceContainer &data);
+
+    /**
+     * @brief Method which consumes input from a ReferenceContainer passed
+     * by reference.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithConstInputReferenceContainer(const MARTe::ReferenceContainer& data);
+
+    /**
+     * @brief Method which produces output into a ReferenceContainer passed
+     * by reference.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithOutputReferenceContainer(MARTe::ReferenceContainer& data);
+
+    /**
+     * @brief Method which consumes/produces from/into a ReferenceContainer
+     * passed by reference.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer& data);
 
     /**
      * @brief Gets a string with the name and signature of the last executed
@@ -148,8 +154,6 @@ private:
      */
     MARTe::StreamString lastMethodExecuted;
 };
-
-CLASS_METHOD_REGISTER(ClassWithCallableMethods, &ClassWithCallableMethods::MethodWithInputInteger, &ClassWithCallableMethods::MethodWithOutputInteger, &ClassWithCallableMethods::MethodWithInputOutputInteger, &ClassWithCallableMethods::FaultyMethod, &ClassWithCallableMethods::MethodWithInputReferenceContainer, &ClassWithCallableMethods::MethodWithOutputReferenceContainer, &ClassWithCallableMethods::MethodWithInputOutputReferenceContainer, &ClassWithCallableMethods::MethodWithInputIntegerByCopy, &ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods::OverloadedMethod)
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

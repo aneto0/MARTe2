@@ -47,13 +47,13 @@ public:
 
     ObjectWithMessages();
 
-    bool ReceiverMethod(ReferenceContainer& ref);
+    ErrorManagement::ErrorType ReceiverMethod(ReferenceContainer& ref);
 
-    bool SenderMethod(ReferenceContainer& ref);
+    ErrorManagement::ErrorType SenderMethod(ReferenceContainer& ref);
 
     int32 Flag();
 
-    bool HandleReply();
+    ErrorManagement::ErrorType HandleReply();
 private:
      int32 flag;
 

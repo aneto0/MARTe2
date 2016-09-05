@@ -63,7 +63,7 @@ public:
  */
 
 #define CLASS_METHOD_REGISTER(className,methodName)\
-    static MARTe::ClassMethodInterfaceMapperLoader className ## methodName ## MethodLoader(#className,#methodName,className ::GetClassRegistryItem_Static(),new ClassMethodInterfaceMapper(& className :: methodName));
+    static MARTe::ClassMethodInterfaceMapperLoader className ## methodName ## MethodLoader(#className,#methodName,className ::GetClassRegistryItem_Static(),new MARTe::ClassMethodInterfaceMapper(& className :: methodName));
 
 
 

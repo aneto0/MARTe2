@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "CLASSMETHODREGISTER.h"
 #include "ClassRegistryItemT.h"
 #include "ObjectWithMessages.h"
 #include "RegisteredMethodsMessageFilter.h"
@@ -54,7 +55,7 @@ ObjectWithMessages::ObjectWithMessages() {
     flag = -1;
 }
 
-bool ObjectWithMessages::ReceiverMethod(ReferenceContainer& ref) {
+ErrorManagement::ErrorType ObjectWithMessages::ReceiverMethod(ReferenceContainer& ref) {
     flag = 0;
     ReferenceT<Object> obj = ReferenceT<Object>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     obj->SetName("REPLY");
@@ -62,7 +63,7 @@ bool ObjectWithMessages::ReceiverMethod(ReferenceContainer& ref) {
     return true;
 }
 
-bool ObjectWithMessages::SenderMethod(ReferenceContainer& ref) {
+ErrorManagement::ErrorType ObjectWithMessages::SenderMethod(ReferenceContainer& ref) {
     flag = 1;
     return true;
 }
@@ -71,13 +72,15 @@ int32 ObjectWithMessages::Flag() {
     return flag;
 }
 
-bool ObjectWithMessages::HandleReply() {
+ErrorManagement::ErrorType ObjectWithMessages::HandleReply() {
     flag = 2;
     return true;
 }
 
 CLASS_REGISTER(ObjectWithMessages, "1.0")
 
-CLASS_METHOD_REGISTER(ObjectWithMessages, &ObjectWithMessages::ReceiverMethod, &ObjectWithMessages::SenderMethod, &ObjectWithMessages::HandleReply)
+CLASS_METHOD_REGISTER(ObjectWithMessages, ReceiverMethod)
+CLASS_METHOD_REGISTER(ObjectWithMessages, SenderMethod)
+CLASS_METHOD_REGISTER(ObjectWithMessages, HandleReply)
 
 }

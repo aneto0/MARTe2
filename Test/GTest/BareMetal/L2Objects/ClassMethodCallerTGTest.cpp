@@ -49,7 +49,38 @@ TEST(ClassMethodCallerTGTest,TestDefaultConstructor) {
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(ClassMethodCallerTGTest,TestCall) {
+TEST(ClassMethodCallerTGTest,TestCall_VoidParameters) {
     ClassMethodCallerTTest target;
-    ASSERT_TRUE(target.TestCall());
+    ASSERT_TRUE(target.TestCall_VoidParameters());
 }
+
+TEST(ClassMethodCallerTGTest,TestCall_OneBasicParameterReadOnly) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_OneBasicParameterReadOnly());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_OneBasicParameterReadWrite) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_OneBasicParameterReadWrite());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_OneStructuredDataIParameterReadOnly) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_OneStructuredDataIParameterReadOnly());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_OneStructuredDataIParameterReadWrite) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_OneStructuredDataIParameterReadWrite());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_OneReferenceContainerParameterReadOnly) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_OneReferenceContainerParameterReadOnly());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_OneReferenceContainerParameterReadWrite) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_OneReferenceContainerParameterReadWrite());
+}
+

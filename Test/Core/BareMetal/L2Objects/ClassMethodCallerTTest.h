@@ -58,9 +58,39 @@ public:
     bool TestDefaultConstructor();
 
     /**
-     * @brief Tests the Call method
+     * @brief Tests the Call method with no parameters
      */
-    bool TestCall();
+    bool TestCall_VoidParameters();
+
+    /**
+     * @brief Tests the Call method with one read-only parameter
+     */
+    bool TestCall_OneBasicParameterReadOnly();
+
+    /**
+     * @brief Tests the Call method with one read/write parameter
+     */
+    bool TestCall_OneBasicParameterReadWrite();
+
+    /**
+     * @brief Tests the Call method with one StructuredDataI read-only parameter
+     */
+    bool TestCall_OneStructuredDataIParameterReadOnly();
+
+    /**
+     * @brief Tests the Call method with one StructuredDataI read/write parameter
+     */
+    bool TestCall_OneStructuredDataIParameterReadWrite();
+
+    /**
+     * @brief Tests the Call method with one read-only ReferenceContainer parameter
+     */
+    bool TestCall_OneReferenceContainerParameterReadOnly();
+
+    /**
+     * @brief Tests the Call method with one read/write ReferenceContainer parameters
+     */
+    bool TestCall_OneReferenceContainerParameterReadWrite();
 };
 
 /*---------------------------------------------------------------------------*/
