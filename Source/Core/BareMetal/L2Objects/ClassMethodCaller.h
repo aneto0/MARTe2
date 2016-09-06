@@ -34,9 +34,9 @@
 
 #include "Object.h"
 #include "ErrorType.h"
-#include "StructuredDataI.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
+#include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */

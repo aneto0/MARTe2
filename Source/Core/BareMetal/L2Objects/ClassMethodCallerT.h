@@ -49,6 +49,15 @@
 namespace MARTe {
 
 /**
+ * These constants specify if the value of the template parameters below are being by reference and
+ *  thus should be updated when the Call function returns.
+ */
+static const uint32 PARAM1_IS_REFERENCE = 0x1000;
+static const uint32 PARAM2_IS_REFERENCE = 0x0100;
+static const uint32 PARAM3_IS_REFERENCE = 0x0010;
+static const uint32 PARAM4_IS_REFERENCE = 0x0001;
+
+/**
  * @brief This class template is a helper for building specific versions of
  * class method callers for target methods with four arguments.
  *
@@ -83,8 +92,9 @@ public:
      * @post f == GetMethodPointer()
      */
     ClassMethodCallerT(MethodPointer method,
-                       uint32 mask) {
+                       uint32 maskIn) {
         pFun = method;
+        mask = maskIn;
     }
 
     /**
@@ -102,18 +112,64 @@ public:
 
         className* actual = dynamic_cast<className *>(object);
         err.unsupportedFeature = (actual == static_cast<className*>(0));
+        err.parametersError = (&parameters == NULL_PTR(StructuredDataI *));
 
+        argType1 param1;
+        argType2 param2;
+        argType3 param3;
+        argType4 param4;
         if (err.ErrorsCleared()) {
-            argType1 param1;
-            parameters.Read("param1", param1);
-            argType2 param2;
-            parameters.Read("param2", param2);
-            argType3 param3;
-            parameters.Read("param3", param3);
-            argType4 param4;
-            parameters.Read("param4", param4);
+            if (!parameters.Read("param1", param1)) {
+                err.parametersError = true;
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if (!parameters.Read("param2", param2)) {
+                err.parametersError = true;
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if (!parameters.Read("param3", param3)) {
+                err.parametersError = true;
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if (!parameters.Read("param4", param4)) {
+                err.parametersError = true;
+            }
+        }
+        if (err.ErrorsCleared()) {
             err = (actual->*pFun)(param1, param2, param3, param4);
         }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM1_IS_REFERENCE) == PARAM1_IS_REFERENCE) {
+                if (!parameters.Write("param1", param1)) {
+                    err.parametersError = true;
+                }
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM2_IS_REFERENCE) == PARAM2_IS_REFERENCE) {
+                if (!parameters.Write("param2", param2)) {
+                    err.parametersError = true;
+                }
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM3_IS_REFERENCE) == PARAM3_IS_REFERENCE) {
+                if (!parameters.Write("param3", param3)) {
+                    err.parametersError = true;
+                }
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM4_IS_REFERENCE) == PARAM4_IS_REFERENCE) {
+                if (!parameters.Write("param4", param4)) {
+                    err.parametersError = true;
+                }
+            }
+        }
+
         return err;
     }
 
@@ -124,12 +180,17 @@ public:
                                             ReferenceContainer &parameters) {
 
         // no need to check validity of
-        ReferenceT<StructuredDataI> param = parameters.Get(0);
-        return Call(object, *(param.operator->()));
-    }
+        ErrorManagement::ErrorType err(true);
 
-    //TODO create class to generate a StructuredDataI from a StreamI
-    //TODO then Call the Call(StructuredDataI)
+        ReferenceT<StructuredDataI> sI = parameters.Get(0);
+
+        err.parametersError = !sI.IsValid();
+        if (err.ErrorsCleared()) {
+            err = Call(object, *(sI.operator->()));
+        }
+
+        return err;
+    }
 
 private:
     /**
@@ -137,7 +198,12 @@ private:
      */
     MethodPointer pFun;
 
-};
+    /**
+     * Read/Write mask
+     */
+    uint32 mask;
+}
+;
 
 /**
  * @brief This class template is a helper for building specific versions of
@@ -173,8 +239,9 @@ public:
      * @post f == GetMethodPointer()
      */
     ClassMethodCallerT(MethodPointer method,
-                       uint32 mask) {
+                       uint32 maskIn) {
         pFun = method;
+        mask = maskIn;
     }
 
     /**
@@ -192,15 +259,50 @@ public:
 
         className* actual = dynamic_cast<className *>(object);
         err.unsupportedFeature = (actual == static_cast<className*>(0));
+        err.parametersError = (&parameters == NULL_PTR(StructuredDataI *));
+
+        argType1 param1;
+        argType2 param2;
+        argType3 param3;
 
         if (err.ErrorsCleared()) {
-            argType1 param1;
-            argType2 param2;
-            argType3 param3;
-            parameters.Read("param1", param1);
-            parameters.Read("param2", param2);
-            parameters.Read("param3", param3);
+            if (!parameters.Read("param1", param1)) {
+                err.parametersError = true;
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if (!parameters.Read("param2", param2)) {
+                err.parametersError = true;
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if (!parameters.Read("param3", param3)) {
+                err.parametersError = true;
+            }
+        }
+        if (err.ErrorsCleared()) {
             err = (actual->*pFun)(param1, param2, param3);
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM1_IS_REFERENCE) == PARAM1_IS_REFERENCE) {
+                if (!parameters.Write("param1", param1)) {
+                    err.parametersError = true;
+                }
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM2_IS_REFERENCE) == PARAM2_IS_REFERENCE) {
+                if (!parameters.Write("param2", param2)) {
+                    err.parametersError = true;
+                }
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM3_IS_REFERENCE) == PARAM3_IS_REFERENCE) {
+                if (!parameters.Write("param3", param3)) {
+                    err.parametersError = true;
+                }
+            }
         }
         return err;
     }
@@ -210,18 +312,28 @@ public:
      */
     virtual ErrorManagement::ErrorType Call(Object *object,
                                             ReferenceContainer &parameters) {
-        ReferenceT<StructuredDataI> param = parameters.Get(0);
-        return Call(object, *(param.operator->()));
-    }
+        ErrorManagement::ErrorType err(true);
 
-    //TODO create class to generate a StructuredDataI from a StreamI
-    //TODO then Call the Call(StructuredDataI)
+        ReferenceT<StructuredDataI> sI = parameters.Get(0);
+
+        err.parametersError = !sI.IsValid();
+        if (err.ErrorsCleared()) {
+            err = Call(object, *(sI.operator->()));
+        }
+
+        return err;
+    }
 
 private:
     /**
      * Pointer to the class method
      */
     MethodPointer pFun;
+
+    /**
+     * Read/write mask
+     */
+    uint32 mask;
 
 };
 
@@ -258,8 +370,9 @@ public:
      * @post f == GetMethodPointer()
      */
     ClassMethodCallerT(MethodPointer method,
-                       uint32 mask) {
+                       uint32 maskIn) {
         pFun = method;
+        mask = maskIn;
     }
 
     /**
@@ -277,13 +390,37 @@ public:
 
         className* actual = dynamic_cast<className *>(object);
         err.unsupportedFeature = (actual == static_cast<className*>(0));
+        err.parametersError = (&parameters == NULL_PTR(StructuredDataI *));
+
+        argType1 param1;
+        argType2 param2;
 
         if (err.ErrorsCleared()) {
-            argType1 param1;
-            argType2 param2;
-            parameters.Read("param1", param1);
-            parameters.Read("param2", param2);
+            if (!parameters.Read("param1", param1)) {
+                err.parametersError = true;
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if (!parameters.Read("param2", param2)) {
+                err.parametersError = true;
+            }
+        }
+        if (err.ErrorsCleared()) {
             err = (actual->*pFun)(param1, param2);
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM1_IS_REFERENCE) == PARAM1_IS_REFERENCE) {
+                if (!parameters.Write("param1", param1)) {
+                    err.parametersError = true;
+                }
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM2_IS_REFERENCE) == PARAM2_IS_REFERENCE) {
+                if (!parameters.Write("param2", param2)) {
+                    err.parametersError = true;
+                }
+            }
         }
         return err;
     }
@@ -293,18 +430,28 @@ public:
      */
     virtual ErrorManagement::ErrorType Call(Object *object,
                                             ReferenceContainer &parameters) {
-        ReferenceT<StructuredDataI> param = parameters.Get(0);
-        return Call(object, *(param.operator->()));
-    }
+        ErrorManagement::ErrorType err(true);
 
-    //TODO create class to generate a StructuredDataI from a StreamI
-    //TODO then Call the Call(StructuredDataI)
+        ReferenceT<StructuredDataI> sI = parameters.Get(0);
+
+        err.parametersError = !sI.IsValid();
+        if (err.ErrorsCleared()) {
+            err = Call(object, *(sI.operator->()));
+        }
+
+        return err;
+    }
 
 private:
     /**
      * Pointer to the class method
      */
     MethodPointer pFun;
+
+    /**
+     * Read/write mask
+     */
+    uint32 mask;
 };
 
 /**
@@ -700,7 +847,7 @@ public:
 
         ReferenceT<StreamI> param = parameters.Get(0);
 
-        return (actual->*pFun)(param.operator->());
+        return (actual->*pFun)(*(param.operator->()));
     }
 
     /**

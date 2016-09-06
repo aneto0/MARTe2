@@ -64,7 +64,12 @@ TEST(ClassMethodInterfaceMapperGTest,TestConstructorForMethodWith1ArgumentByRef)
     ASSERT_TRUE(target.TestConstructorForMethodWith1ArgumentByRef());
 }
 
-TEST(ClassMethodInterfaceMapperGTest,TestCall) {
+TEST(ClassMethodInterfaceMapperGTest,TestConstructor_3_parameters) {
     ClassMethodInterfaceMapperTest target;
-    ASSERT_TRUE(target.TestCall());
+    ASSERT_TRUE(target.TestConstructor_3_parameters());
+}
+
+TEST(ClassMethodInterfaceMapperGTest,TestConstructor_4_parameters) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_4_parameters());
 }

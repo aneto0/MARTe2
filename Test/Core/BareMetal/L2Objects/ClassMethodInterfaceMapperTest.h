@@ -73,9 +73,14 @@ public:
     bool TestConstructorForMethodWith1ArgumentByRef();
 
     /**
-     * @brief Tests the Call method
+     * @brief Tests the Constructor with 3 parameters in all the 27 possible combinations
      */
-    bool TestCall();
+    bool TestConstructor_3_parameters();
+
+    /**
+     * @brief Tests the Constructor with 4 parameters in all the 8 possible combinations
+     */
+    bool TestConstructor_4_parameters();
 };
 
 /*---------------------------------------------------------------------------*/

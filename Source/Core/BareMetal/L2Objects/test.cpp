@@ -43,7 +43,7 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-class Dummy: public Object {
+/*class Dummy: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -96,7 +96,7 @@ CLASS_METHOD_REGISTER(Dummy, f3)
 CLASS_METHOD_REGISTER(Dummy, f4)
 CLASS_METHOD_REGISTER(Dummy, f5)
 CLASS_METHOD_REGISTER(Dummy, f6)
-CLASS_METHOD_REGISTER(Dummy, f7)
+CLASS_METHOD_REGISTER(Dummy, f7)*/
 
 //static ClassMethodInterfaceMapperLoader xx(CCString(""),CCString(""),Dummy::GetClassRegistryItem_Static(),new ClassMethodInterfaceMapper(&Dummy::f1));
 
