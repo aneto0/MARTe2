@@ -48,10 +48,10 @@ namespace MARTe{
  */
 class ClassMethodInterfaceMapperLoader{
 public:
-    ClassMethodInterfaceMapperLoader(CCString className,CCString methodName,ClassRegistryItem *cri, ClassMethodInterfaceMapper *mapper){
+    ClassMethodInterfaceMapperLoader(CCString className, CCString methodName, ClassRegistryItem *cri, ClassMethodInterfaceMapper *mapper){
         if ((mapper != NULL) && (cri != NULL)){
             cri->AddMethod(mapper);
-            mapper->SetName(methodName);
+            mapper->SetMethodName(methodName);
         }
     }
 };

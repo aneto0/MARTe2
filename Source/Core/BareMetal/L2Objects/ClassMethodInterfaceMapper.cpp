@@ -43,9 +43,6 @@
 
 namespace MARTe {
 
-
-
-/*lint -e {1551} */
 ClassMethodInterfaceMapper::~ClassMethodInterfaceMapper() {
     if (caller != NULL) {
         delete caller;

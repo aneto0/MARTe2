@@ -118,7 +118,6 @@ void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const loadLib
     this->loadableLibrary = loadLibrary;
 }
 
-
 void ClassRegistryItem::IncrementNumberOfInstances() {
     Atomic::Increment(&numberOfInstances);
 }
@@ -135,35 +134,27 @@ void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {
     classProperties.SetUniqueIdentifier(uid);
 }
 
-
-/**
- * TODO
- */
-ClassMethodCaller *ClassRegistryItem::FindMethod(CCString methodName){
+ClassMethodCaller *ClassRegistryItem::FindMethod(CCString methodName) {
 
     uint32 i = 0;
     uint32 end = classMethods.ListSize();
     ClassMethodCaller *caller = NULL_PTR(ClassMethodCaller *);
-    while ((i < end) && (caller == NULL_PTR(ClassMethodCaller *))){
+    while ((i < end) && (caller == NULL_PTR(ClassMethodCaller *))) {
         ClassMethodInterfaceMapper *cmim = classMethods.ListPeek(i);
-        if (cmim != NULL){
-            if (StringHelper::Compare(cmim->GetMethodName(),methodName)){
-                caller = cmim->GetMethod();
+        if (cmim != NULL) {
+            if (StringHelper::Compare(cmim->GetMethodName(), methodName) == 0u) {
+                caller = cmim->GetMethodCaller();
             }
         }
+        i++;
     }
     return caller;
 }
 
-/**
- * TODO
- */
-void ClassRegistryItem::AddMethod(ClassMethodInterfaceMapper *method){
-    if (method != NULL){
+void ClassRegistryItem::AddMethod(ClassMethodInterfaceMapper *method) {
+    if (method != NULL) {
         classMethods.ListAdd(method);
     }
 }
-
-
 
 }

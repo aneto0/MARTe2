@@ -220,7 +220,34 @@ public:
     /**
      * @brief Tests the Call method with three parameters on all the possible combinations
      */
-    bool TestCall_ThreeParameters();
+    bool TestCall_ThreeParameters_C_C_C();
+    bool TestCall_ThreeParameters_C_C_R();
+    bool TestCall_ThreeParameters_C_C_W();
+    bool TestCall_ThreeParameters_C_R_C();
+    bool TestCall_ThreeParameters_C_R_R();
+    bool TestCall_ThreeParameters_C_R_W();
+    bool TestCall_ThreeParameters_C_W_C();
+    bool TestCall_ThreeParameters_C_W_R();
+    bool TestCall_ThreeParameters_C_W_W();
+    bool TestCall_ThreeParameters_R_C_C();
+    bool TestCall_ThreeParameters_R_C_R();
+    bool TestCall_ThreeParameters_R_C_W();
+    bool TestCall_ThreeParameters_R_R_C();
+    bool TestCall_ThreeParameters_R_R_R();
+    bool TestCall_ThreeParameters_R_R_W();
+    bool TestCall_ThreeParameters_R_W_C();
+    bool TestCall_ThreeParameters_R_W_R();
+    bool TestCall_ThreeParameters_R_W_W();
+    bool TestCall_ThreeParameters_W_C_C();
+    bool TestCall_ThreeParameters_W_C_R();
+    bool TestCall_ThreeParameters_W_C_W();
+    bool TestCall_ThreeParameters_W_R_C();
+    bool TestCall_ThreeParameters_W_R_R();
+    bool TestCall_ThreeParameters_W_R_W();
+    bool TestCall_ThreeParameters_W_W_C();
+    bool TestCall_ThreeParameters_W_W_R();
+    bool TestCall_ThreeParameters_W_W_W();
+
 
     /**
      * @brief Tests the Call method with three parameters with an error on the first parameter.
@@ -250,7 +277,15 @@ public:
     /**
      * @brief Tests the Call method with two parameters on all the possible combinations
      */
-    bool TestCall_TwoParameters();
+    bool TestCall_TwoParameters_C_C();
+    bool TestCall_TwoParameters_C_R();
+    bool TestCall_TwoParameters_C_W();
+    bool TestCall_TwoParameters_R_C();
+    bool TestCall_TwoParameters_R_R();
+    bool TestCall_TwoParameters_R_W();
+    bool TestCall_TwoParameters_W_C();
+    bool TestCall_TwoParameters_W_R();
+    bool TestCall_TwoParameters_W_W();
 
     /**
      * @brief Tests the Call method with two parameters with an error on the first parameter.
@@ -275,7 +310,9 @@ public:
     /**
      * @brief Tests the Call method with one parameters on all the possible combinations
      */
-    bool TestCall_OneParameter();
+    bool TestCall_OneParameter_C();
+    bool TestCall_OneParameter_R();
+    bool TestCall_OneParameter_W();
 
     /**
      * @brief Tests the Call method with one parameters with an error on the first parameter.

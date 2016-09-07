@@ -599,7 +599,6 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadWrite() {
     return result;
 }
 
-
 bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_C_C() {
     using namespace MARTe;
     bool result = true;
@@ -2871,497 +2870,597 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ReferenceContainer() {
     return result;
 }
 
-bool ClassMethodCallerTTest::TestCall_ThreeParameters() {
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_C_C() {
     using namespace MARTe;
     bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
+                                                                                                          const MARTe::float32 &,
+                                                                                                          const MARTe::StreamString &), uint32, float32,
+            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_C, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_C");
+    return result;
+}
 
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                              const MARTe::float32 &,
-                                                                                                              const MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_C, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_C");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                              const MARTe::float32 &,
-                                                                                                              MARTe::StreamString), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_R, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_R");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                              const MARTe::float32 &,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_W, 0x10);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param3", param3);
-        result &= (param3 == "KOOK");
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_W");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                              MARTe::float32,
-                                                                                                              const MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_C, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_C");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                              MARTe::float32,
-                                                                                                              MARTe::StreamString), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_R, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_R");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                              MARTe::float32,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_W, 0x10);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param3", param3);
-        result &= (param3 == "KOOK");
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_W");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                              MARTe::float32 &,
-                                                                                                              const MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_C, 0x100);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param2", param2);
-        result &= (param2 == 6.0);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_C");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                              MARTe::float32 &,
-                                                                                                              MARTe::StreamString), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_R, 0x100);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param2", param2);
-        result &= (param2 == 6.0);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_R");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                              MARTe::float32 &,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_W, 0x110);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param2", param2);
-        result &= (param2 == 6.0);
-        parameters.Read("param3", param3);
-        result &= (param3 == "KOOK");
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_W");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                              const MARTe::float32 &,
-                                                                                                              const MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_C, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_C");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                              const MARTe::float32 &,
-                                                                                                              MARTe::StreamString), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_R, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_R");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                              const MARTe::float32 &,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_W, 0x10);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param3", param3);
-        result &= (param3 == "KOOK");
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_W");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                              MARTe::float32,
-                                                                                                              const MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_C, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_C");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                              MARTe::float32,
-                                                                                                              MARTe::StreamString), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_R, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_R");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                              MARTe::float32,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_W, 0x10);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param3", param3);
-        result &= (param3 == "KOOK");
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_W");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                              MARTe::float32 &,
-                                                                                                              const MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_C, 0x100);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param2", param2);
-        result &= (param2 == 6.0);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_C");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                              MARTe::float32 &,
-                                                                                                              MARTe::StreamString), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_R, 0x100);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param2", param2);
-        result &= (param2 == 6.0);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_R");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                              MARTe::float32 &,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_W, 0x110);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param2", param2);
-        result &= (param2 == 6.0);
-        parameters.Read("param3", param3);
-        result &= (param3 == "KOOK");
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_W");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              const MARTe::float32 &,
-                                                                                                              const MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_C, 0x1000);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param1", param1);
-        result &= (param1 == 5);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_C");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              const MARTe::float32 &,
-                                                                                                              MARTe::StreamString), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_R, 0x1000);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param1", param1);
-        result &= (param1 == 5);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_R");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              const MARTe::float32 &,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_W, 0x1010);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param1", param1);
-        result &= (param1 == 5);
-        parameters.Read("param3", param3);
-        result &= (param3 == "KOOK");
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_W");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::float32,
-                                                                                                              const MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_C, 0x1000);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param1", param1);
-        result &= (param1 == 5);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_C");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::float32,
-                                                                                                              MARTe::StreamString), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_R, 0x1000);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param1", param1);
-        result &= (param1 == 5);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_R");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::float32,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_W, 0x1010);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param1", param1);
-        result &= (param1 == 5);
-        parameters.Read("param3", param3);
-        result &= (param3 == "KOOK");
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_W");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::float32 &,
-                                                                                                              const MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_C, 0x1100);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param1", param1);
-        result &= (param1 == 5);
-        parameters.Read("param2", param2);
-        result &= (param2 == 6.0);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_W_C");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::float32 &,
-                                                                                                              MARTe::StreamString), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_R, 0x1100);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param1", param1);
-        result &= (param1 == 5);
-        parameters.Read("param2", param2);
-        result &= (param2 == 6.0);
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_W_R");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::float32 &,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1110);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        float32 param2 = 2.0;
-        parameters.Write("param2", param2);
-        StreamString param3 = "KO";
-        parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param1", param1);
-        result &= (param1 == 5);
-        parameters.Read("param2", param2);
-        result &= (param2 == 6.0);
-        parameters.Read("param3", param3);
-        result &= (param3 == "KOOK");
-        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_W_W");
-    }
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
+                                                                                                          const MARTe::float32 &,
+                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_R, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_R");
+    return result;
+}
 
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
+                                                                                                          const MARTe::float32 &,
+                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_W, 0x10);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_W");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
+                                                                                                          MARTe::float32,
+                                                                                                          const MARTe::StreamString &), uint32, float32,
+            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_C, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_C");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
+                                                                                                          MARTe::float32,
+                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_R, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_R");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
+                                                                                                          MARTe::float32,
+                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_W, 0x10);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_W");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
+                                                                                                          MARTe::float32 &,
+                                                                                                          const MARTe::StreamString &), uint32, float32,
+            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_C, 0x100);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_C");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
+                                                                                                          MARTe::float32 &,
+                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_R, 0x100);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_R");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
+                                                                                                          MARTe::float32 &,
+                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_W, 0x110);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_W");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
+                                                                                                          const MARTe::float32 &,
+                                                                                                          const MARTe::StreamString &), uint32, float32,
+            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_C, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_C");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
+                                                                                                          const MARTe::float32 &,
+                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_R, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_R");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
+                                                                                                          const MARTe::float32 &,
+                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_W, 0x10);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_W");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
+                                                                                                          MARTe::float32,
+                                                                                                          const MARTe::StreamString &), uint32, float32,
+            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_C, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_C");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
+                                                                                                          MARTe::float32,
+                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_R, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_R");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
+                                                                                                          MARTe::float32,
+                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_W, 0x10);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_W");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
+                                                                                                          MARTe::float32 &,
+                                                                                                          const MARTe::StreamString &), uint32, float32,
+            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_C, 0x100);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_C");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
+                                                                                                          MARTe::float32 &,
+                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_R, 0x100);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_R");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
+                                                                                                          MARTe::float32 &,
+                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_W, 0x110);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_W");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
+                                                                                                          const MARTe::float32 &,
+                                                                                                          const MARTe::StreamString &), uint32, float32,
+            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_C, 0x1000);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_C");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
+                                                                                                          const MARTe::float32 &,
+                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_R, 0x1000);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_R");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
+                                                                                                          const MARTe::float32 &,
+                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_W, 0x1010);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_W");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
+                                                                                                          MARTe::float32,
+                                                                                                          const MARTe::StreamString &), uint32, float32,
+            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_C, 0x1000);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_C");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
+                                                                                                          MARTe::float32,
+                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_R, 0x1000);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_R");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
+                                                                                                          MARTe::float32,
+                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_W, 0x1010);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_W");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
+                                                                                                          MARTe::float32 &,
+                                                                                                          const MARTe::StreamString &), uint32, float32,
+            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_C, 0x1100);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_W_C");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
+                                                                                                          MARTe::float32 &,
+                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_R, 0x1100);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_W_R");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
+                                                                                                          MARTe::float32 &,
+                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+            void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1110);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_W_W");
     return result;
 }
 
@@ -3511,140 +3610,168 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ReferenceContainer() {
     return result;
 }
 
-bool ClassMethodCallerTTest::TestCall_TwoParameters() {
+bool ClassMethodCallerTTest::TestCall_TwoParameters_C_C() {
     using namespace MARTe;
     bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
+                                                                                                          const MARTe::StreamString &), uint32, StreamString,
+            void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_C_C, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_C");
+    return result;
+}
 
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                              const MARTe::StreamString &), uint32,
-                StreamString, void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_C_C, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        StreamString param2 = "KO";
-        parameters.Write("param2", param2);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_C");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                              MARTe::StreamString), uint32, StreamString, void,
-                void> target(&ClassWithCallableMethods::MethodWithTwoParameters_C_R, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        StreamString param2 = "KO";
-        parameters.Write("param2", param2);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_R");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                              MARTe::StreamString &), uint32, StreamString,
-                void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_C_W, 0x100);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        StreamString param2 = "KO";
-        parameters.Write("param2", param2);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param2", param2);
-        result &= (param2 == "KOOK");
-        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_W");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                              const MARTe::StreamString &), uint32,
-                StreamString, void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_R_C, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        StreamString param2 = "KO";
-        parameters.Write("param2", param2);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_C");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                              MARTe::StreamString), uint32, StreamString, void,
-                void> target(&ClassWithCallableMethods::MethodWithTwoParameters_R_R, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        StreamString param2 = "KO";
-        parameters.Write("param2", param2);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_R");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                              MARTe::StreamString &), uint32, StreamString,
-                void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_R_W, 0x100);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        StreamString param2 = "KO";
-        parameters.Write("param2", param2);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param2", param2);
-        result &= (param2 == "KOOK");
-        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_W");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              const MARTe::StreamString &), uint32,
-                StreamString, void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_W_C, 0x1000);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        StreamString param2 = "KO";
-        parameters.Write("param2", param2);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param1", param1);
-        result &= (param1 == 5);
-        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_C");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::StreamString), uint32, StreamString, void,
-                void> target(&ClassWithCallableMethods::MethodWithTwoParameters_W_R, 0x1000);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        StreamString param2 = "KO";
-        parameters.Write("param2", param2);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param1", param1);
-        result &= (param1 == 5);
-        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_R");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::StreamString &), uint32, StreamString,
-                void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_W_W, 0x1100);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        StreamString param2 = "KO";
-        parameters.Write("param2", param2);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param1", param1);
-        result &= (param1 == 5);
-        parameters.Read("param2", param2);
-        result &= (param2 == "KOOK");
-        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_W");
-    }
+bool ClassMethodCallerTTest::TestCall_TwoParameters_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
+                                                                                                          MARTe::StreamString), uint32, StreamString, void, void> target(
+            &ClassWithCallableMethods::MethodWithTwoParameters_C_R, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_R");
+    return result;
+}
 
+bool ClassMethodCallerTTest::TestCall_TwoParameters_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
+                                                                                                          MARTe::StreamString &), uint32, StreamString, void,
+            void> target(&ClassWithCallableMethods::MethodWithTwoParameters_C_W, 0x100);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param2", param2);
+    result &= (param2 == "KOOK");
+    result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_W");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_TwoParameters_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
+                                                                                                          const MARTe::StreamString &), uint32, StreamString,
+            void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_R_C, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_C");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_TwoParameters_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
+                                                                                                          MARTe::StreamString), uint32, StreamString, void, void> target(
+            &ClassWithCallableMethods::MethodWithTwoParameters_R_R, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_R");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_TwoParameters_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
+                                                                                                          MARTe::StreamString &), uint32, StreamString, void,
+            void> target(&ClassWithCallableMethods::MethodWithTwoParameters_R_W, 0x100);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param2", param2);
+    result &= (param2 == "KOOK");
+    result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_W");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_TwoParameters_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
+                                                                                                          const MARTe::StreamString &), uint32, StreamString,
+            void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_W_C, 0x1000);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_C");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_TwoParameters_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
+                                                                                                          MARTe::StreamString), uint32, StreamString, void, void> target(
+            &ClassWithCallableMethods::MethodWithTwoParameters_W_R, 0x1000);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_R");
+    return result;
+}
+
+bool ClassMethodCallerTTest::TestCall_TwoParameters_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
+                                                                                                          MARTe::StreamString &), uint32, StreamString, void,
+            void> target(&ClassWithCallableMethods::MethodWithTwoParameters_W_W, 0x1100);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == "KOOK");
+    result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_W");
     return result;
 }
 
@@ -3754,43 +3881,47 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_ReferenceContainer() {
     return result;
 }
 
-bool ClassMethodCallerTTest::TestCall_OneParameter() {
+bool ClassMethodCallerTTest::TestCall_OneParameter_C() {
     using namespace MARTe;
     bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &), uint32, void, void, void> target(
+            &ClassWithCallableMethods::MethodWithOneParameter_C, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_C");
+    return result;
+}
 
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &), uint32, void, void, void> target(
-                &ClassWithCallableMethods::MethodWithOneParameter_C, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_C");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32), uint32, void, void, void> target(
-                &ClassWithCallableMethods::MethodWithOneParameter_R, 0x0);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_R");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &), uint32, void, void, void> target(
-                &ClassWithCallableMethods::MethodWithOneParameter_W, 0x1000);
-        ConfigurationDatabase parameters;
-        uint32 param1 = 3;
-        parameters.Write("param1", param1);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
-        parameters.Read("param1", param1);
-        result &= (param1 == 5);
-        result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_W");
-    }
+bool ClassMethodCallerTTest::TestCall_OneParameter_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32), uint32, void, void, void> target(
+            &ClassWithCallableMethods::MethodWithOneParameter_R, 0x0);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_R");
+    return result;
+}
 
+bool ClassMethodCallerTTest::TestCall_OneParameter_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &), uint32, void, void, void> target(
+            &ClassWithCallableMethods::MethodWithOneParameter_W, 0x1000);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_W");
     return result;
 }
 

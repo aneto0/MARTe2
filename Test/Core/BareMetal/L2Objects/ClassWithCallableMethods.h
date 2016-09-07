@@ -294,6 +294,9 @@ ClassWithCallableMethods    ();
     MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_W_C(MARTe::uint32 & param1, const MARTe::StreamString & param2);
     MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_W_R(MARTe::uint32 & param1, MARTe::StreamString param2);
     MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_W_W(MARTe::uint32 & param1, MARTe::StreamString & param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_Pointer_1(MARTe::uint32 * param1, MARTe::StreamString & param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_Pointer_2(MARTe::uint32 & param1, MARTe::StreamString * param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_Pointer_1_2(MARTe::uint32 * param1, MARTe::StreamString * param2);
 
     /**
      * @brief Method with two parameters which returns an error.
@@ -306,6 +309,7 @@ ClassWithCallableMethods    ();
     MARTe::ErrorManagement::ErrorType MethodWithOneParameter_C(const MARTe::uint32 & param1);
     MARTe::ErrorManagement::ErrorType MethodWithOneParameter_R( MARTe::uint32 param1);
     MARTe::ErrorManagement::ErrorType MethodWithOneParameter_W( MARTe::uint32 & param1);
+    MARTe::ErrorManagement::ErrorType MethodWithOneParameter_Pointer( MARTe::uint32 * param1);
 
     /**
      * @brief Method with two parameters which returns an error.

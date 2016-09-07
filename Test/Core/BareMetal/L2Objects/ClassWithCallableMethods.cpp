@@ -1658,25 +1658,44 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParamet
     return MARTe::ErrorManagement::fatalError;
 }
 
-MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameter_C(const MARTe::uint32 & param1) {
-  bool result = true;
-  result &= (param1 == 3);
-  lastMethodExecuted = "MethodWithOneParameter_C";
-  return result;
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_Pointer_1(MARTe::uint32 * param1,
+                                                                                              MARTe::StreamString & param2) {
+    return MARTe::ErrorManagement::fatalError;
 }
 
-MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameter_R(MARTe::uint32  param1) {
-  bool result = true;
-  result &= (param1 == 3);
-  lastMethodExecuted = "MethodWithOneParameter_R";
-  return result;
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_Pointer_2(MARTe::uint32 & param1,
+                                                                                              MARTe::StreamString * param2) {
+    return MARTe::ErrorManagement::fatalError;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_Pointer_1_2(MARTe::uint32 * param1,
+                                                                                                MARTe::StreamString * param2) {
+    return MARTe::ErrorManagement::fatalError;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameter_C(const MARTe::uint32 & param1) {
+    bool result = true;
+    result &= (param1 == 3);
+    lastMethodExecuted = "MethodWithOneParameter_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameter_R(MARTe::uint32 param1) {
+    bool result = true;
+    result &= (param1 == 3);
+    lastMethodExecuted = "MethodWithOneParameter_R";
+    return result;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameter_W(MARTe::uint32 & param1) {
-  bool result = true;
-  param1 = 5;
-  lastMethodExecuted = "MethodWithOneParameter_W";
-  return result;
+    bool result = true;
+    param1 = 5;
+    lastMethodExecuted = "MethodWithOneParameter_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameter_Pointer(MARTe::uint32 * param1) {
+    return MARTe::ErrorManagement::fatalError;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameterReturnError(MARTe::uint32 &param1) {
@@ -1824,7 +1843,7 @@ CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithTwoParameters_W_W)
 CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOneParameter_C)
 CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOneParameter_R)
 CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOneParameter_W)
-
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOneParameter_Pointer)
 
 CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParametersReturnError)
 CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParametersReturnError)

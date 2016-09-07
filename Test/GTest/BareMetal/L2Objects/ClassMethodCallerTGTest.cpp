@@ -529,9 +529,139 @@ TEST(ClassMethodCallerTGTest,TestCall_FourParameters_ReferenceContainer) {
     ASSERT_TRUE(target.TestCall_FourParameters_ReferenceContainer());
 }
 
-TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters) {
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_C_C_C) {
     ClassMethodCallerTTest target;
-    ASSERT_TRUE(target.TestCall_ThreeParameters());
+    ASSERT_TRUE(target.TestCall_ThreeParameters_C_C_C());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_C_C_R) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_C_C_R());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_C_C_W) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_C_C_W());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_C_R_C) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_C_R_C());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_C_R_R) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_C_R_R());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_C_R_W) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_C_R_W());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_C_W_C) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_C_W_C());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_C_W_R) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_C_W_R());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_C_W_W) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_C_W_W());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_R_C_C) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_R_C_C());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_R_C_R) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_R_C_R());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_R_C_W) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_R_C_W());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_R_R_C) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_R_R_C());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_R_R_R) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_R_R_R());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_R_R_W) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_R_R_W());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_R_W_C) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_R_W_C());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_R_W_R) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_R_W_R());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_R_W_W) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_R_W_W());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_W_C_C) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_W_C_C());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_W_C_R) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_W_C_R());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_W_C_W) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_W_C_W());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_W_R_C) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_W_R_C());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_W_R_R) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_W_R_R());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_W_R_W) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_W_R_W());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_W_W_C) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_W_W_C());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_W_W_R) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_W_W_R());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_W_W_W) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_ThreeParameters_W_W_W());
 }
 
 TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_ErrorParameter1) {
@@ -559,9 +689,49 @@ TEST(ClassMethodCallerTGTest,TestCall_ThreeParameters_ReferenceContainer) {
     ASSERT_TRUE(target.TestCall_ThreeParameters_ReferenceContainer());
 }
 
-TEST(ClassMethodCallerTGTest,TestCall_TwoParameters) {
+TEST(ClassMethodCallerTGTest,TestCall_TwoParameters_C_C) {
     ClassMethodCallerTTest target;
-    ASSERT_TRUE(target.TestCall_TwoParameters());
+    ASSERT_TRUE(target.TestCall_TwoParameters_C_C());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_TwoParameters_C_R) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_TwoParameters_C_R());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_TwoParameters_C_W) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_TwoParameters_C_W());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_TwoParameters_R_C) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_TwoParameters_R_C());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_TwoParameters_R_R) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_TwoParameters_R_R());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_TwoParameters_R_W) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_TwoParameters_R_W());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_TwoParameters_W_C) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_TwoParameters_W_C());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_TwoParameters_W_R) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_TwoParameters_W_R());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_TwoParameters_W_W) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_TwoParameters_W_W());
 }
 
 TEST(ClassMethodCallerTGTest,TestCall_TwoParameters_ErrorParameter1) {
@@ -584,9 +754,19 @@ TEST(ClassMethodCallerTGTest,TestCall_TwoParameters_ReferenceContainer) {
     ASSERT_TRUE(target.TestCall_TwoParameters_ReferenceContainer());
 }
 
-TEST(ClassMethodCallerTGTest,TestCall_OneParameter) {
+TEST(ClassMethodCallerTGTest,TestCall_OneParameter_C) {
     ClassMethodCallerTTest target;
-    ASSERT_TRUE(target.TestCall_OneParameter());
+    ASSERT_TRUE(target.TestCall_OneParameter_C());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_OneParameter_R) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_OneParameter_R());
+}
+
+TEST(ClassMethodCallerTGTest,TestCall_OneParameter_W) {
+    ClassMethodCallerTTest target;
+    ASSERT_TRUE(target.TestCall_OneParameter_W());
 }
 
 TEST(ClassMethodCallerTGTest,TestCall_OneParameter_ErrorParameter1) {
