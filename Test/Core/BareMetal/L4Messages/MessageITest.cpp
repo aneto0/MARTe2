@@ -102,7 +102,7 @@ bool MessageITest::TestSendMessage() {
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessage(mess, sender.operator->());
-    if (status != ErrorManagement::noError) {
+    if (status != ErrorManagement::NoError) {
         return false;
     }
 
@@ -131,7 +131,7 @@ bool MessageITest::TestSendMessage_NULL_Source() {
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessage(mess, NULL);
-    if (status != ErrorManagement::noError) {
+    if (status != ErrorManagement::NoError) {
         return false;
     }
 
@@ -154,7 +154,7 @@ bool MessageITest::TestSendMessage_False_InvalidMessage() {
 
     status = MessageI::SendMessage(mess, NULL);
 
-    result = (status == ErrorManagement::parametersError);
+    result = (status == ErrorManagement::ParametersError);
 
     return result;
 }
@@ -185,7 +185,7 @@ bool MessageITest::TestSendMessage_False_NotExpectedIndirectReply() {
 
     status = MessageI::SendMessage(mess, sender.operator->());
 
-    result = (status == ErrorManagement::communicationError);
+    result = (status == ErrorManagement::CommunicationError);
 
     return result;
 }
@@ -213,7 +213,7 @@ bool MessageITest::TestSendMessage_False_NoDestinationForReply() {
 
     status = MessageI::SendMessage(mess, NULL);
 
-    result = (status == ErrorManagement::parametersError);
+    result = (status == ErrorManagement::ParametersError);
 
     return result;
 
@@ -242,7 +242,7 @@ bool MessageITest::TestSendMessage_False_NoDestinationForExpectedReply() {
 
     status = MessageI::SendMessage(mess, NULL);
 
-    result = (status == ErrorManagement::parametersError);
+    result = (status == ErrorManagement::ParametersError);
 
     return result;
 
@@ -272,7 +272,7 @@ bool MessageITest::TestSendMessage_False_InvalidDestination() {
 
     status = MessageI::SendMessage(mess, sender.operator->());
 
-    result = (status == ErrorManagement::unsupportedFeature);
+    result = (status == ErrorManagement::UnsupportedFeature);
 
     return result;
 
@@ -302,7 +302,7 @@ bool MessageITest::TestSendMessage_False_InvalidFunction() {
 
     status = MessageI::SendMessage(mess, sender.operator->());
 
-    result = (status == ErrorManagement::unsupportedFeature);
+    result = (status == ErrorManagement::UnsupportedFeature);
 
     return result;
 
@@ -332,7 +332,7 @@ bool MessageITest::TestSendMessageAndWaitReply() {
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessageAndWaitReply(mess, sender.operator->());
-    if (status != ErrorManagement::noError) {
+    if (status != ErrorManagement::NoError) {
         return false;
     }
     if (!mess->IsReply()) {
@@ -364,7 +364,7 @@ bool MessageITest::TestSendMessageAndWaitReply_False_InvalidMessage() {
 
     status = MessageI::SendMessageAndWaitReply(mess, sender.operator->());
 
-    result = (status == ErrorManagement::parametersError);
+    result = (status == ErrorManagement::ParametersError);
 
     return result;
 }
@@ -396,7 +396,7 @@ bool MessageITest::TestSendMessageAndWaitReply_False_ReplyOfReply() {
 
     status = MessageI::SendMessageAndWaitReply(mess, sender.operator->());
 
-    result = (status == ErrorManagement::communicationError);
+    result = (status == ErrorManagement::CommunicationError);
 
     return result;
 }
@@ -433,11 +433,11 @@ bool MessageITest::TestSendMessage_ExpectsIndirectReply() {
     sender->InstallMessageFilter(catcherFilter);
 
     status = MessageI::SendMessage(mess, sender.operator->());
-    if (status != ErrorManagement::noError) {
+    if (status != ErrorManagement::NoError) {
         return false;
     }
     status = catcherFilter->Wait(TTInfiniteWait);
-    if (status != ErrorManagement::noError) {
+    if (status != ErrorManagement::NoError) {
         return false;
     }
 
@@ -470,7 +470,7 @@ bool MessageITest::TestSendMessageAndWaitIndirectReply() {
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = sender->SendMessageAndWaitIndirectReply(mess);
-    if (status != ErrorManagement::noError) {
+    if (status != ErrorManagement::NoError) {
         return false;
     }
     ReferenceT<Object> replyObj = mess->Get(0);
@@ -503,7 +503,7 @@ bool MessageITest::TestSendMessageAndExpectReplyLater_False_InvalidMessage() {
 
     status = MessageI::SendMessageAndWaitReply(mess, sender.operator->());
 
-    result = (status == ErrorManagement::parametersError);
+    result = (status == ErrorManagement::ParametersError);
 
     return result;
 }

@@ -227,7 +227,7 @@ inline const char8 *CharBuffer::Buffer() const {
 }
 inline char8 *CharBuffer::BufferReference() {
     if (readOnly) {
-       REPORT_ERROR(ErrorManagement::warning, "The buffer is Read Only");
+       REPORT_ERROR(ErrorManagement::Warning, "The buffer is Read Only");
     }
     return buffer;
 }

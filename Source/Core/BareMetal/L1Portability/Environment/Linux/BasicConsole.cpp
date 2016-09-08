@@ -205,7 +205,7 @@ bool BasicConsole::Read(char8 * const output,
         ret = Read(output, size);
     }
     else {
-        REPORT_ERROR(ErrorManagement::unsupportedFeature, "BasicConsole: Cannot read within timeout");
+        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Cannot read within timeout");
     }
 
     return ret;
@@ -220,7 +220,7 @@ bool BasicConsole::Write(const char8 * const input,
         ret = Write(input, size);
     }
     else {
-        REPORT_ERROR(ErrorManagement::unsupportedFeature, "BasicConsole: Cannot write within timeout");
+        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Cannot write within timeout");
     }
 
     return ret;
@@ -301,7 +301,7 @@ bool BasicConsole::OSWrite(const char8* const buffer,
     size = static_cast<uint32>(writtenBytes);
     if (size == 0u) {
         err = false;
-        REPORT_ERROR(ErrorManagement::warning, "BasicConsole: Zero bytes written");
+        REPORT_ERROR(ErrorManagement::Warning, "BasicConsole: Zero bytes written");
     }
     return err;
 }
@@ -330,7 +330,7 @@ bool BasicConsole::Read(char8 * const output,
             }
             else if (readBytes == 0) {
                 err = false;
-                REPORT_ERROR(ErrorManagement::warning, "BasicConsole: Zero bytes read");
+                REPORT_ERROR(ErrorManagement::Warning, "BasicConsole: Zero bytes read");
             }
             else {
                 size = static_cast<uint32>(readBytes);
@@ -339,7 +339,7 @@ bool BasicConsole::Read(char8 * const output,
     }
     else {
         err = false;
-        REPORT_ERROR(ErrorManagement::warning, "BasicConsole: Invalid input parameters");
+        REPORT_ERROR(ErrorManagement::Warning, "BasicConsole: Invalid input parameters");
     }
     return err;
 }
@@ -396,34 +396,34 @@ bool BasicConsole::TimeoutSupported() const {
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::ShowBuffer() {
-    REPORT_ERROR(ErrorManagement::unsupportedFeature, "BasicConsole: Function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
     return false;
 }
 
 /*lint -e{715} function not implemented in Linux*/
 bool BasicConsole::SetColour(const Colours &foregroundColour,
                              const Colours &backgroundColour) {
-    REPORT_ERROR(ErrorManagement::unsupportedFeature, "BasicConsole: Function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
     return false;
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::SetTitleBar(const char8 * const title) {
-    REPORT_ERROR(ErrorManagement::unsupportedFeature, "BasicConsole: Function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
     return false;
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::GetTitleBar(char8 * const title,
                                const uint32 &size) const {
-    REPORT_ERROR(ErrorManagement::unsupportedFeature, "BasicConsole: Function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
     return false;
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::SetCursorPosition(const uint32 &column,
                                      const uint32 &row) {
-    REPORT_ERROR(ErrorManagement::unsupportedFeature, "BasicConsole: Function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
 
     return false;
 }
@@ -437,7 +437,7 @@ bool BasicConsole::GetCursorPosition(uint32 &column,
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
                                  const uint32 &numberOfRows) {
-    REPORT_ERROR(ErrorManagement::unsupportedFeature, "BasicConsole: Function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
 
     return false;
 }
@@ -445,7 +445,7 @@ bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::GetWindowSize(uint32 &numberOfColumns,
                                  uint32 &numberOfRows) const {
-    REPORT_ERROR(ErrorManagement::unsupportedFeature, "BasicConsole: Function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
 
     return false;
 }
@@ -456,7 +456,7 @@ bool BasicConsole::PlotChar(const char8 &c,
                             const Colours &backgroundColour,
                             const uint32 &column,
                             const uint32 &row) {
-    REPORT_ERROR(ErrorManagement::unsupportedFeature, "BasicConsole: Function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
 
     return false;
 }

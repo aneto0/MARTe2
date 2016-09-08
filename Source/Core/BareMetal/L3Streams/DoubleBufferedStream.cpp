@@ -49,11 +49,11 @@ DoubleBufferedStream::DoubleBufferedStream() :
         writeBuffer(this) {
     bufferSizeSet = true;
     if (!readBuffer.SetBufferSize(32u)) {
-        REPORT_ERROR(ErrorManagement::fatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+        REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
         bufferSizeSet = false;
     }
     if (!writeBuffer.SetBufferSize(32u)) {
-        REPORT_ERROR(ErrorManagement::fatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+        REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
         bufferSizeSet = false;
     }
 }
@@ -65,11 +65,11 @@ DoubleBufferedStream::DoubleBufferedStream(const TimeoutType &timeoutIn) :
     SetTimeout(timeoutIn);
     bufferSizeSet = true;
     if (!readBuffer.SetBufferSize(32u)) {
-        REPORT_ERROR(ErrorManagement::fatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+        REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
         bufferSizeSet = false;
     }
     if (!writeBuffer.SetBufferSize(32u)) {
-        REPORT_ERROR(ErrorManagement::fatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+        REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
         bufferSizeSet = false;
     }
 }

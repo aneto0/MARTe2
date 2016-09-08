@@ -63,7 +63,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_VoidParameters() {
         ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithVoidParameters);
         result &= (mapper.GetMethodCaller() != NULL);
         if (result) {
-            result &= (mapper.GetMethodCaller()->Call(&context) == ErrorManagement::noError);
+            result &= (mapper.GetMethodCaller()->Call(&context) == ErrorManagement::NoError);
             result = (context.GetLastMethodExecuted() == "MethodWithVoidParameters(void)");
         }
         return result;
@@ -81,7 +81,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_OneParameter_C() {
     parameters.Write("param1", param1);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_C");
     }
     return result;
@@ -97,7 +97,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_OneParameter_R() {
     parameters.Write("param1", param1);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_R");
     }
     return result;
@@ -113,7 +113,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_OneParameter_W() {
     parameters.Write("param1", param1);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_W");
     }
     parameters.Read("param1", param1);
@@ -142,7 +142,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_C_C() {
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_C");
     }
     return result;
@@ -160,7 +160,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_C_R() {
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_R");
     }
     return result;
@@ -178,7 +178,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_C_W() {
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_W");
     }
     parameters.Read("param2", param2);
@@ -198,7 +198,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_R_C() {
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_C");
     }
     return result;
@@ -216,7 +216,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_R_R() {
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_R");
     }
     return result;
@@ -234,7 +234,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_R_W() {
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_W");
     }
     parameters.Read("param2", param2);
@@ -254,7 +254,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_W_C() {
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_C");
     }
     parameters.Read("param1", param1);
@@ -274,7 +274,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_W_R() {
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_R");
     }
     parameters.Read("param1", param1);
@@ -294,7 +294,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_W_W() {
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_W");
     }
     parameters.Read("param1", param1);
@@ -338,7 +338,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_C_C() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_C");
     }
     return result;
@@ -358,7 +358,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_C_R() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_R");
     }
     return result;
@@ -378,7 +378,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_C_W() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_W");
     }
     parameters.Read("param3", param3);
@@ -400,7 +400,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_R_C() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_C");
     }
     return result;
@@ -420,7 +420,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_R_R() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_R");
     }
     return result;
@@ -440,7 +440,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_R_W() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_W");
     }
     parameters.Read("param3", param3);
@@ -462,7 +462,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_W_C() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_C");
     }
     parameters.Read("param2", param2);
@@ -484,7 +484,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_W_R() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_R");
     }
     parameters.Read("param2", param2);
@@ -506,7 +506,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_W_W() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_W");
     }
     parameters.Read("param2", param2);
@@ -530,7 +530,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_C_C() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_C");
     }
     return result;
@@ -550,7 +550,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_C_R() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_R");
     }
     return result;
@@ -570,7 +570,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_C_W() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_W");
     }
     parameters.Read("param3", param3);
@@ -592,7 +592,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_R_C() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_C");
     }
     return result;
@@ -612,7 +612,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_R_R() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_R");
     }
     return result;
@@ -632,7 +632,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_R_W() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_W");
     }
     parameters.Read("param3", param3);
@@ -654,7 +654,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_W_C() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_C");
     }
     parameters.Read("param2", param2);
@@ -676,7 +676,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_W_R() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_R");
     }
     parameters.Read("param2", param2);
@@ -698,7 +698,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_W_W() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_W");
     }
     parameters.Read("param2", param2);
@@ -722,7 +722,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_C_C() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_C");
     }
     parameters.Read("param1", param1);
@@ -744,7 +744,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_C_R() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_R");
     }
     parameters.Read("param1", param1);
@@ -766,7 +766,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_C_W() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_W");
     }
     parameters.Read("param1", param1);
@@ -790,7 +790,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_R_C() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_C");
     }
     parameters.Read("param1", param1);
@@ -812,7 +812,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_R_R() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_R");
     }
     parameters.Read("param1", param1);
@@ -834,7 +834,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_R_W() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_W");
     }
     parameters.Read("param1", param1);
@@ -858,7 +858,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_W_C() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_W_C");
     }
     parameters.Read("param1", param1);
@@ -882,7 +882,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_W_R() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_W_R");
     }
     parameters.Read("param1", param1);
@@ -906,7 +906,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_W_W() {
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_W_W");
     }
     parameters.Read("param1", param1);
@@ -934,7 +934,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_C_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_C_C");
     }
     return result;
@@ -956,7 +956,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_C_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_C_R");
     }
     return result;
@@ -978,7 +978,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_C_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_C_W");
     }
     parameters.Read("param4", param4);
@@ -1002,7 +1002,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_R_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_R_C");
     }
     return result;
@@ -1024,7 +1024,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_R_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_R_R");
     }
     return result;
@@ -1046,7 +1046,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_R_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_R_W");
     }
     parameters.Read("param4", param4);
@@ -1070,7 +1070,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_W_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_W_C");
     }
     parameters.Read("param3", param3);
@@ -1094,7 +1094,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_W_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_W_R");
     }
     parameters.Read("param3", param3);
@@ -1118,7 +1118,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_W_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_W_W");
     }
     parameters.Read("param3", param3);
@@ -1144,7 +1144,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_C_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_C_C");
     }
     return result;
@@ -1166,7 +1166,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_C_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_C_R");
     }
     return result;
@@ -1188,7 +1188,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_C_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_C_W");
     }
     parameters.Read("param4", param4);
@@ -1212,7 +1212,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_R_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_R_C");
     }
     return result;
@@ -1234,7 +1234,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_R_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_R_R");
     }
     return result;
@@ -1256,7 +1256,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_R_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_R_W");
     }
     parameters.Read("param4", param4);
@@ -1280,7 +1280,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_W_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_W_C");
     }
     parameters.Read("param3", param3);
@@ -1304,7 +1304,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_W_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_W_R");
     }
     parameters.Read("param3", param3);
@@ -1328,7 +1328,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_W_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_W_W");
     }
     parameters.Read("param3", param3);
@@ -1354,7 +1354,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_C_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_C_C");
     }
     parameters.Read("param2", param2);
@@ -1378,7 +1378,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_C_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_C_R");
     }
     parameters.Read("param2", param2);
@@ -1402,7 +1402,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_C_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_C_W");
     }
     parameters.Read("param2", param2);
@@ -1428,7 +1428,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_R_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_R_C");
     }
     parameters.Read("param2", param2);
@@ -1452,7 +1452,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_R_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_R_R");
     }
     parameters.Read("param2", param2);
@@ -1476,7 +1476,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_R_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_R_W");
     }
     parameters.Read("param2", param2);
@@ -1502,7 +1502,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_W_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_W_C");
     }
     parameters.Read("param2", param2);
@@ -1528,7 +1528,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_W_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_W_R");
     }
     parameters.Read("param2", param2);
@@ -1554,7 +1554,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_W_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_W_W");
     }
     parameters.Read("param2", param2);
@@ -1582,7 +1582,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_C_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_C_C");
     }
     return result;
@@ -1604,7 +1604,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_C_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_C_R");
     }
     return result;
@@ -1626,7 +1626,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_C_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_C_W");
     }
     parameters.Read("param4", param4);
@@ -1650,7 +1650,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_R_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_R_C");
     }
     return result;
@@ -1672,7 +1672,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_R_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_R_R");
     }
     return result;
@@ -1694,7 +1694,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_R_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_R_W");
     }
     parameters.Read("param4", param4);
@@ -1718,7 +1718,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_W_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_W_C");
     }
     parameters.Read("param3", param3);
@@ -1742,7 +1742,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_W_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_W_R");
     }
     parameters.Read("param3", param3);
@@ -1766,7 +1766,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_W_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_W_W");
     }
     parameters.Read("param3", param3);
@@ -1792,7 +1792,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_C_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_C_C");
     }
     return result;
@@ -1814,7 +1814,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_C_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_C_R");
     }
     return result;
@@ -1836,7 +1836,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_C_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_C_W");
     }
     parameters.Read("param4", param4);
@@ -1860,7 +1860,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_R_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_R_C");
     }
     return result;
@@ -1882,7 +1882,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_R_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_R_R");
     }
     return result;
@@ -1904,7 +1904,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_R_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_R_W");
     }
     parameters.Read("param4", param4);
@@ -1928,7 +1928,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_W_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_W_C");
     }
     parameters.Read("param3", param3);
@@ -1952,7 +1952,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_W_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_W_R");
     }
     parameters.Read("param3", param3);
@@ -1976,7 +1976,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_W_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_W_W");
     }
     parameters.Read("param3", param3);
@@ -2002,7 +2002,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_C_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_C_C");
     }
     parameters.Read("param2", param2);
@@ -2026,7 +2026,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_C_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_C_R");
     }
     parameters.Read("param2", param2);
@@ -2050,7 +2050,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_C_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_C_W");
     }
     parameters.Read("param2", param2);
@@ -2076,7 +2076,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_R_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_R_C");
     }
     parameters.Read("param2", param2);
@@ -2100,7 +2100,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_R_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_R_R");
     }
     parameters.Read("param2", param2);
@@ -2124,7 +2124,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_R_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_R_W");
     }
     parameters.Read("param2", param2);
@@ -2150,7 +2150,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_W_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_W_C");
     }
     parameters.Read("param2", param2);
@@ -2176,7 +2176,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_W_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_W_R");
     }
     parameters.Read("param2", param2);
@@ -2202,7 +2202,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_W_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_W_W");
     }
     parameters.Read("param2", param2);
@@ -2230,7 +2230,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_C_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_C_C");
     }
     parameters.Read("param1", param1);
@@ -2254,7 +2254,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_C_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_C_R");
     }
     parameters.Read("param1", param1);
@@ -2278,7 +2278,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_C_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_C_W");
     }
     parameters.Read("param1", param1);
@@ -2304,7 +2304,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_R_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_R_C");
     }
     parameters.Read("param1", param1);
@@ -2328,7 +2328,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_R_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_R_R");
     }
     parameters.Read("param1", param1);
@@ -2352,7 +2352,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_R_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_R_W");
     }
     parameters.Read("param1", param1);
@@ -2378,7 +2378,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_W_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_W_C");
     }
     parameters.Read("param1", param1);
@@ -2404,7 +2404,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_W_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_W_R");
     }
     parameters.Read("param1", param1);
@@ -2430,7 +2430,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_W_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_W_W");
     }
     parameters.Read("param1", param1);
@@ -2458,7 +2458,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_C_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_C_C");
     }
     parameters.Read("param1", param1);
@@ -2482,7 +2482,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_C_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_C_R");
     }
     parameters.Read("param1", param1);
@@ -2506,7 +2506,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_C_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_C_W");
     }
     parameters.Read("param1", param1);
@@ -2532,7 +2532,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_R_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_R_C");
     }
     parameters.Read("param1", param1);
@@ -2556,7 +2556,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_R_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_R_R");
     }
     parameters.Read("param1", param1);
@@ -2580,7 +2580,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_R_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_R_W");
     }
     parameters.Read("param1", param1);
@@ -2606,7 +2606,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_W_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_W_C");
     }
     parameters.Read("param1", param1);
@@ -2632,7 +2632,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_W_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_W_R");
     }
     parameters.Read("param1", param1);
@@ -2658,7 +2658,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_W_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_W_W");
     }
     parameters.Read("param1", param1);
@@ -2686,7 +2686,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_C_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_C_C");
     }
     parameters.Read("param1", param1);
@@ -2712,7 +2712,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_C_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_C_R");
     }
     parameters.Read("param1", param1);
@@ -2738,7 +2738,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_C_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_C_W");
     }
     parameters.Read("param1", param1);
@@ -2766,7 +2766,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_R_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_R_C");
     }
     parameters.Read("param1", param1);
@@ -2792,7 +2792,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_R_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_R_R");
     }
     parameters.Read("param1", param1);
@@ -2818,7 +2818,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_R_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_R_W");
     }
     parameters.Read("param1", param1);
@@ -2846,7 +2846,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_W_C() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_W_C");
     }
     parameters.Read("param1", param1);
@@ -2874,7 +2874,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_W_R() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_W_R");
     }
     parameters.Read("param1", param1);
@@ -2902,7 +2902,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_W_W() {
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
-        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::noError);
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_W_W");
     }
     parameters.Read("param1", param1);

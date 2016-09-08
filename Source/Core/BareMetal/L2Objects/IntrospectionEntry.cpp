@@ -134,11 +134,11 @@ TypeDescriptor IntrospectionEntry::GetMemberTypeDescriptor() const {
                 typeDes.isConstant = isConstant;
             }
             else {
-                REPORT_ERROR(ErrorManagement::fatalError, "GetMemberTypeDescriptor: No ClassProperties associated to the specified structured object");
+                REPORT_ERROR(ErrorManagement::FatalError, "GetMemberTypeDescriptor: No ClassProperties associated to the specified structured object");
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::fatalError,
+            REPORT_ERROR(ErrorManagement::FatalError,
                          "GetMemberTypeDescriptor: No structured object with the specified type found inside the ClassRegistryDatabase");
         }
     }

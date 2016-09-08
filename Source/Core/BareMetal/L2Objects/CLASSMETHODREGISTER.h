@@ -55,24 +55,18 @@ public:
     ClassMethodInterfaceMapperLoader(CCString className,
                                      CCString methodName,
                                      ClassRegistryItem *classRegistryItem,
-                                     ClassMethodInterfaceMapper *mapper);
+                                     ClassMethodInterfaceMapper *mapper) {
+        if ((mapper != NULL) && (classRegistryItem != NULL)) {
+            classRegistryItem->AddMethod(mapper);
+            mapper->SetMethodName(methodName);
+        }
+    }
 };
 }
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-ClassMethodInterfaceMapperLoader::ClassMethodInterfaceMapperLoader(CCString className,
-                                                                   CCString methodName,
-                                                                   ClassRegistryItem *classRegistryItem,
-                                                                   ClassMethodInterfaceMapper *mapper) {
-    if ((mapper != NULL) && (classRegistryItem != NULL)) {
-        classRegistryItem->AddMethod(mapper);
-        mapper->SetMethodName(methodName);
-    }
-}
-}
 
 /**
  * This macro has to be inserted in the unit file of the class with the method to register.

@@ -102,7 +102,7 @@ bool ErrorManagementTest::TestSetErrorProcessFunction() {
 
     ErrorManagement::SetErrorProcessFunction(DummyErrorFunction);
 
-    ErrorManagement::ReportError(ErrorManagement::information, "", "", 0, "");
+    ErrorManagement::ReportError(ErrorManagement::Information, "", "", 0, "");
 
     return retVal;
 
@@ -110,25 +110,25 @@ bool ErrorManagementTest::TestSetErrorProcessFunction() {
 
 bool ErrorManagementTest::TestToName() {
 
-    ErrorManagement::ErrorType all[] = { ErrorManagement::noError, ErrorManagement::debug, ErrorManagement::information, ErrorManagement::warning,
-            ErrorManagement::fatalError, ErrorManagement::recoverableError, ErrorManagement::initialisationError, ErrorManagement::OSError,
-            ErrorManagement::parametersError, ErrorManagement::illegalOperation, ErrorManagement::errorSharing, ErrorManagement::errorAccessDenied,
-            ErrorManagement::exception, ErrorManagement::timeout, ErrorManagement::communicationError, ErrorManagement::syntaxError,
-            ErrorManagement::unsupportedFeature };
+    ErrorManagement::ErrorType all[] = { ErrorManagement::NoError, ErrorManagement::Debug, ErrorManagement::Information, ErrorManagement::Warning,
+            ErrorManagement::FatalError, ErrorManagement::RecoverableError, ErrorManagement::InitialisationError, ErrorManagement::OSError,
+            ErrorManagement::ParametersError, ErrorManagement::IllegalOperation, ErrorManagement::ErrorSharing, ErrorManagement::ErrorAccessDenied,
+            ErrorManagement::Exception, ErrorManagement::Timeout, ErrorManagement::CommunicationError, ErrorManagement::SyntaxError,
+            ErrorManagement::UnsupportedFeature };
 
     const char8 *names[] = { "NoError", "Debug", "Information", "Warning", "FatalError", "RecoverableError", "InitialisationError", "OSError",
             "ParametersError", "IllegalOperation", "ErrorSharing", "ErrorAccessDenied", "Exception", "Timeout", "CommunicationError", "SyntaxError",
             "UnsupportedFeature" };
 
     uint32 i = 0;
-    while (all[i] != ErrorManagement::unsupportedFeature) {
+    while (all[i] != ErrorManagement::UnsupportedFeature) {
         if (StringHelper::Compare(ErrorManagement::ToName(all[i]), names[i]) != 0) {
             return false;
         }
         i++;
     }
 
-    return StringHelper::Compare(ErrorManagement::ToName(ErrorManagement::unsupportedFeature), "UnsupportedFeature") == 0;
+    return StringHelper::Compare(ErrorManagement::ToName(ErrorManagement::UnsupportedFeature), "UnsupportedFeature") == 0;
 }
 
 bool ErrorManagementTest::TestReportError(ErrorManagement::ErrorType code,

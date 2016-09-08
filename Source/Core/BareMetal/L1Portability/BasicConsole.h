@@ -174,7 +174,7 @@ public:
      * @return true if the size can be set, false in case of error. The error code will be: \n
      * ErrorManagement::OSError if there is any operating
      * system related problem while performing the operation;
-     * ErrorManagement::unsupportedFeature if the feature is not available
+     * ErrorManagement::UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
     virtual bool SetWindowSize(const uint32 &numberOfColumns,
@@ -187,7 +187,7 @@ public:
      * @return true if the size can be retrieved, false in case of error. The error code will be: \n
      * ErrorManagement::OSError if there is any operating
      * system related problem while performing the operation;
-     * ErrorManagement::unsupportedFeature if the feature is not available
+     * ErrorManagement::UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
     virtual bool GetWindowSize(uint32 &numberOfColumns,
@@ -207,7 +207,7 @@ public:
      * @return true if the cursor can be set in the required position, false in case of error. The error code will be: \n
      * ErrorManagement::OSError if there is any operating
      * system related problem while performing the operation;
-     * ErrorManagement::unsupportedFeature if the feature is not available
+     * ErrorManagement::UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
     virtual bool SetCursorPosition(const uint32 &column,
@@ -220,7 +220,7 @@ public:
      * @return true if the cursor coordinates be retrieved, false in case of error. The error code will be: \n
      * ErrorManagement::OSError if there is any operating
      * system related problem while performing the operation;
-     * ErrorManagement::unsupportedFeature if the feature is not available
+     * ErrorManagement::UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
     virtual bool GetCursorPosition(uint32 & column,
@@ -240,7 +240,7 @@ public:
      * @return true if the buffer is successfully displayed, false in case of error. The error code will be: \n
      * ErrorManagement::OSError if there is any operating
      * system related problem while performing the operation;
-     * ErrorManagement::unsupportedFeature if the feature is not available
+     * ErrorManagement::UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
     virtual bool ShowBuffer();
@@ -258,7 +258,7 @@ public:
      * @return true if the new colours can be successfully set, false in case of error. The error code will be: \n
      * ErrorManagement::OSError if there is any operating
      * system related problem while performing the operation;
-     * ErrorManagement::unsupportedFeature if the feature is not available
+     * ErrorManagement::UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
     virtual bool SetColour(const Colours &foregroundColour,
@@ -288,7 +288,7 @@ public:
      * @return true if the char is successfully plotted with the correct attributes, false in case of error. The error code will be: \n
      * ErrorManagement::OSError if there is any operating
      * system related problem while performing the operation;
-     * ErrorManagement::unsupportedFeature if the feature is not available
+     * ErrorManagement::UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
     virtual bool PlotChar(const char8 &c,
@@ -303,7 +303,7 @@ public:
      * @return true if the title can be successfully set, false in case of error. The error code will be: \n
      * ErrorManagement::OSError if there is any operating
      * system related problem while performing the operation;
-     * ErrorManagement::unsupportedFeature if the feature is not available
+     * ErrorManagement::UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
     virtual bool SetTitleBar(const char8 *title);
@@ -315,7 +315,7 @@ public:
      * @return true if the title can be successfully retrieved. In case of errors it returns false and the error code will be: \n
      * ErrorManagement::OSError if there is any operating
      * system related problem while performing the operation;
-     * ErrorManagement::unsupportedFeature if the feature is not available
+     * ErrorManagement::UnsupportedFeature if the feature is not available
      * in the operating system specific implementation;
      */
     virtual bool GetTitleBar(char8 *title,
@@ -373,8 +373,8 @@ public:
      * @param [in] timeout maximum time to wait for writing to the console.
      * @return - true if a number of bytes greater than 0 is successfully written.
      * Returns false in case of errors. The error code will be:
-     * - ErrorManagement::timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
-     * - ErrorManagement::warning if zero bytes are written and no ErrorManagement::OSError is flagged;
+     * - ErrorManagement::Timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
+     * - ErrorManagement::Warning if zero bytes are written and no ErrorManagement::OSError is flagged;
      * - ErrorManagement::OSError if there is any operating system related problem while performing the operation.
      * @pre Size has not to be larger than the buffer size.
      */
@@ -390,8 +390,8 @@ public:
      * @param[in,out] size number of bytes to read.
      * @param[in] timeout maximum time to wait for the operation to be successfully completed.
      * @return - true if at least one byte is read, false in case of errors. The error code will be:
-     * - ErrorManagement::timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
-     * - ErrorManagement::warning if zero bytes are read and no ErrorManagement::OSError is flagged;
+     * - ErrorManagement::Timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
+     * - ErrorManagement::Warning if zero bytes are read and no ErrorManagement::OSError is flagged;
      * - ErrorManagement::OSError if there is any operating system related problem while performing the operation.
      */
     virtual bool Read(char8 * const output,
@@ -465,8 +465,8 @@ private:
      * size will contain the number of bytes actually written.
      * @param [in] timeout maximum time to wait for writing to the console.
      * @return - true if a number of bytes greater than 0 is successfully written;
-     * - ErrorManagement::timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
-     * - ErrorManagement::warning if zero bytes are written and no ErrorManagement::OSError is flagged;
+     * - ErrorManagement::Timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
+     * - ErrorManagement::Warning if zero bytes are written and no ErrorManagement::OSError is flagged;
      * - ErrorManagement::OSError if there is any operating system related problem while performing the operation.
      */
     bool OSWrite(const char8 * const buffer,

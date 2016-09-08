@@ -99,7 +99,7 @@ public:
      * @brief Waits for a post event without timeout (i.e. possibly forever).
      * @details Calling this function on a semaphore that was not reset will
      * not block the calling thread.
-     * @return ErrorManagement::noError if the operating system call returns with no errors.
+     * @return ErrorManagement::NoError if the operating system call returns with no errors.
      * @pre the semaphore was successfully created.
      */
     ErrorManagement::ErrorType Wait();
@@ -109,7 +109,7 @@ public:
      * @details Calling this function on a semaphore that was not reset will
      * not block the calling thread.
      * @param[in] timeout the maximum time that the barrier will be set.
-     * @return ErrorManagement::noError if the operating system call returns with no errors or
+     * @return ErrorManagement::NoError if the operating system call returns with no errors or
      * Timeout if the time waiting in the barrier (from when the function was called)
      * was greater than the specified timeout.
      * @pre the semaphore was successfully created.
@@ -134,7 +134,7 @@ public:
      * @brief Resets the semaphore (raises the barrier) and waits.
      * @param[in] timeout is the desired timeout.
      * @return true if both system level Reset returns true and
-     * the Wait function returns ErrorManagement::noError.
+     * the Wait function returns ErrorManagement::NoError.
      * @pre the semaphore was successfully created.
      */
     ErrorManagement::ErrorType ResetWait(const TimeoutType &timeout);

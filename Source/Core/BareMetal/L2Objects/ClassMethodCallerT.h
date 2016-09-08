@@ -792,7 +792,7 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
         err = Call(object, *(param.operator->()));
     }
     else {
-        err = ErrorManagement::parametersError;
+        err = ErrorManagement::ParametersError;
     }
     return err;
 }
@@ -881,7 +881,7 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, Referenc
         err = Call(object, param1);
     }
     else {
-        err = ErrorManagement::parametersError;
+        err = ErrorManagement::ParametersError;
     }
 
     return err;

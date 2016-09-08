@@ -663,13 +663,13 @@ bool ObjectTest::TestCallRegisteredMethod() {
             ErrorManagement::ErrorType status;
             ReferenceContainer params;
             status = target->CallRegisteredMethod("NonRegisteredMethod", params);
-            result &= status.unsupportedFeature;
+            result &= status.UnsupportedFeature;
         }
         {
             ErrorManagement::ErrorType status;
             ReferenceContainer params;
             status = target->CallRegisteredMethod("FaultyMethod", params);
-            result &= status.fatalError;
+            result &= status.FatalError;
             result &= (context->GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
         }
         {

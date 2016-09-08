@@ -1266,7 +1266,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
                                                                                                 MARTe::float32 &param2,
                                                                                                 MARTe::float64 &param3,
                                                                                                 MARTe::StreamString &param4) {
-    return MARTe::ErrorManagement::fatalError;
+    return MARTe::ErrorManagement::FatalError;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_C_C(const MARTe::uint32 & param1,
@@ -1569,7 +1569,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParametersReturnError(MARTe::uint32 &param1,
                                                                                                  MARTe::float32 &param2,
                                                                                                  MARTe::StreamString &param3) {
-    return MARTe::ErrorManagement::fatalError;
+    return MARTe::ErrorManagement::FatalError;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_C_C(const MARTe::uint32 & param1,
@@ -1655,22 +1655,22 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParamet
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParametersReturnError(MARTe::uint32 &param1,
                                                                                                MARTe::StreamString &param2) {
-    return MARTe::ErrorManagement::fatalError;
+    return MARTe::ErrorManagement::FatalError;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_Pointer_1(MARTe::uint32 * param1,
                                                                                               MARTe::StreamString & param2) {
-    return MARTe::ErrorManagement::fatalError;
+    return MARTe::ErrorManagement::FatalError;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_Pointer_2(MARTe::uint32 & param1,
                                                                                               MARTe::StreamString * param2) {
-    return MARTe::ErrorManagement::fatalError;
+    return MARTe::ErrorManagement::FatalError;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_Pointer_1_2(MARTe::uint32 * param1,
                                                                                                 MARTe::StreamString * param2) {
-    return MARTe::ErrorManagement::fatalError;
+    return MARTe::ErrorManagement::FatalError;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameter_C(const MARTe::uint32 & param1) {
@@ -1695,11 +1695,11 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParamet
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameter_Pointer(MARTe::uint32 * param1) {
-    return MARTe::ErrorManagement::fatalError;
+    return MARTe::ErrorManagement::FatalError;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameterReturnError(MARTe::uint32 &param1) {
-    return MARTe::ErrorManagement::fatalError;
+    return MARTe::ErrorManagement::FatalError;
 }
 
 CLASS_REGISTER(ClassWithCallableMethods, "1.0")

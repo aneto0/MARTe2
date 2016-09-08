@@ -62,7 +62,7 @@ RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder
         ret = globalDatabase.MoveToRoot();
     }
     if (!ret) {
-        REPORT_ERROR_FULL(ErrorManagement::fatalError, "In RealTimeApplicationConfigurationBuilder failed to MoveToRoot");
+        REPORT_ERROR_FULL(ErrorManagement::FatalError, "In RealTimeApplicationConfigurationBuilder failed to MoveToRoot");
     }
     realTimeApplication = NULL_PTR(RealTimeApplication*);
 }
@@ -180,11 +180,11 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabaseFromConfi
         if (ret) {
             ret = (timingDataSourceCounter == 1u);
             if (timingDataSourceCounter > 1u) {
-                REPORT_ERROR(ErrorManagement::initialisationError, "Only one TimingDataSource per application allowed");
+                REPORT_ERROR(ErrorManagement::InitialisationError, "Only one TimingDataSource per application allowed");
             }
             else {
                 if (timingDataSourceCounter == 0u) {
-                    REPORT_ERROR(ErrorManagement::initialisationError, "Please specify a TimingDataSource to store GAMs relevant times");
+                    REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify a TimingDataSource to store GAMs relevant times");
                 }
             }
         }
@@ -241,7 +241,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
                     if (gamElement.IsValid()) {
                         ret = (r == (pathLength - 1u));
                         if (!ret) {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Unsupported nested GAMs in path %s", qualifiedName.Buffer())
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Unsupported nested GAMs in path %s", qualifiedName.Buffer())
                         }
                     }
                     StreamString name = element->GetName();
@@ -274,7 +274,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
                             if (!functionsDatabase.MoveRelative("InputSignals")) {
                                 ret = functionsDatabase.MoveRelative("OutputSignals");
                                 if (!ret) {
-                                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Specified GAM %s with no input nor output",
+                                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Specified GAM %s with no input nor output",
                                             qualifiedName.Buffer())
                                 }
                             }
@@ -289,7 +289,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
                     ret = functionsDatabase.MoveToAncestor(1u);
                 }
                 else {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Failed to AddSignals for %s", gam->GetName())
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Failed to AddSignals for %s", gam->GetName())
                 }
             }
         }
@@ -366,17 +366,17 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
                     ret = dataSourcesDatabase.MoveAbsolute("Data");
                 }
                 else {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Failed to AddSignals for %s", dataSource->GetName())
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Failed to AddSignals for %s", dataSource->GetName())
                 }
 
             }
             if (ret) {
                 ret = (isTimeStamp == 1u);
                 if (isTimeStamp > 1u) {
-                    REPORT_ERROR(ErrorManagement::initialisationError, "Only one TimingDataSource per application allowed");
+                    REPORT_ERROR(ErrorManagement::InitialisationError, "Only one TimingDataSource per application allowed");
                 }
                 else if (isTimeStamp == 0u) {
-                    REPORT_ERROR(ErrorManagement::initialisationError, "Please specify a TimingDataSource to store GAMs relevant times");
+                    REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify a TimingDataSource to store GAMs relevant times");
                 }
                 else {
                     ret = dataSourcesDatabase.MoveRelative(timeStampDsName.Buffer());
@@ -396,7 +396,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::initialisationError, "Invalid RealTimeApplication set");
+        REPORT_ERROR(ErrorManagement::InitialisationError, "Invalid RealTimeApplication set");
     }
 
     return ret;
@@ -602,7 +602,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                 }
                 else {
                     ret = false;
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "DataSource not specified for %s and DefaultDataSource not specified",
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "DataSource not specified for %s and DefaultDataSource not specified",
                                             signalName)
                 }
             }
@@ -639,7 +639,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                     ret = (numberOfDimensions == 0u);
                     if (!ret) {
                         REPORT_ERROR_PARAMETERS(
-                                ErrorManagement::initialisationError,
+                                ErrorManagement::InitialisationError,
                                 "Invalid NumberOfDimensions for signal %s. Structured types only support NumberOfDimensions = 0 (you may define arrays of basic types inside the structure)",
                                 signalName)
                     }
@@ -648,7 +648,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                     ret = (numberOfElements == 1u);
                     if (!ret) {
                         REPORT_ERROR_PARAMETERS(
-                                ErrorManagement::initialisationError,
+                                ErrorManagement::InitialisationError,
                                 "Invalid NumberOfElements for signal %s. Structured types only support NumberOfElements = 1 (you may define arrays of basic types inside the structure)",
                                 signalName)
                     }
@@ -671,7 +671,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                         }
                         else {
                             REPORT_ERROR_PARAMETERS(
-                                    ErrorManagement::initialisationError,
+                                    ErrorManagement::InitialisationError,
                                     "Specified a synchronising signal %s with no synchronised frequency in structured %s. Please define the \"Frequency\" field",
                                     syncSignalName.Buffer(), signalName)
                         }
@@ -680,7 +680,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                         ret = frequency.IsVoid();
                         if (!ret) {
                             REPORT_ERROR_PARAMETERS(
-                                    ErrorManagement::initialisationError,
+                                    ErrorManagement::InitialisationError,
                                     "Specified a frequency with no synchronised signal in structured %s. Please define the \"SyncSignal\" field", signalName)
 
                         }
@@ -695,7 +695,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                     if (ret) {
                         ret = syncSet;
                         if (!ret) {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Invalid synchronising member specified in %s", signalName)
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Invalid synchronising member specified in %s", signalName)
 
                         }
                     }
@@ -974,7 +974,7 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
                 ret = dataSourcesDatabase.MoveToAncestor(1u);
             }
             else {
-                REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "The data source assigned to the signal %s in %s is incompatible",
+                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "The data source assigned to the signal %s in %s is incompatible",
                                         originalSignalName.Buffer(), functionName.Buffer())
             }
         }
@@ -994,7 +994,7 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
             ret = dataSourcesDatabase.CreateRelative(signalId.Buffer());
         }
         else {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Cannot add the signal %s in GAM %s because the related DataSource is locked",
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Cannot add the signal %s in GAM %s because the related DataSource is locked",
                                     originalSignalName.Buffer(), functionName.Buffer())
         }
         if (ret) {
@@ -1027,7 +1027,7 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
                         if (!ret) {
                             fullPropertyName = "Unknown";
                         }
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Mismatch in signal with name: %s: %s asked for %s while %s asked for %s",
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Mismatch in signal with name: %s: %s asked for %s while %s asked for %s",
                                                 fullPropertyName.Buffer(), functionName.Buffer(), sElementSignalDatabase.Buffer(), dataSourceName.Buffer(),
                                                 sElementDataSourceDatabase.Buffer())
                     }
@@ -1038,7 +1038,7 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
                         ret = dataSourcesDatabase.Write(properties[p], elementSignalDatabase);
                     }
                     else {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError,
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
                                                 "Cannot complete the signal %s in GAM %s because the related DataSource is locked", originalSignalName.Buffer(),
                                                 functionName.Buffer())
                     }
@@ -1135,7 +1135,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                         ret = (signalName.Size() > 0u);
                     }
                     if (!ret) {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "QualifiedName was not defined for signal at position: %s in %s",
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "QualifiedName was not defined for signal at position: %s in %s",
                                                 signalId.Buffer(), dataSourceName.Buffer())
                     }
                 }
@@ -1203,7 +1203,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                         }
                         else {
                             // This error is trapped in the Resolve
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError, "The name %s in %s is defined as a node", signalName.Buffer(),
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The name %s in %s is defined as a node", signalName.Buffer(),
                                                     dataSourceName.Buffer())
                         }
                     }
@@ -1213,7 +1213,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                             ret = dataSourcesDatabase.MoveRelative(signalId.Buffer());
                         }
                         else {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError, "Undefined type for signal %s in %s", signalName.Buffer(),
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Undefined type for signal %s in %s", signalName.Buffer(),
                                                     dataSourceName.Buffer())
 
                         }
@@ -1229,7 +1229,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                         else {
                             ret = numberOfElements > 0u;
                             if (!ret) {
-                                REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "NumberOfElements of signal %s in %s cannot be zero",
+                                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "NumberOfElements of signal %s in %s cannot be zero",
                                                         signalName.Buffer(), dataSourceName.Buffer())
 
                             }
@@ -1243,7 +1243,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                             numberOfDimensions = 0u;
                             if (numberOfElements > 1u) {
                                 REPORT_ERROR_PARAMETERS(
-                                        ErrorManagement::warning,
+                                        ErrorManagement::Warning,
                                         "NumberOfDimensions is not defined for signal: %s in %s with NumberOfElements > 1, assuming it as 1 (vector)",
                                         signalName.Buffer(), dataSourceName.Buffer())
                                 numberOfDimensions = 1u;
@@ -1267,7 +1267,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                     if (ret) {
                         StreamString defaultVal;
                         if (!dataSourcesDatabase.Read("Default", defaultVal)) {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::warning, "Default value is not defined for signal: %s in %s, by default it will be zeroed",
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "Default value is not defined for signal: %s in %s, by default it will be zeroed",
                                                     signalName.Buffer(), dataSourceName.Buffer())
                         }
                         // check validity of the default value
@@ -1294,7 +1294,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                                     }
                                 }
                                 else {
-                                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError,
+                                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
                                                             "Default value of signal %s in %s must be defined as a vector for multi-dimensional variables",
                                                             signalName.Buffer(), dataSourceName.Buffer())
                                 }
@@ -1324,7 +1324,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                                     }
                                 }
                                 if (!ret) {
-                                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Unsupported defined default value of signal %s in %s",
+                                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Unsupported defined default value of signal %s in %s",
                                                             signalName.Buffer(), dataSourceName.Buffer())
                                 }
                             }
@@ -1419,7 +1419,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignals(const Signa
                         ret = functionsDatabase.Read("DataSource", dataSourceName);
                     }
                     if (!ret) {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "DataSource was not defined for signal: %s in %s", signalName.Buffer(),
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "DataSource was not defined for signal: %s in %s", signalName.Buffer(),
                                                 functionName.Buffer())
                     }
                     //Move to the DataSource
@@ -1587,7 +1587,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignal(const char8 
                         if (ret) {
                             fullPropertyName = "Unknown";
                         }
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Mismatch in signal with name: %s. %s asked for %s while %s asked for %s",
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Mismatch in signal with name: %s. %s asked for %s while %s asked for %s",
                                                 fullPropertyName.Buffer(), functionName, sElementSignalDatabase.Buffer(), dataSourceName,
                                                 sElementDataSourceDatabase.Buffer())
                     }
@@ -1691,7 +1691,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyFunctionSignals(const Signal
                         ret = (signalName.Size() > 0u);
                     }
                     if (!ret) {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "QualifiedName was not defined for signal at position: %s in %s",
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "QualifiedName was not defined for signal at position: %s in %s",
                                                 signalId.Buffer(), functionName.Buffer())
                     }
                     //At this state the Type must be defined
@@ -1703,7 +1703,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyFunctionSignals(const Signal
                             ret = (type.Size() > 0u);
                         }
                         if (!ret) {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Type was not defined for signal: %s in %s", signalName.Buffer(),
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Type was not defined for signal: %s in %s", signalName.Buffer(),
                                                     functionName.Buffer())
                         }
                     }
@@ -1711,7 +1711,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyFunctionSignals(const Signal
                     if (ret) {
                         ret = functionsDatabase.Read("NumberOfDimensions", numberOfDimensions);
                         if (!ret) {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "NumberOfDimensions was not defined for signal: %s in %s",
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "NumberOfDimensions was not defined for signal: %s in %s",
                                                     signalName.Buffer(), functionName.Buffer())
                         }
                     }
@@ -1719,7 +1719,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyFunctionSignals(const Signal
                     if (ret) {
                         ret = functionsDatabase.Read("NumberOfElements", numberOfElements);
                         if (!ret) {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "NumberOfElements was not defined for signal: %s in %s",
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "NumberOfElements was not defined for signal: %s in %s",
                                                     signalName.Buffer(), functionName.Buffer())
                         }
                     }
@@ -1853,7 +1853,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                                                         gamName = "UnknownGAM";
                                                     }
                                                 }
-                                                REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError,
+                                                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
                                                         "The GAM %s is declared in more than one thread in %s", gamName.Buffer(), stateName)
                                             }
                                         }
@@ -1863,7 +1863,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                             if (ret) {
                                 ret = (syncSignals <= 1u);
                                 if (!ret) {
-                                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "More than one synchronising signal found in %s.%s",
+                                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "More than one synchronising signal found in %s.%s",
                                             stateName, threadName)
                                 }
                             }
@@ -1871,13 +1871,13 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                     }
                 }
                 else {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "No Threads ReferenceContainer found in RealTimeState %s", stateName)
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Threads ReferenceContainer found in RealTimeState %s", stateName)
                 }
             }
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::initialisationError, "Invalid RealTimeApplication set");
+        REPORT_ERROR(ErrorManagement::InitialisationError, "Invalid RealTimeApplication set");
     }
 
     return ret;
@@ -1924,7 +1924,7 @@ bool RealTimeApplicationConfigurationBuilder::AddStateToGAM(const char8 * const 
                             gamName = "UnknownGAM";
                         }
                     }
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "The GAM %s is declared in more than one thread in %s", gamName.Buffer(),
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "The GAM %s is declared in more than one thread in %s", gamName.Buffer(),
                                             stateName)
                 }
             }
@@ -2047,19 +2047,19 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStatesFromConfiguration() {
                                     if (ret) {
                                         ret = (syncSignals <= 1u);
                                         if (!ret) {
-                                            REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "More than one synchronising signal found in %s.%s",
+                                            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "More than one synchronising signal found in %s.%s",
                                                                     &stateName[1], &threadName[1])
                                         }
                                     }
 
                                 }
                                 else {
-                                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "The Functions element must be defined as vector %s.%s",
+                                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "The Functions element must be defined as vector %s.%s",
                                                             &stateName[1], &threadName[1])
                                 }
                             }
                             else {
-                                REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "The Functions element must be %s.%s", &stateName[1],
+                                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "The Functions element must be %s.%s", &stateName[1],
                                                         &threadName[1])
                             }
                             if (ret) {
@@ -2273,7 +2273,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyStates() {
                 if (!functionsDatabase.Read("QualifiedName", gamName)) {
                     gamName = "UnknownGAM";
                 }
-                REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError, "The GAM %s is never called", gamName.Buffer())
+                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The GAM %s is never called", gamName.Buffer())
             }
 
         }
@@ -2556,7 +2556,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
                                 //the time data source must not have producers!!
                                 ret = prods.IsVoid();
                                 if (!ret) {
-                                    REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError, "The time signal %s in %s cannot be produced", dsSignalName.Buffer(),
+                                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The time signal %s in %s cannot be produced", dsSignalName.Buffer(),
                                                             dataSourceName.Buffer())
                                 }
                             }
@@ -2566,7 +2566,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
                                         // Check the range overlap
                                         ret = BuildProducersRanges();
                                         if (!ret) {
-                                            REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError,
+                                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
                                                                     "Producers of %s in %s overlap write operations on the same memory area",
                                                                     dsSignalName.Buffer(), dataSourceName.Buffer())
                                         }
@@ -2847,14 +2847,14 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(c
                                             uint32 maxIdx = rangesMat(n, 1u);
                                             if (minIdx > maxIdx) {
                                                 ret = false;
-                                                REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError,
+                                                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
                                                                         "Illegal Ranges for signal %s in %s: minimum index must be <= maximum index",
                                                                         signalName.Buffer(), functionName.Buffer())
                                             }
                                             if (ret) {
                                                 if (maxIdx >= numberOfElements) {
                                                     ret = false;
-                                                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError,
+                                                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
                                                                             "Illegal Ranges for signal %s in %s: maximum index must be < NumberOfElements",
                                                                             signalName.Buffer(), functionName.Buffer())
                                                 }
@@ -2868,7 +2868,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(c
                                         }
                                     }
                                     else {
-                                        REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Ranges must be a nx2 matrix for %s in %s",
+                                        REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Ranges must be a nx2 matrix for %s in %s",
                                                                 signalName.Buffer(), functionName.Buffer())
                                     }
                                     delete[] rangesMatBackend;
@@ -3026,7 +3026,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
                         else {
                             ret = (samplesBackend > 0u);
                             if (!ret) {
-                                REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Invalid Samples for signal %s in %s", signalName.Buffer(),
+                                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Invalid Samples for signal %s in %s", signalName.Buffer(),
                                                         functionName.Buffer())
                             }
                         }
@@ -3341,7 +3341,7 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToFunctions() {
     if (ret) {
         ret = (realTimeApplication != NULL);
         if (!ret) {
-            REPORT_ERROR(ErrorManagement::initialisationError, "Invalid RealTimeApplication set");
+            REPORT_ERROR(ErrorManagement::InitialisationError, "Invalid RealTimeApplication set");
         }
     }
 
@@ -3415,7 +3415,7 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToSignals(const Signa
                     if (!dataSourcesDatabase.Read("QualifiedName", signalName)) {
                         signalName = "UnknownSignal";
                     }
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Unsupported broker for signal %s linked to %s", signalName.Buffer(),
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Unsupported broker for signal %s linked to %s", signalName.Buffer(),
                                             signalName.Buffer(), dataSource->GetName())
                 }
 
@@ -3460,7 +3460,7 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
                 dataSource = realTimeApplication->Find(qualifiedName.Buffer());
                 ret = dataSource.IsValid();
                 if (!ret) {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "The DataSource %s is not valid", qualifiedName.Buffer())
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "The DataSource %s is not valid", qualifiedName.Buffer())
                 }
             }
             if (ret) {
@@ -3502,7 +3502,7 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureFunctions() {
                 gam = realTimeApplication->Find(qualifiedName.Buffer());
                 ret = gam.IsValid();
                 if (!ret) {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "The GAM %s is not valid", qualifiedName.Buffer())
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "The GAM %s is not valid", qualifiedName.Buffer())
                 }
             }
             if (ret) {
@@ -3674,7 +3674,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
         intro = item->GetIntrospection();
     }
     else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError, "The type %s is not registered", typeName)
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "The type %s is not registered", typeName)
     }
 
     ret = (intro != NULL);
@@ -3849,7 +3849,7 @@ bool RealTimeApplicationConfigurationBuilder::SearchGAMs(ConfigurationDatabase &
             isGam = inputDatabase.MoveRelative("OutputSignals");
             if (!isGam) {
                 ret = false;
-                REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Specified GAM %s with no input nor output", fullPath.Buffer())
+                REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Specified GAM %s with no input nor output", fullPath.Buffer())
             }
         }
     }
@@ -3860,7 +3860,7 @@ bool RealTimeApplicationConfigurationBuilder::SearchGAMs(ConfigurationDatabase &
 
         if (found) {
             ret = false;
-            REPORT_ERROR_PARAMETERS(ErrorManagement::initialisationError, "Unsupported nested GAMs in path %s", fullPath.Buffer())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Unsupported nested GAMs in path %s", fullPath.Buffer())
         }
         else {
             found = true;

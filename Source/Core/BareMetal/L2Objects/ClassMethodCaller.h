@@ -70,8 +70,8 @@ public:
      * @param[in] object is the pointer to the object owning the method.
      * @param[in] parameters a reference to a Stream that will be used to fill the parameters to call the functions.
      * @return
-     * + ErrorManagement::parametersError if no match between parameters provided and the function call is possible
-     * + ErrorManagement::unsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
+     * + ErrorManagement::ParametersError if no match between parameters provided and the function call is possible
+     * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
     virtual ErrorManagement::ErrorType Call(Object *object, StreamI &stream);
@@ -81,8 +81,8 @@ public:
      * @param[in] object is the pointer to the object owning the method.
      * @param[in] parameters a reference to a StructuredDataI object where to read/write parameters/results.
      * @return
-     * + ErrorManagement::parametersError if no match between parameters provided and the function call is possible
-     * + ErrorManagement::unsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
+     * + ErrorManagement::ParametersError if no match between parameters provided and the function call is possible
+     * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
     virtual ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters);
@@ -92,8 +92,8 @@ public:
      * @param[in] object is the pointer to the object owning the method.
      * @param[in] parameters a reference to a ReferenceContainer that will be used to fill the parameters to call the functions
      * @return
-     * + ErrorManagement::parametersError if no match between parameters provided and the function call is possible
-     * + ErrorManagement::unsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
+     * + ErrorManagement::ParametersError if no match between parameters provided and the function call is possible
+     * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
     virtual ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters);
@@ -102,8 +102,8 @@ public:
      * @brief Calls the class method without parameters
      * @param[in] object is the pointer to the object owning the method.
      * @return
-     * + ErrorManagement::parametersError if no match between parameters provided and the function call is possible
-     * + ErrorManagement::unsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
+     * + ErrorManagement::ParametersError if no match between parameters provided and the function call is possible
+     * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
     virtual ErrorManagement::ErrorType Call(Object *object);

@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MESSAGEFILTERPOOL_H_
-#define L4MESSAGES_MESSAGEFILTERPOOL_H_
+#ifndef MESSAGEFILTERPOOL_H_
+#define MESSAGEFILTERPOOL_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -35,11 +35,16 @@
 #include "ReferenceContainer.h"
 #include "MessageFilter.h"
 
-namespace MARTe {
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
+/**
+ * @brief TODO
+ */
 class MessageFilterPool: public ReferenceContainer {
 
 public:
@@ -49,8 +54,8 @@ public:
      * @details Handles the reception of a message and by default simply calls SortMessage(). Can be overridden to implement message Queues etc...
      * @param[in,out] message is the received to be received.
      * @return
-     *   ErrorManagement::noError if the function specified in \a message is called correctly and returns true.
-     *   ErrorManagement::unsupportedFeature if something goes wrong trying to call the registered function.
+     *   ErrorManagement::NoError if the function specified in \a message is called correctly and returns true.
+     *   ErrorManagement::UnsupportedFeature if something goes wrong trying to call the registered function.
      */
     ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
 
@@ -77,12 +82,11 @@ public:
 
 };
 
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-}
-#endif /* L4MESSAGES_MESSAGEFILTERPOOL_H_ */
+#endif /* MESSAGEFILTERPOOL_H_ */
 	

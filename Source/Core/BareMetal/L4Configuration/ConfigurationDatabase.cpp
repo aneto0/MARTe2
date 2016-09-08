@@ -367,7 +367,7 @@ uint32 ConfigurationDatabase::GetNumberOfChildren() {
 }
 
 bool ConfigurationDatabase::Lock(const TimeoutType &timeout) {
-    return (mux.FastLock(timeout) == ErrorManagement::noError);
+    return (mux.FastLock(timeout) == ErrorManagement::NoError);
 }
 
 void ConfigurationDatabase::Unlock() {

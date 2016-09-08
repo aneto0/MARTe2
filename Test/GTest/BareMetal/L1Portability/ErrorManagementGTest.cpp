@@ -53,14 +53,14 @@ TEST(ErrorManagementGTest,TestToName) {
 
 TEST(ErrorManagementGTest,TestReportError) {
     ErrorManagementTest errorManTest;
-    ASSERT_TRUE(errorManTest.TestReportError(ErrorManagement::information,"Information","This is an error","FileError", 1, "TestReportError"));
+    ASSERT_TRUE(errorManTest.TestReportError(ErrorManagement::Information,"Information","This is an error","FileError", 1, "TestReportError"));
     ErrorManagement::SetErrorProcessFunction (ErrorManagement::NullErrorProcessFunction);
 
 }
 
 TEST(ErrorManagementGTest,TestReportErrorFullContext) {
     ErrorManagementTest errorManTest;
-    ASSERT_TRUE(errorManTest.TestReportErrorFullContext(ErrorManagement::information,"Information","Error!!","FileError2", 1, "TestReportErrorFullContext",32));
+    ASSERT_TRUE(errorManTest.TestReportErrorFullContext(ErrorManagement::Information,"Information","Error!!","FileError2", 1, "TestReportErrorFullContext",32));
     ErrorManagement::SetErrorProcessFunction (ErrorManagement::NullErrorProcessFunction);
 
 }
@@ -68,14 +68,14 @@ TEST(ErrorManagementGTest,TestReportErrorFullContext) {
 
 TEST(ErrorManagementGTest,TestReportErrorMacro) {
     ErrorManagementTest errorManTest;
-    ASSERT_TRUE(errorManTest.TestReportErrorMacro(ErrorManagement::information,"This is an error","Information"));
+    ASSERT_TRUE(errorManTest.TestReportErrorMacro(ErrorManagement::Information,"This is an error","Information"));
     ErrorManagement::SetErrorProcessFunction (ErrorManagement::NullErrorProcessFunction);
 
 }
 
 TEST(ErrorManagementGTest,TestReportErrorMacroFullContext) {
     ErrorManagementTest errorManTest;
-    ASSERT_TRUE(errorManTest.TestReportErrorMacroFullContext(ErrorManagement::information,"Error!!","Information",32));
+    ASSERT_TRUE(errorManTest.TestReportErrorMacroFullContext(ErrorManagement::Information,"Error!!","Information",32));
     ErrorManagement::SetErrorProcessFunction (ErrorManagement::NullErrorProcessFunction);
 
 }

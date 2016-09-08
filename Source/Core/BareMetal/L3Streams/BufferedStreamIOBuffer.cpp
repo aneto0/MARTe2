@@ -70,7 +70,7 @@ bool BufferedStreamIOBuffer::Resync() {
             // position is to the character after the buffer end
             /*lint -e{613} . Justification: The NULL pointer condition is handled*/
             if (!stream->OSSeek(stream->OSPosition() - deltaToEnd)) {
-                REPORT_ERROR(ErrorManagement::fatalError, "BufferedStreamIOBuffer: Failed OSSeek");
+                REPORT_ERROR(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Failed OSSeek");
                 retval = false;
             }
 
@@ -80,7 +80,7 @@ bool BufferedStreamIOBuffer::Resync() {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "BufferedStreamIOBuffer: Invalid stream");
+        REPORT_ERROR(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Invalid stream");
     }
     return retval;
 }
@@ -103,14 +103,14 @@ bool BufferedStreamIOBuffer::NoMoreDataToRead() {
                 retval = true;
             }
             else {
-                REPORT_ERROR(ErrorManagement::fatalError, "BufferedStreamIOBuffer: Failed OSRead");
+                REPORT_ERROR(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Failed OSRead");
                 Empty();
             }
 
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "BufferedStreamIOBuffer: Invalid stream");
+        REPORT_ERROR(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Invalid stream");
     }
     return retval;
 }
@@ -134,13 +134,13 @@ bool BufferedStreamIOBuffer::NoMoreSpaceToWrite() {
                     Empty();
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::fatalError, "BufferedStreamIOBuffer: Failed OSWrite");
+                    REPORT_ERROR(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Failed OSWrite");
                 }
             }
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "BufferedStreamIOBuffer: Invalid stream");
+        REPORT_ERROR(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Invalid stream");
     }
     return retval;
 }

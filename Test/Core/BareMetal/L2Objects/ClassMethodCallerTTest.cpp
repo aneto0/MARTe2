@@ -132,7 +132,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
         info->Write("param1", param1);
         ReferenceContainer parameters;
         parameters.Insert(info);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         info->Read("param1", param1);
         result &= (param1 == 80);
         result &= (context.GetLastMethodExecuted() == "MethodWithInputIntegerByCopy(int)");
@@ -146,14 +146,14 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
         info->Write("param2", param1);
         ReferenceContainer parameters;
         parameters.Insert(info);
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
     {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(int32), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithInputIntegerByCopy, 0x0000);
         ReferenceContainer parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
     {
         ClassWithCallableMethods context;
@@ -161,7 +161,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
                 &ClassWithCallableMethods::MethodWithInputIntegerByCopy, 0x0000);
         StreamString parameters;
         ClassMethodCaller targetForce = target;
-        result &= (targetForce.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     {
@@ -185,7 +185,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
         info->Write("param1", param1);
         ReferenceContainer parameters;
         parameters.Insert(info);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         info->Read("param1", param1);
         result &= (param1 == 40);
         result &= (context.GetLastMethodExecuted() == "MethodWithConstInputInteger(int&)");
@@ -199,14 +199,14 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
         info->Write("param2", param1);
         ReferenceContainer parameters;
         parameters.Insert(info);
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
     {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const int32 &), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithConstInputInteger, 0x0000);
         ReferenceContainer parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
     {
         ClassWithCallableMethods context;
@@ -214,7 +214,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
                 &ClassWithCallableMethods::MethodWithConstInputInteger, 0x0000);
         StreamString parameters;
         ClassMethodCaller targetForce = target;
-        result &= (targetForce.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -241,7 +241,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadWrite() {
         ReferenceT<ConfigurationDatabase> info(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         ReferenceContainer parameters;
         parameters.Insert(info);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         uint32 param1;
         info->Read("param1", param1);
         result &= (param1 == 20);
@@ -268,7 +268,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadWrite() {
         parameters.Insert(info);
         uint32 param1 = 10;
         info->Write("param1", param1);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         info->Read("param1", param1);
         result &= (param1 == 20);
         result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputInteger(int&)");
@@ -282,14 +282,14 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadWrite() {
         info->Write("param2", param1);
         ReferenceContainer parameters;
         parameters.Insert(info);
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
     {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(int32 &), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithOutputInteger, 0x1000);
         ReferenceContainer parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
     {
         ClassWithCallableMethods context;
@@ -297,7 +297,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadWrite() {
                 &ClassWithCallableMethods::MethodWithOutputInteger, 0x1000);
         StreamString parameters;
         ClassMethodCaller targetForce = target;
-        result &= (targetForce.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -327,7 +327,7 @@ bool ClassMethodCallerTTest::TestCall_OneStructuredDataIParameterReadOnly() {
         info->Write("value", value);
         ReferenceContainer parameters;
         parameters.Insert(info);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         info->Read("value", value);
         result &= (value == 20);
         result &= (context.GetLastMethodExecuted() == "MethodWithConstInputStructuredDataI(StructuredDataI)");
@@ -337,7 +337,7 @@ bool ClassMethodCallerTTest::TestCall_OneStructuredDataIParameterReadOnly() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const StructuredDataI &), StructuredDataI, void,
                 void, void> target(&ClassWithCallableMethods::MethodWithConstInputStructuredDataI, 0x0000);
         ReferenceContainer parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
     {
         ClassWithCallableMethods context;
@@ -345,7 +345,7 @@ bool ClassMethodCallerTTest::TestCall_OneStructuredDataIParameterReadOnly() {
                 void, void> target(&ClassWithCallableMethods::MethodWithConstInputStructuredDataI, 0x0000);
         StreamString parameters;
         ClassMethodCaller targetForce = target;
-        result &= (targetForce.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -375,7 +375,7 @@ bool ClassMethodCallerTTest::TestCall_OneStructuredDataIParameterReadWrite() {
         info->Write("value", value);
         ReferenceContainer parameters;
         parameters.Insert(info);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         info->Read("value", value);
         result &= (value == 40);
         result &= (context.GetLastMethodExecuted() == "MethodWithOutputStructuredDataI(StructuredDataI)");
@@ -385,7 +385,7 @@ bool ClassMethodCallerTTest::TestCall_OneStructuredDataIParameterReadWrite() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(StructuredDataI &), StructuredDataI, void, void,
                 void> target(&ClassWithCallableMethods::MethodWithOutputStructuredDataI, 0x1000);
         ReferenceContainer parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
     {
         ClassWithCallableMethods context;
@@ -393,7 +393,7 @@ bool ClassMethodCallerTTest::TestCall_OneStructuredDataIParameterReadWrite() {
                 void> target(&ClassWithCallableMethods::MethodWithOutputStructuredDataI, 0x1000);
         StreamString parameters;
         ClassMethodCaller targetForce = target;
-        result &= (targetForce.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -411,7 +411,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadOnly() {
         ReferenceT<Object> obj(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         obj->SetName("TestObject");
         parameters.Insert(obj);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainerByCopy(ReferenceContainer)");
     }
     {
@@ -421,7 +421,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadOnly() {
         ReferenceT<ConfigurationDatabase> info(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         uint32 param1 = 10;
         info->Write("value", param1);
-        result &= (target.Call(&context, *(info.operator->())) == ErrorManagement::noError);
+        result &= (target.Call(&context, *(info.operator->())) == ErrorManagement::NoError);
         info->Read("value", param1);
         result &= (param1 == 10);
         result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainerAndStructuredDataIAt0(ReferenceContainer)");
@@ -435,7 +435,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadOnly() {
         ReferenceT<Object> obj(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         obj->SetName("TestObject");
         parameters.Insert(obj);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithConstInputReferenceContainer(ReferenceContainer&)");
     }
     {
@@ -444,7 +444,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadOnly() {
                 void, void> target(&ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy, 0x0000);
         StreamString parameters;
         ClassMethodCaller targetForce = target;
-        result &= (targetForce.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -459,7 +459,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadWrite() 
                 void, void> target(&ClassWithCallableMethods::MethodWithOutputReferenceContainer, 0x1000);
 
         ReferenceContainer parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         ReferenceT<Object> obj = parameters.Get(0);
         result &= obj.IsValid();
         if (result) {
@@ -472,7 +472,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadWrite() 
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(ReferenceContainer &), ReferenceContainer, void,
                 void, void> target(&ClassWithCallableMethods::MethodWithOutputReferenceContainerAndStructuredDataIAt0, 0x1000);
         ReferenceContainer parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         uint32 value;
         ReferenceT<ConfigurationDatabase> info = parameters.Get(0);
         result = info.IsValid();
@@ -491,7 +491,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadWrite() 
         ReferenceT<Object> obj(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         obj->SetName("TestObject");
         parameters.Insert(obj);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputReferenceContainer(ReferenceContainer&)");
         ReferenceT<Object> obj2 = parameters.Find("TestObject2");
         result &= obj2.IsValid();
@@ -502,7 +502,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadWrite() 
                 void, void> target(&ClassWithCallableMethods::MethodWithOutputReferenceContainer, 0x1000);
         StreamString parameters;
         ClassMethodCaller targetForce = target;
-        result &= (targetForce.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -516,7 +516,7 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadOnly() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const StreamI &), StreamI, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithConstInputStreamI, 0x0000);
         StreamString parameters = "MethodWithConstInputStreamI";
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithConstInputStreamI(StreamI)");
     }
     {
@@ -528,7 +528,7 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadOnly() {
         uint32 size = StringHelper::Length("MethodWithConstInputStreamI");
         ss->Write("MethodWithConstInputStreamI", size);
         parameters.Insert(ss);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithConstInputStreamI(StreamI)");
     }
 
@@ -543,7 +543,7 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadWrite() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(StreamI &), StreamI, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithOutputStreamI, 0x1000);
         StreamString parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         result &= (parameters == "MethodWithOutputStreamI");
         result &= (context.GetLastMethodExecuted() == "MethodWithOutputStreamI(StreamI&)");
     }
@@ -554,7 +554,7 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadWrite() {
         ReferenceContainer parameters;
         ReferenceT<ClassMethodCallerTTestStreamString> ss(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         parameters.Insert(ss);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         StreamString ssToCompare = ss->Buffer();
         result &= (ssToCompare == "MethodWithOutputStreamI");
         result &= (context.GetLastMethodExecuted() == "MethodWithOutputStreamI(StreamI&)");
@@ -564,7 +564,7 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadWrite() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(StreamI &), StreamI, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithInputOutputStreamI, 0x1000);
         StreamString parameters = "MethodWithInputOutputStreamI";
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         result &= (parameters == "ReturnFromMethodWithInputOutputStreamII");
         result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputStreamI(StreamI&)");
     }
@@ -577,7 +577,7 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadWrite() {
         uint32 size = StringHelper::Length("MethodWithInputOutputStreamI");
         ss->Write("MethodWithInputOutputStreamI", size);
         parameters.Insert(ss);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         StreamString ssToCompare = ss->Buffer();
         result &= (ssToCompare == "ReturnFromMethodWithInputOutputStreamII");
         result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputStreamI(StreamI&)");
@@ -603,7 +603,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_C_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_C_C");
     return result;
 }
@@ -626,7 +626,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_C_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_C_R");
     return result;
 }
@@ -649,7 +649,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_C_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
     result &= (param4 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_C_W");
@@ -674,7 +674,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_R_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_R_C");
     return result;
 }
@@ -697,7 +697,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_R_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_R_R");
     return result;
 }
@@ -720,7 +720,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_R_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
     result &= (param4 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_R_W");
@@ -745,7 +745,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_W_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == -7.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_W_C");
@@ -770,7 +770,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_W_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == -7.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_W_R");
@@ -795,7 +795,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_W_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == -7.0);
     parameters.Read("param4", param4);
@@ -822,7 +822,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_C_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_C_C");
     return result;
 }
@@ -845,7 +845,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_C_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_C_R");
     return result;
 }
@@ -868,7 +868,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_C_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
     result &= (param4 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_C_W");
@@ -893,7 +893,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_R_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_R_C");
     return result;
 }
@@ -916,7 +916,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_R_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_R_R");
     return result;
 }
@@ -939,7 +939,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_R_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
     result &= (param4 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_R_W");
@@ -964,7 +964,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_W_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == -7.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_W_C");
@@ -989,7 +989,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_W_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == -7.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_W_R");
@@ -1014,7 +1014,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_W_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == -7.0);
     parameters.Read("param4", param4);
@@ -1041,7 +1041,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_C_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_C_C");
@@ -1066,7 +1066,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_C_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_C_R");
@@ -1091,7 +1091,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_C_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     parameters.Read("param4", param4);
@@ -1118,7 +1118,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_R_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_R_C");
@@ -1143,7 +1143,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_R_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_R_R");
@@ -1168,7 +1168,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_R_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     parameters.Read("param4", param4);
@@ -1195,7 +1195,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_W_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     parameters.Read("param3", param3);
@@ -1222,7 +1222,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_W_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     parameters.Read("param3", param3);
@@ -1249,7 +1249,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_W_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     parameters.Read("param3", param3);
@@ -1278,7 +1278,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_C_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_C_C");
     return result;
 }
@@ -1301,7 +1301,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_C_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_C_R");
     return result;
 }
@@ -1324,7 +1324,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_C_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
     result &= (param4 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_C_W");
@@ -1349,7 +1349,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_R_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_R_C");
     return result;
 }
@@ -1372,7 +1372,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_R_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_R_R");
     return result;
 }
@@ -1395,7 +1395,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_R_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
     result &= (param4 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_R_W");
@@ -1420,7 +1420,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_W_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == -7.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_W_C");
@@ -1445,7 +1445,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_W_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == -7.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_W_R");
@@ -1470,7 +1470,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_W_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == -7.0);
     parameters.Read("param4", param4);
@@ -1497,7 +1497,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_C_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_C_C");
     return result;
 }
@@ -1520,7 +1520,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_C_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_C_R");
     return result;
 }
@@ -1543,7 +1543,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_C_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
     result &= (param4 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_C_W");
@@ -1568,7 +1568,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_R_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_R_C");
     return result;
 }
@@ -1591,7 +1591,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_R_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_R_R");
     return result;
 }
@@ -1614,7 +1614,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_R_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
     result &= (param4 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_R_W");
@@ -1639,7 +1639,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_W_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == -7.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_W_C");
@@ -1664,7 +1664,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_W_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == -7.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_W_R");
@@ -1689,7 +1689,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_W_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == -7.0);
     parameters.Read("param4", param4);
@@ -1716,7 +1716,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_C_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_C_C");
@@ -1741,7 +1741,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_C_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_C_R");
@@ -1766,7 +1766,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_C_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     parameters.Read("param4", param4);
@@ -1793,7 +1793,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_R_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_R_C");
@@ -1818,7 +1818,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_R_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_R_R");
@@ -1843,7 +1843,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_R_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     parameters.Read("param4", param4);
@@ -1870,7 +1870,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_W_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     parameters.Read("param3", param3);
@@ -1897,7 +1897,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_W_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     parameters.Read("param3", param3);
@@ -1924,7 +1924,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_W_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     parameters.Read("param3", param3);
@@ -1953,7 +1953,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_C_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_C_C");
@@ -1978,7 +1978,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_C_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_C_R");
@@ -2003,7 +2003,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_C_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param4", param4);
@@ -2030,7 +2030,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_R_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_R_C");
@@ -2055,7 +2055,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_R_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_R_R");
@@ -2080,7 +2080,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_R_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param4", param4);
@@ -2107,7 +2107,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_W_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param3", param3);
@@ -2134,7 +2134,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_W_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param3", param3);
@@ -2161,7 +2161,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_W_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param3", param3);
@@ -2190,7 +2190,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_C_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_C_C");
@@ -2215,7 +2215,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_C_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_C_R");
@@ -2240,7 +2240,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_C_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param4", param4);
@@ -2267,7 +2267,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_R_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_R_C");
@@ -2292,7 +2292,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_R_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_R_R");
@@ -2317,7 +2317,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_R_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param4", param4);
@@ -2344,7 +2344,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_W_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param3", param3);
@@ -2371,7 +2371,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_W_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param3", param3);
@@ -2398,7 +2398,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_W_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param3", param3);
@@ -2427,7 +2427,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_C_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param2", param2);
@@ -2454,7 +2454,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_C_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param2", param2);
@@ -2481,7 +2481,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_C_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param2", param2);
@@ -2510,7 +2510,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_R_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param2", param2);
@@ -2537,7 +2537,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_R_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param2", param2);
@@ -2564,7 +2564,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_R_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param2", param2);
@@ -2593,7 +2593,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_W_C() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param2", param2);
@@ -2622,7 +2622,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_W_R() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param2", param2);
@@ -2651,7 +2651,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_W_W() {
     parameters.Write("param3", param3);
     StreamString param4 = "KO";
     parameters.Write("param4", param4);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param2", param2);
@@ -2683,7 +2683,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ErrorParameter1() {
         parameters.Write("param3", param3);
         StreamString param4 = "KO";
         parameters.Write("param4", param4);
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -2708,7 +2708,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ErrorParameter2() {
         parameters.Write("param3", param3);
         StreamString param4 = "KO";
         parameters.Write("param4", param4);
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -2733,7 +2733,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ErrorParameter3() {
         parameters.Write("param3E", param3);
         StreamString param4 = "KO";
         parameters.Write("param4", param4);
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -2758,7 +2758,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ErrorParameter4() {
         parameters.Write("param3", param3);
         StreamString param4 = "KO";
         parameters.Write("param4E", param4);
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -2783,7 +2783,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ErrorParameterReturn() {
         parameters.Write("param3", param3);
         StreamString param4 = "KO";
         parameters.Write("param4", param4);
-        result &= (target.Call(&context, parameters) != ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) != ErrorManagement::NoError);
     }
 
     return result;
@@ -2811,7 +2811,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ReferenceContainer() {
 
         ReferenceContainer parameters;
         parameters.Insert(parametersDB);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         parametersDB->Read("param1", param1);
         result &= (param1 == 5);
         parametersDB->Read("param2", param2);
@@ -2841,7 +2841,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ReferenceContainer() {
 
         ReferenceContainer parameters;
         parameters.Insert(parametersDB);
-        result &= (target.Call(&context, parameters) != ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) != ErrorManagement::NoError);
     }
     {
         ClassWithCallableMethods context;
@@ -2851,7 +2851,7 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ReferenceContainer() {
                                                                                                               MARTe::StreamString &), uint32, float32, float64,
                 StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
         ReferenceContainer parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
     return result;
 }
@@ -2871,7 +2871,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_C_C() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_C");
     return result;
 }
@@ -2891,7 +2891,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_C_R() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_R");
     return result;
 }
@@ -2911,7 +2911,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_C_W() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_W");
@@ -2933,7 +2933,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_R_C() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_C");
     return result;
 }
@@ -2953,7 +2953,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_R_R() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_R");
     return result;
 }
@@ -2973,7 +2973,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_R_W() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_W");
@@ -2995,7 +2995,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_W_C() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_C");
@@ -3017,7 +3017,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_W_R() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_R");
@@ -3039,7 +3039,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_W_W() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     parameters.Read("param3", param3);
@@ -3063,7 +3063,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_C_C() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_C");
     return result;
 }
@@ -3083,7 +3083,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_C_R() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_R");
     return result;
 }
@@ -3103,7 +3103,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_C_W() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_W");
@@ -3125,7 +3125,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_R_C() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_C");
     return result;
 }
@@ -3145,7 +3145,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_R_R() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_R");
     return result;
 }
@@ -3165,7 +3165,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_R_W() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
     result &= (param3 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_W");
@@ -3187,7 +3187,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_W_C() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_C");
@@ -3209,7 +3209,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_W_R() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_R");
@@ -3231,7 +3231,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_W_W() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == 6.0);
     parameters.Read("param3", param3);
@@ -3255,7 +3255,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_C_C() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_C");
@@ -3277,7 +3277,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_C_R() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_R");
@@ -3299,7 +3299,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_C_W() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param3", param3);
@@ -3323,7 +3323,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_R_C() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_C");
@@ -3345,7 +3345,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_R_R() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_R");
@@ -3367,7 +3367,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_R_W() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param3", param3);
@@ -3391,7 +3391,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_W_C() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param2", param2);
@@ -3415,7 +3415,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_W_R() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param2", param2);
@@ -3439,7 +3439,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_W_W() {
     parameters.Write("param2", param2);
     StreamString param3 = "KO";
     parameters.Write("param3", param3);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param2", param2);
@@ -3466,7 +3466,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ErrorParameter1() {
         parameters.Write("param2", param2);
         StreamString param3 = "KO";
         parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -3488,7 +3488,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ErrorParameter2() {
         parameters.Write("param2E", param2);
         StreamString param3 = "KO";
         parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -3510,7 +3510,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ErrorParameter3() {
         parameters.Write("param2", param2);
         StreamString param3 = "KO";
         parameters.Write("param3E", param3);
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -3532,7 +3532,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ErrorParameterReturn() {
         parameters.Write("param2", param2);
         StreamString param3 = "KO";
         parameters.Write("param3", param3);
-        result &= (target.Call(&context, parameters) != ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) != ErrorManagement::NoError);
     }
 
     return result;
@@ -3557,7 +3557,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ReferenceContainer() {
 
         ReferenceContainer parameters;
         parameters.Insert(parametersDB);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         parametersDB->Read("param1", param1);
         result &= (param1 == 5);
         parametersDB->Read("param2", param2);
@@ -3582,7 +3582,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ReferenceContainer() {
 
         ReferenceContainer parameters;
         parameters.Insert(parametersDB);
-        result &= (target.Call(&context, parameters) != ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) != ErrorManagement::NoError);
     }
     {
         ClassWithCallableMethods context;
@@ -3591,7 +3591,7 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ReferenceContainer() {
                                                                                                               MARTe::StreamString &), uint32, float32,
                 StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1111);
         ReferenceContainer parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
     return result;
 }
@@ -3608,7 +3608,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_C_C() {
     parameters.Write("param1", param1);
     StreamString param2 = "KO";
     parameters.Write("param2", param2);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_C");
     return result;
 }
@@ -3625,7 +3625,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_C_R() {
     parameters.Write("param1", param1);
     StreamString param2 = "KO";
     parameters.Write("param2", param2);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_R");
     return result;
 }
@@ -3642,7 +3642,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_C_W() {
     parameters.Write("param1", param1);
     StreamString param2 = "KO";
     parameters.Write("param2", param2);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_W");
@@ -3661,7 +3661,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_R_C() {
     parameters.Write("param1", param1);
     StreamString param2 = "KO";
     parameters.Write("param2", param2);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_C");
     return result;
 }
@@ -3678,7 +3678,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_R_R() {
     parameters.Write("param1", param1);
     StreamString param2 = "KO";
     parameters.Write("param2", param2);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_R");
     return result;
 }
@@ -3695,7 +3695,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_R_W() {
     parameters.Write("param1", param1);
     StreamString param2 = "KO";
     parameters.Write("param2", param2);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
     result &= (param2 == "KOOK");
     result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_W");
@@ -3714,7 +3714,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_W_C() {
     parameters.Write("param1", param1);
     StreamString param2 = "KO";
     parameters.Write("param2", param2);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_C");
@@ -3733,7 +3733,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_W_R() {
     parameters.Write("param1", param1);
     StreamString param2 = "KO";
     parameters.Write("param2", param2);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_R");
@@ -3752,7 +3752,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_W_W() {
     parameters.Write("param1", param1);
     StreamString param2 = "KO";
     parameters.Write("param2", param2);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     parameters.Read("param2", param2);
@@ -3774,7 +3774,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_ErrorParameter1() {
         parameters.Write("param1E", param1);
         StreamString param2 = "KO";
         parameters.Write("param2", param2);
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -3793,7 +3793,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_ErrorParameter2() {
         parameters.Write("param1", param1);
         StreamString param2 = "KO";
         parameters.Write("param2E", param2);
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -3812,7 +3812,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_ErrorParameterReturn() {
         parameters.Write("param1", param1);
         StreamString param2 = "KO";
         parameters.Write("param2", param2);
-        result &= (target.Call(&context, parameters) != ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) != ErrorManagement::NoError);
     }
 
     return result;
@@ -3834,7 +3834,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_ReferenceContainer() {
 
         ReferenceContainer parameters;
         parameters.Insert(parametersDB);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         parametersDB->Read("param1", param1);
         result &= (param1 == 5);
         parametersDB->Read("param2", param2);
@@ -3854,7 +3854,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_ReferenceContainer() {
 
         ReferenceContainer parameters;
         parameters.Insert(parametersDB);
-        result &= (target.Call(&context, parameters) != ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) != ErrorManagement::NoError);
     }
     {
         ClassWithCallableMethods context;
@@ -3862,7 +3862,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_ReferenceContainer() {
                                                                                                               MARTe::StreamString &), uint32, StreamString,
                 void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_W_W, 0x1111);
         ReferenceContainer parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
     return result;
 }
@@ -3876,7 +3876,7 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_C() {
     ConfigurationDatabase parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_C");
     return result;
 }
@@ -3890,7 +3890,7 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_R() {
     ConfigurationDatabase parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_R");
     return result;
 }
@@ -3904,7 +3904,7 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_W() {
     ConfigurationDatabase parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+    result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
     result &= (param1 == 5);
     result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_W");
@@ -3921,7 +3921,7 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_ErrorParameter1() {
         ConfigurationDatabase parameters;
         uint32 param1 = 3;
         parameters.Write("param1E", param1);
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
 
     return result;
@@ -3937,7 +3937,7 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_ErrorParameterReturn() {
         ConfigurationDatabase parameters;
         uint32 param1 = 3;
         parameters.Write("param1", param1);
-        result &= (target.Call(&context, parameters) != ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) != ErrorManagement::NoError);
     }
 
     return result;
@@ -3956,7 +3956,7 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_ReferenceContainer() {
 
         ReferenceContainer parameters;
         parameters.Insert(parametersDB);
-        result &= (target.Call(&context, parameters) == ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         parametersDB->Read("param1", param1);
         result &= (param1 == 5);
         result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_W");
@@ -3971,14 +3971,14 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_ReferenceContainer() {
 
         ReferenceContainer parameters;
         parameters.Insert(parametersDB);
-        result &= (target.Call(&context, parameters) != ErrorManagement::noError);
+        result &= (target.Call(&context, parameters) != ErrorManagement::NoError);
     }
     {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &), uint32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithOneParameter_W, 0x1000);
         ReferenceContainer parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
+        result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
     return result;
 }

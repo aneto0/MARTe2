@@ -72,7 +72,7 @@ void MultiClientServiceThread::ThreadLoop(){
             // wait for service request loop
             // keep at it only if answer is timeout
             // any other answer - including no errors - continue
-            while ((err == ErrorManagement::timeout) && (commands == KeepRunningCommand) ){
+            while ((err == ErrorManagement::Timeout) && (commands == KeepRunningCommand) ){
                 err = Execute(information);
             } // wait service
 

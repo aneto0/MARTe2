@@ -211,7 +211,7 @@ public:
     uint32 expectedSize;
     bool isServer;
     bool isTimeout;
-    bool noError;
+    bool NoError;
     bool createSocketOnHeap;
     bool isValidClient;
     bool isValidServer;

@@ -54,22 +54,22 @@ ClassMethodCaller::~ClassMethodCaller() {
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object *object, StreamI &stream){
-    return ErrorManagement::parametersError;
+    return ErrorManagement::ParametersError;
 }
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object *object, StructuredDataI &parameters){
-    return ErrorManagement::parametersError;
+    return ErrorManagement::ParametersError;
 }
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object *object, ReferenceContainer &parameters){
-    return ErrorManagement::parametersError;
+    return ErrorManagement::ParametersError;
 }
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object *object){
-    return ErrorManagement::parametersError;
+    return ErrorManagement::ParametersError;
 }
 
 }

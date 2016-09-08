@@ -150,10 +150,10 @@ bool EventSemTest::TestWait(TimeoutType timeoutTime) {
     EventSem newSem(eventSem);
     eventSem.Reset();
     ErrorManagement::ErrorType err = eventSem.Wait(timeoutTime);
-    if (err == ErrorManagement::noError) {
+    if (err == ErrorManagement::NoError) {
         err = newSem.ResetWait(timeoutTime);
     }
-    return (err == ErrorManagement::timeout);
+    return (err == ErrorManagement::Timeout);
 }
 
 bool EventSemTest::TestPost() {
@@ -200,7 +200,7 @@ bool EventSemTest::TestWait() {
 
     if (sharedVariable == 0) {
         //Too fast wait has failed for sure...
-        err = ErrorManagement::fatalError;
+        err = ErrorManagement::FatalError;
     }
     sharedVariable = 2;
     eventSem.Close();
@@ -213,7 +213,7 @@ bool EventSemTest::TestWait() {
             break;
         }
     }
-    return (err == ErrorManagement::noError);
+    return (err == ErrorManagement::NoError);
 }
 
 bool EventSemTest::TestResetWait() {
@@ -223,7 +223,7 @@ bool EventSemTest::TestResetWait() {
 
     if (sharedVariable == 0) {
         //Too fast wait has failed for sure...
-        err = ErrorManagement::fatalError;
+        err = ErrorManagement::FatalError;
     }
     sharedVariable = 2;
     eventSem.Close();
@@ -237,7 +237,7 @@ bool EventSemTest::TestResetWait() {
             break;
         }
     }
-    return (err == ErrorManagement::noError);
+    return (err == ErrorManagement::NoError);
 }
 
 void MultiThreadedTestWaitCallback(EventSemTest &eventSemTest) {

@@ -171,7 +171,7 @@ public:
 
     InternetHost server;
     bool retVal;
-    bool noError;
+    bool NoError;
     EventSem eventSem;
     int32 exitCondition;
     bool isBlocking;

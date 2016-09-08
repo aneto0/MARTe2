@@ -75,12 +75,12 @@ public:
      * @param[in] sender is the Object sending the message.
 
      * @return
-     *   ErrorManagement::noError() if the destination object is found and the called function returns true.
-     *   ErrorManagement::fatalError if the function to be called returns false.
-     *   ErrorManagement::unsupportedFeature if no receiver for this message was found
-     *   ErrorManagement::timeout if a wait for reply times out
+     *   ErrorManagement::NoError() if the destination object is found and the called function returns true.
+     *   ErrorManagement::FatalError if the function to be called returns false.
+     *   ErrorManagement::UnsupportedFeature if no receiver for this message was found
+     *   ErrorManagement::Timeout if a wait for reply times out
      *   ErrorManagement::communicationError if trying to send a direct reply
-     *   ErrorManagement::parametersError if the message is invalid or if sender is NULL and reply was expected
+     *   ErrorManagement::ParametersError if the message is invalid or if sender is NULL and reply was expected
      */
     static ErrorManagement::ErrorType SendMessage(ReferenceT<Message> &message,const Object * const sender = NULL_PTR(Object *));
 
@@ -93,8 +93,8 @@ public:
      * @param[in] maxWait is the maximum time allowed waiting for the message reply.
      * @param[in] pollingTimeUsec is the period between check of the arrival as us
      * @return
-     *   ErrorManagement::noError() if the reply is obtained on time.
-     *   ErrorManagement::timeout if a wait for reply times out
+     *   ErrorManagement::NoError() if the reply is obtained on time.
+     *   ErrorManagement::Timeout if a wait for reply times out
      *   ErrorManagement::communicationError if no reply expected
      */
     static ErrorManagement::ErrorType WaitForReply(ReferenceT<Message> &message,const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec=1000);
@@ -107,9 +107,9 @@ public:
      * @param[in] sender is the Object sending the message.
      * @param[in] maxWait is the maximum time allowed waiting for the message reply.
      * @return
-     *   ErrorManagement::noError() if the reply is obtained on time.
-     *   ErrorManagement::parametersError if message is no valid pointer
-     *   ErrorManagement::timeout if a wait for reply times out
+     *   ErrorManagement::NoError() if the reply is obtained on time.
+     *   ErrorManagement::ParametersError if message is no valid pointer
+     *   ErrorManagement::Timeout if a wait for reply times out
      *   ErrorManagement::communicationError if no reply expected
      */
     static ErrorManagement::ErrorType SendMessageAndWaitReply(ReferenceT<Message> &message,const Object * const sender = NULL_PTR(Object *),
