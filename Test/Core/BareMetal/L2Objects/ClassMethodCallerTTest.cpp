@@ -523,13 +523,6 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const StreamI &), StreamI, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithConstInputStreamI, 0x0000);
-        ConfigurationDatabase parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const StreamI &), StreamI, void, void, void> target(
-                &ClassWithCallableMethods::MethodWithConstInputStreamI, 0x0000);
         ReferenceContainer parameters;
         ReferenceT<ClassMethodCallerTTestStreamString> ss(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         uint32 size = StringHelper::Length("MethodWithConstInputStreamI");
@@ -553,13 +546,6 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadWrite() {
         result &= (target.Call(&context, parameters) == ErrorManagement::noError);
         result &= (parameters == "MethodWithOutputStreamI");
         result &= (context.GetLastMethodExecuted() == "MethodWithOutputStreamI(StreamI&)");
-    }
-    {
-        ClassWithCallableMethods context;
-        ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(StreamI &), StreamI, void, void, void> target(
-                &ClassWithCallableMethods::MethodWithOutputStreamI, 0x1000);
-        ConfigurationDatabase parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::parametersError);
     }
     {
         ClassWithCallableMethods context;

@@ -49,25 +49,26 @@
 namespace MARTe{
 
 /**
- * TODO
+ * @brief Allows to call registered methods on registered objects (see ClassMethodInterfaceMapper and CLASS_METHOD_REGISTER).
+ * @details The actual implementations of this class are in ClassMethodCallerT.
  */
 class ClassMethodCaller{
 public:
 
     /**
-     * TODO
+     * @brief Default constructor. NOOP.
      */
     ClassMethodCaller();
 
     /**
-     * TODO
+     * @brief. Destructor.
      */
     virtual ~ClassMethodCaller();
 
     /**
      * @brief Calls the class method using a Stream as the source of the parameters
      * @param[in] object is the pointer to the object owning the method.
-     * @param[in] parameters a reference to a Stream that will be used to fill the parameters to call the functions
+     * @param[in] parameters a reference to a Stream that will be used to fill the parameters to call the functions.
      * @return
      * + ErrorManagement::parametersError if no match between parameters provided and the function call is possible
      * + ErrorManagement::unsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
@@ -107,11 +108,10 @@ public:
      */
     virtual ErrorManagement::ErrorType Call(Object *object);
 };
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-}
 #endif /* CLASSMETHODCALLER_H_ */
