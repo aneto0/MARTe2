@@ -49,4 +49,19 @@ ClassMethodInterfaceMapper::~ClassMethodInterfaceMapper() {
     }
 }
 
+ClassMethodCaller *ClassMethodInterfaceMapper::GetMethodCaller() {
+    return caller;
+}
+
+void ClassMethodInterfaceMapper::SetMethodName(CCString name) {
+    methodName = name;
+}
+/**
+ * @brief Gets the name of method registered in this mapper.
+ * @return the name of method registered in this mapper.
+ */
+CCString ClassMethodInterfaceMapper::GetMethodName() {
+    return methodName;
+}
+
 }
