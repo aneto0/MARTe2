@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef ERRORS_H_
-#define ERRORS_H_
+#ifndef ERRORTYPE_H_
+#define ERRORTYPE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -455,10 +455,14 @@ public:
     };
 
 };
-
+}
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
+namespace ErrorManagement {
 
 inline ErrorType::ErrorType(const ErrorIntegerFormat errorBitSet) {
     format_as_integer = errorBitSet;
@@ -507,9 +511,8 @@ inline bool ErrorType::Contains(const ErrorIntegerFormat errorBitSet)const{
     return   ((format_as_integer & errorBitSet) == errorBitSet);
 }
 
-
 }
 
 }
 
-#endif /* ERRORS_H_ */
+#endif /* ERRORTYPE */
