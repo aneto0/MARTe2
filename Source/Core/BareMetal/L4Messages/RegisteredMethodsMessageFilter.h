@@ -72,7 +72,7 @@ protected:
      * @param[in] messageToTest The message holding the function to call.
      * @return ErrorManagement::NoError if the method (messageToTest->GetFunction()) can be successfully called on the destination object.
      * @post
-     *   The message is marked has consumed (see MessageConsumed()).
+     *   The message is marked has consumed (see SetMessageConsumed()).
      */
     virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 

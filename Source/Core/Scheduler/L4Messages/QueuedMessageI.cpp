@@ -70,7 +70,8 @@ QueuedMessageI::QueuedMessageI():
 
     if (err.ErrorsCleared()){
         // installs as last in the filter queue
-        err = MessageI::InstallMessageFilter(queue,"QUEUE",-1);
+        queue->SetName("QUEUE");
+        err = MessageI::InstallMessageFilter(queue, -1);
     }
 }
 
@@ -134,12 +135,12 @@ ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(EmbeddedServiceI::Exe
 }
 
 
-ErrorManagement::ErrorType QueuedMessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,CCString name,int32 position,bool afterQueue){
+ErrorManagement::ErrorType QueuedMessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, int32 position,bool afterQueue){
     ErrorManagement::ErrorType err;
     if (afterQueue) {
-        err = queuedMessageFilters.InstallMessageFilter(messageFilter,name,position);
+        err = queuedMessageFilters.InstallMessageFilter(messageFilter, position);
     } else {
-        err = messageFilters.InstallMessageFilter(messageFilter,name,position);
+        err = messageFilters.InstallMessageFilter(messageFilter, position);
     }
 
     return err;

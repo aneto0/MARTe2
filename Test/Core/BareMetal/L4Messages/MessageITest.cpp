@@ -478,7 +478,7 @@ bool MessageITest::TestSendMessageAndWaitIndirectReply() {
     if (!replyObj.IsValid()) {
         return false;
     }
-    if(!StringHelper::Compare(replyObj->GetName(), "REPLY")){
+    if(StringHelper::Compare(replyObj->GetName(), "REPLY") != 0){
         return false;
     }
 

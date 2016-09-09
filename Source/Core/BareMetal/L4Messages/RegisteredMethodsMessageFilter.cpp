@@ -65,7 +65,7 @@ ErrorManagement::ErrorType RegisteredMethodsMessageFilter::ConsumeMessage(Refere
 
         // the registered method has no responsibility to handle the reply mechanism
         // therefore it is handled here
-        if (MessageConsumed(ret) && messageToTest->ExpectsReply()) {
+        if (ret.ErrorsCleared() && messageToTest->ExpectsReply()) {
             messageToTest->SetAsReply();
 
             // handles indirect reply

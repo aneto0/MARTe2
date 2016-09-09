@@ -45,11 +45,10 @@
 using namespace MARTe;
 class ClassWithCallableMethodsAndMessageI: public ClassWithCallableMethods, public MARTe::MessageI {
 public:
-    CLASS_REGISTER_DECLARATION()
-    ClassWithCallableMethodsAndMessageI() {
+    CLASS_REGISTER_DECLARATION()ClassWithCallableMethodsAndMessageI() {
     }
 
-    void Setup(ReferenceT<Message> toCatch){
+    void Setup(ReferenceT<Message> toCatch) {
         catcherFilter = ReferenceT<ReplyMessageCatcherMessageFilter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         catcherFilter->SetMessageToCatch(toCatch);
         InstallMessageFilter(catcherFilter);
@@ -63,7 +62,6 @@ public:
 };
 CLASS_REGISTER(ClassWithCallableMethodsAndMessageI, "1.0")
 CLASS_METHOD_REGISTER(ClassWithCallableMethodsAndMessageI, MethodWithVoidParameters)
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -147,7 +145,6 @@ bool RegisteredMethodsMessageFilterTest::TestConsumeMessage_IndirectReply() {
     destination->Setup(msg);
     ObjectRegistryDatabase::Instance()->Insert(destination);
 
-
     ConfigurationDatabase data;
     data.Write("Destination", "TestConsumeMessage_IndirectReplyDestination");
     data.Write("Function", "MethodWithVoidParameters");
@@ -165,4 +162,10 @@ bool RegisteredMethodsMessageFilterTest::TestConsumeMessage_IndirectReply() {
     ret &= (StringHelper::Compare(destination->GetLastMethodExecuted().Buffer(), "MethodWithVoidParameters(void)") == 0);
     ret &= destination->ReplyReceived();
     return ret;
+}
+
+bool RegisteredMethodsMessageFilterTest::TestIsPermanentFilter() {
+    using namespace MARTe;
+    RegisteredMethodsMessageFilter filter;
+    return filter.IsPermanentFilter();
 }

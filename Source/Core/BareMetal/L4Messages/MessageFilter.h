@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MESSAGEFILTER_H_
-#define L4MESSAGES_MESSAGEFILTER_H_
+#ifndef MESSAGEFILTER_H_
+#define MESSAGEFILTER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -37,50 +37,44 @@
 #include "StringHelper.h"
 #include "ReferenceT.h"
 
-namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 /**
- * @brief class to implement a filter on Messages.
+ * @brief Class to implement a filter on Message objects.
  */
 class MessageFilter: public Object{
 public:
+
     /**
-     * TODO
-     * Initialises basic search filter
-     *
+     * @brief Constructor.
+     * @post
+     *   IsPermanentFilter() == isPermanentFilter &&
+     *   IsMessageConsumed() == true.
      */
     MessageFilter(bool isPermanentFilter);
 
     /**
-     * TODO
-     * Initialises basic search filter
-     *
+     * @brief Destructor.
      */
     virtual ~MessageFilter();
 
     /**
-     * TODO
+     * @brief Returns true if the filter is to remain active after a successful match.
+     * @return true if the filter is to remain active after a successful match.
      */
-    inline bool IsPermanentFilter(){
-        return permanentFilter;
-    }
+    bool IsPermanentFilter();
 
     /**
-     * TODO
-     * Single test of a message.
-     * Also try consuming (uses and does not delete it) the message if matched
-    */
-    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest)= 0;
-
-    /**
-     * TODO
-     * Was the message consumed?
-    */
-    inline bool MessageConsumed(ErrorManagement::ErrorType ret);
+     * @brief Checks if the \a messageToTest is compatible with the Filter.
+     * @param[in] messageToTest the message to be tested by this filter.
+     * @return ErrorManagement::NoError if the message was consumed by this filter.
+     */
+    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest) = 0;
 
 private:
 
@@ -91,18 +85,15 @@ private:
 
 };
 
+} // namespace
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 
-inline bool MessageFilter::MessageConsumed(ErrorManagement::ErrorType ret){
-    return !ret.unsupportedFeature && !ret.parametersError;
-}
-
-} // namespace
 
 
-#endif /* L4MESSAGES_MESSAGEFILTER_H_ */
+
+#endif /* MESSAGEFILTER_H_ */
 	

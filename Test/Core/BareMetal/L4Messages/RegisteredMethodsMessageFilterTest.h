@@ -68,6 +68,10 @@ public:
      */
     bool TestConsumeMessage_IndirectReply();
 
+    /**
+     * @brief Tests the IsPermanentFilter method (should return true).
+     */
+    bool TestIsPermanentFilter();
 
 };
 

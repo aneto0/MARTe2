@@ -78,7 +78,7 @@ public:
     * @brief installs a message filter in a given position
     * TODO
     */
-   ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,CCString name="",int32 position=0,bool afterQueue=true);
+   ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, int32 position=0, bool afterQueue=true);
 
    /**
     * TODO

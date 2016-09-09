@@ -65,6 +65,7 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::ConsumeMessage(Refe
             ret.warning = true;
         }
         HandleReplyMessage(messageToTest);
+
     }
     else {
         ret.unsupportedFeature = true;

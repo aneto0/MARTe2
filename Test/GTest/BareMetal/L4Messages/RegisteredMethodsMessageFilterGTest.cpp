@@ -65,3 +65,8 @@ TEST(RegisteredMethodsMessageFilterGTest,TestConsumeMessage_IndirectReply) {
     RegisteredMethodsMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_IndirectReply());
 }
+
+TEST(RegisteredMethodsMessageFilterGTest,TestIsPermanentFilter) {
+    RegisteredMethodsMessageFilterTest target;
+    ASSERT_TRUE(target.TestIsPermanentFilter());
+}

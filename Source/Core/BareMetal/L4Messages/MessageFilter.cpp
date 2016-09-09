@@ -51,5 +51,9 @@ MessageFilter::MessageFilter(bool isPermanentFilter){
 MessageFilter::~MessageFilter(){
 }
 
+bool MessageFilter::IsPermanentFilter(){
+    return permanentFilter;
+}
+
 }
 	

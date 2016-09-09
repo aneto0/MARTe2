@@ -35,17 +35,17 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ErrorManagement::ErrorType MessageFilterPool::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,
-                                                                   CCString name,
-                                                                   int32 position) {
+namespace MARTe {
+MessageFilterPool::MessageFilterPool() {
 
-    messageFilter->SetName(name);
+}
+
+ErrorManagement::ErrorType MessageFilterPool::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,
+                                                                   int32 position) {
 
     ErrorManagement::ErrorType err;
     err.timeout = !Insert(messageFilter, position);
@@ -87,7 +87,7 @@ ErrorManagement::ErrorType MessageFilterPool::ReceiveMessage(ReferenceT<Message>
 
         if (messageFilter.IsValid()) {
             err = messageFilter->ConsumeMessage(message);
-            matched = messageFilter->MessageConsumed(err);
+            matched = err.ErrorsCleared();
         }
     }
 

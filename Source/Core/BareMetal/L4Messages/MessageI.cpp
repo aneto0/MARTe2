@@ -218,10 +218,9 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
 /*---------------------------------------------------------------------------*/
 
 ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,
-                                                          CCString name,
                                                           int32 position) {
 
-    return messageFilters.InstallMessageFilter(messageFilter, name, position);
+    return messageFilters.InstallMessageFilter(messageFilter, position);
 }
 
 ErrorManagement::ErrorType MessageI::RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter) {
@@ -247,9 +246,6 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<
     if (!message.IsValid()) {
         ret.parametersError = true;
         // TODO produce error message
-
-        message->SetExpectsIndirectReply();
-        message->SetExpectsReply();
     }
 
     ReferenceT<ReplyMessageCatcherMessageFilter> replyMessageCatcher;
@@ -267,7 +263,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<
 
         messageCatcher = replyMessageCatcher;
 
-        ret = InstallMessageFilter(messageCatcher, "");
+        ret = InstallMessageFilter(messageCatcher);
     }
 
     if (ret.ErrorsCleared()) {

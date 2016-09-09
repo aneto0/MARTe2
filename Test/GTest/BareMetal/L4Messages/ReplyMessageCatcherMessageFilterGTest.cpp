@@ -75,3 +75,8 @@ TEST(ReplyMessageCatcherMessageFilterGTest,TestConsumeMessage_DifferentMessage) 
     ReplyMessageCatcherMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_DifferentMessage());
 }
+
+TEST(ReplyMessageCatcherMessageFilterGTest,TestIsPermanentFilter) {
+    ReplyMessageCatcherMessageFilterTest target;
+    ASSERT_TRUE(target.TestIsPermanentFilter());
+}

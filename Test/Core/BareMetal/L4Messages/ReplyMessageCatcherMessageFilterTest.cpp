@@ -123,3 +123,9 @@ bool ReplyMessageCatcherMessageFilterTest::TestConsumeMessage_NotReply() {
 
     return !err.ErrorsCleared();
 }
+
+bool ReplyMessageCatcherMessageFilterTest::TestIsPermanentFilter() {
+    using namespace MARTe;
+    ReplyMessageCatcherMessageFilter filter;
+    return !filter.IsPermanentFilter();
+}

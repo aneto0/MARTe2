@@ -43,16 +43,25 @@
 namespace MARTe {
 
 /**
- * @brief TODO
+ * @brief Default message handling mechanism.
+ * @details A pool of MessageFilter objects which are tested when a new message is received. As soon as one of the filters
+ *  declares that the message was consumed (see MessageFilter::IsMessageConsumed) the message will not be tested on any
+ *  subsequent filters.
+ *  If the message is consumed
  */
 class MessageFilterPool: public ReferenceContainer {
 
 public:
 
     /**
+     * @brief Default constructor.
+     */
+    MessageFilterPool();
+
+    /**
      * @brief Default message handling mechanism.
      * @details Handles the reception of a message and by default simply calls SortMessage(). Can be overridden to implement message Queues etc...
-     * @param[in,out] message is the received to be received.
+     * @param[in,out] message is the message to be received.
      * @return
      *   ErrorManagement::NoError if the function specified in \a message is called correctly and returns true.
      *   ErrorManagement::UnsupportedFeature if something goes wrong trying to call the registered function.
@@ -60,10 +69,11 @@ public:
     ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
 
     /**
-     * @brief installs a message filter in a given position
+     * @brief Installs a message filter in a given position.
+     * @
      * TODO
      */
-    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,CCString name="",int32 position=0);
+    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, int32 position=0);
 
     /**
      * TODO

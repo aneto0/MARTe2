@@ -117,17 +117,19 @@ public:
 
     /**
      * @brief installs a message filter in a given position
-     * TODO
+     * TODO (tests missing)
      */
-    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,CCString name="",int32 position=0);
+    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, int32 position=0);
 
     /**
      * TODO
+     * TODO (tests missing)
      */
     ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter);
 
     /**
      * TODO
+     * TODO (tests missing)
      */
     ErrorManagement::ErrorType RemoveMessageFilter(CCString name);
 

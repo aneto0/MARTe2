@@ -79,6 +79,11 @@ public:
     bool TestConsumeMessage_NotReply();
 
     /**
+     * @brief Tests the IsPermanentFilter method (should return false).
+     */
+    bool TestIsPermanentFilter();
+
+    /**
      * Auxiliary variables needed for the TestWait
      */
     MARTe::uint32 waitState;
