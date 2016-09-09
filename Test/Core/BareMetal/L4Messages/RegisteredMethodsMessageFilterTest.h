@@ -1,6 +1,6 @@
 /**
- * @file ReplyMessageCatcherMessageFilterTest.h
- * @brief Header file for class ReplyMessageCatcherMessageFilterTest
+ * @file RegisteredMethodsMessageFilterTest.h
+ * @brief Header file for class RegisteredMethodsMessageFilterTest
  * @date 09/09/2016
  * @author Andre' Neto
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ReplyMessageCatcherMessageFilterTest
+ * @details This header file contains the declaration of the class RegisteredMethodsMessageFilterTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REPLYMESSAGECATCHERMESSAGEFILTERTEST_H_
-#define REPLYMESSAGECATCHERMESSAGEFILTERTEST_H_
+#ifndef REGISTEREDMETHODSMESSAGEFILTERTEST_H_
+#define REGISTEREDMETHODSMESSAGEFILTERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,16 +31,16 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReplyMessageCatcherMessageFilter.h"
+#include "RegisteredMethodsMessageFilter.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
- * Tests the ReplyMessageCatcherMessageFilterTest public methods.
+ * Tests the RegisteredMethodsMessageFilterTest public methods.
  */
-class ReplyMessageCatcherMessageFilterTest {
+class RegisteredMethodsMessageFilterTest {
 public:
 
     /**
@@ -49,19 +49,9 @@ public:
     bool TestDefaultConstructor();
 
     /**
-     * @brief Tests the SetMessageToCatch method.
+     * @brief Tests the SetDestinationObject method.
      */
-    bool TestSetMessageToCatch();
-
-    /**
-     * @brief Tests the Wait method.
-     */
-    bool TestWait();
-
-    /**
-     * @brief Tests the Wait method with a timeout.
-     */
-    bool TestWait_Timeout();
+    bool TestSetDestinationObject();
 
     /**
      * @brief Tests the ConsumeMessage method.
@@ -69,21 +59,15 @@ public:
     bool TestConsumeMessage();
 
     /**
-     * @brief Tests the ConsumeMessage method with a different message (i.e. not the one that was registered to be caught).
+     * @brief Tests the ConsumeMessage method with a message that is a reply (should not be handled).
      */
-    bool TestConsumeMessage_DifferentMessage();
+    bool TestConsumeMessage_Reply();
 
     /**
-     * @brief Tests the ConsumeMessage method with a message that is not a reply.
+     * @brief Tests the ConsumeMessage method with a message that requests an indirect reply .
      */
-    bool TestConsumeMessage_NotReply();
+    bool TestConsumeMessage_IndirectReply();
 
-    /**
-     * Auxiliary variables needed for the TestWait
-     */
-    MARTe::uint32 waitState;
-    MARTe::ReplyMessageCatcherMessageFilter waitFilter;
-    MARTe::ReferenceT<MARTe::Message> waitMessage;
 
 };
 
@@ -91,5 +75,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REPLYMESSAGECATCHERMESSAGEFILTERTEST_H_ */
+#endif /* REGISTEREDMETHODSMESSAGEFILTERTEST_H_ */
 

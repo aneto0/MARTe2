@@ -81,7 +81,7 @@ ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodNa
     }
 
     if (err.ErrorsCleared()){
-        err = caller->Call(this);
+        err = caller->Call(this, parameters);
     }
 
     return err;
@@ -101,7 +101,7 @@ ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodNa
     }
 
     if (err.ErrorsCleared()){
-        err = caller->Call(this);
+        err = caller->Call(this, parameters);
     }
 
     return err;
@@ -121,7 +121,7 @@ ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodNa
     }
 
     if (err.ErrorsCleared()){
-        err = caller->Call(this);
+        err = caller->Call(this, stream);
     }
 
     return err;

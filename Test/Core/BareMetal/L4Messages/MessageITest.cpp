@@ -43,7 +43,8 @@
 namespace MARTe {
 class ObjectWithMessagesCatcher: public ReplyMessageCatcherMessageFilter {
 public:
-    CLASS_REGISTER_DECLARATION()ObjectWithMessagesCatcher() {
+    CLASS_REGISTER_DECLARATION()
+    ObjectWithMessagesCatcher() {
 
     }
 

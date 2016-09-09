@@ -28,6 +28,7 @@
 OBJSX=	MessageITest.x \
         MessageTest.x \
         ObjectWithMessages.x \
+        RegisteredMethodsMessageFilterTest.x \
         ReplyMessageCatcherMessageFilterTest.x
 					
 PACKAGE=Core/BareMetal
@@ -43,6 +44,8 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Messages
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
+
+INCLUDES += -I../../../../Test/Core/BareMetal/L2Objects
 
 all: $(OBJS) \
     $(BUILD_DIR)/L4MessagesTest$(LIBEXT)

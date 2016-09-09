@@ -62,11 +62,9 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::ConsumeMessage(Refe
         //check reply flag
         if (!messageToTest->IsReply()) {
             REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "The message caught is not a reply %s", messageToTest.operator ->()->GetName())
+            ret.warning = true;
         }
-
         HandleReplyMessage(messageToTest);
-
-        ret = true;
     }
     else {
         ret.unsupportedFeature = true;

@@ -55,7 +55,7 @@ bool ReplyMessageCatcherMessageFilterTest::TestSetMessageToCatch() {
     bool ret = !err.ErrorsCleared();
     if (ret) {
         msg->SetAsReply(true);
-        err = (unprotectedFilter.ConsumeMessage(msg) == ErrorManagement::NoError);
+        err = unprotectedFilter.ConsumeMessage(msg);
         ret = err.ErrorsCleared();
     }
     return ret;
@@ -90,4 +90,36 @@ bool ReplyMessageCatcherMessageFilterTest::TestWait_Timeout() {
     using namespace MARTe;
     ErrorManagement::ErrorType err = waitFilter.Wait(1);
     return (err == ErrorManagement::Timeout);
+}
+
+bool ReplyMessageCatcherMessageFilterTest::TestConsumeMessage() {
+    using namespace MARTe;
+    ReplyMessageCatcherMessageFilter filter;
+    ReferenceT<Message> msg(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    filter.SetMessageToCatch(msg);
+    MessageFilter &unprotectedFilter = filter;
+    msg->SetAsReply(true);
+    ErrorManagement::ErrorType err = unprotectedFilter.ConsumeMessage(msg);
+    return err.ErrorsCleared();
+}
+
+bool ReplyMessageCatcherMessageFilterTest::TestConsumeMessage_DifferentMessage() {
+    using namespace MARTe;
+    ReplyMessageCatcherMessageFilter filter;
+    ReferenceT<Message> msg(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<Message> msg2(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    filter.SetMessageToCatch(msg);
+    MessageFilter &unprotectedFilter = filter;
+    return !unprotectedFilter.ConsumeMessage(msg2);
+}
+
+bool ReplyMessageCatcherMessageFilterTest::TestConsumeMessage_NotReply() {
+    using namespace MARTe;
+    ReplyMessageCatcherMessageFilter filter;
+    ReferenceT<Message> msg(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    filter.SetMessageToCatch(msg);
+    MessageFilter &unprotectedFilter = filter;
+    ErrorManagement::ErrorType err = unprotectedFilter.ConsumeMessage(msg);
+
+    return !err.ErrorsCleared();
 }

@@ -1,6 +1,6 @@
 /**
- * @file ReplyMessageCatcherMessageFilterGTest.cpp
- * @brief Source file for class ReplyMessageCatcherMessageFilterGTest
+ * @file RegisteredMethodsMessageFilterGTest.cpp
+ * @brief Source file for class RegisteredMethodsMessageFilterGTest
  * @date 09/09/2016
  * @author Andre Neto
  *
@@ -31,7 +31,7 @@
 
 
 #include "gtest/gtest.h"
-#include "ReplyMessageCatcherMessageFilterTest.h"
+#include "RegisteredMethodsMessageFilterTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,37 +41,27 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ReplyMessageCatcherMessageFilterGTest,TestConstructor) {
-    ReplyMessageCatcherMessageFilterTest target;
+TEST(RegisteredMethodsMessageFilterGTest,TestConstructor) {
+    RegisteredMethodsMessageFilterTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(ReplyMessageCatcherMessageFilterGTest,TestSetMessageToCatch) {
-    ReplyMessageCatcherMessageFilterTest target;
-    ASSERT_TRUE(target.TestSetMessageToCatch());
+TEST(RegisteredMethodsMessageFilterGTest,TestSetDestinationObject) {
+    RegisteredMethodsMessageFilterTest target;
+    ASSERT_TRUE(target.TestSetDestinationObject());
 }
 
-TEST(ReplyMessageCatcherMessageFilterGTest,TestWait) {
-    ReplyMessageCatcherMessageFilterTest target;
-    ASSERT_TRUE(target.TestWait());
-}
-
-TEST(ReplyMessageCatcherMessageFilterGTest,TestWait_Timeout) {
-    ReplyMessageCatcherMessageFilterTest target;
-    ASSERT_TRUE(target.TestWait_Timeout());
-}
-
-TEST(ReplyMessageCatcherMessageFilterGTest,TestConsumeMessage) {
-    ReplyMessageCatcherMessageFilterTest target;
+TEST(RegisteredMethodsMessageFilterGTest,TestConsumeMessage) {
+    RegisteredMethodsMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage());
 }
 
-TEST(ReplyMessageCatcherMessageFilterGTest,TestConsumeMessage_NotReply) {
-    ReplyMessageCatcherMessageFilterTest target;
-    ASSERT_TRUE(target.TestConsumeMessage_NotReply());
+TEST(RegisteredMethodsMessageFilterGTest,TestConsumeMessage_Reply) {
+    RegisteredMethodsMessageFilterTest target;
+    ASSERT_TRUE(target.TestConsumeMessage_Reply());
 }
 
-TEST(ReplyMessageCatcherMessageFilterGTest,TestConsumeMessage_DifferentMessage) {
-    ReplyMessageCatcherMessageFilterTest target;
-    ASSERT_TRUE(target.TestConsumeMessage_DifferentMessage());
+TEST(RegisteredMethodsMessageFilterGTest,TestConsumeMessage_IndirectReply) {
+    RegisteredMethodsMessageFilterTest target;
+    ASSERT_TRUE(target.TestConsumeMessage_IndirectReply());
 }

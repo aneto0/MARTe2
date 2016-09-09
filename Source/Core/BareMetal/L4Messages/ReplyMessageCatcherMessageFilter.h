@@ -49,7 +49,8 @@ public:
     CLASS_REGISTER_DECLARATION()
     /**
      * @brief Constructor. Initialises the MessageFilter(false).
-     * @post IsPermanentFilter() == false
+     * @post
+     *   IsPermanentFilter() == false
      */
     ReplyMessageCatcherMessageFilter();
 

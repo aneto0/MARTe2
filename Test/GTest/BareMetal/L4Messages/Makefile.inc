@@ -25,6 +25,7 @@
 
 OBJSX=  MessageGTest.x \
 		MessageIGTest.x \
+		RegisteredMethodsMessageFilterGTest.x \
 		ReplyMessageCatcherMessageFilterGTest.x
 		
 
