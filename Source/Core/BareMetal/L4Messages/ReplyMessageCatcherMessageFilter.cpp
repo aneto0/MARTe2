@@ -28,10 +28,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "AdvancedErrorManagement.h"
 #include "ReplyMessageCatcherMessageFilter.h"
-
-namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,36 +38,37 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 
-
-ReplyMessageCatcherMessageFilter::ReplyMessageCatcherMessageFilter():MessageFilter(false){
+ReplyMessageCatcherMessageFilter::ReplyMessageCatcherMessageFilter() :
+        MessageFilter(false) {
     caught = false;
 }
 
-
-void ReplyMessageCatcherMessageFilter::SetMessageToCatch(const ReferenceT<Message> &message ){
-    originalMessage = message;
+void ReplyMessageCatcherMessageFilter::SetMessageToCatch(const ReferenceT<Message> &message) {
+    messageToCatch = message;
 }
 
-ReplyMessageCatcherMessageFilter::~ReplyMessageCatcherMessageFilter(){
+ReplyMessageCatcherMessageFilter::~ReplyMessageCatcherMessageFilter() {
+    caught = true;
 }
 
-
-ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest){
+ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest) {
 
     ErrorManagement::ErrorType ret(true);
 
-    if (messageToTest == originalMessage){
+    if (messageToTest == messageToCatch) {
 
         //check reply flag
-        if (!messageToTest->IsReply()){
-            // TODO produce warning!
+        if (!messageToTest->IsReply()) {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "The message caught is not a reply %s", messageToTest.operator ->()->GetName())
         }
 
         HandleReplyMessage(messageToTest);
 
         ret = true;
-    } else {
+    }
+    else {
         ret.unsupportedFeature = true;
     }
 
@@ -77,15 +76,16 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::ConsumeMessage(Refe
 
 }
 
-ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::Wait(const TimeoutType &maxWait, const uint32 pollingTimeUsec){
-    ErrorManagement::ErrorType  err(true);
+ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::Wait(const TimeoutType &maxWait,
+                                                                  const uint32 pollingTimeUsec) {
+    ErrorManagement::ErrorType err(true);
 
     uint64 start = HighResolutionTimer::Counter();
-    float32 pollingTime = (float)pollingTimeUsec * 1.0e-6;
+    float32 pollingTime = (float) pollingTimeUsec * 1.0e-6;
 
-    while(err.ErrorsCleared() && !caught ){
+    while (err.ErrorsCleared() && !caught) {
         Sleep::NoMore(pollingTime);
-        if (maxWait != TTInfiniteWait){
+        if (maxWait != TTInfiniteWait) {
             uint64 deltaT = HighResolutionTimer::Counter() - start;
             err.timeout = maxWait.HighResolutionTimerTicks() > deltaT;
         }
@@ -94,9 +94,15 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::Wait(const TimeoutT
     return err;
 }
 
-CLASS_REGISTER(ReplyMessageCatcherMessageFilter, "1.0")
+void ReplyMessageCatcherMessageFilter::HandleReplyMessage(ReferenceT<Message> &replyMessage) {
+    caught = true;
+}
 
+bool ReplyMessageCatcherMessageFilter::ReplyCaught() {
+    return caught;
+}
+
+CLASS_REGISTER(ReplyMessageCatcherMessageFilter, "1.0")
 
 }
 
-	

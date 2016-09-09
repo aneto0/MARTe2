@@ -24,7 +24,8 @@
 
 
 OBJSX=  MessageGTest.x \
-		MessageIGTest.x
+		MessageIGTest.x \
+		ReplyMessageCatcherMessageFilterGTest.x
 		
 
 PACKAGE=GTest/BareMetal

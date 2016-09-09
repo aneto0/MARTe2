@@ -1,8 +1,8 @@
 /**
- * @file MessageGTest.cpp
- * @brief Source file for class MessageGTest
- * @date 14/06/2016
- * @author Giuseppe Ferro
+ * @file ReplyMessageCatcherMessageFilterGTest.cpp
+ * @brief Source file for class ReplyMessageCatcherMessageFilterGTest
+ * @date 09/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -31,7 +31,7 @@
 
 
 #include "gtest/gtest.h"
-#include "MessageTest.h"
+#include "ReplyMessageCatcherMessageFilterTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,69 +41,22 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MessageGTest,TestConstructor) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestConstructor());
+TEST(ReplyMessageCatcherMessageFilterGTest,TestConstructor) {
+    ReplyMessageCatcherMessageFilterTest target;
+    ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-
-TEST(MessageGTest,TestInitialise) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestInitialise());
+TEST(ReplyMessageCatcherMessageFilterGTest,TestSetMessageToCatch) {
+    ReplyMessageCatcherMessageFilterTest target;
+    ASSERT_TRUE(target.TestSetMessageToCatch());
 }
 
-
-TEST(MessageGTest,TestSetAsReply) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestSetAsReply());
+TEST(ReplyMessageCatcherMessageFilterGTest,TestWait) {
+    ReplyMessageCatcherMessageFilterTest target;
+    ASSERT_TRUE(target.TestWait());
 }
 
-TEST(MessageGTest,TestIsReply) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestIsReply());
-}
-
-TEST(MessageGTest,TestSetExpectsReply) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestSetExpectsReply());
-}
-
-TEST(MessageGTest,TestSetExpectsIndirectReply) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestSetExpectsIndirectReply());
-}
-
-TEST(MessageGTest,TestExpectsReply) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestExpectsReply());
-}
-
-TEST(MessageGTest,TestExpectsIndirectReply) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestExpectsIndirectReply());
-}
-
-TEST(MessageGTest,TestGetDestination) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestGetDestination());
-}
-
-TEST(MessageGTest,TestGetSender) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestGetSender());
-}
-
-TEST(MessageGTest,TestSetSender) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestSetSender());
-}
-
-TEST(MessageGTest,TestGetFunction) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestGetFunction());
-}
-
-TEST(MessageGTest,TestSetReplyTimeout) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestSetReplyTimeout());
+TEST(ReplyMessageCatcherMessageFilterGTest,TestWait_Timeout) {
+    ReplyMessageCatcherMessageFilterTest target;
+    ASSERT_TRUE(target.TestWait_Timeout());
 }
