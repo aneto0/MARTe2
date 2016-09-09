@@ -342,9 +342,10 @@ public:
     inline void ClearError(const ErrorIntegerFormat errorBitSet);
 
     /**
-     * @brief Checks if the current error bits match the provided \a errorBitSet.
+     * @brief Checks if the current error bits contains the provided \a errorBitSet.
      * @param[in] errorBitSet Error bits to verify.
-     * @return true if the current error bits match the provided \a errorBitSet.
+     * @return true if the current error bits contains the provided \a errorBitSet.
+     *  If one of the bits in the \a errorBitSet is not set the function will return false.
      */
     inline bool Contains(const ErrorIntegerFormat errorBitSet) const;
 

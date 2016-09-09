@@ -55,14 +55,14 @@ bool ErrorTypeTest::TestConstructor_False() {
 bool ErrorTypeTest::TestConstructor_BitSet() {
     ErrorManagement::ErrorType err(ErrorManagement::Debug | ErrorManagement::ErrorSharing);
     bool ret = !err.ErrorsCleared();
-    ret &= (err == ErrorManagement::Debug | ErrorManagement::ErrorSharing);
+    ret &= (err == (ErrorManagement::Debug | ErrorManagement::ErrorSharing));
     return ret;
 }
 
 bool ErrorTypeTest::TestErrorsCleared() {
     ErrorManagement::ErrorType err(ErrorManagement::Debug | ErrorManagement::ErrorSharing);
     bool ret = !err.ErrorsCleared();
-    err = true;
+    err = false;
     ret &= err.ErrorsCleared();
     return ret;
 }
@@ -70,8 +70,14 @@ bool ErrorTypeTest::TestErrorsCleared() {
 bool ErrorTypeTest::TestOperatorBool() {
     ErrorManagement::ErrorType err;
     bool ret = err;
+    err = true;
+    if (ret) {
+        ret = !err;
+    }
     err = false;
-    ret &= !err;
+    if (ret) {
+        ret = err;
+    }
     return ret;
 }
 
@@ -118,7 +124,7 @@ bool ErrorTypeTest::TestContains() {
     bool ret = (err == (ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation));
     ret &= (err.Contains(ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation));
     ret &= !(err.Contains(ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation | ErrorManagement::FatalError));
-    ret &= !(err.Contains(ErrorManagement::Information));
+    ret &= (err.Contains(ErrorManagement::Information));
     err = ErrorManagement::Information;
     ret &= (err == (ErrorManagement::Information));
     return ret;
