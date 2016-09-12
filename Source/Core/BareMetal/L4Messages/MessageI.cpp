@@ -220,16 +220,16 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
 ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,
                                                           int32 position) {
 
-    return messageFilters.InstallMessageFilter(messageFilter, position);
+    return messageFilters.Insert(messageFilter, position);
 }
 
 ErrorManagement::ErrorType MessageI::RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter) {
-    return messageFilters.RemoveMessageFilter(messageFilter);
+    return messageFilters.Delete(messageFilter);
 
 }
 
 ErrorManagement::ErrorType MessageI::RemoveMessageFilter(CCString name) {
-    return messageFilters.RemoveMessageFilter(name);
+    return messageFilters.Delete(name);
 }
 
 ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<Message> &message,

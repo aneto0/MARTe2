@@ -138,9 +138,9 @@ ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(EmbeddedServiceI::Exe
 ErrorManagement::ErrorType QueuedMessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, int32 position,bool afterQueue){
     ErrorManagement::ErrorType err;
     if (afterQueue) {
-        err = queuedMessageFilters.InstallMessageFilter(messageFilter, position);
+        err = queuedMessageFilters.Insert(messageFilter, position);
     } else {
-        err = messageFilters.InstallMessageFilter(messageFilter, position);
+        err = messageFilters.Insert(messageFilter, position);
     }
 
     return err;
@@ -150,10 +150,10 @@ ErrorManagement::ErrorType QueuedMessageI::InstallMessageFilter(ReferenceT<Messa
 ErrorManagement::ErrorType QueuedMessageI::RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter){
     ErrorManagement::ErrorType err;
 
-    err = messageFilters.RemoveMessageFilter(messageFilter);
+    err = messageFilters.Delete(messageFilter);
 
     if (!err.ErrorsCleared()){
-        err = queuedMessageFilters.RemoveMessageFilter(messageFilter);
+        err = queuedMessageFilters.Delete(messageFilter);
     }
     return err;
 }
@@ -161,10 +161,10 @@ ErrorManagement::ErrorType QueuedMessageI::RemoveMessageFilter(ReferenceT<Messag
 ErrorManagement::ErrorType QueuedMessageI::RemoveMessageFilter(CCString name){
     ErrorManagement::ErrorType err;
 
-    err = messageFilters.RemoveMessageFilter(name);
+    err = messageFilters.Delete(name);
 
     if (!err.ErrorsCleared()){
-        err = queuedMessageFilters.RemoveMessageFilter(name);
+        err = queuedMessageFilters.Delete(name);
     }
     return err;
 }

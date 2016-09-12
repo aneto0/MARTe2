@@ -1,8 +1,8 @@
 /**
- * @file MessageFilterPool.cpp
- * @brief Source file for class MessageFilterPool
- * @date 22/08/2016
- * @author Filippo Sartori
+ * @file MessageFilterPoolGTest.cpp
+ * @brief Source file for class MessageFilterPoolGTest
+ * @date 12/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MessageFilterPool (public, protected, and private). Be aware that some 
+ * the class MessageFilterPoolGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "MessageFilterPool.h"
+
+#include "gtest/gtest.h"
+#include "MessageFilterPoolTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,42 +41,32 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-MessageFilterPool::MessageFilterPool() {
-
+TEST(MessageFilterPoolGTest,TestConstructor) {
+    MessageFilterPoolTest target;
+    ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-MessageFilterPool::~MessageFilterPool() {
-
+TEST(MessageFilterPoolGTest,TestReceiveMessage) {
+    MessageFilterPoolTest target;
+    ASSERT_TRUE(target.TestReceiveMessage());
 }
 
-ErrorManagement::ErrorType MessageFilterPool::ReceiveMessage(ReferenceT<Message> &message) {
-    bool matched = false;
-    ErrorManagement::ErrorType err;
-    ReferenceT<MessageFilter> messageFilter;
-
-    uint32 i;
-    for (i = 0; (i < Size() && !matched); i++) {
-        messageFilter = Get(i);
-
-        if (messageFilter.IsValid()) {
-            err = messageFilter->ConsumeMessage(message);
-            matched = err.ErrorsCleared();
-        }
-    }
-
-    if (matched) {
-        if (!messageFilter->IsPermanentFilter()) {
-            err.timeout = !Delete(messageFilter);
-        }
-    }
-    else {
-        err.unsupportedFeature = true;
-    }
-
-    return err;
+TEST(MessageFilterPoolGTest,TestReceiveMessage_ErrorInFilter) {
+    MessageFilterPoolTest target;
+    ASSERT_TRUE(target.TestReceiveMessage_ErrorInFilter());
 }
 
-CLASS_REGISTER(MessageFilterPool, "1.0")
+TEST(MessageFilterPoolGTest,TestReceiveMessage_MessageNotFound) {
+    MessageFilterPoolTest target;
+    ASSERT_TRUE(target.TestReceiveMessage_MessageNotFound());
+}
 
+TEST(MessageFilterPoolGTest,TestReceiveMessage_NotPermanentRemoved) {
+    MessageFilterPoolTest target;
+    ASSERT_TRUE(target.TestReceiveMessage_NotPermanentRemoved());
+}
+
+TEST(MessageFilterPoolGTest,TestReceiveMessage_PermanentNotRemoved) {
+    MessageFilterPoolTest target;
+    ASSERT_TRUE(target.TestReceiveMessage_PermanentNotRemoved());
 }

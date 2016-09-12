@@ -44,51 +44,37 @@ namespace MARTe {
 
 /**
  * @brief Default message handling mechanism.
- * @details A pool of MessageFilter objects which are tested when a new message is received. As soon as one of the filters
- *  declares that the message was consumed (see MessageFilter::IsMessageConsumed) the message will not be tested on any
- *  subsequent filters.
- *  If the message is consumed
+ * @details A container of MessageFilter objects which are tested when a new message is received. As soon as one of the filters
+ *  declares that the message was consumed (i.e. that MessageFilter::ConsumeMessage returns ErrorManagement::NoError)
+ *  the message will not be tested on any subsequent filters.
+ *  Filters can be added to the container using the ReferenceContainer::Insert methods.
  */
 class MessageFilterPool: public ReferenceContainer {
 
 public:
-
+    CLASS_REGISTER_DECLARATION()
     /**
-     * @brief Default constructor.
+     * @brief Default constructor. NOOP.
      */
     MessageFilterPool();
 
     /**
-     * @brief Default message handling mechanism.
-     * @details Handles the reception of a message and by default simply calls SortMessage(). Can be overridden to implement message Queues etc...
-     * @param[in,out] message is the message to be received.
+     * @brief Destructor. NOOP.
+     */
+    virtual ~MessageFilterPool();
+
+    /**
+     * @brief Tests the \a message on all the filters that belong to this container.
+     * @details As soon as one of the filters declares that the message was consumed (i.e. that MessageFilter::ConsumeMessage
+     * returns ErrorManagement::NoError) the message will not be tested on any subsequent filters.
+     * If the filter is not permanent (!MessageFilter::IsPermanentFilter), it will be removed from the container after handling the message.
+     * @param[in,out] message is the message to be tested on the installed filters.
      * @return
-     *   ErrorManagement::NoError if the function specified in \a message is called correctly and returns true.
-     *   ErrorManagement::UnsupportedFeature if something goes wrong trying to call the registered function.
+     *   ErrorManagement::NoError if at least one filter can consume the message (i.e. that MessageFilter::ConsumeMessage
+     * returns ErrorManagement::NoError).
+     *   ErrorManagement::UnsupportedFeature if no filter can consume the message.
      */
     ErrorManagement::ErrorType ReceiveMessage(ReferenceT<Message> &message);
-
-    /**
-     * @brief Installs a message filter in a given position.
-     * @
-     * TODO
-     */
-    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, int32 position=0);
-
-    /**
-     * TODO
-     */
-    ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter);
-
-    /**
-     * TODO
-     */
-    ErrorManagement::ErrorType RemoveMessageFilter(CCString name);
-
-    /**
-     * TODO
-     */
-    ErrorManagement::ErrorType FindMessageFilter(CCString name,ReferenceT<MessageFilter> messageFilter);
 
 };
 

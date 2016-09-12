@@ -25,7 +25,8 @@
 #############################################################
 
 
-OBJSX=	MessageITest.x \
+OBJSX=	MessageFilterPoolTest.x \
+        MessageITest.x \
         MessageTest.x \
         ObjectWithMessages.x \
         RegisteredMethodsMessageFilterTest.x \
