@@ -64,7 +64,8 @@ bool MessageTest::TestInitialise() {
             { "dummyDestination", "dummyFunction", 1000, "", "Destination=dummyDestination\n Function=dummyFunction\n MaxWait=1000\n ", true },
             { "dummyDestination", "dummyFunction", TTInfiniteWait, "ExpectsImmediateReply", "Destination=dummyDestination\n Function=dummyFunction\n Mode=ExpectsImmediateReply\n", true },
             { "dummyDestination", "dummyFunction", TTInfiniteWait, "", "Destination=dummyDestination\n Function=dummyFunction\n ", true },
-            { "dummyDestination", "", TTInfiniteWait, "", "Destination=dummyDestination\n ", false }, { "", "dummyFunction", TTInfiniteWait, "", "Function=dummyFunction\n ", false },
+            { "dummyDestination", "", TTInfiniteWait, "", "Destination=dummyDestination\n ", false },
+            { "", "dummyFunction", TTInfiniteWait, "", "Function=dummyFunction\n ", false },
             { NULL, NULL, 0, NULL, NULL, false }
     };
     result = TestInitialise(table);
