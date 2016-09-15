@@ -41,28 +41,26 @@
 namespace MARTe {
 
 QueueingMessageFilter::QueueingMessageFilter():MessageFilter(true){
-
+    mutexSemQ.Create();
+    newMessagesAlarm.Create();
 }
 
-/**
- * @brief Destructor.
- */
 QueueingMessageFilter::~QueueingMessageFilter(){
 
 }
 
 ErrorManagement::ErrorType QueueingMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest){
     ErrorManagement::ErrorType err;
-    err.timeout = messageQ.Lock();
+    err.timeout = !mutexSemQ.FastLock();
     if (err.ErrorsCleared()){
-        err.fatalError = messageQ.Insert(messageToTest,-1);
+        err.fatalError = !messageQ.Insert(messageToTest,-1);
 
         // handle the case of an element to an empty Q
         if (err.ErrorsCleared()  && messageQ.Size() == 1){
             newMessagesAlarm.Post();
         }
 
-        messageQ.UnLock();
+        mutexSemQ.FastUnLock();
     }
     return err;
 }
@@ -73,7 +71,7 @@ ErrorManagement::ErrorType QueueingMessageFilter::ConsumeMessage(ReferenceT<Mess
 ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message> &message,const TimeoutType &timeout){
     ErrorManagement::ErrorType err;
     bool locked = false;
-    err.timeout = !messageQ.Lock();
+    err.timeout = !mutexSemQ.FastLock();
     locked = !err.timeout;
 
     // handle the empty Q case
@@ -82,14 +80,14 @@ ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message>
             err.fatalError = newMessagesAlarm.Reset();
         }
         if (locked && err.ErrorsCleared()){
-            messageQ.UnLock();
+            mutexSemQ.FastUnLock();
             locked = false;
         }
         if (err.ErrorsCleared()){
             err.timeout = newMessagesAlarm.Wait(timeout);
         }
         if (err.ErrorsCleared()){
-            err.timeout = !messageQ.Lock();
+            err.timeout = !mutexSemQ.FastLock();
             locked = !err.timeout;
         }
     }
@@ -108,7 +106,7 @@ ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message>
     }
 
     if (locked) {
-         messageQ.UnLock();
+        mutexSemQ.FastUnLock();
    }
     return err;
 

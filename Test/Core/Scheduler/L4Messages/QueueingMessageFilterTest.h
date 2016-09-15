@@ -1,8 +1,8 @@
 /**
- * @file QueueingMessageFilter.h
- * @brief Header file for class QueueingMessageFilter
- * @date 22/08/2016
- * @author Filippo Sartori
+ * @file QueueingMessageFilterTest.h
+ * @brief Header file for class QueueingMessageFilterTest
+ * @date 09/09/2016
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MessageI
+ * @details This header file contains the declaration of the class QueueingMessageFilterTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef QUEUEINGMESSAGEFILTER_H_
-#define QUEUEINGMESSAGEFILTER_H_
+#ifndef REGISTEREDMETHODSMESSAGEFILTERTEST_H_
+#define REGISTEREDMETHODSMESSAGEFILTERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,76 +31,59 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "MessageFilter.h"
-#include "EventSem.h"
+#include "QueueingMessageFilter.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
 /**
- * @brief Adds message to a queue.
- * @details Messages consumed by this filter are added to a queue. The queue is consumed by calling the GetMessage method.
+ * Tests the QueueingMessageFilterTest public methods.
  */
-class DLL_API QueueingMessageFilter: public MessageFilter {
+class QueueingMessageFilterTest {
 public:
 
     /**
-     * @brief Constructor. Initialises the semaphores.
+     * @brief Tests the default constructor.
      */
-    QueueingMessageFilter();
+    bool TestDefaultConstructor();
 
     /**
-     * @brief Destructor.
+     * @brief Tests the ConsumeMessage method.
      */
-    virtual ~QueueingMessageFilter();
+    bool TestConsumeMessage();
 
     /**
-     * @brief Adds the message to the message queue.
-     * @param[in] messageToTest The message to add to the queue.
-     * @return ErrorManagement::NoError if the message can be successfully added to the queue.
+     * @brief Tests the IsPermanentFilter method (should return true).
      */
-    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
+    bool TestIsPermanentFilter();
 
     /**
-     * @brief Gets the oldest message from the queue or waits for a message to be available.
-     * @param[out] message The oldest message available on the queue.
-     * @param[out] timeout The maximum time to wait for a message to be available on the queue.
-     * @return ErrorManagement::NoError if the message can be successfully retrieved from the queue with-in the specified timeout.
+     * @brief Tests the GetMessage method.
      */
-    ErrorManagement::ErrorType GetMessage(ReferenceT<Message> &message, const TimeoutType &timeout = TTInfiniteWait);
-
-private:
+    bool TestGetMessage();
+#if 0
+    /**
+     * @brief Tests the SetDestinationObject method.
+     */
+    bool TestSetDestinationObject();
 
     /**
-     * Holds the messages consumed by this QueueingMessageFilter
+     * @brief Tests the ConsumeMessage method with a message that is a reply (should not be handled).
      */
-    ReferenceContainer messageQ;
+    bool TestConsumeMessage_Reply();
 
     /**
-     * Locks the adding/removing of messages to the queue
+     * @brief Tests the ConsumeMessage method with a message that requests an indirect reply .
      */
-    FastPollingMutexSem mutexSemQ;
+    bool TestConsumeMessage_IndirectReply();
 
-    /**
-     * Wakes threads waiting on the queue
-     */
-    EventSem newMessagesAlarm;
-
-
+#endif
 };
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-}
-
-
-#endif /* QUEUEINGMESSAGEFILTER_H_ */
+#endif /* REGISTEREDMETHODSMESSAGEFILTERTEST_H_ */
 
