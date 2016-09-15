@@ -56,7 +56,7 @@ bool MultiClientService::Initialise(StructuredDataI &data){
 ErrorManagement::ErrorType MultiClientService::AddThread(){
     ErrorManagement::ErrorType  err;
     if ((threadPool.Size()< maxNumberOfThreads) && (err.ErrorsCleared())){
-        ReferenceT<MultiClientServiceThread> thread(new MultiClientServiceThread(method,*this));
+        ReferenceT<MultiClientServiceThread> thread(new (NULL) MultiClientServiceThread(method, *this));
         err.fatalError = ! thread.IsValid();
         if (err.ErrorsCleared()) {
             err = thread->Start();

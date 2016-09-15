@@ -79,7 +79,7 @@ public:
 private:
 
     /**
-     * True if it remains active after a successful match
+     * True if it remains active after a successful match.
      */
     bool permanentFilter;
 

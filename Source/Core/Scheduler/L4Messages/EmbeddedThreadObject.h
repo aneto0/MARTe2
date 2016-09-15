@@ -43,8 +43,6 @@ class EmbeddedThreadObject: public EmbeddedThread{
 
 public:
 
-    CLASS_REGISTER_DECLARATION()
-
 
     /**
      * TODO

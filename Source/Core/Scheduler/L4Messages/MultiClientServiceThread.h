@@ -45,8 +45,6 @@ class MultiClientServiceThread: public Object,public EmbeddedThread {
 
 public:
 
-    CLASS_REGISTER_DECLARATION()
-
     /**
      * TODO
      */

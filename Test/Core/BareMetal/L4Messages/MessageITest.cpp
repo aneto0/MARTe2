@@ -43,8 +43,7 @@
 namespace MARTe {
 class ObjectWithMessagesCatcher: public ReplyMessageCatcherMessageFilter {
 public:
-    CLASS_REGISTER_DECLARATION()
-    ObjectWithMessagesCatcher() {
+    CLASS_REGISTER_DECLARATION()ObjectWithMessagesCatcher() {
 
     }
 
@@ -478,7 +477,7 @@ bool MessageITest::TestSendMessageAndWaitIndirectReply() {
     if (!replyObj.IsValid()) {
         return false;
     }
-    if(StringHelper::Compare(replyObj->GetName(), "REPLY") != 0){
+    if (StringHelper::Compare(replyObj->GetName(), "REPLY") != 0) {
         return false;
     }
 
@@ -487,25 +486,92 @@ bool MessageITest::TestSendMessageAndWaitIndirectReply() {
     return result;
 }
 
-bool MessageITest::TestSendMessageAndExpectReplyLater_False_InvalidMessage() {
+bool MessageITest::TestSendMessageAndWaitIndirectReply_InvalidMessage() {
     using namespace MARTe;
-    bool result = false;
-    ErrorManagement::ErrorType status;
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<Message> msg;
+    ErrorManagement::ErrorType status = sender->SendMessageAndWaitIndirectReply(msg);
+
+    return status == ErrorManagement::ParametersError;
+}
+
+bool MessageITest::TestSendMessageAndWaitIndirectReply_InvalidDestination() {
+    using namespace MARTe;
+
     ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     sender->SetName("sender");
-    receiver->SetName("receiver");
+    receiver->SetName("does.not.exist");
 
-    ReferenceT<Message> mess;
+    ReferenceT<Message> msg = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiver");
+    cdb.Write("Function", "ReceiverMethod");
+    cdb.Write("Mode", "ExpectsIndirectReply");
+
+    if (!msg->Initialise(cdb)) {
+        return false;
+    }
 
     ObjectRegistryDatabase::Instance()->CleanUp();
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
-    status = MessageI::SendMessageAndWaitReply(mess, sender.operator->());
+    ErrorManagement::ErrorType status = sender->SendMessageAndWaitIndirectReply(msg);
 
-    result = (status == ErrorManagement::ParametersError);
-
-    return result;
+    return (status == ErrorManagement::UnsupportedFeature);
 }
 
+bool MessageITest::TestWaitForReply() {
+    using namespace MARTe;
+
+    ReferenceT<Message> msg = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    msg->SetAsReply(true);
+    msg->SetExpectsReply(true);
+    ErrorManagement::ErrorType status = MessageI::WaitForReply(msg, 1, 1);
+    return status;
+}
+
+bool MessageITest::TestWaitForReply_InvalidMessage() {
+    using namespace MARTe;
+
+    ReferenceT<Message> msg;
+    ErrorManagement::ErrorType status = MessageI::WaitForReply(msg, 1, 1);
+    return status == ErrorManagement::ParametersError;
+}
+
+bool MessageITest::TestWaitForReply_NotExpectsReply() {
+    using namespace MARTe;
+
+    ReferenceT<Message> msg = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    msg->SetAsReply(true);
+    msg->SetExpectsReply(false);
+    ErrorManagement::ErrorType status = MessageI::WaitForReply(msg, 1, 1);
+    return status == ErrorManagement::CommunicationError;
+}
+
+bool MessageITest::TestWaitForReply_Timeout() {
+    using namespace MARTe;
+
+    ReferenceT<Message> msg = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    msg->SetExpectsReply(true);
+    ErrorManagement::ErrorType status = MessageI::WaitForReply(msg, 1, 1);
+    return status == ErrorManagement::Timeout;
+}
+
+bool MessageITest::TestInstallMessageFilter() {
+    using namespace MARTe;
+
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ReplyMessageCatcherMessageFilter> filter = ReferenceT<ReplyMessageCatcherMessageFilter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    return sender->InstallMessageFilter(filter);
+}
+
+bool MessageITest::TestRemoveMessageFilter() {
+    using namespace MARTe;
+
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ReplyMessageCatcherMessageFilter> filter = ReferenceT<ReplyMessageCatcherMessageFilter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->InstallMessageFilter(filter);
+    return sender->RemoveMessageFilter(filter);
+}

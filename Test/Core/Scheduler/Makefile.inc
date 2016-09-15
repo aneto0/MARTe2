@@ -31,7 +31,8 @@ MAKEDEFAULTDIR=../../../MakeDefaults
 ROOT_DIR=../../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityTest$(LIBEXT)
+LIBRARIES_STATIC=$(BUILD_DIR)/L1Portability/L1PortabilityTest$(LIBEXT)
+#LIBRARIES_STATIC+=$(BUILD_DIR)/L4Messages/L4MessagesTest$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L5GAMs/L5GAMsTest$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ) \

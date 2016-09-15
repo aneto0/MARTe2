@@ -39,31 +39,35 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
-MultiClientServiceThread::~MultiClientServiceThread(){ }
+MultiClientServiceThread::~MultiClientServiceThread() {
+}
 
-MultiClientServiceThread::MultiClientServiceThread(MethodBinderI &binder,MultiThreadService &managerIn): EmbeddedThread(binder),manager(managerIn){ }
+MultiClientServiceThread::MultiClientServiceThread(MethodBinderI &binder,
+                                                   MultiThreadService &managerIn) :
+        EmbeddedThread(binder),
+        manager(managerIn) {
+}
 
-
-void MultiClientServiceThread::ThreadLoop(){
+void MultiClientServiceThread::ThreadLoop() {
     commands = KeepRunningCommand;
     information.Reset();
 
     // thread is decontextualised.
     // any error in execution will only abort the sequence - no the thread
     // thread is killed at this stage if commands != KeepRunningCommand or if there more service threads that the minimum needed
-    while((commands == KeepRunningCommand) && (!manager.MoreThanEnoughThreads())){
+    while ((commands == KeepRunningCommand) && (!manager.MoreThanEnoughThreads())) {
         ErrorManagement::ErrorType err;
 
         information.SetStage(startupStage);
         information.SetStage2(nullStage2);
-        if (commands == KeepRunningCommand){
+        if (commands == KeepRunningCommand) {
             err = Execute(information);
         } // start
 
         // main loop - wait for service request - service the request
-        while (err.ErrorsCleared() && (commands == KeepRunningCommand)){
+        while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
             information.SetStage(mainStage);
             information.SetStage2(waitRequestStage2);
 
@@ -72,17 +76,17 @@ void MultiClientServiceThread::ThreadLoop(){
             // wait for service request loop
             // keep at it only if answer is timeout
             // any other answer - including no errors - continue
-            while ((err == ErrorManagement::Timeout) && (commands == KeepRunningCommand) ){
+            while ((err == ErrorManagement::Timeout) && (commands == KeepRunningCommand)) {
                 err = Execute(information);
             } // wait service
 
-            if (err.ErrorsCleared() && (commands == KeepRunningCommand)){
+            if (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
                 // Try start new service thread
                 manager.AddThread();
 
                 information.SetStage2(serviceRequestStage2);
                 // exit on error including ErrorManagement::completed
-                while (err.ErrorsCleared() && (commands == KeepRunningCommand)){
+                while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
                     err = Execute(information);
                 }
             } // loop service
@@ -92,15 +96,14 @@ void MultiClientServiceThread::ThreadLoop(){
         information.SetStage2(nullStage2);
         if (err.completed) {
             information.SetStage(terminationStage);
-        } else {
+        }
+        else {
             information.SetStage(badTerminationStage);
         }
         Execute(information);
 
-    }// main loop (start - loop (wait service - loop (service) ) - end)
+    } // main loop (start - loop (wait service - loop (service) ) - end)
 
 }
-
-
 
 }

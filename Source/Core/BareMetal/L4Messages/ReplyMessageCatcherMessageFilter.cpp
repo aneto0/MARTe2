@@ -97,10 +97,6 @@ void ReplyMessageCatcherMessageFilter::HandleReplyMessage(ReferenceT<Message> &r
     caught = true;
 }
 
-bool ReplyMessageCatcherMessageFilter::ReplyCaught() {
-    return caught;
-}
-
 CLASS_REGISTER(ReplyMessageCatcherMessageFilter, "1.0")
 
 }

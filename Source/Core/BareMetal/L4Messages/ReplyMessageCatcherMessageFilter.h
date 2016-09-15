@@ -91,12 +91,6 @@ protected:
      */
     virtual void HandleReplyMessage(ReferenceT<Message> &replyMessage);
 
-    /*
-     * @brief Returns true if the message was caught.
-     * @return true if the message was caught.
-     */
-    bool ReplyCaught();
-
 private:
 
     /**

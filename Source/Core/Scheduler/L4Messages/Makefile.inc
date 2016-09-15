@@ -41,8 +41,8 @@ INCLUDES += -I../../BareMetal/L4Messages
 INCLUDES += -I../../BareMetal/L5GAMs
 INCLUDES += -I../../Scheduler/L1Portability
 all: $(OBJS)    \
-	        $(BUILD_DIR)/L4MessagesB$(LIBEXT) \
-	        $(BUILD_DIR)/L4MessagesB.def
+	        $(BUILD_DIR)/L4MessagesS$(LIBEXT) \
+	        $(BUILD_DIR)/L4MessagesS.def
 	echo  $(OBJS)
 
 include depends.$(TARGET)

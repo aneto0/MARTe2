@@ -41,6 +41,9 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 namespace MARTe {
 
 MessageI::MessageI() {
@@ -77,19 +80,9 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
     CCString destination = "";
     ErrorManagement::ErrorType ret;
 
-    /*
-     * TODO: Verify all the error conditions at the beginning:
-     *
-     * !message.IsValid() => error
-     * message->IsReplyMessage() && !message->LateReplyExpected() => error
-     * !message->IsReplyMessage() && sender == NULL && message->ReplyExpected() => error
-     * !destinationObject.IsValid() => error
-     * message->ImmediateReplyExpected() && !message->IsReplyMessage() => error
-     */
-
     if (!message.IsValid()) {
         ret.parametersError = true;
-        // TODO produce error message
+        REPORT_ERROR(ErrorManagement::ParametersError, "Invalid message.");
     }
 
     // compute actual message parameters
@@ -102,11 +95,10 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
 
             if (!message->ExpectsIndirectReply()) {
                 ret.communicationError = true;
-                // TODO produce error message
+                REPORT_ERROR(ErrorManagement::CommunicationError, "Message does not expect and indirect reply as it should.");
             }
             else {
 
-                //{message->IsReply() and message->ExpectsIndirectReply()}
                 // if it is a reply then the destination is the original sender
                 destination = message->GetSender();
             }
@@ -125,7 +117,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
                 // no Object ==> no reply possible
                 // therefore refuse sending
                 if (message->ExpectsReply()) {
-                    // TODO produce error message
+                    REPORT_ERROR(ErrorManagement::CommunicationError, "Message expects reply but no sender was set.");
                     ret.parametersError = true;
                 }
             }
@@ -140,9 +132,8 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
             ret = destinationObject->messageFilters.ReceiveMessage(message);
         }
         else {
+            REPORT_ERROR(ErrorManagement::UnsupportedFeature, "The destination object does not have a MessageI interface.");
             ret.unsupportedFeature = true;
-            // TODO produce error message
-            // the object being addressed does not have the MessageI interface
         }
     }
 
@@ -159,13 +150,15 @@ ErrorManagement::ErrorType MessageI::WaitForReply(ReferenceT<Message> &message,
 
     if (!message.IsValid()) {
         err.parametersError = true;
-        // TODO produce error message
+        REPORT_ERROR(ErrorManagement::ParametersError, "Invalid message.");
     }
 
-    // no reply expected. why am I here?
-    if (!message->ExpectsReply()) {
-        // TODO emit error
-        err.communicationError = true;
+    if (err.ErrorsCleared()) {
+        // no reply expected. why am I here?
+        if (!message->ExpectsReply()) {
+            REPORT_ERROR_FULL(ErrorManagement::CommunicationError, "No reply expected as it should.");
+            err.communicationError = true;
+        }
     }
 
     while (err.ErrorsCleared() && !message->IsReply()) {
@@ -193,7 +186,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
 
     if (!message.IsValid()) {
         ret.parametersError = true;
-        // TODO produce error message
+        REPORT_ERROR(ErrorManagement::ParametersError, "Invalid message.");
     }
 
     if (ret.ErrorsCleared()) {
@@ -213,10 +206,6 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
     return ret;
 }
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
-
 ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,
                                                           int32 position) {
 
@@ -226,10 +215,6 @@ ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilt
 ErrorManagement::ErrorType MessageI::RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter) {
     return messageFilters.Delete(messageFilter);
 
-}
-
-ErrorManagement::ErrorType MessageI::RemoveMessageFilter(CCString name) {
-    return messageFilters.Delete(name);
 }
 
 ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<Message> &message,
@@ -245,7 +230,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<
 
     if (!message.IsValid()) {
         ret.parametersError = true;
-        // TODO produce error message
+        REPORT_ERROR(ErrorManagement::ParametersError, "Invalid message.");
     }
 
     ReferenceT<ReplyMessageCatcherMessageFilter> replyMessageCatcher;
