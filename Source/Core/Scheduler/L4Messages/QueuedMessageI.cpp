@@ -43,46 +43,32 @@
 
 namespace MARTe {
 
-
-
-/**
- * TODO
- *     kills the message handler thread
- */
-QueuedMessageI::~QueuedMessageI(){
-
-}
-
-
-
-/**
- *     sets all up and starts the message handler thread
- */
-QueuedMessageI::QueuedMessageI():
+QueuedMessageI::QueuedMessageI() :
         queue(GlobalObjectsDatabase::Instance()->GetStandardHeap()),
         queueProcessingThread(binder),
-        binder(*this, &QueuedMessageI::QueueProcessing)
-{
-//        queueProcessingThread(EmbeddedServiceI::MethodBinderT<QueuedMessageI> (*this, &QueuedMessageI::QueueProcessing)){
+        binder(*this, &QueuedMessageI::QueueProcessing) {
+
     ErrorManagement::ErrorType err;
 
     err.fatalError = !queue.IsValid();
 
-    if (err.ErrorsCleared()){
+    if (err.ErrorsCleared()) {
         // installs as last in the filter queue
         queue->SetName("QUEUE");
         err = MessageI::InstallMessageFilter(queue, -1);
     }
 }
 
+QueuedMessageI::~QueuedMessageI() {
 
+}
 
-ErrorManagement::ErrorType QueuedMessageI::Start(){
+ErrorManagement::ErrorType QueuedMessageI::Start() {
     ErrorManagement::ErrorType err;
 
     err.fatalError = !queue.IsValid();
 
-    if (err.ErrorsCleared()){
+    if (err.ErrorsCleared()) {
 
         err = queueProcessingThread.Start();
 
@@ -92,12 +78,12 @@ ErrorManagement::ErrorType QueuedMessageI::Start(){
 
 }
 
-ErrorManagement::ErrorType QueuedMessageI::Stop(){
+ErrorManagement::ErrorType QueuedMessageI::Stop() {
     ErrorManagement::ErrorType err;
 
     err = queueProcessingThread.Stop();
 
-    if (err.timeout){
+    if (err.timeout) {
 
         err = queueProcessingThread.Stop();
 
@@ -107,21 +93,21 @@ ErrorManagement::ErrorType QueuedMessageI::Stop(){
 
 }
 
-ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(EmbeddedServiceI::ExecutionInfo &info){
+ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(EmbeddedServiceI::ExecutionInfo &info) {
     ErrorManagement::ErrorType err;
     ReferenceT<Message> message;
     const TimeoutType timeout = 1000;
 
     // do not handle other stages
-    if (info.GetStage() == EmbeddedServiceI::mainStage){
+    if (info.GetStage() == EmbeddedServiceI::mainStage) {
 
         err.unsupportedFeature = !queue.IsValid();
 
-        if (err.ErrorsCleared()){
+        if (err.ErrorsCleared()) {
 
-            err = queue->GetMessage(message,timeout);
+            err = queue->GetMessage(message, timeout);
 
-            if (err.ErrorsCleared()){
+            if (err.ErrorsCleared()) {
                 err = queuedMessageFilters.ReceiveMessage(message);
             }
         }
@@ -134,43 +120,25 @@ ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(EmbeddedServiceI::Exe
 
 }
 
-
-ErrorManagement::ErrorType QueuedMessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, int32 position,bool afterQueue){
+ErrorManagement::ErrorType QueuedMessageI::InstallMessageFilterInQueue(ReferenceT<MessageFilter> messageFilter,
+                                                                       int32 position) {
     ErrorManagement::ErrorType err;
-    if (afterQueue) {
+    err.parametersError = !messageFilter.IsValid();
+    if (err.ErrorsCleared()) {
         err = queuedMessageFilters.Insert(messageFilter, position);
-    } else {
-        err = messageFilters.Insert(messageFilter, position);
     }
 
     return err;
 }
 
-
-ErrorManagement::ErrorType QueuedMessageI::RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter){
+ErrorManagement::ErrorType QueuedMessageI::RemoveMessageFilterInQueue(ReferenceT<MessageFilter> messageFilter) {
     ErrorManagement::ErrorType err;
-
-    err = messageFilters.Delete(messageFilter);
-
-    if (!err.ErrorsCleared()){
+    err.parametersError = !messageFilter.IsValid();
+    if (err.ErrorsCleared()) {
         err = queuedMessageFilters.Delete(messageFilter);
     }
     return err;
 }
 
-ErrorManagement::ErrorType QueuedMessageI::RemoveMessageFilter(CCString name){
-    ErrorManagement::ErrorType err;
-
-    err = messageFilters.Delete(name);
-
-    if (!err.ErrorsCleared()){
-        err = queuedMessageFilters.Delete(name);
-    }
-    return err;
 }
 
-
-
-}
-
-	

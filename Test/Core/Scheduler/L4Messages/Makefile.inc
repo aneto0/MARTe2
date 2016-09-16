@@ -24,7 +24,8 @@
 #
 #############################################################
 
-OBJSX=  QueueingMessageFilterTest.x
+OBJSX=  QueuedMessageITest.x \
+    QueueingMessageFilterTest.x
 
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..

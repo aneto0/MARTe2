@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX=  QueueingMessageFilterGTest.x
+OBJSX=  QueuedMessageIGTest.x\
+    QueueingMessageFilterGTest.x
 
 PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..

@@ -151,7 +151,7 @@ protected:
     static ReferenceT<MessageI> FindDestination(CCString destination);
 
     /**
-     * The message consuming filters used by SortMessage
+     * The message consuming filters used by SendMessage.
      */
     MessageFilterPool messageFilters;
 
