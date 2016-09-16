@@ -56,27 +56,17 @@ TEST(QueueingMessageFilterGTest,TestGetMessage) {
     ASSERT_TRUE(target.TestGetMessage());
 }
 
+TEST(QueueingMessageFilterGTest,TestGetMessage_Wait) {
+    QueueingMessageFilterTest target;
+    ASSERT_TRUE(target.TestGetMessage_Wait());
+}
+
+TEST(QueueingMessageFilterGTest,TestGetMessage_Wait_Timeout) {
+    QueueingMessageFilterTest target;
+    ASSERT_TRUE(target.TestGetMessage_Wait_Timeout());
+}
+
 TEST(QueueingMessageFilterGTest,TestIsPermanentFilter) {
     QueueingMessageFilterTest target;
     ASSERT_TRUE(target.TestIsPermanentFilter());
 }
-
-#if 0
-TEST(QueueingMessageFilterGTest,TestSetDestinationObject) {
-    QueueingMessageFilterTest target;
-    ASSERT_TRUE(target.TestSetDestinationObject());
-}
-
-
-TEST(QueueingMessageFilterGTest,TestConsumeMessage_Reply) {
-    QueueingMessageFilterTest target;
-    ASSERT_TRUE(target.TestConsumeMessage_Reply());
-}
-
-TEST(QueueingMessageFilterGTest,TestConsumeMessage_IndirectReply) {
-    QueueingMessageFilterTest target;
-    ASSERT_TRUE(target.TestConsumeMessage_IndirectReply());
-}
-
-#endif
-

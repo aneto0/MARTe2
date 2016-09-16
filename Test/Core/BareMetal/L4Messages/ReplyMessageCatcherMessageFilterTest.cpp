@@ -35,6 +35,15 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+static void ReplyMessageCatcherMessageFilterTestWaitCallCallback(ReplyMessageCatcherMessageFilterTest &test) {
+    test.waitState = 1;
+    while (test.waitState == 1) {
+        MARTe::Sleep::MSec(1);
+    }
+    MARTe::Sleep::MSec(10);
+    MARTe::MessageFilter &unprotectedFilter = test.waitFilter;
+    unprotectedFilter.ConsumeMessage(test.waitMessage);
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -59,16 +68,6 @@ bool ReplyMessageCatcherMessageFilterTest::TestSetMessageToCatch() {
         ret = err.ErrorsCleared();
     }
     return ret;
-}
-
-static void ReplyMessageCatcherMessageFilterTestWaitCallCallback(ReplyMessageCatcherMessageFilterTest &test) {
-    test.waitState = 1;
-    while (test.waitState == 1) {
-        MARTe::Sleep::MSec(1);
-    }
-    MARTe::Sleep::MSec(10);
-    MARTe::MessageFilter &unprotectedFilter = test.waitFilter;
-    unprotectedFilter.ConsumeMessage(test.waitMessage);
 }
 
 bool ReplyMessageCatcherMessageFilterTest::TestWait() {

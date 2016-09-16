@@ -43,6 +43,12 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+static void QueueingMessageFilterTestWaitCallCallback(QueueingMessageFilterTest &test) {
+    test.waitState = 1;
+    MARTe::QueueingMessageFilter &unprotectedFilter = test.waitFilter;
+    test.waitErr = unprotectedFilter.GetMessage(test.waitMessage);
+    test.waitState = 2;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -67,7 +73,6 @@ bool QueueingMessageFilterTest::TestConsumeMessage() {
     return ok;
 }
 
-
 bool QueueingMessageFilterTest::TestIsPermanentFilter() {
     using namespace MARTe;
     QueueingMessageFilter filter;
@@ -89,3 +94,29 @@ bool QueueingMessageFilterTest::TestGetMessage() {
     return ok;
 }
 
+bool QueueingMessageFilterTest::TestGetMessage_Wait() {
+    using namespace MARTe;
+    ReferenceT<Message> msg(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    waitErr = ErrorManagement::NoError;
+    waitState = 0;
+    Threads::BeginThread((ThreadFunctionType) QueueingMessageFilterTestWaitCallCallback, this);
+    while (waitState == 0) {
+        Sleep::MSec(1);
+    }
+    MARTe::Sleep::MSec(10);
+    waitFilter.ConsumeMessage(msg);
+    while (waitState == 1) {
+        Sleep::MSec(1);
+    }
+    bool ok = waitErr.ErrorsCleared();
+    ok &= (msg == waitMessage);
+    return ok;
+}
+
+bool QueueingMessageFilterTest::TestGetMessage_Wait_Timeout() {
+    using namespace MARTe;
+    QueueingMessageFilter filter;
+    ReferenceT<Message> msg;
+    ErrorManagement::ErrorType err = filter.GetMessage(msg, 1);
+    return err.timeout;
+}

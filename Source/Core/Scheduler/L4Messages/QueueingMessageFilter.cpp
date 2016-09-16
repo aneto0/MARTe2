@@ -40,23 +40,24 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-QueueingMessageFilter::QueueingMessageFilter():MessageFilter(true){
+QueueingMessageFilter::QueueingMessageFilter() :
+        MessageFilter(true) {
     mutexSemQ.Create();
     newMessagesAlarm.Create();
 }
 
-QueueingMessageFilter::~QueueingMessageFilter(){
+QueueingMessageFilter::~QueueingMessageFilter() {
 
 }
 
-ErrorManagement::ErrorType QueueingMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest){
+ErrorManagement::ErrorType QueueingMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest) {
     ErrorManagement::ErrorType err;
     err.timeout = !mutexSemQ.FastLock();
-    if (err.ErrorsCleared()){
-        err.fatalError = !messageQ.Insert(messageToTest,-1);
+    if (err.ErrorsCleared()) {
+        err.fatalError = !messageQ.Insert(messageToTest, -1);
 
         // handle the case of an element to an empty Q
-        if (err.ErrorsCleared()  && messageQ.Size() == 1){
+        if (err.ErrorsCleared() && messageQ.Size() == 1) {
             newMessagesAlarm.Post();
         }
 
@@ -65,53 +66,45 @@ ErrorManagement::ErrorType QueueingMessageFilter::ConsumeMessage(ReferenceT<Mess
     return err;
 }
 
-/**
- * TODO
-*/
-ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message> &message,const TimeoutType &timeout){
-    ErrorManagement::ErrorType err;
-    bool locked = false;
-    err.timeout = !mutexSemQ.FastLock();
-    locked = !err.timeout;
+ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message> &message,
+                                                             const TimeoutType &timeout) {
+    ErrorManagement::ErrorType err = mutexSemQ.FastLock();
+    bool locked = !err.timeout;
 
     // handle the empty Q case
-    if (messageQ.Size() == 0){
-        if (err.ErrorsCleared()){
-            err.fatalError = newMessagesAlarm.Reset();
+    if (messageQ.Size() == 0) {
+        if (err.ErrorsCleared()) {
+            err.fatalError = !newMessagesAlarm.Reset();
         }
-        if (locked && err.ErrorsCleared()){
+        if (locked) {
             mutexSemQ.FastUnLock();
             locked = false;
         }
-        if (err.ErrorsCleared()){
-            err.timeout = newMessagesAlarm.Wait(timeout);
+        if (err.ErrorsCleared()) {
+            err = newMessagesAlarm.Wait(timeout);
         }
-        if (err.ErrorsCleared()){
-            err.timeout = !mutexSemQ.FastLock();
+        if (err.ErrorsCleared()) {
+            err = mutexSemQ.FastLock();
             locked = !err.timeout;
         }
     }
 
-    if (err.ErrorsCleared()){
+    if (err.ErrorsCleared()) {
         Reference ref = messageQ.Get(0);
 
-        // TODO diversify error -- unexpectedError
         err.fatalError = !ref.IsValid();
 
-        if (err.ErrorsCleared()){
+        if (err.ErrorsCleared()) {
             message = ref;
-            // TODO diversify error -- failedCast
             err.fatalError = !message.IsValid();
         }
     }
 
     if (locked) {
         mutexSemQ.FastUnLock();
-   }
+    }
     return err;
 
 }
-
-
 
 }

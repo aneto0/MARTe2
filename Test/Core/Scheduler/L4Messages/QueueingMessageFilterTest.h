@@ -62,23 +62,22 @@ public:
      * @brief Tests the GetMessage method.
      */
     bool TestGetMessage();
-#if 0
-    /**
-     * @brief Tests the SetDestinationObject method.
-     */
-    bool TestSetDestinationObject();
 
     /**
-     * @brief Tests the ConsumeMessage method with a message that is a reply (should not be handled).
+     * @brief Tests the GetMessage method waiting for a new message to arrive.
      */
-    bool TestConsumeMessage_Reply();
+    bool TestGetMessage_Wait();
 
     /**
-     * @brief Tests the ConsumeMessage method with a message that requests an indirect reply .
+     * @brief Tests the GetMessage method waiting for a new message to arrive triggers a timeout.
      */
-    bool TestConsumeMessage_IndirectReply();
+    bool TestGetMessage_Wait_Timeout();
 
-#endif
+    //Synchronise the test
+    MARTe::uint32 waitState;
+    MARTe::QueueingMessageFilter waitFilter;
+    MARTe::ReferenceT<MARTe::Message> waitMessage;
+    MARTe::ErrorManagement::ErrorType waitErr;
 };
 
 /*---------------------------------------------------------------------------*/
