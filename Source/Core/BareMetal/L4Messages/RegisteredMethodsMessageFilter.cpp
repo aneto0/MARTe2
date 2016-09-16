@@ -46,10 +46,11 @@ RegisteredMethodsMessageFilter::RegisteredMethodsMessageFilter() :
     destinationObject = NULL_PTR(Object *);
 }
 
+/*lint -e{1540} the destinationObject is to freed by the class that calls SetDestination.*/
 RegisteredMethodsMessageFilter::~RegisteredMethodsMessageFilter() {
 }
 
-void RegisteredMethodsMessageFilter::SetDestination(Object *destination) {
+void RegisteredMethodsMessageFilter::SetDestination(Object * const destination) {
     destinationObject = destination;
 }
 
@@ -58,21 +59,26 @@ ErrorManagement::ErrorType RegisteredMethodsMessageFilter::ConsumeMessage(Refere
     ErrorManagement::ErrorType ret;
 
     //This filter does not handle replies...
-    if ((destinationObject != NULL_PTR(Object *)) && (messageToTest.IsValid()) && (!messageToTest->IsReply())) {
+    bool valid = messageToTest.IsValid();
+    bool isReply = messageToTest->IsReply();
+    if ((destinationObject != NULL_PTR(Object *)) && (valid) && (!isReply)) {
 
         // try calling the method
-        ret = destinationObject->CallRegisteredMethod(messageToTest->GetFunction(), *(messageToTest.operator->()));
+        CCString methodName = messageToTest->GetFunction();
+        ret = destinationObject->CallRegisteredMethod(methodName, *(messageToTest.operator->()));
 
         // the registered method has no responsibility to handle the reply mechanism
         // therefore it is handled here
-        if (ret.ErrorsCleared() && messageToTest->ExpectsReply()) {
-            messageToTest->SetAsReply();
+        if (ret.ErrorsCleared()) {
+            if (messageToTest->ExpectsReply()) {
+                messageToTest->SetAsReply();
 
-            // handles indirect reply
-            if (messageToTest->ExpectsIndirectReply()) {
-                // simply produce a warning
-                // destination in reply is known so should not be set
-                ret = MessageI::SendMessage(messageToTest, NULL);
+                // handles indirect reply
+                if (messageToTest->ExpectsIndirectReply()) {
+                    // simply produce a warning
+                    // destination in reply is known so should not be set
+                    ret = MessageI::SendMessage(messageToTest, NULL_PTR(Object *));
+                }
             }
         }
     }

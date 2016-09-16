@@ -143,9 +143,6 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
 ErrorManagement::ErrorType MessageI::WaitForReply(ReferenceT<Message> &message,
                                                   const TimeoutType &maxWait,
                                                   const uint32 pollingTimeUsec) {
-
-    uint64 start = HighResolutionTimer::Counter();
-    float32 pollingTime = (float) pollingTimeUsec * 1.0e-6;
     ErrorManagement::ErrorType err(true);
 
     if (!message.IsValid()) {
@@ -161,12 +158,17 @@ ErrorManagement::ErrorType MessageI::WaitForReply(ReferenceT<Message> &message,
         }
     }
 
-    while (err.ErrorsCleared() && !message->IsReply()) {
-        Sleep::NoMore(pollingTime);
+    uint64 start = HighResolutionTimer::Counter();
+    float32 pollingTime = static_cast<float32>(pollingTimeUsec);
+    pollingTime *= static_cast<float32>(1.0e-6);
+    bool isReply = message->IsReply();
+    while ((err.ErrorsCleared()) && (!isReply)) {
+        Sleep::NoMore(static_cast<float64>(pollingTime));
         if (maxWait != TTInfiniteWait) {
             uint64 deltaT = HighResolutionTimer::Counter() - start;
             err.timeout = maxWait.HighResolutionTimerTicks() > deltaT;
         }
+        isReply = message->IsReply();
     }
 
     return err;
@@ -207,7 +209,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
 }
 
 ErrorManagement::ErrorType MessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,
-                                                          int32 position) {
+                                                          const int32 position) {
 
     return messageFilters.Insert(messageFilter, position);
 }
@@ -252,6 +254,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<
     }
 
     if (ret.ErrorsCleared()) {
+        /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: It is expected that the final class inherits both from MessageI and from Object. */
         Object *thisObject = dynamic_cast<Object *>(this);
 
         if (thisObject != NULL) {

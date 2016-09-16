@@ -32,21 +32,21 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "CLASSREGISTER.h"
 #include "HeapI.h"
 #include "HeapManager.h"
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
 #include "ErrorType.h"
 #include "StringHelper.h"
-
+#include "StructuredDataI.h"
+#include "CLASSREGISTER.h"
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-class StructuredDataI;
-
+//class StructuredDataI;
+class ReferenceContainer;
 }
 
 /*---------------------------------------------------------------------------*/

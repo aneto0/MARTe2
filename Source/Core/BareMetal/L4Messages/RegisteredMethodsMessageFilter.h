@@ -64,8 +64,7 @@ public:
      * @brief Sets the destination object where the registered method is to be called.
      * @param[in] destination the object where the registered method is to be called.
      */
-    void SetDestination(Object *destination);
-protected:
+    void SetDestination(Object * const destination);
 
     /**
      * @brief Calls on the destination object (see SetDestination) the registered method with name messageToTest->GetFunction().
@@ -74,6 +73,7 @@ protected:
      */
     virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 
+protected:
     /**
      * Object where the registered method is to be called.
      */

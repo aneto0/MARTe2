@@ -32,24 +32,21 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "LinkedListHolderT.h"
-#include "FractionalInteger.h"    //using ClassUID typedef
+#include "ClassProperties.h"
 #include "CString.h"
+#include "FractionalInteger.h"    //using ClassUID typedef
+#include "Introspection.h"
 #include "LinkedListable.h"
+#include "LinkedListHolderT.h"
+#include "LoadableLibrary.h"
+#include "ObjectBuilder.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-/*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
-class Object;
-//class ClassMethodsRegistryItem;
-class ClassProperties;
-class Introspection;
-class LoadableLibrary;
-class ObjectBuilder;
-class ReferenceContainer;
 class ClassMethodCaller;
 class ClassMethodInterfaceMapper;
 }

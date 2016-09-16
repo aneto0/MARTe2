@@ -80,10 +80,11 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::Wait(const TimeoutT
     ErrorManagement::ErrorType err(true);
 
     uint64 start = HighResolutionTimer::Counter();
-    float32 pollingTime = (float) pollingTimeUsec * 1.0e-6;
+    float32 pollingTime = static_cast<float32>(pollingTimeUsec);
+    pollingTime *= static_cast<float32>(1.0e-6);
 
-    while (err.ErrorsCleared() && !caught) {
-        Sleep::NoMore(pollingTime);
+    while ((err.ErrorsCleared()) && (!caught)) {
+        Sleep::NoMore(static_cast<float64>(pollingTime));
         if (maxWait != TTInfiniteWait) {
             uint64 deltaT = HighResolutionTimer::Counter() - start;
             err.timeout = maxWait.HighResolutionTimerTicks() > deltaT;
@@ -93,6 +94,7 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::Wait(const TimeoutT
     return err;
 }
 
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] symbol available to classes that specialise this method*/
 void ReplyMessageCatcherMessageFilter::HandleReplyMessage(ReferenceT<Message> &replyMessage) {
     caught = true;
 }

@@ -73,9 +73,8 @@ public:
      * @param[in] pollingTimeUsec Time to wait on the polling sleep.
      * @return ErrorManagement::NoError if the message was caught or ErrorManagement::Timeout if the time specified in \a maxWait has expired.
      */
-    virtual ErrorManagement::ErrorType Wait(const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec = 1000);
-
-protected:
+    /*lint -e(1735) [MISRA C++ Rule 8-3-1] the derived classes shall use this default parameter or no default parameter at all*/
+    virtual ErrorManagement::ErrorType Wait(const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec = 1000u);
 
     /**
      * @brief Verifies if the \a messageToTest is the message to be caught (see SetMessageToCatch).
@@ -83,6 +82,8 @@ protected:
      * @return ErrorManagement::NoError if the messageToTest was the one to be caught, otherwise it returns ErrorManagement::UnsupportedFeature.
      */
     virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
+
+protected:
 
     /**
      * @brief Called when the message to catch has been found.

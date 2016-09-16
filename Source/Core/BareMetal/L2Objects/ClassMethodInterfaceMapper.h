@@ -53,6 +53,7 @@ namespace MARTe {
  * @details The ClassMethodCallerT to be constructed is automatically selected by the provided template parameters,
  *  allowing to distinguish, for any of the parameters, between input (copy or constant reference) and output parameters.
  */
+/*lint -e{9109} forward declaration of ClassMethodInterfaceMapper required in the ClassRegistryItem*/
 class DLL_API ClassMethodInterfaceMapper: public LinkedListable {
 
 public:

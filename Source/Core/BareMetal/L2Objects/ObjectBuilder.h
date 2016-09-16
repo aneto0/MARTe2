@@ -39,6 +39,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+/*lint -e{9109} forward declaration of this class is required in other modules*/
 class Object;
 }
 
@@ -64,6 +65,7 @@ namespace MARTe {
  * implement the Build method, while the abstract class can be used as an
  * invalid object builder (useful for setting a default builder).
  */
+/*lint -e{9109} forward declaration of this class is required in other modules*/
 class DLL_API ObjectBuilder {
 public:
 

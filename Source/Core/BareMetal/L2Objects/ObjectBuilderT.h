@@ -73,7 +73,7 @@ public:
      * instance will be allocated.
      * @return a pointer to the new created instance.
      */
-    Object *Build(HeapI* const heap) const;
+    virtual Object *Build(HeapI* const heap) const;
 
 };
 

@@ -56,7 +56,7 @@ public:
      *   IsPermanentFilter() == isPermanentFilter &&
      *   IsMessageConsumed() == true.
      */
-    MessageFilter(bool isPermanentFilter);
+    MessageFilter(const bool isPermanentFilter);
 
     /**
      * @brief Destructor.
@@ -67,7 +67,7 @@ public:
      * @brief Returns true if the filter is to remain active after a successful match.
      * @return true if the filter is to remain active after a successful match.
      */
-    bool IsPermanentFilter();
+    bool IsPermanentFilter() const;
 
     /**
      * @brief Checks if the \a messageToTest is compatible with the Filter.
@@ -83,6 +83,9 @@ private:
      */
     bool permanentFilter;
 
+    /*lint -e{1712} This class does not have a default constructor because
+     * the decision to make a filter permanent must be defined on construction and remains constant
+     * during object's lifetime*/
 };
 
 } // namespace

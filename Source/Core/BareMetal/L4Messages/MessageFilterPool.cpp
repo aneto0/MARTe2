@@ -40,7 +40,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-MessageFilterPool::MessageFilterPool() {
+MessageFilterPool::MessageFilterPool() : ReferenceContainer() {
 
 }
 
@@ -54,7 +54,7 @@ ErrorManagement::ErrorType MessageFilterPool::ReceiveMessage(ReferenceT<Message>
     ReferenceT<MessageFilter> messageFilter;
 
     uint32 i;
-    for (i = 0; (i < Size() && !matched); i++) {
+    for (i = 0u; (i < Size()) && (!matched); i++) {
         messageFilter = Get(i);
 
         if (messageFilter.IsValid()) {

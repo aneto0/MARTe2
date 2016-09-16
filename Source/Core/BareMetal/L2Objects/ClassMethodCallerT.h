@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassMethodCaller.h"
+#include "ReferenceT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -44,10 +45,10 @@ namespace MARTe {
  * These constants specify if the value of the template parameters below are being by reference and
  *  thus should be updated when the Call function returns.
  */
-static const uint32 PARAM1_IS_REFERENCE = 0x1000;
-static const uint32 PARAM2_IS_REFERENCE = 0x0100;
-static const uint32 PARAM3_IS_REFERENCE = 0x0010;
-static const uint32 PARAM4_IS_REFERENCE = 0x0001;
+static const uint32 PARAM1_IS_REFERENCE = 0x1000u;
+static const uint32 PARAM2_IS_REFERENCE = 0x0100u;
+static const uint32 PARAM3_IS_REFERENCE = 0x0010u;
+static const uint32 PARAM4_IS_REFERENCE = 0x0001u;
 
 /**
  * @brief This class template is a helper for building specific versions of
@@ -108,8 +109,7 @@ private:
      * Read/Write mask
      */
     uint32 mask;
-}
-;
+};
 
 /**
  * @brief This class template is a helper for building specific versions of
@@ -151,7 +151,7 @@ public:
      * @brief See ClassMethodCaller.
      * @details The parameters StructuredDataI is expected to have valid field nodes named: param1, param2 and param3; which contain the parameter values.
      */
-    ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters);
+    virtual ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters);
 
     /**
      * @brief See ClassMethodCaller.
@@ -211,7 +211,7 @@ public:
      * @brief See ClassMethodCaller.
      * @details The parameters StructuredDataI is expected to have valid field nodes named: param1 and param2; which contain the parameter values.
      */
-    ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters);
+    virtual ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters);
 
     /**
      * @brief See ClassMethodCaller.
@@ -269,7 +269,7 @@ public:
      * @brief See ClassMethodCaller.
      * @details The parameters StructuredDataI is expected to have valid field nodes named: param1 and param2; which contain the parameter values.
      */
-    ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters);
+    virtual ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters);
 
     /**
      * @brief See ClassMethodCaller.
@@ -385,7 +385,7 @@ public:
      * @brief See ClassMethodCaller.
      * @details Calls the registered function with the input StructuredDataI parameter.
      */
-    ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters);
+    virtual ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters);
 
     /**
      * @brief See ClassMethodCaller.
@@ -491,13 +491,13 @@ public:
      * @details The parameters ReferenceContainer is expected to have a valid StreamI on its first entry.
      * This is then used as the input argument of the registered function.
      */
-    ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters);
+    virtual ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters);
 
     /**
      * @brief See ClassMethodCaller.
      * @details Calls the registered function with the input StreamI parameter.
      */
-    ErrorManagement::ErrorType Call(Object *object, StreamI &stream);
+    virtual ErrorManagement::ErrorType Call(Object *object, StreamI &stream);
 
 private:
     /**

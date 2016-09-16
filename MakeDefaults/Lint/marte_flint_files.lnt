@@ -17,14 +17,12 @@ BrokerI.cpp
 BufferedStreamGenerator.h
 BufferedStreamI.cpp
 BufferedStreamIOBuffer.cpp
-CallRegisteredMethodLauncher.cpp
 CharBuffer.cpp
 ClassMethodCaller.cpp
 ClassMethodCaller.h
 ClassMethodCallerT.h
 ClassMethodInterfaceMapper.cpp
 CLASSMETHODREGISTER.h
-ClassMethodsRegistryItem.cpp
 ClassProperties.cpp
 CLASSREGISTER.h
 ClassRegistryDatabase.cpp
@@ -101,6 +99,8 @@ MemoryMapSynchronisedInputBroker.cpp
 MemoryOperationsHelper.h
 MemoryOperationsHelper_CLIB_Generic.cpp
 Message.cpp
+MessageFilter.cpp
+MessageFilterPool.cpp
 MessageI.cpp
 MutexSem.cpp
 Object.cpp
@@ -111,6 +111,8 @@ OperatingSystemCallbacksI.h
 ParserI.cpp
 Processor.cpp
 ProcessorType.cpp
+QueuedMessageI.cpp
+QueueingMessageFilter.cpp
 RealTimeApplication.cpp
 RealTimeApplicationConfigurationBuilder.cpp
 RealTimeState.cpp
@@ -123,6 +125,8 @@ ReferenceContainerFilterObjectName.cpp
 ReferenceContainerFilterReferences.cpp
 ReferenceContainerNode.cpp
 ReferenceT.h
+RegisteredMethodsMessageFilter.cpp
+ReplyMessageCatcherMessageFilter.cpp
 SearchFilter.h
 SearchFilterT.h
 Select.cpp

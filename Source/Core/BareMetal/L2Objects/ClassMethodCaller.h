@@ -32,10 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "Object.h"
 #include "ErrorType.h"
+#include "Object.h"
 #include "ReferenceContainer.h"
-#include "ReferenceT.h"
 #include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
@@ -46,13 +45,14 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /**
  * @brief Allows to call registered methods on registered objects (see ClassMethodInterfaceMapper and CLASS_METHOD_REGISTER).
  * @details The actual implementations of this class are in ClassMethodCallerT.
  */
-class ClassMethodCaller{
+/*lint -e{9109} forward declaration required to be able to Call the Object *.*/
+class ClassMethodCaller {
 public:
 
     /**
@@ -74,7 +74,8 @@ public:
      * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
-    virtual ErrorManagement::ErrorType Call(Object *object, StreamI &stream);
+    virtual ErrorManagement::ErrorType Call(Object *object,
+                                            StreamI &stream);
 
     /**
      * @brief Calls the class method by taking the arguments from StructuredDataI *parameters
@@ -85,7 +86,8 @@ public:
      * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
-    virtual ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters);
+    virtual ErrorManagement::ErrorType Call(Object *object,
+                                            StructuredDataI &parameters);
 
     /**
      * @brief Calls the class method by taking the arguments from the ReferenceContainer parameters
@@ -96,7 +98,8 @@ public:
      * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
-    virtual ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters);
+    virtual ErrorManagement::ErrorType Call(Object *object,
+                                            ReferenceContainer &parameters);
 
     /**
      * @brief Calls the class method without parameters

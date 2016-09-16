@@ -96,7 +96,7 @@ public:
      *   ErrorManagement::Timeout if a wait for reply times out
      *   ErrorManagement::communicationError if no reply expected
      */
-    static ErrorManagement::ErrorType WaitForReply(ReferenceT<Message> &message,const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec=1000);
+    static ErrorManagement::ErrorType WaitForReply(ReferenceT<Message> &message, const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec = 1000u);
 
     /**
      * @brief sends a message expecting direct reply and waits for it
@@ -112,7 +112,7 @@ public:
      *   ErrorManagement::communicationError if no reply expected
      */
     static ErrorManagement::ErrorType SendMessageAndWaitReply(ReferenceT<Message> &message,const Object * const sender = NULL_PTR(Object *),
-                                                              const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec=1000);
+                                                              const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec = 1000u);
 
     /**
      * @brief Installs a message filter that is capable of handling messages addressed to this MessageI.
@@ -122,7 +122,7 @@ public:
      * @pre
      *   messageFilter.IsValid()
      */
-    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, int32 position=0);
+    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, const int32 position=0);
 
     /**
      * @brief Removes a previously installed message filter (see InstallMessageFilter).
@@ -140,7 +140,7 @@ public:
      * @param[in] sender is the Object sending the message.
      */
     ErrorManagement::ErrorType SendMessageAndWaitIndirectReply(ReferenceT<Message> &message,const TimeoutType &maxWait = TTInfiniteWait,
-                                                                  const uint32 pollingTimeUsec=1000);
+                                                                  const uint32 pollingTimeUsec = 1000u);
 
 protected:
     /**

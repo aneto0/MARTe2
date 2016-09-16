@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CONFIGURATION_DATABASE_H_
-#define CONFIGURATION_DATABASE_H_
+#ifndef STRUCTURED_DATA_I_H_
+#define STRUCTURED_DATA_I_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
