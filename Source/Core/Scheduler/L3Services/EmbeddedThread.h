@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L2MIXED_EMBEDDEDTHREAD_H_
-#define L2MIXED_EMBEDDEDTHREAD_H_
+#ifndef EMBEDDEDTHREAD_H_
+#define EMBEDDEDTHREAD_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,20 +32,18 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "Object.h"
 #include "EmbeddedServiceI.h"
 #include "ErrorType.h"
-#include "Threads.h"
+#include "Object.h"
 #include "StructuredDataI.h"
-
-namespace MARTe{
-
+#include "Threads.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 
+namespace MARTe{
 
 /**
  * TODO
@@ -57,8 +55,7 @@ class EmbeddedThread: public EmbeddedServiceI {
 public:
 
     /**
-     * @brief States of an EmbeddedThread
-
+     * @brief List of possible states of an EmbeddedThread.
      */
     enum States {
         /**
@@ -67,63 +64,61 @@ public:
         NoneState,
 
         /**
-         * No Thread running =  (threadId = 0)
+         * No Thread running = (threadId = 0)
          */
         OffState,
 
         /**
-         *TODO
+         * Thread is starting
          */
         StartingState,
 
         /**
-         * TODO
+         * Thread timed-out while starting
          */
         TimeoutStartingState,
 
         /**
-         * (threadId != 0) && TODO
+         * (threadId != 0)
          */
         RunningState,
 
         /**
-         * TODO
+         * Thread is stopping
          */
         StoppingState,
 
         /**
-         * TODO
+         * Thread timed-out while stopping
          */
         TimeoutStoppingState,
 
         /**
-         * TODO
+         * Thread is being killed
          */
         KillingState,
 
         /**
-         * TODO
+         * Thread timed-out while being killed
          */
         TimeoutKillingState
 
     };
 
     /**
-     * @brief States of an EmbeddedThread
-
+     * @brief List of possible commands to an EmbeddedThread
      */
     enum Commands {
         /**
-         * set by Start() at the start of thread life
+         * Set by Start() at the start of thread life
          */
         StartCommand,
         /**
-         * set by thread before entering loop
+         * Set by the thread before entering loop
          */
         KeepRunningCommand,
-
         /**
-         * nice request to stop
+         * Nice request to stop
          */
         StopCommand,
 
@@ -135,61 +130,89 @@ public:
     };
 
     /**
-     * TODO
+     * @brief Constructor.
+     * @param[in] binder contains the function to be executed by this EmbeddedThread.
      */
     EmbeddedThread(MethodBinderI &binder);
 
     /**
-     * TODO
+     * @brief Constructor.
+     * @param[in] binder contains the function to be executed by this EmbeddedThread.
      */
     template <typename className>
     EmbeddedThread(MethodBinderT<className> &binder);
 
     /**
-     * TODO
+     * @brief Destructor.
+     * @details Calls the Stop() method.
      */
     virtual ~EmbeddedThread();
 
     /**
-    * TODO
-    * same as object interface
-    * implementation of EmbeddedServiceI
-    */
+     * @brief Reads the Timeout from the data input.
+     * @param[in] data shall contain a parameter with name "Timeout" holding the timeout in milliseconds.
+     */
     virtual bool  Initialise(StructuredDataI &data);
 
     /**
-     * TODO
+     * @brief Starts the EmbeddedThread.
+     * @return ErrorManagement::NoError if the thread can be successfully started.
+     * @pre
+     *   GetStatus() == OffState && GetThreadId() == 0
+     * @post
+     *   GetStatus() != OffState && GetThreadId() > 0
      */
     virtual ErrorManagement::ErrorType Start();
 
     /**
-     * TODO
+     * @brief Stops the EmbeddedThread.
+     * @details If the thread was not running this function does nothing.
+     * If the thread is running, a stop command with timeout is issued.
+     * If the thread was being stopped (Stop() had already been called), the thread is killed.
+     * @return ErrorManagement::NoError if the thread can be successfully stopped.
+     * @pre
+     *   GetStatus() == OffState && GetThreadId() == 0
+     * @post
+     *   GetStatus() != OffState && GetThreadId() > 0
      */
     virtual ErrorManagement::ErrorType Stop();
 
     /**
-     * TODO
+     * @brief Gets the current thread status.
+     * @return
+     *  - OffState if the thread is not running
+     *  - RunningState if the thread is being executed (i.e. calling the callback function in a loop)
+     *  - StartingState if the thread is starting
+     *  - TimeoutStartingState if the thread has timed-out while starting
+     *  - StoppingState is the thread is stopping
+     *  - TimeoutStoppingState if the thread has timed-out while stopping
+     *  - KillingState if the thread is being killed
+     *  - TimeoutKillingState if the thread has timed-out while being killed
      */
     EmbeddedThread::States GetStatus();
 
     /**
      * Allows recovering information like the current custom thread code and the stages of execution
+     * TODO Do we ned this.
      */
     EmbeddedServiceI::ExecutionInfo GetExecutionInfo();
 
     /**
-     * TODO
+     * @brief Gets the embedded thread identifier.
+     * @return the embedded thread identifier.
      */
-    inline ThreadIdentifier Id();
+    ThreadIdentifier GetThreadId();
 
     /**
-     * TODO
+     * @brief Sets the maximum time to execute a state change.
+     * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
      */
     void SetTimeout(TimeoutType msecTimeout);
 
     /**
-     * TODO
-     * Public to be accessed by the thread launcher subroutine
+     * @brief Thread callback function which executes the internal state-machine and calls
+     * the Execute method with the correct status information.
+     * TODO check virtual and check that this needs to be public.
      */
     virtual void ThreadLoop();
 
@@ -197,12 +220,12 @@ public:
 protected:
 
     /**
-     * TODO
+     * Embedded thread identifier.
      */
     ThreadIdentifier      threadId;
 
     /**
-     * TODO
+     * Command to change the internal status of the thread state-machine.
      */
     Commands              commands;
 
@@ -234,10 +257,6 @@ protected:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-ThreadIdentifier EmbeddedThread::Id() {
-    return threadId;
-}
 
 /**
  * TODO

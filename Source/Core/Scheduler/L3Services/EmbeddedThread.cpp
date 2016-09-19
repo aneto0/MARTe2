@@ -41,7 +41,8 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-EmbeddedThread::EmbeddedThread(MethodBinderI &binder):EmbeddedServiceI(binder){
+EmbeddedThread::EmbeddedThread(MethodBinderI &binder) :
+        EmbeddedServiceI(binder) {
     threadId = InvalidThreadIdentifier;
     commands = StopCommand;
     maxCommandCompletionHRT = 0;
@@ -49,91 +50,93 @@ EmbeddedThread::EmbeddedThread(MethodBinderI &binder):EmbeddedServiceI(binder){
     information.Reset();
 }
 
-EmbeddedThread::~EmbeddedThread(){
+EmbeddedThread::~EmbeddedThread() {
     Stop();
 }
 
-bool EmbeddedThread::Initialise(StructuredDataI &data){
-    uint32  msecTimeout;
+bool EmbeddedThread::Initialise(StructuredDataI &data) {
+    uint32 msecTimeout;
     ErrorManagement::ErrorType err;
-    err.timeout = !data.Read("Timeout",msecTimeout);
-    if (err.ErrorsCleared()){
-        SetTimeout(msecTimeout);
-    }
-    err.fatalError = data.Read("Timeout",msecTimeout);
-    if (err.ErrorsCleared()){
+    err.fatalError = !data.Read("Timeout", msecTimeout);
+    if (err.ErrorsCleared()) {
         SetTimeout(msecTimeout);
     }
 
     return err;
 }
 
-void EmbeddedThread::SetTimeout(TimeoutType msecTimeout){
+void EmbeddedThread::SetTimeout(TimeoutType msecTimeout) {
     if (msecTimeout == TTInfiniteWait) {
         timeoutHRT = -1;
-    } else {
+    }
+    else {
         uint64 tt64 = msecTimeout.HighResolutionTimerTicks();
-        if (tt64 < 0x7FFFFFFF){
+        if (tt64 < 0x7FFFFFFF) {
             timeoutHRT = tt64;
-        } else {
+        }
+        else {
             timeoutHRT = 0x7FFFFFFF;
         }
     }
 }
 
-EmbeddedServiceI::ExecutionInfo EmbeddedThread::GetExecutionInfo(){
+EmbeddedServiceI::ExecutionInfo EmbeddedThread::GetExecutionInfo() {
     return information;
 }
 
-EmbeddedThread::States EmbeddedThread::GetStatus(){
-    EmbeddedThread::States  etos = NoneState;
+EmbeddedThread::States EmbeddedThread::GetStatus() {
+    EmbeddedThread::States status = NoneState;
     bool isAlive = false;
 
     if (threadId == InvalidThreadIdentifier) {
-                etos = OffState;
-    } else {
+        status = OffState;
+    }
+    else {
         isAlive = Threads::IsAlive(threadId);
 
-        if (!isAlive )  {
-            etos = OffState;
+        if (!isAlive) {
+            status = OffState;
             threadId = InvalidThreadIdentifier;
         }
     }
 
-    if (etos == NoneState) {
-        if (commands == KeepRunningCommand)  {
-                etos = RunningState;
-        } else if (commands == StartCommand) {
+    if (status == NoneState) {
+        if (commands == KeepRunningCommand) {
+            status = RunningState;
+        }
+        else if (commands == StartCommand) {
             int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
             if ((deltaT > 0) && (timeoutHRT != -1)) {
-                etos = TimeoutStartingState;
-            }
-            else            {
-                etos = StartingState;
-            }
-        } else if (commands == StopCommand) {
-            int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
-            if ((deltaT > 0) && (timeoutHRT != -1)) {
-                etos = TimeoutStoppingState;
-            }
-            else            {
-                etos = StoppingState;
-            }
-        } else if (commands == KillCommand){
-            int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
-            if ((deltaT > 0) && (timeoutHRT != -1)) {
-                etos = TimeoutKillingState;
+                status = TimeoutStartingState;
             }
             else {
-                etos = KillingState;
+                status = StartingState;
+            }
+        }
+        else if (commands == StopCommand) {
+            int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
+            if ((deltaT > 0) && (timeoutHRT != -1)) {
+                status = TimeoutStoppingState;
+            }
+            else {
+                status = StoppingState;
+            }
+        }
+        else if (commands == KillCommand) {
+            int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
+            if ((deltaT > 0) && (timeoutHRT != -1)) {
+                status = TimeoutKillingState;
+            }
+            else {
+                status = KillingState;
             }
         }
 
     }
-    return etos;
+    return status;
 }
 
-static void  EmbeddedThreadThreadLauncher(const void * const parameters){
+static void EmbeddedThreadThreadLauncher(const void * const parameters) {
     EmbeddedThread *thread;
     // get object
     thread = reinterpret_cast<EmbeddedThread *>(const_cast<void *>(parameters));
@@ -141,25 +144,25 @@ static void  EmbeddedThreadThreadLauncher(const void * const parameters){
     // call
     thread->ThreadLoop();
 
-
 }
 
-void EmbeddedThread::ThreadLoop(){
+void EmbeddedThread::ThreadLoop() {
     commands = KeepRunningCommand;
 
     ErrorManagement::ErrorType err;
 
-    while  (commands == KeepRunningCommand){
+    //TODO check with FISA this loop.
+    while (commands == KeepRunningCommand) {
         information.Reset();
 
         // startup
         err = Execute(information);
 
         // main stage
-        if (err.ErrorsCleared() && (commands == KeepRunningCommand)){
+        if (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
 
             information.SetStage(mainStage);
-            while (err.ErrorsCleared() && (commands == KeepRunningCommand)){
+            while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
                 err = Execute(information);
             }
         }
@@ -167,66 +170,63 @@ void EmbeddedThread::ThreadLoop(){
         // assuming one reason for exiting (not multiple errors together with a command change)
         if (err.completed) {
             information.SetStage(terminationStage);
-        } else {
+        }
+        else {
             information.SetStage(badTerminationStage);
         }
-        Execute(information);
+        err = Execute(information);
     }
 }
 
-
-ErrorManagement::ErrorType EmbeddedThread::Start(){
+ErrorManagement::ErrorType EmbeddedThread::Start() {
     ErrorManagement::ErrorType err;
 
     //check if thread already running
-    if (GetStatus() != OffState ){
+    if (GetStatus() != OffState) {
         err.illegalOperation = true;
     }
 
-    if (err.ErrorsCleared()){
+    if (err.ErrorsCleared()) {
         commands = StartCommand;
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
-        const void * const parameters = static_cast<void *> (this);
+        const void * const parameters = static_cast<void *>(this);
 
-        threadId = Threads::BeginThread(EmbeddedThreadThreadLauncher,parameters);
+        threadId = Threads::BeginThread(EmbeddedThreadThreadLauncher, parameters);
 
-        err.fatalError =  (threadId == 0);
+        err.fatalError = (threadId == 0);
     }
 
     return err;
 }
 
-/**
- * TODO
- * First time attempt gentle Stop
- * Second time called Kills thread
- */
-ErrorManagement::ErrorType EmbeddedThread::Stop(){
+ErrorManagement::ErrorType EmbeddedThread::Stop() {
     ErrorManagement::ErrorType err;
     States status = GetStatus();
 
-    //check if thread already running
-    if (status == OffState ){
+    //check if thread already stopped
+    if (status == OffState) {
 
-    } else if (status == RunningState ) {
+    }
+    else if (status == RunningState) {
         commands = StopCommand;
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
 
-        while(GetStatus() == StoppingState){
+        while (GetStatus() == StoppingState) {
             Sleep::MSec(1);
         }
 
         err.timeout = (GetStatus() != OffState);
 
-    } else if ((status == TimeoutStoppingState) || (status == StoppingState)){
+    }
+    else if ((status == TimeoutStoppingState) || (status == StoppingState)) {
         commands = KillCommand;
 
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
         err.fatalError = Threads::Kill(threadId);
 
-        if (err.ErrorsCleared()){
+        if (err.ErrorsCleared()) {
 
-            while(GetStatus() == KillingState){
+            while (GetStatus() == KillingState) {
                 Sleep::MSec(1);
             }
 
@@ -238,15 +238,18 @@ ErrorManagement::ErrorType EmbeddedThread::Stop(){
         information.SetStage(asyncTerminationStage);
         Execute(information);
 
-    } else  {
+    }
+    else {
         err.illegalOperation = true;
     }
 
     return err;
 }
 
+ThreadIdentifier EmbeddedThread::GetThreadId() {
+    return threadId;
+}
 
 
 }
 
-	
