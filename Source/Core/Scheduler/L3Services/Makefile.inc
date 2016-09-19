@@ -20,32 +20,37 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+#
 #############################################################
 
-OBJSX= 
-
-SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x L4Messages.x L5GAMs.x
-
-PACKAGE=GTest
-ROOT_DIR=../../..
+OBJSX=	EmbeddedServiceI.x \
+    EmbeddedThread.x \
+    EmbeddedThreadObject.x \
+    MultiThreadService.x \
+    MultiClientServiceThread.x \
+    MultiClientService.x
+        
+PACKAGE=Core/Scheduler
+ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-
-LIBRARIES_STATIC=$(BUILD_DIR)/L0Types/L0TypesBGTest$(LIBEXT)
-#LIBRARIES_STATIC+= $(BUILD_DIR)/L1Portability/L1PortabilityBGTest$(LIBEXT)
-#LIBRARIES_STATIC+= $(BUILD_DIR)/L2Objects/L2ObjectsBGTest$(LIBEXT)
-#LIBRARIES_STATIC+= $(BUILD_DIR)/L3Streams/L3StreamsBGTest$(LIBEXT)
-#LIBRARIES_STATIC+= $(BUILD_DIR)/L4Configuration/L4ConfigurationBGTest$(LIBEXT)
-#LIBRARIES_STATIC+= $(BUILD_DIR)/L4Messages/L4MessagesBGTest$(LIBEXT)
-#LIBRARIES_STATIC+= $(BUILD_DIR)/L5GAMs/L5GAMsBGTest$(LIBEXT)
-
-
-all: $(OBJS)  $(SUBPROJ)  \
-        $(BUILD_DIR)/MARTeBGTest$(LIBEXT) 
+INCLUDES += -I.
+INCLUDES += -I../../BareMetal/L0Types
+INCLUDES += -I../../BareMetal/L1Portability
+INCLUDES += -I../../BareMetal/L2Objects
+INCLUDES += -I../../BareMetal/L3Streams
+INCLUDES += -I../../BareMetal/L4Configuration
+INCLUDES += -I../../BareMetal/L4Messages
+INCLUDES += -I../../BareMetal/L5GAMs
+INCLUDES += -I../../Scheduler/L1Portability
+all: $(OBJS)    \
+	        $(BUILD_DIR)/L3ServicesS$(LIBEXT) \
+	        $(BUILD_DIR)/L3ServicesS.def
 	echo  $(OBJS)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include depends.$(TARGET)
 
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

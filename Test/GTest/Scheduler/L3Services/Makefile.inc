@@ -23,16 +23,13 @@
 #############################################################
 
 
-OBJSX=  QueuedMessageIGTest.x\
-    QueueingMessageFilterGTest.x
+OBJSX=  EmbeddedThreadGTest.x
 
 PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
-
 
 INCLUDES += -I../../../
 INCLUDES += -I../../../Core/BareMetal/L0Types
@@ -42,7 +39,7 @@ INCLUDES += -I../../../Core/BareMetal/L3Streams
 INCLUDES += -I../../../Core/BareMetal/L4Configuration
 INCLUDES += -I../../../Core/BareMetal/L4Messages
 INCLUDES += -I../../../Core/Scheduler/L1Portability
-INCLUDES += -I../../../Core/Scheduler/L4Messages
+INCLUDES += -I../../../Core/Scheduler/L3Services
 INCLUDES += -I../../../Core/FileSystem/L1Portability
 
 INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
@@ -53,13 +50,13 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Messages
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 INCLUDES += -I../../../../Source/Core/Scheduler/L3Services
-INCLUDES += -I../../../../Source/Core/Scheduler/L4Messages
+
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 
 
 all: $(OBJS)    \
-        $(BUILD_DIR)/L4MessagesSGTest$(LIBEXT)
+        $(BUILD_DIR)/L3ServicesSGTest$(LIBEXT)
 	echo  $(OBJS)
 
 include depends.$(TARGET)
