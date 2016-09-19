@@ -248,6 +248,7 @@ EmbeddedThread::EmbeddedThread(MethodBinderT<className> &binder):EmbeddedService
     commands = StopCommand;
     maxCommandCompletionHRT = 0;
     timeoutHRT = -1;
+    information.Reset();
 }
 
 

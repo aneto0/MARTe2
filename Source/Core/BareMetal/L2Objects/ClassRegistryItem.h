@@ -160,7 +160,7 @@ public:
      * @brief Registers a method that can be later retrieved with FindMethod.
      * @param[in] method the method to register. The pointer will be freed by this class.
      */
-    void AddMethod(ClassMethodInterfaceMapper *method);
+    void AddMethod(ClassMethodInterfaceMapper * const method);
 
 protected:
 

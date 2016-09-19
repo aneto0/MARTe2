@@ -46,7 +46,8 @@ namespace MARTe {
 QueuedMessageI::QueuedMessageI() :
         queue(GlobalObjectsDatabase::Instance()->GetStandardHeap()),
         queueProcessingThread(binder),
-        binder(*this, &QueuedMessageI::QueueProcessing) {
+        binder(*this, &QueuedMessageI::QueueProcessing),
+        MessageI() {
 
     ErrorManagement::ErrorType err;
 
@@ -57,6 +58,10 @@ QueuedMessageI::QueuedMessageI() :
         queue->SetName("QUEUE");
         err = MessageI::InstallMessageFilter(queue, -1);
     }
+    if (!err.ErrorsCleared()) {
+        REPORT_ERROR(ErrorManagement::InitialisationError, "Failed to install message filter");
+    }
+
 }
 
 QueuedMessageI::~QueuedMessageI() {
@@ -83,7 +88,7 @@ ErrorManagement::ErrorType QueuedMessageI::Stop() {
 
     err = queueProcessingThread.Stop();
 
-    if (err.timeout) {
+    if (err.timeout.operator bool()) {
 
         err = queueProcessingThread.Stop();
 
@@ -120,22 +125,22 @@ ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(EmbeddedServiceI::Exe
 
 }
 
-ErrorManagement::ErrorType QueuedMessageI::InstallMessageFilterInQueue(ReferenceT<MessageFilter> messageFilter,
-                                                                       int32 position) {
+ErrorManagement::ErrorType QueuedMessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,
+                                                                const int32 position) {
     ErrorManagement::ErrorType err;
     err.parametersError = !messageFilter.IsValid();
     if (err.ErrorsCleared()) {
-        err = queuedMessageFilters.Insert(messageFilter, position);
+        err.fatalError = !queuedMessageFilters.Insert(messageFilter, position);
     }
 
     return err;
 }
 
-ErrorManagement::ErrorType QueuedMessageI::RemoveMessageFilterInQueue(ReferenceT<MessageFilter> messageFilter) {
+ErrorManagement::ErrorType QueuedMessageI::RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter) {
     ErrorManagement::ErrorType err;
     err.parametersError = !messageFilter.IsValid();
     if (err.ErrorsCleared()) {
-        err = queuedMessageFilters.Delete(messageFilter);
+        err.fatalError = !queuedMessageFilters.Delete(messageFilter);
     }
     return err;
 }

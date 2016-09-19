@@ -348,7 +348,7 @@ private:
     /**
      * The name of this object.
      */
-    char8 *name;
+    char8 *thisObjName;
 
     /**
      * Specifies if the object is a domain

@@ -34,7 +34,6 @@
 
 #include "ErrorType.h"
 #include "Object.h"
-#include "ReferenceContainer.h"
 #include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/

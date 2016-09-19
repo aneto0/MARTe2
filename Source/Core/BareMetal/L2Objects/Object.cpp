@@ -47,87 +47,92 @@
 
 namespace MARTe {
 
-ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName){
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName) {
     ErrorManagement::ErrorType err;
 
     ClassRegistryItem * cri = GetClassRegistryItem();
-    ClassMethodCaller *caller = NULL;
+    ClassMethodCaller *caller = NULL_PTR(ClassMethodCaller *);
 
     err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
 
-    if (err.ErrorsCleared()){
+    if (err.ErrorsCleared()) {
         caller = cri->FindMethod(methodName);
         err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
     }
 
-    if (err.ErrorsCleared()){
+    if (err.ErrorsCleared()) {
+        /*lint -e{613} err.unsupportedFeature protects from using caller = NULL*/
         err = caller->Call(this);
     }
 
     return err;
 }
 
-ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName, ReferenceContainer &parameters){
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName,
+                                                        ReferenceContainer &parameters) {
     ErrorManagement::ErrorType err;
 
     ClassRegistryItem * cri = GetClassRegistryItem();
-    ClassMethodCaller *caller = NULL;
+    ClassMethodCaller *caller = NULL_PTR(ClassMethodCaller *);
 
     err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
 
-    if (err.ErrorsCleared()){
+    if (err.ErrorsCleared()) {
         caller = cri->FindMethod(methodName);
         err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
     }
 
-    if (err.ErrorsCleared()){
+    if (err.ErrorsCleared()) {
+        /*lint -e{613} err.unsupportedFeature protects from using caller = NULL*/
         err = caller->Call(this, parameters);
     }
 
     return err;
 }
 
-ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName, StructuredDataI &parameters){
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName,
+                                                        StructuredDataI &parameters) {
     ErrorManagement::ErrorType err;
 
     ClassRegistryItem * cri = GetClassRegistryItem();
-    ClassMethodCaller *caller = NULL;
+    ClassMethodCaller *caller = NULL_PTR(ClassMethodCaller *);
 
     err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
 
-    if (err.ErrorsCleared()){
+    if (err.ErrorsCleared()) {
         caller = cri->FindMethod(methodName);
         err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
     }
 
-    if (err.ErrorsCleared()){
+    if (err.ErrorsCleared()) {
+        /*lint -e{613} err.unsupportedFeature protects from using caller = NULL*/
         err = caller->Call(this, parameters);
     }
 
     return err;
 }
 
-ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName, StreamI &stream){
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName,
+                                                        StreamI &stream) {
     ErrorManagement::ErrorType err;
 
     ClassRegistryItem * cri = GetClassRegistryItem();
-    ClassMethodCaller *caller = NULL;
+    ClassMethodCaller *caller = NULL_PTR(ClassMethodCaller *);
 
     err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
 
-    if (err.ErrorsCleared()){
+    if (err.ErrorsCleared()) {
         caller = cri->FindMethod(methodName);
         err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
     }
 
-    if (err.ErrorsCleared()){
+    if (err.ErrorsCleared()) {
+        /*lint -e{613} err.unsupportedFeature protects from using caller = NULL*/
         err = caller->Call(this, stream);
     }
 
     return err;
 }
-
-
 
 bool Object::ConvertDataToStructuredData(void* const ptr,
                                          const char8* const className,
@@ -317,13 +322,13 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
 
 Object::Object() {
     referenceCounter = 0;
-    name = NULL_PTR(char8 *);
+    thisObjName = NULL_PTR(char8 *);
     isDomain = false;
 }
 
 Object::Object(const Object &copy) {
     referenceCounter = 0;
-    name = StringHelper::StringDup(copy.name);
+    thisObjName = StringHelper::StringDup(copy.thisObjName);
     isDomain = false;
 }
 
@@ -331,9 +336,9 @@ Object::Object(const Object &copy) {
  * thrown given that name always points to a valid memory address and thus Memory::Free
  * should not raise exceptions.*/
 Object::~Object() {
-    if (name != NULL_PTR(char8 *)) {
+    if (thisObjName != NULL_PTR(char8 *)) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        bool ok = HeapManager::Free(reinterpret_cast<void *&>(name));
+        bool ok = HeapManager::Free(reinterpret_cast<void *&>(thisObjName));
         if (!ok) {
             REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed HeapManager::Free() in destructor");
         }
@@ -372,7 +377,7 @@ void *Object::operator new(const osulong size) throw () {
 //LCOV_EXCL_STOP
 
 const char8 * const Object::GetName() const {
-    return name;
+    return thisObjName;
 }
 
 void Object::GetUniqueName(char8 * const destination,
@@ -444,14 +449,14 @@ void Object::GetUniqueName(char8 * const destination,
 }
 
 void Object::SetName(const char8 * const newName) {
-    if (name != NULL_PTR(char8 *)) {
+    if (thisObjName != NULL_PTR(char8 *)) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        bool ok = HeapManager::Free(reinterpret_cast<void *&>(name));
+        bool ok = HeapManager::Free(reinterpret_cast<void *&>(thisObjName));
         if (!ok) {
             REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed HeapManager::Free()");
         }
     }
-    name = StringHelper::StringDup(newName);
+    thisObjName = StringHelper::StringDup(newName);
 }
 
 bool Object::ExportData(StructuredDataI & data) {
@@ -495,8 +500,6 @@ void Object::SetDomain(const bool isDomainFlag) {
 bool Object::IsDomain() const {
     return isDomain;
 }
-
-
 
 CLASS_REGISTER(Object, "1.0")
 

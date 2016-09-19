@@ -520,13 +520,13 @@ public:
      * @brief Sets the name of method registered in this mapper.
      * @param[in] name the name of method registered in this mapper.
      */
-    void SetMethodName(CCString name);
+    void SetMethodName(CCString const & name);
 
     /**
      * @brief Gets the name of method registered in this mapper.
      * @return the name of method registered in this mapper.
      */
-    CCString GetMethodName();
+    CCString GetMethodName() const;
 
 private:
 
@@ -540,6 +540,7 @@ private:
      */
     CCString methodName;
 
+/*lint -e{1712} This class is only used by CLASSMETHODREGISTER macro to register new methods.*/
 };
 
 }

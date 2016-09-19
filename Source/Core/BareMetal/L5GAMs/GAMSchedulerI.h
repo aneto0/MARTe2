@@ -147,7 +147,7 @@ public:
      * and the active buffer index.
      * @return true if the next state name is found, false otherwise.
      */
-    bool PrepareNextState(const char8 * const currentStateName,
+    virtual bool PrepareNextState(const char8 * const currentStateName,
                                   const char8 * const nextStateName);
 
     /**

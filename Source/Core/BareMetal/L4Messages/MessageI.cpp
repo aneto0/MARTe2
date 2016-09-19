@@ -161,7 +161,10 @@ ErrorManagement::ErrorType MessageI::WaitForReply(ReferenceT<Message> &message,
     uint64 start = HighResolutionTimer::Counter();
     float32 pollingTime = static_cast<float32>(pollingTimeUsec);
     pollingTime *= static_cast<float32>(1.0e-6);
-    bool isReply = message->IsReply();
+    bool isReply = false;
+    if(err.ErrorsCleared()){
+        isReply = message->IsReply();
+    }
     while ((err.ErrorsCleared()) && (!isReply)) {
         Sleep::NoMore(static_cast<float64>(pollingTime));
         if (maxWait != TTInfiniteWait) {

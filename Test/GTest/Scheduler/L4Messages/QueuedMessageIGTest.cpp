@@ -46,14 +46,14 @@ TEST(QueuedMessageIGTest,TestConstructor) {
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(QueuedMessageIGTest,TestInstallMessageFilterInQueue) {
+TEST(QueuedMessageIGTest,TestInstallMessageFilter) {
     QueuedMessageITest target;
-    ASSERT_TRUE(target.TestInstallMessageFilterInQueue());
+    ASSERT_TRUE(target.TestInstallMessageFilter());
 }
 
-TEST(QueuedMessageIGTest,TestRemoveMessageFilterInQueue) {
+TEST(QueuedMessageIGTest,TestRemoveMessageFilter) {
     QueuedMessageITest target;
-    ASSERT_TRUE(target.TestRemoveMessageFilterInQueue());
+    ASSERT_TRUE(target.TestRemoveMessageFilter());
 }
 
 TEST(QueuedMessageIGTest,TestStart) {

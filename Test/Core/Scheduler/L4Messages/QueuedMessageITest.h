@@ -73,14 +73,14 @@ public:
     bool TestStop();
 
     /**
-     * @brief Tests the InstallMessageFilterInQueue method
+     * @brief Tests the InstallMessageFilter method
      */
-    bool TestInstallMessageFilterInQueue();
+    bool TestInstallMessageFilter();
 
     /**
-     * @brief Tests the RemoveMessageFilterInQueue method
+     * @brief Tests the RemoveMessageFilter method
      */
-    bool TestRemoveMessageFilterInQueue();
+    bool TestRemoveMessageFilter();
 
 };
 

@@ -43,6 +43,8 @@
 
 namespace MARTe {
 
+/*lint -e{1551} no exception should be thrown given that
+ * before deleting the pointer is verified not to be NULL*/
 ClassMethodInterfaceMapper::~ClassMethodInterfaceMapper() {
     if (caller != NULL) {
         delete caller;
@@ -53,11 +55,11 @@ ClassMethodCaller *ClassMethodInterfaceMapper::GetMethodCaller() {
     return caller;
 }
 
-void ClassMethodInterfaceMapper::SetMethodName(CCString name) {
+void ClassMethodInterfaceMapper::SetMethodName(CCString const & name) {
     methodName = name;
 }
 
-CCString ClassMethodInterfaceMapper::GetMethodName() {
+CCString ClassMethodInterfaceMapper::GetMethodName() const {
     return methodName;
 }
 

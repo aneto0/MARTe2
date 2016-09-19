@@ -43,7 +43,9 @@ namespace MARTe {
 QueueingMessageFilter::QueueingMessageFilter() :
         MessageFilter(true) {
     mutexSemQ.Create();
-    newMessagesAlarm.Create();
+    if (!newMessagesAlarm.Create()) {
+        REPORT_ERROR_FULL(ErrorManagement::InitialisationError, "EventSem::Create() has failed");
+    }
 }
 
 QueueingMessageFilter::~QueueingMessageFilter() {
@@ -57,8 +59,9 @@ ErrorManagement::ErrorType QueueingMessageFilter::ConsumeMessage(ReferenceT<Mess
         err.fatalError = !messageQ.Insert(messageToTest, -1);
 
         // handle the case of an element to an empty Q
-        if (err.ErrorsCleared() && messageQ.Size() == 1) {
-            newMessagesAlarm.Post();
+        uint32 queueSize = messageQ.Size();
+        if ((err.ErrorsCleared()) && (queueSize == 1u)) {
+            err.timeout = !newMessagesAlarm.Post();
         }
 
         mutexSemQ.FastUnLock();
@@ -72,7 +75,7 @@ ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message>
     bool locked = !err.timeout;
 
     // handle the empty Q case
-    if (messageQ.Size() == 0) {
+    if (messageQ.Size() == 0u) {
         if (err.ErrorsCleared()) {
             err.fatalError = !newMessagesAlarm.Reset();
         }
@@ -90,7 +93,7 @@ ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message>
     }
 
     if (err.ErrorsCleared()) {
-        Reference ref = messageQ.Get(0);
+        Reference ref = messageQ.Get(0u);
 
         err.fatalError = !ref.IsValid();
 

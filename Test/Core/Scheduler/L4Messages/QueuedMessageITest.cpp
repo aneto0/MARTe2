@@ -82,7 +82,7 @@ bool QueuedMessageITest::TestStart() {
 
     filter->SetDestination(destination.operator->());
 
-    receiver->InstallMessageFilterInQueue(filter);
+    receiver->InstallMessageFilter(filter);
     receiver->SetName("receiver");
     receiver->Start();
 
@@ -123,7 +123,7 @@ bool QueuedMessageITest::TestStart2() {
 
     filter->SetDestination(destination.operator->());
 
-    receiver->InstallMessageFilterInQueue(filter);
+    receiver->InstallMessageFilter(filter);
     receiver->SetName("receiver");
 
     ReferenceT<Message> msg = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -163,7 +163,7 @@ bool QueuedMessageITest::TestStop() {
 
     filter->SetDestination(destination.operator->());
 
-    receiver->InstallMessageFilterInQueue(filter);
+    receiver->InstallMessageFilter(filter);
     receiver->SetName("receiver");
     receiver->Start();
 
@@ -199,7 +199,7 @@ bool QueuedMessageITest::TestStop() {
     return !ret;
 }
 
-bool QueuedMessageITest::TestInstallMessageFilterInQueue() {
+bool QueuedMessageITest::TestInstallMessageFilter() {
     using namespace MARTe;
 
     QueuedMessageI queuedMessageI;
@@ -207,7 +207,7 @@ bool QueuedMessageITest::TestInstallMessageFilterInQueue() {
     return queuedMessageI.InstallMessageFilter(filter);
 }
 
-bool QueuedMessageITest::TestRemoveMessageFilterInQueue() {
+bool QueuedMessageITest::TestRemoveMessageFilter() {
     using namespace MARTe;
 
     QueuedMessageI queuedMessageI;

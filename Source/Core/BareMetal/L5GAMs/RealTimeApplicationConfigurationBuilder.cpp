@@ -1050,7 +1050,7 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
         StreamString dsSignalFullType;
         bool replace = (!dataSourcesDatabase.Read("FullType", dsSignalFullType));
 
-        if (!replace && ret) {
+        if ((!replace) && (ret)) {
             ret = dsSignalFullType.Seek(0LLU);
             if (fullType.Size() > 0u) {
                 if (ret) {
@@ -3748,11 +3748,15 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                 }
                 uint32 byteSize = 0u;
                 if ((i + 1u) < numberOfMembers) {
-                    const IntrospectionEntry nextEntry = intro->operator[](i + 1u);
-                    byteSize = nextEntry.GetMemberByteOffset() - entry.GetMemberByteOffset();
+                    if(intro != NULL_PTR(const Introspection *)){
+                        const IntrospectionEntry nextEntry = intro->operator[](i + 1u);
+                        byteSize = nextEntry.GetMemberByteOffset() - entry.GetMemberByteOffset();
+                    }
                 }
                 else {
-                    byteSize = intro->GetClassSize() - entry.GetMemberByteOffset();
+                    if(intro != NULL_PTR(const Introspection *)){
+                        byteSize = intro->GetClassSize() - entry.GetMemberByteOffset();
+                    }
                 }
                 //Finally got to the BasicType. Write all the properties
                 if (ret) {

@@ -122,7 +122,8 @@ public:
      * @pre
      *   messageFilter.IsValid()
      */
-    ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, const int32 position=0);
+    /*lint -e(1735) the derived classes shall use this default parameter or no default parameter at all*/
+    virtual ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, const int32 position=0);
 
     /**
      * @brief Removes a previously installed message filter (see InstallMessageFilter).
@@ -131,7 +132,7 @@ public:
      * @pre
      *   messageFilter.IsValid()
      */
-    ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter);
+    virtual ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter);
 
     /**
      * @brief A message is sent requiring indirect reply.

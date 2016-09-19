@@ -18,6 +18,15 @@
 -estring(686,"*CPU_ISSET*")
 -estring(1960,"*__pthread_cleanup_class*")
 
+/*
+ * In the macro CLASS_REGISTER_DECLARATION we cannot compare against the actual size of class.
+ * The reason is that if the final class inherits from Object and does not use the registration 
+ * CLASS_REGISTER and CLASS_REGISTER_DECLARATION macros (which is a valid use case), then on the 
+ * operator new and operator delete the size of the final class being created/deleted will be compared
+ * against the size of Object which is obviously wrong.  
+ */
+-estring(1531,"*")
+
 /* 
  * Do not lint operating system files
  * Remember that Flexelint uses the label of "library" header to 

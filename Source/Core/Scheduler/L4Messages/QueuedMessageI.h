@@ -84,8 +84,9 @@ public:
      * @pre
      *   messageFilter.IsValid()
      */
-    ErrorManagement::ErrorType InstallMessageFilterInQueue(ReferenceT<MessageFilter> messageFilter,
-                                                           int32 position = 0);
+    /*lint -e(1735) the derived classes shall use this default parameter or no default parameter at all*/
+    virtual ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,
+                                                            const int32 position = 0);
 
     /**
      * @brief Removes a previously installed message filter (see InstallMessageFilterInQueue).
@@ -94,7 +95,7 @@ public:
      * @pre
      *   messageFilter.IsValid()
      */
-    ErrorManagement::ErrorType RemoveMessageFilterInQueue(ReferenceT<MessageFilter> messageFilter);
+    virtual ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter);
 
 private:
 
