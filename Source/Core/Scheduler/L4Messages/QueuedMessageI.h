@@ -125,7 +125,7 @@ private:
     /**
      * Binds the QueueProcessing against the queueProcessingThread.
      */
-    EmbeddedServiceI::MethodBinderT<QueuedMessageI> binder;
+    EmbeddedServiceMethodBinderT<QueuedMessageI> binder;
 };
 
 /*---------------------------------------------------------------------------*/

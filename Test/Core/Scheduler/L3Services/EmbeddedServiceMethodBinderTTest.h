@@ -1,8 +1,8 @@
 /**
- * @file MultiThreadService.h
- * @brief Header file for class MultiThreadServerClass
- * @date Aug 30, 2016
- * @author Filippo Sartori
+ * @file EmbeddedServiceMethodBinderTTest.h
+ * @brief Header file for class EmbeddedServiceMethodBinderTTest
+ * @date 19/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MultiThreadServerClass
+ * @details This header file contains the declaration of the class EmbeddedServiceMethodBinderTTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MULTITHREADSERVICE_H_
-#define L4MESSAGES_MULTITHREADSERVICE_H_
+#ifndef EMBEDDEDSERVICEMETHODBINDERTTEST_H_
+#define EMBEDDEDSERVICEMETHODBINDERTTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,102 +31,47 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "EmbeddedServiceI.h"
-#include "EmbeddedThreadObject.h"
-#include "ReferenceContainer.h"
-
-namespace MARTe{
-
+#include "EmbeddedServiceMethodBinderTTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
 /**
- * Contains instances of specialised EmbeddedThreads
- *
+ * Tests the EmbeddedServiceMethodBinderTTest public methods.
  */
-class MultiThreadService: public EmbeddedServiceI{
-
-
+class EmbeddedServiceMethodBinderTTest {
 public:
+
     /**
-     * TODO
+     * @brief Default constructor
      */
-    template <typename className>
-    MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder);
+    EmbeddedServiceMethodBinderTTest();
 
     /**
-     *
+     * @brief Destructor
      */
-    virtual ~MultiThreadService();
+    virtual ~EmbeddedServiceMethodBinderTTest();
 
     /**
-    * TODO
-    * same as object interface
-    * implementation of EmbeddedServiceI
-    */
-    virtual bool  Initialise(StructuredDataI &data);
-
-    /**
-     * TODO
+     * @brief Tests the default constructor.
      */
-    virtual ErrorManagement::ErrorType Start();
+    bool TestDefaultConstructor();
 
     /**
-     * TODO
+     * @brief Tests the Execute method.
      */
-    virtual ErrorManagement::ErrorType Stop();
-
+    bool TestExecute();
 
     /**
-     * just allows to add threads to the minNumberOfThreads
-     * called by Start
+     * @brief Tests the Execute method and verifies that the user returned error is propagated.
      */
-    virtual ErrorManagement::ErrorType AddThread();
-
-    /**
-     *
-     */
-    inline bool TooManyThreads();
-
-    /**
-     *
-     */
-    inline bool MoreThanEnoughThreads();
-
-protected:
-    /**
-     *
-     */
-    ReferenceContainer threadPool;
-
-    /// either the available working threads or the maximum
-    uint32 minNumberOfThreads;
+    bool TestExecute_WithError();
 
 };
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * TODO
- */
-template <typename className>
-MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder):EmbeddedServiceI(binder){
-    minNumberOfThreads = 1;
-}
+#endif /* EMBEDDEDSERVICEMETHODBINDERTTEST_H_ */
 
-bool MultiThreadService::MoreThanEnoughThreads(){
-    return (threadPool.Size() > minNumberOfThreads);
-}
-
-
-}
-
-#endif /* L4MESSAGES_MULTITHREADSERVICE_H_ */
-	

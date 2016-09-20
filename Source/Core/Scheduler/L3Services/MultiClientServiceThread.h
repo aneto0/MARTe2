@@ -35,26 +35,28 @@
 #include "EmbeddedThread.h"
 #include "MultiThreadService.h"
 
-namespace MARTe{
+namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class MultiClientServiceThread: public Object,public EmbeddedThread {
+class MultiClientServiceThread: public Object, public EmbeddedThread {
 
 public:
 
     /**
      * TODO
      */
-    MultiClientServiceThread(MethodBinderI &binder,MultiThreadService &managerIn);
+    MultiClientServiceThread(EmbeddedServiceMethodBinderI &binder,
+                             MultiThreadService &managerIn);
 
     /**
      * TODO
      */
-    template <typename className>
-    MultiClientServiceThread(MethodBinderT<className> &binder,MultiThreadService &managerIn);
+    template<typename className>
+    MultiClientServiceThread(EmbeddedServiceMethodBinderT<className> &binder,
+                             MultiThreadService &managerIn);
 
     /**
      *
@@ -67,7 +69,6 @@ public:
      */
     void ThreadLoop();
 
-
 private:
     /**
      *
@@ -75,14 +76,17 @@ private:
     MultiThreadService &manager;
 };
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template <typename className>
-MultiClientServiceThread::MultiClientServiceThread(MethodBinderT<className> &binder,MultiThreadService &managerIn): EmbeddedThread(binder),manager(managerIn) {}
+template<typename className>
+MultiClientServiceThread::MultiClientServiceThread(EmbeddedServiceMethodBinderT<className> &binder,
+                                                   MultiThreadService &managerIn) :
+        EmbeddedThread(binder),
+        manager(managerIn) {
+}
 
 }
 #endif /* L4MESSAGES_MULTICLIENTSERVICETHREAD_H_ */
-	
+

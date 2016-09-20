@@ -113,7 +113,7 @@ public:
      *   GetThreadId() == 0 &&
      *   GetStatus() == OffState
      */
-    EmbeddedThread(MethodBinderI &binder);
+    EmbeddedThread(EmbeddedServiceMethodBinderI &binder);
 
     /**
      * @brief Constructor.
@@ -124,7 +124,7 @@ public:
      *   GetStatus() == OffState
      */
     template<typename className>
-    EmbeddedThread(MethodBinderT<className> &binder);
+    EmbeddedThread(EmbeddedServiceMethodBinderT<className> &binder);
 
     /**
      * @brief Destructor.
@@ -263,11 +263,8 @@ protected:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * TODO
- */
 template<typename className>
-EmbeddedThread::EmbeddedThread(MethodBinderT<className> &binder) :
+EmbeddedThread::EmbeddedThread(EmbeddedServiceMethodBinderT<className> &binder) :
         EmbeddedServiceI(binder) {
     threadId = InvalidThreadIdentifier;
     commands = StopCommand;

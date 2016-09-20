@@ -1,7 +1,7 @@
 /**
- * @file MultiThreadService.h
- * @brief Header file for class MultiThreadServerClass
- * @date Aug 30, 2016
+ * @file EmbeddedServiceMethodBinderI.h
+ * @brief Header file for class EmbeddedServiceMethodBinderI
+ * @date 20/09/2016
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MultiThreadServerClass
+ * @details This header file contains the declaration of the class EmbeddedServiceMethodBinderI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MULTITHREADSERVICE_H_
-#define L4MESSAGES_MULTITHREADSERVICE_H_
+#ifndef EMBEDDEDSERVICEMETHODBINDERI_H_
+#define EMBEDDEDSERVICEMETHODBINDERI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,102 +31,46 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "EmbeddedServiceI.h"
-#include "EmbeddedThreadObject.h"
-#include "ReferenceContainer.h"
-
-namespace MARTe{
+#include "ErrorType.h"
+#include "ExecutionInfo.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
 
 /**
- * Contains instances of specialised EmbeddedThreads
- *
+ * @brief Only to be used by the EmbeddedServiceMethodBinderT. Allows to register
+ * a user specific callback function to be executed in the context of an EmbeddedServiceI.
  */
-class MultiThreadService: public EmbeddedServiceI{
-
+class EmbeddedServiceMethodBinderI {
 
 public:
     /**
-     * TODO
+     * @brief Default constructor. NOOP.
      */
-    template <typename className>
-    MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder);
+    EmbeddedServiceMethodBinderI();
 
     /**
-     *
+     * @brief Destructor. NOOP.
      */
-    virtual ~MultiThreadService();
+    virtual ~EmbeddedServiceMethodBinderI();
 
     /**
-    * TODO
-    * same as object interface
-    * implementation of EmbeddedServiceI
-    */
-    virtual bool  Initialise(StructuredDataI &data);
-
-    /**
-     * TODO
+     * @brief Callback function that is executed in the context of a thread spawned by the EmbeddedService.
+     * @details This function is a one-to-one mapping to the user-registered callback function (see EmbeddedServiceMethodBinderT).
+     * This allows to call functions with any name in the class and to call, on the same object instance, different functions from different threads.
+     * @param[in] info information about the current state of the execution thread.
+     * @return the ErrorType returned by the user function.
      */
-    virtual ErrorManagement::ErrorType Start();
-
-    /**
-     * TODO
-     */
-    virtual ErrorManagement::ErrorType Stop();
-
-
-    /**
-     * just allows to add threads to the minNumberOfThreads
-     * called by Start
-     */
-    virtual ErrorManagement::ErrorType AddThread();
-
-    /**
-     *
-     */
-    inline bool TooManyThreads();
-
-    /**
-     *
-     */
-    inline bool MoreThanEnoughThreads();
-
-protected:
-    /**
-     *
-     */
-    ReferenceContainer threadPool;
-
-    /// either the available working threads or the maximum
-    uint32 minNumberOfThreads;
+    virtual ErrorManagement::ErrorType Execute(ExecutionInfo info) = 0;
 
 };
-
-
-
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * TODO
- */
-template <typename className>
-MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder):EmbeddedServiceI(binder){
-    minNumberOfThreads = 1;
-}
+#endif /* EMBEDDEDSERVICEMETHODBINDERI_H_ */
 
-bool MultiThreadService::MoreThanEnoughThreads(){
-    return (threadPool.Size() > minNumberOfThreads);
-}
-
-
-}
-
-#endif /* L4MESSAGES_MULTITHREADSERVICE_H_ */
-	

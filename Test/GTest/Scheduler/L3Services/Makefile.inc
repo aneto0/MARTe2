@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX=  EmbeddedThreadGTest.x \
+OBJSX=  EmbeddedServiceMethodBinderTGTest.x \
+        EmbeddedThreadGTest.x \
     ExecutionInfoGTest.x
 
 PACKAGE=GTest/Scheduler

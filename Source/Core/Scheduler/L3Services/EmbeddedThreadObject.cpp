@@ -43,7 +43,7 @@ namespace MARTe{
 
 EmbeddedThreadObject::~EmbeddedThreadObject(){ }
 
-EmbeddedThreadObject::EmbeddedThreadObject(MethodBinderI &binder): EmbeddedThread(binder){ }
+EmbeddedThreadObject::EmbeddedThreadObject(EmbeddedServiceMethodBinderI &binder): EmbeddedThread(binder){ }
 
 }
 	

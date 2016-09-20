@@ -34,7 +34,7 @@
 
 #include "MultiThreadService.h"
 
-namespace MARTe{
+namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -43,22 +43,23 @@ namespace MARTe{
 /**
  *
  */
-class MultiClientService: public MultiThreadService{
+class MultiClientService: public MultiThreadService {
 
 public:
 
-    template <typename className>
-    MultiClientService(MethodBinderT<className> &binder);
+    template<typename className>
+    MultiClientService(EmbeddedServiceMethodBinderT<className> &binder);
 
     /**
      *
      */
-    virtual ~MultiClientService(){    }
+    virtual ~MultiClientService() {
+    }
 
     /**
-    * TODO
-    * same as object interface
-    */
+     * TODO
+     * same as object interface
+     */
     virtual bool Initialise(StructuredDataI &data);
 
     /**
@@ -67,13 +68,11 @@ public:
      */
     virtual ErrorManagement::ErrorType AddThread();
 
-
 protected:
 
     /// either the available working threads or the maximum
     uint32 maxNumberOfThreads;
 };
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
@@ -82,12 +81,12 @@ protected:
 /**
  * TODO
  */
-template <typename className>
-MultiClientService::MultiClientService(MethodBinderT<className> &binder):MultiThreadService(binder){
+template<typename className>
+MultiClientService::MultiClientService(EmbeddedServiceMethodBinderT<className> &binder) :
+        MultiThreadService(binder) {
     maxNumberOfThreads = minNumberOfThreads;
 }
 
-
 }
 #endif /* L4MESSAGES_MULTICLIENTSERVICE_H_ */
-	
+

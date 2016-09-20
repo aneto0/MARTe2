@@ -24,7 +24,8 @@
 #
 #############################################################
 
-OBJSX=  EmbeddedThreadTest.x \
+OBJSX=  EmbeddedServiceMethodBinderTTest.x \
+        EmbeddedThreadTest.x \
     ExecutionInfoTest.x
 
 PACKAGE=Core/Scheduler

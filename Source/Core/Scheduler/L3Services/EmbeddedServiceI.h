@@ -34,6 +34,8 @@
 
 #include "BitRange.h"
 #include "BitBoolean.h"
+#include "EmbeddedServiceMethodBinderI.h"
+#include "EmbeddedServiceMethodBinderT.h"
 #include "ErrorType.h"
 #include "ExecutionInfo.h"
 #include "StructuredDataI.h"
@@ -52,80 +54,10 @@ class EmbeddedServiceI {
 public:
 
     /**
-     * Interface to the Method Binders.
-     * Not usable
-     */
-    class MethodBinderI {
-
-    public:
-        /**
-         * TODO
-         */
-        MethodBinderI() {
-        }
-        ;
-
-        /**
-         * TODO
-         */
-        virtual ~MethodBinderI() {
-        }
-        ;
-
-        /**
-         *
-         */
-        virtual ErrorManagement::ErrorType Execute(ExecutionInfo info)=0;
-
-    };
-
-    /**
-     * TODO
-     */
-    template<typename className>
-    class MethodBinderT: public MethodBinderI {
-
-    public:
-
-        /**
-         * @brief Type definition for the method pointer prototype
-         */
-        typedef ErrorManagement::ErrorType (className::*MethodPointer)(ExecutionInfo &info);
-
-        /**
-         * TODO
-         */
-        MethodBinderT(className &o,
-                      MethodPointer f);
-
-        /**
-         * TODO
-         */
-        virtual ~MethodBinderT();
-
-        /**
-         * TODO
-         */
-        virtual ErrorManagement::ErrorType Execute(ExecutionInfo info);
-
-    private:
-
-        /**
-         * TODO
-         */
-        className &object;
-
-        /**
-         * TODO
-         */
-        MethodPointer function;
-    };
-
-    /**
      * allocated by the user.
      * memory managed by object
      */
-    EmbeddedServiceI(MethodBinderI &binder) :
+    EmbeddedServiceI(EmbeddedServiceMethodBinderI &binder) :
             method(binder) {
     }
 
@@ -134,7 +66,7 @@ public:
      * memory managed by object
      */
     template<typename className>
-    EmbeddedServiceI(MethodBinderT<className> &binder) :
+    EmbeddedServiceI(EmbeddedServiceMethodBinderT<className> &binder) :
             method(binder) {
     }
 
@@ -168,29 +100,12 @@ protected:
         return method.Execute(information);
     }
 
-    MethodBinderI &method;
+    EmbeddedServiceMethodBinderI &method;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-template<typename className>
-EmbeddedServiceI::MethodBinderT<className>::MethodBinderT(className &o,
-                                                          MethodBinderT<className>::MethodPointer f) :
-        object(o),
-        function(f) {
-}
-;
-
-template<typename className>
-EmbeddedServiceI::MethodBinderT<className>::~MethodBinderT() {
-}
-
-template<typename className>
-ErrorManagement::ErrorType EmbeddedServiceI::MethodBinderT<className>::Execute(ExecutionInfo info) {
-    return (object.*function)(info);
-}
 
 }
 

@@ -122,8 +122,8 @@ EmbeddedThreadTest::~EmbeddedThreadTest() {
 bool EmbeddedThreadTest::TestDefaultConstructor() {
     using namespace MARTe;
     EmbeddedThreadTestCallbackClass callbackClass;
-    EmbeddedServiceI::MethodBinderT<EmbeddedThreadTestCallbackClass> binderT(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
-    EmbeddedServiceI::MethodBinderI &binder = binderT;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadTestCallbackClass> binderT(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
+    EmbeddedServiceMethodBinderI &binder = binderT;
 
     EmbeddedThread embeddedThread(binder);
     bool ok = (embeddedThread.GetTimeout() == TTInfiniteWait);
@@ -135,7 +135,7 @@ bool EmbeddedThreadTest::TestDefaultConstructor() {
 bool EmbeddedThreadTest::TestDefaultConstructor_Template() {
     using namespace MARTe;
     EmbeddedThreadTestCallbackClass callbackClass;
-    EmbeddedServiceI::MethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
+    EmbeddedServiceMethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
     EmbeddedThread embeddedThread(binder);
     bool ok = (embeddedThread.GetTimeout() == TTInfiniteWait);
     ok &= (embeddedThread.GetThreadId() == 0);
@@ -146,7 +146,7 @@ bool EmbeddedThreadTest::TestDefaultConstructor_Template() {
 bool EmbeddedThreadTest::TestInitialise() {
     using namespace MARTe;
     EmbeddedThreadTestCallbackClass callbackClass;
-    EmbeddedServiceI::MethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
+    EmbeddedServiceMethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
     EmbeddedThread embeddedThread(binder);
 
     ConfigurationDatabase config;
@@ -159,7 +159,7 @@ bool EmbeddedThreadTest::TestInitialise() {
 bool EmbeddedThreadTest::TestInitialise_False() {
     using namespace MARTe;
     EmbeddedThreadTestCallbackClass callbackClass;
-    EmbeddedServiceI::MethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
+    EmbeddedServiceMethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
     EmbeddedThread embeddedThread(binder);
 
     ConfigurationDatabase config;
@@ -171,7 +171,7 @@ bool EmbeddedThreadTest::TestInitialise_False() {
 bool EmbeddedThreadTest::TestStart() {
     using namespace MARTe;
     EmbeddedThreadTestCallbackClass callbackClass;
-    EmbeddedServiceI::MethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
+    EmbeddedServiceMethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
     EmbeddedThread embeddedThread(binder);
 
     bool ok = (embeddedThread.GetThreadId() == 0);
@@ -195,7 +195,7 @@ bool EmbeddedThreadTest::TestStart() {
 bool EmbeddedThreadTest::TestStart_False() {
     using namespace MARTe;
     EmbeddedThreadTestCallbackClass callbackClass;
-    EmbeddedServiceI::MethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
+    EmbeddedServiceMethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
     EmbeddedThread embeddedThread(binder);
 
     bool ok = (embeddedThread.GetThreadId() == 0);
@@ -222,7 +222,7 @@ bool EmbeddedThreadTest::TestStart_False() {
 bool EmbeddedThreadTest::TestStart_Restart() {
     using namespace MARTe;
     EmbeddedThreadTestCallbackClass callbackClass;
-    EmbeddedServiceI::MethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
+    EmbeddedServiceMethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
     EmbeddedThread embeddedThread(binder);
 
     bool ok = (embeddedThread.GetThreadId() == 0);
@@ -258,7 +258,7 @@ bool EmbeddedThreadTest::TestStart_Restart() {
 bool EmbeddedThreadTest::TestStop() {
     using namespace MARTe;
     EmbeddedThreadTestCallbackClass callbackClass;
-    EmbeddedServiceI::MethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
+    EmbeddedServiceMethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
     EmbeddedThread embeddedThread(binder);
 
     bool ok = (embeddedThread.GetThreadId() == 0);
@@ -286,7 +286,7 @@ bool EmbeddedThreadTest::TestStop() {
 bool EmbeddedThreadTest::TestStop_Kill() {
     using namespace MARTe;
     EmbeddedThreadTestCallbackClassToKill callbackClass;
-    EmbeddedServiceI::MethodBinderT<EmbeddedThreadTestCallbackClassToKill> binder(callbackClass, &EmbeddedThreadTestCallbackClassToKill::CallbackFunction);
+    EmbeddedServiceMethodBinderT<EmbeddedThreadTestCallbackClassToKill> binder(callbackClass, &EmbeddedThreadTestCallbackClassToKill::CallbackFunction);
     EmbeddedThread embeddedThread(binder);
 
     bool ok = (embeddedThread.GetThreadId() == 0);
@@ -322,7 +322,7 @@ bool EmbeddedThreadTest::TestStop_Kill() {
 bool EmbeddedThreadTest::TestThreadLoop() {
     using namespace MARTe;
     EmbeddedThreadTestCallbackClassStage callbackClass;
-    EmbeddedServiceI::MethodBinderT<EmbeddedThreadTestCallbackClassStage> binder(callbackClass, &EmbeddedThreadTestCallbackClassStage::CallbackFunction);
+    EmbeddedServiceMethodBinderT<EmbeddedThreadTestCallbackClassStage> binder(callbackClass, &EmbeddedThreadTestCallbackClassStage::CallbackFunction);
     EmbeddedThread embeddedThread(binder);
 
     bool ok = (embeddedThread.GetThreadId() == 0);
@@ -344,7 +344,7 @@ bool EmbeddedThreadTest::TestThreadLoop() {
 bool EmbeddedThreadTest::TestGetStatus() {
     using namespace MARTe;
     EmbeddedThreadTestCallbackClass callbackClass;
-    EmbeddedServiceI::MethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
+    EmbeddedServiceMethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
     EmbeddedThread embeddedThread(binder);
 
     bool ok = (embeddedThread.GetThreadId() == 0);
@@ -367,7 +367,7 @@ bool EmbeddedThreadTest::TestGetStatus() {
 bool EmbeddedThreadTest::TestSetTimeout() {
     using namespace MARTe;
     EmbeddedThreadTestCallbackClass callbackClass;
-    EmbeddedServiceI::MethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
+    EmbeddedServiceMethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
     EmbeddedThread embeddedThread(binder);
     embeddedThread.SetTimeout(100);
     bool ok = (embeddedThread.GetTimeout() == 100);
@@ -383,7 +383,7 @@ bool EmbeddedThreadTest::TestGetTimeout() {
 bool EmbeddedThreadTest::TestGetThreadId() {
     using namespace MARTe;
     EmbeddedThreadTestCallbackClass callbackClass;
-    EmbeddedServiceI::MethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
+    EmbeddedServiceMethodBinderT<EmbeddedThreadTestCallbackClass> binder(callbackClass, &EmbeddedThreadTestCallbackClass::CallbackFunction);
     EmbeddedThread embeddedThread(binder);
 
     bool ok = (embeddedThread.GetThreadId() == 0);

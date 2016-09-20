@@ -42,7 +42,7 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-EmbeddedThread::EmbeddedThread(MethodBinderI &binder) :
+EmbeddedThread::EmbeddedThread(EmbeddedServiceMethodBinderI &binder) :
         EmbeddedServiceI(binder) {
     threadId = InvalidThreadIdentifier;
     commands = StopCommand;

@@ -44,7 +44,7 @@ namespace MARTe {
 MultiClientServiceThread::~MultiClientServiceThread() {
 }
 
-MultiClientServiceThread::MultiClientServiceThread(MethodBinderI &binder,
+MultiClientServiceThread::MultiClientServiceThread(EmbeddedServiceMethodBinderI &binder,
                                                    MultiThreadService &managerIn) :
         EmbeddedThread(binder),
         manager(managerIn) {

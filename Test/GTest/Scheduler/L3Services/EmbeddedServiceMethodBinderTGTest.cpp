@@ -1,8 +1,8 @@
 /**
- * @file EmbeddedThreadObject.h
- * @brief Header file for class EmbeddedThreadObject
- * @date Sep 5, 2016
- * @author fsartori
+ * @file EmbeddedServiceMethodBinderTGTest.cpp
+ * @brief Source file for class EmbeddedServiceMethodBinderTGTest
+ * @date 20/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,61 +16,42 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class EmbeddedThreadObject
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class MessageGTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef L4MESSAGES_EMBEDDEDTHREADOBJECT_H_
-#define L4MESSAGES_EMBEDDEDTHREADOBJECT_H_
-
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
-/*---------------------------------------------------------------------------*/
-
-#include "EmbeddedThread.h"
-
-namespace MARTe {
-/*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
-/*---------------------------------------------------------------------------*/
-
-class EmbeddedThreadObject: public EmbeddedThread{
-
-public:
-
-
-    /**
-     * TODO
-     */
-    EmbeddedThreadObject(EmbeddedServiceMethodBinderI &binder);
-
-    /**
-     * TODO
-     */
-    template <typename className>
-    EmbeddedThreadObject(EmbeddedServiceMethodBinderT<className> &binder);
-
-    /**
-     * TODO
-     */
-    virtual ~EmbeddedThreadObject();
-
-};
-
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 
-template <typename className>
-EmbeddedThreadObject::EmbeddedThreadObject(EmbeddedServiceMethodBinderT<className> &binder): EmbeddedThread(binder) {}
+#include "gtest/gtest.h"
+#include "EmbeddedServiceMethodBinderTTest.h"
 
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+TEST(EmbeddedServiceMethodBinderTGTest,TestConstructor) {
+    EmbeddedServiceMethodBinderTTest target;
+    ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-#endif /* L4MESSAGES_EMBEDDEDTHREADOBJECT_H_ */
-	
+TEST(EmbeddedServiceMethodBinderTGTest,TestExecute) {
+    EmbeddedServiceMethodBinderTTest target;
+    ASSERT_TRUE(target.TestExecute());
+}
+
+TEST(EmbeddedServiceMethodBinderTGTest,TestExecute_WithError) {
+    EmbeddedServiceMethodBinderTTest target;
+    ASSERT_TRUE(target.TestExecute_WithError());
+}

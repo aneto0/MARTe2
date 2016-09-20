@@ -25,6 +25,7 @@
 #############################################################
 
 OBJSX=	EmbeddedServiceI.x \
+    EmbeddedServiceMethodBinderI.x \
     EmbeddedThread.x \
     EmbeddedThreadObject.x \
     ExecutionInfo.x \
