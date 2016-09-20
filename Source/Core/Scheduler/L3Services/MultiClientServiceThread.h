@@ -65,7 +65,7 @@ public:
      * TODO
      * Public to be accessed by the thread launcher subroutine
      */
-    virtual void ThreadLoop();
+    void ThreadLoop();
 
 
 private:

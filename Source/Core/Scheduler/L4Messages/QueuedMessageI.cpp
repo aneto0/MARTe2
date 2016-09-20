@@ -104,7 +104,7 @@ ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(EmbeddedServiceI::Exe
     const TimeoutType timeout = 1000;
 
     // do not handle other stages
-    if (info.GetStage() == EmbeddedServiceI::mainStage) {
+    if (info.GetStage() == EmbeddedServiceI::MainStage) {
 
         err.unsupportedFeature = !queue.IsValid();
 

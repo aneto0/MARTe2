@@ -57,6 +57,70 @@ public:
      */
     bool TestDefaultConstructor();
 
+    /**
+     * @brief Tests the default constructor.
+     */
+    bool TestDefaultConstructor_Template();
+
+    /**
+     * @brief Tests the Initialise function.
+     */
+    bool TestInitialise();
+
+    /**
+     * @brief Tests the Initialise function without specifying the Timeout parameter.
+     */
+    bool TestInitialise_False();
+
+    /**
+     * @brief Tests the Start function.
+     */
+    bool TestStart();
+
+    /**
+     * @brief Tests the Start function calling it twice, which should trigger an illegal operation.
+     */
+    bool TestStart_False();
+
+    /**
+     * @brief Tests the Start function after a stop has been called.
+     */
+    bool TestStart_Restart();
+
+    /**
+     * @brief Tests the Stop function.
+     */
+    bool TestStop();
+
+    /**
+     * @brief Tests the Stop function forcing a kill.
+     */
+    bool TestStop_Kill();
+
+    /**
+     * @brief Tests the ThreadLoop function.
+     */
+    bool TestThreadLoop();
+
+    /**
+     * @brief Tests the GetStatus function.
+     */
+    bool TestGetStatus();
+
+    /**
+     * @brief Tests the SetTimeout function
+     */
+    bool TestSetTimeout();
+
+    /**
+     * @brief Tests the GetTimeout function
+     */
+    bool TestGetTimeout();
+
+    /**
+     * @brief Tests the GetThreadId function
+     */
+    bool TestGetThreadId();
 };
 
 /*---------------------------------------------------------------------------*/

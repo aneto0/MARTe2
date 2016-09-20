@@ -45,7 +45,7 @@ EmbeddedServiceI::ExecutionInfo::ExecutionInfo(){
 
 
 void EmbeddedServiceI::ExecutionInfo::SetThreadNumber(uint16 number){
-    if (stage == startupStage){
+    if (stage == StartupStage){
         threadNumber = number;
     }
 }
@@ -72,8 +72,8 @@ uint8 EmbeddedServiceI::ExecutionInfo::GetStage2(){
 
 void EmbeddedServiceI::ExecutionInfo::Reset(){
     threadNumber = 0;
-    stage = startupStage;
-    stage2 = nullStage2;
+    stage = StartupStage;
+    stage2 = NullStage2;
 
 }
 

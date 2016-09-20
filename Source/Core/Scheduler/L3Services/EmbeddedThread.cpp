@@ -45,8 +45,8 @@ EmbeddedThread::EmbeddedThread(MethodBinderI &binder) :
         EmbeddedServiceI(binder) {
     threadId = InvalidThreadIdentifier;
     commands = StopCommand;
-    maxCommandCompletionHRT = 0;
-    timeoutHRT = -1;
+    maxCommandCompletionHRT = 0u;
+    SetTimeout(TTInfiniteWait);
     information.Reset();
 }
 
@@ -57,7 +57,7 @@ EmbeddedThread::~EmbeddedThread() {
 bool EmbeddedThread::Initialise(StructuredDataI &data) {
     uint32 msecTimeout;
     ErrorManagement::ErrorType err;
-    err.fatalError = !data.Read("Timeout", msecTimeout);
+    err.parametersError = !data.Read("Timeout", msecTimeout);
     if (err.ErrorsCleared()) {
         SetTimeout(msecTimeout);
     }
@@ -65,7 +65,8 @@ bool EmbeddedThread::Initialise(StructuredDataI &data) {
     return err;
 }
 
-void EmbeddedThread::SetTimeout(TimeoutType msecTimeout) {
+void EmbeddedThread::SetTimeout(TimeoutType msecTimeoutIn) {
+    msecTimeout = msecTimeoutIn;
     if (msecTimeout == TTInfiniteWait) {
         timeoutHRT = -1;
     }
@@ -80,8 +81,8 @@ void EmbeddedThread::SetTimeout(TimeoutType msecTimeout) {
     }
 }
 
-EmbeddedServiceI::ExecutionInfo EmbeddedThread::GetExecutionInfo() {
-    return information;
+TimeoutType EmbeddedThread::GetTimeout() const {
+    return msecTimeout;
 }
 
 EmbeddedThread::States EmbeddedThread::GetStatus() {
@@ -137,9 +138,7 @@ EmbeddedThread::States EmbeddedThread::GetStatus() {
 }
 
 static void EmbeddedThreadThreadLauncher(const void * const parameters) {
-    EmbeddedThread *thread;
-    // get object
-    thread = reinterpret_cast<EmbeddedThread *>(const_cast<void *>(parameters));
+    EmbeddedThread *thread = reinterpret_cast<EmbeddedThread *>(const_cast<void *>(parameters));
 
     // call
     thread->ThreadLoop();
@@ -151,8 +150,8 @@ void EmbeddedThread::ThreadLoop() {
 
     ErrorManagement::ErrorType err;
 
-    //TODO check with FISA this loop.
     while (commands == KeepRunningCommand) {
+        //Reset sets stage = StartupStage;
         information.Reset();
 
         // startup
@@ -161,7 +160,7 @@ void EmbeddedThread::ThreadLoop() {
         // main stage
         if (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
 
-            information.SetStage(mainStage);
+            information.SetStage(MainStage);
             while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
                 err = Execute(information);
             }
@@ -169,12 +168,14 @@ void EmbeddedThread::ThreadLoop() {
 
         // assuming one reason for exiting (not multiple errors together with a command change)
         if (err.completed) {
-            information.SetStage(terminationStage);
+            information.SetStage(TerminationStage);
         }
         else {
-            information.SetStage(badTerminationStage);
+            information.SetStage(BadTerminationStage);
         }
-        err = Execute(information);
+
+        //Return value is ignored as thread cycle will start afresh whatever the return value.
+        Execute(information);
     }
 }
 
@@ -216,13 +217,16 @@ ErrorManagement::ErrorType EmbeddedThread::Stop() {
         }
 
         err.timeout = (GetStatus() != OffState);
+        if (err.ErrorsCleared()) {
+            threadId = 0u;
+        }
 
     }
     else if ((status == TimeoutStoppingState) || (status == StoppingState)) {
         commands = KillCommand;
 
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
-        err.fatalError = Threads::Kill(threadId);
+        err.fatalError = !Threads::Kill(threadId);
 
         if (err.ErrorsCleared()) {
 
@@ -235,9 +239,9 @@ ErrorManagement::ErrorType EmbeddedThread::Stop() {
         err.timeout = (GetStatus() != OffState);
 
         // in any case notify the main object of the fact that the thread has been killed
-        information.SetStage(asyncTerminationStage);
+        information.SetStage(AsyncTerminationStage);
         Execute(information);
-
+        threadId = 0u;
     }
     else {
         err.illegalOperation = true;
@@ -249,7 +253,6 @@ ErrorManagement::ErrorType EmbeddedThread::Stop() {
 ThreadIdentifier EmbeddedThread::GetThreadId() {
     return threadId;
 }
-
 
 }
 

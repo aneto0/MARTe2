@@ -51,30 +51,49 @@ namespace MARTe{
  */
 class EmbeddedServiceI{
 public:
-    // start of a thread execution sequence
-    static const uint8  startupStage         = 0u;
+    //Note that the list of stages is not an enum as it is used in a BitRange below as a uint8
+    /**
+     * Start of a thread execution sequence
+     */
+    static const uint8  StartupStage         = 0u;
 
-    // main part of a sequence - looping unless an error or completed is returned
-    static const uint8  mainStage            = 1u;
+    /**
+     * Main part of a sequence - looping unless an error or completed is returned
+     */
+    static const uint8  MainStage            = 1u;
 
-    // normal termination stage - following the end of the mainStage
-    static const uint8  terminationStage     = 2u;
+    /**
+     * Normal termination stage - following the end of the mainStage
+     */
+    static const uint8  TerminationStage     = 2u;
 
-    // bad termination stage - after an error returned by the user code or following the Stop()
-    static const uint8  badTerminationStage  = 3u;
+    /**
+     * Bad termination stage - after an error returned by the user code or following the Stop()
+     */
+    static const uint8  BadTerminationStage  = 3u;
 
-    // after a kill - called by the killing task
-    static const uint8  asyncTerminationStage= 4u;
+    /**
+     * After a kill - called by the killing task
+     */
+    static const uint8  AsyncTerminationStage= 4u;
 
-    // sub-states of mainStage
-    // set when stage is startupStage or terminationStage
-    static const uint8  nullStage2           = 0u;
+    /**
+     *  Sub-states of mainStage.
+     */
+    /**
+     * Set when stage is startupStage or terminationStage
+     */
+    static const uint8  NullStage2           = 0u;
 
-    // for client&server model - wait for service request
-    static const uint8  waitRequestStage2    = 1u;
+    /**
+     * For client&server model - wait for service request
+     */
+    static const uint8  WaitRequestStage2    = 1u;
 
-    // for client&server model - servicing the client
-    static const uint8  serviceRequestStage2 = 2u;
+    /**
+     * For client&server model - servicing the client
+     */
+    static const uint8  ServiceRequestStage2 = 2u;
 
     /**
      * I communicates to the user code the stage of the thread life, which evolves according to rules specific to the EmbeddedServiceI derived class

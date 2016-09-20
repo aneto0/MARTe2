@@ -46,3 +46,67 @@ TEST(EmbeddedThreadGTest,TestConstructor) {
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
+TEST(EmbeddedThreadGTest,TestDefaultConstructor_Template) {
+    EmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestDefaultConstructor_Template());
+}
+
+TEST(EmbeddedThreadGTest,TestInitialise) {
+    EmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestInitialise());
+}
+
+TEST(EmbeddedThreadGTest,TestInitialise_False) {
+    EmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestInitialise_False());
+}
+
+TEST(EmbeddedThreadGTest,TestStart) {
+    EmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestStart());
+}
+
+TEST(EmbeddedThreadGTest,TestStart_False) {
+    EmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestStart_False());
+}
+
+TEST(EmbeddedThreadGTest,TestStart_Restart) {
+    EmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestStart_Restart());
+}
+
+TEST(EmbeddedThreadGTest,TestStop) {
+    EmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestStop());
+}
+
+TEST(EmbeddedThreadGTest,TestStop_Kill) {
+    EmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestStop_Kill());
+}
+
+TEST(EmbeddedThreadGTest,TestThreadLoop) {
+    EmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestThreadLoop());
+}
+
+TEST(EmbeddedThreadGTest,TestGetStatus) {
+    EmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestGetStatus());
+}
+
+TEST(EmbeddedThreadGTest,TestSetTimeout) {
+    EmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestSetTimeout());
+}
+
+TEST(EmbeddedThreadGTest,TestGetTimeout) {
+    EmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestGetTimeout());
+}
+
+TEST(EmbeddedThreadGTest,TestGetThreadId) {
+    EmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestGetThreadId());
+}

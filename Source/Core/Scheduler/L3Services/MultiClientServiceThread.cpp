@@ -60,16 +60,16 @@ void MultiClientServiceThread::ThreadLoop() {
     while ((commands == KeepRunningCommand) && (!manager.MoreThanEnoughThreads())) {
         ErrorManagement::ErrorType err;
 
-        information.SetStage(startupStage);
-        information.SetStage2(nullStage2);
+        information.SetStage(StartupStage);
+        information.SetStage2(NullStage2);
         if (commands == KeepRunningCommand) {
             err = Execute(information);
         } // start
 
         // main loop - wait for service request - service the request
         while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
-            information.SetStage(mainStage);
-            information.SetStage2(waitRequestStage2);
+            information.SetStage(MainStage);
+            information.SetStage2(WaitRequestStage2);
 
             // simulate timeout to allow entering next loop
             err.timeout = true;
@@ -84,7 +84,7 @@ void MultiClientServiceThread::ThreadLoop() {
                 // Try start new service thread
                 manager.AddThread();
 
-                information.SetStage2(serviceRequestStage2);
+                information.SetStage2(ServiceRequestStage2);
                 // exit on error including ErrorManagement::completed
                 while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
                     err = Execute(information);
@@ -93,12 +93,12 @@ void MultiClientServiceThread::ThreadLoop() {
         } // loop (wait service - loop (service) ) -
 
         // assuming one reason for exiting (not multiple errors together with a command change)
-        information.SetStage2(nullStage2);
+        information.SetStage2(NullStage2);
         if (err.completed) {
-            information.SetStage(terminationStage);
+            information.SetStage(TerminationStage);
         }
         else {
-            information.SetStage(badTerminationStage);
+            information.SetStage(BadTerminationStage);
         }
         Execute(information);
 
