@@ -38,6 +38,7 @@
 #include "EmbeddedServiceMethodBinderT.h"
 #include "ErrorType.h"
 #include "ExecutionInfo.h"
+#include "Object.h"
 #include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
@@ -46,60 +47,57 @@
 
 namespace MARTe {
 /**
- * @brief Interface to a family of objects that allow interfacing a class method to a thread or a pool of threads.
+ * @brief Interface to a family of objects that allows interfacing a class method to a thread or to a pool of threads.
  * @details The method interface is specified in EmbeddedServiceI::MethodBinderT<class>::MethodPointer.
  * It returns an ErrorType and has one parameter of type EmbeddedServiceI::ExecutionInfo&
  */
-class EmbeddedServiceI {
+class EmbeddedServiceI: public Object {
 public:
 
     /**
-     * allocated by the user.
-     * memory managed by object
+     * @brief Constructor. Forces the setting of the method binder.
+     * @param[in] binder the method which will be called in the context of this service.
      */
-    EmbeddedServiceI(EmbeddedServiceMethodBinderI &binder) :
-            method(binder) {
-    }
+    EmbeddedServiceI(EmbeddedServiceMethodBinderI &binder);
 
     /**
-     * allocated by the user.
-     * memory managed by object
+     * @brief Constructor. Forces the setting of the method binder.
+     * @param[in] binder the method which will be called in the context of this service.
      */
     template<typename className>
-    EmbeddedServiceI(EmbeddedServiceMethodBinderT<className> &binder) :
-            method(binder) {
-    }
+    EmbeddedServiceI(EmbeddedServiceMethodBinderT<className> &binder);
 
     /**
-     *
+     * @brief Destructor. NOOP.
      */
-    virtual ~EmbeddedServiceI() {
-    }
+    virtual ~EmbeddedServiceI();
 
     /**
-     * TODO
-     * same as object interface
-     */
-    virtual bool Initialise(StructuredDataI &data)=0;
-
-    /**
-     * TODO
+     * @brief Starts the embedded service (which will call the registered callback method in the context of a thread).
+     * @return ErrorManagement::NoError if the service can be successfully started.
      */
     virtual ErrorManagement::ErrorType Start()=0;
 
     /**
-     * TODO
+     * @brief Stops the embedded service (which is calling the registered callback method in the context of a thread).
+     * @return ErrorManagement::NoError if the service can be successfully stopped.
      */
     virtual ErrorManagement::ErrorType Stop()=0;
 
 protected:
-    /**
-     * TODO
-     */
-    inline ErrorManagement::ErrorType Execute(ExecutionInfo information) {
-        return method.Execute(information);
-    }
 
+    /**
+     * @brief Callback function that is executed in the context of a thread spawned by this EmbeddedServiceI.
+     * @details This function is a one-to-one mapping to the user-registered callback function (see EmbeddedServiceMethodBinderT).
+     * This allows to call functions with any name and to call, on the same object instance, different functions from different threads.
+     * @param[in] info information about the current state of the execution thread.
+     * @return the ErrorType returned by the user function.
+     */
+    inline ErrorManagement::ErrorType Execute(ExecutionInfo information);
+
+    /**
+     * The registered call-back method to be called by this EmbeddedServiceI instance.
+     */
     EmbeddedServiceMethodBinderI &method;
 };
 
@@ -107,6 +105,15 @@ protected:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+template<typename className>
+EmbeddedServiceI::EmbeddedServiceI(EmbeddedServiceMethodBinderT<className> &binder) :
+        Object(),
+        method(binder) {
+}
+
+ErrorManagement::ErrorType EmbeddedServiceI::Execute(ExecutionInfo information) {
+    return method.Execute(information);
+}
 }
 
 #endif /* EMBEDDEDSERVICE_H_ */

@@ -30,8 +30,6 @@
 /*---------------------------------------------------------------------------*/
 #include "EmbeddedServiceI.h"
 
-namespace MARTe {
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,6 +37,13 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+EmbeddedServiceI::EmbeddedServiceI(EmbeddedServiceMethodBinderI &binder) :
+        Object(),
+        method(binder) {
+}
 
+EmbeddedServiceI::~EmbeddedServiceI() {
+}
 
 }

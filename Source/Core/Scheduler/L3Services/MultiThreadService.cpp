@@ -53,7 +53,7 @@ bool  MultiThreadService::Initialise(StructuredDataI &data){
 ErrorManagement::ErrorType MultiThreadService::AddThread(){
     ErrorManagement::ErrorType  err;
     if ((threadPool.Size()< minNumberOfThreads) && (err.ErrorsCleared())){
-        ReferenceT<EmbeddedThread> thread(new EmbeddedThread(method));
+        ReferenceT<EmbeddedThread> thread(new (NULL) EmbeddedThread(method));
         err.fatalError = ! thread.IsValid();
         if (err.ErrorsCleared()) {
             err = thread->Start();

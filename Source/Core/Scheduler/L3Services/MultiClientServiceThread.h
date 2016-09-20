@@ -41,7 +41,7 @@ namespace MARTe {
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class MultiClientServiceThread: public Object, public EmbeddedThread {
+class MultiClientServiceThread: public EmbeddedThread {
 
 public:
 

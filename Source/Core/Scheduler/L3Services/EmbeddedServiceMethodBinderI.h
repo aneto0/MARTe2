@@ -58,9 +58,9 @@ public:
     virtual ~EmbeddedServiceMethodBinderI();
 
     /**
-     * @brief Callback function that is executed in the context of a thread spawned by the EmbeddedService.
+     * @brief Callback function that is executed in the context of a thread spawned by the EmbeddedServiceI.
      * @details This function is a one-to-one mapping to the user-registered callback function (see EmbeddedServiceMethodBinderT).
-     * This allows to call functions with any name in the class and to call, on the same object instance, different functions from different threads.
+     * This allows to call functions with any name and to call, on the same object instance, different functions from different threads.
      * @param[in] info information about the current state of the execution thread.
      * @return the ErrorType returned by the user function.
      */
