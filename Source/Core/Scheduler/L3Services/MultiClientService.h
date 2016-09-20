@@ -43,7 +43,7 @@ namespace MARTe {
 /**
  *
  */
-class MultiClientService: public MultiThreadService {
+class MultiClientService: public EmbeddedServiceI {
 
 public:
 
@@ -66,17 +66,36 @@ public:
      * allows to add threads to the maxNumberOfThreads
      * called by Start
      */
-    virtual ErrorManagement::ErrorType AddThread();
-
+    ErrorManagement::ErrorType AddThread();
+    /**
+         *
+         */
+        inline bool MoreThanEnoughThreads();
 protected:
+    /**
+     *
+     */
+    //inline bool TooManyThreads();
+
 
     /// either the available working threads or the maximum
     uint32 maxNumberOfThreads;
+
+    uint32 minNumberOfThreads;
+
+    /**
+     *
+     */
+    ReferenceContainer threadPool;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+bool MultiClientService::MoreThanEnoughThreads() {
+    return (threadPool.Size() > minNumberOfThreads);
+}
 
 /**
  * TODO
@@ -84,7 +103,8 @@ protected:
 template<typename className>
 MultiClientService::MultiClientService(EmbeddedServiceMethodBinderT<className> &binder) :
         MultiThreadService(binder) {
-    maxNumberOfThreads = minNumberOfThreads;
+    minNumberOfThreads = 0u;
+    maxNumberOfThreads = 1u;
 }
 
 }

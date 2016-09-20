@@ -28,10 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "AdvancedErrorManagement.h"
 #include "MultiThreadService.h"
 #include "ReferenceT.h"
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,21 +40,34 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
-bool  MultiThreadService::Initialise(StructuredDataI &data){
-    ErrorManagement::ErrorType  err;
+MultiThreadService::~MultiThreadService() {
+    Stop();
+}
+
+bool MultiThreadService::Initialise(StructuredDataI &data) {
+    ErrorManagement::ErrorType err;
     threadPool.SetName("ThreadPool");
-    err = data.Read("MinNumberOfThreads",minNumberOfThreads);
+    err.parametersError = !data.Read("NumberOfPoolThreads", numberOfPoolThreads);
+    if (err.ErrorsCleared()) {
+        err.parametersError = !data.Read("Timeout", msecTimeout);
+    }
+    if (err.ErrorsCleared()) {
+        if (msecTimeout == 0u) {
+            msecTimeout = TTInfiniteWait.GetTimeoutMSec();
+        }
+    }
     return err;
 }
 
-ErrorManagement::ErrorType MultiThreadService::AddThread(){
-    ErrorManagement::ErrorType  err;
-    if ((threadPool.Size()< minNumberOfThreads) && (err.ErrorsCleared())){
-        ReferenceT<EmbeddedThread> thread(new (NULL) EmbeddedThread(method));
-        err.fatalError = ! thread.IsValid();
+ErrorManagement::ErrorType MultiThreadService::Start() {
+    ErrorManagement::ErrorType err;
+    while ((threadPool.Size() < numberOfPoolThreads) && (err.ErrorsCleared())) {
+        ReferenceT<SingleThreadService> thread(new (NULL) SingleThreadService(method));
+        err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
+            thread->SetTimeout(msecTimeout);
             err = thread->Start();
         }
         if (err.ErrorsCleared()) {
@@ -65,47 +77,46 @@ ErrorManagement::ErrorType MultiThreadService::AddThread(){
     return err;
 }
 
-
-ErrorManagement::ErrorType MultiThreadService::Start(){
-    ErrorManagement::ErrorType  err;
-    while((threadPool.Size()< minNumberOfThreads) && (err.ErrorsCleared())){
-        err = AddThread();
-    }
-    return err;
-}
-
-ErrorManagement::ErrorType MultiThreadService::Stop(){
-    ErrorManagement::ErrorType  err;
+ErrorManagement::ErrorType MultiThreadService::Stop() {
+    ErrorManagement::ErrorType err;
     uint32 i;
-    for (i=0;i<threadPool.Size();i++){
-        ReferenceT<EmbeddedThread> thread = threadPool.Get(i);
-        if (thread.IsValid()){
-            thread->Stop();
+    for (i = 0; i < threadPool.Size(); i++) {
+        ReferenceT<SingleThreadService> thread = threadPool.Get(i);
+        if (thread.IsValid()) {
+            err = thread->Stop();
+            if (!err.ErrorsCleared()) {
+                REPORT_ERROR_PARAMETERS(err, "Could not Stop SingleThreadService(%d)", i)
+            }
         }
     }
     // perform kill if necessary
-    for (i=0;i<threadPool.Size();i++){
-        ReferenceT<EmbeddedThread> thread = threadPool.Get(i);
-        if (thread.IsValid()){
-            thread->Stop();
+    for (i = 0; i < threadPool.Size(); i++) {
+        ReferenceT<SingleThreadService> thread = threadPool.Get(i);
+        if (thread.IsValid()) {
+            err = thread->Stop();
+            if (!err.ErrorsCleared()) {
+                REPORT_ERROR_PARAMETERS(err, "Could not Kill SingleThreadService(%d)", i)
+            }
         }
     }
     // remove dead threads
     i = 0;
-    while((i<threadPool.Size()) && (err.ErrorsCleared())){
-        ReferenceT<EmbeddedThread> thread = threadPool.Get(i);
-        if (thread.IsValid()){
-            if (thread->GetStatus() == EmbeddedThread::OffState){
+    while ((i < threadPool.Size()) && (err.ErrorsCleared())) {
+        ReferenceT<SingleThreadService> thread = threadPool.Get(i);
+        if (thread.IsValid()) {
+            if (thread->GetStatus() == EmbeddedServiceI::OffState) {
                 threadPool.Delete(thread);
-            } else {
+            }
+            else {
                 i++;
             }
-        } else {
+        }
+        else {
             // some unexpected content or something seriously wrong!!
             err.internalSetupError = true;
         }
     }
-    if (err.ErrorsCleared() && (threadPool.Size() > 0)){
+    if (err.ErrorsCleared() && (threadPool.Size() > 0)) {
         // some thread die hard
         err.timeout = true;
     }
@@ -114,8 +125,28 @@ ErrorManagement::ErrorType MultiThreadService::Stop(){
 
 }
 
-MultiThreadService::~MultiThreadService(){
-    Stop();
+EmbeddedServiceI::States MultiThreadService::GetStatus(uint32 threadIdx) {
+    EmbeddedServiceI::States status = EmbeddedServiceI::NoneState;
+    if (threadIdx < threadPool.Size()) {
+        ReferenceT<SingleThreadService> thread = threadPool.Get(threadIdx);
+        status = thread->GetStatus();
+    }
+
+    return status;
+}
+
+ThreadIdentifier MultiThreadService::GetThreadId(uint32 threadIdx) {
+    ThreadIdentifier tid = 0u;
+    if (threadIdx < threadPool.Size()) {
+        ReferenceT<SingleThreadService> thread = threadPool.Get(threadIdx);
+        tid = thread->GetThreadId();
+    }
+
+    return tid;
+}
+
+uint32 MultiThreadService::GetNumberOfPoolThreads() const {
+    return numberOfPoolThreads;
 }
 
 }

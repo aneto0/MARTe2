@@ -32,8 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "EmbeddedThread.h"
-#include "MultiThreadService.h"
+#include "MultiClientService.h"
+#include "SingleThreadService.h"
 
 namespace MARTe {
 
@@ -41,7 +41,7 @@ namespace MARTe {
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class MultiClientServiceThread: public EmbeddedThread {
+class MultiClientServiceThread: public SingleThreadService {
 
 public:
 
@@ -49,14 +49,14 @@ public:
      * TODO
      */
     MultiClientServiceThread(EmbeddedServiceMethodBinderI &binder,
-                             MultiThreadService &managerIn);
+                             MultiClientService &managerIn);
 
     /**
      * TODO
      */
     template<typename className>
     MultiClientServiceThread(EmbeddedServiceMethodBinderT<className> &binder,
-                             MultiThreadService &managerIn);
+                             MultiClientService &managerIn);
 
     /**
      *
@@ -73,7 +73,7 @@ private:
     /**
      *
      */
-    MultiThreadService &manager;
+    MultiClientService &manager;
 };
 
 /*---------------------------------------------------------------------------*/
@@ -82,8 +82,8 @@ private:
 
 template<typename className>
 MultiClientServiceThread::MultiClientServiceThread(EmbeddedServiceMethodBinderT<className> &binder,
-                                                   MultiThreadService &managerIn) :
-        EmbeddedThread(binder),
+                                                   MultiClientService &managerIn) :
+                                                   SingleThreadService(binder),
         manager(managerIn) {
 }
 

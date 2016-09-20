@@ -1,8 +1,8 @@
 /**
- * @file EmbeddedThreadObject.h
- * @brief Header file for class EmbeddedThreadObject
- * @date Sep 5, 2016
- * @author fsartori
+ * @file MultiThreadServiceTest.h
+ * @brief Header file for class MultiThreadServiceTest
+ * @date 19/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class EmbeddedThreadObject
+ * @details This header file contains the declaration of the class MultiThreadServiceTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_EMBEDDEDTHREADOBJECT_H_
-#define L4MESSAGES_EMBEDDEDTHREADOBJECT_H_
+#ifndef MULTITHREADSERVICETEST_H_
+#define MULTITHREADSERVICETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,46 +31,100 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "EmbeddedThread.h"
-
-namespace MARTe {
+#include "MultiThreadService.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class EmbeddedThreadObject: public EmbeddedThread{
-
+/**
+ * Tests the MultiThreadService public methods.
+ */
+class MultiThreadServiceTest {
 public:
 
+    /**
+     * @brief Default constructor
+     */
+    MultiThreadServiceTest();
 
     /**
-     * TODO
+     * @brief Destructor
      */
-    EmbeddedThreadObject(EmbeddedServiceMethodBinderI &binder);
+    virtual ~MultiThreadServiceTest();
 
     /**
-     * TODO
+     * @brief Tests the default constructor.
      */
-    template <typename className>
-    EmbeddedThreadObject(EmbeddedServiceMethodBinderT<className> &binder);
+    bool TestDefaultConstructor_Template();
 
     /**
-     * TODO
+     * @brief Tests the Initialise function.
      */
-    virtual ~EmbeddedThreadObject();
+    bool TestInitialise();
 
+    /**
+     * @brief Tests the Initialise function without specifying the Timeout parameter.
+     */
+    bool TestInitialise_False();
+
+#if 0
+
+
+    /**
+     * @brief Tests the Start function.
+     */
+    bool TestStart();
+
+    /**
+     * @brief Tests the Start function calling it twice, which should trigger an illegal operation.
+     */
+    bool TestStart_False();
+
+    /**
+     * @brief Tests the Start function after a stop has been called.
+     */
+    bool TestStart_Restart();
+
+    /**
+     * @brief Tests the Stop function.
+     */
+    bool TestStop();
+
+    /**
+     * @brief Tests the Stop function forcing a kill.
+     */
+    bool TestStop_Kill();
+
+    /**
+     * @brief Tests the ThreadLoop function.
+     */
+    bool TestThreadLoop();
+
+    /**
+     * @brief Tests the GetStatus function.
+     */
+    bool TestGetStatus();
+
+    /**
+     * @brief Tests the SetTimeout function
+     */
+    bool TestSetTimeout();
+
+    /**
+     * @brief Tests the GetTimeout function
+     */
+    bool TestGetTimeout();
+
+    /**
+     * @brief Tests the GetThreadId function
+     */
+    bool TestGetThreadId();
+#endif
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+#endif /* MULTITHREADSERVICETEST_H_ */
 
-template <typename className>
-EmbeddedThreadObject::EmbeddedThreadObject(EmbeddedServiceMethodBinderT<className> &binder): EmbeddedThread(binder) {}
-
-}
-
-#endif /* L4MESSAGES_EMBEDDEDTHREADOBJECT_H_ */
-	

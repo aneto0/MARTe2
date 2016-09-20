@@ -53,7 +53,56 @@ namespace MARTe {
  */
 class EmbeddedServiceI: public Object {
 public:
+    /**
+     * @brief List of possible states of an SingleServiceThread.
+     */
+    enum States {
+        /**
+         * No Status
+         */
+        NoneState,
 
+        /**
+         * No Thread running = (threadId = 0)
+         */
+        OffState,
+
+        /**
+         * Thread is starting
+         */
+        StartingState,
+
+        /**
+         * Thread timed-out while starting
+         */
+        TimeoutStartingState,
+
+        /**
+         * (threadId != 0)
+         */
+        RunningState,
+
+        /**
+         * Thread is stopping
+         */
+        StoppingState,
+
+        /**
+         * Thread timed-out while stopping
+         */
+        TimeoutStoppingState,
+
+        /**
+         * Thread is being killed
+         */
+        KillingState,
+
+        /**
+         * Thread timed-out while being killed
+         */
+        TimeoutKillingState
+
+    };
     /**
      * @brief Constructor. Forces the setting of the method binder.
      * @param[in] binder the method which will be called in the context of this service.
@@ -85,6 +134,29 @@ public:
     virtual ErrorManagement::ErrorType Stop()=0;
 
 protected:
+    /**
+     * @brief List of possible commands to an SingleServiceThread
+     */
+    enum Commands {
+        /**
+         * Set by Start() at the start of thread life
+         */
+        StartCommand,
+        /**
+         * Set by the thread before entering loop
+         */
+        KeepRunningCommand,
+        /**
+         * Nice request to stop
+         */
+        StopCommand,
+
+        /**
+         * Stop called twice - performing async killing
+         */
+        KillCommand
+
+    };
 
     /**
      * @brief Callback function that is executed in the context of a thread spawned by this EmbeddedServiceI.

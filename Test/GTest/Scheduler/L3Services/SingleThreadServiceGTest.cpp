@@ -1,6 +1,6 @@
 /**
- * @file EmbeddedThreadGTest.cpp
- * @brief Source file for class EmbeddedThreadGTest
+ * @file SingleThreadServiceGTest.cpp
+ * @brief Source file for class SingleThreadServiceGTest
  * @date 19/09/2016
  * @author Andre Neto
  *
@@ -30,8 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 
+#include <SingleThreadServiceTest.h>
 #include "gtest/gtest.h"
-#include "EmbeddedThreadTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,72 +41,72 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(EmbeddedThreadGTest,TestConstructor) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestConstructor) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(EmbeddedThreadGTest,TestDefaultConstructor_Template) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestDefaultConstructor_Template) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestDefaultConstructor_Template());
 }
 
-TEST(EmbeddedThreadGTest,TestInitialise) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestInitialise) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestInitialise());
 }
 
-TEST(EmbeddedThreadGTest,TestInitialise_False) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestInitialise_False) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False());
 }
 
-TEST(EmbeddedThreadGTest,TestStart) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestStart) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestStart());
 }
 
-TEST(EmbeddedThreadGTest,TestStart_False) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestStart_False) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestStart_False());
 }
 
-TEST(EmbeddedThreadGTest,TestStart_Restart) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestStart_Restart) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestStart_Restart());
 }
 
-TEST(EmbeddedThreadGTest,TestStop) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestStop) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestStop());
 }
 
-TEST(EmbeddedThreadGTest,TestStop_Kill) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestStop_Kill) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestStop_Kill());
 }
 
-TEST(EmbeddedThreadGTest,TestThreadLoop) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestThreadLoop) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestThreadLoop());
 }
 
-TEST(EmbeddedThreadGTest,TestGetStatus) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestGetStatus) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestGetStatus());
 }
 
-TEST(EmbeddedThreadGTest,TestSetTimeout) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestSetTimeout) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestSetTimeout());
 }
 
-TEST(EmbeddedThreadGTest,TestGetTimeout) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestGetTimeout) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestGetTimeout());
 }
 
-TEST(EmbeddedThreadGTest,TestGetThreadId) {
-    EmbeddedThreadTest target;
+TEST(SingleThreadServiceGTest,TestGetThreadId) {
+    SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestGetThreadId());
 }

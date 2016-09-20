@@ -32,9 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "../L3Services/SingleThreadService.h"
 #include "MessageI.h"
 #include "ReferenceContainer.h"
-#include "EmbeddedThread.h"
 #include "QueueingMessageFilter.h"
 
 /*---------------------------------------------------------------------------*/
@@ -120,7 +120,7 @@ private:
     /**
      * EmbeddedThread that executes the QueueProcessing.
      */
-    EmbeddedThread queueProcessingThread;
+    SingleThreadService queueProcessingThread;
 
     /**
      * Binds the QueueProcessing against the queueProcessingThread.

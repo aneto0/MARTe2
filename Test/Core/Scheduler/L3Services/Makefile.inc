@@ -25,8 +25,9 @@
 #############################################################
 
 OBJSX=  EmbeddedServiceMethodBinderTTest.x \
-        EmbeddedThreadTest.x \
-    ExecutionInfoTest.x
+    ExecutionInfoTest.x \
+    MultiThreadServiceTest.x \
+    SingleThreadServiceTest.x
 
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..

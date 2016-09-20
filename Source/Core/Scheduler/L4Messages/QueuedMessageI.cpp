@@ -44,10 +44,10 @@
 namespace MARTe {
 
 QueuedMessageI::QueuedMessageI() :
+        MessageI(),
         queue(GlobalObjectsDatabase::Instance()->GetStandardHeap()),
         queueProcessingThread(binder),
-        binder(*this, &QueuedMessageI::QueueProcessing),
-        MessageI() {
+        binder(*this, &QueuedMessageI::QueueProcessing) {
 
     ErrorManagement::ErrorType err;
 

@@ -1,6 +1,6 @@
 /**
- * @file EmbeddedThreadTest.h
- * @brief Header file for class EmbeddedThreadTest
+ * @file SingleThreadServiceTest.h
+ * @brief Header file for class SingleThreadServiceTest
  * @date 19/09/2016
  * @author Andre Neto
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class EmbeddedThreadTest
+ * @details This header file contains the declaration of the class SingleThreadServiceTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef EMBEDDEDTHREADTEST_H_
-#define EMBEDDEDTHREADTEST_H_
+#ifndef SINGLETHREADSERVICETEST_H_
+#define SINGLETHREADSERVICETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,26 +31,26 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "EmbeddedThread.h"
+#include "SingleThreadService.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
- * Tests the EmbeddedThread public methods.
+ * Tests the SingleThreadService public methods.
  */
-class EmbeddedThreadTest {
+class SingleThreadServiceTest {
 public:
 
     /**
      * @brief Default constructor
      */
-    EmbeddedThreadTest();
+    SingleThreadServiceTest();
 
     /**
      * @brief Destructor
      */
-    virtual ~EmbeddedThreadTest();
+    virtual ~SingleThreadServiceTest();
 
     /**
      * @brief Tests the default constructor.
@@ -127,5 +127,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* EMBEDDEDTHREADTEST_H_ */
+#endif /* SINGLETHREADSERVICETEST_H_ */
 

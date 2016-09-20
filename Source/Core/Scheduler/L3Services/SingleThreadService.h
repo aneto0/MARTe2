@@ -1,6 +1,6 @@
 /**
- * @file EmbeddedThread.h
- * @brief Header file for class EmbeddedThread
+ * @file SingleThreadService.h
+ * @brief Header file for class SingleThreadService
  * @date 22/08/2016
  * @author Filippo Sartori
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class EmbeddedThread
+ * @details This header file contains the declaration of the class SingleThreadService
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef EMBEDDEDTHREAD_H_
-#define EMBEDDEDTHREAD_H_
+#ifndef SINGLETHREADSERVICE_H_
+#define SINGLETHREADSERVICE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -50,96 +50,46 @@ namespace MARTe {
  * This method will be continuously called (see Start) with the stage encoded in the Information parameter. In particular this class allows to request for a "kind" Stop of the
  * embedded thread and, if this fails, for a direct killing of the thread.
  */
-class EmbeddedThread: public EmbeddedServiceI {
+class SingleThreadService: public EmbeddedServiceI {
 
 public:
 
     /**
-     * @brief List of possible states of an EmbeddedThread.
-     */
-    enum States {
-        /**
-         * No Status
-         */
-        NoneState,
-
-        /**
-         * No Thread running = (threadId = 0)
-         */
-        OffState,
-
-        /**
-         * Thread is starting
-         */
-        StartingState,
-
-        /**
-         * Thread timed-out while starting
-         */
-        TimeoutStartingState,
-
-        /**
-         * (threadId != 0)
-         */
-        RunningState,
-
-        /**
-         * Thread is stopping
-         */
-        StoppingState,
-
-        /**
-         * Thread timed-out while stopping
-         */
-        TimeoutStoppingState,
-
-        /**
-         * Thread is being killed
-         */
-        KillingState,
-
-        /**
-         * Thread timed-out while being killed
-         */
-        TimeoutKillingState
-
-    };
-
-    /**
      * @brief Constructor.
-     * @param[in] binder contains the function to be executed by this EmbeddedThread.
+     * @param[in] binder contains the function to be executed by this SingleThreadService.
      * @post
      *   GetTimeout() == TTInfiniteWait &&
      *   GetThreadId() == 0 &&
      *   GetStatus() == OffState
      */
-    EmbeddedThread(EmbeddedServiceMethodBinderI &binder);
+    SingleThreadService(EmbeddedServiceMethodBinderI &binder);
 
     /**
      * @brief Constructor.
-     * @param[in] binder contains the function to be executed by this EmbeddedThread.
+     * @param[in] binder contains the function to be executed by this SingleThreadService.
      * @post
      *   GetTimeout() == TTInfiniteWait &&
      *   GetThreadId() == 0 &&
      *   GetStatus() == OffState
      */
     template<typename className>
-    EmbeddedThread(EmbeddedServiceMethodBinderT<className> &binder);
+    SingleThreadService(EmbeddedServiceMethodBinderT<className> &binder);
 
     /**
      * @brief Destructor.
      * @details Calls the Stop() method.
      */
-    virtual ~EmbeddedThread();
+    virtual ~SingleThreadService();
 
     /**
      * @brief Reads the Timeout from the data input.
      * @param[in] data shall contain a parameter with name "Timeout" holding the timeout in milliseconds.
+     * If "Timeout=0" => Timeout = TTInfiniteWait
      */
     virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * @brief Starts the EmbeddedThread.
+     * @brief Starts the SingleThreadService.
      * @return ErrorManagement::NoError if the thread can be successfully started.
      * @pre
      *   GetStatus() == OffState && GetThreadId() == 0
@@ -149,7 +99,7 @@ public:
     virtual ErrorManagement::ErrorType Start();
 
     /**
-     * @brief Stops the EmbeddedThread.
+     * @brief Stops the SingleThreadService.
      * @details If the thread was not running this function does nothing.
      * If the thread is running, a stop command with timeout is issued (notice that if GetTimeout() == TTInfiniteWait) the Stop() command will block forever) .
      * If the thread was being stopped (Stop() had already been called), the thread is killed.
@@ -173,7 +123,7 @@ public:
      *  - KillingState if the thread is being killed
      *  - TimeoutKillingState if the thread has timed-out while being killed
      */
-    EmbeddedThread::States GetStatus();
+    States GetStatus();
 
     /**
      * @brief Gets the embedded thread identifier.
@@ -201,29 +151,6 @@ public:
     void ThreadLoop();
 
 protected:
-    /**
-     * @brief List of possible commands to an EmbeddedThread
-     */
-    enum Commands {
-        /**
-         * Set by Start() at the start of thread life
-         */
-        StartCommand,
-        /**
-         * Set by the thread before entering loop
-         */
-        KeepRunningCommand,
-        /**
-         * Nice request to stop
-         */
-        StopCommand,
-
-        /**
-         * Stop called twice - performing async killing
-         */
-        KillCommand
-
-    };
     /**
      * Embedded thread identifier.
      */
@@ -264,15 +191,16 @@ protected:
 /*---------------------------------------------------------------------------*/
 
 template<typename className>
-EmbeddedThread::EmbeddedThread(EmbeddedServiceMethodBinderT<className> &binder) :
+SingleThreadService::SingleThreadService(EmbeddedServiceMethodBinderT<className> &binder) :
         EmbeddedServiceI(binder) {
     threadId = InvalidThreadIdentifier;
     commands = StopCommand;
     maxCommandCompletionHRT = 0;
     timeoutHRT = -1;
     information.Reset();
+    SetTimeout(TTInfiniteWait);
 }
 
 }
-#endif /* L2MIXED_EMBEDDEDTHREAD_H_ */
+#endif /* SINGLETHREADSERVICE_H_ */
 

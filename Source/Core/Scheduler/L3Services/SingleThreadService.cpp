@@ -1,6 +1,6 @@
 /**
- * @file EmbeddedThread.cpp
- * @brief Source file for class EmbeddedThread
+ * @file SingleThreadService.cpp
+ * @brief Source file for class SingleThreadService
  * @date 23/08/2016
  * @author Filippo Sartori
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class EmbeddedThread (public, protected, and private). Be aware that some 
+ * the class SingleThreadService (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "EmbeddedThread.h"
+#include <SingleThreadService.h>
 #include "ExecutionInfo.h"
 
 /*---------------------------------------------------------------------------*/
@@ -42,7 +42,7 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-EmbeddedThread::EmbeddedThread(EmbeddedServiceMethodBinderI &binder) :
+SingleThreadService::SingleThreadService(EmbeddedServiceMethodBinderI &binder) :
         EmbeddedServiceI(binder) {
     threadId = InvalidThreadIdentifier;
     commands = StopCommand;
@@ -51,22 +51,25 @@ EmbeddedThread::EmbeddedThread(EmbeddedServiceMethodBinderI &binder) :
     information.Reset();
 }
 
-EmbeddedThread::~EmbeddedThread() {
+SingleThreadService::~SingleThreadService() {
     Stop();
 }
 
-bool EmbeddedThread::Initialise(StructuredDataI &data) {
+bool SingleThreadService::Initialise(StructuredDataI &data) {
     uint32 msecTimeout;
     ErrorManagement::ErrorType err;
     err.parametersError = !data.Read("Timeout", msecTimeout);
     if (err.ErrorsCleared()) {
+        if (msecTimeout == 0u) {
+            msecTimeout = TTInfiniteWait.GetTimeoutMSec();
+        }
         SetTimeout(msecTimeout);
     }
 
     return err;
 }
 
-void EmbeddedThread::SetTimeout(TimeoutType msecTimeoutIn) {
+void SingleThreadService::SetTimeout(TimeoutType msecTimeoutIn) {
     msecTimeout = msecTimeoutIn;
     if (msecTimeout == TTInfiniteWait) {
         timeoutHRT = -1;
@@ -82,12 +85,12 @@ void EmbeddedThread::SetTimeout(TimeoutType msecTimeoutIn) {
     }
 }
 
-TimeoutType EmbeddedThread::GetTimeout() const {
+TimeoutType SingleThreadService::GetTimeout() const {
     return msecTimeout;
 }
 
-EmbeddedThread::States EmbeddedThread::GetStatus() {
-    EmbeddedThread::States status = NoneState;
+SingleThreadService::States SingleThreadService::GetStatus() {
+    SingleThreadService::States status = NoneState;
     bool isAlive = false;
 
     if (threadId == InvalidThreadIdentifier) {
@@ -138,15 +141,15 @@ EmbeddedThread::States EmbeddedThread::GetStatus() {
     return status;
 }
 
-static void EmbeddedThreadThreadLauncher(const void * const parameters) {
-    EmbeddedThread *thread = reinterpret_cast<EmbeddedThread *>(const_cast<void *>(parameters));
+static void SingleThreadServiceThreadLauncher(const void * const parameters) {
+    SingleThreadService *thread = reinterpret_cast<SingleThreadService *>(const_cast<void *>(parameters));
 
     // call
     thread->ThreadLoop();
 
 }
 
-void EmbeddedThread::ThreadLoop() {
+void SingleThreadService::ThreadLoop() {
     commands = KeepRunningCommand;
 
     ErrorManagement::ErrorType err;
@@ -180,7 +183,7 @@ void EmbeddedThread::ThreadLoop() {
     }
 }
 
-ErrorManagement::ErrorType EmbeddedThread::Start() {
+ErrorManagement::ErrorType SingleThreadService::Start() {
     ErrorManagement::ErrorType err;
 
     //check if thread already running
@@ -193,7 +196,7 @@ ErrorManagement::ErrorType EmbeddedThread::Start() {
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
         const void * const parameters = static_cast<void *>(this);
 
-        threadId = Threads::BeginThread(EmbeddedThreadThreadLauncher, parameters);
+        threadId = Threads::BeginThread(SingleThreadServiceThreadLauncher, parameters);
 
         err.fatalError = (threadId == 0);
     }
@@ -201,7 +204,7 @@ ErrorManagement::ErrorType EmbeddedThread::Start() {
     return err;
 }
 
-ErrorManagement::ErrorType EmbeddedThread::Stop() {
+ErrorManagement::ErrorType SingleThreadService::Stop() {
     ErrorManagement::ErrorType err;
     States status = GetStatus();
 
@@ -251,7 +254,7 @@ ErrorManagement::ErrorType EmbeddedThread::Stop() {
     return err;
 }
 
-ThreadIdentifier EmbeddedThread::GetThreadId() {
+ThreadIdentifier SingleThreadService::GetThreadId() {
     return threadId;
 }
 

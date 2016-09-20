@@ -1,7 +1,7 @@
 /**
  * @file MultiThreadService.h
  * @brief Header file for class MultiThreadServerClass
- * @date Aug 30, 2016
+ * @date 30/08/2016
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MULTITHREADSERVICE_H_
-#define L4MESSAGES_MULTITHREADSERVICE_H_
+#ifndef MULTITHREADSERVICE_H_
+#define MULTITHREADSERVICE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,81 +33,102 @@
 /*---------------------------------------------------------------------------*/
 
 #include "EmbeddedServiceI.h"
-#include "EmbeddedThreadObject.h"
 #include "ReferenceContainer.h"
-
-namespace MARTe{
+#include "SingleThreadService.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
 
 /**
- * Contains instances of specialised EmbeddedThreads
- *
+ * @brief Associates a pool of SingleThreadService instances (fixed size) to a class method.
  */
-class MultiThreadService: public EmbeddedServiceI{
-
+class MultiThreadService: public EmbeddedServiceI {
 
 public:
     /**
-     * TODO
+     * @brief Constructor.
+     * @param[in] binder contains the function to be executed by this MultiThreadService.
+     * @post
+     *   GetNumberOfPoolThreads() == 1
      */
-    template <typename className>
+    template<typename className>
     MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder);
 
     /**
-     *
+     * @brief Destructor.
+     * @post
+     *   Stop()
      */
     virtual ~MultiThreadService();
 
     /**
-    * TODO
-    * same as object interface
-    * implementation of EmbeddedServiceI
-    */
-    virtual bool  Initialise(StructuredDataI &data);
+     * @brief Reads the number of pool threads from the data input.
+     * @param[in] data shall contain a parameter named "NumberOfPoolThreads" holding the number of pool threads
+     * and another parameter named "Timeout" with the timeout to apply to each of the SingleThreadService instances.
+     * If "Timeout=0" => Timeout = TTInfiniteWait
+     */
+    virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * TODO
+     * @brief Starts N (GetNumberOfPoolThreads()) SingleThreadService instances.
+     * @return ErrorManagement::NoError if all the instances can be successfully started.
      */
     virtual ErrorManagement::ErrorType Start();
 
     /**
-     * TODO
+     * @brief Stops N (GetNumberOfPoolThreads()) SingleThreadService instances.
+     * @return ErrorManagement::NoError if all the instances can be successfully stopped.
      */
     virtual ErrorManagement::ErrorType Stop();
 
+    /**
+     * @brief Gets the number of pool threads.
+     * @return the number of pool threads.
+     */
+    uint32 GetNumberOfPoolThreads() const;
 
     /**
-     * just allows to add threads to the minNumberOfThreads
-     * called by Start
+     * @brief Sets the number of pool threads.
+     * @param[in] numberOfPoolThreadsIn the number of pool threads.
      */
-    virtual ErrorManagement::ErrorType AddThread();
+    void SetNumberOfPoolThreads(const uint32 numberOfPoolThreadsIn);
 
     /**
-     *
+     * @brief Gets the status of the SingleThreadService with index \a threadIdx.
+     * @param[in] threadIdx the index of the thread to query.
+     * @pre
+     *   threadIdx < GetNumberOfPoolThreads()
      */
-    inline bool TooManyThreads();
+    EmbeddedServiceI::States GetStatus(uint32 threadIdx);
 
     /**
-     *
+     * @brief Gets the ThreadIdentifier of the SingleThreadService with index \a threadIdx.
+     * @param[in] threadIdx the index of the thread to query.
+     * @pre
+     *   threadIdx < GetNumberOfPoolThreads()
      */
-    inline bool MoreThanEnoughThreads();
+    ThreadIdentifier GetThreadId(uint32 threadIdx);
 
 protected:
     /**
-     *
+     * Holds a pool of ReferenceT<SingleThreadService> references.
      */
     ReferenceContainer threadPool;
 
-    /// either the available working threads or the maximum
-    uint32 minNumberOfThreads;
+    /**
+     * The fixed number of pool threads.
+     */
+    uint32 numberOfPoolThreads;
+
+    /**
+     * The timeout to apply to each of the SingleThreadService instances.
+     */
+    uint32 msecTimeout;
 
 };
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
@@ -116,17 +137,14 @@ protected:
 /**
  * TODO
  */
-template <typename className>
-MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder):EmbeddedServiceI(binder){
-    minNumberOfThreads = 1;
+template<typename className>
+MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder) :
+        EmbeddedServiceI(binder) {
+    numberOfPoolThreads = 1;
+    msecTimeout = TTInfiniteWait.GetTimeoutMSec();
 }
-
-bool MultiThreadService::MoreThanEnoughThreads(){
-    return (threadPool.Size() > minNumberOfThreads);
-}
-
 
 }
 
-#endif /* L4MESSAGES_MULTITHREADSERVICE_H_ */
-	
+#endif /* MULTITHREADSERVICE_H_ */
+

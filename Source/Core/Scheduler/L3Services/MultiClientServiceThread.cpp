@@ -45,8 +45,8 @@ MultiClientServiceThread::~MultiClientServiceThread() {
 }
 
 MultiClientServiceThread::MultiClientServiceThread(EmbeddedServiceMethodBinderI &binder,
-                                                   MultiThreadService &managerIn) :
-        EmbeddedThread(binder),
+                                                   MultiClientService &managerIn) :
+        SingleThreadService(binder),
         manager(managerIn) {
 }
 

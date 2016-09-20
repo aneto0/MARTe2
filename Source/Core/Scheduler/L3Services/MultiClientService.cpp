@@ -33,8 +33,7 @@
 #include "MultiClientServiceThread.h"
 #include "ReferenceT.h"
 
-
-namespace MARTe{
+namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -43,21 +42,21 @@ namespace MARTe{
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool MultiClientService::Initialise(StructuredDataI &data){
+bool MultiClientService::Initialise(StructuredDataI &data) {
 
-    ErrorManagement::ErrorType  err = MultiThreadService::Initialise(data);
-    if (err.ErrorsCleared()){
-        err = data.Read("MaxNumberOfThreads",maxNumberOfThreads);
+    ErrorManagement::ErrorType err = data.Read("MaxNumberOfThreads", maxNumberOfThreads);
+
+    if (err.ErrorsCleared()) {
+        err = data.Read("MinNumberOfThreads", minNumberOfThreads);
     }
     return err;
 }
 
-
-ErrorManagement::ErrorType MultiClientService::AddThread(){
-    ErrorManagement::ErrorType  err;
-    if ((threadPool.Size()< maxNumberOfThreads) && (err.ErrorsCleared())){
+ErrorManagement::ErrorType MultiClientService::AddThread() {
+    ErrorManagement::ErrorType err;
+    if ((threadPool.Size() < maxNumberOfThreads) && (err.ErrorsCleared())) {
         ReferenceT<MultiClientServiceThread> thread(new (NULL) MultiClientServiceThread(method, *this));
-        err.fatalError = ! thread.IsValid();
+        err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
             err = thread->Start();
         }
@@ -68,7 +67,5 @@ ErrorManagement::ErrorType MultiClientService::AddThread(){
     return err;
 }
 
-
 }
 
-	

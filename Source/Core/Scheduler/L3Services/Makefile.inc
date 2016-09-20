@@ -26,12 +26,11 @@
 
 OBJSX=	EmbeddedServiceI.x \
     EmbeddedServiceMethodBinderI.x \
-    EmbeddedThread.x \
-    EmbeddedThreadObject.x \
     ExecutionInfo.x \
     MultiThreadService.x \
     MultiClientServiceThread.x \
-    MultiClientService.x
+    MultiClientService.x \
+    SingleThreadService.x \
         
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..
