@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "EmbeddedThread.h"
+#include "ExecutionInfo.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -160,7 +161,7 @@ void EmbeddedThread::ThreadLoop() {
         // main stage
         if (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
 
-            information.SetStage(MainStage);
+            information.SetStage(ExecutionInfo::MainStage);
             while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
                 err = Execute(information);
             }
@@ -168,10 +169,10 @@ void EmbeddedThread::ThreadLoop() {
 
         // assuming one reason for exiting (not multiple errors together with a command change)
         if (err.completed) {
-            information.SetStage(TerminationStage);
+            information.SetStage(ExecutionInfo::TerminationStage);
         }
         else {
-            information.SetStage(BadTerminationStage);
+            information.SetStage(ExecutionInfo::BadTerminationStage);
         }
 
         //Return value is ignored as thread cycle will start afresh whatever the return value.
@@ -239,7 +240,7 @@ ErrorManagement::ErrorType EmbeddedThread::Stop() {
         err.timeout = (GetStatus() != OffState);
 
         // in any case notify the main object of the fact that the thread has been killed
-        information.SetStage(AsyncTerminationStage);
+        information.SetStage(ExecutionInfo::AsyncTerminationStage);
         Execute(information);
         threadId = 0u;
     }

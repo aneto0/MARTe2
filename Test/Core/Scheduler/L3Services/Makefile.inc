@@ -24,7 +24,8 @@
 #
 #############################################################
 
-OBJSX=  EmbeddedThreadTest.x
+OBJSX=  EmbeddedThreadTest.x \
+    ExecutionInfoTest.x
 
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..

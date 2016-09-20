@@ -42,7 +42,7 @@ public:
         internalState = 0u;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::EmbeddedServiceI::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
         internalState++;
         return MARTe::ErrorManagement::NoError;
     }
@@ -56,14 +56,14 @@ public:
         internalState = 0u;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::EmbeddedServiceI::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
         internalState = 1;
-        if (information.GetStage() == MARTe::EmbeddedThread::MainStage) {
+        if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
             while (1) {
                 MARTe::Sleep::Sec(1.0);
             }
         }
-        if (information.GetStage() == MARTe::EmbeddedThread::AsyncTerminationStage) {
+        if (information.GetStage() == MARTe::ExecutionInfo::AsyncTerminationStage) {
             internalState = 15;
         }
         return MARTe::ErrorManagement::NoError;
@@ -81,11 +81,11 @@ public:
         startup = false;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::EmbeddedServiceI::ExecutionInfo &information) {
-        if (information.GetStage() == MARTe::EmbeddedThread::StartupStage) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
+        if (information.GetStage() == MARTe::ExecutionInfo::StartupStage) {
             startup = true;
         }
-        if (information.GetStage() == MARTe::EmbeddedThread::MainStage) {
+        if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
             main = true;
             if (!completed) {
                 return MARTe::ErrorManagement::Completed;
@@ -94,10 +94,10 @@ public:
                 return MARTe::ErrorManagement::FatalError;
             }
         }
-        if (information.GetStage() == MARTe::EmbeddedThread::TerminationStage) {
+        if (information.GetStage() == MARTe::ExecutionInfo::TerminationStage) {
             completed = true;
         }
-        if (information.GetStage() == MARTe::EmbeddedThread::BadTerminationStage) {
+        if (information.GetStage() == MARTe::ExecutionInfo::BadTerminationStage) {
             badTermination = true;
         }
         return MARTe::ErrorManagement::NoError;

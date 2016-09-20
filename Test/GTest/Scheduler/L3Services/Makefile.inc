@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX=  EmbeddedThreadGTest.x
+OBJSX=  EmbeddedThreadGTest.x \
+    ExecutionInfoGTest.x
 
 PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..

@@ -60,16 +60,16 @@ void MultiClientServiceThread::ThreadLoop() {
     while ((commands == KeepRunningCommand) && (!manager.MoreThanEnoughThreads())) {
         ErrorManagement::ErrorType err;
 
-        information.SetStage(StartupStage);
-        information.SetStage2(NullStage2);
+        information.SetStage(ExecutionInfo::StartupStage);
+        information.SetStageSpecific(ExecutionInfo::NullStageSpecific);
         if (commands == KeepRunningCommand) {
             err = Execute(information);
         } // start
 
         // main loop - wait for service request - service the request
         while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
-            information.SetStage(MainStage);
-            information.SetStage2(WaitRequestStage2);
+            information.SetStage(ExecutionInfo::MainStage);
+            information.SetStageSpecific(ExecutionInfo::WaitRequestStageSpecific);
 
             // simulate timeout to allow entering next loop
             err.timeout = true;
@@ -84,7 +84,7 @@ void MultiClientServiceThread::ThreadLoop() {
                 // Try start new service thread
                 manager.AddThread();
 
-                information.SetStage2(ServiceRequestStage2);
+                information.SetStageSpecific(ExecutionInfo::ServiceRequestStageSpecific);
                 // exit on error including ErrorManagement::completed
                 while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
                     err = Execute(information);
@@ -93,12 +93,12 @@ void MultiClientServiceThread::ThreadLoop() {
         } // loop (wait service - loop (service) ) -
 
         // assuming one reason for exiting (not multiple errors together with a command change)
-        information.SetStage2(NullStage2);
+        information.SetStageSpecific(ExecutionInfo::NullStageSpecific);
         if (err.completed) {
-            information.SetStage(TerminationStage);
+            information.SetStage(ExecutionInfo::TerminationStage);
         }
         else {
-            information.SetStage(BadTerminationStage);
+            information.SetStage(ExecutionInfo::BadTerminationStage);
         }
         Execute(information);
 

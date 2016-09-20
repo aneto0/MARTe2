@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_EMBEDDEDSERVICE_H_
-#define L4MESSAGES_EMBEDDEDSERVICE_H_
+#ifndef EMBEDDEDSERVICE_H_
+#define EMBEDDEDSERVICE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -35,188 +35,68 @@
 #include "BitRange.h"
 #include "BitBoolean.h"
 #include "ErrorType.h"
+#include "ExecutionInfo.h"
 #include "StructuredDataI.h"
-
-namespace MARTe{
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
 /**
- * Interface to a family of objects that allow interfacing a class method to a thread or a pool of threads
- * The method interface is specified in EmbeddedServiceI::MethodBinderT<class>::MethodPointer.
+ * @brief Interface to a family of objects that allow interfacing a class method to a thread or a pool of threads.
+ * @details The method interface is specified in EmbeddedServiceI::MethodBinderT<class>::MethodPointer.
  * It returns an ErrorType and has one parameter of type EmbeddedServiceI::ExecutionInfo&
  */
-class EmbeddedServiceI{
+class EmbeddedServiceI {
 public:
-    //Note that the list of stages is not an enum as it is used in a BitRange below as a uint8
-    /**
-     * Start of a thread execution sequence
-     */
-    static const uint8  StartupStage         = 0u;
-
-    /**
-     * Main part of a sequence - looping unless an error or completed is returned
-     */
-    static const uint8  MainStage            = 1u;
-
-    /**
-     * Normal termination stage - following the end of the mainStage
-     */
-    static const uint8  TerminationStage     = 2u;
-
-    /**
-     * Bad termination stage - after an error returned by the user code or following the Stop()
-     */
-    static const uint8  BadTerminationStage  = 3u;
-
-    /**
-     * After a kill - called by the killing task
-     */
-    static const uint8  AsyncTerminationStage= 4u;
-
-    /**
-     *  Sub-states of mainStage.
-     */
-    /**
-     * Set when stage is startupStage or terminationStage
-     */
-    static const uint8  NullStage2           = 0u;
-
-    /**
-     * For client&server model - wait for service request
-     */
-    static const uint8  WaitRequestStage2    = 1u;
-
-    /**
-     * For client&server model - servicing the client
-     */
-    static const uint8  ServiceRequestStage2 = 2u;
-
-    /**
-     * I communicates to the user code the stage of the thread life, which evolves according to rules specific to the EmbeddedServiceI derived class
-     * In addition to stage, it provides a stage2 which is fully custom to the derived class.
-     * threadNumber is specific to the user code and allows
-     */
-    /*lint ++flb*/
-    class ExecutionInfo{
-
-    public:
-        /**
-         * TODO
-         */
-        ExecutionInfo();
-
-        /**
-         * TODO
-         */
-        void SetThreadNumber(uint16 number);
-
-        /**
-         * TODO
-         */
-        void SetStage(uint8 number);
-
-        /**
-         * TODO
-         */
-        void SetStage2(uint8 number);
-
-        /**
-         * TODO
-         */
-        uint16 GetThreadNumber();
-
-        /**
-         * TODO
-         */
-        uint8 GetStage();
-
-        /**
-         * TODO
-         */
-        uint8 GetStage2();
-
-        /**
-         * set all to 0
-         */
-        void Reset();
-
-    private:
-        union {
-
-            /**
-             * threadNumber is an unique id that identifies a thread within an EmbeddedService
-             * threadNumber is initialised by the user routine during the startupStage
-             * it is set to 0 and at the return it can be changed to any value meaningful to the user.
-             */
-            BitRange<uint32, 16u ,0u> threadNumber;
-
-
-            /**
-             * The operating stage of the thread.
-             * There are 3 main stages and 64 substages which are custom defined
-             */
-            BitRange<uint32, 8u ,16u> stage;
-
-
-            /**
-             * The operating stage of the thread.
-             * There are 3 main stages and 64 substages which are custom defined
-             */
-            BitRange<uint32, 8u ,24u> stage2;
-
-            /**
-             * To set the Message mode using an 8-bit integer.
-             */
-//            uint32 formatAsUint32;
-        };
-    };
-    /*lint --flb*/
 
     /**
      * Interface to the Method Binders.
      * Not usable
      */
-    class MethodBinderI{
+    class MethodBinderI {
 
     public:
         /**
          * TODO
          */
-        MethodBinderI(){};
+        MethodBinderI() {
+        }
+        ;
 
         /**
          * TODO
          */
-        virtual ~MethodBinderI(){};
+        virtual ~MethodBinderI() {
+        }
+        ;
 
         /**
          *
          */
-        virtual ErrorManagement::ErrorType Execute(EmbeddedServiceI::ExecutionInfo info)=0;
+        virtual ErrorManagement::ErrorType Execute(ExecutionInfo info)=0;
 
     };
 
     /**
      * TODO
      */
-    template <typename className>
-    class MethodBinderT: public MethodBinderI{
+    template<typename className>
+    class MethodBinderT: public MethodBinderI {
 
     public:
 
         /**
          * @brief Type definition for the method pointer prototype
          */
-        typedef ErrorManagement::ErrorType  (className::*MethodPointer)(EmbeddedServiceI::ExecutionInfo &info);
+        typedef ErrorManagement::ErrorType (className::*MethodPointer)(ExecutionInfo &info);
 
         /**
          * TODO
          */
-        MethodBinderT(className &o, MethodPointer f);
+        MethodBinderT(className &o,
+                      MethodPointer f);
 
         /**
          * TODO
@@ -226,7 +106,7 @@ public:
         /**
          * TODO
          */
-        virtual ErrorManagement::ErrorType Execute(EmbeddedServiceI::ExecutionInfo info);
+        virtual ErrorManagement::ErrorType Execute(ExecutionInfo info);
 
     private:
 
@@ -245,24 +125,29 @@ public:
      * allocated by the user.
      * memory managed by object
      */
-    EmbeddedServiceI(MethodBinderI &binder):method(binder) {  }
+    EmbeddedServiceI(MethodBinderI &binder) :
+            method(binder) {
+    }
 
     /**
      * allocated by the user.
      * memory managed by object
      */
-    template <typename className>
-    EmbeddedServiceI(MethodBinderT<className> &binder):method(binder) {  }
+    template<typename className>
+    EmbeddedServiceI(MethodBinderT<className> &binder) :
+            method(binder) {
+    }
 
     /**
      *
      */
-    virtual ~EmbeddedServiceI(){    }
+    virtual ~EmbeddedServiceI() {
+    }
 
     /**
-    * TODO
-    * same as object interface
-    */
+     * TODO
+     * same as object interface
+     */
     virtual bool Initialise(StructuredDataI &data)=0;
 
     /**
@@ -279,7 +164,7 @@ protected:
     /**
      * TODO
      */
-    inline ErrorManagement::ErrorType Execute(ExecutionInfo information){
+    inline ErrorManagement::ErrorType Execute(ExecutionInfo information) {
         return method.Execute(information);
     }
 
@@ -290,21 +175,24 @@ protected:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+template<typename className>
+EmbeddedServiceI::MethodBinderT<className>::MethodBinderT(className &o,
+                                                          MethodBinderT<className>::MethodPointer f) :
+        object(o),
+        function(f) {
+}
+;
 
+template<typename className>
+EmbeddedServiceI::MethodBinderT<className>::~MethodBinderT() {
+}
 
-template <typename className>
-EmbeddedServiceI::MethodBinderT<className>::MethodBinderT(className &o, MethodBinderT< className>::MethodPointer f):    object(o),    function(f){};
-
-template <typename className>
-EmbeddedServiceI::MethodBinderT<className>::~MethodBinderT(){}
-
-template <typename className>
-ErrorManagement::ErrorType EmbeddedServiceI::MethodBinderT< className>::Execute(EmbeddedServiceI::ExecutionInfo info){
+template<typename className>
+ErrorManagement::ErrorType EmbeddedServiceI::MethodBinderT<className>::Execute(ExecutionInfo info) {
     return (object.*function)(info);
 }
 
-
 }
 
-#endif /* L4MESSAGES_EMBEDDEDSERVICE_H_ */
-	
+#endif /* EMBEDDEDSERVICE_H_ */
+

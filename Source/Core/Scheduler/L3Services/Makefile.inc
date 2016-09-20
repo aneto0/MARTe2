@@ -27,6 +27,7 @@
 OBJSX=	EmbeddedServiceI.x \
     EmbeddedThread.x \
     EmbeddedThreadObject.x \
+    ExecutionInfo.x \
     MultiThreadService.x \
     MultiClientServiceThread.x \
     MultiClientService.x

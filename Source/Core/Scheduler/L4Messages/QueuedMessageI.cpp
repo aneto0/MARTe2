@@ -98,13 +98,13 @@ ErrorManagement::ErrorType QueuedMessageI::Stop() {
 
 }
 
-ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(EmbeddedServiceI::ExecutionInfo &info) {
+ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(ExecutionInfo &info) {
     ErrorManagement::ErrorType err;
     ReferenceT<Message> message;
     const TimeoutType timeout = 1000;
 
     // do not handle other stages
-    if (info.GetStage() == EmbeddedServiceI::MainStage) {
+    if (info.GetStage() == ExecutionInfo::MainStage) {
 
         err.unsupportedFeature = !queue.IsValid();
 

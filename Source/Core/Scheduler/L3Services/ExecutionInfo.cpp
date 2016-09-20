@@ -1,8 +1,8 @@
 /**
- * @file EmbeddedServiceI.cpp
- * @brief Source file for class EmbeddedServiceI
- * @date Sep 5, 2016
- * @author fsartori
+ * @file ExecutionInfo.cpp
+ * @brief Source file for class ExecutionInfo
+ * @date 20/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class EmbeddedServiceI (public, protected, and private). Be aware that some 
+ * the class ExecutionInfo (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,9 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "EmbeddedServiceI.h"
-
-namespace MARTe {
+#include "ExecutionInfo.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,6 +37,42 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 
+ExecutionInfo::ExecutionInfo() {
+    Reset();
+}
 
+void ExecutionInfo::SetThreadNumber(uint16 number) {
+    if (stage == StartupStage) {
+        threadNumber = number;
+    }
+}
+
+void ExecutionInfo::SetStage(uint8 number) {
+    stage = number;
+}
+
+void ExecutionInfo::SetStageSpecific(uint8 number) {
+    stageSpecific = number;
+}
+
+uint16 ExecutionInfo::GetThreadNumber() {
+    return threadNumber;
+}
+
+uint8 ExecutionInfo::GetStage() {
+    return stage;
+}
+
+uint8 ExecutionInfo::GetStageSpecific() {
+    return stageSpecific;
+}
+
+void ExecutionInfo::Reset() {
+    threadNumber = 0;
+    stage = StartupStage;
+    stageSpecific = NullStageSpecific;
+
+}
 }
