@@ -82,10 +82,6 @@ public:
      */
     bool TestStart_Restart();
 
-#if 0
-
-
-
     /**
      * @brief Tests the Stop function.
      */
@@ -95,11 +91,6 @@ public:
      * @brief Tests the Stop function forcing a kill.
      */
     bool TestStop_Kill();
-
-    /**
-     * @brief Tests the ThreadLoop function.
-     */
-    bool TestThreadLoop();
 
     /**
      * @brief Tests the GetStatus function.
@@ -120,7 +111,16 @@ public:
      * @brief Tests the GetThreadId function
      */
     bool TestGetThreadId();
-#endif
+
+    /**
+     * @brief Tests the SetNumberOfPoolThreads function
+     */
+    bool TestSetNumberOfPoolThreads();
+
+    /**
+     * @brief Tests the GetNumberOfPoolThreads function
+     */
+    bool TestGetNumberOfPoolThreads();
 };
 
 /*---------------------------------------------------------------------------*/

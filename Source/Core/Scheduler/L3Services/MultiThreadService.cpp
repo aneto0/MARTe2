@@ -84,7 +84,7 @@ ErrorManagement::ErrorType MultiThreadService::Start() {
 ErrorManagement::ErrorType MultiThreadService::Stop() {
     ErrorManagement::ErrorType err;
     uint32 i;
-    for (i = 0; i < threadPool.Size(); i++) {
+    for (i = 0u; i < threadPool.Size(); i++) {
         ReferenceT<SingleThreadService> thread = threadPool.Get(i);
         if (thread.IsValid()) {
             err = thread->Stop();
@@ -130,7 +130,7 @@ ErrorManagement::ErrorType MultiThreadService::Stop() {
 }
 
 EmbeddedServiceI::States MultiThreadService::GetStatus(uint32 threadIdx) {
-    EmbeddedServiceI::States status = EmbeddedServiceI::NoneState;
+    EmbeddedServiceI::States status = EmbeddedServiceI::OffState;
     if (threadIdx < threadPool.Size()) {
         ReferenceT<SingleThreadService> thread = threadPool.Get(threadIdx);
         status = thread->GetStatus();
@@ -155,6 +155,21 @@ uint32 MultiThreadService::GetNumberOfPoolThreads() const {
 
 void MultiThreadService::SetNumberOfPoolThreads(const uint32 numberOfPoolThreadsIn) {
     numberOfPoolThreads = numberOfPoolThreadsIn;
+}
+
+void MultiThreadService::SetTimeout(TimeoutType msecTimeoutIn) {
+    msecTimeout = msecTimeoutIn.GetTimeoutMSec();
+    uint32 i;
+    for (i = 0u; i < threadPool.Size(); i++) {
+        ReferenceT<SingleThreadService> thread = threadPool.Get(i);
+        if (thread.IsValid()) {
+            thread->SetTimeout(msecTimeoutIn);
+        }
+    }
+}
+
+TimeoutType MultiThreadService::GetTimeout() const {
+    return msecTimeout;
 }
 
 }

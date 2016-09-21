@@ -81,6 +81,7 @@ public:
 
     /**
      * @brief Stops N (GetNumberOfPoolThreads()) SingleThreadService instances.
+     * @details A Kill will be issued if the SingleThreadService do not Stop at the first time.
      * @return ErrorManagement::NoError if all the instances can be successfully stopped.
      */
     virtual ErrorManagement::ErrorType Stop();
@@ -112,6 +113,18 @@ public:
      *   threadIdx < GetNumberOfPoolThreads()
      */
     ThreadIdentifier GetThreadId(uint32 threadIdx);
+
+    /**
+     * @brief Sets the maximum time to execute a state change.
+     * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
+     */
+    void SetTimeout(TimeoutType msecTimeoutIn);
+
+    /**
+     * @brief Gets the maximum time to execute a state change.
+     * @return the maximum time to execute a state change.
+     */
+    TimeoutType GetTimeout() const;
 
 protected:
     /**

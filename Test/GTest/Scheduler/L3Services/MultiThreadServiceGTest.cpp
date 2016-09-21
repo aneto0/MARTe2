@@ -72,7 +72,6 @@ TEST(MultiThreadServiceGTest,TestStart_Restart) {
     ASSERT_TRUE(target.TestStart_Restart());
 }
 
-#if 0
 TEST(MultiThreadServiceGTest,TestStop) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestStop());
@@ -81,11 +80,6 @@ TEST(MultiThreadServiceGTest,TestStop) {
 TEST(MultiThreadServiceGTest,TestStop_Kill) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestStop_Kill());
-}
-
-TEST(MultiThreadServiceGTest,TestThreadLoop) {
-    MultiThreadServiceTest target;
-    ASSERT_TRUE(target.TestThreadLoop());
 }
 
 TEST(MultiThreadServiceGTest,TestGetStatus) {
@@ -107,4 +101,14 @@ TEST(MultiThreadServiceGTest,TestGetThreadId) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestGetThreadId());
 }
-#endif
+
+TEST(MultiThreadServiceGTest,TestGetNumberOfPoolThreads) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestGetNumberOfPoolThreads());
+}
+
+TEST(MultiThreadServiceGTest,TestSetNumberOfPoolThreads) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetNumberOfPoolThreads());
+}
+
