@@ -55,7 +55,8 @@ TEST(MultiThreadServiceGTest,TestInitialise_False) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False());
 }
-#if 0
+
+
 TEST(MultiThreadServiceGTest,TestStart) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestStart());
@@ -71,6 +72,7 @@ TEST(MultiThreadServiceGTest,TestStart_Restart) {
     ASSERT_TRUE(target.TestStart_Restart());
 }
 
+#if 0
 TEST(MultiThreadServiceGTest,TestStop) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestStop());

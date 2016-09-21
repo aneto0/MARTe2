@@ -403,3 +403,18 @@ bool SingleThreadServiceTest::TestGetThreadId() {
 
     return ok;
 }
+
+bool SingleThreadServiceTest::TestGetThreadNumber() {
+    using namespace MARTe;
+    SingleThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<SingleThreadServiceTestCallbackClass> binder(callbackClass, &SingleThreadServiceTestCallbackClass::CallbackFunction);
+    SingleThreadService embeddedThread(binder);
+
+    embeddedThread.SetThreadNumber(100);
+
+    return (embeddedThread.GetThreadNumber() == 100);
+}
+
+bool SingleThreadServiceTest::TestSetThreadNumber() {
+    return TestGetThreadNumber();
+}

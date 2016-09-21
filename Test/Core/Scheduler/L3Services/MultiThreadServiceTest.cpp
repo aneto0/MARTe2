@@ -24,7 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <stdio.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -39,15 +39,27 @@
 class MultiThreadServiceTestCallbackClass {
 public:
     MultiThreadServiceTestCallbackClass() {
-        internalState = 0u;
+        internalStateThread0 = 0u;
+        internalStateThread1 = 0u;
+        internalStateThread2 = 0u;
     }
 
     MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
-        internalState++;
+        if (information.GetThreadNumber() == 0) {
+            internalStateThread0++;
+        }
+        if (information.GetThreadNumber() == 1) {
+            internalStateThread1++;
+        }
+        if (information.GetThreadNumber() == 2) {
+            internalStateThread2++;
+        }
         return MARTe::ErrorManagement::NoError;
     }
 
-    MARTe::uint32 internalState;
+    MARTe::uint32 internalStateThread0;
+    MARTe::uint32 internalStateThread1;
+    MARTe::uint32 internalStateThread2;
 };
 
 class MultiThreadServiceTestCallbackClassToKill {
@@ -167,26 +179,30 @@ bool MultiThreadServiceTest::TestInitialise_False() {
     return ok;
 }
 
-#if 0
 bool MultiThreadServiceTest::TestStart() {
     using namespace MARTe;
     MultiThreadServiceTestCallbackClass callbackClass;
     EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
     MultiThreadService embeddedThread(binder);
 
-    bool ok = (embeddedThread.GetThreadId() == 0);
-    ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
-
+    embeddedThread.SetNumberOfPoolThreads(3);
     ErrorManagement::ErrorType err = embeddedThread.Start();
-    ok = (err == ErrorManagement::NoError);
+    bool ok = (err == ErrorManagement::NoError);
     uint32 maxCounter = 10;
-    while ((maxCounter > 0) && (callbackClass.internalState < 10u)) {
+    while ((maxCounter > 0)
+            && ((callbackClass.internalStateThread0 < 10u) || (callbackClass.internalStateThread1 < 10u) || (callbackClass.internalStateThread2 < 10u))) {
         Sleep::Sec(1.0);
         maxCounter--;
     }
-    ok &= (callbackClass.internalState >= 10u);
-    ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThreadId() != 0);
+    ok &= (callbackClass.internalStateThread0 >= 10u);
+    ok &= (callbackClass.internalStateThread1 >= 10u);
+    ok &= (callbackClass.internalStateThread2 >= 10u);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::RunningState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::RunningState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::RunningState);
+    ok &= (embeddedThread.GetThreadId(0) != 0);
+    ok &= (embeddedThread.GetThreadId(1) != 0);
+    ok &= (embeddedThread.GetThreadId(2) != 0);
 
     embeddedThread.Stop();
     return ok;
@@ -198,19 +214,24 @@ bool MultiThreadServiceTest::TestStart_False() {
     EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
     MultiThreadService embeddedThread(binder);
 
-    bool ok = (embeddedThread.GetThreadId() == 0);
-    ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
-
+    embeddedThread.SetNumberOfPoolThreads(3);
     ErrorManagement::ErrorType err = embeddedThread.Start();
-    ok &= (err == ErrorManagement::NoError);
+    bool ok = (err == ErrorManagement::NoError);
     uint32 maxCounter = 10;
-    while ((maxCounter > 0) && (callbackClass.internalState < 10u)) {
+    while ((maxCounter > 0)
+            && ((callbackClass.internalStateThread0 < 10u) || (callbackClass.internalStateThread1 < 10u) || (callbackClass.internalStateThread2 < 10u))) {
         Sleep::Sec(1.0);
         maxCounter--;
     }
-    ok &= (callbackClass.internalState >= 10u);
-    ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThreadId() != 0);
+    ok &= (callbackClass.internalStateThread0 >= 10u);
+    ok &= (callbackClass.internalStateThread1 >= 10u);
+    ok &= (callbackClass.internalStateThread2 >= 10u);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::RunningState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::RunningState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::RunningState);
+    ok &= (embeddedThread.GetThreadId(0) != 0);
+    ok &= (embeddedThread.GetThreadId(1) != 0);
+    ok &= (embeddedThread.GetThreadId(2) != 0);
 
     err = embeddedThread.Start();
     ok &= (err == ErrorManagement::IllegalOperation);
@@ -225,36 +246,50 @@ bool MultiThreadServiceTest::TestStart_Restart() {
     EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
     MultiThreadService embeddedThread(binder);
 
-    bool ok = (embeddedThread.GetThreadId() == 0);
-    ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
-
+    embeddedThread.SetNumberOfPoolThreads(3);
     ErrorManagement::ErrorType err = embeddedThread.Start();
-    ok &= (err == ErrorManagement::NoError);
+    bool ok = (err == ErrorManagement::NoError);
     uint32 maxCounter = 10;
-    while ((maxCounter > 0) && (callbackClass.internalState < 10u)) {
+    while ((maxCounter > 0)
+            && ((callbackClass.internalStateThread0 < 10u) || (callbackClass.internalStateThread1 < 10u) || (callbackClass.internalStateThread2 < 10u))) {
         Sleep::Sec(1.0);
         maxCounter--;
     }
-    ok &= (callbackClass.internalState >= 10u);
-    ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThreadId() != 0);
+    ok &= (callbackClass.internalStateThread0 >= 10u);
+    ok &= (callbackClass.internalStateThread1 >= 10u);
+    ok &= (callbackClass.internalStateThread2 >= 10u);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::RunningState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::RunningState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::RunningState);
+    ok &= (embeddedThread.GetThreadId(0) != 0);
+    ok &= (embeddedThread.GetThreadId(1) != 0);
+    ok &= (embeddedThread.GetThreadId(2) != 0);
 
     embeddedThread.Stop();
 
-    callbackClass.internalState = 0u;
+    callbackClass.internalStateThread0 = 0u;
+    callbackClass.internalStateThread1 = 0u;
+    callbackClass.internalStateThread2 = 0u;
     err = embeddedThread.Start();
     ok &= (err == ErrorManagement::NoError);
     maxCounter = 10;
-    while ((maxCounter > 0) && (callbackClass.internalState < 10u)) {
+    while ((maxCounter > 0)
+            && ((callbackClass.internalStateThread0 < 10u) || (callbackClass.internalStateThread1 < 10u) || (callbackClass.internalStateThread2 < 10u))) {
         Sleep::Sec(1.0);
         maxCounter--;
     }
-    ok &= (callbackClass.internalState >= 10u);
-    ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThreadId() != 0);
+    ok &= (callbackClass.internalStateThread0 >= 10u);
+    ok &= (callbackClass.internalStateThread1 >= 10u);
+    ok &= (callbackClass.internalStateThread2 >= 10u);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::RunningState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::RunningState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::RunningState);
+    ok &= (embeddedThread.GetThreadId(0) != 0);
+    ok &= (embeddedThread.GetThreadId(1) != 0);
+    ok &= (embeddedThread.GetThreadId(2) != 0);
     return ok;
 }
-
+#if 0
 bool MultiThreadServiceTest::TestStop() {
     using namespace MARTe;
     MultiThreadServiceTestCallbackClass callbackClass;

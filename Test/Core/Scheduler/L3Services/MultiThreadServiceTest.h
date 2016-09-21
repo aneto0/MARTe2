@@ -67,9 +67,6 @@ public:
      */
     bool TestInitialise_False();
 
-#if 0
-
-
     /**
      * @brief Tests the Start function.
      */
@@ -84,6 +81,10 @@ public:
      * @brief Tests the Start function after a stop has been called.
      */
     bool TestStart_Restart();
+
+#if 0
+
+
 
     /**
      * @brief Tests the Stop function.

@@ -121,6 +121,16 @@ public:
      * @brief Tests the GetThreadId function
      */
     bool TestGetThreadId();
+
+    /**
+     * @brief Tests the GetThreadNumber function
+     */
+    bool TestGetThreadNumber();
+
+    /**
+     * @brief Tests the SetThreadNumber function
+     */
+    bool TestSetThreadNumber();
 };
 
 /*---------------------------------------------------------------------------*/

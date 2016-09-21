@@ -157,6 +157,7 @@ void SingleThreadService::ThreadLoop() {
     while (commands == KeepRunningCommand) {
         //Reset sets stage = StartupStage;
         information.Reset();
+        information.SetThreadNumber(GetThreadNumber());
 
         // startup
         err = Execute(information);
@@ -258,5 +259,11 @@ ThreadIdentifier SingleThreadService::GetThreadId() {
     return threadId;
 }
 
+uint16 SingleThreadService::GetThreadNumber() const {
+    return threadNumber;
 }
 
+void SingleThreadService::SetThreadNumber(const uint16 threadNumberIn){
+    threadNumber = threadNumberIn;
+}
+}

@@ -110,3 +110,13 @@ TEST(SingleThreadServiceGTest,TestGetThreadId) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestGetThreadId());
 }
+
+TEST(SingleThreadServiceGTest,TestGetThreadNumber) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestGetThreadNumber());
+}
+
+TEST(SingleThreadServiceGTest,TestSetThreadNumber) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetThreadNumber());
+}

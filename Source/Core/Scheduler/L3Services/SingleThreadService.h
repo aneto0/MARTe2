@@ -144,6 +144,18 @@ public:
     TimeoutType GetTimeout() const;
 
     /**
+     * @brief Gets the thread unique number (with-in the context of a pool).
+     * @return the thread unique number (with-in the context of a pool).
+     */
+    uint16 GetThreadNumber() const;
+
+    /**
+     * @brief Sets the thread unique number (with-in the context of a pool).
+     * @param[in] numberIn the thread unique number (with-in the context of a pool).
+     */
+    void SetThreadNumber(uint16 threadNumberIn);
+
+    /**
      * @brief Thread callback function which executes the internal state-machine and calls
      * the Execute method with the correct status information.
      * @details public access as it is called by the thread callback function.
@@ -182,8 +194,10 @@ protected:
      */
     TimeoutType msecTimeout;
 
-
-
+    /**
+     * The thread unique number (in the context of a pool)
+     */
+    uint16 threadNumber;
 };
 
 /*---------------------------------------------------------------------------*/

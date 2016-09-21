@@ -63,16 +63,20 @@ bool MultiThreadService::Initialise(StructuredDataI &data) {
 
 ErrorManagement::ErrorType MultiThreadService::Start() {
     ErrorManagement::ErrorType err;
+    err.illegalOperation = (threadPool.Size() >= numberOfPoolThreads);
+    uint32 n = 0u;
     while ((threadPool.Size() < numberOfPoolThreads) && (err.ErrorsCleared())) {
         ReferenceT<SingleThreadService> thread(new (NULL) SingleThreadService(method));
         err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
+            thread->SetThreadNumber(n);
             thread->SetTimeout(msecTimeout);
             err = thread->Start();
         }
         if (err.ErrorsCleared()) {
             threadPool.Insert(thread);
         }
+        n++;
     }
     return err;
 }
@@ -147,6 +151,10 @@ ThreadIdentifier MultiThreadService::GetThreadId(uint32 threadIdx) {
 
 uint32 MultiThreadService::GetNumberOfPoolThreads() const {
     return numberOfPoolThreads;
+}
+
+void MultiThreadService::SetNumberOfPoolThreads(const uint32 numberOfPoolThreadsIn) {
+    numberOfPoolThreads = numberOfPoolThreadsIn;
 }
 
 }

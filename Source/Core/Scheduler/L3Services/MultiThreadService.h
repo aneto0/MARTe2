@@ -75,6 +75,7 @@ public:
     /**
      * @brief Starts N (GetNumberOfPoolThreads()) SingleThreadService instances.
      * @return ErrorManagement::NoError if all the instances can be successfully started.
+     * ErrorManagement::IllegalOperation if start is called twice without calling stop beforehand.
      */
     virtual ErrorManagement::ErrorType Start();
 
