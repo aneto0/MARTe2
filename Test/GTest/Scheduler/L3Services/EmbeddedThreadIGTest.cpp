@@ -1,8 +1,8 @@
 /**
- * @file EmbeddedServiceI.cpp
- * @brief Source file for class EmbeddedServiceI
- * @date Sep 5, 2016
- * @author fsartori
+ * @file EmbeddedThreadIGTest.cpp
+ * @brief Source file for class EmbeddedThreadIGTest
+ * @date 20/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class EmbeddedServiceI (public, protected, and private). Be aware that some 
+ * the class MessageGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "EmbeddedServiceI.h"
+
+
+#include "gtest/gtest.h"
+#include "EmbeddedThreadITest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -37,12 +40,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-EmbeddedServiceI::EmbeddedServiceI() :
-        Object() {
+
+TEST(EmbeddedThreadIGTest,TestConstructor) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-EmbeddedServiceI::~EmbeddedServiceI() {
-}
-
-}

@@ -1,8 +1,8 @@
 /**
- * @file EmbeddedServiceI.cpp
- * @brief Source file for class EmbeddedServiceI
- * @date Sep 5, 2016
- * @author fsartori
+ * @file EmbeddedThreadI.cpp
+ * @brief Source file for class EmbeddedThreadI
+ * @date 21/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class EmbeddedServiceI (public, protected, and private). Be aware that some 
+ * the class EmbeddedThreadI (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,21 +28,69 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "EmbeddedServiceI.h"
+#include "EmbeddedThreadI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+static void ServiceThreadLauncher(const void * const parameters) {
+    EmbeddedThreadI * thread = dynamic_cast<EmbeddedThreadI *>(reinterpret_cast<EmbeddedThreadI *>(const_cast<void *>(parameters)));
+
+    // call
+    thread->ThreadLoop();
+
+}
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-EmbeddedServiceI::EmbeddedServiceI() :
-        Object() {
+
+EmbeddedThreadI::EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder) :
+        method(binder) {
+    threadId = InvalidThreadIdentifier;
+    threadNumber = 0u;
+    commands = StopCommand;
 }
 
-EmbeddedServiceI::~EmbeddedServiceI() {
+EmbeddedThreadI::~EmbeddedThreadI() {
+
+}
+
+void EmbeddedThreadI::LaunchThread() {
+    if (!Threads::IsAlive(threadId)) {
+        const void * const parameters = static_cast<void *>(this);
+        threadId = Threads::BeginThread(ServiceThreadLauncher, parameters);
+    }
+}
+
+uint16 EmbeddedThreadI::GetThreadNumber() const {
+    return threadNumber;
+}
+
+void EmbeddedThreadI::SetThreadNumber(const uint16 threadNumberIn) {
+    threadNumber = threadNumberIn;
+}
+
+EmbeddedThreadI::Commands EmbeddedThreadI::GetCommands() const {
+    return commands;
+}
+
+void EmbeddedThreadI::SetCommands(Commands commandsIn) {
+    commands = commandsIn;
+}
+
+ThreadIdentifier EmbeddedThreadI::GetThreadId() const {
+    return threadId;
+}
+
+void EmbeddedThreadI::ResetThreadId() {
+    if (!Threads::IsAlive(threadId)) {
+        threadId = 0;
+    }
 }
 
 }
+

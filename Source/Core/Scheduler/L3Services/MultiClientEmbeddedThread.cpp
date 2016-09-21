@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "MultiClientServiceThread.h"
+#include "MultiClientEmbeddedThread.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,17 +41,18 @@
 
 namespace MARTe {
 
-MultiClientServiceThread::~MultiClientServiceThread() {
+MultiClientEmbeddedThread::~MultiClientEmbeddedThread() {
 }
 
-MultiClientServiceThread::MultiClientServiceThread(EmbeddedServiceMethodBinderI &binder,
+MultiClientEmbeddedThread::MultiClientEmbeddedThread(EmbeddedServiceMethodBinderI &binder,
                                                    MultiClientService &managerIn) :
-        SingleThreadService(binder),
+        EmbeddedThreadI(binder),
         manager(managerIn) {
 }
 
-void MultiClientServiceThread::ThreadLoop() {
+void MultiClientEmbeddedThread::ThreadLoop() {
     commands = KeepRunningCommand;
+    ExecutionInfo information;
     information.Reset();
 
     // thread is decontextualised.

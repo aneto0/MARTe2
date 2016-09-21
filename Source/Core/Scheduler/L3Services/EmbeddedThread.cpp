@@ -1,8 +1,8 @@
 /**
- * @file EmbeddedServiceI.cpp
- * @brief Source file for class EmbeddedServiceI
- * @date Sep 5, 2016
- * @author fsartori
+ * @file EmbeddedThread.cpp
+ * @brief Source file for class EmbeddedThread
+ * @date 21/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class EmbeddedServiceI (public, protected, and private). Be aware that some 
+ * the class EmbeddedThread (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "EmbeddedServiceI.h"
+#include "EmbeddedThread.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,11 +38,48 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-EmbeddedServiceI::EmbeddedServiceI() :
-        Object() {
+EmbeddedThread::EmbeddedThread(EmbeddedServiceMethodBinderI &binder) :
+        EmbeddedThreadI(binder) {
+
 }
 
-EmbeddedServiceI::~EmbeddedServiceI() {
+EmbeddedThread::~EmbeddedThread() {
+
+}
+
+void EmbeddedThread::ThreadLoop() {
+    commands = KeepRunningCommand;
+
+    ErrorManagement::ErrorType err;
+
+    while (commands == KeepRunningCommand) {
+        //Reset sets stage = StartupStage;
+        information.Reset();
+        information.SetThreadNumber(GetThreadNumber());
+
+        // startup
+        err = Execute(information);
+
+        // main stage
+        if (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
+
+            information.SetStage(ExecutionInfo::MainStage);
+            while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
+                err = Execute(information);
+            }
+        }
+
+        // assuming one reason for exiting (not multiple errors together with a command change)
+        if (err.completed) {
+            information.SetStage(ExecutionInfo::TerminationStage);
+        }
+        else {
+            information.SetStage(ExecutionInfo::BadTerminationStage);
+        }
+
+        //Return value is ignored as thread cycle will start afresh whatever the return value.
+        Execute(information);
+    }
 }
 
 }

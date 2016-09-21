@@ -1,6 +1,6 @@
 /**
- * @file MultiClientService.h
- * @brief Header file for class MultiClientService
+ * @file MultiClientEmbeddedThread.h
+ * @brief Header file for class MultiClientEmbeddedThread
  * @date 05/09/2016
  * @author Filippo Sartori
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MultiClientService
+ * @details This header file contains the declaration of the class MultiClientEmbeddedThread
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MULTICLIENTSERVICE_H_
-#define MULTICLIENTSERVICE_H_
+#ifndef MULTICLIENTSERVICETHREAD_H_
+#define MULTICLIENTSERVICETHREAD_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,58 +32,49 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "MultiThreadService.h"
+#include "MultiClientService.h"
+#include "EmbeddedThreadI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 /**
- *
+ * @brief
  */
-class MultiClientService: public MultiThreadService {
+class MultiClientEmbeddedThread: public EmbeddedThreadI {
 
 public:
 
-    template<typename className>
-    MultiClientService(EmbeddedServiceMethodBinderT<className> &binder);
-
     /**
-     *
+     * TODO
      */
-    virtual ~MultiClientService() {
-    }
+    MultiClientEmbeddedThread(EmbeddedServiceMethodBinderI &binder,
+                             MultiClientService &managerIn);
 
     /**
      * TODO
-     * same as object interface
      */
-    virtual bool Initialise(StructuredDataI &data);
-
-    /**
-     * allows to add threads to the maxNumberOfThreads
-     * called by Start
-     */
-    ErrorManagement::ErrorType AddThread();
-    /**
-     *
-     */
-    inline bool MoreThanEnoughThreads();
-protected:
-    /**
-     *
-     */
-    //inline bool TooManyThreads();
-    /// either the available working threads or the maximum
-    uint32 maxNumberOfThreads;
-
-    uint32 minNumberOfThreads;
+    template<typename className>
+    MultiClientEmbeddedThread(EmbeddedServiceMethodBinderT<className> &binder,
+                             MultiClientService &managerIn);
 
     /**
      *
      */
-    ReferenceContainer threadPool;
+    virtual ~MultiClientEmbeddedThread();
+
+    /**
+     * TODO
+     * Public to be accessed by the thread launcher subroutine
+     */
+    virtual void ThreadLoop();
+
+private:
+    /**
+     *
+     */
+    MultiClientService &manager;
 };
 }
 
@@ -92,18 +83,13 @@ protected:
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-bool MultiClientService::MoreThanEnoughThreads() {
-    return (threadPool.Size() > minNumberOfThreads);
-}
-
 template<typename className>
-MultiClientService::MultiClientService(EmbeddedServiceMethodBinderT<className> &binder) :
-        MultiThreadService(binder) {
-    minNumberOfThreads = 0u;
-    maxNumberOfThreads = 1u;
+MultiClientEmbeddedThread::MultiClientEmbeddedThread(EmbeddedServiceMethodBinderT<className> &binder,
+                                                   MultiClientService &managerIn) :
+        EmbeddedThreadI(binder),
+        manager(managerIn) {
 }
 
 }
-#endif /* MULTICLIENTSERVICE_H_ */
+#endif /* MULTICLIENTSERVICETHREAD_H_ */
 

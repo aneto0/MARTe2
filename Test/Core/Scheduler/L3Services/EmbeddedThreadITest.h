@@ -1,8 +1,8 @@
 /**
- * @file EmbeddedServiceI.cpp
- * @brief Source file for class EmbeddedServiceI
- * @date Sep 5, 2016
- * @author fsartori
+ * @file EmbeddedThreadITest.h
+ * @brief Header file for class EmbeddedThreadITest
+ * @date 19/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,33 +16,52 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class EmbeddedServiceI (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+ * @details This header file contains the declaration of the class EmbeddedThreadITest
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
+#ifndef EMBEDDEDTHREADSITEST_H_
+#define EMBEDDEDTHREADSITEST_H_
+
 /*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
+/*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "EmbeddedServiceI.h"
+#include "EmbeddedThreadI.h"
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+/**
+ * Tests the EmbeddedThreadI public methods.
+ */
+class EmbeddedThreadITest {
+public:
+
+    /**
+     * @brief Default constructor
+     */
+    EmbeddedThreadITest();
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~EmbeddedThreadITest();
+
+    /**
+     * @brief Tests the default constructor.
+     */
+    bool TestDefaultConstructor();
+
+};
 
 /*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
+/*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
-namespace MARTe {
-EmbeddedServiceI::EmbeddedServiceI() :
-        Object() {
-}
+#endif /* EMBEDDEDTHREADSITEST_H_ */
 
-EmbeddedServiceI::~EmbeddedServiceI() {
-}
-
-}

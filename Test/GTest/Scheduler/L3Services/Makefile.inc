@@ -24,6 +24,7 @@
 
 
 OBJSX=  EmbeddedServiceMethodBinderTGTest.x \
+    EmbeddedThreadIGTest.x \
     ExecutionInfoGTest.x \
     MultiThreadServiceGTest.x \
     SingleThreadServiceGTest.x

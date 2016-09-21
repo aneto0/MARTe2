@@ -43,12 +43,10 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 SingleThreadService::SingleThreadService(EmbeddedServiceMethodBinderI &binder) :
-        EmbeddedServiceI(binder) {
-    threadId = InvalidThreadIdentifier;
-    commands = StopCommand;
+        EmbeddedServiceI(),
+        embeddedThread(binder) {
     maxCommandCompletionHRT = 0u;
     SetTimeout(TTInfiniteWait);
-    information.Reset();
 }
 
 SingleThreadService::~SingleThreadService() {
@@ -89,27 +87,28 @@ TimeoutType SingleThreadService::GetTimeout() const {
     return msecTimeout;
 }
 
-SingleThreadService::States SingleThreadService::GetStatus() {
-    SingleThreadService::States status = NoneState;
+EmbeddedServiceI::States SingleThreadService::GetStatus() {
+    States status = NoneState;
+    EmbeddedThreadI::Commands commands = embeddedThread.GetCommands();
     bool isAlive = false;
 
-    if (threadId == InvalidThreadIdentifier) {
+    if (embeddedThread.GetThreadId() == InvalidThreadIdentifier) {
         status = OffState;
     }
     else {
-        isAlive = Threads::IsAlive(threadId);
+        isAlive = Threads::IsAlive(embeddedThread.GetThreadId());
 
         if (!isAlive) {
             status = OffState;
-            threadId = InvalidThreadIdentifier;
+            embeddedThread.ResetThreadId();
         }
     }
 
     if (status == NoneState) {
-        if (commands == KeepRunningCommand) {
+        if (commands == EmbeddedThreadI::KeepRunningCommand) {
             status = RunningState;
         }
-        else if (commands == StartCommand) {
+        else if (commands == EmbeddedThreadI::StartCommand) {
             int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
             if ((deltaT > 0) && (timeoutHRT != -1)) {
                 status = TimeoutStartingState;
@@ -118,7 +117,7 @@ SingleThreadService::States SingleThreadService::GetStatus() {
                 status = StartingState;
             }
         }
-        else if (commands == StopCommand) {
+        else if (commands == EmbeddedThreadI::StopCommand) {
             int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
             if ((deltaT > 0) && (timeoutHRT != -1)) {
                 status = TimeoutStoppingState;
@@ -127,7 +126,7 @@ SingleThreadService::States SingleThreadService::GetStatus() {
                 status = StoppingState;
             }
         }
-        else if (commands == KillCommand) {
+        else if (commands == EmbeddedThreadI::KillCommand) {
             int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
             if ((deltaT > 0) && (timeoutHRT != -1)) {
                 status = TimeoutKillingState;
@@ -141,49 +140,6 @@ SingleThreadService::States SingleThreadService::GetStatus() {
     return status;
 }
 
-static void SingleThreadServiceThreadLauncher(const void * const parameters) {
-    SingleThreadService *thread = reinterpret_cast<SingleThreadService *>(const_cast<void *>(parameters));
-
-    // call
-    thread->ThreadLoop();
-
-}
-
-void SingleThreadService::ThreadLoop() {
-    commands = KeepRunningCommand;
-
-    ErrorManagement::ErrorType err;
-
-    while (commands == KeepRunningCommand) {
-        //Reset sets stage = StartupStage;
-        information.Reset();
-        information.SetThreadNumber(GetThreadNumber());
-
-        // startup
-        err = Execute(information);
-
-        // main stage
-        if (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
-
-            information.SetStage(ExecutionInfo::MainStage);
-            while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
-                err = Execute(information);
-            }
-        }
-
-        // assuming one reason for exiting (not multiple errors together with a command change)
-        if (err.completed) {
-            information.SetStage(ExecutionInfo::TerminationStage);
-        }
-        else {
-            information.SetStage(ExecutionInfo::BadTerminationStage);
-        }
-
-        //Return value is ignored as thread cycle will start afresh whatever the return value.
-        Execute(information);
-    }
-}
-
 ErrorManagement::ErrorType SingleThreadService::Start() {
     ErrorManagement::ErrorType err;
 
@@ -193,13 +149,11 @@ ErrorManagement::ErrorType SingleThreadService::Start() {
     }
 
     if (err.ErrorsCleared()) {
-        commands = StartCommand;
+        embeddedThread.SetCommands(EmbeddedThreadI::StartCommand);
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
-        const void * const parameters = static_cast<void *>(this);
+        embeddedThread.LaunchThread();
 
-        threadId = Threads::BeginThread(SingleThreadServiceThreadLauncher, parameters);
-
-        err.fatalError = (threadId == 0);
+        err.fatalError = (embeddedThread.GetThreadId() == 0);
     }
 
     return err;
@@ -208,13 +162,12 @@ ErrorManagement::ErrorType SingleThreadService::Start() {
 ErrorManagement::ErrorType SingleThreadService::Stop() {
     ErrorManagement::ErrorType err;
     States status = GetStatus();
-
     //check if thread already stopped
     if (status == OffState) {
 
     }
     else if (status == RunningState) {
-        commands = StopCommand;
+        embeddedThread.SetCommands(EmbeddedThreadI::StopCommand);
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
 
         while (GetStatus() == StoppingState) {
@@ -223,15 +176,15 @@ ErrorManagement::ErrorType SingleThreadService::Stop() {
 
         err.timeout = (GetStatus() != OffState);
         if (err.ErrorsCleared()) {
-            threadId = 0u;
+            embeddedThread.ResetThreadId();
         }
 
     }
     else if ((status == TimeoutStoppingState) || (status == StoppingState)) {
-        commands = KillCommand;
+        embeddedThread.SetCommands(EmbeddedThreadI::KillCommand);
 
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
-        err.fatalError = !Threads::Kill(threadId);
+        err.fatalError = !Threads::Kill(embeddedThread.GetThreadId());
 
         if (err.ErrorsCleared()) {
 
@@ -244,9 +197,11 @@ ErrorManagement::ErrorType SingleThreadService::Stop() {
         err.timeout = (GetStatus() != OffState);
 
         // in any case notify the main object of the fact that the thread has been killed
+        ExecutionInfo information;
+        information.SetThreadNumber(embeddedThread.GetThreadNumber());
         information.SetStage(ExecutionInfo::AsyncTerminationStage);
-        Execute(information);
-        threadId = 0u;
+        embeddedThread.Execute(information);
+        embeddedThread.ResetThreadId();
     }
     else {
         err.illegalOperation = true;
@@ -255,15 +210,16 @@ ErrorManagement::ErrorType SingleThreadService::Stop() {
     return err;
 }
 
-ThreadIdentifier SingleThreadService::GetThreadId() {
-    return threadId;
+const EmbeddedThread &SingleThreadService::GetThread() {
+    return embeddedThread;
 }
 
 uint16 SingleThreadService::GetThreadNumber() const {
-    return threadNumber;
+    return embeddedThread.GetThreadNumber();
 }
 
-void SingleThreadService::SetThreadNumber(const uint16 threadNumberIn){
-    threadNumber = threadNumberIn;
+void SingleThreadService::SetThreadNumber(uint16 threadNumberIn) {
+    embeddedThread.SetThreadNumber(threadNumberIn);
 }
+
 }

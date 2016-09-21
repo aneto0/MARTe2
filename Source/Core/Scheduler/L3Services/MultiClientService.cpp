@@ -1,5 +1,5 @@
 /**
- * @file MultiClientServiceThread.cpp
+ * @file MultiClientEmbeddedThread.cpp
  * @brief Source file for class MultiClientService
  * @date Sep 5, 2016
  * @author Filippo Sartori
@@ -29,8 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include <MultiClientEmbeddedThread.h>
 #include "MultiClientService.h"
-#include "MultiClientServiceThread.h"
 #include "ReferenceT.h"
 
 namespace MARTe {
@@ -55,12 +55,10 @@ bool MultiClientService::Initialise(StructuredDataI &data) {
 ErrorManagement::ErrorType MultiClientService::AddThread() {
     ErrorManagement::ErrorType err;
     if ((threadPool.Size() < maxNumberOfThreads) && (err.ErrorsCleared())) {
-        ReferenceT<MultiClientServiceThread> thread(new (NULL) MultiClientServiceThread(method, *this));
+        ReferenceT<MultiClientEmbeddedThread> thread(new MultiClientEmbeddedThread(method, *this));
         err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
-            err = thread->Start();
-        }
-        if (err.ErrorsCleared()) {
+            thread->LaunchThread();
             threadPool.Insert(thread);
         }
     }

@@ -142,6 +142,10 @@ protected:
      */
     uint32 msecTimeout;
 
+    /**
+     * The registered call-back method to be called by this EmbeddedServiceI instance.
+     */
+    EmbeddedServiceMethodBinderI &method;
 };
 
 /*---------------------------------------------------------------------------*/
@@ -153,7 +157,7 @@ protected:
  */
 template<typename className>
 MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder) :
-        EmbeddedServiceI(binder) {
+        method(binder) {
     numberOfPoolThreads = 1;
     msecTimeout = TTInfiniteWait.GetTimeoutMSec();
 }

@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "EmbeddedServiceI.h"
+#include "EmbeddedThread.h"
 #include "ErrorType.h"
 #include "Object.h"
 #include "StructuredDataI.h"
@@ -59,7 +60,7 @@ public:
      * @param[in] binder contains the function to be executed by this SingleThreadService.
      * @post
      *   GetTimeout() == TTInfiniteWait &&
-     *   GetThreadId() == 0 &&
+     *   GetThread().GetThreadId() == 0 &&
      *   GetStatus() == OffState
      */
     SingleThreadService(EmbeddedServiceMethodBinderI &binder);
@@ -69,7 +70,7 @@ public:
      * @param[in] binder contains the function to be executed by this SingleThreadService.
      * @post
      *   GetTimeout() == TTInfiniteWait &&
-     *   GetThreadId() == 0 &&
+     *   GetThread().GetThreadId() == 0 &&
      *   GetStatus() == OffState
      */
     template<typename className>
@@ -92,9 +93,9 @@ public:
      * @brief Starts the SingleThreadService.
      * @return ErrorManagement::NoError if the thread can be successfully started.
      * @pre
-     *   GetStatus() == OffState && GetThreadId() == 0
+     *   GetStatus() == OffState && GetThread().GetThreadId() == 0
      * @post
-     *   GetStatus() != OffState && GetThreadId() > 0
+     *   GetStatus() != OffState && GetThread().GetThreadId() > 0
      */
     virtual ErrorManagement::ErrorType Start();
 
@@ -105,9 +106,9 @@ public:
      * If the thread was being stopped (Stop() had already been called), the thread is killed.
      * @return ErrorManagement::NoError if the thread can be successfully stopped.
      * @pre
-     *   GetStatus() != OffState && GetThreadId() != 0
+     *   GetStatus() != OffState && GetThread().GetThreadId() != 0
      * @post
-     *   GetStatus() == OffState && GetThreadId() = 0
+     *   GetStatus() == OffState && GetThread().GetThreadId() = 0
      */
     virtual ErrorManagement::ErrorType Stop();
 
@@ -126,12 +127,6 @@ public:
     States GetStatus();
 
     /**
-     * @brief Gets the embedded thread identifier.
-     * @return the embedded thread identifier.
-     */
-    ThreadIdentifier GetThreadId();
-
-    /**
      * @brief Sets the maximum time to execute a state change.
      * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
      */
@@ -142,6 +137,12 @@ public:
      * @return the maximum time to execute a state change.
      */
     TimeoutType GetTimeout() const;
+
+    /**
+     * @brief Gets the embedded thread.
+     * @return the embedded thread.
+     */
+    const EmbeddedThread &GetThread();
 
     /**
      * @brief Gets the thread unique number (with-in the context of a pool).
@@ -155,29 +156,7 @@ public:
      */
     void SetThreadNumber(uint16 threadNumberIn);
 
-    /**
-     * @brief Thread callback function which executes the internal state-machine and calls
-     * the Execute method with the correct status information.
-     * @details public access as it is called by the thread callback function.
-     */
-    void ThreadLoop();
-
 protected:
-    /**
-     * Embedded thread identifier.
-     */
-    ThreadIdentifier threadId;
-
-    /**
-     * Command to change the internal status of the thread state-machine.
-     */
-    Commands commands;
-
-    /**
-     * Information about the status of the thread being executed.
-     */
-    ExecutionInfo information;
-
     /**
      * Maximum absolute time to execute a state change.
      * maxCommandCompletionHRT = HighResolutionTimer::Counter32 + timeoutHRT
@@ -195,9 +174,9 @@ protected:
     TimeoutType msecTimeout;
 
     /**
-     * The thread unique number (in the context of a pool)
+     * The embedded thread.
      */
-    uint16 threadNumber;
+    EmbeddedThread embeddedThread;
 };
 
 /*---------------------------------------------------------------------------*/
@@ -206,12 +185,10 @@ protected:
 
 template<typename className>
 SingleThreadService::SingleThreadService(EmbeddedServiceMethodBinderT<className> &binder) :
-        EmbeddedServiceI(binder) {
-    threadId = InvalidThreadIdentifier;
-    commands = StopCommand;
+        EmbeddedServiceI(),
+        embeddedThread(binder) {
     maxCommandCompletionHRT = 0;
     timeoutHRT = -1;
-    information.Reset();
     SetTimeout(TTInfiniteWait);
 }
 

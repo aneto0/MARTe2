@@ -1,8 +1,8 @@
 /**
- * @file MultiClientServiceThread.h
- * @brief Header file for class MultiClientServiceThread
- * @date Sep 5, 2016
- * @author fsartori
+ * @file EmbeddedThread.h
+ * @brief Header file for class EmbeddedThread
+ * @date 21/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MultiClientServiceThread
+ * @details This header file contains the declaration of the class EmbeddedThread
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_MULTICLIENTSERVICETHREAD_H_
-#define L4MESSAGES_MULTICLIENTSERVICETHREAD_H_
+#ifndef EMBEDDEDTHREAD_H_
+#define EMBEDDEDTHREAD_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,62 +31,51 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "MultiClientService.h"
-#include "SingleThreadService.h"
-
-namespace MARTe {
+#include "EmbeddedThreadI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-class MultiClientServiceThread: public SingleThreadService {
-
+namespace MARTe {
+/**
+ * @brief Implementation that calls Execute while GetCommands == KeepRunningCommand.
+ * @details The ThreadLoop only terminates when the GetCommands !== KeepRunningCommand.
+ * The user call-back function should not block. It will be continuously called by the
+ * ThreadLoop with ExecutionInfo::MainStage set.
+ */
+class EmbeddedThread: public EmbeddedThreadI {
 public:
+    /**
+     * @brief Constructor. Forces the setting of the method binder.
+     * @param[in] binder the method which will be called in the context of this thread.
+     */
+    EmbeddedThread(EmbeddedServiceMethodBinderI &binder);
 
     /**
-     * TODO
+     * @brief Destructor. NOOP.
      */
-    MultiClientServiceThread(EmbeddedServiceMethodBinderI &binder,
-                             MultiClientService &managerIn);
+    virtual ~EmbeddedThread();
 
     /**
-     * TODO
+     * @brief Implementation that continuously calls the user callback function.
+     * @details Only terminates when the GetCommands !== KeepRunningCommand.
+     * The user call-back function should not block. It will be continuously called by the
+     * ThreadLoop with ExecutionInfo::MainStage set.
+     * The first call to the user-function will have ExecutionInfo::StartupStage set.
      */
-    template<typename className>
-    MultiClientServiceThread(EmbeddedServiceMethodBinderT<className> &binder,
-                             MultiClientService &managerIn);
-
-    /**
-     *
-     */
-    virtual ~MultiClientServiceThread();
-
-    /**
-     * TODO
-     * Public to be accessed by the thread launcher subroutine
-     */
-    void ThreadLoop();
+    virtual void ThreadLoop();
 
 private:
     /**
-     *
+     * Information about the status of the thread being executed.
      */
-    MultiClientService &manager;
+    ExecutionInfo information;
 };
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template<typename className>
-MultiClientServiceThread::MultiClientServiceThread(EmbeddedServiceMethodBinderT<className> &binder,
-                                                   MultiClientService &managerIn) :
-                                                   SingleThreadService(binder),
-        manager(managerIn) {
-}
-
-}
-#endif /* L4MESSAGES_MULTICLIENTSERVICETHREAD_H_ */
+#endif /* EMBEDDEDTHREAD_H_ */
 
