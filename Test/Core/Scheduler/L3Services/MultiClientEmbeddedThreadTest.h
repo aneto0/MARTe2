@@ -1,8 +1,8 @@
 /**
- * @file EmbeddedService.h
- * @brief Header file for class EmbeddedService
- * @date Sep 1, 2016
- * @author fsartori
+ * @file MultiClientEmbeddedThreadTest.h
+ * @brief Header file for class MultiClientEmbeddedThreadTest
+ * @date 19/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class EmbeddedService
+ * @details This header file contains the declaration of the class MultiClientEmbeddedThreadTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef EMBEDDEDSERVICE_H_
-#define EMBEDDEDSERVICE_H_
+#ifndef MULTICLIENTEMBEDDEDTHREADTEST_H_
+#define MULTICLIENTEMBEDDEDTHREADTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,54 +31,57 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "EmbeddedServiceMethodBinderI.h"
-#include "EmbeddedServiceMethodBinderT.h"
-#include "EmbeddedThreadI.h"
-#include "ErrorType.h"
-#include "Object.h"
-#include "StructuredDataI.h"
-
+#include "EmbeddedThread.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
 /**
- * @brief Interface to a family of objects that allows interfacing a class method to a thread or to a pool of threads.
- * @details The method callback interface is specified in EmbeddedServiceMethodBinderT<class>::MethodPointer.
+ * Tests the EmbeddedThread public methods.
  */
-class EmbeddedServiceI: public Object {
+class MultiClientEmbeddedThreadTest {
 public:
-    /**
-     * @brief Constructor. NOOP.
-     */
-    EmbeddedServiceI();
 
     /**
-     * @brief Destructor. NOOP.
+     * @brief Default constructor
      */
-    virtual ~EmbeddedServiceI();
+    MultiClientEmbeddedThreadTest();
 
     /**
-     * @brief Starts the embedded service (which will call the registered callback method in the context of a thread).
-     * @return ErrorManagement::NoError if the service can be successfully started.
+     * @brief Destructor
      */
-    virtual ErrorManagement::ErrorType Start() = 0;
+    virtual ~MultiClientEmbeddedThreadTest();
 
     /**
-     * @brief Stops the embedded service (which is calling the registered callback method in the context of a thread).
-     * @return ErrorManagement::NoError if the service can be successfully stopped.
+     * @brief Tests the default constructor.
      */
-    virtual ErrorManagement::ErrorType Stop() = 0;
+    bool TestDefaultConstructor();
 
+    /**
+     * @brief Tests the ThreadLoop method.
+     */
+    bool TestThreadLoop();
+
+    /**
+     * @brief Callback function of the thread.
+     */
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information);
+
+    /**
+     * True when the Execute method is called.
+     */
+    bool main;
+    bool completed;
+    bool badTermination;
+    bool startup;
+    bool nullStageSpecific;
+    bool waitRequestStageSpecific;
+    bool serviceRequestStageSpecific;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-}
-
-#endif /* EMBEDDEDSERVICE_H_ */
+#endif /* MULTICLIENTEMBEDDEDTHREADTEST_H_ */
 

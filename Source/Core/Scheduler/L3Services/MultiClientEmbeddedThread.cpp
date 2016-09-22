@@ -1,8 +1,8 @@
 /**
- * @file MultiThreadService.cpp
- * @brief Source file for class MultiThreadService
- * @date Sep 2, 2016
- * @author fsartori
+ * @file MultiClientEmbeddedThread.cpp
+ * @brief Source file for class MultiClientEmbeddedThread
+ * @date 02/09/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -41,13 +41,13 @@
 
 namespace MARTe {
 
-MultiClientEmbeddedThread::~MultiClientEmbeddedThread() {
-}
-
 MultiClientEmbeddedThread::MultiClientEmbeddedThread(EmbeddedServiceMethodBinderI &binder,
-                                                   MultiClientService &managerIn) :
+                                                     MultiClientService &managerIn) :
         EmbeddedThreadI(binder),
         manager(managerIn) {
+}
+
+MultiClientEmbeddedThread::~MultiClientEmbeddedThread() {
 }
 
 void MultiClientEmbeddedThread::ThreadLoop() {
@@ -55,8 +55,7 @@ void MultiClientEmbeddedThread::ThreadLoop() {
     ExecutionInfo information;
     information.Reset();
 
-    // thread is decontextualised.
-    // any error in execution will only abort the sequence - no the thread
+    // any error in execution will only abort the sequence - but not the thread
     // thread is killed at this stage if commands != KeepRunningCommand or if there more service threads that the minimum needed
     while ((commands == KeepRunningCommand) && (!manager.MoreThanEnoughThreads())) {
         ErrorManagement::ErrorType err;
@@ -83,7 +82,10 @@ void MultiClientEmbeddedThread::ThreadLoop() {
 
             if (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
                 // Try start new service thread
-                manager.AddThread();
+                bool threadAddedOk = manager.AddThread();
+                if (!threadAddedOk) {
+                    REPORT_ERROR(ErrorManagement::RecoverableError, "Failed to AddThread... Increase the maximum number of threads allowed in the MultiClientService...");
+                }
 
                 information.SetStageSpecific(ExecutionInfo::ServiceRequestStageSpecific);
                 // exit on error including ErrorManagement::completed

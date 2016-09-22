@@ -40,39 +40,60 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 /**
- * @brief
+ * @brief Multiple client connection oriented EmbeddedThreadI implementation.
+ * @details The ThreadLoop only terminates when the GetCommands !== KeepRunningCommand or when
+ *  the MultiClientService already has enough threads handling client connections (see
+ *   MultiClientService::MoreThanEnoughThreads).
+
+ * The user callback function should not block and should return ErrorManagement::Timeout
+ * while waiting to serve. In this stage, it will be continuously called by the ThreadLoop with
+ * ExecutionInfo::MainStage and ExecutionInfo::WaitRequestStageSpecific.
+ *
+ * When the user callback returns with no error it will be recalled with ExecutionInfo::ServiceRequestStageSpecific
+ *  so to handle the connection request.
+ * In parallel, a new thread will be launched by the manager to handle any new subsequent connection requests (see MultiClientService::AddThread)
  */
 class MultiClientEmbeddedThread: public EmbeddedThreadI {
 
 public:
 
     /**
-     * TODO
+     * @brief Constructor. Forces the setting of the method binder.
+     * @param[in] binder the method which will be called in the context of this thread.
+     * @param[in] managerIn the MultiClientService responsible for managing the number of threads.
      */
     MultiClientEmbeddedThread(EmbeddedServiceMethodBinderI &binder,
-                             MultiClientService &managerIn);
+                              MultiClientService &managerIn);
 
     /**
-     * TODO
+     * @brief Constructor. Forces the setting of the method binder.
+     * @param[in] binder the method which will be called in the context of this thread.
+     * @param[in] managerIn the MultiClientService responsible for managing the number of threads.
      */
     template<typename className>
     MultiClientEmbeddedThread(EmbeddedServiceMethodBinderT<className> &binder,
-                             MultiClientService &managerIn);
+                              MultiClientService &managerIn);
 
     /**
-     *
+     * @brief Destructor. NOOP.
      */
     virtual ~MultiClientEmbeddedThread();
 
     /**
-     * TODO
-     * Public to be accessed by the thread launcher subroutine
+     * @brief Continuously calls the user callback function.
+     * @details The user callback function should not block and should return ErrorManagement::Timeout
+     * while waiting to serve. In this stage, it will be continuously called by the ThreadLoop with
+     * ExecutionInfo::MainStage and ExecutionInfo::WaitRequestStageSpecific.
+     *
+     * When the user callback returns with no error it will be recalled with ExecutionInfo::ServiceRequestStageSpecific
+     *  so to handle the connection request.
+     * In parallel, a new thread will be launched by the manager to handle any new subsequent connection requests (see MultiClientService::AddThread)
      */
     virtual void ThreadLoop();
 
 private:
     /**
-     *
+     * Responsible for managing the number of threads.
      */
     MultiClientService &manager;
 };
@@ -85,7 +106,7 @@ private:
 namespace MARTe {
 template<typename className>
 MultiClientEmbeddedThread::MultiClientEmbeddedThread(EmbeddedServiceMethodBinderT<className> &binder,
-                                                   MultiClientService &managerIn) :
+                                                     MultiClientService &managerIn) :
         EmbeddedThreadI(binder),
         manager(managerIn) {
 }

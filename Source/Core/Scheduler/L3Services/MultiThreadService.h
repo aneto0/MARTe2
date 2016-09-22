@@ -104,7 +104,7 @@ public:
      * @pre
      *   threadIdx < GetNumberOfPoolThreads()
      */
-    EmbeddedServiceI::States GetStatus(uint32 threadIdx);
+    EmbeddedThreadI::States GetStatus(uint32 threadIdx);
 
     /**
      * @brief Gets the ThreadIdentifier of the SingleThreadService with index \a threadIdx.
@@ -143,7 +143,7 @@ protected:
     uint32 msecTimeout;
 
     /**
-     * The registered call-back method to be called by this EmbeddedServiceI instance.
+     * The callback method
      */
     EmbeddedServiceMethodBinderI &method;
 };
@@ -157,6 +157,7 @@ protected:
  */
 template<typename className>
 MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder) :
+        EmbeddedServiceI (),
         method(binder) {
     numberOfPoolThreads = 1;
     msecTimeout = TTInfiniteWait.GetTimeoutMSec();

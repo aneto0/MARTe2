@@ -53,6 +53,8 @@ EmbeddedThreadI::EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder) :
     threadId = InvalidThreadIdentifier;
     threadNumber = 0u;
     commands = StopCommand;
+    maxCommandCompletionHRT = 0u;
+    timeoutHRT = -1;
 }
 
 EmbeddedThreadI::~EmbeddedThreadI() {
@@ -91,6 +93,151 @@ void EmbeddedThreadI::ResetThreadId() {
         threadId = InvalidThreadIdentifier;
     }
 }
+
+void EmbeddedThreadI::SetTimeout(TimeoutType msecTimeoutIn) {
+    msecTimeout = msecTimeoutIn;
+    if (msecTimeout == TTInfiniteWait) {
+        timeoutHRT = -1;
+    }
+    else {
+        uint64 tt64 = msecTimeout.HighResolutionTimerTicks();
+        if (tt64 < 0x7FFFFFFF) {
+            timeoutHRT = tt64;
+        }
+        else {
+            timeoutHRT = 0x7FFFFFFF;
+        }
+    }
+}
+
+TimeoutType EmbeddedThreadI::GetTimeout() const {
+    return msecTimeout;
+}
+
+
+EmbeddedThreadI::States EmbeddedThreadI::GetStatus() {
+    States status = NoneState;
+    EmbeddedThreadI::Commands commands = GetCommands();
+    bool isAlive = false;
+
+    if (GetThreadId() == InvalidThreadIdentifier) {
+        status = OffState;
+    }
+    else {
+        isAlive = Threads::IsAlive(GetThreadId());
+
+        if (!isAlive) {
+            status = OffState;
+            ResetThreadId();
+        }
+    }
+
+    if (status == NoneState) {
+        if (commands == EmbeddedThreadI::KeepRunningCommand) {
+            status = RunningState;
+        }
+        else if (commands == EmbeddedThreadI::StartCommand) {
+            int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
+            if ((deltaT > 0) && (timeoutHRT != -1)) {
+                status = TimeoutStartingState;
+            }
+            else {
+                status = StartingState;
+            }
+        }
+        else if (commands == EmbeddedThreadI::StopCommand) {
+            int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
+            if ((deltaT > 0) && (timeoutHRT != -1)) {
+                status = TimeoutStoppingState;
+            }
+            else {
+                status = StoppingState;
+            }
+        }
+        else if (commands == EmbeddedThreadI::KillCommand) {
+            int32 deltaT = HighResolutionTimer::Counter32() - maxCommandCompletionHRT;
+            if ((deltaT > 0) && (timeoutHRT != -1)) {
+                status = TimeoutKillingState;
+            }
+            else {
+                status = KillingState;
+            }
+        }
+
+    }
+    return status;
+}
+
+ErrorManagement::ErrorType EmbeddedThreadI::Start() {
+    ErrorManagement::ErrorType err;
+
+    //check if thread already running
+    if (GetStatus() != OffState) {
+        err.illegalOperation = true;
+    }
+
+    if (err.ErrorsCleared()) {
+        SetCommands(EmbeddedThreadI::StartCommand);
+        maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
+        LaunchThread();
+
+        err.fatalError = (GetThreadId() == 0);
+    }
+
+    return err;
+}
+
+ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
+    ErrorManagement::ErrorType err;
+    States status = GetStatus();
+    //check if thread already stopped
+    if (status == OffState) {
+
+    }
+    else if (status == RunningState) {
+        SetCommands(EmbeddedThreadI::StopCommand);
+        maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
+
+        while (GetStatus() == StoppingState) {
+            Sleep::MSec(1);
+        }
+
+        err.timeout = (GetStatus() != OffState);
+        if (err.ErrorsCleared()) {
+            ResetThreadId();
+        }
+
+    }
+    else if ((status == TimeoutStoppingState) || (status == StoppingState)) {
+        SetCommands(EmbeddedThreadI::KillCommand);
+
+        maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
+        err.fatalError = !Threads::Kill(GetThreadId());
+
+        if (err.ErrorsCleared()) {
+
+            while (GetStatus() == KillingState) {
+                Sleep::MSec(1);
+            }
+
+        }
+
+        err.timeout = (GetStatus() != OffState);
+
+        // in any case notify the main object of the fact that the thread has been killed
+        ExecutionInfo information;
+        information.SetThreadNumber(GetThreadNumber());
+        information.SetStage(ExecutionInfo::AsyncTerminationStage);
+        Execute(information);
+        ResetThreadId();
+    }
+    else {
+        err.illegalOperation = true;
+    }
+
+    return err;
+}
+
 
 }
 

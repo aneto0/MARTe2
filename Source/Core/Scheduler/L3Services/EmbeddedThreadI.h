@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "EmbeddedServiceMethodBinderI.h"
 #include "EmbeddedServiceMethodBinderT.h"
+#include "Object.h"
 #include "Threads.h"
 
 /*---------------------------------------------------------------------------*/
@@ -47,7 +48,7 @@ namespace MARTe {
  * the Execute method is expected to be called with the correct stage information. Note that the
  * Execute method is not virtual for performance reasons.
  */
-class EmbeddedThreadI {
+class EmbeddedThreadI: public Object {
 public:
     /**
      * @brief Constructor. Forces the setting of the method binder.
@@ -86,6 +87,56 @@ public:
          */
         KillCommand
 
+    };
+
+    /**
+     * @brief List of possible states of an SingleServiceThread.
+     */
+    enum States {
+        /**
+         * No Status
+         */
+        NoneState,
+
+        /**
+         * No Thread running = (threadId = 0)
+         */
+        OffState,
+
+        /**
+         * Thread is starting
+         */
+        StartingState,
+
+        /**
+         * Thread timed-out while starting
+         */
+        TimeoutStartingState,
+
+        /**
+         * (threadId != 0)
+         */
+        RunningState,
+
+        /**
+         * Thread is stopping
+         */
+        StoppingState,
+
+        /**
+         * Thread timed-out while stopping
+         */
+        TimeoutStoppingState,
+
+        /**
+         * Thread is being killed
+         */
+        KillingState,
+
+        /**
+         * Thread timed-out while being killed
+         */
+        TimeoutKillingState
     };
 
     /**
@@ -148,6 +199,44 @@ public:
      */
     inline ErrorManagement::ErrorType Execute(ExecutionInfo information);
 
+    /**
+     * @brief Gets the current thread status.
+     * @return
+     *  - OffState if the thread is not running
+     *  - RunningState if the thread is being executed (i.e. calling the callback function in a loop)
+     *  - StartingState if the thread is starting
+     *  - TimeoutStartingState if the thread has timed-out while starting
+     *  - StoppingState is the thread is stopping
+     *  - TimeoutStoppingState if the thread has timed-out while stopping
+     *  - KillingState if the thread is being killed
+     *  - TimeoutKillingState if the thread has timed-out while being killed
+     */
+    States GetStatus();
+
+    /**
+     * @brief Sets the maximum time to execute a state change.
+     * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
+     */
+    void SetTimeout(TimeoutType msecTimeoutIn);
+
+    /**
+     * @brief Gets the maximum time to execute a state change.
+     * @return the maximum time to execute a state change.
+     */
+    TimeoutType GetTimeout() const;
+
+    /**
+     * @brief Starts the embedded thread (which will call the registered callback method in the context of a thread).
+     * @return ErrorManagement::NoError if the thread can be successfully started.
+     */
+    virtual ErrorManagement::ErrorType Start();
+
+    /**
+     * @brief Stops the embedded thread (which is calling the registered callback method in the context of a thread).
+     * @return ErrorManagement::NoError if the thread can be successfully stopped.
+     */
+    virtual ErrorManagement::ErrorType Stop();
+
 protected:
 
     /**
@@ -170,6 +259,21 @@ protected:
      */
     Commands commands;
 
+    /**
+     * Maximum absolute time to execute a state change.
+     * maxCommandCompletionHRT = HighResolutionTimer::Counter32 + timeoutHRT
+     */
+    uint32 maxCommandCompletionHRT;
+
+    /**
+     * The timeout in high resolution counts.
+     */
+    int32 timeoutHRT;
+
+    /**
+     * The maximum time to execute a state change.
+     */
+    TimeoutType msecTimeout;
 };
 }
 

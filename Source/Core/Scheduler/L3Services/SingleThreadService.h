@@ -113,20 +113,6 @@ public:
     virtual ErrorManagement::ErrorType Stop();
 
     /**
-     * @brief Gets the current thread status.
-     * @return
-     *  - OffState if the thread is not running
-     *  - RunningState if the thread is being executed (i.e. calling the callback function in a loop)
-     *  - StartingState if the thread is starting
-     *  - TimeoutStartingState if the thread has timed-out while starting
-     *  - StoppingState is the thread is stopping
-     *  - TimeoutStoppingState if the thread has timed-out while stopping
-     *  - KillingState if the thread is being killed
-     *  - TimeoutKillingState if the thread has timed-out while being killed
-     */
-    States GetStatus();
-
-    /**
      * @brief Sets the maximum time to execute a state change.
      * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
      */
@@ -142,7 +128,7 @@ public:
      * @brief Gets the embedded thread.
      * @return the embedded thread.
      */
-    const EmbeddedThread &GetThread();
+    const EmbeddedThreadI & GetThread();
 
     /**
      * @brief Gets the thread unique number (with-in the context of a pool).
@@ -156,23 +142,7 @@ public:
      */
     void SetThreadNumber(uint16 threadNumberIn);
 
-protected:
-    /**
-     * Maximum absolute time to execute a state change.
-     * maxCommandCompletionHRT = HighResolutionTimer::Counter32 + timeoutHRT
-     */
-    uint32 maxCommandCompletionHRT;
-
-    /**
-     * The timeout in high resolution counts.
-     */
-    int32 timeoutHRT;
-
-    /**
-     * The maximum time to execute a state change.
-     */
-    TimeoutType msecTimeout;
-
+private:
     /**
      * The embedded thread.
      */
@@ -187,8 +157,6 @@ template<typename className>
 SingleThreadService::SingleThreadService(EmbeddedServiceMethodBinderT<className> &binder) :
         EmbeddedServiceI(),
         embeddedThread(binder) {
-    maxCommandCompletionHRT = 0;
-    timeoutHRT = -1;
     SetTimeout(TTInfiniteWait);
 }
 

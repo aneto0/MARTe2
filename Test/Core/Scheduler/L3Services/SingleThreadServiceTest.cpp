@@ -90,7 +90,7 @@ bool SingleThreadServiceTest::TestDefaultConstructor() {
 
     SingleThreadService embeddedThread(binder);
     bool ok = (embeddedThread.GetTimeout() == TTInfiniteWait);
-    ok &= (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetThread()->GetThreadId() == InvalidThreadIdentifier);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
     return ok;
 }
@@ -101,7 +101,7 @@ bool SingleThreadServiceTest::TestDefaultConstructor_Template() {
     EmbeddedServiceMethodBinderT<SingleThreadServiceTestCallbackClass> binder(callbackClass, &SingleThreadServiceTestCallbackClass::CallbackFunction);
     SingleThreadService embeddedThread(binder);
     bool ok = (embeddedThread.GetTimeout() == TTInfiniteWait);
-    ok &= (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetThread()->GetThreadId() == InvalidThreadIdentifier);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
     return ok;
 }
@@ -137,7 +137,7 @@ bool SingleThreadServiceTest::TestStart() {
     EmbeddedServiceMethodBinderT<SingleThreadServiceTestCallbackClass> binder(callbackClass, &SingleThreadServiceTestCallbackClass::CallbackFunction);
     SingleThreadService embeddedThread(binder);
 
-    bool ok = (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
+    bool ok = (embeddedThread.GetThread()->GetThreadId() == InvalidThreadIdentifier);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
 
     ErrorManagement::ErrorType err = embeddedThread.Start();
@@ -149,7 +149,7 @@ bool SingleThreadServiceTest::TestStart() {
     }
     ok &= (callbackClass.internalState >= 10u);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThread().GetThreadId() != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetThread()->GetThreadId() != InvalidThreadIdentifier);
 
     embeddedThread.Stop();
     return ok;
@@ -161,7 +161,7 @@ bool SingleThreadServiceTest::TestStart_False() {
     EmbeddedServiceMethodBinderT<SingleThreadServiceTestCallbackClass> binder(callbackClass, &SingleThreadServiceTestCallbackClass::CallbackFunction);
     SingleThreadService embeddedThread(binder);
 
-    bool ok = (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
+    bool ok = (embeddedThread.GetThread()->GetThreadId() == InvalidThreadIdentifier);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
 
     ErrorManagement::ErrorType err = embeddedThread.Start();
@@ -173,7 +173,7 @@ bool SingleThreadServiceTest::TestStart_False() {
     }
     ok &= (callbackClass.internalState >= 10u);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThread().GetThreadId() != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetThread()->GetThreadId() != InvalidThreadIdentifier);
 
     err = embeddedThread.Start();
     ok &= (err == ErrorManagement::IllegalOperation);
@@ -188,7 +188,7 @@ bool SingleThreadServiceTest::TestStart_Restart() {
     EmbeddedServiceMethodBinderT<SingleThreadServiceTestCallbackClass> binder(callbackClass, &SingleThreadServiceTestCallbackClass::CallbackFunction);
     SingleThreadService embeddedThread(binder);
 
-    bool ok = (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
+    bool ok = (embeddedThread.GetThread()->GetThreadId() == InvalidThreadIdentifier);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
 
     ErrorManagement::ErrorType err = embeddedThread.Start();
@@ -200,7 +200,7 @@ bool SingleThreadServiceTest::TestStart_Restart() {
     }
     ok &= (callbackClass.internalState >= 10u);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThread().GetThreadId() != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetThread()->GetThreadId() != InvalidThreadIdentifier);
 
     embeddedThread.Stop();
 
@@ -214,7 +214,7 @@ bool SingleThreadServiceTest::TestStart_Restart() {
     }
     ok &= (callbackClass.internalState >= 10u);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThread().GetThreadId() != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetThread()->GetThreadId() != InvalidThreadIdentifier);
     return ok;
 }
 
@@ -224,7 +224,7 @@ bool SingleThreadServiceTest::TestStop() {
     EmbeddedServiceMethodBinderT<SingleThreadServiceTestCallbackClass> binder(callbackClass, &SingleThreadServiceTestCallbackClass::CallbackFunction);
     SingleThreadService embeddedThread(binder);
 
-    bool ok = (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
+    bool ok = (embeddedThread.GetThread()->GetThreadId() == InvalidThreadIdentifier);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
 
     ErrorManagement::ErrorType err = embeddedThread.Start();
@@ -236,12 +236,12 @@ bool SingleThreadServiceTest::TestStop() {
     }
     ok &= (callbackClass.internalState >= 10u);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThread().GetThreadId() != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetThread()->GetThreadId() != InvalidThreadIdentifier);
 
     err = embeddedThread.Stop();
     ok &= (err == ErrorManagement::NoError);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
-    ok &= (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetThread()->GetThreadId() == InvalidThreadIdentifier);
 
     return ok;
 }
@@ -252,7 +252,7 @@ bool SingleThreadServiceTest::TestStop_Kill() {
     EmbeddedServiceMethodBinderT<SingleThreadServiceTestCallbackClassToKill> binder(callbackClass, &SingleThreadServiceTestCallbackClassToKill::CallbackFunction);
     SingleThreadService embeddedThread(binder);
 
-    bool ok = (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
+    bool ok = (embeddedThread.GetThread()->GetThreadId() == InvalidThreadIdentifier);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
 
     ErrorManagement::ErrorType err = embeddedThread.Start();
@@ -264,20 +264,20 @@ bool SingleThreadServiceTest::TestStop_Kill() {
     }
     ok &= (callbackClass.internalState == 1u);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThread().GetThreadId() != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetThread()->GetThreadId() != InvalidThreadIdentifier);
 
     embeddedThread.SetTimeout(1000);
     err = embeddedThread.Stop();
 
     ok &= (err == ErrorManagement::Timeout);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::TimeoutStoppingState);
-    ok &= (embeddedThread.GetThread().GetThreadId() != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetThread()->GetThreadId() != InvalidThreadIdentifier);
 
     err = embeddedThread.Stop();
 
     ok &= (err == ErrorManagement::NoError);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
-    ok &= (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetThread()->GetThreadId() == InvalidThreadIdentifier);
     ok &= (callbackClass.internalState == 15u);
     return ok;
 }
@@ -288,7 +288,7 @@ bool SingleThreadServiceTest::TestGetStatus() {
     EmbeddedServiceMethodBinderT<SingleThreadServiceTestCallbackClass> binder(callbackClass, &SingleThreadServiceTestCallbackClass::CallbackFunction);
     SingleThreadService embeddedThread(binder);
 
-    bool ok = (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
+    bool ok = (embeddedThread.GetThread()->GetThreadId() == InvalidThreadIdentifier);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
 
     ErrorManagement::ErrorType err = embeddedThread.Start();
@@ -327,7 +327,7 @@ bool SingleThreadServiceTest::TestGetThreadId() {
     EmbeddedServiceMethodBinderT<SingleThreadServiceTestCallbackClass> binder(callbackClass, &SingleThreadServiceTestCallbackClass::CallbackFunction);
     SingleThreadService embeddedThread(binder);
 
-    bool ok = (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
+    bool ok = (embeddedThread.GetThread()->GetThreadId() == InvalidThreadIdentifier);
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
 
     ErrorManagement::ErrorType err = embeddedThread.Start();
@@ -337,10 +337,10 @@ bool SingleThreadServiceTest::TestGetThreadId() {
         Sleep::Sec(1.0);
         maxCounter--;
     }
-    ok &= (embeddedThread.GetThread().GetThreadId() != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetThread()->GetThreadId() != InvalidThreadIdentifier);
 
     err = embeddedThread.Stop();
-    ok &= (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetThread()->GetThreadId() == InvalidThreadIdentifier);
 
     return ok;
 }
@@ -353,7 +353,7 @@ bool SingleThreadServiceTest::TestGetThreadNumber() {
 
     embeddedThread.SetThreadNumber(100);
 
-    return (embeddedThread.GetThread().GetThreadNumber() == 100);
+    return (embeddedThread.GetThread()->GetThreadNumber() == 100);
 }
 
 bool SingleThreadServiceTest::TestSetThreadNumber() {

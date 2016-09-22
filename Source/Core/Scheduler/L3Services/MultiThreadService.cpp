@@ -66,15 +66,15 @@ ErrorManagement::ErrorType MultiThreadService::Start() {
     err.illegalOperation = (threadPool.Size() >= numberOfPoolThreads);
     uint32 n = 0u;
     while ((threadPool.Size() < numberOfPoolThreads) && (err.ErrorsCleared())) {
-        ReferenceT<SingleThreadService> service(new (NULL) SingleThreadService(method));
-        err.fatalError = !service.IsValid();
+        ReferenceT<EmbeddedThread> thread(new (NULL) EmbeddedThread(method));
+        err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
-            service->SetThreadNumber(n);
-            service->SetTimeout(msecTimeout);
-            err = service->Start();
+            thread->SetThreadNumber(n);
+            thread->SetTimeout(msecTimeout);
+            err = thread->Start();
         }
         if (err.ErrorsCleared()) {
-            threadPool.Insert(service);
+            threadPool.Insert(thread);
         }
         n++;
     }
@@ -85,31 +85,31 @@ ErrorManagement::ErrorType MultiThreadService::Stop() {
     ErrorManagement::ErrorType err;
     uint32 i;
     for (i = 0u; i < threadPool.Size(); i++) {
-        ReferenceT<SingleThreadService> service = threadPool.Get(i);
-        if (service.IsValid()) {
-            err = service->Stop();
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
+        if (thread.IsValid()) {
+            err = thread->Stop();
             if (!err.ErrorsCleared()) {
-                REPORT_ERROR_PARAMETERS(err, "Could not Stop SingleThreadService(%d)", i)
+                REPORT_ERROR_PARAMETERS(err, "Could not Stop EmbeddedThreadI(%d)", i)
             }
         }
     }
     // perform kill if necessary
     for (i = 0; i < threadPool.Size(); i++) {
-        ReferenceT<SingleThreadService> service = threadPool.Get(i);
+        ReferenceT<EmbeddedThreadI> service = threadPool.Get(i);
         if (service.IsValid()) {
             err = service->Stop();
             if (!err.ErrorsCleared()) {
-                REPORT_ERROR_PARAMETERS(err, "Could not Kill SingleThreadService(%d)", i)
+                REPORT_ERROR_PARAMETERS(err, "Could not Kill EmbeddedThreadI(%d)", i)
             }
         }
     }
     // remove dead threads
     i = 0;
     while ((i < threadPool.Size()) && (err.ErrorsCleared())) {
-        ReferenceT<SingleThreadService> service = threadPool.Get(i);
-        if (service.IsValid()) {
-            if (service->GetStatus() == EmbeddedServiceI::OffState) {
-                threadPool.Delete(service);
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
+        if (thread.IsValid()) {
+            if (thread->GetStatus() == EmbeddedThreadI::OffState) {
+                threadPool.Delete(thread);
             }
             else {
                 i++;
@@ -129,11 +129,13 @@ ErrorManagement::ErrorType MultiThreadService::Stop() {
 
 }
 
-EmbeddedServiceI::States MultiThreadService::GetStatus(uint32 threadIdx) {
-    EmbeddedServiceI::States status = EmbeddedServiceI::OffState;
+EmbeddedThreadI::States MultiThreadService::GetStatus(uint32 threadIdx) {
+    EmbeddedThreadI::States status = EmbeddedThreadI::OffState;
     if (threadIdx < threadPool.Size()) {
-        ReferenceT<SingleThreadService> service = threadPool.Get(threadIdx);
-        status = service->GetStatus();
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
+        if (thread.IsValid()) {
+            status = thread->GetStatus();
+        }
     }
 
     return status;
@@ -142,8 +144,10 @@ EmbeddedServiceI::States MultiThreadService::GetStatus(uint32 threadIdx) {
 ThreadIdentifier MultiThreadService::GetThreadId(uint32 threadIdx) {
     ThreadIdentifier tid = 0u;
     if (threadIdx < threadPool.Size()) {
-        ReferenceT<SingleThreadService> service = threadPool.Get(threadIdx);
-        tid = service->GetThread().GetThreadId();
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
+        if (thread.IsValid()) {
+            tid = thread->GetThreadId();
+        }
     }
 
     return tid;
@@ -161,9 +165,9 @@ void MultiThreadService::SetTimeout(TimeoutType msecTimeoutIn) {
     msecTimeout = msecTimeoutIn.GetTimeoutMSec();
     uint32 i;
     for (i = 0u; i < threadPool.Size(); i++) {
-        ReferenceT<SingleThreadService> service = threadPool.Get(i);
-        if (service.IsValid()) {
-            service->SetTimeout(msecTimeoutIn);
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
+        if (thread.IsValid()) {
+            thread->SetTimeout(msecTimeoutIn);
         }
     }
 }

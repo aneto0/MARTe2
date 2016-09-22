@@ -1,8 +1,8 @@
 /**
- * @file SingleThreadService.cpp
- * @brief Source file for class SingleThreadService
- * @date 23/08/2016
- * @author Filippo Sartori
+ * @file MultiClientEmbeddedThreadGTest.cpp
+ * @brief Source file for class MultiClientEmbeddedThreadGTest
+ * @date 20/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class SingleThreadService (public, protected, and private). Be aware that some
+ * the class MessageGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,69 +29,24 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <SingleThreadService.h>
-#include "ExecutionInfo.h"
+#include "gtest/gtest.h"
+#include "MultiClientEmbeddedThreadTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-SingleThreadService::SingleThreadService(EmbeddedServiceMethodBinderI &binder) :
-        EmbeddedServiceI() {
-    SetTimeout(TTInfiniteWait);
+TEST(MultiClientEmbeddedThreadGTest, TestConstructor) {
+    MultiClientEmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-SingleThreadService::~SingleThreadService() {
-    Stop();
-    Stop();
+TEST(MultiClientEmbeddedThreadGTest,TestThreadLoop) {
+    MultiClientEmbeddedThreadTest target;
+    ASSERT_TRUE(target.TestThreadLoop());
 }
 
-bool SingleThreadService::Initialise(StructuredDataI &data) {
-    uint32 msecTimeout;
-    ErrorManagement::ErrorType err;
-    err.parametersError = !data.Read("Timeout", msecTimeout);
-    if (err.ErrorsCleared()) {
-        if (msecTimeout == 0u) {
-            msecTimeout = TTInfiniteWait.GetTimeoutMSec();
-        }
-        SetTimeout(msecTimeout);
-    }
-
-    return err;
-}
-
-void SingleThreadService::SetTimeout(TimeoutType msecTimeoutIn) {
-    embeddedThread.SetTimeout(msecTimeoutIn);
-}
-
-TimeoutType SingleThreadService::GetTimeout() const {
-    return embeddedThread.GetTimeout();
-}
-
-ErrorManagement::ErrorType SingleThreadService::Start() {
-    return embeddedThread.Start();
-}
-
-ErrorManagement::ErrorType SingleThreadService::Stop() {
-    return embeddedThread.Stop();
-}
-
-const EmbeddedThreadI &SingleThreadService::GetThread() {
-    return embeddedThread;
-}
-
-uint16 SingleThreadService::GetThreadNumber() const {
-    return embeddedThread.GetThreadNumber();
-}
-
-void SingleThreadService::SetThreadNumber(uint16 threadNumberIn) {
-    embeddedThread.SetThreadNumber(threadNumberIn);
-}
-
-}
