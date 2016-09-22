@@ -133,7 +133,7 @@ public:
     void SetCommands(Commands commandsIn);
 
     /**
-     * @brief Sets the thread identifier to zero.
+     * @brief Sets the thread identifier to InvalidThreadIdentifier.
      * @pre
      *   !Threads::IsAlive(GetThreadId())
      */

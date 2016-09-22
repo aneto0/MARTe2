@@ -57,6 +57,55 @@ public:
      */
     bool TestDefaultConstructor();
 
+    /**
+     * @brief Tests the GetThreadNumber method.
+     */
+    bool TestGetThreadNumber();
+
+    /**
+     * @brief Tests the SetThreadNumber method.
+     */
+    bool TestSetThreadNumber();
+
+    /**
+     * @brief Tests the GetThreadId method.
+     */
+    bool TestGetThreadId();
+
+    /**
+     * @brief Tests the LaunchThread method.
+     */
+    bool TestLaunchThread();
+
+    /**
+     * @brief Tests the GetCommands method.
+     */
+    bool TestGetCommands();
+
+    /**
+     * @brief Tests the SetCommands method.
+     */
+    bool TestSetCommands();
+
+    /**
+     * @brief Tests the ResetThreadId method.
+     */
+    bool TestResetThreadId();
+
+    /**
+     * @brief Tests the Execute method.
+     */
+    bool TestExecute();
+
+    /**
+     * @brief Callback function of the thread.
+     */
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information);
+
+    /**
+     * True when the Execute method is called.
+     */
+    bool executeCalled;
 };
 
 /*---------------------------------------------------------------------------*/

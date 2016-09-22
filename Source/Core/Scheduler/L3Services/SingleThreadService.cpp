@@ -51,6 +51,7 @@ SingleThreadService::SingleThreadService(EmbeddedServiceMethodBinderI &binder) :
 
 SingleThreadService::~SingleThreadService() {
     Stop();
+    Stop();
 }
 
 bool SingleThreadService::Initialise(StructuredDataI &data) {

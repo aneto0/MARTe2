@@ -29,7 +29,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-
 #include "gtest/gtest.h"
 #include "EmbeddedThreadITest.h"
 
@@ -41,8 +40,47 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(EmbeddedThreadIGTest,TestConstructor) {
+TEST(EmbeddedThreadIGTest, TestConstructor) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
+TEST(EmbeddedThreadIGTest,TestGetThreadNumber) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetThreadNumber());
+}
+
+TEST(EmbeddedThreadIGTest, TestSetThreadNumber) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestSetThreadNumber());
+}
+
+TEST(EmbeddedThreadIGTest, TestGetThreadId) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetThreadId());
+}
+
+TEST(EmbeddedThreadIGTest, TestLaunchThread) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestLaunchThread());
+}
+
+TEST(EmbeddedThreadIGTest, TestGetCommands) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetCommands());
+}
+
+TEST(EmbeddedThreadIGTest, TestSetCommands) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestSetCommands());
+}
+
+TEST(EmbeddedThreadIGTest, TestResetThreadId) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestResetThreadId());
+}
+
+TEST(EmbeddedThreadIGTest, TestExecute) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestExecute());
+}

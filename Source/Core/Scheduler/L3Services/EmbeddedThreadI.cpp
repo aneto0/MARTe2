@@ -88,7 +88,7 @@ ThreadIdentifier EmbeddedThreadI::GetThreadId() const {
 
 void EmbeddedThreadI::ResetThreadId() {
     if (!Threads::IsAlive(threadId)) {
-        threadId = 0;
+        threadId = InvalidThreadIdentifier;
     }
 }
 
