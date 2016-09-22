@@ -124,24 +124,6 @@ public:
      */
     TimeoutType GetTimeout() const;
 
-    /**
-     * @brief Gets the embedded thread.
-     * @return the embedded thread.
-     */
-    const EmbeddedThreadI & GetThread();
-
-    /**
-     * @brief Gets the thread unique number (with-in the context of a pool).
-     * @return the thread unique number (with-in the context of a pool).
-     */
-    uint16 GetThreadNumber() const;
-
-    /**
-     * @brief Sets the thread unique number (with-in the context of a pool).
-     * @param[in] numberIn the thread unique number (with-in the context of a pool).
-     */
-    void SetThreadNumber(uint16 threadNumberIn);
-
 private:
     /**
      * The embedded thread.

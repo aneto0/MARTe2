@@ -165,13 +165,6 @@ public:
     ThreadIdentifier GetThreadId() const;
 
     /**
-     * @brief Spawns a new thread which will call the ThreadLoop method.
-     * @pre
-     *   !Threads::IsAlive(GetThreadId())
-     */
-    void LaunchThread();
-
-    /**
      * @brief Gets the current command being executed in the ThreadLoop.
      * @return the current command.
      */

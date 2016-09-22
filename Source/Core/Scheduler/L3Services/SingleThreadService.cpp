@@ -43,7 +43,8 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 SingleThreadService::SingleThreadService(EmbeddedServiceMethodBinderI &binder) :
-        EmbeddedServiceI() {
+        EmbeddedServiceI(),
+        embeddedThread(binder) {
     SetTimeout(TTInfiniteWait);
 }
 
@@ -80,18 +81,6 @@ ErrorManagement::ErrorType SingleThreadService::Start() {
 
 ErrorManagement::ErrorType SingleThreadService::Stop() {
     return embeddedThread.Stop();
-}
-
-const EmbeddedThreadI &SingleThreadService::GetThread() {
-    return embeddedThread;
-}
-
-uint16 SingleThreadService::GetThreadNumber() const {
-    return embeddedThread.GetThreadNumber();
-}
-
-void SingleThreadService::SetThreadNumber(uint16 threadNumberIn) {
-    embeddedThread.SetThreadNumber(threadNumberIn);
 }
 
 }

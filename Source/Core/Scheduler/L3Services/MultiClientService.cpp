@@ -49,18 +49,50 @@ bool MultiClientService::Initialise(StructuredDataI &data) {
     if (err.ErrorsCleared()) {
         err = data.Read("MinNumberOfThreads", minNumberOfThreads);
     }
+    if (err.ErrorsCleared()) {
+        err.parametersError = !data.Read("Timeout", msecTimeout);
+    }
+    if (err.ErrorsCleared()) {
+        if (msecTimeout == 0u) {
+            msecTimeout = TTInfiniteWait.GetTimeoutMSec();
+        }
+    }
     return err;
 }
 
 ErrorManagement::ErrorType MultiClientService::AddThread() {
     ErrorManagement::ErrorType err;
     if ((threadPool.Size() < maxNumberOfThreads) && (err.ErrorsCleared())) {
-        ReferenceT<MultiClientEmbeddedThread> thread(new MultiClientEmbeddedThread(method, *this));
+        ReferenceT<MultiClientEmbeddedThread> thread(new (NULL) MultiClientEmbeddedThread(method, *this));
         err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
-            thread->LaunchThread();
+            thread->SetThreadNumber(threadPool.Size());
+            thread->SetTimeout(msecTimeout);
+            err = thread->Start();
+        }
+        if (err.ErrorsCleared()) {
             threadPool.Insert(thread);
         }
+    }
+    return err;
+}
+
+ErrorManagement::ErrorType MultiClientService::Start() {
+    ErrorManagement::ErrorType err;
+    err.illegalOperation = (threadPool.Size() >= minNumberOfThreads);
+    uint32 n = 0u;
+    while ((threadPool.Size() < minNumberOfThreads) && (err.ErrorsCleared())) {
+        ReferenceT<MultiClientEmbeddedThread> thread(new (NULL) MultiClientEmbeddedThread(method, *this));
+        err.fatalError = !thread.IsValid();
+        if (err.ErrorsCleared()) {
+            thread->SetThreadNumber(n);
+            thread->SetTimeout(msecTimeout);
+            err = thread->Start();
+        }
+        if (err.ErrorsCleared()) {
+            threadPool.Insert(thread);
+        }
+        n++;
     }
     return err;
 }

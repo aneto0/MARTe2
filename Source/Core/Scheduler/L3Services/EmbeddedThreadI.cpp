@@ -61,13 +61,6 @@ EmbeddedThreadI::~EmbeddedThreadI() {
 
 }
 
-void EmbeddedThreadI::LaunchThread() {
-    if (!Threads::IsAlive(threadId)) {
-        const void * const parameters = static_cast<void *>(this);
-        threadId = Threads::BeginThread(ServiceThreadLauncher, parameters);
-    }
-}
-
 uint16 EmbeddedThreadI::GetThreadNumber() const {
     return threadNumber;
 }
@@ -113,7 +106,6 @@ void EmbeddedThreadI::SetTimeout(TimeoutType msecTimeoutIn) {
 TimeoutType EmbeddedThreadI::GetTimeout() const {
     return msecTimeout;
 }
-
 
 EmbeddedThreadI::States EmbeddedThreadI::GetStatus() {
     States status = NoneState;
@@ -175,11 +167,14 @@ ErrorManagement::ErrorType EmbeddedThreadI::Start() {
     if (GetStatus() != OffState) {
         err.illegalOperation = true;
     }
-
+    if (err.ErrorsCleared()) {
+        err.illegalOperation = Threads::IsAlive(threadId);
+    }
     if (err.ErrorsCleared()) {
         SetCommands(EmbeddedThreadI::StartCommand);
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + timeoutHRT;
-        LaunchThread();
+        const void * const parameters = static_cast<void *>(this);
+        threadId = Threads::BeginThread(ServiceThreadLauncher, parameters);
 
         err.fatalError = (GetThreadId() == 0);
     }
@@ -237,7 +232,6 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
 
     return err;
 }
-
 
 }
 

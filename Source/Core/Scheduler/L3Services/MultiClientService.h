@@ -71,6 +71,8 @@ public:
      *
      */
     inline bool MoreThanEnoughThreads();
+
+    virtual ErrorManagement::ErrorType Start();
 protected:
     /**
      *
