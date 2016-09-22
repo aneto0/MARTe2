@@ -86,11 +86,6 @@ TEST(SingleThreadServiceGTest,TestStop_Kill) {
     ASSERT_TRUE(target.TestStop_Kill());
 }
 
-TEST(SingleThreadServiceGTest,TestThreadLoop) {
-    SingleThreadServiceTest target;
-    ASSERT_TRUE(target.TestThreadLoop());
-}
-
 TEST(SingleThreadServiceGTest,TestGetStatus) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestGetStatus());

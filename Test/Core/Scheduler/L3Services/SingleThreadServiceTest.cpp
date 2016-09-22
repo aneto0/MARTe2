@@ -72,43 +72,6 @@ public:
     MARTe::uint32 internalState;
 };
 
-class SingleThreadServiceTestCallbackClassStage {
-public:
-    SingleThreadServiceTestCallbackClassStage() {
-        completed = false;
-        main = false;
-        badTermination = false;
-        startup = false;
-    }
-
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
-        if (information.GetStage() == MARTe::ExecutionInfo::StartupStage) {
-            startup = true;
-        }
-        if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
-            main = true;
-            if (!completed) {
-                return MARTe::ErrorManagement::Completed;
-            }
-            else {
-                return MARTe::ErrorManagement::FatalError;
-            }
-        }
-        if (information.GetStage() == MARTe::ExecutionInfo::TerminationStage) {
-            completed = true;
-        }
-        if (information.GetStage() == MARTe::ExecutionInfo::BadTerminationStage) {
-            badTermination = true;
-        }
-        return MARTe::ErrorManagement::NoError;
-    }
-
-    bool main;
-    bool completed;
-    bool badTermination;
-    bool startup;
-};
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -316,28 +279,6 @@ bool SingleThreadServiceTest::TestStop_Kill() {
     ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
     ok &= (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
     ok &= (callbackClass.internalState == 15u);
-    return ok;
-}
-
-bool SingleThreadServiceTest::TestThreadLoop() {
-    using namespace MARTe;
-    SingleThreadServiceTestCallbackClassStage callbackClass;
-    EmbeddedServiceMethodBinderT<SingleThreadServiceTestCallbackClassStage> binder(callbackClass, &SingleThreadServiceTestCallbackClassStage::CallbackFunction);
-    SingleThreadService embeddedThread(binder);
-
-    bool ok = (embeddedThread.GetThread().GetThreadId() == InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetStatus() == EmbeddedServiceI::OffState);
-
-    ErrorManagement::ErrorType err = embeddedThread.Start();
-    ok = (err == ErrorManagement::NoError);
-    uint32 maxCounter = 10;
-    while ((maxCounter > 0) && (callbackClass.badTermination != true)) {
-        Sleep::Sec(1.0);
-        maxCounter--;
-    }
-    ok &= (callbackClass.main && callbackClass.completed && callbackClass.startup && callbackClass.badTermination);
-
-    embeddedThread.Stop();
     return ok;
 }
 

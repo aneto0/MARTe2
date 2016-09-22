@@ -1,6 +1,6 @@
 /**
- * @file SingleThreadServiceTest.h
- * @brief Header file for class SingleThreadServiceTest
+ * @file EmbeddedThreadITest.h
+ * @brief Header file for class EmbeddedThreadITest
  * @date 19/09/2016
  * @author Andre Neto
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class SingleThreadServiceTest
+ * @details This header file contains the declaration of the class EmbeddedThreadITest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SINGLETHREADSERVICETEST_H_
-#define SINGLETHREADSERVICETEST_H_
+#ifndef EMBEDDEDTHREADSTEST_H_
+#define EMBEDDEDTHREADSTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,26 +31,26 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "SingleThreadService.h"
+#include "EmbeddedThread.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
- * Tests the SingleThreadService public methods.
+ * Tests the EmbeddedThread public methods.
  */
-class SingleThreadServiceTest {
+class EmbeddedThreadTest {
 public:
 
     /**
      * @brief Default constructor
      */
-    SingleThreadServiceTest();
+    EmbeddedThreadTest();
 
     /**
      * @brief Destructor
      */
-    virtual ~SingleThreadServiceTest();
+    virtual ~EmbeddedThreadTest();
 
     /**
      * @brief Tests the default constructor.
@@ -58,79 +58,27 @@ public:
     bool TestDefaultConstructor();
 
     /**
-     * @brief Tests the default constructor.
+     * @brief Tests the ThreadLoop method.
      */
-    bool TestDefaultConstructor_Template();
+    bool TestThreadLoop();
 
     /**
-     * @brief Tests the Initialise function.
+     * @brief Callback function of the thread.
      */
-    bool TestInitialise();
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information);
 
     /**
-     * @brief Tests the Initialise function without specifying the Timeout parameter.
+     * True when the Execute method is called.
      */
-    bool TestInitialise_False();
-
-    /**
-     * @brief Tests the Start function.
-     */
-    bool TestStart();
-
-    /**
-     * @brief Tests the Start function calling it twice, which should trigger an illegal operation.
-     */
-    bool TestStart_False();
-
-    /**
-     * @brief Tests the Start function after a stop has been called.
-     */
-    bool TestStart_Restart();
-
-    /**
-     * @brief Tests the Stop function.
-     */
-    bool TestStop();
-
-    /**
-     * @brief Tests the Stop function forcing a kill.
-     */
-    bool TestStop_Kill();
-
-    /**
-     * @brief Tests the GetStatus function.
-     */
-    bool TestGetStatus();
-
-    /**
-     * @brief Tests the SetTimeout function
-     */
-    bool TestSetTimeout();
-
-    /**
-     * @brief Tests the GetTimeout function
-     */
-    bool TestGetTimeout();
-
-    /**
-     * @brief Tests the GetThreadId function
-     */
-    bool TestGetThreadId();
-
-    /**
-     * @brief Tests the GetThreadNumber function
-     */
-    bool TestGetThreadNumber();
-
-    /**
-     * @brief Tests the SetThreadNumber function
-     */
-    bool TestSetThreadNumber();
+    bool main;
+    bool completed;
+    bool badTermination;
+    bool startup;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SINGLETHREADSERVICETEST_H_ */
+#endif /* EMBEDDEDTHREADSTEST_H_ */
 

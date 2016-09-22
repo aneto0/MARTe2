@@ -25,6 +25,7 @@
 #############################################################
 
 OBJSX=  EmbeddedServiceMethodBinderTTest.x \
+    EmbeddedThreadTest.x \
     EmbeddedThreadITest.x \
     ExecutionInfoTest.x \
     MultiThreadServiceTest.x \
