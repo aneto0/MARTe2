@@ -97,11 +97,6 @@ TEST(MultiThreadServiceGTest,TestGetTimeout) {
     ASSERT_TRUE(target.TestGetTimeout());
 }
 
-TEST(MultiThreadServiceGTest,TestGetThreadId) {
-    MultiThreadServiceTest target;
-    ASSERT_TRUE(target.TestGetThreadId());
-}
-
 TEST(MultiThreadServiceGTest,TestGetNumberOfPoolThreads) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestGetNumberOfPoolThreads());

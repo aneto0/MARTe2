@@ -40,53 +40,101 @@
 
 namespace MARTe {
 /**
- *
+ * @brief Multiple client connection oriented EmbeddedServiceI implementation.
+ * @details This class allows associating a class method in the form (MARTe::ErrorManagement::ErrorType (*)(MARTe::EmbeddedServiceI::ExecutionInfo &)) to a pool of threads.
+ * This method will be continuously called (see Start) with the stage encoded in the Information parameter.
+ * Notice that the user-callback should not block and should return ErrorManagement::Timeout while waiting for a connection to be established.
  */
 class MultiClientService: public MultiThreadService {
 
 public:
 
+    /**
+     * @brief Constructor. Forces the setting of the method binder.
+     * @param[in] binder the method which will be called in the context of this pool of thread.
+     */
+    MultiClientService(EmbeddedServiceMethodBinderI &binder);
+
+    /**
+     * @brief Constructor. Forces the setting of the method binder.
+     * @param[in] binder the method which will be called in the context of this pool of threads.
+     */
     template<typename className>
     MultiClientService(EmbeddedServiceMethodBinderT<className> &binder);
 
     /**
-     *
+     * @brief Destructor. NOOP.
      */
-    virtual ~MultiClientService() {
-    }
+    virtual ~MultiClientService();
 
     /**
-     * TODO
-     * same as object interface
+     * @brief Reads the minimum and maximum number of pool threads from the data input.
+     * @param[in] data shall contain a parameter named "MinNumberOfThreads" holding the minimum number of pool threads,
+     * another parameter named "MaxNumberOfThreads" containing the maximum number of pool threads
+     * and another parameter named "Timeout" with the timeout to apply to each of the SingleThreadService instances.
+     * If "Timeout=0" => Timeout = TTInfiniteWait.
+     * The MinNumberOfThreads shall be > 1.
+     * @return true if all the parameters are available and valid (i.e. MinNumberOfThreads > 1).
      */
     virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * allows to add threads to the maxNumberOfThreads
-     * called by Start
+     * @brief If the current number of allocated threads is < GetMaximumNumberOfPoolThreads() allocates a new thread.
+     * @return ErrorManagement::IllegalOperation if the number of allocated threads is >= GetMaximumNumberOfPoolThreads()
      */
     ErrorManagement::ErrorType AddThread();
 
     /**
-     *
+     * @brief Gets the maximum number of threads available in the pool.
+     * @return the maximum number of threads available in the pool.
+     */
+    uint16 GetMaximumNumberOfPoolThreads();
+
+    /**
+     * @brief Gets the minimum number of threads available in the pool.
+     * @return the minimum number of threads available in the pool.
+     */
+    uint16 GetMinimumNumberOfPoolThreads();
+
+    /**
+     * @brief Sets the maximum number of threads available in the pool.
+     * @param[in] maxNumberOfThreadsIn the maximum number of threads available in the pool.
+     * @pre
+     *   Stop()
+     */
+    void SetMaximumNumberOfPoolThreads(const uint16 maxNumberOfThreadsIn);
+
+    /**
+     * @brief Sets the minimum number of threads available in the pool.
+     * @param[in] minNumberOfThreadsIn the minimum number of threads available in the pool.
+     * @pre
+     *   Stop()
+     */
+    void SetMinimumNumberOfPoolThreads(const uint16 minNumberOfThreadsIn);
+
+    /**
+     * @brief Checks if sufficient threads have already been allocated and thus the thread calling this function can be destroyed.
+     * @return true if sufficient threads have already been allocated, i.e. if the current number of threads running > GetMinimumNumberOfPoolThreads().
      */
     inline bool MoreThanEnoughThreads();
 
+    /**
+     * @brief Starts N (GetMinimumNumberOfPoolThreads()) MultiClientEmbeddedThread instances.
+     * @return ErrorManagement::NoError if all the instances can be successfully started.
+     * ErrorManagement::IllegalOperation if start is called twice without calling stop beforehand.
+     */
     virtual ErrorManagement::ErrorType Start();
 protected:
     /**
-     *
+     * Maximum number of pool threads.
      */
-    //inline bool TooManyThreads();
-    /// either the available working threads or the maximum
-    uint32 maxNumberOfThreads;
-
-    uint32 minNumberOfThreads;
+    uint16 maxNumberOfThreads;
 
     /**
-     *
+     * Minimum number of pool threads.
      */
-    ReferenceContainer threadPool;
+    uint16 minNumberOfThreads;
+
 };
 }
 
@@ -103,7 +151,7 @@ bool MultiClientService::MoreThanEnoughThreads() {
 template<typename className>
 MultiClientService::MultiClientService(EmbeddedServiceMethodBinderT<className> &binder) :
         MultiThreadService(binder) {
-    minNumberOfThreads = 0u;
+    minNumberOfThreads = 1u;
     maxNumberOfThreads = 1u;
 }
 

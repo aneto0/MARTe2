@@ -43,11 +43,22 @@
 namespace MARTe {
 
 /**
- * @brief Associates a pool of SingleThreadService instances (fixed size) to a class method.
+ * @brief Associates a pool of EmbeddedThread instances (fixed size) to a class method.
+ * @details This class allows associating a class method in the form (MARTe::ErrorManagement::ErrorType (*)(MARTe::EmbeddedServiceI::ExecutionInfo &)) to a thread context.
+ * This method will be continuously called (see Start) with the stage encoded in the Information parameter. In particular this class allows to request for a "kind" Stop of the
+ * embedded thread and, if this fails, for a direct killing of the thread.
  */
 class MultiThreadService: public EmbeddedServiceI {
 
 public:
+    /**
+     * @brief Constructor.
+     * @param[in] binder contains the function to be executed by this MultiThreadService.
+     * @post
+     *   GetNumberOfPoolThreads() == 1
+     */
+    MultiThreadService(EmbeddedServiceMethodBinderI &binder);
+
     /**
      * @brief Constructor.
      * @param[in] binder contains the function to be executed by this MultiThreadService.
@@ -69,6 +80,7 @@ public:
      * @param[in] data shall contain a parameter named "NumberOfPoolThreads" holding the number of pool threads
      * and another parameter named "Timeout" with the timeout to apply to each of the SingleThreadService instances.
      * If "Timeout=0" => Timeout = TTInfiniteWait
+     * @return true if all the parameters are available.
      */
     virtual bool Initialise(StructuredDataI &data);
 
@@ -95,6 +107,8 @@ public:
     /**
      * @brief Sets the number of pool threads.
      * @param[in] numberOfPoolThreadsIn the number of pool threads.
+     * @pre
+     *   Stop()
      */
     void SetNumberOfPoolThreads(const uint32 numberOfPoolThreadsIn);
 
@@ -105,14 +119,6 @@ public:
      *   threadIdx < GetNumberOfPoolThreads()
      */
     EmbeddedThreadI::States GetStatus(uint32 threadIdx);
-
-    /**
-     * @brief Gets the ThreadIdentifier of the SingleThreadService with index \a threadIdx.
-     * @param[in] threadIdx the index of the thread to query.
-     * @pre
-     *   threadIdx < GetNumberOfPoolThreads()
-     */
-    ThreadIdentifier GetThreadId(uint32 threadIdx);
 
     /**
      * @brief Sets the maximum time to execute a state change.

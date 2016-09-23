@@ -60,7 +60,6 @@ public:
      * @param[in] binder contains the function to be executed by this SingleThreadService.
      * @post
      *   GetTimeout() == TTInfiniteWait &&
-     *   GetThread().GetThreadId() == 0 &&
      *   GetStatus() == OffState
      */
     SingleThreadService(EmbeddedServiceMethodBinderI &binder);
@@ -70,7 +69,6 @@ public:
      * @param[in] binder contains the function to be executed by this SingleThreadService.
      * @post
      *   GetTimeout() == TTInfiniteWait &&
-     *   GetThread().GetThreadId() == 0 &&
      *   GetStatus() == OffState
      */
     template<typename className>
@@ -86,6 +84,7 @@ public:
      * @brief Reads the Timeout from the data input.
      * @param[in] data shall contain a parameter with name "Timeout" holding the timeout in milliseconds.
      * If "Timeout=0" => Timeout = TTInfiniteWait
+     * @return true if all the parameters are available.
      */
     virtual bool Initialise(StructuredDataI &data);
 
@@ -123,6 +122,12 @@ public:
      * @return the maximum time to execute a state change.
      */
     TimeoutType GetTimeout() const;
+
+    /**
+     * @brief Gets the Status of the EmbeddedThreadI.
+     * @return the Status of the EmbeddedThreadI.
+     */
+    EmbeddedThreadI::States GetStatus();
 
 private:
     /**

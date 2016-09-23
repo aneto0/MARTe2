@@ -86,10 +86,6 @@ TEST(SingleThreadServiceGTest,TestStop_Kill) {
     ASSERT_TRUE(target.TestStop_Kill());
 }
 
-TEST(SingleThreadServiceGTest,TestGetStatus) {
-    SingleThreadServiceTest target;
-    ASSERT_TRUE(target.TestGetStatus());
-}
 
 TEST(SingleThreadServiceGTest,TestSetTimeout) {
     SingleThreadServiceTest target;
@@ -99,19 +95,4 @@ TEST(SingleThreadServiceGTest,TestSetTimeout) {
 TEST(SingleThreadServiceGTest,TestGetTimeout) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestGetTimeout());
-}
-
-TEST(SingleThreadServiceGTest,TestGetThreadId) {
-    SingleThreadServiceTest target;
-    ASSERT_TRUE(target.TestGetThreadId());
-}
-
-TEST(SingleThreadServiceGTest,TestGetThreadNumber) {
-    SingleThreadServiceTest target;
-    ASSERT_TRUE(target.TestGetThreadNumber());
-}
-
-TEST(SingleThreadServiceGTest,TestSetThreadNumber) {
-    SingleThreadServiceTest target;
-    ASSERT_TRUE(target.TestSetThreadNumber());
 }

@@ -83,4 +83,8 @@ ErrorManagement::ErrorType SingleThreadService::Stop() {
     return embeddedThread.Stop();
 }
 
+EmbeddedThreadI::States SingleThreadService::GetStatus() {
+    return embeddedThread.GetStatus();
+}
+
 }

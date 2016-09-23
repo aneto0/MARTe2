@@ -164,12 +164,9 @@ bool MultiThreadServiceTest::TestStart() {
     ok &= (callbackClass.internalStateThread0 >= 10u);
     ok &= (callbackClass.internalStateThread1 >= 10u);
     ok &= (callbackClass.internalStateThread2 >= 10u);
-    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThreadId(0) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(1) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(2) != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::RunningState);
 
     embeddedThread.Stop();
     return ok;
@@ -193,12 +190,9 @@ bool MultiThreadServiceTest::TestStart_False() {
     ok &= (callbackClass.internalStateThread0 >= 10u);
     ok &= (callbackClass.internalStateThread1 >= 10u);
     ok &= (callbackClass.internalStateThread2 >= 10u);
-    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThreadId(0) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(1) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(2) != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::RunningState);
 
     err = embeddedThread.Start();
     ok &= (err == ErrorManagement::IllegalOperation);
@@ -225,12 +219,9 @@ bool MultiThreadServiceTest::TestStart_Restart() {
     ok &= (callbackClass.internalStateThread0 >= 10u);
     ok &= (callbackClass.internalStateThread1 >= 10u);
     ok &= (callbackClass.internalStateThread2 >= 10u);
-    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThreadId(0) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(1) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(2) != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::RunningState);
 
     embeddedThread.Stop();
 
@@ -248,12 +239,9 @@ bool MultiThreadServiceTest::TestStart_Restart() {
     ok &= (callbackClass.internalStateThread0 >= 10u);
     ok &= (callbackClass.internalStateThread1 >= 10u);
     ok &= (callbackClass.internalStateThread2 >= 10u);
-    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThreadId(0) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(1) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(2) != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::RunningState);
     return ok;
 }
 
@@ -276,22 +264,16 @@ bool MultiThreadServiceTest::TestStop() {
     ok &= (callbackClass.internalStateThread0 >= 10u);
     ok &= (callbackClass.internalStateThread1 >= 10u);
     ok &= (callbackClass.internalStateThread2 >= 10u);
-    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThreadId(0) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(1) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(2) != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::RunningState);
 
     err = embeddedThread.Stop();
 
     ok &= (err == ErrorManagement::NoError);
-    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::OffState);
-    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::OffState);
-    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::OffState);
-    ok &= (embeddedThread.GetThreadId(0) == InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(1) == InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(2) == InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedThreadI::OffState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::OffState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::OffState);
 
     return ok;
 }
@@ -312,23 +294,17 @@ bool MultiThreadServiceTest::TestStop_Kill() {
         maxCounter--;
     }
     ok &= (callbackClass.internalState == 2u);
-    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThreadId(0) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(1) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(2) != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::RunningState);
 
     embeddedThread.SetTimeout(1000);
     err = embeddedThread.Stop();
 
     ok &= (err == ErrorManagement::NoError);
-    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::OffState);
-    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::OffState);
-    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::OffState);
-    ok &= (embeddedThread.GetThreadId(0) == InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(1) == InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(2) == InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedThreadI::OffState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::OffState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::OffState);
     ok &= (callbackClass.internalState == 30u);
     return ok;
 }
@@ -351,17 +327,14 @@ bool MultiThreadServiceTest::TestGetStatus() {
     ok &= (callbackClass.internalStateThread0 >= 10u);
     ok &= (callbackClass.internalStateThread1 >= 10u);
     ok &= (callbackClass.internalStateThread2 >= 10u);
-    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::RunningState);
-    ok &= (embeddedThread.GetThreadId(0) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(1) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(2) != InvalidThreadIdentifier);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::RunningState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::RunningState);
 
     embeddedThread.Stop();
-    ok &= (embeddedThread.GetStatus(0) == EmbeddedServiceI::OffState);
-    ok &= (embeddedThread.GetStatus(1) == EmbeddedServiceI::OffState);
-    ok &= (embeddedThread.GetStatus(2) == EmbeddedServiceI::OffState);
+    ok &= (embeddedThread.GetStatus(0) == EmbeddedThreadI::OffState);
+    ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::OffState);
+    ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::OffState);
 
     return ok;
 }
@@ -380,33 +353,6 @@ bool MultiThreadServiceTest::TestSetTimeout() {
 
 bool MultiThreadServiceTest::TestGetTimeout() {
     return TestSetTimeout();
-}
-
-bool MultiThreadServiceTest::TestGetThreadId() {
-    using namespace MARTe;
-    MultiThreadServiceTestCallbackClass callbackClass;
-    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
-    MultiThreadService embeddedThread(binder);
-
-    embeddedThread.SetNumberOfPoolThreads(3);
-    ErrorManagement::ErrorType err = embeddedThread.Start();
-    bool ok = (err == ErrorManagement::NoError);
-    uint32 maxCounter = 10;
-    while ((maxCounter > 0)
-            && ((callbackClass.internalStateThread0 < 10u) || (callbackClass.internalStateThread1 < 10u) || (callbackClass.internalStateThread2 < 10u))) {
-        Sleep::Sec(1.0);
-        maxCounter--;
-    }
-
-    ok &= (embeddedThread.GetThreadId(0) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(1) != InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(2) != InvalidThreadIdentifier);
-    embeddedThread.Stop();
-    ok &= (embeddedThread.GetThreadId(0) == InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(1) == InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadId(2) == InvalidThreadIdentifier);
-
-    return ok;
 }
 
 bool MultiThreadServiceTest::TestSetNumberOfPoolThreads() {

@@ -60,11 +60,6 @@ TEST(EmbeddedThreadIGTest, TestGetThreadId) {
     ASSERT_TRUE(target.TestGetThreadId());
 }
 
-TEST(EmbeddedThreadIGTest, TestLaunchThread) {
-    EmbeddedThreadITest target;
-    ASSERT_TRUE(target.TestLaunchThread());
-}
-
 TEST(EmbeddedThreadIGTest, TestGetCommands) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestGetCommands());
@@ -83,4 +78,9 @@ TEST(EmbeddedThreadIGTest, TestResetThreadId) {
 TEST(EmbeddedThreadIGTest, TestExecute) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestExecute());
+}
+
+TEST(EmbeddedThreadIGTest,TestGetStatus) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetStatus());
 }

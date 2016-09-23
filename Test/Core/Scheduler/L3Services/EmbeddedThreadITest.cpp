@@ -34,6 +34,7 @@
 #include "EmbeddedThreadITest.h"
 #include "EmbeddedServiceMethodBinderI.h"
 #include "EmbeddedServiceMethodBinderT.h"
+#include "SingleThreadService.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -53,6 +54,20 @@ public:
     }
 };
 
+class EmbeddedThreadITestCallbackClass {
+public:
+    EmbeddedThreadITestCallbackClass() {
+        internalState = 0u;
+    }
+
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
+        internalState++;
+        return MARTe::ErrorManagement::NoError;
+    }
+
+    MARTe::uint32 internalState;
+};
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -65,8 +80,8 @@ EmbeddedThreadITest::~EmbeddedThreadITest() {
 }
 
 MARTe::ErrorManagement::ErrorType EmbeddedThreadITest::CallbackFunction(MARTe::ExecutionInfo &information) {
-    executeCalled = true;
     MARTe::Sleep::Sec(0.1);
+    executeCalled = true;
     return MARTe::ErrorManagement::NoError;
 }
 
@@ -97,8 +112,13 @@ bool EmbeddedThreadITest::TestGetThreadId() {
     EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
     EmbeddedThreadITestStub embeddedThreadI(binder);
     bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
-    embeddedThreadI.LaunchThread();
+    embeddedThreadI.Start();
     ok &= (embeddedThreadI.GetThreadId() != InvalidThreadIdentifier);
+    uint32 counter = 10;
+    while ((counter > 0) && (!executeCalled)) {
+        Sleep::Sec(0.5);
+        counter--;
+    }
     //The thread must die before EmbeddedThreadITest::CallbackFunction gets out of scope!
     if (Threads::IsAlive(embeddedThreadI.GetThreadId())) {
         Threads::Kill(embeddedThreadI.GetThreadId());
@@ -106,23 +126,26 @@ bool EmbeddedThreadITest::TestGetThreadId() {
     return ok;
 }
 
-bool EmbeddedThreadITest::TestLaunchThread() {
+bool EmbeddedThreadITest::TestGetStatus() {
     using namespace MARTe;
-    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
-    EmbeddedThreadITestStub embeddedThreadI(binder);
-    bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
-    embeddedThreadI.LaunchThread();
-    ok &= (embeddedThreadI.GetThreadId() != InvalidThreadIdentifier);
-    uint32 counter = 10;
-    while ((counter > 0) && (!executeCalled)) {
-        Sleep::Sec(0.5);
-        counter--;
+    EmbeddedThreadITestCallbackClass callbackClass;
+    //Easier to test through the SingleThreadService
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITestCallbackClass> binder(callbackClass, &EmbeddedThreadITestCallbackClass::CallbackFunction);
+    SingleThreadService service(binder);
+
+    bool ok = (service.GetStatus() == EmbeddedThreadI::OffState);
+
+    ErrorManagement::ErrorType err = service.Start();
+    ok = (err == ErrorManagement::NoError);
+    uint32 maxCounter = 10;
+    while ((maxCounter > 0) && (callbackClass.internalState < 10u)) {
+        Sleep::Sec(1.0);
+        maxCounter--;
     }
-    ok &= executeCalled;
-    //The thread must die before EmbeddedThreadITest::CallbackFunction gets out of scope!
-    if (Threads::IsAlive(embeddedThreadI.GetThreadId())) {
-        Threads::Kill(embeddedThreadI.GetThreadId());
-    }
+    ok &= (callbackClass.internalState >= 10u);
+    ok &= (service.GetStatus() == EmbeddedThreadI::RunningState);
+    service.Stop();
+    ok &= (service.GetStatus() == EmbeddedThreadI::OffState);
     return ok;
 }
 
@@ -150,14 +173,13 @@ bool EmbeddedThreadITest::TestResetThreadId() {
     EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
     EmbeddedThreadITestStub embeddedThreadI(binder);
     bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
-    embeddedThreadI.LaunchThread();
+    embeddedThreadI.Start();
     ok &= (embeddedThreadI.GetThreadId() != InvalidThreadIdentifier);
     uint32 counter = 10;
     while ((counter > 0) && (!executeCalled)) {
         Sleep::Sec(0.5);
         counter--;
     }
-
     embeddedThreadI.ResetThreadId();
     ok &= (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
     //The thread must die before EmbeddedThreadITest::CallbackFunction gets out of scope!
@@ -168,5 +190,5 @@ bool EmbeddedThreadITest::TestResetThreadId() {
 }
 
 bool EmbeddedThreadITest::TestExecute() {
-    return TestLaunchThread();
+    return TestGetStatus();
 }

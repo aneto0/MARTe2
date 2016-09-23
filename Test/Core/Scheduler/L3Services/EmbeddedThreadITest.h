@@ -73,11 +73,6 @@ public:
     bool TestGetThreadId();
 
     /**
-     * @brief Tests the LaunchThread method.
-     */
-    bool TestLaunchThread();
-
-    /**
      * @brief Tests the GetCommands method.
      */
     bool TestGetCommands();
@@ -96,6 +91,11 @@ public:
      * @brief Tests the Execute method.
      */
     bool TestExecute();
+
+    /**
+     * @brief Tests the GetStatus function.
+     */
+    bool TestGetStatus();
 
     /**
      * @brief Callback function of the thread.

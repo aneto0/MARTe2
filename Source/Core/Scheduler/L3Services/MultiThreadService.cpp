@@ -42,6 +42,13 @@
 
 namespace MARTe {
 
+MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderI &binder) :
+        EmbeddedServiceI(),
+        method(binder) {
+    numberOfPoolThreads = 1;
+    msecTimeout = TTInfiniteWait.GetTimeoutMSec();
+}
+
 MultiThreadService::~MultiThreadService() {
     Stop();
 }
@@ -63,7 +70,7 @@ bool MultiThreadService::Initialise(StructuredDataI &data) {
 
 ErrorManagement::ErrorType MultiThreadService::Start() {
     ErrorManagement::ErrorType err;
-    err.illegalOperation = (threadPool.Size() >= numberOfPoolThreads);
+    err.illegalOperation = (threadPool.Size() > 0);
     uint32 n = 0u;
     while ((threadPool.Size() < numberOfPoolThreads) && (err.ErrorsCleared())) {
         ReferenceT<EmbeddedThread> thread(new (NULL) EmbeddedThread(method));
@@ -95,9 +102,9 @@ ErrorManagement::ErrorType MultiThreadService::Stop() {
     }
     // perform kill if necessary
     for (i = 0; i < threadPool.Size(); i++) {
-        ReferenceT<EmbeddedThreadI> service = threadPool.Get(i);
-        if (service.IsValid()) {
-            err = service->Stop();
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
+        if (thread.IsValid()) {
+            err = thread->Stop();
             if (!err.ErrorsCleared()) {
                 REPORT_ERROR_PARAMETERS(err, "Could not Kill EmbeddedThreadI(%d)", i)
             }
@@ -141,24 +148,14 @@ EmbeddedThreadI::States MultiThreadService::GetStatus(uint32 threadIdx) {
     return status;
 }
 
-ThreadIdentifier MultiThreadService::GetThreadId(uint32 threadIdx) {
-    ThreadIdentifier tid = 0u;
-    if (threadIdx < threadPool.Size()) {
-        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
-        if (thread.IsValid()) {
-            tid = thread->GetThreadId();
-        }
-    }
-
-    return tid;
-}
-
 uint32 MultiThreadService::GetNumberOfPoolThreads() const {
     return numberOfPoolThreads;
 }
 
 void MultiThreadService::SetNumberOfPoolThreads(const uint32 numberOfPoolThreadsIn) {
-    numberOfPoolThreads = numberOfPoolThreadsIn;
+    if (threadPool.Size() == 0u) {
+        numberOfPoolThreads = numberOfPoolThreadsIn;
+    }
 }
 
 void MultiThreadService::SetTimeout(TimeoutType msecTimeoutIn) {

@@ -108,11 +108,6 @@ public:
     bool TestGetTimeout();
 
     /**
-     * @brief Tests the GetThreadId function
-     */
-    bool TestGetThreadId();
-
-    /**
      * @brief Tests the SetNumberOfPoolThreads function
      */
     bool TestSetNumberOfPoolThreads();

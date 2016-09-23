@@ -73,11 +73,13 @@ MARTe::ErrorManagement::ErrorType MultiClientEmbeddedThreadTest::CallbackFunctio
         }
         if (information.GetStageSpecific() == MARTe::ExecutionInfo::ServiceRequestStageSpecific) {
             serviceRequestStageSpecific = true;
-            completed = true;
-            return MARTe::ErrorManagement::Completed;
-        }
-        else {
-            return MARTe::ErrorManagement::FatalError;
+            if (!completed) {
+                completed = true;
+                return MARTe::ErrorManagement::Completed;
+            }
+            else {
+                return MARTe::ErrorManagement::FatalError;
+            }
         }
     }
     if (information.GetStage() == MARTe::ExecutionInfo::TerminationStage) {

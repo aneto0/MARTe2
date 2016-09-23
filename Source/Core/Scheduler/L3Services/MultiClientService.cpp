@@ -42,6 +42,16 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+MultiClientService::~MultiClientService() {
+
+}
+
+MultiClientService::MultiClientService(EmbeddedServiceMethodBinderI &binder) :
+        MultiThreadService(binder) {
+    minNumberOfThreads = 1u;
+    maxNumberOfThreads = 1u;
+}
+
 bool MultiClientService::Initialise(StructuredDataI &data) {
 
     ErrorManagement::ErrorType err = data.Read("MaxNumberOfThreads", maxNumberOfThreads);
@@ -61,7 +71,7 @@ bool MultiClientService::Initialise(StructuredDataI &data) {
 }
 
 ErrorManagement::ErrorType MultiClientService::AddThread() {
-    ErrorManagement::ErrorType err;
+    ErrorManagement::ErrorType err = ErrorManagement::IllegalOperation;
     if ((threadPool.Size() < maxNumberOfThreads) && (err.ErrorsCleared())) {
         ReferenceT<MultiClientEmbeddedThread> thread(new (NULL) MultiClientEmbeddedThread(method, *this));
         err.fatalError = !thread.IsValid();
@@ -79,7 +89,7 @@ ErrorManagement::ErrorType MultiClientService::AddThread() {
 
 ErrorManagement::ErrorType MultiClientService::Start() {
     ErrorManagement::ErrorType err;
-    err.illegalOperation = (threadPool.Size() >= minNumberOfThreads);
+    err.illegalOperation = (threadPool.Size() > 0);
     uint32 n = 0u;
     while ((threadPool.Size() < minNumberOfThreads) && (err.ErrorsCleared())) {
         ReferenceT<MultiClientEmbeddedThread> thread(new (NULL) MultiClientEmbeddedThread(method, *this));
@@ -95,6 +105,26 @@ ErrorManagement::ErrorType MultiClientService::Start() {
         n++;
     }
     return err;
+}
+
+uint16 MultiClientService::GetMaximumNumberOfPoolThreads() {
+    return maxNumberOfThreads;
+}
+
+uint16 MultiClientService::GetMinimumNumberOfPoolThreads() {
+    return minNumberOfThreads;
+}
+
+void MultiClientService::SetMaximumNumberOfPoolThreads(const uint16 maxNumberOfThreadsIn) {
+    if (threadPool.Size() == 0u) {
+        maxNumberOfThreads = maxNumberOfThreadsIn;
+    }
+}
+
+void MultiClientService::SetMinimumNumberOfPoolThreads(const uint16 minNumberOfThreadsIn) {
+    if (threadPool.Size() == 0u) {
+        minNumberOfThreads = minNumberOfThreadsIn;
+    }
 }
 
 }
