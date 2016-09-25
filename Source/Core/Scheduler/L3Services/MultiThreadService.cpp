@@ -104,9 +104,14 @@ ErrorManagement::ErrorType MultiThreadService::Stop() {
     for (i = 0; i < threadPool.Size(); i++) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
         if (thread.IsValid()) {
-            err = thread->Stop();
-            if (!err.ErrorsCleared()) {
-                REPORT_ERROR_PARAMETERS(err, "Could not Kill EmbeddedThreadI(%d)", i)
+            if (thread->GetStatus() != EmbeddedThreadI::OffState) {
+                err = thread->Stop();
+                if (!err.ErrorsCleared()) {
+                    REPORT_ERROR_PARAMETERS(err, "Could not Kill EmbeddedThreadI(%d)", i)
+                }
+                else {
+                    REPORT_ERROR_PARAMETERS(err, "Killed EmbeddedThreadI(%d)", i)
+                }
             }
         }
     }

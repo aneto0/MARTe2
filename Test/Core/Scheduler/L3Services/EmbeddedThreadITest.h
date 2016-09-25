@@ -98,6 +98,31 @@ public:
     bool TestGetStatus();
 
     /**
+     * @brief Tests the Start function
+     */
+    bool TestStart();
+
+    /**
+     * @brief Tests the Start function calling it twice, which should trigger an illegal operation.
+     */
+    bool TestStart_False();
+
+    /**
+     * @brief Tests the Start function after a stop has been called.
+     */
+    bool TestStart_Restart();
+
+    /**
+     * @brief Tests the Stop function
+     */
+    bool TestStop();
+
+    /**
+     * @brief Tests the Stop function forcing a kill.
+     */
+    bool TestStop_Kill();
+
+    /**
      * @brief Callback function of the thread.
      */
     MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information);

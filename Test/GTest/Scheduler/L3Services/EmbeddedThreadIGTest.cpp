@@ -84,3 +84,28 @@ TEST(EmbeddedThreadIGTest,TestGetStatus) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestGetStatus());
 }
+
+TEST(EmbeddedThreadIGTest,TestStart) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestStart());
+}
+
+TEST(EmbeddedThreadIGTest,TestStart_False) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestStart_False());
+}
+
+TEST(EmbeddedThreadIGTest,TestStart_Restart) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestStart_Restart());
+}
+
+TEST(EmbeddedThreadIGTest,TestStop) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestStop());
+}
+
+TEST(EmbeddedThreadIGTest,TestStop_Kill) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestStop_Kill());
+}

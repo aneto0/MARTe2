@@ -62,6 +62,29 @@ public:
 
     MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
         internalState++;
+        MARTe::Sleep::Sec(0.1);
+        return MARTe::ErrorManagement::NoError;
+    }
+
+    MARTe::uint32 internalState;
+};
+
+class EmbeddedThreadITestCallbackClassToKill {
+public:
+    EmbeddedThreadITestCallbackClassToKill() {
+        internalState = 0u;
+    }
+
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
+        if (information.GetStage() == MARTe::ExecutionInfo::AsyncTerminationStage) {
+            internalState++;
+        }
+        else {
+            internalState--;
+            while (1) {
+                MARTe::Sleep::Sec(0.1);
+            }
+        }
         return MARTe::ErrorManagement::NoError;
     }
 
@@ -138,11 +161,11 @@ bool EmbeddedThreadITest::TestGetStatus() {
     ErrorManagement::ErrorType err = service.Start();
     ok = (err == ErrorManagement::NoError);
     uint32 maxCounter = 10;
-    while ((maxCounter > 0) && (callbackClass.internalState < 10u)) {
+    while ((maxCounter > 0) && (callbackClass.internalState < 1u)) {
         Sleep::Sec(1.0);
         maxCounter--;
     }
-    ok &= (callbackClass.internalState >= 10u);
+    ok &= (callbackClass.internalState >= 1u);
     ok &= (service.GetStatus() == EmbeddedThreadI::RunningState);
     service.Stop();
     ok &= (service.GetStatus() == EmbeddedThreadI::OffState);
@@ -191,4 +214,115 @@ bool EmbeddedThreadITest::TestResetThreadId() {
 
 bool EmbeddedThreadITest::TestExecute() {
     return TestGetStatus();
+}
+
+bool EmbeddedThreadITest::TestStart() {
+    using namespace MARTe;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
+    EmbeddedThreadITestStub embeddedThreadI(binder);
+    bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
+    ErrorManagement::ErrorType err = embeddedThreadI.Start();
+    ok &= (err == ErrorManagement::NoError);
+    ok &= (embeddedThreadI.GetThreadId() != InvalidThreadIdentifier);
+    uint32 counter = 10;
+    while ((counter > 0) && (!executeCalled)) {
+        Sleep::Sec(0.5);
+        counter--;
+    }
+    ok &= executeCalled;
+    embeddedThreadI.Stop();
+    return ok;
+}
+
+bool EmbeddedThreadITest::TestStart_False() {
+    using namespace MARTe;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
+    EmbeddedThreadITestStub embeddedThreadI(binder);
+    bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
+    ErrorManagement::ErrorType err = embeddedThreadI.Start();
+    ok &= (err == ErrorManagement::NoError);
+    ok &= (embeddedThreadI.GetThreadId() != InvalidThreadIdentifier);
+    uint32 counter = 10;
+    while ((counter > 0) && (!executeCalled)) {
+        Sleep::Sec(0.5);
+        counter--;
+    }
+    err = embeddedThreadI.Start();
+    ok &= (err == ErrorManagement::IllegalOperation);
+
+    embeddedThreadI.Stop();
+    return ok;
+}
+
+bool EmbeddedThreadITest::TestStart_Restart() {
+    using namespace MARTe;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
+    EmbeddedThreadITestStub embeddedThreadI(binder);
+    bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
+    ErrorManagement::ErrorType err = embeddedThreadI.Start();
+    ok &= (err == ErrorManagement::NoError);
+    ok &= (embeddedThreadI.GetThreadId() != InvalidThreadIdentifier);
+    uint32 counter = 10;
+    while ((counter > 0) && (!executeCalled)) {
+        Sleep::Sec(0.5);
+        counter--;
+    }
+    ok &= executeCalled;
+    embeddedThreadI.Stop();
+    executeCalled = false;
+    err = embeddedThreadI.Start();
+    ok &= (err == ErrorManagement::IllegalOperation);
+    ok &= (embeddedThreadI.GetThreadId() != InvalidThreadIdentifier);
+    counter = 10;
+    while ((counter > 0) && (!executeCalled)) {
+        Sleep::Sec(0.5);
+        counter--;
+    }
+    ok &= executeCalled;
+    embeddedThreadI.Stop();
+    return ok;
+}
+
+bool EmbeddedThreadITest::TestStop() {
+    using namespace MARTe;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
+    EmbeddedThreadITestStub embeddedThreadI(binder);
+    bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
+    ErrorManagement::ErrorType err = embeddedThreadI.Start();
+    ok &= (err == ErrorManagement::NoError);
+    ok &= (embeddedThreadI.GetThreadId() != InvalidThreadIdentifier);
+    uint32 counter = 10;
+    while ((counter > 0) && (!executeCalled)) {
+        Sleep::Sec(0.5);
+        counter--;
+    }
+    ok &= executeCalled;
+    err = embeddedThreadI.Stop();
+    ok &= (err == ErrorManagement::NoError);
+    return ok;
+}
+
+bool EmbeddedThreadITest::TestStop_Kill() {
+    using namespace MARTe;
+    EmbeddedThreadITestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITestCallbackClass> binder(callbackClass, &EmbeddedThreadITestCallbackClass::CallbackFunction);
+    EmbeddedThreadITestStub embeddedThreadI(binder);
+    bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
+    ErrorManagement::ErrorType err = embeddedThreadI.Start();
+    ok &= (err == ErrorManagement::NoError);
+    ok &= (embeddedThreadI.GetThreadId() != InvalidThreadIdentifier);
+    uint32 counter = 10;
+    while ((counter > 0) && (callbackClass.internalState != 2u)) {
+        Sleep::Sec(0.5);
+        counter--;
+    }
+    ok &= (callbackClass.internalState == 2u);
+    err = embeddedThreadI.Stop();
+    while ((counter > 0) && (callbackClass.internalState != 0u)) {
+        Sleep::Sec(0.5);
+        counter--;
+    }
+    ok &= (callbackClass.internalState == 0u);
+    ok &= (err == ErrorManagement::NoError);
+    return ok;
 }

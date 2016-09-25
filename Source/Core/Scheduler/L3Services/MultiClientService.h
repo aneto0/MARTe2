@@ -52,12 +52,17 @@ public:
     /**
      * @brief Constructor. Forces the setting of the method binder.
      * @param[in] binder the method which will be called in the context of this pool of thread.
+     * @post
+     *   GetMinimumNumberOfPoolThreads() == 1 &&
+     *   GetMaximumNumberOfPoolThreads() == 3
      */
     MultiClientService(EmbeddedServiceMethodBinderI &binder);
 
     /**
      * @brief Constructor. Forces the setting of the method binder.
      * @param[in] binder the method which will be called in the context of this pool of threads.
+     *   GetMinimumNumberOfPoolThreads() == 1 &&
+     *   GetMaximumNumberOfPoolThreads() == 3
      */
     template<typename className>
     MultiClientService(EmbeddedServiceMethodBinderT<className> &binder);
@@ -81,6 +86,7 @@ public:
     /**
      * @brief If the current number of allocated threads is < GetMaximumNumberOfPoolThreads() allocates a new thread.
      * @return ErrorManagement::IllegalOperation if the number of allocated threads is >= GetMaximumNumberOfPoolThreads()
+     * * TODO Test
      */
     ErrorManagement::ErrorType AddThread();
 
@@ -88,19 +94,20 @@ public:
      * @brief Gets the maximum number of threads available in the pool.
      * @return the maximum number of threads available in the pool.
      */
-    uint16 GetMaximumNumberOfPoolThreads();
+    uint16 GetMaximumNumberOfPoolThreads() const;
 
     /**
      * @brief Gets the minimum number of threads available in the pool.
      * @return the minimum number of threads available in the pool.
      */
-    uint16 GetMinimumNumberOfPoolThreads();
+    uint16 GetMinimumNumberOfPoolThreads() const;
 
     /**
      * @brief Sets the maximum number of threads available in the pool.
      * @param[in] maxNumberOfThreadsIn the maximum number of threads available in the pool.
      * @pre
-     *   Stop()
+     *   Stop() &&
+     *   maxNumberOfThreadsIn > GetMinimumNumberOfPoolThreads()
      */
     void SetMaximumNumberOfPoolThreads(const uint16 maxNumberOfThreadsIn);
 
@@ -108,7 +115,10 @@ public:
      * @brief Sets the minimum number of threads available in the pool.
      * @param[in] minNumberOfThreadsIn the minimum number of threads available in the pool.
      * @pre
-     *   Stop()
+     *   Stop() &&
+     *   minNumberOfThreadsIn < GetMaximumNumberOfPoolThreads() &&
+     *   minNumberOfThreadsIn > 0
+     *
      */
     void SetMinimumNumberOfPoolThreads(const uint16 minNumberOfThreadsIn);
 
@@ -124,6 +134,13 @@ public:
      * ErrorManagement::IllegalOperation if start is called twice without calling stop beforehand.
      */
     virtual ErrorManagement::ErrorType Start();
+
+    /**
+     * @brief Gets the number of active threads.
+     * @return the number of active threads.
+     */
+    uint16 GetNumberOfActiveThreads();
+
 protected:
     /**
      * Maximum number of pool threads.
@@ -152,7 +169,7 @@ template<typename className>
 MultiClientService::MultiClientService(EmbeddedServiceMethodBinderT<className> &binder) :
         MultiThreadService(binder) {
     minNumberOfThreads = 1u;
-    maxNumberOfThreads = 1u;
+    maxNumberOfThreads = 3u;
 }
 
 }

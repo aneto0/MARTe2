@@ -55,9 +55,12 @@ void MultiClientEmbeddedThread::ThreadLoop() {
     ExecutionInfo information;
     information.Reset();
 
+    information.SetThreadNumber(GetThreadNumber());
+    bool newThread = true;
     // any error in execution will only abort the sequence - but not the thread
     // thread is killed at this stage if commands != KeepRunningCommand or if there more service threads that the minimum needed
-    while ((commands == KeepRunningCommand) && (!manager.MoreThanEnoughThreads())) {
+    while ((commands == KeepRunningCommand) && (newThread || !manager.MoreThanEnoughThreads())) {
+        newThread = false;
         ErrorManagement::ErrorType err;
 
         information.SetStage(ExecutionInfo::StartupStage);
@@ -106,7 +109,6 @@ void MultiClientEmbeddedThread::ThreadLoop() {
         Execute(information);
 
     } // main loop (start - loop (wait service - loop (service) ) - end)
-
 }
 
 }
