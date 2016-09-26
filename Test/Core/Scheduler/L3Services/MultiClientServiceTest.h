@@ -161,6 +161,21 @@ public:
      * @brief Tests the SetMinimumNumberOfPoolThreads function
      */
     bool TestSetMinimumNumberOfPoolThreads();
+
+    /**
+     * @brief Tests the AddThread method.
+     */
+    bool TestAddThread();
+
+    /**
+     * @brief Tests the RemoveThread method.
+     */
+    bool TestRemoveThread();
+
+    /**
+     * @brief Tests the MoreThanEnoughThreads method.
+     */
+    bool TestMoreThanEnoughThreads();
 };
 
 /*---------------------------------------------------------------------------*/

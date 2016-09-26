@@ -55,7 +55,7 @@ void EmbeddedThread::ThreadLoop() {
     while (commands == KeepRunningCommand) {
         //Reset sets stage = StartupStage;
         information.Reset();
-        information.SetThreadNumber(GetThreadNumber());
+        information.SetThreadNumber(GetThreadId());
 
         // startup
         err = Execute(information);

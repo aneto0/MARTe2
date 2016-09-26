@@ -42,16 +42,36 @@ public:
         internalStateThread0 = 0u;
         internalStateThread1 = 0u;
         internalStateThread2 = 0u;
+        thread0Id = 0u;
+        thread1Id = 0u;
+        thread2Id = 0u;
     }
 
     MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
-        if (information.GetThreadNumber() == 0) {
+        if (thread0Id == 0u) {
+            thread0Id = information.GetThreadNumber();
+        }
+        if (thread1Id == 0u) {
+            if (thread0Id != information.GetThreadNumber()) {
+                if (thread2Id != information.GetThreadNumber()) {
+                    thread1Id = information.GetThreadNumber();
+                }
+            }
+        }
+        if (thread2Id == 0u) {
+            if (thread0Id != information.GetThreadNumber()) {
+                if (thread1Id != information.GetThreadNumber()) {
+                    thread2Id = information.GetThreadNumber();
+                }
+            }
+        }
+        if (information.GetThreadNumber() == thread0Id) {
             internalStateThread0++;
         }
-        if (information.GetThreadNumber() == 1) {
+        if (information.GetThreadNumber() == thread1Id) {
             internalStateThread1++;
         }
-        if (information.GetThreadNumber() == 2) {
+        if (information.GetThreadNumber() == thread2Id) {
             internalStateThread2++;
         }
         return MARTe::ErrorManagement::NoError;
@@ -60,6 +80,9 @@ public:
     MARTe::uint32 internalStateThread0;
     MARTe::uint32 internalStateThread1;
     MARTe::uint32 internalStateThread2;
+    MARTe::uint32 thread0Id;
+    MARTe::uint32 thread1Id;
+    MARTe::uint32 thread2Id;
 };
 
 class MultiThreadServiceTestCallbackClassToKill {

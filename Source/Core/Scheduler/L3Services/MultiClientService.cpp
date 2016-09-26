@@ -98,40 +98,30 @@ ErrorManagement::ErrorType MultiClientService::AddThread() {
     if (err.ErrorsCleared()) {
         ReferenceT<MultiClientEmbeddedThread> thread(new (NULL) MultiClientEmbeddedThread(method, *this));
         err.fatalError = !thread.IsValid();
-        uint16 threadNumber = 0u;
-        //Check for dead threads... TODO discuss with FISA + unique identifier.
-        uint32 i = 0u;
-        i = 0;
-        while ((i < threadPool.Size()) && (err.ErrorsCleared())) {
-            ReferenceT<EmbeddedThreadI> deadThreadCheck = threadPool.Get(i);
-            if (deadThreadCheck.IsValid()) {
-                if (deadThreadCheck->GetStatus() == EmbeddedThreadI::OffState) {
-                    //Recycle thread number
-                    if (threadNumber == 0u) {
-                        threadNumber = deadThreadCheck->GetThreadNumber();
-                    }
-                    threadPool.Delete(deadThreadCheck);
-                }
-                else {
-                    i++;
-                }
-            }
-            else {
-                // some unexpected content or something seriously wrong!!
-                err.internalSetupError = true;
-            }
-        }
+        thread->SetTimeout(msecTimeout);
         if (err.ErrorsCleared()) {
-            thread->SetThreadNumber(threadNumber);
-            thread->SetTimeout(msecTimeout);
-            if (err.ErrorsCleared()) {
-                err = thread->Start();
-            }
-
-            if (err.ErrorsCleared()) {
-                threadPool.Insert(thread);
-            }
+            err = thread->Start();
         }
+
+        if (err.ErrorsCleared()) {
+            threadPool.Insert(thread);
+        }
+
+    }
+    return err;
+}
+
+ErrorManagement::ErrorType MultiClientService::RemoveThread(ThreadIdentifier threadId) {
+    uint32 i = 0;
+    ErrorManagement::ErrorType err;
+    bool found = false;
+    while ((i < threadPool.Size()) && (err.ErrorsCleared()) && !found) {
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
+        bool found = (thread->GetThreadId() == threadId);
+        if (found) {
+            err.recoverableError = !threadPool.Delete(thread);
+        }
+        i++;
     }
     return err;
 }
@@ -158,7 +148,6 @@ ErrorManagement::ErrorType MultiClientService::Start() {
         ReferenceT<MultiClientEmbeddedThread> thread(new (NULL) MultiClientEmbeddedThread(method, *this));
         err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
-            thread->SetThreadNumber(static_cast<uint16>(n));
             thread->SetTimeout(msecTimeout);
             err = thread->Start();
         }

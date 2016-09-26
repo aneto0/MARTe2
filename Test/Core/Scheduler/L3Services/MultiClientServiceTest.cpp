@@ -98,6 +98,7 @@ class MultiClientServiceTestCallbackClassToKill {
 public:
     MultiClientServiceTestCallbackClassToKill() {
         internalState = 0u;
+        done = false;
     }
 
     MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
@@ -106,15 +107,17 @@ public:
         }
         else {
             internalState++;
-            while (1) {
+            while (!done) {
                 MARTe::Sleep::Sec(1.0);
             }
+            return MARTe::ErrorManagement::Completed;
         }
 
         return MARTe::ErrorManagement::NoError;
     }
 
     MARTe::uint32 internalState;
+    bool done;
 };
 
 /*---------------------------------------------------------------------------*/
@@ -556,4 +559,100 @@ bool MultiClientServiceTest::TestGetMinimumNumberOfPoolThreads() {
 
 bool MultiClientServiceTest::TestGetNumberOfActiveThreads() {
     return TestStart();
+}
+
+bool MultiClientServiceTest::TestAddThread() {
+    using namespace MARTe;
+    MultiClientServiceTestCallbackClassToKill callbackClass;
+    EmbeddedServiceMethodBinderT<MultiClientServiceTestCallbackClassToKill> binder(callbackClass, &MultiClientServiceTestCallbackClassToKill::CallbackFunction);
+    MultiClientService service(binder);
+    service.SetMinimumNumberOfPoolThreads(2);
+    service.SetMaximumNumberOfPoolThreads(3);
+    service.SetTimeout(100);
+    uint32 maxCounter = 10;
+    ErrorManagement::ErrorType err = service.Start();
+    bool ok = (err == ErrorManagement::NoError);
+    //Check that GetMinimumNumberOfPoolThreadswo threads are awaiting connection
+    while ((maxCounter > 0) && (callbackClass.internalState != service.GetMinimumNumberOfPoolThreads())) {
+        Sleep::Sec(0.5);
+        maxCounter--;
+    }
+    ok &= (callbackClass.internalState == service.GetMinimumNumberOfPoolThreads());
+    err = service.AddThread();
+    ok &= (err == ErrorManagement::NoError);
+    //Check that GetMinimumNumberOfPoolThreadswo threads are awaiting connection
+    maxCounter = 10u;
+    while ((maxCounter > 0) && (callbackClass.internalState != (service.GetMinimumNumberOfPoolThreads() + 1u))) {
+        Sleep::Sec(0.5);
+        maxCounter--;
+    }
+    ok &= ((callbackClass.internalState == service.GetMinimumNumberOfPoolThreads() + 1u));
+    err = service.AddThread();
+    ok &= (err == ErrorManagement::IllegalOperation);
+    service.Stop();
+    return ok;
+}
+
+bool MultiClientServiceTest::TestRemoveThread() {
+    using namespace MARTe;
+    MultiClientServiceTestCallbackClassToKill callbackClass;
+    EmbeddedServiceMethodBinderT<MultiClientServiceTestCallbackClassToKill> binder(callbackClass, &MultiClientServiceTestCallbackClassToKill::CallbackFunction);
+    MultiClientService service(binder);
+    service.SetMinimumNumberOfPoolThreads(2);
+    service.SetMaximumNumberOfPoolThreads(3);
+    service.SetTimeout(100);
+    uint32 maxCounter = 10;
+    ErrorManagement::ErrorType err = service.Start();
+    bool ok = (err == ErrorManagement::NoError);
+    //Check that GetMinimumNumberOfPoolThreadswo threads are awaiting connection
+    while ((maxCounter > 0) && (callbackClass.internalState != service.GetMinimumNumberOfPoolThreads())) {
+        Sleep::Sec(0.5);
+        maxCounter--;
+    }
+    ok &= (callbackClass.internalState == service.GetMinimumNumberOfPoolThreads());
+    err = service.AddThread();
+    ok &= (err == ErrorManagement::NoError);
+    //Check that GetMinimumNumberOfPoolThreadswo threads are awaiting connection
+    maxCounter = 10u;
+    while ((maxCounter > 0) && (callbackClass.internalState != (service.GetMinimumNumberOfPoolThreads() + 1u))) {
+        Sleep::Sec(0.5);
+        maxCounter--;
+    }
+    ok &= ((callbackClass.internalState == service.GetMinimumNumberOfPoolThreads() + 1u));
+    err = service.AddThread();
+    ok &= (err == ErrorManagement::IllegalOperation);
+    callbackClass.done = true;
+    //The thread in excess will destroy itself by calling RemoveThread
+    maxCounter = 10u;
+    while ((maxCounter > 0) && (service.GetNumberOfActiveThreads() != service.GetMinimumNumberOfPoolThreads())) {
+        Sleep::Sec(0.5);
+        maxCounter--;
+    }
+    ok &= (service.GetNumberOfActiveThreads() == service.GetMinimumNumberOfPoolThreads());
+    service.Stop();
+    return ok;
+}
+
+bool MultiClientServiceTest::TestMoreThanEnoughThreads() {
+    using namespace MARTe;
+    MultiClientServiceTestCallbackClassToKill callbackClass;
+    EmbeddedServiceMethodBinderT<MultiClientServiceTestCallbackClassToKill> binder(callbackClass, &MultiClientServiceTestCallbackClassToKill::CallbackFunction);
+    MultiClientService service(binder);
+    service.SetMinimumNumberOfPoolThreads(2);
+    service.SetMaximumNumberOfPoolThreads(3);
+    service.SetTimeout(100);
+    uint32 maxCounter = 10;
+    ErrorManagement::ErrorType err = service.Start();
+    bool ok = (err == ErrorManagement::NoError);
+    //Check that GetMinimumNumberOfPoolThreadswo threads are awaiting connection
+    while ((maxCounter > 0) && (callbackClass.internalState != service.GetMinimumNumberOfPoolThreads())) {
+        Sleep::Sec(0.5);
+        maxCounter--;
+    }
+    ok &= (callbackClass.internalState == service.GetMinimumNumberOfPoolThreads());
+    ok &= !service.MoreThanEnoughThreads();
+    err = service.AddThread();
+    ok &= service.MoreThanEnoughThreads();
+    service.Stop();
+    return ok;
 }

@@ -61,14 +61,6 @@ EmbeddedThreadI::~EmbeddedThreadI() {
 
 }
 
-uint16 EmbeddedThreadI::GetThreadNumber() const {
-    return threadNumber;
-}
-
-void EmbeddedThreadI::SetThreadNumber(const uint16 threadNumberIn) {
-    threadNumber = threadNumberIn;
-}
-
 EmbeddedThreadI::Commands EmbeddedThreadI::GetCommands() const {
     return commands;
 }
@@ -221,7 +213,7 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
 
         // in any case notify the main object of the fact that the thread has been killed
         ExecutionInfo information;
-        information.SetThreadNumber(GetThreadNumber());
+        information.SetThreadNumber(GetThreadId());
         information.SetStage(ExecutionInfo::AsyncTerminationStage);
         Execute(information);
         ResetThreadId();

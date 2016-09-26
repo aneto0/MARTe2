@@ -158,9 +158,6 @@ protected:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * TODO
- */
 template<typename className>
 MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder) :
         EmbeddedServiceI (),

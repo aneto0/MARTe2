@@ -86,9 +86,19 @@ public:
     /**
      * @brief If the current number of allocated threads is < GetMaximumNumberOfPoolThreads() allocates a new thread.
      * @return ErrorManagement::IllegalOperation if the number of allocated threads is >= GetMaximumNumberOfPoolThreads()
-     * * TODO Test
+     * @post
+     *   GetNumberOfActiveThreads()++
      */
     ErrorManagement::ErrorType AddThread();
+
+    /**
+     * @brief Remove a the EmbeddedThreadI with GetThreadId=threadId from the list of active threads.
+     * @param[in] threadId the identifier of the thread to be removed.
+     * @return ErrorManagement::NoError if the thread can be successfully removed from the list of active threads.
+     * @post
+     *   GetNumberOfActiveThreads()--
+     */
+    ErrorManagement::ErrorType RemoveThread(ThreadIdentifier threadId);
 
     /**
      * @brief Gets the maximum number of threads available in the pool.

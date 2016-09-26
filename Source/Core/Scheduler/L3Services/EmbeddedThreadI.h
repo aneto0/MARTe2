@@ -55,7 +55,6 @@ public:
      * @param[in] binder the method which will be called in the context of this thread.
      * @post
      *   GetThreadId() == InvalidThreadIdentifier &&
-     *   GetThreadNumber == 0u &&
      *   GetCommands() == StopCommand
      */
     EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder);
@@ -145,18 +144,6 @@ public:
      * @details public access as it is called by the thread callback function.
      */
     virtual void ThreadLoop() = 0;
-
-    /**
-     * @brief Gets the thread unique number (with-in the context of a pool).
-     * @return the thread unique number (with-in the context of a pool).
-     */
-    uint16 GetThreadNumber() const;
-
-    /**
-     * @brief Sets the thread unique number (with-in the context of a pool).
-     * @param[in] numberIn the thread unique number (with-in the context of a pool).
-     */
-    void SetThreadNumber(uint16 threadNumberIn);
 
     /**
      * @brief Gets the embedded thread identifier.

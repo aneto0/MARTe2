@@ -55,7 +55,7 @@ void MultiClientEmbeddedThread::ThreadLoop() {
     ExecutionInfo information;
     information.Reset();
 
-    information.SetThreadNumber(GetThreadNumber());
+    information.SetThreadNumber(GetThreadId());
     bool newThread = true;
     // any error in execution will only abort the sequence - but not the thread
     // thread is killed at this stage if commands != KeepRunningCommand or if there more service threads that the minimum needed
@@ -109,6 +109,7 @@ void MultiClientEmbeddedThread::ThreadLoop() {
         Execute(information);
 
     } // main loop (start - loop (wait service - loop (service) ) - end)
+    manager.RemoveThread(GetThreadId());
 }
 
 }

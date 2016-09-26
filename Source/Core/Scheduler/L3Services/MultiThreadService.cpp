@@ -76,7 +76,6 @@ ErrorManagement::ErrorType MultiThreadService::Start() {
         ReferenceT<EmbeddedThread> thread(new (NULL) EmbeddedThread(method));
         err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
-            thread->SetThreadNumber(n);
             thread->SetTimeout(msecTimeout);
             err = thread->Start();
         }
@@ -116,22 +115,7 @@ ErrorManagement::ErrorType MultiThreadService::Stop() {
         }
     }
     // remove dead threads
-    i = 0;
-    while ((i < threadPool.Size()) && (err.ErrorsCleared())) {
-        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
-        if (thread.IsValid()) {
-            if (thread->GetStatus() == EmbeddedThreadI::OffState) {
-                threadPool.Delete(thread);
-            }
-            else {
-                i++;
-            }
-        }
-        else {
-            // some unexpected content or something seriously wrong!!
-            err.internalSetupError = true;
-        }
-    }
+    threadPool.CleanUp();
     if (err.ErrorsCleared() && (threadPool.Size() > 0)) {
         // some service die hard
         err.timeout = true;

@@ -77,10 +77,10 @@ public:
 
     MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
         if (information.GetStage() == MARTe::ExecutionInfo::AsyncTerminationStage) {
-            internalState++;
+            internalState--;
         }
         else {
-            internalState--;
+            internalState++;
             while (1) {
                 MARTe::Sleep::Sec(0.1);
             }
@@ -113,21 +113,8 @@ bool EmbeddedThreadITest::TestDefaultConstructor() {
     EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
     EmbeddedThreadITestStub embeddedThreadI(binder);
     bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
-    ok &= (embeddedThreadI.GetThreadNumber() == 0);
     ok &= (embeddedThreadI.GetCommands() == EmbeddedThreadI::StopCommand);
     return ok;
-}
-
-bool EmbeddedThreadITest::TestGetThreadNumber() {
-    return TestSetThreadNumber();
-}
-
-bool EmbeddedThreadITest::TestSetThreadNumber() {
-    using namespace MARTe;
-    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
-    EmbeddedThreadITestStub embeddedThreadI(binder);
-    embeddedThreadI.SetThreadNumber(100);
-    return (embeddedThreadI.GetThreadNumber() == 100);
 }
 
 bool EmbeddedThreadITest::TestGetThreadId() {
@@ -236,14 +223,16 @@ bool EmbeddedThreadITest::TestStart() {
 
 bool EmbeddedThreadITest::TestStart_False() {
     using namespace MARTe;
-    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
+    EmbeddedThreadITestCallbackClassToKill callbackClass;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITestCallbackClassToKill> binder(callbackClass, &EmbeddedThreadITestCallbackClassToKill::CallbackFunction);
     EmbeddedThreadITestStub embeddedThreadI(binder);
+    embeddedThreadI.SetTimeout(1000);
     bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
     ErrorManagement::ErrorType err = embeddedThreadI.Start();
     ok &= (err == ErrorManagement::NoError);
     ok &= (embeddedThreadI.GetThreadId() != InvalidThreadIdentifier);
     uint32 counter = 10;
-    while ((counter > 0) && (!executeCalled)) {
+    while ((counter > 0) && (!callbackClass.internalState)) {
         Sleep::Sec(0.5);
         counter--;
     }
@@ -271,8 +260,6 @@ bool EmbeddedThreadITest::TestStart_Restart() {
     embeddedThreadI.Stop();
     executeCalled = false;
     err = embeddedThreadI.Start();
-    ok &= (err == ErrorManagement::IllegalOperation);
-    ok &= (embeddedThreadI.GetThreadId() != InvalidThreadIdentifier);
     counter = 10;
     while ((counter > 0) && (!executeCalled)) {
         Sleep::Sec(0.5);
@@ -304,20 +291,25 @@ bool EmbeddedThreadITest::TestStop() {
 
 bool EmbeddedThreadITest::TestStop_Kill() {
     using namespace MARTe;
-    EmbeddedThreadITestCallbackClass callbackClass;
-    EmbeddedServiceMethodBinderT<EmbeddedThreadITestCallbackClass> binder(callbackClass, &EmbeddedThreadITestCallbackClass::CallbackFunction);
+    EmbeddedThreadITestCallbackClassToKill callbackClass;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITestCallbackClassToKill> binder(callbackClass, &EmbeddedThreadITestCallbackClassToKill::CallbackFunction);
     EmbeddedThreadITestStub embeddedThreadI(binder);
+    embeddedThreadI.SetTimeout(1000);
     bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
     ErrorManagement::ErrorType err = embeddedThreadI.Start();
     ok &= (err == ErrorManagement::NoError);
     ok &= (embeddedThreadI.GetThreadId() != InvalidThreadIdentifier);
+
     uint32 counter = 10;
-    while ((counter > 0) && (callbackClass.internalState != 2u)) {
+    while ((counter > 0) && (callbackClass.internalState != 1u)) {
         Sleep::Sec(0.5);
         counter--;
     }
-    ok &= (callbackClass.internalState == 2u);
+    ok &= (callbackClass.internalState == 1u);
     err = embeddedThreadI.Stop();
+    ok &= (err == ErrorManagement::Timeout);
+    err = embeddedThreadI.Stop();
+
     while ((counter > 0) && (callbackClass.internalState != 0u)) {
         Sleep::Sec(0.5);
         counter--;

@@ -97,7 +97,6 @@ bool MultiClientEmbeddedThreadTest::TestDefaultConstructor() {
     MultiClientService service(binder);
     MultiClientEmbeddedThread embeddedThread(binder, service);
     bool ok = (embeddedThread.GetThreadId() == InvalidThreadIdentifier);
-    ok &= (embeddedThread.GetThreadNumber() == 0);
     ok &= (embeddedThread.GetCommands() == EmbeddedThread::StopCommand);
     return ok;
 }

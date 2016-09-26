@@ -150,3 +150,18 @@ TEST(MultiClientServiceGTest,TestTestGetNumberOfActiveThreads) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestGetNumberOfActiveThreads());
 }
+
+TEST(MultiClientServiceGTest,TestAddThread) {
+    MultiClientServiceTest target;
+    ASSERT_TRUE(target.TestAddThread());
+}
+
+TEST(MultiClientServiceGTest,TestRemoveThread) {
+    MultiClientServiceTest target;
+    ASSERT_TRUE(target.TestRemoveThread());
+}
+
+TEST(MultiClientServiceGTest,TestMoreThanEnoughThreads) {
+    MultiClientServiceTest target;
+    ASSERT_TRUE(target.TestMoreThanEnoughThreads());
+}

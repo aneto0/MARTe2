@@ -152,22 +152,24 @@ public:
     void Reset();
 
 private:
-    union {
 
-        /**
-         * ThreadNumber is an unique id that identifies a thread within an EmbeddedService.
-         */
-        BitRange<uint32, 16u, 0u> threadNumber;
+    /**
+     * ThreadNumber is an unique id that identifies a thread within an EmbeddedService.
+     */
+    uint32 threadNumber;
+
+
+    union {
 
         /**
          * The operating stage of the thread.
          */
-        BitRange<uint32, 8u, 16u> stage;
+        BitRange<uint32, 8u, 0u> stage;
 
         /**
          * The operating stage of the thread (specific to the class inhering from EmbeddedServiceI).
          */
-        BitRange<uint32, 8u, 24u> stageSpecific;
+        BitRange<uint32, 8u, 8u> stageSpecific;
 
     };
 };
