@@ -94,16 +94,14 @@ public:
     MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
         if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
             if (information.GetThreadNumber() > internalState) {
-                internalState = information.GetThreadNumber();
+                internalState++;
             }
             while (1) {
                 MARTe::Sleep::Sec(1.0);
             }
         }
         if (information.GetStage() == MARTe::ExecutionInfo::AsyncTerminationStage) {
-            if ((information.GetThreadNumber() * 15) > internalState) {
-                internalState = information.GetThreadNumber() * 15;
-            }
+            internalState--;
         }
         return MARTe::ErrorManagement::NoError;
     }
@@ -312,23 +310,28 @@ bool MultiThreadServiceTest::TestStop_Kill() {
     ErrorManagement::ErrorType err = embeddedThread.Start();
     bool ok = (err == ErrorManagement::NoError);
     uint32 maxCounter = 10;
-    while ((maxCounter > 0) && (callbackClass.internalState != 2u)) {
+    while ((maxCounter > 0) && (callbackClass.internalState != 3u)) {
         Sleep::Sec(1.0);
         maxCounter--;
     }
-    ok &= (callbackClass.internalState == 2u);
+    ok &= (callbackClass.internalState == 3u);
     ok &= (embeddedThread.GetStatus(0) == EmbeddedThreadI::RunningState);
     ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::RunningState);
     ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::RunningState);
 
     embeddedThread.SetTimeout(1000);
     err = embeddedThread.Stop();
+    maxCounter = 10;
+    while ((maxCounter > 0) && (callbackClass.internalState != 0u)) {
+        Sleep::Sec(1.0);
+        maxCounter--;
+    }
 
     ok &= (err == ErrorManagement::NoError);
     ok &= (embeddedThread.GetStatus(0) == EmbeddedThreadI::OffState);
     ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::OffState);
     ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::OffState);
-    ok &= (callbackClass.internalState == 30u);
+    ok &= (callbackClass.internalState == 0u);
     return ok;
 }
 

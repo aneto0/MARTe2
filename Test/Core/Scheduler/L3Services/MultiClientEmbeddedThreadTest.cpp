@@ -68,6 +68,11 @@ MARTe::ErrorManagement::ErrorType MultiClientEmbeddedThreadTest::CallbackFunctio
     if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
         main = true;
         if (information.GetStageSpecific() == MARTe::ExecutionInfo::WaitRequestStageSpecific) {
+            //Job done. Wait for test to finish
+            if (badTermination) {
+                MARTe::Sleep::Sec(0.1);
+                return MARTe::ErrorManagement::Timeout;
+            }
             waitRequestStageSpecific = true;
             return MARTe::ErrorManagement::NoError;
         }
