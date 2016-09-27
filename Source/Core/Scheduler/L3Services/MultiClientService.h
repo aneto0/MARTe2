@@ -162,6 +162,9 @@ protected:
      */
     uint16 minNumberOfThreads;
 
+    /*lint -e{1712} This class does not have a default constructor because
+     * the callback method must be defined at construction time and will remain constant
+     * during the object's lifetime*/
 };
 }
 

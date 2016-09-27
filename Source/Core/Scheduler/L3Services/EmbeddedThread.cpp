@@ -48,11 +48,11 @@ EmbeddedThread::~EmbeddedThread() {
 }
 
 void EmbeddedThread::ThreadLoop() {
-    commands = KeepRunningCommand;
+    SetCommands(KeepRunningCommand);
 
     ErrorManagement::ErrorType err;
 
-    while (commands == KeepRunningCommand) {
+    while (GetCommands() == KeepRunningCommand) {
         //Reset sets stage = StartupStage;
         information.Reset();
         information.SetThreadNumber(GetThreadId());
@@ -61,24 +61,28 @@ void EmbeddedThread::ThreadLoop() {
         err = Execute(information);
 
         // main stage
-        if (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
+        if (GetCommands() == KeepRunningCommand) {
 
             information.SetStage(ExecutionInfo::MainStage);
-            while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
+            bool ok = true;
+            while ((GetCommands() == KeepRunningCommand) && (ok)) {
                 err = Execute(information);
+                ok = err.ErrorsCleared();
             }
         }
 
         // assuming one reason for exiting (not multiple errors together with a command change)
-        if (err.completed) {
+        if (err.completed.operator bool()) {
             information.SetStage(ExecutionInfo::TerminationStage);
         }
         else {
             information.SetStage(ExecutionInfo::BadTerminationStage);
         }
 
-        //Return value is ignored as thread cycle will start afresh whatever the return value.
-        Execute(information);
+        err = Execute(information);
+        if (!err.ErrorsCleared()) {
+            REPORT_ERROR(ErrorManagement::RecoverableError, "Callback returned error. Restarting EmbeddedThread loop.");
+        }
     }
 }
 

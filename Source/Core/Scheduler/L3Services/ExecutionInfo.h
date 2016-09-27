@@ -34,11 +34,12 @@
 #include "BitRange.h"
 #include "BitBoolean.h"
 #include "ErrorType.h"
+#include "Threads.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
+/*lint -sem(MARTe::ExecutionInfo::Reset,initializer)*/
 namespace MARTe {
 /**
  * @brief Communicates to the user code the stage of the thread life, which evolves accordingly to rules
@@ -106,7 +107,7 @@ public:
      * @pre
      *   GetStage() == StartupStage
      */
-    void SetThreadNumber(uint16 number);
+    void SetThreadNumber(const ThreadIdentifier &number);
 
     /**
      * @brief Sets the current stage (as encoded above).
@@ -114,7 +115,7 @@ public:
      * @post
      *   GetStage() == number
      */
-    void SetStage(uint8 number);
+    void SetStage(const uint8 number);
 
     /**
      * @brief Sets a stage which is specific to a class derived from EmbeddedServiceI.
@@ -122,25 +123,25 @@ public:
      * @post
      *   GetStageSpecific() == number
      */
-    void SetStageSpecific(uint8 number);
+    void SetStageSpecific(const uint8 number);
 
     /**
      * @brief Gets the thread unique number in a thread pool of an EmbeddedServiceI.
      * @return the thread unique number in a thread pool.
      */
-    uint16 GetThreadNumber();
+    ThreadIdentifier GetThreadNumber() const;
 
     /**
      * @brief Gets the current stage (as encoded above).
      * @return the current stage (as encoded above).
      */
-    uint8 GetStage();
+    uint8 GetStage() const;
 
     /**
      * @brief Gets a stage which is specific to a class derived from EmbeddedServiceI.
      * @return a stage which is specific to a class derived from EmbeddedServiceI.
      */
-    uint8 GetStageSpecific();
+    uint8 GetStageSpecific() const;
 
     /**
      * @brief Resets the thread number and the stages to their initial values.
@@ -156,22 +157,18 @@ private:
     /**
      * ThreadNumber is an unique id that identifies a thread within an EmbeddedService.
      */
-    uint32 threadNumber;
+    ThreadIdentifier threadNumber;
 
+    /**
+     * The operating stage of the thread.
+     */
+    uint8 stage;
 
-    union {
+    /**
+     * The operating stage of the thread (specific to the class inhering from EmbeddedServiceI).
+     */
+    uint8 stageSpecific;
 
-        /**
-         * The operating stage of the thread.
-         */
-        BitRange<uint32, 8u, 0u> stage;
-
-        /**
-         * The operating stage of the thread (specific to the class inhering from EmbeddedServiceI).
-         */
-        BitRange<uint32, 8u, 8u> stageSpecific;
-
-    };
 };
 }
 

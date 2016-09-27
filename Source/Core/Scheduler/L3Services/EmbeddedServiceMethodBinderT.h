@@ -76,6 +76,8 @@ private:
     /**
      * The object with the callback method to be called.
      */
+    /*lint -e{1725} object is a reference that is initialised during construction and is the basic mechanism to register
+     * the callback function to be called by the EmbeddedThreadI. */
     className &object;
 
     /**

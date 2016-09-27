@@ -43,34 +43,34 @@ ExecutionInfo::ExecutionInfo() {
     Reset();
 }
 
-void ExecutionInfo::SetThreadNumber(uint16 number) {
+void ExecutionInfo::SetThreadNumber(const ThreadIdentifier &number) {
     if (stage == StartupStage) {
         threadNumber = number;
     }
 }
 
-void ExecutionInfo::SetStage(uint8 number) {
+void ExecutionInfo::SetStage(const uint8 number) {
     stage = number;
 }
 
-void ExecutionInfo::SetStageSpecific(uint8 number) {
+void ExecutionInfo::SetStageSpecific(const uint8 number) {
     stageSpecific = number;
 }
 
-uint16 ExecutionInfo::GetThreadNumber() {
+ThreadIdentifier ExecutionInfo::GetThreadNumber() const {
     return threadNumber;
 }
 
-uint8 ExecutionInfo::GetStage() {
+uint8 ExecutionInfo::GetStage() const {
     return stage;
 }
 
-uint8 ExecutionInfo::GetStageSpecific() {
+uint8 ExecutionInfo::GetStageSpecific() const {
     return stageSpecific;
 }
 
 void ExecutionInfo::Reset() {
-    threadNumber = 0;
+    threadNumber = 0u;
     stage = StartupStage;
     stageSpecific = NullStageSpecific;
 

@@ -1,4 +1,10 @@
-AdvancedErrorManagement.h
+/*EmbeddedServiceI.cpp*/
+MultiClientEmbeddedThread.cpp
+/*MultiClientService.cpp
+MultiThreadService.cpp
+SingleThreadService.cpp*/
+
+/*AdvancedErrorManagement.h
 AnyObject.cpp
 AnyType.cpp
 AnyTypeCreator.cpp
@@ -37,6 +43,9 @@ DirectoryCore.h
 DirectoryScanner.cpp
 DoubleBufferedStream.cpp
 DoubleInteger.h
+EmbeddedServiceMethodBinderI.cpp
+EmbeddedThread.cpp
+EmbeddedThreadI.cpp
 Endianity.h
 ErrorInformation.h
 ErrorManagement.h
@@ -45,6 +54,7 @@ ErrorType.h
 EventSem.cpp
 ExceptionHandler.h
 ExecutableI.cpp
+ExecutionInfo.cpp
 FastMath.h
 FastPollingEventSem.cpp
 FastPollingMutexSem.cpp
@@ -171,4 +181,4 @@ TypeDescriptor.cpp
 ValidateBasicType.cpp
 Vector.h
 XMLParser.cpp
-ZeroTerminatedArray.h
+ZeroTerminatedArray.h*/

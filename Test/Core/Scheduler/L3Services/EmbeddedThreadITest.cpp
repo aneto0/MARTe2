@@ -47,7 +47,7 @@ public:
     }
 
     void ThreadLoop() {
-        commands = KeepRunningCommand;
+        SetCommands(KeepRunningCommand);
         MARTe::ExecutionInfo info;
         info.SetStage(MARTe::ExecutionInfo::MainStage);
         Execute(info);

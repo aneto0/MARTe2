@@ -161,7 +161,7 @@ public:
      * @brief Sets the command to be executed in the ThreadLoop.
      * @param[in] commandsIn the command to be executed in the ThreadLoop.
      */
-    void SetCommands(Commands commandsIn);
+    void SetCommands(const Commands commandsIn);
 
     /**
      * @brief Sets the thread identifier to InvalidThreadIdentifier.
@@ -177,7 +177,7 @@ public:
      * @param[in] info information about the current state of the execution thread.
      * @return the ErrorType returned by the user function.
      */
-    inline ErrorManagement::ErrorType Execute(ExecutionInfo information);
+    inline ErrorManagement::ErrorType Execute(const ExecutionInfo & information);
 
     /**
      * @brief Gets the current thread status.
@@ -197,7 +197,7 @@ public:
      * @brief Sets the maximum time to execute a state change.
      * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
      */
-    void SetTimeout(TimeoutType msecTimeoutIn);
+    void SetTimeout(const TimeoutType &msecTimeoutIn);
 
     /**
      * @brief Gets the maximum time to execute a state change.
@@ -217,11 +217,13 @@ public:
      */
     virtual ErrorManagement::ErrorType Stop();
 
-protected:
+private:
 
     /**
      * The registered call-back method to be called by this EmbeddedServiceI instance.
      */
+    /*lint -e{1725} method is a reference that is initialised during construction and is the basic mechanism to register
+     * the callback function to be called by this EmbeddedThreadI. */
     EmbeddedServiceMethodBinderI &method;
 
     /**
@@ -254,6 +256,10 @@ protected:
      * The maximum time to execute a state change.
      */
     TimeoutType msecTimeout;
+
+    /*lint -e{1712} This class does not have a default constructor because
+     * the callback method must be defined at construction and will remain constant
+     * during the object's lifetime*/
 };
 }
 
@@ -262,7 +268,7 @@ protected:
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-ErrorManagement::ErrorType EmbeddedThreadI::Execute(ExecutionInfo information) {
+ErrorManagement::ErrorType EmbeddedThreadI::Execute(const ExecutionInfo & information) {
     return method.Execute(information);
 }
 

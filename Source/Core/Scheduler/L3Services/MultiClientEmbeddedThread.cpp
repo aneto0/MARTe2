@@ -28,7 +28,6 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
 #include "MultiClientEmbeddedThread.h"
 
 /*---------------------------------------------------------------------------*/
@@ -51,26 +50,26 @@ MultiClientEmbeddedThread::~MultiClientEmbeddedThread() {
 }
 
 void MultiClientEmbeddedThread::ThreadLoop() {
-    commands = KeepRunningCommand;
+    SetCommands(KeepRunningCommand);
     ExecutionInfo information;
     information.Reset();
 
     information.SetThreadNumber(GetThreadId());
-    bool newThread = true;
     // any error in execution will only abort the sequence - but not the thread
     // thread is killed at this stage if commands != KeepRunningCommand or if there more service threads that the minimum needed
-    while ((commands == KeepRunningCommand) && (newThread || !manager.MoreThanEnoughThreads())) {
-        newThread = false;
-        ErrorManagement::ErrorType err;
-
+    //Allow new threads to enter....
+    bool moreThanEnoughtThreads = false;
+    ErrorManagement::ErrorType err;
+    while ((GetCommands() == KeepRunningCommand) && (!moreThanEnoughtThreads)) {
         information.SetStage(ExecutionInfo::StartupStage);
         information.SetStageSpecific(ExecutionInfo::NullStageSpecific);
-        if (commands == KeepRunningCommand) {
+        if (GetCommands() == KeepRunningCommand) {
             err = Execute(information);
         } // start
 
         // main loop - wait for service request - service the request
-        while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
+        bool errorsCleared = err.ErrorsCleared();
+        while ((GetCommands() == KeepRunningCommand) && (errorsCleared)) {
             information.SetStage(ExecutionInfo::MainStage);
             information.SetStageSpecific(ExecutionInfo::WaitRequestStageSpecific);
 
@@ -79,37 +78,51 @@ void MultiClientEmbeddedThread::ThreadLoop() {
             // wait for service request loop
             // keep at it only if answer is timeout
             // any other answer - including no errors - continue
-            while ((err == ErrorManagement::Timeout) && (commands == KeepRunningCommand)) {
+            bool hasToContinue = (err == ErrorManagement::Timeout);
+            while ((GetCommands() == KeepRunningCommand) && (hasToContinue)) {
                 err = Execute(information);
+                hasToContinue = (err == ErrorManagement::Timeout);
             } // wait service
 
-            if (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
+            errorsCleared = err.ErrorsCleared();
+            if ((GetCommands() == KeepRunningCommand) && (errorsCleared)) {
                 // Try start new service thread
                 bool threadAddedOk = manager.AddThread();
                 if (!threadAddedOk) {
-                    REPORT_ERROR(ErrorManagement::RecoverableError, "Failed to AddThread... Increase the maximum number of threads allowed in the MultiClientService...");
+                    REPORT_ERROR(ErrorManagement::RecoverableError,
+                                 "Failed to AddThread... Increase the maximum number of threads allowed in the MultiClientService...");
                 }
 
                 information.SetStageSpecific(ExecutionInfo::ServiceRequestStageSpecific);
                 // exit on error including ErrorManagement::completed
-                while (err.ErrorsCleared() && (commands == KeepRunningCommand)) {
+                errorsCleared = err.ErrorsCleared();
+                while ((GetCommands() == KeepRunningCommand) && (errorsCleared)) {
                     err = Execute(information);
+                    errorsCleared = err.ErrorsCleared();
                 }
             } // loop service
+            errorsCleared = err.ErrorsCleared();
         } // loop (wait service - loop (service) ) -
 
         // assuming one reason for exiting (not multiple errors together with a command change)
         information.SetStageSpecific(ExecutionInfo::NullStageSpecific);
-        if (err.completed) {
+        if (err.completed.operator bool()) {
             information.SetStage(ExecutionInfo::TerminationStage);
         }
         else {
             information.SetStage(ExecutionInfo::BadTerminationStage);
         }
-        Execute(information);
+        err = Execute(information);
+        if (!err.ErrorsCleared()) {
+            REPORT_ERROR(ErrorManagement::RecoverableError, "Callback returned error. Restarting MultiClientEmbeddedThread loop.");
+        }
 
+        moreThanEnoughtThreads = manager.MoreThanEnoughThreads();
     } // main loop (start - loop (wait service - loop (service) ) - end)
-    manager.RemoveThread(GetThreadId());
+    err = manager.RemoveThread(GetThreadId());
+    if (!err.ErrorsCleared()) {
+        REPORT_ERROR(ErrorManagement::RecoverableError, "Failed to remove thread from pool");
+    }
 }
 
 }
