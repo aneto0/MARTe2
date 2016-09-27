@@ -58,7 +58,7 @@ MultiClientEmbeddedThreadTest::MultiClientEmbeddedThreadTest() {
 MultiClientEmbeddedThreadTest::~MultiClientEmbeddedThreadTest() {
 }
 
-MARTe::ErrorManagement::ErrorType MultiClientEmbeddedThreadTest::CallbackFunction(MARTe::ExecutionInfo &information) {
+MARTe::ErrorManagement::ErrorType MultiClientEmbeddedThreadTest::CallbackFunction(const MARTe::ExecutionInfo &information) {
     if (information.GetStage() == MARTe::ExecutionInfo::StartupStage) {
         startup = true;
         if (information.GetStageSpecific() == MARTe::ExecutionInfo::NullStageSpecific) {

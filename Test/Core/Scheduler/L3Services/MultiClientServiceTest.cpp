@@ -51,7 +51,7 @@ public:
         mux.Create();
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
         if (information.GetStageSpecific() == MARTe::ExecutionInfo::StartupStage) {
             mux.Lock();
             numberConnectionsWaiting++;
@@ -101,7 +101,7 @@ public:
         done = false;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
         if (information.GetStage() == MARTe::ExecutionInfo::AsyncTerminationStage) {
             internalState--;
         }

@@ -48,7 +48,7 @@ public:
     /**
      * @brief Type definition for the callback method pointer prototype.
      */
-    typedef ErrorManagement::ErrorType (className::*MethodPointer)(ExecutionInfo &info);
+    typedef ErrorManagement::ErrorType (className::*MethodPointer)(const ExecutionInfo &info);
 
     /**
      * @brief Constructor.
@@ -69,7 +69,7 @@ public:
      * @param[in] info information about the current state of the execution thread.
      * @return the ErrorType returned by the user function.
      */
-    virtual ErrorManagement::ErrorType Execute(ExecutionInfo info);
+    virtual ErrorManagement::ErrorType Execute(const ExecutionInfo &info);
 
 private:
 
@@ -93,7 +93,7 @@ private:
 namespace MARTe {
 template<typename className>
 EmbeddedServiceMethodBinderT<className>::EmbeddedServiceMethodBinderT(className &obj,
-                                                                      EmbeddedServiceMethodBinderT<className>::MethodPointer fun) :
+                                                                      const EmbeddedServiceMethodBinderT<className>::MethodPointer fun) :
         EmbeddedServiceMethodBinderI(),
         object(obj),
         function(fun) {
@@ -104,7 +104,7 @@ EmbeddedServiceMethodBinderT<className>::~EmbeddedServiceMethodBinderT() {
 }
 
 template<typename className>
-ErrorManagement::ErrorType EmbeddedServiceMethodBinderT<className>::Execute(ExecutionInfo info) {
+ErrorManagement::ErrorType EmbeddedServiceMethodBinderT<className>::Execute(const ExecutionInfo &info) {
     return (object.*function)(info);
 }
 }

@@ -60,7 +60,7 @@ public:
         internalState = 0u;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
         internalState++;
         MARTe::Sleep::Sec(0.1);
         return MARTe::ErrorManagement::NoError;
@@ -75,7 +75,7 @@ public:
         internalState = 0u;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
         if (information.GetStage() == MARTe::ExecutionInfo::AsyncTerminationStage) {
             internalState--;
         }
@@ -102,7 +102,7 @@ EmbeddedThreadITest::EmbeddedThreadITest() {
 EmbeddedThreadITest::~EmbeddedThreadITest() {
 }
 
-MARTe::ErrorManagement::ErrorType EmbeddedThreadITest::CallbackFunction(MARTe::ExecutionInfo &information) {
+MARTe::ErrorManagement::ErrorType EmbeddedThreadITest::CallbackFunction(const MARTe::ExecutionInfo &information) {
     MARTe::Sleep::Sec(0.1);
     executeCalled = true;
     return MARTe::ErrorManagement::NoError;
@@ -239,6 +239,8 @@ bool EmbeddedThreadITest::TestStart_False() {
     err = embeddedThreadI.Start();
     ok &= (err == ErrorManagement::IllegalOperation);
 
+    embeddedThreadI.Stop();
+    //kill the thread otherwise it will stay alive and will stop other tests that depend on while(Threads::NumberOfThreads() > 0)
     embeddedThreadI.Stop();
     return ok;
 }

@@ -42,12 +42,12 @@ public:
         functionCalled = false;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
         functionCalled = true;
         return MARTe::ErrorManagement::NoError;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunctionWithError(MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunctionWithError(const MARTe::ExecutionInfo &information) {
         functionCalled = true;
         return MARTe::ErrorManagement::FatalError;
     }

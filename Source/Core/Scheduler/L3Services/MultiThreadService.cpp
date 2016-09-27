@@ -45,12 +45,18 @@ namespace MARTe {
 MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderI &binder) :
         EmbeddedServiceI(),
         method(binder) {
-    numberOfPoolThreads = 1;
+    numberOfPoolThreads = 1u;
     msecTimeout = TTInfiniteWait.GetTimeoutMSec();
 }
 
+/*lint -e{1551} the only reason why this could throw an exception is if
+ * the callback method throws an exception while stopping (but this is not
+ * caught anyway). */
 MultiThreadService::~MultiThreadService() {
-    Stop();
+    ErrorManagement::ErrorType err = MultiThreadService::Stop();
+    if (!err.ErrorsCleared()) {
+        REPORT_ERROR(err, "Could not Stop all the EmbeddedThreadI instances.");
+    }
 }
 
 bool MultiThreadService::Initialise(StructuredDataI &data) {
@@ -70,9 +76,9 @@ bool MultiThreadService::Initialise(StructuredDataI &data) {
 
 ErrorManagement::ErrorType MultiThreadService::Start() {
     ErrorManagement::ErrorType err;
-    err.illegalOperation = (threadPool.Size() > 0);
-    uint32 n = 0u;
-    while ((threadPool.Size() < numberOfPoolThreads) && (err.ErrorsCleared())) {
+    err.illegalOperation = (threadPool.Size() > 0u);
+    bool errorsCleared = err.ErrorsCleared();
+    while ((threadPool.Size() < numberOfPoolThreads) && (errorsCleared)) {
         ReferenceT<EmbeddedThread> thread(new (NULL) EmbeddedThread(method));
         err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
@@ -80,9 +86,9 @@ ErrorManagement::ErrorType MultiThreadService::Start() {
             err = thread->Start();
         }
         if (err.ErrorsCleared()) {
-            threadPool.Insert(thread);
+            err.fatalError = !threadPool.Insert(thread);
         }
-        n++;
+        errorsCleared = err.ErrorsCleared();
     }
     return err;
 }
@@ -95,37 +101,39 @@ ErrorManagement::ErrorType MultiThreadService::Stop() {
         if (thread.IsValid()) {
             err = thread->Stop();
             if (!err.ErrorsCleared()) {
-                REPORT_ERROR_PARAMETERS(err, "Could not Stop EmbeddedThreadI(%d)", i)
+                uint32 threadNumber = i;
+                REPORT_ERROR_PARAMETERS(err, "Could not Stop EmbeddedThreadI(%d)", threadNumber)
             }
         }
     }
     // perform kill if necessary
-    for (i = 0; i < threadPool.Size(); i++) {
+    for (i = 0u; i < threadPool.Size(); i++) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
         if (thread.IsValid()) {
             if (thread->GetStatus() != EmbeddedThreadI::OffState) {
+                uint32 threadNumber = i;
                 err = thread->Stop();
                 if (!err.ErrorsCleared()) {
-                    REPORT_ERROR_PARAMETERS(err, "Could not Kill EmbeddedThreadI(%d)", i)
+                    REPORT_ERROR_PARAMETERS(err, "Could not Kill EmbeddedThreadI(%d)", threadNumber)
                 }
                 else {
-                    REPORT_ERROR_PARAMETERS(err, "Killed EmbeddedThreadI(%d)", i)
+                    REPORT_ERROR_PARAMETERS(err, "Killed EmbeddedThreadI(%d)", threadNumber)
                 }
             }
         }
     }
     // remove dead threads
     threadPool.CleanUp();
-    if (err.ErrorsCleared() && (threadPool.Size() > 0)) {
-        // some service die hard
-        err.timeout = true;
+    if (err.ErrorsCleared()) {
+        // some service died hard
+        err.timeout = (threadPool.Size() > 0u);
     }
 
     return err;
 
 }
 
-EmbeddedThreadI::States MultiThreadService::GetStatus(uint32 threadIdx) {
+EmbeddedThreadI::States MultiThreadService::GetStatus(const uint32 threadIdx) {
     EmbeddedThreadI::States status = EmbeddedThreadI::OffState;
     if (threadIdx < threadPool.Size()) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
@@ -147,7 +155,7 @@ void MultiThreadService::SetNumberOfPoolThreads(const uint32 numberOfPoolThreads
     }
 }
 
-void MultiThreadService::SetTimeout(TimeoutType msecTimeoutIn) {
+void MultiThreadService::SetTimeout(const TimeoutType & msecTimeoutIn) {
     msecTimeout = msecTimeoutIn.GetTimeoutMSec();
     uint32 i;
     for (i = 0u; i < threadPool.Size(); i++) {

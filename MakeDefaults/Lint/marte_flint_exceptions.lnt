@@ -207,8 +207,14 @@
 -esym(1960, MARTe::ReferenceT<<1>>::Init*)
 -esym(1960, MARTe::ReferenceT<<1>>::RemoveReference*)
 -esym(1960, MARTe::BitBoolean*::operator=*)
--esym(1960, MARTe::TimeStamp::*)
-
+-esym(1960, MARTe::ErrorManagement::ErrorType::ClearError*)
+-esym(1960, MARTe::ErrorManagement::ErrorType::SetError*)
+-esym(1960, MARTe::TimeStamp::SetDay*)
+-esym(1960, MARTe::TimeStamp::SetHour*)
+-esym(1960, MARTe::TimeStamp::SetMinutes*)
+-esym(1960, MARTe::TimeStamp::SetMonth*)
+-esym(1960, MARTe::TimeStamp::SetSeconds*)
+-esym(1960, MARTe::TimeStamp::SetYear*)
 /*
  * Rule flexelint 1960 
  * Rule MISRA 0-1-8
@@ -236,6 +242,8 @@
   * It is as if it was a member function of the class.
   */
  -esym(459, *BuildFn_*)
+ -esym(459, *RTThreadRoutine*)
+ -esym(459, *ServiceThreadLauncher*)
  
  /*
   * Rule 14-7-1
@@ -283,6 +291,7 @@
   * files can be included in multiple unit files.
   */
 -esym(9107, MARTe::ReferenceT*)
+-esym(9107, MARTe::EmbeddedServiceMethodBinderT*)
 
 /*
  * Rule flexelint 1793

@@ -95,7 +95,13 @@ private:
     /**
      * Responsible for managing the number of threads.
      */
+    /*lint -e{1725} manager is a reference that is initialised during construction and is the basic mechanism to register
+     * the callback MultiClientService that manages the creation and destruction of threads. */
     MultiClientService &manager;
+
+    /*lint -e{1712} This class does not have a default constructor because
+     * the MultiClientService manager must be defined at construction and will remain constant
+     * during the object's lifetime*/
 };
 }
 

@@ -48,9 +48,18 @@ SingleThreadService::SingleThreadService(EmbeddedServiceMethodBinderI &binder) :
     SetTimeout(TTInfiniteWait);
 }
 
+/*lint -e{1551} the only reason why this could throw an exception is if
+ * the callback method throws an exception while stopping (but this is not
+ * caught anyway). */
 SingleThreadService::~SingleThreadService() {
-    Stop();
-    Stop();
+    ErrorManagement::ErrorType err = SingleThreadService::Stop();
+    if (!err.ErrorsCleared()) {
+        REPORT_ERROR(err, "Could not Stop all the EmbeddedThreadI instances (first time).");
+    }
+    err = SingleThreadService::Stop();
+    if (!err.ErrorsCleared()) {
+        REPORT_ERROR(err, "Could not Stop all the EmbeddedThreadI instances (second time).");
+    }
 }
 
 bool SingleThreadService::Initialise(StructuredDataI &data) {
@@ -67,7 +76,7 @@ bool SingleThreadService::Initialise(StructuredDataI &data) {
     return err;
 }
 
-void SingleThreadService::SetTimeout(TimeoutType msecTimeoutIn) {
+void SingleThreadService::SetTimeout(const TimeoutType &msecTimeoutIn) {
     embeddedThread.SetTimeout(msecTimeoutIn);
 }
 

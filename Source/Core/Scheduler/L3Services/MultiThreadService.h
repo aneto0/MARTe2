@@ -118,13 +118,13 @@ public:
      * @pre
      *   threadIdx < GetNumberOfPoolThreads()
      */
-    EmbeddedThreadI::States GetStatus(uint32 threadIdx);
+    EmbeddedThreadI::States GetStatus(const uint32 threadIdx);
 
     /**
      * @brief Sets the maximum time to execute a state change.
      * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
      */
-    void SetTimeout(TimeoutType msecTimeoutIn);
+    void SetTimeout(const TimeoutType & msecTimeoutIn);
 
     /**
      * @brief Gets the maximum time to execute a state change.
@@ -151,7 +151,12 @@ protected:
     /**
      * The callback method
      */
+    /*lint -e{1725} method is a reference that is initialised during construction and is the basic mechanism to register
+     * the callback function to be called by the EmbeddedThreadI. */
     EmbeddedServiceMethodBinderI &method;
+    /*lint -e{1712} This class does not have a default constructor because
+     * the callback method must be defined at construction and will remain constant
+     * during the object's lifetime*/
 };
 
 /*---------------------------------------------------------------------------*/
@@ -160,7 +165,7 @@ protected:
 
 template<typename className>
 MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder) :
-        EmbeddedServiceI (),
+        EmbeddedServiceI(),
         method(binder) {
     numberOfPoolThreads = 1;
     msecTimeout = TTInfiniteWait.GetTimeoutMSec();

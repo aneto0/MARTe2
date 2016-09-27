@@ -42,7 +42,7 @@ public:
         internalState = 0u;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
         internalState++;
         return MARTe::ErrorManagement::NoError;
     }
@@ -56,7 +56,7 @@ public:
         internalState = 0u;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
         internalState = 1;
         if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
             while (1) {
@@ -206,6 +206,8 @@ bool SingleThreadServiceTest::TestStart_Restart() {
     }
     ok &= (callbackClass.internalState >= 10u);
     ok &= (service.GetStatus() == EmbeddedThreadI::RunningState);
+    err = service.Stop();
+    ok &= (err == ErrorManagement::NoError);
     return ok;
 }
 

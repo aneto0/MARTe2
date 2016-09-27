@@ -1,10 +1,4 @@
-/*EmbeddedServiceI.cpp*/
-MultiClientEmbeddedThread.cpp
-/*MultiClientService.cpp
-MultiThreadService.cpp
-SingleThreadService.cpp*/
-
-/*AdvancedErrorManagement.h
+AdvancedErrorManagement.h
 AnyObject.cpp
 AnyType.cpp
 AnyTypeCreator.cpp
@@ -46,6 +40,7 @@ DoubleInteger.h
 EmbeddedServiceMethodBinderI.cpp
 EmbeddedThread.cpp
 EmbeddedThreadI.cpp
+EmbeddedServiceI.cpp
 Endianity.h
 ErrorInformation.h
 ErrorManagement.h
@@ -112,6 +107,9 @@ Message.cpp
 MessageFilter.cpp
 MessageFilterPool.cpp
 MessageI.cpp
+MultiClientEmbeddedThread.cpp
+MultiClientService.cpp
+MultiThreadService.cpp
 MutexSem.cpp
 Object.cpp
 ObjectBuilder.h
@@ -143,6 +141,7 @@ Select.cpp
 SelectProperties.h
 Shift.h
 SingleBufferedStream.cpp
+SingleThreadService.cpp
 Sleep.h
 Sleep.cpp
 SocketCore.h
@@ -181,4 +180,4 @@ TypeDescriptor.cpp
 ValidateBasicType.cpp
 Vector.h
 XMLParser.cpp
-ZeroTerminatedArray.h*/
+ZeroTerminatedArray.h

@@ -105,7 +105,7 @@ private:
      * @return ErrorManagement::NoError if the message can be get from the QueueingMessageFilter. Note that a timeout
      *  is not considered to be an error (thread is expected to Poll).
      */
-    ErrorManagement::ErrorType QueueProcessing(ExecutionInfo &info);
+    ErrorManagement::ErrorType QueueProcessing(const ExecutionInfo &info);
 
     /**
      * Message pool that contains the filters that handle the requests in QueueProcessing.

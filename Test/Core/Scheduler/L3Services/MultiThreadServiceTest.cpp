@@ -47,7 +47,7 @@ public:
         thread2Id = 0u;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
         if (thread0Id == 0u) {
             thread0Id = information.GetThreadNumber();
         }
@@ -80,9 +80,9 @@ public:
     MARTe::uint32 internalStateThread0;
     MARTe::uint32 internalStateThread1;
     MARTe::uint32 internalStateThread2;
-    MARTe::uint32 thread0Id;
-    MARTe::uint32 thread1Id;
-    MARTe::uint32 thread2Id;
+    MARTe::ThreadIdentifier thread0Id;
+    MARTe::ThreadIdentifier thread1Id;
+    MARTe::ThreadIdentifier thread2Id;
 };
 
 class MultiThreadServiceTestCallbackClassToKill {
@@ -91,7 +91,7 @@ public:
         internalState = 0u;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
         if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
             if (information.GetThreadNumber() > internalState) {
                 internalState++;
@@ -263,6 +263,7 @@ bool MultiThreadServiceTest::TestStart_Restart() {
     ok &= (embeddedThread.GetStatus(0) == EmbeddedThreadI::RunningState);
     ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::RunningState);
     ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::RunningState);
+    embeddedThread.Stop();
     return ok;
 }
 

@@ -125,7 +125,7 @@ public:
     /**
      * @brief Callback function of the thread.
      */
-    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information);
+    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information);
 
     /**
      * True when the Execute method is called.

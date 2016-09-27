@@ -104,31 +104,32 @@ ErrorManagement::ErrorType MultiClientService::AddThread() {
         }
 
         if (err.ErrorsCleared()) {
-            threadPool.Insert(thread);
+            err.fatalError = !threadPool.Insert(thread);
         }
 
     }
     return err;
 }
 
-ErrorManagement::ErrorType MultiClientService::RemoveThread(ThreadIdentifier threadId) {
-    uint32 i = 0;
+ErrorManagement::ErrorType MultiClientService::RemoveThread(const ThreadIdentifier threadId) {
+    uint32 i = 0u;
     ErrorManagement::ErrorType err;
     bool found = false;
-    while ((i < threadPool.Size()) && (err.ErrorsCleared()) && !found) {
+    while ((i < threadPool.Size()) && (!found)) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
-        bool found = (thread->GetThreadId() == threadId);
+        found = (thread->GetThreadId() == threadId);
         if (found) {
             err.recoverableError = !threadPool.Delete(thread);
         }
         i++;
     }
+    err.fatalError = !found;
     return err;
 }
 
 uint16 MultiClientService::GetNumberOfActiveThreads() {
     uint32 numberOfThreads = threadPool.Size();
-    uint32 numberOfAliveThreads = 0u;
+    uint16 numberOfAliveThreads = 0u;
     uint32 i;
     for (i = 0u; (i < numberOfThreads); i++) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
@@ -142,9 +143,9 @@ uint16 MultiClientService::GetNumberOfActiveThreads() {
 
 ErrorManagement::ErrorType MultiClientService::Start() {
     ErrorManagement::ErrorType err;
-    err.illegalOperation = (threadPool.Size() > 0);
-    uint32 n = 0u;
-    while ((threadPool.Size() < minNumberOfThreads) && (err.ErrorsCleared())) {
+    err.illegalOperation = (threadPool.Size() > 0u);
+    bool errorsCleared = err.ErrorsCleared();
+    while ((threadPool.Size() < minNumberOfThreads) && (errorsCleared)) {
         ReferenceT<MultiClientEmbeddedThread> thread(new (NULL) MultiClientEmbeddedThread(method, *this));
         err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
@@ -152,9 +153,9 @@ ErrorManagement::ErrorType MultiClientService::Start() {
             err = thread->Start();
         }
         if (err.ErrorsCleared()) {
-            threadPool.Insert(thread);
+            err.fatalError = !threadPool.Insert(thread);
         }
-        n++;
+        errorsCleared = err.ErrorsCleared();
     }
     return err;
 }

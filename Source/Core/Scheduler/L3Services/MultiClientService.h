@@ -98,7 +98,7 @@ public:
      * @post
      *   GetNumberOfActiveThreads()--
      */
-    ErrorManagement::ErrorType RemoveThread(ThreadIdentifier threadId);
+    ErrorManagement::ErrorType RemoveThread(const ThreadIdentifier threadId);
 
     /**
      * @brief Gets the maximum number of threads available in the pool.

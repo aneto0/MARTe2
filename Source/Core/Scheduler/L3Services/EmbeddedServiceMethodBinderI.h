@@ -64,7 +64,7 @@ public:
      * @param[in] info information about the current state of the execution thread.
      * @return the ErrorType returned by the user function.
      */
-    virtual ErrorManagement::ErrorType Execute(ExecutionInfo info) = 0;
+    virtual ErrorManagement::ErrorType Execute(const ExecutionInfo & info) = 0;
 
 };
 }
