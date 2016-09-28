@@ -114,6 +114,10 @@ bool SingleThreadServiceTest::TestInitialise() {
     config.Write("Timeout", 10);
     bool ok = service.Initialise(config);
     ok &= (service.GetTimeout() == 10);
+    ConfigurationDatabase config2;
+    config2.Write("Timeout", 0);
+    ok &= service.Initialise(config2);
+    ok &= (service.GetTimeout() == TTInfiniteWait);
     return ok;
 }
 

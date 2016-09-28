@@ -68,9 +68,11 @@ bool SingleThreadService::Initialise(StructuredDataI &data) {
     err.parametersError = !data.Read("Timeout", msecTimeout);
     if (err.ErrorsCleared()) {
         if (msecTimeout == 0u) {
-            msecTimeout = TTInfiniteWait.GetTimeoutMSec();
+            SetTimeout(TTInfiniteWait);
         }
-        SetTimeout(msecTimeout);
+        else {
+            SetTimeout(msecTimeout);
+        }
     }
 
     return err;

@@ -119,6 +119,17 @@ MultiThreadServiceTest::MultiThreadServiceTest() {
 MultiThreadServiceTest::~MultiThreadServiceTest() {
 }
 
+bool MultiThreadServiceTest::TestDefaultConstructor() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    EmbeddedServiceMethodBinderI &binderI = binder;
+
+    MultiThreadService multiThreadService(binderI);
+    bool ok = (multiThreadService.GetNumberOfPoolThreads() == 1u);
+    return ok;
+}
+
 bool MultiThreadServiceTest::TestDefaultConstructor_Template() {
     using namespace MARTe;
     MultiThreadServiceTestCallbackClass callbackClass;

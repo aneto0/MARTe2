@@ -100,3 +100,13 @@ TEST(EmbeddedThreadIGTest,TestStop_Kill) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestStop_Kill());
 }
+
+TEST(EmbeddedThreadIGTest,TestStart_StartCommand) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestStart_StartCommand());
+}
+
+TEST(EmbeddedThreadIGTest,TestStart_StartCommandTimeout) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestStart_StartCommandTimeout());
+}

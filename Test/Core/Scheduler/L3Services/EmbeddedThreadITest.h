@@ -123,6 +123,16 @@ public:
     bool TestStop_Kill();
 
     /**
+     * @brief Tests the Start function forcing the StartCommand
+     */
+    bool TestStart_StartCommand();
+
+    /**
+     * @brief Tests the Start function forcing the StartCommand with a timeout
+     */
+    bool TestStart_StartCommandTimeout();
+
+    /**
      * @brief Callback function of the thread.
      */
     MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information);

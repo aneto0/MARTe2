@@ -55,6 +55,11 @@ public:
     /**
      * @brief Tests the default constructor.
      */
+    bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests the default constructor.
+     */
     bool TestDefaultConstructor_Template();
 
     /**

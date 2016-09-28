@@ -54,6 +54,23 @@ public:
     }
 };
 
+class EmbeddedThreadITestStubStartCommand: public MARTe::EmbeddedThreadI {
+public:
+    EmbeddedThreadITestStubStartCommand(MARTe::EmbeddedServiceMethodBinderI &binder) :
+            MARTe::EmbeddedThreadI(binder) {
+    }
+
+    void ThreadLoop() {
+        SetCommands(StartCommand);
+        MARTe::ExecutionInfo info;
+        info.SetStage(MARTe::ExecutionInfo::StartupStage);
+        Execute(info);
+        while (1) {
+            MARTe::Sleep::Sec(0.1);
+        }
+    }
+};
+
 class EmbeddedThreadITestCallbackClass {
 public:
     EmbeddedThreadITestCallbackClass() {
@@ -318,5 +335,41 @@ bool EmbeddedThreadITest::TestStop_Kill() {
     }
     ok &= (callbackClass.internalState == 0u);
     ok &= (err == ErrorManagement::NoError);
+    return ok;
+}
+
+bool EmbeddedThreadITest::TestStart_StartCommand() {
+    using namespace MARTe;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
+    EmbeddedThreadITestStubStartCommand embeddedThreadI(binder);
+    bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
+    ErrorManagement::ErrorType err = embeddedThreadI.Start();
+    ok &= (err == ErrorManagement::NoError);
+    uint32 counter = 10;
+    while ((counter > 0) && (!executeCalled)) {
+        Sleep::Sec(0.1);
+    }
+    ok &= (embeddedThreadI.GetStatus() == EmbeddedThreadI::StartingState);
+    embeddedThreadI.SetTimeout(1);
+    embeddedThreadI.Stop();
+    embeddedThreadI.Stop();
+    return ok;
+}
+
+bool EmbeddedThreadITest::TestStart_StartCommandTimeout() {
+    using namespace MARTe;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
+    EmbeddedThreadITestStubStartCommand embeddedThreadI(binder);
+    bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
+    embeddedThreadI.SetTimeout(1);
+    ErrorManagement::ErrorType err = embeddedThreadI.Start();
+    ok &= (err == ErrorManagement::NoError);
+    uint32 counter = 10;
+    while ((counter > 0) && (!executeCalled)) {
+        Sleep::Sec(0.1);
+    }
+    ok &= (embeddedThreadI.GetStatus() == EmbeddedThreadI::TimeoutStartingState);
+    embeddedThreadI.Stop();
+    embeddedThreadI.Stop();
     return ok;
 }

@@ -41,10 +41,16 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MultiThreadServiceGTest,TestConstructor) {
+TEST(MultiThreadServiceGTest,TestDefaultConstructor) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestDefaultConstructor());
+}
+
+TEST(MultiThreadServiceGTest,TestDefaultConstructor_Template) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestDefaultConstructor_Template());
 }
+
 
 TEST(MultiThreadServiceGTest,TestInitialise) {
     MultiThreadServiceTest target;

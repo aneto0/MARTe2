@@ -186,7 +186,7 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
     if (status == OffState) {
 
     }
-    else if (status == RunningState) {
+    else if ((status == RunningState) || (status == StartingState) || (status == TimeoutStartingState)) {
         SetCommands(EmbeddedThreadI::StopCommand);
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + static_cast<uint32>(timeoutHRT);
 
@@ -204,7 +204,6 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
         SetCommands(EmbeddedThreadI::KillCommand);
 
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + static_cast<uint32>(timeoutHRT);
-        err.fatalError = !Threads::Kill(GetThreadId());
 
         if (err.ErrorsCleared()) {
 
@@ -214,11 +213,14 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
 
         }
 
-        err.timeout = (GetStatus() != OffState);
+        ThreadIdentifier threadId = GetThreadId();
+        if (GetStatus() != OffState) {
+            err.fatalError = !Threads::Kill(GetThreadId());
+        }
 
         // in any case notify the main object of the fact that the thread has been killed
         ExecutionInfo information;
-        information.SetThreadNumber(GetThreadId());
+        information.SetThreadNumber(threadId);
         information.SetStage(ExecutionInfo::AsyncTerminationStage);
         ErrorManagement::ErrorType killErr = Execute(information);
         if (!killErr.ErrorsCleared()) {

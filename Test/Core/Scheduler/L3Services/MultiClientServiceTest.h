@@ -55,6 +55,11 @@ public:
     /**
      * @brief Tests the default constructor.
      */
+    bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests the default constructor.
+     */
     bool TestDefaultConstructor_Template();
 
     /**
@@ -91,6 +96,11 @@ public:
      * @brief Tests the Start function.
      */
     bool TestStart();
+
+    /**
+     * @brief Tests the Start function and force not sufficient threads to be available.
+     */
+    bool TestStart_NotEnoughThreads();
 
     /**
      * @brief Tests the Start function calling it twice, which should trigger an illegal operation.

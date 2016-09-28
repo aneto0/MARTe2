@@ -130,14 +130,26 @@ MultiClientServiceTest::MultiClientServiceTest() {
 MultiClientServiceTest::~MultiClientServiceTest() {
 }
 
+bool MultiClientServiceTest::TestDefaultConstructor() {
+    using namespace MARTe;
+    MultiClientServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiClientServiceTestCallbackClass> binder(callbackClass, &MultiClientServiceTestCallbackClass::CallbackFunction);
+    EmbeddedServiceMethodBinderI &binderI = binder;
+
+    MultiClientService service(binderI);
+    bool ok = (service.GetMinimumNumberOfPoolThreads() == 1u);
+    ok &= (service.GetMaximumNumberOfPoolThreads() == 3u);
+    return ok;
+}
+
 bool MultiClientServiceTest::TestDefaultConstructor_Template() {
     using namespace MARTe;
     MultiClientServiceTestCallbackClass callbackClass;
     EmbeddedServiceMethodBinderT<MultiClientServiceTestCallbackClass> binder(callbackClass, &MultiClientServiceTestCallbackClass::CallbackFunction);
 
-    MultiClientService multiThreadService(binder);
-    bool ok = (multiThreadService.GetMinimumNumberOfPoolThreads() == 1u);
-    ok &= (multiThreadService.GetMaximumNumberOfPoolThreads() == 3u);
+    MultiClientService service(binder);
+    bool ok = (service.GetMinimumNumberOfPoolThreads() == 1u);
+    ok &= (service.GetMaximumNumberOfPoolThreads() == 3u);
     return ok;
 }
 
@@ -253,6 +265,62 @@ bool MultiClientServiceTest::TestStart() {
     ok &= (callbackClass.numberConnectionsWaiting == service.GetMinimumNumberOfPoolThreads());
     ok &= (callbackClass.numberConnectionsServing == (service.GetMinimumNumberOfPoolThreads() - 1u));
     ok &= (service.GetNumberOfActiveThreads() == (service.GetMinimumNumberOfPoolThreads() + 1u));
+    //Marking the connection has served will make this thread die (because the service.GetNumberOfActiveThreads() > (service.GetMinimumNumberOfPoolThreads()))
+    callbackClass.connectIsServed = true;
+    maxCounter = 10;
+    while ((maxCounter > 0) && service.GetNumberOfActiveThreads() != (service.GetMinimumNumberOfPoolThreads())) {
+        Sleep::Sec(1.0);
+        maxCounter--;
+    }
+    ok &= (service.GetNumberOfActiveThreads() == service.GetMinimumNumberOfPoolThreads());
+    service.Stop();
+    return ok;
+}
+
+bool MultiClientServiceTest::TestStart_NotEnoughThreads() {
+    using namespace MARTe;
+    MultiClientServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiClientServiceTestCallbackClass> binder(callbackClass, &MultiClientServiceTestCallbackClass::CallbackFunction);
+    MultiClientService service(binder);
+    service.SetMinimumNumberOfPoolThreads(2);
+    service.SetMaximumNumberOfPoolThreads(3);
+    service.SetTimeout(1000);
+    uint32 maxCounter = 10;
+    ErrorManagement::ErrorType err = service.Start();
+    bool ok = (err == ErrorManagement::NoError);
+    //Check that GetMinimumNumberOfPoolThreadswo threads are awaiting connection
+    while ((maxCounter > 0) && (callbackClass.numberConnectionsWaiting != service.GetMinimumNumberOfPoolThreads())) {
+        Sleep::Sec(0.5);
+        maxCounter--;
+    }
+    ok &= (callbackClass.numberConnectionsWaiting == service.GetMinimumNumberOfPoolThreads());
+    //Now mark one connection request. This should trigger the creation of a new thread which will wait and this thread will start serving
+    callbackClass.connectionRequested = true;
+    //Check that GetMinimumNumberOfPoolThreadswo threads are awaiting connection
+    maxCounter = 10;
+    while ((maxCounter > 0)
+            && ((callbackClass.numberConnectionsWaiting != service.GetMinimumNumberOfPoolThreads())
+                    || (callbackClass.numberConnectionsServing != (service.GetMinimumNumberOfPoolThreads() - 1u)))) {
+        Sleep::Sec(0.5);
+        maxCounter--;
+    }
+    ok &= (callbackClass.numberConnectionsWaiting == service.GetMinimumNumberOfPoolThreads());
+    ok &= (callbackClass.numberConnectionsServing == (service.GetMinimumNumberOfPoolThreads() - 1u));
+    ok &= (service.GetNumberOfActiveThreads() == (service.GetMinimumNumberOfPoolThreads() + 1u));
+    //Ask for a new connection. This should fail and the number of connections waiting should decrease
+    callbackClass.connectionRequested = true;
+    //Check that GetMinimumNumberOfPoolThreadswo threads are awaiting connection
+    maxCounter = 10;
+    while ((maxCounter > 0)
+            && ((callbackClass.numberConnectionsWaiting != (service.GetMinimumNumberOfPoolThreads() - 1u))
+                    || (callbackClass.numberConnectionsServing != (service.GetMinimumNumberOfPoolThreads())))) {
+        Sleep::Sec(0.5);
+        maxCounter--;
+    }
+    ok &= (callbackClass.numberConnectionsWaiting == (service.GetMinimumNumberOfPoolThreads() - 1u));
+    ok &= (callbackClass.numberConnectionsServing == (service.GetMinimumNumberOfPoolThreads()));
+    ok &= (service.GetNumberOfActiveThreads() == (service.GetMinimumNumberOfPoolThreads() + 1u));
+
     //Marking the connection has served will make this thread die (because the service.GetNumberOfActiveThreads() > (service.GetMinimumNumberOfPoolThreads()))
     callbackClass.connectIsServed = true;
     maxCounter = 10;

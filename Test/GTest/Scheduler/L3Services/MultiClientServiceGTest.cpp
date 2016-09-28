@@ -41,7 +41,12 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MultiClientServiceGTest,TestConstructor) {
+TEST(MultiClientServiceGTest,TestDefaultConstructor) {
+    MultiClientServiceTest target;
+    ASSERT_TRUE(target.TestDefaultConstructor());
+}
+
+TEST(MultiClientServiceGTest,TestDefaultConstructor_Template) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestDefaultConstructor_Template());
 }
@@ -89,6 +94,11 @@ TEST(MultiClientServiceGTest,TestStart_False) {
 TEST(MultiClientServiceGTest,TestStart_Restart) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestStart_Restart());
+}
+
+TEST(MultiClientServiceGTest,TestStart_NotEnoughThreads) {
+    MultiClientServiceTest target;
+    ASSERT_TRUE(target.TestStart_NotEnoughThreads());
 }
 
 TEST(MultiClientServiceGTest,TestStop) {
