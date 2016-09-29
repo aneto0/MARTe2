@@ -213,7 +213,6 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
 
         }
 
-        ThreadIdentifier threadId = GetThreadId();
         if (GetStatus() != OffState) {
             err.fatalError = !Threads::Kill(GetThreadId());
         }
