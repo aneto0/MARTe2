@@ -43,8 +43,8 @@
 namespace MARTe {
 /**
  * @brief Communicates to the user code the stage of the thread life, which evolves accordingly to rules
- * that are specific to the EmbeddedServiceI derived class.
- * @details In addition to stage, it provides a stage which is fully custom to the class that inherits
+ * that are specific to the EmbeddedThreadI derived class (see EmbeddedThreadI::Execute).
+ * @details In addition to stage, it provides a specific stage which is fully custom to the class that inherits
  * from EmbeddedServiceI and that receives an ExecutionInfo as part of its callback method.
  */
 class ExecutionInfo {
