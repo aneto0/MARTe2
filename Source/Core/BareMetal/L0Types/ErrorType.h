@@ -98,7 +98,7 @@ static const uint32 ErrorSharingBit(errorSharingBit);
  * Access denied.
  */
 static const uint32 errorAccessDeniedBit(7u);
-static const uint32 ErrorAccessDeniedBit(ErrorAccessDeniedBit);
+static const uint32 ErrorAccessDeniedBit(errorAccessDeniedBit);
 
 /**
  * Exception.

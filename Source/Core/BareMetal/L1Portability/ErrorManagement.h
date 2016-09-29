@@ -63,12 +63,6 @@ extern DLL_API ErrorProcessFunctionType errorMessageProcessFunction;
  */
 DLL_API void NullErrorProcessFunction(const ErrorInformation &errorInfo,
                                       const char8 * const errorDescription);
-/**
- * @brief Returns the name string associated to the error code.
- * @param[in] errorCode is the error code.
- * TODO OBSOLETE
- */
-DLL_API const char8 *ToName(const ErrorType &errorCode);
 
 /**
  * @brief Converts ErrorType to stream.
