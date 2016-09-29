@@ -73,9 +73,9 @@ public:
     bool TestSendMessage_False_InvalidMessage();
 
     /**
-     * @brief Tests the SendMessage method with not expected late reply
+     * @brief Tests the SendMessage method with not expected Indirect reply
      */
-    bool TestSendMessage_False_NotExpectedLateReply();
+    bool TestSendMessage_False_NotExpectedIndirectReply();
 
     /**
      * @brief Tests the SendMessage method with no destination for reply
@@ -113,19 +113,54 @@ public:
     bool TestSendMessageAndWaitReply_False_ReplyOfReply();
 
     /**
-     * @brief Tests the SendMessageAndExpectReplyLater method
+     * @brief Tests the SendMessage using a custom catcher
      */
-    bool TestSendMessageAndExpectReplyLater();
+    bool TestSendMessage_ExpectsIndirectReply();
 
     /**
-     * @brief Tests the SendMessageAndExpectReplyLater method with invalid message
+     * @brief Tests the TestSendMessageAndWaitIndirectReply
      */
-    bool TestSendMessageAndExpectReplyLater_False_InvalidMessage();
+    bool TestSendMessageAndWaitIndirectReply();
 
     /**
-     * @brief Tests the SendMessageAndExpectReplyLater method with reply of reply
+     * @brief Tests the SendMessageAndWaitIndirectReply method with invalid message
      */
-    bool TestSendMessageAndExpectReplyLater_False_ReplyOfReply();
+    bool TestSendMessageAndWaitIndirectReply_InvalidMessage();
+
+    /**
+     * @brief Tests the SendMessageAndWaitIndirectReply method with invalid destination (check that the filter was removed)
+     */
+    bool TestSendMessageAndWaitIndirectReply_InvalidDestination();
+
+    /**
+     * @brief Tests the WaitForReply function
+     */
+    bool TestWaitForReply();
+
+    /**
+     * @brief Tests the WaitForReply function with an invalid message
+     */
+    bool TestWaitForReply_InvalidMessage();
+
+    /**
+     * @brief Tests the WaitForReply function with a message that does not expect a reply
+     */
+    bool TestWaitForReply_NotExpectsReply();
+
+    /**
+     * @brief Tests the WaitForReply function and timeout
+     */
+    bool TestWaitForReply_Timeout();
+
+    /**
+     * @brief Tests the InstallMessageFilter method
+     */
+    bool TestInstallMessageFilter();
+
+    /**
+     * @brief Tests the RemoveMessageFilter method
+     */
+    bool TestRemoveMessageFilter();
 
 };
 

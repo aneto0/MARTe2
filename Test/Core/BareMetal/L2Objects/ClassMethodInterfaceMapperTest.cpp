@@ -32,6 +32,7 @@
 #include "ClassMethodInterfaceMapperTest.h"
 #include "ClassMethodInterfaceMapper.h"
 #include "ClassWithCallableMethods.h"
+#include "ConfigurationDatabase.h"
 #include "ErrorType.h"
 #include "Reference.h"
 #include "ReferenceContainer.h"
@@ -54,191 +55,2880 @@ ClassMethodInterfaceMapperTest::ClassMethodInterfaceMapperTest() {
 ClassMethodInterfaceMapperTest::~ClassMethodInterfaceMapperTest() {
 }
 
-bool ClassMethodInterfaceMapperTest::TestDefaultConstructor() {
-    /* Warning: It is not possible to query the target about the address
-     * actually set as the callable method, so it is not possible to check
-     * if it has been set to NULL.
-     */
-    using namespace MARTe;
-    ClassMethodInterfaceMapper target();
-    return true;
-}
-
-bool ClassMethodInterfaceMapperTest::TestConstructorForMethodWithNoArguments() {
-    /* Warning: It is not possible to query the target about the address
-     * actually set as the callable method, so it is not possible to check
-     * if it has been set to method.
-     */
-    using namespace MARTe;
-    bool (ClassWithCallableMethods::*method)() = &ClassWithCallableMethods::OverloadedMethod;
-    ClassMethodInterfaceMapper target(method);
-    return true;
-}
-
-bool ClassMethodInterfaceMapperTest::TestConstructorForMethodWith1ArgumentByCopy() {
-    /* Warning: It is not possible to query the target about the address
-     * actually set as the callable method, so it is not possible to check
-     * if it has been set to method.
-     */
-    using namespace MARTe;
-    bool (ClassWithCallableMethods::*method)(int) = &ClassWithCallableMethods::MethodWithInputIntegerByCopy;
-    ClassMethodInterfaceMapper target(method);
-    return true;
-}
-
-bool ClassMethodInterfaceMapperTest::TestConstructorForMethodWith1ArgumentByRef() {
-    /* Warning: It is not possible to query the target about the address
-     * actually set as the callable method, so it is not possible to check
-     * if it has been set to method.
-     */
-    using namespace MARTe;
-    bool (ClassWithCallableMethods::*method)(int&) = &ClassWithCallableMethods::MethodWithOutputInteger;
-    ClassMethodInterfaceMapper target(method);
-    return true;
-}
-
-bool ClassMethodInterfaceMapperTest::TestCall() {
+bool ClassMethodInterfaceMapperTest::TestConstructor_VoidParameters() {
     using namespace MARTe;
     bool result = true;
     {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::FaultyMethod);
         ClassWithCallableMethods context;
-        ReferenceContainer params;
-        ErrorManagement::ErrorType status;
-        status = target.Call<ReferenceContainer&>(&context, params);
-        result &= status.functionError;
-        result &= (context.GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
-    }
-    {
-        ClassMethodInterfaceMapper target((bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods::OverloadedMethod);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        status = target.Call(&context);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "OverloadedMethod()");
-    }
-    {
-        ClassMethodInterfaceMapper target((bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods::OverloadedMethod);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 0;
-        status = target.Call<int&>(&context, params);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(int&)");
-    }
-    {
-        ClassMethodInterfaceMapper target((bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods::OverloadedMethod);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        status = target.Call<ReferenceContainer&>(&context, params);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
-    }
-    {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputInteger);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 10;
-        status = target.Call<int&>(&context, params);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "MethodWithInputInteger(int&)");
-    }
-    {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithOutputInteger);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 0;
-        status = target.Call<int&>(&context, params);
-        result &= status;
-        result &= (params == 20);
-        result &= (context.GetLastMethodExecuted() == "MethodWithOutputInteger(int&)");
-    }
-    {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputOutputInteger);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 30;
-        status = target.Call<int&>(&context, params);
-        result &= status;
-        result &= (params == (30 + 5));
-        result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputInteger(int&)");
-    }
-    {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputReferenceContainer);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        Reference obj("Object");
-        bool success;
-        success = params.Insert("TestObject", obj);
-        if (success) {
-            status = target.Call<ReferenceContainer&>(&context, params);
-            result &= status;
-            result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainer(MARTe::ReferenceContainer&)");
+        ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithVoidParameters);
+        result &= (mapper.GetMethodCaller() != NULL);
+        if (result) {
+            result &= (mapper.GetMethodCaller()->Call(&context) == ErrorManagement::NoError);
+            result = (context.GetLastMethodExecuted() == "MethodWithVoidParameters(void)");
         }
-        else {
-            result = false;
-        }
-    }
-    {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithOutputReferenceContainer);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        Reference obj;
-        status = target.Call<ReferenceContainer&>(&context, params);
-        result &= status;
-        obj = params.Find("TestObject2");
-        result &= obj.IsValid();
-        result &= (context.GetLastMethodExecuted() == "MethodWithOutputReferenceContainer(MARTe::ReferenceContainer&)");
-    }
-    {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputOutputReferenceContainer);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        Reference obj("Object");
-        bool success;
-        success = params.Insert("TestObject", obj);
-        if (success) {
-            status = target.Call<ReferenceContainer&>(&context, params);
-            result &= status;
-            obj = params.Find("TestObject");
-            result &= !obj.IsValid();
-            obj = params.Find("TestObject2");
-            result &= obj.IsValid();
-            result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer&)");
-        }
-        else {
-            result = false;
-        }
-    }
-    {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputIntegerByCopy);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 80;
-        status = target.Call<int>(&context, params);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "MethodWithInputIntegerByCopy(int)");
-    }
-    {
-        ClassMethodInterfaceMapper target(&ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy);
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        Reference obj("Object");
-        bool success;
-        success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
-        if (success) {
-            status = target.Call<ReferenceContainer>(&context, params);
-            result &= status;
-            result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer)");
-        }
-        else {
-            result = false;
-        }
+        return result;
     }
     return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_OneParameter_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithOneParameter_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_OneParameter_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithOneParameter_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_OneParameter_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithOneParameter_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithOneParameter_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_OneParameter_Pointer() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithOneParameter_Pointer);
+    result &= (mapper.GetMethodCaller() == NULL);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_C_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_C_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_C_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_W");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_R_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_R_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_R_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_W");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_W_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_C");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_W_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_R");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_W_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    StreamString param2 = "KO";
+    parameters.Write("param2", param2);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_W_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_Pointers() {
+    using namespace MARTe;
+    bool result = true;
+    /*{
+     ErrorManagement::ErrorType (ClassWithCallableMethods::*foo)(uint32 *, MARTe::StreamString &);
+     foo = &ClassWithCallableMethods::MethodWithTwoParameters_Pointer_1;
+     ClassMethodInterfaceMapper mapper(foo);
+     result &= (mapper.GetMethodCaller() == NULL);
+     }
+     {
+     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_Pointer_2);
+     result &= (mapper.GetMethodCaller() == NULL);
+     }
+     {
+     //ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_Pointer_1_2);
+     ///result &= (mapper.GetMethodCaller() == NULL);
+     }*/
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_W");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_W");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_C");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_R");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_W_W");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_W");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_W");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_C");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_R");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_W_W");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_C");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_R");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_C_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_C");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_R");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_R_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_W_C");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_W_R");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    StreamString param3 = "KO";
+    parameters.Write("param3", param3);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_W_W_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_C_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_C_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_C_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_C_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_C_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_C_W");
+    }
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_R_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_R_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_R_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_R_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_R_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_R_W");
+    }
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_W_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_W_C");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_W_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_W_R");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_W_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_W_W");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_C_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_C_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_C_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_C_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_C_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_C_W");
+    }
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_R_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_R_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_R_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_R_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_R_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_R_W");
+    }
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_W_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_W_C");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_W_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_W_R");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_W_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_W_W");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_C_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_C_C");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_C_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_C_R");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_C_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_C_W");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_R_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_R_C");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_R_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_R_R");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_R_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_R_W");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_W_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_W_C");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_W_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_W_R");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_W_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_W_W_W");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_C_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_C_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_C_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_C_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_C_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_C_W");
+    }
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_R_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_R_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_R_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_R_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_R_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_R_W");
+    }
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_W_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_W_C");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_W_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_W_R");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_W_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_W_W");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_C_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_C_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_C_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_C_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_C_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_C_W");
+    }
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_R_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_R_C");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_R_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_R_R");
+    }
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_R_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_R_W");
+    }
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_W_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_W_C");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_W_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_W_R");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_W_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_W_W");
+    }
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_C_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_C_C");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_C_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_C_R");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_C_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_C_W");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_R_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_R_C");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_R_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_R_R");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_R_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_R_W");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_W_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_W_C");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_W_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_W_R");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_W_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_W_W_W");
+    }
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_C_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_C_C");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_C_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_C_R");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_C_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_C_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_R_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_R_C");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_R_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_R_R");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_R_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_R_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_W_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_W_C");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_W_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_W_R");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_W_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_C_W_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_C_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_C_C");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_C_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_C_R");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_C_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_C_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_R_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_R_C");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_R_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_R_R");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_R_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_R_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_W_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_W_C");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_W_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_W_R");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_W_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_R_W_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_C_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_C_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_C_C");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_C_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_C_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_C_R");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_C_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_C_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_C_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_R_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_R_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_R_C");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_R_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_R_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_R_R");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_R_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_R_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_R_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_W_C() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_C);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_W_C");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_W_R() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_R);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_W_R");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_W_W() {
+    using namespace MARTe;
+    bool result = true;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W);
+    ConfigurationDatabase parameters;
+    uint32 param1 = 3;
+    parameters.Write("param1", param1);
+    float32 param2 = 2.0;
+    parameters.Write("param2", param2);
+    float64 param3 = -9.0;
+    parameters.Write("param3", param3);
+    StreamString param4 = "KO";
+    parameters.Write("param4", param4);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context, parameters) == ErrorManagement::NoError);
+        result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_W_W_W_W");
+    }
+    parameters.Read("param1", param1);
+    result &= (param1 == 5);
+    parameters.Read("param2", param2);
+    result &= (param2 == 6.0);
+    parameters.Read("param3", param3);
+    result &= (param3 == -7.0);
+    parameters.Read("param4", param4);
+    result &= (param4 == "KOOK");
+    return result;
+}
+
+bool ClassMethodInterfaceMapperTest::TestGetMethodCaller() {
+    using namespace MARTe;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W);
+    return (mapper.GetMethodCaller() != NULL);
+}
+
+bool ClassMethodInterfaceMapperTest::TestGetMethodName() {
+    return TestSetMethodName();
+}
+
+bool ClassMethodInterfaceMapperTest::TestSetMethodName() {
+    using namespace MARTe;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W);
+    mapper.SetMethodName("MethodWithFourParameters_W_W_W_W_Testing");
+    return (StringHelper::Compare(mapper.GetMethodName(), "MethodWithFourParameters_W_W_W_W_Testing") == 0);
 }

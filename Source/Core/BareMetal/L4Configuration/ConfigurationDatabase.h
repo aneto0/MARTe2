@@ -52,9 +52,10 @@ namespace MARTe {
  *
  * A shared semaphore that can be used by the users of a database instance to have concurrent access to the database.
  */
-class DLL_API ConfigurationDatabase: public StructuredDataI {
+class DLL_API ConfigurationDatabase: public StructuredDataI, public Object {
 
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Default constructor.
@@ -69,10 +70,8 @@ public:
      */
     virtual ~ConfigurationDatabase();
 
-
     //TODO test and document
     void CleanUp();
-
 
     /**
      * @see StructuredDataI::Read
@@ -172,10 +171,13 @@ public:
     void Unlock();
 
     // TODO. Test and Document! adds the possibility to use find, filters ecc ecc
-    operator ReferenceT<ReferenceContainer>(){
+    /*operator ReferenceT<ReferenceContainer>(){
+     return currentNode;
+     }*/
+    //TODO
+    ReferenceT<ReferenceContainer> GetCurrentNode() {
         return currentNode;
     }
-
 
 private:
 

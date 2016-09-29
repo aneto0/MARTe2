@@ -33,16 +33,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ClassRegistryItemT.h"
 
-#include "ClassProperties.h"
-#include "ClassRegistryItem.h"
 #include "ClassRegistryItemT.h"
-#include "GeneralDefinitions.h"
-#include "HeapI.h"
-#include "HeapManager.h"
-#include "StringHelper.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -150,14 +142,12 @@
      */                                                                                                                \
     void * className::operator new(const size_t size, MARTe::HeapI* const heap) {                                      \
         void *obj = NULL_PTR(void *);                                                                                  \
-        if(size == sizeof(className)){                                                                                 \
-            if (heap != NULL) {                                                                                        \
-                obj = heap->Malloc(static_cast<MARTe::uint32>(size));                                                  \
-            } else {                                                                                                   \
-                obj = MARTe::HeapManager::Malloc(static_cast<MARTe::uint32>(size));                                    \
-            }                                                                                                          \
-            GetClassRegistryItem_Static()->IncrementNumberOfInstances();                                               \
+        if (heap != NULL) {                                                                                            \
+            obj = heap->Malloc(static_cast<MARTe::uint32>(size));                                                      \
+        } else {                                                                                                       \
+            obj = MARTe::HeapManager::Malloc(static_cast<MARTe::uint32>(size));                                        \
         }                                                                                                              \
+        GetClassRegistryItem_Static()->IncrementNumberOfInstances();                                                   \
         return obj;                                                                                                    \
     }                                                                                                                  \
     /*                                                                                                                 \

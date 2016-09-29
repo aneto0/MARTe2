@@ -47,7 +47,7 @@
 
 namespace MARTe {
 
-ConfigurationDatabase::ConfigurationDatabase() {
+ConfigurationDatabase::ConfigurationDatabase() : Object() {
     mux.Create();
     ReferenceT < ReferenceContainer > rootContainer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     rootNode = rootContainer;
@@ -72,7 +72,7 @@ bool ConfigurationDatabase::Write(const char8 * const name,
     if ((isRegisteredObject) || (isStructuredDataI)) {
         ReferenceT < ReferenceContainer > storeCurrentNode = currentNode;
         if (CreateRelative(name)) {
-            ok = TypeConvert(*this, value);
+            ok = TypeConvert((*this).operator MARTe::AnyType(), value);
         }
         currentNode = storeCurrentNode;
     }
@@ -175,7 +175,7 @@ bool ConfigurationDatabase::Read(const char8 * const name,
     if ((isRegisteredObject) || (isStructuredDataI)) {
         ReferenceT < ReferenceContainer > storeCurrentNode = currentNode;
         if (MoveRelative(name)) {
-            ok = TypeConvert(value, *this);
+            ok = TypeConvert(value, (*this).operator MARTe::AnyType());
         }
         currentNode = storeCurrentNode;
     }
@@ -373,5 +373,7 @@ bool ConfigurationDatabase::Lock(const TimeoutType &timeout) {
 void ConfigurationDatabase::Unlock() {
     mux.FastUnLock();
 }
+
+CLASS_REGISTER(ConfigurationDatabase, "1.0")
 
 }

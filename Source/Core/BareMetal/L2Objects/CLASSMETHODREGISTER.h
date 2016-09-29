@@ -32,26 +32,62 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassMethodInterfaceMapper.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 /**
- * @brief Macro used to register automatically a list of class methods in the ClassRegistryItem (and in the ClassRegistryDatabase).
- * @details Passing a list of class method pointers, this macro automatically creates the list of function names. To find the function
- * in the list it is only necessary that the function name (without mangling) is enclosed between a ':' and a ',' or '\0'. For instance
- * putting "(bool (*)())A::f1(),B::f2()" the find function will match the functions f1 and f2. It is possible to register two different
- * functions with the same name (if a class overloads a method).
- * @param[in] C is the class name.
- * @param[in] ... list of class methods.
+ * @brief Helper class used only by the macro CLASS_METHOD_REGISTER to register a ClassMethodInterfaceMapper instance in the provided ClassRegistryItem.
  */
-#define CLASS_METHOD_REGISTER(C,...)\
-    static MARTe::ClassMethodInterfaceMapper C ## __ClassMethodsInterfaceMapper[] = {__VA_ARGS__}; \
-    static /*const*/ MARTe::ClassMethodsRegistryItem C ## __ClassMethodsRegistryItem(C::GetClassRegistryItem_Static(),C ## __ClassMethodsInterfaceMapper,#__VA_ARGS__);
+class ClassMethodInterfaceMapperLoader {
+public:
+
+    /**
+     * @brief Default constructor. Not used.
+     */
+    ClassMethodInterfaceMapperLoader() {
+    }
+
+    /**
+     * @brief Register a ClassMethodInterfaceMapper in a ClassRegistryItem and sets the name in the ClassMethodInterfaceMapper to methodName.
+     * @param[in] className the name of the class with the method to register.
+     * @param[in] methodName the name of the method to register.
+     * @param[in] classRegistryItem the ClassRegistryItem associated this \a className.
+     * @param[in] mapper the ClassMethodInterfaceMapper where this method is registered.
+     */
+    ClassMethodInterfaceMapperLoader(CCString const & methodName,
+                                     ClassRegistryItem * const classRegistryItem,
+                                     ClassMethodInterfaceMapper * const mapper) {
+        if ((mapper != NULL) && (classRegistryItem != NULL)) {
+            classRegistryItem->AddMethod(mapper);
+            mapper->SetMethodName(methodName);
+        }
+    }
+
+};
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * This macro has to be inserted in the unit file of the class with the method to register.
+ * The methodName of the className will be registered in the classRegistryItem associated to this className
+ */
+/*lint -save -e9026 -e9024 -e9023 -e9141
+ * 9026: function-like macro defined.
+ * 9024: '#/##' operators used in macro.
+ * 9023: (Multiple use of '#/##' operators in definition of macro) an exception to this rule.
+ * is only applied in the definition of the ClassMethodInterfaceMapperLoader_.
+ * 9141: Disable global declaration of symbols.
+ */
+#define CLASS_METHOD_REGISTER(className,methodName)\
+    static MARTe::ClassMethodInterfaceMapperLoader className ## methodName ## MethodLoader(#methodName,className ::GetClassRegistryItem_Static(),new MARTe::ClassMethodInterfaceMapper(& className :: methodName));
+/*lint -restore */
 #endif /* CLASS_METHOD_REGISTER_H_ */
 

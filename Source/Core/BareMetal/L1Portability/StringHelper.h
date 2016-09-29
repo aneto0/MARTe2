@@ -48,6 +48,8 @@ namespace StringHelper {
  * @brief Duplicates a string in the heap memory.
  * @param[in] s The pointer to the string which must be copied.
  * @return The pointer to the new allocated memory which contains a copy of s.
+ * TODO all const char8 * ---> CCString
+ * TODO all char8 * CString
  */
 DLL_API char8 *StringDup(const char8 * const s);
 

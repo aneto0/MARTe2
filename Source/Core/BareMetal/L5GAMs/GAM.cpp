@@ -102,7 +102,7 @@ bool GAM::Initialise(StructuredDataI & data) {
 }
 
 bool GAM::AddSignals(StructuredDataI &data) {
-    return data.Write("Signals", signalsDatabase);
+    return data.Write("Signals", signalsDatabase.operator MARTe::AnyType());
 }
 
 bool GAM::AllocateInputSignalsMemory() {

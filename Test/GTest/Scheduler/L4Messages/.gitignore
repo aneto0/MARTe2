@@ -1,4 +1,5 @@
-/depends.cov
 /depends.linux
-/dependsRaw.cov
 /dependsRaw.linux
+/depends.cov
+/dependsRaw.cov
+/cov/

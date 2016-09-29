@@ -1,8 +1,8 @@
 /**
  * @file ObjectWithMessages.h
  * @brief Header file for class ObjectWithMessages
- * @date 14/giu/2016
- * @author pc
+ * @date 14/06/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -47,13 +47,13 @@ public:
 
     ObjectWithMessages();
 
-    bool ReceiverMethod(ReferenceContainer& ref);
+    ErrorManagement::ErrorType ReceiverMethod(ReferenceContainer& ref);
 
-    bool SenderMethod(ReferenceContainer& ref);
+    ErrorManagement::ErrorType SenderMethod(ReferenceContainer& ref);
 
     int32 Flag();
 
-    bool HandleReply(ReferenceContainer& ref);
+    ErrorManagement::ErrorType HandleReply();
 private:
      int32 flag;
 

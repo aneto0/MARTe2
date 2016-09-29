@@ -44,9 +44,9 @@
 
 
 
-TEST(ErrorManagementGTest,TestToName) {
+TEST(ErrorManagementGTest,TestErrorCodeToStream) {
     ErrorManagementTest errorManTest;
-    ASSERT_TRUE(errorManTest.TestToName());
+    ASSERT_TRUE(errorManTest.TestErrorCodeToStream());
     ErrorManagement::SetErrorProcessFunction (ErrorManagement::NullErrorProcessFunction);
 
 }

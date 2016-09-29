@@ -26,8 +26,6 @@
 
 
 OBJSX=  AnyTypeTest.x\
-		CallRegisteredMethodLauncherTest.x \
-		CallRegisteredMethodLauncherTTest.x \
 		ClassMethodCallerTest.x \
 		ClassMethodCallerTTest.x \
 		ClassMethodInterfaceMapperTest.x \

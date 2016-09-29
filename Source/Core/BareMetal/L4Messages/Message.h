@@ -1,8 +1,8 @@
 /**
  * @file Message.h
  * @brief Header file for class Message
- * @date Apr 5, 2016
- * @author fsartori
+ * @date 05/04/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -67,60 +67,58 @@ public:
     /**
      * @see ReferenceContainer::Initialise(*)
      * @detail The following parameters have to be specified in the StructuredDataI which initialises the
-     * Message:
+     * Message
+     * @param[in] data StructuredDataI with the structure:
      *   Destination = "Address in the ObjectRegistryDatabase of the Object which must receive this Message"
      *   Function = "The name of the destination method which has to be called" (this method has to be registered in the ClassRegistryDatabase)
      *   MaxWait (optional) = "The timeout in milliseconds" (default is TTInfiniteWait, namely infinite timeout)
      *   Mode (optional) = "The message type". Can be one of the following;
-     *     "ExpectsReply": after sending the message, the sender waits for a reply.
-     *     "ExpectsImmediateReply": after sending the message the sender waits for an immediate reply.
+     *     "ExpectsDirectReply": after sending the message, the sender expects a reply in the Message.
+     *     "ExpectsIndirectReply": after sending the message the sender expects a reply sent to him.
      *   By default, the sender will not wait for a message reply.
+     *   !!!!! IMPORTANT !!!! a reply is always contained in the same Message object used to send
+     *   a    direct reply is performed by transforming the Message object into a reply
+     *   an indirect reply is performed by transforming the Message object into a reply and by sending to the sender
      */
     virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * @brief Sets or Unsets this Message as a Reply.
+     * @brief Sets or unsets this Message as a Reply.
      * @param[in] flag if true the message is set as a reply, otherwise it is not considered as a reply.
      */
-    void MarkAsReply(const bool flag=true);
+    void SetAsReply(const bool flag=true);
 
     /**
-     * @brief Specifies if this message requires an immediate reply.
+     * @brief Specifies if this message requires a reply
      * marked by send when requiring reply
-     * @param[in] flag if true means that this messages requires a reply after being received, if false id does needs a reply.
+     * @param[in] flag if true means that this messages requires a reply after being received, if false it does not needs a reply.
      */
-    void MarkImmediateReplyExpected(const bool flag=true);
+    void SetExpectsReply(const bool flag=true);
 
     /**
-     * @brief Specifies if this message requires a reply.
+     * @brief Specifies if this message requires an indirect reply.
      * marked by send when requiring reply
-     * @param[in] flag if true means that this messages requires a reply after being received, if false id does needs a reply.
+     * @param[in] flag (only if expectsReply is true) if true means that this messages requires an indirect reply , if false it needs a direct reply.
      */
-    void MarkLateReplyExpected(const bool flag=true);
+    void SetExpectsIndirectReply(const bool flag=true);
 
     /**
      * @brief Checks if this message requires a reply (immediate or not).
      * @return true if this message requires a reply, false otherwise.
      */
-    bool ReplyExpected() const;
+    bool ExpectsReply() const;
 
     /**
      * @brief Checks if this message requires an immediate reply.
      * @return true if this message requires an immediate reply, false otherwise.
      */
-    bool ImmediateReplyExpected() const;
-
-    /**
-     * @brief Checks if this message requires a late reply.
-     * @return true if this message requires a late reply, false otherwise.
-     */
-    bool LateReplyExpected() const;
+    bool ExpectsIndirectReply() const;
 
     /**
      * @brief Checks if this message is a reply.
      * @return true if this message is a reply, false otherwise.
      */
-    bool IsReplyMessage() const;
+    bool IsReply() const;
 
     /**
      * @brief Retrieved the address of the destination Object in the ObjectRegistryDatabase.
@@ -168,8 +166,7 @@ private:
          * @post
          *   Message::IsReply() == false &&
          *   Message::ExpectsReply() == false &&
-         *   Message::ExpectsImmediateReply() == false &&
-         *   Message::ExpectsLateReply() == false;
+         *   Message::ExpectsIndirectReply() == false
          */
         MessageFlags();
 
@@ -179,13 +176,11 @@ private:
          * @post
          *   if(asString == "ExpectsReply") then
          *     Message::ExpectsReply() == true &&
-         *     Message::ExpectsLateReply() == true &&
-         *     Message::ExpectsImmediateReply() == false;
+         *     Message::ExpectsIndirectReply() == true;
          *
-         *   if(asString == "ExpectsImmediateReply") then
+         *   if(asString == "ExpectsIndirectReply") then
          *     Message::ExpectsReply() == true &&
-         *     Message::ExpectsLateReply() == false &&
-         *     Message::ExpectsImmediateReply() == true;
+         *     Message::ExpectsIndirectReply() == false;
          */
         MessageFlags(CCString asString);
 
@@ -200,10 +195,11 @@ private:
 
             /**
              * True if reply is required
-             * and I am going to wait for it in the call itself
+             * and it has to be sent to me by the receiver
+             * False if reply is only generated within the original message
              * set by the sender
              */
-            BitBoolean<uint8, 1u> expectsImmediateReply;
+            BitBoolean<uint8, 1u> expectsIndirectReply;
 
             /**
              * True for a reply message, false for a normal message
@@ -216,7 +212,7 @@ private:
             /**
              * Unmapped area
              */
-            BitRange<uint8,4u ,3u> unMapped;
+            BitRange<uint8, 5u ,3u> unMapped;
 
             /**
              * To set the Message mode using an 8-bit integer.

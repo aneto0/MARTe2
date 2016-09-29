@@ -34,6 +34,8 @@
 
 #include "ErrorInformation.h"
 #include "GeneralDefinitions.h"
+#include "StreamI.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                              */
@@ -61,11 +63,13 @@ extern DLL_API ErrorProcessFunctionType errorMessageProcessFunction;
  */
 DLL_API void NullErrorProcessFunction(const ErrorInformation &errorInfo,
                                       const char8 * const errorDescription);
+
 /**
- * @brief Returns the name string associated to the error code.
+ * @brief Converts ErrorType to stream.
  * @param[in] errorCode is the error code.
+ * @param[out] stream the full error description will be streamed into.
  */
-DLL_API const char8 *ToName(const ErrorType &errorCode);
+DLL_API void ErrorCodeToStream (const ErrorType &errorCode,StreamI &stream );
 
 /**
  * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.

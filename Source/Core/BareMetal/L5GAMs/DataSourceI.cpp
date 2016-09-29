@@ -78,7 +78,7 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
      *Justification: "Signals" is an optional field, so the move command must
      *Justification: not be checked.*/
     signalsDatabase.MoveAbsolute("Signals");
-    ret = data.Write("Signals", signalsDatabase);
+    ret = data.Write("Signals", signalsDatabase.operator MARTe::AnyType());
     return ret;
 }
 

@@ -44,7 +44,7 @@ using namespace MARTe;
 BasicUDPSocketTest::BasicUDPSocketTest() {
 
     retVal = true;
-    noError = true;
+    NoError = true;
     eventSem.Create();
     exitCondition = 0;
     isBlocking = true;
@@ -159,7 +159,7 @@ void StartServer_Listen(BasicUDPSocketTest &param) {
     BasicUDPSocket serverSocket;
 
     if (!serverSocket.Open()) {
-        param.noError = false;
+        param.NoError = false;
         return;
     }
 
@@ -185,24 +185,24 @@ void StartServer_Listen(BasicUDPSocketTest &param) {
             uint32 sizeRead = 32;
             if (!serverSocket.Read(output, sizeRead)) {
                 param.sem.FastLock();
-                param.noError = false;
+                param.NoError = false;
                 param.sem.FastUnLock();
             }
             else {
                 if (StringHelper::Compare(output, "HelloServer") != 0) {
                     param.sem.FastLock();
-                    param.noError = false;
+                    param.NoError = false;
                     param.sem.FastUnLock();
                 }
             }
 
-            if (param.noError) {
+            if (param.NoError) {
                 serverSocket.SetDestination(serverSocket.GetSource());
                 const char8 *toWrite = "HelloClient";
                 uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
                 if (!serverSocket.Write(toWrite, sizeWrite)) {
                     param.sem.FastLock();
-                    param.noError = false;
+                    param.NoError = false;
                     param.sem.FastUnLock();
                 }
             }
@@ -228,7 +228,7 @@ void ClientJob_Listen(BasicUDPSocketTest &param) {
 
     if (!go) {
         param.sem.FastLock();
-        param.noError = false;
+        param.NoError = false;
         param.sem.FastUnLock();
     }
     else {
@@ -247,7 +247,7 @@ void ClientJob_Listen(BasicUDPSocketTest &param) {
             uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
             if (!clientSocket.Write(toWrite, sizeWrite)) {
                 param.sem.FastLock();
-                param.noError = false;
+                param.NoError = false;
                 param.sem.FastUnLock();
             }
             else {
@@ -255,13 +255,13 @@ void ClientJob_Listen(BasicUDPSocketTest &param) {
                 uint32 sizeRead = 32;
                 if (!clientSocket.Read(output, sizeRead)) {
                     param.sem.FastLock();
-                    param.noError = false;
+                    param.NoError = false;
                     param.sem.FastUnLock();
                 }
                 else {
                     if (StringHelper::Compare(output, "HelloClient") != 0) {
                         param.sem.FastLock();
-                        param.noError = false;
+                        param.NoError = false;
                         param.sem.FastUnLock();
                     }
                 }
@@ -298,7 +298,7 @@ static bool ListenConnectTest(BasicUDPSocketTest &param,
         Threads::BeginThread((ThreadFunctionType) StartServer_Listen, &param);
 
         while (param.exitCondition < 1) {
-            if (!param.noError) {
+            if (!param.NoError) {
                 param.alives = 0;
                 while (Threads::NumberOfThreads() > 0) {
                     Sleep::MSec(10);
@@ -320,7 +320,7 @@ static bool ListenConnectTest(BasicUDPSocketTest &param,
             Sleep::MSec(10);
         }
 
-        if ((param.retVal != table[i].expected) || (!param.noError)) {
+        if ((param.retVal != table[i].expected) || (!param.NoError)) {
             return false;
         }
 
@@ -345,12 +345,12 @@ void StartServer_Read(BasicUDPSocketTest &param) {
     BasicUDPSocket serverSocket;
 
     if (!serverSocket.Open()) {
-        param.noError = false;
+        param.NoError = false;
         return;
     }
 
     if (!serverSocket.Listen(param.server.GetPort())) {
-        param.noError = false;
+        param.NoError = false;
         return;
     }
 
@@ -363,18 +363,18 @@ void StartServer_Read(BasicUDPSocketTest &param) {
         uint32 sizeRead = 32;
         if (!serverSocket.Read(output, sizeRead)) {
             param.sem.FastLock();
-            param.noError = false;
+            param.NoError = false;
             param.sem.FastUnLock();
         }
         else {
             if (StringHelper::Compare(output, "HelloServer") != 0) {
                 param.sem.FastLock();
-                param.noError = false;
+                param.NoError = false;
                 param.sem.FastUnLock();
             }
         }
 
-        if (param.noError && param.isServer && param.isValidClient) {
+        if (param.NoError && param.isServer && param.isValidClient) {
             serverSocket.SetDestination(serverSocket.GetSource());
 
             //uint32 sizeWrite = 64;
@@ -383,7 +383,7 @@ void StartServer_Read(BasicUDPSocketTest &param) {
             uint32 sizeWrite = param.size;
             if (!serverSocket.Write(input, sizeWrite)) {
                 param.sem.FastLock();
-                param.noError = false;
+                param.NoError = false;
                 param.sem.FastUnLock();
             }
         }
@@ -405,13 +405,13 @@ void ClientJob_Read(BasicUDPSocketTest &param) {
 
     if (!clientSocket.Open()) {
         param.sem.FastLock();
-        param.noError = false;
+        param.NoError = false;
         param.sem.FastUnLock();
     }
     else {
         if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
             param.sem.FastLock();
-            param.noError = false;
+            param.NoError = false;
             param.sem.FastUnLock();
         }
 
@@ -421,7 +421,7 @@ void ClientJob_Read(BasicUDPSocketTest &param) {
             uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
             if (!clientSocket.Write(toWrite, sizeWrite)) {
                 param.sem.FastLock();
-                param.noError = false;
+                param.NoError = false;
                 param.sem.FastUnLock();
             }
             else {
@@ -429,7 +429,7 @@ void ClientJob_Read(BasicUDPSocketTest &param) {
                 bool ret = clientSocket.SetBlocking(param.isBlocking);
                 if (!ret) {
                     param.sem.FastLock();
-                    param.noError = false;
+                    param.NoError = false;
                     param.sem.FastUnLock();
                 }
                 else {
@@ -497,7 +497,7 @@ bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
         Threads::BeginThread((ThreadFunctionType) StartServer_Read, this);
 
         while (exitCondition < 1) {
-            if (!noError) {
+            if (!NoError) {
                 alives = 0;
                 while (Threads::NumberOfThreads() > 0) {
                     Sleep::MSec(10);
@@ -516,7 +516,7 @@ bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
             Sleep::MSec(50);
         }
 
-        if ((retVal != table[i].expected) || (!noError)) {
+        if ((retVal != table[i].expected) || (!NoError)) {
             return false;
         }
 
@@ -530,13 +530,13 @@ void ClientJob_Peek(BasicUDPSocketTest &param) {
     BasicUDPSocket clientSocket;
     if (!clientSocket.Open()) {
         param.sem.FastLock();
-        param.noError = false;
+        param.NoError = false;
         param.sem.FastUnLock();
     }
     else {
         if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
             param.sem.FastLock();
-            param.noError = false;
+            param.NoError = false;
             param.sem.FastUnLock();
         }
 
@@ -546,7 +546,7 @@ void ClientJob_Peek(BasicUDPSocketTest &param) {
             uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
             if (!clientSocket.Write(toWrite, sizeWrite)) {
                 param.sem.FastLock();
-                param.noError = false;
+                param.NoError = false;
                 param.sem.FastUnLock();
             }
             else {
@@ -555,7 +555,7 @@ void ClientJob_Peek(BasicUDPSocketTest &param) {
 
                 if (!ret) {
                     param.sem.FastLock();
-                    param.noError = false;
+                    param.NoError = false;
                     param.sem.FastUnLock();
                 }
                 else {
@@ -625,7 +625,7 @@ bool BasicUDPSocketTest::TestPeek(const ReadWriteUDPTestTable* table) {
         Threads::BeginThread((ThreadFunctionType) StartServer_Read, this);
 
         while (exitCondition < 1) {
-            if (!noError) {
+            if (!NoError) {
                 alives = 0;
                 while (Threads::NumberOfThreads() > 0) {
                     Sleep::MSec(10);
@@ -643,7 +643,7 @@ bool BasicUDPSocketTest::TestPeek(const ReadWriteUDPTestTable* table) {
             Sleep::MSec(10);
         }
 
-        if ((retVal != table[i].expected) || (!noError)) {
+        if ((retVal != table[i].expected) || (!NoError)) {
             return false;
         }
 
@@ -656,12 +656,12 @@ void StartServer_Write(BasicUDPSocketTest &param) {
     BasicUDPSocket serverSocket;
 
     if (!serverSocket.Open()) {
-        param.noError = false;
+        param.NoError = false;
         return;
     }
 
     if (!serverSocket.Listen(param.server.GetPort())) {
-        param.noError = false;
+        param.NoError = false;
         return;
     }
 
@@ -678,7 +678,7 @@ void StartServer_Write(BasicUDPSocketTest &param) {
                 char8 output[64];
                 if (!serverSocket.Read(output, sizeRead)) {
                     param.sem.FastLock();
-                    param.noError = false;
+                    param.NoError = false;
                     param.sem.FastUnLock();
                 }
                 else {
@@ -715,13 +715,13 @@ void ClientJob_Write(BasicUDPSocketTest &param) {
     BasicUDPSocket clientSocket;
     if (!clientSocket.Open()) {
         param.sem.FastLock();
-        param.noError = false;
+        param.NoError = false;
         param.sem.FastUnLock();
     }
     else {
         if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
             param.sem.FastLock();
-            param.noError = false;
+            param.NoError = false;
             param.sem.FastUnLock();
         }
 
@@ -730,7 +730,7 @@ void ClientJob_Write(BasicUDPSocketTest &param) {
 
             if (!ret) {
                 param.sem.FastLock();
-                param.noError = false;
+                param.NoError = false;
                 param.sem.FastUnLock();
             }
             else {
@@ -784,7 +784,7 @@ bool BasicUDPSocketTest::TestWrite(const ReadWriteUDPTestTable* table) {
         Threads::BeginThread((ThreadFunctionType) StartServer_Write, this);
 
         while (exitCondition < 1) {
-            if (!noError) {
+            if (!NoError) {
                 alives = 0;
                 while (Threads::NumberOfThreads() > 0) {
                     Sleep::MSec(10);
@@ -802,7 +802,7 @@ bool BasicUDPSocketTest::TestWrite(const ReadWriteUDPTestTable* table) {
             Sleep::MSec(10);
         }
 
-        if ((retVal != table[i].expected) || (!noError)) {
+        if ((retVal != table[i].expected) || (!NoError)) {
             return false;
         }
 
