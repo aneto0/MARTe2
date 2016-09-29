@@ -1,8 +1,4 @@
 /depends.linux
 /dependsRaw.linux
-/cov/
-/CreateMSCDepends.sed
-/depends.msc
-/dependsRaw.msc
-/vc120.pdb
-/temp/
+/depends.cov
+/dependsRaw.cov

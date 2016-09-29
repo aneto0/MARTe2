@@ -71,6 +71,16 @@ public:
      * @return true if ClassProperties::GetName == "ReferenceContainer".
      */
 
+    /**
+     * @brief Tests the ReferenceContainer copy constructor.
+     */
+    bool TestCopyConstructor();
+
+    /**
+     * @brief Tests the ReferenceContainer operator =.
+     */
+    bool TestOperatorEqual();
+
     bool TestGetClassProperties();
 
     /**
@@ -303,8 +313,6 @@ public:
     float TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
                               ReferenceContainerFilter &filter);
 
-
-
     bool TestFindWithPath();
 
     /**
@@ -384,10 +392,7 @@ public:
      */
     bool TestDelete();
 
-
     bool TestDeleteWithPath();
-
-
 
     /**
      * @brief Tests if for each of the marked nodes of \a data a new Object
@@ -395,18 +400,13 @@ public:
      */
     bool TestInitialise();
 
-
-
     bool TestCleanUp();
-
 
     bool TestCleanUp_Shared();
 
-
     bool TestExportData();
 
-
-   /**
+    /**
      * List of nodes for the tree described in the GenerateTestTree function
      */
     ReferenceT<ReferenceContainer> tree;
@@ -457,7 +457,6 @@ public:
      * @return the container with the generated tree, i.e. the Root
      */
     ReferenceT<ReferenceContainer> GenerateTestTreeLarge(uint32 depth);
-
 
     volatile int32 spinLock;
 
@@ -515,7 +514,6 @@ private:
     bool GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source,
                                                                  ReferenceContainer &result,
                                                                  const char8 * const str);
-
 
 };
 

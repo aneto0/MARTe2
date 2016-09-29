@@ -34,6 +34,7 @@ LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L2Objects\L2ObjectsB$(LI
 LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L3Streams\L3StreamsB$(LIBEXT)
 LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L4Configuration\L4ConfigurationB$(LIBEXT)
 LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L4Messages\L4MessagesB$(LIBEXT)
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L5GAMs\L5GAMsB$(LIBEXT)
 
 IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L0Types\L0TypesB.def
 IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L1Portability\L1PortabilityB.def
@@ -41,4 +42,7 @@ IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L2Objects\L2ObjectsB.def
 IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L3Streams\L3StreamsB.def
 IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L4Configuration\L4ConfigurationB.def
 IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L4Messages\L4MessagesB.def
+IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L5GAMs\L5GAMsB.def
+
+
 

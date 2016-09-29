@@ -97,13 +97,11 @@ bool MatrixTest::TestGetNumberOfRows(uint32 nRows) {
 }
 
 bool MatrixTest::TestMatrixOperator_Static() {
-
     const uint32 nRow = 32;
     const uint32 nCols = 32;
     int32 matrix[nRow][nCols];
 
     for (uint32 i = 0; i < nRow; i++) {
-
         for (uint32 j = 0; j < nCols; j++) {
             matrix[i][j] = i + j;
         }
@@ -123,7 +121,6 @@ bool MatrixTest::TestMatrixOperator_Static() {
 }
 
 bool MatrixTest::TestMatrixOperator_Heap() {
-
     const uint32 nRows = 32;
     const uint32 nCols = 32;
 
@@ -134,7 +131,6 @@ bool MatrixTest::TestMatrixOperator_Heap() {
     }
 
     for (uint32 i = 0; i < nRows; i++) {
-
         for (uint32 j = 0; j < nCols; j++) {
             matrix[i][j] = i + j;
         }
@@ -147,6 +143,88 @@ bool MatrixTest::TestMatrixOperator_Heap() {
         Vector<int32> row = myMatrix[i];
         for (uint32 j = 0; j < nCols; j++) {
             if (row[j] != matrix[i][j]) {
+                ret = false;
+            }
+        }
+    }
+
+    for (uint32 i = 0; i < nRows; i++) {
+        delete[] matrix[i];
+    }
+
+    delete[] matrix;
+
+    return ret;
+}
+
+bool MatrixTest::TestMatrixFunctionCallOperator_Static() {
+    {
+        const uint32 nRow = 32;
+        const uint32 nCols = 32;
+        int32 matrix[nRow][nCols];
+        Matrix<int32> myMatrix(matrix);
+
+        for (uint32 i = 0; i < nRow; i++) {
+            for (uint32 j = 0; j < nCols; j++) {
+                matrix[i][j] = i + j;
+            }
+        }
+
+        for (uint32 i = 0; i < nRow; i++) {
+            for (uint32 j = 0; j < nCols; j++) {
+                if (myMatrix(i,j) != matrix[i][j]) {
+                    return false;
+                }
+            }
+        }
+    }
+    {
+        const uint32 nRow = 32;
+        const uint32 nCols = 32;
+        int32 matrix[nRow][nCols];
+        Matrix<int32> myMatrix(matrix);
+
+        for (uint32 i = 0; i < nRow; i++) {
+            for (uint32 j = 0; j < nCols; j++) {
+                myMatrix(i,j) = i + j;
+            }
+        }
+
+        for (uint32 i = 0; i < nRow; i++) {
+            for (uint32 j = 0; j < nCols; j++) {
+                if (myMatrix(i,j) != matrix[i][j]) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+bool MatrixTest::TestMatrixFunctionCallOperator_Heap() {
+    bool ret = true;
+
+    const uint32 nRows = 32;
+    const uint32 nCols = 32;
+
+    Matrix<int32> myMatrix(nRows, nCols);
+
+    int32 ** matrix = new int32*[nRows];
+
+    for (uint32 i = 0; i < nRows; i++) {
+        matrix[i] = new int32[nCols];
+    }
+
+    for (uint32 i = 0; i < nRows; i++) {
+        for (uint32 j = 0; j < nCols; j++) {
+            myMatrix(i,j) = i + j;
+            matrix[i][j] = i + j;
+        }
+    }
+
+    for (uint32 i = 0; i < nRows; i++) {
+        for (uint32 j = 0; j < nCols; j++) {
+            if (myMatrix(i,j) != matrix[i][j]) {
                 ret = false;
             }
         }

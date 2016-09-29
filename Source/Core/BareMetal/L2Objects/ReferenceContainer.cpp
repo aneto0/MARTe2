@@ -59,6 +59,7 @@ ReferenceContainer::ReferenceContainer() :
 
 ReferenceContainer::ReferenceContainer(ReferenceContainer &copy) :
         Object(copy) {
+    SetTimeout(copy.GetTimeout());
     uint32 nChildren = copy.Size();
     for (uint32 i = 0u; i < nChildren; i++) {
         Reference toInsert = copy.Get(i);
@@ -66,6 +67,20 @@ ReferenceContainer::ReferenceContainer(ReferenceContainer &copy) :
             //TODO
         }
     }
+}
+
+ReferenceContainer& ReferenceContainer::operator =(ReferenceContainer &copy) {
+    SetTimeout(copy.GetTimeout());
+    if (this != &copy) {
+        uint32 nChildren = copy.Size();
+        for (uint32 i = 0u; i < nChildren; i++) {
+            Reference toInsert = copy.Get(i);
+            if (!Insert(toInsert)) {
+                //TODO
+            }
+        }
+    }
+    return *this;
 }
 
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
@@ -373,9 +388,14 @@ void ReferenceContainer::Find(ReferenceContainer &result,
     UnLock();
 }
 
-Reference ReferenceContainer::Find(const char8 * const path) {
+Reference ReferenceContainer::Find(const char8 * const path,
+                                   const bool recursive) {
     Reference ret;
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::SHALLOW, path);
+    uint32 mode = ReferenceContainerFilterMode::SHALLOW;
+    if (recursive) {
+        mode = ReferenceContainerFilterMode::RECURSIVE;
+    }
+    ReferenceContainerFilterObjectName filter(1, mode, path);
     ReferenceContainer resultSingle;
     Find(resultSingle, filter);
     if (resultSingle.Size() > 0u) {
@@ -418,11 +438,24 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
                             if (childName[0] == '$') {
                                 newObject->SetDomain(true);
                             }
-                            newObject->SetName(&childName[1]);
                             ok = ReferenceContainer::Insert(newObject);
                         }
                         if (ok) {
                             ok = data.MoveToAncestor(1u);
+                        }
+                    }
+                    else {
+                        const uint32 maxSize = 64u;
+                        char8 errorMsg[maxSize];
+                        errorMsg[0] = '\0';
+                        bool ret = StringHelper::Concatenate(&errorMsg[0], "Failed to Initialise object with name ");
+                        uint32 sizeLeft = 0u;
+                        if (ret) {
+                            sizeLeft = maxSize - StringHelper::Length(&errorMsg[0]);
+                            ret = StringHelper::ConcatenateN(&errorMsg[0], childName, sizeLeft);
+                        }
+                        if (ret) {
+                            REPORT_ERROR(ErrorManagement::FatalError, &errorMsg[0]);
                         }
                     }
                 }
