@@ -1,8 +1,8 @@
 /**
- * @file QueueingMessageFilter.h
- * @brief Header file for class QueueingMessageFilter
- * @date 22/08/2016
- * @author Filippo Sartori
+ * @file StateMachineMessage.h
+ * @brief Header file for class StateMachineMessage
+ * @date 30/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MessageI
+ * @details This header file contains the declaration of the class StateMachineMessage
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef QUEUEINGMESSAGEFILTER_H_
-#define QUEUEINGMESSAGEFILTER_H_
+#ifndef STATEMACHINEMESSAGE_H_
+#define STATEMACHINEMESSAGE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,76 +31,61 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "MessageFilter.h"
-#include "EventSem.h"
+#include "Message.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
-
 /**
- * @brief Adds message to a queue.
- * @details Messages consumed by this filter are added to a queue. The queue is consumed by calling the GetMessage method.
+ * @brief TODO
  */
-class DLL_API QueueingMessageFilter: public MessageFilter, public Object {
+class StateMachineMessage: public Message {
+
 public:
 
-    /**
-     * @brief Constructor. Initialises the semaphores.
-     */
-    QueueingMessageFilter();
+    CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief Destructor.
+     * TODO
      */
-    virtual ~QueueingMessageFilter();
+    StateMachineMessage();
 
     /**
-     * @brief Adds the message to the message queue.
-     * @param[in] messageToTest The message to add to the queue.
-     * @return ErrorManagement::NoError if the message can be successfully added to the queue.
+     * TODO
      */
-    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
+    virtual ~StateMachineMessage();
 
     /**
-     * @brief Gets the oldest message from the queue or waits for a message to be available.
-     * @param[out] message The oldest message available on the queue.
-     * @param[out] timeout The maximum time to wait for a message to be available on the queue.
-     * @return ErrorManagement::NoError if the message can be successfully retrieved from the queue with-in the specified timeout.
+     * TODO
      */
-    ErrorManagement::ErrorType GetMessage(ReferenceT<Message> &message, const TimeoutType &timeout = TTInfiniteWait);
+    uint32 GetCode();
+
+    /**
+     * TODO
+     */
+    CCString GetContent();
+
+    /**
+     * TODO
+     */
+    TimeoutType GetTimeout();
 
 private:
+    /**
+     *
+     */
+    uint32 code;
 
     /**
-     * Holds the messages consumed by this QueueingMessageFilter
+     *
      */
-    ReferenceContainer messageQ;
-
-    /**
-     * Locks the adding/removing of messages to the queue
-     */
-    FastPollingMutexSem mutexSemQ;
-
-    /**
-     * Wakes threads waiting on the queue
-     */
-    EventSem newMessagesAlarm;
-
-
+    CCString content;
 };
-
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-}
-
-
-#endif /* QUEUEINGMESSAGEFILTER_H_ */
-
+#endif /* STATEMACHINEMESSAGE_H_ */

@@ -1,8 +1,8 @@
 /**
- * @file QueueingMessageFilter.h
- * @brief Header file for class QueueingMessageFilter
- * @date 22/08/2016
- * @author Filippo Sartori
+ * @file StateMachineState.h
+ * @brief Header file for class StateMachineState
+ * @date 30/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MessageI
+ * @details This header file contains the declaration of the class StateMachineState
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef QUEUEINGMESSAGEFILTER_H_
-#define QUEUEINGMESSAGEFILTER_H_
+#ifndef STATEMACHINESTATE_H_
+#define STATEMACHINESTATE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,76 +31,62 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "MessageFilter.h"
-#include "EventSem.h"
+#include "ReferenceContainer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
 /**
- * @brief Adds message to a queue.
- * @details Messages consumed by this filter are added to a queue. The queue is consumed by calling the GetMessage method.
+ * @brief TODO
  */
-class DLL_API QueueingMessageFilter: public MessageFilter, public Object {
+class DLL_API StateMachineState: public MessageFilter, public ReferenceContainer {
+
 public:
 
-    /**
-     * @brief Constructor. Initialises the semaphores.
-     */
-    QueueingMessageFilter();
+    CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief Destructor.
+     * @brief Constructor.
+     * @post
+     *    GetCode() == 0
      */
-    virtual ~QueueingMessageFilter();
+    StateMachineState();
 
     /**
-     * @brief Adds the message to the message queue.
-     * @param[in] messageToTest The message to add to the queue.
-     * @return ErrorManagement::NoError if the message can be successfully added to the queue.
+     * @brief Gets the code that identifies the state.
+     * @return the code that identifies the state.
+     */
+    uint32 GetCode() const;
+
+
+    /**
+     * TODO.
      */
     virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
-
-    /**
-     * @brief Gets the oldest message from the queue or waits for a message to be available.
-     * @param[out] message The oldest message available on the queue.
-     * @param[out] timeout The maximum time to wait for a message to be available on the queue.
-     * @return ErrorManagement::NoError if the message can be successfully retrieved from the queue with-in the specified timeout.
-     */
-    ErrorManagement::ErrorType GetMessage(ReferenceT<Message> &message, const TimeoutType &timeout = TTInfiniteWait);
-
 private:
+    /**
+     * TODO
+     */
+    ErrorManagement::ErrorType ActOn(CCString instruction);
 
     /**
-     * Holds the messages consumed by this QueueingMessageFilter
+     * A numerical code which identifies the state.
      */
-    ReferenceContainer messageQ;
+    uint32 code;
 
     /**
-     * Locks the adding/removing of messages to the queue
+     * Reference to the state-machine which holds this state
      */
-    FastPollingMutexSem mutexSemQ;
-
-    /**
-     * Wakes threads waiting on the queue
-     */
-    EventSem newMessagesAlarm;
-
-
+    Reference stateMachineIn;
 };
 
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-}
-
-
-#endif /* QUEUEINGMESSAGEFILTER_H_ */
+#endif /* STATEMACHINESTATE_H_ */
 

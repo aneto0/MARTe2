@@ -1,8 +1,8 @@
 /**
- * @file MessageFilter.cpp
- * @brief Source file for class MessageFilter
- * @date 23/08/2016
- * @author Filippo Sartori
+ * @file StateMachineEvent.h
+ * @brief Header file for class StateMachineEvent
+ * @date 30/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,42 +16,38 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class MessageFilter (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+ * @details This header file contains the declaration of the class StateMachineEvent
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
+#ifndef STATEMACHINEEVENT_H_
+#define STATEMACHINEEVENT_H_
+
 /*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
+/*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "MessageFilter.h"
-
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
+#include "StateMachineEvent.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
+/*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
+/**
+ * TODO
+ */
+class StateMachineEvent {
 
-MessageFilter::MessageFilter(const bool isPermanentFilter) {
-    permanentFilter = isPermanentFilter;
+};
 }
 
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
-MessageFilter::~MessageFilter(){
-}
+#endif /* STATEMACHINEEVENT_H_ */
 
-bool MessageFilter::IsPermanentFilter() const {
-    return permanentFilter;
-}
-
-}
-	

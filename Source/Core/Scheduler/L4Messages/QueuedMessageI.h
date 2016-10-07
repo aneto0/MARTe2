@@ -97,6 +97,9 @@ public:
      */
     virtual ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter);
 
+    //TODO
+    ErrorManagement::ErrorType SendMultiplesMessageAndWaitIndirectReply(ReferenceContainer messages);
+
 private:
 
     /**

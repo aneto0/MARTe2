@@ -41,7 +41,8 @@
 namespace MARTe {
 
 QueueingMessageFilter::QueueingMessageFilter() :
-        MessageFilter(true) {
+        MessageFilter(true),
+        Object() {
     mutexSemQ.Create();
     if (!newMessagesAlarm.Create()) {
         REPORT_ERROR_FULL(ErrorManagement::InitialisationError, "EventSem::Create() has failed");

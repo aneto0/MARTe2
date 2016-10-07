@@ -1,8 +1,8 @@
 /**
- * @file ReplyMessageCatcherMessageFilter.cpp
- * @brief Source file for class ReplyMessageCatcherMessageFilter
- * @date 19/08/2016
- * @author Filippo Sartori
+ * @file QueuedReplyMessageCatcherFilter.cpp
+ * @brief Source file for class QueuedReplyMessageCatcherFilter
+ * @date 7/10/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ReplyMessageCatcherMessageFilter (public, protected, and private). Be aware that some 
+ * the class QueuedReplyMessageCatcherFilter (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,8 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "AdvancedErrorManagement.h"
-#include "ReplyMessageCatcherMessageFilter.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,10 +39,9 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-ReplyMessageCatcherMessageFilter::ReplyMessageCatcherMessageFilter() :
+QueuedReplyMessageCatcherFilter::QueuedReplyMessageCatcherFilter() :
         Object(),
         MessageFilter(false) {
-    caught = false;
 }
 
 void ReplyMessageCatcherMessageFilter::SetMessageToCatch(const ReferenceT<Message> &message) {
@@ -75,32 +73,6 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::ConsumeMessage(Refe
     return ret;
 
 }
-
-ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::Wait(const TimeoutType &maxWait,
-                                                                  const uint32 pollingTimeUsec) {
-    ErrorManagement::ErrorType err(true);
-
-    uint64 start = HighResolutionTimer::Counter();
-    float32 pollingTime = static_cast<float32>(pollingTimeUsec);
-    pollingTime *= static_cast<float32>(1.0e-6);
-
-    while ((err.ErrorsCleared()) && (!caught)) {
-        Sleep::NoMore(static_cast<float64>(pollingTime));
-        if (maxWait != TTInfiniteWait) {
-            uint64 deltaT = HighResolutionTimer::Counter() - start;
-            err.timeout = maxWait.HighResolutionTimerTicks() > deltaT;
-        }
-    }
-
-    return err;
 }
 
-/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] symbol available to classes that specialise this method*/
-void ReplyMessageCatcherMessageFilter::HandleReplyMessage(ReferenceT<Message> &replyMessage) {
-    caught = true;
-}
-
-CLASS_REGISTER(ReplyMessageCatcherMessageFilter, "1.0")
-
-}
-
+	

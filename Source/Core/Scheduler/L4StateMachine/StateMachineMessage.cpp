@@ -1,8 +1,8 @@
 /**
- * @file MessageFilter.cpp
- * @brief Source file for class MessageFilter
- * @date 23/08/2016
- * @author Filippo Sartori
+ * @file StateMachineMessage.cpp
+ * @brief Source file for class StateMachineMessage
+ * @date 30/09/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MessageFilter (public, protected, and private). Be aware that some 
+ * the class StateMachineMessage (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,8 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "MessageFilter.h"
+#include "StateMachineMessage.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,20 +37,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 
-MessageFilter::MessageFilter(const bool isPermanentFilter) {
-    permanentFilter = isPermanentFilter;
-}
 
-
-MessageFilter::~MessageFilter(){
-}
-
-bool MessageFilter::IsPermanentFilter() const {
-    return permanentFilter;
-}
+CLASS_REGISTER(StateMachineMessage, "1.0")
 
 }
-	
+

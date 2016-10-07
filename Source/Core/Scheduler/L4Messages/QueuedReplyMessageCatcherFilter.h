@@ -1,8 +1,8 @@
 /**
- * @file ReplyMessageCatcherMessageFilter.h
- * @brief Header file for class ReplyMessageCatcherMessageFilter
- * @date 19/08/2016
- * @author Filippo Sartori
+ * @file QueuedReplyMessageCatcherFilter.h
+ * @brief Header file for class QueuedReplyMessageCatcherFilter
+ * @date 7/10/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ReplyMessageCatcherMessageFilter
+ * @details This header file contains the declaration of the class QueuedReplyMessageCatcherFilter
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REPLYMESSAGECATCHERMESSAGEFILTER_H_
-#define REPLYMESSAGECATCHERMESSAGEFILTER_H_
+#ifndef QUEUEDREPLYMESSAGECATCHERFILTER_H_
+#define QUEUEDREPLYMESSAGECATCHERFILTER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,20 +31,20 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
 #include "MessageFilter.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 
 /**
- * @brief Allows catching (i.e. trapping) a specific message reply.
- * @details The filter is removed after catching the reply.
+ * @brief Allows catching (i.e. trapping) a container of message replies.
+ * @details When all the reply messages are caught an event semaphore is posted.
+ * The filter is removed after catching the reply.
+ * TODO TEST!
  */
-class ReplyMessageCatcherMessageFilter: public MessageFilter, public Object {
+class QueuedReplyMessageCatcherFilter: public MessageFilter, public Object {
 public:
     CLASS_REGISTER_DECLARATION()
     /**
@@ -52,65 +52,53 @@ public:
      * @post
      *   IsPermanentFilter() == false
      */
-    ReplyMessageCatcherMessageFilter();
+    QueuedReplyMessageCatcherFilter();
 
     /**
      * @brief Destructor. NOOP.
      */
-    virtual ~ReplyMessageCatcherMessageFilter();
+    virtual ~QueuedReplyMessageCatcherFilter();
 
     /**
-     * @brief Sets the reply message to be caught.
-     * @param[in] message the reply message to be caught.
+     * @brief Sets the reply messages to be caught.
+     * @param[in] messagesToCatchIn the reply messages to be caught.
      */
-    void SetMessageToCatch(const ReferenceT<Message> &message);
-
+    void SetMessagesToCatch(const ReferenceContainer &messagesToCatchIn);
 
     /**
-     * @brief Waits for the message to be caught.
-     * @details This implementation polls with a sleep time of \a pollingTimeUsec.
-     * @param[in] maxWait Maximum time to wait for the message to be caught.
-     * @param[in] pollingTimeUsec Time to wait on the polling sleep.
-     * @return ErrorManagement::NoError if the message was caught or ErrorManagement::Timeout if the time specified in \a maxWait has expired.
+     * @brief Sets the event semaphore to fire when all the messages have been caught.
+     * @param[in] eventSemIn event semaphore to post when all the messages have been caught.
      */
-    /*lint -e(1735) [MISRA C++ Rule 8-3-1] the derived classes shall use this default parameter or no default parameter at all*/
-    virtual ErrorManagement::ErrorType Wait(const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec = 1000u);
+    void SetEventSemaphore(EventSem &eventSemIn);
 
     /**
-     * @brief Verifies if the \a messageToTest is the message to be caught (see SetMessageToCatch).
+     * @brief Verifies if the \a messageToTest is one of messages to be caught (see SetMessagesToCatch).
      * @param[in] messageToTest The message to test.
-     * @return ErrorManagement::NoError if the messageToTest was the one to be caught, otherwise it returns ErrorManagement::UnsupportedFeature.
+     * @return ErrorManagement::NoError if the messageToTest was one of the messages to be caught, otherwise it returns ErrorManagement::UnsupportedFeature.
      */
     virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
-
-protected:
-
-    /**
-     * @brief Called when the message to catch has been found.
-     * @details The default implementation sets ReplyCaught() == true.
-     * @param[in] replyMessage the caught message.
-     */
-    virtual void HandleReplyMessage(ReferenceT<Message> &replyMessage);
 
 private:
 
     /**
-     * True if the message was caught.
-     */
-    bool caught;
-
-    /**
      * The message to catch.
      */
-    ReferenceT<Message> messageToCatch;
+    ReferenceContainer messagesToCatch;
+
+    /**
+     * The semaphore to post when all the messages have been received.
+     */
+    EventSem eventSem;
 
 };
 
 }
 
+
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REPLYMESSAGECATCHERMESSAGEFILTER_H_ */
-
+#endif /* QUEUEDMESSAGEREPLYCATCHERMESSAGEFILTER_H_ */
+	
