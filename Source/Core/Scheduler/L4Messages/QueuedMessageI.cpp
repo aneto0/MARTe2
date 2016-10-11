@@ -143,24 +143,5 @@ ErrorManagement::ErrorType QueuedMessageI::RemoveMessageFilter(ReferenceT<Messag
     return err;
 }
 
-ErrorManagement::ErrorType QueuedMessageI::SendMultiplesMessageAndWaitIndirectReply(ReferenceContainer messages) {
-    ErrorManagement::ErrorType err;
-    uint32 n;
-    bool ok = true;
-    for (n = 0u; (n < messages.Size()) && (ok); n++) {
-        ReferenceT<Message> message = messages.Get(n);
-        err.fatalError = !message.IsValid();
-        ok = err.ErrorsCleared();
-        if (ok) {
-            if (message->ExpectsReply()) {
-                //Force to be an indirect reply
-                message->SetExpectsIndirectReply(true);
-            }
-        }
-    }
-
-    return err;
-}
-
 }
 

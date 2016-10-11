@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
+#include "QueuedReplyMessageCatcherFilter.h"
 #include "StateMachine.h"
 #include "StateMachineEvent.h"
 #include "StateMachineMessage.h"
@@ -42,106 +43,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-#if 0
-ErrorManagement::ErrorType StateMachineState::ActOn(CCString instruction) {
-    ReferenceT<StateMachineMessage> enterInstruction = Find(instruction);
-    // Instruction exists?
-    bool found = enterInstruction.IsValid();
-
-    if (found) {
-        //SENDSTATE
-        GCRTemplate<Message> gcrtm = me->Find("SENDSTATE");
-        if (gcrtm.IsValid()) {
-            GCRTemplate < Message > gcrtm(GCFT_Create);
-            if (!gcrtm.IsValid()) {
-                AssertErrorCondition(FatalError, "ActOn: Failed creating message for SENDSTATE");
-                return SMS_Error;
-            }
-            if (sm.currentState.IsValid()) {
-                gcrtm->Init(sm.currentState->StateCode(), sm.currentState->Name());
-            }
-            else {
-                AssertErrorCondition(FatalError, "ActOn: sm->currentState is not valid! using this state instead ");
-                gcrtm->Init(this->StateCode(), this->Name());
-            }
-
-            if (sm.verboseLevel >= 10) {
-                AssertErrorCondition(Information, "ActOn: sending state(%i,%s) to %s", gcrtm->GetMessageCode().Code(), gcrtm->Content(), me->Destination());
-            }
-
-            GCRTemplate < MessageEnvelope > mec(GCFT_Create);
-            if (!mec.IsValid()) {
-                AssertErrorCondition(FatalError, "ActOn: Failed creating copy for SENDSTATE");
-                return SMS_Error;
-            }
-            mec->PrepareMessageEnvelope(gcrtm, me->Destination(), MDRF_None, &sm);
-            // replace with copy
-            me = mec;
-        }
-        else {
-            // associate sender
-            me->SetSender(sm);
-        }
-
-        MessageHandler::SendMessage (me);
-        return SMS_Ok;
-    }
-
-    GCRTemplate < MessageDeliveryRequest > mdr = enterInstruction;
-    if (mdr.IsValid()) {
-
-        //SENDSTATE
-        GCRTemplate<Message> gcrtm = mdr->GetMessage();
-        if (gcrtm.IsValid()) {
-            if (strcmp(gcrtm->Name(), "SENDSTATE") == 0) {
-                GCRTemplate < Message > gcrtm(GCFT_Create);
-
-                if (!gcrtm.IsValid()) {
-                    AssertErrorCondition(FatalError, "Trigger: Failed creating mdr message for SENDSTATE");
-                    return SMS_Error;
-                }
-
-                if (sm.currentState.IsValid()) {
-                    gcrtm->Init(sm.currentState->StateCode(), sm.currentState->Name());
-                }
-                else {
-                    AssertErrorCondition(FatalError, "ActOn: sm->currentState is not valid! using this state instead ");
-                    gcrtm->Init(this->StateCode(), this->Name());
-                }
-
-                if (sm.verboseLevel >= 10) {
-                    AssertErrorCondition(Information, "ActOn: sending state(%i,%s) to %s", gcrtm->GetMessageCode().Code(), gcrtm->Content(),
-                            mdr->Destinations());
-                }
-
-                GCRTemplate < MessageDeliveryRequest > mdrc(GCFT_Create);
-                if (!mdrc.IsValid()) {
-                    AssertErrorCondition(FatalError, "Trigger: Failed creating mdr copy for SENDSTATE");
-                    return SMS_Error;
-                }
-                mdrc->PrepareMDR(gcrtm, mdr->Destinations(), mdr->Flags(), &sm, mdr->MsecTimeout());
-                // replace with copy
-                mdr = mdrc;
-            }
-            else {
-                // associate sender
-                mdr->SetSender(sm);
-            }
-        }
-
-        if (GMDSendMessageDeliveryRequest (mdr)) {
-            return SMS_Ok;
-        }
-        else {
-            return SMS_Error;
-        }
-    }
-
-    AssertErrorCondition(FatalError, "ActOn: %s object is of type %s (not MessageEnvelope or MDR)", name, enterInstruction->ClassName());
-    return SMS_Error;
-
-}
-#endif
 
 ErrorManagement::ErrorType StateMachineState::ConsumeMessage(ReferenceT<Message> &messageToTest) {
 
@@ -161,24 +62,53 @@ ErrorManagement::ErrorType StateMachineState::ConsumeMessage(ReferenceT<Message>
     }
     if (found) {
         REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Changing from state (%s) with code (%d)", GetName(), GetCode())
-        //Fire all the events
-        uint32 i = 0u;
-        ReferenceT<StateMachineMessage> event = Get(i);
-        if (event.IsValid()) {
-            if (event->ExpectsReply()) {
-                err = MessageI::SendMessageAndWaitReply(event, stateMachine.operator ->(), event->GetTimeout());
-            }
-            else if (event->ExpectsIndirectReply()) {
-                err = stateMachine->SendMessageAndWaitIndirectReply(event, event->GetTimeout());
-            }
-            else {
-                err = MessageI::SendMessage(event, stateMachine.operator ->());
+        //Prepare to wait for eventual replies
+        ReferenceContainer eventReplyContainer;
+        uint32 i;
+
+        for (i = 0u; i < Size(); i++) {
+            ReferenceT<StateMachineMessage> event = Get(i);
+            if (event.IsValid()) {
+                if (event->ExpectsReply()) {
+                    event->SetExpectsIndirectReply(true);
+                }
+                if (event->ExpectsIndirectReply()) {
+                    eventReplyContainer.Insert(event);
+                }
             }
         }
+        EventSem waitSem;
+        if (eventReplyContainer.Size() > 0u) {
+            ReferenceT<QueuedReplyMessageCatcherFilter> filter(new (NULL) QueuedReplyMessageCatcherFilter());
+            waitSem.Create();
+            waitSem.Reset();
+            filter->SetMessagesToCatch(eventReplyContainer);
+            filter->SetEventSemaphore(waitSem);
+            stateMachine->MessageI::InstallMessageFilter(filter, 0);
+        }
 
-        return err;
+        bool ok = err.ErrorsCleared();
+        for (i = 0u; (i < Size()) && (ok); i++) {
+            ReferenceT<StateMachineMessage> stateMachineMsg = Get(i);
+            if (stateMachineMsg.IsValid()) {
+                err = MessageI::SendMessage(stateMachineMsg, stateMachine.operator ->());
+                REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "While changing from state (%s) triggered message (%s)", GetName(), stateMachineMsg->GetName())
+            }
+            ok = err.ErrorsCleared();
+        }
+        //Wait for all the replies to arrive...
+        if(ok){
+            if (eventReplyContainer.Size() > 0u) {
+                err = waitSem.Wait(timeout);
+            }
+        }
     }
+    //Install the next state filter...
 
-    CLASS_REGISTER(StateMachineState, "1.0")
+
+    return err;
+}
+
+CLASS_REGISTER(StateMachineState, "1.0")
 }
 

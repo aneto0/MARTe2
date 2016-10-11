@@ -1,5 +1,5 @@
 /**
- * @file StateMachineState.h
+~ * @file StateMachineState.h
  * @brief Header file for class StateMachineState
  * @date 30/09/2016
  * @author Andre Neto
@@ -39,9 +39,11 @@
 
 namespace MARTe {
 /**
- * @brief TODO
+ * @brief A container of StateMachineEvents.
+ * @details Any given state may contain one or more StateMachineEvents. Change state requests
+ *  are filtered by the events. When the event is matched
  */
-class DLL_API StateMachineState: public MessageFilter, public ReferenceContainer {
+class DLL_API StateMachineState: public ReferenceContainer {
 
 public:
 
@@ -50,36 +52,17 @@ public:
     /**
      * @brief Constructor.
      * @post
-     *    GetCode() == 0
+     *    GetCode() == 0 &&
+     *    GetTimeout() == TTInfiniteWait
      */
     StateMachineState();
 
-    /**
-     * @brief Gets the code that identifies the state.
-     * @return the code that identifies the state.
-     */
-    uint32 GetCode() const;
-
-
-    /**
-     * TODO.
-     */
-    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 private:
     /**
      * TODO
      */
     ErrorManagement::ErrorType ActOn(CCString instruction);
 
-    /**
-     * A numerical code which identifies the state.
-     */
-    uint32 code;
-
-    /**
-     * Reference to the state-machine which holds this state
-     */
-    Reference stateMachineIn;
 };
 
 }

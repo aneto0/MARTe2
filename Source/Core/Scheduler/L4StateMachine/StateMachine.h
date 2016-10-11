@@ -1,7 +1,7 @@
 /**
- * @file StateMachineMessage.h
- * @brief Header file for class StateMachineMessage
- * @date 30/09/2016
+ * @file StateMachine.h
+ * @brief Header file for class StateMachine
+ * @date 11/10/2016
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StateMachineMessage
+ * @details This header file contains the declaration of the class StateMachine
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef STATEMACHINEMESSAGE_H_
-#define STATEMACHINEMESSAGE_H_
+#ifndef STATEMACHINE_H_
+#define STATEMACHINE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,66 +31,35 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Message.h"
+#include "Object.h"
+#include "QueuedMessageI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
+
 /**
  * @brief TODO
  */
-class StateMachineMessage: public Message {
-
+class StateMachine : public ReferenceContainer, public QueuedMessageI {
 public:
-
-    CLASS_REGISTER_DECLARATION()
+CLASS_REGISTER_DECLARATION()
 
     /**
-     * TODO
+     * @brief TODO
      */
-    StateMachineMessage();
+    StateMachine();
 
     /**
-     * TODO
+     * @brief TODO
      */
-    virtual ~StateMachineMessage();
+    virtual ~StateMachine();
 
     /**
-     * TODO
-     */
-    uint32 GetCode();
-
-    /**
-     * TODO
-     */
-    CCString GetContent();
-
-    /**
-     * TODO
-     */
-    TimeoutType GetTimeout();
-
-    /**
-     * TODO
+     * @brief TODO
      */
     virtual bool Initialise(StructuredDataI &data);
-
-private:
-    /**
-     * TODO
-     */
-    uint32 code;
-
-    /**
-     * TODO
-     */
-    StreamString content;
-
-    /**
-     * TODO
-     */
-    TimeoutType timeout;
 };
 }
 
@@ -98,4 +67,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* STATEMACHINEMESSAGE_H_ */
+#endif /* STATEMACHINE_H_ */
+

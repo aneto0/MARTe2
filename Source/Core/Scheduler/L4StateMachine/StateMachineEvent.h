@@ -31,6 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "MessageFilter.h"
+#include "ReferenceContainer.h"
 #include "StateMachineEvent.h"
 
 /*---------------------------------------------------------------------------*/
@@ -38,10 +40,95 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 /**
- * TODO
+ * @brief A container of StateMachineMessages.
+ * @details These messages will be triggered (i.e. sent) as soon as a StateMachineMessage
+ * matches this event code (see ConsumeMessage).
  */
-class StateMachineEvent {
+class StateMachineEvent: public ReferenceContainer, public MessageFilter {
+public:
+    CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief Default constructor.
+     * @post
+     *   IsPermanentFilter() == false &&
+     *   GetTimeout() == TTInfiniteWait &&
+     *   GetCode() == 0
+     */
+    StateMachineEvent ();
+
+    /**
+     * @brief Destructor. NOOP.
+     */
+    virtual ~StateMachineEvent();
+
+    /**
+     * @brief Gets the code that identifies the event.
+     * @return the code that identifies the event.
+     */
+    uint32 GetCode() const;
+
+    /**
+     * @brief Gets the maximum timeout to wait for all the replies against a given event.
+     * @return the maximum timeout to wait for all the replies against a given event.
+     */
+    TimeoutType GetTimeout() const;
+
+    /**
+     * @brief Gets the state to follow the trigger of this event.
+     * @return the state to follow the trigger of this event.
+     */
+    CCString GetNextState();
+
+    /**
+     * @brief Sets the StateMachine.
+     * @param[in] stateMachine the StateMachine to set.
+     */
+    void SetStateMachine(Reference stateMachine);
+
+
+    /**
+     * @brief Reads the event code and the maximum timeout to wait for replies.
+     * @param[in] data shall contain a parameter named "Code" holding a number which defines the event code,
+     * and another parameter named "Timeout" with the timeout to wait for all the replies to arrive.
+     * If "Timeout=0" => Timeout = TTInfiniteWait.
+     * @return true if all the parameters are available.
+     */
+    virtual bool Initialise(StructuredDataI &data);
+
+    /**
+     * TODO.
+     */
+    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
+
+private:
+
+    /**
+     * @brief Sends multiple messages and waits for all the replies to arrive.
+     * @param[in] messagesToSend container with messages to send.
+     * @return ErrorManagement::NoError if all the messages can be successfully send and all the replies are received before timeout.
+     */
+    virtual ErrorManagement::ErrorType SendMultipleMessagesAndWaitReply(ReferenceContainer messagesToSend);
+
+    /**
+     * A numerical code which identifies the event.
+     */
+    uint32 code;
+
+    /**
+     * Reference to the state-machine which holds this event
+     */
+    Reference stateMachineIn;
+
+    /**
+     * Maximum timeout to wait for a reply from all the triggered actions which require a reply.
+     */
+    TimeoutType timeout;
+
+    /**
+     * The name of the next state
+     */
+    StreamString nextState;
 };
 }
 
