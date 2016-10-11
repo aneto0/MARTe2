@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "EventSem.h"
 #include "MessageFilter.h"
 
 /*---------------------------------------------------------------------------*/
@@ -39,10 +40,9 @@
 namespace MARTe {
 
 /**
- * @brief Allows catching (i.e. trapping) a container of message replies.
+ * @brief Allows catching a container of message replies.
  * @details When all the reply messages are caught an event semaphore is posted.
  * The filter is removed after catching the reply.
- * TODO TEST!
  */
 class QueuedReplyMessageCatcherFilter: public MessageFilter, public Object {
 public:
@@ -63,10 +63,11 @@ public:
      * @brief Sets the reply messages to be caught.
      * @param[in] messagesToCatchIn the reply messages to be caught.
      */
-    void SetMessagesToCatch(const ReferenceContainer &messagesToCatchIn);
+    void SetMessagesToCatch(ReferenceContainer &messagesToCatchIn);
 
     /**
      * @brief Sets the event semaphore to fire when all the messages have been caught.
+     * @details This assignment is performed by copying the low-level semaphore of \a eventSemIn.
      * @param[in] eventSemIn event semaphore to post when all the messages have been caught.
      */
     void SetEventSemaphore(EventSem &eventSemIn);
@@ -75,6 +76,8 @@ public:
      * @brief Verifies if the \a messageToTest is one of messages to be caught (see SetMessagesToCatch).
      * @param[in] messageToTest The message to test.
      * @return ErrorManagement::NoError if the messageToTest was one of the messages to be caught, otherwise it returns ErrorManagement::UnsupportedFeature.
+     * @pre
+     *   SetEventSemaphore
      */
     virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 
@@ -88,7 +91,7 @@ private:
     /**
      * The semaphore to post when all the messages have been received.
      */
-    EventSem eventSem;
+    EventSem *eventSem;
 
 };
 

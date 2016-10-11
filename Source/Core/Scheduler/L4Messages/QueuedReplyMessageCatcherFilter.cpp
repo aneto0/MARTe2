@@ -1,7 +1,7 @@
 /**
  * @file QueuedReplyMessageCatcherFilter.cpp
  * @brief Source file for class QueuedReplyMessageCatcherFilter
- * @date 7/10/2016
+ * @date 07/10/2016
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -28,7 +28,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "AdvancedErrorManagement.h"
+#include "QueuedReplyMessageCatcherFilter.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,39 +41,75 @@
 namespace MARTe {
 
 QueuedReplyMessageCatcherFilter::QueuedReplyMessageCatcherFilter() :
-        Object(),
-        MessageFilter(false) {
+        MessageFilter(false),
+        Object() {
+    eventSem = NULL_PTR(EventSem *);
 }
 
-void ReplyMessageCatcherMessageFilter::SetMessageToCatch(const ReferenceT<Message> &message) {
-    messageToCatch = message;
+void QueuedReplyMessageCatcherFilter::SetMessagesToCatch(ReferenceContainer &messagesToCatchIn) {
+    messagesToCatch = messagesToCatchIn;
 }
 
-ReplyMessageCatcherMessageFilter::~ReplyMessageCatcherMessageFilter() {
-    caught = true;
+void QueuedReplyMessageCatcherFilter::SetEventSemaphore(EventSem &eventSemIn) {
+    if (eventSem != NULL_PTR(EventSem *)) {
+        delete eventSem;
+    }
+    eventSem = new EventSem(eventSemIn);
 }
 
-ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest) {
+QueuedReplyMessageCatcherFilter::~QueuedReplyMessageCatcherFilter() {
+    if (eventSem != NULL_PTR(EventSem *)) {
+        delete eventSem;
+    }
+}
+
+ErrorManagement::ErrorType QueuedReplyMessageCatcherFilter::ConsumeMessage(ReferenceT<Message> &messageToTest) {
 
     ErrorManagement::ErrorType ret(true);
+    //check reply flag
+    if (!messageToTest->IsReply()) {
+        REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "The message caught is not a reply %s", messageToTest.operator ->()->GetName())
+        ret.warning = true;
+    }
+    bool ok = ret.ErrorsCleared();
+    if (ok) {
+        uint32 i = 0u;
+        bool found = false;
+        for (i = 0u; (i < messagesToCatch.Size()) && (ok) && (!found); i++) {
+            ReferenceT<Message> message = messagesToCatch.Get(i);
+            ok = message.IsValid();
+            if (ok) {
+                found = (message == messageToTest);
+            }
+            else {
+                ret.unsupportedFeature = true;
+            }
 
-    if (messageToTest == messageToCatch) {
-
-        //check reply flag
-        if (!messageToTest->IsReply()) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "The message caught is not a reply %s", messageToTest.operator ->()->GetName())
-            ret.warning = true;
+            if (found) {
+                messagesToCatch.Delete(message);
+            }
         }
-        HandleReplyMessage(messageToTest);
-
+        if (!found) {
+            ret.unsupportedFeature = true;
+        }
     }
-    else {
-        ret.unsupportedFeature = true;
+    ok = ret.ErrorsCleared();
+    if (ok) {
+        if (messagesToCatch.Size() == 0u) {
+            if (eventSem != NULL_PTR(EventSem *)) {
+                ret.fatalError = !eventSem->Post();
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::FatalError, "The event semaphore was not set!");
+                ret.fatalError = true;
+            }
+        }
     }
-
     return ret;
 
 }
+
+CLASS_REGISTER(QueuedReplyMessageCatcherFilter, "1.0")
+
 }
 
-	
