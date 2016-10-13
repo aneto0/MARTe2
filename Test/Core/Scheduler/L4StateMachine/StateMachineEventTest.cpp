@@ -28,12 +28,36 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "ConfigurationDatabase.h"
+#include "CLASSMETHODREGISTER.h"
+#include "ObjectRegistryDatabase.h"
+#include "StandardParser.h"
+#include "StateMachine.h"
 #include "StateMachineEvent.h"
 #include "StateMachineEventTest.h"
+#include "StateMachineMessage.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+class StateMachineEventTestMessageReceiver: public MARTe::Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    StateMachineEventTestMessageReceiver() {
+        flag = 0;
+    }
+
+    MARTe::ErrorManagement::ErrorType ReceiverMethod(MARTe::ReferenceContainer& ref){
+        flag = 1;
+        return MARTe::ErrorManagement::NoError;
+    }
+
+    MARTe::int32 flag;
+
+};
+CLASS_REGISTER(StateMachineEventTestMessageReceiver, "1.0")
+CLASS_METHOD_REGISTER(StateMachineEventTestMessageReceiver, ReceiverMethod)
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -41,8 +65,159 @@
 bool StateMachineEventTest::TestDefaultConstructor() {
     using namespace MARTe;
     StateMachineEvent event;
-    bool ok = (event.GetCode() == 0u);
+    bool ok = (event.GetTimeout() == TTInfiniteWait);
+    return ok;
+}
+
+bool StateMachineEventTest::TestGetTimeout() {
+    return TestInitialise();
+}
+
+bool StateMachineEventTest::TestGetNextState() {
+    return TestInitialise();
+}
+
+bool StateMachineEventTest::TestSetStateMachine() {
+    return TestConsumeMessage();
+}
+
+bool StateMachineEventTest::TestInitialise() {
+    using namespace MARTe;
+    StateMachineEvent event;
+    ConfigurationDatabase cdb;
+    cdb.Write("NextState", "B");
+    cdb.Write("NextStateError", "E");
+    cdb.Write("Timeout", 0);
+    bool ok = event.Initialise(cdb);
+    ok &= (StringHelper::Compare(event.GetNextState(), "B") == 0);
+    ok &= (StringHelper::Compare(event.GetNextStateError(), "E") == 0);
     ok &= (event.GetTimeout() == TTInfiniteWait);
     return ok;
 }
 
+bool StateMachineEventTest::TestInitialise_NoZeroTimeout() {
+    using namespace MARTe;
+    StateMachineEvent event;
+    ConfigurationDatabase cdb;
+    cdb.Write("NextState", "B");
+    cdb.Write("NextStateError", "E");
+    cdb.Write("Timeout", 10);
+    bool ok = event.Initialise(cdb);
+    ok &= (StringHelper::Compare(event.GetNextState(), "B") == 0);
+    ok &= (StringHelper::Compare(event.GetNextStateError(), "E") == 0);
+    ok &= (event.GetTimeout() == 10);
+    return ok;
+}
+
+bool StateMachineEventTest::TestGetNextStateError() {
+    return TestInitialise();
+}
+
+bool StateMachineEventTest::TestInitialise_False_NoNextState() {
+    using namespace MARTe;
+    StateMachineEvent event;
+    ConfigurationDatabase cdb;
+    cdb.Write("NextStateError", "E");
+    cdb.Write("Timeout", 10);
+    return !event.Initialise(cdb);
+}
+
+bool StateMachineEventTest::TestInitialise_True_NoNextStateError() {
+    using namespace MARTe;
+    StateMachineEvent event;
+    ConfigurationDatabase cdb;
+    cdb.Write("NextState", "B");
+    cdb.Write("Timeout", 10);
+    bool ok = event.Initialise(cdb);
+    ok &= (StringHelper::Compare(event.GetNextState(), "B") == 0);
+    ok &= (StringHelper::Compare(event.GetNextStateError(), "ERROR") == 0);
+    ok &= (event.GetTimeout() == 10);
+    return ok;
+}
+
+bool StateMachineEventTest::TestInitialise_True_NoTimeout() {
+    using namespace MARTe;
+    StateMachineEvent event;
+    ConfigurationDatabase cdb;
+    cdb.Write("Code", 0xf);
+    cdb.Write("NextState", "B");
+    cdb.Write("NextStateError", "E");
+    bool ok = event.Initialise(cdb);
+    ok &= (StringHelper::Compare(event.GetNextState(), "B") == 0);
+    ok &= (StringHelper::Compare(event.GetNextStateError(), "E") == 0);
+    ok &= (event.GetTimeout() == TTInfiniteWait);
+    return ok;
+}
+
+bool StateMachineEventTest::TestConsumeMessage() {
+    using namespace MARTe;
+
+    const char8 * const config1 = ""
+            "+StateMachine = {"
+            "    Class = StateMachine"
+            "    +A = {"
+            "        Class = ReferenceContainer"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"B\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "        +E2 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "        }"
+            "    }"
+            "    +B = {"
+            "        Class = ReferenceContainer"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "        }"
+            "    }"
+            "    +E = {"
+            "        Class = ReferenceContainer"
+            "        +E2 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"E\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "        }"
+            "    }"
+            "";
+
+    ReferenceT<StateMachine> stateMachine = ReferenceT<StateMachine>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineEventTestMessageReceiver> receiver = ReferenceT<StateMachineEventTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    receiver->SetName("Receiver");
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+    StreamString configStream = config1;
+    configStream.Seek(0);
+    ConfigurationDatabase cdb;
+    StandardParser parser(configStream, cdb);
+    parser.Parse();
+    bool ok = stateMachine->Initialise(cdb);
+    ReferenceT<StateMachineEvent> event = stateMachine->Find("A.E1");
+    event->SetStateMachine(stateMachine);
+
+    ReferenceT<Message> stateMachineMessage = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase msgCdb;
+    msgCdb.Write("Destination", "StateMachine");
+    msgCdb.Write("Function", "E1");
+    ok &= stateMachineMessage->Initialise(msgCdb);
+    ok &= (event->ConsumeMessage(stateMachineMessage) == ErrorManagement::NoError);
+
+
+    return ok;
+
+}

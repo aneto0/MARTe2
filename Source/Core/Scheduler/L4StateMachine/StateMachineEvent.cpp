@@ -47,16 +47,12 @@ StateMachineEvent::StateMachineEvent() :
         ReferenceContainer(),
         MessageFilter(false) {
     timeout = TTInfiniteWait;
-    code = 0;
 }
 
 StateMachineEvent::~StateMachineEvent() {
 
 }
 
-uint32 StateMachineEvent::GetCode() const {
-    return code;
-}
 
 TimeoutType StateMachineEvent::GetTimeout() const {
     return timeout;
@@ -64,6 +60,10 @@ TimeoutType StateMachineEvent::GetTimeout() const {
 
 CCString StateMachineEvent::GetNextState() {
     return nextState.Buffer();
+}
+
+CCString StateMachineEvent::GetNextStateError() {
+    return nextStateError.Buffer();
 }
 
 void StateMachineEvent::SetStateMachine(Reference stateMachine) {
@@ -74,22 +74,20 @@ bool StateMachineEvent::Initialise(StructuredDataI &data) {
     ErrorManagement::ErrorType err;
     err.parametersError = !ReferenceContainer::Initialise(data);
     if (err.ErrorsCleared()) {
-        err.parametersError = !data.Read("Code", code);
-        if (!err.ErrorsCleared()) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Code was not specified");
-        }
-    }
-    if (err.ErrorsCleared()) {
         err.parametersError = !data.Read("NextState", nextState);
         if (!err.ErrorsCleared()) {
             REPORT_ERROR(ErrorManagement::ParametersError, "NextState was not specified");
         }
     }
+    if (!data.Read("NextStateError", nextStateError)) {
+        REPORT_ERROR(ErrorManagement::Warning, "NextStateError was not specified. Using ERROR.");
+        nextStateError = "ERROR";
+    }
     uint32 msecTimeout;
     if (err.ErrorsCleared()) {
-        err.parametersError = !data.Read("Timeout", msecTimeout);
-        if (!!err.ErrorsCleared()) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Timeout was not specified");
+        if (!data.Read("Timeout", msecTimeout)) {
+            REPORT_ERROR(ErrorManagement::Warning, "Timeout was not specified. Using TTInfiniteWait");
+            msecTimeout = 0u;
         }
     }
     if (err.ErrorsCleared()) {
@@ -106,70 +104,86 @@ bool StateMachineEvent::Initialise(StructuredDataI &data) {
 
 ErrorManagement::ErrorType StateMachineEvent::ConsumeMessage(ReferenceT<Message> &messageToTest) {
 
-    ReferenceT<StateMachineMessage> msg = messageToTest;
     ReferenceT<StateMachine> stateMachine = stateMachineIn;
 
     ErrorManagement::ErrorType err;
-    err.fatalError = !msg.IsValid();
+    err.fatalError = !messageToTest.IsValid();
 
     bool found = false;
     //Check if the destination of this message is this event
     if (err.ErrorsCleared()) {
-        found = (msg->GetCode() == GetCode());
-        if (!found) {
-            if (msg->GetContent() != NULL_PTR(CCString)) {
-                found = (StringHelper::Compare(msg->GetContent(), GetName()) == 0u);
-            }
+        /*found = (msg->GetCode() == GetCode());
+         if (!found) {
+         if (msg->GetContent() != NULL_PTR(CCString)) {
+         found = (StringHelper::Compare(msg->GetContent(), GetName()) == 0u);
+         }
+         }*/
+        if (messageToTest->GetFunction() != NULL_PTR(CCString)) {
+            found = (StringHelper::Compare(messageToTest->GetFunction(), GetName()) == 0u);
         }
+
     }
     //Found.
     if (found) {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Changing from state (%s) with code (%d)", GetName(), GetCode())
+        REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Changing from state (%s) to state (%s)", GetName(), nextState)
         err = SendMultipleMessagesAndWaitReply(*this);
-    }
-    //Install the next state event filters...
-    bool ok = err.ErrorsCleared();
-    ReferenceT<ReferenceContainer> nextStateRef;
-    if (ok) {
-        if (nextState != NULL_PTR(CCString)) {
-            nextStateRef = stateMachine->Find(nextState.Buffer());
-            err.fatalError = !nextStateRef.IsValid();
-        }
-        else {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In state (%s) the next state is not defined", GetName())
-        }
-    }
-    ok = err.ErrorsCleared();
-    if (ok) {
-        uint32 j;
-        for (j = 0u; (j < nextStateRef->Size()) && (ok); j++) {
-            ReferenceT<StateMachineEvent> nextStateEventJ = nextStateRef->Get(j);
-            if (nextStateEventJ.IsValid()) {
-                err = stateMachine->InstallMessageFilter(nextStateEventJ);
-                ok = err.ErrorsCleared();
-            }
-        }
-    }
-    //Check if the next state there are messages to be fired at ENTER
-    if (ok) {
-        ReferenceT<ReferenceContainer> enterMessages = nextStateRef->Find("ENTER");
-        if (enterMessages.IsValid()) {
-            //Check if it is a single message
-            ReferenceT<ReferenceContainer> enterMessage = enterMessages;
-            if (enterMessage.IsValid()) {
-                ReferenceContainer messagesToSend;
-                messagesToSend.Insert(enterMessage);
-                err = SendMultipleMessagesAndWaitReply(messagesToSend);
+        //Install the next state event filters...
+        ReferenceT<ReferenceContainer> nextStateRef;
+        if (err.ErrorsCleared()) {
+            if (nextState.Size() > 0u) {
+                nextStateRef = stateMachine->Find(nextState.Buffer());
+                err.fatalError = !nextStateRef.IsValid();
             }
             else {
-                err = SendMultipleMessagesAndWaitReply(*(enterMessages.operator ->()));
+                REPORT_ERROR_PARAMETERS(err, "In state (%s) the NextState is not defined", GetName())
             }
         }
-    }
-    else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In state (%s) the next state is not valid", GetName())
-    }
+        else {
+            REPORT_ERROR_PARAMETERS(err, "In state (%s) could not send all the event messages. Moving to error state (%s)", GetName(), nextStateError)
+            if (nextStateError.Size() > 0u) {
+                nextStateRef = stateMachine->Find(nextStateError.Buffer());
+                err.fatalError = !nextStateRef.IsValid();
+            }
+            else {
+                REPORT_ERROR_PARAMETERS(err, "In state (%s) the NextStateError is not defined", GetName())
+            }
+            if (err.ErrorsCleared()) {
+                //Clear errors to allow to install the ERROR
+                err = false;
+            }
+        }
+        if (err.ErrorsCleared()) {
+            uint32 j;
+            bool ok = true;
+            for (j = 0u; (j < nextStateRef->Size()) && (ok); j++) {
+                ReferenceT<StateMachineEvent> nextStateEventJ = nextStateRef->Get(j);
+                if (nextStateEventJ.IsValid()) {
+                    err = stateMachine->InstallMessageFilter(nextStateEventJ);
+                    ok = err.ErrorsCleared();
+                }
+            }
+        }
+        else {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In state (%s) the next state is not valid", GetName())
+        }
+        //Check if the next state there are messages to be fired at ENTER
+        if (err.ErrorsCleared()) {
+            ReferenceT<ReferenceContainer> enterMessages = nextStateRef->Find("ENTER");
+            if (enterMessages.IsValid()) {
+                //Check if it is a single message
+                ReferenceT<ReferenceContainer> enterMessage = enterMessages;
+                if (enterMessage.IsValid()) {
+                    ReferenceContainer messagesToSend;
+                    messagesToSend.Insert(enterMessage);
+                    err = SendMultipleMessagesAndWaitReply(messagesToSend);
+                }
+                else {
+                    err = SendMultipleMessagesAndWaitReply(*(enterMessages.operator ->()));
+                }
+            }
+        }
 
+    }
     return err;
 }
 
@@ -191,7 +205,7 @@ ErrorManagement::ErrorType StateMachineEvent::SendMultipleMessagesAndWaitReply(R
 
     //Only accept indirect replies
     for (i = 0u; i < Size(); i++) {
-        ReferenceT<StateMachineMessage> eventMsg = messagesToSend.Get(i);
+        ReferenceT<Message> eventMsg = messagesToSend.Get(i);
         if (eventMsg.IsValid()) {
             if (eventMsg->ExpectsReply()) {
                 eventMsg->SetExpectsIndirectReply(true);

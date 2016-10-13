@@ -46,34 +46,54 @@ TEST(StateMachineEventGTest,TestConstructor) {
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-#if 0
-TEST(QueuedReplyMessageCatcherFilterGTest,TestSetMessagesToCatch) {
-    QueuedReplyMessageCatcherFilterTest target;
-    ASSERT_TRUE(target.TestSetMessagesToCatch());
-}
-
-TEST(QueuedReplyMessageCatcherFilterGTest,TestSetEventSemaphore) {
-    QueuedReplyMessageCatcherFilterTest target;
-    ASSERT_TRUE(target.TestSetEventSemaphore());
-}
-
-TEST(QueuedReplyMessageCatcherFilterGTest,TestConsumeMessage) {
-    QueuedReplyMessageCatcherFilterTest target;
+TEST(StateMachineEventGTest,TestConsumeMessage) {
+    StateMachineEventTest target;
     ASSERT_TRUE(target.TestConsumeMessage());
 }
 
-TEST(QueuedReplyMessageCatcherFilterGTest,TestConsumeMessage_MissingMessage) {
-    QueuedReplyMessageCatcherFilterTest target;
-    ASSERT_TRUE(target.TestConsumeMessage_MissingMessage());
+TEST(StateMachineEventGTest,TestGetNextState) {
+    StateMachineEventTest target;
+    ASSERT_TRUE(target.TestGetNextState());
 }
 
-TEST(QueuedReplyMessageCatcherFilterGTest,TestConsumeMessage_InvalidMessage) {
-    QueuedReplyMessageCatcherFilterTest target;
-    ASSERT_TRUE(target.TestConsumeMessage_InvalidMessage());
+TEST(StateMachineEventGTest,TestGetNextStateError) {
+    StateMachineEventTest target;
+    ASSERT_TRUE(target.TestGetNextStateError());
 }
 
-TEST(QueuedReplyMessageCatcherFilterGTest,TestConsumeMessage_MessageNoEventSem) {
-    QueuedReplyMessageCatcherFilterTest target;
-    ASSERT_TRUE(target.TestConsumeMessage_MessageNoEventSem());
+TEST(StateMachineEventGTest,TestGetTimeout) {
+    StateMachineEventTest target;
+    ASSERT_TRUE(target.TestGetTimeout());
 }
-#endif
+
+TEST(StateMachineEventGTest,TestInitialise) {
+    StateMachineEventTest target;
+    ASSERT_TRUE(target.TestInitialise());
+}
+
+TEST(StateMachineEventGTest,TestInitialise_False_NoNextState) {
+    StateMachineEventTest target;
+    ASSERT_TRUE(target.TestInitialise_False_NoNextState());
+}
+
+TEST(StateMachineEventGTest,TestInitialise_NoZeroTimeout) {
+    StateMachineEventTest target;
+    ASSERT_TRUE(target.TestInitialise_NoZeroTimeout());
+}
+
+TEST(StateMachineEventGTest,TestInitialise_True_NoNextStateError) {
+    StateMachineEventTest target;
+    ASSERT_TRUE(target.TestInitialise_True_NoNextStateError());
+}
+
+TEST(StateMachineEventGTest,TestInitialise_True_NoTimeout) {
+    StateMachineEventTest target;
+    ASSERT_TRUE(target.TestInitialise_True_NoTimeout());
+}
+
+TEST(StateMachineEventGTest,TestSetStateMachine) {
+    StateMachineEventTest target;
+    ASSERT_TRUE(target.TestSetStateMachine());
+}
+
+

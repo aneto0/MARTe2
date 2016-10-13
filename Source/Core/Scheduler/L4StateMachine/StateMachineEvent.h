@@ -52,21 +52,14 @@ public:
      * @brief Default constructor.
      * @post
      *   IsPermanentFilter() == false &&
-     *   GetTimeout() == TTInfiniteWait &&
-     *   GetCode() == 0
+     *   GetTimeout() == TTInfiniteWait
      */
-    StateMachineEvent ();
+    StateMachineEvent();
 
     /**
      * @brief Destructor. NOOP.
      */
     virtual ~StateMachineEvent();
-
-    /**
-     * @brief Gets the code that identifies the event.
-     * @return the code that identifies the event.
-     */
-    uint32 GetCode() const;
 
     /**
      * @brief Gets the maximum timeout to wait for all the replies against a given event.
@@ -81,18 +74,27 @@ public:
     CCString GetNextState();
 
     /**
+     * @brief Gets the following state in case of an error when triggering this event.
+     * @return the following state in case of an error when triggering this event.
+     */
+    CCString GetNextStateError();
+
+    /**
      * @brief Sets the StateMachine.
      * @param[in] stateMachine the StateMachine to set.
      */
     void SetStateMachine(Reference stateMachine);
 
-
     /**
      * @brief Reads the event code and the maximum timeout to wait for replies.
      * @param[in] data shall contain a parameter named "Code" holding a number which defines the event code,
-     * and another parameter named "Timeout" with the timeout to wait for all the replies to arrive.
+     * and another parameter named "NextState" with the name of the state to which the state machine shall move if
+     * this event is triggered.
+     * If a parameter named "Timeout" is defined it will be used to define the maximum time to wait for all the replies to arrive.
      * If "Timeout=0" => Timeout = TTInfiniteWait.
-     * @return true if all the parameters are available.
+     * If a parameter named "NextStateError" exists, it will be used to define the name of the state to where the state machine
+     *  will move in case of an error when moving away from this event.
+     * @return true if the "Code" and "NextState" parameters are available.
      */
     virtual bool Initialise(StructuredDataI &data);
 
@@ -111,11 +113,6 @@ private:
     virtual ErrorManagement::ErrorType SendMultipleMessagesAndWaitReply(ReferenceContainer messagesToSend);
 
     /**
-     * A numerical code which identifies the event.
-     */
-    uint32 code;
-
-    /**
      * Reference to the state-machine which holds this event
      */
     Reference stateMachineIn;
@@ -129,6 +126,11 @@ private:
      * The name of the next state
      */
     StreamString nextState;
+
+    /**
+     * The name of the state to go in case of error
+     */
+    StreamString nextStateError;
 };
 }
 
