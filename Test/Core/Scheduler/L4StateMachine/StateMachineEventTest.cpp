@@ -31,25 +31,28 @@
 #include "ConfigurationDatabase.h"
 #include "CLASSMETHODREGISTER.h"
 #include "ObjectRegistryDatabase.h"
+#include "RegisteredMethodsMessageFilter.h"
 #include "StandardParser.h"
 #include "StateMachine.h"
 #include "StateMachineEvent.h"
 #include "StateMachineEventTest.h"
-#include "StateMachineMessage.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-class StateMachineEventTestMessageReceiver: public MARTe::Object {
+class StateMachineEventTestMessageReceiver: public MARTe::Object, public MARTe::MessageI {
 public:
     CLASS_REGISTER_DECLARATION()
 
-    StateMachineEventTestMessageReceiver() {
+StateMachineEventTestMessageReceiver    () {
+        MARTe::ReferenceT<MARTe::RegisteredMethodsMessageFilter> filter = MARTe::ReferenceT<MARTe::RegisteredMethodsMessageFilter>(MARTe::GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        filter->SetDestination(this);
+        InstallMessageFilter(filter);
         flag = 0;
     }
 
-    MARTe::ErrorManagement::ErrorType ReceiverMethod(MARTe::ReferenceContainer& ref){
-        flag = 1;
+    MARTe::ErrorManagement::ErrorType ReceiverMethod(MARTe::ReferenceContainer& ref) {
+        flag++;
         return MARTe::ErrorManagement::NoError;
     }
 
@@ -177,6 +180,14 @@ bool StateMachineEventTest::TestConsumeMessage() {
             "    }"
             "    +B = {"
             "        Class = ReferenceContainer"
+            "        +ENTER = {"
+            "            Class = ReferenceContainer"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
             "        +E1 = {"
             "            Class = StateMachineEvent"
             "            NextState = \"A\""
@@ -188,27 +199,32 @@ bool StateMachineEventTest::TestConsumeMessage() {
             "        Class = ReferenceContainer"
             "        +E2 = {"
             "            Class = StateMachineEvent"
-            "            NextState = \"E\""
+            "            NextState = \"A\""
             "            NextStateError = \"E\""
             "            Timeout = 0"
             "        }"
             "    }"
-            "";
+            "}";
 
-    ReferenceT<StateMachine> stateMachine = ReferenceT<StateMachine>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    ReferenceT<StateMachineEventTestMessageReceiver> receiver = ReferenceT<StateMachineEventTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineEventTestMessageReceiver> receiver = ReferenceT<StateMachineEventTestMessageReceiver>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
     receiver->SetName("Receiver");
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
-    ObjectRegistryDatabase::Instance()->Insert(receiver);
     StreamString configStream = config1;
     configStream.Seek(0);
     ConfigurationDatabase cdb;
-    StandardParser parser(configStream, cdb);
-    parser.Parse();
-    bool ok = stateMachine->Initialise(cdb);
-    ReferenceT<StateMachineEvent> event = stateMachine->Find("A.E1");
-    event->SetStateMachine(stateMachine);
+    StreamString parserErr;
+    StandardParser parser(configStream, cdb, &parserErr);
+    bool ok = parser.Parse();
+    if (!ok) {
+        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+    ReferenceT<StateMachineEvent> event = ObjectRegistryDatabase::Instance()->Find("StateMachine.A.E1");
 
     ReferenceT<Message> stateMachineMessage = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ConfigurationDatabase msgCdb;
@@ -216,8 +232,7 @@ bool StateMachineEventTest::TestConsumeMessage() {
     msgCdb.Write("Function", "E1");
     ok &= stateMachineMessage->Initialise(msgCdb);
     ok &= (event->ConsumeMessage(stateMachineMessage) == ErrorManagement::NoError);
-
-
+    ok &= (receiver->flag == 2);
     return ok;
 
 }

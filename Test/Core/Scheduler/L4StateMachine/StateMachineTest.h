@@ -1,7 +1,7 @@
 /**
- * @file StateMachineMessage.h
- * @brief Header file for class StateMachineMessage
- * @date 30/09/2016
+ * @file StateMachineTest.h
+ * @brief Header file for class StateMachineTest
+ * @date 15/10/2016
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StateMachineMessage
+ * @details This header file contains the declaration of the class StateMachineTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef STATEMACHINEMESSAGE_H_
-#define STATEMACHINEMESSAGE_H_
+#ifndef STATEMACHINETEST_H_
+#define STATEMACHINETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,71 +31,27 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Message.h"
+#include "StateMachine.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
 /**
- * @brief TODO
+ * Tests the StateMachineEvent public methods.
  */
-class StateMachineMessage: public Message {
-
+class StateMachineTest {
 public:
-
-    CLASS_REGISTER_DECLARATION()
-
     /**
-     * TODO
+     * @brief Tests the default constructor.
      */
-    StateMachineMessage();
-
-    /**
-     * TODO
-     */
-    virtual ~StateMachineMessage();
-
-    /**
-     * TODO
-     */
-    uint32 GetCode();
-
-    /**
-     * TODO
-     */
-    CCString GetContent();
-
-    /**
-     * TODO
-     */
-    TimeoutType GetTimeout();
-
-    /**
-     * TODO
-     */
-    virtual bool Initialise(StructuredDataI &data);
-
-private:
-    /**
-     * TODO
-     */
-    uint32 code;
-
-    /**
-     * TODO
-     */
-    StreamString content;
-
-    /**
-     * TODO
-     */
-    TimeoutType timeout;
+    bool TestDefaultConstructor();
 };
-}
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* STATEMACHINEMESSAGE_H_ */
+#endif /* STATEMACHINETEST_H_ */
+	

@@ -24,7 +24,8 @@
 #
 #############################################################
 
-OBJSX=  StateMachineEventTest.x
+OBJSX=  StateMachineEventTest.x \
+    StateMachineTest.x
 
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..

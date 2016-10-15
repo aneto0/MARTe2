@@ -40,9 +40,10 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 /**
- * @brief A container of StateMachineMessages.
- * @details These messages will be triggered (i.e. sent) as soon as a StateMachineMessage
- * matches this event code (see ConsumeMessage).
+ * @brief The StateMachine event definition.
+ * @details When this event is triggered (i.e. when a message whose Function is the Name() of this
+ *  StateMachineEvent instance) the StateMachine will change to the state given by GetNextState()
+ *  and all the Message instances that belong to this container will be triggered.
  */
 class StateMachineEvent: public ReferenceContainer, public MessageFilter {
 public:
@@ -87,8 +88,7 @@ public:
 
     /**
      * @brief Reads the event code and the maximum timeout to wait for replies.
-     * @param[in] data shall contain a parameter named "Code" holding a number which defines the event code,
-     * and another parameter named "NextState" with the name of the state to which the state machine shall move if
+     * @param[in] data shall contain a parameter named "NextState" with the name of the state to which the state machine shall move if
      * this event is triggered.
      * If a parameter named "Timeout" is defined it will be used to define the maximum time to wait for all the replies to arrive.
      * If "Timeout=0" => Timeout = TTInfiniteWait.
@@ -99,18 +99,13 @@ public:
     virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * TODO.
+     * @brief Checks if the messageToTest->GetFunction() == GetName() and if so requests a state change to the state machine.
+     * @param[in] messageToTest the message with the target event name encoded in the messageToTest->GetFunction().
+     * @return ErrorManagement::NoError if messageToTest->GetFunction() == GetName() and the event can be successfully triggered in the state machine.
      */
     virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 
 private:
-
-    /**
-     * @brief Sends multiple messages and waits for all the replies to arrive.
-     * @param[in] messagesToSend container with messages to send.
-     * @return ErrorManagement::NoError if all the messages can be successfully send and all the replies are received before timeout.
-     */
-    virtual ErrorManagement::ErrorType SendMultipleMessagesAndWaitReply(ReferenceContainer messagesToSend);
 
     /**
      * Reference to the state-machine which holds this event

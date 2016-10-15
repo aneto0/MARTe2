@@ -29,10 +29,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
-#include "QueuedReplyMessageCatcherFilter.h"
 #include "StateMachine.h"
 #include "StateMachineEvent.h"
-#include "StateMachineMessage.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -112,12 +111,6 @@ ErrorManagement::ErrorType StateMachineEvent::ConsumeMessage(ReferenceT<Message>
     bool found = false;
     //Check if the destination of this message is this event
     if (err.ErrorsCleared()) {
-        /*found = (msg->GetCode() == GetCode());
-         if (!found) {
-         if (msg->GetContent() != NULL_PTR(CCString)) {
-         found = (StringHelper::Compare(msg->GetContent(), GetName()) == 0u);
-         }
-         }*/
         if (messageToTest->GetFunction() != NULL_PTR(CCString)) {
             found = (StringHelper::Compare(messageToTest->GetFunction(), GetName()) == 0u);
         }
@@ -125,124 +118,12 @@ ErrorManagement::ErrorType StateMachineEvent::ConsumeMessage(ReferenceT<Message>
     }
     //Found.
     if (found) {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Changing from state (%s) to state (%s)", GetName(), nextState)
-        err = SendMultipleMessagesAndWaitReply(*this);
-        //Install the next state event filters...
-        ReferenceT<ReferenceContainer> nextStateRef;
-        if (err.ErrorsCleared()) {
-            if (nextState.Size() > 0u) {
-                nextStateRef = stateMachine->Find(nextState.Buffer());
-                err.fatalError = !nextStateRef.IsValid();
-            }
-            else {
-                REPORT_ERROR_PARAMETERS(err, "In state (%s) the NextState is not defined", GetName())
-            }
-        }
-        else {
-            REPORT_ERROR_PARAMETERS(err, "In state (%s) could not send all the event messages. Moving to error state (%s)", GetName(), nextStateError)
-            if (nextStateError.Size() > 0u) {
-                nextStateRef = stateMachine->Find(nextStateError.Buffer());
-                err.fatalError = !nextStateRef.IsValid();
-            }
-            else {
-                REPORT_ERROR_PARAMETERS(err, "In state (%s) the NextStateError is not defined", GetName())
-            }
-            if (err.ErrorsCleared()) {
-                //Clear errors to allow to install the ERROR
-                err = false;
-            }
-        }
-        if (err.ErrorsCleared()) {
-            uint32 j;
-            bool ok = true;
-            for (j = 0u; (j < nextStateRef->Size()) && (ok); j++) {
-                ReferenceT<StateMachineEvent> nextStateEventJ = nextStateRef->Get(j);
-                if (nextStateEventJ.IsValid()) {
-                    err = stateMachine->InstallMessageFilter(nextStateEventJ);
-                    ok = err.ErrorsCleared();
-                }
-            }
-        }
-        else {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In state (%s) the next state is not valid", GetName())
-        }
-        //Check if the next state there are messages to be fired at ENTER
-        if (err.ErrorsCleared()) {
-            ReferenceT<ReferenceContainer> enterMessages = nextStateRef->Find("ENTER");
-            if (enterMessages.IsValid()) {
-                //Check if it is a single message
-                ReferenceT<ReferenceContainer> enterMessage = enterMessages;
-                if (enterMessage.IsValid()) {
-                    ReferenceContainer messagesToSend;
-                    messagesToSend.Insert(enterMessage);
-                    err = SendMultipleMessagesAndWaitReply(messagesToSend);
-                }
-                else {
-                    err = SendMultipleMessagesAndWaitReply(*(enterMessages.operator ->()));
-                }
-            }
-        }
-
+        //Remove all the filters which
+        err = stateMachine->EventTriggered(this);
     }
     return err;
 }
 
-ErrorManagement::ErrorType StateMachineEvent::SendMultipleMessagesAndWaitReply(ReferenceContainer messagesToSend) {
-
-    ErrorManagement::ErrorType err;
-    ReferenceT<StateMachine> stateMachine = stateMachineIn;
-
-    //Semaphore to wait for replies from events which require a reply
-    EventSem waitSem;
-    bool ok = waitSem.Create();
-    if (ok) {
-        ok = waitSem.Reset();
-    }
-
-    //Prepare to wait for eventual replies
-    ReferenceContainer eventReplyContainer;
-    uint32 i;
-
-    //Only accept indirect replies
-    for (i = 0u; i < Size(); i++) {
-        ReferenceT<Message> eventMsg = messagesToSend.Get(i);
-        if (eventMsg.IsValid()) {
-            if (eventMsg->ExpectsReply()) {
-                eventMsg->SetExpectsIndirectReply(true);
-            }
-            if (eventMsg->ExpectsIndirectReply()) {
-                eventReplyContainer.Insert(eventMsg);
-            }
-        }
-    }
-
-    //Prepare the filter which will wait for all the replies
-    if (eventReplyContainer.Size() > 0u) {
-        ReferenceT<QueuedReplyMessageCatcherFilter> filter(new (NULL) QueuedReplyMessageCatcherFilter());
-        filter->SetMessagesToCatch(eventReplyContainer);
-        filter->SetEventSemaphore(waitSem);
-        stateMachine->MessageI::InstallMessageFilter(filter, 0);
-    }
-
-    ok = err.ErrorsCleared();
-    for (i = 0u; (i < Size()) && (ok); i++) {
-        ReferenceT<Message> stateMachineMsg = messagesToSend.Get(i);
-        if (stateMachineMsg.IsValid()) {
-            err = MessageI::SendMessage(stateMachineMsg, stateMachine.operator ->());
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "While changing from state (%s) triggered message (%s)", GetName(),
-                                    stateMachineMsg->GetName())
-        }
-        ok = err.ErrorsCleared();
-    }
-    //Wait for all the replies to arrive...
-    if (ok) {
-        if (eventReplyContainer.Size() > 0u) {
-            err = waitSem.Wait(timeout);
-        }
-    }
-
-    return err;
-}
 
 CLASS_REGISTER(StateMachineEvent, "1.0")
 

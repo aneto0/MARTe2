@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "Object.h"
 #include "QueuedMessageI.h"
+#include "StateMachineEvent.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -40,19 +41,69 @@
 namespace MARTe {
 
 /**
- * @brief TODO
+ * @brief Implementation of a complete state machine.
+ * @details A StateMachine contains one or more states (which are ReferenceContainre instances).
+ * A state contains one or more StateMachineEvent instances.
+ * A StateMachineEvent instance contains one or Message instances to be triggered when the event is matched.
+ * The StateMachine automatically moves to the first state defined. To change state a message with the event
+ * name, which contains the next state, must be received.
+ *
+ * On each state, if a ReferenceContainer named ENTER exists, then all the messages belonging to this container
+ *  will be sent upon entering this state.
+
+ *
+ * The configuration syntax is (object names are only given as an example):
+ * +StateMachine = {
+ *     Class = StateMachine
+ *     +State1 = {
+ *        Class = ReferenceContainer
+ *        +Event1 = {
+ *            Class = StateMachineEvent
+ *            NextState = State2
+ *            +Message1 = {
+ *               Class = Message
+ *               Destination = SomeObject
+ *            }
+ *        }
+ *        +SameState = {
+ *            Class = StateMachineEvent
+ *            NextState = State1
+ *        }
+ *     }
+ *     +State2 = {
+ *        Class = ReferenceContainer
+ *        +ENTER = {
+ *            Class = ReferenceContainer
+ *            +Message1 = {
+ *               Class = Message
+ *               Destination = SomeObject
+ *            }
+ *        }
+ *        +Event1 = {
+ *            Class = StateMachineEvent
+ *            NextState = State1
+ *        }
+ *     }
+ *     +ERROR = {
+ *        Class = ReferenceContainer
+ *        +Event1 = {
+ *            Class = StateMachineEvent
+ *            NextState = State1
+ *        }
+ *     }
+ * }
  */
-class StateMachine : public ReferenceContainer, public QueuedMessageI {
+class StateMachine: public ReferenceContainer, public QueuedMessageI {
 public:
-CLASS_REGISTER_DECLARATION()
+    CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief TODO
+     * @brief Default constructor. NOOP.
      */
     StateMachine();
 
     /**
-     * @brief TODO
+     * @brief Destructor. NOOP.
      */
     virtual ~StateMachine();
 
@@ -60,6 +111,21 @@ CLASS_REGISTER_DECLARATION()
      * @brief TODO
      */
     virtual bool Initialise(StructuredDataI &data);
+
+    /**
+     * @brief TODO
+     */
+    ErrorManagement::ErrorType EventTriggered(ReferenceT<StateMachineEvent> event);
+
+private:
+    /**
+     * @brief Sends multiple messages and waits for all the replies to arrive.
+     * @param[in] messagesToSend container with messages to send.
+     * @return ErrorManagement::NoError if all the messages can be successfully send and all the replies are received before timeout.
+     */
+    virtual ErrorManagement::ErrorType SendMultipleMessagesAndWaitReply(ReferenceContainer messagesToSend, const TimeoutType &timeout);
+
+    ReferenceT<ReferenceContainer> currentState;
 };
 }
 

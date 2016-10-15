@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX=  StateMachineEventGTest.x
+OBJSX=  StateMachineEventGTest.x \
+    StateMachineGTest.x
 
 PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..

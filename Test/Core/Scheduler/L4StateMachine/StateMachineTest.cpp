@@ -1,7 +1,7 @@
 /**
-~ * @file StateMachineState.h
- * @brief Header file for class StateMachineState
- * @date 30/09/2016
+ * @file StateMachineTest.cpp
+ * @brief Source file for class StateMachineTest
+ * @date 15/10/2016
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,60 +16,31 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StateMachineState
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class StateMachineTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef STATEMACHINESTATE_H_
-#define STATEMACHINESTATE_H_
-
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
+#include "StateMachineTest.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-/**
- * @brief A container of StateMachineEvents.
- * @details Any given state may contain one or more StateMachineEvents. Change state requests
- *  are filtered by the events. When the event is matched
- */
-class DLL_API StateMachineState: public ReferenceContainer {
-
-public:
-
-    CLASS_REGISTER_DECLARATION()
-
-    /**
-     * @brief Constructor.
-     * @post
-     *    GetCode() == 0 &&
-     *    GetTimeout() == TTInfiniteWait
-     */
-    StateMachineState();
-
-private:
-    /**
-     * TODO
-     */
-    ErrorManagement::ErrorType ActOn(CCString instruction);
-
-};
-
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+bool StateMachineTest::TestDefaultConstructor() {
+    using namespace MARTe;
+    StateMachine stateMachine;
+    bool ok = (stateMachine.Size() == 0u);
+    return ok;
 }
-
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-#endif /* STATEMACHINESTATE_H_ */
 

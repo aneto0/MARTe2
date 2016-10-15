@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
+#include "QueuedReplyMessageCatcherFilter.h"
 #include "StateMachine.h"
 #include "StateMachineEvent.h"
 
@@ -75,7 +76,17 @@ bool StateMachine::Initialise(StructuredDataI &data) {
                         ReferenceT<ReferenceContainer> nextState = Find(event->GetNextState());
                         ok = nextState.IsValid();
                         if (!ok) {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::ParametersError, "In event (%s) the next state (%s) does not exist", event->GetName(), event->GetNextState().GetList())
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::ParametersError, "In event (%s) the next state (%s) does not exist", event->GetName(),
+                                                    event->GetNextState().GetList())
+                        }
+                        //Check if the NextStateError exists
+                        if (ok) {
+                            ReferenceT<ReferenceContainer> nextStateError = Find(event->GetNextStateError());
+                            ok = nextStateError.IsValid();
+                            if (!ok) {
+                                REPORT_ERROR_PARAMETERS(ErrorManagement::ParametersError, "In event (%s) the next state error (%s) does not exist",
+                                                        event->GetName(), event->GetNextStateError().GetList())
+                            }
                         }
                     }
                 }
@@ -89,18 +100,17 @@ bool StateMachine::Initialise(StructuredDataI &data) {
         }
     }
     //Install the event listeners for the first state
-    ReferenceT<ReferenceContainer> nextStateRef;
     if (err.ErrorsCleared()) {
-        nextStateRef = Get(0u);
-        err.fatalError = !nextStateRef.IsValid();
+        currentState = Get(0u);
+        err.fatalError = !currentState.IsValid();
         if (!err.ErrorsCleared()) {
             REPORT_ERROR(ErrorManagement::FatalError, "No state at position zero was defined");
         }
     }
     if (err.ErrorsCleared()) {
         uint32 z;
-        for (z = 0u; (z < nextStateRef->Size()) && (ok); z++) {
-            ReferenceT<StateMachineEvent> nextStateEventJ = nextStateRef->Get(z);
+        for (z = 0u; (z < currentState->Size()) && (ok); z++) {
+            ReferenceT<StateMachineEvent> nextStateEventJ = currentState->Get(z);
             if (nextStateEventJ.IsValid()) {
                 err = InstallMessageFilter(nextStateEventJ);
                 ok = err.ErrorsCleared();
@@ -110,6 +120,162 @@ bool StateMachine::Initialise(StructuredDataI &data) {
     if (err.ErrorsCleared()) {
         err = Start();
     }
+    return err;
+}
+
+ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineEvent> event) {
+    ErrorManagement::ErrorType err;
+    ErrorManagement::ErrorType errSend = false;
+    StreamString nextStateError;
+    StreamString nextState;
+
+    err.fatalError = !event.IsValid();
+    if (err.ErrorsCleared()) {
+        err.fatalError = !currentState.IsValid();
+        if (!err.ErrorsCleared()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "The current state is not valid!");
+        }
+    }
+
+    if (err.ErrorsCleared()) {
+        //Remove all the filters related to the previous event.
+        uint32 j;
+        bool ok = true;
+        for (j = 0u; (j < currentState->Size()) && (ok); j++) {
+            ReferenceT<StateMachineEvent> currentStateEventJ = currentState->Get(j);
+            if (currentStateEventJ.IsValid()) {
+                err = RemoveMessageFilter(currentStateEventJ);
+                ok = err.ErrorsCleared();
+            }
+        }
+    }
+    if (!err.ErrorsCleared()) {
+        REPORT_ERROR(ErrorManagement::FatalError, "Error removing StateMachineEvent filters");
+    }
+
+    if (err.ErrorsCleared()) {
+        nextStateError = event->GetNextStateError();
+        nextState = event->GetNextState();
+        REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Changing from state (%s) to state (%s)", currentState->GetName(), nextState.Buffer())
+        errSend = SendMultipleMessagesAndWaitReply(*(event.operator ->()), event->GetTimeout());
+    }
+    //Install the next state event filters...
+    if (errSend.ErrorsCleared()) {
+        if (nextState.Size() > 0u) {
+            currentState = Find(nextState.Buffer());
+            err.fatalError = !currentState.IsValid();
+        }
+        else {
+            REPORT_ERROR_PARAMETERS(err, "In state (%s) the NextState is not defined", currentState->GetName())
+        }
+    }
+    else {
+        REPORT_ERROR_PARAMETERS(err, "In state (%s) could not send all the event messages. Moving to error state (%s)", currentState->GetName(),
+                                nextStateError.Buffer())
+        if (nextStateError.Size() > 0u) {
+            currentState = Find(nextStateError.Buffer());
+            err.fatalError = !currentState.IsValid();
+        }
+        else {
+            REPORT_ERROR_PARAMETERS(err, "In state (%s) the NextStateError is not defined", currentState->GetName())
+        }
+    }
+    if (err.ErrorsCleared()) {
+        uint32 j;
+        bool ok = true;
+        for (j = 0u; (j < currentState->Size()) && (ok); j++) {
+            ReferenceT<StateMachineEvent> nextStateEventJ = currentState->Get(j);
+            if (nextStateEventJ.IsValid()) {
+                err = InstallMessageFilter(nextStateEventJ);
+                ok = err.ErrorsCleared();
+            }
+        }
+    }
+    else {
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In state (%s) the next state is not valid", currentState->GetName())
+    }
+    //Check if the next state there are messages to be fired at ENTER.
+    if (err.ErrorsCleared()) {
+        ReferenceT<ReferenceContainer> enterMessages = currentState->Find("ENTER");
+        //Compute the highest timeout
+        if (enterMessages.IsValid()) {
+            uint32 msecTimeout = 0;
+            uint32 n;
+            bool maxTimeoutFound = false;
+            for (n = 0u; (n < enterMessages->Size()) && (!maxTimeoutFound); n++) {
+                ReferenceT<Message> enterMessage = enterMessages->Get(n);
+                if (enterMessage.IsValid()) {
+                    if (enterMessage->GetTimeout() == TTInfiniteWait) {
+                        maxTimeoutFound = true;
+                        msecTimeout = TTInfiniteWait.GetTimeoutMSec();
+                    }
+                    else {
+                        if (enterMessage->GetTimeout().GetTimeoutMSec() > msecTimeout) {
+                            msecTimeout = enterMessage->GetTimeout().GetTimeoutMSec();
+                        }
+                    }
+                }
+            }
+            err = SendMultipleMessagesAndWaitReply(*(enterMessages.operator ->()), msecTimeout);
+        }
+    }
+
+    return err;
+}
+
+ErrorManagement::ErrorType StateMachine::SendMultipleMessagesAndWaitReply(ReferenceContainer messagesToSend,
+                                                                          const TimeoutType &timeout) {
+
+    ErrorManagement::ErrorType err;
+    //Semaphore to wait for replies from events which require a reply
+    EventSem waitSem;
+    bool ok = waitSem.Create();
+    if (ok) {
+        ok = waitSem.Reset();
+    }
+
+    //Prepare to wait for eventual replies
+    ReferenceContainer eventReplyContainer;
+    uint32 i;
+
+    //Only accept indirect replies
+    for (i = 0u; i < messagesToSend.Size(); i++) {
+        ReferenceT<Message> eventMsg = messagesToSend.Get(i);
+        if (eventMsg.IsValid()) {
+            if (eventMsg->ExpectsReply()) {
+                eventMsg->SetExpectsIndirectReply(true);
+            }
+            if (eventMsg->ExpectsIndirectReply()) {
+                eventReplyContainer.Insert(eventMsg);
+            }
+        }
+    }
+
+    //Prepare the filter which will wait for all the replies
+    if (eventReplyContainer.Size() > 0u) {
+        ReferenceT<QueuedReplyMessageCatcherFilter> filter(new (NULL) QueuedReplyMessageCatcherFilter());
+        filter->SetMessagesToCatch(eventReplyContainer);
+        filter->SetEventSemaphore(waitSem);
+        MessageI::InstallMessageFilter(filter, 0);
+    }
+
+    ok = err.ErrorsCleared();
+    for (i = 0u; (i < messagesToSend.Size()) && (ok); i++) {
+        ReferenceT<Message> eventMsg = messagesToSend.Get(i);
+        if (eventMsg.IsValid()) {
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "While changing from state (%s) triggered message (%s)", currentState->GetName(),
+                                    eventMsg->GetName())
+            err = MessageI::SendMessage(eventMsg, this);
+        }
+        ok = err.ErrorsCleared();
+    }
+    //Wait for all the replies to arrive...
+    if (ok) {
+        if (eventReplyContainer.Size() > 0u) {
+            err = waitSem.Wait(timeout);
+        }
+    }
+
     return err;
 }
 
