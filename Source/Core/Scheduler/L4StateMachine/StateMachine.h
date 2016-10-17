@@ -103,12 +103,60 @@ public:
     StateMachine();
 
     /**
-     * @brief Destructor. NOOP.
+     * @brief Destructor. Calls QueuedMessageI::Stop().
      */
     virtual ~StateMachine();
 
     /**
-     * @brief TODO
+     * @brief Initialises the StateMachine (@see ReferenceContainer::Initialise)
+     * @details Verifies that at least one state shall exist.
+     * For every state at least one event shall be defined.
+     * For every event in every state the NextState shall be defined and shall exists.
+     *  For every event in every state the NextStateError shall exist.
+     * Upon successful initialisation it calls QueuedMessageI::Starts and registers the
+     * MessageFilter for all the events of the first state.
+     * @param[in] data configuration in the form:
+     * * +StateMachine = {
+     *     Class = StateMachine
+     *     +State1 = {
+     *        Class = ReferenceContainer
+     *        +Event1 = {
+     *            Class = StateMachineEvent
+     *            NextState = State2
+     *            +Message1 = {
+     *               Class = Message
+     *               Destination = SomeObject
+     *            }
+     *        }
+     *        +SameState = {
+     *            Class = StateMachineEvent
+     *            NextState = State1
+     *        }
+     *     }
+     *     +State2 = {
+     *        Class = ReferenceContainer
+     *        +ENTER = {
+     *            Class = ReferenceContainer
+     *            +Message1 = {
+     *               Class = Message
+     *               Destination = SomeObject
+     *            }
+     *        }
+     *        +Event1 = {
+     *            Class = StateMachineEvent
+     *            NextState = State1
+     *        }
+     *     }
+     *     +ERROR = {
+     *        Class = ReferenceContainer
+     *        +Event1 = {
+     *            Class = StateMachineEvent
+     *            NextState = State1
+     *        }
+     *     }
+     * }
+     * @return true if ReferenceContainer::Initialise(data) returns true and
+     *  if the state rules defined above are valid.
      */
     virtual bool Initialise(StructuredDataI &data);
 

@@ -51,7 +51,11 @@ StateMachine::StateMachine() :
 StateMachine::~StateMachine() {
     ErrorManagement::ErrorType err = Stop();
     if (!err.ErrorsCleared()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "Could not Stop the StateMachine");
+        REPORT_ERROR(ErrorManagement::FatalError, "Could not Stop the StateMachine. Retrying...");
+        err = Stop();
+        if (!err.ErrorsCleared()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "Could not Stop the StateMachine.");
+        }
     }
 }
 
@@ -76,6 +80,7 @@ bool StateMachine::Initialise(StructuredDataI &data) {
                         ReferenceT<ReferenceContainer> nextState = Find(event->GetNextState());
                         ok = nextState.IsValid();
                         if (!ok) {
+                            err.parametersError = true;
                             REPORT_ERROR_PARAMETERS(ErrorManagement::ParametersError, "In event (%s) the next state (%s) does not exist", event->GetName(),
                                                     event->GetNextState().GetList())
                         }
@@ -84,6 +89,7 @@ bool StateMachine::Initialise(StructuredDataI &data) {
                             ReferenceT<ReferenceContainer> nextStateError = Find(event->GetNextStateError());
                             ok = nextStateError.IsValid();
                             if (!ok) {
+                                err.parametersError = true;
                                 REPORT_ERROR_PARAMETERS(ErrorManagement::ParametersError, "In event (%s) the next state error (%s) does not exist",
                                                         event->GetName(), event->GetNextStateError().GetList())
                             }
@@ -93,6 +99,7 @@ bool StateMachine::Initialise(StructuredDataI &data) {
                 if (ok) {
                     ok = found;
                     if (!ok) {
+                        err.parametersError = true;
                         REPORT_ERROR_PARAMETERS(ErrorManagement::ParametersError, "In state (%s) no events were defined", state->GetName())
                     }
                 }

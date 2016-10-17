@@ -46,5 +46,28 @@ TEST(StateMachineGTest,TestConstructor) {
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
+TEST(StateMachineGTest,TestInitialise) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestInitialise());
+}
 
+TEST(StateMachineGTest,TestInitialise_False_NoStates) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestInitialise_False_NoStates());
+}
+
+TEST(StateMachineGTest,TestInitialise_False_NoEvents) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestInitialise_False_NoEvents());
+}
+
+TEST(StateMachineGTest,TestInitialise_False_NextState) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestInitialise_False_NextState());
+}
+
+TEST(StateMachineGTest,TestInitialise_False_NextStateError) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestInitialise_False_NextStateError());
+}
 

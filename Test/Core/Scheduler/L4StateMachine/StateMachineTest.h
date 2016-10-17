@@ -45,13 +45,36 @@ public:
      * @brief Tests the default constructor.
      */
     bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests the Initialise method.
+     */
+    bool TestInitialise();
+
+    /**
+     * @brief Tests the Initialise without defining any states.
+     */
+    bool TestInitialise_False_NoStates();
+
+    /**
+     * @brief Tests the Initialise with a state without event.
+     */
+    bool TestInitialise_False_NoEvents();
+
+    /**
+     * @brief Tests the Initialise with a NextState that does not exist.
+     */
+    bool TestInitialise_False_NextState();
+
+    /**
+     * @brief Tests the Initialise with a NextStateError that does not exist.
+     */
+    bool TestInitialise_False_NextStateError();
 };
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* STATEMACHINETEST_H_ */
-	
+
