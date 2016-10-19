@@ -99,8 +99,10 @@ ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message>
         err.fatalError = !ref.IsValid();
 
         if (err.ErrorsCleared()) {
-            message = ref;
-            err.fatalError = !message.IsValid();
+            if (messageQ.Delete(ref)) {
+                message = ref;
+                err.fatalError = !message.IsValid();
+            }
         }
     }
 
