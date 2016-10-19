@@ -118,7 +118,6 @@ ErrorManagement::ErrorType StateMachineEvent::ConsumeMessage(ReferenceT<Message>
     }
     //Found.
     if (found) {
-        //Remove all the filters which
         err = stateMachine->EventTriggered(this);
     }
     return err;

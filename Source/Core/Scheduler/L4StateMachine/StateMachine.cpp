@@ -145,14 +145,16 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
     }
 
     if (err.ErrorsCleared()) {
-        //Remove all the filters related to the previous event.
+        //Remove all the filters related to the previous event (except this one which will be removed by the MessageFilter).
         uint32 j;
         bool ok = true;
         for (j = 0u; (j < currentState->Size()) && (ok); j++) {
             ReferenceT<StateMachineEvent> currentStateEventJ = currentState->Get(j);
-            if (currentStateEventJ.IsValid()) {
-                err = RemoveMessageFilter(currentStateEventJ);
-                ok = err.ErrorsCleared();
+            if (currentStateEventJ != event) {
+                if (currentStateEventJ.IsValid()) {
+                    err = RemoveMessageFilter(currentStateEventJ);
+                    ok = err.ErrorsCleared();
+                }
             }
         }
     }
@@ -270,8 +272,7 @@ ErrorManagement::ErrorType StateMachine::SendMultipleMessagesAndWaitReply(Refere
     for (i = 0u; (i < messagesToSend.Size()) && (ok); i++) {
         ReferenceT<Message> eventMsg = messagesToSend.Get(i);
         if (eventMsg.IsValid()) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "While changing from state (%s) triggered message (%s)", currentState->GetName(),
-                                    eventMsg->GetName())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "In state (%s) triggered message (%s)", currentState->GetName(), eventMsg->GetName())
             err = MessageI::SendMessage(eventMsg, this);
         }
         ok = err.ErrorsCleared();

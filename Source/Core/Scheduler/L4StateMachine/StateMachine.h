@@ -161,7 +161,14 @@ public:
     virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * @brief TODO
+     * @brief To be called by a StateMachineEvent which has received a relevant event and wishes to change state.
+     * @details The current state will be updated to the StateMachineEvent::GetNextState. All the messages associated
+     * to the event will be triggered and the state machine will wait for all the relevant replies.
+     * If there is an ENTER reference container on the next state all the messages belonging to this container
+     *  will also be fired.
+     * @param[in] event the state machine event that has received the relevant event.
+     * @return ErrorManagement::NoError if the event can be successfully processed and the state machine state changed.
+     * ErrorManagement::Timeout if a timeout occurs while sending the message.
      */
     ErrorManagement::ErrorType EventTriggered(ReferenceT<StateMachineEvent> event);
 
@@ -173,6 +180,9 @@ private:
      */
     virtual ErrorManagement::ErrorType SendMultipleMessagesAndWaitReply(ReferenceContainer messagesToSend, const TimeoutType &timeout);
 
+    /**
+     * The state machine current state.
+     */
     ReferenceT<ReferenceContainer> currentState;
 };
 }

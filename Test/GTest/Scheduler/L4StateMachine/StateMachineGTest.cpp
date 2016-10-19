@@ -71,3 +71,12 @@ TEST(StateMachineGTest,TestInitialise_False_NextStateError) {
     ASSERT_TRUE(target.TestInitialise_False_NextStateError());
 }
 
+TEST(StateMachineGTest,TestEventTriggered) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestEventTriggered());
+}
+
+TEST(StateMachineGTest,TestEventTriggered_SendMessage) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestEventTriggered_SendMessage());
+}

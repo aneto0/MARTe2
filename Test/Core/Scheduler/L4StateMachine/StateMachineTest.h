@@ -52,24 +52,34 @@ public:
     bool TestInitialise();
 
     /**
-     * @brief Tests the Initialise without defining any states.
+     * @brief Tests the Initialise method without defining any states.
      */
     bool TestInitialise_False_NoStates();
 
     /**
-     * @brief Tests the Initialise with a state without event.
+     * @brief Tests the Initialise method with a state without event.
      */
     bool TestInitialise_False_NoEvents();
 
     /**
-     * @brief Tests the Initialise with a NextState that does not exist.
+     * @brief Tests the Initialise method with a NextState that does not exist.
      */
     bool TestInitialise_False_NextState();
 
     /**
-     * @brief Tests the Initialise with a NextStateError that does not exist.
+     * @brief Tests the Initialise method with a NextStateError that does not exist.
      */
     bool TestInitialise_False_NextStateError();
+
+    /**
+     * @brief Tests the EventTriggered method.
+     */
+    bool TestEventTriggered();
+
+    /**
+     * @brief Tests the EventTriggered method through the SendMessage interface.
+     */
+    bool TestEventTriggered_SendMessage();
 };
 
 /*---------------------------------------------------------------------------*/
