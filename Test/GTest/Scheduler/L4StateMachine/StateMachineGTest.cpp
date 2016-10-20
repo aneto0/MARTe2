@@ -51,6 +51,16 @@ TEST(StateMachineGTest,TestInitialise) {
     ASSERT_TRUE(target.TestInitialise());
 }
 
+TEST(StateMachineGTest,TestGetState) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestGetState());
+}
+
+TEST(StateMachineGTest,TestGetStateStatus) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestGetStateStatus());
+}
+
 TEST(StateMachineGTest,TestInitialise_False_NoStates) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestInitialise_False_NoStates());
@@ -79,4 +89,19 @@ TEST(StateMachineGTest,TestEventTriggered) {
 TEST(StateMachineGTest,TestEventTriggered_SendMessage) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestEventTriggered_SendMessage());
+}
+
+TEST(StateMachineGTest,TestEventTriggered_SendMessage_WaitReply) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestEventTriggered_SendMessage_WaitReply());
+}
+
+TEST(StateMachineGTest,TestEventTriggered_SendMessage_GoToError) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestEventTriggered_SendMessage_GoToError());
+}
+
+TEST(StateMachineGTest,TestEventTriggered_SendMessage_GoToError_Timeout) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestEventTriggered_SendMessage_GoToError_Timeout());
 }

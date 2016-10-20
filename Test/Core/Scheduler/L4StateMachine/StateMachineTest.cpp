@@ -62,6 +62,56 @@ StateMachineTestMessageReceiver    () {
 CLASS_REGISTER(StateMachineTestMessageReceiver, "1.0")
 CLASS_METHOD_REGISTER(StateMachineTestMessageReceiver, ReceiverMethod)
 
+class StateMachineTestMessageReceiverError: public MARTe::Object, public MARTe::MessageI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+StateMachineTestMessageReceiverError    () {
+        MARTe::ReferenceT<MARTe::RegisteredMethodsMessageFilter> filter = MARTe::ReferenceT<MARTe::RegisteredMethodsMessageFilter>(MARTe::GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        filter->SetDestination(this);
+        InstallMessageFilter(filter);
+        flag = 0;
+    }
+
+    MARTe::ErrorManagement::ErrorType ReceiverMethod(MARTe::ReferenceContainer& ref) {
+        flag++;
+        return MARTe::ErrorManagement::FatalError;
+    }
+
+    MARTe::int32 flag;
+
+};
+CLASS_REGISTER(StateMachineTestMessageReceiverError, "1.0")
+CLASS_METHOD_REGISTER(StateMachineTestMessageReceiverError, ReceiverMethod)
+
+class StateMachineTestMessageReceiverTimeout: public MARTe::Object, public MARTe::QueuedMessageI {
+public:
+    CLASS_REGISTER_DECLARATION()StateMachineTestMessageReceiverTimeout() {
+        MARTe::ReferenceT<MARTe::RegisteredMethodsMessageFilter> filter = MARTe::ReferenceT<MARTe::RegisteredMethodsMessageFilter>(MARTe::GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        filter->SetDestination(this);
+        InstallMessageFilter(filter);
+        flag = 0;
+        Start();
+    }
+
+    virtual ~StateMachineTestMessageReceiverTimeout() {
+        Stop();
+        Stop();
+    }
+
+    MARTe::ErrorManagement::ErrorType ReceiverMethod(MARTe::ReferenceContainer& ref) {
+        flag = 1;
+        while(flag == 1) {
+            MARTe::Sleep::Sec(0.1);
+        }
+        return MARTe::ErrorManagement::NoError;
+    }
+
+    MARTe::int32 flag;
+
+};
+CLASS_REGISTER(StateMachineTestMessageReceiverTimeout, "1.0")
+CLASS_METHOD_REGISTER(StateMachineTestMessageReceiverTimeout, ReceiverMethod)
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -483,6 +533,292 @@ bool StateMachineTest::TestEventTriggered() {
     return ok;
 }
 
+bool StateMachineTest::TestGetState() {
+    using namespace MARTe;
+    const char8 * const config1 = ""
+            "+StateMachine = {"
+            "    Class = StateMachine"
+            "    +A = {"
+            "        Class = ReferenceContainer"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"B\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver1\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver2\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "    }"
+            "    +B = {"
+            "        Class = ReferenceContainer"
+            "        +ENTER = {"
+            "            Class = ReferenceContainer"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver3\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver4\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver4\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "    }"
+            "    +E = {"
+            "        Class = ReferenceContainer"
+            "        +E2 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "        }"
+            "    }"
+            "}";
+
+    StreamString configStream = config1;
+    configStream.Seek(0);
+    ConfigurationDatabase cdb;
+    StreamString parserErr;
+    StandardParser parser(configStream, cdb, &parserErr);
+    bool ok = parser.Parse();
+    if (!ok) {
+        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver3 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver4 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+    receiver1->SetName("Receiver1");
+    receiver2->SetName("Receiver2");
+    receiver3->SetName("Receiver3");
+    receiver4->SetName("Receiver4");
+
+    ObjectRegistryDatabase::Instance()->Insert(receiver1);
+    ObjectRegistryDatabase::Instance()->Insert(receiver2);
+    ObjectRegistryDatabase::Instance()->Insert(receiver3);
+    ObjectRegistryDatabase::Instance()->Insert(receiver4);
+
+    ReferenceT<StateMachine> stateMachine = ObjectRegistryDatabase::Instance()->Find("StateMachine");
+    ReferenceT<ReferenceContainer> stateA = ObjectRegistryDatabase::Instance()->Find("StateMachine.A");
+    ReferenceT<StateMachineEvent> stateMachineEventA = ObjectRegistryDatabase::Instance()->Find("StateMachine.A.E1");
+
+    ok &= stateMachine.IsValid();
+    ok &= stateA.IsValid();
+    ok &= stateMachineEventA.IsValid();
+    if (ok) {
+        ok &= (stateMachine->GetCurrentState() == stateA);
+        ok &= (stateMachine->GetCurrentStateStatus() == StateMachine::Executing);
+    }
+    if (ok) {
+        ok = (stateMachine->EventTriggered(stateMachineEventA) == ErrorManagement::NoError);
+    }
+    if (ok) {
+        ok = (receiver1->flag == 1);
+        ok = (receiver2->flag == 1);
+        ok = (receiver3->flag == 1);
+        ok = (receiver4->flag == 1);
+    }
+
+    ReferenceT<ReferenceContainer> stateB = ObjectRegistryDatabase::Instance()->Find("StateMachine.B");
+    ReferenceT<StateMachineEvent> stateMachineEventB = ObjectRegistryDatabase::Instance()->Find("StateMachine.B.E1");
+
+    ok &= stateMachineEventB.IsValid();
+    if (ok) {
+        ok &= (stateMachine->GetCurrentState() == stateB);
+        ok &= (stateMachine->GetCurrentStateStatus() == StateMachine::Executing);
+    }
+    if (ok) {
+        ok = (stateMachine->EventTriggered(stateMachineEventB) == ErrorManagement::NoError);
+    }
+    if (ok) {
+        ok = (receiver1->flag == 1);
+        ok = (receiver2->flag == 1);
+        ok = (receiver3->flag == 1);
+        ok = (receiver4->flag == 2);
+    }
+
+    return ok;
+}
+
+bool StateMachineTest::TestGetStateStatus() {
+    using namespace MARTe;
+    const char8 * const config1 = ""
+            "+StateMachine = {"
+            "    Class = StateMachine"
+            "    +A = {"
+            "        Class = ReferenceContainer"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"B\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver1\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver2\""
+            "                Function = \"ReceiverMethod\""
+            "                Mode = \"ExpectsReply\""
+            "            }"
+            "        }"
+            "    }"
+            "    +B = {"
+            "        Class = ReferenceContainer"
+            "        +ENTER = {"
+            "            Class = ReferenceContainer"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver3\""
+            "                Function = \"ReceiverMethod\""
+            "                Mode = \"ExpectsReply\""
+            "            }"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver4\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver4\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "    }"
+            "    +E = {"
+            "        Class = ReferenceContainer"
+            "        +E2 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver5\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    StreamString configStream = config1;
+    configStream.Seek(0);
+    ConfigurationDatabase cdb;
+    StreamString parserErr;
+    StandardParser parser(configStream, cdb, &parserErr);
+    bool ok = parser.Parse();
+    if (!ok) {
+        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiverTimeout> receiver2 = ReferenceT<StateMachineTestMessageReceiverTimeout>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiverTimeout> receiver3 = ReferenceT<StateMachineTestMessageReceiverTimeout>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver4 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver5 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+    receiver1->SetName("Receiver1");
+    receiver2->SetName("Receiver2");
+    receiver3->SetName("Receiver3");
+    receiver4->SetName("Receiver4");
+    receiver5->SetName("Receiver5");
+
+    ObjectRegistryDatabase::Instance()->Insert(receiver1);
+    ObjectRegistryDatabase::Instance()->Insert(receiver2);
+    ObjectRegistryDatabase::Instance()->Insert(receiver3);
+    ObjectRegistryDatabase::Instance()->Insert(receiver4);
+    ObjectRegistryDatabase::Instance()->Insert(receiver5);
+
+    ReferenceT<Message> msg = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb2;
+    cdb2.Write("Destination", "StateMachine");
+    cdb2.Write("Function", "E1");
+    ok &= msg->Initialise(cdb2);
+    MessageI::SendMessage(msg, NULL);
+
+    bool done = false;
+    uint32 counter = 0;
+    while (!done && (counter < 500)) {
+        done = (receiver2->flag == 1);
+        counter++;
+        Sleep::MSec(10);
+    }
+    ok &= done;
+
+    ReferenceT<StateMachine> stateMachine = ObjectRegistryDatabase::Instance()->Find("StateMachine");
+    ReferenceT<ReferenceContainer> stateA = ObjectRegistryDatabase::Instance()->Find("StateMachine.A");
+
+    ok &= (stateMachine->GetCurrentState() == stateA);
+    ok &= (stateMachine->GetCurrentStateStatus() == StateMachine::Exiting);
+    receiver2->flag = 2;
+    done = false;
+    counter = 0;
+    while (!done && (counter < 500)) {
+        done = (receiver3->flag == 1);
+        counter++;
+        Sleep::MSec(10);
+    }
+    ok &= done;
+    ReferenceT<ReferenceContainer> stateB = ObjectRegistryDatabase::Instance()->Find("StateMachine.B");
+    ok &= (stateMachine->GetCurrentState() == stateB);
+    ok &= (stateMachine->GetCurrentStateStatus() == StateMachine::Entering);
+    receiver3->flag = 2;
+    done = false;
+    counter = 0;
+    while (!done && (counter < 500)) {
+        done = (receiver4->flag == 1);
+        counter++;
+        Sleep::MSec(10);
+    }
+    ok &= done;
+    done = false;
+    counter = 0;
+    while (!done && (counter < 500)) {
+        done = (stateMachine->GetCurrentState() == stateB);
+        done &= (stateMachine->GetCurrentStateStatus() == StateMachine::Executing);
+    }
+    ok &= done;
+    return ok;
+}
+
 bool StateMachineTest::TestEventTriggered_SendMessage() {
     using namespace MARTe;
     const char8 * const config1 = ""
@@ -582,7 +918,7 @@ bool StateMachineTest::TestEventTriggered_SendMessage() {
 
     ok = false;
     uint32 counter = 0;
-    while (!ok && (counter < 100)) {
+    while (!ok && (counter < 500)) {
         ok = (receiver1->flag == 1);
         ok &= (receiver2->flag == 1);
         ok &= (receiver3->flag == 1);
@@ -602,15 +938,429 @@ bool StateMachineTest::TestEventTriggered_SendMessage() {
         ok = !ok;
     }
     counter = 0;
-    while (!ok && (counter < 100)) {
+    while (!ok && (counter < 500)) {
         ok = (receiver1->flag == 1);
-        ok = (receiver2->flag == 1);
-        ok = (receiver3->flag == 1);
-        ok = (receiver4->flag == 2);
+        ok &= (receiver2->flag == 1);
+        ok &= (receiver3->flag == 1);
+        ok &= (receiver4->flag == 2);
         counter++;
         Sleep::MSec(10);
     }
 
+    return ok;
+}
+
+bool StateMachineTest::TestEventTriggered_SendMessage_WaitReply() {
+    using namespace MARTe;
+    const char8 * const config1 = ""
+            "+StateMachine = {"
+            "    Class = StateMachine"
+            "    +A = {"
+            "        Class = ReferenceContainer"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"B\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver1\""
+            "                Function = \"ReceiverMethod\""
+            "                Mode = \"ExpectsReply\""
+            "            }"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver2\""
+            "                Function = \"ReceiverMethod\""
+            "                Mode = \"ExpectsReply\""
+            "            }"
+            "        }"
+            "    }"
+            "    +B = {"
+            "        Class = ReferenceContainer"
+            "        +ENTER = {"
+            "            Class = ReferenceContainer"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver3\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver4\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver4\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "    }"
+            "    +E = {"
+            "        Class = ReferenceContainer"
+            "        +E2 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "        }"
+            "    }"
+            "}";
+
+    StreamString configStream = config1;
+    configStream.Seek(0);
+    ConfigurationDatabase cdb;
+    StreamString parserErr;
+    StandardParser parser(configStream, cdb, &parserErr);
+    bool ok = parser.Parse();
+    if (!ok) {
+        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver3 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver4 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+    receiver1->SetName("Receiver1");
+    receiver2->SetName("Receiver2");
+    receiver3->SetName("Receiver3");
+    receiver4->SetName("Receiver4");
+
+    ObjectRegistryDatabase::Instance()->Insert(receiver1);
+    ObjectRegistryDatabase::Instance()->Insert(receiver2);
+    ObjectRegistryDatabase::Instance()->Insert(receiver3);
+    ObjectRegistryDatabase::Instance()->Insert(receiver4);
+
+    ReferenceT<Message> msg = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb2;
+    cdb2.Write("Destination", "StateMachine");
+    cdb2.Write("Function", "E1");
+    ok &= msg->Initialise(cdb2);
+    MessageI::SendMessage(msg, NULL);
+
+    ok = false;
+    uint32 counter = 0;
+    while (!ok && (counter < 500)) {
+        ok = (receiver1->flag == 1);
+        ok &= (receiver2->flag == 1);
+        ok &= (receiver3->flag == 1);
+        ok &= (receiver4->flag == 1);
+        counter++;
+        Sleep::MSec(10);
+    }
+
+    ReferenceT<Message> msg2 = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb3;
+    cdb3.Write("Destination", "StateMachine");
+    cdb3.Write("Function", "E1");
+    ok &= msg2->Initialise(cdb3);
+    MessageI::SendMessage(msg2, NULL);
+
+    if (ok) {
+        ok = !ok;
+    }
+    counter = 0;
+    while (!ok && (counter < 500)) {
+        ok = (receiver1->flag == 1);
+        ok &= (receiver2->flag == 1);
+        ok &= (receiver3->flag == 1);
+        ok &= (receiver4->flag == 2);
+        counter++;
+        Sleep::MSec(10);
+    }
+
+    return ok;
+}
+
+bool StateMachineTest::TestEventTriggered_SendMessage_GoToError() {
+    using namespace MARTe;
+    const char8 * const config1 = ""
+            "+StateMachine = {"
+            "    Class = StateMachine"
+            "    +A = {"
+            "        Class = ReferenceContainer"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"B\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver1\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver2\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "    }"
+            "    +B = {"
+            "        Class = ReferenceContainer"
+            "        +ENTER = {"
+            "            Class = ReferenceContainer"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver3\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver4\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver4\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "    }"
+            "    +E = {"
+            "        Class = ReferenceContainer"
+            "        +E2 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver5\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    StreamString configStream = config1;
+    configStream.Seek(0);
+    ConfigurationDatabase cdb;
+    StreamString parserErr;
+    StandardParser parser(configStream, cdb, &parserErr);
+    bool ok = parser.Parse();
+    if (!ok) {
+        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    ReferenceT<StateMachineTestMessageReceiverError> receiver1 = ReferenceT<StateMachineTestMessageReceiverError>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiverError> receiver2 = ReferenceT<StateMachineTestMessageReceiverError>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiverError> receiver3 = ReferenceT<StateMachineTestMessageReceiverError>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiverError> receiver4 = ReferenceT<StateMachineTestMessageReceiverError>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver5 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+    receiver1->SetName("Receiver1");
+    receiver2->SetName("Receiver2");
+    receiver3->SetName("Receiver3");
+    receiver4->SetName("Receiver4");
+    receiver5->SetName("Receiver5");
+
+    ObjectRegistryDatabase::Instance()->Insert(receiver1);
+    ObjectRegistryDatabase::Instance()->Insert(receiver2);
+    ObjectRegistryDatabase::Instance()->Insert(receiver3);
+    ObjectRegistryDatabase::Instance()->Insert(receiver4);
+    ObjectRegistryDatabase::Instance()->Insert(receiver5);
+
+    ReferenceT<Message> msg = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb2;
+    cdb2.Write("Destination", "StateMachine");
+    cdb2.Write("Function", "E1");
+    ok &= msg->Initialise(cdb2);
+    MessageI::SendMessage(msg, NULL);
+
+    bool done = false;
+    uint32 counter = 0;
+    while (!done && (counter < 500)) {
+        done = (receiver1->flag == 1);
+        counter++;
+        Sleep::MSec(10);
+    }
+    ok &= done;
+    ReferenceT<Message> msg2 = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb3;
+    cdb3.Write("Destination", "StateMachine");
+    cdb3.Write("Function", "E2");
+    ok &= msg2->Initialise(cdb3);
+    MessageI::SendMessage(msg2, NULL);
+
+    counter = 0;
+    done = false;
+    while (!done && (counter < 500)) {
+        done = (receiver5->flag == 1);
+        counter++;
+        Sleep::MSec(10);
+    }
+    ok &= done;
+    return ok;
+}
+
+bool StateMachineTest::TestEventTriggered_SendMessage_GoToError_Timeout() {
+    using namespace MARTe;
+    const char8 * const config1 = ""
+            "+StateMachine = {"
+            "    Class = StateMachine"
+            "    +A = {"
+            "        Class = ReferenceContainer"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"B\""
+            "            NextStateError = \"E\""
+            "            Timeout = 10"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver1\""
+            "                Function = \"ReceiverMethod\""
+            "                Mode = \"ExpectsReply\""
+            "            }"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver2\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "    }"
+            "    +B = {"
+            "        Class = ReferenceContainer"
+            "        +ENTER = {"
+            "            Class = ReferenceContainer"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver3\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver4\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver4\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "    }"
+            "    +E = {"
+            "        Class = ReferenceContainer"
+            "        +E2 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver5\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    StreamString configStream = config1;
+    configStream.Seek(0);
+    ConfigurationDatabase cdb;
+    StreamString parserErr;
+    StandardParser parser(configStream, cdb, &parserErr);
+    bool ok = parser.Parse();
+    if (!ok) {
+        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    ReferenceT<StateMachineTestMessageReceiverTimeout> receiver1 = ReferenceT<StateMachineTestMessageReceiverTimeout>(
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver3 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver4 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver5 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+    receiver1->SetName("Receiver1");
+    receiver2->SetName("Receiver2");
+    receiver3->SetName("Receiver3");
+    receiver4->SetName("Receiver4");
+    receiver5->SetName("Receiver5");
+
+    ObjectRegistryDatabase::Instance()->Insert(receiver1);
+    ObjectRegistryDatabase::Instance()->Insert(receiver2);
+    ObjectRegistryDatabase::Instance()->Insert(receiver3);
+    ObjectRegistryDatabase::Instance()->Insert(receiver4);
+    ObjectRegistryDatabase::Instance()->Insert(receiver5);
+
+    ReferenceT<Message> msg = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb2;
+    cdb2.Write("Destination", "StateMachine");
+    cdb2.Write("Function", "E1");
+    ok &= msg->Initialise(cdb2);
+    MessageI::SendMessage(msg, NULL);
+
+    bool done = false;
+    uint32 counter = 0;
+    while (!done && (counter < 500)) {
+        done = (receiver1->flag == 1);
+        counter++;
+        Sleep::MSec(10);
+    }
+    ok &= done;
+    done = false;
+    counter = 0;
+    ReferenceT<StateMachine> stateMachine = ObjectRegistryDatabase::Instance()->Find("StateMachine");
+    ReferenceT<ReferenceContainer> errorState = ObjectRegistryDatabase::Instance()->Find("StateMachine.E");
+    while (!done && (counter < 500)) {
+        done = (stateMachine->GetCurrentState() == errorState);
+        done &= (stateMachine->GetCurrentStateStatus() == StateMachine::Executing);
+        counter++;
+        Sleep::MSec(10);
+    }
+
+    ReferenceT<Message> msg2 = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb3;
+    cdb3.Write("Destination", "StateMachine");
+    cdb3.Write("Function", "E2");
+    ok &= msg2->Initialise(cdb3);
+    MessageI::SendMessage(msg2, NULL);
+    ok &= done;
+    done = false;
+    counter = 0;
+    while (!done && (counter < 500)) {
+        done = (receiver5->flag == 1);
+        counter++;
+        Sleep::MSec(10);
+    }
+    ok &= done;
+    receiver1->flag = 2;
+    Sleep::MSec(100);
     return ok;
 }
 

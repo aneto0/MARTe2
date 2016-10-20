@@ -45,7 +45,7 @@ namespace MARTe {
 StateMachine::StateMachine() :
         ReferenceContainer(),
         QueuedMessageI() {
-
+    currentStateStatus = Entering;
 }
 
 StateMachine::~StateMachine() {
@@ -127,6 +127,9 @@ bool StateMachine::Initialise(StructuredDataI &data) {
     if (err.ErrorsCleared()) {
         err = Start();
     }
+    if (err.ErrorsCleared()) {
+        currentStateStatus = Executing;
+    }
     return err;
 }
 
@@ -136,6 +139,7 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
     StreamString nextStateError;
     StreamString nextState;
 
+    currentStateStatus = Exiting;
     err.fatalError = !event.IsValid();
     if (err.ErrorsCleared()) {
         err.fatalError = !currentState.IsValid();
@@ -172,6 +176,7 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
     if (errSend.ErrorsCleared()) {
         if (nextState.Size() > 0u) {
             currentState = Find(nextState.Buffer());
+            currentStateStatus = Entering;
             err.fatalError = !currentState.IsValid();
         }
         else {
@@ -228,7 +233,9 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
             err = SendMultipleMessagesAndWaitReply(*(enterMessages.operator ->()), msecTimeout);
         }
     }
-
+    if (err.ErrorsCleared()) {
+        currentStateStatus = Executing;
+    }
     return err;
 }
 
@@ -286,6 +293,15 @@ ErrorManagement::ErrorType StateMachine::SendMultipleMessagesAndWaitReply(Refere
 
     return err;
 }
+
+Reference StateMachine::GetCurrentState() {
+    return currentState;
+}
+
+StateMachine::StateStatus StateMachine::GetCurrentStateStatus() {
+    return currentStateStatus;
+}
+
 
 CLASS_REGISTER(StateMachine, "1.0")
 }

@@ -32,7 +32,6 @@
 #include "StateMachine.h"
 #include "StateMachineEvent.h"
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -51,7 +50,6 @@ StateMachineEvent::StateMachineEvent() :
 StateMachineEvent::~StateMachineEvent() {
 
 }
-
 
 TimeoutType StateMachineEvent::GetTimeout() const {
     return timeout;
@@ -120,9 +118,11 @@ ErrorManagement::ErrorType StateMachineEvent::ConsumeMessage(ReferenceT<Message>
     if (found) {
         err = stateMachine->EventTriggered(this);
     }
+    if (!found) {
+        err.unmapped = true;
+    }
     return err;
 }
-
 
 CLASS_REGISTER(StateMachineEvent, "1.0")
 

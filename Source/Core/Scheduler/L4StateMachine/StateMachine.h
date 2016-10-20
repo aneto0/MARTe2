@@ -100,12 +100,32 @@ public:
     /**
      * @brief Default constructor. NOOP.
      */
-    StateMachine();
+StateMachine    ();
 
     /**
      * @brief Destructor. Calls QueuedMessageI::Stop().
      */
     virtual ~StateMachine();
+
+    /**
+     * The list of status where
+     */
+    enum StateStatus {
+        /**
+         * Exiting from a given state
+         */
+        Exiting,
+
+        /**
+         * Executing a given state
+         */
+        Executing,
+
+        /**
+         * Entering a given state
+         */
+        Entering
+    };
 
     /**
      * @brief Initialises the StateMachine (@see ReferenceContainer::Initialise)
@@ -172,6 +192,18 @@ public:
      */
     ErrorManagement::ErrorType EventTriggered(ReferenceT<StateMachineEvent> event);
 
+    /**
+     * @brief Gets the current state.
+     * @return the current State.
+     */
+    Reference GetCurrentState();
+
+    /**
+     * @brief Gets the current state status.
+     * @return the current state status.
+     */
+    StateStatus GetCurrentStateStatus();
+
 private:
     /**
      * @brief Sends multiple messages and waits for all the replies to arrive.
@@ -184,6 +216,11 @@ private:
      * The state machine current state.
      */
     ReferenceT<ReferenceContainer> currentState;
+
+    /**
+     * The current state status.
+     */
+    StateStatus currentStateStatus;
 };
 }
 

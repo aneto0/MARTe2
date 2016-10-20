@@ -8,10 +8,14 @@
 #include <limits.h>
 #include "gtest/gtest.h"
 #include "ErrorManagement.h"
+#include "StreamString.h"
 
 void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo,
                                    const char * const errorDescription) {
-    printf("---->>%s\n", errorDescription);
+    MARTe::StreamString errorCodeStr;
+    MARTe::ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
+    errorCodeStr.Seek(0);
+    printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
 }
 
 

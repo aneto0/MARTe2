@@ -72,6 +72,16 @@ public:
     bool TestInitialise_False_NextStateError();
 
     /**
+     * @brief Tests the GetState method.
+     */
+    bool TestGetState();
+
+    /**
+     * @brief Tests the GetStatus method.
+     */
+    bool TestGetStateStatus();
+
+    /**
      * @brief Tests the EventTriggered method.
      */
     bool TestEventTriggered();
@@ -80,6 +90,21 @@ public:
      * @brief Tests the EventTriggered method through the SendMessage interface.
      */
     bool TestEventTriggered_SendMessage();
+
+    /**
+     * @brief Tests the EventTriggered method through the SendMessage interface and wait for a replay.
+     */
+    bool TestEventTriggered_SendMessage_WaitReply();
+
+    /**
+     * @brief Tests the EventTriggered method through the SendMessage and verifies that it goes into an error state.
+     */
+    bool TestEventTriggered_SendMessage_GoToError();
+
+    /**
+     * @brief Tests the EventTriggered method through the SendMessage and verifies that it goes into an error state after a timeout.
+     */
+    bool TestEventTriggered_SendMessage_GoToError_Timeout();
 };
 
 /*---------------------------------------------------------------------------*/

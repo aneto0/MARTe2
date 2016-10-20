@@ -104,6 +104,10 @@ ErrorManagement::ErrorType QueuedReplyMessageCatcherFilter::ConsumeMessage(Refer
                 ret.fatalError = true;
             }
         }
+        else {
+            //Do not allow the MessageFilter to remove the filter (which is not permanent) before all the messages are caught
+            ret.notCompleted = true;
+        }
     }
     return ret;
 
