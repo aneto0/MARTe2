@@ -233,6 +233,9 @@ bool StateMachineEventTest::TestConsumeMessage() {
     ok &= stateMachineMessage->Initialise(msgCdb);
     ok &= (event->ConsumeMessage(stateMachineMessage) == ErrorManagement::NoError);
     ok &= (receiver->flag == 2);
+    ReferenceT<StateMachine> stateMachine = ObjectRegistryDatabase::Instance()->Find("StateMachine");
+    stateMachine->Stop();
+    stateMachine->Stop();
     return ok;
 
 }

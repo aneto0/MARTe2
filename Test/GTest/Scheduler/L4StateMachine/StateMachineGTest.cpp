@@ -105,3 +105,8 @@ TEST(StateMachineGTest,TestEventTriggered_SendMessage_GoToError_Timeout) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestEventTriggered_SendMessage_GoToError_Timeout());
 }
+
+TEST(StateMachineGTest,TestEventTriggered_SendMessage_PingPong) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestEventTriggered_SendMessage_PingPong());
+}

@@ -190,6 +190,8 @@ bool StateMachineTest::TestInitialise() {
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachine> stateMachine = ObjectRegistryDatabase::Instance()->Find("StateMachine");
     ok &= stateMachine.IsValid();
+    stateMachine->Stop();
+    stateMachine->Stop();
     return ok;
 }
 
@@ -530,6 +532,8 @@ bool StateMachineTest::TestEventTriggered() {
         ok = (receiver4->flag == 2);
     }
 
+    stateMachine->Stop();
+    stateMachine->Stop();
     return ok;
 }
 
@@ -662,6 +666,8 @@ bool StateMachineTest::TestGetState() {
         ok = (receiver4->flag == 2);
     }
 
+    stateMachine->Stop();
+    stateMachine->Stop();
     return ok;
 }
 
@@ -816,6 +822,13 @@ bool StateMachineTest::TestGetStateStatus() {
         done &= (stateMachine->GetCurrentStateStatus() == StateMachine::Executing);
     }
     ok &= done;
+
+    receiver2->Stop();
+    receiver2->Stop();
+    receiver3->Stop();
+    receiver3->Stop();
+    stateMachine->Stop();
+    stateMachine->Stop();
     return ok;
 }
 
@@ -947,6 +960,9 @@ bool StateMachineTest::TestEventTriggered_SendMessage() {
         Sleep::MSec(10);
     }
 
+    ReferenceT<StateMachine> stateMachine = ObjectRegistryDatabase::Instance()->Find("StateMachine");
+    stateMachine->Stop();
+    stateMachine->Stop();
     return ok;
 }
 
@@ -1080,6 +1096,9 @@ bool StateMachineTest::TestEventTriggered_SendMessage_WaitReply() {
         Sleep::MSec(10);
     }
 
+    ReferenceT<StateMachine> stateMachine = ObjectRegistryDatabase::Instance()->Find("StateMachine");
+    stateMachine->Stop();
+    stateMachine->Stop();
     return ok;
 }
 
@@ -1215,6 +1234,10 @@ bool StateMachineTest::TestEventTriggered_SendMessage_GoToError() {
         Sleep::MSec(10);
     }
     ok &= done;
+
+    ReferenceT<StateMachine> stateMachine = ObjectRegistryDatabase::Instance()->Find("StateMachine");
+    stateMachine->Stop();
+    stateMachine->Stop();
     return ok;
 }
 
@@ -1361,6 +1384,156 @@ bool StateMachineTest::TestEventTriggered_SendMessage_GoToError_Timeout() {
     ok &= done;
     receiver1->flag = 2;
     Sleep::MSec(100);
+
+    receiver1->Stop();
+    receiver1->Stop();
+    stateMachine->Stop();
+    stateMachine->Stop();
+
     return ok;
 }
 
+bool StateMachineTest::TestEventTriggered_SendMessage_PingPong() {
+    using namespace MARTe;
+    const char8 * const config1 = ""
+            "+StateMachineA = {"
+            "    Class = StateMachine"
+            "    +A = {"
+            "        Class = ReferenceContainer"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"B\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"StateMachineB\""
+            "                Function = \"E1\""
+            "            }"
+            "        }"
+            "    }"
+            "    +B = {"
+            "        Class = ReferenceContainer"
+            "        +ENTER = {"
+            "            Class = ReferenceContainer"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver1\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"StateMachineB\""
+            "                Function = \"E1\""
+            "            }"
+            "        }"
+            "    }"
+            "    +E = {"
+            "        Class = ReferenceContainer"
+            "        +E2 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "        }"
+            "    }"
+            "}"
+            "+StateMachineB = {"
+            "    Class = StateMachine"
+            "    +A = {"
+            "        Class = ReferenceContainer"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"B\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"StateMachineA\""
+            "                Function = \"E1\""
+            "            }"
+            "        }"
+            "    }"
+            "    +B = {"
+            "        Class = ReferenceContainer"
+            "        +ENTER = {"
+            "            Class = ReferenceContainer"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver2\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "        }"
+            "    }"
+            "    +E = {"
+            "        Class = ReferenceContainer"
+            "        +E2 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "        }"
+            "    }"
+            "}";
+
+    StreamString configStream = config1;
+    configStream.Seek(0);
+    ConfigurationDatabase cdb;
+    StreamString parserErr;
+    StandardParser parser(configStream, cdb, &parserErr);
+    bool ok = parser.Parse();
+    if (!ok) {
+        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->CleanUp();
+    ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+    receiver1->SetName("Receiver1");
+    receiver2->SetName("Receiver2");
+
+    ObjectRegistryDatabase::Instance()->Insert(receiver1);
+    ObjectRegistryDatabase::Instance()->Insert(receiver2);
+
+    ReferenceT<Message> msg = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb2;
+    cdb2.Write("Destination", "StateMachineA");
+    cdb2.Write("Function", "E1");
+    ok &= msg->Initialise(cdb2);
+    MessageI::SendMessage(msg, NULL);
+
+    ok = false;
+    uint32 counter = 0;
+    ReferenceT<StateMachine> stateMachineA = ObjectRegistryDatabase::Instance()->Find("StateMachineA");
+    ReferenceT<StateMachine> stateMachineB = ObjectRegistryDatabase::Instance()->Find("StateMachineB");
+    ReferenceT<ReferenceContainer> stateMachineAStateA = ObjectRegistryDatabase::Instance()->Find("StateMachineA.A");
+    ReferenceT<ReferenceContainer> stateMachineBStateA = ObjectRegistryDatabase::Instance()->Find("StateMachineB.A");
+    while (!ok && (counter < 500)) {
+        ok = (receiver1->flag == 1);
+        ok &= (receiver2->flag == 1);
+        ok &= (stateMachineA->GetCurrentState() == stateMachineAStateA);
+        ok &= (stateMachineB->GetCurrentState() == stateMachineBStateA);
+        counter++;
+        Sleep::MSec(10);
+    }
+    stateMachineA->Stop();
+    stateMachineA->Stop();
+    stateMachineB->Stop();
+    stateMachineB->Stop();
+    return ok;
+}

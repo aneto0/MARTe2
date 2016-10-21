@@ -105,6 +105,11 @@ public:
      * @brief Tests the EventTriggered method through the SendMessage and verifies that it goes into an error state after a timeout.
      */
     bool TestEventTriggered_SendMessage_GoToError_Timeout();
+
+    /**
+     * @brief Tests the EventTriggered method through the SendMessage interface and by forcing two state machines to interchange information between them.
+     */
+    bool TestEventTriggered_SendMessage_PingPong();
 };
 
 /*---------------------------------------------------------------------------*/

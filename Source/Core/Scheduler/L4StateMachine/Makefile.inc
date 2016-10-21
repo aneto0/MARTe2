@@ -25,8 +25,7 @@
 #############################################################
 
 OBJSX=	StateMachine.x \
-    StateMachineEvent.x \
-    StateMachineMessage.x
+    StateMachineEvent.x
         
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..
