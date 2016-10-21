@@ -196,13 +196,13 @@ StateMachine    ();
      * @brief Gets the current state.
      * @return the current State.
      */
-    Reference GetCurrentState();
+    Reference GetCurrentState() const;
 
     /**
      * @brief Gets the current state status.
      * @return the current state status.
      */
-    StateStatus GetCurrentStateStatus();
+    StateStatus GetCurrentStateStatus() const;
 
 private:
     /**

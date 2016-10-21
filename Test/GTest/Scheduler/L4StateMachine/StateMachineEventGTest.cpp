@@ -61,9 +61,9 @@ TEST(StateMachineEventGTest,TestGetNextStateError) {
     ASSERT_TRUE(target.TestGetNextStateError());
 }
 
-TEST(StateMachineEventGTest,TestGetTimeout) {
+TEST(StateMachineEventGTest,TestGetTransitionTimeout) {
     StateMachineEventTest target;
-    ASSERT_TRUE(target.TestGetTimeout());
+    ASSERT_TRUE(target.TestGetTransitionTimeout());
 }
 
 TEST(StateMachineEventGTest,TestInitialise) {

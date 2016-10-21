@@ -48,7 +48,7 @@ public:
     /**
      * @brief Tests the GetTimeout method.
      */
-    bool TestGetTimeout();
+    bool TestGetTransitionTimeout();
 
     /**
      * @brief Tests the GetNextState method.

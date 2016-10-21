@@ -68,11 +68,11 @@ CLASS_METHOD_REGISTER(StateMachineEventTestMessageReceiver, ReceiverMethod)
 bool StateMachineEventTest::TestDefaultConstructor() {
     using namespace MARTe;
     StateMachineEvent event;
-    bool ok = (event.GetTimeout() == TTInfiniteWait);
+    bool ok = (event.GetTransitionTimeout() == TTInfiniteWait);
     return ok;
 }
 
-bool StateMachineEventTest::TestGetTimeout() {
+bool StateMachineEventTest::TestGetTransitionTimeout() {
     return TestInitialise();
 }
 
@@ -94,7 +94,7 @@ bool StateMachineEventTest::TestInitialise() {
     bool ok = event.Initialise(cdb);
     ok &= (StringHelper::Compare(event.GetNextState(), "B") == 0);
     ok &= (StringHelper::Compare(event.GetNextStateError(), "E") == 0);
-    ok &= (event.GetTimeout() == TTInfiniteWait);
+    ok &= (event.GetTransitionTimeout() == TTInfiniteWait);
     return ok;
 }
 
@@ -108,7 +108,7 @@ bool StateMachineEventTest::TestInitialise_NoZeroTimeout() {
     bool ok = event.Initialise(cdb);
     ok &= (StringHelper::Compare(event.GetNextState(), "B") == 0);
     ok &= (StringHelper::Compare(event.GetNextStateError(), "E") == 0);
-    ok &= (event.GetTimeout() == 10);
+    ok &= (event.GetTransitionTimeout() == 10);
     return ok;
 }
 
@@ -134,7 +134,7 @@ bool StateMachineEventTest::TestInitialise_True_NoNextStateError() {
     bool ok = event.Initialise(cdb);
     ok &= (StringHelper::Compare(event.GetNextState(), "B") == 0);
     ok &= (StringHelper::Compare(event.GetNextStateError(), "ERROR") == 0);
-    ok &= (event.GetTimeout() == 10);
+    ok &= (event.GetTransitionTimeout() == 10);
     return ok;
 }
 
@@ -148,7 +148,7 @@ bool StateMachineEventTest::TestInitialise_True_NoTimeout() {
     bool ok = event.Initialise(cdb);
     ok &= (StringHelper::Compare(event.GetNextState(), "B") == 0);
     ok &= (StringHelper::Compare(event.GetNextStateError(), "E") == 0);
-    ok &= (event.GetTimeout() == TTInfiniteWait);
+    ok &= (event.GetTransitionTimeout() == TTInfiniteWait);
     return ok;
 }
 

@@ -48,6 +48,7 @@ StateMachine::StateMachine() :
     currentStateStatus = Entering;
 }
 
+/*lint -e{1551} the destructor must guarantee that the QueuedMessageI SingleThreadService is stopped.*/
 StateMachine::~StateMachine() {
     ErrorManagement::ErrorType err = Stop();
     if (!err.ErrorsCleared()) {
@@ -77,21 +78,23 @@ bool StateMachine::Initialise(StructuredDataI &data) {
                         event->SetStateMachine(this);
                         found = true;
                         //Check if the NextState exists
-                        ReferenceT<ReferenceContainer> nextState = Find(event->GetNextState());
+                        CCString nextStateStr = event->GetNextState();
+                        ReferenceT<ReferenceContainer> nextState = Find(nextStateStr);
                         ok = nextState.IsValid();
                         if (!ok) {
                             err.parametersError = true;
                             REPORT_ERROR_PARAMETERS(ErrorManagement::ParametersError, "In event (%s) the next state (%s) does not exist", event->GetName(),
-                                                    event->GetNextState().GetList())
+                                                    nextStateStr.GetList())
                         }
                         //Check if the NextStateError exists
                         if (ok) {
-                            ReferenceT<ReferenceContainer> nextStateError = Find(event->GetNextStateError());
+                            CCString nextStateErrorStr = event->GetNextStateError();
+                            ReferenceT<ReferenceContainer> nextStateError = Find(nextStateErrorStr);
                             ok = nextStateError.IsValid();
                             if (!ok) {
                                 err.parametersError = true;
                                 REPORT_ERROR_PARAMETERS(ErrorManagement::ParametersError, "In event (%s) the next state error (%s) does not exist",
-                                                        event->GetName(), event->GetNextStateError().GetList())
+                                                        event->GetName(), nextStateErrorStr.GetList())
                             }
                         }
                     }
@@ -170,7 +173,7 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
         nextStateError = event->GetNextStateError();
         nextState = event->GetNextState();
         REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Changing from state (%s) to state (%s)", currentState->GetName(), nextState.Buffer())
-        errSend = SendMultipleMessagesAndWaitReply(*(event.operator ->()), event->GetTimeout());
+        errSend = SendMultipleMessagesAndWaitReply(*(event.operator ->()), event->GetTransitionTimeout());
     }
     //Install the next state event filters...
     if (errSend.ErrorsCleared()) {
@@ -213,7 +216,7 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
         ReferenceT<ReferenceContainer> enterMessages = currentState->Find("ENTER");
         //Compute the highest timeout
         if (enterMessages.IsValid()) {
-            uint32 msecTimeout = 0;
+            uint32 msecTimeout = 0u;
             uint32 n;
             bool maxTimeoutFound = false;
             for (n = 0u; (n < enterMessages->Size()) && (!maxTimeoutFound); n++) {
@@ -262,17 +265,20 @@ ErrorManagement::ErrorType StateMachine::SendMultipleMessagesAndWaitReply(Refere
                 eventMsg->SetExpectsIndirectReply(true);
             }
             if (eventMsg->ExpectsIndirectReply()) {
-                eventReplyContainer.Insert(eventMsg);
+                err = !eventReplyContainer.Insert(eventMsg);
             }
         }
     }
 
+    if (ok) {
+        ok = err.ErrorsCleared();
+    }
     //Prepare the filter which will wait for all the replies
-    if (eventReplyContainer.Size() > 0u) {
+    if ((eventReplyContainer.Size() > 0u) && (ok)) {
         ReferenceT<QueuedReplyMessageCatcherFilter> filter(new (NULL) QueuedReplyMessageCatcherFilter());
         filter->SetMessagesToCatch(eventReplyContainer);
         filter->SetEventSemaphore(waitSem);
-        MessageI::InstallMessageFilter(filter, 0);
+        err = MessageI::InstallMessageFilter(filter, 0);
     }
 
     ok = err.ErrorsCleared();
@@ -294,14 +300,13 @@ ErrorManagement::ErrorType StateMachine::SendMultipleMessagesAndWaitReply(Refere
     return err;
 }
 
-Reference StateMachine::GetCurrentState() {
+Reference StateMachine::GetCurrentState() const {
     return currentState;
 }
 
-StateMachine::StateStatus StateMachine::GetCurrentStateStatus() {
+StateMachine::StateStatus StateMachine::GetCurrentStateStatus() const {
     return currentStateStatus;
 }
-
 
 CLASS_REGISTER(StateMachine, "1.0")
 }

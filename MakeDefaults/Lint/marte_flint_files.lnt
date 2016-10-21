@@ -150,6 +150,8 @@ SortFilterT.h
 StandardHeap.h
 StandardHeap_Generic.cpp
 StandardParser.cpp
+StateMachine.cpp
+StateMachineEvent.cpp
 StaticList.h
 StaticListHolder.cpp
 StreamI.h

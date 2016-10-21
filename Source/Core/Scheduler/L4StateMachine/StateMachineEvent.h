@@ -53,7 +53,7 @@ public:
      * @brief Default constructor.
      * @post
      *   IsPermanentFilter() == false &&
-     *   GetTimeout() == TTInfiniteWait
+     *   GetTransitionTimeout() == TTInfiniteWait
      */
     StateMachineEvent();
 
@@ -66,7 +66,7 @@ public:
      * @brief Gets the maximum timeout to wait for all the replies against a given event.
      * @return the maximum timeout to wait for all the replies against a given event.
      */
-    TimeoutType GetTimeout() const;
+    TimeoutType GetTransitionTimeout() const;
 
     /**
      * @brief Gets the state to follow the trigger of this event.

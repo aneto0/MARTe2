@@ -51,7 +51,7 @@ StateMachineEvent::~StateMachineEvent() {
 
 }
 
-TimeoutType StateMachineEvent::GetTimeout() const {
+TimeoutType StateMachineEvent::GetTransitionTimeout() const {
     return timeout;
 }
 
@@ -80,7 +80,7 @@ bool StateMachineEvent::Initialise(StructuredDataI &data) {
         REPORT_ERROR(ErrorManagement::Warning, "NextStateError was not specified. Using ERROR.");
         nextStateError = "ERROR";
     }
-    uint32 msecTimeout;
+    uint32 msecTimeout = 0u;
     if (err.ErrorsCleared()) {
         if (!data.Read("Timeout", msecTimeout)) {
             REPORT_ERROR(ErrorManagement::Warning, "Timeout was not specified. Using TTInfiniteWait");
@@ -109,8 +109,9 @@ ErrorManagement::ErrorType StateMachineEvent::ConsumeMessage(ReferenceT<Message>
     bool found = false;
     //Check if the destination of this message is this event
     if (err.ErrorsCleared()) {
-        if (messageToTest->GetFunction() != NULL_PTR(CCString)) {
-            found = (StringHelper::Compare(messageToTest->GetFunction(), GetName()) == 0u);
+        CCString function = messageToTest->GetFunction();
+        if (function.GetList() != NULL_PTR(const char8 *)) {
+            found = (StringHelper::Compare(function, GetName()) == 0);
         }
 
     }
