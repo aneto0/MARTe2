@@ -125,7 +125,9 @@
     /*                                                                                                                 \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                              \
-        return MARTe::ClassRegistryItemT<className>::Instance();                                                       \
+    	if(className ## _privateItem == NULL) {\
+    	}\
+	return MARTe::ClassRegistryItemT<className>::Instance();            \
     }                                                                                                                  \
     /*                                                                                                                 \
      */                                                                                                                \

@@ -42,8 +42,8 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 RegisteredMethodsMessageFilter::RegisteredMethodsMessageFilter() :
-        Object(),
-        MessageFilter(true) {
+        MessageFilter(true),
+        Object() {
     destinationObject = NULL_PTR(Object *);
 }
 

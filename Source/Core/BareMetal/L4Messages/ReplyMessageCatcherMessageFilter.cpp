@@ -41,8 +41,8 @@
 namespace MARTe {
 
 ReplyMessageCatcherMessageFilter::ReplyMessageCatcherMessageFilter() :
-        Object(),
-        MessageFilter(false) {
+        MessageFilter(false),
+        Object() {
     caught = false;
 }
 
