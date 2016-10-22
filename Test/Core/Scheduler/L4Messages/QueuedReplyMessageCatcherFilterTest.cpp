@@ -67,7 +67,7 @@ bool QueuedReplyMessageCatcherFilterTest::TestConsumeMessage() {
     MessageFilter &unprotectedFilter = filter;
 
     ErrorManagement::ErrorType err = unprotectedFilter.ConsumeMessage(msg1);
-    bool ret = err.ErrorsCleared();
+    bool ret = (err == ErrorManagement::NotCompleted);
     if (ret) {
         //This should post the semaphore.
         err = unprotectedFilter.ConsumeMessage(msg2);
@@ -101,7 +101,7 @@ bool QueuedReplyMessageCatcherFilterTest::TestConsumeMessage_MissingMessage() {
     MessageFilter &unprotectedFilter = filter;
 
     ErrorManagement::ErrorType err = unprotectedFilter.ConsumeMessage(msg1);
-    bool ret = err.ErrorsCleared();
+    bool ret = (err == ErrorManagement::NotCompleted);
     if (ret) {
         err = sem.Wait(10);
         //Should timeout
