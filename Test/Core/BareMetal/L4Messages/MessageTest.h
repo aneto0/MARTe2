@@ -128,7 +128,7 @@ private:
     struct MessageInitTableTest {
         const MARTe::char8* destination;
         const MARTe::char8* function;
-        const MARTe::TimeoutType maxwait;
+        const MARTe::TimeoutType replyTimeout;
         const MARTe::char8* mode;
         const MARTe::char8* configuration;
         bool expected;

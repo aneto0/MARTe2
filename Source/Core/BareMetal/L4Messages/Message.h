@@ -132,30 +132,30 @@ public:
      * destination of the reply (namely the address of the sender Object).
      * @return the address of the sender Object in the ObjectRegistryDatabase.
      */
-    inline CCString GetSender();
+    CCString GetSender();
 
     /**
      * @brief Sets the sender Object address in the ObjectRegistryDatabase.
      * @param[in] senderName is the address of the sender Object in the ObjectRegistryDatabase.
      */
-    inline void SetSender(CCString senderName);
+    void SetSender(CCString senderName);
 
     /**
      * @brief Retrieves the name of the registered class method of the destination Object which has to be called.
      * @return the name of the registered class method of the destination Object which has to be called.
      */
-    inline CCString GetFunction();
+    CCString GetFunction();
 
     /**
      * @brief Sets the time to wait for a reply.
      * @param[in] maxWaitIn is the timeout time in milliseconds.
      */
-    inline void SetReplyTimeout(const TimeoutType &maxWaitIn);
+    void SetReplyTimeout(const TimeoutType &maxWaitIn);
 
     /**
      * @brief Gets the timeout for the reply
      */
-    inline TimeoutType GetReplyTimeout() const;
+    TimeoutType GetReplyTimeout() const;
 
 private:
 
@@ -255,26 +255,6 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-CCString Message::GetSender() {
-    return sender.Buffer();
-}
-
-void Message::SetSender(CCString senderName) {
-    sender = senderName.GetList();
-}
-
-CCString Message::GetFunction() {
-    return function.Buffer();
-}
-
-void Message::SetReplyTimeout(const TimeoutType &maxWaitIn) {
-    maxWait = maxWaitIn;
-}
-
-TimeoutType Message::GetReplyTimeout() const {
-    return maxWait;
-}
 
 }
 
