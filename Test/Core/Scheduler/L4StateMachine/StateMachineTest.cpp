@@ -864,6 +864,7 @@ bool StateMachineTest::TestEventTriggered_SendMessage() {
             "                Class = Message"
             "                Destination = \"Receiver3\""
             "                Function = \"ReceiverMethod\""
+            "                ReplyTimeout = 10000"
             "            }"
             "            +M2 = {"
             "                Class = Message"

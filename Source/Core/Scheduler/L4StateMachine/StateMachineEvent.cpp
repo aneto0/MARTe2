@@ -119,8 +119,8 @@ ErrorManagement::ErrorType StateMachineEvent::ConsumeMessage(ReferenceT<Message>
     if (found) {
         err = stateMachine->EventTriggered(this);
     }
-    if (!found) {
-        err.unmapped = true;
+    else {
+        err.recoverableError = true;
     }
     return err;
 }

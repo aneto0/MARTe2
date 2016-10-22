@@ -222,13 +222,13 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
             for (n = 0u; (n < enterMessages->Size()) && (!maxTimeoutFound); n++) {
                 ReferenceT<Message> enterMessage = enterMessages->Get(n);
                 if (enterMessage.IsValid()) {
-                    if (enterMessage->GetTimeout() == TTInfiniteWait) {
+                    if (enterMessage->GetReplyTimeout() == TTInfiniteWait) {
                         maxTimeoutFound = true;
                         msecTimeout = TTInfiniteWait.GetTimeoutMSec();
                     }
                     else {
-                        if (enterMessage->GetTimeout().GetTimeoutMSec() > msecTimeout) {
-                            msecTimeout = enterMessage->GetTimeout().GetTimeoutMSec();
+                        if (enterMessage->GetReplyTimeout().GetTimeoutMSec() > msecTimeout) {
+                            msecTimeout = enterMessage->GetReplyTimeout().GetTimeoutMSec();
                         }
                     }
                 }

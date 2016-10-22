@@ -233,6 +233,14 @@ bool StateMachineEventTest::TestConsumeMessage() {
     ok &= stateMachineMessage->Initialise(msgCdb);
     ok &= (event->ConsumeMessage(stateMachineMessage) == ErrorManagement::NoError);
     ok &= (receiver->flag == 2);
+
+    ReferenceT<Message> stateMachineMessage2 = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase msgCdb2;
+    msgCdb2.Write("Destination", "StateMachine");
+    msgCdb2.Write("Function", "E2");
+    ok &= stateMachineMessage2->Initialise(msgCdb2);
+    ok &= (event->ConsumeMessage(stateMachineMessage2) == ErrorManagement::RecoverableError);
+
     ReferenceT<StateMachine> stateMachine = ObjectRegistryDatabase::Instance()->Find("StateMachine");
     stateMachine->Stop();
     stateMachine->Stop();
