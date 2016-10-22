@@ -121,6 +121,7 @@ Processor.cpp
 ProcessorType.cpp
 QueuedMessageI.cpp
 QueueingMessageFilter.cpp
+QueuedReplyMessageCatcherFilter.cpp
 RealTimeApplication.cpp
 RealTimeApplicationConfigurationBuilder.cpp
 RealTimeState.cpp

@@ -57,8 +57,12 @@ void QueuedReplyMessageCatcherFilter::SetEventSemaphore(EventSem &eventSemIn) {
     eventSem = new EventSem(eventSemIn);
 }
 
+/*lint -e{1551} the event semaphore must be destroyed in the destructor*/
 QueuedReplyMessageCatcherFilter::~QueuedReplyMessageCatcherFilter() {
     if (eventSem != NULL_PTR(EventSem *)) {
+        if(!eventSem->Close()){
+            REPORT_ERROR(ErrorManagement::FatalError, "Could not close the EventSem");
+        }
         delete eventSem;
     }
 }
@@ -73,7 +77,7 @@ ErrorManagement::ErrorType QueuedReplyMessageCatcherFilter::ConsumeMessage(Refer
     }
     bool ok = ret.ErrorsCleared();
     if (ok) {
-        uint32 i = 0u;
+        uint32 i;
         bool found = false;
         for (i = 0u; (i < messagesToCatch.Size()) && (ok) && (!found); i++) {
             ReferenceT<Message> message = messagesToCatch.Get(i);
@@ -86,7 +90,7 @@ ErrorManagement::ErrorType QueuedReplyMessageCatcherFilter::ConsumeMessage(Refer
             }
 
             if (found) {
-                messagesToCatch.Delete(message);
+                ok = messagesToCatch.Delete(message);
             }
         }
         if (!found) {
