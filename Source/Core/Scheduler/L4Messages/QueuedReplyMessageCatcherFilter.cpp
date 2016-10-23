@@ -60,9 +60,6 @@ void QueuedReplyMessageCatcherFilter::SetEventSemaphore(EventSem &eventSemIn) {
 /*lint -e{1551} the event semaphore must be destroyed in the destructor*/
 QueuedReplyMessageCatcherFilter::~QueuedReplyMessageCatcherFilter() {
     if (eventSem != NULL_PTR(EventSem *)) {
-        if(!eventSem->Close()){
-            REPORT_ERROR(ErrorManagement::FatalError, "Could not close the EventSem");
-        }
         delete eventSem;
     }
 }

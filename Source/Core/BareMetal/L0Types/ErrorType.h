@@ -339,6 +339,12 @@ public:
     inline ErrorIntegerFormat operator =(const ErrorIntegerFormat errorBitSet);
 
     /**
+     * @brief Constructor from a bit set.
+     * @param[in] errorBitSet initialises the ErrorType against this bit set.
+     */
+    inline ErrorIntegerFormat operator =(const bool error);
+
+    /**
      * @brief Sets the error bits against a bit set.
      * @param[in] errorBitSet initialises the ErrorType against this bit set.
      */
@@ -374,7 +380,7 @@ public:
         /**
          * Recoverable error
          */
-        GENERATE_ERROR_BITRANGE(recoverableError)
+GENERATE_ERROR_BITRANGE        (recoverableError)
 
         /**
          * Initialization error
@@ -510,6 +516,16 @@ return format_as_integer != errorBitSet;
 inline ErrorIntegerFormat ErrorType::operator =(const ErrorIntegerFormat errorBitSet) {
 format_as_integer = errorBitSet;
 return errorBitSet;
+}
+
+inline ErrorIntegerFormat ErrorType::operator =(const bool error) {
+    if(error) {
+        format_as_integer = 1;
+    }
+    else {
+        format_as_integer = 0;
+    }
+    return format_as_integer;
 }
 
 inline void ErrorType::SetError(const ErrorIntegerFormat errorBitSet) {
