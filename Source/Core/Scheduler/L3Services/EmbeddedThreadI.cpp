@@ -219,7 +219,7 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
 
         // in any case notify the main object of the fact that the thread has been killed
         ExecutionInfo information;
-        information.SetThreadNumber(threadId);
+        information.SetThreadNumber(GetThreadId());
         information.SetStage(ExecutionInfo::AsyncTerminationStage);
         ErrorManagement::ErrorType killErr = Execute(information);
         if (!killErr.ErrorsCleared()) {

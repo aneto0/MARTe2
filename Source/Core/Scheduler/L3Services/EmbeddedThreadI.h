@@ -217,6 +217,12 @@ public:
      */
     virtual ErrorManagement::ErrorType Stop();
 
+protected:
+    /**
+     * Embedded thread identifier.
+     */
+    ThreadIdentifier threadId;
+
 private:
 
     /**
@@ -225,11 +231,6 @@ private:
     /*lint -e{1725} method is a reference that is initialised during construction and is the basic mechanism to register
      * the callback function to be called by this EmbeddedThreadI. */
     EmbeddedServiceMethodBinderI &method;
-
-    /**
-     * Embedded thread identifier.
-     */
-    ThreadIdentifier threadId;
 
     /**
      * The thread unique number (in the context of a pool)
