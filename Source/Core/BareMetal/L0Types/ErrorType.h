@@ -380,7 +380,7 @@ public:
         /**
          * Recoverable error
          */
-GENERATE_ERROR_BITRANGE        (recoverableError)
+        GENERATE_ERROR_BITRANGE(recoverableError)
 
         /**
          * Initialization error

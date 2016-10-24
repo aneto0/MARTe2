@@ -15,7 +15,6 @@ void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformatio
                                    const char * const errorDescription) {
     MARTe::StreamString errorCodeStr;
     MARTe::ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
-    errorCodeStr.Seek(0);
     printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
 }
 
