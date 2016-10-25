@@ -97,7 +97,7 @@ void ErrorCodeToStream(const ErrorType &errorCode,
                 firstErrorWritten = true;
             }
 
-            size = StringHelper::Length(errorNames[i].name) + 1;
+            size = StringHelper::Length(errorNames[i].name) + 1u;
             if (ok) {
                 ok = stream.Write(errorNames[i].name, size);
             }
