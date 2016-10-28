@@ -428,7 +428,12 @@ public:
      */
     virtual bool SetContext(ConstReference context);
 
-
+    /**
+     * @brief Function when all the information about the GAM is known and set.
+     * @details This allows to perform post-Initialise configuration given that at this stage
+     * all the information about the GAM is known (e.g. GetNumberOfInputSignals ...).
+     * @return true if the GAM is successfully configured.
+     */
     virtual bool Setup()=0;
 
 protected:
