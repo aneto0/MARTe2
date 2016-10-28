@@ -429,8 +429,8 @@ public:
     virtual bool SetContext(ConstReference context);
 
     /**
-     * @brief Function when all the information about the GAM is known and set.
-     * @details This allows to perform post-Initialise configuration given that at this stage
+     * @brief Function called when all the information about the GAM is known and set.
+     * @details This allows to perform post-Initialise configurations. When this function is called
      * all the information about the GAM is known (e.g. GetNumberOfInputSignals ...).
      * @return true if the GAM is successfully configured.
      */
