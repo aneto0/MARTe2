@@ -44,7 +44,7 @@ namespace MARTe {
  * @brief Calls the registered method in the messages trapped by this filter instance.
  * @details The filters remains permanently active until expressly removed.
  */
-class RegisteredMethodsMessageFilter: public MessageFilter {
+class RegisteredMethodsMessageFilter: public MessageFilter, public Object {
 public:
     CLASS_REGISTER_DECLARATION()
 

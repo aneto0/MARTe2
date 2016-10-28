@@ -24,6 +24,7 @@
 
 
 OBJSX=  QueuedMessageIGTest.x\
+    QueuedReplyMessageCatcherFilterGTest.x\
     QueueingMessageFilterGTest.x
 
 PACKAGE=GTest/Scheduler

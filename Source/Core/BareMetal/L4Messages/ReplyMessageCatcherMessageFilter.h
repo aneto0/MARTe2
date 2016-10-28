@@ -44,7 +44,7 @@ namespace MARTe {
  * @brief Allows catching (i.e. trapping) a specific message reply.
  * @details The filter is removed after catching the reply.
  */
-class ReplyMessageCatcherMessageFilter: public MessageFilter {
+class ReplyMessageCatcherMessageFilter: public MessageFilter, public Object {
 public:
     CLASS_REGISTER_DECLARATION()
     /**

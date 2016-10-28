@@ -37,10 +37,11 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class MessageFilterPoolTestPermanentFilter: public MARTe::MessageFilter {
+class MessageFilterPoolTestPermanentFilter: public MARTe::MessageFilter, public MARTe::Object {
 public:
     MessageFilterPoolTestPermanentFilter() :
-            MessageFilter(true) {
+            MessageFilter(true),
+            MARTe::Object() {
 
     }
 

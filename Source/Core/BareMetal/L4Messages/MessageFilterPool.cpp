@@ -40,7 +40,8 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-MessageFilterPool::MessageFilterPool() : ReferenceContainer() {
+MessageFilterPool::MessageFilterPool() :
+        ReferenceContainer() {
 
 }
 
@@ -50,16 +51,20 @@ MessageFilterPool::~MessageFilterPool() {
 
 ErrorManagement::ErrorType MessageFilterPool::ReceiveMessage(ReferenceT<Message> &message) {
     bool matched = false;
+    bool partialMatched = false;
     ErrorManagement::ErrorType err;
     ReferenceT<MessageFilter> messageFilter;
 
     uint32 i;
-    for (i = 0u; (i < Size()) && (!matched); i++) {
+    for (i = 0u; (i < Size()) && (!matched) && (!partialMatched); i++) {
         messageFilter = Get(i);
 
         if (messageFilter.IsValid()) {
             err = messageFilter->ConsumeMessage(message);
             matched = err.ErrorsCleared();
+            //A filter has a partial match (i.e. the message was for this filter but its work is still not complete, e.g. needs another message).
+            //By setting partialMatched to true will not allow to continue to test other filters.
+            partialMatched = (err == ErrorManagement::NotCompleted);
         }
     }
 
@@ -69,7 +74,13 @@ ErrorManagement::ErrorType MessageFilterPool::ReceiveMessage(ReferenceT<Message>
         }
     }
     else {
-        err.unsupportedFeature = true;
+        if (partialMatched) {
+            //Remove the flag as it was already handled (i.e. the filter was not removed).
+            err.notCompleted = false;
+        }
+        else{
+            err.unsupportedFeature = true;
+        }
     }
 
     return err;

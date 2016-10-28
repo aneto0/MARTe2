@@ -76,6 +76,9 @@ const struct {
         { "CommunicationError", CommunicationError },
         { "SyntaxError", SyntaxError },
         { "UnsupportedFeature", UnsupportedFeature },
+        { "InternalSetupError", InternalSetupError },
+        { "Completed", Completed },
+        { "NotCompleted", NotCompleted },
         { static_cast<const char8 *>(NULL), NoError }, };
 
 void ErrorCodeToStream(const ErrorType &errorCode,
@@ -94,12 +97,10 @@ void ErrorCodeToStream(const ErrorType &errorCode,
                 firstErrorWritten = true;
             }
 
-            size = StringHelper::Length(errorNames[i].name);
+            size = StringHelper::Length(errorNames[i].name) + 1u;
             if (ok) {
                 ok = stream.Write(errorNames[i].name, size);
             }
-
-            break;
         }
         i++;
     }
@@ -109,7 +110,6 @@ void ErrorCodeToStream(const ErrorType &errorCode,
         /*lint -e{534} write to stream failure is ignored.*/
         stream.Write("NoError", size);
     }
-
 }
 
 void ReportError(const ErrorType &code,

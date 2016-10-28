@@ -75,7 +75,7 @@ public:
  * @brief Retrieves the member address with respect to the class begin.
  */
 #define INTROSPECTION_MEMBER_INDEX(className, memberName) \
-    (intptr)(&(((className *)0)->memberName))
+        (size_t)(&((className *)0)->memberName)
 
                 /**
                  * @brief Retrieves the member size.
