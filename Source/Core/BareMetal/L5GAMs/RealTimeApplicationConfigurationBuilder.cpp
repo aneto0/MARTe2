@@ -3385,6 +3385,9 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToFunctions() {
                 ret = dataSourcesDatabase.MoveToAncestor(2u);
             }
         }
+        else {
+            ret = dataSourcesDatabase.MoveToAncestor(1u);
+        }
     }
 
     return ret;
