@@ -534,9 +534,9 @@ protected:
     ReferenceContainer outputBrokers;
 
     /**
-     * The heap that is used to malloc the input and output signals.
+     * The gamHeap that is used to malloc the input and output signals.
      */
-    HeapI *heap;
+    HeapI *gamHeap;
 
 };
 

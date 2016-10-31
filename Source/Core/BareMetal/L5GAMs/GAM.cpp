@@ -54,16 +54,16 @@ GAM::GAM() :
     outputSignalsMemory = NULL_PTR(void *);
     inputSignalsMemoryIndexer = NULL_PTR(void **);
     outputSignalsMemoryIndexer = NULL_PTR(void **);
-    heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
+    gamHeap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
 }
 
 /*lint -e{1551} no exception should be thrown*/
 GAM::~GAM() {
     if (inputSignalsMemory != NULL_PTR(void *)) {
-        heap->Free(inputSignalsMemory);
+        gamHeap->Free(inputSignalsMemory);
     }
     if (outputSignalsMemory != NULL_PTR(void *)) {
-        heap->Free(outputSignalsMemory);
+        gamHeap->Free(outputSignalsMemory);
     }
     if (inputSignalsMemoryIndexer != NULL_PTR(void **)) {
         delete[] inputSignalsMemoryIndexer;
@@ -71,7 +71,7 @@ GAM::~GAM() {
     if (outputSignalsMemoryIndexer != NULL_PTR(void **)) {
         delete[] outputSignalsMemoryIndexer;
     }
-    /*lint -e{1740} pointer member 'heap' points to a static object
+    /*lint -e{1740} pointer member 'gamHeap' points to a static object
      * returned by GlobalObjectsDatabase::Instance()->GetStandardHeap() */
 }
 
@@ -118,7 +118,7 @@ bool GAM::AllocateInputSignalsMemory() {
             ret = configuredDatabase.Read("ByteSize", totalByteSize);
         }
         if (ret) {
-            inputSignalsMemory = heap->Malloc(totalByteSize);
+            inputSignalsMemory = gamHeap->Malloc(totalByteSize);
             if (inputSignalsMemory != NULL_PTR(void*)) {
                 ret = MemoryOperationsHelper::Set(inputSignalsMemory, '\0', totalByteSize);
             }
@@ -172,7 +172,7 @@ bool GAM::AllocateOutputSignalsMemory() {
             ret = configuredDatabase.Read("ByteSize", totalByteSize);
         }
         if (ret) {
-            outputSignalsMemory = heap->Malloc(totalByteSize);
+            outputSignalsMemory = gamHeap->Malloc(totalByteSize);
             if (outputSignalsMemory != NULL_PTR(void*)) {
                 ret = MemoryOperationsHelper::Set(outputSignalsMemory, '\0', totalByteSize);
             }
