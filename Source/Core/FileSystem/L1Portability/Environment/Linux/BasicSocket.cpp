@@ -57,7 +57,7 @@ BasicSocket::BasicSocket() :
 /*lint -e{1551} .Justification: Removes the warning "Function may throw exception '...' in destructor". */
 BasicSocket::~BasicSocket() {
     if (!Close()) {
-        REPORT_ERROR(ErrorManagement::fatalError, "BasicSocket: The socket handle is invalid");
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
     }
 }
 
@@ -78,7 +78,7 @@ bool BasicSocket::SetBlocking(const bool flag) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "BasicSocket: The socket handle is invalid");
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
     }
     return (ret >= 0);
 }
@@ -89,7 +89,7 @@ bool BasicSocket::Close() {
         ret = close(connectionSocket);
         connectionSocket = -1;
         if (ret < 0) {
-            REPORT_ERROR(ErrorManagement::fatalError, "BasicSocket::Close failed");
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket::Close failed");
             ret = 0;
         }
     }

@@ -32,25 +32,21 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-//#include "CallRegisteredMethodLauncherT.h"
-#include "LinkedListHolderT.h"
-#include "FractionalInteger.h"    //using ClassUID typedef
+#include "ClassProperties.h"
 #include "CString.h"
+#include "FractionalInteger.h"    //using ClassUID typedef
+#include "Introspection.h"
 #include "LinkedListable.h"
+#include "LinkedListHolderT.h"
+#include "LoadableLibrary.h"
+#include "ObjectBuilder.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-/*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
-class Object;
-//class ClassMethodsRegistryItem;
-class ClassProperties;
-class Introspection;
-class LoadableLibrary;
-class ObjectBuilder;
-class ReferenceContainer;
 class ClassMethodCaller;
 class ClassMethodInterfaceMapper;
 }
@@ -132,14 +128,6 @@ public:
     const LoadableLibrary *GetLoadableLibrary() const;
 
     /**
-     * @brief Adds a list of registered class methods.
-     * @param[in] classMethodRecord contains a list of registered class methods
-     * to add to the class registry item instance. The class of this argument
-     * must be a descendant of LinkedListable.
-     */
-//    void RegisterMethods(ClassMethodsRegistryItem * const classMethodRecord);
-
-    /**
      * @brief Sets the object builder defining the way to allocate the memory when creating a new
      * instance of the registered class.
      * @param[in] objectBuilderIn is the object builder to be used to build new instances of the
@@ -162,29 +150,32 @@ public:
     void SetUniqueIdentifier(const ClassUID &uid);
 
     /**
-     * TODO
+     * @brief Gets the ClassMethodCaller associated to the method with name = methodName.
+     * @param[in] methodName the name of the method.
+     * @return the ClassMethodCaller associated to the method with name = methodName.
      */
     ClassMethodCaller *FindMethod(CCString methodName);
 
     /**
-     * TODO
+     * @brief Registers a method that can be later retrieved with FindMethod.
+     * @param[in] method the method to register. The pointer will be freed by this class.
      */
-    void AddMethod(ClassMethodInterfaceMapper *method);
+    void AddMethod(ClassMethodInterfaceMapper * const method);
 
 protected:
 
     /**
-     // singleton approach - usable only by descendant methods
-     * @brief Default constructor
+     * @brief Default constructor. Singleton approach - usable only by descendant methods.
+     * @param[in] classProperties_in class properties associated to this item.
      */
     ClassRegistryItem(ClassProperties &classProperties_in);
 
-    /** singleton approach - usable only by descendant methods
-     * common code
-     * static ptr is specialised in the templetised descendant
+    /**
+     * @brief Gets a pointer to this pseudo-singleton instance.
+     * @param[in] instance if instance != NULL a new instance of ClassRegistryItem is created and assigned to instance.
+     * This mechanism is used by the ClassRegistryItemT
      */
-    static ClassRegistryItem *Instance(ClassRegistryItem *&instance,
-                                       ClassProperties &classProperties_in);
+    static ClassRegistryItem *Instance(ClassRegistryItem *&instance, ClassProperties &classProperties_in);
 
 private:
 

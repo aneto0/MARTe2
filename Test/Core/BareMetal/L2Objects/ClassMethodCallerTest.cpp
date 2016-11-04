@@ -65,7 +65,7 @@ bool ClassMethodCallerTest::TestCall() {
         ErrorManagement::ErrorType status;
         Object context;
         status = target.Call(&context);
-        result &= (status == ErrorManagement::parametersError);
+        result &= (status == ErrorManagement::ParametersError);
     }
     {
         ClassMethodCaller target;
@@ -73,7 +73,7 @@ bool ClassMethodCallerTest::TestCall() {
         Object context;
         ReferenceContainer param;
         status = target.Call(&context, param);
-        result &= (status == ErrorManagement::parametersError);
+        result &= (status == ErrorManagement::ParametersError);
     }
     {
         ClassMethodCaller target;
@@ -81,7 +81,7 @@ bool ClassMethodCallerTest::TestCall() {
         Object context;
         ConfigurationDatabase param;
         status = target.Call(&context, param);
-        result &= (status == ErrorManagement::parametersError);
+        result &= (status == ErrorManagement::ParametersError);
     }
     {
         ClassMethodCaller target;
@@ -89,7 +89,7 @@ bool ClassMethodCallerTest::TestCall() {
         Object context;
         StreamString param;
         status = target.Call(&context, param);
-        result &= (status == ErrorManagement::parametersError);
+        result &= (status == ErrorManagement::ParametersError);
     }
     return result;
 }

@@ -89,7 +89,7 @@ void *LoadableLibrary::Function(char8 const * const name) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "LoadableLibrary: Invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "LoadableLibrary: Invalid input arguments");
 
     }
 

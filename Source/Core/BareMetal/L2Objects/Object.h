@@ -32,21 +32,21 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "CLASSREGISTER.h"
 #include "HeapI.h"
 #include "HeapManager.h"
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
 #include "ErrorType.h"
 #include "StringHelper.h"
-
+#include "StructuredDataI.h"
+#include "CLASSREGISTER.h"
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-class StructuredDataI;
-
+//class StructuredDataI;
+class ReferenceContainer;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -230,32 +230,32 @@ public:
     /**
      * @brief Calls a registered method without arguments.
      * @param[in] methodName is the method name.
-     * @return ErrorManagement::unsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
-     * ErrorManagement::fatalError will be returned if the function returns false, ErrorManagement::noError otherwise.
+     * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
+     * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
     ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName);
 
     /**
      * @brief Calls a registered method without arguments.
      * @param[in] methodName is the method name.
-     * @return ErrorManagement::unsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
-     * ErrorManagement::fatalError will be returned if the function returns false, ErrorManagement::noError otherwise.
+     * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
+     * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
     ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName, ReferenceContainer &parameters);
 
     /**
      * @brief Calls a registered method without arguments.
      * @param[in] methodName is the method name.
-     * @return ErrorManagement::unsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
-     * ErrorManagement::fatalError will be returned if the function returns false, ErrorManagement::noError otherwise.
+     * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
+     * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
     ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName, StructuredDataI &parameters);
 
     /**
      * @brief Calls a registered method without arguments.
      * @param[in] methodName is the method name.
-     * @return ErrorManagement::unsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
-     * ErrorManagement::fatalError will be returned if the function returns false, ErrorManagement::noError otherwise.
+     * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
+     * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
     ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName, StreamI &stream);
 
@@ -348,7 +348,7 @@ private:
     /**
      * The name of this object.
      */
-    char8 *name;
+    char8 *thisObjName;
 
     /**
      * Specifies if the object is a domain

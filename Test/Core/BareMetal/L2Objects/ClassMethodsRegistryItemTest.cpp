@@ -103,14 +103,14 @@ bool ClassMethodsRegistryItemTest::TestCallFunction() {
         ClassWithCallableMethods2 context;
         ReferenceContainer params;
         status = target.CallFunction(&context, "NonRegisteredMethod", params);
-        result &= status.unsupportedFeature;
+        result &= status.UnsupportedFeature;
     }
     {
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods2 context;
         ReferenceContainer params;
         status = target.CallFunction(&context, "FaultyMethod", params);
-        result &= status.fatalError;
+        result &= status.FatalError;
         result &= (context.GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
     }
     {
@@ -245,14 +245,14 @@ bool ClassMethodsRegistryItemTest::TestCallFunction_WithMacroSupport() {
         ClassWithCallableMethods context;
         ReferenceContainer params;
         status = target->CallFunction<ReferenceContainer&>(&context, "NonRegisteredMethod", params);
-        result &= status.unsupportedFeature;
+        result &= status.UnsupportedFeature;
     }
     {
         ErrorManagement::ErrorType status;
         ClassWithCallableMethods context;
         ReferenceContainer params;
         status = target->CallFunction<ReferenceContainer&>(&context, "FaultyMethod", params);
-        result &= status.fatalError;
+        result &= status.FatalError;
         result &= (context.GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
     }
     {

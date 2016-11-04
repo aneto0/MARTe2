@@ -95,7 +95,7 @@ public:
 
     /**
      * @brief Locks the semaphore without timeout (i.e. possibly forever).
-     * @return ErrorManagement::noError if the operating system call returns with no errors.
+     * @return ErrorManagement::NoError if the operating system call returns with no errors.
      * @pre the semaphore was successfully created.
      */
     ErrorManagement::ErrorType Lock();
@@ -103,7 +103,7 @@ public:
     /**
      * @brief Locks the semaphore up to a maximum period defined by the timeout.
      * @param[in] timeout the maximum time up until when the semaphore will be locked.
-     * @return ErrorManagement::noError if the operating system call returns with no errors or
+     * @return ErrorManagement::NoError if the operating system call returns with no errors or
      * Timeout if the time waiting in the Lock (from when the function was called)
      * was greater than the specified timeout.
      * @pre the semaphore was successfully created.

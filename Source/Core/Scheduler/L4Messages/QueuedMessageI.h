@@ -32,11 +32,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "../L3Services/SingleThreadService.h"
 #include "MessageI.h"
 #include "ReferenceContainer.h"
-#include "EmbeddedThread.h"
 #include "QueueingMessageFilter.h"
-//#include "EmbeddedThreadMethodCaller.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -45,92 +44,94 @@
 namespace MARTe {
 
 /**
- * TODO
- * */
-class QueuedMessageI: public MessageI{
+ * @brief MessageI queued implementation.
+ * @details Messages consumed by this MessageI are processed in the context of a thread.
+ * A QueueingMessageFilter is installed (MessageI::InstallMessageFilter) and the thread blocks until
+ *  a new message is consumed by this queue (QueueingMessageFilter::GetMessage). This message is then
+ *  propagated to all the filter that were added to this QueuedMessageI (see InstallMessageFilterInQueue).
+ */
+class QueuedMessageI: public MessageI {
 public:
 
     /**
-     *     sets all up and starts the message handler thread
+     * @brief Constructor.
+     * @details Installs a QueueingMessageFilter in the parent MessageI.
      */
     QueuedMessageI();
 
     /**
-     * TODO
-     *     kills the message handler thread
+     * @brief Destructor. NOOP.
      */
-   virtual ~QueuedMessageI();
+    virtual ~QueuedMessageI();
 
-   /**
-    * TODO
-    *     installs message queue
-    *     starts the thread
-    */
-   ErrorManagement::ErrorType Start();
-   /**
-    * TODO
-    *     installs message queue
-    *     starts the thread
-    */
-   ErrorManagement::ErrorType Stop();
+    /**
+     * @brief Starts the EmbeddedThread that consumes the messages sent to this QueuedMessageI.
+     * @return ErrorManagement::NoError if EmbeddedThread can be successfully started.
+     */
+    ErrorManagement::ErrorType Start();
 
-   /**
-    * @brief installs a message filter in a given position
-    * TODO
-    */
-   ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,CCString name="",int32 position=0,bool afterQueue=true);
+    /**
+     * @brief Stops the EmbeddedThread that is consuming the messages sent to this QueuedMessageI.
+     * @return ErrorManagement::NoError if EmbeddedThread can be successfully stopped.
+     */
+    ErrorManagement::ErrorType Stop();
 
-   /**
-    * TODO
-    */
-   ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter);
+    /**
+     * @brief Installs a message filter that is capable of handling messages addressed to this QueuedMessageI.
+     * @param[in] messageFilter a reference to the filter to be installed.
+     * @param[in] position the position of the filter. Filters with lower position will handle messages before.
+     * @return ErrorManagement::NoError if the filter can be successfully installed.
+     * @pre
+     *   messageFilter.IsValid()
+     */
+    /*lint -e(1735) the derived classes shall use this default parameter or no default parameter at all*/
+    virtual ErrorManagement::ErrorType InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,
+                                                            const int32 position = 0);
 
-   /**
-    * TODO
-    */
-   ErrorManagement::ErrorType RemoveMessageFilter(CCString name);
-
+    /**
+     * @brief Removes a previously installed message filter (see InstallMessageFilterInQueue).
+     * @param[in] messageFilter a reference to the filter to be removed.
+     * @return ErrorManagement::NoError if the filter can be successfully installed.
+     * @pre
+     *   messageFilter.IsValid()
+     */
+    virtual ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter);
 
 private:
 
-   /**
-    * TODO
-    * */
-   ErrorManagement::ErrorType QueueProcessing(EmbeddedServiceI::ExecutionInfo &info);
+    /**
+     * @brief Callback thread function that consumes the messages from the QueueingMessageFilter.
+     * @param[in] info the ExecutionInfo for the processing thread.
+     * @return ErrorManagement::NoError if the message can be get from the QueueingMessageFilter. Note that a timeout
+     *  is not considered to be an error (thread is expected to Poll).
+     */
+    ErrorManagement::ErrorType QueueProcessing(const ExecutionInfo &info);
 
-   /**
-    * TODO
-    * The message consuming filters
-    * used by SortMessage
-    *
-    * */
-   MessageFilterPool queuedMessageFilters;
+    /**
+     * Message pool that contains the filters that handle the requests in QueueProcessing.
+     */
+    MessageFilterPool queuedMessageFilters;
 
-   /**
-    * TODO
-    * */
-   ReferenceT<QueueingMessageFilter> queue;
+    /**
+     * The QueueingMessageFilter that is installed in the parent MessageI.
+     */
+    ReferenceT<QueueingMessageFilter> queue;
 
-   /**
-    * TODO
-    * The message consuming filters
-    * used by SortMessage
-    *
-    * */
-   EmbeddedThread    queueProcessingThread;
+    /**
+     * EmbeddedThread that executes the QueueProcessing.
+     */
+    SingleThreadService queueProcessingThread;
 
-   /**
-    * TODO
-    */
-   EmbeddedServiceI::MethodBinderT<QueuedMessageI> binder;
+    /**
+     * Binds the QueueProcessing against the queueProcessingThread.
+     */
+    EmbeddedServiceMethodBinderT<QueuedMessageI> binder;
 };
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
 }
 #endif /* QUEUEDMESSAGEI_H_ */
-	
+

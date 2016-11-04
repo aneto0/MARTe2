@@ -74,7 +74,7 @@ public:
      * @param[in] timeout is the maximum amount of time to wait for the FastPost() before exiting.
      * @param[in] sleepTime is the amount of time the CPU is to be released in-between each polling loop cycle.
      * If sleepTime = 0 the CPU is never released and the spin-lock is continuously polled.
-     * @return ErrorManagement::noError if the spin-lock barrier is raised by a FastPost(), ErrorManagement::timeout if
+     * @return ErrorManagement::NoError if the spin-lock barrier is raised by a FastPost(), ErrorManagement::Timeout if
      * the timeout expires before the FastPost().
      * @pre Reset is called to lower the barrier.
      */
@@ -96,7 +96,7 @@ public:
      * @param[in] timeout is the maximum amount of time to wait for the FastPost() before exiting.
      * @param[in] sleepTime is the amount of time the CPU is to be released in-between each polling loop cycle.
      * If sleepTime = 0 the CPU is never released and the spin-lock is continuously polled.
-     * @return ErrorManagement::noError if the spin-lock is set by a FastPost(), ErrorManagement::timeout if
+     * @return ErrorManagement::NoError if the spin-lock is set by a FastPost(), ErrorManagement::Timeout if
      * the timeout expires before the FastPost().
      */
     ErrorManagement::ErrorType FastResetWait(const TimeoutType &timeout = TTInfiniteWait,

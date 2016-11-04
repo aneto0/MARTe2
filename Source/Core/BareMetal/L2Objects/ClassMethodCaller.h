@@ -32,93 +32,88 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "Object.h"
 #include "ErrorType.h"
+#include "Object.h"
 #include "StructuredDataI.h"
-#include "ReferenceContainer.h"
-#include "ReferenceT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
 /*---------------------------------------------------------------------------*/
 
-//namespace MARTe {
-///class Object;
-//class ReferenceContainer;
-//}
-
-
-namespace MARTe{
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
 
 /**
- * TODO
+ * @brief Allows to call registered methods on registered objects (see ClassMethodInterfaceMapper and CLASS_METHOD_REGISTER).
+ * @details The actual implementations of this class are in ClassMethodCallerT.
  */
-class ClassMethodCaller{
+/*lint -e{9109} forward declaration required to be able to Call the Object *.*/
+class ClassMethodCaller {
 public:
 
     /**
-     * TODO
+     * @brief Default constructor. NOOP.
      */
     ClassMethodCaller();
 
     /**
-     * TODO
+     * @brief. Destructor.
      */
     virtual ~ClassMethodCaller();
 
     /**
      * @brief Calls the class method using a Stream as the source of the parameters
      * @param[in] object is the pointer to the object owning the method.
-     * @param[in] parameters a reference to a Stream that will be used to fill the parameters to call the functions
+     * @param[in] parameters a reference to a Stream that will be used to fill the parameters to call the functions.
      * @return
-     * + ErrorManagement::parametersError if no match between parameters provided and the function call is possible
-     * + ErrorManagement::unsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
+     * + ErrorManagement::ParametersError if no match between parameters provided and the function call is possible
+     * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
-    virtual ErrorManagement::ErrorType Call(Object *object, StreamI &stream);
+    virtual ErrorManagement::ErrorType Call(Object *object,
+                                            StreamI &stream);
 
     /**
      * @brief Calls the class method by taking the arguments from StructuredDataI *parameters
      * @param[in] object is the pointer to the object owning the method.
      * @param[in] parameters a reference to a StructuredDataI object where to read/write parameters/results.
      * @return
-     * + ErrorManagement::parametersError if no match between parameters provided and the function call is possible
-     * + ErrorManagement::unsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
+     * + ErrorManagement::ParametersError if no match between parameters provided and the function call is possible
+     * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
-    virtual ErrorManagement::ErrorType Call(Object *object, StructuredDataI &parameters);
+    virtual ErrorManagement::ErrorType Call(Object *object,
+                                            StructuredDataI &parameters);
 
     /**
      * @brief Calls the class method by taking the arguments from the ReferenceContainer parameters
      * @param[in] object is the pointer to the object owning the method.
      * @param[in] parameters a reference to a ReferenceContainer that will be used to fill the parameters to call the functions
      * @return
-     * + ErrorManagement::parametersError if no match between parameters provided and the function call is possible
-     * + ErrorManagement::unsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
+     * + ErrorManagement::ParametersError if no match between parameters provided and the function call is possible
+     * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
-    virtual ErrorManagement::ErrorType Call(Object *object, ReferenceContainer &parameters);
+    virtual ErrorManagement::ErrorType Call(Object *object,
+                                            ReferenceContainer &parameters);
 
     /**
      * @brief Calls the class method without parameters
      * @param[in] object is the pointer to the object owning the method.
      * @return
-     * + ErrorManagement::parametersError if no match between parameters provided and the function call is possible
-     * + ErrorManagement::unsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
+     * + ErrorManagement::ParametersError if no match between parameters provided and the function call is possible
+     * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
     virtual ErrorManagement::ErrorType Call(Object *object);
 };
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-}
 #endif /* CLASSMETHODCALLER_H_ */

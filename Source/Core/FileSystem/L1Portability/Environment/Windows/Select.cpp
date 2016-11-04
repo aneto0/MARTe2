@@ -49,7 +49,7 @@ Select::Select() {
     WSADATA wsaData;
     int32 err = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (err != 0) {
-        REPORT_ERROR(ErrorManagement::fatalError, "Select::Select(), Fail WSAStartup.");
+        REPORT_ERROR(ErrorManagement::FatalError, "Select::Select(), Fail WSAStartup.");
     }
     readHandle.registeredHandles = new Handle[MAXIMUM_WAIT_OBJECTS];
     readHandle.selectHandles = new Handle[MAXIMUM_WAIT_OBJECTS];
@@ -98,7 +98,7 @@ bool Select::AddReadHandle(const HandleI &handle) {
             }
             for (int32 i = 0; i < indexMax; i++) {
                 if (readHandle.registeredHandles[i] == h) {
-                    REPORT_ERROR(ErrorManagement::fatalError, "Select::AddHandle(), Same Handle.");
+                    REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(), Same Handle.");
                     retVal = false;
                 }
             }
@@ -122,7 +122,7 @@ bool Select::AddReadHandle(const HandleI &handle) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "Select::AddHandle(). Invalid descriptor.");
+        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(). Invalid descriptor.");
         retVal = false;
     }
     return retVal;
@@ -139,7 +139,7 @@ bool Select::AddWriteHandle(const HandleI &handle) {
             }
             for (int32 i = 0; i < indexMax; i++) {
                 if (writeHandle.registeredHandles[i] == h) {
-                    REPORT_ERROR(ErrorManagement::fatalError, "Select::AddHandle(), Same Handle.");
+                    REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(), Same Handle.");
                     retVal = false;
                 }
             }
@@ -163,7 +163,7 @@ bool Select::AddWriteHandle(const HandleI &handle) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "Select::AddHandle(). Invalid descriptor.");
+        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(). Invalid descriptor.");
         retVal = false;
     }
     return retVal;
@@ -180,7 +180,7 @@ bool Select::AddExceptionHandle(const HandleI &handle) {
             }
             for (int32 i = 0; i < indexMax; i++) {
                 if (exceptionHandle.registeredHandles[i] == h) {
-                    REPORT_ERROR(ErrorManagement::fatalError, "Select::AddHandle(), Same Handle.");
+                    REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(), Same Handle.");
                     retVal = false;
                 }
             }
@@ -204,7 +204,7 @@ bool Select::AddExceptionHandle(const HandleI &handle) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "Select::AddHandle(). Invalid descriptor.");
+        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(). Invalid descriptor.");
         retVal = false;
     }
     return retVal;
@@ -225,7 +225,7 @@ bool Select::RemoveReadHandle(const HandleI &handle) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "Select::AddHandle(). Invalid descriptor.");
+        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(). Invalid descriptor.");
         retVal = false;
     }
     if (retVal) {
@@ -249,7 +249,7 @@ bool Select::RemoveWriteHandle(const HandleI &handle) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "Select::AddHandle(). Invalid descriptor.");
+        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(). Invalid descriptor.");
         retVal = false;
     }
     if (retVal) {
@@ -273,7 +273,7 @@ bool Select::RemoveExceptionHandle(const HandleI &handle) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "Select::AddHandle(). Invalid descriptor.");
+        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(). Invalid descriptor.");
         retVal = false;
     }
     if (retVal) {

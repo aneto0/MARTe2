@@ -87,13 +87,16 @@ CCString Message::GetDestination() {
 bool Message::Initialise(StructuredDataI &data) {
     bool ret = (ReferenceContainer::Initialise(data));
     if (ret) {
-
-        // TODO handle errors
         ret = data.Read("Destination", destination);
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Destination not set");
+        }
 
         if (ret) {
-            // TODO handle errors
             ret = data.Read("Function", function);
+        }
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Function not set");
         }
         if (ret) {
             uint32 msecWait;
@@ -102,15 +105,11 @@ bool Message::Initialise(StructuredDataI &data) {
             }
             else {
                 maxWait = TTInfiniteWait;
-                // TODO warning about maxWait set to infinite
             }
 
             StreamString messageFlags;
             if (data.Read("Mode", messageFlags)) {
                 flags = MessageFlags(messageFlags.Buffer());
-            }
-            else {
-                // TODO warning about flags set to default
             }
         }
 

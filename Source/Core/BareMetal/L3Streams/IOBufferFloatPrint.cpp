@@ -195,7 +195,7 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
             // fill up with zeros
             for (i = (5 - numberFillLength); i <= index; i++) {
                 if(!s.PutC('0')){
-                    REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                     break;
                 }
             }
@@ -203,7 +203,7 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
         // then complete by outputting all digits
         for (i = index + 1; i <= 4; i++) {
             if(!s.PutC(buffer[i])){
-                REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                 break;
             }
         }
@@ -899,14 +899,14 @@ static inline void ExponentToStreamPrivate(IOBuffer & ioBuffer,
             // get the absolute value
             if (exponent > 0) {
                 if (!ioBuffer.PutC('+')) {
-                    REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
             else {
                 exponent = -exponent;
                 if (!ioBuffer.PutC('-')) {
-                    REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
@@ -950,9 +950,9 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
 // should never be called like this
 // better handle it anyway
     if ((positiveNumber < static_cast<T>(0.0)) || (positiveNumber >= static_cast<T>(10.0))) {
-        REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: The normalized number must be in [0, 10) range!");
+        REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: The normalized number must be in [0, 10) range!");
         if (!ioBuffer.PutC('!')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
         }
         ok = false;
     }
@@ -962,11 +962,11 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
         // start with a 0.000 until we reach the first non zero digit
         if (exponent < 0) {
             if (!ioBuffer.PutC('0')) {
-                REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
             if (!ioBuffer.PutC('.')) {
-                REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
 
@@ -974,7 +974,7 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
 
             for (int16 i = 0; ok && (i < -(exponent + 1)); i++) {
                 if (!ioBuffer.PutC('0')) {
-                    REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
@@ -990,7 +990,7 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
             // before outputting the fractional part add a '.'
             if (exponent == -1) {
                 if (!ioBuffer.PutC('.')) {
-                    REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
@@ -999,7 +999,7 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
             // but still some exponent (fixed format)
             if (precision == 0) {
                 if (!ioBuffer.PutC('0')) {
-                    REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
@@ -1011,7 +1011,7 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
 
                 int8 zero = static_cast<int8>('0');
                 if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
-                    REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
@@ -1088,7 +1088,7 @@ bool FloatToStreamPrivate(const FloatNotation &notation,
         if ((engineeringExponent != 0) && (engineeringExponent <= 24) && (engineeringExponent >= -24)) {
             static const char8 * const symbols = "yzafpnum KMGTPEZY";
             if (!ioBuffer.PutC(symbols[(engineeringExponent / 3) + 8])) {
-                REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -1113,7 +1113,7 @@ bool FloatToStreamPrivate(const FloatNotation &notation,
             if (engineeringExponent != 0) {
                 static const char8 * const symbols = "yzafpnum KMGTPEZY";
                 if (!ioBuffer.PutC(symbols[(engineeringExponent / 3) + 8])) {
-                    REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
@@ -1392,7 +1392,7 @@ bool FloatToStreamPrivate(IOBuffer & ioBuffer,
     if ((isPadded) && (!isLeftAligned)) {
         for (int32 i = numberSize; i < maximumSize; i++) {
             if (!ioBuffer.PutC(' ')) {
-                REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -1404,7 +1404,7 @@ bool FloatToStreamPrivate(IOBuffer & ioBuffer,
         // output sign
         if (hasSign) {
             if (!ioBuffer.PutC('-')) {
-                REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -1417,7 +1417,7 @@ bool FloatToStreamPrivate(IOBuffer & ioBuffer,
     case NoFormat:
     case InsufficientSpaceForFloat: {
         if (!ioBuffer.PutC('?')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
     }
@@ -1425,60 +1425,60 @@ bool FloatToStreamPrivate(IOBuffer & ioBuffer,
     case NanFloat: {
 
         if (!ioBuffer.PutC('N')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
         if (!ioBuffer.PutC('a')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
         if (!ioBuffer.PutC('N')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
     }
         break;
     case InfPFloat: {
         if (!ioBuffer.PutC('+')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
         if (!ioBuffer.PutC('I')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
         if (!ioBuffer.PutC('n')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
         if (!ioBuffer.PutC('f')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
     }
         break;
     case InfNFloat: {
         if (!ioBuffer.PutC('-')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
         if (!ioBuffer.PutC('I')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
         if (!ioBuffer.PutC('n')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
         if (!ioBuffer.PutC('f')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
     }
         break;
     case ZeroFloat: {
         if (!ioBuffer.PutC('0')) {
-            REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
     }
@@ -1489,7 +1489,7 @@ bool FloatToStreamPrivate(IOBuffer & ioBuffer,
     if ((isPadded) && (isLeftAligned)) {
         for (int32 i = numberSize; i < maximumSize; i++) {
             if (!ioBuffer.PutC(' ')) {
-                REPORT_ERROR(ErrorManagement::fatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
                 ok = false;
                 break;
             }

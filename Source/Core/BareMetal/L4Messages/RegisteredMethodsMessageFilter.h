@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_REGISTEREDMETHODSMESSAGEFILTER_H_
-#define L4MESSAGES_REGISTEREDMETHODSMESSAGEFILTER_H_
+#ifndef REGISTEREDMETHODSMESSAGEFILTER_H_
+#define REGISTEREDMETHODSMESSAGEFILTER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -41,37 +41,41 @@
 namespace MARTe {
 
 /**
- * TODO
- * Allows activating registered methods
- * The filters remains permanently active until expressly removed
+ * @brief Calls the registered method in the messages trapped by this filter instance.
+ * @details The filters remains permanently active until expressly removed.
  */
 class RegisteredMethodsMessageFilter: public MessageFilter {
 public:
     CLASS_REGISTER_DECLARATION()
 
-RegisteredMethodsMessageFilter    ();
+    /**
+     * @brief Constructor. Initialises the MessageFilter(true).
+     * @post
+     *   IsPermanentFilter() == true
+     */
+    RegisteredMethodsMessageFilter();
 
     /**
-     * TODO
-     * Initialises basic search filter
-     *
+     * @brief Destructor. NOOP.
      */
     virtual ~RegisteredMethodsMessageFilter();
 
     /**
-     * TODO
+     * @brief Sets the destination object where the registered method is to be called.
+     * @param[in] destination the object where the registered method is to be called.
      */
-    void SetDestination(Object *destination);
-protected:
+    void SetDestination(Object * const destination);
 
     /**
-     * TODO
-     * on every match will also consume the message and handles both reply mechanisms
+     * @brief Calls on the destination object (see SetDestination) the registered method with name messageToTest->GetFunction().
+     * @param[in] messageToTest The message holding the function to call.
+     * @return ErrorManagement::NoError if the method (messageToTest->GetFunction()) can be successfully called on the destination object.
      */
     virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 
+protected:
     /**
-     * TODO
+     * Object where the registered method is to be called.
      */
     Object *destinationObject;
 };
@@ -81,5 +85,5 @@ protected:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* L4MESSAGES_REGISTEREDMETHODSMESSAGEFILTER_H_ */
+#endif /* REGISTEREDMETHODSMESSAGEFILTER_H_ */
 

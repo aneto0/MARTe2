@@ -54,7 +54,7 @@ BasicSocket::BasicSocket() :
 BasicSocket::~BasicSocket() {
     if (IsValid()) {
         if (!Close()) {
-            REPORT_ERROR(ErrorManagement::fatalError, "BasicSocket: failed to close socket");
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: failed to close socket");
         }
     }
     WSACleanup();
@@ -77,7 +77,7 @@ bool BasicSocket::SetBlocking(const bool flag) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "BasicSocket: The socket handle is invalid");
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
     }
     return (ret == 0);
 }
@@ -88,7 +88,7 @@ bool BasicSocket::Close() {
         ret = closesocket(connectionSocket);
         connectionSocket = -1;
         if (ret != 0) {
-            REPORT_ERROR(ErrorManagement::fatalError, "BasicSocket::Close failed returning");
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket::Close failed returning");
             ret = -1;
         }
     }

@@ -112,10 +112,10 @@ bool StreamMemoryReference::Seek(const uint64 pos) {
     bool ret = true;
     if (pos > usedSize) {
         if (!buffer.Seek(usedSize)) {
-            REPORT_ERROR(ErrorManagement::fatalError, "StreamMemoryReference: Failed IOBuffer::Seek");
+            REPORT_ERROR(ErrorManagement::FatalError, "StreamMemoryReference: Failed IOBuffer::Seek");
         }
         ret = false;
-        REPORT_ERROR(ErrorManagement::fatalError, "StreamString: Desired Position greater than current size: moved to end");
+        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Desired Position greater than current size: moved to end");
     }
 
     return (ret) ? (buffer.Seek(static_cast<uint32>(pos))) : (false);
@@ -124,7 +124,7 @@ bool StreamMemoryReference::Seek(const uint64 pos) {
 bool StreamMemoryReference::RelativeSeek(const int64 deltaPos) {
     bool ret = true;
     if ((deltaPos > MAX_INT32) || (deltaPos < MIN_INT32)) {
-        REPORT_ERROR(ErrorManagement::fatalError, "RelativeSeek: The seek offset should be in the int32 range");
+        REPORT_ERROR(ErrorManagement::FatalError, "RelativeSeek: The seek offset should be in the int32 range");
         ret = false;
     }
     else {

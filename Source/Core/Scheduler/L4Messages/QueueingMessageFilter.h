@@ -42,14 +42,14 @@
 namespace MARTe {
 
 /**
- * @brief TODO
- * @details TODO
+ * @brief Adds message to a queue.
+ * @details Messages consumed by this filter are added to a queue. The queue is consumed by calling the GetMessage method.
  */
 class DLL_API QueueingMessageFilter: public MessageFilter {
 public:
 
     /**
-     * @brief Constructor.
+     * @brief Constructor. Initialises the semaphores.
      */
     QueueingMessageFilter();
 
@@ -59,31 +59,35 @@ public:
     virtual ~QueueingMessageFilter();
 
     /**
-     * TODO
-     * Simply consumes all messages and puts them in a Q
-    */
+     * @brief Adds the message to the message queue.
+     * @param[in] messageToTest The message to add to the queue.
+     * @return ErrorManagement::NoError if the message can be successfully added to the queue.
+     */
     virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 
     /**
-     * TODO
-    */
-    ErrorManagement::ErrorType GetMessage(ReferenceT<Message> &message,const TimeoutType &timeout=TTInfiniteWait);
+     * @brief Gets the oldest message from the queue or waits for a message to be available.
+     * @param[out] message The oldest message available on the queue.
+     * @param[out] timeout The maximum time to wait for a message to be available on the queue.
+     * @return ErrorManagement::NoError if the message can be successfully retrieved from the queue with-in the specified timeout.
+     */
+    ErrorManagement::ErrorType GetMessage(ReferenceT<Message> &message, const TimeoutType &timeout = TTInfiniteWait);
 
 private:
 
     /**
-     * TODO
-     * The message consuming filters
-     * used by SortMessage
-     *
-     * */
+     * Holds the messages consumed by this QueueingMessageFilter
+     */
     ReferenceContainer messageQ;
 
     /**
-     * TODO
-     * To wake consuming threads
-     *
-     * */
+     * Locks the adding/removing of messages to the queue
+     */
+    FastPollingMutexSem mutexSemQ;
+
+    /**
+     * Wakes threads waiting on the queue
+     */
     EventSem newMessagesAlarm;
 
 

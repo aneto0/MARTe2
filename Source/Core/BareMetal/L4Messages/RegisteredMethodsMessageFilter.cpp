@@ -32,7 +32,6 @@
 #include "RegisteredMethodsMessageFilter.h"
 #include "MessageI.h"
 
-
 namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,43 +41,48 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-RegisteredMethodsMessageFilter::RegisteredMethodsMessageFilter() :MessageFilter(true){
+RegisteredMethodsMessageFilter::RegisteredMethodsMessageFilter() :
+        MessageFilter(true) {
     destinationObject = NULL_PTR(Object *);
 }
 
-RegisteredMethodsMessageFilter::~RegisteredMethodsMessageFilter(){
+/*lint -e{1540} the destinationObject is to freed by the class that calls SetDestination.*/
+RegisteredMethodsMessageFilter::~RegisteredMethodsMessageFilter() {
 }
 
-void RegisteredMethodsMessageFilter::SetDestination(Object *destination){
+void RegisteredMethodsMessageFilter::SetDestination(Object * const destination) {
     destinationObject = destination;
 }
 
-ErrorManagement::ErrorType RegisteredMethodsMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest){
+ErrorManagement::ErrorType RegisteredMethodsMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest) {
 
     ErrorManagement::ErrorType ret;
 
     //This filter does not handle replies...
-    if ((destinationObject != NULL_PTR(Object *)) && (messageToTest.IsValid()) && (!messageToTest->IsReply())){
+    bool valid = messageToTest.IsValid();
+    bool isReply = messageToTest->IsReply();
+    if ((destinationObject != NULL_PTR(Object *)) && (valid) && (!isReply)) {
 
         // try calling the method
-        ret = destinationObject->CallRegisteredMethod(messageToTest->GetFunction(), *(messageToTest.operator->()));
+        CCString methodName = messageToTest->GetFunction();
+        ret = destinationObject->CallRegisteredMethod(methodName, *(messageToTest.operator->()));
 
         // the registered method has no responsibility to handle the reply mechanism
         // therefore it is handled here
-        if (MessageConsumed(ret) && messageToTest->ExpectsReply()){
-            messageToTest->SetAsReply();
+        if (ret.ErrorsCleared()) {
+            if (messageToTest->ExpectsReply()) {
+                messageToTest->SetAsReply();
 
-            // TODO handling other error messages resulting from the call
-            // store them in the reply
-            // handles indirect reply
-            if (messageToTest->ExpectsIndirectReply()){
-                // TODO handle error messages from SendMessage
-                // simply produce a warning
-                // destination in reply is known so should not be set
-                MessageI::SendMessage(messageToTest, NULL);
+                // handles indirect reply
+                if (messageToTest->ExpectsIndirectReply()) {
+                    // simply produce a warning
+                    // destination in reply is known so should not be set
+                    ret = MessageI::SendMessage(messageToTest, NULL_PTR(Object *));
+                }
             }
         }
-    } else {
+    }
+    else {
         ret.unsupportedFeature = true;
     }
 
@@ -90,5 +94,3 @@ CLASS_REGISTER(RegisteredMethodsMessageFilter, "1.0")
 
 }
 
-
-	

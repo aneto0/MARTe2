@@ -111,8 +111,42 @@ TEST(MessageIGTest,TestSendMessageAndWaitIndirectReply) {
     ASSERT_TRUE(target.TestSendMessageAndWaitIndirectReply());
 }
 
-TEST(MessageIGTest,TestSendMessageAndExpectReplyLater_False_InvalidMessage) {
+TEST(MessageIGTest,TestSendMessageAndWaitIndirectReply_InvalidMessage) {
     MessageITest target;
-    ASSERT_TRUE(target.TestSendMessageAndExpectReplyLater_False_InvalidMessage());
+    ASSERT_TRUE(target.TestSendMessageAndWaitIndirectReply_InvalidMessage());
 }
 
+TEST(MessageIGTest,TestSendMessageAndWaitIndirectReply_InvalidDestination) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessageAndWaitIndirectReply_InvalidDestination());
+}
+
+TEST(MessageIGTest,TestWaitForReply) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestWaitForReply());
+}
+
+TEST(MessageIGTest,TestWaitForReply_InvalidMessage) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestWaitForReply_InvalidMessage());
+}
+
+TEST(MessageIGTest,TestWaitForReply_NotExpectsReply) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestWaitForReply_NotExpectsReply());
+}
+
+TEST(MessageIGTest,TestWaitForReply_Timeout) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestWaitForReply_Timeout());
+}
+
+TEST(MessageIGTest,TestInstallMessageFilter) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestInstallMessageFilter());
+}
+
+TEST(MessageIGTest,TestRemoveMessageFilter) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestRemoveMessageFilter());
+}

@@ -88,8 +88,8 @@ public:
      * @param[in] timeout is the desired timeout.
      * @param[in] sleepTime is the amount of time the CPU is to be released in-between each polling loop cycle.
      * If sleepTime = 0 the CPU is never released and the spin-lock is continuously polled.
-     * @return ErrorManagement::timeout if the semaphore is locked for a period which is greater than the
-     * specified timeout. Otherwise ErrorManagement::noError is returned.
+     * @return ErrorManagement::Timeout if the semaphore is locked for a period which is greater than the
+     * specified timeout. Otherwise ErrorManagement::NoError is returned.
      */
     ErrorManagement::ErrorType FastLock(const TimeoutType &timeout = TTInfiniteWait,
                                         float64 sleepTime = 1e-3);

@@ -50,7 +50,7 @@ SingleBufferedStream::SingleBufferedStream() :
     mutexWriteMode = false;
     bufferSizeSet = true;
     if (!internalBuffer.SetBufferSize(32u)) {
-        REPORT_ERROR(ErrorManagement::fatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+        REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
         bufferSizeSet = false;
     }
 }
@@ -63,7 +63,7 @@ SingleBufferedStream::SingleBufferedStream(const TimeoutType &timeoutIn) :
     bufferSizeSet = true;
     SetTimeout(timeoutIn);
     if (!internalBuffer.SetBufferSize(32u)) {
-        REPORT_ERROR(ErrorManagement::fatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+        REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
         bufferSizeSet = false;
     }
 }
@@ -294,7 +294,7 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
             // if within range just update readBufferAccessPosition
             if ((pos >= bufferStartPosition) && (pos < currentStreamPosition)) {
                 if (!internalBuffer.Seek(static_cast<uint32>(pos - bufferStartPosition))) {
-                    REPORT_ERROR(ErrorManagement::fatalError, "SingleBufferedStream: Failed to seek the internal buffer");
+                    REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to seek the internal buffer");
                 }
 
                 ubSeek = false;
@@ -371,7 +371,7 @@ bool SingleBufferedStream::RelativeSeek(const int64 deltaPos) {
 
     if (ok && ubSeek) {
         if ((absDelta > OSPosition()) && (moveBack)) {
-            REPORT_ERROR(ErrorManagement::fatalError, "RelativeSeek: Desired position negative: moved to the begin");
+            REPORT_ERROR(ErrorManagement::FatalError, "RelativeSeek: Desired position negative: moved to the begin");
             ok = false;
         }
         else {

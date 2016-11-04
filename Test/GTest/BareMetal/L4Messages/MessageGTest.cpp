@@ -1,8 +1,8 @@
 /**
  * @file MessageGTest.cpp
  * @brief Source file for class MessageGTest
- * @date 14/giu/2016
- * @author pc
+ * @date 14/06/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

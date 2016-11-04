@@ -102,7 +102,7 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
             }
 
             if (stepsCounter > 0u) {
-                REPORT_ERROR(ErrorManagement::warning, "Find: Too many back steps in the path. The searching will start from the root");
+                REPORT_ERROR(ErrorManagement::Warning, "Find: Too many back steps in the path. The searching will start from the root");
                 isSearchDomain = false;
             }
         }
@@ -120,7 +120,7 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
                 domain->Find(resultSingle, filterName);
             }
             else {
-                REPORT_ERROR(ErrorManagement::fatalError, "Find: Invalid domain");
+                REPORT_ERROR(ErrorManagement::FatalError, "Find: Invalid domain");
             }
         }
         else {

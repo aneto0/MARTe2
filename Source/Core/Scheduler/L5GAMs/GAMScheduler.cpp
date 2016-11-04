@@ -70,7 +70,7 @@ GAMScheduler::GAMScheduler() :
     param[0] = NULL_PTR(RTThreadParam *);
     param[1] = NULL_PTR(RTThreadParam *);
     if (!eventSem.Create()) {
-        REPORT_ERROR(ErrorManagement::fatalError, "Failer Create(*) of the event semaphore");
+        REPORT_ERROR(ErrorManagement::FatalError, "Failer Create(*) of the event semaphore");
     }
 }
 
@@ -92,7 +92,7 @@ GAMScheduler::~GAMScheduler() {
 void GAMScheduler::StartExecution() {
     Atomic::Increment(&spinLock[RealTimeApplication::GetIndex()]);
     if(!eventSem.Post()){
-        REPORT_ERROR(ErrorManagement::fatalError, "Failer Post(*) of the event semaphore");
+        REPORT_ERROR(ErrorManagement::FatalError, "Failer Post(*) of the event semaphore");
     }
 }
 
@@ -143,7 +143,7 @@ void GAMScheduler::CustomPrepareNextState() {
         }
     }
     else{
-        REPORT_ERROR(ErrorManagement::fatalError, "Failer Reset(*) of the event semaphore");
+        REPORT_ERROR(ErrorManagement::FatalError, "Failer Reset(*) of the event semaphore");
     }
 
 }

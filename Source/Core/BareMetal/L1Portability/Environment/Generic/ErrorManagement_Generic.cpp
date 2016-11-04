@@ -21,7 +21,6 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
-
 #define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -43,11 +42,12 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 namespace ErrorManagement {
 
-    void NullErrorProcessFunction(const ErrorInformation &errorInfo, const char8 * const errorDescription) {
+void NullErrorProcessFunction(const ErrorInformation &errorInfo,
+                              const char8 * const errorDescription) {
 }
 
 ErrorProcessFunctionType errorMessageProcessFunction = &NullErrorProcessFunction;
@@ -55,39 +55,23 @@ ErrorProcessFunctionType errorMessageProcessFunction = &NullErrorProcessFunction
 /**
  * @brief A structure pairing an error code with its explanation.
  */
-const  struct {
-    const char8 *       name;
-    ErrorIntegerFormat  errorBitSet;
-} errorNames[] = {
-        {"NoError",                   noError  },
-        {"Debug",                     debug},
-        {"Information",               information },
-        {"Warning",                   warning },
-        {"FatalError",                fatalError },
-        {"RecoverableError",          recoverableError },
-        {"InitialisationError",       initialisationError },
-        {"OSError",                   OSError },
-        {"ParametersError",           parametersError },
-        {"IllegalOperation",          illegalOperation },
-        {"ErrorSharing",              errorSharing },
-        {"ErrorAccessDenied",         errorAccessDenied},
-        {"Exception",                 exception},
-        {"Timeout",                   timeout},
-        {"CommunicationError",        communicationError},
-        {"SyntaxError",               syntaxError},
-        {"UnsupportedFeature",        unsupportedFeature},
-        {static_cast<const char8 *>(NULL),  noError},
-};
-
+const struct {
+    const char8 * name;
+    ErrorIntegerFormat errorBitSet;
+} errorNames[] = { { "NoError", NoError }, { "Debug", Debug }, { "Information", Information }, { "Warning", Warning }, { "FatalError", FatalError }, {
+        "RecoverableError", RecoverableError }, { "InitialisationError", InitialisationError }, { "OSError", OSError }, { "ParametersError", ParametersError },
+        { "IllegalOperation", IllegalOperation }, { "ErrorSharing", ErrorSharing }, { "ErrorAccessDenied", ErrorAccessDenied }, { "Exception", Exception }, {
+                "Timeout", Timeout }, { "CommunicationError", CommunicationError }, { "SyntaxError", SyntaxError },
+        { "UnsupportedFeature", UnsupportedFeature }, { static_cast<const char8 *>(NULL), NoError }, };
 
 // TODO OBSOLETE!!! TO BE REMOVED
 const char8 *ToName(const ErrorType &errorCode) {
     uint32 i = 0u;
-    const char8* retString="Unrecognized Error or Error Combination";
+    const char8* retString = "Unrecognized Error or Error Combination";
 
     while (errorNames[i].name != NULL) {
-        if (errorNames[i].errorBitSet == errorCode.format_as_integer){
-            retString =errorNames[i].name;
+        if (errorNames[i].errorBitSet == errorCode.format_as_integer) {
+            retString = errorNames[i].name;
             break;
         }
         i++;
@@ -95,33 +79,36 @@ const char8 *ToName(const ErrorType &errorCode) {
     return retString;
 }
 
-void ErrorCodeToStream (const ErrorType &errorCode,StreamI &stream ){
+void ErrorCodeToStream(const ErrorType &errorCode,
+                       StreamI &stream) {
     uint32 i = 0u;
     bool firstErrorWritten = false;
-    while (errorNames[i].name != NULL) {
-        if (errorCode.Contains(errorNames[i].errorBitSet)){
-
-            uint32 size = 1;
-            if (firstErrorWritten){
-                stream.Write("+", size);
-            } else {
+    bool ok = true;
+    while (ok && (errorNames[i].name != NULL)) {
+        if (errorCode.Contains(errorNames[i].errorBitSet)) {
+            uint32 size = 1u;
+            if (firstErrorWritten) {
+                ok = stream.Write("+", size);
+            }
+            else {
                 firstErrorWritten = true;
             }
 
             size = StringHelper::Length(errorNames[i].name);
-            stream.Write(errorNames[i].name, size);
+            if (ok) {
+                ok = stream.Write(errorNames[i].name, size);
+            }
 
             break;
         }
         i++;
     }
 
-    if (!firstErrorWritten){
-        uint32 size = 9;
+    if (ok && (!firstErrorWritten)) {
+        uint32 size = 9u;
+        /*lint -e{534} write to stream failure is ignored.*/
         stream.Write("No Errors", size);
     }
-
-    return ;
 
 }
 
@@ -133,7 +120,7 @@ void ReportError(const ErrorType &code,
     ErrorInformation errorInfo;
 //    errorInfo.threadId = InvalidThreadIdentifier;
     errorInfo.objectPointer = static_cast<void*>(NULL);
-    errorInfo.className       = static_cast<const char8 *>(NULL);
+    errorInfo.className = static_cast<const char8 *>(NULL);
     errorInfo.header.errorType = code;
 
     errorInfo.header.lineNumber = lineNumber;
@@ -146,7 +133,6 @@ void ReportError(const ErrorType &code,
     errorMessageProcessFunction(errorInfo, errorDescription);
 }
 
-
 void ReportErrorFullContext(const ErrorType &code,
                             const char8 * const errorDescription,
                             const char8 * const fileName,
@@ -155,7 +141,7 @@ void ReportErrorFullContext(const ErrorType &code,
     ErrorInformation errorInfo;
 //    errorInfo.threadId = InvalidThreadIdentifier;
     errorInfo.objectPointer = static_cast<void*>(NULL);
-    errorInfo.className       = static_cast<const char8 *>(NULL);
+    errorInfo.className = static_cast<const char8 *>(NULL);
     errorInfo.header.errorType = code;
     errorInfo.header.lineNumber = lineNumber;
     errorInfo.fileName = fileName;
@@ -165,12 +151,11 @@ void ReportErrorFullContext(const ErrorType &code,
     errorMessageProcessFunction(errorInfo, errorDescription);
 }
 
-
 void SetErrorProcessFunction(const ErrorProcessFunctionType userFun) {
-    if (userFun != NULL){
+    if (userFun != NULL) {
         errorMessageProcessFunction = userFun;
     }
-    else{
+    else {
         errorMessageProcessFunction = &NullErrorProcessFunction;
     }
 }

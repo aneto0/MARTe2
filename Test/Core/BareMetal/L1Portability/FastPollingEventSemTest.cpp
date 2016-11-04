@@ -208,7 +208,7 @@ void TestFastWaitErrorCodeCallback(FastPollingEventSemTest &mt) {
     mt.failed = false;
     //This should fail because it was already locked in the TestFastLockErrorCode
     ErrorManagement::ErrorType err = mt.testEvent.FastWait(TTInfiniteWait);
-    if (err != ErrorManagement::noError) {
+    if (err != ErrorManagement::NoError) {
         mt.failed = true;
     }
     Atomic::Decrement(&mt.nOfExecutingThreads);
@@ -221,7 +221,7 @@ bool FastPollingEventSemTest::TestFastWaitErrorCode() {
     nOfExecutingThreads++;
 
     ErrorManagement::ErrorType err = testEvent.FastWait(1);
-    ok &= (err == ErrorManagement::timeout);
+    ok &= (err == ErrorManagement::Timeout);
 
     testEvent.FastPost();
     while (nOfExecutingThreads > 0) {

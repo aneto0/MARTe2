@@ -31,8 +31,6 @@
 
 #include "MessageFilter.h"
 
-namespace MARTe {
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,14 +39,18 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
 
-
-MessageFilter::MessageFilter(bool isPermanentFilter){
+MessageFilter::MessageFilter(const bool isPermanentFilter) : Object() {
     permanentFilter = isPermanentFilter;
 }
 
 
 MessageFilter::~MessageFilter(){
+}
+
+bool MessageFilter::IsPermanentFilter() const {
+    return permanentFilter;
 }
 
 }

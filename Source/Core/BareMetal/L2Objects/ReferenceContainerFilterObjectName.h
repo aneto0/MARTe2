@@ -101,7 +101,8 @@ public:
                       Reference &referenceToTest);
 
     /**
-     * TODO
+     * @brief Sets the address of the object to search.
+     * @param[in] address the address of the object to search.
      */
     void SetAddress(const char8 * const address);
 

@@ -200,7 +200,7 @@ bool MutexSem::Close() {
  * reference to handle*/
 /*lint -e{454} -e{456} false positive, the semaphore will be unlocked by the UnLock function*/
 ErrorManagement::ErrorType MutexSem::Lock() {
-    ErrorManagement::ErrorType err = ErrorManagement::noError;
+    ErrorManagement::ErrorType err = ErrorManagement::NoError;
     if (!handle->closed) {
         bool okCancel = (pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, static_cast<int32 *>(NULL)) == 0);
         bool okLock = (pthread_mutex_lock(&handle->mutexHandle) == 0);
@@ -215,7 +215,7 @@ ErrorManagement::ErrorType MutexSem::Lock() {
         }
     }
     else {
-        err = ErrorManagement::fatalError;
+        err = ErrorManagement::FatalError;
         REPORT_ERROR(err, "Error: the semaphore handle is closed");
     }
 
@@ -250,11 +250,11 @@ ErrorManagement::ErrorType MutexSem::Lock(const TimeoutType &timeout) {
 
                 ok = (pthread_mutex_timedlock(&handle->mutexHandle, &timesValues) == 0);
                 if (!ok) {
-                    err = ErrorManagement::timeout;
+                    err = ErrorManagement::Timeout;
                     REPORT_ERROR(err, "Information: timeout occurred");
                 }
                 else {
-                    err = ErrorManagement::noError;
+                    err = ErrorManagement::NoError;
                 }
             }
             else {
@@ -262,7 +262,7 @@ ErrorManagement::ErrorType MutexSem::Lock(const TimeoutType &timeout) {
             }
         }
         else {
-            err = ErrorManagement::fatalError;
+            err = ErrorManagement::FatalError;
             REPORT_ERROR(err, "Information: the semaphore handle is closed");
         }
     }
@@ -287,7 +287,7 @@ bool MutexSem::UnLock() {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "Error: the semaphore handle is closed");
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: the semaphore handle is closed");
     }
     return ok;
 }

@@ -78,7 +78,7 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
      *Justification: "Signals" is an optional field, so the move command must
      *Justification: not be checked.*/
     signalsDatabase.MoveAbsolute("Signals");
-    ret = data.Write("Signals", signalsDatabase);
+    ret = data.Write("Signals", signalsDatabase.operator MARTe::AnyType());
     return ret;
 }
 
@@ -680,7 +680,7 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
                     }
                     else {
                         //There is no direction set
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError, "No direction set when adding brokers to DataSourceI : %s", GetName())
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No direction set when adding brokers to DataSourceI : %s", GetName())
                         ret = false;
                     }
 
@@ -716,7 +716,7 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
         }
     }
     else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError, "No RealTimeApplication found for DataSourceI : %s", GetName())
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No RealTimeApplication found for DataSourceI : %s", GetName())
     }
     return ret;
 }

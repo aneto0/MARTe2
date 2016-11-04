@@ -952,7 +952,7 @@ bool ValidateBasicType(const AnyType &value,
                             }
                             else {
                                 recognized=false;
-                                REPORT_ERROR(ErrorManagement::warning, "ValidateBasicType: Basic Type not matched");
+                                REPORT_ERROR(ErrorManagement::Warning, "ValidateBasicType: Basic Type not matched");
                             }
                         }
                     }

@@ -35,44 +35,16 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ErrorManagement::ErrorType MessageFilterPool::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,
-                                                                   CCString name,
-                                                                   int32 position) {
+namespace MARTe {
+MessageFilterPool::MessageFilterPool() : ReferenceContainer() {
 
-    messageFilter->SetName(name);
-
-    ErrorManagement::ErrorType err;
-    err.timeout = !Insert(messageFilter, position);
-    return err;
 }
 
-ErrorManagement::ErrorType MessageFilterPool::RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter) {
-    ErrorManagement::ErrorType err;
-    err.timeout = !Delete(messageFilter);
-
-    return err;
-}
-
-ErrorManagement::ErrorType MessageFilterPool::RemoveMessageFilter(CCString name) {
-    ErrorManagement::ErrorType err;
-    err.timeout = !Delete(name);
-
-    return err;
-}
-
-ErrorManagement::ErrorType MessageFilterPool::FindMessageFilter(CCString name,
-                                                                ReferenceT<MessageFilter> messageFilter) {
-    messageFilter = Find(name);
-    ErrorManagement::ErrorType err;
-    err.unsupportedFeature = !messageFilter.IsValid();
-
-    return err;
+MessageFilterPool::~MessageFilterPool() {
 
 }
 
@@ -82,12 +54,12 @@ ErrorManagement::ErrorType MessageFilterPool::ReceiveMessage(ReferenceT<Message>
     ReferenceT<MessageFilter> messageFilter;
 
     uint32 i;
-    for (i = 0; (i < Size() && !matched); i++) {
+    for (i = 0u; (i < Size()) && (!matched); i++) {
         messageFilter = Get(i);
 
         if (messageFilter.IsValid()) {
             err = messageFilter->ConsumeMessage(message);
-            matched = messageFilter->MessageConsumed(err);
+            matched = err.ErrorsCleared();
         }
     }
 
@@ -102,5 +74,7 @@ ErrorManagement::ErrorType MessageFilterPool::ReceiveMessage(ReferenceT<Message>
 
     return err;
 }
+
+CLASS_REGISTER(MessageFilterPool, "1.0")
 
 }

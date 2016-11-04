@@ -77,7 +77,7 @@ bool BasicUDPSocket::Peek(char8* const output,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
     return (ret > 0);
 
@@ -103,7 +103,7 @@ bool BasicUDPSocket::Read(char8* const output,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
     return (ret > 0);
 }
@@ -127,7 +127,7 @@ bool BasicUDPSocket::Write(const char8* const input,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
 
     }
     return (ret > 0);
@@ -149,7 +149,7 @@ bool BasicUDPSocket::Listen(const uint16 port) {
         errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<socklen_t>(server.Size()));
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
     return (errorCode >= 0);
 }
@@ -168,7 +168,7 @@ bool BasicUDPSocket::Connect(const char8 * const address,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
 
     return ret;
@@ -223,7 +223,7 @@ bool BasicUDPSocket::Read(char8 * const output,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
     return (size > 0u);
 }
@@ -265,7 +265,7 @@ bool BasicUDPSocket::Write(const char8 * const input,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
     return (size > 0u);
 }

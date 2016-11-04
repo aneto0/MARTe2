@@ -70,7 +70,7 @@ bool TimingDataSource::SetConfiguredDatabase(StructuredDataI & data) {
                     if (!GetSignalName(n, signalName)) {
                         signalName = "";
                     }
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::fatalError, "In TimingDataSource %s, state %s, signal %s has a producer", GetName(),
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In TimingDataSource %s, state %s, signal %s has a producer", GetName(),
                                             stateName.Buffer(), signalName.Buffer())
                 }
 

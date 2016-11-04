@@ -3,3 +3,5 @@
 /cov/
 /depends.cov
 /dependsRaw.cov
+/ThreadInformation_Gen.cpp
+/ThreadsDatabase_Gen.cpp

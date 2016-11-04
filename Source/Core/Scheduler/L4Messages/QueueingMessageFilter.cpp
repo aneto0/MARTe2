@@ -40,80 +40,74 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-QueueingMessageFilter::QueueingMessageFilter():MessageFilter(true){
+QueueingMessageFilter::QueueingMessageFilter() :
+        MessageFilter(true) {
+    mutexSemQ.Create();
+    if (!newMessagesAlarm.Create()) {
+        REPORT_ERROR_FULL(ErrorManagement::InitialisationError, "EventSem::Create() has failed");
+    }
+}
+
+QueueingMessageFilter::~QueueingMessageFilter() {
 
 }
 
-/**
- * @brief Destructor.
- */
-QueueingMessageFilter::~QueueingMessageFilter(){
-
-}
-
-ErrorManagement::ErrorType QueueingMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest){
+ErrorManagement::ErrorType QueueingMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest) {
     ErrorManagement::ErrorType err;
-    err.timeout = messageQ.Lock();
-    if (err.ErrorsCleared()){
-        err.fatalError = messageQ.Insert(messageToTest,-1);
+    err.timeout = !mutexSemQ.FastLock();
+    if (err.ErrorsCleared()) {
+        err.fatalError = !messageQ.Insert(messageToTest, -1);
 
         // handle the case of an element to an empty Q
-        if (err.ErrorsCleared()  && messageQ.Size() == 1){
-            newMessagesAlarm.Post();
+        uint32 queueSize = messageQ.Size();
+        if ((err.ErrorsCleared()) && (queueSize == 1u)) {
+            err.timeout = !newMessagesAlarm.Post();
         }
 
-        messageQ.UnLock();
+        mutexSemQ.FastUnLock();
     }
     return err;
 }
 
-/**
- * TODO
-*/
-ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message> &message,const TimeoutType &timeout){
-    ErrorManagement::ErrorType err;
-    bool locked = false;
-    err.timeout = !messageQ.Lock();
-    locked = !err.timeout;
+ErrorManagement::ErrorType QueueingMessageFilter::GetMessage(ReferenceT<Message> &message,
+                                                             const TimeoutType &timeout) {
+    ErrorManagement::ErrorType err = mutexSemQ.FastLock();
+    bool locked = !err.timeout;
 
     // handle the empty Q case
-    if (messageQ.Size() == 0){
-        if (err.ErrorsCleared()){
-            err.fatalError = newMessagesAlarm.Reset();
+    if (messageQ.Size() == 0u) {
+        if (err.ErrorsCleared()) {
+            err.fatalError = !newMessagesAlarm.Reset();
         }
-        if (locked && err.ErrorsCleared()){
-            messageQ.UnLock();
+        if (locked) {
+            mutexSemQ.FastUnLock();
             locked = false;
         }
-        if (err.ErrorsCleared()){
-            err.timeout = newMessagesAlarm.Wait(timeout);
+        if (err.ErrorsCleared()) {
+            err = newMessagesAlarm.Wait(timeout);
         }
-        if (err.ErrorsCleared()){
-            err.timeout = !messageQ.Lock();
+        if (err.ErrorsCleared()) {
+            err = mutexSemQ.FastLock();
             locked = !err.timeout;
         }
     }
 
-    if (err.ErrorsCleared()){
-        Reference ref = messageQ.Get(0);
+    if (err.ErrorsCleared()) {
+        Reference ref = messageQ.Get(0u);
 
-        // TODO diversify error -- unexpectedError
         err.fatalError = !ref.IsValid();
 
-        if (err.ErrorsCleared()){
+        if (err.ErrorsCleared()) {
             message = ref;
-            // TODO diversify error -- failedCast
             err.fatalError = !message.IsValid();
         }
     }
 
     if (locked) {
-         messageQ.UnLock();
-   }
+        mutexSemQ.FastUnLock();
+    }
     return err;
 
 }
-
-
 
 }

@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4MESSAGES_REPLYMESSAGECATCHERMESSAGEFILTER_H_
-#define L4MESSAGES_REPLYMESSAGECATCHERMESSAGEFILTER_H_
+#ifndef REPLYMESSAGECATCHERMESSAGEFILTER_H_
+#define REPLYMESSAGECATCHERMESSAGEFILTER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -41,72 +41,68 @@
 namespace MARTe {
 
 /**
- * Allows catching a specific message reply
- * The filters is removed after catching the reply
- * */
+ * @brief Allows catching (i.e. trapping) a specific message reply.
+ * @details The filter is removed after catching the reply.
+ */
 class ReplyMessageCatcherMessageFilter: public MessageFilter {
 public:
     CLASS_REGISTER_DECLARATION()
     /**
-     * TODO
-     * Initialises basic search filter
-     *
+     * @brief Constructor. Initialises the MessageFilter(false).
+     * @post
+     *   IsPermanentFilter() == false
      */
-    ReplyMessageCatcherMessageFilter    ();
+    ReplyMessageCatcherMessageFilter();
 
     /**
-     * TODO
-     */
-    void SetMessageToCatch(const ReferenceT<Message> &message);
-
-    /**
-     * TODO
-     * Initialises basic search filter
-     *
+     * @brief Destructor. NOOP.
      */
     virtual ~ReplyMessageCatcherMessageFilter();
 
     /**
-     * TODO
-     * to be overridden to implement different synchronisation mechanism
-     * Wait for caught
+     * @brief Sets the reply message to be caught.
+     * @param[in] message the reply message to be caught.
      */
-    virtual ErrorManagement::ErrorType Wait(const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec=1000);
+    void SetMessageToCatch(const ReferenceT<Message> &message);
+
+
+    /**
+     * @brief Waits for the message to be caught.
+     * @details This implementation polls with a sleep time of \a pollingTimeUsec.
+     * @param[in] maxWait Maximum time to wait for the message to be caught.
+     * @param[in] pollingTimeUsec Time to wait on the polling sleep.
+     * @return ErrorManagement::NoError if the message was caught or ErrorManagement::Timeout if the time specified in \a maxWait has expired.
+     */
+    /*lint -e(1735) [MISRA C++ Rule 8-3-1] the derived classes shall use this default parameter or no default parameter at all*/
+    virtual ErrorManagement::ErrorType Wait(const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec = 1000u);
+
+    /**
+     * @brief Verifies if the \a messageToTest is the message to be caught (see SetMessageToCatch).
+     * @param[in] messageToTest The message to test.
+     * @return ErrorManagement::NoError if the messageToTest was the one to be caught, otherwise it returns ErrorManagement::UnsupportedFeature.
+     */
+    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 
 protected:
 
     /**
-     * TODO
-     * on every match will also consume the message and handles both reply mechanisms
+     * @brief Called when the message to catch has been found.
+     * @details The default implementation sets ReplyCaught() == true.
+     * @param[in] replyMessage the caught message.
      */
-    virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
-
-    /**
-     * TODO
-     * to be overridden to implement synchronisation mechanisms
-     */
-    virtual void HandleReplyMessage(ReferenceT<Message> &replyMessage) {
-        caught = true;
-    }
-
-    /*
-     * TODO
-     */
-    bool ReplyCaught() {
-        return caught;
-    }
+    virtual void HandleReplyMessage(ReferenceT<Message> &replyMessage);
 
 private:
 
     /**
-     * TODO
+     * True if the message was caught.
      */
     bool caught;
 
     /**
-     * TODO
+     * The message to catch.
      */
-    ReferenceT<Message> originalMessage;
+    ReferenceT<Message> messageToCatch;
 
 };
 
@@ -116,5 +112,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* L4MESSAGES_REPLYMESSAGECATCHERMESSAGEFILTER_H_ */
+#endif /* REPLYMESSAGECATCHERMESSAGEFILTER_H_ */
 

@@ -61,7 +61,7 @@ void FastPollingEventSem::Create(const bool wait) {
 
 ErrorManagement::ErrorType FastPollingEventSem::FastWait(const TimeoutType &timeout,
                                                          float64 sleepTime) const {
-    ErrorManagement::ErrorType err = ErrorManagement::noError;
+    ErrorManagement::ErrorType err = ErrorManagement::NoError;
     uint64 ticksStop = timeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
 
@@ -75,7 +75,7 @@ ErrorManagement::ErrorType FastPollingEventSem::FastWait(const TimeoutType &time
     while (*flag == 0) {
         if (timeout != TTInfiniteWait) {
             if (HighResolutionTimer::Counter() > ticksStop) {
-                err = ErrorManagement::timeout;
+                err = ErrorManagement::Timeout;
                 break;
             }
         }

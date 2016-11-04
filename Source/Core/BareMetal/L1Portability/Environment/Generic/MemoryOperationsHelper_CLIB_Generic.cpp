@@ -61,7 +61,7 @@ bool Copy(void* const destination,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "MemoryOperationsHelper: Invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
 
     return ret;
@@ -87,7 +87,7 @@ int32 Compare(const void * const mem1,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "MemoryOperationsHelper: Invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
 
     return ret;
@@ -104,7 +104,7 @@ const void* Search(const void * const mem,
 
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "MemoryOperationsHelper: Invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
 
     return ret;
@@ -124,7 +124,7 @@ bool Move(void * const destination,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "MemoryOperationsHelper: Invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
     return ret;
 
@@ -142,7 +142,7 @@ bool Set(void * const mem,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::fatalError, "MemoryOperationsHelper: Invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
 
     return ret;

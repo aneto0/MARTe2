@@ -127,7 +127,7 @@ bool CharBuffer::SetBufferSize(const uint32 desiredSize) {
     // stay within mathematical limits
     if (desiredSize > allocationBoundary) {
         ok = false;
-        REPORT_ERROR(ErrorManagement::fatalError, "CharBuffer: It is not possible allocate more than 2^32-1 bytes");
+        REPORT_ERROR(ErrorManagement::FatalError, "CharBuffer: It is not possible allocate more than 2^32-1 bytes");
     }
 
     if (ok) {
@@ -151,7 +151,7 @@ bool CharBuffer::SetBufferSize(const uint32 desiredSize) {
         else {
             bufferSize = 0u;
             ok = false;
-            REPORT_ERROR(ErrorManagement::fatalError, "CharBuffer: Failed HeapManager::Malloc() or HeapManager::Realloc()");
+            REPORT_ERROR(ErrorManagement::FatalError, "CharBuffer: Failed HeapManager::Malloc() or HeapManager::Realloc()");
         }
     }
     return ok;

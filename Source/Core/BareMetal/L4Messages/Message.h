@@ -67,7 +67,8 @@ public:
     /**
      * @see ReferenceContainer::Initialise(*)
      * @detail The following parameters have to be specified in the StructuredDataI which initialises the
-     * Message:
+     * Message
+     * @param[in] data StructuredDataI with the structure:
      *   Destination = "Address in the ObjectRegistryDatabase of the Object which must receive this Message"
      *   Function = "The name of the destination method which has to be called" (this method has to be registered in the ClassRegistryDatabase)
      *   MaxWait (optional) = "The timeout in milliseconds" (default is TTInfiniteWait, namely infinite timeout)
@@ -82,7 +83,7 @@ public:
     virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * @brief Sets or Unsets this Message as a Reply.
+     * @brief Sets or unsets this Message as a Reply.
      * @param[in] flag if true the message is set as a reply, otherwise it is not considered as a reply.
      */
     void SetAsReply(const bool flag=true);

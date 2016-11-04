@@ -205,7 +205,7 @@ static inline void BSToBS(T * const & destination,
 
     // copy
     if (!MemoryOperationsHelper::Copy(&sourceCopy, source, sourceByteSize)) {
-        REPORT_ERROR(ErrorManagement::fatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
+        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
     }
 
 
@@ -281,7 +281,7 @@ static inline void BSToBS(T * const & destination,
 
     // copy
     if (!MemoryOperationsHelper::Copy(&destinationCopy, destination, destinationByteSize)) {
-        REPORT_ERROR(ErrorManagement::fatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
+        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
     }
     destinationMask &= destinationCopy;
 
@@ -289,7 +289,7 @@ static inline void BSToBS(T * const & destination,
     sourceCopy |= destinationMask;
 
     if (!MemoryOperationsHelper::Copy(destination, &sourceCopy, destinationByteSize)) {
-        REPORT_ERROR(ErrorManagement::fatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
+        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
     }
 
 }

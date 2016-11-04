@@ -34,6 +34,7 @@
 #include "ClassWithCallableMethods.h"
 #include "ConfigurationDatabase.h"
 #include "Reference.h"
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -148,6 +149,28 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOutputStru
     return result;
 }
 
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithConstInputStreamI(const MARTe::StreamI &data) {
+    const MARTe::StreamString &ss = reinterpret_cast<const MARTe::StreamString &>(data);
+    bool result = (ss == "MethodWithConstInputStreamI");
+    lastMethodExecuted = "MethodWithConstInputStreamI(StreamI)";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOutputStreamI(MARTe::StreamI &data) {
+    MARTe::StreamString &ss = reinterpret_cast<MARTe::StreamString &>(data);
+    ss = "MethodWithOutputStreamI";
+    lastMethodExecuted = "MethodWithOutputStreamI(StreamI&)";
+    return true;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithInputOutputStreamI(MARTe::StreamI &data) {
+    MARTe::StreamString &ss = reinterpret_cast<MARTe::StreamString &>(data);
+    bool result = (ss == "MethodWithInputOutputStreamI");
+    lastMethodExecuted = "MethodWithInputOutputStreamI(StreamI&)";
+    ss = "ReturnFromMethodWithInputOutputStreamII";
+    return result;
+}
+
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer data) {
     bool result = true;
     MARTe::Reference obj = data.Find("TestObject");
@@ -186,15 +209,1643 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithVoidParame
     return true;
 }
 
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_C_C(const MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_C_C_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_C_R(const MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_C_C_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_C_W(const MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_C_C_C_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_R_C(const MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_C_R_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_R_R(const MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_C_R_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_R_W(const MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_C_C_R_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_W_C(const MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_C_W_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_W_R(const MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_C_W_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_W_W(const MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_C_C_W_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_C_C(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_R_C_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_C_R(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_R_C_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_C_W(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_C_R_C_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_R_C(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_R_R_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_R_R(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_R_R_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_R_W(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_C_R_R_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_W_C(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_R_W_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_W_R(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_R_W_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_W_W(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_C_R_W_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_C_C(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_W_C_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_C_R(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_W_C_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_C_W(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_C_W_C_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_R_C(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_W_R_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_R_R(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_W_R_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_R_W(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_C_W_R_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_W_C(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_W_W_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_W_R(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_C_W_W_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_W_W(const MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    param3 = -7.0;
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_C_W_W_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_C_C(MARTe::uint32 param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_C_C_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_C_R(MARTe::uint32 param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_C_C_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_C_W(MARTe::uint32 param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_R_C_C_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_R_C(MARTe::uint32 param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_C_R_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_R_R(MARTe::uint32 param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_C_R_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_R_W(MARTe::uint32 param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_R_C_R_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_W_C(MARTe::uint32 param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_C_W_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_W_R(MARTe::uint32 param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_C_W_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_W_W(MARTe::uint32 param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_R_C_W_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_C_C(MARTe::uint32 param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_R_C_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_C_R(MARTe::uint32 param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_R_C_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_C_W(MARTe::uint32 param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_R_R_C_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_R_C(MARTe::uint32 param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_R_R_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_R_R(MARTe::uint32 param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_R_R_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_R_W(MARTe::uint32 param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_R_R_R_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_W_C(MARTe::uint32 param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_R_W_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_W_R(MARTe::uint32 param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_R_W_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_W_W(MARTe::uint32 param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_R_R_W_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_C_C(MARTe::uint32 param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_W_C_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_C_R(MARTe::uint32 param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_W_C_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_C_W(MARTe::uint32 param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_R_W_C_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_R_C(MARTe::uint32 param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_W_R_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_R_R(MARTe::uint32 param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_W_R_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_R_W(MARTe::uint32 param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_R_W_R_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_W_C(MARTe::uint32 param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_W_W_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_W_R(MARTe::uint32 param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_R_W_W_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_W_W(MARTe::uint32 param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    param3 = -7.0;
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_R_W_W_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_C_C(MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_C_C_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_C_R(MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_C_C_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_C_W(MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_W_C_C_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_R_C(MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_C_R_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_R_R(MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_C_R_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_R_W(MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_W_C_R_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_W_C(MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_C_W_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_W_R(MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_C_W_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_W_W(MARTe::uint32 &param1,
+                                                                                             const MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_W_C_W_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_C_C(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_R_C_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_C_R(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_R_C_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_C_W(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_W_R_C_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_R_C(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_R_R_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_R_R(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_R_R_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_R_W(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_W_R_R_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_W_C(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_R_W_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_W_R(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_R_W_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_W_W(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    param3 = -7.0;
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_W_R_W_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_C_C(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_W_C_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_C_R(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    param1 = 5;
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_W_C_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_C_W(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             const MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_W_W_C_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_R_C(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_W_R_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_R_R(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    param1 = 5;
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_W_R_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_R_W(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    param2 = 6.0;
+    result &= (param3 == -9.0);
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_W_W_R_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_W_C(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             const MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    param2 = 6.0;
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_W_W_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_W_R(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString param4) {
+    bool result = true;
+    param1 = 5;
+    param2 = 6.0;
+    param3 = -7.0;
+    result &= (param4 == "KO");
+    lastMethodExecuted = "MethodWithFourParameters_W_W_W_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W(MARTe::uint32 &param1,
+                                                                                             MARTe::float32 &param2,
+                                                                                             MARTe::float64 &param3,
+                                                                                             MARTe::StreamString &param4) {
+    bool result = true;
+    param1 = 5;
+    param2 = 6.0;
+    param3 = -7.0;
+    param4 = "OK";
+    lastMethodExecuted = "MethodWithFourParameters_W_W_W_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParametersReturnError(MARTe::uint32 &param1,
+                                                                                                MARTe::float32 &param2,
+                                                                                                MARTe::float64 &param3,
+                                                                                                MARTe::StreamString &param4) {
+    return MARTe::ErrorManagement::FatalError;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_C_C(const MARTe::uint32 & param1,
+                                                                                            const MARTe::float32 & param2,
+                                                                                            const MARTe::StreamString & param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_C_C_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_C_R(const MARTe::uint32 & param1,
+                                                                                            const MARTe::float32 & param2,
+                                                                                            MARTe::StreamString param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_C_C_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_C_W(const MARTe::uint32 & param1,
+                                                                                            const MARTe::float32 & param2,
+                                                                                            MARTe::StreamString & param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = "OK";
+    lastMethodExecuted = "MethodWithThreeParameters_C_C_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_R_C(const MARTe::uint32 & param1,
+                                                                                            MARTe::float32 param2,
+                                                                                            const MARTe::StreamString & param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_C_R_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_R_R(const MARTe::uint32 & param1,
+                                                                                            MARTe::float32 param2,
+                                                                                            MARTe::StreamString param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_C_R_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_R_W(const MARTe::uint32 & param1,
+                                                                                            MARTe::float32 param2,
+                                                                                            MARTe::StreamString & param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = "OK";
+    lastMethodExecuted = "MethodWithThreeParameters_C_R_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_W_C(const MARTe::uint32 & param1,
+                                                                                            MARTe::float32 & param2,
+                                                                                            const MARTe::StreamString & param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_C_W_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_W_R(const MARTe::uint32 & param1,
+                                                                                            MARTe::float32 & param2,
+                                                                                            MARTe::StreamString param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_C_W_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_W_W(const MARTe::uint32 & param1,
+                                                                                            MARTe::float32 & param2,
+                                                                                            MARTe::StreamString & param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    param3 = "OK";
+    lastMethodExecuted = "MethodWithThreeParameters_C_W_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_C_C(MARTe::uint32 param1,
+                                                                                            const MARTe::float32 & param2,
+                                                                                            const MARTe::StreamString & param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_R_C_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_C_R(MARTe::uint32 param1,
+                                                                                            const MARTe::float32 & param2,
+                                                                                            MARTe::StreamString param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_R_C_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_C_W(MARTe::uint32 param1,
+                                                                                            const MARTe::float32 & param2,
+                                                                                            MARTe::StreamString & param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = "OK";
+    lastMethodExecuted = "MethodWithThreeParameters_R_C_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_R_C(MARTe::uint32 param1,
+                                                                                            MARTe::float32 param2,
+                                                                                            const MARTe::StreamString & param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_R_R_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_R_R(MARTe::uint32 param1,
+                                                                                            MARTe::float32 param2,
+                                                                                            MARTe::StreamString param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_R_R_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_R_W(MARTe::uint32 param1,
+                                                                                            MARTe::float32 param2,
+                                                                                            MARTe::StreamString & param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == 2.0);
+    param3 = "OK";
+    lastMethodExecuted = "MethodWithThreeParameters_R_R_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_W_C(MARTe::uint32 param1,
+                                                                                            MARTe::float32 & param2,
+                                                                                            const MARTe::StreamString & param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_R_W_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_W_R(MARTe::uint32 param1,
+                                                                                            MARTe::float32 & param2,
+                                                                                            MARTe::StreamString param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_R_W_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_W_W(MARTe::uint32 param1,
+                                                                                            MARTe::float32 & param2,
+                                                                                            MARTe::StreamString & param3) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = 6.0;
+    param3 = "OK";
+    lastMethodExecuted = "MethodWithThreeParameters_R_W_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_C_C(MARTe::uint32 & param1,
+                                                                                            const MARTe::float32 & param2,
+                                                                                            const MARTe::StreamString & param3) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_W_C_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_C_R(MARTe::uint32 & param1,
+                                                                                            const MARTe::float32 & param2,
+                                                                                            MARTe::StreamString param3) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_W_C_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_C_W(MARTe::uint32 & param1,
+                                                                                            const MARTe::float32 & param2,
+                                                                                            MARTe::StreamString & param3) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    param3 = "OK";
+    lastMethodExecuted = "MethodWithThreeParameters_W_C_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_R_C(MARTe::uint32 & param1,
+                                                                                            MARTe::float32 param2,
+                                                                                            const MARTe::StreamString & param3) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_W_R_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_R_R(MARTe::uint32 & param1,
+                                                                                            MARTe::float32 param2,
+                                                                                            MARTe::StreamString param3) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_W_R_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_R_W(MARTe::uint32 & param1,
+                                                                                            MARTe::float32 param2,
+                                                                                            MARTe::StreamString & param3) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == 2.0);
+    param3 = "OK";
+    lastMethodExecuted = "MethodWithThreeParameters_W_R_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_W_C(MARTe::uint32 & param1,
+                                                                                            MARTe::float32 & param2,
+                                                                                            const MARTe::StreamString & param3) {
+    bool result = true;
+    param1 = 5;
+    param2 = 6.0;
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_W_W_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_W_R(MARTe::uint32 & param1,
+                                                                                            MARTe::float32 & param2,
+                                                                                            MARTe::StreamString param3) {
+    bool result = true;
+    param1 = 5;
+    param2 = 6.0;
+    result &= (param3 == "KO");
+    lastMethodExecuted = "MethodWithThreeParameters_W_W_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_W_W(MARTe::uint32 & param1,
+                                                                                            MARTe::float32 & param2,
+                                                                                            MARTe::StreamString & param3) {
+    bool result = true;
+    param1 = 5;
+    param2 = 6.0;
+    param3 = "OK";
+    lastMethodExecuted = "MethodWithThreeParameters_W_W_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParametersReturnError(MARTe::uint32 &param1,
+                                                                                                 MARTe::float32 &param2,
+                                                                                                 MARTe::StreamString &param3) {
+    return MARTe::ErrorManagement::FatalError;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_C_C(const MARTe::uint32 & param1,
+                                                                                        const MARTe::StreamString & param2) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == "KO");
+    lastMethodExecuted = "MethodWithTwoParameters_C_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_C_R(const MARTe::uint32 & param1,
+                                                                                        MARTe::StreamString param2) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == "KO");
+    lastMethodExecuted = "MethodWithTwoParameters_C_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_C_W(const MARTe::uint32 & param1,
+                                                                                        MARTe::StreamString & param2) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = "OK";
+    lastMethodExecuted = "MethodWithTwoParameters_C_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_R_C(MARTe::uint32 param1,
+                                                                                        const MARTe::StreamString & param2) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == "KO");
+    lastMethodExecuted = "MethodWithTwoParameters_R_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_R_R(MARTe::uint32 param1,
+                                                                                        MARTe::StreamString param2) {
+    bool result = true;
+    result &= (param1 == 3);
+    result &= (param2 == "KO");
+    lastMethodExecuted = "MethodWithTwoParameters_R_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_R_W(MARTe::uint32 param1,
+                                                                                        MARTe::StreamString & param2) {
+    bool result = true;
+    result &= (param1 == 3);
+    param2 = "OK";
+    lastMethodExecuted = "MethodWithTwoParameters_R_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_W_C(MARTe::uint32 & param1,
+                                                                                        const MARTe::StreamString & param2) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == "KO");
+    lastMethodExecuted = "MethodWithTwoParameters_W_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_W_R(MARTe::uint32 & param1,
+                                                                                        MARTe::StreamString param2) {
+    bool result = true;
+    param1 = 5;
+    result &= (param2 == "KO");
+    lastMethodExecuted = "MethodWithTwoParameters_W_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_W_W(MARTe::uint32 & param1,
+                                                                                        MARTe::StreamString & param2) {
+    bool result = true;
+    param1 = 5;
+    param2 = "OK";
+    lastMethodExecuted = "MethodWithTwoParameters_W_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParametersReturnError(MARTe::uint32 &param1,
+                                                                                               MARTe::StreamString &param2) {
+    return MARTe::ErrorManagement::FatalError;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_Pointer_1(MARTe::uint32 * param1,
+                                                                                              MARTe::StreamString & param2) {
+    return MARTe::ErrorManagement::FatalError;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_Pointer_2(MARTe::uint32 & param1,
+                                                                                              MARTe::StreamString * param2) {
+    return MARTe::ErrorManagement::FatalError;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_Pointer_1_2(MARTe::uint32 * param1,
+                                                                                                MARTe::StreamString * param2) {
+    return MARTe::ErrorManagement::FatalError;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameter_C(const MARTe::uint32 & param1) {
+    bool result = true;
+    result &= (param1 == 3);
+    lastMethodExecuted = "MethodWithOneParameter_C";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameter_R(MARTe::uint32 param1) {
+    bool result = true;
+    result &= (param1 == 3);
+    lastMethodExecuted = "MethodWithOneParameter_R";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameter_W(MARTe::uint32 & param1) {
+    bool result = true;
+    param1 = 5;
+    lastMethodExecuted = "MethodWithOneParameter_W";
+    return result;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameter_Pointer(MARTe::uint32 * param1) {
+    return MARTe::ErrorManagement::FatalError;
+}
+
+MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOneParameterReturnError(MARTe::uint32 &param1) {
+    return MARTe::ErrorManagement::FatalError;
+}
+
 CLASS_REGISTER(ClassWithCallableMethods, "1.0")
 
 CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithVoidParameters)
-/*CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOutputInteger)
- CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithInputOutputInteger)
- CLASS_METHOD_REGISTER(ClassWithCallableMethods, FaultyMethod)
- CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithInputReferenceContainer)
- CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOutputReferenceContainer)
- CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithInputOutputReferenceContainer)
- CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithInputIntegerByCopy)
- CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithInputReferenceContainerByCopy)
- CLASS_METHOD_REGISTER(ClassWithCallableMethods, OverloadedMethod)*/
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithConstInputInteger)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOutputInteger)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithInputOutputInteger)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithInputIntegerByCopy)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithConstInputStructuredDataI)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOutputStructuredDataI)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithInputReferenceContainerByCopy)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithInputReferenceContainerAndStructuredDataIAt0)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOutputReferenceContainerAndStructuredDataIAt0)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithConstInputReferenceContainer)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOutputReferenceContainer)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithInputOutputReferenceContainer)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithConstInputStreamI)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOutputStreamI)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithInputOutputStreamI)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_C_C_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_C_C_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_C_C_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_C_R_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_C_R_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_C_R_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_C_W_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_C_W_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_C_W_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_R_C_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_R_C_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_R_C_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_R_R_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_R_R_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_R_R_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_R_W_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_R_W_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_R_W_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_W_C_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_W_C_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_W_C_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_W_R_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_W_R_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_W_R_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_W_W_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_W_W_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_C_W_W_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_C_C_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_C_C_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_C_C_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_C_R_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_C_R_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_C_R_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_C_W_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_C_W_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_C_W_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_R_C_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_R_C_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_R_C_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_R_R_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_R_R_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_R_R_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_R_W_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_R_W_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_R_W_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_W_C_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_W_C_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_W_C_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_W_R_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_W_R_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_W_R_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_W_W_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_W_W_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_R_W_W_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_C_C_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_C_C_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_C_C_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_C_R_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_C_R_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_C_R_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_C_W_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_C_W_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_C_W_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_R_C_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_R_C_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_R_C_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_R_R_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_R_R_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_R_R_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_R_W_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_R_W_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_R_W_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_W_C_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_W_C_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_W_C_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_W_R_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_W_R_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_W_R_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_W_W_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_W_W_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParameters_W_W_W_W)
+
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_C_C_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_C_C_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_C_C_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_C_R_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_C_R_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_C_R_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_C_W_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_C_W_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_C_W_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_R_C_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_R_C_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_R_C_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_R_R_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_R_R_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_R_R_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_R_W_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_R_W_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_R_W_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_W_C_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_W_C_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_W_C_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_W_R_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_W_R_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_W_R_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_W_W_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_W_W_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParameters_W_W_W)
+
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithTwoParameters_C_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithTwoParameters_C_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithTwoParameters_C_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithTwoParameters_R_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithTwoParameters_R_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithTwoParameters_R_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithTwoParameters_W_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithTwoParameters_W_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithTwoParameters_W_W)
+
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOneParameter_C)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOneParameter_R)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOneParameter_W)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOneParameter_Pointer)
+
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithFourParametersReturnError)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithThreeParametersReturnError)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithTwoParametersReturnError)
+CLASS_METHOD_REGISTER(ClassWithCallableMethods, MethodWithOneParameterReturnError)
