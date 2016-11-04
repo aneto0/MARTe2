@@ -126,7 +126,7 @@ public:
 
 
             /**
-             * serialisation
+             * serialisation / deserialisation
              *       display of object configuration parameters
              *       recursion limited by depth,
              *       treats containers recursively by calling deserialisation of each contained object
@@ -136,7 +136,7 @@ public:
              *                         <var1> = {
              *                             class = <class>
              *                             <var11> = {
-             *                                 class = <type>
+             * [non-necessary for deserializ.] class = <type>
              * [omitted for metadata]          value = <value as string>
              *                             }
              *                             <var12> = {  // collapsed data due to recursion limit - just show metadata
@@ -144,7 +144,8 @@ public:
              *                             }
              *                             Container = {
              *                                 <var13 = object name> = {
-             *                                     class = <type>
+             *                                 " ser/des of contained object with same ser/des parameters but depth--"
+             * [non-necessary for deserialisation] class = <type>
              * [omitted for metadata]              value = <value as string>
              *                                 }
              *                                 <var14 = object name> = {  // collapsed data due to recursion limit - just show metadata
