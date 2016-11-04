@@ -92,7 +92,7 @@ public:
              * deserialisation - not supported
              * serialisation
              *       display of meaningful data,
-             *       output function of userCode,
+             *       actual output depends on userCode,
              *       recursion limited by depth,
              *       treats containers as members data seamlessly
              *       supports metadata as output
@@ -100,13 +100,22 @@ public:
              *       output form (as CDB):
              *                     {
              *                         <var1> = {
-             *                             class = <class - could be ReferenceContainer>
+             *                             class = <class>
              *                             <var11> = {
              *                                 class = <type>
              * [omitted for metadata]          value = <value as string>
              *                             }
              *                             <var12> = {  // collapsed data due to recursion limit - just show metadata
              *                                 class = <class name>
+             *                             }
+             *                             Container = {
+             *                                 <var13 = object name> = {
+             *                                     class = <type>
+             * [omitted for metadata]              value = <value as string>
+             *                                 }
+             *                                 <var14 = object name> = {  // collapsed data due to recursion limit - just show metadata
+             *                                     class = <class name>
+             *                                 }
              *                             }
              *                             ....
              *                       }
@@ -117,10 +126,38 @@ public:
 
 
             /**
+             * serialisation
+             *       display of object configuration parameters
+             *       recursion limited by depth,
+             *       treats containers recursively by calling deserialisation of each contained object
+             *       supports metadata as output
+             *       output form (as CDB):
+             *                     {
+             *                         <var1> = {
+             *                             class = <class>
+             *                             <var11> = {
+             *                                 class = <type>
+             * [omitted for metadata]          value = <value as string>
+             *                             }
+             *                             <var12> = {  // collapsed data due to recursion limit - just show metadata
+             *                                 class = <class name>
+             *                             }
+             *                             Container = {
+             *                                 <var13 = object name> = {
+             *                                     class = <type>
+             * [omitted for metadata]              value = <value as string>
+             *                                 }
+             *                                 <var14 = object name> = {  // collapsed data due to recursion limit - just show metadata
+             *                                     class = <class name>
+             *                                 }
+             *                             }
+             *                     }
+             *
+             *
              * display of object config parameters, depending on navigateContainers will recurse through containers. Supports metadata as output
              *
              */
-            fullSerialisation
+            objectSerialisation
         } mode:8;
 
         /// custom code to select different display views
