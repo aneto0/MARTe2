@@ -39,7 +39,7 @@
 namespace MARTe {
 /**
  * @brief EmbeddedThreadI implementation that calls Execute while GetCommands == KeepRunningCommand.
- * @details The ThreadLoop only terminates when the GetCommands !== KeepRunningCommand.
+ * @details The ThreadLoop only terminates when the GetCommands != KeepRunningCommand.
  * The user call-back function should not block. It will be continuously called by the
  * ThreadLoop with ExecutionInfo::MainStage set.
  */
@@ -58,7 +58,7 @@ public:
 
     /**
      * @brief Continuously calls the user callback function.
-     * @details Only terminates when the GetCommands !== KeepRunningCommand.
+     * @details Only terminates when the GetCommands != KeepRunningCommand.
      * The user call-back function should not block. It will be continuously called by the
      * ThreadLoop with ExecutionInfo::MainStage set.
      * The first call to the user-function will have ExecutionInfo::StartupStage set.

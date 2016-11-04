@@ -29,10 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-//#include <old/GenericVoidMethodCallerT.h>
 #include "QueuedMessageI.h"
 #include "ErrorType.h"
-//#include "EmbeddedThreadMethodCaller.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

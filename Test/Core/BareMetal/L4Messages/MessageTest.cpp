@@ -60,8 +60,8 @@ bool MessageTest::TestInitialise() {
     using namespace MARTe;
     bool result = false;
     const MessageTest::MessageInitTableTest table[] = {
-            { "dummyDestination", "dummyFunction", 1000, "ExpectsReply", "Destination=dummyDestination\n Function=dummyFunction\n MaxWait=1000\n Mode=ExpectsReply\n", true },
-            { "dummyDestination", "dummyFunction", 1000, "", "Destination=dummyDestination\n Function=dummyFunction\n MaxWait=1000\n ", true },
+            { "dummyDestination", "dummyFunction", 1000, "ExpectsReply", "Destination=dummyDestination\n Function=dummyFunction\n ReplyTimeout=1000\n Mode=ExpectsReply\n", true },
+            { "dummyDestination", "dummyFunction", 1000, "", "Destination=dummyDestination\n Function=dummyFunction\n ReplyTimeout=1000\n ", true },
             { "dummyDestination", "dummyFunction", TTInfiniteWait, "ExpectsImmediateReply", "Destination=dummyDestination\n Function=dummyFunction\n Mode=ExpectsImmediateReply\n", true },
             { "dummyDestination", "dummyFunction", TTInfiniteWait, "", "Destination=dummyDestination\n Function=dummyFunction\n ", true },
             { "dummyDestination", "", TTInfiniteWait, "", "Destination=dummyDestination\n ", false },
@@ -108,7 +108,7 @@ bool MessageTest::TestInitialise(const MessageInitTableTest * table) {
             result &= (StringHelper::Compare(mess.GetDestination(), table[i].destination) == 0);
             result &= (StringHelper::Compare(mess.GetFunction(), table[i].function) == 0);
             result &= (StringHelper::Compare(mess.GetSender(), "") == 0);
-            result &= (mess.GetReplyTimeout() == table[i].maxwait);
+            result &= (mess.GetReplyTimeout() == table[i].replyTimeout);
             if (StringHelper::Compare(table[i].mode, "ExpectsReply") == 0) {
                 result &= mess.ExpectsReply();
             }

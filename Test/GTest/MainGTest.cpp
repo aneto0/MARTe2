@@ -8,14 +8,18 @@
 #include <limits.h>
 #include "gtest/gtest.h"
 #include "ErrorManagement.h"
+#include "Object.h"
+#include "StreamString.h"
 
 void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo,
                                    const char * const errorDescription) {
-    printf("---->>%s\n", errorDescription);
+    MARTe::StreamString errorCodeStr;
+    MARTe::ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
+    printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
 }
 
-
-int main(int argc, char **argv) {
+int main(int argc,
+         char **argv) {
     SetErrorProcessFunction(&MainGTestErrorProcessFunction);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

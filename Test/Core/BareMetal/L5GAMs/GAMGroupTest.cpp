@@ -90,6 +90,8 @@ public:
 
 GAMGroupTestGAM1    ();
 
+    virtual bool Setup();
+
     virtual bool Execute();
 
     virtual bool SetContext(ConstReference contextIn);
@@ -106,6 +108,10 @@ private:
 GAMGroupTestGAM1::GAMGroupTestGAM1() :
         GAM() {
     failContext = false;
+}
+
+bool GAMGroupTestGAM1::Setup() {
+    return true;
 }
 
 bool GAMGroupTestGAM1::Execute() {

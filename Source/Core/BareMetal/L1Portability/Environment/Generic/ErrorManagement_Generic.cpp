@@ -56,32 +56,35 @@ ErrorProcessFunctionType errorMessageProcessFunction = &NullErrorProcessFunction
  * @brief A structure pairing an error code with its explanation.
  */
 const struct {
-    const char8 * name;
+    const char8 * const name;
     ErrorIntegerFormat errorBitSet;
-} errorNames[] = { { "NoError", NoError }, { "Debug", Debug }, { "Information", Information }, { "Warning", Warning }, { "FatalError", FatalError }, {
-        "RecoverableError", RecoverableError }, { "InitialisationError", InitialisationError }, { "OSError", OSError }, { "ParametersError", ParametersError },
-        { "IllegalOperation", IllegalOperation }, { "ErrorSharing", ErrorSharing }, { "ErrorAccessDenied", ErrorAccessDenied }, { "Exception", Exception }, {
-                "Timeout", Timeout }, { "CommunicationError", CommunicationError }, { "SyntaxError", SyntaxError },
-        { "UnsupportedFeature", UnsupportedFeature }, { static_cast<const char8 *>(NULL), NoError }, };
-
-// TODO OBSOLETE!!! TO BE REMOVED
-const char8 *ToName(const ErrorType &errorCode) {
-    uint32 i = 0u;
-    const char8* retString = "Unrecognized Error or Error Combination";
-
-    while (errorNames[i].name != NULL) {
-        if (errorNames[i].errorBitSet == errorCode.format_as_integer) {
-            retString = errorNames[i].name;
-            break;
-        }
-        i++;
-    }
-    return retString;
-}
+} errorNames[] = {
+        { "NoError", NoError },
+        { "Debug", Debug },
+        { "Information", Information },
+        { "Warning", Warning },
+        { "FatalError", FatalError },
+        { "RecoverableError", RecoverableError },
+        { "InitialisationError", InitialisationError },
+        { "OSError", OSError },
+        { "ParametersError", ParametersError },
+        { "IllegalOperation", IllegalOperation },
+        { "ErrorSharing", ErrorSharing },
+        { "ErrorAccessDenied", ErrorAccessDenied },
+        { "Exception", Exception },
+        { "Timeout", Timeout },
+        { "CommunicationError", CommunicationError },
+        { "SyntaxError", SyntaxError },
+        { "UnsupportedFeature", UnsupportedFeature },
+        { "InternalSetupError", InternalSetupError },
+        { "Completed", Completed },
+        { "NotCompleted", NotCompleted },
+        { static_cast<const char8 *>(NULL), NoError }, };
 
 void ErrorCodeToStream(const ErrorType &errorCode,
                        StreamI &stream) {
-    uint32 i = 0u;
+    //Skip the NoError
+    uint32 i = 1u;
     bool firstErrorWritten = false;
     bool ok = true;
     while (ok && (errorNames[i].name != NULL)) {
@@ -94,22 +97,19 @@ void ErrorCodeToStream(const ErrorType &errorCode,
                 firstErrorWritten = true;
             }
 
-            size = StringHelper::Length(errorNames[i].name);
+            size = StringHelper::Length(errorNames[i].name) + 1u;
             if (ok) {
                 ok = stream.Write(errorNames[i].name, size);
             }
-
-            break;
         }
         i++;
     }
 
     if (ok && (!firstErrorWritten)) {
-        uint32 size = 9u;
+        uint32 size = 7u;
         /*lint -e{534} write to stream failure is ignored.*/
-        stream.Write("No Errors", size);
+        stream.Write("NoError", size);
     }
-
 }
 
 void ReportError(const ErrorType &code,

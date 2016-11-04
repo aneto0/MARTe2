@@ -45,7 +45,7 @@
 
 namespace MARTe {
 /**
- * @brief Interface to a family of objects that allows interfacing a class method to a thread or to a pool of threads.
+ * @brief Family of objects that enable the interfacing of a class method to a thread or to a pool of threads.
  * @details The method callback interface is specified in EmbeddedServiceMethodBinderT<class>::MethodPointer.
  */
 class EmbeddedServiceI: public Object {

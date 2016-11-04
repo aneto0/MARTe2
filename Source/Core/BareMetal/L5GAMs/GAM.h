@@ -428,6 +428,14 @@ public:
      */
     virtual bool SetContext(ConstReference context);
 
+    /**
+     * @brief Function called when all the information about the GAM is known and set.
+     * @details This allows to perform post-Initialise configurations. When this function is called
+     * all the information about the GAM is known (e.g. GetNumberOfInputSignals ...).
+     * @return true if the GAM is successfully configured.
+     */
+    virtual bool Setup()=0;
+
 protected:
 
     /**
@@ -526,9 +534,9 @@ protected:
     ReferenceContainer outputBrokers;
 
     /**
-     * The heap that is used to malloc the input and output signals.
+     * The gamHeap that is used to malloc the input and output signals.
      */
-    HeapI *heap;
+    HeapI *gamHeap;
 
 };
 

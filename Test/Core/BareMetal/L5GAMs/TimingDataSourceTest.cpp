@@ -101,12 +101,18 @@ public:
 
 TimingDataSourceTestGAM1    ();
 
+    virtual bool Setup();
+
     virtual bool Execute();
 };
 
 TimingDataSourceTestGAM1::TimingDataSourceTestGAM1() :
         GAM() {
 
+}
+
+bool TimingDataSourceTestGAM1::Setup() {
+    return true;
 }
 
 bool TimingDataSourceTestGAM1::Execute() {

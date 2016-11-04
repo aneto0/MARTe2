@@ -163,6 +163,8 @@ public:
 
 RealTimeStateStateLessGAM    ();
 
+    virtual bool Setup();
+
     virtual bool Execute();
 
     virtual bool SetContext(ConstReference contextIn);
@@ -177,6 +179,10 @@ private:
 RealTimeStateStateLessGAM::RealTimeStateStateLessGAM() :
         GAM() {
     index = 0;
+}
+
+bool RealTimeStateStateLessGAM::Setup() {
+    return true;
 }
 
 bool RealTimeStateStateLessGAM::Execute() {
@@ -207,6 +213,8 @@ public:
 
 RealTimeStateStateFulGAM    ();
 
+    virtual bool Setup();
+
     virtual bool Execute();
 
     virtual bool SetContext(ConstReference contextIn);
@@ -229,6 +237,10 @@ RealTimeStateStateFulGAM::RealTimeStateStateFulGAM() :
     context = 0u;
     index = 0;
 
+}
+
+bool RealTimeStateStateFulGAM::Setup() {
+    return true;
 }
 
 bool RealTimeStateStateFulGAM::Execute() {

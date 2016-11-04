@@ -41,7 +41,7 @@
 
 namespace MARTe {
 
-MessageFilter::MessageFilter(const bool isPermanentFilter) : Object() {
+MessageFilter::MessageFilter(const bool isPermanentFilter) {
     permanentFilter = isPermanentFilter;
 }
 

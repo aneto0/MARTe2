@@ -40,7 +40,7 @@
 
 namespace MARTe {
 /**
- * @brief Multiple client connection oriented EmbeddedServiceI implementation.
+ * @brief Multiple client connections oriented EmbeddedServiceI implementation.
  * @details This class allows associating a class method in the form (MARTe::ErrorManagement::ErrorType (*)(MARTe::EmbeddedServiceI::ExecutionInfo &)) to a pool of threads.
  * This method will be continuously called (see Start) with the stage encoded in the Information parameter.
  * Notice that the user-callback should not block and should return ErrorManagement::Timeout while waiting for a connection to be established.

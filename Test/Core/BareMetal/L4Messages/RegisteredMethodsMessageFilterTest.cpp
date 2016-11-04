@@ -2,7 +2,7 @@
  * @file RegisteredMethodsMessageFilterTest.cpp
  * @brief Source file for class RegisteredMethodsMessageFilterTest
  * @date 9/09/2016
- * @author Andre Nneto
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

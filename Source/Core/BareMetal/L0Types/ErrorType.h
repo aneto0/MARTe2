@@ -46,7 +46,7 @@ namespace ErrorManagement {
 /**
  * Defines the error type.
  */
-typedef uint32 ErrorIntegerFormat ;
+typedef uint32 ErrorIntegerFormat;
 
 /**
  * Defines the error type bit size.
@@ -98,7 +98,7 @@ static const uint32 ErrorSharingBit(errorSharingBit);
  * Access denied.
  */
 static const uint32 errorAccessDeniedBit(7u);
-static const uint32 ErrorAccessDeniedBit(ErrorAccessDeniedBit);
+static const uint32 ErrorAccessDeniedBit(errorAccessDeniedBit);
 
 /**
  * Exception.
@@ -161,9 +161,15 @@ static const uint32 completedBit(17u);
 static const uint32 CompletedBit(completedBit);
 
 /**
+ * Bit to communicate that a cycling called function has not finished and needs to be called again.
+ */
+static const uint32 notCompletedBit(18u);
+static const uint32 NotCompletedBit(notCompletedBit);
+
+/**
  * Last used Bit.
  */
-static const uint32 lastErrorBit(17u);
+static const uint32 lastErrorBit(19u);
 static const uint32 LastErrorBit(lastErrorBit);
 
 /**
@@ -176,12 +182,10 @@ static const ErrorIntegerFormat NoError = 0u;
  */
 #define GENERATE_ERROR_CONSTANTS(errorName)   static const ErrorIntegerFormat errorName =(1 << errorName ## Bit);
 
-
 /**
  * To generate the constants representing a specific error type.
  */
 #define GENERATE_ERROR_BITRANGE(errorName)    BitBoolean<ErrorIntegerFormat, errorName ## Bit> errorName;
-
 
 /**
  * Fatal Error.
@@ -269,9 +273,14 @@ GENERATE_ERROR_CONSTANTS(Information)
 GENERATE_ERROR_CONSTANTS(Warning)
 
 /**
- * ErrorManagement::Warning.
+ * ErrorManagement::Completed.
  */
 GENERATE_ERROR_CONSTANTS(Completed)
+
+/**
+ * ErrorManagement::NotCompleted.
+ */
+GENERATE_ERROR_CONSTANTS(NotCompleted)
 
 /**
  * @brief Provides an alternative to bool as return type from functions, allowing to add extra information.
@@ -283,7 +292,7 @@ public:
      * @param[in] allOk is false then the error.FatalError is set to false, otherwise all other errors cleared.
      *   @post ErrorsCleared() == allOk
      */
-    inline ErrorType(bool allOk=true);
+    inline ErrorType(bool allOk = true);
 
     /**
      * @brief Constructor from a bit set.
@@ -295,7 +304,7 @@ public:
      * @brief Checks if any error has been flagged.
      * @return true is no error is flagged (warnings may have been set).
      */
-    inline bool ErrorsCleared() const ;
+    inline bool ErrorsCleared() const;
 
     /**
      * @brief Checks if any error has been flagged.
@@ -314,7 +323,7 @@ public:
      * @param[in] errorBitSet Error bits to verify.
      * @return true if the current error bits match the provided \a errorBitSet.
      */
-    inline bool operator ==(const ErrorIntegerFormat errorBitSet)const;
+    inline bool operator ==(const ErrorIntegerFormat errorBitSet) const;
 
     /**
      * @brief Checks if the current error bits do not match the provided \a errorBitSet.
@@ -328,6 +337,12 @@ public:
      * @param[in] errorBitSet initialises the ErrorType against this bit set.
      */
     inline ErrorIntegerFormat operator =(const ErrorIntegerFormat errorBitSet);
+
+    /**
+     * @brief Constructor from a bit set.
+     * @param[in] errorBitSet initialises the ErrorType against this bit set.
+     */
+    inline ErrorIntegerFormat operator =(const bool error);
 
     /**
      * @brief Sets the error bits against a bit set.
@@ -348,7 +363,6 @@ public:
      *  If one of the bits in the \a errorBitSet is not set the function will return false.
      */
     inline bool Contains(const ErrorIntegerFormat errorBitSet) const;
-
 
     /*lint -e{9018} Use of union allows to use this memory to describe both objects and basic types.*/
     union {
@@ -449,6 +463,11 @@ public:
         GENERATE_ERROR_BITRANGE(completed)
 
         /**
+         * Operation completed.
+         */
+        GENERATE_ERROR_BITRANGE(notCompleted)
+
+        /**
          * unmapped bits
          */
         BitRange<ErrorIntegerFormat, lastErrorBit+1, errorIntegerFormatBitSize - lastErrorBit -1 > unmapped;
@@ -466,50 +485,59 @@ namespace MARTe {
 namespace ErrorManagement {
 
 inline ErrorType::ErrorType(const ErrorIntegerFormat errorBitSet) {
-    format_as_integer = errorBitSet;
+format_as_integer = errorBitSet;
 }
 
 inline ErrorType::ErrorType(bool allOk) {
-    format_as_integer = NoError;
-    fatalError = !allOk;
+format_as_integer = NoError;
+fatalError = !allOk;
 }
 
-
 inline bool ErrorType::ErrorsCleared() const {
-    return (format_as_integer == 0);
+return (format_as_integer == 0);
 }
 
 inline ErrorType::operator bool() const {
-    return (format_as_integer == 0);
+return (format_as_integer == 0);
 }
 
-inline ErrorType::operator ErrorIntegerFormat() const{
-    return format_as_integer ;
+inline ErrorType::operator ErrorIntegerFormat() const {
+return format_as_integer;
 }
 
 inline bool ErrorType::operator ==(const ErrorIntegerFormat errorBitSet) const {
-    return format_as_integer == errorBitSet;
+return format_as_integer == errorBitSet;
 }
 
 inline bool ErrorType::operator !=(const ErrorIntegerFormat errorBitSet) const {
-    return format_as_integer != errorBitSet;
+return format_as_integer != errorBitSet;
 }
 
-inline ErrorIntegerFormat ErrorType::operator =(const ErrorIntegerFormat errorBitSet){
-    format_as_integer = errorBitSet;
-    return errorBitSet;
+inline ErrorIntegerFormat ErrorType::operator =(const ErrorIntegerFormat errorBitSet) {
+format_as_integer = errorBitSet;
+return errorBitSet;
+}
+
+inline ErrorIntegerFormat ErrorType::operator =(const bool error) {
+    if(error) {
+        format_as_integer = 1;
+    }
+    else {
+        format_as_integer = 0;
+    }
+    return format_as_integer;
 }
 
 inline void ErrorType::SetError(const ErrorIntegerFormat errorBitSet) {
-    format_as_integer |= errorBitSet;
+format_as_integer |= errorBitSet;
 }
 
 inline void ErrorType::ClearError(const ErrorIntegerFormat errorBitSet) {
-    format_as_integer &= ~errorBitSet;
+format_as_integer &= ~errorBitSet;
 }
 
-inline bool ErrorType::Contains(const ErrorIntegerFormat errorBitSet)const{
-    return   ((format_as_integer & errorBitSet) == errorBitSet);
+inline bool ErrorType::Contains(const ErrorIntegerFormat errorBitSet) const {
+return ((format_as_integer & errorBitSet) == errorBitSet);
 }
 
 }

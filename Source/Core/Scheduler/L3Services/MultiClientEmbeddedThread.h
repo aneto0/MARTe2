@@ -44,7 +44,7 @@ namespace MARTe {
  * @details The ThreadLoop only terminates when the GetCommands !== KeepRunningCommand or when
  *  the MultiClientService already has enough threads handling client connections (see
  *   MultiClientService::MoreThanEnoughThreads).
-
+ *
  * The user callback function should not block and should return ErrorManagement::Timeout
  * while waiting to serve. In this stage, it will be continuously called by the ThreadLoop with
  * ExecutionInfo::MainStage and ExecutionInfo::WaitRequestStageSpecific.

@@ -45,8 +45,8 @@ namespace MARTe {
 /**
  * @brief Associates a pool of EmbeddedThread instances (fixed size) to a class method.
  * @details This class allows associating a class method in the form (MARTe::ErrorManagement::ErrorType (*)(MARTe::EmbeddedServiceI::ExecutionInfo &)) to a thread context.
- * This method will be continuously called (see Start) with the stage encoded in the Information parameter. In particular this class allows to request for a "kind" Stop of the
- * embedded thread and, if this fails, for a direct killing of the thread.
+ * This method will be continuously called (see Start) with the stage encoded in the Information parameter.
+ * This class allows to request for a "kind" Stop of the embedded thread and, if this fails, for a direct killing of the thread.
  */
 class MultiThreadService: public EmbeddedServiceI {
 
@@ -93,7 +93,8 @@ public:
 
     /**
      * @brief Stops N (GetNumberOfPoolThreads()) SingleThreadService instances.
-     * @details A Kill will be issued if the SingleThreadService do not Stop at the first time.
+     * @details A Kill will be issued if the SingleThreadService do not Stop at the first time, i.e. if the first
+     *  call to Stop fails (or times-out) a second Stop() will kill the threads.
      * @return ErrorManagement::NoError if all the instances can be successfully stopped.
      */
     virtual ErrorManagement::ErrorType Stop();

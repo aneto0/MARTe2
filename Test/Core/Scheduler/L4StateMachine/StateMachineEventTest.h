@@ -1,8 +1,8 @@
 /**
- * @file HttpService.h
- * @brief Header file for class HttpService
- * @date Sep 5, 2016
- * @author fsartori
+ * @file StateMachineEventTest.h
+ * @brief Header file for class StateMachineEventTest
+ * @date 11/10/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HttpService
+ * @details This header file contains the declaration of the class StateMachineEventTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L5HTTPSERVICE_HTTPSERVICE_H_
-#define L5HTTPSERVICE_HTTPSERVICE_H_
+#ifndef STATEMACHINEEVENTTEST_H_
+#define STATEMACHINEEVENTTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,88 +32,72 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ReferenceContainer.h"
-#include "TCPSocket.h"
-
-namespace MARTe {
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-class HttpServiceConnector{
-
-private:
-    TCPSocket conectedSocket;
-
-
-};
-
 /**
- * The container may contain objects of any type.
- * But only object of type HttpResourceContainer result in accessible pages
- *
+ * Tests the StateMachineEvent public methods.
  */
-class HttpService: public ReferenceContainer{
+class StateMachineEventTest {
 public:
-
     /**
-    * TODO
-    * same as object interface
-    */
-    virtual bool Initialise(StructuredDataI &data);
-
-    /**
-     * Open socket
-     * launches threads
+     * @brief Tests the default constructor.
      */
-    virtual ErrorManagement::ErrorType Start();
+    bool TestDefaultConstructor();
 
     /**
-     * closes threads
-     * destroys all HttpServiceConnector
+     * @brief Tests the GetTimeout method.
      */
-    virtual ErrorManagement::ErrorType Stop();
+    bool TestGetTransitionTimeout();
 
-private:
+    /**
+     * @brief Tests the GetNextState method.
+     */
+    bool TestGetNextState();
 
-    /// allows sending a message
-    static void SendHttpMessage(CCString url, Stream & content);
+    /**
+     * @brief Tests the GetNextStateError method.
+     */
+    bool TestGetNextStateError();
 
-    /// here to wait for connections
-    BasicTCPSocket listeningSocket;
+    /**
+     * @brief Tests the SetStateMachine method.
+     */
+    bool TestSetStateMachine();
 
+    /**
+     * @brief Tests the Initialise method.
+     */
+    bool TestInitialise();
+
+    /**
+     * @brief Tests the Initialise method with a timeout that is not zero.
+     */
+    bool TestInitialise_NoZeroTimeout();
+
+    /**
+     * @brief Tests the Initialise method without specifying the NextState.
+     */
+    bool TestInitialise_False_NoNextState();
+
+    /**
+     * @brief Tests the Initialise method without specifying the NextStateError.
+     */
+    bool TestInitialise_True_NoNextStateError();
+
+    /**
+     * @brief Tests the Initialise method without specifying the timeout.
+     */
+    bool TestInitialise_True_NoTimeout();
+
+    /**
+     * @brief Tests the ConsumeMessage method.
+     */
+    bool TestConsumeMessage();
 };
-
-
-/** may contain references to any object
- * Objects of type HttpLinkResource are automatically transformed in links to an Object in GODB
- * Object of type HttpRealm allows setting the security level. By default is no access!
- *
- * */
-class HttpResourceContainer: public ReferenceContainer{
-
-};
-
-/**
- * allows mapping a simple URL into a full parametrised method call
- */
-class HttpMapResource{
-
-};
-
-/**
- * provides a streightforward reply to an URL
- */
-class HttpResource{
-
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+#endif /* STATEMACHINEEVENTTEST_H_ */
 
-
-}
-#endif /* L5HTTPSERVICE_HTTPSERVICE_H_ */
-	

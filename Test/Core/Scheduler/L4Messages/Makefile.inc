@@ -25,6 +25,7 @@
 #############################################################
 
 OBJSX=  QueuedMessageITest.x \
+    QueuedReplyMessageCatcherFilterTest.x\
     QueueingMessageFilterTest.x
 
 PACKAGE=Core/Scheduler

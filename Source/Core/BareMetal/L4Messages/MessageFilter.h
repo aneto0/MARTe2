@@ -47,7 +47,7 @@ namespace MARTe {
 /**
  * @brief Class to implement a filter on Message objects.
  */
-class MessageFilter: public Object{
+class MessageFilter {
 public:
 
     /**

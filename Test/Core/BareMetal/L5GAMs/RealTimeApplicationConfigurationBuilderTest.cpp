@@ -40,10 +40,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-static void MyErrorProcessFunction(const ErrorManagement::ErrorInformation &errorInfo,
-                                   const char8 * const errorDescription) {
-    printf("---->>%s\n", errorDescription);
-}
 
 static bool CompareConfigurationDatabases(ConfigurationDatabase &db1,
                                           ConfigurationDatabase &db2,
@@ -419,7 +415,7 @@ static bool TestBuilder(const char8 * const config,
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 RealTimeApplicationConfigurationBuilderTest::RealTimeApplicationConfigurationBuilderTest() {
-    ErrorManagement::SetErrorProcessFunction(&MyErrorProcessFunction);
+
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase1(bool fromConfig) {

@@ -213,14 +213,13 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
 
         }
 
-        ThreadIdentifier threadId = GetThreadId();
         if (GetStatus() != OffState) {
             err.fatalError = !Threads::Kill(GetThreadId());
         }
 
         // in any case notify the main object of the fact that the thread has been killed
         ExecutionInfo information;
-        information.SetThreadNumber(threadId);
+        information.SetThreadNumber(GetThreadId());
         information.SetStage(ExecutionInfo::AsyncTerminationStage);
         ErrorManagement::ErrorType killErr = Execute(information);
         if (!killErr.ErrorsCleared()) {

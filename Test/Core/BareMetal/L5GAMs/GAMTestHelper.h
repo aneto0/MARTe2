@@ -198,6 +198,8 @@ GAM1    ();
 
     virtual ~GAM1();
 
+    virtual bool Setup();
+
     virtual bool Initialise(StructuredDataI & data);
 
     virtual bool Execute();
@@ -206,9 +208,6 @@ GAM1    ();
 
     uint32 numberOfExecutions;
     uint32 context;
-
-protected:
-    virtual void SetUp();
 
 };
 

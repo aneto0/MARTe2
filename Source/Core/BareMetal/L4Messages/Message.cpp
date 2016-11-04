@@ -100,7 +100,7 @@ bool Message::Initialise(StructuredDataI &data) {
         }
         if (ret) {
             uint32 msecWait;
-            if (data.Read("MaxWait", msecWait)) {
+            if (data.Read("ReplyTimeout", msecWait)) {
                 maxWait = msecWait;
             }
             else {
@@ -131,6 +131,26 @@ Message::MessageFlags::MessageFlags(CCString asString) {
         expectsReply = true;
     }
     isReply = false;
+}
+
+CCString Message::GetSender() {
+    return sender.Buffer();
+}
+
+void Message::SetSender(CCString senderName) {
+    sender = senderName.GetList();
+}
+
+CCString Message::GetFunction() {
+    return function.Buffer();
+}
+
+void Message::SetReplyTimeout(const TimeoutType &maxWaitIn) {
+    maxWait = maxWaitIn;
+}
+
+TimeoutType Message::GetReplyTimeout() const {
+    return maxWait;
 }
 
 CLASS_REGISTER(Message, "1.0")

@@ -84,6 +84,8 @@ public:
 
 MemoryMapStatefulBrokerTestGAM1    ();
 
+    virtual bool Setup();
+
     virtual bool Execute();
 
     void *GetInputSignalsMemory();
@@ -113,6 +115,10 @@ void *MemoryMapStatefulBrokerTestGAM1::GetInputSignalMemory(uint32 signalIdx) {
 
 void *MemoryMapStatefulBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
     return GAM::GetOutputSignalMemory(signalIdx);
+}
+
+bool MemoryMapStatefulBrokerTestGAM1::Setup() {
+    return true;
 }
 
 bool MemoryMapStatefulBrokerTestGAM1::Execute() {

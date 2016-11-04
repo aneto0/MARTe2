@@ -92,6 +92,8 @@ MemoryMapStatefulInputBrokerTestGAM1    ();
 
     void *GetOutputSignalMemory(uint32 signalIdx);
 
+    virtual bool Setup();
+
     virtual bool Execute();
 };
 
@@ -113,6 +115,10 @@ void *MemoryMapStatefulInputBrokerTestGAM1::GetInputSignalMemory(uint32 signalId
 
 void *MemoryMapStatefulInputBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
     return GAM::GetOutputSignalMemory(signalIdx);
+}
+
+bool MemoryMapStatefulInputBrokerTestGAM1::Setup() {
+    return true;
 }
 
 bool MemoryMapStatefulInputBrokerTestGAM1::Execute() {
