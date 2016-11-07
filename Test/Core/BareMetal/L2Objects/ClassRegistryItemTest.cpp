@@ -383,15 +383,20 @@ bool ClassRegistryItemTest::TestGetIntrospection() {
     return myItemIntro.GetIntrospection() == &introspectionTest;
 }
 
-bool ClassRegistryItemTest::TestSetUniqueIdentifier(uint32 uid) {
+bool ClassRegistryItemTest::TestSetTypeDescriptor(const TypeDescriptor &td){
     bool ret = true;
 
-    ClassUID prev = myItem.GetClassProperties()->GetUniqueIdentifier();
-    myItem.SetUniqueIdentifier(prev + 1);
-    if (myItem.GetClassProperties()->GetUniqueIdentifier() != (prev + 1)) {
+    //GetTypeDescriptor
+    TypeDescriptor prevTd = myItem.GetClassProperties()->GetTypeDescriptor();
+    TypeDescriptor newTd = prevTd;
+
+
+    newTd.structuredDataIdCode = newTd.structuredDataIdCode+1;
+    myItem.SetTypeDescriptor(newTd);
+    if (myItem.GetClassProperties()->GetTypeDescriptor() != newTd) {
         ret = false;
     }
-    myItem.SetUniqueIdentifier(prev);
+    myItem.SetTypeDescriptor(prevTd);
     return ret;
 }
 

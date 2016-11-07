@@ -130,7 +130,8 @@ TypeDescriptor IntrospectionEntry::GetMemberTypeDescriptor() const {
         if (item != NULL) {
             const ClassProperties *properties = item->GetClassProperties();
             if (properties != NULL) {
-                typeDes = TypeDescriptor(isConstant, properties->GetUniqueIdentifier());
+                typeDes = properties->GetTypeDescriptor();
+//                typeDes = TypeDescriptor(isConstant, properties->GetUniqueIdentifier());
                 typeDes.isConstant = isConstant;
             }
             else {

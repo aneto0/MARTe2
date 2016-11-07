@@ -141,12 +141,12 @@ public:
     bool TestGetIntrospection();
 
     /**
-     * @brief Tests the ClassRegistryItem::SetUniqueIdentifier function.
-     * @param uniqueIdentifier the unique identifier value to test.
-     * @return true if after calling ClassRegistryItem::SetUniqueIdentifier(\a uniqueIdentifier),
-     * ClassRegistryItem->GetClassProperties()->GetUniqueIdentifier() == \a uniqueIdentifier;
+     * @brief Tests the ClassRegistryItem::SetTypeDescriptor function.
+     * @param td the unique identifier value to test.
+     * @return true if after calling ClassRegistryItem::SetTypeDescriptor(\a td),
+     * ClassRegistryItem->GetClassProperties()->GetTypeDescriptor() == \a td;
      */
-    bool TestSetUniqueIdentifier(uint32 uniqueIdentifier);
+    bool TestSetTypeDescriptor(const TypeDescriptor &td);
 
 };
 

@@ -130,9 +130,11 @@ uint32 ClassRegistryItem::GetNumberOfInstances() const {
     return static_cast<uint32>(numberOfInstances);
 }
 
-void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {
-    classProperties.SetUniqueIdentifier(uid);
+
+void ClassRegistryItem::SetTypeDescriptor(const TypeDescriptor &td){
+    classProperties.SetTypeDescriptor(td);
 }
+
 
 ClassMethodCaller *ClassRegistryItem::FindMethod(CCString methodName) {
 

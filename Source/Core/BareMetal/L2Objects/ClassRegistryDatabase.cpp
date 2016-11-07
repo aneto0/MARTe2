@@ -60,8 +60,8 @@ ClassRegistryDatabase *ClassRegistryDatabase::Instance() {
     return instance;
 }
 
-ClassRegistryDatabase::ClassRegistryDatabase() {
-    classUniqueIdentifier = 0u;
+ClassRegistryDatabase::ClassRegistryDatabase(): lastTypeDescriptor(0) {
+
 }
 
 ClassRegistryDatabase::~ClassRegistryDatabase() {
@@ -75,10 +75,14 @@ void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
             REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
         }
 
-        p->SetUniqueIdentifier(classUniqueIdentifier);
+        // add at the end
+        classDatabase.ListAdd(p);
+        // set the code appropriately to reflect number of items in the database
+        lastTypeDescriptor.structuredDataIdCode = classDatabase.ListSize()-1;
+        // load the code
+        p->SetTypeDescriptor(lastTypeDescriptor);
 
-        classDatabase.ListInsert(p, classUniqueIdentifier);
-        classUniqueIdentifier = classUniqueIdentifier + 1u;
+        /// TODO check the code not to be over 2**14 ! 16K classes supported should be fine though.
 
         UnLock();
     }

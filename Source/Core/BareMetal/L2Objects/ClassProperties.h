@@ -33,7 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include "FractionalInteger.h"
+#include "TypeDescriptor.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -88,13 +89,13 @@ public:
      * @brief Returns the unique identifier of the class.
      * @return the unique identifier of the class.
      */
-    ClassUID GetUniqueIdentifier() const;
+    TypeDescriptor GetTypeDescriptor() const;
 
     /**
-     * @brief Sets the unique identifier for the class described by this ClassProperties instance.
-     * @param[in] uid the new unique identifier to be set for the class.
+     * @brief Sets the type descriptor for the class described by this ClassProperties instance.
+     * @param[in] td the new unique identifier to be set for the class.
      */
-    void SetUniqueIdentifier(const ClassUID &uid);
+    void SetTypeDescriptor(const TypeDescriptor &td);
 
     /**
      * @brief Retrieves the class size.
@@ -121,8 +122,9 @@ private:
     /**
      * A unique identifier for this class
      */
-    uint14 uniqueIdentifier;
+    TypeDescriptor typeDescriptor;
 
+    ///
     uint32 size;
 };
 

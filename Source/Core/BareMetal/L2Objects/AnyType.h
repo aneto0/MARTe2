@@ -1125,9 +1125,10 @@ void AnyType::CreateFromOtherType(AnyType &dest,
     ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
     const ClassRegistryItem *classItem = classDatabase->FindTypeIdName(typeid(obj).name());
     if (classItem != NULL_PTR(ClassRegistryItem *)) {
-        dest.dataDescriptor.isStructuredData = true;
+        dest.dataDescriptor = classItem->GetClassProperties()->GetTypeDescriptor();
+//        dest.dataDescriptor.isStructuredData = true;
         dest.dataDescriptor.isConstant = false;
-        dest.dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
+//        dest.dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
     }
 }
 
@@ -1140,9 +1141,10 @@ void AnyType::CreateFromOtherType(AnyType &dest,
     ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
     const ClassRegistryItem *classItem = classDatabase->FindTypeIdName(typeid(obj).name());
     if (classItem != NULL_PTR(ClassRegistryItem *)) {
-        dest.dataDescriptor.isStructuredData = true;
+        dest.dataDescriptor = classItem->GetClassProperties()->GetTypeDescriptor();
+//        dest.dataDescriptor.isStructuredData = true;
         dest.dataDescriptor.isConstant = true;
-        dest.dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
+//        dest.dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
     }
 }
 

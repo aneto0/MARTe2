@@ -355,7 +355,10 @@ bool ConfigurationDatabaseTest::TestRead_Object() {
     char8 outBuff[64];
     testDestination.member5_to.nestedMember2_to = outBuff;
 
-    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor destinationDes = ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetTypeDescriptor();
+    destinationDes.isConstant = false;
+
     AnyType destination(destinationDes, 0u, &testDestination);
 
     source.MoveToRoot();
@@ -459,7 +462,10 @@ bool ConfigurationDatabaseTest::TestWrite_Object() {
     sourceTest.member5_from.nestedMember1_from = &member5Ref;
     sourceTest.member5_from.nestedMember2_from = 12345;
 
-    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor sourceDes = ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetTypeDescriptor();
+    sourceDes.isConstant = false;
+
     AnyType source(sourceDes, 0u, &sourceTest);
 
     ConfigurationDatabase destination;

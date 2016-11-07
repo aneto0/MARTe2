@@ -44,7 +44,9 @@ bool ClassPropertiesTest::TestDefaultConstructor() {
     ClassProperties classProperties;
     bool ok = (classProperties.GetName() == NULL);
     ok &= (classProperties.GetVersion() == NULL);
-    ok &= (classProperties.GetUniqueIdentifier() == 0);
+//    ok &= (classProperties.GetUniqueIdentifier() == 0);
+    ok &= (classProperties.GetTypeDescriptor() == InvalidType);
+
     return ok;
 }
 
@@ -72,7 +74,9 @@ bool ClassPropertiesTest::TestFullConstructor(const char8 *name,
     ClassProperties classProperties3(NULL, NULL, NULL);
     bool ok = (classProperties3.GetName() == NULL);
     ok &= (classProperties3.GetVersion() == NULL);
-    ok &= (classProperties3.GetUniqueIdentifier() == 0);
+//    ok &= (classProperties3.GetUniqueIdentifier() == 0);
+    ok &= (classProperties3.GetTypeDescriptor() == InvalidType);
+
     return ok;
 }
 
@@ -100,18 +104,22 @@ bool ClassPropertiesTest::TestGetVersion(const char8*version) {
 
 }
 
-bool ClassPropertiesTest::TestGetUniqueIdentifier(uint32 uniqueIdentifier) {
+bool ClassPropertiesTest::TestGetTypeDescriptor(const TypeDescriptor &td){
+//bool ClassPropertiesTest::TestGetUniqueIdentifier(uint32 uniqueIdentifier) {
     ClassProperties classProperties;
-    if (classProperties.GetUniqueIdentifier() != 0) {
+    if (classProperties.GetTypeDescriptor() != InvalidType) {
         return false;
     }
 
     ClassProperties classProperties1(NULL, NULL, NULL);
-    classProperties1.SetUniqueIdentifier(uniqueIdentifier);
-    return (classProperties1.GetUniqueIdentifier() == uniqueIdentifier);
+    classProperties1.SetTypeDescriptor(td);
+    return (classProperties1.GetTypeDescriptor() == td);
 
 }
-bool ClassPropertiesTest::TestSetUniqueIdentifier(uint32 uniqueIdentifier) {
+//bool ClassPropertiesTest::TestSetUniqueIdentifier(uint32 uniqueIdentifier) {
+bool ClassPropertiesTest::TestSetTypeDescriptor(const TypeDescriptor &td){
+    return TestGetTypeDescriptor(td);
+/*
     ClassProperties classProperties;
     if (classProperties.GetUniqueIdentifier() != 0) {
         return false;
@@ -120,4 +128,5 @@ bool ClassPropertiesTest::TestSetUniqueIdentifier(uint32 uniqueIdentifier) {
     ClassProperties classProperties1(NULL, NULL, NULL);
     classProperties1.SetUniqueIdentifier(uniqueIdentifier);
     return (classProperties1.GetUniqueIdentifier() == uniqueIdentifier);
+*/
 }

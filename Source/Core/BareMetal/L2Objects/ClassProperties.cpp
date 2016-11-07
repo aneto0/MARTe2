@@ -43,22 +43,20 @@
 
 namespace MARTe {
 
-ClassProperties::ClassProperties() {
+ClassProperties::ClassProperties():typeDescriptor(0) {
     className = static_cast<const char8 *>(NULL);
     typeidClassName = static_cast<const char8 *>(NULL);
     classVersion = static_cast<const char8 *>(NULL);
-    uniqueIdentifier = 0u;
     size = 0u;
 }
 
 ClassProperties::ClassProperties(const char8 * const cName,
                                  const char8 * const typeidName,
                                  const char8 * const cVersion,
-                                 const uint32 cSize) {
+                                 const uint32 cSize):typeDescriptor(0) {
     className = cName;
     typeidClassName = typeidName;
     classVersion = cVersion;
-    uniqueIdentifier = 0u;
     size = cSize;
 }
 
@@ -74,12 +72,12 @@ const char8* ClassProperties::GetVersion() const {
     return classVersion;
 }
 
-ClassUID ClassProperties::GetUniqueIdentifier() const {
-    return uniqueIdentifier;
+TypeDescriptor ClassProperties::GetTypeDescriptor() const {
+    return typeDescriptor;
 }
 
-void ClassProperties::SetUniqueIdentifier(const ClassUID &uid) {
-    uniqueIdentifier = uid;
+void ClassProperties::SetTypeDescriptor(const TypeDescriptor &td) {
+    typeDescriptor = td;
 }
 
 uint32 ClassProperties::GetSize() const {

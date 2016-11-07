@@ -282,10 +282,14 @@ bool TypeConversionTest::TestObjectToObject() {
     testDestination.member5_to.nestedMember2_to=outBuff;
 
 
-    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor sourceDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetTypeDescriptor();
+    sourceDes.isConstant = false;
     AnyType source(sourceDes, 0u, &testSource);
 
-    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor destinationDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetTypeDescriptor();
+    destinationDes.isConstant = false;
     AnyType destination(destinationDes, 0u, &testDestination);
 
     if (!TypeConvert(destination, source)) {
@@ -354,10 +358,14 @@ bool TypeConversionTest::TestObjectToObject_Reverse() {
     testDestination.member4_from[1][1]=buff22;
 
 
-    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor sourceDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetTypeDescriptor();
+    sourceDes.isConstant = false;
     AnyType source(sourceDes, 0u, &testSource);
 
-    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor destinationDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetTypeDescriptor();
+    destinationDes.isConstant = false;
     AnyType destination(destinationDes, 0u, &testDestination);
 
     if (!TypeConvert(destination, source)) {
@@ -416,11 +424,16 @@ bool TypeConversionTest::TestObjectToObject_ErrorNoSourceIntrospection() {
     char8 outBuff[64];
     testDestination.member5_to.nestedMember2_to=outBuff;
 
-    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestNoIntrospectionObject")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestNoIntrospectionObject")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor sourceDes = ClassRegistryDatabase::Instance()->Find("TestNoIntrospectionObject")->GetClassProperties()->GetTypeDescriptor();
+    sourceDes.isConstant = false;
     AnyType source(sourceDes, 0u, &testSource);
 
-    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+//        TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor destinationDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetTypeDescriptor();
+    destinationDes.isConstant = false;
     AnyType destination(destinationDes, 0u, &testDestination);
+
 
     return (!TypeConvert(destination, source));
 
@@ -447,11 +460,17 @@ bool TypeConversionTest::TestObjectToObject_ErrorNoDestIntrospection() {
     TestNoIntrospectionObject testDestination;
 
 
-    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor sourceDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetTypeDescriptor();
+    sourceDes.isConstant = false;
     AnyType source(sourceDes, 0u, &testSource);
 
-    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestNoIntrospectionObject")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestNoIntrospectionObject")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor destinationDes = ClassRegistryDatabase::Instance()->Find("TestNoIntrospectionObject")->GetClassProperties()->GetTypeDescriptor();
+    destinationDes.isConstant = false;
     AnyType destination(destinationDes, 0u, &testDestination);
+
+
 
     return (!TypeConvert(destination, source));
 
@@ -475,12 +494,19 @@ bool TypeConversionTest::TestObjectToObject_NoCompatibility() {
     testSource.member5_from.nestedMember2_from = 12345;
 
     TestIntrospectionObjectNoCompatibility testDestination;
-    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+
+//    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor sourceDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetTypeDescriptor();
+    sourceDes.isConstant = false;
     AnyType source(sourceDes, 0u, &testSource);
 
-    TypeDescriptor destinationDes(
-            false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectNoCompatibility")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor destinationDes(
+//            false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectNoCompatibility")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor destinationDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectNoCompatibility")->GetClassProperties()->GetTypeDescriptor();
+    destinationDes.isConstant = false;
     AnyType destination(destinationDes, 0u, &testDestination);
+
+
 
     return (!TypeConvert(destination, source));
 }
@@ -523,8 +549,11 @@ bool TypeConversionTest::TestStructuredDataToObject_SourceIntrospection() {
     cdb.Write("Class", "TestIntrospectionNestedStructureFrom");
     cdb.MoveAbsolute("testSource");
 
-    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor destinationDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetTypeDescriptor();
+    destinationDes.isConstant = false;
     AnyType destination(destinationDes, 0u, &testDestination);
+
 
     if (!TypeConvert(destination, cdb)) {
         return false;
@@ -593,8 +622,11 @@ bool TypeConversionTest::TestStructuredDataToObject_NoSourceIntrospection() {
     cdb.Write("nestedMember2", testSource.member5_from.nestedMember2_from);
     cdb.MoveAbsolute("testSource");
 
-    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor destinationDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectTo")->GetClassProperties()->GetTypeDescriptor();
+    destinationDes.isConstant = false;
     AnyType destination(destinationDes, 0u, &testDestination);
+
 
     if (!TypeConvert(destination, cdb)) {
         return false;
@@ -659,13 +691,20 @@ bool TypeConversionTest::TestStructuredDataToObject_ErrorNoDestIntrospection() {
 
     TestNoIntrospectionObject testDestination;
 
-    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor sourceDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetTypeDescriptor();
+    sourceDes.isConstant = false;
     AnyType source(sourceDes, 0u, &testSource);
 
-    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestNoIntrospectionObject")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestNoIntrospectionObject")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor destinationDes = ClassRegistryDatabase::Instance()->Find("TestNoIntrospectionObject")->GetClassProperties()->GetTypeDescriptor();
+    destinationDes.isConstant = false;
     AnyType destination(destinationDes, 0u, &testDestination);
     return (!TypeConvert(destination, cdb));
 }
+
+
+
 
 bool TypeConversionTest::TestStructuredDataToObject_NoCompatibility() {
     TestIntrospectionObjectFrom testSource;
@@ -697,14 +736,19 @@ bool TypeConversionTest::TestStructuredDataToObject_NoCompatibility() {
 
     TestIntrospectionObjectNoCompatibility testDestination;
 
-    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor sourceDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetTypeDescriptor();
+    sourceDes.isConstant = false;
     AnyType source(sourceDes, 0u, &testSource);
 
-    TypeDescriptor destinationDes(
-            false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectNoCompatibility")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor destinationDes(
+//            false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectNoCompatibility")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor destinationDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectNoCompatibility")->GetClassProperties()->GetTypeDescriptor();
+    destinationDes.isConstant = false;
     AnyType destination(destinationDes, 0u, &testDestination);
     return (!TypeConvert(destination, cdb));
 }
+
 
 bool TypeConversionTest::TestObjectToStructuredData() {
 
@@ -724,8 +768,11 @@ bool TypeConversionTest::TestObjectToStructuredData() {
     testSource.member5_from.nestedMember1_from = &member5;
     testSource.member5_from.nestedMember2_from = 12345;
 
-    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor sourceDes = ClassRegistryDatabase::Instance()->Find("TestIntrospectionObjectFrom")->GetClassProperties()->GetTypeDescriptor();
+    sourceDes.isConstant = false;
     AnyType source(sourceDes, 0u, &testSource);
+
 
     ConfigurationDatabase cdb;
     if (!TypeConvert(cdb, source)) {

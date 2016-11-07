@@ -77,6 +77,7 @@ public:
      */
     bool TestGetVersion(const char8 * version);
 
+#if 0
     /**
      * @brief Tests the ClassProperties::GetUniqueIdentifier function.
      * @param[in] UniqueIdentifier the unique identifier value to test.
@@ -90,6 +91,21 @@ public:
      * @return True if after calling ClassProperties::SetUniqueIdentifier(\a uniqueIdentifier), ClassProperties::GetUniqueIdentifier() == \a uniqueIdentifier;
      */
     bool TestSetUniqueIdentifier(uint32 uniqueIdentifier);
+#endif
+
+    /**
+     * @brief Tests the ClassProperties::GetTypeDescriptor function.
+     * @param[in] td the TypeDescriptor value to test.
+     * @return True if after calling ClassProperties::SetTypeDescriptor(\a td), ClassProperties::GetTypeDescriptor() == \a td;
+     */
+    bool TestGetTypeDescriptor(const TypeDescriptor &td);
+
+    /**
+     * @brief Tests the ClassProperties::SetTypeDescriptor function.
+     * @param[in] td the TypeDescriptor value to test.
+     * @return True if after calling ClassProperties::SetTypeDescriptor(\a td), ClassProperties::GetTypeDescriptor() == \a td;
+     */
+    bool TestSetTypeDescriptor(const TypeDescriptor &td);
 
 };
 

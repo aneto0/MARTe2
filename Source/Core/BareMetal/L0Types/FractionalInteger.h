@@ -725,10 +725,7 @@ typedef FractionalInteger<int64, 62u> int62;
  */
 typedef FractionalInteger<int64, 63u> int63;
 
-/**
- * Class UUID for the Class Registry Database.
- */
-typedef uint14 ClassUID;
+
 }
 
 #endif /* FRACTIONALINTEGER_H_ */

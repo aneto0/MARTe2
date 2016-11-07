@@ -80,7 +80,7 @@ TypeDescriptor::TypeDescriptor(const bool isConstantIn,
 }
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,
-                               const ClassUID &structuredDataIdCodeIn) {
+                               const uint14  &structuredDataIdCodeIn) {
     isStructuredData = true;
     isConstant = isConstantIn;
     structuredDataIdCode = structuredDataIdCodeIn;

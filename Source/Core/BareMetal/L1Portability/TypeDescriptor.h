@@ -43,6 +43,14 @@
 
 namespace MARTe {
 
+
+/**
+ * Class UUID for the Class Registry Database.
+ * To be eliminated - redundant with TypeDescriptor
+ */
+///typedef uint14 ClassUID;
+
+
 /**
  * @brief A structure Used to describe the type pointed to by a pointer.
  * @details Depending on the first bit isStructuredData it may contain a code identifying a structure
@@ -69,6 +77,7 @@ public:
      */
     /*lint -e{9018} Use of union allows to use this memory to describe or objects or basic types in an exclusive way.*/
     union {
+
         /**
          * If true then the data is a structure or class and its definition
          * has to be found in the ObjectRegistryDatabase
@@ -80,20 +89,40 @@ public:
          */
         BitBoolean<uint16, 1u> isConstant;
 
+        /*****************************************************
+         *
+         *        For isStructuredData = false
+         *
+         *****************************************************/
+
         /**
          * The actual type of data
+         * See table
          */
         BitRange<uint16, 4u, 2u> type;
 
         /**
          * The size in bits
+         * Up to 1024
          */
         BitRange<uint16, 10u, 6u> numberOfBits;
+
+        /*****************************************************
+         *
+         *        For isStructuredData = true
+         *
+         *****************************************************/
 
         /**
          * A code related univocally to a record in the ObjectRegistryDatabase
          */
         BitRange<uint16, 14u, 2u> structuredDataIdCode;
+
+        /*****************************************************
+         *
+         *        as a 16 bit code
+         *
+         *****************************************************/
 
         /**
          * Fills all the memory area.
@@ -131,7 +160,7 @@ public:
      *   structuredDataIdCodeIn == structuredDataIdCode
      */
     TypeDescriptor(const bool isConstantIn,
-                   const ClassUID &structuredDataIdCodeIn);
+                   const uint14 &structuredDataIdCodeIn);
 
     /**
      * @brief Equality operator used to compare types.

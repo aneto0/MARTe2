@@ -34,7 +34,7 @@
 
 #include "ClassProperties.h"
 #include "CString.h"
-#include "FractionalInteger.h"    //using ClassUID typedef
+#include "TypeDescriptor.h"    //using ClassUID typedef
 #include "Introspection.h"
 #include "LinkedListable.h"
 #include "LinkedListHolderT.h"
@@ -144,10 +144,10 @@ public:
     const ObjectBuilder *GetObjectBuilder() const;
 
     /**
-     * @brief Sets the unique identifier for the class described by this ClassRegistryItem.
+     * @brief Sets the type descriptor for the class described by this ClassRegistryItem.
      * @param[in] uid the new unique identifier to be set for the class described by this ClassRegistryItem.
      */
-    void SetUniqueIdentifier(const ClassUID &uid);
+    void SetTypeDescriptor(const TypeDescriptor &td);
 
     /**
      * @brief Gets the ClassMethodCaller associated to the method with name = methodName.

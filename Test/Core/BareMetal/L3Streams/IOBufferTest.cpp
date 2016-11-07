@@ -1692,7 +1692,10 @@ bool IOBufferTest::TestPrintTooMuchDimensions() {
 
 bool IOBufferTest::TestPrintFormattedIntrospection() {
     TestIOBufferIntrospectionStructure myStruct;
-    TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetUniqueIdentifier());
+    //TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor myType = ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetTypeDescriptor();
+    myType.isConstant = false;
+
     AnyType at(myType, 0, (void*) &myStruct);
     IOBuffer ioBuffer;
     uint32 allocationSize = 600;
@@ -1744,7 +1747,10 @@ bool IOBufferTest::TestPrintFormattedObject() {
     myStruct.member4[1][1] = "7";
     myStruct.member5.nestedMember1 = 5;
     myStruct.member5.nestedMember2 = "Hello";
-    TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetUniqueIdentifier());
+    //TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor myType = ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetTypeDescriptor();
+    myType.isConstant = false;
+
     AnyType at(myType, 0, (void*) &myStruct);
     IOBuffer ioBuffer;
     uint32 allocationSize = 600;
@@ -1803,7 +1809,9 @@ bool IOBufferTest::TestPrintStructuredDataInterface() {
 
 bool IOBufferTest::TestPrintFormattedIntrospection_NotIntrospectable() {
     TestIOBufferNotIntrospectable x;
-    TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferNotIntrospectable")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferNotIntrospectable")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor myType = ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetTypeDescriptor();
+    myType.isConstant = false;
 
     AnyType at(myType, 0, &x);
     IOBuffer ioBuffer;
@@ -1816,7 +1824,9 @@ bool IOBufferTest::TestPrintFormattedIntrospection_NotIntrospectable() {
 
 bool IOBufferTest::TestPrintFormattedObject_NotIntrospectable() {
     TestIOBufferNotIntrospectable x;
-    TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferNotIntrospectable")->GetClassProperties()->GetUniqueIdentifier());
+//    TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferNotIntrospectable")->GetClassProperties()->GetUniqueIdentifier());
+    TypeDescriptor myType = ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetTypeDescriptor();
+    myType.isConstant = false;
 
     AnyType at(myType, 0, &x);
     IOBuffer ioBuffer;
