@@ -53,6 +53,7 @@ ExecutionInfo.cpp
 FastMath.h
 FastPollingEventSem.cpp
 FastPollingMutexSem.cpp
+FastResourceContainer.cpp
 FlagsType.h
 FloatToInteger.cpp
 FormatDescriptor.cpp

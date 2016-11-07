@@ -20,40 +20,29 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+#
 #############################################################
 
+OBJSX=	LoggerService.x
+        
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-
-SPB=Environment/$(ENVIRONMENT).x
-
-OBJSX=  		FastPollingEventSem.x \
-		FastPollingMutexSem.x \
-		FastResourceContainer.x \
-		FormatDescriptor.x \
-		GlobalObjectI.x \
-		GlobalObjectsDatabase.x \
-		HeapManager.x \
-		MemoryArea.x \
-		ProcessorType.x \
-		StaticListHolder.x \
-		StringHelper.x \
-		TypeDescriptor.x
-
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES+=-I.
-INCLUDES+=-I../L0Types
+INCLUDES += -I.
+INCLUDES += -I../L0Types
+INCLUDES += -I../L1Portability
+INCLUDES += -I../L2Objects
+INCLUDES += -I../L3Streams
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
-
-all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L1PortabilityB$(LIBEXT) \
-		$(BUILD_DIR)/L1PortabilityB.def
-		
+all: $(OBJS)    \
+	        $(BUILD_DIR)/L4LoggerServiceB$(LIBEXT) \
+	        $(BUILD_DIR)/L4LoggerServiceB.def
 	echo  $(OBJS)
 
 include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+
