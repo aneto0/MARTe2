@@ -1,6 +1,6 @@
 /**
- * @file LoggerPage.h
- * @brief Header file for class LoggerPage
+ * @file LoggerServiceTest.h
+ * @brief Header file for class LoggerServiceTest
  * @date 07/11/2016
  * @author Andre' Neto
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class LoggerPage
+ * @details This header file contains the declaration of the class LoggerServiceTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef LOGGERPAGE_H_
-#define LOGGERPAGE_H_
+#ifndef LOGGERSERVICETEST_H_
+#define LOGGERSERVICETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,21 +31,48 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "AdvancedErrorManagement.h"
-#include "ErrorManagement.h"
-#include "FastResourceContainer.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-struct LoggerPage {
+/**
+ * Tests the LoggerService public methods.
+ */
+class LoggerServiceTest {
 public:
-    ErrorManagement::ErrorInformation errorInfo;
 
-    char errorStrBuffer[MAX_ERROR_MESSAGE_SIZE];
+    /**
+     * @brief Tests the default constructor
+     */
+    bool TestConstructor();
+
+    /**
+     * @brief Tests the GetLogEntry method
+     */
+    bool TestGetLogEntry();
+
+    /**
+     * @brief Tests the ReturnPage method
+     */
+    bool TestReturnPage();
+
+    /**
+     * @brief Tests the GetPage method
+     */
+    bool TestGetPage();
+
+    /**
+     * @brief Tests the AddLogEntry method
+     */
+    bool TestAddLogEntry();
+
+    /**
+     * @brief Tests the LoggerServiceErrorProcessFunction with no REPORT_ERROR parameters
+     */
+    bool TestLoggerServiceErrorProcessFunction();
+
 };
-}
 
 
 
@@ -53,5 +80,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* LOGGERPAGE_H_ */
+#endif /* LOGGERSERVICETEST_H_ */
 	

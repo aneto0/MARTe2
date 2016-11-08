@@ -62,6 +62,7 @@ LoggerService *LoggerService::Instance() {
 }
 
 LoggerService::LoggerService() :
+        nOfPages(128u),
         logsIndex(nOfPages, true),
         pagesIndex(nOfPages, false) {
     pages = new LoggerPage[nOfPages];
