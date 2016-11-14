@@ -44,7 +44,7 @@ namespace MARTe {
 
 /**
  * */
-class TCPSocket: public BufferedStreamGenerator<DoubleBufferedStream,BasicTCPSocket>{
+class DLL_API TCPSocket: public BufferedStreamGenerator<DoubleBufferedStream,BasicTCPSocket>{
 
 public:
     /**
