@@ -32,8 +32,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "HeapI.h"
-#include "StandardHeap_Generic.h"
+//#include "HeapI.h"
+//#include "StandardHeap_Generic.h"
+#include "../../HeapI.h"
+#include "../Generic/StandardHeap_Generic.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

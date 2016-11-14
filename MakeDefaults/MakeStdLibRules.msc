@@ -31,28 +31,30 @@ CreateLibrary :
 
 $(BUILD_DIR)/%.obj : %.cpp
 	@echo $(BUILD_DIR)
-	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES)  $*.cpp  $(ASSEMBLER)
-	@if not exist temp mkdir temp
-	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR) >temp/temp
-	@touch $(BUILD_DIR)/$*.obj >temp/temp
-	@rm $(BUILD_DIR)/$*.obj >temp/temp
-	@mv $*.obj $(BUILD_DIR) >temp/temp
-	@touch $(BUILD_DIR)/$*.asm >temp/temp
-	@rm $(BUILD_DIR)/$*.asm >temp/temp
-	@touch $*.asm >temp/temp
-	@mv $*.asm $(BUILD_DIR) >temp/temp
+	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES)  $*.cpp  $(ASSEMBLER) -Fo$(BUILD_DIR)/$*.obj
+
+#	@if not exist temp mkdir temp
+#	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR) >temp/temp
+#	@touch $(BUILD_DIR)/$*.obj >temp/temp
+#	@rm $(BUILD_DIR)/$*.obj >temp/temp
+#	@mv $*.obj $(BUILD_DIR) >temp/temp
+#	@touch $(BUILD_DIR)/$*.asm >temp/temp
+#	@rm $(BUILD_DIR)/$*.asm >temp/temp
+#	@touch $*.asm >temp/temp
+#	@mv $*.asm $(BUILD_DIR) >temp/temp
 
 $(BUILD_DIR)/%.obj : %.c
-	@if not exist temp mkdir temp
-	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR) >temp/temp
 	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $(INCLUDES) $*.c  $(ASSEMBLER)
-	@touch $(BUILD_DIR)/$*.obj >temp/temp
-	@rm $(BUILD_DIR)/$*.obj >temp/temp
-	@mv $*.obj $(BUILD_DIR) >temp/temp
-	@touch $(BUILD_DIR)/$*.asm >temp/temp
-	@rm $(BUILD_DIR)/$*.asm >temp/temp
-	@touch $*.asm >temp/temp
-	@mv $*.asm $(BUILD_DIR) >temp/temp
+
+#	@if not exist temp mkdir temp
+#	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR) >temp/temp
+#	@touch $(BUILD_DIR)/$*.obj >temp/temp
+#	@rm $(BUILD_DIR)/$*.obj >temp/temp
+#	@mv $*.obj $(BUILD_DIR) >temp/temp
+#	@touch $(BUILD_DIR)/$*.asm >temp/temp
+#	@rm $(BUILD_DIR)/$*.asm >temp/temp
+#	@touch $*.asm >temp/temp
+#	@mv $*.asm $(BUILD_DIR) >temp/temp
 
 $(BUILD_DIR)/%.obj : %.f
 	@if not exist temp mkdir temp
