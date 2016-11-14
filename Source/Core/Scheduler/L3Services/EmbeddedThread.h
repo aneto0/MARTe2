@@ -43,7 +43,7 @@ namespace MARTe {
  * The user call-back function should not block. It will be continuously called by the
  * ThreadLoop with ExecutionInfo::MainStage set.
  */
-class EmbeddedThread: public EmbeddedThreadI {
+class DLL_API EmbeddedThread: public EmbeddedThreadI {
 public:
     /**
      * @brief Constructor. Forces the setting of the method binder.

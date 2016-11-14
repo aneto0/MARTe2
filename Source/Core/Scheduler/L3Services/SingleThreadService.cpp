@@ -29,6 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#define DLL_API
+
 #include <SingleThreadService.h>
 #include "ExecutionInfo.h"
 

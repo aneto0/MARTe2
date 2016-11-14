@@ -44,7 +44,7 @@ namespace MARTe {
  * @brief Only to be used by the EmbeddedServiceMethodBinderT. Allows to register
  * a user specific callback function to be executed in the context of an EmbeddedServiceI.
  */
-class EmbeddedServiceMethodBinderI {
+class DLL_API EmbeddedServiceMethodBinderI {
 
 public:
     /**

@@ -50,7 +50,7 @@ namespace MARTe {
  *  a new message is consumed by this queue (QueueingMessageFilter::GetMessage). This message is then
  *  propagated to all the filter that were added to this QueuedMessageI (see InstallMessageFilterInQueue).
  */
-class QueuedMessageI: public MessageI {
+class DLL_API QueuedMessageI: public MessageI {
 public:
 
     /**

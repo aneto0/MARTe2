@@ -28,6 +28,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#define DLL_API
+
 #include "AdvancedErrorManagement.h"
 #include "StateMachine.h"
 #include "StateMachineEvent.h"

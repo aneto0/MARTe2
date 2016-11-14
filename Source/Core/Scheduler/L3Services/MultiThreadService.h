@@ -48,7 +48,7 @@ namespace MARTe {
  * This method will be continuously called (see Start) with the stage encoded in the Information parameter.
  * This class allows to request for a "kind" Stop of the embedded thread and, if this fails, for a direct killing of the thread.
  */
-class MultiThreadService: public EmbeddedServiceI {
+class DLL_API MultiThreadService: public EmbeddedServiceI {
 
 public:
     /**
