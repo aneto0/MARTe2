@@ -350,7 +350,7 @@ static const char8 * const config1 = ""
         "                   Alias = Signal4A"
         "                   NumberOfDimensions = 2"
         "                   NumberOfElements = 10"
-        "                   Ranges = {{0 0} {2 5} {9 9}}"
+        "                   Ranges = {{1 1} {2 5} {9 9}}"
         "                   Frequency = 5.0"
         "               }"
         "               Signal5 = {"
@@ -397,7 +397,7 @@ static const char8 * const config1 = ""
         "                   Alias = Signal4A"
         "                   NumberOfDimensions = 2"
         "                   NumberOfElements = 10"
-        "                   Ranges = {{0 0} {2 5} {9 9}}"
+        "                   Ranges = {{1 1} {2 5} {9 9}}"
         "               }"
         "               Signal5 = {"
         "                   DataSource = Drv1"
@@ -814,6 +814,8 @@ bool MemoryMapBrokerTest::TestInit_Output_Ranges() {
     if (ret) {
         //3rd signal of the GAM. The 2nd belongs to another DataSource (and thus to another Broker)
         gamPtr = reinterpret_cast<char8 *>(gamC->GetOutputSignalMemory(2));
+        uint32 signalNBytes =0;
+        gamC->GetSignalByteSize(OutputSignals, 2, signalNBytes);
     }
     for (n = 1u; (n < 4) && (ret); n++) {
         uint32 startOffset = 0;
