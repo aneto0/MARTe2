@@ -64,6 +64,11 @@ TEST(DataSourceIGTest,TestGetNumberOfSignals) {
     ASSERT_TRUE(test.TestGetNumberOfSignals());
 }
 
+TEST(DataSourceIGTest,TestGetNumberOfSignals_NotConsumedOrProduced) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetNumberOfSignals_NotConsumedOrProduced());
+}
+
 TEST(DataSourceIGTest,TestGetSignalIndex) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalIndex());

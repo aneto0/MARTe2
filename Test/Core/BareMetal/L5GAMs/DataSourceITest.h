@@ -69,6 +69,11 @@ public:
     bool TestGetNumberOfSignals();
 
     /**
+     * @brief Tests that the GetNumberOfSignals does not change if some signals are not consumed or produced.
+     */
+    bool TestGetNumberOfSignals_NotConsumedOrProduced();
+
+    /**
      * @brief Tests the GetSignalIndex method.
      */
     bool TestGetSignalIndex();
