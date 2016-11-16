@@ -24,7 +24,7 @@
 
 OBJSX=
 
-SPB = L1Portability.x
+SPB = L1Portability.x L3Streams.x
 
 PACKAGE=GTest
 ROOT_DIR=../../..
@@ -33,6 +33,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 LIBRARIES_STATIC = $(BUILD_DIR)/L1Portability/L1PortabilityFGTest$(LIBEXT)
+LIBRARIES_STATIC += $(BUILD_DIR)/L3Streams/L3StreamsFGTest$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/MARTeFGTest$(LIBEXT) 

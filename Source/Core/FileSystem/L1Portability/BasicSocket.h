@@ -50,7 +50,7 @@ namespace MARTe {
      * + Setting and querying the configuration of the destination host.
      * + Setting and querying the blocking status of the socket itself.
      */
-    class DLL_API BasicSocket: public StreamI, public HandleI {
+    class DLL_API BasicSocket: public virtual StreamI, public HandleI {
     public:
         /**
          * @brief Default constructor.

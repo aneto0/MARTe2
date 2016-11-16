@@ -1,8 +1,8 @@
 /**
- * @file TCPSocket.h
- * @brief Header file for class TCPSocket
- * @date 17/03/2016
- * @author Filippo Sartori
+ * @file File.h
+ * @brief Header file for class File
+ * @date 10/11/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class TCPSocket
+ * @details This header file contains the declaration of the class File
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TCPSOCKET_H_
-#define TCPSOCKET_H_
+#ifndef SOURCE_CORE_FILESYSTEM_L3STREAMS_FILE_H_
+#define SOURCE_CORE_FILESYSTEM_L3STREAMS_FILE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,11 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
 #include "BufferedStreamGenerator.h"
 #include "DoubleBufferedStream.h"
-#include "BasicTCPSocket.h"
-
+#include "BasicFile.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -43,27 +41,28 @@
 namespace MARTe {
 
 /**
- * @brief Buffered implementation of the BasicTCPSocket.
+ * @brief Buffered implementation of the BasicFile.
  */
-class TCPSocket: public BufferedStreamGenerator<DoubleBufferedStream,BasicTCPSocket>{
+class File: public BufferedStreamGenerator<DoubleBufferedStream, BasicFile> {
 
 public:
     /**
      * @brief Default constructor. NOOP.
      */
-    TCPSocket();
+    File();
 
     /**
-     * @brief Destructor.
+     * @brief Default destructor.
      */
-    virtual ~TCPSocket();
+    virtual ~File();
 };
 
-};
+}
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_FILESYSTEM_L3STREAMS_TCPSOCKET_H_ */
-	
+#endif /* SOURCE_CORE_FILESYSTEM_L3STREAMS_FILE_H_ */
+

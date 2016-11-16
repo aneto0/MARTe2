@@ -1,6 +1,6 @@
 /**
- * @file TCPSocket.h
- * @brief Header file for class TCPSocket
+ * @file UDPSocket.h
+ * @brief Header file for class UDPSocket
  * @date 17/03/2016
  * @author Filippo Sartori
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class TCPSocket
+ * @details This header file contains the declaration of the class UDPSocket
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TCPSOCKET_H_
-#define TCPSOCKET_H_
+#ifndef UDPSocket_H_
+#define UDPSocket_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -34,7 +34,7 @@
 
 #include "BufferedStreamGenerator.h"
 #include "DoubleBufferedStream.h"
-#include "BasicTCPSocket.h"
+#include "BasicUDPSocket.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -43,20 +43,20 @@
 namespace MARTe {
 
 /**
- * @brief Buffered implementation of the BasicTCPSocket.
+ * @brief Buffered implementation of the BasicUDPSocket.
  */
-class TCPSocket: public BufferedStreamGenerator<DoubleBufferedStream,BasicTCPSocket>{
+class UDPSocket: public BufferedStreamGenerator<DoubleBufferedStream, BasicUDPSocket>{
 
 public:
     /**
      * @brief Default constructor. NOOP.
      */
-    TCPSocket();
+    UDPSocket();
 
     /**
      * @brief Destructor.
      */
-    virtual ~TCPSocket();
+    virtual ~UDPSocket();
 };
 
 };
@@ -65,5 +65,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_FILESYSTEM_L3STREAMS_TCPSOCKET_H_ */
+#endif /* SOURCE_CORE_FILESYSTEM_L3STREAMS_UDPSocket_H_ */
 	

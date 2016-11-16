@@ -1,8 +1,8 @@
 /**
- * @file TCPSocket.h
- * @brief Header file for class TCPSocket
- * @date 17/03/2016
- * @author Filippo Sartori
+ * @file TCPSocket.cpp
+ * @brief Source file for class TCPSocket
+ * @date 16/11/2016
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,54 +16,42 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class TCPSocket
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class TCPSocket (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef TCPSOCKET_H_
-#define TCPSOCKET_H_
+#define DLL_API
 
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "BufferedStreamGenerator.h"
-#include "DoubleBufferedStream.h"
-#include "BasicTCPSocket.h"
-
+#include "TCPSocket.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
-/**
- * @brief Buffered implementation of the BasicTCPSocket.
- */
-class TCPSocket: public BufferedStreamGenerator<DoubleBufferedStream,BasicTCPSocket>{
+TCPSocket::TCPSocket() {
 
-public:
-    /**
-     * @brief Default constructor. NOOP.
-     */
-    TCPSocket();
+}
 
-    /**
-     * @brief Destructor.
-     */
-    virtual ~TCPSocket();
-};
+TCPSocket::~TCPSocket() {
 
-};
+}
+
+}
 
 /*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
+/*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_FILESYSTEM_L3STREAMS_TCPSOCKET_H_ */
+
+
 	

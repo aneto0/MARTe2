@@ -104,7 +104,7 @@ namespace MARTe {
  * write, which increments position and/or size, will not change this value.
  */
 
-class DLL_API BufferedStreamI: public StreamI {
+class DLL_API BufferedStreamI: public virtual StreamI {
 
 public:
 

@@ -97,7 +97,7 @@ public:
      */
     virtual bool Read(char8 * const output,
                       uint32 &size,
-                      TimeoutType msecTimeout);
+                      const TimeoutType &msecTimeout);
 
     /**
      * @brief Wraps bufferedStream::Write(*)
@@ -117,7 +117,7 @@ public:
      */
     virtual bool Write(const char8 * const input,
                        uint32 &size,
-                       TimeoutType msecTimeout);
+                       const TimeoutType &msecTimeout);
 
     /**
      * @brief Wraps bufferedStream::Size(*)
@@ -215,14 +215,14 @@ protected:
 
 template<class bufferedStream, class basicStream>
 BufferedStreamGenerator<bufferedStream, basicStream>::BufferedStreamGenerator() :
-        bufferedStream(),
-        basicStream() {
+bufferedStream(),
+basicStream() {
 }
 
 template<class bufferedStream, class basicStream>
 BufferedStreamGenerator<bufferedStream, basicStream>::BufferedStreamGenerator(uint32 timeout) :
         bufferedStream(timeout),
-        basicStream() {
+        basicStream(){
 }
 
 template<class bufferedStream, class basicStream>
@@ -238,7 +238,7 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::Read(char8 * const ou
 template<class bufferedStream, class basicStream>
 bool BufferedStreamGenerator<bufferedStream, basicStream>::Read(char8 * const output,
                                                                 uint32 &size,
-                                                                TimeoutType msecTimeout) {
+                                                                const TimeoutType &msecTimeout) {
     return bufferedStream::Read(output, size, msecTimeout);
 
 }
@@ -252,7 +252,7 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::Write(const char8 * c
 template<class bufferedStream, class basicStream>
 bool BufferedStreamGenerator<bufferedStream, basicStream>::Write(const char8 * const input,
                                                                  uint32 &size,
-                                                                 TimeoutType msecTimeout) {
+                                                                 const TimeoutType &msecTimeout) {
     return bufferedStream::Write(input, size, msecTimeout);
 
 }
@@ -325,14 +325,14 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::OSSetSize(uint64 size
 template<class bufferedStream, class basicStream>
 bool BufferedStreamGenerator<bufferedStream, basicStream>::OSRead(char8 * const data,
                                                                   uint32 &size) {
-    return basicStream::Read(data, size, GetTimeout());
+    return basicStream::Read(data, size, bufferedStream::GetTimeout());
 }
 
 template<class bufferedStream, class basicStream>
 bool BufferedStreamGenerator<bufferedStream, basicStream>::OSWrite(const char8 * const data,
                                                                    uint32 &size) {
 
-    return basicStream::Write(data, size, GetTimeout());
+    return basicStream::Write(data, size, bufferedStream::GetTimeout());
 }
 }
 

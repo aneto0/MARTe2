@@ -68,7 +68,7 @@ namespace MARTe {
      * @invariant
      *    Size() >= 0;
      */
-    class DLL_API BasicFile: public StreamI, public HandleI {
+    class DLL_API BasicFile: public virtual StreamI, public HandleI {
 
     public:
 

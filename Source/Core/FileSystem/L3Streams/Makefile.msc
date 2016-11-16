@@ -2,7 +2,7 @@
 #
 # Copyright 2015 F4E | European Joint Undertaking for ITER 
 #  and the Development of Fusion Energy ('Fusion for Energy')
-# 
+#
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -20,11 +20,27 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
+# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
+#
 #############################################################
 
-TARGET=cov
+TARGET=msc
 
 include Makefile.inc
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L0Types\L0TypesB$(LIBEXT) 
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L1Portability\L1PortabilityB$(LIBEXT) 
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L2Objects\L2ObjectsB$(LIBEXT)
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L3Streams\L3StreamsB$(LIBEXT)
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\L3Streams\L3StreamsB$(LIBEXT)
 
-LIBRARIES_STATIC = L1Portability/cov/L1PortabilityFGTest$(LIBEXT)
-LIBRARIES_STATIC += L3Streams/cov/L3StreamsFGTest$(LIBEXT)
+IMPDEFS += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/L1PortabilityB.def
+IMPDEFS += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/L1Portability/L1PortabilityB.def
+
+
+
+
+
+
+
+
+
