@@ -56,6 +56,7 @@ enum SignalDirection {
  * +ThisDataSourceIObjectName = {"
  *    Class = ClassThatImplementsDataSourceI"
  *    Signals = {
+ *        Locked = 0|1 (default Locked=0)
  *        +*NAME = {
  *            +Type = BasicType|StructuredType
  *            +NumberOfDimensions = 0|1|2
@@ -63,6 +64,7 @@ enum SignalDirection {
  *       }
  *    }
  * }
+ * If Locked=1 no signals will be automatically added by GAMs reading/writing from/to this DataSourceI.
  */
 class DLL_API DataSourceI: public ReferenceContainer, public StatefulI {
 
