@@ -61,6 +61,36 @@ TEST(EmbeddedThreadIGTest, TestSetCommands) {
     ASSERT_TRUE(target.TestSetCommands());
 }
 
+TEST(EmbeddedThreadIGTest, TestGetPriorityClass) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetPriorityClass());
+}
+
+TEST(EmbeddedThreadIGTest, TestGetPriorityLevel) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetPriorityLevel());
+}
+
+TEST(EmbeddedThreadIGTest, TestGetCPUMask) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetCPUMask());
+}
+
+TEST(EmbeddedThreadIGTest, TestSetPriorityClass) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestSetPriorityClass());
+}
+
+TEST(EmbeddedThreadIGTest, TestSetPriorityLevel) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestSetPriorityLevel());
+}
+
+TEST(EmbeddedThreadIGTest, TestSetCPUMask) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestSetCPUMask());
+}
+
 TEST(EmbeddedThreadIGTest, TestResetThreadId) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestResetThreadId());

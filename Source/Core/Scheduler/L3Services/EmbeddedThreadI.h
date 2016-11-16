@@ -55,7 +55,10 @@ public:
      * @param[in] binder the method which will be called in the context of this thread.
      * @post
      *   GetThreadId() == InvalidThreadIdentifier &&
-     *   GetCommands() == StopCommand
+     *   GetCommands() == StopCommand &&
+     *   GetPriorityClass() == Threads::NormalPriorityClass &&
+     *   GetPriorityLevel() == 0 &&
+     *   GetCPUMask() == UndefinedCPUs
      */
     EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder);
 
@@ -217,6 +220,42 @@ public:
      */
     virtual ErrorManagement::ErrorType Stop();
 
+    /**
+     * @brief Gets the thread priority class.
+     * @return the thread priority class.
+     */
+    Threads::PriorityClassType GetPriorityClass() const;
+
+    /**
+     * @brief Sets the thread priority class.
+     * @param[in] priorityClassIn the thread priority class.
+     */
+    void SetPriorityClass(Threads::PriorityClassType priorityClassIn);
+
+    /**
+     * @brief Gets the thread priority level.
+     * @return the thread priority level.
+     */
+    uint8 GetPriorityLevel() const;
+
+    /**
+     * @brief Sets the thread priority level.
+     * @param[in] priorityLevelIn the thread priority level.
+     */
+    void SetPriorityLevel(uint8 priorityLevelIn);
+
+    /**
+     * @brief Gets the thread CPU mask (i.e. thread affinity).
+     * @return the thread CPU mask.
+     */
+    const ProcessorType& GetCPUMask() const;
+
+    /**
+     * @brief Sets the thread CPU mask (i.e. thread affinity).
+     * @param[in] cpuMaskIn the thread CPU mask (i.e. thread affinity).
+     */
+    void SetCPUMask(const ProcessorType& cpuMaskIn);
+
 protected:
     /**
      * Embedded thread identifier.
@@ -257,6 +296,21 @@ private:
      * The maximum time to execute a state change.
      */
     TimeoutType msecTimeout;
+
+    /**
+     * The thread priority class.
+     */
+    Threads::PriorityClassType priorityClass;
+
+    /**
+     * The thread priority level.
+     */
+    uint8 priorityLevel;
+
+    /**
+     * The thread CPU mask
+     */
+    ProcessorType cpuMask;
 
     /*lint -e{1712} This class does not have a default constructor because
      * the callback method must be defined at construction and will remain constant

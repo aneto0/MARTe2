@@ -38,7 +38,7 @@
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/\
+/*---------------------------------------------------------------------------*/
 
 class EmbeddedThreadITestStub: public MARTe::EmbeddedThreadI {
 public:
@@ -131,6 +131,9 @@ bool EmbeddedThreadITest::TestDefaultConstructor() {
     EmbeddedThreadITestStub embeddedThreadI(binder);
     bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
     ok &= (embeddedThreadI.GetCommands() == EmbeddedThreadI::StopCommand);
+    ok &= (embeddedThreadI.GetPriorityClass() == Threads::NormalPriorityClass);
+    ok &= (embeddedThreadI.GetPriorityLevel() == 0u);
+    ok &= (embeddedThreadI.GetCPUMask() == UndefinedCPUs);
     return ok;
 }
 
@@ -151,6 +154,49 @@ bool EmbeddedThreadITest::TestGetThreadId() {
         Threads::Kill(embeddedThreadI.GetThreadId());
     }
     return ok;
+}
+
+
+bool EmbeddedThreadITest::TestGetPriorityClass() {
+    using namespace MARTe;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
+    EmbeddedThreadITestStub embeddedThreadI(binder);
+    bool ok = (embeddedThreadI.GetPriorityClass() == Threads::NormalPriorityClass);
+    embeddedThreadI.SetPriorityClass(Threads::RealTimePriorityClass);
+    ok &= (embeddedThreadI.GetPriorityClass() == Threads::RealTimePriorityClass);
+    return ok;
+}
+
+bool EmbeddedThreadITest::TestSetPriorityClass() {
+    return TestGetPriorityClass();
+}
+
+bool EmbeddedThreadITest::TestGetPriorityLevel() {
+    using namespace MARTe;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
+    EmbeddedThreadITestStub embeddedThreadI(binder);
+    bool ok = (embeddedThreadI.GetPriorityLevel() == 0);
+    embeddedThreadI.SetPriorityLevel(10);
+    ok &= (embeddedThreadI.GetPriorityLevel() == 10);
+    return ok;
+}
+
+bool EmbeddedThreadITest::TestSetPriorityLevel() {
+    return TestGetPriorityLevel();
+}
+
+bool EmbeddedThreadITest::TestGetCPUMask() {
+    using namespace MARTe;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
+    EmbeddedThreadITestStub embeddedThreadI(binder);
+    bool ok = (embeddedThreadI.GetCPUMask() == UndefinedCPUs);
+    embeddedThreadI.SetCPUMask(0x3);
+    ok &= (embeddedThreadI.GetCPUMask() == 0x3);
+    return ok;
+}
+
+bool EmbeddedThreadITest::TestSetCPUMask() {
+    return TestGetCPUMask();
 }
 
 bool EmbeddedThreadITest::TestGetStatus() {

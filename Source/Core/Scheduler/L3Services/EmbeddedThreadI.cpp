@@ -61,6 +61,9 @@ EmbeddedThreadI::EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder) :
     commands = StopCommand;
     maxCommandCompletionHRT = 0u;
     timeoutHRT = -1;
+    priorityClass = Threads::NormalPriorityClass;
+    priorityLevel = 0u;
+    cpuMask = UndefinedCPUs;
 }
 
 EmbeddedThreadI::~EmbeddedThreadI() {
@@ -171,7 +174,7 @@ ErrorManagement::ErrorType EmbeddedThreadI::Start() {
         SetCommands(EmbeddedThreadI::StartCommand);
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + static_cast<uint32>(timeoutHRT);
         const void * const parameters = static_cast<void *>(this);
-        threadId = Threads::BeginThread(&ServiceThreadLauncher, parameters);
+        threadId = Threads::BeginThread(&ServiceThreadLauncher, parameters, static_cast<uint32>(THREADS_DEFAULT_STACKSIZE), GetName(), ExceptionHandler::NotHandled, cpuMask);
 
         err.fatalError = (GetThreadId() == 0u);
     }
@@ -233,6 +236,32 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
 
     return err;
 }
+
+
+Threads::PriorityClassType EmbeddedThreadI::GetPriorityClass() const {
+    return priorityClass;
+}
+
+void EmbeddedThreadI::SetPriorityClass(Threads::PriorityClassType priorityClassIn) {
+    priorityClass = priorityClassIn;
+}
+
+uint8 EmbeddedThreadI::GetPriorityLevel() const {
+    return priorityLevel;
+}
+
+void EmbeddedThreadI::SetPriorityLevel(uint8 priorityLevelIn) {
+    priorityLevel = priorityLevelIn;
+}
+
+const ProcessorType& EmbeddedThreadI::GetCPUMask() const {
+    return cpuMask;
+}
+
+void EmbeddedThreadI::SetCPUMask(const ProcessorType& cpuMaskIn) {
+    cpuMask = cpuMaskIn;
+}
+
 
 }
 

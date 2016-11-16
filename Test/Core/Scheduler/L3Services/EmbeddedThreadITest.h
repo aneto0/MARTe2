@@ -58,16 +58,6 @@ public:
     bool TestDefaultConstructor();
 
     /**
-     * @brief Tests the GetThreadNumber method.
-     */
-    bool TestGetThreadNumber();
-
-    /**
-     * @brief Tests the SetThreadNumber method.
-     */
-    bool TestSetThreadNumber();
-
-    /**
      * @brief Tests the GetThreadId method.
      */
     bool TestGetThreadId();
@@ -81,6 +71,36 @@ public:
      * @brief Tests the SetCommands method.
      */
     bool TestSetCommands();
+
+    /**
+     * @brief Tests the GetPriorityClass method.
+     */
+    bool TestGetPriorityClass();
+
+    /**
+     * @brief Tests the SetPriorityClass method.
+     */
+    bool TestSetPriorityClass();
+
+    /**
+     * Tests the GetPriorityLevel method.
+     */
+    bool TestGetPriorityLevel();
+
+    /**
+     * @brief Tests the SetPriorityLevel method.
+     */
+    bool TestSetPriorityLevel();
+
+    /**
+     * @brief Tests the TestGetCPUMask method.
+     */
+    bool TestGetCPUMask();
+
+    /**
+     * @brief Tests the TestSetCPUMask method.
+     */
+    bool TestSetCPUMask();
 
     /**
      * @brief Tests the ResetThreadId method.
