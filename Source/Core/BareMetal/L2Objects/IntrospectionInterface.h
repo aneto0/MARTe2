@@ -76,7 +76,7 @@ public:
              *                             modifier = < sequence of modifiers >
              * [omitted for metadata]      address = < start pointer to memory> | value = < value as string>
              *                         }
-             *                         ....
+             *    IntrospectionInterface                     ....
              *                     }
              *       input form (as CDB):
              *
@@ -191,13 +191,23 @@ public:
      */
     ErrorManagement::ErrorType DeSerialise(SerialiseContext context,SerialiseMode mode,CCString address, const StructuredDataI &in );
 
+
+    /**
+     *
+     */
+    inline ErrorManagement::ErrorType SetObjectParameters(const StructuredDataI &in );
 };
 
-}
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+inline ErrorManagement::ErrorType IntrospectionInterface::SetObjectParameters(const StructuredDataI &in ){
+    return DeSerialise(SerialiseContext(SerialiseContext::objectSerialisation), SerialiseMode(SerialiseMode::data,255,true),"",in);
+}
+
+}
 #endif /* L2OBJECTS_INTROSPECTIONINTERFACE_H_ */
 	
