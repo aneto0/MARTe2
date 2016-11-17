@@ -151,9 +151,9 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
         //Check for all known operating system extensions.
         while ((operatingSystemDLLExtensions[i] != 0) && (!dllOpened)) {
             if (MemoryOperationsHelper::Set(fullName, '\0', fullSize)) {
-                if (StringHelper::ConcatenateN(fullName, dllName, dllNameSize)) {
+                if (StringHelper::ConcatenateN(fullName, &(dllName[0]), dllNameSize)) {
                     const char8 *extension = operatingSystemDLLExtensions[i];
-                    char8 *fullNameWithDllName = fullName + dllNameSize;
+                    char8 *fullNameWithDllName = &fullName[dllNameSize];
                     if (StringHelper::ConcatenateN(fullNameWithDllName, extension, 4u)) {
                         dllOpened = loader->Open(fullName);
                     }
