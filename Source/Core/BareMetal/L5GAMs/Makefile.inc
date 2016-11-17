@@ -42,6 +42,7 @@ OBJSX=BrokerI.x \
     RealTimeApplicationConfigurationBuilder.x \
     RealTimeState.x \
     RealTimeThread.x \
+    SynchronisedBroker.x \
     TimingDataSource.x
 
 PACKAGE=Core/BareMetal

@@ -595,6 +595,33 @@ public:
                                   const char8* const functionName,
                                   void * const gamMemPtr)=0;
 
+    /**
+     * @brief Adds to the \a brokers all the BrokerI instances that will be executed before the first the GAM
+     * (and its InputBrokers) that interacts with this DataSourceI is executed.
+     * @param[out] brokers where the BrokerI instances have to be added to.
+     * @param[in] functionName name of the first function that interacs with this DataSourceI.
+     * @param[in] gamMemPtr the GAM memory where the signals will be written to.
+     * @return true if a list of BrokerI instances can be successfully added to the pre-brokers list (or if
+     * there are no brokers to be added).
+     */
+    virtual bool GetPreBrokers(ReferenceContainer &brokers,
+                               const char8* const functionName,
+                               void * const gamMemPtr);
+
+    /**
+     * @brief Adds to the \a brokers all the BrokerI instances that will be executed after the last GAM
+     * (and its OutputBrokers) that interacts with this DataSourceI is executed.
+     * @details Note that these Brokers will only be added if there is at least one GAM with OutputSignals
+     *  that write in this DataSourceI.
+     * @param[out] brokers where the BrokerI instances have to be added to.
+     * @param[in] functionName name of the last function that interacts with this DataSourceI.
+     * @param[in] gamMemPtr the GAM memory where the signals will be written to.
+     * @return true if a list of BrokerI instances can be successfully added to the post-brokers list (or if
+     * there are no brokers to be added).
+     */
+    virtual bool GetPostBrokers(ReferenceContainer &brokers,
+                                const char8* const functionName,
+                                void * const gamMemPtr);
 protected:
 
     /**
@@ -637,6 +664,16 @@ private:
      * Number of signals assigned to this function
      */
     uint32 numberOfSignals;
+
+    /**
+     * True if the pre brokers have already been added.
+     */
+    bool preBrokersAdded;
+
+    /**
+     * True if the post brokers have already been added.
+     */
+    bool postBrokersAdded;
 };
 
 }

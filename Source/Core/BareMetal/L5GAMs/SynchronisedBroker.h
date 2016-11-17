@@ -1,7 +1,7 @@
 /**
- * @file ExecutableI.h
- * @brief Header file for class ExecutableI
- * @date 19/07/2016
+ * @file SynchronisedBroker.h
+ * @brief Header file for class SynchronisedBroker
+ * @date 17/11/2016
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ExecutableI
+ * @details This header file contains the declaration of the class SynchronisedBroker
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef EXECUTORI_H_
-#define EXECUTORI_H_
+#ifndef SOURCE_CORE_BAREMETAL_L5GAMS_SYNCHRONISEDBROKER_H_
+#define SOURCE_CORE_BAREMETAL_L5GAMS_SYNCHRONISEDBROKER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,64 +31,58 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
+#include "BrokerI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
 
+namespace MARTe {
 /**
- * @brief Classes that implement this interface are schedulable and can be
- *  executed by a GAMSchedulerI.
+ * @brief Synchronous BrokerI implementation.
+ * @details This class calls Synchronise on the DataSourceI every-time it is executed..
  */
-class DLL_API ExecutableI {
-
+class DLL_API SynchronisedBroker: public BrokerI {
 public:
+    CLASS_REGISTER_DECLARATION()
     /**
-     * @brief Constructor. NOOP.
+     * @brief Default constructor. NOOP.
      */
-    ExecutableI();
+    SynchronisedBroker();
 
     /**
      * @brief Destructor. NOOP.
      */
-    virtual ~ExecutableI();
+    virtual ~SynchronisedBroker();
 
     /**
-     * @brief Method called by a GAMSchedulerI to trigger the execution of the component.
-     * @return true if the component is successfully executed.
+     * @see BrokerI::Init.
+     * @detail After this function is executed the Execute will call Synchronise on the \a dataSourceIn.
      */
-    virtual bool Execute() = 0;
+    virtual bool Init(SignalDirection direction,
+                      DataSourceI &dataSourceIn,
+                      const char8 * const functionName,
+                      void *gamMemoryAddress);
 
     /**
-     * @brief Sets the address in memory where the signal which contains the last execution time of this component is stored.
-     * @details The last execution time units are micro-seconds and are measured w.r.t. to the start of a cycle.
-     * @param[in] timingSignalAddressIn the address of the timing signal.
+     * @brief Calls Synchronise on the DataSourceI.
+     * @return true if the synchronisation call is successful.
      */
-    void SetTimingSignalAddress(uint32 * const timingSignalAddressIn);
-
-    /**
-     * @brief Gets the address in memory where the signal which contains the last execution time is stored.
-     * @details The last execution time units are micro-seconds and are measured w.r.t. to the start of a cycle.
-     * @return the address in memory where the signal which contains the last execution time is stored.
-     */
-    inline uint32 *GetTimingSignalAddress();
-
+    virtual bool Execute();
 private:
-
-    uint32 * timingSignalAddress;
+    /**
+     * The DataSourceI where to call Synchronise
+     */
+    DataSourceI *dataSource;
 };
+
+}
 
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-uint32 * ExecutableI::GetTimingSignalAddress() {
-    return timingSignalAddress;
-}
 
-}
-#endif /* EXECUTORI_H_ */
+#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_SYNCHRONISEDBROKER_H_ */
 	

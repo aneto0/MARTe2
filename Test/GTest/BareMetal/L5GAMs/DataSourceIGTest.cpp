@@ -214,3 +214,12 @@ TEST(DataSourceIGTest,TestIsSupportedBroker) {
     ASSERT_TRUE(test.TestIsSupportedBroker());
 }
 
+TEST(DataSourceIGTest,TestGetPreBrokers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetPreBrokers());
+}
+
+TEST(DataSourceIGTest,TestGetPostBrokers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetPostBrokers());
+}

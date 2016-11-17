@@ -1,7 +1,7 @@
 /**
- * @file ExecutableI.h
- * @brief Header file for class ExecutableI
- * @date 19/07/2016
+ * @file SynchronisedBrokerTest.h
+ * @brief Header file for class SynchronisedBrokerTest
+ * @date 17/11/2016
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ExecutableI
+ * @details This header file contains the declaration of the class SynchronisedBrokerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef EXECUTORI_H_
-#define EXECUTORI_H_
+#ifndef TEST_CORE_BAREMETAL_L5GAMS_SYNCHRONISEDBROKERTEST_H_
+#define TEST_CORE_BAREMETAL_L5GAMS_SYNCHRONISEDBROKERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,64 +31,38 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
+#include "SynchronisedBrokerTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
 
 /**
- * @brief Classes that implement this interface are schedulable and can be
- *  executed by a GAMSchedulerI.
+ * @brief Tests all the RealTimeState functions.
  */
-class DLL_API ExecutableI {
+class SynchronisedBrokerTest {
 
 public:
-    /**
-     * @brief Constructor. NOOP.
-     */
-    ExecutableI();
 
     /**
-     * @brief Destructor. NOOP.
+     * @brief Tests the constructor
      */
-    virtual ~ExecutableI();
+    bool TestConstructor();
 
     /**
-     * @brief Method called by a GAMSchedulerI to trigger the execution of the component.
-     * @return true if the component is successfully executed.
+     * @brief Tests the Init method
      */
-    virtual bool Execute() = 0;
+    bool TestInit();
 
     /**
-     * @brief Sets the address in memory where the signal which contains the last execution time of this component is stored.
-     * @details The last execution time units are micro-seconds and are measured w.r.t. to the start of a cycle.
-     * @param[in] timingSignalAddressIn the address of the timing signal.
+     * @brief Tests the Execute method
      */
-    void SetTimingSignalAddress(uint32 * const timingSignalAddressIn);
-
-    /**
-     * @brief Gets the address in memory where the signal which contains the last execution time is stored.
-     * @details The last execution time units are micro-seconds and are measured w.r.t. to the start of a cycle.
-     * @return the address in memory where the signal which contains the last execution time is stored.
-     */
-    inline uint32 *GetTimingSignalAddress();
-
-private:
-
-    uint32 * timingSignalAddress;
+    bool TestExecute();
 };
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-uint32 * ExecutableI::GetTimingSignalAddress() {
-    return timingSignalAddress;
-}
 
-}
-#endif /* EXECUTORI_H_ */
-	
+#endif /* TEST_CORE_BAREMETAL_L5GAMS_SYNCHRONISEDBROKERTEST_H_ */
+

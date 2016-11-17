@@ -51,6 +51,8 @@ namespace MARTe {
 DataSourceI::DataSourceI() :
         ReferenceContainer() {
     numberOfSignals = 0u;
+    preBrokersAdded = false;
+    postBrokersAdded = false;
 }
 
 DataSourceI::~DataSourceI() {
@@ -649,11 +651,16 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
 
     if (ret) {
         if (configuredDatabase.MoveAbsolute("Functions")) {
+            ReferenceContainer preBrokers;
             uint32 numberOfFunctions = configuredDatabase.GetNumberOfChildren();
+            StreamString functionName = "";
+            ReferenceT<GAM> gam;
+            void *gamMemoryAddress = NULL_PTR(void *);
+
             for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
                 const char8* functionId = configuredDatabase.GetChildName(i);
                 ret = configuredDatabase.MoveRelative(functionId);
-                StreamString functionName;
+                functionName = "";
                 if (ret) {
                     ret = configuredDatabase.Read("QualifiedName", functionName);
                 }
@@ -661,45 +668,58 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
                     StreamString fullFunctionName = "Functions.";
                     fullFunctionName += functionName;
 
-                    ReferenceT<GAM> gam = application->Find(fullFunctionName.Buffer());
+                    gam = application->Find(fullFunctionName.Buffer());
                     ret = gam.IsValid();
-                    void *gamMemoryAddress = NULL_PTR(void *);
 
                     bool relevant = false;
-                    if (direction == InputSignals) {
-                        if (gam->GetNumberOfInputSignals() > 0u) {
-                            gamMemoryAddress = gam->GetInputSignalsMemory();
-                            relevant = true;
+                    if (ret) {
+                        if (direction == InputSignals) {
+                            if (gam->GetNumberOfInputSignals() > 0u) {
+                                gamMemoryAddress = gam->GetInputSignalsMemory();
+                                relevant = true;
+                            }
+                        }
+                        else if (direction == OutputSignals) {
+                            if (gam->GetNumberOfOutputSignals() > 0u) {
+                                gamMemoryAddress = gam->GetOutputSignalsMemory();
+                                relevant = true;
+                            }
+                        }
+                        else {
+                            //There is no direction set
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No direction set when adding brokers to DataSourceI : %s", GetName())
+                            ret = false;
                         }
                     }
-                    else if (direction == OutputSignals) {
-                        if (gam->GetNumberOfOutputSignals() > 0u) {
-                            gamMemoryAddress = gam->GetOutputSignalsMemory();
-                            relevant = true;
-                        }
-                    }
-                    else {
-                        //There is no direction set
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No direction set when adding brokers to DataSourceI : %s", GetName())
-                        ret = false;
-                    }
-
                     if (relevant) {
                         if (ret) {
                             ret = (gamMemoryAddress != NULL);
                         }
                         if (ret) {
                             if (configuredDatabase.MoveRelative(dirStr)) {
+                                if (!preBrokersAdded) {
+                                    ret = GetPreBrokers(preBrokers, functionName.Buffer(), gamMemoryAddress);
+                                    if (ret) {
+                                        if (preBrokers.Size() > 0u) {
+                                            preBrokersAdded = true;
+                                            ret = gam->AddInputBrokers(preBrokers);
+                                        }
+                                    }
+                                }
                                 if (direction == InputSignals) {
                                     ReferenceContainer inputBrokers;
-                                    ret = GetInputBrokers(inputBrokers, functionName.Buffer(), gamMemoryAddress);
+                                    if (ret) {
+                                        ret = GetInputBrokers(inputBrokers, functionName.Buffer(), gamMemoryAddress);
+                                    }
                                     if (ret) {
                                         ret = gam->AddInputBrokers(inputBrokers);
                                     }
                                 }
                                 else {
                                     ReferenceContainer outputBrokers;
-                                    ret = GetOutputBrokers(outputBrokers, functionName.Buffer(), gamMemoryAddress);
+                                    if (ret) {
+                                        ret = GetOutputBrokers(outputBrokers, functionName.Buffer(), gamMemoryAddress);
+                                    }
                                     if (ret) {
                                         ret = gam->AddOutputBrokers(outputBrokers);
                                     }
@@ -713,12 +733,42 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
                     ret = configuredDatabase.MoveAbsolute("Functions");
                 }
             }
+            if (ret) {
+                if (direction == OutputSignals) {
+                    if (!postBrokersAdded) {
+                        ReferenceContainer postBrokers;
+                        //This will be the last GAM
+                        if (gam.IsValid()) {
+                            ret = GetPostBrokers(postBrokers, functionName.Buffer(), gamMemoryAddress);
+
+                            if (ret) {
+                                if (postBrokers.Size() > 0u) {
+                                    postBrokersAdded = true;
+                                    ret = gam->AddOutputBrokers(postBrokers);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     else {
         REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No RealTimeApplication found for DataSourceI : %s", GetName())
     }
     return ret;
+}
+
+bool DataSourceI::GetPreBrokers(ReferenceContainer &brokers,
+                                const char8* const functionName,
+                                void * const gamMemPtr) {
+    return true;
+}
+
+bool DataSourceI::GetPostBrokers(ReferenceContainer &brokers,
+                                 const char8* const functionName,
+                                 void * const gamMemPtr) {
+    return true;
 }
 
 }

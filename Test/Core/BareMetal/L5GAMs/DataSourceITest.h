@@ -222,6 +222,16 @@ public:
      * @brief Tests the IsSupportedBroker method.
      */
     bool TestIsSupportedBroker();
+
+    /**
+     * @brief Tests the GetPreBrokers method.
+     */
+    bool TestGetPreBrokers();
+
+    /**
+     * @brief Tests the GetPostBrokers method.
+     */
+    bool TestGetPostBrokers();
 };
 
 /*---------------------------------------------------------------------------*/
