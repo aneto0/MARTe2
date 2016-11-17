@@ -76,8 +76,9 @@ public:
     virtual ~MultiThreadService();
 
     /**
-     * @brief Reads the number of pool threads from the data input.
-     * @param[in] data shall contain a parameter named "NumberOfPoolThreads" holding the number of pool threads
+     * @brief Reads the number of pool threads from the data input. Calls EmbeddedServiceI::Initialise().
+     * @param[in] in addition to the parameters defined in EmbeddedServiceI::Initialise it shall contain a parameter
+     * named "NumberOfPoolThreads" holding the number of pool threads
      * and another parameter named "Timeout" with the timeout to apply to each of the SingleThreadService instances.
      * If "Timeout=0" => Timeout = TTInfiniteWait
      * @return true if all the parameters are available.
@@ -125,13 +126,32 @@ public:
      * @brief Sets the maximum time to execute a state change.
      * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
      */
-    void SetTimeout(const TimeoutType & msecTimeoutIn);
+    virtual void SetTimeout(const TimeoutType & msecTimeoutIn);
 
     /**
-     * @brief Gets the maximum time to execute a state change.
-     * @return the maximum time to execute a state change.
+     * @brief Sets the thread priority class level for all the threads.
+     * @param[in] priorityClassIn the thread priority class.
+     * @pre
+     *   GetStatus(*) == OffState
      */
-    TimeoutType GetTimeout() const;
+    virtual void SetPriorityClass(Threads::PriorityClassType priorityClassIn);
+
+    /**
+     * @brief Sets the thread priority level for all the threads.
+     * @param[in] priorityLevelIn the thread priority level.
+     * @pre
+     *   GetStatus(*) == OffState
+     */
+    virtual void SetPriorityLevel(uint8 priorityLevelIn);
+
+    /**
+     * @brief Sets the thread CPU mask (i.e. thread affinity) level for all the threads.
+     * @param[in] cpuMaskIn the thread CPU mask (i.e. thread affinity).
+     * @pre
+     *   GetStatus(*) == OffState
+     */
+    virtual void SetCPUMask(const ProcessorType& cpuMaskIn);
+
 
 protected:
     /**
@@ -143,11 +163,6 @@ protected:
      * The fixed number of pool threads.
      */
     uint32 numberOfPoolThreads;
-
-    /**
-     * The timeout to apply to each of the SingleThreadService instances.
-     */
-    uint32 msecTimeout;
 
     /**
      * The callback method
@@ -169,7 +184,6 @@ MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderT<className> &
         EmbeddedServiceI(),
         method(binder) {
     numberOfPoolThreads = 1;
-    msecTimeout = TTInfiniteWait.GetTimeoutMSec();
 }
 
 }

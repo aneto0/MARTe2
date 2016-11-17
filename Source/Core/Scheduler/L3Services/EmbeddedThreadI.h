@@ -229,6 +229,8 @@ public:
     /**
      * @brief Sets the thread priority class.
      * @param[in] priorityClassIn the thread priority class.
+     * @pre
+     *   GetStatus() == OffState
      */
     void SetPriorityClass(Threads::PriorityClassType priorityClassIn);
 
@@ -241,6 +243,8 @@ public:
     /**
      * @brief Sets the thread priority level.
      * @param[in] priorityLevelIn the thread priority level.
+     * @pre
+     *   GetStatus() == OffState
      */
     void SetPriorityLevel(uint8 priorityLevelIn);
 
@@ -253,6 +257,8 @@ public:
     /**
      * @brief Sets the thread CPU mask (i.e. thread affinity).
      * @param[in] cpuMaskIn the thread CPU mask (i.e. thread affinity).
+     * @pre
+     *   GetStatus() == OffState
      */
     void SetCPUMask(const ProcessorType& cpuMaskIn);
 

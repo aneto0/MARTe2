@@ -80,13 +80,6 @@ public:
      */
     virtual ~SingleThreadService();
 
-    /**
-     * @brief Reads the Timeout from the data input.
-     * @param[in] data shall contain a parameter with name "Timeout" holding the timeout in milliseconds.
-     * If "Timeout=0" => Timeout = TTInfiniteWait
-     * @return true if all the parameters are available.
-     */
-    virtual bool Initialise(StructuredDataI &data);
 
     /**
      * @brief Starts the SingleThreadService.
@@ -115,13 +108,7 @@ public:
      * @brief Sets the maximum time to execute a state change.
      * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
      */
-    void SetTimeout(const TimeoutType &msecTimeoutIn);
-
-    /**
-     * @brief Gets the maximum time to execute a state change.
-     * @return the maximum time to execute a state change.
-     */
-    TimeoutType GetTimeout() const;
+    virtual void SetTimeout(const TimeoutType &msecTimeoutIn);
 
     /**
      * @brief Gets the Status of the EmbeddedThreadI.
@@ -129,7 +116,32 @@ public:
      */
     EmbeddedThreadI::States GetStatus();
 
+    /**
+     * @brief Sets the thread priority class.
+     * @param[in] priorityClassIn the thread priority class.
+     * @pre
+     *   GetStatus() == OffState
+     */
+    virtual void SetPriorityClass(Threads::PriorityClassType priorityClassIn);
+
+    /**
+     * @brief Sets the thread priority level.
+     * @param[in] priorityLevelIn the thread priority level.
+     * @pre
+     *   GetStatus() == OffState
+     */
+    virtual void SetPriorityLevel(uint8 priorityLevelIn);
+
+    /**
+     * @brief Sets the thread CPU mask (i.e. thread affinity).
+     * @param[in] cpuMaskIn the thread CPU mask (i.e. thread affinity).
+     * @pre
+     *   GetStatus() == OffState
+     */
+    virtual void SetCPUMask(const ProcessorType& cpuMaskIn);
+
 private:
+
     /**
      * The embedded thread.
      */

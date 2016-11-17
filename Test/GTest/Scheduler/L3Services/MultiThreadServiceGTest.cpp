@@ -113,3 +113,33 @@ TEST(MultiThreadServiceGTest,TestSetNumberOfPoolThreads) {
     ASSERT_TRUE(target.TestSetNumberOfPoolThreads());
 }
 
+TEST(MultiThreadServiceGTest, TestSetPriorityClass) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityClass());
+}
+
+TEST(MultiThreadServiceGTest, TestSetPriorityLevel) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityLevel());
+}
+
+TEST(MultiThreadServiceGTest, TestSetCPUMask) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetCPUMask());
+}
+
+TEST(MultiThreadServiceGTest, TestSetPriorityClass_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityClass_Start());
+}
+
+TEST(MultiThreadServiceGTest, TestSetPriorityLevel_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityLevel_Start());
+}
+
+TEST(MultiThreadServiceGTest, TestSetCPUMask_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetCPUMask_Start());
+}
+

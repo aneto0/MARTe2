@@ -96,3 +96,48 @@ TEST(SingleThreadServiceGTest,TestGetTimeout) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestGetTimeout());
 }
+
+TEST(SingleThreadServiceGTest, TestGetPriorityClass) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestGetPriorityClass());
+}
+
+TEST(SingleThreadServiceGTest, TestGetPriorityLevel) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestGetPriorityLevel());
+}
+
+TEST(SingleThreadServiceGTest, TestGetCPUMask) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestGetCPUMask());
+}
+
+TEST(SingleThreadServiceGTest, TestSetPriorityClass) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityClass());
+}
+
+TEST(SingleThreadServiceGTest, TestSetPriorityLevel) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityLevel());
+}
+
+TEST(SingleThreadServiceGTest, TestSetCPUMask) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetCPUMask());
+}
+
+TEST(SingleThreadServiceGTest, TestSetPriorityClass_Start) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityClass_Start());
+}
+
+TEST(SingleThreadServiceGTest, TestSetPriorityLevel_Start) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityLevel_Start());
+}
+
+TEST(SingleThreadServiceGTest, TestSetCPUMask_Start) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetCPUMask_Start());
+}

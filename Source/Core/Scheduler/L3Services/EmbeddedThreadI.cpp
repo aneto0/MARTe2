@@ -242,16 +242,20 @@ Threads::PriorityClassType EmbeddedThreadI::GetPriorityClass() const {
     return priorityClass;
 }
 
-void EmbeddedThreadI::SetPriorityClass(Threads::PriorityClassType priorityClassIn) {
-    priorityClass = priorityClassIn;
+void EmbeddedThreadI::SetPriorityClass(const Threads::PriorityClassType priorityClassIn) {
+    if(GetStatus() == OffState) {
+        priorityClass = priorityClassIn;
+    }
 }
 
 uint8 EmbeddedThreadI::GetPriorityLevel() const {
     return priorityLevel;
 }
 
-void EmbeddedThreadI::SetPriorityLevel(uint8 priorityLevelIn) {
-    priorityLevel = priorityLevelIn;
+void EmbeddedThreadI::SetPriorityLevel(const uint8 priorityLevelIn) {
+    if(GetStatus() == OffState) {
+        priorityLevel = priorityLevelIn;
+    }
 }
 
 const ProcessorType& EmbeddedThreadI::GetCPUMask() const {
@@ -259,7 +263,9 @@ const ProcessorType& EmbeddedThreadI::GetCPUMask() const {
 }
 
 void EmbeddedThreadI::SetCPUMask(const ProcessorType& cpuMaskIn) {
-    cpuMask = cpuMaskIn;
+    if(GetStatus() == OffState) {
+        cpuMask = cpuMaskIn;
+    }
 }
 
 

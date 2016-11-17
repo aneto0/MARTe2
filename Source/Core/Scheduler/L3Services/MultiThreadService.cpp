@@ -46,7 +46,6 @@ MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderI &binder) :
         EmbeddedServiceI(),
         method(binder) {
     numberOfPoolThreads = 1u;
-    msecTimeout = TTInfiniteWait.GetTimeoutMSec();
 }
 
 /*lint -e{1551} the only reason why this could throw an exception is if
@@ -60,17 +59,15 @@ MultiThreadService::~MultiThreadService() {
 }
 
 bool MultiThreadService::Initialise(StructuredDataI &data) {
-    ErrorManagement::ErrorType err;
     threadPool.SetName("ThreadPool");
-    err.parametersError = !data.Read("NumberOfPoolThreads", numberOfPoolThreads);
+    ErrorManagement::ErrorType err = EmbeddedServiceI::Initialise(data);
     if (err.ErrorsCleared()) {
-        err.parametersError = !data.Read("Timeout", msecTimeout);
-    }
-    if (err.ErrorsCleared()) {
-        if (msecTimeout == 0u) {
-            msecTimeout = TTInfiniteWait.GetTimeoutMSec();
+        err.parametersError = !data.Read("NumberOfPoolThreads", numberOfPoolThreads);
+        if (!err.ErrorsCleared()) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "NumberOfPoolThreads has to be specified.");
         }
     }
+
     return err;
 }
 
@@ -82,7 +79,10 @@ ErrorManagement::ErrorType MultiThreadService::Start() {
         ReferenceT<EmbeddedThread> thread(new (NULL) EmbeddedThread(method));
         err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
-            thread->SetTimeout(msecTimeout);
+            thread->SetPriorityClass(GetPriorityClass());
+            thread->SetPriorityLevel(GetPriorityLevel());
+            thread->SetCPUMask(GetCPUMask());
+            thread->SetTimeout(GetTimeout());
             err = thread->Start();
         }
         if (err.ErrorsCleared()) {
@@ -156,7 +156,7 @@ void MultiThreadService::SetNumberOfPoolThreads(const uint32 numberOfPoolThreads
 }
 
 void MultiThreadService::SetTimeout(const TimeoutType & msecTimeoutIn) {
-    msecTimeout = msecTimeoutIn.GetTimeoutMSec();
+    EmbeddedServiceI::SetTimeout(msecTimeoutIn);
     uint32 i;
     for (i = 0u; i < threadPool.Size(); i++) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
@@ -166,8 +166,64 @@ void MultiThreadService::SetTimeout(const TimeoutType & msecTimeoutIn) {
     }
 }
 
-TimeoutType MultiThreadService::GetTimeout() const {
-    return msecTimeout;
+void MultiThreadService::SetPriorityClass(const Threads::PriorityClassType priorityClassIn) {
+    bool allStop = true;
+    uint32 i;
+    for (i = 0u; (i < threadPool.Size()) && (allStop); i++) {
+        allStop = (GetStatus(i) == EmbeddedThreadI::OffState);
+    }
+    if (allStop) {
+        EmbeddedServiceI::SetPriorityClass(priorityClassIn);
+        for (i = 0u; (i < threadPool.Size()) && (allStop); i++) {
+            ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
+            if (thread.IsValid()) {
+                thread->SetPriorityClass(priorityClassIn);
+            }
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Priority class cannot be changed if the service is running");
+    }
+}
+
+void MultiThreadService::SetPriorityLevel(const uint8 priorityLevelIn) {
+    bool allStop = true;
+    uint32 i;
+    for (i = 0u; (i < threadPool.Size()) && (allStop); i++) {
+        allStop = (GetStatus(i) == EmbeddedThreadI::OffState);
+    }
+    if (allStop) {
+        EmbeddedServiceI::SetPriorityLevel(priorityLevelIn);
+        for (i = 0u; (i < threadPool.Size()) && (allStop); i++) {
+            ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
+            if (thread.IsValid()) {
+                thread->SetPriorityLevel(priorityLevelIn);
+            }
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Priority level cannot be changed if the service is running");
+    }
+}
+
+void MultiThreadService::SetCPUMask(const ProcessorType& cpuMaskIn) {
+    bool allStop = true;
+    uint32 i;
+    for (i = 0u; (i < threadPool.Size()) && (allStop); i++) {
+        allStop = (GetStatus(i) == EmbeddedThreadI::OffState);
+    }
+    if (allStop) {
+        EmbeddedServiceI::SetCPUMask(cpuMaskIn);
+        for (i = 0u; (i < threadPool.Size()) && (allStop); i++) {
+            ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
+            if (thread.IsValid()) {
+                thread->SetCPUMask(cpuMaskIn);
+            }
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "CPUMask cannot be changed if the service is running");
+    }
 }
 
 }

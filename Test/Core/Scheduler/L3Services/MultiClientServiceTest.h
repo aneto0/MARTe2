@@ -186,6 +186,36 @@ public:
      * @brief Tests the MoreThanEnoughThreads method.
      */
     bool TestMoreThanEnoughThreads();
+
+    /**
+     * @brief Tests the SetPriorityClass method.
+     */
+    bool TestSetPriorityClass();
+
+    /**
+     * @brief Tests the SetPriorityLevel method.
+     */
+    bool TestSetPriorityLevel();
+
+    /**
+     * @brief Tests the TestSetCPUMask method.
+     */
+    bool TestSetCPUMask();
+
+    /**
+     * @brief Verifies that priority class is not changed after the service has started.
+     */
+    bool TestSetPriorityClass_AfterStart();
+
+    /**
+     * @brief Verifies that priority level is not changed after the service has started.
+     */
+    bool TestSetPriorityLevel_AfterStart();
+
+    /**
+     * @brief Verifies that priority class is not changed after the service has started.
+     */
+    bool TestSetCPUMask_AfterStart();
 };
 
 /*---------------------------------------------------------------------------*/

@@ -107,6 +107,51 @@ public:
      */
     bool TestGetTimeout();
 
+    /**
+     * @brief Tests the GetPriorityClass method.
+     */
+    bool TestGetPriorityClass();
+
+    /**
+     * @brief Tests the SetPriorityClass method.
+     */
+    bool TestSetPriorityClass();
+
+    /**
+     * Tests the GetPriorityLevel method.
+     */
+    bool TestGetPriorityLevel();
+
+    /**
+     * @brief Tests the SetPriorityLevel method.
+     */
+    bool TestSetPriorityLevel();
+
+    /**
+     * @brief Tests the TestGetCPUMask method.
+     */
+    bool TestGetCPUMask();
+
+    /**
+     * @brief Tests the TestSetCPUMask method.
+     */
+    bool TestSetCPUMask();
+
+    /**
+     * @brief Verifies that priority class is not changed after the service has started.
+     */
+    bool TestSetPriorityClass_Start();
+
+    /**
+     * @brief Verifies that priority level is not changed after the service has started.
+     */
+    bool TestSetPriorityLevel_Start();
+
+    /**
+     * @brief Verifies that priority class is not changed after the service has started.
+     */
+    bool TestSetCPUMask_Start();
+
 };
 
 /*---------------------------------------------------------------------------*/
