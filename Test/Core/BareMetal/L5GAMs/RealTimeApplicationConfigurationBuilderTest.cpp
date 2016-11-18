@@ -2971,6 +2971,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Co
             "                       Samples = 2"
             "                       Frequency = 2"
             "                       SyncSignal = ADCs.Signal3.c1.b2"
+            "                       Trigger = 1"
             "                       TriggerSignal = ADCs.Signal3.c1.b2"
             "                       Ranges = \"{{0 0}}\""
             "                       NumberOfDimensions = 0"
