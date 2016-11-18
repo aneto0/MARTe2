@@ -32,9 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassRegistryItem.h"
 #include "GlobalObjectsDatabase.h"
 #include "FastPollingMutexSem.h"
-#include "ClassRegistryItem.h"
 #include "StaticList.h"
 #include "FractionalInteger.h"
 

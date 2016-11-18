@@ -37,7 +37,6 @@
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
 #include "LoadableLibrary.h"
-#include "ClassRegistryItem.h"
 #include "ClassRegistryDatabase.h"
 #include "ErrorManagement.h"
 

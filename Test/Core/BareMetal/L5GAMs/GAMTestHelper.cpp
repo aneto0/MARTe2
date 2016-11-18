@@ -30,7 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAMTestHelper.h"
-#include "Introspection.h"
+
+#include <Introspection-old.h>
 #include "IntrospectionT.h"
 #include "ConfigurationDatabase.h"
 #include "MemoryMapInputBroker.h"

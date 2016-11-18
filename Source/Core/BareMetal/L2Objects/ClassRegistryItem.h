@@ -1,8 +1,8 @@
 /**
- * @file ClassRegistryItem.h
- * @brief Header file for class ClassRegistryItem
- * @date 04/08/2015
- * @author Andre' Neto
+ * @file ClassRegistryItem2.h
+ * @brief Header file for class ClassRegistryItem2
+ * @date Nov 18, 2016
+ * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -15,14 +15,14 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
- * @details This header file contains the declaration of the class ClassRegistryItem
+
+ * @details This header file contains the declaration of the class ClassRegistryItem2
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CLASSREGISTRYITEM_H_
-#define CLASSREGISTRYITEM_H_
+#ifndef L2OBJECTS_CLASSREGISTRYITEM2_H_
+#define L2OBJECTS_CLASSREGISTRYITEM2_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,24 +32,13 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassProperties.h"
-#include "CString.h"
-#include "TypeDescriptor.h"    //using ClassUID typedef
-#include "Introspection.h"
 #include "LinkedListable.h"
-#include "LinkedListHolderT.h"
+#include "ClassProperties.h"
 #include "LoadableLibrary.h"
-#include "ObjectBuilder.h"
+#include "ClassMethodCaller.h"
+#include "ClassMethodInterfaceMapper.h"
+#include "Introspection-old.h"
 
-
-/*---------------------------------------------------------------------------*/
-/*                         Forward declarations                              */
-/*---------------------------------------------------------------------------*/
-
-namespace MARTe {
-class ClassMethodCaller;
-class ClassMethodInterfaceMapper;
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -68,11 +57,6 @@ class DLL_API ClassRegistryItem: public LinkedListable {
 public:
 
     /**
-     * @brief Destructor. Responsible for destroying the assigned loadable library.
-     */
-    virtual ~ClassRegistryItem();
-
-    /**
      * @brief Increments the number of instantiated objects of the class type represented by this registry item.
      */
     void IncrementNumberOfInstances();
@@ -87,6 +71,7 @@ public:
      * @return the number of instantiated objects of the class type represented by this registry item.
      */
     uint32 GetNumberOfInstances() const;
+
 
     /**
      * @brief Returns a copy to the class parameters.
@@ -149,6 +134,9 @@ public:
      */
     void SetTypeDescriptor(const TypeDescriptor &td);
 
+
+    ///??? GetTypeDescriptor???
+
     /**
      * @brief Gets the ClassMethodCaller associated to the method with name = methodName.
      * @param[in] methodName the name of the method.
@@ -162,48 +150,54 @@ public:
      */
     void AddMethod(ClassMethodInterfaceMapper * const method);
 
-protected:
 
     /**
-     * @brief Default constructor. Singleton approach - usable only by descendant methods.
-     * @param[in] classProperties_in class properties associated to this item.
+     * @brief Destructor.
      */
-    ClassRegistryItem(ClassProperties &classProperties_in);
+    virtual ~ClassRegistryItem();
+protected:
+
 
     /**
      * @brief Gets a pointer to this pseudo-singleton instance.
      * @param[in] instance if instance != NULL a new instance of ClassRegistryItem is created and assigned to instance.
      * This mechanism is used by the ClassRegistryItemT
      */
-    static ClassRegistryItem *Instance(ClassRegistryItem *&instance, ClassProperties &classProperties_in);
+    static ClassRegistryItem *CreateRegisterAndInitialiseInstance(ClassProperties &classProperties_in);
 
 private:
 
     /**
-     * The properties of the class represented by this registry item.
+     * @brief Constructor.
      */
-    ClassProperties &classProperties;
+    ClassRegistryItem(ClassProperties &classProperties_in);
+
 
     /**
      * The number of instantiated objects of the class type represented by this registry item.
      */
-    volatile int32 numberOfInstances;
+    volatile int32            numberOfInstances;
+
+    /**
+     * The properties of the class represented by this registry item.
+     */
+    ClassProperties &         classProperties;
 
     /**
      * Library (dll) holding the class type represented by this registry item.
      * This class is responsible for destroying the pointer at the end of its life-cycle.
      */
-    const LoadableLibrary *loadableLibrary;
+    const LoadableLibrary *   loadableLibrary;
 
     /**
      * The object factory .
      */
-    const ObjectBuilder *objectBuilder;
+    const ObjectBuilder *     objectBuilder;
 
     /**
      * The introspection associated to the class.
      */
-    const Introspection *introspection;
+    const Introspection *     introspection;
 
     /**
      * A list of lists of registered class methods.
@@ -220,9 +214,6 @@ private:
 
 
 
-
-
 }
-
-#endif /* CLASSREGISTRYITEM_H_ */
-
+#endif /* L2OBJECTS_CLASSREGISTRYITEM2_H_ */
+	

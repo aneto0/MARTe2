@@ -33,9 +33,11 @@
 #include "ClassRegistryDatabase.h"
 #include "ClassRegistryItemT.h"
 #include "ClassRegistryItemTest.h"
+
+#include <Introspection-old.h>
+
 #include "ClassWithCallableMethods.h"
 #include "ErrorType.h"
-#include "Introspection.h"
 #include "IntrospectionEntry.h"
 #include "LoadableLibrary.h"
 #include "MemoryCheck.h"

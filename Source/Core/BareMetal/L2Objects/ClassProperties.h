@@ -134,5 +134,7 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+
+
 #endif /* CLASSPROPERTIES_H_ */
 

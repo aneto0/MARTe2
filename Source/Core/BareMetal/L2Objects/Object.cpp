@@ -35,7 +35,7 @@
 #include "Object.h"
 #include "StringHelper.h"
 #include "HeapI.h"
-#include "Introspection.h"
+#include "Introspection-old.h"
 #include "ReferenceContainer.h"
 #include "MemoryOperationsHelper.h"
 #include "Atomic.h"

@@ -32,8 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "Introspection.h"
-#include "ClassRegistryItem.h"
+#include "ClassRegistryItem-old.h"
+#include "Introspection-old.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

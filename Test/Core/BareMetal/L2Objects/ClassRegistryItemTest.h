@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ClassRegistryItem.h"
+#include "../../../../Source/Core/BareMetal/L2Objects/ClassRegistryItem-old.h"
 #include "Object.h"
 using namespace MARTe;
 

@@ -31,11 +31,12 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassRegistryItem.h"
+
 #include "ClassProperties.h"
 #include "ClassRegistryDatabase.h"
-#include "ClassRegistryItem.h"
 #include "ErrorManagement.h"
-#include "Introspection.h"
+#include "Introspection-old.h"
 #include "LoadableLibrary.h"
 #include "ObjectBuilder.h"
 #include "SearchFilterT.h"
@@ -61,6 +62,10 @@ ClassRegistryItem::ClassRegistryItem(ClassProperties &classProperties_in) :
     introspection = NULL_PTR(Introspection *);
 }
 
+#if 0  // OLD implementation
+
+
+
 ClassRegistryItem *ClassRegistryItem::Instance(ClassRegistryItem *&instance,
                                                ClassProperties &classProperties_in) {
     ClassRegistryDatabase* crd = ClassRegistryDatabase::Instance();
@@ -73,6 +78,24 @@ ClassRegistryItem *ClassRegistryItem::Instance(ClassRegistryItem *&instance,
 
     return instance;
 }
+
+#else
+
+ClassRegistryItem *ClassRegistryItem::CreateRegisterAndInitialiseInstance(ClassProperties &classProperties_in){
+    ClassRegistryDatabase* crd = ClassRegistryDatabase::Instance();
+    ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem*);
+
+    if (crd != NULL_PTR(ClassRegistryDatabase*)) {
+        instance = new ClassRegistryItem(classProperties_in);
+        crd->Add(instance);
+    }
+
+    return instance;
+
+}
+
+
+#endif
 
 void ClassRegistryItem::SetObjectBuilder(const ObjectBuilder * const objectBuilderIn) {
     objectBuilder = objectBuilderIn;

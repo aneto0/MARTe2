@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassRegistryItem.h"
+#include "ClassRegistryItem-old.h"
 #include "ObjectBuilderT.h"
 
 /*---------------------------------------------------------------------------*/
@@ -41,6 +41,7 @@
 
 namespace MARTe {
 
+#if 0
 /**
  * @brief Template version of ClassRegistryItem.
  * @tparam T The type of the class to register. It is expected that will have
@@ -93,6 +94,45 @@ private:
      */
     ClassRegistryItemT(ClassProperties &classProperties_in);
 };
+#endif
+
+
+/**
+ * @brief Template version of ClassRegistryItem.
+ * @tparam T The type of the class to register. It is expected that will have
+ * a public attribute named classProperties of type ClassProperties.
+ * @tparam AddDefaultObjectBuilder A boolean which states if a default object
+ * must be created.
+ */
+template<typename T>
+class ClassRegistryItemT: public ClassRegistryItem {
+
+public:
+    /**
+     * @brief Singleton access to the database.
+     * @return a reference to the database.
+     * @only used for Object derived classes
+     */
+    static inline ClassRegistryItem *Instance();
+
+
+    /**
+     * @brief Singleton access to the database.
+     * @return a reference to the database.
+     * @ used when registering a structure or a class that has no ClassProperties structure
+     */
+    static inline ClassRegistryItem *GenericInstance(ClassProperties &classProperties_in);
+    /**
+     * @brief Destructor.
+     */
+    virtual ~ClassRegistryItemT();
+private:
+    /**
+     * @brief Constructor.
+     */
+    ClassRegistryItemT(ClassProperties &classProperties_in);
+};
+
 
 }
 
@@ -102,6 +142,49 @@ private:
 
 namespace MARTe {
 
+template<typename T>
+ClassRegistryItem *ClassRegistryItemT<T>::Instance() {
+    /**
+     * static variable. not automatic! persistent across calls
+     * will be initialised with a pointer to the only valid instance of this
+     */
+    static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
+
+    /// first time will go inside here
+    if (instance == NULL_PTR(ClassRegistryItem *)) {
+
+        /// all common code here
+        instance = ClassRegistryItem::CreateRegisterAndInitialiseInstance(T::classProperties);
+
+    }
+    return instance;
+}
+
+template<typename T>
+ClassRegistryItem *ClassRegistryItemT<T>::GenericInstance(ClassProperties &classProperties_in) {
+    /**
+     * static variable. not automatic! persistent across calls
+     * will be initialised with a pointer to the only valid instance of this
+     */
+    static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
+
+    /// first time will go inside here
+    if (instance == NULL_PTR(ClassRegistryItem *)) {
+
+        /// all common code here
+        instance = ClassRegistryItem::CreateRegisterAndInitialiseInstance(T::classProperties);
+
+    }
+    return instance;
+}
+
+
+template<typename T>
+ClassRegistryItemT<T>::~ClassRegistryItemT() {
+
+}
+
+#if 0
 template<typename T, bool AddDefaultObjectBuilder>
 ClassRegistryItem *ClassRegistryItemT<T, AddDefaultObjectBuilder>::Instance() {
     static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
@@ -142,6 +225,8 @@ template<typename T, bool AddDefaultObjectBuilder>
 ClassRegistryItemT<T, AddDefaultObjectBuilder>::ClassRegistryItemT(ClassProperties &classProperties_in) :
         ClassRegistryItem(classProperties_in) {
 }
+
+#endif
 
 }
 

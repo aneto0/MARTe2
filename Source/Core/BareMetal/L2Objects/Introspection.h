@@ -1,8 +1,8 @@
 /**
- * @file Introspection.h
- * @brief Header file for class Introspection
- * @date 05/08/2015
- * @author Andre Neto
+ * @file Introspection2.h
+ * @brief Header file for class Introspection2
+ * @date Nov 18, 2016
+ * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -15,14 +15,14 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
- * @details This header file contains the declaration of the class Introspection
+
+ * @details This header file contains the declaration of the class Introspection2
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef INTROSPECTION_H_
-#define INTROSPECTION_H_
+#ifndef L2OBJECTS_INTROSPECTION2_H_
+#define L2OBJECTS_INTROSPECTION2_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,8 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "IntrospectionEntry.h"
+//#include "IntrospectionEntry2.h"
 #include "ZeroTerminatedArray.h"
+#include "ClassRegistryItemT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -41,69 +42,35 @@
 
 namespace MARTe {
 
+class IntrospectionEntry{
+
+};
+
 /**
  * @brief Groups the information about each member of a class or a structure.
  */
 /*lint -e{9109} forward declaration of this class is required in other modules*/
-class DLL_API Introspection {
-
-public:
-
-    /**
-     * @brief Default constructor
-     * @post
-     *   GetClassSize()==0u
-     */
-    Introspection();
+template <class T>
+class DLL_API Introspection: public ZeroTerminatedArray<IntrospectionEntry> {
 
     /**
-     * @brief Constructor.
-     * @param[in] introspectionListIn contains a list of IntrospectionEntry pointers, one for each class member.
-     * @param[in] classSizeIn is the class size.
-     * @pre
-     *   introspectionListIn must be a zero-terminated array.
-     * @post
-     *   GetClassSize()==classSizeIn
+     *
      */
-    Introspection(const IntrospectionEntry ** const introspectionListIn,
-                  const uint32 classSizeIn);
-
-    /**
-     * @brief Retrieves the information about a specific member.
-     * @param[in] index is the member number.
-     * @return a pointer to the IntrospectionEntry structure containing all the
-     * information about the \a index-th class member.
-     */
-    const IntrospectionEntry operator[](const uint32 index) const;
-
-    /**
-     * @brief Retrieves the number of IntrospectionEntries in the internal array.
-     * @return the number of IntrospectionEntries in the internal array.
-     */
-    uint32 GetNumberOfMembers() const;
-
-    /**
-     * @brief Retrieves the class Size.
-     * @return the class size.
-     */
-    uint32 GetClassSize() const;
-
-private:
-
-    /**
-     * An array of pointer to the class member's descriptors.
-     * The array must be zero-terminated.
-     */
-    ZeroTerminatedArray<const IntrospectionEntry *> fields;
-
-    /**
-     * The class size.
-     */
-    uint32 classSize;
+    Introspection(IntrospectionEntry *entries,ClassRegistryItem *record):ZeroTerminatedArray<IntrospectionEntry>(entries) {
+        if ()
+        record->SetIntrospection(this);
+    }
 
 };
 
+#define DECLARE_CLASS_INTROSPECTION(className, introEntryArray) \
+    static MARTe::ClassProperties className ## _ ## introspection_properties( #className , typeid(className).name(), "", static_cast<MARTe::uint32>(sizeof(className))); \
+    static MARTe::Introspection   className ## _ ## introspection(introEntryArray, ClassRegistryItemT<className>::GenericInstance(className ## _ ## introspection_properties));
+
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 }
-
-#endif /* INTROSPECTION_H_ */
-
+#endif /* L2OBJECTS_INTROSPECTION2_H_ */
+	

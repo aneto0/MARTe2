@@ -31,8 +31,8 @@
 
 #include "ClassMethodsRegistryItemTest.h"
 
+#include <ClassRegistryItem-old.h>
 #include "ClassMethodInterfaceMapper.h"
-#include "ClassRegistryItem.h"
 #include "ClassRegistryItemT.h"
 #include "ClassWithCallableMethods.h"
 #include "ConfigurationDatabase.h"
