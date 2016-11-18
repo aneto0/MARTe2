@@ -101,6 +101,7 @@ MemoryMapStatefulBroker.cpp
 MemoryMapStatefulInputBroker.cpp
 MemoryMapStatefulOutputBroker.cpp
 MemoryMapSynchronisedInputBroker.cpp
+MemoryMapSynchronisedOutputBroker.cpp
 MemoryOperationsHelper.h
 MemoryOperationsHelper_CLIB_Generic.cpp
 Message.cpp
@@ -166,7 +167,6 @@ StringHelper_Portable_Generic.cpp
 StringToFloat.cpp
 StringToInteger.cpp
 StructuredDataI.h
-SynchronisedBroker.cpp
 TemplateParametersVerificator.h
 ThreadInformation.h
 ThreadInformation_Generic.cpp
