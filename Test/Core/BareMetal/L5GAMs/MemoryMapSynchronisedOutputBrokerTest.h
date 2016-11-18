@@ -1,8 +1,8 @@
 /**
- * @file SynchronisedBrokerTest.h
- * @brief Header file for class SynchronisedBrokerTest
- * @date 17/11/2016
- * @author Andre Neto
+ * @file MemoryMapSynchronisedOutputBroker.h
+ * @brief Header file for class MemoryMapSynchronisedOutputBroker
+ * @date Nov 18, 2016 TODO Verify the value and format of the date
+ * @author aneto TODO Verify the name and format of the author
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class SynchronisedBrokerTest
+ * @details This header file contains the declaration of the class MemoryMapSynchronisedOutputBroker
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TEST_CORE_BAREMETAL_L5GAMS_SYNCHRONISEDBROKERTEST_H_
-#define TEST_CORE_BAREMETAL_L5GAMS_SYNCHRONISEDBROKERTEST_H_
+#ifndef TEST_CORE_BAREMETAL_L5GAMS_MEMORYMAPSYNCHRONISEDOUTPUTBROKERTEST_H_
+#define TEST_CORE_BAREMETAL_L5GAMS_MEMORYMAPSYNCHRONISEDOUTPUTBROKERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,38 +31,35 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "SynchronisedBrokerTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 /**
- * @brief Tests all the RealTimeState functions.
+ * @brief Tests the MemoryMapSynchronisedOutputBroker public methods.
  */
-class SynchronisedBrokerTest {
-
+class MemoryMapSynchronisedOutputBrokerTest {
 public:
-
     /**
-     * @brief Tests the constructor
+     * @brief Tests the default constructor.
      */
     bool TestConstructor();
 
     /**
-     * @brief Tests the Init method
-     */
-    bool TestInit();
-
-    /**
-     * @brief Tests the Execute method
+     * @brief Tests the Execute method.
      */
     bool TestExecute();
+
+    /**
+     * @brief Tests the Execute method with the DataSourceI::Synchronise returning false.
+     */
+    bool TestExecute_False();
+
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_CORE_BAREMETAL_L5GAMS_SYNCHRONISEDBROKERTEST_H_ */
+#endif /* TEST_CORE_BAREMETAL_L5GAMS_MEMORYMAPSYNCHRONISEDOUTPUTBROKERTEST_H_ */
 

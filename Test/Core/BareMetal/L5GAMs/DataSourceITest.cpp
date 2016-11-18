@@ -52,25 +52,11 @@ DataSourceITestScheduler1    ();
     virtual void StopExecution();
     virtual void CustomPrepareNextState();
 
-    void ExecuteThreadCycle(MARTe::uint32 threadId);
-
-    bool ConfigureScheduler();
-private:
-
-    MARTe::ScheduledState * const * scheduledStates;
 };
 
 DataSourceITestScheduler1::DataSourceITestScheduler1() :
         GAMSchedulerI() {
-    scheduledStates = NULL_PTR(ScheduledState * const *);
-}
 
-bool DataSourceITestScheduler1::ConfigureScheduler() {
-    bool ret = GAMSchedulerI::ConfigureScheduler();
-    if (ret) {
-        scheduledStates = GetSchedulableStates();
-    }
-    return ret;
 }
 
 void DataSourceITestScheduler1::StartExecution() {
@@ -81,14 +67,7 @@ void DataSourceITestScheduler1::StopExecution() {
 
 }
 
-void DataSourceITestScheduler1::CustomPrepareNextState() {
-
-}
-
-void DataSourceITestScheduler1::ExecuteThreadCycle(MARTe::uint32 threadId) {
-
-    ExecuteSingleCycle(scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].executables,
-                       scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
+void DataSourceITestScheduler1::CustomPrepareNextState(){
 
 }
 
@@ -149,24 +128,13 @@ DataSourceITestHelper    ();
             const char8* const functionName,
             void * const gamMemPtr);
 
-    virtual bool GetPreBrokers(
-            ReferenceContainer &brokers,
-            const char8* const functionName,
-            void * const gamMemPtr);
-
-    virtual bool GetPostBrokers(
-            ReferenceContainer &brokers,
-            const char8* const functionName,
-            void * const gamMemPtr);
-
     virtual bool Synchronise();
 
-    uint32 synchronisedCall;
 };
 
 DataSourceITestHelper::DataSourceITestHelper() :
         DataSourceI() {
-    synchronisedCall = 0u;
+
 }
 
 DataSourceITestHelper::~DataSourceITestHelper() {
@@ -222,37 +190,8 @@ bool DataSourceITestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
     return ret;
 }
 
-bool DataSourceITestHelper::GetPreBrokers(ReferenceContainer &brokers,
-                                          const char8* const functionName,
-                                          void * const gamMemPtr) {
-    ReferenceT<BrokerI> broker("SynchronisedBroker");
-    bool ret = broker.IsValid();
-    if (ret) {
-        ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
-    }
-    if (ret) {
-        ret = brokers.Insert(broker);
-    }
-    return ret;
-}
-
-bool DataSourceITestHelper::GetPostBrokers(ReferenceContainer &brokers,
-                                           const char8* const functionName,
-                                           void * const gamMemPtr) {
-    ReferenceT<BrokerI> broker("SynchronisedBroker");
-    bool ret = broker.IsValid();
-    if (ret) {
-        ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
-    }
-    if (ret) {
-        ret = brokers.Insert(broker);
-    }
-    return ret;
-}
-
 bool DataSourceITestHelper::Synchronise() {
-    synchronisedCall++;
-    return true;
+    return false;
 }
 
 CLASS_REGISTER(DataSourceITestHelper, "1.0");
@@ -303,6 +242,7 @@ static const char8 * const config1 = ""
         "                   DataSource = Drv1"
         "                   Type = uint32"
         "                   Samples = 3"
+        "                   Trigger = 1"
         "               }"
         "               Signal0 = {"
         "                   DataSource = DDB1"
@@ -322,6 +262,7 @@ static const char8 * const config1 = ""
         "               Signal2 = {"
         "                   DataSource = Drv1"
         "                   Type = float32"
+        "                   Trigger = 1"
         "               }"
         "            }"
         "        }"
@@ -358,6 +299,7 @@ static const char8 * const config1 = ""
         "               Signal2 = {"
         "                   DataSource = Drv1"
         "                   Type = float32"
+        "                   Trigger = 1"
         "               }"
         "            }"
         "        }"
@@ -379,6 +321,7 @@ static const char8 * const config1 = ""
         "                    NumberOfDimensions = 2"
         "                    NumberOfElements = 6"
         "                    Default = \"{3 6 9 12 15 18}\""
+        "                    Trigger = 1"
         "                }"
         "            }"
         "        }"
@@ -433,7 +376,7 @@ static const char8 * const config1 = ""
         "    }"
         "    +Scheduler = {"
         "        TimingDataSource = Timings"
-        "        Class = DataSourceITestScheduler1"
+        "        Class = GAMDataSourceTestScheduler1"
         "    }"
         "}";
 
@@ -588,76 +531,10 @@ static const char8 * const config2 = ""
         "    }"
         "    +Scheduler = {"
         "        TimingDataSource = Timings"
-        "        Class = DataSourceITestScheduler1"
+        "        Class = GAMDataSourceTestScheduler1"
         "    }"
         "}";
 
-static const char8 * const config3 = ""
-        "$Application1 = {"
-        "    Class = RealTimeApplication"
-        "    +Functions = {"
-        "        Class = ReferenceContainer"
-        "        +GAMA = {"
-        "            Class = DataSourceITestGAM1"
-        "            OutputSignals = {"
-        "               Signal0 = {"
-        "                   DataSource = DDB1"
-        "                   Type = uint32"
-        "               }"
-        "               Signal1 = {"
-        "                   DataSource = Drv1"
-        "                   Alias = Signal1"
-        "                   Type = uint32"
-        "               }"
-        "            }"
-        "        }"
-        "    }"
-        "    +Data = {"
-        "        Class = ReferenceContainer"
-        "        +DDB1 = {"
-        "            Class = GAMDataSource"
-        "        }"
-        "        +Drv1 = {"
-        "            Class = DataSourceITestHelper"
-        "            Signals = {"
-        "                Locked = 1"
-        "                Signal1 = {"
-        "                    Type = uint32"
-        "                }"
-        "                Signal2 = {"
-        "                    Type = float32"
-        "                    NumberOfElements = 10"
-        "                    NumberOfDimensions = 1"
-        "                }"
-        "                Signal3 = {"
-        "                    Type = int32"
-        "                    NumberOfElements = 8"
-        "                    NumberOfDimensions = 1"
-        "                }"
-        "            }"
-        "        }"
-        "        +Timings = {"
-        "            Class = TimingDataSource"
-        "        }"
-        "    }"
-        "    +States = {"
-        "        Class = ReferenceContainer"
-        "        +State1 = {"
-        "            Class = RealTimeState"
-        "            +Threads = {"
-        "                Class = ReferenceContainer"
-        "                +Thread1 = {"
-        "                    Class = RealTimeThread"
-        "                    Functions = {GAMA}"
-        "                }"
-        "            }"
-        "        }"
-        "    }"
-        "    +Scheduler = {"
-        "        TimingDataSource = Timings"
-        "        Class = DataSourceITestScheduler1"
-        "    }"
-        "}";
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -777,19 +654,6 @@ bool DataSourceITest::TestGetNumberOfSignals() {
     }
     if (ret) {
         ret = (dataSource->GetNumberOfSignals() == 5u);
-    }
-    return ret;
-}
-
-bool DataSourceITest::TestGetNumberOfSignals_NotConsumedOrProduced() {
-    bool ret = InitialiseDataSourceIEnviroment(config3);
-    ReferenceT<DataSourceITestHelper> dataSource;
-    if (ret) {
-        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
-        ret = dataSource.IsValid();
-    }
-    if (ret) {
-        ret = (dataSource->GetNumberOfSignals() == 3u);
     }
     return ret;
 }
@@ -1019,8 +883,7 @@ bool DataSourceITest::TestGetSignalStateName() {
     }
 
     const char8 *signalNames[] = { "Signal1A", "Signal2", "Signal3", "Signal4A", "Signal5" };
-    const char8 *signalStateNames[][2] = { { "State1", NULL }, { "State2", NULL }, { "State1", "State2" }, { "State1",
-    NULL }, { "State1", NULL } };
+    const char8 *signalStateNames[][2] = { { "State1", NULL }, { "State2", NULL }, { "State1", "State2" }, { "State1", NULL }, { "State1", NULL } };
     StreamString stateName;
     uint32 idx;
     uint32 n;
@@ -1148,8 +1011,7 @@ bool DataSourceITest::TestGetSignalConsumerName() {
     const uint32 numberOfConsumers = 2;
     const char8 *signalNames[] = { "Signal1A", "Signal2", "Signal3", "Signal4A", "Signal5" };
     const char8 *signalStates[] = { "State1", "State2" };
-    const char8 *signalConsumerNames[][numberOfStates][numberOfConsumers] = { { { "GAMA", NULL }, { NULL, NULL } }, { {
-    NULL, NULL }, { "GAMB", "GAME" } }, { {
+    const char8 *signalConsumerNames[][numberOfStates][numberOfConsumers] = { { { "GAMA", NULL }, { NULL, NULL } }, { { NULL, NULL }, { "GAMB", "GAME" } }, { {
     NULL, NULL }, { NULL, NULL } }, { { "GAMA", NULL }, { NULL, NULL } }, { { "GAMA", NULL }, { NULL, NULL } } };
 
     uint32 idx;
@@ -1990,6 +1852,79 @@ bool DataSourceITest::TestGetFunctionSignalReadFrequencyOutput() {
     return ret;
 }
 
+
+bool DataSourceITest::TestGetFunctionSignalTrigger() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    uint32 numberOfFunctions = dataSource->GetNumberOfFunctions();
+
+    if (ret) {
+        ret = (numberOfFunctions == 6u);
+    }
+    StreamString value;
+    uint32 idx;
+    const uint32 maxNumberOfInputSignals = 3;
+    const uint32 maxNumberOfOutputSignals = 3;
+    const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
+    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
+            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
+    uint32 triggerInput[][maxNumberOfInputSignals] = { { 0, 1, 0 }, { 1, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+    uint32 triggerOutput[][maxNumberOfOutputSignals] = { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 0, 0 }, { 0, 0, 0 }, { 1, 0, 0 } };
+
+    uint32 n;
+    uint32 functionSignalIdx;
+    uint32 trigger;
+    for (n = 0u; (n < numberOfFunctions) && (ret); n++) {
+        ret = dataSource->GetFunctionIndex(idx, functionNames[n]);
+        if (ret) {
+            uint32 i;
+            for (i = 0; (i < maxNumberOfInputSignals) && (ret); i++) {
+                ret = dataSource->GetFunctionSignalIndex(InputSignals, idx, functionSignalIdx, functionInputSignalNames[n][i]);
+                if (functionInputSignalNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else if (ret) {
+                    ret = dataSource->GetFunctionSignalTrigger(InputSignals, idx, functionSignalIdx, trigger);
+                    if (ret) {
+                        ret = (trigger == triggerInput[n][i]);
+                    }
+                }
+            }
+            for (i = 0; (i < maxNumberOfOutputSignals) && (ret); i++) {
+                ret = dataSource->GetFunctionSignalIndex(OutputSignals, idx, functionSignalIdx, functionOutputSignalNames[n][i]);
+                if (functionOutputSignalNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else if (ret) {
+                    ret = dataSource->GetFunctionSignalTrigger(OutputSignals, idx, functionSignalIdx, trigger);
+                    if (ret) {
+                        ret = (trigger == triggerOutput[n][i]);
+                    }
+                }
+            }
+        }
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalTrigger(InputSignals, 0, 10000, trigger);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalTrigger(OutputSignals, 0, 10000, trigger);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalTrigger(InputSignals, 10000, 0, trigger);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalTrigger(OutputSignals, 10000, 0, trigger);
+    }
+    return ret;
+}
+
 bool DataSourceITest::TestGetFunctionSignalGAMMemoryOffset() {
     bool ret = InitialiseDataSourceIEnviroment(config2);
     ReferenceT<DataSourceITestHelper> dataSource;
@@ -2133,44 +2068,4 @@ bool DataSourceITest::TestIsSupportedBroker() {
         ret = !dataSource->IsSupportedBroker(OutputSignals, 100000, 0, "MemoryMapOutputBroker");
     }
     return ret;
-}
-
-bool DataSourceITest::TestGetPreBrokers() {
-    bool ret = InitialiseDataSourceIEnviroment(config1);
-    ReferenceT<DataSourceITestHelper> dataSource;
-    if (ret) {
-        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
-        ret = dataSource.IsValid();
-    }
-    ReferenceT<DataSourceITestScheduler1> scheduler;
-    if (ret) {
-        scheduler = ObjectRegistryDatabase::Instance()->Find("Application1.Scheduler");
-        ret = scheduler.IsValid();
-    }
-    ReferenceT<RealTimeApplication> rtApp;
-    if (ret) {
-        rtApp = ObjectRegistryDatabase::Instance()->Find("Application1");
-        ret = scheduler.IsValid();
-    }
-    if (ret) {
-        ret = scheduler->ConfigureScheduler();
-    }
-    if (ret) {
-        ret = scheduler->PrepareNextState("", "State1");
-    }
-    if (ret) {
-        rtApp->StartExecution();
-    }
-    if (ret) {
-        scheduler->ExecuteThreadCycle(0u);
-    }
-    if (ret) {
-        ret = (dataSource->synchronisedCall == 2u);
-    }
-
-    return ret;
-}
-
-bool DataSourceITest::TestGetPostBrokers() {
-    return TestGetPreBrokers();
 }

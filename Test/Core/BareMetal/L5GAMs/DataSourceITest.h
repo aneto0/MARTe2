@@ -69,11 +69,6 @@ public:
     bool TestGetNumberOfSignals();
 
     /**
-     * @brief Tests that the GetNumberOfSignals does not change if some signals are not consumed or produced.
-     */
-    bool TestGetNumberOfSignals_NotConsumedOrProduced();
-
-    /**
      * @brief Tests the GetSignalIndex method.
      */
     bool TestGetSignalIndex();
@@ -209,6 +204,11 @@ public:
     bool TestGetFunctionSignalReadFrequencyOutput();
 
     /**
+     * @brief Tests the GetFunctionSignalTrigger method.
+     */
+    bool TestGetFunctionSignalTrigger();
+
+    /**
      * @brief Tests the GetFunctionSignalGAMMemoryOffset method.
      */
     bool TestGetFunctionSignalGAMMemoryOffset();
@@ -222,16 +222,6 @@ public:
      * @brief Tests the IsSupportedBroker method.
      */
     bool TestIsSupportedBroker();
-
-    /**
-     * @brief Tests the GetPreBrokers method.
-     */
-    bool TestGetPreBrokers();
-
-    /**
-     * @brief Tests the GetPostBrokers method.
-     */
-    bool TestGetPostBrokers();
 };
 
 /*---------------------------------------------------------------------------*/

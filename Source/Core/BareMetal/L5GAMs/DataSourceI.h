@@ -56,7 +56,6 @@ enum SignalDirection {
  * +ThisDataSourceIObjectName = {"
  *    Class = ClassThatImplementsDataSourceI"
  *    Signals = {
- *        Locked = 0|1 (default Locked=0)
  *        +*NAME = {
  *            +Type = BasicType|StructuredType
  *            +NumberOfDimensions = 0|1|2
@@ -64,7 +63,6 @@ enum SignalDirection {
  *       }
  *    }
  * }
- * If Locked=1 no signals will be automatically added by GAMs reading/writing from/to this DataSourceI.
  */
 class DLL_API DataSourceI: public ReferenceContainer, public StatefulI {
 
@@ -111,6 +109,7 @@ public:
      *        NumberOfDimensions = 0|1|2
      *        NumberOfElements = NUMBER>0
      *        +Frequency = -1|NUMBER>0
+     *        +Trigger = 0|1
      *        +States = {
      *          *StateN = {
      *            GAMConsumers = { "0" ... "N" }
@@ -129,6 +128,7 @@ public:
      *                QualifiedName = "QualifiedName of the Signal"
      *                +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
      *                Frequency = -1|NUMBER>0
+     *                Trigger = 0|1
      *                Samples = -1|NUMBER>0
      *                Broker = "Name of the Broker returned by the DataSource"
      *              }
@@ -488,6 +488,22 @@ public:
                                         float32 &frequency);
 
     /**
+     * @brief Gets the trigger that was set for the signal with index \a functionSignalIdx.
+     * @details The Trigger parameter defines if the reading/writing of this signal should trigger the DataSourceI.
+     * @param[in] direction the signal direction.
+     * @param[in] functionIdx the index of the function.
+     * @param[in] functionSignalIdx the index of the signal in this function.
+     * @param[out] trigger the value will be one if the reading/writing of this signal should trigger the DataSourceI.
+     * @return true if the functionIdx and the functionSignalIdx exist in the specified direction.
+     * @pre
+     *   SetConfiguredDatabase
+     */
+    bool GetFunctionSignalTrigger(const SignalDirection direction,
+                                  const uint32 functionIdx,
+                                  const uint32 functionSignalIdx,
+                                  uint32 &trigger);
+
+    /**
      * @brief Gets the offset in bytes of this signal with respect to the beginning of the GAM signal memory address.
      * @param[in] direction the signal direction.
      * @param[in] functionIdx the index of the function.
@@ -567,6 +583,7 @@ public:
      *   NumberOfElements = N
      *   Samples = N
      *   Frequency = N
+     *   Trigger = N
      * @param[in] direction the signal direction.
      * @return the name of the BrokerI class that will handle the copy of this signal from the DataSourceI memory to the GAM memory.
      */
@@ -595,33 +612,6 @@ public:
                                   const char8* const functionName,
                                   void * const gamMemPtr)=0;
 
-    /**
-     * @brief Adds to the \a brokers all the BrokerI instances that will be executed before the first the GAM
-     * (and its InputBrokers) that interacts with this DataSourceI is executed.
-     * @param[out] brokers where the BrokerI instances have to be added to.
-     * @param[in] functionName name of the first function that interacs with this DataSourceI.
-     * @param[in] gamMemPtr the GAM memory where the signals will be written to.
-     * @return true if a list of BrokerI instances can be successfully added to the pre-brokers list (or if
-     * there are no brokers to be added).
-     */
-    virtual bool GetPreBrokers(ReferenceContainer &brokers,
-                               const char8* const functionName,
-                               void * const gamMemPtr);
-
-    /**
-     * @brief Adds to the \a brokers all the BrokerI instances that will be executed after the last GAM
-     * (and its OutputBrokers) that interacts with this DataSourceI is executed.
-     * @details Note that these Brokers will only be added if there is at least one GAM with OutputSignals
-     *  that write in this DataSourceI.
-     * @param[out] brokers where the BrokerI instances have to be added to.
-     * @param[in] functionName name of the last function that interacts with this DataSourceI.
-     * @param[in] gamMemPtr the GAM memory where the signals will be written to.
-     * @return true if a list of BrokerI instances can be successfully added to the post-brokers list (or if
-     * there are no brokers to be added).
-     */
-    virtual bool GetPostBrokers(ReferenceContainer &brokers,
-                                const char8* const functionName,
-                                void * const gamMemPtr);
 protected:
 
     /**
@@ -664,16 +654,6 @@ private:
      * Number of signals assigned to this function
      */
     uint32 numberOfSignals;
-
-    /**
-     * True if the pre brokers have already been added.
-     */
-    bool preBrokersAdded;
-
-    /**
-     * True if the post brokers have already been added.
-     */
-    bool postBrokersAdded;
 };
 
 }

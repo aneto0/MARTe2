@@ -38,11 +38,11 @@ OBJSX=BrokerI.x \
     MemoryMapStatefulInputBroker.x \
     MemoryMapStatefulOutputBroker.x \
     MemoryMapSynchronisedInputBroker.x \
+    MemoryMapSynchronisedOutputBroker.x \
     RealTimeApplication.x \
     RealTimeApplicationConfigurationBuilder.x \
     RealTimeState.x \
     RealTimeThread.x \
-    SynchronisedBroker.x \
     TimingDataSource.x
 
 PACKAGE=Core/BareMetal

@@ -1,7 +1,7 @@
 /**
- * @file SynchronisedBroker.cpp
- * @brief Source file for class SynchronisedBroker
- * @date 17/11/2016
+ * @file MemoryMapSynchronisedOutputBrokerGTest.cpp
+ * @brief Source file for class MemoryMapSynchronisedOutputBrokerGTest
+ * @date 18/11/2016
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,20 +17,21 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class SynchronisedBroker (public, protected, and private). Be aware that some 
+ * the class MemoryMapSynchronisedOutputBrokerGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
-
-#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <limits.h>
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "SynchronisedBroker.h"
+#include "MemoryMapSynchronisedOutputBrokerTest.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,32 +40,18 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-SynchronisedBroker::SynchronisedBroker() {
-    dataSource = NULL_PTR(DataSourceI *);
+
+TEST(MemoryMapSynchronisedOutputBrokerGTest,TestConstructor) {
+    MemoryMapSynchronisedOutputBrokerTest test;
+    ASSERT_TRUE(test.TestConstructor());
 }
 
-SynchronisedBroker::~SynchronisedBroker() {
-
+TEST(MemoryMapSynchronisedOutputBrokerGTest,TestExecute) {
+    MemoryMapSynchronisedOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute());
 }
 
-bool SynchronisedBroker::Init(SignalDirection direction,
-                  DataSourceI &dataSourceIn,
-                  const char8 * const functionName,
-                  void *gamMemoryAddress) {
-    dataSource = &dataSourceIn;
-    return true;
+TEST(MemoryMapSynchronisedOutputBrokerGTest,TestExecute_False) {
+    MemoryMapSynchronisedOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_False());
 }
-
-bool SynchronisedBroker::Execute() {
-    bool ok = false;
-    if(dataSource != NULL_PTR(DataSourceI *)) {
-        ok = dataSource->Synchronise();
-    }
-    return ok;
-}
-
-CLASS_REGISTER(SynchronisedBroker, "1.0")
-
-}
-

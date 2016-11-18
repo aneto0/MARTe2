@@ -1,7 +1,7 @@
 /**
- * @file SynchronisedBroker.h
- * @brief Header file for class SynchronisedBroker
- * @date 17/11/2016
+ * @file MemoryMapSynchronisedOutputBroker.h
+ * @brief Header file for class MemoryMapSynchronisedOutputBroker
+ * @date 18/11/2016
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,12 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class SynchronisedBroker
+ * @details This header file contains the declaration of the class MemoryMapSynchronisedOutputBroker
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
-
-#ifndef SOURCE_CORE_BAREMETAL_L5GAMS_SYNCHRONISEDBROKER_H_
-#define SOURCE_CORE_BAREMETAL_L5GAMS_SYNCHRONISEDBROKER_H_
+#ifndef MEMORYMAPISYNCHRONISEDOUTPUTBROKER_H_
+#define MEMORYMAPISYNCHRONISEDOUTPUTBROKER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,58 +30,44 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BrokerI.h"
+#include "MemoryMapOutputBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
+
 /**
- * @brief Synchronous BrokerI implementation.
- * @details This class calls Synchronise on the DataSourceI every-time it is executed..
+ * @brief Synchronous output MemoryMapBroker implementation.
+ * @details This class calls Synchronise on the DataSourceI and copies all
+ * the signals declared from this MemoryMapBroker (from the GAM memory to the DataSourceI memory).
  */
-class DLL_API SynchronisedBroker: public BrokerI {
+class DLL_API MemoryMapSynchronisedOutputBroker: public MemoryMapOutputBroker {
 public:
     CLASS_REGISTER_DECLARATION()
     /**
      * @brief Default constructor. NOOP.
      */
-    SynchronisedBroker();
+    MemoryMapSynchronisedOutputBroker();
 
     /**
      * @brief Destructor. NOOP.
      */
-    virtual ~SynchronisedBroker();
+    virtual ~MemoryMapSynchronisedOutputBroker();
 
     /**
-     * @see BrokerI::Init.
-     * @detail After this function is executed the Execute will call Synchronise on the \a dataSourceIn.
-     */
-    virtual bool Init(SignalDirection direction,
-                      DataSourceI &dataSourceIn,
-                      const char8 * const functionName,
-                      void *gamMemoryAddress);
-
-    /**
-     * @brief Calls Synchronise on the DataSourceI.
-     * @return true if the synchronisation call is successful.
+     * @brief Calls Synchronise on the DataSourceI and sequentially copies all the
+     * signals from the GAM  memory to the DataSourceI memory.
+     * @return true if the synchronisation call is successful and if all copies are successfully performed.
      */
     virtual bool Execute();
-private:
-    /**
-     * The DataSourceI where to call Synchronise
-     */
-    DataSourceI *dataSource;
 };
 
 }
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_BAREMETAL_L5GAMS_SYNCHRONISEDBROKER_H_ */
-	
+#endif /* MEMORYMAPISYNCHRONISEDOUTPUTBROKER_H_ */
+

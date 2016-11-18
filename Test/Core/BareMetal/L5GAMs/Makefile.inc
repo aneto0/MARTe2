@@ -39,11 +39,11 @@ OBJSX= BrokerITest.x \
        MemoryMapStatefulInputBrokerTest.x\
        MemoryMapStatefulOutputBrokerTest.x\
        MemoryMapSynchronisedInputBrokerTest.x\
+       MemoryMapSynchronisedOutputBrokerTest.x\
        RealTimeApplicationTest.x\
        RealTimeApplicationConfigurationBuilderTest.x\
        RealTimeStateTest.x\
        RealTimeThreadTest.x\
-       SynchronisedBrokerTest.x\
        TimingDataSourceTest.x
 			
 PACKAGE=Core/BareMetal

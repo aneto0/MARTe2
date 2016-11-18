@@ -275,7 +275,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
                                 ret = functionsDatabase.MoveRelative("OutputSignals");
                                 if (!ret) {
                                     REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Specified GAM %s with no input nor output",
-                                            qualifiedName.Buffer())
+                                                            qualifiedName.Buffer())
                                 }
                             }
                         }
@@ -660,14 +660,16 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                     AnyType ranges = signalDatabase.GetType("Ranges");
                     AnyType samples = signalDatabase.GetType("Samples");
                     AnyType frequency = signalDatabase.GetType("Frequency");
+                    AnyType trigger = signalDatabase.GetType("Trigger");
                     StreamString syncSignalName;
+                    StreamString triggerSignalName;
                     bool syncSet = true;
+                    bool triggerSet = true;
                     if (signalDatabase.Read("SyncSignal", syncSignalName)) {
                         ret = !frequency.IsVoid();
                         if (ret) {
                             // both sync signal and frequency specified... check if the member will be found
                             syncSet = false;
-
                         }
                         else {
                             REPORT_ERROR_PARAMETERS(
@@ -685,18 +687,45 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
 
                         }
                     }
+                    if (signalDatabase.Read("TriggerSignal", triggerSignalName)) {
+                        ret = !trigger.IsVoid();
+                        if (ret) {
+                            // both sync signal and trigger specified... check if the member will be found
+                            triggerSet = false;
+                        }
+                        else {
+                            REPORT_ERROR_PARAMETERS(
+                                    ErrorManagement::InitialisationError,
+                                    "Specified a TriggerSignal %s with no synchronised trigger in structured %s. Please define the \"Trigger = 1\" field",
+                                    triggerSignalName.Buffer(), signalName)
+                        }
+                    }
+                    else {
+                        ret = trigger.IsVoid();
+                        if (!ret) {
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
+                                                    "Specified Trigger = 1 with no trigger signal in structured %s. Please define the \"TriggerSignal\" field",
+                                                    signalName)
+
+                        }
+                    }
 
                     if (ret) {
 
                         ret = SignalIntrospectionToStructuredData(signalDatabase, signalType.Buffer(), signalName, alias.Buffer(), dataSourceName.Buffer(),
-                                                                  syncSignalName.Buffer(), fullType.Buffer(), ranges, samples, frequency, resolvedSignal,
-                                                                  signalNumber, syncSet, isFunctionsDatabase);
+                                                                  syncSignalName.Buffer(), triggerSignalName.Buffer(), fullType.Buffer(), ranges, samples,
+                                                                  frequency, trigger, resolvedSignal, signalNumber, syncSet, triggerSet, isFunctionsDatabase);
                     }
                     if (ret) {
                         ret = syncSet;
                         if (!ret) {
                             REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Invalid synchronising member specified in %s", signalName)
-
+                        }
+                    }
+                    if (ret) {
+                        ret = triggerSet;
+                        if (!ret) {
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "Invalid trigger member specified in %s", signalName)
                         }
                     }
 
@@ -722,7 +751,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
             }
             //Loop and copy all known properties at this time.
             const char8 *properties[] = { "Type", "NumberOfDimensions", "NumberOfElements", "Alias", "Ranges", "DataSource", "Samples", "Default", "Frequency",
-                    NULL_PTR(char8 *) };
+                    "Trigger", NULL_PTR(char8 *) };
             uint32 p = 0u;
             while ((properties[p] != NULL_PTR(char8 *)) && (ret)) {
                 AnyType element = signalDatabase.GetType(properties[p]);
@@ -1260,7 +1289,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                     }
                     uint32 signalNumberOfBytes = 0u;
                     if (ret) {
-                        signalNumberOfBytes = ((numberOfElements * signalTypeDescriptor.numberOfBits) / 8u) ;
+                        signalNumberOfBytes = ((numberOfElements * signalTypeDescriptor.numberOfBits) / 8u);
                         ret = dataSourcesDatabase.Write("ByteSize", signalNumberOfBytes);
                     }
 
@@ -1854,7 +1883,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                                                     }
                                                 }
                                                 REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
-                                                        "The GAM %s is declared in more than one thread in %s", gamName.Buffer(), stateName)
+                                                                        "The GAM %s is declared in more than one thread in %s", gamName.Buffer(), stateName)
                                             }
                                         }
                                     }
@@ -1864,7 +1893,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                                 ret = (syncSignals <= 1u);
                                 if (!ret) {
                                     REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "More than one synchronising signal found in %s.%s",
-                                            stateName, threadName)
+                                                            stateName, threadName)
                                 }
                             }
                         }
@@ -2981,7 +3010,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
                     uint32 samplesBackend = 1u;
                     uint32 byteSize = 0u;
                     float32 frequencyBackend = -1.0F;
-
+                    uint32 triggerBackend = 0u;
 
                     signalId = functionsDatabase.GetChildName(s);
                     ret = functionsDatabase.MoveRelative(signalId.Buffer());
@@ -3036,6 +3065,12 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
 
                         if (!functionsDatabase.Read("Frequency", frequencyBackend)) {
                             frequencyBackend = -1.0F;
+                        }
+                        if (!functionsDatabase.Read("Trigger", triggerBackend)) {
+                            triggerBackend = 0u;
+                        }
+                        if (triggerBackend != 1u) {
+                            triggerBackend = 0u;
                         }
                     }
                     //Move to the function level
@@ -3116,6 +3151,10 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
 
                     if (ret) {
                         ret = functionsDatabase.Write("Frequency", frequencyBackend);
+                    }
+
+                    if (ret) {
+                        ret = functionsDatabase.Write("Trigger", triggerBackend);
                     }
 
                     if (ret) {
@@ -3658,13 +3697,16 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                                                                                   const char8 * const alias,
                                                                                   const char8 * const dataSourceName,
                                                                                   const char8 * const syncSignalName,
+                                                                                  const char8 * const triggerSignalName,
                                                                                   const char8 * const fullTypeName,
                                                                                   const AnyType & ranges,
                                                                                   const AnyType & samples,
                                                                                   const AnyType & frequency,
+                                                                                  const AnyType & trigger,
                                                                                   StructuredDataI & data,
                                                                                   uint32 &signalNumber,
                                                                                   bool &syncSet,
+                                                                                  bool &triggerSet,
                                                                                   const bool isFunctionDatabase) {
     //Try to find the registered type in the ClassRegistryDatabase
     const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(typeName);
@@ -3727,8 +3769,8 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
             bool isStructured = entry.GetMemberTypeDescriptor().isStructuredData;
             if (isStructured) {
                 ret = SignalIntrospectionToStructuredData(signalDatabase, entry.GetMemberTypeName(), fullSignalName.Buffer(), fullAliasName.Buffer(),
-                                                          dataSourceName, syncSignalName, typeNameStr.Buffer(), ranges, samples, frequency, data, signalNumber,
-                                                          syncSet, isFunctionDatabase);
+                                                          dataSourceName, syncSignalName, triggerSignalName, typeNameStr.Buffer(), ranges, samples, frequency,
+                                                          trigger, data, signalNumber, syncSet, triggerSet, isFunctionDatabase);
             }
             else {
                 if (ret) {
@@ -3751,13 +3793,13 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                 }
                 uint32 byteSize = 0u;
                 if ((i + 1u) < numberOfMembers) {
-                    if(intro != NULL_PTR(const Introspection *)){
+                    if (intro != NULL_PTR(const Introspection *)) {
                         const IntrospectionEntry nextEntry = intro->operator[](i + 1u);
                         byteSize = nextEntry.GetMemberByteOffset() - entry.GetMemberByteOffset();
                     }
                 }
                 else {
-                    if(intro != NULL_PTR(const Introspection *)){
+                    if (intro != NULL_PTR(const Introspection *)) {
                         byteSize = intro->GetClassSize() - entry.GetMemberByteOffset();
                     }
                 }
@@ -3814,6 +3856,14 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                                 if (StringHelper::Compare(fullSignalName.Buffer(), syncSignalName) == 0) {
                                     ret = data.Write("Frequency", frequency);
                                     syncSet = true;
+                                }
+                            }
+                        }
+                        if (ret) {
+                            if (trigger.GetTypeDescriptor() != VoidType) {
+                                if (StringHelper::Compare(fullSignalName.Buffer(), triggerSignalName) == 0) {
+                                    ret = data.Write("Trigger", trigger);
+                                    triggerSet = true;
                                 }
                             }
                         }

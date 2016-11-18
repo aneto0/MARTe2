@@ -64,11 +64,6 @@ TEST(DataSourceIGTest,TestGetNumberOfSignals) {
     ASSERT_TRUE(test.TestGetNumberOfSignals());
 }
 
-TEST(DataSourceIGTest,TestGetNumberOfSignals_NotConsumedOrProduced) {
-    DataSourceITest test;
-    ASSERT_TRUE(test.TestGetNumberOfSignals_NotConsumedOrProduced());
-}
-
 TEST(DataSourceIGTest,TestGetSignalIndex) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalIndex());
@@ -199,6 +194,11 @@ TEST(DataSourceIGTest,TestGetFunctionSignalReadFrequencyOutput) {
     ASSERT_TRUE(test.TestGetFunctionSignalReadFrequencyOutput());
 }
 
+TEST(DataSourceIGTest,TestGetFunctionSignalTrigger) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionSignalTrigger());
+}
+
 TEST(DataSourceIGTest,TestGetFunctionSignalGAMMemoryOffset) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionSignalGAMMemoryOffset());
@@ -214,12 +214,3 @@ TEST(DataSourceIGTest,TestIsSupportedBroker) {
     ASSERT_TRUE(test.TestIsSupportedBroker());
 }
 
-TEST(DataSourceIGTest,TestGetPreBrokers) {
-    DataSourceITest test;
-    ASSERT_TRUE(test.TestGetPreBrokers());
-}
-
-TEST(DataSourceIGTest,TestGetPostBrokers) {
-    DataSourceITest test;
-    ASSERT_TRUE(test.TestGetPostBrokers());
-}
