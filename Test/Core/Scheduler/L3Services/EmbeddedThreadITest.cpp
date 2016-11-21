@@ -46,6 +46,11 @@ public:
             MARTe::EmbeddedThreadI(binder) {
     }
 
+    EmbeddedThreadITestStub(MARTe::EmbeddedServiceMethodBinderI &binder,
+                            MARTe::uint32 threadNumber) :
+            MARTe::EmbeddedThreadI(binder, threadNumber) {
+    }
+
     void ThreadLoop() {
         SetCommands(KeepRunningCommand);
         MARTe::ExecutionInfo info;
@@ -137,6 +142,32 @@ bool EmbeddedThreadITest::TestDefaultConstructor() {
     return ok;
 }
 
+bool EmbeddedThreadITest::TestConstructorThreadNumber() {
+    using namespace MARTe;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
+    EmbeddedThreadITestStub embeddedThreadI(binder, 5);
+    bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
+    ok &= (embeddedThreadI.GetCommands() == EmbeddedThreadI::StopCommand);
+    ok &= (embeddedThreadI.GetPriorityClass() == Threads::NormalPriorityClass);
+    ok &= (embeddedThreadI.GetPriorityLevel() == 0u);
+    ok &= (embeddedThreadI.GetCPUMask() == UndefinedCPUs);
+    ok &= (embeddedThreadI.GetThreadNumber() == 5u);
+    return ok;
+}
+
+bool EmbeddedThreadITest::TestGetThreadNumber() {
+    using namespace MARTe;
+    EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
+    EmbeddedThreadITestStub embeddedThreadI(binder, 7);
+    bool ok = (embeddedThreadI.GetThreadId() == InvalidThreadIdentifier);
+    ok &= (embeddedThreadI.GetCommands() == EmbeddedThreadI::StopCommand);
+    ok &= (embeddedThreadI.GetPriorityClass() == Threads::NormalPriorityClass);
+    ok &= (embeddedThreadI.GetPriorityLevel() == 0u);
+    ok &= (embeddedThreadI.GetCPUMask() == UndefinedCPUs);
+    ok &= (embeddedThreadI.GetThreadNumber() == 7u);
+    return ok;
+}
+
 bool EmbeddedThreadITest::TestGetThreadId() {
     using namespace MARTe;
     EmbeddedServiceMethodBinderT<EmbeddedThreadITest> binder(*this, &EmbeddedThreadITest::CallbackFunction);
@@ -155,7 +186,6 @@ bool EmbeddedThreadITest::TestGetThreadId() {
     }
     return ok;
 }
-
 
 bool EmbeddedThreadITest::TestGetPriorityClass() {
     using namespace MARTe;

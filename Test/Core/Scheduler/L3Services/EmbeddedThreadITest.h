@@ -58,6 +58,16 @@ public:
     bool TestDefaultConstructor();
 
     /**
+     * @brief Tests the constructor with the thread number.
+     */
+    bool TestConstructorThreadNumber();
+
+    /**
+     * @brief Tests the GetThreadNumber method.
+     */
+    bool TestGetThreadNumber();
+
+    /**
      * @brief Tests the GetThreadId method.
      */
     bool TestGetThreadId();

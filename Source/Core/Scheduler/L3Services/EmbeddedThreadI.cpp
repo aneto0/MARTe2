@@ -57,7 +57,7 @@ EmbeddedThreadI::EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder) :
         Object(),
         method(binder) {
     threadId = InvalidThreadIdentifier;
-    threadNumber = 0u;
+    threadNumber = 0xFFFFu;
     commands = StopCommand;
     maxCommandCompletionHRT = 0u;
     timeoutHRT = -1;
@@ -65,6 +65,20 @@ EmbeddedThreadI::EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder) :
     priorityLevel = 0u;
     cpuMask = UndefinedCPUs;
 }
+
+EmbeddedThreadI::EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder, const uint16 threadNumberIn) :
+        Object(),
+        method(binder) {
+    threadId = InvalidThreadIdentifier;
+    threadNumber = threadNumberIn;
+    commands = StopCommand;
+    maxCommandCompletionHRT = 0u;
+    timeoutHRT = -1;
+    priorityClass = Threads::NormalPriorityClass;
+    priorityLevel = 0u;
+    cpuMask = UndefinedCPUs;
+}
+
 
 EmbeddedThreadI::~EmbeddedThreadI() {
 
@@ -80,6 +94,10 @@ void EmbeddedThreadI::SetCommands(const Commands commandsIn) {
 
 ThreadIdentifier EmbeddedThreadI::GetThreadId() const {
     return threadId;
+}
+
+uint16 EmbeddedThreadI::GetThreadNumber() const {
+    return threadNumber;
 }
 
 void EmbeddedThreadI::ResetThreadId() {
@@ -222,7 +240,7 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
 
         // in any case notify the main object of the fact that the thread has been killed
         ExecutionInfo information;
-        information.SetThreadNumber(GetThreadId());
+        information.SetThreadNumber(threadNumber);
         information.SetStage(ExecutionInfo::AsyncTerminationStage);
         ErrorManagement::ErrorType killErr = Execute(information);
         if (!killErr.ErrorsCleared()) {
@@ -258,7 +276,7 @@ void EmbeddedThreadI::SetPriorityLevel(const uint8 priorityLevelIn) {
     }
 }
 
-const ProcessorType& EmbeddedThreadI::GetCPUMask() const {
+ProcessorType EmbeddedThreadI::GetCPUMask() const {
     return cpuMask;
 }
 

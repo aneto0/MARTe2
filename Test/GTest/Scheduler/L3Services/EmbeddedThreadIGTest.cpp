@@ -45,6 +45,15 @@ TEST(EmbeddedThreadIGTest, TestConstructor) {
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
+TEST(EmbeddedThreadIGTest, TestConstructorThreadNumber) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestConstructorThreadNumber());
+}
+
+TEST(EmbeddedThreadIGTest, TestGetThreadNumber) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetThreadNumber());
+}
 
 TEST(EmbeddedThreadIGTest, TestGetThreadId) {
     EmbeddedThreadITest target;

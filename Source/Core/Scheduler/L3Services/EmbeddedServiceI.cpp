@@ -120,7 +120,7 @@ void EmbeddedServiceI::SetPriorityLevel(const uint8 priorityLevelIn) {
     priorityLevel = priorityLevelIn;
 }
 
-const ProcessorType& EmbeddedServiceI::GetCPUMask() const {
+ProcessorType EmbeddedServiceI::GetCPUMask() const {
     return cpuMask;
 }
 

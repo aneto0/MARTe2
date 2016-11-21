@@ -55,12 +55,27 @@ public:
      * @param[in] binder the method which will be called in the context of this thread.
      * @post
      *   GetThreadId() == InvalidThreadIdentifier &&
+     *   GetThreadNumber() == 0xFFFF &&
      *   GetCommands() == StopCommand &&
      *   GetPriorityClass() == Threads::NormalPriorityClass &&
      *   GetPriorityLevel() == 0 &&
      *   GetCPUMask() == UndefinedCPUs
      */
     EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder);
+
+    /**
+     * @brief Constructor. Forces the setting of the method binder.
+     * @param[in] binder the method which will be called in the context of this thread.
+     * @param[in] threadNumberIn a thread unique identifier which will be set in the ExecutionInfo (see ExecutionInfo::SetThreadNumber).
+     * @post
+     *   GetThreadId() == InvalidThreadIdentifier &&
+     *   GetThreadNumber() == threadNumberIn &&
+     *   GetCommands() == StopCommand &&
+     *   GetPriorityClass() == Threads::NormalPriorityClass &&
+     *   GetPriorityLevel() == 0 &&
+     *   GetCPUMask() == UndefinedCPUs
+     */
+    EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder, uint16 threadNumberIn);
 
     /**
      * @brief Destructor. NOOP.
@@ -153,6 +168,12 @@ public:
      * @return the embedded thread identifier.
      */
     ThreadIdentifier GetThreadId() const;
+
+    /**
+     * @brief Gets the embedded thread unique number.
+     * @return the embedded thread unique number.
+     */
+    uint16 GetThreadNumber() const;
 
     /**
      * @brief Gets the current command being executed in the ThreadLoop.
@@ -252,7 +273,7 @@ public:
      * @brief Gets the thread CPU mask (i.e. thread affinity).
      * @return the thread CPU mask.
      */
-    const ProcessorType& GetCPUMask() const;
+    ProcessorType GetCPUMask() const;
 
     /**
      * @brief Sets the thread CPU mask (i.e. thread affinity).
@@ -268,6 +289,11 @@ protected:
      */
     ThreadIdentifier threadId;
 
+    /**
+     * The thread unique number (in the context of a pool)
+     */
+    uint16 threadNumber;
+
 private:
 
     /**
@@ -276,11 +302,6 @@ private:
     /*lint -e{1725} method is a reference that is initialised during construction and is the basic mechanism to register
      * the callback function to be called by this EmbeddedThreadI. */
     EmbeddedServiceMethodBinderI &method;
-
-    /**
-     * The thread unique number (in the context of a pool)
-     */
-    uint16 threadNumber;
 
     /**
      * The command being executed in the ThreadLoop.

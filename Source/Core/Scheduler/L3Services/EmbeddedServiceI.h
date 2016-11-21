@@ -117,7 +117,7 @@ public:
      * @brief Gets the thread CPU mask (i.e. thread affinity).
      * @return the thread CPU mask.
      */
-    const ProcessorType& GetCPUMask() const;
+    ProcessorType GetCPUMask() const;
 
     /**
      * @brief Sets the thread CPU mask (i.e. thread affinity).
