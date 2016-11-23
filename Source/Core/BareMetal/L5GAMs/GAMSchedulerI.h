@@ -193,6 +193,11 @@ protected:
      */
     virtual void CustomPrepareNextState()=0;
 
+    /**
+     * Clock period
+     */
+    const float64 clockPeriod;
+
 private:
 
     /**
@@ -220,11 +225,6 @@ private:
      * Number of possible application states.
      */
     uint32 numberOfStates;
-
-    /**
-     * Clock period
-     */
-    const float64 clockPeriod;
 
     /**
      * @brief Helper function to add the input brokers of the \a gam to the table of states to be executed.

@@ -48,8 +48,6 @@ namespace MARTe {
 GAMScheduler::GAMScheduler() :
         GAMSchedulerI(),
         binder(*this, &GAMScheduler::Execute) {
-    threadsWaitingToStart = 0;
-    clockPeriod = HighResolutionTimer::Period();
     cycleTimeStamp = 0u;
     multiThreadService[0] = NULL_PTR(MultiThreadService *);
     multiThreadService[1] = NULL_PTR(MultiThreadService *);
@@ -60,6 +58,8 @@ GAMScheduler::GAMScheduler() :
     }
 }
 
+/*lint -e{1551} the destructor must guarantee that the resources are stopped and freed. No exception should be thrown given that
+ * the memory addresses are checked before being used.*/
 GAMScheduler::~GAMScheduler() {
     if (multiThreadService[0] != NULL) {
         ErrorManagement::ErrorType err;
@@ -91,7 +91,6 @@ ErrorManagement::ErrorType GAMScheduler::StartNextStateExecution() {
         uint32 newBuffer = RealTimeApplication::GetIndex();
         ScheduledState *newState = GetSchedulableStates()[newBuffer];
         if (newState != NULL_PTR(ScheduledState *)) {
-            threadsWaitingToStart = newState->numberOfThreads;
             if (!eventSem.Post()) {
                 REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
             }
@@ -121,11 +120,6 @@ ErrorManagement::ErrorType GAMScheduler::StopCurrentStateExecution() {
 }
 
 void GAMScheduler::CustomPrepareNextState() {
-    //This is to disallow a fast subsequent call to CustomPrepareNextState() which could re-arm the eventSem before all the threads from the previous state started.
-    while (threadsWaitingToStart > 0) {
-        Sleep::MSec(1u);
-        REPORT_ERROR(ErrorManagement::FatalError, "threadsWaitingToStart");
-    }
     ErrorManagement::ErrorType err;
     if (eventSem.Reset()) {
         //Launches the threads for the next state
@@ -175,7 +169,6 @@ ErrorManagement::ErrorType GAMScheduler::Execute(const ExecutionInfo &informatio
     ErrorManagement::ErrorType ret;
     if (information.GetStage() == MARTe::ExecutionInfo::StartupStage) {
         ret = eventSem.Wait(TTInfiniteWait);
-        Atomic::Decrement(&threadsWaitingToStart);
         cycleTimeStamp = HighResolutionTimer::Counter();
     }
     else if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
@@ -201,6 +194,9 @@ ErrorManagement::ErrorType GAMScheduler::Execute(const ExecutionInfo &informatio
         else {
             REPORT_ERROR(ErrorManagement::FatalError, "RTThreadParam is NULL.");
         }
+    }
+    else {
+        //Other states not used.
     }
     return ret;
 }

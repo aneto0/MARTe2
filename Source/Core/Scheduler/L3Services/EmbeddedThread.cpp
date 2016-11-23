@@ -43,7 +43,7 @@ EmbeddedThread::EmbeddedThread(EmbeddedServiceMethodBinderI &binder) :
 }
 
 EmbeddedThread::EmbeddedThread(EmbeddedServiceMethodBinderI &binder,
-                               uint16 threadNumberIn) :
+                               const uint16 threadNumberIn) :
         EmbeddedThreadI(binder, threadNumberIn) {
 }
 

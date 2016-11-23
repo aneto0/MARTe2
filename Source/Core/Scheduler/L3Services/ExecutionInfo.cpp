@@ -43,7 +43,7 @@ ExecutionInfo::ExecutionInfo() {
     Reset();
 }
 
-void ExecutionInfo::SetThreadNumber(uint32 number) {
+void ExecutionInfo::SetThreadNumber(const uint32 number) {
     if (stage == StartupStage) {
         threadNumber = number;
     }

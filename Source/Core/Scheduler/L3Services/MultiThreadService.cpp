@@ -97,11 +97,12 @@ bool MultiThreadService::Initialise(StructuredDataI &data) {
             uint32 r;
             for (r = 0u; (r < numberOfRows) && (ok); r++) {
                 uint32 priorityClassIdx;
-                ok = TypeConvert(priorityClassIdx, priorityClassMat[r][0]);
+                StreamString strToConvert = priorityClassMat(r, 0u);
+                ok = TypeConvert(priorityClassIdx, strToConvert);
                 if (!ok) {
                     REPORT_ERROR(ErrorManagement::ParametersError, "Failed to TypeConvert string to integer.");
                 }
-                StreamString priorityClassStr = priorityClassMat[r][1];
+                StreamString priorityClassStr = priorityClassMat(r, 1u);
                 if (ok) {
                     ok = (priorityClassIdx < GetNumberOfPoolThreads());
                     if (!ok) {
@@ -147,22 +148,20 @@ bool MultiThreadService::Initialise(StructuredDataI &data) {
                     REPORT_ERROR(ErrorManagement::ParametersError, "PrioritiesLevel must have two columns.");
                 }
             }
-            Matrix<uint32> priorityLevelMat(numberOfRows, numberOfColumns);
+            Matrix<uint32> priorityLevelMat = Matrix<uint32>(numberOfRows, numberOfColumns);
             if (ok) {
                 ok = data.Read("PrioritiesLevel", priorityLevelMat);
             }
             uint32 r;
             for (r = 0u; (r < numberOfRows) && (ok); r++) {
-                uint32 priorityLevelIdx = priorityLevelMat[r][0];
-                uint32 priorityLevel = priorityLevelMat[r][1];
-                if (ok) {
-                    ok = (priorityLevelIdx < GetNumberOfPoolThreads());
-                }
+                uint32 priorityLevelIdx = priorityLevelMat(r, 0u);
+                uint8 prioLevel = static_cast<uint8>(priorityLevelMat(r, 1u));
+                ok = (priorityLevelIdx < GetNumberOfPoolThreads());
                 if (!ok) {
                     REPORT_ERROR(ErrorManagement::ParametersError, "priorityLevelIdx must be < GetNumberOfPoolThreads()");
                 }
                 if (ok) {
-                    SetPriorityLevelThreadPool(priorityLevel, priorityLevelIdx);
+                    SetPriorityLevelThreadPool(prioLevel, priorityLevelIdx);
                 }
             }
             if (!ok) {
@@ -194,16 +193,14 @@ bool MultiThreadService::Initialise(StructuredDataI &data) {
             }
             uint32 r;
             for (r = 0u; (r < numberOfRows) && (ok); r++) {
-                uint32 cpuMaskIdx = cpuMasksMat[r][0];
-                uint32 cpuMask = cpuMasksMat[r][1];
-                if (ok) {
-                    ok = (cpuMaskIdx < GetNumberOfPoolThreads());
-                }
+                uint32 cpuMaskIdx = cpuMasksMat(r, 0u);
+                uint32 cpuMaskForIdx = cpuMasksMat(r, 1u);
+                ok = (cpuMaskIdx < GetNumberOfPoolThreads());
                 if (!ok) {
                     REPORT_ERROR(ErrorManagement::ParametersError, "cpuMaskIdx must be < GetNumberOfPoolThreads()");
                 }
                 if (ok) {
-                    SetCPUMaskThreadPool(cpuMask, cpuMaskIdx);
+                    SetCPUMaskThreadPool(cpuMaskForIdx, cpuMaskIdx);
                 }
             }
             if (!ok) {
@@ -218,7 +215,7 @@ ErrorManagement::ErrorType MultiThreadService::CreateThreads() {
     ErrorManagement::ErrorType err;
     err.illegalOperation = (threadPool.Size() > 0u);
     bool errorsCleared = err.ErrorsCleared();
-    uint32 threadNumber = 0u;
+    uint16 threadNumber = 0u;
     while ((threadPool.Size() < numberOfPoolThreads) && (errorsCleared)) {
         ReferenceT<EmbeddedThread> thread(new (NULL) EmbeddedThread(method, threadNumber));
         err.fatalError = !thread.IsValid();
@@ -407,36 +404,36 @@ void MultiThreadService::SetCPUMask(const ProcessorType& cpuMaskIn) {
 }
 
 Threads::PriorityClassType MultiThreadService::GetPriorityClassThreadPool(const uint32 threadIdx) {
-    Threads::PriorityClassType priorityClass = Threads::UnknownPriorityClass;
+    Threads::PriorityClassType prioClass = Threads::UnknownPriorityClass;
     if (threadIdx < threadPool.Size()) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
         if (thread.IsValid()) {
-            priorityClass = thread->GetPriorityClass();
+            prioClass = thread->GetPriorityClass();
         }
     }
-    return priorityClass;
+    return prioClass;
 }
 
 uint8 MultiThreadService::GetPriorityLevelThreadPool(const uint32 threadIdx) {
-    uint8 priorityLevel = 0u;
+    uint8 prioLevel = 0u;
     if (threadIdx < threadPool.Size()) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
         if (thread.IsValid()) {
-            priorityLevel = thread->GetPriorityLevel();
+            prioLevel = thread->GetPriorityLevel();
         }
     }
-    return priorityLevel;
+    return prioLevel;
 }
 
 ProcessorType MultiThreadService::GetCPUMaskThreadPool(const uint32 threadIdx) {
-    ProcessorType cpuMask = UndefinedCPUs;
+    ProcessorType cpuMaskForIdx = UndefinedCPUs;
     if (threadIdx < threadPool.Size()) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
         if (thread.IsValid()) {
-            cpuMask = thread->GetCPUMask();
+            cpuMaskForIdx = thread->GetCPUMask();
         }
     }
-    return cpuMask;
+    return cpuMaskForIdx;
 }
 
 void MultiThreadService::SetPriorityClassThreadPool(const Threads::PriorityClassType priorityClassIn,

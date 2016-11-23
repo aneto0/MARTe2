@@ -128,15 +128,14 @@ private:
     EventSem eventSem;
 
     /**
-     * Processor clock period;
+     * HRT value of the last executed cycle
      */
-    float64 clockPeriod;
-
-    //TODO
     uint64 cycleTimeStamp;
-    EmbeddedServiceMethodBinderT<GAMScheduler> binder;
-    int32 threadsWaitingToStart;
 
+    /**
+     * Registers the callback function to be called by the MultiThreadService
+     */
+    EmbeddedServiceMethodBinderT<GAMScheduler> binder;
 };
 
 }

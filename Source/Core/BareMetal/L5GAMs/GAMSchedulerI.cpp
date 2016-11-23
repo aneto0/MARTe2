@@ -170,9 +170,7 @@ bool GAMSchedulerI::ConfigureScheduler() {
                                 //add input brokers
                                 StreamString gamFullName;
                                 ReferenceT<GAM> gam = gams.Get(k);
-                                if (ret) {
-                                    ret = gam->GetQualifiedName(gamFullName);
-                                }
+                                ret = gam->GetQualifiedName(gamFullName);
                                 if (ret) {
                                     ret = InsertInputBrokers(gam, gamFullName.Buffer(), i, j, c);
                                 }
@@ -376,7 +374,7 @@ bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
 }
 
 bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
-                                       const uint32 numberOfExecutables) const{
+                                       const uint32 numberOfExecutables) const {
     // warning: possible segmentation faults if the previous operations
     // lack or fail and the pointers are invalid.
 
@@ -386,7 +384,7 @@ bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
         // save the time before
         // execute the gam
         ret = executables[i]->Execute();
-        uint64 tmp=(HighResolutionTimer::Counter() - absTicks);
+        uint64 tmp = (HighResolutionTimer::Counter() - absTicks);
         float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
         uint32 absTime = static_cast<uint32>(ticksToTime);  //us
         if (ret) {
