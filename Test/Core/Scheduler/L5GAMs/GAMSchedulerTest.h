@@ -68,12 +68,12 @@ public:
     /**
      * @brief Tests the execution of a multi-thread MARTe application
      */
-    bool TestStartExecution();
+    bool TestStartNextStateExecution();
 
     /**
      * @brief Tests the execution of a multi-thread MARTe application
      */
-    bool TestStopExecution();
+    bool TestStopCurrentStateExecution();
 
     /**
      * @brief The application configuration stream

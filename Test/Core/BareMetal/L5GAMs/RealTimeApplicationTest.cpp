@@ -47,9 +47,9 @@ public:
 
 RealTimeApplicationTestScheduler    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
 
     void SetThreadToExecute(uint32 tid);
 
@@ -78,16 +78,16 @@ RealTimeApplicationTestScheduler::RealTimeApplicationTestScheduler() :
 bool RealTimeApplicationTestScheduler::Started() {
     return started;
 }
-void RealTimeApplicationTestScheduler::StartExecution() {
+MARTe::ErrorManagement::ErrorType RealTimeApplicationTestScheduler::StartNextStateExecution() {
     started = true;
     ExecuteSingleCycle(GetSchedulableStates()[RealTimeApplication::GetIndex()]->threads[threadId].executables,
                        GetSchedulableStates()[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
-
+    return MARTe::ErrorManagement::NoError;
 }
 
-void RealTimeApplicationTestScheduler::StopExecution() {
+MARTe::ErrorManagement::ErrorType RealTimeApplicationTestScheduler::StopCurrentStateExecution() {
     started = false;
-
+    return MARTe::ErrorManagement::NoError;
 }
 
 const char8 *RealTimeApplicationTestScheduler::GetStateName() {
@@ -889,7 +889,7 @@ bool RealTimeApplicationTest::TestPrepareNextState() {
         return false;
     }
 
-    app->StartExecution();
+    app->StartNextStateExecution();
 
     ReferenceT<RealTimeApplicationTestScheduler> scheduler = app->Find("Scheduler");
     if (!scheduler.IsValid()) {
@@ -935,7 +935,7 @@ bool RealTimeApplicationTest::TestPrepareNextState() {
         return false;
     }
 
-    app->StartExecution();
+    app->StartNextStateExecution();
 
     if (StringHelper::Compare(scheduler->GetStateName(), "State2") != 0) {
         return false;
@@ -944,7 +944,7 @@ bool RealTimeApplicationTest::TestPrepareNextState() {
 
 }
 
-bool RealTimeApplicationTest::TestStartExecution() {
+bool RealTimeApplicationTest::TestStartNextStateExecution() {
     if (!Init()) {
         return false;
     }
@@ -963,7 +963,7 @@ bool RealTimeApplicationTest::TestStartExecution() {
     if (!app->PrepareNextState("State1")) {
         return false;
     }
-    app->StartExecution();
+    app->StartNextStateExecution();
     ReferenceT<RealTimeApplicationTestScheduler> scheduler = app->Find("Scheduler");
     if (!scheduler.IsValid()) {
         return false;
@@ -976,7 +976,7 @@ bool RealTimeApplicationTest::TestStartExecution() {
 
 }
 
-bool RealTimeApplicationTest::TestStopExecution() {
+bool RealTimeApplicationTest::TestStopCurrentStateExecution() {
     if (!Init()) {
         return false;
     }
@@ -992,7 +992,7 @@ bool RealTimeApplicationTest::TestStopExecution() {
     if (!app->PrepareNextState("State1")) {
         return false;
     }
-    app->StartExecution();
+    app->StartNextStateExecution();
     ReferenceT<RealTimeApplicationTestScheduler> scheduler = app->Find("Scheduler");
     if (!scheduler.IsValid()) {
         return false;
@@ -1001,7 +1001,7 @@ bool RealTimeApplicationTest::TestStopExecution() {
         return false;
     }
 
-    app->StopExecution();
+    app->StopCurrentStateExecution();
     return !scheduler->Started();
 }
 

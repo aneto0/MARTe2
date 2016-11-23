@@ -31,8 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GAMSchedulerI.h"
 #include "EventSem.h"
+#include "GAMSchedulerI.h"
+#include "MultiThreadService.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -43,10 +44,7 @@ namespace MARTe {
  * @brief Thread parameter structure
  */
 struct RTThreadParam {
-    /**
-     * The scheduler
-     */
-    GAMSchedulerI *scheduler;
+
     /**
      * The list of executables
      */
@@ -59,15 +57,7 @@ struct RTThreadParam {
      * The cycle time
      */
     uint32* cycleTime;
-    /**
-     * A spinlock allowing to stop the thread execution
-     */
-    volatile int32 *spinLock;
 
-    /**
-     * The event semaphore where threads wait before start their execution
-     */
-    EventSem *eventSem;
 };
 
 /**
@@ -90,14 +80,28 @@ public:
 
     /**
      * @brief Starts the multi-thread execution for the current state.
+     * @return ErrorManagement::NoError if the next state was configured (see PrepareNextState) and the MultiThreadService could be successfully started.
+     * @pre
+     *   PrepareNextState()
      */
-    virtual void StartExecution();
+    virtual ErrorManagement::ErrorType StartNextStateExecution();
 
     /**
      * @brief Stops the execution application
+     * @return ErrorManagement::NoError if the current state was configured (see PrepareNextState) and the MultiThreadService could be successfully stopped.
+     * @pre
+     *   PrepareNextState()
      */
-    virtual void StopExecution();
+    virtual ErrorManagement::ErrorType StopCurrentStateExecution();
 
+
+    /**
+     * @brief Callback function for the MultiThreadService.
+     * @details Loops on all the real-time threads and executes its ExecutableI
+     * @param[in] information @see EmbeddedThread
+     * @return ErrorManagement::NoError iff every ExecutableI did not return any error.
+     */
+    ErrorManagement::ErrorType Execute(const ExecutionInfo &information);
 protected:
 
     /**
@@ -111,22 +115,27 @@ private:
     /**
      * The array of identifiers of the thread in execution.
      */
-    ThreadIdentifier *tid[2];
-
-    /**
-     * Synchronization spin-lock
-     */
-    volatile int32 spinLock[2];
+    MultiThreadService *multiThreadService[2];
 
     /**
      * The array of the thread parameters
      */
-    RTThreadParam *param[2];
+    RTThreadParam *rtThreadInfo[2];
 
     /**
      * The eventSemaphore
      */
     EventSem eventSem;
+
+    /**
+     * Processor clock period;
+     */
+    float64 clockPeriod;
+
+    //TODO
+    uint64 cycleTimeStamp;
+    EmbeddedServiceMethodBinderT<GAMScheduler> binder;
+    int32 threadsWaitingToStart;
 
 };
 

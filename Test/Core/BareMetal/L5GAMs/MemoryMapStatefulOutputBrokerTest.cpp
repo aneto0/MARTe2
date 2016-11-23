@@ -49,9 +49,9 @@ public:
 
 MemoryMapStatefulOutputBrokerTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
 
     virtual void CustomPrepareNextState(){
 
@@ -64,12 +64,12 @@ MemoryMapStatefulOutputBrokerTestScheduler1::MemoryMapStatefulOutputBrokerTestSc
 
 }
 
-void MemoryMapStatefulOutputBrokerTestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType MemoryMapStatefulOutputBrokerTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void MemoryMapStatefulOutputBrokerTestScheduler1::StopExecution() {
-
+MARTe::ErrorManagement::ErrorType MemoryMapStatefulOutputBrokerTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 CLASS_REGISTER(MemoryMapStatefulOutputBrokerTestScheduler1, "1.0")
@@ -600,7 +600,7 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_0() {
         ret = app.IsValid();
     }
     if (ret) {
-        app->StartExecution();
+        app->StartNextStateExecution();
     }
     if (ret) {
         ret = gamC->Execute();
@@ -761,7 +761,7 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_ChangeState() {
         ret = app.IsValid();
     }
     if (ret) {
-        app->StartExecution();
+        app->StartNextStateExecution();
     }
     //RealTimeApplication::index = 0u;
 
@@ -841,7 +841,7 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_Ranges_0() {
         ret = app.IsValid();
     }
     if (ret) {
-        app->StartExecution();
+        app->StartNextStateExecution();
     }
     if (ret) {
         ret = gamC->Execute();
@@ -1038,7 +1038,7 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_Ranges_ChangeState() {
         ret = app.IsValid();
     }
     if (ret) {
-        app->StartExecution();
+        app->StartNextStateExecution();
     }
     //RealTimeApplication::index = 0u;
 
@@ -1139,7 +1139,7 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_Samples_0() {
         ret = app.IsValid();
     }
     if (ret) {
-        app->StartExecution();
+        app->StartNextStateExecution();
     }
     if (ret) {
         ret = gamC->Execute();
@@ -1294,7 +1294,7 @@ bool MemoryMapStatefulOutputBrokerTest::TestExecute_Samples_ChangeState() {
         ret = app.IsValid();
     }
     if (ret) {
-        app->StartExecution();
+        app->StartNextStateExecution();
     }
     //RealTimeApplication::index = 0u;
     if (ret) {

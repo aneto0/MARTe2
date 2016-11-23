@@ -49,9 +49,9 @@ public:
 
 MemoryMapBrokerTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StopCurrentStateExecution();
 
     virtual void CustomPrepareNextState(){
 
@@ -64,12 +64,12 @@ MemoryMapBrokerTestScheduler1::MemoryMapBrokerTestScheduler1() :
 
 }
 
-void MemoryMapBrokerTestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType MemoryMapBrokerTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void MemoryMapBrokerTestScheduler1::StopExecution() {
-
+MARTe::ErrorManagement::ErrorType MemoryMapBrokerTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 CLASS_REGISTER(MemoryMapBrokerTestScheduler1, "1.0")

@@ -169,13 +169,15 @@ public:
 
     /**
      * @brief Starts the execution of the next state threads.
+     * @pre
+     *    PrepareNextState();
      */
-    virtual void StartExecution()=0;
+    virtual ErrorManagement::ErrorType StartNextStateExecution()=0;
 
     /**
      * @brief Stops the execution of the current state threads.
      */
-    virtual void StopExecution()=0;
+    virtual ErrorManagement::ErrorType StopCurrentStateExecution()=0;
 
 protected:
     /**

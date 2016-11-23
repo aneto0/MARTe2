@@ -382,13 +382,13 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
 
 }
 
-void RealTimeApplication::StartExecution() {
+ErrorManagement::ErrorType RealTimeApplication::StartNextStateExecution() {
     index = (index + 1u) % 2u;
-    scheduler->StartExecution();
+    return scheduler->StartNextStateExecution();
 }
 
-void RealTimeApplication::StopExecution() {
-    scheduler->StopExecution();
+ErrorManagement::ErrorType RealTimeApplication::StopCurrentStateExecution() {
+    return scheduler->StopCurrentStateExecution();
 }
 
 bool RealTimeApplication::FindStatefulDataSources() {

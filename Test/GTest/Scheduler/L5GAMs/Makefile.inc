@@ -25,13 +25,9 @@ PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-
 OBJSX=  GAMSchedulerGTest.x
 		 
-		
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
-
 
 INCLUDES += -I../../../
 INCLUDES += -I../../../Core/BareMetal/L0Types
@@ -50,10 +46,9 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 INCLUDES += -I../../../../Source/Core/BareMetal/L5GAMs
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
+INCLUDES += -I../../../../Source/Core/Scheduler/L3Services
 INCLUDES += -I../../../../Source/Core/Scheduler/L5GAMs
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
-
-
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L5GAMsSGTest$(LIBEXT) 

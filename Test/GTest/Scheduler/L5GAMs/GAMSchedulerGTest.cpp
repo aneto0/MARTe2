@@ -49,12 +49,12 @@ TEST(GAMSchedulerGTest,TestConstructor) {
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(GAMSchedulerGTest,TestStartExecution) {
+TEST(GAMSchedulerGTest,TestStartNextStateExecution) {
     GAMSchedulerTest test;
-    ASSERT_TRUE(test.TestStartExecution());
+    ASSERT_TRUE(test.TestStartNextStateExecution());
 }
 
-TEST(GAMSchedulerGTest,TestStopExecution) {
+TEST(GAMSchedulerGTest,TestStopCurrentStateExecution) {
     GAMSchedulerTest test;
-    ASSERT_TRUE(test.TestStopExecution());
+    ASSERT_TRUE(test.TestStopCurrentStateExecution());
 }

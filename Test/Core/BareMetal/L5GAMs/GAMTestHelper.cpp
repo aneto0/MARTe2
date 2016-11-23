@@ -132,14 +132,7 @@ bool GAM1::Execute() {
         ReferenceT<ExecutableI> broker = inputBrokers.Get(b);
         broker->Execute();
     }
-    const char8 *name = GetName();
-    printf("%s:\n", name);
-    uint32 numberOfInputSignals = GetNumberOfInputSignals();
-    uint32 numberOfOutputSignals = GetNumberOfOutputSignals();
-    printf("Inputs %d\n", numberOfInputSignals);
-    printf("Outputs %d\n", numberOfOutputSignals);
     uint32 *inputBuffer = (uint32 *) GetInputSignalsMemory();
-
     uint32 *outputBuffer = (uint32 *) GetOutputSignalsMemory();
 
     outputBuffer[0] = inputBuffer[0] + inputBuffer[1];
@@ -432,11 +425,12 @@ CLASS_REGISTER(Driver1, "1.0");
 DefaultSchedulerForTests::DefaultSchedulerForTests() :
         GAMSchedulerI() {
 }
-void DefaultSchedulerForTests::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType DefaultSchedulerForTests::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void DefaultSchedulerForTests::StopExecution() {
+MARTe::ErrorManagement::ErrorType DefaultSchedulerForTests::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 void DefaultSchedulerForTests::CustomPrepareNextState(){

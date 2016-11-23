@@ -70,7 +70,57 @@ public:
     /**
      * @brief Tests the Initialise function without specifying the Timeout parameter.
      */
-    bool TestInitialise_False();
+    bool TestInitialise_False_Timeout();
+
+    /**
+     * @brief Tests the Initialise function specifying a PrioritiesClass that is not a matrix.
+     */
+    bool TestInitialise_False_PrioritiesClass_NotMatrix();
+
+    /**
+     * @brief Tests the Initialise function specifying a PrioritiesClass with a matrix that has more than two columns.
+     */
+    bool TestInitialise_False_PrioritiesClass_Columns();
+
+    /**
+     * @brief Tests the Initialise function specifying a PrioritiesClass with an out of range index.
+     */
+    bool TestInitialise_False_PrioritiesClass_OutOfRangeIndex();
+
+    /**
+     * @brief Tests the Initialise function specifying a PrioritiesClass that is not a matrix.
+     */
+    bool TestInitialise_False_PrioritiesLevel_NotMatrix();
+
+    /**
+     * @brief Tests the Initialise function specifying a PrioritiesLevel with a matrix that has more than two columns.
+     */
+    bool TestInitialise_False_PrioritiesLevel_Columns();
+
+    /**
+     * @brief Tests the Initialise function specifying a PrioritiesLevel with an out of range index.
+     */
+    bool TestInitialise_False_PrioritiesLevel_OutOfRangeIndex();
+
+    /**
+     * @brief Tests the Initialise function specifying a PrioritiesLevel with an index that is not a number.
+     */
+    bool TestInitialise_False_PrioritiesClass_TypeConvert();
+
+    /**
+     * @brief Tests the Initialise function specifying a CPUMasks that is not a matrix.
+     */
+    bool TestInitialise_False_CPUMasks_NotMatrix();
+
+    /**
+     * @brief Tests the Initialise function specifying a CPUMasks with a matrix that has more than two columns.
+     */
+    bool TestInitialise_False_CPUMasks_Columns();
+
+    /**
+     * @brief Tests the Initialise function specifying a CPUMasks with an out of range index.
+     */
+    bool TestInitialise_False_CPUMasks_OutOfRangeIndex();
 
     /**
      * @brief Tests the Start function.
@@ -86,6 +136,21 @@ public:
      * @brief Tests the Start function after a stop has been called.
      */
     bool TestStart_Restart();
+
+    /**
+     * @brief Tests the CreateThread function.
+     */
+    bool TestCreateThreads();
+
+    /**
+     * @brief Tests the CreateThread function calling it twice, which should trigger an illegal operation.
+     */
+    bool TestCreateThreads_False();
+
+    /**
+     * @brief Tests the CreateThread function after a stop has been called.
+     */
+    bool TestCreateThreads_Restart();
 
     /**
      * @brief Tests the Stop function.
@@ -151,6 +216,66 @@ public:
      * @brief Verifies that priority class is not changed after the service has started.
      */
     bool TestSetCPUMask_Start();
+
+    /**
+     * @brief Tests the SetPriorityClassThreadPool method.
+     */
+    bool TestSetPriorityClassThreadPool();
+
+    /**
+     * @brief Tests the SetPriorityLevelThreadPool method.
+     */
+    bool TestSetPriorityLevelThreadPool();
+
+    /**
+     * @brief Tests the SetCPUMaskThreadPool method.
+     */
+    bool TestSetCPUMaskThreadPool();
+
+    /**
+     * @brief Tests the GetPriorityClassThreadPool method.
+     */
+    bool TestGetPriorityClassThreadPool();
+
+    /**
+     * @brief Tests the GetPriorityLevelThreadPool method.
+     */
+    bool TestGetPriorityLevelThreadPool();
+
+    /**
+     * @brief Tests the GetCPUMaskThreadPool method.
+     */
+    bool TestGetCPUMaskThreadPool();
+
+    /**
+     * @brief Tests the GetPriorityClassThreadPool method with an index which is greater than the number of threads in the pool.
+     */
+    bool TestGetPriorityClassThreadPool_OutOfIndex();
+
+    /**
+     * @brief Tests the GetPriorityLevelThreadPool method with an index which is greater than the number of threads in the pool.
+     */
+    bool TestGetPriorityLevelThreadPool_OutOfIndex();
+
+    /**
+     * @brief Tests the GetCPUMaskThreadPool method with an index which is greater than the number of threads in the pool.
+     */
+    bool TestGetCPUMaskThreadPool_OutOfIndex();
+
+    /**
+     * @brief Verifies that priority class is not changed after the service has started.
+     */
+    bool TestSetPriorityClassThreadPool_Start();
+
+    /**
+     * @brief Verifies that priority level is not changed after the service has started.
+     */
+    bool TestSetPriorityLevelThreadPool_Start();
+
+    /**
+     * @brief Verifies that priority class is not changed after the service has started.
+     */
+    bool TestSetCPUMaskThreadPool_Start();
 };
 
 /*---------------------------------------------------------------------------*/

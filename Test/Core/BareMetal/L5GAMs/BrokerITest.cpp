@@ -32,6 +32,7 @@
 #include "BrokerITest.h"
 #include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
+#include "ErrorManagement.h"
 #include "GAMSchedulerI.h"
 #include "ObjectRegistryDatabase.h"
 #include "RealTimeApplication.h"
@@ -46,9 +47,9 @@ public:
 
 BrokerITestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
 
     virtual void CustomPrepareNextState();
 
@@ -59,12 +60,12 @@ BrokerITestScheduler1::BrokerITestScheduler1() :
 
 }
 
-void BrokerITestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType BrokerITestScheduler1::StartNextStateExecution() {
+    return ErrorManagement::NoError;
 }
 
-void BrokerITestScheduler1::StopExecution() {
-
+MARTe::ErrorManagement::ErrorType BrokerITestScheduler1::StopCurrentStateExecution() {
+    return ErrorManagement::NoError;
 }
 
 void BrokerITestScheduler1::CustomPrepareNextState(){

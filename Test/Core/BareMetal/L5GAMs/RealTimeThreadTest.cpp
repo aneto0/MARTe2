@@ -49,9 +49,9 @@ public:
 
 RealTimeThreadTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
 
     virtual void CustomPrepareNextState(){
 
@@ -64,12 +64,12 @@ RealTimeThreadTestScheduler1::RealTimeThreadTestScheduler1() :
 
 }
 
-void RealTimeThreadTestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType RealTimeThreadTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void RealTimeThreadTestScheduler1::StopExecution() {
-
+MARTe::ErrorManagement::ErrorType RealTimeThreadTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 CLASS_REGISTER(RealTimeThreadTestScheduler1, "1.0")

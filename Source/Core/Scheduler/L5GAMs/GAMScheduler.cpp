@@ -1,8 +1,9 @@
 /**
  * @file GAMScheduler.cpp
  * @brief Source file for class GAMScheduler
- * @date 09/ago/2016
- * @author pc
+ * @date 20/11/2016
+ * @author Giuseppe Ferro
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -30,122 +31,178 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GAMScheduler.h"
-#include "Threads.h"
+#include "ExecutionInfo.h"
+#include "MultiThreadService.h"
 #include "RealTimeApplication.h"
+#include "Threads.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-
-static void RTThreadRoutine(const RTThreadParam &par) {
-    (void) par.eventSem->Wait(TTInfiniteWait);
-
-    float64 clockPeriod = HighResolutionTimer::Period();
-    uint64 cycleTimeStamp = HighResolutionTimer::Counter();
-    while ((*par.spinLock) == 1) {
-        //TODO
-        (void) par.scheduler->ExecuteSingleCycle(par.executables, par.numberOfExecutables);
-        uint64 tmp=(HighResolutionTimer::Counter() - cycleTimeStamp);
-        float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
-        uint32 absTime = static_cast<uint32>(ticksToTime);  //us
-        uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
-        (void) MemoryOperationsHelper::Copy(par.cycleTime, &absTime, sizeToCopy);
-        cycleTimeStamp = HighResolutionTimer::Counter();
-    }
-
-    Threads::EndThread();
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 GAMScheduler::GAMScheduler() :
-        GAMSchedulerI() {
-    spinLock[0] = 0;
-    spinLock[1] = 0;
-
-    tid[0] = NULL_PTR(ThreadIdentifier *);
-    tid[1] = NULL_PTR(ThreadIdentifier *);
-    param[0] = NULL_PTR(RTThreadParam *);
-    param[1] = NULL_PTR(RTThreadParam *);
+        GAMSchedulerI(),
+        binder(*this, &GAMScheduler::Execute) {
+    threadsWaitingToStart = 0;
+    clockPeriod = HighResolutionTimer::Period();
+    cycleTimeStamp = 0u;
+    multiThreadService[0] = NULL_PTR(MultiThreadService *);
+    multiThreadService[1] = NULL_PTR(MultiThreadService *);
+    rtThreadInfo[0] = NULL_PTR(RTThreadParam *);
+    rtThreadInfo[1] = NULL_PTR(RTThreadParam *);
     if (!eventSem.Create()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "Failer Create(*) of the event semaphore");
+        REPORT_ERROR(ErrorManagement::FatalError, "Failed Create(*) of the event semaphore");
     }
 }
 
 GAMScheduler::~GAMScheduler() {
-    if (tid[0] != NULL) {
-        delete[] tid[0];
+    if (multiThreadService[0] != NULL) {
+        ErrorManagement::ErrorType err;
+        err = multiThreadService[0]->Stop();
+        if (!err.ErrorsCleared()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "Could not StopCurrentStateExecution multiThreadService[0]");
+        }
+        delete multiThreadService[0];
     }
-    if (tid[1] != NULL) {
-        delete[] tid[1];
+    if (multiThreadService[1] != NULL) {
+        ErrorManagement::ErrorType err;
+        err = multiThreadService[1]->Stop();
+        if (!err.ErrorsCleared()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "Could not StopCurrentStateExecution multiThreadService[1]");
+        }
+        delete multiThreadService[1];
     }
-    if (param[0] != NULL) {
-        delete[] param[0];
+    if (rtThreadInfo[0] != NULL) {
+        delete rtThreadInfo[0];
     }
-    if (param[1] != NULL) {
-        delete[] param[1];
+    if (rtThreadInfo[1] != NULL) {
+        delete rtThreadInfo[1];
     }
 }
 
-void GAMScheduler::StartExecution() {
-    Atomic::Increment(&spinLock[RealTimeApplication::GetIndex()]);
-    if(!eventSem.Post()){
-        REPORT_ERROR(ErrorManagement::FatalError, "Failer Post(*) of the event semaphore");
-    }
-}
-
-void GAMScheduler::StopExecution() {
-
-    uint32 currentIndex = RealTimeApplication::GetIndex();
-
-    if (tid[currentIndex] != NULL) {
-        Atomic::Decrement(&spinLock[RealTimeApplication::GetIndex()]);
-        uint32 numberOfThreads=GetSchedulableStates()[currentIndex]->numberOfThreads;
-        for (uint32 i = 0u; i < numberOfThreads; i++) {
-            // safe exit
-            while (Threads::IsAlive(tid[currentIndex][i])) {
-                Sleep::MSec(1);
+ErrorManagement::ErrorType GAMScheduler::StartNextStateExecution() {
+    ErrorManagement::ErrorType err;
+    if (GetSchedulableStates() != NULL_PTR(ScheduledState **)) {
+        uint32 newBuffer = RealTimeApplication::GetIndex();
+        ScheduledState *newState = GetSchedulableStates()[newBuffer];
+        if (newState != NULL_PTR(ScheduledState *)) {
+            threadsWaitingToStart = newState->numberOfThreads;
+            if (!eventSem.Post()) {
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
             }
         }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "newState is NULL. Did you call PrepareNextState?");
+            err.fatalError = true;
+        }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "No states defined.");
+        err.fatalError = true;
+    }
+    return err;
+}
 
+ErrorManagement::ErrorType GAMScheduler::StopCurrentStateExecution() {
+    uint32 currentIndex = RealTimeApplication::GetIndex();
+    ErrorManagement::ErrorType err;
+    if (multiThreadService[currentIndex] != NULL) {
+        err = multiThreadService[currentIndex]->Stop();
+    }
+    else {
+        err.fatalError = true;
+    }
+    return err;
 }
 
 void GAMScheduler::CustomPrepareNextState() {
-
+    //This is to disallow a fast subsequent call to CustomPrepareNextState() which could re-arm the eventSem before all the threads from the previous state started.
+    while (threadsWaitingToStart > 0) {
+        Sleep::MSec(1u);
+        REPORT_ERROR(ErrorManagement::FatalError, "threadsWaitingToStart");
+    }
+    ErrorManagement::ErrorType err;
     if (eventSem.Reset()) {
-
         //Launches the threads for the next state
         uint32 nextBuffer = (RealTimeApplication::GetIndex() + 1u) % 2u;
         ScheduledState *nextState = GetSchedulableStates()[nextBuffer];
         uint32 numberOfThreads = nextState->numberOfThreads;
-        if (tid[nextBuffer] != NULL) {
-            delete[] tid[nextBuffer];
+        if (multiThreadService[nextBuffer] != NULL) {
+            err = multiThreadService[nextBuffer]->Stop();
+            delete multiThreadService[nextBuffer];
         }
-        tid[nextBuffer] = new ThreadIdentifier[numberOfThreads];
-        if (param[nextBuffer] != NULL) {
-            delete [] param[nextBuffer];
+        if (err.ErrorsCleared()) {
+            multiThreadService[nextBuffer] = new (NULL) MultiThreadService(binder);
+            multiThreadService[nextBuffer]->SetNumberOfPoolThreads(numberOfThreads);
+            if (rtThreadInfo[nextBuffer] != NULL) {
+                delete rtThreadInfo[nextBuffer];
+            }
+            err = multiThreadService[nextBuffer]->CreateThreads();
         }
-        param[nextBuffer] = new RTThreadParam[numberOfThreads];
-
-        for (uint32 i = 0u; i < numberOfThreads; i++) {
-            param[nextBuffer][i].scheduler = this;
-            param[nextBuffer][i].spinLock = &spinLock[nextBuffer];
-            param[nextBuffer][i].executables = nextState->threads[i].executables;
-            param[nextBuffer][i].numberOfExecutables = nextState->threads[i].numberOfExecutables;
-            param[nextBuffer][i].cycleTime = nextState->threads[i].cycleTime;
-            param[nextBuffer][i].eventSem = &eventSem;
-            tid[nextBuffer][i] = Threads::BeginThread(reinterpret_cast<ThreadFunctionType>(&RTThreadRoutine), &param[nextBuffer][i],
-                                                      nextState->threads[i].stackSize, nextState->threads[i].name, ExceptionHandler::NotHandled,
-                                                      nextState->threads[i].cpu);
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "Failed to Stop() MultiThreadService.");
+        }
+        if (err.ErrorsCleared()) {
+            rtThreadInfo[nextBuffer] = new RTThreadParam[numberOfThreads];
+            for (uint32 i = 0u; i < numberOfThreads; i++) {
+                rtThreadInfo[nextBuffer][i].executables = nextState->threads[i].executables;
+                rtThreadInfo[nextBuffer][i].numberOfExecutables = nextState->threads[i].numberOfExecutables;
+                rtThreadInfo[nextBuffer][i].cycleTime = nextState->threads[i].cycleTime;
+                multiThreadService[nextBuffer]->SetPriorityClassThreadPool(Threads::RealTimePriorityClass, i);
+                multiThreadService[nextBuffer]->SetCPUMaskThreadPool(nextState->threads[i].cpu, i);
+            }
+            err = multiThreadService[nextBuffer]->Start();
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "Failed to CreateThreads().");
+        }
+        if (!err.ErrorsCleared()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "Failed to Start() MultiThreadService.");
         }
     }
-    else{
-        REPORT_ERROR(ErrorManagement::FatalError, "Failer Reset(*) of the event semaphore");
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "Failed Reset(*) of the event semaphore");
     }
 
+}
+
+ErrorManagement::ErrorType GAMScheduler::Execute(const ExecutionInfo &information) {
+    ErrorManagement::ErrorType ret;
+    if (information.GetStage() == MARTe::ExecutionInfo::StartupStage) {
+        ret = eventSem.Wait(TTInfiniteWait);
+        Atomic::Decrement(&threadsWaitingToStart);
+        cycleTimeStamp = HighResolutionTimer::Counter();
+    }
+    else if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
+        uint32 threadNumber = information.GetThreadNumber();
+        uint32 idx = RealTimeApplication::GetIndex();
+        if (rtThreadInfo[idx] != NULL_PTR(RTThreadParam *)) {
+            bool ok = ExecuteSingleCycle(rtThreadInfo[idx][threadNumber].executables, rtThreadInfo[idx][threadNumber].numberOfExecutables);
+            if (!ok) {
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to ExecuteSingleCycle().");
+                //Do not set ret.fatalError = true because when ExecuteSingleCycle returns false it will trigger the MultiThreadService to restart the execution of ThreadLoop.
+                //If this was not handled then it would wait on eventSem.Wait(TTInfiniteWait) every time ExecuteSingleCycle returns false.
+                //ret.fatalError = true;
+            }
+            uint64 tmp = (HighResolutionTimer::Counter() - cycleTimeStamp);
+            float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
+            uint32 absTime = static_cast<uint32>(ticksToTime);  //us
+            uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
+            if(!MemoryOperationsHelper::Copy(rtThreadInfo[idx][threadNumber].cycleTime, &absTime, sizeToCopy)) {
+                REPORT_ERROR(ErrorManagement::FatalError, "Could not copy cycle time information.");
+            }
+            cycleTimeStamp = HighResolutionTimer::Counter();
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "RTThreadParam is NULL.");
+        }
+    }
+    return ret;
 }
 
 CLASS_REGISTER(GAMScheduler, "1.0")

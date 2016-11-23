@@ -47,9 +47,9 @@ public:
 
 DataSourceITestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
     virtual void CustomPrepareNextState();
 
 };
@@ -59,12 +59,12 @@ DataSourceITestScheduler1::DataSourceITestScheduler1() :
 
 }
 
-void DataSourceITestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType DataSourceITestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void DataSourceITestScheduler1::StopExecution() {
-
+MARTe::ErrorManagement::ErrorType DataSourceITestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 void DataSourceITestScheduler1::CustomPrepareNextState(){

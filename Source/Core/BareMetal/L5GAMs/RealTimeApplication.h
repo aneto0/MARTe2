@@ -193,13 +193,15 @@ RealTimeApplication    ();
 
     /**
      * @brief Swaps the current execution index (RealTimeApplication::GetIndex) and calls GAMSchedulerI::StartExecution on the defined application Scheduler.
+     * @return GAMSchedulerI::StartNextStateExecution
      */
-    void StartExecution();
+    ErrorManagement::ErrorType  StartNextStateExecution();
 
     /**
-     * @brief Calls GAMSchedulerI::StoptExecution on the defined application Scheduler.
+     * @brief Calls GAMSchedulerI::StopCurrentExecution on the defined application Scheduler.
+     * @return GAMSchedulerI::StopCurrentExecution
      */
-    void StopExecution();
+    ErrorManagement::ErrorType  StopCurrentStateExecution();
 
     /**
      * @brief Gets the declared RealTimeState components.

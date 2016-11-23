@@ -31,6 +31,8 @@
 #include "AdvancedErrorManagement.h"
 #include "MultiThreadService.h"
 #include "ReferenceT.h"
+#include "StreamString.h"
+#include "TypeConversion.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -67,28 +69,204 @@ bool MultiThreadService::Initialise(StructuredDataI &data) {
             REPORT_ERROR(ErrorManagement::ParametersError, "NumberOfPoolThreads has to be specified.");
         }
     }
-
+    if (err.ErrorsCleared()) {
+        err = CreateThreads();
+    }
+    if (err.ErrorsCleared()) {
+        AnyType individualThreadPrioritiesClass = data.GetType("PrioritiesClass");
+        if (!individualThreadPrioritiesClass.IsVoid()) {
+            uint32 dims = individualThreadPrioritiesClass.GetNumberOfDimensions();
+            bool ok = (dims == 2u);
+            if (!ok) {
+                REPORT_ERROR(ErrorManagement::ParametersError, "PrioritiesClass must be a matrix.");
+            }
+            uint32 numberOfColumns = 0u;
+            uint32 numberOfRows = 0u;
+            if (ok) {
+                numberOfColumns = individualThreadPrioritiesClass.GetNumberOfElements(0u);
+                numberOfRows = individualThreadPrioritiesClass.GetNumberOfElements(1u);
+                ok = (numberOfColumns == 2u);
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "PrioritiesClass must have two columns.");
+                }
+            }
+            Matrix<StreamString> priorityClassMat(numberOfRows, numberOfColumns);
+            if (ok) {
+                ok = data.Read("PrioritiesClass", priorityClassMat);
+            }
+            uint32 r;
+            for (r = 0u; (r < numberOfRows) && (ok); r++) {
+                uint32 priorityClassIdx;
+                ok = TypeConvert(priorityClassIdx, priorityClassMat[r][0]);
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "Failed to TypeConvert string to integer.");
+                }
+                StreamString priorityClassStr = priorityClassMat[r][1];
+                if (ok) {
+                    ok = (priorityClassIdx < GetNumberOfPoolThreads());
+                    if (!ok) {
+                        REPORT_ERROR(ErrorManagement::ParametersError, "priorityClassIdx must be < GetNumberOfPoolThreads()");
+                    }
+                }
+                if (ok) {
+                    if (priorityClassStr == "IdlePriorityClass") {
+                        SetPriorityClassThreadPool(Threads::IdlePriorityClass, priorityClassIdx);
+                    }
+                    else if (priorityClassStr == "NormalPriorityClass") {
+                        SetPriorityClassThreadPool(Threads::NormalPriorityClass, priorityClassIdx);
+                    }
+                    else if (priorityClassStr == "RealTimePriorityClass") {
+                        SetPriorityClassThreadPool(Threads::RealTimePriorityClass, priorityClassIdx);
+                    }
+                    else {
+                        REPORT_ERROR(ErrorManagement::ParametersError, "Unsupported PriorityClass.");
+                        ok = false;
+                    }
+                }
+            }
+            if (!ok) {
+                err.parametersError = true;
+            }
+        }
+    }
+    if (err.ErrorsCleared()) {
+        AnyType individualThreadPrioritiesLevel = data.GetType("PrioritiesLevel");
+        if (!individualThreadPrioritiesLevel.IsVoid()) {
+            uint32 dims = individualThreadPrioritiesLevel.GetNumberOfDimensions();
+            bool ok = (dims == 2u);
+            if (!ok) {
+                REPORT_ERROR(ErrorManagement::ParametersError, "PrioritiesLevel must be a matrix.");
+            }
+            uint32 numberOfColumns = 0u;
+            uint32 numberOfRows = 0u;
+            if (ok) {
+                numberOfColumns = individualThreadPrioritiesLevel.GetNumberOfElements(0u);
+                numberOfRows = individualThreadPrioritiesLevel.GetNumberOfElements(1u);
+                ok = (numberOfColumns == 2u);
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "PrioritiesLevel must have two columns.");
+                }
+            }
+            Matrix<uint32> priorityLevelMat(numberOfRows, numberOfColumns);
+            if (ok) {
+                ok = data.Read("PrioritiesLevel", priorityLevelMat);
+            }
+            uint32 r;
+            for (r = 0u; (r < numberOfRows) && (ok); r++) {
+                uint32 priorityLevelIdx = priorityLevelMat[r][0];
+                uint32 priorityLevel = priorityLevelMat[r][1];
+                if (ok) {
+                    ok = (priorityLevelIdx < GetNumberOfPoolThreads());
+                }
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "priorityLevelIdx must be < GetNumberOfPoolThreads()");
+                }
+                if (ok) {
+                    SetPriorityLevelThreadPool(priorityLevel, priorityLevelIdx);
+                }
+            }
+            if (!ok) {
+                err.parametersError = true;
+            }
+        }
+    }
+    if (err.ErrorsCleared()) {
+        AnyType individualThreadCPUMask = data.GetType("CPUMasks");
+        if (!individualThreadCPUMask.IsVoid()) {
+            uint32 dims = individualThreadCPUMask.GetNumberOfDimensions();
+            bool ok = (dims == 2u);
+            if (!ok) {
+                REPORT_ERROR(ErrorManagement::ParametersError, "CPUMasks must be a matrix.");
+            }
+            uint32 numberOfColumns = 0u;
+            uint32 numberOfRows = 0u;
+            if (ok) {
+                numberOfColumns = individualThreadCPUMask.GetNumberOfElements(0u);
+                numberOfRows = individualThreadCPUMask.GetNumberOfElements(1u);
+                ok = (numberOfColumns == 2u);
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "CPUMasks must have two columns.");
+                }
+            }
+            Matrix<uint32> cpuMasksMat(numberOfRows, numberOfColumns);
+            if (ok) {
+                ok = data.Read("CPUMasks", cpuMasksMat);
+            }
+            uint32 r;
+            for (r = 0u; (r < numberOfRows) && (ok); r++) {
+                uint32 cpuMaskIdx = cpuMasksMat[r][0];
+                uint32 cpuMask = cpuMasksMat[r][1];
+                if (ok) {
+                    ok = (cpuMaskIdx < GetNumberOfPoolThreads());
+                }
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "cpuMaskIdx must be < GetNumberOfPoolThreads()");
+                }
+                if (ok) {
+                    SetCPUMaskThreadPool(cpuMask, cpuMaskIdx);
+                }
+            }
+            if (!ok) {
+                err.parametersError = true;
+            }
+        }
+    }
     return err;
 }
 
-ErrorManagement::ErrorType MultiThreadService::Start() {
+ErrorManagement::ErrorType MultiThreadService::CreateThreads() {
     ErrorManagement::ErrorType err;
     err.illegalOperation = (threadPool.Size() > 0u);
     bool errorsCleared = err.ErrorsCleared();
+    uint32 threadNumber = 0u;
     while ((threadPool.Size() < numberOfPoolThreads) && (errorsCleared)) {
-        ReferenceT<EmbeddedThread> thread(new (NULL) EmbeddedThread(method));
+        ReferenceT<EmbeddedThread> thread(new (NULL) EmbeddedThread(method, threadNumber));
         err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
             thread->SetPriorityClass(GetPriorityClass());
             thread->SetPriorityLevel(GetPriorityLevel());
             thread->SetCPUMask(GetCPUMask());
             thread->SetTimeout(GetTimeout());
-            err = thread->Start();
         }
         if (err.ErrorsCleared()) {
             err.fatalError = !threadPool.Insert(thread);
         }
+        threadNumber++;
         errorsCleared = err.ErrorsCleared();
+    }
+    return err;
+}
+
+ErrorManagement::ErrorType MultiThreadService::Start() {
+    bool allStop = true;
+    uint32 i;
+    ErrorManagement::ErrorType err;
+    if (threadPool.Size() == 0u) {
+        err = CreateThreads();
+    }
+    else {
+        if (err.ErrorsCleared()) {
+            for (i = 0u; (i < threadPool.Size()) && (allStop); i++) {
+                allStop = (GetStatus(i) == EmbeddedThreadI::OffState);
+            }
+        }
+    }
+    if (allStop) {
+        bool ok = err.ErrorsCleared();
+        for (i = 0u; (i < threadPool.Size()) && (ok); i++) {
+            ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
+            if (thread.IsValid()) {
+                err = thread->Start();
+            }
+            else {
+                err.fatalError = true;
+            }
+            ok = err.ErrorsCleared();
+        }
+    }
+    else {
+        err.illegalOperation = true;
+        REPORT_ERROR(ErrorManagement::IllegalOperation, "Service must be stopped before starting.");
     }
     return err;
 }
@@ -99,14 +277,16 @@ ErrorManagement::ErrorType MultiThreadService::Stop() {
     for (i = 0u; i < threadPool.Size(); i++) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
         if (thread.IsValid()) {
-            err = thread->Stop();
-            if (!err.ErrorsCleared()) {
-                uint32 threadNumber = i;
-                REPORT_ERROR_PARAMETERS(err, "Could not Stop EmbeddedThreadI(%d)", threadNumber)
+            if (thread->GetStatus() != EmbeddedThreadI::OffState) {
+                err = thread->Stop();
+                if (!err.ErrorsCleared()) {
+                    uint32 threadNumber = i;
+                    REPORT_ERROR_PARAMETERS(err, "Could not Stop EmbeddedThreadI(%d)", threadNumber)
+                }
             }
         }
     }
-    // perform kill if necessary
+// perform kill if necessary
     for (i = 0u; i < threadPool.Size(); i++) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
         if (thread.IsValid()) {
@@ -122,7 +302,7 @@ ErrorManagement::ErrorType MultiThreadService::Stop() {
             }
         }
     }
-    // remove dead threads
+// remove dead threads
     threadPool.CleanUp();
     if (err.ErrorsCleared()) {
         // some service died hard
@@ -174,7 +354,7 @@ void MultiThreadService::SetPriorityClass(const Threads::PriorityClassType prior
     }
     if (allStop) {
         EmbeddedServiceI::SetPriorityClass(priorityClassIn);
-        for (i = 0u; (i < threadPool.Size()) && (allStop); i++) {
+        for (i = 0u; i < threadPool.Size(); i++) {
             ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
             if (thread.IsValid()) {
                 thread->SetPriorityClass(priorityClassIn);
@@ -194,7 +374,7 @@ void MultiThreadService::SetPriorityLevel(const uint8 priorityLevelIn) {
     }
     if (allStop) {
         EmbeddedServiceI::SetPriorityLevel(priorityLevelIn);
-        for (i = 0u; (i < threadPool.Size()) && (allStop); i++) {
+        for (i = 0u; i < threadPool.Size(); i++) {
             ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
             if (thread.IsValid()) {
                 thread->SetPriorityLevel(priorityLevelIn);
@@ -214,7 +394,7 @@ void MultiThreadService::SetCPUMask(const ProcessorType& cpuMaskIn) {
     }
     if (allStop) {
         EmbeddedServiceI::SetCPUMask(cpuMaskIn);
-        for (i = 0u; (i < threadPool.Size()) && (allStop); i++) {
+        for (i = 0u; i < threadPool.Size(); i++) {
             ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
             if (thread.IsValid()) {
                 thread->SetCPUMask(cpuMaskIn);
@@ -226,4 +406,78 @@ void MultiThreadService::SetCPUMask(const ProcessorType& cpuMaskIn) {
     }
 }
 
+Threads::PriorityClassType MultiThreadService::GetPriorityClassThreadPool(const uint32 threadIdx) {
+    Threads::PriorityClassType priorityClass = Threads::UnknownPriorityClass;
+    if (threadIdx < threadPool.Size()) {
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
+        if (thread.IsValid()) {
+            priorityClass = thread->GetPriorityClass();
+        }
+    }
+    return priorityClass;
 }
+
+uint8 MultiThreadService::GetPriorityLevelThreadPool(const uint32 threadIdx) {
+    uint8 priorityLevel = 0u;
+    if (threadIdx < threadPool.Size()) {
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
+        if (thread.IsValid()) {
+            priorityLevel = thread->GetPriorityLevel();
+        }
+    }
+    return priorityLevel;
+}
+
+ProcessorType MultiThreadService::GetCPUMaskThreadPool(const uint32 threadIdx) {
+    ProcessorType cpuMask = UndefinedCPUs;
+    if (threadIdx < threadPool.Size()) {
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
+        if (thread.IsValid()) {
+            cpuMask = thread->GetCPUMask();
+        }
+    }
+    return cpuMask;
+}
+
+void MultiThreadService::SetPriorityClassThreadPool(const Threads::PriorityClassType priorityClassIn,
+                                                    const uint32 threadIdx) {
+
+    if (GetStatus(threadIdx) == EmbeddedThreadI::OffState) {
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
+        if (thread.IsValid()) {
+            thread->SetPriorityClass(priorityClassIn);
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Priority class cannot be changed if the service is running");
+    }
+}
+
+void MultiThreadService::SetPriorityLevelThreadPool(const uint8 priorityLevelIn,
+                                                    const uint32 threadIdx) {
+    if (GetStatus(threadIdx) == EmbeddedThreadI::OffState) {
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
+        if (thread.IsValid()) {
+            thread->SetPriorityLevel(priorityLevelIn);
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Priority level cannot be changed if the service is running");
+    }
+}
+
+void MultiThreadService::SetCPUMaskThreadPool(const ProcessorType& cpuMaskIn,
+                                              const uint32 threadIdx) {
+    if (GetStatus(threadIdx) == EmbeddedThreadI::OffState) {
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
+        if (thread.IsValid()) {
+            thread->SetCPUMask(cpuMaskIn);
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "CPUMask cannot be changed if the service is running");
+    }
+}
+
+}
+

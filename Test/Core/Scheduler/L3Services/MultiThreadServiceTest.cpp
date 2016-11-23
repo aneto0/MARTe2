@@ -42,47 +42,25 @@ public:
         internalStateThread0 = 0u;
         internalStateThread1 = 0u;
         internalStateThread2 = 0u;
-        thread0Id = 0u;
-        thread1Id = 0u;
-        thread2Id = 0u;
     }
 
     MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
-        if (thread0Id == 0u) {
-            thread0Id = information.GetThreadNumber();
-        }
-        if (thread1Id == 0u) {
-            if (thread0Id != information.GetThreadNumber()) {
-                if (thread2Id != information.GetThreadNumber()) {
-                    thread1Id = information.GetThreadNumber();
-                }
-            }
-        }
-        if (thread2Id == 0u) {
-            if (thread0Id != information.GetThreadNumber()) {
-                if (thread1Id != information.GetThreadNumber()) {
-                    thread2Id = information.GetThreadNumber();
-                }
-            }
-        }
-        if (information.GetThreadNumber() == thread0Id) {
+        if (information.GetThreadNumber() == 0u) {
             internalStateThread0++;
         }
-        if (information.GetThreadNumber() == thread1Id) {
+        else if (information.GetThreadNumber() == 1u) {
             internalStateThread1++;
         }
-        if (information.GetThreadNumber() == thread2Id) {
+        else if (information.GetThreadNumber() == 2u) {
             internalStateThread2++;
         }
+
         return MARTe::ErrorManagement::NoError;
     }
 
     MARTe::uint32 internalStateThread0;
     MARTe::uint32 internalStateThread1;
     MARTe::uint32 internalStateThread2;
-    MARTe::ThreadIdentifier thread0Id;
-    MARTe::ThreadIdentifier thread1Id;
-    MARTe::ThreadIdentifier thread2Id;
 };
 
 class MultiThreadServiceTestCallbackClassToKill {
@@ -93,9 +71,7 @@ public:
 
     MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
         if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
-            if (information.GetThreadNumber() > internalState) {
-                internalState++;
-            }
+            internalState++;
             while (1) {
                 MARTe::Sleep::Sec(1.0);
             }
@@ -151,6 +127,7 @@ bool MultiThreadServiceTest::TestInitialise() {
     config.Write("NumberOfPoolThreads", 20);
     bool ok = multiThreadService.Initialise(config);
     ok &= (multiThreadService.GetNumberOfPoolThreads() == 20);
+    multiThreadService.Stop();
 
     ConfigurationDatabase config2;
     config2.Write("Timeout", 20);
@@ -164,10 +141,48 @@ bool MultiThreadServiceTest::TestInitialise() {
     ok &= (multiThreadService.GetPriorityClass() == Threads::RealTimePriorityClass);
     ok &= (multiThreadService.GetPriorityLevel() == 1);
     ok &= (multiThreadService.GetCPUMask() == 0x3);
+    multiThreadService.Stop();
+
+    ConfigurationDatabase config3;
+    config3.Write("Timeout", 20);
+    config3.Write("NumberOfPoolThreads", 10);
+    config3.Write("PriorityLevel", 5);
+    config3.Write("CPUMask", 0x3);
+    config3.Write("PriorityClass", "RealTimePriorityClass");
+
+    uint32 prioritiesLevel[3][2] = { { 0, 10 }, { 1, 9 }, { 9, 1 } };
+    config3.Write("PrioritiesLevel", prioritiesLevel);
+
+    const char8 * prioritiesClass[3][2] = { { "0", "NormalPriorityClass" }, { "1", "IdlePriorityClass" }, { "9", "NormalPriorityClass" } };
+    config3.Write("PrioritiesClass", prioritiesClass);
+
+    uint32 cpuMasks[3][2] = { { 0, 0x8 }, { 1, 0x4 }, { 9, 0x2 } };
+    config3.Write("CPUMasks", cpuMasks);
+
+    ok &= multiThreadService.Initialise(config3);
+    ok &= (multiThreadService.GetTimeout() == 20);
+    ok &= (multiThreadService.GetNumberOfPoolThreads() == 10);
+    ok &= (multiThreadService.GetPriorityClass() == Threads::RealTimePriorityClass);
+    ok &= (multiThreadService.GetPriorityLevel() == 5);
+    ok &= (multiThreadService.GetCPUMask() == 0x3);
+
+    ok &= (multiThreadService.GetPriorityClassThreadPool(0) == Threads::NormalPriorityClass);
+    ok &= (multiThreadService.GetPriorityClassThreadPool(1) == Threads::IdlePriorityClass);
+    ok &= (multiThreadService.GetPriorityClassThreadPool(9) == Threads::NormalPriorityClass);
+
+    ok &= (multiThreadService.GetPriorityLevelThreadPool(0) == 10);
+    ok &= (multiThreadService.GetPriorityLevelThreadPool(1) == 9);
+    ok &= (multiThreadService.GetPriorityLevelThreadPool(9) == 1);
+
+    ok &= (multiThreadService.GetCPUMaskThreadPool(0) == 0x8);
+    ok &= (multiThreadService.GetCPUMaskThreadPool(1) == 0x4);
+    ok &= (multiThreadService.GetCPUMaskThreadPool(9) == 0x2);
+    multiThreadService.Stop();
+
     return ok;
 }
 
-bool MultiThreadServiceTest::TestInitialise_False() {
+bool MultiThreadServiceTest::TestInitialise_False_Timeout() {
     using namespace MARTe;
     MultiThreadServiceTestCallbackClass callbackClass;
     EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
@@ -188,6 +203,276 @@ bool MultiThreadServiceTest::TestInitialise_False() {
     config3.Write("NumberOfPoolThread", 20);
     ok &= !embeddedThread.Initialise(config3);
 
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestInitialise_False_PrioritiesClass_NotMatrix() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService multiThreadService(binder);
+
+    ConfigurationDatabase config;
+    config.Write("Timeout", 10);
+    config.Write("NumberOfPoolThreads", 10);
+    config.Write("PriorityLevel", 5);
+    config.Write("CPUMask", 0x3);
+    config.Write("PriorityClass", "RealTimePriorityClass");
+
+    const char8 * prioritiesClass[3] = { "NormalPriorityClass", "IdlePriorityClass", "NormalPriorityClass" };
+    config.Write("PrioritiesClass", prioritiesClass);
+
+    uint32 prioritiesLevel[3][2] = { { 0, 10 }, { 1, 9 }, { 9, 1 } };
+    config.Write("PrioritiesLevel", prioritiesLevel);
+
+    uint32 cpuMasks[3][2] = { { 0, 0x8 }, { 1, 0x4 }, { 9, 0x2 } };
+    config.Write("CPUMasks", cpuMasks);
+
+    bool ok = !multiThreadService.Initialise(config);
+    multiThreadService.Stop();
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestInitialise_False_PrioritiesClass_Columns() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService multiThreadService(binder);
+
+    ConfigurationDatabase config;
+    config.Write("Timeout", 10);
+    config.Write("NumberOfPoolThreads", 10);
+    config.Write("PriorityLevel", 5);
+    config.Write("CPUMask", 0x3);
+    config.Write("PriorityClass", "RealTimePriorityClass");
+
+    const char8 * prioritiesClass[3][3] = { { "0", "NormalPriorityClass", "A" }, { "1", "IdlePriorityClass", "B" }, { "9", "NormalPriorityClass", "C" } };
+    config.Write("PrioritiesClass", prioritiesClass);
+
+    uint32 prioritiesLevel[3][2] = { { 0, 10 }, { 1, 9 }, { 9, 1 } };
+    config.Write("PrioritiesLevel", prioritiesLevel);
+
+    uint32 cpuMasks[3][2] = { { 0, 0x8 }, { 1, 0x4 }, { 9, 0x2 } };
+    config.Write("CPUMasks", cpuMasks);
+
+    bool ok = !multiThreadService.Initialise(config);
+    multiThreadService.Stop();
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestInitialise_False_PrioritiesClass_OutOfRangeIndex() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService multiThreadService(binder);
+
+    ConfigurationDatabase config;
+    config.Write("Timeout", 10);
+    config.Write("NumberOfPoolThreads", 10);
+    config.Write("PriorityLevel", 5);
+    config.Write("CPUMask", 0x3);
+    config.Write("PriorityClass", "RealTimePriorityClass");
+
+    const char8 * prioritiesClass[3][2] = { { "0", "NormalPriorityClass" }, { "1", "IdlePriorityClass" }, { "10", "NormalPriorityClass" } };
+    config.Write("PrioritiesClass", prioritiesClass);
+
+    uint32 prioritiesLevel[3][2] = { { 0, 10 }, { 1, 9 }, { 9, 1 } };
+    config.Write("PrioritiesLevel", prioritiesLevel);
+
+    uint32 cpuMasks[3][2] = { { 0, 0x8 }, { 1, 0x4 }, { 9, 0x2 } };
+    config.Write("CPUMasks", cpuMasks);
+
+    bool ok = !multiThreadService.Initialise(config);
+    multiThreadService.Stop();
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestInitialise_False_PrioritiesClass_TypeConvert() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService multiThreadService(binder);
+
+    ConfigurationDatabase config;
+    config.Write("Timeout", 10);
+    config.Write("NumberOfPoolThreads", 10);
+    config.Write("PriorityLevel", 5);
+    config.Write("CPUMask", 0x3);
+    config.Write("PriorityClass", "RealTimePriorityClass");
+
+    const char8 * prioritiesClass[3][2] = { { "zxcf", "NormalPriorityClass" }, { "1", "IdlePriorityClass" }, { "9", "NormalPriorityClass" } };
+    config.Write("PrioritiesClass", prioritiesClass);
+
+    uint32 prioritiesLevel[3][2] = { { 0, 10 }, { 1, 9 }, { 9, 1 } };
+    config.Write("PrioritiesLevel", prioritiesLevel);
+
+    uint32 cpuMasks[3][2] = { { 0, 0x8 }, { 1, 0x4 }, { 9, 0x2 } };
+    config.Write("CPUMasks", cpuMasks);
+
+    bool ok = !multiThreadService.Initialise(config);
+    multiThreadService.Stop();
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestInitialise_False_PrioritiesLevel_NotMatrix() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService multiThreadService(binder);
+
+    ConfigurationDatabase config;
+    config.Write("Timeout", 10);
+    config.Write("NumberOfPoolThreads", 10);
+    config.Write("PriorityLevel", 5);
+    config.Write("CPUMask", 0x3);
+    config.Write("PriorityClass", "RealTimePriorityClass");
+
+    const char8 * prioritiesClass[3][2] = { { "0", "NormalPriorityClass" }, { "1", "IdlePriorityClass" }, { "9", "NormalPriorityClass" } };
+    config.Write("PrioritiesClass", prioritiesClass);
+
+    uint32 prioritiesLevel[3] = { 0, 10, 1 };
+    config.Write("PrioritiesLevel", prioritiesLevel);
+
+    uint32 cpuMasks[3][2] = { { 0, 0x8 }, { 1, 0x4 }, { 9, 0x2 } };
+    config.Write("CPUMasks", cpuMasks);
+
+    bool ok = !multiThreadService.Initialise(config);
+    multiThreadService.Stop();
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestInitialise_False_PrioritiesLevel_Columns() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService multiThreadService(binder);
+
+    ConfigurationDatabase config;
+    config.Write("Timeout", 10);
+    config.Write("NumberOfPoolThreads", 10);
+    config.Write("PriorityLevel", 5);
+    config.Write("CPUMask", 0x3);
+    config.Write("PriorityClass", "RealTimePriorityClass");
+
+    const char8 * prioritiesClass[3][2] = { { "0", "NormalPriorityClass" }, { "1", "IdlePriorityClass" }, { "9", "NormalPriorityClass" } };
+    config.Write("PrioritiesClass", prioritiesClass);
+
+    uint32 prioritiesLevel[3][3] = { { 0, 10, 11 }, { 1, 9, 12 }, { 9, 1, 13 } };
+    config.Write("PrioritiesLevel", prioritiesLevel);
+
+    uint32 cpuMasks[3][2] = { { 0, 0x8 }, { 1, 0x4 }, { 9, 0x2 } };
+    config.Write("CPUMasks", cpuMasks);
+
+    bool ok = !multiThreadService.Initialise(config);
+    multiThreadService.Stop();
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestInitialise_False_PrioritiesLevel_OutOfRangeIndex() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService multiThreadService(binder);
+
+    ConfigurationDatabase config;
+    config.Write("Timeout", 10);
+    config.Write("NumberOfPoolThreads", 10);
+    config.Write("PriorityLevel", 5);
+    config.Write("CPUMask", 0x3);
+    config.Write("PriorityClass", "RealTimePriorityClass");
+
+    const char8 * prioritiesClass[3][2] = { { "0", "NormalPriorityClass" }, { "1", "IdlePriorityClass" }, { "9", "NormalPriorityClass" } };
+    config.Write("PrioritiesClass", prioritiesClass);
+
+    uint32 prioritiesLevel[3][2] = { { 0, 10 }, { 1, 9 }, { 10, 1 } };
+    config.Write("PrioritiesLevel", prioritiesLevel);
+
+    uint32 cpuMasks[3][2] = { { 0, 0x8 }, { 1, 0x4 }, { 9, 0x2 } };
+    config.Write("CPUMasks", cpuMasks);
+
+    bool ok = !multiThreadService.Initialise(config);
+    multiThreadService.Stop();
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestInitialise_False_CPUMasks_NotMatrix() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService multiThreadService(binder);
+
+    ConfigurationDatabase config;
+    config.Write("Timeout", 10);
+    config.Write("NumberOfPoolThreads", 10);
+    config.Write("PriorityLevel", 5);
+    config.Write("CPUMask", 0x3);
+    config.Write("PriorityClass", "RealTimePriorityClass");
+
+    const char8 * prioritiesClass[3][2] = { { "0", "NormalPriorityClass" }, { "1", "IdlePriorityClass" }, { "9", "NormalPriorityClass" } };
+    config.Write("PrioritiesClass", prioritiesClass);
+
+    uint32 prioritiesLevel[3][2] = { { 0, 10 }, { 1, 9 }, { 9, 1 } };
+    config.Write("PrioritiesLevel", prioritiesLevel);
+
+    uint32 cpuMasks[3] = { 0, 0x8, 1 };
+    config.Write("CPUMasks", cpuMasks);
+
+    bool ok = !multiThreadService.Initialise(config);
+    multiThreadService.Stop();
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestInitialise_False_CPUMasks_Columns() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService multiThreadService(binder);
+
+    ConfigurationDatabase config;
+    config.Write("Timeout", 10);
+    config.Write("NumberOfPoolThreads", 10);
+    config.Write("PriorityLevel", 5);
+    config.Write("CPUMask", 0x3);
+    config.Write("PriorityClass", "RealTimePriorityClass");
+
+    const char8 * prioritiesClass[3][2] = { { "0", "NormalPriorityClass" }, { "1", "IdlePriorityClass" }, { "9", "NormalPriorityClass" } };
+    config.Write("PrioritiesClass", prioritiesClass);
+
+    uint32 prioritiesLevel[3][2] = { { 0, 10 }, { 1, 9 }, { 9, 1 } };
+    config.Write("PrioritiesLevel", prioritiesLevel);
+
+    uint32 cpuMasks[3][3] = { { 0, 0x8, 1 }, { 1, 0x4, 2 }, { 9, 0x2, 3 } };
+    config.Write("CPUMasks", cpuMasks);
+
+    bool ok = !multiThreadService.Initialise(config);
+    multiThreadService.Stop();
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestInitialise_False_CPUMasks_OutOfRangeIndex() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService multiThreadService(binder);
+
+    ConfigurationDatabase config;
+    config.Write("Timeout", 10);
+    config.Write("NumberOfPoolThreads", 10);
+    config.Write("PriorityLevel", 5);
+    config.Write("CPUMask", 0x3);
+    config.Write("PriorityClass", "RealTimePriorityClass");
+
+    const char8 * prioritiesClass[3][2] = { { "0", "NormalPriorityClass" }, { "1", "IdlePriorityClass" }, { "9", "NormalPriorityClass" } };
+    config.Write("PrioritiesClass", prioritiesClass);
+
+    uint32 prioritiesLevel[3][2] = { { 0, 10 }, { 1, 9 }, { 9, 1 } };
+    config.Write("PrioritiesLevel", prioritiesLevel);
+
+    uint32 cpuMasks[3][2] = { { 0, 0x8 }, { 1, 0x4 }, { 10, 0x2 } };
+    config.Write("CPUMasks", cpuMasks);
+
+    bool ok = !multiThreadService.Initialise(config);
+    multiThreadService.Stop();
     return ok;
 }
 
@@ -288,6 +573,45 @@ bool MultiThreadServiceTest::TestStart_Restart() {
     ok &= (embeddedThread.GetStatus(1) == EmbeddedThreadI::RunningState);
     ok &= (embeddedThread.GetStatus(2) == EmbeddedThreadI::RunningState);
     embeddedThread.Stop();
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestCreateThreads() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService multiThreadService(binder);
+    multiThreadService.SetNumberOfPoolThreads(3);
+
+    bool ok = multiThreadService.CreateThreads();
+    multiThreadService.Stop();
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestCreateThreads_False() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService multiThreadService(binder);
+    multiThreadService.SetNumberOfPoolThreads(3);
+
+    bool ok = multiThreadService.CreateThreads();
+    ok &= (multiThreadService.CreateThreads() == ErrorManagement::IllegalOperation);
+    multiThreadService.Stop();
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestCreateThreads_Restart() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService multiThreadService(binder);
+    multiThreadService.SetNumberOfPoolThreads(3);
+
+    bool ok = multiThreadService.CreateThreads();
+    multiThreadService.Stop();
+    ok &= (multiThreadService.CreateThreads() == ErrorManagement::NoError);
+    multiThreadService.Stop();
     return ok;
 }
 
@@ -562,3 +886,215 @@ bool MultiThreadServiceTest::TestSetCPUMask_Start() {
     return ok;
 }
 
+bool MultiThreadServiceTest::TestSetPriorityClassThreadPool() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService embeddedThread(binder);
+    embeddedThread.SetNumberOfPoolThreads(10);
+    embeddedThread.CreateThreads();
+    bool ok = true;
+    uint32 i;
+    for (i = 0; i < 10; i++) {
+        ok &= (embeddedThread.GetPriorityClassThreadPool(i) == Threads::NormalPriorityClass);
+    }
+    embeddedThread.SetPriorityClassThreadPool(Threads::RealTimePriorityClass, 0);
+    embeddedThread.SetPriorityClassThreadPool(Threads::RealTimePriorityClass, 9);
+    for (i = 1; i < 9; i++) {
+        ok &= (embeddedThread.GetPriorityClassThreadPool(i) == Threads::NormalPriorityClass);
+    }
+    ok &= (embeddedThread.GetPriorityClassThreadPool(0) == Threads::RealTimePriorityClass);
+    ok &= (embeddedThread.GetPriorityClassThreadPool(9) == Threads::RealTimePriorityClass);
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestSetPriorityLevelThreadPool() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService embeddedThread(binder);
+    embeddedThread.SetNumberOfPoolThreads(10);
+    embeddedThread.CreateThreads();
+    bool ok = true;
+    uint32 i;
+    for (i = 0; i < 10; i++) {
+        ok &= (embeddedThread.GetPriorityLevelThreadPool(i) == 0);
+    }
+    embeddedThread.SetPriorityLevelThreadPool(5, 0);
+    embeddedThread.SetPriorityLevelThreadPool(8, 9);
+    for (i = 1; i < 9; i++) {
+        ok &= (embeddedThread.GetPriorityLevelThreadPool(i) == 0);
+    }
+    ok &= (embeddedThread.GetPriorityLevelThreadPool(0) == 5);
+    ok &= (embeddedThread.GetPriorityLevelThreadPool(9) == 8);
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestSetCPUMaskThreadPool() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService embeddedThread(binder);
+    embeddedThread.SetNumberOfPoolThreads(10);
+    embeddedThread.CreateThreads();
+    bool ok = true;
+    uint32 i;
+    for (i = 0; i < 10; i++) {
+        ok &= (embeddedThread.GetCPUMaskThreadPool(i) == UndefinedCPUs);
+    }
+    embeddedThread.SetCPUMaskThreadPool(0x4, 0);
+    embeddedThread.SetCPUMaskThreadPool(0x8, 9);
+    for (i = 1; i < 9; i++) {
+        ok &= (embeddedThread.GetCPUMaskThreadPool(i) == UndefinedCPUs);
+    }
+    ok &= (embeddedThread.GetCPUMaskThreadPool(0) == 0x4);
+    ok &= (embeddedThread.GetCPUMaskThreadPool(9) == 0x8);
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestGetPriorityClassThreadPool() {
+    return TestSetPriorityClassThreadPool();
+}
+
+bool MultiThreadServiceTest::TestGetPriorityLevelThreadPool() {
+    return TestSetPriorityLevelThreadPool();
+}
+
+bool MultiThreadServiceTest::TestGetCPUMaskThreadPool() {
+    return TestSetCPUMaskThreadPool();
+}
+
+bool MultiThreadServiceTest::TestGetPriorityClassThreadPool_OutOfIndex() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService embeddedThread(binder);
+    return (embeddedThread.GetPriorityClassThreadPool(1) == Threads::UnknownPriorityClass);
+}
+
+bool MultiThreadServiceTest::TestGetPriorityLevelThreadPool_OutOfIndex() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService embeddedThread(binder);
+    return (embeddedThread.GetPriorityLevelThreadPool(1) == 0);
+}
+
+bool MultiThreadServiceTest::TestGetCPUMaskThreadPool_OutOfIndex() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService embeddedThread(binder);
+    return (embeddedThread.GetCPUMaskThreadPool(1) == UndefinedCPUs);
+}
+
+bool MultiThreadServiceTest::TestSetPriorityLevelThreadPool_Start() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService service(binder);
+    service.SetNumberOfPoolThreads(3);
+    bool ok = (service.GetStatus(0) == EmbeddedThreadI::OffState);
+    ok &= (service.GetStatus(1) == EmbeddedThreadI::OffState);
+    ok &= (service.GetStatus(2) == EmbeddedThreadI::OffState);
+
+    ErrorManagement::ErrorType err = service.Start();
+    ok = (err == ErrorManagement::NoError);
+    uint32 maxCounter = 10;
+    while (((service.GetStatus(0) != EmbeddedThreadI::RunningState) || (service.GetStatus(1) != EmbeddedThreadI::RunningState)
+            || (service.GetStatus(2) != EmbeddedThreadI::RunningState)) && (maxCounter > 0)) {
+        maxCounter--;
+        Sleep::Sec(1);
+    }
+    ok &= (service.GetStatus(0) == EmbeddedThreadI::RunningState);
+    ok &= (service.GetStatus(1) == EmbeddedThreadI::RunningState);
+    ok &= (service.GetStatus(2) == EmbeddedThreadI::RunningState);
+    ok &= (service.GetPriorityLevelThreadPool(1) == 0);
+    service.SetPriorityLevelThreadPool(10, 1);
+    ok &= (service.GetPriorityLevelThreadPool(1) == 0);
+    service.Stop();
+    maxCounter = 10;
+    while (((service.GetStatus(0) != EmbeddedThreadI::OffState) || (service.GetStatus(1) != EmbeddedThreadI::OffState)
+            || (service.GetStatus(2) != EmbeddedThreadI::OffState)) && (maxCounter > 0)) {
+        maxCounter--;
+        Sleep::Sec(1);
+    }
+    service.CreateThreads();
+    service.SetPriorityLevelThreadPool(10, 1);
+    ok &= (service.GetPriorityLevelThreadPool(1) == 10);
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestSetPriorityClassThreadPool_Start() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService service(binder);
+    service.SetNumberOfPoolThreads(3);
+    bool ok = (service.GetStatus(0) == EmbeddedThreadI::OffState);
+    ok &= (service.GetStatus(1) == EmbeddedThreadI::OffState);
+    ok &= (service.GetStatus(2) == EmbeddedThreadI::OffState);
+
+    ErrorManagement::ErrorType err = service.Start();
+    ok = (err == ErrorManagement::NoError);
+    uint32 maxCounter = 10;
+    while (((service.GetStatus(0) != EmbeddedThreadI::RunningState) || (service.GetStatus(1) != EmbeddedThreadI::RunningState)
+            || (service.GetStatus(2) != EmbeddedThreadI::RunningState)) && (maxCounter > 0)) {
+        maxCounter--;
+        Sleep::Sec(1);
+    }
+    ok &= (service.GetStatus(0) == EmbeddedThreadI::RunningState);
+    ok &= (service.GetStatus(1) == EmbeddedThreadI::RunningState);
+    ok &= (service.GetStatus(2) == EmbeddedThreadI::RunningState);
+    ok &= (service.GetPriorityClassThreadPool(1) == Threads::NormalPriorityClass);
+    service.SetPriorityClassThreadPool(Threads::RealTimePriorityClass, 1);
+    ok &= (service.GetPriorityClassThreadPool(1) == Threads::NormalPriorityClass);
+    service.Stop();
+    maxCounter = 10;
+    while (((service.GetStatus(0) != EmbeddedThreadI::OffState) || (service.GetStatus(1) != EmbeddedThreadI::OffState)
+            || (service.GetStatus(2) != EmbeddedThreadI::OffState)) && (maxCounter > 0)) {
+        maxCounter--;
+        Sleep::Sec(1);
+    }
+    service.CreateThreads();
+    service.SetPriorityClassThreadPool(Threads::RealTimePriorityClass, 1);
+    ok &= (service.GetPriorityClassThreadPool(1) == Threads::RealTimePriorityClass);
+    return ok;
+}
+
+bool MultiThreadServiceTest::TestSetCPUMaskThreadPool_Start() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService service(binder);
+    service.SetNumberOfPoolThreads(3);
+    bool ok = (service.GetStatus(0) == EmbeddedThreadI::OffState);
+    ok &= (service.GetStatus(1) == EmbeddedThreadI::OffState);
+    ok &= (service.GetStatus(2) == EmbeddedThreadI::OffState);
+
+    ErrorManagement::ErrorType err = service.Start();
+    ok = (err == ErrorManagement::NoError);
+    uint32 maxCounter = 10;
+    while (((service.GetStatus(0) != EmbeddedThreadI::RunningState) || (service.GetStatus(1) != EmbeddedThreadI::RunningState)
+            || (service.GetStatus(2) != EmbeddedThreadI::RunningState)) && (maxCounter > 0)) {
+        maxCounter--;
+        Sleep::Sec(1);
+    }
+    ok &= (service.GetStatus(0) == EmbeddedThreadI::RunningState);
+    ok &= (service.GetStatus(1) == EmbeddedThreadI::RunningState);
+    ok &= (service.GetStatus(2) == EmbeddedThreadI::RunningState);
+    ok &= (service.GetCPUMaskThreadPool(1) == UndefinedCPUs);
+    service.SetCPUMaskThreadPool(Threads::RealTimePriorityClass, 0xe);
+    ok &= (service.GetCPUMaskThreadPool(1) == UndefinedCPUs);
+    service.Stop();
+    maxCounter = 10;
+    while (((service.GetStatus(0) != EmbeddedThreadI::OffState) || (service.GetStatus(1) != EmbeddedThreadI::OffState)
+            || (service.GetStatus(2) != EmbeddedThreadI::OffState)) && (maxCounter > 0)) {
+        maxCounter--;
+        Sleep::Sec(1);
+    }
+    service.CreateThreads();
+    service.SetCPUMaskThreadPool(0xe, 1);
+    ok &= (service.GetCPUMaskThreadPool(1) == 0xe);
+    return ok;
+}

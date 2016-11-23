@@ -109,12 +109,12 @@ public:
     /**
      * @brief Tests if the function launches the scheduler execution
      */
-    bool TestStartExecution();
+    bool TestStartNextStateExecution();
 
     /**
      * @brief Tests if the function stops the scheduler execution
      */
-    bool TestStopExecution();
+    bool TestStopCurrentStateExecution();
 
     /**
      * @brief Tests the GetStates method.

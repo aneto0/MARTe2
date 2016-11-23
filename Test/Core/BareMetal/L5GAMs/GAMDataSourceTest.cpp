@@ -70,9 +70,9 @@ public:
 
 GAMDataSourceTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
     virtual void CustomPrepareNextState();
 
 };
@@ -82,12 +82,12 @@ GAMDataSourceTestScheduler1::GAMDataSourceTestScheduler1() :
 
 }
 
-void GAMDataSourceTestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType  GAMDataSourceTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void GAMDataSourceTestScheduler1::StopExecution() {
-
+MARTe::ErrorManagement::ErrorType  GAMDataSourceTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 

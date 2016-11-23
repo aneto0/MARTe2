@@ -44,9 +44,9 @@ public:
 
 DummyScheduler    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StopCurrentStateExecution();
 
     void ExecuteThreadCycle(uint32 threadId);
 
@@ -63,7 +63,8 @@ DummyScheduler::DummyScheduler() :
         GAMSchedulerI() {
     scheduledStates = NULL_PTR(ScheduledState * const *);
 }
-void DummyScheduler::StartExecution() {
+MARTe::ErrorManagement::ErrorType  DummyScheduler::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 bool DummyScheduler::ConfigureScheduler() {
@@ -80,7 +81,8 @@ void DummyScheduler::ExecuteThreadCycle(uint32 threadId) {
                        scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
 
 }
-void DummyScheduler::StopExecution() {
+MARTe::ErrorManagement::ErrorType DummyScheduler::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 void DummyScheduler::CustomPrepareNextState(){
@@ -564,7 +566,7 @@ bool GAMSchedulerITest::TestPrepareNextState() {
     ReferenceT<GAM1> gamf = app->Find("Functions.GAMF");
     ReferenceT<GAM1> gamg = app->Find("Functions.GAMG");
     ReferenceT<GAM1> gamh = app->Find("Functions.GAMH");
-    app->StartExecution();
+    app->StartNextStateExecution();
 
     scheduler->ExecuteThreadCycle(0);
 
@@ -581,7 +583,7 @@ bool GAMSchedulerITest::TestPrepareNextState() {
         printf("\nFailed pns\n");
         return false;
     }
-    app->StartExecution();
+    app->StartNextStateExecution();
 
     scheduler->ExecuteThreadCycle(0);
 

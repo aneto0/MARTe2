@@ -310,21 +310,17 @@ bool GAMSchedulerTest::TestConstructor() {
     return true;
 }
 
-
-uint32 done=0;
+uint32 done = 0;
 void PrepareNext(RealTimeApplication &app) {
-
     // the start execution is inside the prepare next state
-    if(!app.PrepareNextState("State2")){
-        printf("\n!!!\n");
+    if (!app.PrepareNextState("State2")) {
+        printf("\nFailed @ app.PrepareNextState!!!\n");
     }
-    app.StopExecution();
-    done=1;
+    app.StopCurrentStateExecution();
+    done = 1;
 }
 
-
-
-bool GAMSchedulerTest::TestStartExecution() {
+bool GAMSchedulerTest::TestStartNextStateExecution() {
     if (!Init()) {
         return false;
     }
@@ -341,18 +337,19 @@ bool GAMSchedulerTest::TestStartExecution() {
 
     ReferenceT<GAMScheduler> sched = app->Find("Scheduler");
 
-    app->StartExecution();
-
+    app->StartNextStateExecution();
 
     Sleep::Sec(1.0);
-    done=0;
+    done = 0;
     Threads::BeginThread((ThreadFunctionType) PrepareNext, app.operator ->());
 
-    while(!done);
-    app->StartExecution();
+    while (!done) {
+        Sleep::MSec(10);
+    }
+    app->StartNextStateExecution();
     Sleep::Sec(1.0);
 
-    app->StopExecution();
+    app->StopCurrentStateExecution();
 
     while (Threads::NumberOfThreads() > 0) {
         Sleep::MSec(10);
@@ -361,6 +358,6 @@ bool GAMSchedulerTest::TestStartExecution() {
     return true;
 }
 
-bool GAMSchedulerTest::TestStopExecution() {
-    return TestStartExecution();
+bool GAMSchedulerTest::TestStopCurrentStateExecution() {
+    return TestStartNextStateExecution();
 }

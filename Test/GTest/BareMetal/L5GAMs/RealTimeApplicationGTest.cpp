@@ -85,13 +85,13 @@ TEST(RealTimeApplicationGTest,TestPrepareNextState) {
     ASSERT_TRUE(test.TestPrepareNextState());
 }
 
-TEST(RealTimeApplicationGTest,TestStartExecution) {
+TEST(RealTimeApplicationGTest,TestStartNextStateExecution) {
     RealTimeApplicationTest test;
-    ASSERT_TRUE(test.TestStartExecution());
+    ASSERT_TRUE(test.TestStartNextStateExecution());
 }
 
-TEST(RealTimeApplicationGTest,TestStopExecution) {
+TEST(RealTimeApplicationGTest,TestStopCurrentStateExecution) {
     RealTimeApplicationTest test;
-    ASSERT_TRUE(test.TestStopExecution());
+    ASSERT_TRUE(test.TestStopCurrentStateExecution());
 }
 
