@@ -157,6 +157,14 @@ bool ConfigurationDatabase::Copy(StructuredDataI &destination) {
     return ok;
 }
 
+bool ConfigurationDatabase::Initialise(StructuredDataI &data) {
+    bool ok = Object::Initialise(data);
+    if(ok) {
+        ok = data.Copy(*this);
+    }
+    return ok;
+}
+
 bool ConfigurationDatabase::MoveToRoot() {
     bool ok = rootNode.IsValid();
     if (ok) {

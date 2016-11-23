@@ -70,7 +70,9 @@ public:
      */
     virtual ~ConfigurationDatabase();
 
-    //TODO test and document
+    /**
+     * @brief Removes all the elements from the database.
+     */
     void CleanUp();
 
     /**
@@ -158,6 +160,13 @@ public:
     virtual uint32 GetNumberOfChildren();
 
     /**
+     * @brief Initialises the contents of this ConfigurationDatabase from a StructuredDataI
+     * @details Calls data.Copy(*this)
+     * @return true if data.Copy(*this) is successful.
+     */
+    virtual bool Initialise(StructuredDataI &data);
+
+    /**
      * @brief Locks the shared semaphore.
      * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
      * @return true if the shared semaphore is successfully locked.
@@ -170,11 +179,10 @@ public:
      */
     void Unlock();
 
-    // TODO. Test and Document! adds the possibility to use find, filters ecc ecc
-    /*operator ReferenceT<ReferenceContainer>(){
-     return currentNode;
-     }*/
-    //TODO
+    /**
+     * @brief Gets a reference to the current node as a ReferenceContainer.
+     * @return a reference to the current node as a ReferenceContainer.
+     */
     ReferenceT<ReferenceContainer> GetCurrentNode() {
         return currentNode;
     }
