@@ -32,10 +32,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "../L1Portability/TypeDescriptor_old.h"    //using ClassUID typedef
 #include "ClassProperties.h"
 #include "CString.h"
 #include "Introspection-old.h"
-#include "TypeDescriptor.h"    //using ClassUID typedef
 #include "LinkedListable.h"
 #include "LinkedListHolderT.h"
 #include "LoadableLibrary.h"

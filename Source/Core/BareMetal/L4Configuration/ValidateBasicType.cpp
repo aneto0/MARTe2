@@ -32,7 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ValidateBasicType.h"
-#include "TypeDescriptor.h"
+#include <TypeDescriptor_old.h>
 #include "TypeConversion.h"
 #include "StringHelper.h"
 #include "StandardParser.h"

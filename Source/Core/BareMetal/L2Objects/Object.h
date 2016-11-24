@@ -38,15 +38,16 @@
 #include "ClassRegistryItem.h"
 #include "ErrorType.h"
 #include "StringHelper.h"
-#include "StructuredDataI.h"
+//#include "StructuredDataI.h"
 #include "CLASSREGISTER.h"
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-//class StructuredDataI;
+class StructuredDataI;
 class ReferenceContainer;
+class ClassRegistryItem;
 }
 
 /*---------------------------------------------------------------------------*/

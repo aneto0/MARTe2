@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "TypeDescriptor.h"
+#include "../L1Portability/TypeDescriptor_old.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

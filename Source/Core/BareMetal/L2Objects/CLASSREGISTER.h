@@ -60,11 +60,6 @@
  */
 #define CLASS_REGISTER_DECLARATION()                                                                                   \
     /*                                                                                                                 \
-     * Contains the class basic informations (name, version, ...)                                                                                                            \
-     */                                                                                                                \
-     /*lint -e{1516} This function will be redeclared in descendants */                                                \
-    static MARTe::ClassProperties classProperties;                                                                     \
-    /*                                                                                                                 \
      * Collects all the class informations (Introspection, ClassProperties, ...) and the build function due to         \
      * make new instances of the class in runtime                                                                      \
      */                                                                                                                \

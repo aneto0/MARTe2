@@ -32,19 +32,23 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "CString.h"
 #include "LinkedListable.h"
-#include "ClassProperties.h"
 #include "LoadableLibrary.h"
-#include "ClassMethodCaller.h"
+#include "TypeDescriptor.h"
+//#include "Introspection.h"
 #include "ClassMethodInterfaceMapper.h"
-#include "Introspection-old.h"
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+class ClassMethodCaller;
+class ObjectBuilder;
+class Introspection;
+
 
 /**
  * @brief Descriptor of framework base classes.
@@ -56,6 +60,10 @@ namespace MARTe {
 class DLL_API ClassRegistryItem: public LinkedListable {
 public:
 
+    /**
+     * @brief Add missing details.
+     */
+    void SetClassDetails(CCString classNameIn,CCString classVersionIn);
     /**
      * @brief Increments the number of instantiated objects of the class type represented by this registry item.
      */
@@ -71,21 +79,6 @@ public:
      * @return the number of instantiated objects of the class type represented by this registry item.
      */
     uint32 GetNumberOfInstances() const;
-
-
-    /**
-     * @brief Returns a copy to the class parameters.
-     * @param[in, out] destination the class properties will be copied to this variable.
-     */
-    void GetClassPropertiesCopy(ClassProperties &destination) const;
-
-    /**
-     * @brief Returns a pointer of the class parameters.
-     * @details The method GetClassPropertiesCopy() should be used when possible. This pointer
-     * will live as long as this instance of ClassRegistryItem exists.
-     * @return a pointer to the class parameters represented by this registry item.
-     */
-    const ClassProperties *GetClassProperties() const;
 
     /**
      * @brief Adds the introspection data.
@@ -126,62 +119,70 @@ public:
      * the class represented by this registry item.
      * @return a pointer to the object factory.
      */
-    const ObjectBuilder *GetObjectBuilder() const;
+    const ObjectBuilder *   GetObjectBuilder() const;
 
     /**
      * @brief Sets the type descriptor for the class described by this ClassRegistryItem.
-     * @param[in] uid the new unique identifier to be set for the class described by this ClassRegistryItem.
+     * @return the TypeDescriptor.
      */
-    void SetTypeDescriptor(const TypeDescriptor &td);
+    TypeDescriptor          GetTypeDescriptor();
 
+    /**
+     * @brief  Get the name of the class (by default the same as returned by typeid.
+     */
+    CCString                GetClassName();
 
-    ///??? GetTypeDescriptor???
+    /**
+     * @brief  The name of the class as returned by typeid.
+     */
+    CCString                GetTypeidName();
+
+    /**
+     * @brief  The version of the class.
+     */
+    CCString                GetClassVersion();
+
+    /**
+     * @brief  The size of the class.
+     */
+    uint32                  GetSizeOfClass();
+
 
     /**
      * @brief Gets the ClassMethodCaller associated to the method with name = methodName.
      * @param[in] methodName the name of the method.
      * @return the ClassMethodCaller associated to the method with name = methodName.
      */
-    ClassMethodCaller *FindMethod(CCString methodName);
+    ClassMethodCaller *     FindMethod(CCString methodName);
 
     /**
      * @brief Registers a method that can be later retrieved with FindMethod.
      * @param[in] method the method to register. The pointer will be freed by this class.
      */
-    void AddMethod(ClassMethodInterfaceMapper * const method);
-
+    void                    AddMethod(ClassMethodInterfaceMapper * const method);
 
     /**
      * @brief Destructor.
      */
-    virtual ~ClassRegistryItem();
-protected:
-
+    virtual               ~ClassRegistryItem();
 
     /**
-     * @brief Gets a pointer to this pseudo-singleton instance.
-     * @param[in] instance if instance != NULL a new instance of ClassRegistryItem is created and assigned to instance.
-     * This mechanism is used by the ClassRegistryItemT
+     * @brief Allows obtaining per-class singleton ClassRegistryItem
      */
-    static ClassRegistryItem *CreateRegisterAndInitialiseInstance(ClassProperties &classProperties_in);
+    template <class T>
+    static ClassRegistryItem *Instance();
 
 private:
 
     /**
      * @brief Constructor.
      */
-    ClassRegistryItem(ClassProperties &classProperties_in);
-
+    ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn);
 
     /**
      * The number of instantiated objects of the class type represented by this registry item.
      */
     volatile int32            numberOfInstances;
-
-    /**
-     * The properties of the class represented by this registry item.
-     */
-    ClassProperties &         classProperties;
 
     /**
      * Library (dll) holding the class type represented by this registry item.
@@ -200,9 +201,33 @@ private:
     const Introspection *     introspection;
 
     /**
+     * The name of the class.
+     */
+    CCString                  className;
+
+    /**
+     * The name of the class as returned by typeid.
+     */
+    CCString                  typeidName;
+
+    /**
+     * The version of the class.
+     */
+    CCString                  classVersion;
+
+    /**
+     * A unique identifier for this class
+     */
+    TypeDescriptor            typeDescriptor;
+
+    ///
+    uint32                    sizeOfClass;
+
+    /**
      * A list of lists of registered class methods.
      */
-    LinkedListHolderT<ClassMethodInterfaceMapper, true> classMethods;
+    LinkedListHolderT<ClassMethodInterfaceMapper,true> classMethods;
+
 
 };
 
@@ -212,6 +237,23 @@ private:
 /*---------------------------------------------------------------------------*/
 
 
+template <class T>
+ ClassRegistryItem *ClassRegistryItem::Instance(){
+    /**
+     * static variable. not automatic! persistent across calls
+     * will be initialised with a pointer to the only valid instance of this
+     */
+    static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
+
+    /// first time will go inside here
+    if (instance == NULL_PTR(ClassRegistryItem *)) {
+
+        /// all common code here
+        instance = new ClassRegistryItem(typeid(T).name(),sizeof(T) );
+
+    }
+    return instance;
+}
 
 
 }

@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 #include "AnyType.h"
 #include "Object.h"
-#include "Introspection-old.h"
+#include "Introspection.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -42,6 +42,7 @@
 
 namespace MARTe {
 
+#if  0
 AnyType::AnyType(Object &obj) {
     Init();
     dataPointer = static_cast<void *>(&obj);
@@ -133,6 +134,8 @@ AnyType AnyType::operator[](const uint32 position) const {
     }
     return ret;
 }
+
+#endif
 
 }
 

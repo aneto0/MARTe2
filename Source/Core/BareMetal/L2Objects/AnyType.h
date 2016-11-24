@@ -30,6 +30,8 @@
 
 #include <typeinfo>
 
+#include "TypeDescriptor.h"
+#include "VariableDescriptor.h"
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -37,7 +39,6 @@
 #include "ClassProperties.h"
 #include "ClassRegistryDatabase.h"
 #include "Matrix.h"
-#include "TypeDescriptor.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
@@ -79,6 +80,134 @@ namespace MARTe {
 class DLL_API AnyType {
 
 public:
+
+    /**
+     * @brief Constructor from const non-ptr
+     * @param[in] x is any variable const non-ptr
+     * @post
+     *   GetDataPointer() == &x  variableDescriptor(&T)
+     */
+    template <class T>
+    AnyType(T const &x): variableDescriptor (reinterpret_cast<const T *>(&x)){
+        dataPointer = reinterpret_cast<void *>(const_cast<T *>(&x));
+    }
+
+    /**
+     * @brief Constructor from non-const non-ptr
+     * @param[in] x is any variable non-const non-ptr
+     * @post
+     *   GetDataPointer() == &x && variableDescriptor(&T)
+     */
+    template <class T>
+    AnyType(T &x): variableDescriptor (reinterpret_cast<T *>(&x)){
+        dataPointer = reinterpret_cast<void *>(const_cast<T *>(&x));
+    }
+
+    /**
+     * @brief Constructor from const ptr
+     * @param[in] x is any variable const ptr
+     * @post
+     *   GetDataPointer() == x  variableDescriptor(&T)
+     */
+    template <class T>
+    AnyType(T const * &x): variableDescriptor (reinterpret_cast<const T *>(&x)){
+        dataPointer = reinterpret_cast<void *>(const_cast<T *>(x));
+    }
+
+    /**
+     * @brief Constructor from non-const ptr
+     * @param[in] x is any variable non-const ptr
+     * @post
+     *   GetDataPointer() == x && variableDescriptor(&T)
+     */
+    template <class T>
+    AnyType(T * &x): variableDescriptor (reinterpret_cast<T *>(&x)){
+        dataPointer = reinterpret_cast<void *>(const_cast<T *>(x));
+    }
+
+
+    /** INTERFACES GETTERS*/
+
+    /**
+     * @brief Returns the pointer to the data.
+     * @return the pointer to the data.
+     */
+    inline void* GetDataPointer() const;
+
+    /**
+     * @brief Returns the synthetic type descriptor a pointer to whatever will be seen as a void *
+     */
+    TypeDescriptor GetTypeDescriptor() const;
+
+    /**
+     * @brief Returns the synthetic type descriptor of *x. In case of error he type is void;
+     * @return voidAnyType if this AnyType is scalar or in case of errors, a scalar AnyType if this
+     * @return a new AnyType
+     */
+    AnyType operator *() const;
+
+    /**
+     * @brief Retrieves the element in the specified position.
+     * @param[in] position is the position of the required element.
+     * @return voidAnyType if this AnyType is scalar or in case of errors, a scalar AnyType if this
+     * AnyType is a vector, a vector AnyType if this AnyType is a scalar.
+     */
+    AnyType operator[](const uint32 position) const;
+
+    /**
+     * @brief Returns the data bit address (i.e  the bit shift respect to the data pointer).
+     * @return the data bit address.
+     */
+    inline uint8 GetBitAddress() const;
+
+
+    /**
+     * @brief Gets the number of dimensions associated to this AnyType.
+     * @details GetNumberOfDimensions() == 0 => scalar, GetNumberOfDimensions() == 1 => vector
+     * GetNumberOfDimensions() == 2 => matrix
+     * @return the number of dimensions associated to this AnyType.
+     */
+//    inline uint8 GetNumberOfDimensions() const;
+
+
+    /**
+     * @brief Gets the number of elements for a given number of \a redirections.
+     * @param[in] dimension the dimension to be queried.
+     * @return the number of elements in a given \a redirections.
+     * @pre
+     *   dimension < 3
+     */
+    inline uint32 GetNumberOfElements(const uint32 redirections) const;
+
+    /**
+     * @brief Retrieves the byte size of this type.
+     * @return the byte size of this type.
+     */
+    inline uint32 GetByteSize() const;
+
+    /**
+     * @brief Retrieves the bit size of this type.
+     * @return the bit size of this type.
+     */
+    inline uint32 GetBitSize() const;
+
+
+
+private:
+
+    /**
+     * contains type descriptor
+     * contains variable modifiers
+     */
+    VariableDescriptor variableDescriptor;
+
+    /**
+     * Pointer to the data.
+     */AnyType
+    void * dataPointer;
+
+
+#if 0
 
     /**
      * @brief Default constructor.
@@ -841,11 +970,15 @@ private:
      *   IsStaticDeclared() == true
      */
     inline void Init();
+
+#endif
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+#if 0
 
 AnyType::AnyType(void) {
     Init();
@@ -1399,6 +1532,8 @@ uint32 AnyType::GetBitSize() const {
 static const AnyType voidAnyType;
 
 }
+
+#endif
 
 #endif /* ANYTYPE_H_ */
 

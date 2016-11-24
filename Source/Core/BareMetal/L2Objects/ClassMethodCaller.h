@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ErrorType.h"
-#include "Object.h"
 #include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
@@ -45,6 +44,9 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+class Object;
+class ReferenceContainer;
 
 /**
  * @brief Allows to call registered methods on registered objects (see ClassMethodInterfaceMapper and CLASS_METHOD_REGISTER).

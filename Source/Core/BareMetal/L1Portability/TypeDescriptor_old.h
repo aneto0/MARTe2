@@ -82,12 +82,12 @@ public:
          * If true then the data is a structure or class and its definition
          * has to be found in the ObjectRegistryDatabase
          */
-        BitBoolean<uint32, 0u> isStructuredData;
+        BitBoolean<uint16, 0u> isStructuredData;
 
         /**
          * The data is constant - cannot be written to
          */
-        BitBoolean<uint32, 1u> isConstant;
+        BitBoolean<uint16, 1u> isConstant;
 
         /*****************************************************
          *
@@ -96,55 +96,16 @@ public:
          *****************************************************/
 
         /**
-         * The data is a bit range : int3, uint27, BitRange<int,3,8>  , BitBoolean<6> etc...
-         */
-        BitBoolean<uint32, 2u> isBitType;
-
-        /**
          * The actual type of data
-         * See table in BasicType
+         * See table
          */
-        BitRange<uint32, 4u, 3u> type;
+        BitRange<uint16, 4u, 2u> type;
 
-        /*****************************************************
-         *
-         *        For isBitType = true
-         *
-         *****************************************************/
         /**
          * The size in bits
-         * Up to 65K
+         * Up to 1024
          */
-        BitRange<uint32, 16u, 7u> numberOfBits;
-
-        /**
-         * The bit offset
-         * 0-7
-         */
-        BitRange<uint32, 3u, 23u> bitOffset;
-
-        /*****************************************************
-         *
-         *        For isBitType = false
-         *
-         *****************************************************/
-        /**
-         * The size in bits
-         * Up to 32 bytes 0 means- not determined
-         */
-        BitRange<uint32, 5u, 7u> numberOfBytes;
-
-        /**
-         * The vector size
-         * Up to 1K  0 means- not determined
-         */
-        BitRange<uint32, 10u, 12u> numberOfrows;
-
-        /**
-         * The vector size
-         * Up to 1K 0 means- not determined
-         */
-        BitRange<uint32, 10u, 22u> numberOfColumns;
+        BitRange<uint16, 10u, 6u> numberOfBits;
 
         /*****************************************************
          *
@@ -155,7 +116,7 @@ public:
         /**
          * A code related univocally to a record in the ObjectRegistryDatabase
          */
-        BitRange<uint32, 30u, 2u> structuredDataIdCode;
+        BitRange<uint16, 14u, 2u> structuredDataIdCode;
 
         /*****************************************************
          *
@@ -166,7 +127,7 @@ public:
         /**
          * Fills all the memory area.
          */
-        BitRange<uint32, 16u, 0u> all;
+        BitRange<uint16, 16u, 0u> all;
     };
 
     /**
@@ -174,7 +135,7 @@ public:
      * @param[in] x contains the type informations which must be stored into this memory area.
      * @post x == all
      */
-    TypeDescriptor(const uint32 x = 0u);
+    TypeDescriptor(const uint16 x = 0u);
 
     /**
      * @brief Basic Type constructor.
@@ -187,8 +148,8 @@ public:
      *   numberOfBitsIn == numberOfBits
      */
     TypeDescriptor(const bool isConstantIn,
-                   const uint32 typeIn,
-                   const uint32 numberOfBitsIn);
+                   const uint16 typeIn,
+                   const uint16 numberOfBitsIn);
 
     /**
      * @brief Structured objects constructor.

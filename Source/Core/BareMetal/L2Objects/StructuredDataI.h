@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "AnyType.h"
+//#include "AnyType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
@@ -40,6 +40,7 @@
 
 namespace MARTe {
 class Reference;
+class AnyType;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -225,16 +226,7 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
 
-inline StructuredDataI::~StructuredDataI() {
-}
 
-inline StructuredDataI::operator AnyType() {
-    AnyType anyTypeConversion(StructuredDataInterfaceType, 0u, this);
-    return anyTypeConversion;
-}
-
-}
 
 #endif /* CONFIGURATION_DATABASE_H_ */

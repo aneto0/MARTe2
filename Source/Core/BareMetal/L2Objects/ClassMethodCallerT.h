@@ -35,12 +35,13 @@
 #include "ClassMethodCaller.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+
 
 /**
  * These constants specify if the value of the template parameters below are being by reference and

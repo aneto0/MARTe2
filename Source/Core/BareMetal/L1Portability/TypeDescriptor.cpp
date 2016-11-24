@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "TypeDescriptor.h"
+#include <TypeDescriptor_old.h>
 #include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/

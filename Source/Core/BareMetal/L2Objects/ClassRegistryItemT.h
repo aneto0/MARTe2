@@ -21,7 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CLASSREGISTRYITEMT_H_
+//#ifndef CLASSREGISTRYITEMT_H_
+#if 0
 #define CLASSREGISTRYITEMT_H_
 
 /*---------------------------------------------------------------------------*/
@@ -32,7 +33,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassRegistryItem-old.h"
 #include "ObjectBuilderT.h"
 
 /*---------------------------------------------------------------------------*/
@@ -41,61 +41,7 @@
 
 namespace MARTe {
 
-#if 0
-/**
- * @brief Template version of ClassRegistryItem.
- * @tparam T The type of the class to register. It is expected that will have
- * a public attribute named classProperties of type ClassProperties.
- * @tparam AddDefaultObjectBuilder A boolean which states if a default object
- * must be created.
- */
-template<typename T, bool AddDefaultObjectBuilder = true>
-class ClassRegistryItemT: public ClassRegistryItem {
-
-public:
-    /**
-     * @brief Singleton access to the database.
-     * @return a reference to the database.
-     */
-    static inline ClassRegistryItem *Instance();
-
-    /**
-     * @brief Destructor.
-     */
-    virtual ~ClassRegistryItemT();
-private:
-    /**
-     * @brief Constructor.
-     */
-    ClassRegistryItemT(ClassProperties &classProperties_in);
-};
-
-/**
- * @brief Template version of ClassRegistryItem.
- * @tparam T
- */
-template<typename T>
-class DLL_API ClassRegistryItemT<T, false> : public ClassRegistryItem {
-
-public:
-    /**
-     * @brief Singleton access to the database.
-     * @return a reference to the database.
-     */
-    static inline ClassRegistryItem *Instance();
-
-    /**
-     * @brief Destructor.
-     */
-    virtual ~ClassRegistryItemT();
-private:
-    /**
-     * @brief Constructor.
-     */
-    ClassRegistryItemT(ClassProperties &classProperties_in);
-};
-#endif
-
+class ClassRegistryItem;
 
 /**
  * @brief Template version of ClassRegistryItem.
@@ -105,7 +51,7 @@ private:
  * must be created.
  */
 template<typename T>
-class ClassRegistryItemT: public ClassRegistryItem {
+class ClassRegistryItemT{
 
 public:
     /**
@@ -115,32 +61,19 @@ public:
      */
     static inline ClassRegistryItem *Instance();
 
-
-    /**
-     * @brief Singleton access to the database.
-     * @return a reference to the database.
-     * @ used when registering a structure or a class that has no ClassProperties structure
-     */
-    static inline ClassRegistryItem *GenericInstance(ClassProperties &classProperties_in);
-    /**
-     * @brief Destructor.
-     */
-    virtual ~ClassRegistryItemT();
 private:
     /**
      * @brief Constructor.
      */
-    ClassRegistryItemT(ClassProperties &classProperties_in);
+    ClassRegistryItemT(CCString typeIdNameIn,uint32 sizeOfClassIn);
 };
 
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
 
 template<typename T>
 ClassRegistryItem *ClassRegistryItemT<T>::Instance() {

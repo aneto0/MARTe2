@@ -64,7 +64,7 @@ const BasicType Pointer = 3u;
 
 /**
  * The type is a C string
- * (const char *)
+ * (const CCString only)
  */
 const BasicType BT_CCString = 4u;
 

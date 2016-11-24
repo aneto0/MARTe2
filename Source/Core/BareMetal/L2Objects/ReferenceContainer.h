@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "LinkedListHolder.h"
+#include "LinkedListHolderT.h"
 #include "FastPollingMutexSem.h"
 #include "TimeoutType.h"
 #include "Object.h"
@@ -46,6 +46,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 
 /**
  * @brief Container of references.

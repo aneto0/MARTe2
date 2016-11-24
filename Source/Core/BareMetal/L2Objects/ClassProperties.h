@@ -32,8 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "../L1Portability/TypeDescriptor_old.h"
 #include "GeneralDefinitions.h"
-#include "TypeDescriptor.h"
 
 
 /*---------------------------------------------------------------------------*/

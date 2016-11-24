@@ -32,11 +32,10 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassRegistryItem.h"
-
+#include "ClassMethodCaller.h"
 #include "ClassProperties.h"
 #include "ClassRegistryDatabase.h"
 #include "ErrorManagement.h"
-#include "Introspection-old.h"
 #include "LoadableLibrary.h"
 #include "ObjectBuilder.h"
 #include "SearchFilterT.h"
@@ -51,51 +50,36 @@
 
 namespace MARTe {
 
-// TODO remove LCOV_EXCL_START
-ClassRegistryItem::ClassRegistryItem(ClassProperties &classProperties_in) :
+class Introspection;
+
+ClassRegistryItem::ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn):
         LinkedListable(),
-        classProperties(classProperties_in),
         classMethods() {
+
     numberOfInstances = 0;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuilder = NULL_PTR(ObjectBuilder *);
     introspection = NULL_PTR(Introspection *);
-}
 
-#if 0  // OLD implementation
+    sizeOfClass = sizeOfClassIn;
+    typeidName = typeidNameIn;
+    className = typeidName;
+    classVersion = "";
+    static uint32 classId = 0;
+    typeDescriptor = classId++;
 
-
-
-ClassRegistryItem *ClassRegistryItem::Instance(ClassRegistryItem *&instance,
-                                               ClassProperties &classProperties_in) {
     ClassRegistryDatabase* crd = ClassRegistryDatabase::Instance();
-
-    if ((crd != NULL_PTR(ClassRegistryDatabase*)) && (instance == NULL_PTR(ClassRegistryItem*))) {
-
-        instance = new ClassRegistryItem(classProperties_in);
-        crd->Add(instance);
-    }
-
-    return instance;
-}
-
-#else
-
-ClassRegistryItem *ClassRegistryItem::CreateRegisterAndInitialiseInstance(ClassProperties &classProperties_in){
-    ClassRegistryDatabase* crd = ClassRegistryDatabase::Instance();
-    ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem*);
-
     if (crd != NULL_PTR(ClassRegistryDatabase*)) {
-        instance = new ClassRegistryItem(classProperties_in);
-        crd->Add(instance);
+        crd->Add(this);
     }
+}
 
-    return instance;
-
+void ClassRegistryItem::SetClassDetails(CCString classNameIn,CCString classVersionIn){
+    className = classNameIn;
+    classVersion = classVersionIn;
 }
 
 
-#endif
 
 void ClassRegistryItem::SetObjectBuilder(const ObjectBuilder * const objectBuilderIn) {
     objectBuilder = objectBuilderIn;
@@ -117,13 +101,7 @@ ClassRegistryItem::~ClassRegistryItem() {
     objectBuilder = NULL_PTR(ObjectBuilder *);
 }
 
-void ClassRegistryItem::GetClassPropertiesCopy(ClassProperties &destination) const {
-    destination = classProperties;
-}
 
-const ClassProperties *ClassRegistryItem::GetClassProperties() const {
-    return &classProperties;
-}
 
 void ClassRegistryItem::SetIntrospection(const Introspection * const introspectionIn) {
     introspection = introspectionIn;
@@ -154,10 +132,33 @@ uint32 ClassRegistryItem::GetNumberOfInstances() const {
 }
 
 
-void ClassRegistryItem::SetTypeDescriptor(const TypeDescriptor &td){
-    classProperties.SetTypeDescriptor(td);
+/**
+ * @brief  Get the name of the class (by default the same as returned by typeid.
+ */
+CCString  ClassRegistryItem::GetClassName(){
+    return className;
 }
 
+/**
+ * @brief  The name of the class as returned by typeid.
+ */
+CCString  ClassRegistryItem::GetTypeidName(){
+    return typeidName;
+}
+
+/**
+ * @brief  The version of the class.
+ */
+CCString  ClassRegistryItem::GetClassVersion(){
+    return classVersion;
+}
+
+/**
+ * @brief  The size of the class.
+ */
+uint32  ClassRegistryItem::GetSizeOfClass(){
+    return sizeOfClass;
+}
 
 ClassMethodCaller *ClassRegistryItem::FindMethod(CCString methodName) {
 

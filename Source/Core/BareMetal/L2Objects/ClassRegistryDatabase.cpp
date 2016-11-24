@@ -59,12 +59,12 @@ ClassRegistryDatabase *ClassRegistryDatabase::Instance() {
     return instance;
 }
 
-ClassRegistryDatabase::ClassRegistryDatabase(): lastTypeDescriptor(0) {
+ClassRegistryDatabase::ClassRegistryDatabase() {
 
 }
 
 ClassRegistryDatabase::~ClassRegistryDatabase() {
-    //automatic LinkedListHolder::CleanUp
+
 }
 
 void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
@@ -76,12 +76,6 @@ void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
 
         // add at the end
         classDatabase.ListAdd(p);
-        // set the code appropriately to reflect number of items in the database
-        lastTypeDescriptor.structuredDataIdCode = classDatabase.ListSize()-1;
-        // load the code
-        p->SetTypeDescriptor(lastTypeDescriptor);
-
-        /// TODO check the code not to be over 2**14 ! 16K classes supported should be fine though.
 
         UnLock();
     }
@@ -118,13 +112,10 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
         for (i = 0u; i < databaseSize; i++) {
             ClassRegistryItem *p = classDatabase.ListPeek(i);
             if (p != NULL) {
-                const ClassProperties *classProperties = p->GetClassProperties();
-                if (classProperties != NULL_PTR(ClassProperties *)) {
-                    if (StringHelper::Compare(classProperties->GetName(), className) == 0) {
-                        registryItem = p;
-                        found = true;
-                        break;
-                    }
+                if (StringHelper::Compare(p->GetClassName(), className) == 0) {
+                    registryItem = p;
+                    found = true;
+                    break;
                 }
             }
         }
@@ -168,13 +159,10 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
                 for (i = 0u; (i < databaseSize) && (!found); i++) {
                     ClassRegistryItem *p = classDatabase.ListPeek(i);
                     if (p != NULL) {
-                        const ClassProperties *classProperties = p->GetClassProperties();
-                        if (classProperties != NULL_PTR(ClassProperties *)) {
-                            if (StringHelper::Compare(classProperties->GetName(), className) == 0) {
-                                registryItem = p;
-                                registryItem->SetLoadableLibrary(loader);
-                                found = true;
-                            }
+                        if (StringHelper::Compare(p->GetClassName(), className) == 0) {
+                            registryItem = p;
+                            registryItem->SetLoadableLibrary(loader);
+                            found = true;
                         }
                     }
                 }
@@ -205,12 +193,9 @@ ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(const char8 * const typ
         for (i = 0u; (i < databaseSize) && (!found); i++) {
             ClassRegistryItem *p = classDatabase.ListPeek(i);
             if (p != NULL) {
-                const ClassProperties *classProperties = p->GetClassProperties();
-                if (classProperties != NULL_PTR(ClassProperties *)) {
-                    if (StringHelper::Compare(classProperties->GetTypeIdName(), typeidName) == 0) {
-                        registryItem = p;
-                        found = true;
-                    }
+                if (StringHelper::Compare(p->GetTypeidName(), typeidName) == 0) {
+                    registryItem = p;
+                    found = true;
                 }
             }
         }

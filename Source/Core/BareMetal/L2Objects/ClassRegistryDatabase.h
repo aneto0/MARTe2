@@ -150,10 +150,6 @@ private:
      */
     FastPollingMutexSem                   mux;
 
-    /**
-     * Type descriptor of the latest registered class;
-     */
-    TypeDescriptor                        lastTypeDescriptor; //classUniqueIdentifier;
 };
 
 }
