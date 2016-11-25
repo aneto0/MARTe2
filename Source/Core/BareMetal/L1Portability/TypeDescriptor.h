@@ -112,16 +112,16 @@ public:
          *
          *****************************************************/
         /**
-         * The size in bits
-         * Up to 65K
-         */
-        BitRange<uint32, 16u, 7u> numberOfBits;
-
-        /**
          * The bit offset
          * 0-7
          */
-        BitRange<uint32, 3u, 23u> bitOffset;
+        BitRange<uint32, 9u, 7u> bitOffset;
+
+        /**
+         * The size in bits
+         * Up to 65K
+         */
+        BitRange<uint32, 16u, 16u> numberOfBits;
 
         /*****************************************************
          *
@@ -129,14 +129,17 @@ public:
          *
          *****************************************************/
         /**
-         * The size in bits
+         * The size of the type
          * Up to 32 bytes 0 means- not determined
+         * Determines the type of integer or float
+         * For char[] this is 1
          */
         BitRange<uint32, 5u, 7u> numberOfBytes;
 
         /**
          * The vector size
          * Up to 1K  0 means- not determined
+         * Used for char[] to indicate size of memory
          */
         BitRange<uint32, 10u, 12u> numberOfrows;
 
@@ -166,7 +169,7 @@ public:
         /**
          * Fills all the memory area.
          */
-        BitRange<uint32, 16u, 0u> all;
+        BitRange<uint32, 32u, 0u> all;
     };
 
     /**
@@ -177,18 +180,21 @@ public:
     TypeDescriptor(const uint32 x = 0u);
 
     /**
-     * @brief Basic Type constructor.
+     * @brief Basic Byte Types constructor.
      * @param[in] isConstantIn specifies if the type is constant.
      * @param[in] typeIn is the type.
      * @param[in] numberOfBitsIn the number of bits associated to the type.
      * @post
      *   isConstantIn == isConstant &&
+     *   isBitType  == ((numberOfBitsIn %8) !=0) || (bitsOffsetIn != 0)
      *   typeIn == type &&
-     *   numberOfBitsIn == numberOfBits
+     *   if (!isBitType) numberOfBytes == numberOfBitsIn /8
+     *   if (isBitType)  numberOfBits == numberOfBitsIn  && bitOffset = bitsOffsetIn
      */
     TypeDescriptor(const bool isConstantIn,
-                   const uint32 typeIn,
-                   const uint32 numberOfBitsIn);
+                   const BasicType typeIn,
+                   const uint16 numberOfBitsIn,
+                   const uint8  bitsOffsetIn = 0);
 
     /**
      * @brief Structured objects constructor.
@@ -199,7 +205,7 @@ public:
      *   structuredDataIdCodeIn == structuredDataIdCode
      */
     TypeDescriptor(const bool isConstantIn,
-                   const uint14 &structuredDataIdCodeIn);
+                   const uint32 &structuredDataIdCodeIn);
 
     /**
      * @brief Equality operator used to compare types.
@@ -219,6 +225,7 @@ public:
     /*lint -e(1739) , operation basic_type != TypeDescriptor will not be supported*/
     bool operator!=(const TypeDescriptor &typeDescriptor) const;
 
+#if 0
     /**
      * @brief Retrieves the TypeDescriptor associated to the type name provided in input.
      * @param[in] typeName is the type name input.
@@ -266,6 +273,7 @@ public:
      */
     static const char8 *GetTypeNameFromStaticTable(const uint32 index);
 
+#endif
 };
 
 /**

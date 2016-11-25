@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <TypeDescriptor_old.h>
+#include <TypeDescriptor.h>
 #include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
@@ -37,6 +37,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+#if 0
 /*lint -e9150 [MISRA C++ Rule 11-0-1]. Justification: a structure with no functions is used to describe this type. */
 struct TypeCastInfo {
     TypeDescriptor typeDes;
@@ -59,6 +60,7 @@ static const TypeCastInfo basicTypeInfo[] = {
         { VoidType, "void"},
         { InvalidType, static_cast<const char8*>(NULL)}
 };
+#endif
 }
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -66,36 +68,51 @@ static const TypeCastInfo basicTypeInfo[] = {
 
 namespace MARTe {
 
-TypeDescriptor::TypeDescriptor(const uint16 x) {
+TypeDescriptor::TypeDescriptor(const uint32 x) {
     all = x;
 }
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,
-                               const uint16 typeIn,
-                               const uint16 numberOfBitsIn) {
+                   const BasicType typeIn,
+                   const uint16 numberOfBitsIn,
+                   const uint8  bitsOffsetIn){
+
+    uint16 bits = numberOfBitsIn % 8;
     isStructuredData = false;
-    isConstant = isConstantIn;
-    type = typeIn;
-    numberOfBits = numberOfBitsIn;
+    isBitType        = ((bits != 0) || (bitsOffsetIn != 0));
+    isConstant       = isConstantIn;
+    type             = typeIn;
+    if (isBitType){
+        numberOfBits     = numberOfBitsIn;
+        bitOffset        = bitsOffsetIn;
+    } else {
+        numberOfBytes    = numberOfBitsIn / 8;
+        numberOfrows     = 0;
+        numberOfColumns  = 0;
+    }
 }
 
+
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,
-                               const uint14  &structuredDataIdCodeIn) {
+                               const uint32  &structuredDataIdCodeIn) {
     isStructuredData = true;
-    isConstant = isConstantIn;
+    isConstant       = isConstantIn;
     structuredDataIdCode = structuredDataIdCodeIn;
 }
 
 bool TypeDescriptor::operator==(const TypeDescriptor &typeDescriptor) const {
-    bool ret = ((all | (0x0002u)) == (typeDescriptor.all | (0x0002u)));
-    return ret;
+//    bool ret = ((all | (0x0002u)) == (typeDescriptor.all | (0x0002u)));
+//    return ret;
+    return all == typeDescriptor.all;
 }
 
 bool TypeDescriptor::operator!=(const TypeDescriptor &typeDescriptor) const {
-    bool ret = ((all | (0x0002u)) != (typeDescriptor.all | (0x0002u)));
-    return ret;
+//    bool ret = ((all | (0x0002u)) != (typeDescriptor.all | (0x0002u)));
+//    return ret;
+    return all == typeDescriptor.all;
 }
 
+/*
 TypeDescriptor TypeDescriptor::GetTypeDescriptorFromTypeName(const char8 * const typeName){
     uint32 typeIndex = 0u;
     while (basicTypeInfo[typeIndex].castName != NULL) {
@@ -132,6 +149,6 @@ TypeDescriptor TypeDescriptor::GetTypeDescriptorFromStaticTable(const uint32 ind
 const char8 *TypeDescriptor::GetTypeNameFromStaticTable(const uint32 index){
     return basicTypeInfo[index].castName;
 }
-
+*/
 
 }

@@ -40,6 +40,7 @@
 #include "ObjectBuilder.h"
 #include "SearchFilterT.h"
 #include "ClassMethodInterfaceMapper.h"
+#include "TypeDescriptor.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -66,7 +67,8 @@ ClassRegistryItem::ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn)
     className = typeidName;
     classVersion = "";
     static uint32 classId = 0;
-    typeDescriptor = classId++;
+    typeDescriptor.isStructuredData = true;
+    typeDescriptor.structuredDataIdCode = classId++;
 
     ClassRegistryDatabase* crd = ClassRegistryDatabase::Instance();
     if (crd != NULL_PTR(ClassRegistryDatabase*)) {
