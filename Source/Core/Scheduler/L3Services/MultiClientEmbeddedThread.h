@@ -53,7 +53,7 @@ namespace MARTe {
  *  so to handle the connection request.
  * In parallel, a new thread will be launched by the manager to handle any new subsequent connection requests (see MultiClientService::AddThread)
  */
-class MultiClientEmbeddedThread: public EmbeddedThreadI {
+class DLL_API MultiClientEmbeddedThread: public EmbeddedThreadI {
 
 public:
 

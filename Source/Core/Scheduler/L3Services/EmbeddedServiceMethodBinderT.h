@@ -93,7 +93,7 @@ private:
 namespace MARTe {
 template<typename className>
 EmbeddedServiceMethodBinderT<className>::EmbeddedServiceMethodBinderT(className &obj,
-                                                                      const EmbeddedServiceMethodBinderT<className>::MethodPointer fun) :
+                                                                       const typename EmbeddedServiceMethodBinderT<className>::MethodPointer fun) :
         EmbeddedServiceMethodBinderI(),
         object(obj),
         function(fun) {

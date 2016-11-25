@@ -28,6 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
+#define DLL_API
+
 #include "AdvancedErrorManagement.h"
 #include "QueuedReplyMessageCatcherFilter.h"
 #include "StateMachine.h"

@@ -73,7 +73,7 @@ struct RTThreadParam {
 /**
  * @brief The GAM scheduler
  */
-class GAMScheduler: public GAMSchedulerI {
+class DLL_API GAMScheduler: public GAMSchedulerI {
 
 public:
     CLASS_REGISTER_DECLARATION()

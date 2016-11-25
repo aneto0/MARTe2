@@ -44,7 +44,7 @@ namespace MARTe {
  * @details When all the reply messages are caught an event semaphore is posted.
  * The filter is removed after catching the reply.
  */
-class QueuedReplyMessageCatcherFilter: public MessageFilter, public Object {
+class DLL_API QueuedReplyMessageCatcherFilter: public MessageFilter, public Object {
 public:
     CLASS_REGISTER_DECLARATION()
     /**
