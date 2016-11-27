@@ -282,7 +282,7 @@ static bool InitialiseGAMEnviroment(const char8 * const config) {
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;
@@ -1017,7 +1017,7 @@ bool GAMTest::TestAddSignals() {
         value = "";
     }
     if (ret) {
-        test.CleanUp();
+        test.Purge();
     }
     if (ret) {
         gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMD");

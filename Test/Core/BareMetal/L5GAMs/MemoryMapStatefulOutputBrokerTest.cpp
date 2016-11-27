@@ -381,7 +381,7 @@ static bool InitialiseMemoryMapStatefulOutputBrokerEnviroment(const char8 * cons
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;

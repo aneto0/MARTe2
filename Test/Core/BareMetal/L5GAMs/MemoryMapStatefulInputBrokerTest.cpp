@@ -375,7 +375,7 @@ static bool InitialiseMemoryMapStatefulInputBrokerEnviroment(const char8 * const
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;

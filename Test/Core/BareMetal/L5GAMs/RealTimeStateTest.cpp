@@ -573,14 +573,14 @@ RealTimeStateTest::RealTimeStateTest() {
     }
 
     cdb.MoveToRoot();
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
 
     if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
     }
 }
 
 RealTimeStateTest::~RealTimeStateTest() {
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
 }
 
 bool RealTimeStateTest::TestConstructor() {

@@ -58,7 +58,7 @@ public:
     /**
      * @brief Initialises the ObjectRegistryDatabase
      */
-    bool Init();
+    bool Init(StreamString &config);
 
     /**
      * @brief Tests the scheduler constructor
@@ -76,9 +76,39 @@ public:
     bool TestStopCurrentStateExecution();
 
     /**
-     * @brief The application configuration stream
+     * @brief Tests the Initialise method
      */
-    StreamString config;
+    bool TestInitialise();
+
+    /**
+     * @brief Tests the Initialise method with an ErrorMessage
+     */
+    bool TestInitialise_ErrorMessage();
+
+    /**
+     * @brief Tests the Initialise method with more than one message defined
+     */
+    bool TestInitialise_False_MoreThanOneErrorMessage();
+
+    /**
+     * @brief Tests the Initialise method with an invalid message
+     */
+    bool TestInitialise_False_InvalidMessage();
+
+    /**
+     * @brief Tests GAMScheduler integrated with the StateMachine
+     */
+    bool TestIntegrated();
+
+    /**
+     * @brief Tests GAMScheduler integrated with the StateMachine
+     */
+    bool TestIntegrated_TriggerErrorMessage();
+
+    /**
+     * @brief Tests that the purge kills all threads
+     */
+    bool TestPurge();
 };
 
 /*---------------------------------------------------------------------------*/

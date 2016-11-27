@@ -63,7 +63,6 @@ QueuedMessageI::QueuedMessageI() :
 }
 
 QueuedMessageI::~QueuedMessageI() {
-
 }
 
 ErrorManagement::ErrorType QueuedMessageI::Start() {

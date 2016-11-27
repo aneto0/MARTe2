@@ -50,6 +50,11 @@ StateMachine::StateMachine() :
 
 /*lint -e{1551} the destructor must guarantee that the QueuedMessageI SingleThreadService is stopped.*/
 StateMachine::~StateMachine() {
+    ReferenceContainer c;
+    Purge(c);
+}
+
+void StateMachine::Purge(ReferenceContainer &purgeList) {
     ErrorManagement::ErrorType err = Stop();
     if (!err.ErrorsCleared()) {
         REPORT_ERROR(ErrorManagement::FatalError, "Could not Stop the StateMachine. Retrying...");
@@ -58,6 +63,17 @@ StateMachine::~StateMachine() {
             REPORT_ERROR(ErrorManagement::FatalError, "Could not Stop the StateMachine.");
         }
     }
+    if (currentState.IsValid()) {
+        uint32 j;
+        bool ok = true;
+        for (j = 0u; (j < currentState->Size()) && (ok); j++) {
+            ReferenceT<StateMachineEvent> currentStateEventJ = currentState->Get(j);
+            if (currentStateEventJ.IsValid()) {
+                ok = (RemoveMessageFilter(currentStateEventJ) == ErrorManagement::NoError);
+            }
+        }
+    }
+    ReferenceContainer::Purge(purgeList);
 }
 
 bool StateMachine::Initialise(StructuredDataI &data) {

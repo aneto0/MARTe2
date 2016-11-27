@@ -300,7 +300,7 @@ ErrorManagement::ErrorType MultiThreadService::Stop() {
         }
     }
 // remove dead threads
-    threadPool.CleanUp();
+    threadPool.Purge();
     if (err.ErrorsCleared()) {
         // some service died hard
         err.timeout = (threadPool.Size() > 0u);

@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "EventSem.h"
 #include "GAMSchedulerI.h"
+#include "Message.h"
 #include "MultiThreadService.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -61,7 +62,18 @@ struct RTThreadParam {
 };
 
 /**
- * @brief The GAM scheduler
+ * @brief The GAM scheduler.
+ * @details The syntax in the configuration stream has to be:
+ *
+ * +Scheduler = {\n
+ *    Class = Scheduler_name
+ *     ...\n
+ *    TimingDataSource = "Name of the TimingDataSource"
+ *    +ErrorMessage = { //Optional. Fired every time there is an execution error. Name is only an example.
+ *        Class = Message
+ *        ...
+ *    }
+ * }\n
  */
 class GAMScheduler: public GAMSchedulerI {
 
@@ -79,6 +91,13 @@ public:
     virtual ~GAMScheduler();
 
     /**
+     * @brief Verifies if there is an ErrorMessage defined.
+     * @param[in] data the StructuredDataI with the TimingDataSource name and with an optional ErrorMessage defined.
+     * @return @see GAMSchedulerI::Initialise. At most one message shall be defined and this will be considered as the ErrorMessage.
+     */
+    virtual bool Initialise(StructuredDataI & data);
+
+    /**
      * @brief Starts the multi-thread execution for the current state.
      * @return ErrorManagement::NoError if the next state was configured (see PrepareNextState) and the MultiThreadService could be successfully started.
      * @pre
@@ -94,7 +113,6 @@ public:
      */
     virtual ErrorManagement::ErrorType StopCurrentStateExecution();
 
-
     /**
      * @brief Callback function for the MultiThreadService.
      * @details Loops on all the real-time threads and executes its ExecutableI
@@ -102,6 +120,13 @@ public:
      * @return ErrorManagement::NoError iff every ExecutableI did not return any error.
      */
     ErrorManagement::ErrorType Execute(const ExecutionInfo &information);
+
+    /**
+     * @brief Stops the active MultiThreadService running services and calls ReferenceContainer::Purge
+     * @details @see ReferenceContainer::Purge
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
+
 protected:
 
     /**
@@ -136,6 +161,11 @@ private:
      * Registers the callback function to be called by the MultiThreadService
      */
     EmbeddedServiceMethodBinderT<GAMScheduler> binder;
+
+    /**
+     * Message to be fired in case of execution error
+     */
+    ReferenceT<Message> errorMessage;
 };
 
 }

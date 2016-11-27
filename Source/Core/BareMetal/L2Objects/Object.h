@@ -109,7 +109,22 @@ public:
      */
     virtual bool Initialise(StructuredDataI &data);
 
-    //virtual bool ProcessMessage(const MessageI & message, MessageI & data);
+    /**
+     * @brief Purge internal links to references that cannot be reached when all the
+     * explicit references to this object have been removed.
+     * @details The smart pointer mechanism guarantees that when there are no references pointing
+     *  at a given object this is destroyed.
+     * Nevertheless, this does not prevent developers from creating internal references, so that there will
+     *  be at least one reference pointing at the Object and thus it never gets destroyed.
+     * An example: A is a specialised ReferenceContainer and has a member b which is also a ReferenceContainer.
+     *  b contains an element C (b.Get(0)) which in turn contains a reference to A. A will then always have at least one
+     *  unreachable reference pointing as b can only be destroyed (thus calling Delete(0) when A is destroyed,
+     *  but A cannot be destroyed because it has a reference pointing at it. Upon calling this method, A is expected to remove all the references
+     *  from b so that no implicit links exist and the global Purge (see ReferenceContainer::Purge) can remove all
+     *  the references from the application.
+     * @param[in] purgeList a container with all the elements to be purged.
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
 
     /**
      * @brief Extracts the data of the object and puts it into an object which

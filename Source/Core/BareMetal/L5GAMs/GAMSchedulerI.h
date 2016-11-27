@@ -130,6 +130,7 @@ public:
 
     /**
      * @brief Reads the TimingDataSource name.
+     * @param[in] data the StructuredDataI with the TimingDataSource.
      * @return false if the TimingDataSource is not defined.
      */
     virtual bool Initialise(StructuredDataI & data);

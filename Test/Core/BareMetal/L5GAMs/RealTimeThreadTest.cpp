@@ -158,7 +158,7 @@ static bool InitialiseRealTimeThreadEnviroment(const char8 * const config) {
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;
@@ -454,7 +454,7 @@ RealTimeThreadTest::RealTimeThreadTest() {
 }
 
 RealTimeThreadTest::~RealTimeThreadTest() {
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
 }
 
 bool RealTimeThreadTest::TestConstructor() {

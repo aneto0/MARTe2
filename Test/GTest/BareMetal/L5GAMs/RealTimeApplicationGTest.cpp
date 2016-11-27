@@ -79,10 +79,14 @@ TEST(RealTimeApplicationGTest,TestConfigureApplicationNoInit) {
     ASSERT_TRUE(test.TestConfigureApplicationNoInit());
 }
 
-
 TEST(RealTimeApplicationGTest,TestPrepareNextState) {
     RealTimeApplicationTest test;
     ASSERT_TRUE(test.TestPrepareNextState());
+}
+
+TEST(RealTimeApplicationGTest,TestPrepareNextState_Message) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestPrepareNextState_Message());
 }
 
 TEST(RealTimeApplicationGTest,TestStartNextStateExecution) {
@@ -95,3 +99,12 @@ TEST(RealTimeApplicationGTest,TestStopCurrentStateExecution) {
     ASSERT_TRUE(test.TestStopCurrentStateExecution());
 }
 
+TEST(RealTimeApplicationGTest,TestStartNextStateExecution_Message) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestStartNextStateExecution_Message());
+}
+
+TEST(RealTimeApplicationGTest,TestStopCurrentStateExecution_Message) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestStopCurrentStateExecution_Message());
+}

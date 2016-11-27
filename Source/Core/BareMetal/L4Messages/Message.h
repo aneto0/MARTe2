@@ -73,7 +73,7 @@ public:
      *   Function = "The name of the destination method which has to be called" (this method has to be registered in the ClassRegistryDatabase)
      *   MaxWait (optional) = "The timeout in milliseconds" (default is TTInfiniteWait, namely infinite timeout)
      *   Mode (optional) = "The message type". Can be one of the following;
-     *     "ExpectsDirectReply": after sending the message, the sender expects a reply in the Message.
+     *     "ExpectsReply": after sending the message, the sender expects a reply in the Message.
      *     "ExpectsIndirectReply": after sending the message the sender expects a reply sent to him.
      *   By default, the sender will not wait for a message reply.
      *   !!!!! IMPORTANT !!!! a reply is always contained in the same Message object used to send

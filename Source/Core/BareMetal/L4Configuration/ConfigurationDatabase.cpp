@@ -57,9 +57,9 @@ ConfigurationDatabase::ConfigurationDatabase() : Object() {
 ConfigurationDatabase::~ConfigurationDatabase() {
 }
 
-void ConfigurationDatabase::CleanUp() {
+void ConfigurationDatabase::Purge() {
     currentNode = rootNode;
-    rootNode->CleanUp();
+    rootNode->Purge();
 }
 
 bool ConfigurationDatabase::Write(const char8 * const name,

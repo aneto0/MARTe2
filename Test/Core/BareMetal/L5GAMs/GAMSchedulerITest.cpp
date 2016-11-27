@@ -344,7 +344,7 @@ GAMSchedulerITest::GAMSchedulerITest() {
     }
 
     cdb.MoveToRoot();
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
 
     if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
         printf("\nFAILED INITIALISATION\n");
@@ -354,7 +354,7 @@ GAMSchedulerITest::GAMSchedulerITest() {
 
 GAMSchedulerITest::~GAMSchedulerITest() {
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
 
 }
 
@@ -510,7 +510,7 @@ bool GAMSchedulerITest::TestConfigureSchedulerFalse_InvalidState() {
     }
 
     cdb.MoveToRoot();
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
 
     if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
         return false;

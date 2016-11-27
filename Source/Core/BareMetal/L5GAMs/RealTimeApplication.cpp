@@ -55,10 +55,18 @@ uint32 RealTimeApplication::index = 1u;
 /*---------------------------------------------------------------------------*/
 
 RealTimeApplication::RealTimeApplication() :
-        ReferenceContainer() {
+        ReferenceContainer(),
+        MessageI() {
+    filter = ReferenceT<RegisteredMethodsMessageFilter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    filter->SetDestination(this);
+    InstallMessageFilter(filter);
 }
 
 RealTimeApplication::~RealTimeApplication() {
+    ErrorManagement::ErrorType ret = StopCurrentStateExecution();
+    if (!ret.ErrorsCleared()) {
+        REPORT_ERROR(ErrorManagement::FatalError, "Could not stop the RealTimeApplication. Was it ever started?");
+    }
 
 }
 bool RealTimeApplication::Initialise(StructuredDataI & data) {
@@ -344,17 +352,19 @@ bool RealTimeApplication::AddBrokersToFunctions() {
     return ret;
 }
 
-bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
-
-    bool ret = statesContainer.IsValid();
+ErrorManagement::ErrorType RealTimeApplication::PrepareNextState(StreamString nextStateName) {
+    bool ret = nextStateName.Seek(0u);
+    if (ret) {
+        ret = statesContainer.IsValid();
+    }
     if (ret) {
         uint32 numberOfStates = statesContainer->Size();
         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
             ReferenceT<RealTimeState> state = statesContainer->Get(i);
             ret = state.IsValid();
             if (ret) {
-                if (StringHelper::Compare(state->GetName(), nextStateName) == 0) {
-                    ret = state->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
+                if (StringHelper::Compare(state->GetName(), nextStateName.Buffer()) == 0) {
+                    ret = state->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName.Buffer());
                     break;
                 }
             }
@@ -366,14 +376,14 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
         ReferenceT<StatefulI> statefulInData = statefulsInData.Get(i);
         ret = statefulInData.IsValid();
         if (ret) {
-            ret = statefulInData->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
+            ret = statefulInData->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName.Buffer());
         }
     }
 
     if (ret) {
         ret = scheduler.IsValid();
         if (ret) {
-            ret = scheduler->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
+            ret = scheduler->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName.Buffer());
         }
     }
     uint32 nextIndex = (index + 1u) % 2u;
@@ -384,11 +394,19 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
 
 ErrorManagement::ErrorType RealTimeApplication::StartNextStateExecution() {
     index = (index + 1u) % 2u;
-    return scheduler->StartNextStateExecution();
+    ErrorManagement::ErrorType ret = scheduler.IsValid();
+    if (ret.ErrorsCleared()) {
+        ret = scheduler->StartNextStateExecution();
+    }
+    return ret;
 }
 
 ErrorManagement::ErrorType RealTimeApplication::StopCurrentStateExecution() {
-    return scheduler->StopCurrentStateExecution();
+    ErrorManagement::ErrorType ret = scheduler.IsValid();
+    if (ret.ErrorsCleared()) {
+        ret = scheduler->StopCurrentStateExecution();
+    }
+    return ret;
 }
 
 bool RealTimeApplication::FindStatefulDataSources() {
@@ -424,4 +442,9 @@ uint32 RealTimeApplication::GetIndex() {
 }
 
 CLASS_REGISTER(RealTimeApplication, "1.0");
+
+CLASS_METHOD_REGISTER(RealTimeApplication, PrepareNextState)
+CLASS_METHOD_REGISTER(RealTimeApplication, StartNextStateExecution)
+CLASS_METHOD_REGISTER(RealTimeApplication, StopCurrentStateExecution)
+
 }

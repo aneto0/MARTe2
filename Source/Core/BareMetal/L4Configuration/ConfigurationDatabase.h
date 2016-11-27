@@ -73,7 +73,7 @@ public:
     /**
      * @brief Removes all the elements from the database.
      */
-    void CleanUp();
+    void Purge();
 
     /**
      * @see StructuredDataI::Read

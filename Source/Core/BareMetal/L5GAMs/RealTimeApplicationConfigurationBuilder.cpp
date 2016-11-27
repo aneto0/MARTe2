@@ -3575,10 +3575,10 @@ bool RealTimeApplicationConfigurationBuilder::Copy(ConfigurationDatabase &functi
 
 bool RealTimeApplicationConfigurationBuilder::Set(ConfigurationDatabase &functionsDatabaseIn,
                                                   ConfigurationDatabase &dataSourcesDatabaseIn) {
-    functionsDatabase.CleanUp();
+    functionsDatabase.Purge();
     bool ret = functionsDatabaseIn.Copy(functionsDatabase);
     if (ret) {
-        dataSourcesDatabase.CleanUp();
+        dataSourcesDatabase.Purge();
         ret = dataSourcesDatabaseIn.Copy(dataSourcesDatabase);
     }
     return ret;

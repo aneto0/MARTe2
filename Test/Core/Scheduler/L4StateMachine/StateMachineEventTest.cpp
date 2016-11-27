@@ -221,7 +221,7 @@ bool StateMachineEventTest::TestConsumeMessage() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
     ReferenceT<StateMachineEvent> event = ObjectRegistryDatabase::Instance()->Find("StateMachine.A.E1");

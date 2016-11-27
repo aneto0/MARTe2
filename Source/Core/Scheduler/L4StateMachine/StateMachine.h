@@ -180,6 +180,13 @@ StateMachine    ();
      */
     virtual bool Initialise(StructuredDataI &data);
 
+
+    /**
+     * @brief Calls ReferenceContainer::Purge after removing all the StateMachineEvents from the queue
+     * @param[in] purgeList @see Object::Purge
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
+
     /**
      * @brief To be called by a StateMachineEvent which has received a relevant event and wishes to change state.
      * @details The current state will be updated to the StateMachineEvent::GetNextState. All the messages associated

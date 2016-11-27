@@ -298,7 +298,7 @@ static bool InitialiseMemoryMapSynchronisedInputBrokerEnviroment(const char8 * c
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;

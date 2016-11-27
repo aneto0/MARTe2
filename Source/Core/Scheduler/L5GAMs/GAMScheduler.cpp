@@ -85,6 +85,45 @@ GAMScheduler::~GAMScheduler() {
     }
 }
 
+bool GAMScheduler::Initialise(StructuredDataI & data) {
+    bool ret = GAMSchedulerI::Initialise(data);
+    if (ret) {
+        if (Size() > 0u) {
+            ret = (Size() == 1u);
+            if (ret) {
+                errorMessage = Get(0u);
+                ret = errorMessage.IsValid();
+                if (!ret) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "The ErrorMessage is not valid");
+                }
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::ParametersError, "Only one ErrorMessage shall be defined");
+            }
+        }
+    }
+
+    return ret;
+}
+
+void GAMScheduler::Purge(ReferenceContainer &purgeList) {
+    if (multiThreadService[0] != NULL) {
+        ErrorManagement::ErrorType err;
+        err = multiThreadService[0]->Stop();
+        if (!err.ErrorsCleared()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "Could not StopCurrentStateExecution multiThreadService[0]");
+        }
+    }
+    if (multiThreadService[1] != NULL) {
+        ErrorManagement::ErrorType err;
+        err = multiThreadService[1]->Stop();
+        if (!err.ErrorsCleared()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "Could not StopCurrentStateExecution multiThreadService[1]");
+        }
+    }
+    ReferenceContainer::Purge(purgeList);
+}
+
 ErrorManagement::ErrorType GAMScheduler::StartNextStateExecution() {
     ErrorManagement::ErrorType err;
     if (GetSchedulableStates() != NULL_PTR(ScheduledState **)) {
@@ -181,12 +220,17 @@ ErrorManagement::ErrorType GAMScheduler::Execute(const ExecutionInfo &informatio
                 //Do not set ret.fatalError = true because when ExecuteSingleCycle returns false it will trigger the MultiThreadService to restart the execution of ThreadLoop.
                 //If this was not handled then it would wait on eventSem.Wait(TTInfiniteWait) every time ExecuteSingleCycle returns false.
                 //ret.fatalError = true;
+                if(errorMessage.IsValid()) {
+                    if(MessageI::SendMessage(errorMessage, this) != ErrorManagement::NoError) {
+                        REPORT_ERROR(ErrorManagement::FatalError, "Failed to SendMessage.");
+                    }
+                }
             }
             uint64 tmp = (HighResolutionTimer::Counter() - cycleTimeStamp);
             float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
             uint32 absTime = static_cast<uint32>(ticksToTime);  //us
             uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
-            if(!MemoryOperationsHelper::Copy(rtThreadInfo[idx][threadNumber].cycleTime, &absTime, sizeToCopy)) {
+            if (!MemoryOperationsHelper::Copy(rtThreadInfo[idx][threadNumber].cycleTime, &absTime, sizeToCopy)) {
                 REPORT_ERROR(ErrorManagement::FatalError, "Could not copy cycle time information.");
             }
             cycleTimeStamp = HighResolutionTimer::Counter();

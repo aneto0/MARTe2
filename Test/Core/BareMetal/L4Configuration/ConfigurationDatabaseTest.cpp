@@ -644,7 +644,7 @@ bool ConfigurationDatabaseTest::TestInitialise() {
 
     if (ret) {
         cdb.MoveToRoot();
-        ObjectRegistryDatabase::Instance()->CleanUp();
+        ObjectRegistryDatabase::Instance()->Purge();
         ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
     }
     ReferenceT<ConfigurationDatabase> db1 = ObjectRegistryDatabase::Instance()->Find("Config1");
@@ -709,7 +709,7 @@ bool ConfigurationDatabaseTest::TestCleanUp() {
     ok &= (cdb.GetNumberOfChildren() > 0u);
     uint32 val;
     ok &= cdb.Read("AAA", val);
-    cdb.CleanUp();
+    cdb.Purge();
     ok &= (cdb.GetNumberOfChildren() == 0u);
     ok &= !cdb.Read("AAA", val);
     return ok;

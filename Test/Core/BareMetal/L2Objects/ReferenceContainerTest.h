@@ -400,10 +400,19 @@ public:
      */
     bool TestInitialise();
 
-    bool TestCleanUp();
+    /**
+     * @brief Tests the Purge method
+     */
+    bool TestPurge();
 
-    bool TestCleanUp_Shared();
+    /**
+     * @brief Tests the Purge method
+     */
+    bool TestPurge_Shared();
 
+    /**
+     * @brief Tests the ExportData function
+     */
     bool TestExportData();
 
     /**

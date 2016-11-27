@@ -94,7 +94,7 @@ bool QueuedMessageITest::TestStart() {
     if (!msg->Initialise(cdb)) {
         return false;
     }
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = QueuedMessageI::SendMessage(msg, NULL);
@@ -134,7 +134,7 @@ bool QueuedMessageITest::TestStart2() {
     if (!msg->Initialise(cdb)) {
         return false;
     }
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = QueuedMessageI::SendMessage(msg, NULL);
@@ -179,7 +179,7 @@ bool QueuedMessageITest::TestStop() {
     if (!msg->Initialise(cdb)) {
         return false;
     }
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = QueuedMessageI::SendMessage(msg, NULL);

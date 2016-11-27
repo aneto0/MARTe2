@@ -501,6 +501,11 @@ bool Object::IsDomain() const {
     return isDomain;
 }
 
+/*lint -e{715} purgeList is not used in the default implementation of the method*/
+void Object::Purge(ReferenceContainer &purgeList) {
+
+}
+
 CLASS_REGISTER(Object, "1.0")
 
 }

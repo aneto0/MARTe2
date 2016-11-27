@@ -508,17 +508,17 @@ TEST(ReferenceContainerGTest,TestInitialise) {
 }
 
 /*******************
- * TestCleanUp *
+ * TestPurge *
  *******************/
 
-TEST(ReferenceContainerGTest,TestCleanUp) {
+TEST(ReferenceContainerGTest,TestPurge) {
     ReferenceContainerTest referenceContainerTest;
-    ASSERT_TRUE(referenceContainerTest.TestCleanUp());
+    ASSERT_TRUE(referenceContainerTest.TestPurge());
 }
 
-TEST(ReferenceContainerGTest,TestCleanUp_Shared) {
+TEST(ReferenceContainerGTest,TestPurge_Shared) {
     ReferenceContainerTest referenceContainerTest;
-    ASSERT_TRUE(referenceContainerTest.TestCleanUp_Shared());
+    ASSERT_TRUE(referenceContainerTest.TestPurge_Shared());
 }
 
 TEST(ReferenceContainerGTest,TestExportData) {

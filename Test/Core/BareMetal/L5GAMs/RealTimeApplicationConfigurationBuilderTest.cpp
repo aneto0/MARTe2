@@ -395,7 +395,7 @@ static bool TestBuilder(const char8 * const config,
         ret = TestLauncher(rtAppBuilder, expectedFunctionsDatabase, expectedDataDatabase, functionToCall, expectCallFailure, fromConfiguration);
     }
     else {
-        ObjectRegistryDatabase::Instance()->CleanUp();
+        ObjectRegistryDatabase::Instance()->Purge();
         if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
             return false;
         }
@@ -25794,7 +25794,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestAssignBrokersToFunctionsFa
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
         return false;
     }
@@ -27593,7 +27593,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureDataSourceFal
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
         return false;
     }
@@ -29046,7 +29046,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureFunctionsFals
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
         return false;
     }

@@ -32,11 +32,11 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "IteratorT.h"
 #include "LinkedListable.h"
 #include "LinkedListHolder.h"
 #include "SortFilterT.h"
 #include "SearchFilterT.h"
-#include "IteratorT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -44,199 +44,129 @@
 
 namespace MARTe {
 
+/**
+ * @brief Template implementation of LinkedListHolder.
+ */
 template<class T, bool canDestroy = true>
 class LinkedListHolderT: protected LinkedListHolder {
 
 public:
 
-    LinkedListHolderT() :
-            LinkedListHolder(canDestroy) {
-
-    }
+    /**
+     * @brief Default constructor.
+     */
+    LinkedListHolderT();
 
     /**
      * @brief Destructor.
      */
-    virtual ~LinkedListHolderT() {
-    }
+    virtual ~LinkedListHolderT();
 
     /**
-     * @brief Returns the first element of the list.
-     * @return a pointer to the first element of the list.
+     * @brief @see LinkedListHolder::List()
      */
-    inline T *List() {
-        return static_cast<T*>(LinkedListHolder::List());
-    }
-
-    inline uint32 ListSize() const {
-        return LinkedListHolder::ListSize();
-    }
-
-
-    inline void CleanUp() {
-        LinkedListHolder::CleanUp();
-    }
-
+    inline T *List();
 
     /**
-     * @brief Inserts \p at the beginning of the list.
-     * @param[in] p the LinkedListable object to insert.
-     * @pre \a p must be a single LinkedListable element, as his next pointer will be set
-     *      to the previous first element of the list after the execution of the function.
-     *      If instead \a p is a list, this could lead to memory leaks.
+     * @brief @see LinkedListHolder::ListSize()
      */
-    inline void FastListInsertSingle(T &p) {
-        LinkedListHolder::FastListInsertSingle(p);
-    }
+    inline uint32 ListSize() const;
 
     /**
-     * @brief Inserts at the beginning of the list \a p. \a p can be a single element or an entire list.
-     * @param[in] p a pointer to the LinkedListable to insert.
+     * @brief @see LinkedListHolder::Reset()
      */
-    inline void ListInsert(T * const p) {
-        LinkedListHolder::ListInsert(p);
-    }
+    inline void Reset();
 
     /**
-     * @brief Inserts the input list using a SortFilter.
-     * @details If sorter is NULL, the unsorted ListInsert(LinkedListable *) function is called,
-     * inserting the input list at the beginning.
-     * @param[in] p the pointer to the LinkedListable to insert.
-     * @param[in] sorter implements the comparison criteria for the sorting.
+     * @brief @see LinkedListHolder::CleanUp()
+     */
+    inline void CleanUp();
+
+    /**
+     * @brief @see LinkedListHolder::FastListInsertSingle()
+     */
+    inline void FastListInsertSingle(T &p);
+
+    /**
+     * @brief @see LinkedListHolder::ListInsert()
+     */
+    inline void ListInsert(T * const p);
+
+    /**
+     * @brief @see LinkedListHolder::ListInsert()
      */
     inline void ListInsert(T * const p,
-                           SortFilterT<T> * const sorter) {
-        LinkedListHolder::ListInsert(p, sorter);
-    }
+                           SortFilterT<T> * const sorter);
 
     /**
-     * @brief Inserts a list in the specified position of the list.
-     * @details If the specified position is greater the the list size, the list input is inserted at the end.
-     * @param[in] q the pointer to the LinkedListable to be inserted.
-     * @param[in] index is the position in the list where \a p must be inserted.
+     * @brief @see LinkedListHolder::ListInsert()
      */
-    inline void ListInsert(T * const q,
-                           const uint32 index) {
-        LinkedListHolder::ListInsert(q, index);
-    }
+    inline void ListInsert(T * const q, const uint32 index);
 
     /**
-     * @brief Adds an element at the end of this list.
-     * @param[in] p the pointer to the LinkedListable element to be appended.
-     * @pre \a p must be a single LinkedListable element, as his next pointer will be set
-     *      to NULL after the execution of the function. If instead \a p is a list, Add
-     *      could lead to memory leaks.
+     * @brief @see LinkedListHolder::ListAdd()
      */
-    inline void ListAdd(T * const p) {
-        LinkedListHolder::ListAdd(p);
-    }
+    inline void ListAdd(T * const p);
 
     /**
-     * @brief Adds a LinkedListable list at the end of the list.
-     * @param[in] p the pointer to the LinkedListable list to added.
+     * @brief @see LinkedListHolder::ListAdd()
      */
-    inline void ListAddL(T * const p) {
-        LinkedListHolder::ListAddL(p);
-    }
+    inline void ListAddL(T * const p);
 
     /**
-     * @brief Searches a specified element in this list.
-     * @param[in] p a pointer to the element to search.
-     * @return true if \a p is in the list, false otherwise.
+     * @brief @see LinkedListHolder::ListSearch()
      */
-    inline bool ListSearch(const T * const p) {
-        return LinkedListHolder::ListSearch(p);
-    }
+    inline bool ListSearch(const T * const p);
 
     /**
-     * @brief Searches an element using a SearchFilter.
-     * @param[in] filter defines the search criteria.
-     * @return a pointer to the element if it is found in the list, NULL otherwise.
+     * @brief @see LinkedListHolder::ListSearch()
      */
-    inline T *ListSearch(SearchFilterT<T> * const filter) {
-        LinkedListable *ll = LinkedListHolder::ListSearch(filter);
-        return static_cast<T*>(ll);
-    }
+    inline T *ListSearch(SearchFilterT<T> * const filter);
 
     /**
-     * @brief Removes the requested element from the list.
-     * @param[in] p the element to be removed.
-     * @return true if \a p was in the list, false otherwise.
+     * @brief @see LinkedListHolder::ListExtract()
      */
-    inline bool ListExtract(T * const p) {
-        return LinkedListHolder::ListExtract(p);
-    }
+    inline bool ListExtract(T * const p);
 
     /**
-     * @brief Finds and removes one element from list using a SearchFilter.
-     * @param[in] filter defines the search criteria.
-     * @return the extracted element, NULL if it is not found in the list.
+     * @brief @see LinkedListHolder::ListExtract()
      */
-    inline T *ListExtract(SearchFilterT<T> * const filter) {
-        return static_cast<T*>(LinkedListHolder::ListExtract(filter));
-    }
+    inline T *ListExtract(SearchFilterT<T> * const filter);
 
     /**
-     * @brief Deletes the requested element.
-     * @param[in] p is the element which must be deleted.
-     * @return true if p is in the list, false otherwise.
+     * @brief @see LinkedListHolder::ListDelete()
      */
-    inline bool ListDelete(T * const p) {
-        return LinkedListHolder::ListDelete(p);
-    }
+    inline bool ListDelete(T * const p);
 
     /**
-     * @brief Deletes elements using a SearchFilter.
-     * @param[in] filter defines the search criteria.
-     * @return true if at least one element is deleted, false otherwise.
+     * @brief @see LinkedListHolder::ListDelete()
      */
-    inline bool ListDelete(SearchFilterT<T> * const filter) {
-        return LinkedListHolder::ListDelete(filter);
-    }
+    inline bool ListDelete(SearchFilterT<T> * const filter);
 
     /**
-     * @brief Deletes a elements using a SearchFilter in safe mode.
-     * @details Safe from being reentrant from the destructor of the object (complex graph destruction)
-     * @param[in] filter defines the search criteria.
-     * @return true if at least one object it is deleted, false otherwise.
+     * @brief @see LinkedListHolder::ListSafeDelete()
      */
-    inline bool ListSafeDelete(SearchFilterT<T> * const filter) {
-        return LinkedListHolder::ListSafeDelete(filter);
-    }
+    inline bool ListSafeDelete(SearchFilterT<T> * const filter);
 
     /**
-     * @brief Sorts the elements in the list using a SortFilter.
-     * @param[in] sorter defines the comparison criteria.
+     * @brief @see LinkedListHolder::ListBSort()
      */
-    inline void ListBSort(SortFilterT<T> * const sorter) {
-        LinkedListHolder::ListBSort(sorter);
-    }
+    inline void ListBSort(SortFilterT<T> * const sorter);
 
     /**
-     * @brief Browses the list.
-     * @param[in] index the position of the requested element (0 means the first element).
-     * @return a pointer to the element at index position.
+     * @brief @see LinkedListHolder::ListPeek()
      */
-    inline T *ListPeek(const uint32 index) {
-        return static_cast<T*>(LinkedListHolder::ListPeek(index));
-    }
+    inline T *ListPeek(const uint32 index);
 
     /**
-     * @brief Removes and gets the element of the list in a specified position.
-     * @param[in] index the position of the requested element.
-     * @return a pointer to the element at index position.
+     * @brief @see LinkedListHolder::ListExtract()
      */
-    inline T *ListExtract(uint32 index = 0u) {
-        return static_cast<T*>(LinkedListHolder::ListExtract(index));
-    }
+    inline T *ListExtract(uint32 index = 0u);
 
     /**
-     * @brief For each item in the list perform the action defined by the Iterator.
-     * @param[in] it defines the action to be performed on each element.
+     * @brief @see LinkedListHolder::ListIterate()
      */
-    inline void ListIterate(IteratorT<T> * const it) {
-        LinkedListHolder::ListIterate(it);
-    }
+    inline void ListIterate(IteratorT<T> * const it);
 };
 
 }
@@ -244,6 +174,127 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+template <class T, bool canDestroy>
+LinkedListHolderT<T, canDestroy>::LinkedListHolderT() :
+        LinkedListHolder(canDestroy) {
+
+}
+
+template <class T, bool canDestroy>
+LinkedListHolderT<T, canDestroy>::~LinkedListHolderT() {
+}
+
+template <class T, bool canDestroy>
+T *LinkedListHolderT<T, canDestroy>::List() {
+    return static_cast<T*>(LinkedListHolder::List());
+}
+
+template <class T, bool canDestroy>
+uint32 LinkedListHolderT<T, canDestroy>::ListSize() const {
+    return LinkedListHolder::ListSize();
+}
+
+template <class T, bool canDestroy>
+void LinkedListHolderT<T, canDestroy>::Reset() {
+    return LinkedListHolder::Reset();
+}
+
+template <class T, bool canDestroy>
+void LinkedListHolderT<T, canDestroy>::CleanUp() {
+    LinkedListHolder::CleanUp();
+}
+
+template <class T, bool canDestroy>
+void LinkedListHolderT<T, canDestroy>::FastListInsertSingle(T &p) {
+    LinkedListHolder::FastListInsertSingle(p);
+}
+
+template <class T, bool canDestroy>
+void LinkedListHolderT<T, canDestroy>::ListInsert(T * const p) {
+    LinkedListHolder::ListInsert(p);
+}
+
+template <class T, bool canDestroy>
+void LinkedListHolderT<T, canDestroy>::ListInsert(T * const p,
+                                   SortFilterT<T> * const sorter) {
+    LinkedListHolder::ListInsert(p, sorter);
+}
+
+template <class T, bool canDestroy>
+void LinkedListHolderT<T, canDestroy>::ListInsert(T * const q,
+                                   const uint32 index) {
+    LinkedListHolder::ListInsert(q, index);
+}
+
+template <class T, bool canDestroy>
+void LinkedListHolderT<T, canDestroy>::ListAdd(T * const p) {
+    LinkedListHolder::ListAdd(p);
+}
+
+template <class T, bool canDestroy>
+void LinkedListHolderT<T, canDestroy>::ListAddL(T * const p) {
+    LinkedListHolder::ListAddL(p);
+}
+
+template <class T, bool canDestroy>
+bool LinkedListHolderT<T, canDestroy>::ListSearch(const T * const p) {
+    return LinkedListHolder::ListSearch(p);
+}
+
+template <class T, bool canDestroy>
+T *LinkedListHolderT<T, canDestroy>::ListSearch(SearchFilterT<T> * const filter) {
+    LinkedListable *ll = LinkedListHolder::ListSearch(filter);
+    return static_cast<T*>(ll);
+}
+
+template <class T, bool canDestroy>
+bool LinkedListHolderT<T, canDestroy>::ListExtract(T * const p) {
+    return LinkedListHolder::ListExtract(p);
+}
+
+template <class T, bool canDestroy>
+T *LinkedListHolderT<T, canDestroy>::ListExtract(SearchFilterT<T> * const filter) {
+    return static_cast<T*>(LinkedListHolder::ListExtract(filter));
+}
+
+template <class T, bool canDestroy>
+bool LinkedListHolderT<T, canDestroy>::ListDelete(T * const p) {
+    return LinkedListHolder::ListDelete(p);
+}
+
+template <class T, bool canDestroy>
+bool LinkedListHolderT<T, canDestroy>::ListDelete(SearchFilterT<T> * const filter) {
+    return LinkedListHolder::ListDelete(filter);
+}
+
+template <class T, bool canDestroy>
+bool LinkedListHolderT<T, canDestroy>::ListSafeDelete(SearchFilterT<T> * const filter) {
+    return LinkedListHolder::ListSafeDelete(filter);
+}
+
+template <class T, bool canDestroy>
+void LinkedListHolderT<T, canDestroy>::ListBSort(SortFilterT<T> * const sorter) {
+    LinkedListHolder::ListBSort(sorter);
+}
+
+template <class T, bool canDestroy>
+T *LinkedListHolderT<T, canDestroy>::ListPeek(const uint32 index) {
+    return static_cast<T*>(LinkedListHolder::ListPeek(index));
+}
+
+template <class T, bool canDestroy>
+T *LinkedListHolderT<T, canDestroy>::ListExtract(uint32 index) {
+    return static_cast<T*>(LinkedListHolder::ListExtract(index));
+}
+
+template <class T, bool canDestroy>
+void LinkedListHolderT<T, canDestroy>::ListIterate(IteratorT<T> * const it) {
+    LinkedListHolder::ListIterate(it);
+}
+}
 
 #endif /* LINKEDLISTHOLDERT_H_ */
 

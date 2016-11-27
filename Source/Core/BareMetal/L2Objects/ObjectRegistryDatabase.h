@@ -79,6 +79,8 @@ public:
     virtual const char8 * const GetClassName() const;
 
 private:
+
+
     /**
      * @brief Disallow the usage of new.
      * @param[in] size the size of the object.
