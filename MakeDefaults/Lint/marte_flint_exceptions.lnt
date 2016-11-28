@@ -317,7 +317,7 @@
  * Justification: these function change the internal private attributes.
  */
 -estring(1960,"*MARTe::DoubleInteger<<1>>*")
--estring(1960,"*MARTe::LinkedListHolderT<<1>>*")  
+-estring(1960,"*MARTe::LinkedListHolderT<<1>,<2>>*")  
 
 /*
  * Rule 0-1-8
