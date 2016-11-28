@@ -140,6 +140,7 @@ ErrorManagement::ErrorType GAMScheduler::StartNextStateExecution() {
         }
     }
     else {
+        //This should not be reachable as the RealTimeApplication will fail in such case.
         REPORT_ERROR(ErrorManagement::FatalError, "No states defined.");
         err.fatalError = true;
     }

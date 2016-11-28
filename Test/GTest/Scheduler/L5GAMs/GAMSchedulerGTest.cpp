@@ -54,6 +54,11 @@ TEST(GAMSchedulerGTest,TestStartNextStateExecution) {
     ASSERT_TRUE(test.TestStartNextStateExecution());
 }
 
+TEST(GAMSchedulerGTest,TestStartNextStateExecution_False_PrepareNextState) {
+    GAMSchedulerTest test;
+    ASSERT_TRUE(test.TestStartNextStateExecution_False_PrepareNextState());
+}
+
 TEST(GAMSchedulerGTest,TestStopCurrentStateExecution) {
     GAMSchedulerTest test;
     ASSERT_TRUE(test.TestStopCurrentStateExecution());
