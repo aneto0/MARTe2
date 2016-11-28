@@ -55,6 +55,66 @@ public:
       * @brief Tests that a function which receives as s BasicTCPSocket as an input can be called. Returns true or compilation will fail while resolving the templates.
       */
      bool TestConstructor_BasicTCPSocket();
+
+     /**
+      * @brief Tests the Read method.
+      */
+     bool TestRead();
+
+     /**
+      * @brief Tests the Read method with a timeout.
+      */
+     bool TestRead_Timeout();
+
+     /**
+      * @brief Tests the Write method.
+      */
+     bool TestWrite();
+
+     /**
+      * @brief Tests the Write method with a timeout.
+      */
+     bool TestWrite_Timeout();
+
+     /**
+      * @brief Tests the Size method.
+      */
+     bool TestSize();
+
+     /**
+      * @brief Tests the Seek method.
+      */
+     bool TestSeek();
+
+     /**
+      * @brief Tests the RelativeSeek method.
+      */
+     bool TestRelativeSeek();
+
+     /**
+      * @brief Tests the Position method.
+      */
+     bool TestPosition();
+
+     /**
+      * @brief Tests the SetSize method.
+      */
+     bool TestSetSize();
+
+     /**
+      * @brief Tests the CanWrite method.
+      */
+     bool TestCanWrite();
+
+     /**
+      * @brief Tests the CanSeek method.
+      */
+     bool TestCanSeek();
+
+     /**
+      * @brief Tests the CanRead method.
+      */
+     bool TestCanRead();
  };
 
 

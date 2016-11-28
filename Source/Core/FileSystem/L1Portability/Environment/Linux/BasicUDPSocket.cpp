@@ -206,7 +206,7 @@ bool BasicUDPSocket::Read(char8 * const output,
                 REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() setting the read timeout");
             }
             else {
-                if (Read(output, sizeToRead)) {
+                if (BasicUDPSocket::Read(output, sizeToRead)) {
                     size = sizeToRead;
                 }
             }
@@ -217,7 +217,7 @@ bool BasicUDPSocket::Read(char8 * const output,
             }
         }
         else {
-            if (Read(output, sizeToRead)) {
+            if (BasicUDPSocket::Read(output, sizeToRead)) {
                 size = sizeToRead;
             }
         }
@@ -248,7 +248,7 @@ bool BasicUDPSocket::Write(const char8 * const input,
                 REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() setting the write timeout");
             }
             else {
-                if (Write(input, sizeToWrite)) {
+                if (BasicUDPSocket::Write(input, sizeToWrite)) {
                     size = sizeToWrite;
                 }
             }
@@ -259,7 +259,7 @@ bool BasicUDPSocket::Write(const char8 * const input,
             }
         }
         else {
-            if (Write(input, sizeToWrite)) {
+            if (BasicUDPSocket::Write(input, sizeToWrite)) {
                 size = sizeToWrite;
             }
         }

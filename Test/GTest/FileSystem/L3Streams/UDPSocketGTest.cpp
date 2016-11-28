@@ -57,4 +57,62 @@ TEST(UDPSocketGTest, TestConstructor_BasicUDPSocket) {
     ASSERT_TRUE(test.TestConstructor_BasicUDPSocket());
 }
 
+TEST(UDPSocketGTest, TestRead) {
+    UDPSocketTest test;
+    ASSERT_TRUE(test.TestRead());
+}
 
+TEST(UDPSocketGTest, TestRead_Timeout) {
+    UDPSocketTest test;
+    ASSERT_TRUE(test.TestRead_Timeout());
+}
+
+TEST(UDPSocketGTest, TestWrite) {
+    UDPSocketTest test;
+    ASSERT_TRUE(test.TestWrite());
+}
+
+TEST(UDPSocketGTest, TestWrite_Timeout) {
+    UDPSocketTest test;
+    ASSERT_TRUE(test.TestWrite_Timeout());
+}
+
+TEST(UDPSocketGTest, TestSize) {
+    UDPSocketTest test;
+    ASSERT_TRUE(test.TestSize());
+}
+
+TEST(UDPSocketGTest, TestSeek) {
+    UDPSocketTest test;
+    ASSERT_TRUE(test.TestSeek());
+}
+
+TEST(UDPSocketGTest, TestRelativeSeek) {
+    UDPSocketTest test;
+    ASSERT_TRUE(test.TestRelativeSeek());
+}
+
+TEST(UDPSocketGTest, TestPosition) {
+    UDPSocketTest test;
+    ASSERT_TRUE(test.TestPosition());
+}
+
+TEST(UDPSocketGTest, TestSetSize) {
+    UDPSocketTest test;
+    ASSERT_TRUE(test.TestSetSize());
+}
+
+TEST(UDPSocketGTest, TestCanWrite) {
+    UDPSocketTest test;
+    ASSERT_TRUE(test.TestCanWrite());
+}
+
+TEST(UDPSocketGTest, TestCanSeek) {
+    UDPSocketTest test;
+    ASSERT_TRUE(test.TestCanSeek());
+}
+
+TEST(UDPSocketGTest, TestCanRead) {
+    UDPSocketTest test;
+    ASSERT_TRUE(test.TestCanRead());
+}

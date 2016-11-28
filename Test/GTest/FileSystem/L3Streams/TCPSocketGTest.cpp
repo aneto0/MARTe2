@@ -58,3 +58,63 @@ TEST(TCPSocketGTest, TestConstructor_BasicTCPSocket) {
 }
 
 
+TEST(TCPSocketGTest, TestRead) {
+    TCPSocketTest test;
+    ASSERT_TRUE(test.TestRead());
+}
+
+TEST(TCPSocketGTest, TestRead_Timeout) {
+    TCPSocketTest test;
+    ASSERT_TRUE(test.TestRead_Timeout());
+}
+
+TEST(TCPSocketGTest, TestWrite) {
+    TCPSocketTest test;
+    ASSERT_TRUE(test.TestWrite());
+}
+
+TEST(TCPSocketGTest, TestWrite_Timeout) {
+    TCPSocketTest test;
+    ASSERT_TRUE(test.TestWrite_Timeout());
+}
+
+TEST(TCPSocketGTest, TestSize) {
+    TCPSocketTest test;
+    ASSERT_TRUE(test.TestSize());
+}
+
+TEST(TCPSocketGTest, TestSeek) {
+    TCPSocketTest test;
+    ASSERT_TRUE(test.TestSeek());
+}
+
+TEST(TCPSocketGTest, TestRelativeSeek) {
+    TCPSocketTest test;
+    ASSERT_TRUE(test.TestRelativeSeek());
+}
+
+TEST(TCPSocketGTest, TestPosition) {
+    TCPSocketTest test;
+    ASSERT_TRUE(test.TestPosition());
+}
+
+TEST(TCPSocketGTest, TestSetSize) {
+    TCPSocketTest test;
+    ASSERT_TRUE(test.TestSetSize());
+}
+
+TEST(TCPSocketGTest, TestCanWrite) {
+    TCPSocketTest test;
+    ASSERT_TRUE(test.TestCanWrite());
+}
+
+TEST(TCPSocketGTest, TestCanSeek) {
+    TCPSocketTest test;
+    ASSERT_TRUE(test.TestCanSeek());
+}
+
+TEST(TCPSocketGTest, TestCanRead) {
+    TCPSocketTest test;
+    ASSERT_TRUE(test.TestCanRead());
+}
+

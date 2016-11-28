@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "Threads.h"
+#include "UDPSocket.h"
 #include "UDPSocketTest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -42,6 +44,36 @@ static bool CheckStream(MARTe::StreamI &stream) {
 
 static bool CheckUDPSocket(MARTe::BasicUDPSocket &file) {
     return true;
+}
+
+static bool readWithTimeout = false;
+static bool serverOK = false;
+static bool serverDone = false;
+static const MARTe::uint32 udpServerExpectReadSize = 255;
+static MARTe::uint8 udpServerBufferRead[udpServerExpectReadSize];
+static MARTe::uint32 udpServerPort = 44488;
+static void UDPSocketTestServerThread(void *params) {
+    using namespace MARTe;
+    UDPSocket server;
+    serverOK = server.Open();
+    InternetHost thisHost(udpServerPort, "127.0.0.1");
+    serverOK &= server.Listen(thisHost.GetPort());
+    uint32 udpServerReadSize = udpServerExpectReadSize;
+    if (serverOK) {
+        if (readWithTimeout) {
+            serverOK &= server.Read((char8 *) udpServerBufferRead, udpServerReadSize, TTInfiniteWait);
+        }
+        else {
+            serverOK &= server.Read((char8 *) udpServerBufferRead, udpServerReadSize);
+        }
+    }
+    serverOK &= (udpServerReadSize == udpServerExpectReadSize);
+    uint8 i;
+    for (i = 0; (i < udpServerExpectReadSize) && (serverOK); i++) {
+        serverOK &= (udpServerBufferRead[i] == i);
+    }
+    server.Close();
+    serverDone = true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -60,4 +92,122 @@ bool UDPSocketTest::TestConstructor_Stream() {
 bool UDPSocketTest::TestConstructor_BasicUDPSocket() {
     MARTe::UDPSocket f;
     return CheckUDPSocket(f);
+}
+
+bool UDPSocketTest::TestRead() {
+    using namespace MARTe;
+    serverDone = false;
+    serverOK = false;
+    readWithTimeout = false;
+    uint8 i;
+    for (i = 0; (i < udpServerExpectReadSize); i++) {
+        udpServerBufferRead[i] = 0;
+    }
+    MARTe::uint8 udpServerWriteBuffer[udpServerExpectReadSize];
+    for (i = 0; (i < udpServerExpectReadSize); i++) {
+        udpServerWriteBuffer[i] = i;
+    }
+    Threads::BeginThread((ThreadFunctionType) UDPSocketTestServerThread, NULL);
+    uint32 counter = 0;
+    UDPSocket client;
+    client.Open();
+    client.Connect("127.0.0.1", udpServerPort);
+    while (!serverDone) {
+        Sleep::Sec(0.1);
+        counter++;
+        if (counter > 50) {
+            break;
+        }
+        uint32 bytesSent = udpServerExpectReadSize;
+        client.Write((char8 *) udpServerWriteBuffer, bytesSent);
+    }
+    client.Close();
+    return serverOK;
+}
+
+bool UDPSocketTest::TestRead_Timeout() {
+    using namespace MARTe;
+    serverDone = false;
+    serverOK = false;
+    readWithTimeout = true;
+    uint8 i;
+    for (i = 0; (i < udpServerExpectReadSize); i++) {
+        udpServerBufferRead[i] = 0;
+    }
+    MARTe::uint8 udpServerWriteBuffer[udpServerExpectReadSize];
+    for (i = 0; (i < udpServerExpectReadSize); i++) {
+        udpServerWriteBuffer[i] = i;
+    }
+    Threads::BeginThread((ThreadFunctionType) UDPSocketTestServerThread, NULL);
+    uint32 counter = 0;
+    UDPSocket client;
+    client.Open();
+    client.Connect("127.0.0.1", udpServerPort);
+    while (!serverDone) {
+        Sleep::Sec(0.1);
+        counter++;
+        if (counter > 50) {
+            break;
+        }
+        uint32 bytesSent = udpServerExpectReadSize;
+        client.Write((char8 *) udpServerWriteBuffer, bytesSent);
+    }
+    client.Close();
+    return serverOK;
+}
+
+bool UDPSocketTest::TestWrite() {
+    return TestRead();
+}
+
+bool UDPSocketTest::TestWrite_Timeout() {
+    return TestRead_Timeout();
+}
+
+bool UDPSocketTest::TestSize() {
+    using namespace MARTe;
+    UDPSocket socket;
+    return (socket.Size() == 0xffffffffffffffffu);
+}
+
+bool UDPSocketTest::TestSeek() {
+    using namespace MARTe;
+    UDPSocket socket;
+    return !socket.Seek(0u);
+}
+
+bool UDPSocketTest::TestRelativeSeek() {
+    using namespace MARTe;
+    UDPSocket socket;
+    return !socket.RelativeSeek(0u);
+}
+
+bool UDPSocketTest::TestPosition() {
+    using namespace MARTe;
+    UDPSocket socket;
+    return (socket.Position() == 0xffffffffffffffffu);
+}
+
+bool UDPSocketTest::TestSetSize() {
+    using namespace MARTe;
+    UDPSocket socket;
+    return !socket.SetSize(10u);
+}
+
+bool UDPSocketTest::TestCanWrite() {
+    using namespace MARTe;
+    UDPSocket socket;
+    return socket.CanWrite();
+}
+
+bool UDPSocketTest::TestCanSeek() {
+    using namespace MARTe;
+    UDPSocket socket;
+    return !socket.CanSeek();
+}
+
+bool UDPSocketTest::TestCanRead() {
+    using namespace MARTe;
+    UDPSocket socket;
+    return socket.CanRead();
 }
