@@ -477,13 +477,16 @@ void ReferenceContainer::Purge(ReferenceContainer &purgeList) {
     uint32 purgeEnd = purgeStart;
     uint32 numberOfElements = Size();
 
+    bool ok = true;
     //flat recursion to avoid stack waste
-    for (uint32 i = 0u; i < numberOfElements; i++) {
+    for (uint32 i = 0u; (i < numberOfElements) && (ok); i++) {
         //extract the element from the list
         Reference node = Get(0u);
         if (node.IsValid()) {
-            purgeList.Insert(node);
-            Delete(node);
+            ok = purgeList.Insert(node);
+            if(ok) {
+                ok = Delete(node);
+            }
             purgeEnd++;
         }
     }
@@ -492,10 +495,7 @@ void ReferenceContainer::Purge(ReferenceContainer &purgeList) {
     for (uint32 i = purgeStart; i < purgeEnd; i++) {
         Reference nodeObj = purgeList.Get(i);
         if (nodeObj.IsValid()) {
-            Reference nodeObj = purgeList.Get(i);
-            if(nodeObj.IsValid()) {
-                nodeObj->Purge(purgeList);
-            }
+            nodeObj->Purge(purgeList);
         }
     }
 }

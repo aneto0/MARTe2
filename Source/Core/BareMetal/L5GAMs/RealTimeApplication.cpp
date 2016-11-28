@@ -59,9 +59,14 @@ RealTimeApplication::RealTimeApplication() :
         MessageI() {
     filter = ReferenceT<RegisteredMethodsMessageFilter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     filter->SetDestination(this);
-    InstallMessageFilter(filter);
+    ErrorManagement::ErrorType ret = MessageI::InstallMessageFilter(filter);
+    if (!ret.ErrorsCleared()) {
+        REPORT_ERROR(ErrorManagement::FatalError, "Failed to install message filters");
+    }
+
 }
 
+/*lint -e{1551} Guarantess that the execution is stopped upon destrucion of the RealTimeApplication*/
 RealTimeApplication::~RealTimeApplication() {
     ErrorManagement::ErrorType ret = StopCurrentStateExecution();
     if (!ret.ErrorsCleared()) {
@@ -353,7 +358,7 @@ bool RealTimeApplication::AddBrokersToFunctions() {
 }
 
 ErrorManagement::ErrorType RealTimeApplication::PrepareNextState(StreamString nextStateName) {
-    bool ret = nextStateName.Seek(0u);
+    bool ret = nextStateName.Seek(0LLU);
     if (ret) {
         ret = statesContainer.IsValid();
     }

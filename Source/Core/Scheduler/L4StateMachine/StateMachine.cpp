@@ -51,7 +51,7 @@ StateMachine::StateMachine() :
 /*lint -e{1551} the destructor must guarantee that the QueuedMessageI SingleThreadService is stopped.*/
 StateMachine::~StateMachine() {
     ReferenceContainer c;
-    Purge(c);
+    StateMachine::Purge(c);
 }
 
 void StateMachine::Purge(ReferenceContainer &purgeList) {
