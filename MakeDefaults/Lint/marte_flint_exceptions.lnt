@@ -27,6 +27,12 @@
  */
 -estring(1531,"*")
 
+/*
+ * CLASS_REGISTER_DECLARATION an instantiation of the loader (which indeed has no nonstatic members) needs to 
+ * be performed in order to register the class methods. This is a warning with minor impact (see manual). 
+ */
+-estring(1502,"*ClassMethodInterfaceMapperLoader*")
+
 /* 
  * Do not lint operating system files
  * Remember that Flexelint uses the label of "library" header to 
@@ -308,9 +314,10 @@
 
 /*
  * Rule 0-1-8
- * Justification: this function change the internal private attributes.
+ * Justification: these function change the internal private attributes.
  */
--estring(1960,"*MARTe::DoubleInteger<<1>>*") 
+-estring(1960,"*MARTe::DoubleInteger<<1>>*")
+-estring(1960,"*MARTe::LinkedListHolderT<<1>>*")  
 
 /*
  * Rule 0-1-8
