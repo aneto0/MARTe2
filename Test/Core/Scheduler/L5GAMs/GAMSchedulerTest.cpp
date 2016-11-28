@@ -1404,6 +1404,34 @@ bool GAMSchedulerTest::TestIntegrated() {
             }
         }
     }
+    if (ok) {
+        for (uint32 i = 0u; (i < 8u); i++) {
+            gams[i]->numberOfExecutions = 0;
+        }
+        ReferenceT<Message> messageState1 = ObjectRegistryDatabase::Instance()->Find("TestMessages.State1");
+        if (!messageState1.IsValid()) {
+            return false;
+        }
+        ok = MessageI::SendMessage(messageState1, NULL);
+    }
+    bool testExecuted3[] = { true, true, true, true, true, true, false, false };
+    counter = 0;
+    if (ok) {
+        ok = false;
+        while (!ok) {
+            ok = true;
+            for (uint32 i = 0u; (i < 8u) && (ok); i++) {
+                ok = ((gams[i]->numberOfExecutions > 0u) == testExecuted3[i]);
+            }
+            counter++;
+            if (!ok) {
+                Sleep::Sec(0.1);
+            }
+            if (counter > 20) {
+                break;
+            }
+        }
+    }
     ReferenceT<Message> messageStop = ObjectRegistryDatabase::Instance()->Find("TestMessages.Stop");
     if (!messageStop.IsValid()) {
         return false;
@@ -1578,25 +1606,42 @@ bool GAMSchedulerTest::TestStartNextStateExecution() {
 
     ReferenceT<GAMScheduler> sched = app->Find("Scheduler");
 
-    app->StartNextStateExecution();
+    ErrorManagement::ErrorType err = app->StartNextStateExecution();
+    if (err.ErrorsCleared()) {
+        Sleep::Sec(1.0);
+        done = 0;
+        Threads::BeginThread((ThreadFunctionType) PrepareNext, app.operator ->());
 
-    Sleep::Sec(1.0);
-    done = 0;
-    Threads::BeginThread((ThreadFunctionType) PrepareNext, app.operator ->());
+        while (!done) {
+            Sleep::MSec(10);
+        }
+        err = app->StartNextStateExecution();
+        Sleep::Sec(1.0);
 
-    while (!done) {
-        Sleep::MSec(10);
+        app->StopCurrentStateExecution();
+
+        while (Threads::NumberOfThreads() > 0) {
+            Sleep::MSec(10);
+        }
     }
-    app->StartNextStateExecution();
-    Sleep::Sec(1.0);
+    return err.ErrorsCleared();
+}
 
-    app->StopCurrentStateExecution();
-
-    while (Threads::NumberOfThreads() > 0) {
-        Sleep::MSec(10);
+bool GAMSchedulerTest::TestStartNextStateExecution_False_PrepareNextState() {
+    if (!Init(configSimple)) {
+        return false;
     }
 
-    return true;
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (!app->ConfigureApplication()) {
+        return false;
+    }
+
+    ReferenceT<GAMScheduler> sched = app->Find("Scheduler");
+
+    ErrorManagement::ErrorType err = app->StartNextStateExecution();
+
+    return !err.ErrorsCleared();
 }
 
 bool GAMSchedulerTest::TestStopCurrentStateExecution() {

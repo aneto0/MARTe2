@@ -152,9 +152,6 @@ ErrorManagement::ErrorType GAMScheduler::StopCurrentStateExecution() {
     if (multiThreadService[currentIndex] != NULL) {
         err = multiThreadService[currentIndex]->Stop();
     }
-    else {
-        err.fatalError = true;
-    }
     return err;
 }
 

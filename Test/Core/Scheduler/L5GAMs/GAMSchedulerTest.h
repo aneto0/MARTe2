@@ -71,6 +71,11 @@ public:
     bool TestStartNextStateExecution();
 
     /**
+     * @brief Tests that starting the execution of a multi-thread MARTe application without Preparing the state returns false
+     */
+    bool TestStartNextStateExecution_False_PrepareNextState();
+
+    /**
      * @brief Tests the execution of a multi-thread MARTe application
      */
     bool TestStopCurrentStateExecution();
