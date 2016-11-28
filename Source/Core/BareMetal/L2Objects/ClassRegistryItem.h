@@ -47,7 +47,8 @@ namespace MARTe {
 
 class ClassMethodCaller;
 class ObjectBuilder;
-class Introspection;
+class ClassMember;
+class VariableDescriptor;
 
 
 /**
@@ -79,19 +80,6 @@ public:
      * @return the number of instantiated objects of the class type represented by this registry item.
      */
     uint32 GetNumberOfInstances() const;
-
-    /**
-     * @brief Adds the introspection data.
-     * @param[in] introspectioIn is the pointer to the object containing the informations
-     * about the registered class attributes.
-     */
-    void SetIntrospection(const Introspection * const introspectionIn);
-
-    /**
-     * @brief Returns a pointer to the class introspection.
-     * @return a pointer to the class introspection.
-     */
-    const Introspection * GetIntrospection() const;
 
     /**
      * @brief Updates the pointer to the loadable library (dll).
@@ -147,7 +135,6 @@ public:
      */
     uint32                  GetSizeOfClass();
 
-
     /**
      * @brief Gets the ClassMethodCaller associated to the method with name = methodName.
      * @param[in] methodName the name of the method.
@@ -160,6 +147,20 @@ public:
      * @param[in] method the method to register. The pointer will be freed by this class.
      */
     void                    AddMethod(ClassMethodInterfaceMapper * const method);
+
+    /**
+     * @brief Gets the ClassMember associated to the member with name = memberName.
+     * @param[in] memberName the name of the member.
+     * @return the ClassMember associated to the member with name = memberName.
+     */
+    VariableDescriptor *     FindMember(CCString memberName);
+
+    /**
+     * @brief Registers a member that can be later retrieved with FindMethod.
+     * @param[in] the member to register. The pointer will be freed by this class.
+     */
+    void                    AddMember(ClassMember * const member);
+
 
     /**
      * @brief Destructor.
@@ -198,7 +199,7 @@ private:
     /**
      * The introspection associated to the class.
      */
-    const Introspection *     introspection;
+//    const Introspection *     introspection;
 
     /**
      * The name of the class.
@@ -228,6 +229,10 @@ private:
      */
     LinkedListHolderT<ClassMethodInterfaceMapper,true> classMethods;
 
+    /**
+     * A list of members of the class.
+     */
+    LinkedListHolderT<ClassMember,true> classMembers;
 
 };
 

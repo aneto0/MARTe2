@@ -31,7 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassProperties.h"
+//#include "ClassProperties.h"
 #include "IntrospectionEntry.h"
 #include "ClassRegistryDatabase.h"
 #include "StringHelper.h"

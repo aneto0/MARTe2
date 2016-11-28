@@ -69,7 +69,7 @@ public:
 
     /**
      * @brief Retrieves the size of the array.
-     * @return the number of elements in the array.
+     * @return the number of elements in the array (excluding the terminator Zero).
      */
     uint32 GetSize() const;
 
@@ -77,10 +77,13 @@ public:
      * @brief Returns the pointer to the beginning of the array.
      * @return the pointer to the beginning of the array.
      */
-    T * GetList();
+    T * GetList() const ;
 
-
-    operator T*();
+    /**
+     * @brief Returns the pointer to the beginning of the array.
+     * @return the pointer to the beginning of the array.
+     */
+    operator T*() const;
 
 private:
 
@@ -129,7 +132,7 @@ uint32 ZeroTerminatedArray<T>::GetSize() const {
 }
 
 template<typename T>
-T * ZeroTerminatedArray<T>::GetList() {
+T * ZeroTerminatedArray<T>::GetList() const{
     return array;
 }
 
@@ -140,7 +143,7 @@ bool ZeroTerminatedArray<T>::Zero(const T & data) const {
 
 
 template<typename T>
-ZeroTerminatedArray<T>::operator T*(){
+ZeroTerminatedArray<T>::operator T*() const {
     return GetList();
 }
 

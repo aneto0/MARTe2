@@ -29,8 +29,6 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 OBJSX=          ClassRegistryItem.x \
                 ClassRegistryDatabase.x \
                 AnyType.x \
-                Introspection.x\
-                IntrospectionEntry.x \
                 StructuredDataI.x \
                 ClassMethodCaller.x\
                 ClassMethodInterfaceMapper.x\

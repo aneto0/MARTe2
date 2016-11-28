@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AnyType.h"
 #include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
@@ -46,7 +47,7 @@ StructuredDataI::~StructuredDataI() {
 }
 
 StructuredDataI::operator AnyType() {
-    AnyType anyTypeConversion(StructuredDataInterfaceType, 0u, this);
+    AnyType anyTypeConversion(StructuredDataInterfaceType, this);
     return anyTypeConversion;
 }
 

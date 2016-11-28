@@ -49,8 +49,8 @@ namespace MARTe {
  * The string generic implementation is not certifiable.*/
 namespace StringHelper {
 
-bool Concatenate(char8 * const destination,
-                 const char8 * const source) {
+bool Concatenate(CString  const destination,
+                 CCString const source) {
     bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
         ret= true;
@@ -62,8 +62,8 @@ bool Concatenate(char8 * const destination,
     return ret;
 }
 
-bool ConcatenateN(char8 * const destination,
-                  const char8 * const source,
+bool ConcatenateN(CString  const destination,
+                  CCString const source,
                   const uint32 size) {
     bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
@@ -76,9 +76,9 @@ bool ConcatenateN(char8 * const destination,
     return ret;
 }
 
-const char8 *SearchChar(const char8 * const string,
+CCString SearchChar(CCString const string,
                         const char8 c) {
-    const char8 *ret = static_cast<const char8 *>(NULL);
+    CCString ret = static_cast<CCString>(NULL);
     if (string != NULL) {
         ret = strchr(string, c);
     }
@@ -88,8 +88,8 @@ const char8 *SearchChar(const char8 * const string,
     return ret;
 }
 
-int32 Compare(const char8 * const string1,
-              const char8 * const string2) {
+int32 Compare(CCString const string1,
+              CCString const string2) {
     int32 ret = -1;
     if ((string1 != NULL) && (string2 != NULL)) {
         ret = strcmp(string1, string2);
@@ -109,8 +109,8 @@ int32 Compare(const char8 * const string1,
     return ret;
 }
 
-int32 CompareN(const char8 * const string1,
-               const char8 * const string2,
+int32 CompareN(CCString const string1,
+               CCString const string2,
                const uint32 size) {
     int32 ret = -1;
     if ((string1 != NULL) && (string2 != NULL)) {
@@ -131,8 +131,8 @@ int32 CompareN(const char8 * const string1,
     return ret;
 }
 
-bool Copy(char8 * const destination,
-          const char8 * const source) {
+bool Copy(CString  const destination,
+          CCString const source) {
     bool ret = false;
     if ((destination != NULL) && (source != NULL)) {
         ret =true;
@@ -144,8 +144,8 @@ bool Copy(char8 * const destination,
     return ret;
 }
 
-bool CopyN(char8 * const destination,
-           const char8 * const source,
+bool CopyN(CString  const destination,
+           CCString const source,
            const uint32 size) {
     bool ret = false;
     if ((destination != NULL) && (source != NULL)) {
@@ -158,8 +158,8 @@ bool CopyN(char8 * const destination,
     return ret;
 }
 
-int32 SearchIndex(const char8 * const string1,
-                  const char8 * const string2) {
+int32 SearchIndex(CCString const string1,
+                  CCString const string2) {
     int32 ret = -1;
     if ((string1 != NULL) && (string2 != NULL)) {
         ret = static_cast<int32>(strcspn(string1, string2));
@@ -170,7 +170,7 @@ int32 SearchIndex(const char8 * const string1,
     return ret;
 }
 
-uint32 Length(const char8 * const string) {
+uint32 Length(CCString const string) {
     uint32 ret = 0u;
     if (string != NULL) {
         ret = static_cast<uint32>(strlen(string));
@@ -181,9 +181,9 @@ uint32 Length(const char8 * const string) {
     return ret;
 }
 
-const char8 *SearchChars(const char8 * const string1,
-                         const char8 * const string2) {
-    const char8 *ret = static_cast<const char8 *>(NULL);
+CCString SearchChars(CCString const string1,
+                         CCString const string2) {
+    CCString ret = static_cast<CCString>(NULL);
     if ((string1 != NULL) && (string2 != NULL)) {
         ret = strpbrk(string1, string2);
     }
@@ -193,9 +193,9 @@ const char8 *SearchChars(const char8 * const string1,
     return ret;
 }
 
-const char8 *SearchLastChar(const char8 * const string,
+CCString SearchLastChar(CCString const string,
                             const char8 c) {
-    const char8 *ret = static_cast<const char8 *>(NULL);
+    CCString ret = static_cast<CCString>(NULL);
     if (string != NULL) {
         ret = strrchr(string, c);
     }
@@ -205,9 +205,9 @@ const char8 *SearchLastChar(const char8 * const string,
     return ret;
 }
 
-const char8 *SearchString(const char8 * const string,
-                          const char8 * const substring) {
-    const char8 *ret = static_cast<const char8 *>(NULL);
+CCString SearchString(CCString const string,
+                          CCString const substring) {
+    CCString ret = static_cast<CCString>(NULL);
     if ((string != NULL) && (substring != NULL)) {
         ret = strstr(string, substring);
     }
@@ -217,7 +217,7 @@ const char8 *SearchString(const char8 * const string,
     return ret;
 }
 
-bool SetChar(char8 * const string,
+bool SetChar(CString  const string,
              const uint32 size,
              const char8 c) {
     bool ret = false;

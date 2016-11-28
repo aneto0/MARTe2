@@ -45,13 +45,13 @@ namespace MARTe{
 namespace StringHelper {
 
 /*lint -e{925} cast pointer to pointer required */
-char8 *StringDup(const char8 * const s) {
+CString StringDup(CCString const s) {
 
-    char8 *duplicate = NULL_PTR(char8 *);
+    CString duplicate = NULL_PTR(CString);
     if (s != NULL) {
 
         void *copy = HeapManager::Duplicate(static_cast<const void *>(s));
-        duplicate = static_cast<char8 *>(copy);
+        duplicate = reinterpret_cast<char8 *>(copy);
         if (duplicate == NULL) {
             REPORT_ERROR(ErrorManagement::FatalError, "Error: string duplication failed");
         }

@@ -34,7 +34,6 @@
 
 #include "HeapI.h"
 #include "HeapManager.h"
-#include "ClassProperties.h"
 #include "ClassRegistryItem.h"
 #include "ErrorType.h"
 #include "StringHelper.h"
@@ -263,7 +262,7 @@ public:
     /*
      * @brief Returns the class properties associated with this class type.
      */
-    const ClassProperties *GetClassProperties() const;
+//    const ClassProperties *GetClassProperties() const;
 
 private:
 

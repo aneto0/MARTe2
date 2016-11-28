@@ -42,7 +42,7 @@ namespace MARTe {
 
 namespace StringHelper {
 
-uint32 Length(const char8* const string) {
+uint32 Length(CCString const string) {
     uint32 i = 0U;
 
     if (string != NULL) {
@@ -58,8 +58,8 @@ uint32 Length(const char8* const string) {
     return i;
 }
 
-int32 Compare(const char8* const string1,
-              const char8* const string2) {
+int32 Compare(CCString  const string1,
+              CCString  const string2) {
 
     int32 ret = -1;
 
@@ -91,8 +91,8 @@ int32 Compare(const char8* const string1,
     return ret;
 }
 
-int32 CompareN(const char8* const string1,
-               const char8* const string2,
+int32 CompareN(CCString  const string1,
+               CCString  const string2,
                const uint32 size) {
 
     int32 ret = -1;
@@ -128,12 +128,12 @@ int32 CompareN(const char8* const string1,
     return ret;
 }
 
-bool Concatenate(char8* const destination,
-                 const char8* const source) {
+bool Concatenate(CString  const destination,
+                 CCString  const source) {
 
     bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
-        uint32 indexString1 = Length(destination);
+        uint32 indexString1 = destination.GetSize();
         uint32 indexString2 = 0U;
         while (source[indexString2] != '\0') {
             destination[indexString1] = source[indexString2];
@@ -148,13 +148,13 @@ bool Concatenate(char8* const destination,
     return ret;
 }
 
-bool ConcatenateN(char8* const destination,
-                  const char8* const source,
+bool ConcatenateN(CString  const destination,
+                  CCString  const source,
                   const uint32 size) {
 
     bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
-        uint32 indexString1 = Length(destination);
+        uint32 indexString1 = destination.GetSize();
         uint32 indexString2 = 0U;
         while ((source[indexString2] != '\0') && (indexString2 < size)) {
             destination[indexString1] = source[indexString2];
@@ -171,10 +171,10 @@ bool ConcatenateN(char8* const destination,
 
 }
 
-const char8* SearchChar(const char8* const string,
+CCString  SearchChar(CCString  const string,
                         const char8 c) {
 
-    const char8* ret = static_cast<const char8*>(NULL);
+    CCString  ret = static_cast<CCString >(NULL);
 
     if (string != NULL) {
         bool end = false;
@@ -201,8 +201,8 @@ const char8* SearchChar(const char8* const string,
 
 }
 
-bool Copy(char8* const destination,
-          const char8* const source) {
+bool Copy(CString  const destination,
+          CCString  const source) {
     bool ret = false;
     if ((destination != NULL) && (source != NULL)) {
         destination[0] = '\0';
@@ -214,8 +214,8 @@ bool Copy(char8* const destination,
     return ret;
 }
 
-bool CopyN(char8* const destination,
-           const char8* const source,
+bool CopyN(CString  const destination,
+           CCString  const source,
            const uint32 size) {
     bool ret = false;
     if ((destination != NULL) && (source != NULL)) {
@@ -228,8 +228,8 @@ bool CopyN(char8* const destination,
     return ret;
 }
 
-int32 SearchIndex(const char8* const string1,
-                  const char8* const string2) {
+int32 SearchIndex(CCString  const string1,
+                  CCString  const string2) {
 
     int32 ret = -1;
 
@@ -262,10 +262,10 @@ int32 SearchIndex(const char8* const string1,
     return ret;
 }
 
-const char8* SearchChars(const char8* const string1,
-                         const char8* const string2) {
+CCString  SearchChars(CCString  const string1,
+                      CCString  const string2) {
 
-    const char8* ret = static_cast<const char8*>(NULL);
+    CCString  ret = static_cast<CCString >(NULL);
 
     if ((string1 != NULL) && (string2 != NULL)) {
         bool end1 = false;
@@ -280,7 +280,7 @@ const char8* SearchChars(const char8* const string1,
                 if (string1[i] == '\0') {
                     end1 = true;
                     end2 = true;
-                    ret = static_cast<const char8*>(NULL);
+                    ret = static_cast<CCString >(NULL);
                 }
                 else {
                     if (string1[i] == string2[j]) {
@@ -306,10 +306,10 @@ const char8* SearchChars(const char8* const string1,
     return ret;
 }
 
-const char8* SearchLastChar(const char8* const string,
+CCString  SearchLastChar(CCString  const string,
                             const char8 c) {
 
-    const char8 *ret = static_cast<const char8*>(NULL);
+    const char8 *ret = static_cast<CCString >(NULL);
 
     if (string != NULL) {
         uint32 index = Length(string);
@@ -331,10 +331,10 @@ const char8* SearchLastChar(const char8* const string,
     return ret;
 }
 
-const char8* SearchString(const char8* const string,
-                          const char8* const substring) {
+CCString  SearchString(CCString  const string,
+                          CCString  const substring) {
 
-    const char8* ret = static_cast<const char8*>(NULL);
+    CCString  ret = static_cast<CCString >(NULL);
     int32 size1 = static_cast<int32>(Length(string));
     int32 size2 = static_cast<int32>(Length(substring));
 
@@ -358,7 +358,7 @@ const char8* SearchString(const char8* const string,
     return ret;
 }
 
-bool SetChar(char8* const string,
+bool SetChar(CString  const string,
              const uint32 size,
              const char8 c) {
     bool ret = false;

@@ -43,9 +43,9 @@ namespace MARTe{
 
 namespace StringHelper {
 
-bool Concatenate(const char8* const string1,
-                 const char8* const string2,
-                 char8* const result) {
+bool Concatenate(CCString const string1,
+                 CCString const string2,
+                 CString const result) {
 
     bool ret = false;
 
@@ -85,9 +85,9 @@ bool Concatenate(const char8* const string1,
     return ret;
 }
 
-bool ConcatenateN(const char8* const string1,
-                  const char8* const string2,
-                  char8* const result,
+bool ConcatenateN(CCString const string1,
+                  CCString const string2,
+                  CString const result,
                   const uint32 size) {
 
     bool ret = false;
@@ -130,11 +130,11 @@ bool ConcatenateN(const char8* const string1,
     return ret;
 }
 
-const char8* TokenizeByChars(const char8* const string,
-                             const char8* const delimiter,
-                             char8* const result) {
+CCString TokenizeByChars(CCString const string,
+                             CCString const delimiter,
+                             CString const result) {
 
-    const char8 *ret = static_cast<const char8*>(NULL);
+    CCString ret = static_cast<CCString>(NULL);
 
     if ((string != NULL) && (delimiter != NULL) && (result != NULL)) {
         bool end = false;
@@ -178,13 +178,13 @@ const char8* TokenizeByChars(const char8* const string,
     return ret;
 }
 
-const char8* TokenizeByString(const char8* const string,
-                              const char8* const terminator,
-                              char8* const result) {
+CCString TokenizeByString(CCString const string,
+                              CCString const terminator,
+                              CString const result) {
 
-    const char8 *ret = static_cast<const char8*>(NULL);
-    int32 size1 = static_cast<int32>(Length(string));
-    int32 size2 = static_cast<int32>(Length(terminator));
+    CCString ret = static_cast<CCString>(NULL);
+    int32 size1 = static_cast<int32>(string.GetSize());
+    int32 size2 = static_cast<int32>(terminator.GetSize());
 
     if ((size1 >= 0) && (size2 >= 0) && (result != NULL)) {
 
@@ -219,8 +219,8 @@ const char8* TokenizeByString(const char8* const string,
 
 bool Substr(const uint32 begin,
             const uint32 end,
-            const char8* const string,
-            char8* const result) {
+            CCString const string,
+            CString const result) {
 
     bool ret = true;
     if ((string == NULL) || (result == NULL) || (end < begin)) {

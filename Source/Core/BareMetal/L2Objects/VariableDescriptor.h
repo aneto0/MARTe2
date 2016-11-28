@@ -36,6 +36,8 @@
 #include "BasicType.h"
 #include "ClassRegistryDatabase.h"
 #include "Matrix.h"
+#include "StringHelper.h"
+
 
 namespace MARTe {
 class Object;
@@ -49,6 +51,11 @@ namespace MARTe {
 
 class ModifierStringType{
 public:
+
+    inline ModifierStringType(const ModifierStringType &x){
+        modifierString = StringHelper::StringDup(CCString(x.modifierString));
+    }
+
     ModifierStringType(){
         modifierString = NULL_PTR(char *);
     }
@@ -91,16 +98,33 @@ private:
 };
 
 /**
- *
+ * @brief full description of the type of a variable including modifiers
  */
 class VariableDescriptor{
 
 public:
 
+
+    /**
+     * @biref copy constructor
+     */
+    inline VariableDescriptor(const VariableDescriptor &x) ;
+
+
+    /**
+     * @brief main constructor by learning
+     */
     template <class T>
     inline  VariableDescriptor( T & x){
         uint32 size = 0;
         Match(x,size);
+    }
+
+    /**
+     * @brief buids a variable descriptor for a variable with no modifiers (a part from those held by typeDescriptor)
+     */
+    VariableDescriptor(const TypeDescriptor &td){
+        typeDescriptor = td;
     }
 
 private:
@@ -444,8 +468,10 @@ private:
 /*---------------------------------------------------------------------------*/
 
 
-
-
+VariableDescriptor::VariableDescriptor(const VariableDescriptor &x) {
+    this->typeDescriptor = x.typeDescriptor;
+    this->modifierString = x.modifierString;
+}
 
 
 //bool VariableDescriptor::IsVoid() const {
@@ -598,79 +624,8 @@ void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * &fractiona
     typeDescriptor.isConstant = false;
     typeDescriptor.type = type;
     typeDescriptor.numberOfBits = fractionalInt->GetNumberOfBits();
-//    bitAddress = 0;
 }
 
-
-#if 0
-template<uint32 nOfElementsStatic>
-void VariableDescriptor::Match(char8 (&source)[nOfElementsStatic]) {
-    Init();
-    dataPointer = (void*) (&source[0]);
-    staticDeclared = true;
-    typeDescriptor.numberOfBits = nOfElementsStatic * 8u;
-    typeDescriptor.isStructuredData = false;
-    typeDescriptor.type = CArray;
-    typeDescriptor.isConstant = false;
-    bitAddress = 0u;
-}
-
-template<uint32 nOfElementsStatic>
-void VariableDescriptor::Match(const char8 (&source)[nOfElementsStatic]) {
-    Init();
-    dataPointer = (void*) (&source[0]);
-    staticDeclared = true;
-    typeDescriptor.numberOfBits = nOfElementsStatic * 8u;
-    typeDescriptor.isStructuredData = false;
-    typeDescriptor.type = CArray;
-    typeDescriptor.isConstant = true;
-    bitAddress = 0u;
-}
-
-template<typename T, uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
-void VariableDescriptor::Match(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
-    Init();
-    dataPointer = (void *) (&source);
-    numberOfDimensions = 2u;
-    numberOfElements[0] = nOfColumnsStatic;
-    numberOfElements[1] = nOfRowsStatic;
-    staticDeclared = true;
-    T typeDiscovery = static_cast<T>(0);
-    Match anyTypeDiscovery(typeDiscovery);
-    typeDescriptor = anyTypeDiscovery.GetTypeDescriptor();
-    bitAddress = anyTypeDiscovery.GetBitAddress();
-}
-
-template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
-void VariableDescriptor::Match(char8 (&source)[nOfRowsStatic][nOfColumnsStatic]) {
-    Init();
-    dataPointer = (void *) (&source);
-    numberOfDimensions = 1u;
-    numberOfElements[0] = nOfRowsStatic;
-    staticDeclared = true;
-    typeDescriptor.numberOfBits = nOfColumnsStatic * 8u;
-    typeDescriptor.isStructuredData = false;
-    typeDescriptor.type = CArray;
-    typeDescriptor.isConstant = false;
-    bitAddress = 0u;
-}
-
-template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic, uint32 nOfChars>
-void VariableDescriptor::Match(char8 (&source)[nOfRowsStatic][nOfColumnsStatic][nOfChars]) {
-    Init();
-    dataPointer = (void *) (&source);
-    numberOfDimensions = 2u;
-    numberOfElements[0] = nOfColumnsStatic;
-    numberOfElements[1] = nOfRowsStatic;
-    staticDeclared = true;
-    typeDescriptor.numberOfBits = nOfChars * 8u;
-    typeDescriptor.isStructuredData = false;
-    typeDescriptor.type = CArray;
-    typeDescriptor.isConstant = false;
-    bitAddress = 0u;
-}
-
-#endif
 
 TypeDescriptor VariableDescriptor::GetTypeDescriptor() const {
     return typeDescriptor;

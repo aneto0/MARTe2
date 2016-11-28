@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 #include "AnyType.h"
 #include "Object.h"
-#include "Introspection.h"
+#include "VariableDescriptor.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,7 +40,9 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+//namespace MARTe {
+
+//}
 
 #if  0
 AnyType::AnyType(Object &obj) {
@@ -137,5 +139,5 @@ AnyType AnyType::operator[](const uint32 position) const {
 
 #endif
 
-}
+
 

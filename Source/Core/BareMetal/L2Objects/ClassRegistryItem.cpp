@@ -31,16 +31,17 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "TypeDescriptor.h"
+#include "VariableDescriptor.h"
 #include "ClassRegistryItem.h"
 #include "ClassMethodCaller.h"
-#include "ClassProperties.h"
 #include "ClassRegistryDatabase.h"
 #include "ErrorManagement.h"
 #include "LoadableLibrary.h"
 #include "ObjectBuilder.h"
 #include "SearchFilterT.h"
 #include "ClassMethodInterfaceMapper.h"
-#include "TypeDescriptor.h"
+#include "ClassMember.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -60,7 +61,6 @@ ClassRegistryItem::ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn)
     numberOfInstances = 0;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuilder = NULL_PTR(ObjectBuilder *);
-    introspection = NULL_PTR(Introspection *);
 
     sizeOfClass = sizeOfClassIn;
     typeidName = typeidNameIn;
@@ -81,8 +81,6 @@ void ClassRegistryItem::SetClassDetails(CCString classNameIn,CCString classVersi
     classVersion = classVersionIn;
 }
 
-
-
 void ClassRegistryItem::SetObjectBuilder(const ObjectBuilder * const objectBuilderIn) {
     objectBuilder = objectBuilderIn;
 }
@@ -99,19 +97,9 @@ ClassRegistryItem::~ClassRegistryItem() {
     }
 
     loadableLibrary = NULL_PTR(LoadableLibrary *);
-    introspection = NULL_PTR(Introspection *);
     objectBuilder = NULL_PTR(ObjectBuilder *);
 }
 
-
-
-void ClassRegistryItem::SetIntrospection(const Introspection * const introspectionIn) {
-    introspection = introspectionIn;
-}
-
-const Introspection * ClassRegistryItem::GetIntrospection() const {
-    return introspection;
-}
 
 const LoadableLibrary *ClassRegistryItem::GetLoadableLibrary() const {
     return loadableLibrary;
@@ -133,31 +121,18 @@ uint32 ClassRegistryItem::GetNumberOfInstances() const {
     return static_cast<uint32>(numberOfInstances);
 }
 
-
-/**
- * @brief  Get the name of the class (by default the same as returned by typeid.
- */
 CCString  ClassRegistryItem::GetClassName(){
     return className;
 }
 
-/**
- * @brief  The name of the class as returned by typeid.
- */
 CCString  ClassRegistryItem::GetTypeidName(){
     return typeidName;
 }
 
-/**
- * @brief  The version of the class.
- */
 CCString  ClassRegistryItem::GetClassVersion(){
     return classVersion;
 }
 
-/**
- * @brief  The size of the class.
- */
 uint32  ClassRegistryItem::GetSizeOfClass(){
     return sizeOfClass;
 }
@@ -185,5 +160,30 @@ void ClassRegistryItem::AddMethod(ClassMethodInterfaceMapper * const method) {
         classMethods.ListAdd(method);
     }
 }
+
+VariableDescriptor *ClassRegistryItem::FindMember(CCString memberName) {
+
+    uint32 i = 0u;
+    uint32 end = classMembers.ListSize();
+    VariableDescriptor *member = NULL_PTR(VariableDescriptor *);
+    while ((i < end) && (member == NULL_PTR(VariableDescriptor *))) {
+        ClassMember *cm = classMembers.ListPeek(i);
+        if (cm != NULL) {
+            CCString name = cm->GetName();
+            if (StringHelper::Compare(name, memberName) == 0) {
+                member = cm->GetDescriptor();
+            }
+        }
+        i++;
+    }
+    return member;
+}
+
+void ClassRegistryItem::AddMember(ClassMember * const method) {
+    if (method != NULL) {
+        classMembers.ListAdd(method);
+    }
+}
+
 
 }

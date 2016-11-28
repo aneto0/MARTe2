@@ -39,24 +39,94 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+/**
+* TODO
+* @brief Wrapper for writable char buffers
+* */
+class CString: public ZeroTerminatedArray<char8>{
+
+public:
     /**
-     * TODO
-     * Wrapper for writable char buffers
-     * */
-    typedef  ZeroTerminatedArray<char8> CString;
+     *TODO
+     */
+    inline CString ();
+
+    /**
+     *TODO
+     */
+    inline CString (CString const &s);
 
     /**
      * TODO
-     * Wrapper for constant char buffers
-     * */
-    typedef  ZeroTerminatedArray<const char8> CCString;
-
+     */
+    inline CString (char8 * const &s);
 };
+
+/**
+ * TODO
+ * @brief Wrapper for constant char buffers
+ * */
+class CCString: public ZeroTerminatedArray<const char8>{
+
+public:
+    /**
+     *TODO
+     */
+    inline CCString ();
+
+    /**
+     * TODO
+     */
+    inline CCString (CCString const &s);
+
+    /**
+     * TODO
+     */
+    inline CCString (CString const &s);
+
+    /**
+     * TODO
+     */
+    inline CCString (char8 const * const &s);
+};
+
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+
+CString::CString (){
+
+}
+
+CString::CString (CString const &s):ZeroTerminatedArray<char8>(s){
+
+}
+
+CString::CString (char8 * const &s):ZeroTerminatedArray<char8>(s){
+
+}
+
+CCString::CCString (){
+
+}
+CCString::CCString (CCString const &s):ZeroTerminatedArray<const char8>(s){
+
+}
+
+CCString::CCString (CString const &s):ZeroTerminatedArray<const char8>(s){
+
+}
+
+CCString::CCString (char8 const * const &s):ZeroTerminatedArray<const char8>(s){
+
+}
+
+
+};
 
 #endif /* CSTRING_H_ */
 	

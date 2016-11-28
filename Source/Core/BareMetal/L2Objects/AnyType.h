@@ -30,13 +30,12 @@
 
 #include <typeinfo>
 
-#include "TypeDescriptor.h"
-#include "VariableDescriptor.h"
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassProperties.h"
+#include "TypeDescriptor.h"
+#include "VariableDescriptor.h"
 #include "ClassRegistryDatabase.h"
 #include "Matrix.h"
 
@@ -80,6 +79,26 @@ namespace MARTe {
 class DLL_API AnyType {
 
 public:
+
+    /**
+     * @brief Copy constructor.
+     * @param[in] x is the AnyType to be copied.
+     * @post
+     *   GetDataPointer() == x.GetDataPointer() &&
+     *   GetDataDescriptor() == x.GetDataDescriptor()
+     */
+    inline AnyType(const AnyType &x);
+
+    /**
+     * @brief Generic constructor for a constant type non-bitset.
+     * @param[in] dataDescriptorIn contains the type informations in a TypeDescriptor class.
+     * @param[in] dataPointerIn is the pointer to the constant data.
+     * @post
+     *   GetDataPointer() == dataPointerIn &&
+     *   GetDataDescriptor() == dataDescriptorIn
+     */
+    inline AnyType(const TypeDescriptor &dataDescriptorIn,
+                   const void* const dataPointerIn);
 
     /**
      * @brief Constructor from const non-ptr
@@ -203,10 +222,10 @@ private:
 
     /**
      * Pointer to the data.
-     */AnyType
+     */
     void * dataPointer;
 
-
+};
 #if 0
 
     /**
@@ -972,11 +991,25 @@ private:
     inline void Init();
 
 #endif
-};
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+
+
+AnyType::AnyType(const TypeDescriptor &typeDescriptorIn,const void* const dataPointerIn):
+        variableDescriptor(typeDescriptorIn)
+        {
+    dataPointer = const_cast<void *>(dataPointerIn);
+}
+
+AnyType::AnyType(const AnyType &x):variableDescriptor(x.variableDescriptor) {
+    /*lint -e{1554} the dataPointer is to be shared with the copied AnyType.*/
+    this->dataPointer = x.dataPointer;
+}
+
 
 #if 0
 
@@ -984,17 +1017,6 @@ AnyType::AnyType(void) {
     Init();
 }
 
-AnyType::AnyType(const AnyType &x) {
-    /*lint -e{1554} the dataPointer is to be shared with the copied AnyType.*/
-    this->dataPointer = x.dataPointer;
-    this->bitAddress = x.bitAddress;
-    this->dataDescriptor = x.dataDescriptor;
-    this->staticDeclared = x.IsStaticDeclared();
-    this->numberOfDimensions = x.numberOfDimensions;
-    this->numberOfElements[0] = x.numberOfElements[0];
-    this->numberOfElements[1] = x.numberOfElements[1];
-    this->numberOfElements[2] = x.numberOfElements[2];
-}
 
 AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,
                  const uint8 bitAddressIn,
@@ -1531,9 +1553,10 @@ uint32 AnyType::GetBitSize() const {
  */
 static const AnyType voidAnyType;
 
-}
 
 #endif
+
+}
 
 #endif /* ANYTYPE_H_ */
 

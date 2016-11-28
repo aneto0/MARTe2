@@ -58,13 +58,13 @@ const BasicType UnsignedInteger = 1u;
 const BasicType Float = 2u;
 
 /**
- * The type is a pointer.
+ * @brief The type is a pointer. A void*. No information on the type pointed to
  */
 const BasicType Pointer = 3u;
 
 /**
- * The type is a C string
- * (const CCString only)
+ * @brief The type is a C string. Cannot be extended. May or may not be modifiable.
+ * (const CCString only ???)
  */
 const BasicType BT_CCString = 4u;
 
@@ -72,26 +72,25 @@ const BasicType BT_CCString = 4u;
  * The type is a pointer to a C string allocated on heap.
  * (char **)
  */
-const BasicType PCString = 5u;
+//const BasicType PCString = 5u;
 
 /**
- * The type is an array of bytes with the size
- * specified in the size field.
+ * @brief The type is an array of chars with the size specified in the size field.
  */
 const BasicType CArray = 6u;
 
 /**
- * The type is a StreamString class.
+ * @brief The type is a StreamString class.
  */
 const BasicType SString = 7u;
 
 /**
- * The type is a StreamInterface class.
+ * @brief The type is a StreamInterface class.
  */
 const BasicType Stream = 8u;
 
 /**
- * The StructuredDataI type
+ * @brief  The StructuredDataI type
  */
 const BasicType StructuredDataNode = 9u;
 
