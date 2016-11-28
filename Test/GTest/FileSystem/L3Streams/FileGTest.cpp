@@ -57,4 +57,62 @@ TEST(FileGTest, TestConstructor_BasicFile) {
     ASSERT_TRUE(test.TestConstructor_BasicFile());
 }
 
+TEST(FileGTest, TestRead) {
+    FileTest test;
+    ASSERT_TRUE(test.TestRead());
+}
 
+TEST(FileGTest, TestRead_Timeout) {
+    FileTest test;
+    ASSERT_TRUE(test.TestRead_Timeout());
+}
+
+TEST(FileGTest, TestWrite) {
+    FileTest test;
+    ASSERT_TRUE(test.TestWrite());
+}
+
+TEST(FileGTest, TestWrite_Timeout) {
+    FileTest test;
+    ASSERT_TRUE(test.TestWrite_Timeout());
+}
+
+TEST(FileGTest, TestSize) {
+    FileTest test;
+    ASSERT_TRUE(test.TestSize());
+}
+
+TEST(FileGTest, TestSeek) {
+    FileTest test;
+    ASSERT_TRUE(test.TestSeek());
+}
+
+TEST(FileGTest, TestRelativeSeek) {
+    FileTest test;
+    ASSERT_TRUE(test.TestRelativeSeek());
+}
+
+TEST(FileGTest, TestPosition) {
+    FileTest test;
+    ASSERT_TRUE(test.TestPosition());
+}
+
+TEST(FileGTest, TestSetSize) {
+    FileTest test;
+    ASSERT_TRUE(test.TestSetSize());
+}
+
+TEST(FileGTest, TestCanWrite) {
+    FileTest test;
+    ASSERT_TRUE(test.TestCanWrite());
+}
+
+TEST(FileGTest, TestCanSeek) {
+    FileTest test;
+    ASSERT_TRUE(test.TestCanSeek());
+}
+
+TEST(FileGTest, TestCanRead) {
+    FileTest test;
+    ASSERT_TRUE(test.TestCanRead());
+}

@@ -38,30 +38,96 @@
 /*---------------------------------------------------------------------------*/
 /**
  * @brief Tests the File public methods.
+ * @details Detailed testing was already performed for the BasicFile and for the DoubleBufferedStream.
+ * The main scope here is to verify that the template is resolving to the correct methods.
  */
- class FileTest {
+class FileTest {
 public:
-     /**
-      * @brief Tests that the class can be constructed. Returns true or compilation will fail while resolving the templates.
-      */
-     bool TestConstructor();
 
-     /**
-      * @brief Tests that a function which receives a StreamI as an input can be called. Returns true or compilation will fail while resolving the templates.
-      */
-     bool TestConstructor_Stream();
+    /**
+     * @brief Constructor. Deletes all the previous test files.
+     */
+    FileTest();
 
-     /**
-      * @brief Tests that a function which receives a BasicFile as an input can be called. Returns true or compilation will fail while resolving the templates.
-      */
-     bool TestConstructor_BasicFile();
- };
+    /**
+     * @brief Tests that the class can be constructed. Returns true or compilation will fail while resolving the templates.
+     */
+    bool TestConstructor();
 
+    /**
+     * @brief Tests that a function which receives a StreamI as an input can be called. Returns true or compilation will fail while resolving the templates.
+     */
+    bool TestConstructor_Stream();
 
+    /**
+     * @brief Tests that a function which receives a BasicFile as an input can be called. Returns true or compilation will fail while resolving the templates.
+     */
+    bool TestConstructor_BasicFile();
+
+    /**
+     * @brief Tests the Read method.
+     */
+    bool TestRead();
+
+    /**
+     * @brief Tests the Read method with a timeout.
+     */
+    bool TestRead_Timeout();
+
+    /**
+     * @brief Tests the Write method.
+     */
+    bool TestWrite();
+
+    /**
+     * @brief Tests the Write method with a timeout.
+     */
+    bool TestWrite_Timeout();
+
+    /**
+     * @brief Tests the Size method.
+     */
+    bool TestSize();
+
+    /**
+     * @brief Tests the Seek method.
+     */
+    bool TestSeek();
+
+    /**
+     * @brief Tests the RelativeSeek method.
+     */
+    bool TestRelativeSeek();
+
+    /**
+     * @brief Tests the Position method.
+     */
+    bool TestPosition();
+
+    /**
+     * @brief Tests the SetSize method.
+     */
+    bool TestSetSize();
+
+    /**
+     * @brief Tests the CanWrite method.
+     */
+    bool TestCanWrite();
+
+    /**
+     * @brief Tests the CanSeek method.
+     */
+    bool TestCanSeek();
+
+    /**
+     * @brief Tests the CanRead method.
+     */
+    bool TestCanRead();
+};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* TEST_CORE_FILESYSTEM_L3STREAMS_FILETEST_H_ */
-	
+

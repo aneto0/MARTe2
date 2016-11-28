@@ -42,7 +42,9 @@ File::File() {
 }
 
 File::~File() {
-
+    if(!Flush()) {
+        REPORT_ERROR(ErrorManagement::OSError, "Could not flush the stream");
+    }
 }
 
 }
