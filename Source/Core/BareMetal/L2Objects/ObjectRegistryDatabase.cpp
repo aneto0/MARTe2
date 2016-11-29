@@ -35,6 +35,7 @@
 #include "ObjectRegistryDatabase.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
+#include "GlobalObjectsDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

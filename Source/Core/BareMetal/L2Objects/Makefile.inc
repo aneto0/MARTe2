@@ -28,24 +28,34 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=          ClassRegistryItem.x \
                 ClassRegistryDatabase.x \
-                AnyType.x \
-                StructuredDataI.x \
-                ClassMethodCaller.x\
                 ClassMethodInterfaceMapper.x\
-		Object.x \
-		ObjectRegistryDatabase.x \
-		Reference.x \
-		ReferenceContainer.x \
-		ReferenceContainerNode.x \
-		ReferenceContainerFilter.x \
-		ReferenceContainerFilterReferences.x \
-		ReferenceContainerFilterObjectName.x
+                AnyType.x \
+                test.x
+
+
+
+
+#                StructuredDataI.x \
+#                ClassMethodCaller.x\
+#		Object.x \
+#		ObjectRegistryDatabase.x \
+#		Reference.x \
+#		ReferenceContainer.x \
+#		ReferenceContainerNode.x \
+#		ReferenceContainerFilter.x \
+#		ReferenceContainerFilterReferences.x \
+#		ReferenceContainerFilterObjectName.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../L1Portability -I../L0Types
 
+LIBRARIES_STATIC=$(BUILD_DIR)/../L0Types/L0TypesB$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/../L1Portability/L1PortabilityB$(LIBEXT)
+
+
 all: $(OBJS) $(SUBPROJ)   \
+                $(BUILD_DIR)/test$(EXEEXT) \
 		$(BUILD_DIR)/L2ObjectsB$(LIBEXT) \
 		$(BUILD_DIR)/L2ObjectsB.def
 	echo  $(OBJS)

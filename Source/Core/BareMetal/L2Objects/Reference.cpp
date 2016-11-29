@@ -38,6 +38,7 @@
 #include "ObjectBuilder.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
+#include "AnyType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -96,13 +97,15 @@ Reference::~Reference() {
 }
 
 /*lint -e{715} data and createOnly not referenced to be removed when the method is implemented in the future*/
-bool Reference::Initialise(StructuredDataI &data,
-                           const bool &initOnly) {
+bool Reference::Initialise(StructuredDataI &data, const bool &initOnly) {
 
     bool ok = (objectPointer != NULL_PTR(Object*));
 
     if (!initOnly) {
         if (objectPointer == NULL_PTR(Object*)) {
+
+
+
             AnyType at = data.GetType("Class");
             void* ptr = at.GetDataPointer();
             ok = (ptr != NULL);

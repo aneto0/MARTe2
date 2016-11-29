@@ -37,7 +37,6 @@
 #include "ClassRegistryItem.h"
 #include "ErrorType.h"
 #include "StringHelper.h"
-//#include "StructuredDataI.h"
 #include "CLASSREGISTER.h"
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
@@ -46,7 +45,6 @@
 namespace MARTe {
 class StructuredDataI;
 class ReferenceContainer;
-class ClassRegistryItem;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -171,8 +169,7 @@ public:
      * Its values are between 0 and MAX_INT32. The -1 value means no limit,
      * so it will export recursively all the metadata.
      */
-    virtual bool ExportMetadata(StructuredDataI & data,
-            const int32 level = -1);
+    virtual bool ExportMetadata(StructuredDataI & data,const int32 level = -1);
 
     /**
      * @brief Sets/unsets this object as a domain.
@@ -202,7 +199,7 @@ public:
      * @brief Returns the object name.
      * @return the object name (which might be NULL).
      */
-    const char8 * const GetName() const;
+    CCString GetName() const;
 
     /**
      * @brief Returns an object name which is guaranteed to be unique.
@@ -216,8 +213,7 @@ public:
      * If enough space is available the string will be zero terminated.
      * @param[in] size the size of the \a destination input string.
      */
-    void GetUniqueName(char8 * const destination,
-            const uint32 &size) const;
+    void GetUniqueName(CString const name,const uint32 &size) const;
 
     /**
      * @brief Sets the object name.
@@ -225,7 +221,7 @@ public:
      * @param newName the new name of the Object. A private copy of the \a name will be performed and managed by the Object.
      * @pre newName != NULL
      */
-    void SetName(const char8 * const newName);
+    void SetName(CCString const newName);
 
     /**
      * @brief Calls a registered method without arguments.
@@ -259,14 +255,8 @@ public:
      */
     ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName, StreamI &stream);
 
-    /*
-     * @brief Returns the class properties associated with this class type.
-     */
-//    const ClassProperties *GetClassProperties() const;
 
 private:
-
-
 
     /**
      * @brief Decrements the number of references to this object.
@@ -348,7 +338,7 @@ private:
     /**
      * The name of this object.
      */
-    char8 *thisObjName;
+    CString objectName;
 
     /**
      * Specifies if the object is a domain

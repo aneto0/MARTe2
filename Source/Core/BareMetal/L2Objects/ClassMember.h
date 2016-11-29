@@ -1,7 +1,7 @@
 /**
- * @file Introspection2.h
- * @brief Header file for class Introspection2
- * @date Nov 18, 2016
+ * @file ClassMember.h
+ * @brief Header file for class ClassMember
+ * @date Nov 28, 2016
  * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class Introspection2
+ * @details This header file contains the declaration of the class ClassMember
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L2OBJECTS_INTROSPECTION2_H_
-#define L2OBJECTS_INTROSPECTION2_H_
+#ifndef L2OBJECTS_CLASSMEMBER_H_
+#define L2OBJECTS_CLASSMEMBER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,9 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-//#include "IntrospectionEntry2.h"
-#include "ZeroTerminatedArray.h"
-#include "ClassRegistryItemT.h"
+#include "LinkedListable.h"
+#include "VariableDescriptor.h"
+#include "ClassRegistryItem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -42,35 +42,68 @@
 
 namespace MARTe {
 
-class IntrospectionEntry{
-
-};
-
 /**
- * @brief Groups the information about each member of a class or a structure.
+ * @brief Used to describe a member of a class for introspection purposes
  */
-/*lint -e{9109} forward declaration of this class is required in other modules*/
-template <class T>
-class DLL_API Introspection: public ZeroTerminatedArray<IntrospectionEntry> {
+class ClassMember: public LinkedListable{
+
+public:
 
     /**
-     *
+     * @brief templated constructor
      */
-    Introspection(IntrospectionEntry *entries,ClassRegistryItem *record):ZeroTerminatedArray<IntrospectionEntry>(entries) {
-        if ()
-        record->SetIntrospection(this);
-    }
+    template <class T>
+    ClassMember(T & member,CCString nameIn);
 
+    /**
+     * @brief name of the method
+     */
+    CCString GetName();
+
+    /**
+     * @brief returns associated descriptor
+     */
+    VariableDescriptor *GetDescriptor();
+
+
+private:
+    /**
+     * @brief The description of the member
+     */
+    VariableDescriptor vd;
+
+    /**
+     * @brief The name of the member
+     */
+    CCString name;
 };
 
-#define DECLARE_CLASS_INTROSPECTION(className, introEntryArray) \
-    static MARTe::ClassProperties className ## _ ## introspection_properties( #className , typeid(className).name(), "", static_cast<MARTe::uint32>(sizeof(className))); \
-    static MARTe::Introspection   className ## _ ## introspection(introEntryArray, ClassRegistryItemT<className>::GenericInstance(className ## _ ## introspection_properties));
+
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+
+template <class T>
+ClassMember::ClassMember(T & member,CCString nameIn): vd(member){
+    ClassRegistryItem * cri = ClassRegistryItem::Instance<T>();
+    if (cri != NULL_PTR(ClassRegistryItem * )){
+        cri->AddMember(this);
+    }
+    name = nameIn;
 }
-#endif /* L2OBJECTS_INTROSPECTION2_H_ */
+
+CCString ClassMember::GetName(){
+    return name;
+}
+
+VariableDescriptor *ClassMember::GetDescriptor(){
+    return &vd;
+}
+
+
+}
+#endif /* L2OBJECTS_CLASSMEMBER_H_ */
 	

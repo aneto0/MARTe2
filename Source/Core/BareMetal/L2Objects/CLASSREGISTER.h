@@ -34,7 +34,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassRegistryItemT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -92,6 +91,18 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+#if 0
+    /*                                                                                                                 \
+     * Class properties of this class type. One instance per class type automatically instantiated at the start        \
+     * of an application or loading of a loadable library.                                                             \
+     * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
+     */                                                                                                                \
+    MARTe::ClassProperties className::classProperties( #className , typeid(className).name(), ver, static_cast<MARTe::uint32>(sizeof(className)));
+#endif
+
+
+
+
 /**
  * This macro has to be inserted in every unit file.
  * The definition of the  _## className ## ClassRegistryItem variable will
@@ -104,35 +115,16 @@
  * class they had to be written as part of the macro as well.
  */
 #define CLASS_REGISTER(className,ver)                                                                                  \
-    /*                                                                                                                 \
-     * Class properties of this class type. One instance per class type automatically instantiated at the start        \
-     * of an application or loading of a loadable library.                                                             \
-     * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
-     */                                                                                                                \
-    MARTe::ClassProperties className::classProperties( #className , typeid(className).name(), ver, static_cast<MARTe::uint32>(sizeof(className)));                 \
-                                                                                                                       \
-    /* The next line, i.e. the instantiation of a static ClassRegistryItem                                            \
-     * is necessary because it creates an instance of ClassRegistryItem and                                            \
-     * registers it into the ClassRegistryDatabase.                                                                    \
-     */                                                                                                                \
-    static MARTe::ClassRegistryItem* className ## _privateItem = MARTe::ClassRegistryItemT<className>::Instance();     \
                                                                                                                        \
     /*                                                                                                                 \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                              \
-    	if(className ## _privateItem == NULL) {\
-    	}\
-	return MARTe::ClassRegistryItemT<className>::Instance();            \
+	return MARTe::ClassRegistryItem::Instance<className>();                                                       \
     }                                                                                                                  \
     /*                                                                                                                 \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem() const {                                               \
-        className x;                                                                                                   \
-        MARTe::ClassRegistryItem *ret=NULL_PTR(MARTe::ClassRegistryItem *);                                            \
-        if(MARTe::StringHelper::Compare(typeid(x).name(), typeid(*this).name())==0){                                   \
-            ret= GetClassRegistryItem_Static();                                                                        \
-        }                                                                                                              \
-        return ret;                                                                                                    \
+        return MARTe::ClassRegistryItem::Instance<className>();                                                       \
     }                                                                                                                  \
     /*                                                                                                                 \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \

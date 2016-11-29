@@ -104,13 +104,6 @@ class VariableDescriptor{
 
 public:
 
-
-    /**
-     * @biref copy constructor
-     */
-    inline VariableDescriptor(const VariableDescriptor &x) ;
-
-
     /**
      * @brief main constructor by learning
      */
@@ -121,11 +114,75 @@ public:
     }
 
     /**
-     * @brief buids a variable descriptor for a variable with no modifiers (a part from those held by typeDescriptor)
-     */
-    VariableDescriptor(const TypeDescriptor &td){
-        typeDescriptor = td;
+     * default
+     * */
+    VariableDescriptor(){
+        typeDescriptor = InvalidType;
     }
+
+    /**
+     * @brief copy
+     * Note that const VariableDescription on its own will not work as it will not match univocally a non cost  VariableDescriptor
+     */
+    inline VariableDescriptor(VariableDescriptor &x ) ;
+
+    /**
+     * @brief copy
+     * Note that const VariableDescription will not work
+     */
+    inline VariableDescriptor(const VariableDescriptor &x );
+
+    /**
+     * @brief sets the typeDescriptor
+     */
+    inline VariableDescriptor(const TypeDescriptor &td);
+
+    /**
+     * @brief gets the modifiers
+     */
+    inline CCString GetModifierString() const;
+
+    /**
+     * @brief Returns the pointed data TypeDescriptor.
+     * @return the data TypeDescriptor.
+     */
+    inline const TypeDescriptor &GetTypeDescriptor() const;
+
+
+    /**
+     * @brief Gets the number of dimensions associated to this Match.
+     * @details GetNumberOfDimensions() == 0 => scalar, GetNumberOfDimensions() == 1 => vector
+     * GetNumberOfDimensions() == 2 => matrix
+     * @return the number of dimensions associated to this Match.
+     */
+    inline uint8 GetNumberOfDimensions() const;
+
+    /**
+     * @brief Gets the number of elements in a given \a dimension.
+     * @param[in] dimension the dimension to be queried.
+     * @return the number of elements in a given \a dimension.
+     * @pre
+     *   dimension < 3
+     */
+    inline uint32 GetNumberOfElements(const uint32 dimension) const;
+
+    /**
+     * @brief Checks if GetDataPointer() is pointing at a statically allocated memory block.
+     * @return true if GetDataPointer() is pointing at a statically allocated memory block.
+     */
+    inline bool IsStaticDeclared() const;
+
+    /**
+     * @brief Retrieves the byte size of this type.
+     * @return the byte size of this type.
+     */
+    inline uint32 GetByteSize() const;
+
+    /**
+     * @brief Retrieves the bit size of this type.
+     * @return the bit size of this type.
+     */
+    inline uint32 GetBitSize() const;
 
 private:
 
@@ -418,49 +475,6 @@ private:
 
 
 
-    /**
-     * @brief Returns the pointed data TypeDescriptor.
-     * @return the data TypeDescriptor.
-     */
-    TypeDescriptor GetTypeDescriptor() const;
-
-
-    /**
-     * @brief Gets the number of dimensions associated to this Match.
-     * @details GetNumberOfDimensions() == 0 => scalar, GetNumberOfDimensions() == 1 => vector
-     * GetNumberOfDimensions() == 2 => matrix
-     * @return the number of dimensions associated to this Match.
-     */
-    inline uint8 GetNumberOfDimensions() const;
-
-    /**
-     * @brief Gets the number of elements in a given \a dimension.
-     * @param[in] dimension the dimension to be queried.
-     * @return the number of elements in a given \a dimension.
-     * @pre
-     *   dimension < 3
-     */
-    inline uint32 GetNumberOfElements(const uint32 dimension) const;
-
-    /**
-     * @brief Checks if GetDataPointer() is pointing at a statically allocated memory block.
-     * @return true if GetDataPointer() is pointing at a statically allocated memory block.
-     */
-    inline bool IsStaticDeclared() const;
-
-    /**
-     * @brief Retrieves the byte size of this type.
-     * @return the byte size of this type.
-     */
-    inline uint32 GetByteSize() const;
-
-    /**
-     * @brief Retrieves the bit size of this type.
-     * @return the bit size of this type.
-     */
-    inline uint32 GetBitSize() const;
-
-
 };
 
 /*---------------------------------------------------------------------------*/
@@ -468,9 +482,18 @@ private:
 /*---------------------------------------------------------------------------*/
 
 
-VariableDescriptor::VariableDescriptor(const VariableDescriptor &x) {
+inline VariableDescriptor::VariableDescriptor( VariableDescriptor &x ){
     this->typeDescriptor = x.typeDescriptor;
     this->modifierString = x.modifierString;
+}
+
+inline VariableDescriptor::VariableDescriptor( const VariableDescriptor &x ){
+    this->typeDescriptor = x.typeDescriptor;
+    this->modifierString = x.modifierString;
+}
+
+inline VariableDescriptor::VariableDescriptor(const TypeDescriptor &td){
+    typeDescriptor = td;
 }
 
 
@@ -627,11 +650,17 @@ void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * &fractiona
 }
 
 
-TypeDescriptor VariableDescriptor::GetTypeDescriptor() const {
+const TypeDescriptor &VariableDescriptor::GetTypeDescriptor() const {
     return typeDescriptor;
 }
 
 
+/**
+ * @brief gets the modifiers
+ */
+inline CCString VariableDescriptor::GetModifierString() const {
+    return this->modifierString;
+}
 
 
 

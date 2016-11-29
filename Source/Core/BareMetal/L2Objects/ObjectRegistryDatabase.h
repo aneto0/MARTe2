@@ -34,6 +34,7 @@
 
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
+#include "GlobalObjectI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

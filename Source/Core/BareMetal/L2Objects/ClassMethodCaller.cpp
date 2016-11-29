@@ -31,9 +31,11 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassMethodCaller.h"
 #include "Object.h"
+#include "ClassMethodCaller.h"
+#include "ErrorManagement.h"
 #include "ReferenceContainer.h"
+#include "ReferenceT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -62,14 +64,58 @@ ErrorManagement::ErrorType ClassMethodCaller::Call(Object *object, StructuredDat
     return ErrorManagement::ParametersError;
 }
 
-/*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
-ErrorManagement::ErrorType ClassMethodCaller::Call(Object *object, ReferenceContainer &parameters){
-    return ErrorManagement::ParametersError;
-}
+///*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
+//ErrorManagement::ErrorType ClassMethodCaller::Call(Object *object, ReferenceContainer &parameters){
+//    return ErrorManagement::ParametersError;
+//}
+
 
 /*lint -e{715} -e{952} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] [MISRA C++ Rule 7-1-1]. This function is a default implementation which does nothing*/
 ErrorManagement::ErrorType ClassMethodCaller::Call(Object *object){
     return ErrorManagement::ParametersError;
 }
 
+
+
+ErrorManagement::ErrorType ClassMethodCaller::Parameters2ReferenceContainerCall(Object *object, StructuredDataI &parameters) {
+
+    ReferenceContainer param1;
+
+    Object * o = dynamic_cast<Object *>(&parameters);
+
+    Reference ref(o);
+
+    ErrorManagement::ErrorType err;
+    if (ref.IsValid()) {
+        param1.Insert(ref);
+        err = Call(object, param1);
+    }
+    else {
+        err = ErrorManagement::ParametersError;
+    }
+
+    return err;
 }
+
+ErrorManagement::ErrorType ClassMethodCaller::ReferenceContainer2ParametersCall(Object *object, ReferenceContainer &parameters) {
+    ErrorManagement::ErrorType err(true);
+
+    ReferenceT<StructuredDataI> sI = parameters.Get(0);
+
+    err.parametersError = !sI.IsValid();
+    if (err.ErrorsCleared()) {
+        err = Call(object, *(sI.operator->()));
+    }
+
+    return err;
+}
+
+StreamI* ClassMethodCaller::StreamIFromReferenceContainer(ReferenceContainer &parameters){
+
+    ReferenceT<StreamI> param = parameters.Get(0);
+
+    return param.operator->();
+}
+
+}
+

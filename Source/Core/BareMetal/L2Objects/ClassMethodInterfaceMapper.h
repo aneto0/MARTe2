@@ -544,7 +544,6 @@ private:
 };
 
 }
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
@@ -827,6 +826,7 @@ ClassMethodCaller *ClassMethodInterfaceMapper::ClassMethodCallerCreate4(ErrorMan
 
 
 }
+
 
 #endif /* CLASSMETHODINTERFACEMAPPER_H_ */
 

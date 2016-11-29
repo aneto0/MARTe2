@@ -47,6 +47,7 @@ namespace MARTe {
 
 class Object;
 class ReferenceContainer;
+class StreamI;
 
 /**
  * @brief Allows to call registered methods on registered objects (see ClassMethodInterfaceMapper and CLASS_METHOD_REGISTER).
@@ -75,11 +76,12 @@ public:
      * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
-    virtual ErrorManagement::ErrorType Call(Object *object,
-                                            StreamI &stream);
+    virtual ErrorManagement::ErrorType Call(Object *object,StreamI &stream);
 
     /**
      * @brief Calls the class method by taking the arguments from StructuredDataI *parameters
+     * @details Default implementation: The parameters ReferenceContainer is expected to have a valid StructuredDataI on its first entry.
+     * @details The call then recurses and calls Call(object,StructuredDataI)
      * @param[in] object is the pointer to the object owning the method.
      * @param[in] parameters a reference to a StructuredDataI object where to read/write parameters/results.
      * @return
@@ -87,8 +89,7 @@ public:
      * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
-    virtual ErrorManagement::ErrorType Call(Object *object,
-                                            StructuredDataI &parameters);
+    virtual ErrorManagement::ErrorType Call(Object *object,StructuredDataI &parameters);
 
     /**
      * @brief Calls the class method by taking the arguments from the ReferenceContainer parameters
@@ -99,8 +100,7 @@ public:
      * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
      * + on success the error returned by the method called
      */
-    virtual ErrorManagement::ErrorType Call(Object *object,
-                                            ReferenceContainer &parameters);
+    virtual ErrorManagement::ErrorType Call(Object *object,ReferenceContainer &parameters);
 
     /**
      * @brief Calls the class method without parameters
@@ -111,6 +111,19 @@ public:
      * + on success the error returned by the method called
      */
     virtual ErrorManagement::ErrorType Call(Object *object);
+
+protected:
+
+    /** @brief calls Call(Object,ReferenceContainer) loading in the container the parameters */
+    ErrorManagement::ErrorType Parameters2ReferenceContainerCall(Object *object, StructuredDataI &parameters);
+
+    /** @brief calls Call(Object,Parameters) loading in the container the parameters */
+    ErrorManagement::ErrorType ReferenceContainer2ParametersCall(Object *object, ReferenceContainer &parameters);
+
+    /**
+     * TODO
+     */
+    StreamI* StreamIFromReferenceContainer(ReferenceContainer &parameters);
 };
 }
 

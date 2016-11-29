@@ -33,15 +33,15 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassMethodCaller.h"
-#include "ReferenceContainer.h"
+//#include "ReferenceContainer.h"
 #include "ReferenceT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 
 
+class ReferenceContainer;
 
 /**
  * These constants specify if the value of the template parameters below are being by reference and
@@ -596,17 +596,10 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
 
 template<class className, typename MethodPointer, typename argType1, typename argType2, typename argType3, typename argType4>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1, argType2, argType3, argType4>::Call(Object *object, ReferenceContainer &parameters) {
-    ErrorManagement::ErrorType err(true);
-
-    ReferenceT<StructuredDataI> sI = parameters.Get(0);
-
-    err.parametersError = !sI.IsValid();
-    if (err.ErrorsCleared()) {
-        err = Call(object, *(sI.operator->()));
-    }
-
-    return err;
+    return ReferenceContainer2ParametersCall(object, parameters);
 }
+
+
 
 template<class className, typename MethodPointer, typename argType1, typename argType2, typename argType3>
 ClassMethodCallerT<className, MethodPointer, argType1, argType2, argType3, void>::ClassMethodCallerT(MethodPointer method, uint32 maskIn) {
@@ -673,15 +666,7 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
 
 template<class className, typename MethodPointer, typename argType1, typename argType2, typename argType3>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1, argType2, argType3, void>::Call(Object *object, ReferenceContainer &parameters) {
-    ErrorManagement::ErrorType err(true);
-    ReferenceT<StructuredDataI> sI = parameters.Get(0);
-
-    err.parametersError = !sI.IsValid();
-    if (err.ErrorsCleared()) {
-        err = Call(object, *(sI.operator->()));
-    }
-
-    return err;
+    return ReferenceContainer2ParametersCall(object, parameters);
 }
 
 template<class className, typename MethodPointer, typename argType1, typename argType2>
@@ -737,16 +722,7 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
 
 template<class className, typename MethodPointer, typename argType1, typename argType2>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1, argType2, void, void>::Call(Object *object, ReferenceContainer &parameters) {
-    ErrorManagement::ErrorType err(true);
-
-    ReferenceT<StructuredDataI> sI = parameters.Get(0);
-
-    err.parametersError = !sI.IsValid();
-    if (err.ErrorsCleared()) {
-        err = Call(object, *(sI.operator->()));
-    }
-
-    return err;
+    return ReferenceContainer2ParametersCall(object, parameters);
 }
 
 
@@ -787,16 +763,7 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
 
 template<class className, typename MethodPointer, typename argType1>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1, void, void, void>::Call(Object *object, ReferenceContainer &parameters) {
-
-    ErrorManagement::ErrorType err;
-    ReferenceT<StructuredDataI> param = parameters.Get(0);
-    if (param.IsValid()) {
-        err = Call(object, *(param.operator->()));
-    }
-    else {
-        err = ErrorManagement::ParametersError;
-    }
-    return err;
+    return ReferenceContainer2ParametersCall(object, parameters);
 }
 
 template<class className, typename MethodPointer>
@@ -846,16 +813,7 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, Structur
 
 template<class className, typename MethodPointer>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, StructuredDataI, void, void, void>::Call(Object *object, ReferenceContainer &parameters) {
-    ErrorManagement::ErrorType err(true);
-
-    ReferenceT<StructuredDataI> sI = parameters.Get(0);
-
-    err.parametersError = !sI.IsValid();
-    if (err.ErrorsCleared()) {
-        err = Call(object, *(sI.operator->()));
-    }
-
-    return err;
+    return ReferenceContainer2ParametersCall(object, parameters);
 }
 
 
@@ -870,23 +828,7 @@ ClassMethodCallerT<className, MethodPointer, ReferenceContainer, void, void, voi
 
 template<class className, typename MethodPointer>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, ReferenceContainer, void, void, void>::Call(Object *object, StructuredDataI &parameters) {
-
-    ReferenceContainer param1;
-
-    Object * o = dynamic_cast<Object *>(&parameters);
-
-    Reference ref(o);
-
-    ErrorManagement::ErrorType err;
-    if (ref.IsValid()) {
-        param1.Insert(ref);
-        err = Call(object, param1);
-    }
-    else {
-        err = ErrorManagement::ParametersError;
-    }
-
-    return err;
+    return Parameters2ReferenceContainerCall(object,parameters);
 }
 
 template<class className, typename MethodPointer>
@@ -907,10 +849,15 @@ ClassMethodCallerT<className, MethodPointer, StreamI, void, void, void>::~ClassM
 template<class className, typename MethodPointer>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, StreamI, void, void, void>::Call(Object *object, ReferenceContainer &parameters) {
     className* actual = dynamic_cast<className *>(object);
+    StreamI * si = StreamIFromReferenceContainer(parameters);
 
-    ReferenceT<StreamI> param = parameters.Get(0);
+    ErrorManagement::ErrorType error = ErrorManagement::ParametersError;
 
-    return (actual->*pFun)(*(param.operator->()));
+    if (si != NULL_PTR(StreamI *)){
+        error = (actual->*pFun)(*si);
+    }
+
+    return error;
 }
 
 template<class className, typename MethodPointer>

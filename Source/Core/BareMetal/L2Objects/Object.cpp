@@ -31,15 +31,14 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassRegistryItemT.h"
 #include "Object.h"
 #include "StringHelper.h"
 #include "HeapI.h"
-#include "Introspection-old.h"
 #include "ReferenceContainer.h"
 #include "MemoryOperationsHelper.h"
 #include "Atomic.h"
 #include "ClassMethodCaller.h"
+#include "ClassRegistryDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -133,7 +132,7 @@ ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodNa
 
     return err;
 }
-
+#if 0
 bool Object::ConvertDataToStructuredData(void* const ptr,
                                          const char8* const className,
                                          StructuredDataI& data,
@@ -315,20 +314,20 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
 
     return ret;
 }
-
+#endif
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 Object::Object() {
     referenceCounter = 0;
-    thisObjName = NULL_PTR(char8 *);
+    objectName = NULL_PTR(char8 *);
     isDomain = false;
 }
 
 Object::Object(const Object &copy) {
     referenceCounter = 0;
-    thisObjName = StringHelper::StringDup(copy.thisObjName);
+    objectName = StringHelper::StringDup(copy.objectName);
     isDomain = false;
 }
 
@@ -336,9 +335,9 @@ Object::Object(const Object &copy) {
  * thrown given that name always points to a valid memory address and thus Memory::Free
  * should not raise exceptions.*/
 Object::~Object() {
-    if (thisObjName != NULL_PTR(char8 *)) {
+    if (objectName != NULL_PTR(char8 *)) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        bool ok = HeapManager::Free(reinterpret_cast<void *&>(thisObjName));
+        bool ok = HeapManager::Free(reinterpret_cast<void *&>(objectName));
         if (!ok) {
             REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed HeapManager::Free() in destructor");
         }
@@ -376,12 +375,12 @@ void *Object::operator new(const osulong size) throw () {
 }
 //LCOV_EXCL_STOP
 
-const char8 * const Object::GetName() const {
-    return thisObjName;
+CCString Object::GetName() const {
+    return objectName;
 }
 
-void Object::GetUniqueName(char8 * const destination,
-                           const uint32 &size) const {
+void Object::GetUniqueName(CString  const destination,const uint32 &size) const {
+
     if (!MemoryOperationsHelper::Set(destination, '\0', size)) {
         REPORT_ERROR(ErrorManagement::Warning, "Failed initialization of the object name in output");
     }
@@ -448,49 +447,48 @@ void Object::GetUniqueName(char8 * const destination,
     }
 }
 
-void Object::SetName(const char8 * const newName) {
-    if (thisObjName != NULL_PTR(char8 *)) {
+void Object::SetName(CCString const newName) {
+    if (objectName != NULL_PTR(char8 *)) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        bool ok = HeapManager::Free(reinterpret_cast<void *&>(thisObjName));
+        bool ok = HeapManager::Free(reinterpret_cast<void *&>(objectName));
         if (!ok) {
             REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed HeapManager::Free()");
         }
     }
-    thisObjName = StringHelper::StringDup(newName);
+    objectName = StringHelper::StringDup(newName);
 }
 
 bool Object::ExportData(StructuredDataI & data) {
     bool ret = false;
 
-    const ClassProperties *myProperties = GetClassProperties();
-    if (myProperties != NULL) {
-        ret = ConvertDataToStructuredData(reinterpret_cast<void*>(this), myProperties->GetName(), data, GetName());
+    ClassRegistryItem *cri = GetClassRegistryItem();
+    if (cri != NULL){
+        ret = ConvertDataToStructuredData(reinterpret_cast<void*>(this), cri->GetClassName(), data, GetName());
     }
+
+//    const ClassProperties *myProperties = GetClassProperties();
+//    if (myProperties != NULL) {
+//        ret = ConvertDataToStructuredData(reinterpret_cast<void*>(this), myProperties->GetName(), data, GetName());
+//    }
     return ret;
 }
 
-bool Object::ExportMetadata(StructuredDataI & data,
-                            const int32 level) {
+bool Object::ExportMetadata(StructuredDataI & data,const int32 level) {
     bool ret = false;
 
-    const ClassProperties *myProperties = GetClassProperties();
-    if (myProperties != NULL) {
-        const char8* className = myProperties->GetName();
-
-        ret = ConvertMetadataToStructuredData(reinterpret_cast<void*>(this), className, data, level);
+    ClassRegistryItem *cri = GetClassRegistryItem();
+    if (cri != NULL){
+        ret = ConvertMetadataToStructuredData(reinterpret_cast<void*>(this), cri->GetClassName(), data, level);
     }
+
+
+    //const ClassProperties *myProperties = GetClassProperties();
+//    if (myProperties != NULL) {
+//        const char8* className = myProperties->GetName();
+
+//        ret = ConvertMetadataToStructuredData(reinterpret_cast<void*>(this), className, data, level);
+//    }
     return ret;
-}
-
-const ClassProperties *Object::GetClassProperties() const {
-    const ClassProperties *cp = NULL_PTR(ClassProperties *);
-    ClassRegistryItem * cri = GetClassRegistryItem();
-
-    if (cri != NULL_PTR(ClassRegistryItem *)) {
-        cp = cri->GetClassProperties();
-    }
-
-    return cp;
 }
 
 void Object::SetDomain(const bool isDomainFlag) {

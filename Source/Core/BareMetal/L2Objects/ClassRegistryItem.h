@@ -28,16 +28,20 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include <typeinfo>
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
 #include "CString.h"
 #include "LinkedListable.h"
+#include "LinkedListHolderT.h"
 #include "LoadableLibrary.h"
 #include "TypeDescriptor.h"
+
 //#include "Introspection.h"
-#include "ClassMethodInterfaceMapper.h"
+//#include "ClassMethodInterfaceMapper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -45,10 +49,13 @@
 
 namespace MARTe {
 
+
+
 class ClassMethodCaller;
 class ObjectBuilder;
 class ClassMember;
 class VariableDescriptor;
+class ClassMethodInterfaceMapper;
 
 
 /**

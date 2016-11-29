@@ -40,9 +40,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-//namespace MARTe {
+namespace MARTe {
 
-//}
 
 #if  0
 AnyType::AnyType(Object &obj) {
@@ -139,5 +138,6 @@ AnyType AnyType::operator[](const uint32 position) const {
 
 #endif
 
+}
 
 

@@ -81,6 +81,15 @@ class DLL_API AnyType {
 public:
 
     /**
+     * @brief Copy constructor. Needed because non cost Anytype is not univocally matched here
+     * @param[in] x is the AnyType to be copied.
+     * @post
+     *   GetDataPointer() == x.GetDataPointer() &&
+     *   GetDataDescriptor() == x.GetDataDescriptor()
+     */
+    inline AnyType(AnyType &x);
+
+    /**
      * @brief Copy constructor.
      * @param[in] x is the AnyType to be copied.
      * @post
@@ -90,6 +99,15 @@ public:
     inline AnyType(const AnyType &x);
 
     /**
+     * @brief default constructor.
+     * @post
+     *   GetDataPointer() == NULL &&
+     *   GetDataDescriptor() == InvalidType
+     */
+    inline AnyType();
+
+
+    /**
      * @brief Generic constructor for a constant type non-bitset.
      * @param[in] dataDescriptorIn contains the type informations in a TypeDescriptor class.
      * @param[in] dataPointerIn is the pointer to the constant data.
@@ -97,8 +115,7 @@ public:
      *   GetDataPointer() == dataPointerIn &&
      *   GetDataDescriptor() == dataDescriptorIn
      */
-    inline AnyType(const TypeDescriptor &dataDescriptorIn,
-                   const void* const dataPointerIn);
+    inline AnyType(const TypeDescriptor &dataDescriptorIn,const void* const dataPointerIn);
 
     /**
      * @brief Constructor from const non-ptr
@@ -156,7 +173,12 @@ public:
     /**
      * @brief Returns the synthetic type descriptor a pointer to whatever will be seen as a void *
      */
-    TypeDescriptor GetTypeDescriptor() const;
+    inline const TypeDescriptor &GetTypeDescriptor() const;
+
+    /**
+     * @brief Returns the full variableDescription
+     */
+    inline const VariableDescriptor &GetVariableDescriptor() const;
 
     /**
      * @brief Returns the synthetic type descriptor of *x. In case of error he type is void;
@@ -999,15 +1021,36 @@ private:
 
 
 
-AnyType::AnyType(const TypeDescriptor &typeDescriptorIn,const void* const dataPointerIn):
-        variableDescriptor(typeDescriptorIn)
-        {
+AnyType::AnyType(){
+    dataPointer = NULL_PTR(void *);
+}
+
+
+AnyType::AnyType(const TypeDescriptor &typeDescriptorIn,const void* const dataPointerIn):variableDescriptor(typeDescriptorIn){
+
     dataPointer = const_cast<void *>(dataPointerIn);
+}
+
+AnyType::AnyType( AnyType &x):variableDescriptor(x.variableDescriptor) {
+    /*lint -e{1554} the dataPointer is to be shared with the copied AnyType.*/
+    this->dataPointer = x.dataPointer;
 }
 
 AnyType::AnyType(const AnyType &x):variableDescriptor(x.variableDescriptor) {
     /*lint -e{1554} the dataPointer is to be shared with the copied AnyType.*/
     this->dataPointer = x.dataPointer;
+}
+
+void* AnyType::GetDataPointer() const{
+    return dataPointer;
+}
+
+const TypeDescriptor &AnyType::GetTypeDescriptor() const{
+    return this->variableDescriptor.GetTypeDescriptor();
+}
+
+const VariableDescriptor &AnyType::GetVariableDescriptor() const{
+    return this->variableDescriptor;
 }
 
 
