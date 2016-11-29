@@ -132,11 +132,11 @@ ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodNa
 
     return err;
 }
-#if 0
 bool Object::ConvertDataToStructuredData(void* const ptr,
                                          const char8* const className,
                                          StructuredDataI& data,
                                          const char8* const objName) {
+#if 0
     bool ret = false;
 
     const ClassRegistryItem* sourceItem = ClassRegistryDatabase::Instance()->Find(className);
@@ -208,6 +208,9 @@ bool Object::ConvertDataToStructuredData(void* const ptr,
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "ConvertDataToStructuredData: Class not registered");
     }
+#else
+    bool ret = false;
+#endif
     return ret;
 }
 
@@ -216,7 +219,7 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
                                              StructuredDataI &data,
                                              const int32 recursionLevel) {
     bool ret = false;
-
+#if 0
     const ClassRegistryItem *sourceItem = ClassRegistryDatabase::Instance()->Find(className);
 
     if (sourceItem != NULL) {
@@ -311,10 +314,10 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Class not registered");
     }
-
+#endif
     return ret;
 }
-#endif
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/

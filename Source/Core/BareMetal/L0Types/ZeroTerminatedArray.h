@@ -80,6 +80,12 @@ public:
     T * GetList() const ;
 
     /**
+     * @brief Allows changing the list
+     * @param[in] arrayIn is the zero terminated array input.
+     */
+    void SetList(T *arrayIn)  ;
+
+    /**
      * @brief Returns the pointer to the beginning of the array.
      * @return the pointer to the beginning of the array.
      */
@@ -134,6 +140,11 @@ uint32 ZeroTerminatedArray<T>::GetSize() const {
 template<typename T>
 T * ZeroTerminatedArray<T>::GetList() const{
     return array;
+}
+
+template<typename T>
+void ZeroTerminatedArray<T>::SetList(T *arrayIn) {
+    array = arrayIn;
 }
 
 template<typename T>

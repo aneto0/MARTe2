@@ -99,7 +99,6 @@ public:
 
 
 CString::CString (){
-
 }
 
 CString::CString (CString const &s):ZeroTerminatedArray<char8>(s){

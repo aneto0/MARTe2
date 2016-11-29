@@ -172,12 +172,14 @@ public:
         BitRange<uint32, 32u, 0u> all;
     };
 
+    TypeDescriptor();
+
     /**
      * @brief Constructor by 16 bit integer.
      * @param[in] x contains the type informations which must be stored into this memory area.
      * @post x == all
      */
-    TypeDescriptor(const uint32 x = 0u);
+    TypeDescriptor(const uint32 x);
 
     /**
      * @brief Basic Byte Types constructor.
@@ -204,8 +206,7 @@ public:
      *   isConstantIn == isConstant &&
      *   structuredDataIdCodeIn == structuredDataIdCode
      */
-    TypeDescriptor(const bool isConstantIn,
-                   const uint32 &structuredDataIdCodeIn);
+    TypeDescriptor(const bool isConstantIn,const uint32 &structuredDataIdCodeIn);
 
     /**
      * @brief Equality operator used to compare types.

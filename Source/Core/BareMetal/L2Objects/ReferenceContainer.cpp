@@ -26,6 +26,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <typeinfo>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -38,7 +39,7 @@
 #include "ErrorManagement.h"
 #include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
-#include <typeinfo>
+#include "GlobalObjectsDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -468,7 +469,7 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
 }
 
 bool ReferenceContainer::ExportData(StructuredDataI & data) {
-
+#if 0
     // no need to lock
     const char8 * objName = GetName();
     uint32 objNameLength = StringHelper::Length(objName);
@@ -483,10 +484,11 @@ bool ReferenceContainer::ExportData(StructuredDataI & data) {
         if (ret) {
             ret = HeapManager::Free(reinterpret_cast<void*&>(objNameToCreate));
             if (ret) {
-                const ClassProperties *properties = GetClassProperties();
-                ret = (properties != NULL);
+                ClassRegistryItem *cri = this->GetClassRegistryItem();
+//                const ClassProperties *properties = GetClassProperties();
+                ret = (cri != NULL);
                 if (ret) {
-                    ret = data.Write("Class", properties->GetName());
+                    ret = data.Write("Class", cri->GetClassName());
                     uint32 numberOfChildren = Size();
                     for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
                         Reference child = Get(i);
@@ -502,6 +504,9 @@ bool ReferenceContainer::ExportData(StructuredDataI & data) {
             }
         }
     }
+#else
+    bool ret= false;
+#endif
     return ret;
 }
 

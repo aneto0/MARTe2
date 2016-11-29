@@ -113,8 +113,8 @@ bool Reference::Initialise(StructuredDataI &data, const bool &initOnly) {
                 TypeDescriptor td = at.GetTypeDescriptor();
                 bool isCCString = (td.type == BT_CCString);
                 bool isCArray = (td.type == CArray);
-                bool isPCString = (td.type == PCString);
-                ok = (isCCString) || (isCArray) || (isPCString);
+//                bool isPCString = (td.type == PCString);
+                ok = (isCCString) || (isCArray) /*|| (isPCString)*/;
                 if (ok) {
                     uint32 len = StringHelper::Length(reinterpret_cast<const char8 *>(ptr)) + 1u;
                     char8 *className = reinterpret_cast<char8 *>(HeapManager::Malloc(len * static_cast<uint32>(sizeof(char8))));

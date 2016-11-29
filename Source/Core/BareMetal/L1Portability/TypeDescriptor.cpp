@@ -68,6 +68,10 @@ static const TypeCastInfo basicTypeInfo[] = {
 
 namespace MARTe {
 
+TypeDescriptor::TypeDescriptor() {
+    all = 0;
+}
+
 TypeDescriptor::TypeDescriptor(const uint32 x) {
     all = x;
 }
