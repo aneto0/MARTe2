@@ -103,9 +103,22 @@ bool Reference::Initialise(StructuredDataI &data, const bool &initOnly) {
 
     if (!initOnly) {
         if (objectPointer == NULL_PTR(Object*)) {
+            char8 className[256];
+            bool ok;
+            ok = data.Read("Class", className);
+            if (ok) {
+                Object *objPtr = CreateByName(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                ok = (objPtr != NULL_PTR(Object*));
+                if (ok) {
+                    objectPointer = objPtr;
+                    objectPointer->IncrementReferences();
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
+                }
+            }
 
-
-
+#if 0
             AnyType at = data.GetType("Class");
             void* ptr = at.GetDataPointer();
             ok = (ptr != NULL);
@@ -114,7 +127,7 @@ bool Reference::Initialise(StructuredDataI &data, const bool &initOnly) {
                 bool isCCString = (td.type == BT_CCString);
                 bool isCArray = (td.type == CArray);
 //                bool isPCString = (td.type == PCString);
-                ok = (isCCString) || (isCArray) /*|| (isPCString)*/;
+                ok = (isCCString) || (isCArray) /*|| (isPCString); */
                 if (ok) {
                     uint32 len = StringHelper::Length(reinterpret_cast<const char8 *>(ptr)) + 1u;
                     char8 *className = reinterpret_cast<char8 *>(HeapManager::Malloc(len * static_cast<uint32>(sizeof(char8))));
@@ -138,6 +151,8 @@ bool Reference::Initialise(StructuredDataI &data, const bool &initOnly) {
                     }
                 }
             }
+#endif
+
         }
         else {
             //TODO Warning the object already exists

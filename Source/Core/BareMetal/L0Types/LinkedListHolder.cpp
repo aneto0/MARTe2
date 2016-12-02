@@ -207,7 +207,7 @@ void LinkedListHolder::ListBSort(SortFilter * const sorter) {
     llhRoot.BSort(sorter);
 }
 
-LinkedListable *LinkedListHolder::ListPeek(const uint32 index) {
+LinkedListable *LinkedListHolder::ListPeek(const uint32 index)   {
     return (llhRoot.Next() == NULL) ? (NULL_PTR(LinkedListable *)) : (llhRoot.Next()->Peek(index));
 }
 

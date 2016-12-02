@@ -58,15 +58,41 @@ namespace MARTe {
  *
  * Basic types are integers 8-64 bit, floats, doubles, char pointers and void pointers.
  *
- * @note The TypeDescriptor is internally represented as a 16-bit bitfield-like union with one of the following structures (depending on the type
+ * @note The TypeDescriptor is internally represented as a 32-bit bitfield-like union with one of the following structures (depending on the type
  * described, if a basic one, or a structured one):
- * | isStructuredData   | isConstant  | type   | numberOfBits |
- * | :----:             | :----:      | :----: | :----:       |
- * |  1                 | 1           | 4      | 10           |
  *
- * | isStructuredData   | isConstant  | structuredDataIdCode  |
- * | :----:             | :----:      | :----:                |
- * |  1                 | 1           | 14                    |
+ * | isStructuredData   | isConstant  | structuredDataIdCode                                                   |
+ * | :----:             | :----:      | :----:                                                                 |
+ * |  1  (=1)           | 1           | 30                                                                     |
+ *
+ * | isStructuredData   | isConstant  | type         | unused  | bitOffset | unused  | numberOfBits            |
+ * | :----:             | :----:      | :----:       | :----:  | :----:    | :----:  | :----:                  |
+ * |  1  (=0)           | 1           | 4 (Bit-Int)  | 4       | 6         | 2       | 16                      |
+ *
+ * | isStructuredData   | isConstant  | type               | numberOfBytes | arrayType      | unused           |
+ * | :----:             | :----:      | :----:             | :----:        | :----:         | :----:           |
+ * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 4             | 2 (ZeroT,?D+)  | 20               |
+ *
+ * | isStructuredData   | isConstant  | type               | numberOfBytes | arrayType  | arraySize            |
+ * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:               |
+ * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 4             | 2 (1D)     | 20                   |
+ *
+ * | isStructuredData   | isConstant  | type               | numberOfBytes | arrayType  | columns | rows       |
+ * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:  | :----:     |
+ * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 4             | 2 (2D)     | 10      | 10         |
+ *
+ * | isStructuredData   | isConstant  | type               | unused        | arrayType      | unused           |
+ * | :----:             | :----:      | :----:             | :----:        | :----:         | :----:           |
+ * |  1  (=0)           | 1           | 4 (others )        | 4             | 2 (ZeroT,?D+)  | 20               |
+ *
+ * | isStructuredData   | isConstant  | type               | unused        | arrayType  | arraySize            | arraySize>0
+ * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:               |
+ * |  1  (=0)           | 1           | 4 (others)         | 4             | 2 (1D)     | 20                   |
+ *
+ * | isStructuredData   | isConstant  | type               | unused        | arrayType  | columns | rows       | rows >=1
+ * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:  | :----:     | columns >=1
+ * |  1  (=0)           | 1           | 4 (others)         | 4             | 2 (2D)     | 10      | 10         |
+ *
  *
  */
 class DLL_API TypeDescriptor {
@@ -96,26 +122,80 @@ public:
          *****************************************************/
 
         /**
-         * The data is a bit range : int3, uint27, BitRange<int,3,8>  , BitBoolean<6> etc...
-         */
-        BitBoolean<uint32, 2u> isBitType;
-
-        /**
          * The actual type of data
          * See table in BasicType
          */
-        BitRange<uint32, 4u, 3u> type;
+        BitRange<uint32, 4u, 2u> type;
 
         /*****************************************************
          *
-         *        For isBitType = true
+         *        For type = int,float,char
          *
          *****************************************************/
+
+        /**
+         * The size of the type
+         * Up to 32 bytes 0 means- not determined
+         * Determines the type of integer or float
+         * For char[] this is 1
+         */
+        BitRange<uint32, 4u, 6u> numberOfBytes;
+
+
+        /**
+         * The array type
+         * 0 means zero terminated array
+         * 1 means 1D
+         * 2 means 2D
+         * 3 means ?D+ too large array. - does not fit within 1D<1M and 2D <(1Kx1K) or too many dimensions
+         */
+        BitRange<uint32, 2u, 10u> arrayType;
+
+        /*****************************************************
+         *
+         *        For arrayType = 1
+         *
+         *****************************************************/
+
+        /**
+         * The vector size for 1D array and for ?D+ array the first dimensions size
+         * Up to 1K  0 means- not determined
+         * Used for char[] to indicate size of memory
+         */
+        BitRange<uint32, 20u, 12u> arraySize;
+
+
+        /*****************************************************
+         *
+         *        For arrayType = 2
+         *
+         *****************************************************/
+
+        /**
+         * The vector size
+         * Up to 1K  0 means- not determined
+         * Used for char[] to indicate size of memory
+         */
+        BitRange<uint32, 10u, 12u> numberOfRows;
+
+        /**
+         * The vector size
+         * Up to 1K 0 means- not determined
+         */
+        BitRange<uint32, 10u, 22u> numberOfColumns;
+
+
+        /*****************************************************
+         *
+         *        For type = bit int
+         *
+         *****************************************************/
+
         /**
          * The bit offset
-         * 0-7
+         * 0-63
          */
-        BitRange<uint32, 9u, 7u> bitOffset;
+        BitRange<uint32, 6u, 8u> bitOffset;
 
         /**
          * The size in bits
@@ -123,31 +203,6 @@ public:
          */
         BitRange<uint32, 16u, 16u> numberOfBits;
 
-        /*****************************************************
-         *
-         *        For isBitType = false
-         *
-         *****************************************************/
-        /**
-         * The size of the type
-         * Up to 32 bytes 0 means- not determined
-         * Determines the type of integer or float
-         * For char[] this is 1
-         */
-        BitRange<uint32, 5u, 7u> numberOfBytes;
-
-        /**
-         * The vector size
-         * Up to 1K  0 means- not determined
-         * Used for char[] to indicate size of memory
-         */
-        BitRange<uint32, 10u, 12u> numberOfrows;
-
-        /**
-         * The vector size
-         * Up to 1K 0 means- not determined
-         */
-        BitRange<uint32, 10u, 22u> numberOfColumns;
 
         /*****************************************************
          *
@@ -162,7 +217,7 @@ public:
 
         /*****************************************************
          *
-         *        as a 16 bit code
+         *        as a 32 bit code
          *
          *****************************************************/
 
@@ -175,7 +230,7 @@ public:
     TypeDescriptor();
 
     /**
-     * @brief Constructor by 16 bit integer.
+     * @brief Constructor by 32 bit integer.
      * @param[in] x contains the type informations which must be stored into this memory area.
      * @post x == all
      */
@@ -186,17 +241,52 @@ public:
      * @param[in] isConstantIn specifies if the type is constant.
      * @param[in] typeIn is the type.
      * @param[in] numberOfBitsIn the number of bits associated to the type.
+     * @param[in] bitsOffsetIn the bit offset of the type from a standard pointer address alignment
      * @post
      *   isConstantIn == isConstant &&
-     *   isBitType  == ((numberOfBitsIn %8) !=0) || (bitsOffsetIn != 0)
-     *   typeIn == type &&
-     *   if (!isBitType) numberOfBytes == numberOfBitsIn /8
-     *   if (isBitType)  numberOfBits == numberOfBitsIn  && bitOffset = bitsOffsetIn
+     *   if (bitsOffset=0 and numberOfbits multiple of 8)
+     *       type == signedBitInteger if typeIn was signedInteger
+     *       type == unsignedBitInteger if typeIn was unsignedInteger
+     *       otherwise type = invalid
+     *   else
+     *       type == typeIn
+     *       byteSize = bitSizeIn/8
+     *       arrayType = 1
+     *       arraySize = 1
+     *   end
      */
     TypeDescriptor(const bool isConstantIn,
                    const BasicType typeIn,
-                   const uint16 numberOfBitsIn,
+                   const uint32 numberOfBitsIn,
                    const uint8  bitsOffsetIn = 0);
+
+    /**
+     * @brief Basic Byte Types constructor.
+     * @param[in] isConstantIn specifies if the type is constant.
+     * @param[in] typeIn is the type.
+     * @param[in] numberOfDimensions 0=Zterm, 1= scalar/vector, 2 matrix, 3 too large array.
+     * @param[in] numberOfBitsIn the number of bits associated to the type.
+     * @param[in] bitsOffsetIn the bit offset of the type from a standard pointer address alignment
+     * @post
+     *   isConstantIn == isConstant &&
+     *   if (bitsOffset=0 and numberOfbits multiple of 8)
+     *       type == signedBitInteger if typeIn was signedInteger
+     *       type == unsignedBitInteger if typeIn was unsignedInteger
+     *       otherwise type = invalid
+     *   else
+     *       type == typeIn
+     *       byteSize = bitSizeIn/8
+     *       arrayType = 1
+     *       arraySize = 1
+     *   end
+     */
+    TypeDescriptor(const bool isConstantIn,
+                   const BasicType typeIn,
+                   const uint8  numberOfDimensions,
+                   const uint32 numberOfBytesIn,
+                   const uint32 numberOfColumnsIn,
+                   const uint32 numberOfRowsIn
+                   );
 
     /**
      * @brief Structured objects constructor.
@@ -225,6 +315,11 @@ public:
      */
     /*lint -e(1739) , operation basic_type != TypeDescriptor will not be supported*/
     bool operator!=(const TypeDescriptor &typeDescriptor) const;
+
+    /**
+     * whether it is an integer with fractional bit size or offset
+     */
+    inline bool IsBitType() const ;
 
 #if 0
     /**
@@ -277,10 +372,12 @@ public:
 #endif
 };
 
+
 /**
- * 8 bit Character.
+ * An array
  */
-static const TypeDescriptor Character8Bit(false, CArray, 8u);
+static const TypeDescriptor Character8Bit(false, Char, 8u);
+
 
 /**
  * 32 bit float descriptor.
@@ -298,9 +395,14 @@ static const TypeDescriptor Float64Bit(false, Float, 64u);
 static const TypeDescriptor Float128Bit(false, Float, 128u);
 
 /**
- * Void descriptor
+ * Void descriptor - unknown -
  */
-static const TypeDescriptor VoidType(false, SignedInteger, 0u);
+static const TypeDescriptor VoidType(false, Void, 0u);
+
+/**
+ * Invalid type descriptor
+ */
+static const TypeDescriptor InvalidType(false, Invalid, 0u);
 
 /**
  * 8 bit signed integer descriptor
@@ -345,31 +447,32 @@ static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
 /**
  * Constant char pointer descriptor
  */
-static const TypeDescriptor ConstCharString(true, BT_CCString, sizeof(const char8*) * 8u);
+static const TypeDescriptor ConstCharString(true, Char, 0, 1, 0, 0);
 
 /**
  * Char pointer descriptor
  */
-static const TypeDescriptor CharString(false, BT_CCString, sizeof(char8*) * 8u);
+static const TypeDescriptor CharString(false,  Char, 0, 1, 0, 0);
 
 /**
  * ConfigurationDatabase node
  */
-static const TypeDescriptor StructuredDataInterfaceType(false, StructuredDataNode, 0u);
+static const TypeDescriptor StructuredDataInterfaceType(false, StructuredDataInterface, 0u);
 
 /**
  * Pointer descriptor
  */
 static const TypeDescriptor PointerType(false, Pointer, sizeof(void*) * 8u);
 
-/**
- * Invalid type descriptor
- */
-static const TypeDescriptor InvalidType(0u);
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+bool TypeDescriptor::IsBitType() const {
+    return ((type ==  SignedBitInteger) || (type ==  UnsignedBitInteger));
+};
+
+}
 
 #endif /* TYPEDESCRIPTOR_H_ */

@@ -29,6 +29,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include <typeinfo>
+#include <stdio.h>
+
+#define dprintf(a,...)
+//#define dprintf printf
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -118,17 +123,6 @@ public:
     inline AnyType(const TypeDescriptor &dataDescriptorIn,const void* const dataPointerIn);
 
     /**
-     * @brief Constructor from const non-ptr
-     * @param[in] x is any variable const non-ptr
-     * @post
-     *   GetDataPointer() == &x  variableDescriptor(&T)
-     */
-    template <class T>
-    AnyType(T const &x): variableDescriptor (reinterpret_cast<const T *>(&x)){
-        dataPointer = reinterpret_cast<void *>(const_cast<T *>(&x));
-    }
-
-    /**
      * @brief Constructor from non-const non-ptr
      * @param[in] x is any variable non-const non-ptr
      * @post
@@ -137,17 +131,19 @@ public:
     template <class T>
     AnyType(T &x): variableDescriptor (reinterpret_cast<T *>(&x)){
         dataPointer = reinterpret_cast<void *>(const_cast<T *>(&x));
+        dprintf("(AT:T&)");
     }
 
     /**
-     * @brief Constructor from const ptr
-     * @param[in] x is any variable const ptr
+     * @brief Constructor from const non-ptr
+     * @param[in] x is any variable const non-ptr
      * @post
-     *   GetDataPointer() == x  variableDescriptor(&T)
+     *   GetDataPointer() == &x  variableDescriptor(&T)
      */
     template <class T>
-    AnyType(T const * &x): variableDescriptor (reinterpret_cast<const T *>(&x)){
-        dataPointer = reinterpret_cast<void *>(const_cast<T *>(x));
+    AnyType(T const &x): variableDescriptor (reinterpret_cast<T const *>(&x)){
+        dataPointer = reinterpret_cast<void *>(const_cast<T *>(&x));
+        dprintf("(AT:Tc&)");
     }
 
     /**
@@ -157,8 +153,22 @@ public:
      *   GetDataPointer() == x && variableDescriptor(&T)
      */
     template <class T>
-    AnyType(T * &x): variableDescriptor (reinterpret_cast<T *>(&x)){
+    AnyType(T * &x): variableDescriptor (reinterpret_cast<T **>(&x)){
         dataPointer = reinterpret_cast<void *>(const_cast<T *>(x));
+        dprintf("(AT:T*&)");
+    }
+
+
+    /**
+     * @brief Constructor from const ptr
+     * @param[in] x is any variable const ptr
+     * @post
+     *   GetDataPointer() == x  variableDescriptor(&T)
+     */
+    template <class T>
+    AnyType(T const * &x): variableDescriptor (reinterpret_cast< T const **>(&x)){
+        dataPointer = reinterpret_cast<void *>(const_cast<T *>(x));
+        dprintf("(AT:Tc*&)");
     }
 
 

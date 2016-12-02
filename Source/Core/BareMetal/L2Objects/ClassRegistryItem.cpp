@@ -121,20 +121,24 @@ uint32 ClassRegistryItem::GetNumberOfInstances() const {
     return static_cast<uint32>(numberOfInstances);
 }
 
-CCString  ClassRegistryItem::GetClassName(){
+CCString  ClassRegistryItem::GetClassName() const{
     return className;
 }
 
-CCString  ClassRegistryItem::GetTypeidName(){
+CCString  ClassRegistryItem::GetTypeidName() const{
     return typeidName;
 }
 
-CCString  ClassRegistryItem::GetClassVersion(){
+CCString  ClassRegistryItem::GetClassVersion() const{
     return classVersion;
 }
 
-uint32  ClassRegistryItem::GetSizeOfClass(){
+uint32  ClassRegistryItem::GetSizeOfClass() const{
     return sizeOfClass;
+}
+
+const TypeDescriptor & ClassRegistryItem::GetTypeDescriptor() const {
+    return typeDescriptor;
 }
 
 ClassMethodCaller *ClassRegistryItem::FindMethod(CCString methodName) {

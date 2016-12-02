@@ -187,7 +187,7 @@ public:
      * @param[in] index is the position of the requested element (0 is the current).
      * @return the pointer to the desired element.
      */
-    LinkedListable *Peek(uint32 index);
+    LinkedListable *Peek(uint32 index) ;
 
     /**
      * @brief For each item in the list perform the action defined by the Iterator.

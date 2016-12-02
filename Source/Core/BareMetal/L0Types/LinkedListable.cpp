@@ -283,7 +283,7 @@ uint32 LinkedListable::Delete(SearchFilter * const filter) {
     return deleted;
 }
 
-LinkedListable *LinkedListable::Peek(uint32 index) {
+LinkedListable *LinkedListable::Peek(uint32 index)  {
     LinkedListable *p = this;
     while ((p != NULL) && (index > 0u)) {
         p = p->next;

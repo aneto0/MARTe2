@@ -78,22 +78,101 @@ TypeDescriptor::TypeDescriptor(const uint32 x) {
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,
                    const BasicType typeIn,
-                   const uint16 numberOfBitsIn,
+                   const uint32 numberOfBitsIn,
                    const uint8  bitsOffsetIn){
 
-    uint16 bits = numberOfBitsIn % 8;
-    isStructuredData = false;
-    isBitType        = ((bits != 0) || (bitsOffsetIn != 0));
     isConstant       = isConstantIn;
     type             = typeIn;
-    if (isBitType){
-        numberOfBits     = numberOfBitsIn;
-        bitOffset        = bitsOffsetIn;
+    isStructuredData = false;
+
+    uint16 bits = numberOfBitsIn % 8u;
+    bool isBitType        = ((bits != 0u) || (bitsOffsetIn != 0u));
+
+
+    if (isBitType) {
+        if (typeIn == UnsignedInteger) {
+            type = UnsignedBitInteger;
+        } else
+        if (typeIn == UnsignedInteger) {
+            type = SignedBitInteger;
+        } else {
+            type = Invalid;
+        }
+        if (numberOfBitsIn <= 65535u){
+            this->numberOfBits = numberOfBitsIn;
+        } else {
+            type = Invalid;
+        }
+        if (numberOfBitsIn <= 63u){
+            this->bitOffset = bitsOffsetIn;
+        } else {
+            type = Invalid;
+        }
     } else {
-        numberOfBytes    = numberOfBitsIn / 8;
-        numberOfrows     = 0;
-        numberOfColumns  = 0;
+        numberOfBytes    = numberOfBitsIn / 8u;
+        arrayType = 1;
+        arraySize = 1;
     }
+}
+
+TypeDescriptor::TypeDescriptor(    const bool isConstantIn,
+                                   const BasicType typeIn,
+                                   const uint8  numberOfDimensions,
+                                   const uint32 numberOfBytesIn,
+                                   const uint32 numberOfColumnsIn,
+                                   const uint32 numberOfRowsIn
+               ){
+    isConstant       = isConstantIn;
+    type             = typeIn;
+    isStructuredData = false;
+
+    if (numberOfBytesIn > 15u){
+        type = Invalid;
+    } else {
+        numberOfBytes    = numberOfBytesIn;
+    }
+
+    if (numberOfDimensions == 0){
+        arrayType = 0;
+        arraySize = 0;
+    } else
+    if (numberOfDimensions == 1){
+        if (numberOfColumnsIn > 0xFFFFFu){
+            arrayType            = 3;
+            arraySize            = 0;
+        } else {
+            arrayType = 1;
+            arraySize = numberOfColumnsIn;
+        }
+
+    } else
+    if (numberOfDimensions == 2){
+        if (numberOfRowsIn > 0x3FFu){
+            arrayType            = 3;
+            if (numberOfRowsIn > 0x7FFFFu){
+                arraySize            = 0;
+            } else {
+                arraySize            = numberOfRowsIn;
+            }
+        } else {
+            if (numberOfColumnsIn > 0x3FFu){
+                arrayType            = 3;
+                arraySize            = numberOfRowsIn;
+            } else {
+                arrayType = 2;
+                numberOfColumns = numberOfColumnsIn;
+                numberOfRows    = numberOfRowsIn;
+            }
+        }
+    } else {
+        arrayType    = 3;
+        if (numberOfRowsIn > 0x7FFFFu){
+            arraySize            = 0;
+        } else {
+            arraySize            = numberOfRowsIn;
+        }
+    }
+
 }
 
 

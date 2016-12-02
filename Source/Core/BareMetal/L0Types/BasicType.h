@@ -43,30 +43,47 @@ namespace MARTe {
 typedef uint4 BasicType;
 
 /**
- * The type is a signed integer.
+ * @brief The type is a signed integer.
  */
 const BasicType SignedInteger = 0u;
 
 /**
- * The type is an unsigned integer.
+ * @brief The type is an unsigned integer.
  */
 const BasicType UnsignedInteger = 1u;
 
 /**
- * The type is a float number.
+ * @brief The type is a float number.
  */
 const BasicType Float = 2u;
 
 /**
+ * @brief The type is a char .
+ */
+const BasicType Char = 3u;
+
+/**
  * @brief The type is a pointer. A void*. No information on the type pointed to
  */
-const BasicType Pointer = 3u;
+const BasicType Pointer = 4u;
+
+/**
+ * @brief The type is a signed bit range .
+ */
+const BasicType SignedBitInteger = 5u;
+
+/**
+ * @brief The type is an unsigned bit range.
+ */
+const BasicType UnsignedBitInteger = 6u;
+
+
 
 /**
  * @brief The type is a C string. Cannot be extended. May or may not be modifiable.
  * (const CCString only ???)
  */
-const BasicType BT_CCString = 4u;
+//const BasicType BT_CCString = 4u;
 
 /**
  * The type is a pointer to a C string allocated on heap.
@@ -77,7 +94,7 @@ const BasicType BT_CCString = 4u;
 /**
  * @brief The type is an array of chars with the size specified in the size field.
  */
-const BasicType CArray = 6u;
+//const BasicType CArray = 6u;
 
 /**
  * @brief The type is a StreamString class.
@@ -92,7 +109,19 @@ const BasicType Stream = 8u;
 /**
  * @brief  The StructuredDataI type
  */
-const BasicType StructuredDataNode = 9u;
+const BasicType StructuredDataInterface = 13u;
+
+/**
+ * @brief The type is unspecified -dereferencing a void *
+ */
+const BasicType Void = 14u;
+
+
+/**
+ * @brief The type is not valid
+ */
+const BasicType Invalid = 15u;
+
 
 }
 

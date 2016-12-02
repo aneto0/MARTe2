@@ -208,7 +208,7 @@ public:
      * @param[in] index the position of the requested element (0 means the first element).
      * @return a pointer to the element at index position.
      */
-    LinkedListable *ListPeek(const uint32 index);
+    LinkedListable *ListPeek(const uint32 index)  ;
 
     /**
      * @brief Removes and gets the element of the list in a specified position.

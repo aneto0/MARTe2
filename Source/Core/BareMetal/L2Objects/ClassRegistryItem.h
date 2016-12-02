@@ -120,34 +120,34 @@ public:
      * @brief Sets the type descriptor for the class described by this ClassRegistryItem.
      * @return the TypeDescriptor.
      */
-    TypeDescriptor          GetTypeDescriptor();
+    const TypeDescriptor &  GetTypeDescriptor() const;
 
     /**
      * @brief  Get the name of the class (by default the same as returned by typeid.
      */
-    CCString                GetClassName();
+    CCString                GetClassName() const;
 
     /**
      * @brief  The name of the class as returned by typeid.
      */
-    CCString                GetTypeidName();
+    CCString                GetTypeidName() const;
 
     /**
      * @brief  The version of the class.
      */
-    CCString                GetClassVersion();
+    CCString                GetClassVersion() const;
 
     /**
      * @brief  The size of the class.
      */
-    uint32                  GetSizeOfClass();
+    uint32                  GetSizeOfClass() const;
 
     /**
      * @brief Gets the ClassMethodCaller associated to the method with name = methodName.
      * @param[in] methodName the name of the method.
      * @return the ClassMethodCaller associated to the method with name = methodName.
      */
-    ClassMethodCaller *     FindMethod(CCString methodName);
+    ClassMethodCaller *     FindMethod(CCString methodName) ;
 
     /**
      * @brief Registers a method that can be later retrieved with FindMethod.
