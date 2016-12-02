@@ -71,7 +71,11 @@ namespace MARTe {
  *
  * | isStructuredData   | isConstant  | type               | numberOfBytes | arrayType      | unused           |
  * | :----:             | :----:      | :----:             | :----:        | :----:         | :----:           |
- * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 4             | 2 (ZeroT,?D+)  | 20               |
+ * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 4             | 2 ?D+          | 20               |
+ *
+ * | isStructuredData   | isConstant  | type               | numberOfBytes | arrayType | allocated | unused    |
+ * | :----:             | :----:      | :----:             | :----:        | :----:    | :----:    | :----:    |
+ * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 4             | 2 ZeroT   | 1         | 19        |
  *
  * | isStructuredData   | isConstant  | type               | numberOfBytes | arrayType  | arraySize            |
  * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:               |
@@ -84,6 +88,10 @@ namespace MARTe {
  * | isStructuredData   | isConstant  | type               | unused        | arrayType      | unused           |
  * | :----:             | :----:      | :----:             | :----:        | :----:         | :----:           |
  * |  1  (=0)           | 1           | 4 (others )        | 4             | 2 (ZeroT,?D+)  | 20               |
+ *
+ * | isStructuredData   | isConstant  | type               | unused        | arrayType | allocated | unused    |
+ * | :----:             | :----:      | :----:             | :----:        | :----:    | :----:    | :----:    |
+ * |  1  (=0)           | 1           | 4 (others)         | 4             | 2 ZeroT   | 1         | 19        |
  *
  * | isStructuredData   | isConstant  | type               | unused        | arrayType  | arraySize            | arraySize>0
  * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:               |
@@ -153,6 +161,17 @@ public:
 
         /*****************************************************
          *
+         *        For arrayType = 0
+         *
+         *****************************************************/
+        /**
+         * If true then the zero terminated array is a ManagedZeroTerminatedArray and can be resized
+         *          */
+        BitBoolean<uint32, 0u> isAllocated;
+
+
+        /*****************************************************
+         *
          *        For arrayType = 1
          *
          *****************************************************/
@@ -185,6 +204,7 @@ public:
         BitRange<uint32, 10u, 22u> numberOfColumns;
 
 
+
         /*****************************************************
          *
          *        For type = bit int
@@ -202,6 +222,7 @@ public:
          * Up to 65K
          */
         BitRange<uint32, 16u, 16u> numberOfBits;
+
 
 
         /*****************************************************
@@ -463,6 +484,16 @@ static const TypeDescriptor StructuredDataInterfaceType(false, StructuredDataInt
  * Pointer descriptor
  */
 static const TypeDescriptor PointerType(false, Pointer, sizeof(void*) * 8u);
+
+/**
+ * @brief Describes one layer of an array. returns as void[size] - size is set to 1 and need to be adjusted - the type is void as the size of the other array layers is unknown
+ */
+static const TypeDescriptor ArrayLayerType(false, Void, 1,0,1,0);
+
+/**
+ * @brief A large array- too large to fit within the models 1D[1024x1024] or 2D[1024][1024]
+ */
+static const TypeDescriptor LargeArrayType(false, Void, 3,0,0,0);
 
 
 /*---------------------------------------------------------------------------*/

@@ -201,7 +201,16 @@ private:
     void Match(Vector<T> * vec,uint32 &size,bool &constant);
 
     /**
-     * @brief Matches a Vector
+     * @brief Matches a static zero terminated array
+     * @tparam T the type of the elements in the vector
+     * @param[in] vec the vector from whose this Match will be constructed.
+     * @post Adds a V to the modifiers
+     */
+    template<typename T>
+    void Match(ZeroTerminatedArray<T> * vec,uint32 &size,bool &constant);
+
+    /**
+     * @brief Matches a dynamic zero terminated array
      * @tparam T the type of the elements in the vector
      * @param[in] vec the vector from whose this Match will be constructed.
      * @post Adds a V to the modifiers
@@ -273,6 +282,15 @@ private:
     inline void Match(T * x,uint32 &size,bool &constant);
 
  // SPECIFIC MATCHES
+
+    /**
+     * @brief Constructor from 8 bit character.
+     * @param[in] i is the 8 bit character input.
+     * @post
+     *   GetDataPointer() == &i &&
+     *   GetTypeDescriptor() == CString
+     */
+    inline void Match(String *s,uint32 &size,bool &constant);
 
     /**
      * @brief Constructor from 8 bit character.
@@ -534,6 +552,15 @@ void VariableDescriptor::Match(ZeroTerminatedArray<T> * vec,uint32 &size,bool &c
     T *pp = NULL;
     Match(pp,size,constant);
 }
+
+template<typename T>
+void VariableDescriptor::Match(ManagedZeroTerminatedArray<T> * vec,uint32 &size,bool &constant){
+    AddGenericToModifiers('M',size,constant);
+    T *pp = NULL;
+    Match(pp,size,constant);
+}
+
+
 
 
 template <class T,unsigned int n>

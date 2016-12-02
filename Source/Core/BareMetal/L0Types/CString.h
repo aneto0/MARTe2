@@ -33,12 +33,51 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ZeroTerminatedArray.h"
+#include "ManagedZeroTerminatedArray.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+
+
+
+/**
+* TODO
+* @brief Wrapper for writable char buffers
+* */
+class String: public ManagedZeroTerminatedArray<char8>{
+
+public:
+    /**
+     *TODO
+     */
+    inline String ();
+
+    /**
+     * @briefs allocates memory and copies the content
+     */
+    inline String (String const &s);
+
+    /**
+     * @briefs allocates memory and copies the content
+     */
+    inline String (CString const &s);
+
+    /**
+     * @briefs allocates memory and copies the content
+     */
+    inline String (CCString const &s);
+
+    /**
+     * @briefs allocates memory and copies the content
+     */
+    inline String (char8 * const &s);
+
+};
+
 
 /**
 * TODO
@@ -56,6 +95,11 @@ public:
      *TODO
      */
     inline CString (CString const &s);
+
+    /**
+     *TODO
+     */
+    inline CString (String const &s);
 
     /**
      * TODO
@@ -88,8 +132,15 @@ public:
     /**
      * TODO
      */
+    inline CCString (String const &s);
+
+    /**
+     * TODO
+     */
     inline CCString (char8 const * const &s);
 };
+
+
 
 
 
