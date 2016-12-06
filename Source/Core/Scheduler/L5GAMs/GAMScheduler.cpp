@@ -107,6 +107,10 @@ bool GAMScheduler::Initialise(StructuredDataI & data) {
 }
 
 void GAMScheduler::Purge(ReferenceContainer &purgeList) {
+    //Post the semaphore to make sure that no Threads are awaiting to start!
+    if (!eventSem.Post()) {
+        REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
+    }
     if (multiThreadService[0] != NULL) {
         ErrorManagement::ErrorType err;
         err = multiThreadService[0]->Stop();
@@ -218,8 +222,8 @@ ErrorManagement::ErrorType GAMScheduler::Execute(const ExecutionInfo &informatio
                 //Do not set ret.fatalError = true because when ExecuteSingleCycle returns false it will trigger the MultiThreadService to restart the execution of ThreadLoop.
                 //If this was not handled then it would wait on eventSem.Wait(TTInfiniteWait) every time ExecuteSingleCycle returns false.
                 //ret.fatalError = true;
-                if(errorMessage.IsValid()) {
-                    if(MessageI::SendMessage(errorMessage, this) != ErrorManagement::NoError) {
+                if (errorMessage.IsValid()) {
+                    if (MessageI::SendMessage(errorMessage, this) != ErrorManagement::NoError) {
                         REPORT_ERROR(ErrorManagement::FatalError, "Failed to SendMessage.");
                     }
                 }
