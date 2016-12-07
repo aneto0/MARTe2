@@ -54,7 +54,8 @@ public:
         else if (information.GetThreadNumber() == 2u) {
             internalStateThread2++;
         }
-
+        //Allow to reschedule
+        MARTe::Sleep::Sec(0.1);
         return MARTe::ErrorManagement::NoError;
     }
 
