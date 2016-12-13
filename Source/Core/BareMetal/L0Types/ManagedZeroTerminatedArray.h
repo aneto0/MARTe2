@@ -43,6 +43,7 @@
 namespace MARTe {
 
 
+
 /**
  * @brief Describes a zero-terminated array.
  *
@@ -104,10 +105,16 @@ public:
 
 protected:
     /**
-     * to all
+     * to access pointer as void
      */
-
     inline void *&VoidArray();
+
+    /**
+     * @brief generic allocator function
+     * @brief reallocates memory in order to fit fitSize object and terminator
+     * @return false if reallocation fails
+     */
+    static bool GranularMalloc(uint32 sizeofT,uint32 granularity, uint32 fitSize);
 
 };
 
