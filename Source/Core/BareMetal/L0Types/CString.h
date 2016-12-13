@@ -48,33 +48,33 @@ namespace MARTe {
 * TODO
 * @brief Wrapper for writable char buffers
 * */
-class String: public ManagedZeroTerminatedArray<char8>{
+class MString: public ManagedZeroTerminatedArray<char8,16>{
 
 public:
     /**
      *TODO
      */
-    inline String ();
+    inline MString ();
 
     /**
      * @briefs allocates memory and copies the content
      */
-    inline String (String const &s);
+    inline MString (MString const &s);
 
     /**
      * @briefs allocates memory and copies the content
      */
-    inline String (CString const &s);
+    inline MString (CString const &s);
 
     /**
      * @briefs allocates memory and copies the content
      */
-    inline String (CCString const &s);
+    inline MString (CCString const &s);
 
     /**
      * @briefs allocates memory and copies the content
      */
-    inline String (char8 * const &s);
+    inline MString (char8 * const &s);
 
 };
 

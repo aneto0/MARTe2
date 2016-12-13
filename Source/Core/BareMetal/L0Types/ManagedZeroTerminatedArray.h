@@ -50,12 +50,12 @@ namespace MARTe {
  * in input is a zero-terminated array and does not check if it is not zero-terminated or NULL.
  * If this pre-condition is not accomplished, a segmentation fault in runtime could happen.
  */
-template<typename T>
+template<typename T,uint32 granularity>
 class ManagedZeroTerminatedArray: protected ZeroTerminatedArray<T> {
 public:
 
     /**
-     * @brief Default constructor. pointer is set  to zero.
+     * @brief Default constructor. memory is allocated for granularity characters + terminator
      */
     ManagedZeroTerminatedArray();
 
@@ -64,47 +64,50 @@ public:
      * @param[in] index is the element position in the array.
      * @return the element in the \a index position.
      */
-    inline T &operator[](const uint32 index) const;
+    inline inline T &operator[](const uint32 index) const;
 
     /**
      * @brief Retrieves the size of the array.
      * @return the number of elements in the array (excluding the terminator Zero).
      */
-    uint32 GetSize() const;
+    inline uint32 GetSize() const;
 
     /**
      * @brief Returns the pointer to the beginning of the array.
      * @return the pointer to the beginning of the array.
      */
-    T * GetList() const ;
+    inline T * GetList() const ;
 
     /**
      * @brief Returns the pointer to the beginning of the array.
      * @return the pointer to the beginning of the array.
      */
-    operator T*() const;
+    inline operator T*() const;
 
     /**
      * @brief Adds one element to the array
      * @return false if realloc fails
      */
-    bool Append(const T &data);
+    inline bool Append(const T &data);
 
     /**
      * @brief Adds one array of elements to the array
      * @return false if realloc fails
      */
-    bool Append(const ZeroTerminatedArray<T> &data);
+    inline bool Append(const ZeroTerminatedArray<T> &data);
 
     /**
      * @brief shrinks the array size to the minimum between newSize and the current size
      * @return false if realloc fails
      */
-    bool Truncate(uint32 newSize);
+    inline bool Truncate(uint32 newSize);
 
 protected:
+    /**
+     * to all
+     */
 
-    void *&VoidArray();
+    inline void *&VoidArray();
 
 };
 
@@ -112,47 +115,57 @@ protected:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template<typename T>
-ManagedZeroTerminatedArray<T>::ManagedZeroTerminatedArray() :ZeroTerminatedArray<T>(){
-    HeapManager::Malloc(1,array);
+template<typename T,uint32 granularity>
+ManagedZeroTerminatedArray<T,granularity>::ManagedZeroTerminatedArray() :ZeroTerminatedArray<T>(){
+    uint32 necessarySize = ((1 + granularity)/ granularity)+granularity;
+    HeapManager::Malloc(necessarySize*sizeof(T),array);
     if (array != NULL_PTR(T *)) array[0] = 0;
 }
 
-template<typename T>
-inline T &ManagedZeroTerminatedArray<T>::operator[](const uint32 index) const {
+template<typename T,uint32 granularity>
+inline T &ManagedZeroTerminatedArray<T,granularity>::operator[](const uint32 index) const {
     return ZeroTerminatedArray<T>::operator[](index);
 }
 
-template<typename T>
-uint32 ManagedZeroTerminatedArray<T>::GetSize() const {
+template<typename T,uint32 granularity>
+uint32 ManagedZeroTerminatedArray<T,granularity>::GetSize() const {
     return ZeroTerminatedArray<T>::GetSize();
 }
 
-template<typename T>
-T * ManagedZeroTerminatedArray<T>::GetList() const{
+template<typename T,uint32 granularity>
+T * ManagedZeroTerminatedArray<T,granularity>::GetList() const{
     return ZeroTerminatedArray<T>::GetList();
 }
 
-template<typename T>
-ManagedZeroTerminatedArray<T>::operator T*() const {
+template<typename T,uint32 granularity>
+ManagedZeroTerminatedArray<T,granularity>::operator T*() const {
     return ZeroTerminatedArray<T>::GetList();
 }
 
-template<typename T>
-void *&ManagedZeroTerminatedArray<T>::VoidArray(){
-
+template<typename T,uint32 granularity>
+void *&ManagedZeroTerminatedArray<T,granularity>::VoidArray(){
     return reinterpret_cast<void *>(array);
 }
 
 
-template<typename T>
-bool ManagedZeroTerminatedArray<T>::Append(const T &data) {
+template<typename T,uint32 granularity>
+bool ManagedZeroTerminatedArray<T,granularity>::Append(const T &data) {
     bool ret = true;
     uint32 size = GetSize();
 
-    HeapManager::Realloc(VoidArray(),size+2);
+    // assuming memory is allocated in a granular way
+    // we can use this indicator to assess whether we need to allocate or we can simply write
+    uint32 freeSpace = (size + 1) % granularity ;
 
-    ret = (array != NULL_PTR(T *));
+    // extreme case indicating in the worst case no more memory
+    if (freeSpace == 0){
+        uint32 necessarySize = (size + 1 + granularity);
+
+        HeapManager::Realloc(VoidArray(),necessarySize*sizeof(T));
+
+        ret = (array != NULL_PTR(T *));
+    }
+
     if (ret)  {
         operator[](size) = data;
     }
@@ -160,13 +173,15 @@ bool ManagedZeroTerminatedArray<T>::Append(const T &data) {
     return ret;
 }
 
-template<typename T>
-bool ManagedZeroTerminatedArray<T>::Append(const ZeroTerminatedArray<T> &data) {
+template<typename T,uint32 granularity>
+bool ManagedZeroTerminatedArray<T,granularity>::Append(const ZeroTerminatedArray<T> &data) {
     bool ret = true;
     uint32 size = GetSize();
     uint32 size2 = data.GetSize();
 
-    HeapManager::Realloc(VoidArray(),size+size2+1);
+    uint32 necessarySize = ((size + size2 + 1 + granularity) / granularity) * granularity;
+
+    HeapManager::Realloc(VoidArray(),necessarySize*sizeof(T));
 
     ret = (array != NULL_PTR(T *));
 
@@ -179,18 +194,25 @@ bool ManagedZeroTerminatedArray<T>::Append(const ZeroTerminatedArray<T> &data) {
     return ret;
 }
 
-template<typename T>
-bool ManagedZeroTerminatedArray<T>::Truncate(uint32 newSize) {
+template<typename T,uint32 granularity>
+bool ManagedZeroTerminatedArray<T,granularity>::Truncate(uint32 newSize) {
     bool ret = true;
     uint32 size = GetSize();
 
     if (newSize < size){
+        uint32 necessarySize = ((newSize + 1 + granularity) / granularity) * granularity;
 
-        HeapManager::Realloc(VoidArray(),newSize+1);
+        HeapManager::Realloc(VoidArray(),necessarySize+sizeof(T));
 
         ret = (array != NULL_PTR(T *));
 
     }
+    if (ret){
+        array[newSize] = 0;
+
+    }
+
+
     return ret;
 }
 
