@@ -91,16 +91,16 @@ void printType(AnyType x){
         } else {
             switch(td.arrayType){
             case 0:{
-                printf ("Btype = %i-%i Z\n",(int)td.type,(int)td.numberOfBytes);
+                printf ("Btype = %i-%i Z\n",(int)td.type,BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             case 1:{
-                printf ("Btype = %i-%i [%i]\n",(int)td.type,(int)td.numberOfBytes,(int)td.arraySize);
+                printf ("Btype = %i-%i [%i]\n",(int)td.type,BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
             }break;
             case 2:{
-                printf ("Btype = %i-%i [%i][%i]\n",(int)td.type,(int)td.numberOfBytes,(int)td.numberOfRows,(int)td.numberOfColumns);
+                printf ("Btype = %i-%i [%i][%i]\n",(int)td.type,BitsFromBasicObjectSize((int)td.objectSize),(int)td.numberOfRows,(int)td.numberOfColumns);
             }break;
             case 3:{
-                printf ("Btype = %i-%i [%i][...]\n",(int)td.type,(int)td.numberOfBytes,(int)td.arraySize);
+                printf ("Btype = %i-%i [%i][...]\n",(int)td.type,BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
             }break;
             }
         }

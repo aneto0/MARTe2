@@ -77,24 +77,6 @@ TypeDescriptor::TypeDescriptor(const uint32 x) {
 }
 
 
-static BasicObjectSize GetRegularType(uint32 bits){
-    BasicObjectSize  bos = SizeUnknown;
-    if (bits > 32){
-        if (bits > 128){
-            if (bits == 256) bos = Size256bit;
-            if (bits == 512) bos = Size512bit;
-        } else {
-            if (bits == 128) bos = Size128bit;
-            if (bits == 64)  bos = Size64bit;
-        }
-    } else {
-        if (bits == 32)      bos = Size32bit;
-        if (bits == 16)      bos = Size16bit;
-        if (bits == 8)       bos = Size8bit;
-    }
-
-    return bos;
-}
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,
                    const BasicType typeIn,
@@ -105,7 +87,7 @@ TypeDescriptor::TypeDescriptor(const bool isConstantIn,
     type             = typeIn;
     isStructuredData = false;
 
-    BasicObjectSize bos = GetRegularType(numberOfBitsIn);
+    BasicObjectSize bos = BasicObjectSizeFromBits(numberOfBitsIn);
 
     bool isBitType        = ((bos == SizeUnknown) || (bitsOffsetIn != 0u));
 
@@ -156,6 +138,7 @@ TypeDescriptor::TypeDescriptor(    const bool isConstantIn,
         } else {
             arraySize            = numberOfColumnsIn;
         }
+    } break;
     case Array1D:{
         if (numberOfColumnsIn > 0xFFFFFu){
             arrayType            = ArrayLarge;
@@ -163,16 +146,22 @@ TypeDescriptor::TypeDescriptor(    const bool isConstantIn,
         } else {
             arraySize            = numberOfColumnsIn;
         }
-    }break;
+    } break;
     case Array2D:{
+
+
         if (numberOfRowsIn > 0x3FFu){
             arrayType            = ArrayLarge;
+
             if (numberOfRowsIn > 0x7FFFFu){
                 arraySize            = 0;
             } else {
                 arraySize            = numberOfRowsIn;
             }
+
         } else {
+
+
             if (numberOfColumnsIn > 0x3FFu){
                 arrayType            = ArrayLarge;
                 arraySize            = numberOfRowsIn;
@@ -180,26 +169,27 @@ TypeDescriptor::TypeDescriptor(    const bool isConstantIn,
                 numberOfColumns      = numberOfColumnsIn;
                 numberOfRows         = numberOfRowsIn;
             }
+
         }
-    }break;
+
+    } break;
     case ArrayLarge:{
         if (numberOfRowsIn > 0x7FFFFu){
             arraySize            = 0;
         } else {
             arraySize            = numberOfRowsIn;
         }
-    }break;
+    } break;
     default:{
 
     }
 
-    }
+    } // end switch
 
 }
 
 
-TypeDescriptor::TypeDescriptor(const bool isConstantIn,
-                               const uint32  &structuredDataIdCodeIn) {
+TypeDescriptor::TypeDescriptor(const bool isConstantIn,const uint32  &structuredDataIdCodeIn) {
     isStructuredData = true;
     isConstant       = isConstantIn;
     structuredDataIdCode = structuredDataIdCodeIn;

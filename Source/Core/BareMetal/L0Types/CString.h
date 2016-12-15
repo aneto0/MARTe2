@@ -42,6 +42,9 @@
 
 namespace MARTe {
 
+class CString;
+
+class CCString;
 
 /**
 * TODO
@@ -87,9 +90,10 @@ class StaticCString: public StaticZeroTerminatedArray<char8,size>{
 public:
 
     /**
-     * @briefs allocates memory and copies the content
+     * @briefs uses the memory provided by s
+     * s is reset to length 0;
     */
-    inline StaticCString (char8 const &s[size]);
+    inline StaticCString (char8 const (&s)[size]);
 };
 
 
@@ -175,29 +179,25 @@ public:
 /*---------------------------------------------------------------------------*/
 
 template <uint32 size>
-StaticCString<size>::StaticCString (char8 const &s[size]){
-    array = &s[0];
+StaticCString<size>::StaticCString (char8 const (&s)[size]){
+    ZeroTerminatedArray<char8 >::array = &s[0];
+    s[0] = '\0';
 }
-
 
 DynamicCString::DynamicCString (){
 
 }
 
-DynamicCString::DynamicCString(DynamicCString const &s){
-    Append(s);
+DynamicCString::DynamicCString(DynamicCString const &s):DynamicZeroTerminatedArray<char8,16>(s){
 }
 
-DynamicCString::DynamicCString (CString const &s){
-    Append(s);
+DynamicCString::DynamicCString (CString const &s):DynamicZeroTerminatedArray<char8,16>(CCString(s)){
 }
 
-DynamicCString::DynamicCString (CCString const &s){
-    Append(s);
+DynamicCString::DynamicCString (CCString const &s):DynamicZeroTerminatedArray<char8,16>(s){
 }
 
-DynamicCString::DynamicCString (char8 * const &s){
-    Append(CString(s));
+DynamicCString::DynamicCString (char8 * const &s):DynamicZeroTerminatedArray<char8,16>(CCString(s)){
 }
 
 

@@ -59,8 +59,8 @@ Reference::Reference(const Reference& sourceReference) {
     (*this) = sourceReference;
 }
 
-Reference::Reference(const char8* const typeName,
-                     HeapI* const heap) {
+Reference::Reference(CCString const typeName,HeapI* const heap) {
+
     objectPointer = NULL_PTR(Object*);
     Object *objPtr = CreateByName(typeName, heap);
     if (objPtr != NULL_PTR(Object*)) {
@@ -103,7 +103,7 @@ bool Reference::Initialise(StructuredDataI &data, const bool &initOnly) {
 
     if (!initOnly) {
         if (objectPointer == NULL_PTR(Object*)) {
-            char8 className[256];
+            DynamicCString className;
             bool ok;
             ok = data.Read("Class", className);
             if (ok) {
@@ -117,42 +117,6 @@ bool Reference::Initialise(StructuredDataI &data, const bool &initOnly) {
                     REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
                 }
             }
-
-#if 0
-            AnyType at = data.GetType("Class");
-            void* ptr = at.GetDataPointer();
-            ok = (ptr != NULL);
-            if (ok) {
-                TypeDescriptor td = at.GetTypeDescriptor();
-                bool isCCString = (td.type == BT_CCString);
-                bool isCArray = (td.type == CArray);
-//                bool isPCString = (td.type == PCString);
-                ok = (isCCString) || (isCArray) /*|| (isPCString); */
-                if (ok) {
-                    uint32 len = StringHelper::Length(reinterpret_cast<const char8 *>(ptr)) + 1u;
-                    char8 *className = reinterpret_cast<char8 *>(HeapManager::Malloc(len * static_cast<uint32>(sizeof(char8))));
-                    ok = MemoryOperationsHelper::Set(className, '\0', len);
-                    if (ok) {
-                        ok = data.Read("Class", className);
-                        if (ok) {
-                            Object *objPtr = CreateByName(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
-                            ok = (objPtr != NULL_PTR(Object*));
-                            if (ok) {
-                                objectPointer = objPtr;
-                                objectPointer->IncrementReferences();
-                            }
-                            else {
-                                REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
-                            }
-                        }
-                        if (!HeapManager::Free(reinterpret_cast<void *&>(className))) {
-                            //TODO
-                        }
-                    }
-                }
-            }
-#endif
-
         }
         else {
             //TODO Warning the object already exists
@@ -218,8 +182,8 @@ bool Reference::operator!=(const Reference& sourceReference) const {
     return (objectPointer != sourceReference.objectPointer);
 }
 
-Object *Reference::CreateByName(const char8 * const className,
-                                HeapI* const heap) const {
+Object *Reference::CreateByName(CCString const className,HeapI* const heap) const {
+
     Object *obj = NULL_PTR(Object *);
 
     const ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance()->Find(className);

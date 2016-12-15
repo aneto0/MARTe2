@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Object.h"
+#include "CString.h"
 #include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
@@ -76,7 +77,7 @@ public:
      * @param[in] typeName the name of the class type.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    Reference(const char8* const typeName,
+    Reference(CCString const typeName,
               HeapI* const heap = static_cast<HeapI *>(NULL));
 
     /**
@@ -184,7 +185,7 @@ private:
      * @param[in] heap the heap where the object is to be allocated.
      * @return a new object of the specified class or NULL if the \a className does not exist.
      */
-    Object *CreateByName(const char8 * const className,
+    Object *CreateByName(CCString const className,
                          HeapI* const heap) const;
 };
 

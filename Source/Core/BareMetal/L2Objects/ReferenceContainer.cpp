@@ -169,8 +169,7 @@ void ReferenceContainer::CleanUp() {
 }
 
 /*lint -e{593} .Justification: The node (newItem) will be deleted by the destructor. */
-bool ReferenceContainer::Insert(Reference ref,
-                                const int32 &position) {
+bool ReferenceContainer::Insert(Reference ref,  const int32 &position) {
     bool ok = (Lock());
     if (ok) {
         ReferenceContainerNode *newItem = new ReferenceContainerNode();
@@ -194,25 +193,24 @@ bool ReferenceContainer::Insert(Reference ref,
     return ok;
 }
 
-bool ReferenceContainer::Insert(const char8 * const path,
-                                Reference ref) {
+bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
     bool ok = ref.IsValid();
     if (ok) {
-        if (StringHelper::Length(path) == 0u) {
+        if (path.GetSize() == 0u) {
             ok = Insert(ref);
         }
         else {
             bool created = false;
             ReferenceContainer* currentNode = this;
-            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
-            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
 
-            const char8* toTokenize = path;
-            const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
-            toTokenize = next;
+            DynamicCString token;
+            DynamicCString nextToken;
+
+            CCString toTokenize(path);
+            toTokenize = StringHelper::TokenizeByChars(toTokenize, CCString("."), token);
 
             while ((token[0] != '\0') && (ok)) {
-                ok = (StringHelper::Length(token) > 0u);
+                ok = (token.GetSize() > 0u);
                 if (ok) {
                     //Check if a node with this name already exists
                     bool found = false;
@@ -224,8 +222,7 @@ bool ReferenceContainer::Insert(const char8 * const path,
                     }
                     // take the next token
 
-                    next = StringHelper::TokenizeByChars(toTokenize, ".", nextToken);
-                    toTokenize = next;
+                    toTokenize = StringHelper::TokenizeByChars(toTokenize, CCString("."), nextToken);
 
                     if (found) {
                         currentNode = dynamic_cast<ReferenceContainer*>(foundReference.operator->());
@@ -251,20 +248,14 @@ bool ReferenceContainer::Insert(const char8 * const path,
                         }
                     }
                     if (ok) {
-                        ok = StringHelper::Copy(token, nextToken);
+                        token.Truncate(0);
+                        ok = token.Append(nextToken);
                     }
                 }
             }
 
             if (ok) {
                 ok = created;
-            }
-
-            if (HeapManager::Free(reinterpret_cast<void*&>(token))) {
-
-            }
-            if (HeapManager::Free(reinterpret_cast<void*&>(nextToken))) {
-
             }
         }
     }
@@ -280,7 +271,7 @@ bool ReferenceContainer::Delete(Reference ref) {
     return (result.Size() > 0u);
 }
 
-bool ReferenceContainer::Delete(const char8 * const path) {
+bool ReferenceContainer::Delete(CCString const path) {
     ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::REMOVE, path);
     ReferenceContainer result;
     //Locking is already done inside the Find
@@ -388,8 +379,7 @@ void ReferenceContainer::Find(ReferenceContainer &result,
     UnLock();
 }
 
-Reference ReferenceContainer::Find(const char8 * const path,
-                                   const bool recursive) {
+Reference ReferenceContainer::Find(CCString const path,const bool recursive) {
     Reference ret;
     uint32 mode = ReferenceContainerFilterMode::SHALLOW;
     if (recursive) {
@@ -424,7 +414,7 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
     bool ok = true;
     uint32 numberOfChildren = data.GetNumberOfChildren();
     for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
-        const char8* childName = data.GetChildName(i);
+        CCString childName = data.GetChildName(i);
         ok = (childName != NULL);
         if (ok) {
             // case object
@@ -445,17 +435,22 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
                         }
                     }
                     else {
+
+// TODO use StaticCString
                         const uint32 maxSize = 64u;
-                        char8 errorMsg[maxSize];
-                        errorMsg[0] = '\0';
-                        bool ret = StringHelper::Concatenate(&errorMsg[0], "Failed to Initialise object with name ");
+                        char8 errorMsgBuffer[maxSize];
+                        StaticCString<64> errorMsg(errorMsgBuffer);
+//                        errorMsg[0] = '\0';
+                        bool ret = errorMsg.Append("Failed to Initialise object with name ");
+//                        bool ret = StringHelper::Concatenate(&errorMsg[0], "Failed to Initialise object with name ");
                         uint32 sizeLeft = 0u;
                         if (ret) {
-                            sizeLeft = maxSize - StringHelper::Length(&errorMsg[0]);
-                            ret = StringHelper::ConcatenateN(&errorMsg[0], childName, sizeLeft);
+                            ret = errorMsg.Append(CString(childName.GetList()));
+//                            sizeLeft = maxSize - StringHelper::Length(&errorMsg[0]);
+//                            ret = StringHelper::ConcatenateN(&errorMsg[0], childName, sizeLeft);
                         }
                         if (ret) {
-                            REPORT_ERROR(ErrorManagement::FatalError, &errorMsg[0]);
+                            REPORT_ERROR(ErrorManagement::FatalError, errorMsg.GetList());
                         }
                     }
                 }

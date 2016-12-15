@@ -49,6 +49,9 @@ namespace MARTe {
  * The string generic implementation is not certifiable.*/
 namespace StringHelper {
 
+
+#if 0
+
 bool Concatenate(CString  const destination,
                  CCString const source) {
     bool ret = false;
@@ -75,6 +78,11 @@ bool ConcatenateN(CString  const destination,
     }
     return ret;
 }
+
+#endif
+
+
+#if 0
 
 CCString SearchChar(CCString const string,
                         const char8 c) {
@@ -232,6 +240,9 @@ bool SetChar(CString  const string,
     }
     return ret;
 }
+
+
+#endif
 
 }
 

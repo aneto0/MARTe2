@@ -42,6 +42,11 @@ namespace MARTe {
 
 namespace StringHelper {
 
+
+
+
+#if 0
+
 uint32 Length(CCString const string) {
     uint32 i = 0U;
 
@@ -128,6 +133,9 @@ int32 CompareN(CCString  const string1,
     return ret;
 }
 
+#endif
+
+#if 0
 bool Concatenate(CString  const destination,
                  CCString  const source) {
 
@@ -170,6 +178,10 @@ bool ConcatenateN(CString  const destination,
     return ret;
 
 }
+
+#endif
+
+#if 0
 
 CCString  SearchChar(CCString  const string,
                         const char8 c) {
@@ -377,6 +389,11 @@ bool SetChar(CString  const string,
     return ret;
 }
 
+
+#endif
+
 }
+
+
 
 }

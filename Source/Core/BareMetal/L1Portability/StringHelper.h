@@ -47,13 +47,79 @@ namespace MARTe {
 namespace StringHelper {
 
 /**
+ * @brief Searches for a character in a string.
+ * @param[in] string is the source string.
+ * @param[in] c is the character to find in string.
+ * @return a pointer to the first occurrence of c in the string, NULL if c is not found.
+ */
+DLL_API CCString SearchChar(CCString  const string,  char8 c);
+
+/**
+ * @brief Compares two strings.
+ * @param[in] string1 the first string.
+ * @param[in] string2 the second string.
+ * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
+ */
+DLL_API int32 Compare(CCString  const string1, CCString  const string2);
+
+/**
+ * @brief Compares two strings for a maximum of 'size' characters.
+ * @param[in] string1 is the first string.
+ * @param[in] string2 is the second string.
+ * @param[in] size is the maximum number of characters to compare.
+ * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
+ * @pre size <= largest length of the string1 or string2.
+ */
+DLL_API int32 CompareN(CCString  const string1,CCString  const string2,const uint32 size);
+
+/**
+ * @brief Get the token using characters as delimiters.
+ * @param[in] string is the string to tokenize.
+ * @param[in] delimiter contains character delimiters.
+ * @param[in] resultStorageSize is the maximum storage size for result
+ * @param[out] result is the substring between delimiters.
+ * @return a pointer to the next position after the delimiter for a successive tokenize operation or
+ * the end of the string if terminator is not found. It returns NULL if at least one of the
+ * arguments is NULL.
+ */
+DLL_API CCString  TokenizeByChars(CCString  const string, CCString  const delimiter,CString const result,uint32 resultStorageSize);
+
+template <uint32 sz>
+inline bool TokenizeByChars(CCString  const string, CCString  const delimiter,StaticCString<sz> result){
+    return TokenizeByChars(string,delimiter,result,sz);
+}
+
+/**
+ * @brief Get the token using characters as delimiters.
+ * @param[in] string is the string to tokenize.
+ * @param[in] delimiter contains character delimiters.
+ * @param[in] resultStorageSize is the maximum storage size for result
+ * @param[out] result is the substring between delimiters.
+ * @return a pointer to the next position after the delimiter for a successive tokenize operation or
+ * the end of the string if terminator is not found. It returns NULL if at least one of the
+ * arguments is NULL.
+ */
+DLL_API CCString  TokenizeByChars(CCString  const string, CCString  const delimiter,DynamicCString result);
+
+
+/**
+ * @brief Get the token using a string as delimiter.
+ * @param[in] string is the string to tokenize.
+ * @param[in] terminator is the string delimiter.
+ * @param[out] result is the next position for a successive operation (NULL if terminator is not found).
+ * @return a pointer to the next position after the substring for a successive tokenize operation or NULL if the substring is not found.
+ */
+DLL_API CCString  TokenizeByString(CCString  const string,CCString  const terminator,CString  const result,uint32 resultStorageSize);
+
+/**
  * @brief Duplicates a string in the heap memory.
  * @param[in] s The pointer to the string which must be copied.
  * @return The pointer to the new allocated memory which contains a copy of s.
  * TODO all CCString  ---> CCString
  * TODO all CString  CString
  */
-DLL_API CString StringDup(CCString  const s);
+//DLL_API DynamicCString StringDup(CCString  const s);
+//OBSOLETED use DynamicCString news(s)
 
 /**
  * @brief Concatenates two strings. "destination" + "source"
@@ -63,9 +129,21 @@ DLL_API CString StringDup(CCString  const s);
  * @param[in] source the string to be appended to the destination.
  * @return true if all parameters were ok
  */
-DLL_API bool Concatenate(CString  const destination,
-                         CCString  const source);
+//DLL_API bool Concatenate(CString  const destination,uint32 destinationStorageSize, CCString  const source);
 
+#if 0
+template <uint32 sz>
+inline bool Concatenate(StaticCString<sz> destination,CCString  const source){
+//    return Concatenate(destination.GetList(),sz,source);
+    return destination.Append(source);
+}
+
+inline bool Concatenate(DynamicCString destination,CCString  const source){
+    return destination.Append(source);
+}
+#endif
+
+#if 0
 /**
  * @brief Concatenates two strings until 'size' chars.
  * @warning !! The destination string memory allocation MUST be able to hold the extra amount of characters
@@ -80,35 +158,8 @@ DLL_API bool ConcatenateN(CString destination,
                           CCString source,
                           uint32 size);
 
-/**
- * @brief Searches for a character in a string.
- * @param[in] string is the source string.
- * @param[in] c is the character to find in string.
- * @return a pointer to the first occurrence of c in the string, NULL if c is not found.
- */
-DLL_API CCString SearchChar(CCString  const string,
-                                char8 c);
 
-/**
- * @brief Compares two strings.
- * @param[in] string1 the first string.
- * @param[in] string2 the second string.
- * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
- */
-DLL_API int32 Compare(CCString  const string1,
-                      CCString  const string2);
 
-/**
- * @brief Compares two strings for a maximum of 'size' characters.
- * @param[in] string1 is the first string.
- * @param[in] string2 is the second string.
- * @param[in] size is the maximum number of characters to compare.
- * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
- * @pre size <= largest length of the string1 or string2.
- */
-DLL_API int32 CompareN(CCString  const string1,
-                       CCString  const string2,
-                       const uint32 size);
 
 /**
  * @brief Copies the source into the destination.
@@ -205,29 +256,8 @@ DLL_API bool SetChar(CString  const string,
                      const uint32 size,
                      const char8 c);
 
-/**
- * @brief Get the token using characters as delimiters.
- * @param[in] string is the string to tokenize.
- * @param[in] delimiter contains character delimiters.
- * @param[out] result is the substring between delimiters.
- * @return a pointer to the next position after the delimiter for a successive tokenize operation or
- * the end of the string if terminator is not found. It returns NULL if at least one of the
- * arguments is NULL.
- */
-DLL_API CCString  TokenizeByChars(CCString  const string,
-                                     CCString  const delimiter,
-                                     CString  const result);
 
-/**
- * @brief Get the token using a string as delimiter.
- * @param[in] string is the string to tokenize.
- * @param[in] terminator is the string delimiter.
- * @param[out] result is the next position for a successive operation (NULL if terminator is not found).
- * @return a pointer to the next position after the substring for a successive tokenize operation or NULL if the substring is not found.
- */
-DLL_API CCString  TokenizeByString(CCString  const string,
-                                      CCString  const terminator,
-                                      CString  const result);
+
 
 /**
  * @brief Gets the substring between two indexes.
@@ -272,6 +302,8 @@ DLL_API bool ConcatenateN(CCString  const string1,
                           const uint32 size);
 
 }
+
+#endif
 
 }
 /*---------------------------------------------------------------------------*/

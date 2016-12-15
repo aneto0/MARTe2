@@ -191,6 +191,19 @@ const BasicObjectSize Size256bit = 6u;
  * @brief The type has size 128bit
  */
 const BasicObjectSize Size512bit = 7u;
+
+/**
+ * TODO
+ * @return SizeUnknown if the number of bits is not exactly 2^N with N in the range [3 9]
+ */
+DLL_API BasicObjectSize BasicObjectSizeFromBits(uint32 bits);
+
+/**
+ * TODO
+ * @return 0 if bos = SizeUnknown otherwise the size in bits
+ */
+DLL_API uint32 BitsFromBasicObjectSize(BasicObjectSize bos);
+
 }
 
 /*---------------------------------------------------------------------------*/

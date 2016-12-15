@@ -35,6 +35,8 @@
 #include "CompilerTypes.h"
 #include "ZeroTerminatedArray.h"
 #include "HeapManager.h"
+#include "MemoryOperationsHelper.h"
+#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -45,10 +47,10 @@ namespace MARTe {
 
 
 /**
- * @brief Describes a zero-terminated array.
+ * @brief Describes a zero-terminated TArray().
  *
  * @warning This class is only a wrapper of a pointer. The implementation assumes that the pointer
- * in input is a zero-terminated array and does not check if it is not zero-terminated or NULL.
+ * in input is a zero-terminated TArray() and does not check if it is not zero-terminated or NULL.
  * If this pre-condition is not accomplished, a segmentation fault in runtime could happen.
  */
 template<typename T,uint32 granularity>
@@ -61,59 +63,65 @@ public:
     DynamicZeroTerminatedArray();
 
     /**
-     * @brief Returns the element in the specified position.
-     * @param[in] index is the element position in the array.
-     * @return the element in the \a index position.
+     * @brief Copy constructor.
      */
-    inline inline T &operator[](const uint32 index) const;
+    DynamicZeroTerminatedArray(const ZeroTerminatedArray<const T> &data);
 
     /**
-     * @brief Retrieves the size of the array.
-     * @return the number of elements in the array (excluding the terminator Zero).
+     * @brief deallocates memory
+     */
+    ~DynamicZeroTerminatedArray();
+
+    /**
+     * @brief Returns the element in the specified position.
+     * @param[in] index is the element position in the TArray().
+     * @return the element in the \a index position.
+     */
+    inline T &operator[](const uint32 index) const;
+
+    /**
+     * @brief Retrieves the size of the TArray().
+     * @return the number of elements in the TArray() (excluding the terminator Zero).
      */
     inline uint32 GetSize() const;
 
     /**
-     * @brief Returns the pointer to the beginning of the array.
-     * @return the pointer to the beginning of the array.
+     * @brief Returns the pointer to the beginning of the TArray().
+     * @return the pointer to the beginning of the TArray().
      */
     inline T * GetList() const ;
 
     /**
-     * @brief Returns the pointer to the beginning of the array.
-     * @return the pointer to the beginning of the array.
+     * @brief Returns the pointer to the beginning of the TArray().
+     * @return the pointer to the beginning of the TArray().
      */
     inline operator T*() const;
 
     /**
-     * @brief Adds one element to the array
+     * @brief Adds one element to the TArray()
      * @return false if realloc fails
      */
     inline bool Append(const T &data);
 
     /**
-     * @brief Adds one array of elements to the array
+     * @brief Adds one TArray() of elements to the TArray()
      * @return false if realloc fails
      */
     inline bool Append(const ZeroTerminatedArray< T> &  data);
 
     /**
-     * @brief Adds one array of elements to the array
+     * @brief Adds one TArray() of elements to the TArray()
      * @return false if realloc fails
      */
     inline bool Append(const ZeroTerminatedArray< const T> &  data);
 
     /**
-     * @brief shrinks the array size to the minimum between newSize and the current size
+     * @brief shrinks the TArray() size to the minimum between newSize and the current size
      * @return false if realloc fails
      */
     inline bool Truncate(uint32 newSize);
 
 protected:
-    /**
-     * to access pointer as void
-     */
-    inline void *&VoidArray();
 
     /**
      * @brief generic allocator function
@@ -122,6 +130,16 @@ protected:
      */
 //    static bool GranularMalloc(uint32 sizeofT,uint32 granularity, uint32 fitSize);
 
+    /**
+     * to access pointer as void
+     */
+    void  *&VoidArray();
+
+    /**
+     * to access pointer as void
+     */
+    T *&TArray();
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -129,10 +147,42 @@ protected:
 /*---------------------------------------------------------------------------*/
 
 template<typename T,uint32 granularity>
+void  *&DynamicZeroTerminatedArray<T,granularity>::VoidArray(){
+    return ZeroTerminatedArray<T>::VoidArray();
+}
+
+template<typename T,uint32 granularity>
+T *&DynamicZeroTerminatedArray<T,granularity>::TArray(){
+    return ZeroTerminatedArray<T>::TArray();
+}
+
+
+template<typename T,uint32 granularity>
 DynamicZeroTerminatedArray<T,granularity>::DynamicZeroTerminatedArray() :ZeroTerminatedArray<T>(){
     uint32 necessarySize = ((1 + granularity)/ granularity)+granularity;
-    HeapManager::Malloc(necessarySize*sizeof(T),array);
-    if (array != NULL_PTR(T *)) array[0] = 0;
+    HeapManager::Malloc(necessarySize*sizeof(T),TArray());
+    if (TArray() != NULL_PTR(T *)) TArray()[0] = 0;
+}
+
+template<typename T,uint32 granularity>
+DynamicZeroTerminatedArray<T,granularity>::DynamicZeroTerminatedArray(const ZeroTerminatedArray<const T> &data) :ZeroTerminatedArray<T>(){
+    uint32 necessarySize = ((1 + data.GetSize() + granularity)/ granularity)+granularity;
+
+    HeapManager::Malloc(necessarySize*sizeof(T),TArray());
+    if (TArray() != NULL_PTR(T *)) {
+
+        void *dest      = static_cast<void *>(GetList());
+        const void *src = static_cast<void *>(data.GetList());
+        MemoryOperationsHelper::Copy(dest,src,1 + data.GetSize());
+    } else {
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: zero term array duplicated creation failed");
+    }
+}
+
+
+template<typename T,uint32 granularity>
+DynamicZeroTerminatedArray<T,granularity>::~DynamicZeroTerminatedArray(){
+    HeapManager::Free(VoidArray());
 }
 
 template<typename T,uint32 granularity>
@@ -156,12 +206,6 @@ DynamicZeroTerminatedArray<T,granularity>::operator T*() const {
 }
 
 template<typename T,uint32 granularity>
-void *&DynamicZeroTerminatedArray<T,granularity>::VoidArray(){
-    return reinterpret_cast<void *>(array);
-}
-
-
-template<typename T,uint32 granularity>
 bool DynamicZeroTerminatedArray<T,granularity>::Append(const T &data) {
     bool ret = true;
     uint32 size = GetSize();
@@ -176,7 +220,7 @@ bool DynamicZeroTerminatedArray<T,granularity>::Append(const T &data) {
 
         HeapManager::Realloc(VoidArray(),necessarySize*sizeof(T));
 
-        ret = (array != NULL_PTR(T *));
+        ret = (TArray() != NULL_PTR(T *));
     }
 
     if (ret)  {
@@ -196,10 +240,10 @@ bool DynamicZeroTerminatedArray<T,granularity>::Append(const ZeroTerminatedArray
 
     HeapManager::Realloc(VoidArray(),necessarySize*sizeof(T));
 
-    ret = (array != NULL_PTR(T *));
+    ret = (TArray() != NULL_PTR(T *));
 
     if (ret)  {
-        void *dest      = static_cast<void *>(array+size);
+        void *dest      = static_cast<void *>(GetList()+size);
         const void *src = static_cast<void *>(data.GetList());
         MemoryOperationsHelper::Copy(dest,src,size2);
     }
@@ -217,11 +261,11 @@ bool DynamicZeroTerminatedArray<T,granularity>::Append(const ZeroTerminatedArray
 
     HeapManager::Realloc(VoidArray(),necessarySize*sizeof(T));
 
-    ret = (array != NULL_PTR(T *));
+    ret = (TArray() != NULL_PTR(T *));
 
     if (ret)  {
-        void *dest      = static_cast<void *>(array+size);
-        const void *src = static_cast<void *>(data.GetList());
+        void *dest = static_cast<void *>(TArray()+size);
+        const void *src  = reinterpret_cast<const void *>(data.GetList());
         MemoryOperationsHelper::Copy(dest,src,size2);
     }
 
@@ -240,11 +284,11 @@ bool DynamicZeroTerminatedArray<T,granularity>::Truncate(uint32 newSize) {
 
         HeapManager::Realloc(VoidArray(),necessarySize+sizeof(T));
 
-        ret = (array != NULL_PTR(T *));
+        ret = (TArray() != NULL_PTR(T *));
 
     }
     if (ret){
-        array[newSize] = 0;
+        TArray()[newSize] = 0;
 
     }
 

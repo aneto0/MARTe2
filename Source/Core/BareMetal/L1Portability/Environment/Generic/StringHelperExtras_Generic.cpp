@@ -39,9 +39,209 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+#define NULLS NULL_PTR(char8 *)
+
 namespace MARTe{
 
 namespace StringHelper {
+
+CCString  SearchChar(CCString  const string,  const char8 c) {
+
+    CCString  ret(NULLS);
+
+    if (string != NULL) {
+        bool end = false;
+
+        uint32 i = 0u;
+
+        while (!end) {
+
+            if (string[i] == '\0') {
+                end = true;
+
+            }
+            if (string[i] == c) {
+                end = true;
+                ret = &string[i];
+            }
+            i++;
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+    }
+    return ret;
+}
+
+
+int32 Compare(CCString  const string1,CCString  const string2) {
+
+    int32 ret = -1;
+
+    if ((string1.GetList() != NULLS) && (string2.GetList() != NULLS)) {
+        bool end = false;
+        int32 i = 0;
+        while (!end) {
+
+            if (static_cast<int32>(string1[i]) > static_cast<int32>(string2[i])) {
+                end = true;
+                ret = 2;
+            } else
+            if (static_cast<int32>(string1[i]) < static_cast<int32>(string2[i])) {
+                end = true;
+                ret = 1;
+            } else
+            if ((string1[i] == '\0') && (string2[i] == '\0')) {
+                end = true;
+                ret = 0;
+            }
+
+            i++;
+        }
+
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+    }
+    return ret;
+}
+
+
+int32 CompareN(CCString  const string1, CCString  const string2, const uint32 size) {
+
+    int32 ret = -1;
+
+    if ((string1.GetList() != NULLS) && (string2.GetList() != NULLS)) {
+        bool end = false;
+        ret = 0;
+
+        uint32 i = 0u;
+        while ((!end) && (i < size)) {
+
+            if (static_cast<int32>(string1[i]) > static_cast<int32>(string2[i])) {
+                ret = 2;
+                end = true;
+            } else
+            if (static_cast<int32>(string1[i]) < static_cast<int32>(string2[i])) {
+                ret = 1;
+                end = true;
+            } else
+            if ((string1[i] == '\0') || (string2[i] == '\0')) {
+                end = true;
+            }
+
+            i++;
+        }
+
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+    }
+
+    return ret;
+}
+
+
+
+CCString TokenizeByChars(CCString const string,CCString const delimiter,CString const result,uint32 resultStorageSize) {
+
+    CCString ret(NULLS);
+    uint32 resultStorageLeft = resultStorageSize-1;
+
+    if ((string.GetList() != NULLS) && (delimiter.GetList() != NULLS) && (result.GetList() != NULLS)) {
+        uint32 inputIndex = 0;
+        uint32 outputIndex = 0;
+
+        // next character to be processed;
+        char8 c = string[0];
+
+        while ((c!=0) && (SearchChar(delimiter,c) == NULLS) && (resultStorageLeft > 0)){
+            result[outputIndex] = c;
+            outputIndex++;
+            inputIndex++;
+            c = string[inputIndex];
+        }
+        // skip separator - too save time avoid calling CompareN - check other reason to have terminatred previous loop
+        if ((c!=0) &&  (resultStorageLeft > 0)){
+            inputIndex++;
+        }
+
+        result[outputIndex] = 0;
+        ret = string[inputIndex];
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: invalid input arguments");
+    }
+    return ret;
+}
+
+CCString  TokenizeByChars(CCString  const string, CCString  const delimiter,DynamicCString result){
+
+    CCString ret(NULLS);
+
+    if ((string.GetList() != NULLS) && (delimiter.GetList() != NULLS) ) {
+        uint32 inputIndex = 0;
+
+        // next character to be processed;
+        char8 c = string[0];
+
+        while ((c!=0) && (SearchChar(delimiter,c) == NULLS) ){
+            result.Append(c);
+            inputIndex++;
+            c = string[inputIndex];
+        }
+        // skip separator - too save time avoid calling CompareN - check other reason to have terminatred previous loop
+        if (c!=0) {
+            inputIndex++;
+        }
+
+        ret = string[inputIndex];
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: invalid input arguments");
+    }
+    return ret;
+}
+
+
+CCString TokenizeByString(CCString const string,CCString const terminator,CString const result,uint32 resultStorageSize) {
+
+    CCString ret(NULLS);
+    uint32 resultStorageLeft = resultStorageSize-1;
+    uint32 terminatorSize = terminator.GetSize();
+
+    if ((string.GetList() != NULLS) && (terminator.GetList() != NULLS) && (result.GetList() != NULLS)) {
+        uint32 inputIndex = 0;
+        uint32 outputIndex = 0;
+
+        // next character to be processed;
+        CCString stringP(string.GetList());
+        char8 c = string[0];
+
+        while ((c!=0) && (CompareN(terminator,stringP,terminatorSize) != 0) && (resultStorageLeft > 0)){
+            result[outputIndex] = c;
+            outputIndex++;
+            inputIndex++;
+            c = string[inputIndex];
+            stringP = CCString (string.GetList()+inputIndex);
+        }
+        // skip separator - too save time avoid calling CompareN - check other reason to have terminatred previous loop
+        if ((c!=0) &&  (resultStorageLeft > 0)){
+            inputIndex+= terminatorSize;
+        }
+
+        result[outputIndex] = 0;
+        ret = CCString (string.GetList()+inputIndex);
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: invalid input arguments");
+    }
+    return ret;
+
+}
+
+
+#if 0
 
 bool Concatenate(CCString const string1,
                  CCString const string2,
@@ -130,92 +330,6 @@ bool ConcatenateN(CCString const string1,
     return ret;
 }
 
-CCString TokenizeByChars(CCString const string,
-                             CCString const delimiter,
-                             CString const result) {
-
-    CCString ret = static_cast<CCString>(NULL);
-
-    if ((string != NULL) && (delimiter != NULL) && (result != NULL)) {
-        bool end = false;
-        int32 i = 0;
-
-        while (ret == NULL) {
-            int32 j = 0;
-            end = false;
-            while (!end) {
-
-                if (string[i] == '\0') {
-                    result[i] = '\0';
-                    ret = &string[i];
-                    end = true;
-                }
-                else {
-                    if (string[i] == delimiter[j]) {
-                        result[i] = '\0';
-                        int32 index = i + 1;
-                        ret = &string[index];
-                        end = true;
-                    }
-                }
-
-                if (delimiter[j] == '\0') {
-                    end = true;
-                }
-                j++;
-            }
-
-            //copy in result if terminator not found yet
-            if (ret == NULL) {
-                result[i] = string[i];
-            }
-            i++;
-        }
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: invalid input arguments");
-    }
-    return ret;
-}
-
-CCString TokenizeByString(CCString const string,
-                              CCString const terminator,
-                              CString const result) {
-
-    CCString ret = static_cast<CCString>(NULL);
-    int32 size1 = static_cast<int32>(string.GetSize());
-    int32 size2 = static_cast<int32>(terminator.GetSize());
-
-    if ((size1 >= 0) && (size2 >= 0) && (result != NULL)) {
-
-        int32 i = 0;
-        while ((size1 - i) >= size2) {
-            uint32 sizeArg = static_cast<uint32>(size2);
-
-            if (CompareN(&string[i], terminator, sizeArg) == 0) {
-                result[i] = '\0';
-                int32 indexRet = i + size2;
-                ret = &string[indexRet];
-
-                //exit from the loop
-                i = size1 - size2;
-
-            }
-            else {
-                result[i] = string[i];
-            }
-            i++;
-        }
-
-        if (ret == NULL) {
-            (void) Copy(&result[i], &string[i]);
-        }
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: invalid input arguments");
-    }
-    return ret;
-}
 
 bool Substr(const uint32 begin,
             const uint32 end,
@@ -248,6 +362,8 @@ bool Substr(const uint32 begin,
     return ret;
 
 }
+
+#endif
 
 }
 

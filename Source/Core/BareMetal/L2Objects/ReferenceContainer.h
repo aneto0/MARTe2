@@ -118,7 +118,7 @@ ReferenceContainer    ();
      * @param[in] red is the Reference to be inserted in the container.
      * @return false if \a ref is not valid or in case of errors, true otherwise.
      */
-    bool Insert(const char8 * const path, Reference ref);
+    bool Insert(CCString const path, Reference ref);
 
     /**
      * @brief Removes a reference from the container.
@@ -134,7 +134,7 @@ ReferenceContainer    ();
      * @param[in] path is the path of the reference to be deleted from the database.
      * @return false if the reference is not found in the specified path, true if it will be successfully deleted.
      */
-    bool Delete(const char8 * const path);
+    bool Delete(CCString const path);
 
     /**
      * @brief Finds on or more elements in the container.
@@ -143,15 +143,14 @@ ReferenceContainer    ();
      * @param[in,out] result container where to store the elements found (which may include a path to a given container).
      * @param[in,out] filter the searching criteria to be applied.
      */
-    void Find(ReferenceContainer &result,
-            ReferenceContainerFilter &filter);
+    void Find(ReferenceContainer &result, ReferenceContainerFilter &filter);
 
     /**
      * @brief Finds the first element identified by \a path in RECURSIVE mode.
      * @param[in] path is the name of the element to be found or its full path.
      * @return the element if it is found or an invalid reference if not.
      */
-    Reference Find(const char8 * const path, const bool recursive=false);
+    Reference Find(CCString const path, const bool recursive=false);
 
     /**
      * @brief Checks if \a ref holds a container.

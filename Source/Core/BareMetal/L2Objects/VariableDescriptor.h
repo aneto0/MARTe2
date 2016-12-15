@@ -233,8 +233,8 @@ private:
      * @param[in] x
      * @post Adds a C to the modifiers
      */
-    //template <class T>
-//    inline void Match(T * const * x,StaticCharString , uint32 &size,bool &constant);
+    template <class T>
+    inline void Match(T * const * x,uint32 &size,bool &constant);
 
     /**
      * @brief Matches a T[n]

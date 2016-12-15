@@ -107,6 +107,15 @@ protected:
      */
     T * array;
 
+    /**
+     * to access pointer as void
+     */
+    inline void *&VoidArray();
+
+    /**
+     * to access pointer as void
+     */
+    inline T *&TArray();
 
 };
 
@@ -115,8 +124,19 @@ protected:
 /*---------------------------------------------------------------------------*/
 
 template<typename T>
+void *&ZeroTerminatedArray<T>::VoidArray(){
+    return const_cast<void *&>(reinterpret_cast<void  * &>(array));
+}
+
+template<typename T>
+T *&ZeroTerminatedArray<T>::TArray(){
+    return array;
+}
+
+
+template<typename T>
 ZeroTerminatedArray<T>::ZeroTerminatedArray(T *arrayIn) :
-        array(arrayIn) {
+    array(arrayIn) {
 }
 
 
