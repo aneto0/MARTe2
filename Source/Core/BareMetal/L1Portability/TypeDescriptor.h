@@ -69,37 +69,29 @@ namespace MARTe {
  * | :----:             | :----:      | :----:       | :----:  | :----:    | :----:  | :----:                  |
  * |  1  (=0)           | 1           | 4 (Bit-Int)  | 4       | 6         | 2       | 16                      |
  *
- * | isStructuredData   | isConstant  | type               | numberOfBytes | arrayType      | unused           |
+ * | isStructuredData   | isConstant  | type               | objectSize    | arrayType      | unused           |
  * | :----:             | :----:      | :----:             | :----:        | :----:         | :----:           |
- * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 4             | 2 ?D+          | 20               |
- *
- * | isStructuredData   | isConstant  | type               | numberOfBytes | arrayType | allocated | unused    |
- * | :----:             | :----:      | :----:             | :----:        | :----:    | :----:    | :----:    |
- * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 4             | 2 ZeroT   | 1         | 19        |
- *
- * | isStructuredData   | isConstant  | type               | numberOfBytes | arrayType  | arraySize            |
+ * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 3             | 3 (ZeroT,..)   | 20               |
+  *
+ * | isStructuredData   | isConstant  | type               | objectSize    | arrayType  | arraySize            |
  * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:               |
- * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 4             | 2 (1D)     | 20                   |
+ * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 3             | 3 (1D,[n]) | 20                   |
  *
- * | isStructuredData   | isConstant  | type               | numberOfBytes | arrayType  | columns | rows       |
+ * | isStructuredData   | isConstant  | type               | objectSize    | arrayType  | columns | rows       |
  * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:  | :----:     |
- * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 4             | 2 (2D)     | 10      | 10         |
+ * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 3             | 3 (2D)     | 10      | 10         |
  *
  * | isStructuredData   | isConstant  | type               | unused        | arrayType      | unused           |
  * | :----:             | :----:      | :----:             | :----:        | :----:         | :----:           |
- * |  1  (=0)           | 1           | 4 (others )        | 4             | 2 (ZeroT,?D+)  | 20               |
- *
- * | isStructuredData   | isConstant  | type               | unused        | arrayType | allocated | unused    |
- * | :----:             | :----:      | :----:             | :----:        | :----:    | :----:    | :----:    |
- * |  1  (=0)           | 1           | 4 (others)         | 4             | 2 ZeroT   | 1         | 19        |
+ * |  1  (=0)           | 1           | 4 (others )        | 3             | 3 (ZeroT,..)   | 20               |
  *
  * | isStructuredData   | isConstant  | type               | unused        | arrayType  | arraySize            | arraySize>0
  * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:               |
- * |  1  (=0)           | 1           | 4 (others)         | 4             | 2 (1D)     | 20                   |
+ * |  1  (=0)           | 1           | 4 (others)         | 3             | 3 (1D,[N]) | 20                   |
  *
  * | isStructuredData   | isConstant  | type               | unused        | arrayType  | columns | rows       | rows >=1
  * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:  | :----:     | columns >=1
- * |  1  (=0)           | 1           | 4 (others)         | 4             | 2 (2D)     | 10      | 10         |
+ * |  1  (=0)           | 1           | 4 (others)         | 3             | 3 (2D)     | 10      | 10         |
  *
  *
  */
@@ -142,37 +134,31 @@ public:
          *****************************************************/
 
         /**
-         * The size of the type
-         * Up to 32 bytes 0 means- not determined
+         * The size of the type unknown/8/16/32/64/128/256/512 bits (1/2/4/8/16/32/64 bytes)
          * Determines the type of integer or float
          * For char[] this is 1
+         * Values taken from BasicObjectSize
          */
-        BitRange<uint32, 4u, 6u> numberOfBytes;
-
+        BitRange<uint32, 3u, 6u> objectSize;
 
         /**
          * The array type
-         * 0 means zero terminated array
+         * 0 means unsupported
          * 1 means 1D
          * 2 means 2D
          * 3 means ?D+ too large array. - does not fit within 1D<1M and 2D <(1Kx1K) or too many dimensions
+         * 4 means Zero Term Array
+         * 5 means Dynamic Zero Term Array (reallocable)
+         * 6 means Static Zero Term Array - equivalent to 1D but zero term
+         * 7 means unsupported
+         *  codes as BasicArryType
          */
-        BitRange<uint32, 2u, 10u> arrayType;
-
-        /*****************************************************
-         *
-         *        For arrayType = 0
-         *
-         *****************************************************/
-        /**
-         * If true then the zero terminated array is a ManagedZeroTerminatedArray and can be resized
-         *          */
-        BitBoolean<uint32, 0u> isAllocated;
+        BitRange<uint32, 3u, 9u> arrayType;
 
 
         /*****************************************************
          *
-         *        For arrayType = 1
+         *        For arrayType = 1 & 6
          *
          *****************************************************/
 
@@ -265,7 +251,7 @@ public:
      * @param[in] bitsOffsetIn the bit offset of the type from a standard pointer address alignment
      * @post
      *   isConstantIn == isConstant &&
-     *   if (bitsOffset=0 and numberOfbits multiple of 8)
+     *   if (bitsOffset=0 and numberOfbits exponential multiple of 8)
      *       type == signedBitInteger if typeIn was signedInteger
      *       type == unsignedBitInteger if typeIn was unsignedInteger
      *       otherwise type = invalid
@@ -283,28 +269,12 @@ public:
 
     /**
      * @brief Basic Byte Types constructor.
-     * @param[in] isConstantIn specifies if the type is constant.
-     * @param[in] typeIn is the type.
-     * @param[in] numberOfDimensions 0=Zterm, 1= scalar/vector, 2 matrix, 3 too large array.
-     * @param[in] numberOfBitsIn the number of bits associated to the type.
-     * @param[in] bitsOffsetIn the bit offset of the type from a standard pointer address alignment
-     * @post
-     *   isConstantIn == isConstant &&
-     *   if (bitsOffset=0 and numberOfbits multiple of 8)
-     *       type == signedBitInteger if typeIn was signedInteger
-     *       type == unsignedBitInteger if typeIn was unsignedInteger
-     *       otherwise type = invalid
-     *   else
-     *       type == typeIn
-     *       byteSize = bitSizeIn/8
-     *       arrayType = 1
-     *       arraySize = 1
-     *   end
+     * TODO
      */
     TypeDescriptor(const bool isConstantIn,
                    const BasicType typeIn,
-                   const uint8  numberOfDimensions,
-                   const uint32 numberOfBytesIn,
+                   const BasicObjectSize objectSizeIn,
+                   const BasicArrayType arrayTypeIn,
                    const uint32 numberOfColumnsIn,
                    const uint32 numberOfRowsIn
                    );
@@ -466,14 +436,25 @@ static const TypeDescriptor SignedInteger64Bit(false, SignedInteger, 64u);
 static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
 
 /**
- * Constant char pointer descriptor
+ * CCString  descriptor
  */
-static const TypeDescriptor ConstCharString(true, Char, 0, 1, 0, 0);
+static const TypeDescriptor ConstCharString(true, Char, Size8bit,ZeroTermArray,  1, 0);
 
 /**
- * Char pointer descriptor
+ * CString descriptor
  */
-static const TypeDescriptor CharString(false,  Char, 0, 1, 0, 0);
+static const TypeDescriptor CharString(false,  Char, Size8bit,ZeroTermArray,  1, 0);
+
+/**
+ *  Dynamic String descriptor char * = malloc
+ */
+static const TypeDescriptor DynamicCharString(false,  Char, Size8bit,DynamicZeroTermArray, 1,  0);
+
+/**
+ *  Static char String descriptor char[1]
+ */
+static const TypeDescriptor StaticCharString(false,  Char, Size8bit,StaticZeroTermArray, 1,  0);
+
 
 /**
  * ConfigurationDatabase node
@@ -488,12 +469,12 @@ static const TypeDescriptor PointerType(false, Pointer, sizeof(void*) * 8u);
 /**
  * @brief Describes one layer of an array. returns as void[size] - size is set to 1 and need to be adjusted - the type is void as the size of the other array layers is unknown
  */
-static const TypeDescriptor ArrayLayerType(false, Void, 1,0,1,0);
+static const TypeDescriptor ArrayLayerType(false, Void, Array1D,0,1,0);
 
 /**
  * @brief A large array- too large to fit within the models 1D[1024x1024] or 2D[1024][1024]
  */
-static const TypeDescriptor LargeArrayType(false, Void, 3,0,0,0);
+static const TypeDescriptor LargeArrayType(false, Void, ArrayLarge,0,0,0);
 
 
 /*---------------------------------------------------------------------------*/

@@ -131,7 +131,7 @@ public:
      * @brief Checks if GetDataPointer() is pointing at a statically allocated memory block.
      * @return true if GetDataPointer() is pointing at a statically allocated memory block.
      */
-    inline bool IsStaticDeclared() const;
+//    inline bool IsStaticDeclared() const;
 
     /**
      * @brief Retrieves the byte size of this type.
@@ -215,8 +215,26 @@ private:
      * @param[in] vec the vector from whose this Match will be constructed.
      * @post Adds a V to the modifiers
      */
-    template<typename T>
-    void Match(ZeroTerminatedArray<T> * vec,uint32 &size,bool &constant);
+    template<typename T >
+    void Match(DynamicZeroTerminatedArray<T,16u> * vec,uint32 &size,bool &constant);
+
+    /**
+     * @brief Matches a zero terminated array statically allocated T[N]
+     * @tparam T the type of the elements in the vector
+     * @param[in] vec the vector from whose this Match will be constructed.
+     * @post Adds a V to the modifiers
+     */
+    template<typename T,uint32 sz >
+    void Match(StaticZeroTerminatedArray<T,sz> * vec,uint32 &size,bool &constant);
+
+    /**
+     * @brief Matches a T* const
+     * @tparam T the type of the elements in the vector
+     * @param[in] x
+     * @post Adds a C to the modifiers
+     */
+    //template <class T>
+//    inline void Match(T * const * x,StaticCharString , uint32 &size,bool &constant);
 
     /**
      * @brief Matches a T[n]
@@ -236,14 +254,6 @@ private:
     template <class T>
     inline void Match(T ** x,uint32 &size,bool &constant);
 
-    /**
-     * @brief Matches a T* const
-     * @tparam T the type of the elements in the vector
-     * @param[in] x
-     * @post Adds a C to the modifiers
-     */
-    template <class T>
-    inline void Match(T * const * x,uint32 &size,bool &constant);
 
     /**
      * @brief Matches a T const *
@@ -284,18 +294,28 @@ private:
  // SPECIFIC MATCHES
 
     /**
-     * @brief Constructor from 8 bit character.
-     * @param[in] i is the 8 bit character input.
-     * @post
+     * @brief Constructor from zeroterm malloced char *
+     * @param[in] s is the string
+     * * @post TODO
      *   GetDataPointer() == &i &&
      *   GetTypeDescriptor() == CString
      */
-    inline void Match(String *s,uint32 &size,bool &constant);
+    inline void Match(DynamicCString *s,uint32 &size,bool &constant);
+
+    /**
+     * @brief Constructor from zeroterm char[]
+     * @param[in] s is the string
+     * * @post TODO
+     *   GetDataPointer() == &i &&
+     *   GetTypeDescriptor() == CString
+     */
+    template <uint32 sz>
+    inline void Match(StaticCString<sz> *s,uint32 &size,bool &constant);
 
     /**
      * @brief Constructor from 8 bit character.
      * @param[in] i is the 8 bit character input.
-     * @post
+     * * @post TODO
      *   GetDataPointer() == &i &&
      *   GetTypeDescriptor() == CString
      */
@@ -313,7 +333,7 @@ private:
     /**
      * @brief Constructor from 8 bit character.
      * @param[in] i is the 8 bit character input.
-     * @post
+     * @post TODO
      *   GetDataPointer() == &i &&
      *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
@@ -517,7 +537,7 @@ inline  VariableDescriptor::VariableDescriptor( T  x){
 
     typeDescriptor.isConstant = constant;
 
-    dprintf("%s","(:)");
+//    dprintf("%s","(:)");
 }
 
 inline VariableDescriptor::VariableDescriptor(const TypeDescriptor &td){
@@ -553,15 +573,20 @@ void VariableDescriptor::Match(ZeroTerminatedArray<T> * vec,uint32 &size,bool &c
     Match(pp,size,constant);
 }
 
-template<typename T>
-void VariableDescriptor::Match(ManagedZeroTerminatedArray<T> * vec,uint32 &size,bool &constant){
-    AddGenericToModifiers('M',size,constant);
+template<typename T >
+void VariableDescriptor::Match(DynamicZeroTerminatedArray<T,16u> * vec,uint32 &size,bool &constant){
+    AddGenericToModifiers('D',size,constant);
     T *pp = NULL;
     Match(pp,size,constant);
 }
 
-
-
+template<typename T, uint32 sz >
+void VariableDescriptor::Match(StaticZeroTerminatedArray<T,sz> * vec,uint32 &size,bool &constant){
+    AddGenericToModifiers('S',size,constant);
+    AddArrayToModifiers(sz,size,constant);
+    T *pp = NULL;
+    Match(pp,size,constant);
+}
 
 template <class T,unsigned int n>
 inline void VariableDescriptor::Match(T (*x) [n],uint32 &size,bool &constant){
@@ -619,6 +644,10 @@ void VariableDescriptor::Match(T * x,uint32 &size,bool &constant){
 //    dprintf("%s","(T*)");
 }
 
+void VariableDescriptor::Match(DynamicCString *s,uint32 &size,bool &constant){
+    typeDescriptor = DynamicCharString;
+}
+
 void VariableDescriptor::Match(CString *s,uint32 &size,bool &constant){
     typeDescriptor = CharString;
 }
@@ -626,6 +655,13 @@ void VariableDescriptor::Match(CString *s,uint32 &size,bool &constant){
 void VariableDescriptor::Match(CCString *s,uint32 &size,bool &constant){
     typeDescriptor = ConstCharString;
 }
+
+template <uint32 sz>
+void VariableDescriptor::Match(StaticCString<sz> *s,uint32 &size,bool &constant){
+    typeDescriptor = StaticCharString;
+    typeDescriptor.arraySize = sz;
+}
+
 
 void VariableDescriptor::Match(char8 * i,uint32 &size,bool &constant) {
     typeDescriptor = Character8Bit;

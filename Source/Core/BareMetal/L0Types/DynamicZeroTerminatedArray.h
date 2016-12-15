@@ -1,5 +1,5 @@
 /**
- * @file ManagedZeroTerminatedArray.h
+ * @file DynamicZeroTerminatedArray.h
  * @brief Header file for class ZeroTerminatedArray
  * @date 22/09/2015
  * @author Filippo Sartori
@@ -52,13 +52,13 @@ namespace MARTe {
  * If this pre-condition is not accomplished, a segmentation fault in runtime could happen.
  */
 template<typename T,uint32 granularity>
-class ManagedZeroTerminatedArray: protected ZeroTerminatedArray<T> {
+class DynamicZeroTerminatedArray: protected ZeroTerminatedArray<T> {
 public:
 
     /**
      * @brief Default constructor. memory is allocated for granularity characters + terminator
      */
-    ManagedZeroTerminatedArray();
+    DynamicZeroTerminatedArray();
 
     /**
      * @brief Returns the element in the specified position.
@@ -95,7 +95,13 @@ public:
      * @brief Adds one array of elements to the array
      * @return false if realloc fails
      */
-    inline bool Append(const ZeroTerminatedArray<T> &data);
+    inline bool Append(const ZeroTerminatedArray< T> &  data);
+
+    /**
+     * @brief Adds one array of elements to the array
+     * @return false if realloc fails
+     */
+    inline bool Append(const ZeroTerminatedArray< const T> &  data);
 
     /**
      * @brief shrinks the array size to the minimum between newSize and the current size
@@ -114,7 +120,7 @@ protected:
      * @brief reallocates memory in order to fit fitSize object and terminator
      * @return false if reallocation fails
      */
-    static bool GranularMalloc(uint32 sizeofT,uint32 granularity, uint32 fitSize);
+//    static bool GranularMalloc(uint32 sizeofT,uint32 granularity, uint32 fitSize);
 
 };
 
@@ -123,40 +129,40 @@ protected:
 /*---------------------------------------------------------------------------*/
 
 template<typename T,uint32 granularity>
-ManagedZeroTerminatedArray<T,granularity>::ManagedZeroTerminatedArray() :ZeroTerminatedArray<T>(){
+DynamicZeroTerminatedArray<T,granularity>::DynamicZeroTerminatedArray() :ZeroTerminatedArray<T>(){
     uint32 necessarySize = ((1 + granularity)/ granularity)+granularity;
     HeapManager::Malloc(necessarySize*sizeof(T),array);
     if (array != NULL_PTR(T *)) array[0] = 0;
 }
 
 template<typename T,uint32 granularity>
-inline T &ManagedZeroTerminatedArray<T,granularity>::operator[](const uint32 index) const {
+inline T &DynamicZeroTerminatedArray<T,granularity>::operator[](const uint32 index) const {
     return ZeroTerminatedArray<T>::operator[](index);
 }
 
 template<typename T,uint32 granularity>
-uint32 ManagedZeroTerminatedArray<T,granularity>::GetSize() const {
+uint32 DynamicZeroTerminatedArray<T,granularity>::GetSize() const {
     return ZeroTerminatedArray<T>::GetSize();
 }
 
 template<typename T,uint32 granularity>
-T * ManagedZeroTerminatedArray<T,granularity>::GetList() const{
+T * DynamicZeroTerminatedArray<T,granularity>::GetList() const{
     return ZeroTerminatedArray<T>::GetList();
 }
 
 template<typename T,uint32 granularity>
-ManagedZeroTerminatedArray<T,granularity>::operator T*() const {
+DynamicZeroTerminatedArray<T,granularity>::operator T*() const {
     return ZeroTerminatedArray<T>::GetList();
 }
 
 template<typename T,uint32 granularity>
-void *&ManagedZeroTerminatedArray<T,granularity>::VoidArray(){
+void *&DynamicZeroTerminatedArray<T,granularity>::VoidArray(){
     return reinterpret_cast<void *>(array);
 }
 
 
 template<typename T,uint32 granularity>
-bool ManagedZeroTerminatedArray<T,granularity>::Append(const T &data) {
+bool DynamicZeroTerminatedArray<T,granularity>::Append(const T &data) {
     bool ret = true;
     uint32 size = GetSize();
 
@@ -181,7 +187,7 @@ bool ManagedZeroTerminatedArray<T,granularity>::Append(const T &data) {
 }
 
 template<typename T,uint32 granularity>
-bool ManagedZeroTerminatedArray<T,granularity>::Append(const ZeroTerminatedArray<T> &data) {
+bool DynamicZeroTerminatedArray<T,granularity>::Append(const ZeroTerminatedArray<T> & data) {
     bool ret = true;
     uint32 size = GetSize();
     uint32 size2 = data.GetSize();
@@ -202,7 +208,30 @@ bool ManagedZeroTerminatedArray<T,granularity>::Append(const ZeroTerminatedArray
 }
 
 template<typename T,uint32 granularity>
-bool ManagedZeroTerminatedArray<T,granularity>::Truncate(uint32 newSize) {
+bool DynamicZeroTerminatedArray<T,granularity>::Append(const ZeroTerminatedArray<const T> & data) {
+    bool ret = true;
+    uint32 size = GetSize();
+    uint32 size2 = data.GetSize();
+
+    uint32 necessarySize = ((size + size2 + 1 + granularity) / granularity) * granularity;
+
+    HeapManager::Realloc(VoidArray(),necessarySize*sizeof(T));
+
+    ret = (array != NULL_PTR(T *));
+
+    if (ret)  {
+        void *dest      = static_cast<void *>(array+size);
+        const void *src = static_cast<void *>(data.GetList());
+        MemoryOperationsHelper::Copy(dest,src,size2);
+    }
+
+    return ret;
+}
+
+
+
+template<typename T,uint32 granularity>
+bool DynamicZeroTerminatedArray<T,granularity>::Truncate(uint32 newSize) {
     bool ret = true;
     uint32 size = GetSize();
 

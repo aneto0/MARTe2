@@ -91,7 +91,7 @@ public:
      */
     operator T*() const;
 
-private:
+protected:
 
     /**
      * @brief Checks if the input \a data is the array terminal character.

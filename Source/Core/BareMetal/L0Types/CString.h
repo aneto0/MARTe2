@@ -33,7 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ZeroTerminatedArray.h"
-#include "ManagedZeroTerminatedArray.h"
+#include "DynamicZeroTerminatedArray.h"
+#include "StaticZeroTerminatedArray.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -42,40 +43,53 @@
 namespace MARTe {
 
 
-
-
 /**
 * TODO
 * @brief Wrapper for writable char buffers
 * */
-class MString: public ManagedZeroTerminatedArray<char8,16>{
+class DynamicCString: public DynamicZeroTerminatedArray<char8,16>{
 
 public:
     /**
      *TODO
      */
-    inline MString ();
+    inline DynamicCString ();
 
     /**
      * @briefs allocates memory and copies the content
      */
-    inline MString (MString const &s);
+    inline DynamicCString (DynamicCString const &s);
 
     /**
      * @briefs allocates memory and copies the content
      */
-    inline MString (CString const &s);
+    inline DynamicCString (CString const &s);
 
     /**
      * @briefs allocates memory and copies the content
      */
-    inline MString (CCString const &s);
+    inline DynamicCString (CCString const &s);
 
     /**
      * @briefs allocates memory and copies the content
      */
-    inline MString (char8 * const &s);
+    inline DynamicCString (char8 * const &s);
 
+};
+
+/**
+* TODO
+* @brief Wrapper for writable char buffers
+* */
+template<uint32 size>
+class StaticCString: public StaticZeroTerminatedArray<char8,size>{
+
+public:
+
+    /**
+     * @briefs allocates memory and copies the content
+    */
+    inline StaticCString (char8 const &s[size]);
 };
 
 
@@ -99,7 +113,13 @@ public:
     /**
      *TODO
      */
-    inline CString (String const &s);
+    inline CString (DynamicCString const &s);
+
+    /**
+     *TODO
+     */
+    template <uint32 size>
+    inline CString (StaticCString<size> const &s);
 
     /**
      * TODO
@@ -132,7 +152,13 @@ public:
     /**
      * TODO
      */
-    inline CCString (String const &s);
+    inline CCString (DynamicCString const &s);
+
+    /**
+     *TODO
+     */
+    template <uint32 size>
+    inline CCString (StaticCString<size> const &s);
 
     /**
      * TODO
@@ -148,6 +174,33 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+template <uint32 size>
+StaticCString<size>::StaticCString (char8 const &s[size]){
+    array = &s[0];
+}
+
+
+DynamicCString::DynamicCString (){
+
+}
+
+DynamicCString::DynamicCString(DynamicCString const &s){
+    Append(s);
+}
+
+DynamicCString::DynamicCString (CString const &s){
+    Append(s);
+}
+
+DynamicCString::DynamicCString (CCString const &s){
+    Append(s);
+}
+
+DynamicCString::DynamicCString (char8 * const &s){
+    Append(CString(s));
+}
+
+
 
 CString::CString (){
 }
@@ -159,6 +212,8 @@ CString::CString (CString const &s):ZeroTerminatedArray<char8>(s){
 CString::CString (char8 * const &s):ZeroTerminatedArray<char8>(s){
 
 }
+
+
 
 CCString::CCString (){
 

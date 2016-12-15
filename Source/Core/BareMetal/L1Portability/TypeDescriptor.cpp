@@ -76,6 +76,26 @@ TypeDescriptor::TypeDescriptor(const uint32 x) {
     all = x;
 }
 
+
+static BasicObjectSize GetRegularType(uint32 bits){
+    BasicObjectSize  bos = SizeUnknown;
+    if (bits > 32){
+        if (bits > 128){
+            if (bits == 256) bos = Size256bit;
+            if (bits == 512) bos = Size512bit;
+        } else {
+            if (bits == 128) bos = Size128bit;
+            if (bits == 64)  bos = Size64bit;
+        }
+    } else {
+        if (bits == 32)      bos = Size32bit;
+        if (bits == 16)      bos = Size16bit;
+        if (bits == 8)       bos = Size8bit;
+    }
+
+    return bos;
+}
+
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,
                    const BasicType typeIn,
                    const uint32 numberOfBitsIn,
@@ -85,9 +105,9 @@ TypeDescriptor::TypeDescriptor(const bool isConstantIn,
     type             = typeIn;
     isStructuredData = false;
 
-    uint16 bits = numberOfBitsIn % 8u;
-    bool isBitType        = ((bits != 0u) || (bitsOffsetIn != 0u));
+    BasicObjectSize bos = GetRegularType(numberOfBitsIn);
 
+    bool isBitType        = ((bos == SizeUnknown) || (bitsOffsetIn != 0u));
 
     if (isBitType) {
         if (typeIn == UnsignedInteger) {
@@ -109,46 +129,44 @@ TypeDescriptor::TypeDescriptor(const bool isConstantIn,
             type = Invalid;
         }
     } else {
-        numberOfBytes    = numberOfBitsIn / 8u;
-        arrayType = 1;
-        arraySize = 1;
+        objectSize  = bos;
+        arrayType = Array1D;
+        arraySize = 1u;
     }
 }
 
 TypeDescriptor::TypeDescriptor(    const bool isConstantIn,
                                    const BasicType typeIn,
-                                   const uint8  numberOfDimensions,
-                                   const uint32 numberOfBytesIn,
+                                   const BasicObjectSize objectSizeIn,
+                                   const BasicArrayType arrayTypeIn,
                                    const uint32 numberOfColumnsIn,
                                    const uint32 numberOfRowsIn
                ){
     isConstant       = isConstantIn;
     type             = typeIn;
     isStructuredData = false;
+    objectSize       = objectSizeIn;
+    arrayType        = arrayTypeIn;
 
-    if (numberOfBytesIn > 15u){
-        type = Invalid;
-    } else {
-        numberOfBytes    = numberOfBytesIn;
-    }
 
-    if (numberOfDimensions == 0){
-        arrayType = 0;
-        arraySize = 0;
-    } else
-    if (numberOfDimensions == 1){
+    switch (arrayTypeIn){
+    case StaticZeroTermArray:{
         if (numberOfColumnsIn > 0xFFFFFu){
-            arrayType            = 3;
+            arrayType            = ZeroTermArray;
+        } else {
+            arraySize            = numberOfColumnsIn;
+        }
+    case Array1D:{
+        if (numberOfColumnsIn > 0xFFFFFu){
+            arrayType            = ArrayLarge;
             arraySize            = 0;
         } else {
-            arrayType = 1;
-            arraySize = numberOfColumnsIn;
+            arraySize            = numberOfColumnsIn;
         }
-
-    } else
-    if (numberOfDimensions == 2){
+    }break;
+    case Array2D:{
         if (numberOfRowsIn > 0x3FFu){
-            arrayType            = 3;
+            arrayType            = ArrayLarge;
             if (numberOfRowsIn > 0x7FFFFu){
                 arraySize            = 0;
             } else {
@@ -156,21 +174,25 @@ TypeDescriptor::TypeDescriptor(    const bool isConstantIn,
             }
         } else {
             if (numberOfColumnsIn > 0x3FFu){
-                arrayType            = 3;
+                arrayType            = ArrayLarge;
                 arraySize            = numberOfRowsIn;
             } else {
-                arrayType = 2;
-                numberOfColumns = numberOfColumnsIn;
-                numberOfRows    = numberOfRowsIn;
+                numberOfColumns      = numberOfColumnsIn;
+                numberOfRows         = numberOfRowsIn;
             }
         }
-    } else {
-        arrayType    = 3;
+    }break;
+    case ArrayLarge:{
         if (numberOfRowsIn > 0x7FFFFu){
             arraySize            = 0;
         } else {
             arraySize            = numberOfRowsIn;
         }
+    }break;
+    default:{
+
+    }
+
     }
 
 }

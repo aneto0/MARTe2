@@ -77,25 +77,6 @@ const BasicType SignedBitInteger = 5u;
  */
 const BasicType UnsignedBitInteger = 6u;
 
-
-
-/**
- * @brief The type is a C string. Cannot be extended. May or may not be modifiable.
- * (const CCString only ???)
- */
-//const BasicType BT_CCString = 4u;
-
-/**
- * The type is a pointer to a C string allocated on heap.
- * (char **)
- */
-//const BasicType PCString = 5u;
-
-/**
- * @brief The type is an array of chars with the size specified in the size field.
- */
-//const BasicType CArray = 6u;
-
 /**
  * @brief The type is a StreamString class.
  */
@@ -116,13 +97,100 @@ const BasicType StructuredDataInterface = 13u;
  */
 const BasicType Void = 14u;
 
-
 /**
  * @brief The type is not valid
  */
 const BasicType Invalid = 15u;
 
 
+
+
+/**
+ * @brief Definition of BasicArrayType
+ */
+typedef uint8 BasicArrayType;
+
+
+/**
+ * @brief The type is a scalar or a vector
+ */
+const BasicArrayType ArrayUnknown = 0u;
+
+/**
+ * @brief The type is a scalar or a vector
+ */
+const BasicArrayType Array1D = 1u;
+
+/**
+ * @brief The type is a matrix
+ */
+const BasicArrayType Array2D = 2u;
+
+/**
+ * @brief The type is a matrix
+ */
+const BasicArrayType ArrayLarge = 3u;
+
+/**
+ * @brief The type is a ZeroTerminatedArray of unknown size
+ */
+const BasicArrayType ZeroTermArray = 4u;
+
+/**
+ * @brief The type is a zero term vector of reallocable size
+ */
+const BasicArrayType DynamicZeroTermArray = 5u;
+
+/**
+ * @brief The type is a zero term vector of fixed size non-reallocable
+ */
+const BasicArrayType StaticZeroTermArray = 5u;
+
+
+/**
+ * @brief Definition of BasicArrayType
+ */
+typedef uint8 BasicObjectSize;
+
+/**
+ * @brief The type has an unknown size
+ */
+const BasicObjectSize SizeUnknown = 0u;
+
+/**
+ * @brief The type has size 8bit
+ */
+const BasicObjectSize Size8bit = 1u;
+
+/**
+ * @brief The type has size 16bit
+ */
+const BasicObjectSize Size16bit = 2u;
+
+/**
+ * @brief The type has size 32bit
+ */
+const BasicObjectSize Size32bit = 3u;
+
+/**
+ * @brief The type has size 64bit
+ */
+const BasicObjectSize Size64bit = 4u;
+
+/**
+ * @brief The type has size 128bit
+ */
+const BasicObjectSize Size128bit = 5u;
+
+/**
+ * @brief The type has size 256bit
+ */
+const BasicObjectSize Size256bit = 6u;
+
+/**
+ * @brief The type has size 128bit
+ */
+const BasicObjectSize Size512bit = 7u;
 }
 
 /*---------------------------------------------------------------------------*/
