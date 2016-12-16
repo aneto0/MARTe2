@@ -81,8 +81,9 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
         }
 
         if (size > 0u) {
-            const char8 *pattern = "MHz";
-            const char8 *p = StringHelper::SearchString(&buffer[0], pattern);
+            CCString pattern("MHz");
+            CCString bufferString(&buffer[0]);
+            CCString p = StringHelper::SearchString(bufferString, pattern);
             if (p != NULL) {
                 p = StringHelper::SearchString(p, ":");
                 p++;

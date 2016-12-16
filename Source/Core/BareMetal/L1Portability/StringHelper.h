@@ -54,6 +54,14 @@ namespace StringHelper {
  */
 DLL_API CCString SearchChar(CCString  const string,  char8 c);
 
+
+/**
+ * @brief Returns a pointer to the first occurrence of substring in string.
+ * @param[in] string the source string.
+ * @param[in] substring the string which must be searched in string.
+ * @return a pointer to the first occurrence of substring in string.
+ */
+DLL_API CCString SearchString(CCString  const string, CCString  const substring);
 /**
  * @brief Compares two strings.
  * @param[in] string1 the first string.
@@ -222,14 +230,7 @@ DLL_API CCString SearchChars(CCString  const string1,
 DLL_API CCString SearchLastChar(CCString  const string,
                                     const char8 c);
 
-/**
- * @brief Returns a pointer to the first occurrence of substring in string.
- * @param[in] string the source string.
- * @param[in] substring the string which must be searched in string.
- * @return a pointer to the first occurrence of substring in string.
- */
-DLL_API CCString SearchString(CCString  const string,
-                                  CCString  const substring);
+
 
 
 /**
@@ -301,9 +302,9 @@ DLL_API bool ConcatenateN(CCString  const string1,
                           CString  const result,
                           const uint32 size);
 
+#endif
 }
 
-#endif
 
 }
 /*---------------------------------------------------------------------------*/

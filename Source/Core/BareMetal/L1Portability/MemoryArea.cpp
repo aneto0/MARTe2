@@ -76,16 +76,11 @@ void MemoryArea::Free() {
             memory = NULL_PTR(void*);
         }
     }
-    if (heapName != NULL) {
-        if (HeapManager::Free(reinterpret_cast<void*&>(heapName))) {
-            heapName = NULL_PTR(char8*);
-        }
-    }
     size = 0u;
 }
 
-void MemoryArea::SetHeapName(const char8 * const name) {
-    heapName = StringHelper::StringDup(name);
+void MemoryArea::SetHeapName(CCString const name) {
+    heapName.Append(name);
 }
 
 bool MemoryArea::Add(const uint32 memorySize,

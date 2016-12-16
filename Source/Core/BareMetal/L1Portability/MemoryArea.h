@@ -32,11 +32,15 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "HeapManager.h"
+#include "DynamicCString.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+
 
 /**
  * @brief Memory allocated area that behaves similarly to a StaticList with variable elements size.
@@ -86,7 +90,7 @@ public:
      * @param[in] heapName is the name of the heap where the memory has to be
      * allocated.
      */
-    void SetHeapName(const char8 * const name);
+    void SetHeapName(CCString const name);
 
     /**
      * @brief Creates a chunk of memory into this memory area and copies existing memory.
@@ -149,7 +153,7 @@ private:
     /**
      * The name of the heap where the memory managed by this area belongs to.
      */
-    char8 * heapName;
+    DynamicCString heapName;
 
     /**
      * The size of the memory area.

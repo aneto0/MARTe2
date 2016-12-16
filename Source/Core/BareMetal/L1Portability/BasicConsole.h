@@ -306,22 +306,25 @@ public:
      * ErrorManagement::UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
-    virtual bool SetTitleBar(const char8 *title);
+    virtual bool SetTitleBar(CCString title);
 
     /**
      * @brief Returns the console title (@see TitleBarSupported).
      * @param[out] title is a destination buffer.
-     * @param[out] size is the size of the title.
      * @return true if the title can be successfully retrieved. In case of errors it returns false and the error code will be: \n
      * ErrorManagement::OSError if there is any operating
      * system related problem while performing the operation;
      * ErrorManagement::UnsupportedFeature if the feature is not available
      * in the operating system specific implementation;
      */
-    virtual bool GetTitleBar(char8 *title,
-                             const uint32 &size) const;
+    template <uint32 sizeOfBuffer>
+    inline bool GetTitleBar(StaticCString<sizeOfBuffer>title) const{
+        uint32 size = sizeOfBuffer;
+        return GetTitleBar(title.GetList(),size);
+    }
 
-    /**F
+
+    /**
      * @brief Checks if changing or reading the console title is supported
      * @return true if the operating system implementation enables the reading and updating
      * of the console title.
@@ -355,14 +358,12 @@ public:
     /**
      * @see StreamI::Read
      */
-    virtual bool Read(char8 * const output,
-                      uint32 & size);
+    virtual bool Read(char8 * const output,  uint32 & size);
 
     /**
      * @see StreamI::Write
      */
-    virtual bool Write(const char8 * const input,
-                       uint32 & size);
+    virtual bool Write(const char8 * const input,  uint32 & size);
 
     /**
      * @brief Writes to the console.
@@ -439,6 +440,18 @@ public:
     virtual Handle GetWriteHandle() const;
 
 private:
+
+    /**
+     * @brief Returns the console title (@see TitleBarSupported).
+     * @param[out] title is a destination buffer.
+     * @param[out] size is the size of the title.
+     * @return true if the title can be successfully retrieved. In case of errors it returns false and the error code will be: \n
+     * ErrorManagement::OSError if there is any operating
+     * system related problem while performing the operation;
+     * ErrorManagement::UnsupportedFeature if the feature is not available
+     * in the operating system specific implementation;
+     */
+    virtual bool GetTitleBar(CString const title, const uint32 &size) const;
 
     /**
      * @brief Portable paged write implementation.
@@ -539,12 +552,12 @@ bool BasicConsole::PagedWrite(const char8 * const buffer,
                 start = index;
                 lastPagingCounter = t1;
                 lineCount = 0u;
-                const char8 *message = "[PAGING] ENTER TO CONTINUE\r";
-                sizeT = static_cast<uint32>(StringHelper::Length(message));
+                CCString message("[PAGING] ENTER TO CONTINUE\r");
+                sizeT = message.GetSize();
                 err = OSWrite(message, sizeT, timeout);
                 if (err) {
-                    char8 readBuffer[32];
-                    sizeT = N_CHARS_NEWLINE;
+                    char8 readBuffer[32];     // TODO why 32
+                    sizeT = N_CHARS_NEWLINE;  // TODO why this size
                     err = Read(&readBuffer[0], sizeT, timeout);
                 }
             }

@@ -73,6 +73,32 @@ CCString  SearchChar(CCString  const string,  const char8 c) {
     return ret;
 }
 
+CCString  SearchString(CCString  const string,CCString  const substring) {
+
+    CCString  ret(NULLS);
+    int32 size1 = static_cast<int32>(string.GetSize());
+    int32 size2 = static_cast<int32>(substring.GetSize());
+
+    if ((size1 >= 0) && (size2 >= 0)) {
+        int32 i = 0;
+
+        while ((size1 - i) >= size2) {
+            uint32 sizeArg = static_cast<uint32>(size2);
+            if (CompareN(string.GetList()+i, substring, sizeArg) == 0) {
+                ret = string.GetList()+i;
+                //exit from the loop
+                i = size1 - size2;
+            }
+            i++;
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+    }
+
+    return ret;
+}
+
 
 int32 Compare(CCString  const string1,CCString  const string2) {
 

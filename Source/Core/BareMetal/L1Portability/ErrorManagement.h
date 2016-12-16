@@ -35,7 +35,7 @@
 #include "ErrorInformation.h"
 #include "GeneralDefinitions.h"
 #include "StreamI.h"
-
+#include "CCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                              */
@@ -43,13 +43,13 @@
 
 namespace MARTe {
 
+
 namespace ErrorManagement {
 
 /**
  * @brief The type of a user provided ErrorProcessing function
  */
-typedef void (*ErrorProcessFunctionType)(const ErrorInformation &errorInfo,
-                                         const char8 * const errorDescription);
+typedef void (*ErrorProcessFunctionType)(const ErrorInformation &errorInfo, CCString const errorDescription);
 
 /**
  * @brief A pointer to the function that will process the errors.
@@ -61,8 +61,7 @@ extern DLL_API ErrorProcessFunctionType errorMessageProcessFunction;
  * @details This function is compatible with the function prototype defined
  * as LogMessageProcessFunctionType. Its purpose is to do nothing.
  */
-DLL_API void NullErrorProcessFunction(const ErrorInformation &errorInfo,
-                                      const char8 * const errorDescription);
+DLL_API void NullErrorProcessFunction(const ErrorInformation &errorInfo,CCString const errorDescription);
 
 /**
  * @brief Converts ErrorType to stream.
@@ -82,10 +81,10 @@ DLL_API void ErrorCodeToStream (const ErrorType &errorCode,StreamI &stream );
  * @param[in] functionName is the name of the function where the error is triggered.
  */
 DLL_API void ReportError(const ErrorType &code,
-                         const char8 * const errorDescription,
-                         const char8 * const fileName = static_cast<const char8 *>(NULL),
-const int16 lineNumber = 0,
-const char8 * const functionName = static_cast<const char8 *>(NULL));
+                         CCString const errorDescription,
+                         CCString const fileName = static_cast<const char8 *>(NULL),
+                         const int16 lineNumber = 0,
+                         CCString const functionName = static_cast<const char8 *>(NULL));
 
 /**
  * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.
@@ -97,10 +96,10 @@ const char8 * const functionName = static_cast<const char8 *>(NULL));
  * @param[in] functionName is the name of the function where the error is triggered.
  */
 DLL_API void ReportErrorFullContext(const ErrorType &code,
-                                    const char8 * const errorDescription,
-                                    const char8 * const fileName = static_cast<const char8 *>(NULL),
-const int16 lineNumber = 0,
-const char8 * const functionName = static_cast<const char8 *>(NULL));
+                                    CCString const errorDescription,
+                                    CCString const fileName = static_cast<const char8 *>(NULL),
+                                    const int16 lineNumber = 0,
+                                    CCString const functionName = static_cast<const char8 *>(NULL));
 
 /**
  * @brief Sets the routine for error managing.

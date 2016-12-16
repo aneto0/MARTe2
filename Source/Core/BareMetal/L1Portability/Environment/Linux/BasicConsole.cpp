@@ -408,13 +408,13 @@ bool BasicConsole::SetColour(const Colours &foregroundColour,
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
-bool BasicConsole::SetTitleBar(const char8 * const title) {
+bool BasicConsole::SetTitleBar(CCString const title) {
     REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
     return false;
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
-bool BasicConsole::GetTitleBar(char8 * const title,
+bool BasicConsole::GetTitleBar(CString const title,
                                const uint32 &size) const {
     REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
     return false;

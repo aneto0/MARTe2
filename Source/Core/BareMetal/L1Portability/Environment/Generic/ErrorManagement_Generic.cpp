@@ -34,6 +34,8 @@
 #include "HighResolutionTimer.h"
 #include "ErrorInformation.h"
 #include "StringHelper.h"
+#include "CString.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -56,7 +58,7 @@ ErrorProcessFunctionType errorMessageProcessFunction = &NullErrorProcessFunction
  * @brief A structure pairing an error code with its explanation.
  */
 const struct {
-    const char8 * const name;
+    CCString const name;
     ErrorIntegerFormat errorBitSet;
 } errorNames[] = {
         { "NoError", NoError },
@@ -97,7 +99,9 @@ void ErrorCodeToStream(const ErrorType &errorCode,
                 firstErrorWritten = true;
             }
 
-            size = StringHelper::Length(errorNames[i].name) + 1u;
+            // TODO  why +1
+//            size = StringHelper::Length(errorNames[i].name) + 1u;
+            size = errorNames[i].name.GetSize();
             if (ok) {
                 ok = stream.Write(errorNames[i].name, size);
             }
@@ -113,10 +117,10 @@ void ErrorCodeToStream(const ErrorType &errorCode,
 }
 
 void ReportError(const ErrorType &code,
-                 const char8 * const errorDescription,
-                 const char8 * const fileName,
+                 CCString const errorDescription,
+                 CCString const fileName,
                  const int16 lineNumber,
-                 const char8 * const functionName) {
+                 CCString const functionName) {
     ErrorInformation errorInfo;
 //    errorInfo.threadId = InvalidThreadIdentifier;
     errorInfo.objectPointer = static_cast<void*>(NULL);
@@ -134,10 +138,10 @@ void ReportError(const ErrorType &code,
 }
 
 void ReportErrorFullContext(const ErrorType &code,
-                            const char8 * const errorDescription,
-                            const char8 * const fileName,
+                            CCString const errorDescription,
+                            CCString const fileName,
                             const int16 lineNumber,
-                            const char8 * const functionName) {
+                            CCString const functionName) {
     ErrorInformation errorInfo;
 //    errorInfo.threadId = InvalidThreadIdentifier;
     errorInfo.objectPointer = static_cast<void*>(NULL);

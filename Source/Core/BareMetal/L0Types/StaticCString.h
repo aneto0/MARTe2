@@ -1,8 +1,8 @@
 /**
- * @file CString.h
- * @brief Header file for class CString
- * @date 05/04/2016
- * @author Filippo Sartori
+ * @file StaticCString.h
+ * @brief Header file for class StaticCString
+ * @date Dec 16, 2016
+ * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class CString
+ * @details This header file contains the declaration of the class StaticCString
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CSTRING_H_
-#define CSTRING_H_
+#ifndef L0TYPES_STATICCSTRING_H_
+#define L0TYPES_STATICCSTRING_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,53 +32,34 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ZeroTerminatedArray.h"
-
+#include "StaticZeroTerminatedArray.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
+namespace MARTe{
 
 /**
 * TODO
 * @brief Wrapper for writable char buffers
 * */
-class CString: public ZeroTerminatedArray<char8>{
+template<uint32 size>
+class StaticCString: public StaticZeroTerminatedArray<char8,size>{
 
 public:
-    /**
-     *TODO
-     */
-    inline CString ();
 
     /**
-     *TODO
-     */
-    inline CString (CString const &s);
+     * @briefs uses the memory provided by s
+     * s is reset to length 0;
+    */
+    inline StaticCString (char8 const (&s)[size]);
 
-    /**
-     *TODO
-     */
-//    inline CString (DynamicCString const &s);
-
-    /**
-     *TODO
-     */
-//    template <uint32 size>
-//    inline CString (StaticCString<size> const &s);
-
-    /**
+    /*
      * TODO
      */
-    inline CString (char8 * const &s);
+    operator char8*() const;
 
-    /**
-     * TODO
-     */
-    inline operator char8*() const;
 };
 
 
@@ -87,25 +68,18 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-
-CString::CString (){
+template <uint32 size>
+StaticCString<size>::StaticCString (char8 const (&s)[size]){
+    ZeroTerminatedArray<char8 >::array = &s[0];
+    s[0] = '\0';
 }
 
-CString::CString (CString const &s):ZeroTerminatedArray<char8>(s){
-
-}
-
-CString::CString (char8 * const &s):ZeroTerminatedArray<char8>(s){
-
-}
-
-CString::operator char8*() const{
+template <uint32 size>
+StaticCString<size>::operator char8*() const{
     return ZeroTerminatedArray<char8>::array;
 }
 
 
-};
-
-#endif /* CSTRING_H_ */
+}
+#endif /* L0TYPES_STATICCSTRING_H_ */
 	

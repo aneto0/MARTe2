@@ -37,7 +37,6 @@
 #include "GlobalObjectI.h"
 #include "GlobalObjectsDatabase.h"
 #include "ErrorManagement.h"
-}
 /*---------------------------------------------------------------------------*/
 /*                           Local Module declaration                        */
 /*---------------------------------------------------------------------------*/

@@ -1,8 +1,8 @@
 /**
- * @file CString.h
- * @brief Header file for class CString
- * @date 05/04/2016
- * @author Filippo Sartori
+ * @file DynamicCString.h
+ * @brief Header file for class DynamicCString
+ * @date Dec 16, 2016
+ * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class CString
+ * @details This header file contains the declaration of the class DynamicCString
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CSTRING_H_
-#define CSTRING_H_
+#ifndef L0TYPES_DYNAMICCSTRING_H_
+#define L0TYPES_DYNAMICCSTRING_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,53 +32,54 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ZeroTerminatedArray.h"
+#include "CompilerTypes.h"
+#include "DynamicZeroTerminatedArray.h"
+#include "CString.h"
+#include "CCString.h"
 
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
+namespace MARTe{
 
 /**
 * TODO
 * @brief Wrapper for writable char buffers
 * */
-class CString: public ZeroTerminatedArray<char8>{
-
+class DynamicCString: public DynamicZeroTerminatedArray<char8,16>{
 public:
     /**
      *TODO
      */
-    inline CString ();
+    inline DynamicCString ();
 
     /**
-     *TODO
+     * @briefs allocates memory and copies the content
      */
-    inline CString (CString const &s);
+    inline DynamicCString (DynamicCString const &s);
 
     /**
-     *TODO
+     * @briefs allocates memory and copies the content
      */
-//    inline CString (DynamicCString const &s);
+    inline DynamicCString (CString const &s);
 
     /**
-     *TODO
+     * @briefs allocates memory and copies the content
      */
-//    template <uint32 size>
-//    inline CString (StaticCString<size> const &s);
+    inline DynamicCString (CCString const &s);
+
+    /**
+     * @briefs allocates memory and copies the content
+     */
+    inline DynamicCString (char8 * const &s);
 
     /**
      * TODO
      */
-    inline CString (char8 * const &s);
+    operator char8*() const;
 
-    /**
-     * TODO
-     */
-    inline operator char8*() const;
 };
 
 
@@ -87,25 +88,26 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-
-CString::CString (){
-}
-
-CString::CString (CString const &s):ZeroTerminatedArray<char8>(s){
+DynamicCString::DynamicCString (){
 
 }
 
-CString::CString (char8 * const &s):ZeroTerminatedArray<char8>(s){
-
+DynamicCString::DynamicCString(DynamicCString const &s):DynamicZeroTerminatedArray<char8,16>(s){
 }
 
-CString::operator char8*() const{
+DynamicCString::DynamicCString (CString const &s):DynamicZeroTerminatedArray<char8,16>(CCString(s)){
+}
+
+DynamicCString::DynamicCString (CCString const &s):DynamicZeroTerminatedArray<char8,16>(s){
+}
+
+DynamicCString::DynamicCString (char8 * const &s):DynamicZeroTerminatedArray<char8,16>(CCString(s)){
+}
+
+DynamicCString::operator char8*() const{
     return ZeroTerminatedArray<char8>::array;
 }
 
-
-};
-
-#endif /* CSTRING_H_ */
+}
+#endif /* L0TYPES_DYNAMICCSTRING_H_ */
 	

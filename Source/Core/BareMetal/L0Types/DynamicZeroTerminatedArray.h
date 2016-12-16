@@ -172,7 +172,7 @@ DynamicZeroTerminatedArray<T,granularity>::DynamicZeroTerminatedArray(const Zero
     if (TArray() != NULL_PTR(T *)) {
 
         void *dest      = static_cast<void *>(GetList());
-        const void *src = static_cast<void *>(data.GetList());
+        const void *src = static_cast<const void *>(data.GetList());
         MemoryOperationsHelper::Copy(dest,src,1 + data.GetSize());
     } else {
         REPORT_ERROR(ErrorManagement::FatalError, "Error: zero term array duplicated creation failed");

@@ -1,8 +1,8 @@
 /**
- * @file CString.h
- * @brief Header file for class CString
- * @date 05/04/2016
- * @author Filippo Sartori
+ * @file CCString.h
+ * @brief Header file for class CCString
+ * @date Dec 16, 2016
+ * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class CString
+ * @details This header file contains the declaration of the class CCString
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CSTRING_H_
-#define CSTRING_H_
+#ifndef L0TYPES_CCSTRING_H_
+#define L0TYPES_CCSTRING_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,8 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ZeroTerminatedArray.h"
-
+#include "CString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -41,44 +40,53 @@
 
 namespace MARTe {
 
+class DynamicCString;
+template <uint32 size> class StaticCString;
+
 
 /**
-* TODO
-* @brief Wrapper for writable char buffers
-* */
-class CString: public ZeroTerminatedArray<char8>{
+ * TODO
+ * @brief Wrapper for constant char buffers
+ * */
+class CCString: public ZeroTerminatedArray<const char8>{
 
 public:
     /**
      *TODO
      */
-    inline CString ();
+    inline CCString ();
 
     /**
-     *TODO
+     * TODO
      */
-    inline CString (CString const &s);
+    inline CCString (CCString const &s);
 
     /**
-     *TODO
+     * TODO
      */
-//    inline CString (DynamicCString const &s);
+    inline CCString (CString const &s);
+
+    /**
+     * TODO
+     */
+//    inline CCString (DynamicCString const &s);
 
     /**
      *TODO
      */
 //    template <uint32 size>
-//    inline CString (StaticCString<size> const &s);
+//    inline CCString (StaticCString<size> const &s);
 
     /**
      * TODO
      */
-    inline CString (char8 * const &s);
+    inline CCString (char8 const * const &s);
 
     /**
      * TODO
      */
-    inline operator char8*() const;
+    operator const char8*() const;
+
 };
 
 
@@ -87,25 +95,18 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+CCString::CCString (){}
 
+CCString::CCString (CCString const &s):ZeroTerminatedArray<const char8>(s){}
 
-CString::CString (){
+CCString::CCString (CString const &s):ZeroTerminatedArray<const char8>(s){}
+
+CCString::CCString (char8 const * const &s):ZeroTerminatedArray<const char8>(s){}
+
+CCString::operator const char8*() const{
+    return ZeroTerminatedArray<const char8>::array;
 }
 
-CString::CString (CString const &s):ZeroTerminatedArray<char8>(s){
-
 }
-
-CString::CString (char8 * const &s):ZeroTerminatedArray<char8>(s){
-
-}
-
-CString::operator char8*() const{
-    return ZeroTerminatedArray<char8>::array;
-}
-
-
-};
-
-#endif /* CSTRING_H_ */
+#endif /* L0TYPES_CCSTRING_H_ */
 	
