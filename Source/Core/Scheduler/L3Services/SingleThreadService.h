@@ -65,16 +65,6 @@ public:
     SingleThreadService(EmbeddedServiceMethodBinderI &binder);
 
     /**
-     * @brief Constructor.
-     * @param[in] binder contains the function to be executed by this SingleThreadService.
-     * @post
-     *   GetTimeout() == TTInfiniteWait &&
-     *   GetStatus() == OffState
-     */
-    template<typename className>
-    SingleThreadService(EmbeddedServiceMethodBinderT<className> &binder);
-
-    /**
      * @brief Destructor.
      * @details Calls the Stop() method.
      */
@@ -155,13 +145,6 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-template<typename className>
-SingleThreadService::SingleThreadService(EmbeddedServiceMethodBinderT<className> &binder) :
-        EmbeddedServiceI(),
-        embeddedThread(binder) {
-    SetTimeout(TTInfiniteWait);
-}
 
 }
 #endif /* SINGLETHREADSERVICE_H_ */

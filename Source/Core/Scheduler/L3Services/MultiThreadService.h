@@ -60,15 +60,6 @@ public:
     MultiThreadService(EmbeddedServiceMethodBinderI &binder);
 
     /**
-     * @brief Constructor.
-     * @param[in] binder contains the function to be executed by this MultiThreadService.
-     * @post
-     *   GetNumberOfPoolThreads() == 1
-     */
-    template<typename className>
-    MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder);
-
-    /**
      * @brief Destructor.
      * @post
      *   Stop()
@@ -256,13 +247,6 @@ protected:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-template<typename className>
-MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder) :
-        EmbeddedServiceI(),
-        method(binder) {
-    numberOfPoolThreads = 1;
-}
 
 }
 
