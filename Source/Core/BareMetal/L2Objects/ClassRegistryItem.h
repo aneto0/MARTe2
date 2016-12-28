@@ -104,7 +104,7 @@ public:
 
     /**
      * @brief Adds the introspection data.
-     * @param[in] introspectioIn is the pointer to the object containing the informations
+     * @param[in] introspectionIn is the pointer to the object containing the informations
      * about the registered class attributes.
      */
     void SetIntrospection(const Introspection * const introspectionIn);
@@ -173,6 +173,7 @@ protected:
     /**
      * @brief Gets a pointer to this pseudo-singleton instance.
      * @param[in] instance if instance != NULL a new instance of ClassRegistryItem is created and assigned to instance.
+     * @param[in] classProperties_in class properties associated to this item.
      * This mechanism is used by the ClassRegistryItemT
      */
     static ClassRegistryItem *Instance(ClassRegistryItem *&instance, ClassProperties &classProperties_in);

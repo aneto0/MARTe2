@@ -367,7 +367,7 @@ public:
     /**
      * @brief Writes to the console.
      * @details A specified number of bytes of the buffer are written to the console output.
-     * @param[in] buffer memory data to be written on the console.
+     * @param[in] input memory data to be written on the console.
      * @param[in,out] size maximum size in bytes to write on the console. If a minor number of bytes is written,
      * size will contain the number of bytes actually written.
      * @param [in] timeout maximum time to wait for writing to the console.
@@ -386,7 +386,7 @@ public:
      * @brief Reads from the console.
      * @details Reads from the console input into the buffer.
      * If PerformCharacterInput mode is enabled, it will return without waiting for LF.
-     * @param[in] buffer memory space where the read bytes are written into.
+     * @param[in] output memory space where the read bytes are written into.
      * @param[in,out] size number of bytes to read.
      * @param[in] timeout maximum time to wait for the operation to be successfully completed.
      * @return - true if at least one byte is read, false in case of errors. The error code will be:

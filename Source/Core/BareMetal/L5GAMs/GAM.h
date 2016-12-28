@@ -236,7 +236,7 @@ public:
      * @details The default number of elements of a signal is 1.
      * @param[in] direction the signal direction.
      * @param[in] signalIdx the index of the signal.
-     * @param[out] numberOfDimensions the number of elements.
+     * @param[out] numberOfElements the number of elements.
      * @return true if the signalIdx exists.
      * @pre
      *   The ConfiguredDatabase must be set

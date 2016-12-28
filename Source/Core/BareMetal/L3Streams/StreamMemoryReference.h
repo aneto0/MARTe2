@@ -68,7 +68,7 @@ public:
      * @details This constructor binds the object to a memory area in
      * read/write mode. It also assumes that the area of memory is empty
      * and therefore the stream's size is 0.
-     * @param[in] buffer is the char8 pointer of the preallocated read/write memory.
+     * @param[in] bufferIn is the char8 pointer of the preallocated read/write memory.
      * @param[in] bufferSize is the usable size of the buffer.
      * @warning The buffer pointer is an input parameter to the constructor,
      * but the pointee will be accessed for reading and writing by the other
@@ -91,7 +91,7 @@ public:
      * @details This constructor binds the object to a memory area in
      * read only mode. It also assumes that the area of memory is full
      * and therefore the stream's size is bufferSize.
-     * @param[in] buffer is the const char8 pointer to a preallocated read only memory.
+     * @param[in] bufferIn is the const char8 pointer to a preallocated read only memory.
      * @param[in] bufferSize is the usable size of the buffer.
      * @warning The buffer pointer is an input parameter to the constructor,
      * but the pointee will be accessed (read only) by the other methods of

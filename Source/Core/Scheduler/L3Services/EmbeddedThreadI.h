@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "EmbeddedServiceMethodBinderI.h"
 #include "EmbeddedServiceMethodBinderT.h"
 #include "Object.h"
@@ -39,6 +40,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
@@ -190,7 +192,7 @@ public:
     /**
      * @brief Sets the thread identifier to InvalidThreadIdentifier.
      * @pre
-     *   !Threads::IsAlive(GetThreadId())
+     *   not Threads::IsAlive(GetThreadId())
      */
     void ResetThreadId();
 
@@ -198,7 +200,7 @@ public:
      * @brief Callback function that is executed in the context of a thread spawned by this EmbeddedServiceI.
      * @details This function is a one-to-one mapping to the user-registered callback function (see EmbeddedServiceMethodBinderT).
      * This allows to call functions with any name and to call, on the same object instance, different functions from different threads.
-     * @param[in] info information about the current state of the execution thread.
+     * @param[in] information information about the current state of the execution thread.
      * @return the ErrorType returned by the user function.
      */
     inline ErrorManagement::ErrorType Execute(const ExecutionInfo & information);
@@ -219,7 +221,7 @@ public:
 
     /**
      * @brief Sets the maximum time to execute a state change.
-     * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
+     * @param[in] msecTimeoutIn the maximum time in milliseconds to execute a state change.
      */
     void SetTimeout(const TimeoutType &msecTimeoutIn);
 

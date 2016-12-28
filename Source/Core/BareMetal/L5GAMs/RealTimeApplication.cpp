@@ -446,7 +446,7 @@ uint32 RealTimeApplication::GetIndex() {
     return index;
 }
 
-CLASS_REGISTER(RealTimeApplication, "1.0");
+CLASS_REGISTER(RealTimeApplication, "1.0")
 
 CLASS_METHOD_REGISTER(RealTimeApplication, PrepareNextState)
 CLASS_METHOD_REGISTER(RealTimeApplication, StartNextStateExecution)

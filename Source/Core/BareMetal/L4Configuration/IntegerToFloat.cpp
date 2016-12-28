@@ -71,12 +71,14 @@ static bool IntegerToFloat(const IntegerType source,
 }
 
 /**
- * @brief Reinterprets the generic source and destination pointers in input recognizing the source integer type and the destination
+ * @brief Reinterprets the generic source and destination pointers in input
+ * recognizing the source integer type and the destination
  * float type by the bit size.
  * @param[in] source is a pointer to the integer number to be converted.
  * @param[in] sourceBitSize is the size in bit of the integer type in input.
  * @param[in,out] dest is a pointer to the float number in output.
  * @param[in] isSigned specifies if the integer type is signed.
+ * @param[in] destBitSize is the size in bit of the integer type in output.
  * @return true if the conversion succeeds, false otherwise.
  */
 /*lint -e{740} -e{826} -e{927}  [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to pointer cast requested from this implementation.*/

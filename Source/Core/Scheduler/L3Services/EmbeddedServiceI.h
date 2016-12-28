@@ -1,6 +1,6 @@
 /**
- * @file EmbeddedService.h
- * @brief Header file for class EmbeddedService
+ * @file EmbeddedServiceI.h
+ * @brief Header file for class EmbeddedServiceI
  * @date 01/09/2016
  * @author Filippo Sartori
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class EmbeddedService
+ * @details This header file contains the declaration of the class EmbeddedServiceI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef EMBEDDEDSERVICE_H_
-#define EMBEDDEDSERVICE_H_
+#ifndef EMBEDDEDSERVICEI_H_
+#define EMBEDDEDSERVICEI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -127,7 +127,7 @@ public:
 
     /**
      * @brief Sets the maximum time to execute a state change.
-     * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
+     * @param[in] msecTimeoutIn the maximum time in milliseconds to execute a state change.
      */
     virtual void SetTimeout(const TimeoutType &msecTimeoutIn);
 
@@ -166,5 +166,5 @@ private:
 
 }
 
-#endif /* EMBEDDEDSERVICE_H_ */
+#endif /* EMBEDDEDSERVICEI_H_ */
 

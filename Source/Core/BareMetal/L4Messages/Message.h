@@ -65,8 +65,9 @@ public:
     virtual ~Message();
 
     /**
-     * @see ReferenceContainer::Initialise(*)
-     * @detail The following parameters have to be specified in the StructuredDataI which initialises the
+     * @brief Explores the StructuredDataI in input and builds Objects storing
+     * their References.
+     * @details The following parameters have to be specified in the StructuredDataI which initialises the
      * Message
      * @param[in] data StructuredDataI with the structure:
      *   Destination = "Address in the ObjectRegistryDatabase of the Object which must receive this Message"
@@ -79,6 +80,7 @@ public:
      *   !!!!! IMPORTANT !!!! a reply is always contained in the same Message object used to send
      *   a    direct reply is performed by transforming the Message object into a reply
      *   an indirect reply is performed by transforming the Message object into a reply and by sending to the sender
+     * @see ReferenceContainer::Initialise(*)
      */
     virtual bool Initialise(StructuredDataI &data);
 

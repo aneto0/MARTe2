@@ -43,12 +43,18 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * @brief Check and multiply
+ */
 #define CHECK_AND_MUL(number,step,exponent)\
 if (exponent >= step){ \
 number *= static_cast<T>(1E ## step); \
 exponent-=step;\
 }
 
+/**
+ * @brief Check and divide
+ */
 #define CHECK_AND_DIV(number,step,exponent)\
 if (exponent >= step){ \
 number *= static_cast<T>(1E- ## step); \

@@ -60,6 +60,7 @@ public:
      * @param[in] cName the name of the class.
      * @param[in] typeidName the name of the class as returned by typeid.
      * @param[in] cVersion the version of the class.
+     * @param[in] cSize the class size (number of bytes).
      */
     ClassProperties(const char8 * const cName,
                     const char8 * const typeidName,
@@ -123,6 +124,9 @@ private:
      */
     uint14 uniqueIdentifier;
 
+    /**
+     * The class size (number of bytes)
+     */
     uint32 size;
 };
 

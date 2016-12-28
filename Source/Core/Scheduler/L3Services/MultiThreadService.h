@@ -68,7 +68,7 @@ public:
 
     /**
      * @brief Reads the number of pool threads from the data input. Calls EmbeddedServiceI::Initialise().
-     * @param[in] in addition to the parameters defined in EmbeddedServiceI::Initialise it shall contain a parameter
+     * @details in addition to the parameters defined in EmbeddedServiceI::Initialise it shall contain a parameter
      * named "NumberOfPoolThreads" holding the number of pool threads
      * and another parameter named "Timeout" with the timeout to apply to each of the SingleThreadService instances.
      * If "Timeout=0" => Timeout = TTInfiniteWait.
@@ -79,6 +79,7 @@ public:
      * A matrix named CPUMasks may be defined. The first column of each row shall contain the thread index to
      * which to apply the CPUMask specified in the second column.
      * If the initialise is successful it calls CreateThreads() and applies the individual thread parameters (priority class and level plus affinity).
+     * @param[in] data is the container with the parameters.
      * @return true if all the parameters are available and if CreateThreads() returns NoError.
      */
     virtual bool Initialise(StructuredDataI &data);
@@ -133,7 +134,7 @@ public:
 
     /**
      * @brief Sets the maximum time to execute a state change.
-     * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
+     * @param[in] msecTimeoutIn the maximum time in milliseconds to execute a state change.
      */
     virtual void SetTimeout(const TimeoutType & msecTimeoutIn);
 
@@ -162,7 +163,7 @@ public:
     virtual void SetCPUMask(const ProcessorType& cpuMaskIn);
 
     /**
-     * @brief Gets the thread priority class for the thread with index \a threadIdx..
+     * @brief Gets the thread priority class for the thread with index \a threadIdx.
      * @param[in] threadIdx the index of the thread.
      * @pre
      *   threadIdx < GetNumberOfPoolThreads()
@@ -172,7 +173,7 @@ public:
     Threads::PriorityClassType GetPriorityClassThreadPool(uint32 threadIdx);
 
     /**
-     * @brief Gets the thread priority level for the thread with index \a threadIdx..
+     * @brief Gets the thread priority level for the thread with index \a threadIdx.
      * @param[in] threadIdx the index of the thread.
      * @pre
      *   threadIdx < GetNumberOfPoolThreads()
@@ -181,7 +182,7 @@ public:
     uint8 GetPriorityLevelThreadPool(uint32 threadIdx);
 
     /**
-     * @brief Gets the thread priority CPU mask for the thread with index \a threadIdx..
+     * @brief Gets the thread priority CPU mask for the thread with index \a threadIdx.
      * @param[in] threadIdx the index of the thread.
      * @pre
      *   threadIdx < GetNumberOfPoolThreads()

@@ -86,7 +86,8 @@ public:
 
     /**
      * @brief Sets the buffer size.
-     * @param[in] bufferSize the desired size for the buffer.
+     * @param[in] readBufferSize the desired size for the read buffer.
+     * @param[in] writeBufferSize the desired size for the write buffer.
      * @return true if the buffer memory is reallocated correctly.
      * @pre
      *    readBufferSize > 8u &&

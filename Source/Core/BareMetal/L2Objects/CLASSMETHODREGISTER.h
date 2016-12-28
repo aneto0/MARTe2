@@ -54,7 +54,6 @@ public:
 
     /**
      * @brief Register a ClassMethodInterfaceMapper in a ClassRegistryItem and sets the name in the ClassMethodInterfaceMapper to methodName.
-     * @param[in] className the name of the class with the method to register.
      * @param[in] methodName the name of the method to register.
      * @param[in] classRegistryItem the ClassRegistryItem associated this \a className.
      * @param[in] mapper the ClassMethodInterfaceMapper where this method is registered.

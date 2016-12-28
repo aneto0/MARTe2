@@ -31,12 +31,14 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ExecutableI.h"
 #include "GAM.h"
 #include "TimingDataSource.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 #include "StatefulI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -144,8 +146,8 @@ public:
 
     /**
      * @brief Stores the GAMSchedulerRecord for the new state in the next buffer.
-     * @param[in] info contains information about the current and the next state
-     * and the active buffer index.
+     * @param[in] currentStateName is the name of the current state
+     * @param[in] nextStateName is the name of the next state
      * @return true if the next state name is found, false otherwise.
      */
     virtual bool PrepareNextState(const char8 * const currentStateName,

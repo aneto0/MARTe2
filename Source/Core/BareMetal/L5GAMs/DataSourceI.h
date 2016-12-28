@@ -43,6 +43,9 @@
 
 namespace MARTe {
 
+/**
+ * @brief Enumeration of signal directions
+ */
 enum SignalDirection {
     InputSignals, OutputSignals, None
 };
@@ -200,7 +203,7 @@ public:
      * @brief Gets the number of elements of the signal at position \a signalIdx.
      * @details The default number of elements of a signal is 1.
      * @param[in] signalIdx the index of the signal.
-     * @param[out] numberOfDimensions the number of elements.
+     * @param[out] numberOfElements the number of elements.
      * @return true if the signalIdx exists.
      * @pre
      *   SetConfiguredDatabase
@@ -508,7 +511,7 @@ public:
      * @param[in] direction the signal direction.
      * @param[in] functionIdx the index of the function.
      * @param[in] functionSignalIdx the index of the signal in this function.
-     * @param[out] offset the offset in bytes of this signal with respect to the beginning of the GAM signal memory address.
+     * @param[out] memoryOffset the offset in bytes of this signal with respect to the beginning of the GAM signal memory address.
      * @return true if the functionIdx and the functionSignalIdx exist in the specified direction.
      * @pre
      *   SetConfiguredDatabase

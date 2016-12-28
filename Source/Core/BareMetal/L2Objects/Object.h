@@ -191,7 +191,7 @@ public:
 
     /**
      * @brief Sets/unsets this object as a domain.
-     * @detail In a tree of objects, a domain object is a local root of a sub-tree.
+     * @details In a tree of objects, a domain object is a local root of a sub-tree.
      * Domain objects are identified with a prefix $ in their name.
      * @param[in] isDomainFlag true if the object is a domain.
      * @post
@@ -253,6 +253,7 @@ public:
     /**
      * @brief Calls a registered method without arguments.
      * @param[in] methodName is the method name.
+     * @param[in] parameters a reference to a ReferenceContainer that will be used to fill the parameters to call the functions
      * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
      * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
@@ -261,6 +262,7 @@ public:
     /**
      * @brief Calls a registered method without arguments.
      * @param[in] methodName is the method name.
+     * @param[in] parameters a reference to a StructuredDataI object where to read/write parameters/results.
      * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
      * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
@@ -269,13 +271,15 @@ public:
     /**
      * @brief Calls a registered method without arguments.
      * @param[in] methodName is the method name.
+     * @param[in] stream a reference to a Stream that will be used to fill the parameters to call the functions.
      * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
      * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
     ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName, StreamI &stream);
 
-    /*
+    /**
      * @brief Returns the class properties associated with this class type.
+     * @return a pointer to the class properties object (which might be NULL).
      */
     const ClassProperties *GetClassProperties() const;
 

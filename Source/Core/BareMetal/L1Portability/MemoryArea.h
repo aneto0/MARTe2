@@ -40,7 +40,7 @@ namespace MARTe {
 
 /**
  * @brief Memory allocated area that behaves similarly to a StaticList with variable elements size.
- * @detail The MemoryArea class facilitates the automatic management (allocation and freeing) of chunks of memory.
+ * @details The MemoryArea class facilitates the automatic management (allocation and freeing) of chunks of memory.
  */
 class DLL_API MemoryArea {
 
@@ -83,7 +83,7 @@ public:
 
     /**
      * @brief Sets the heap name.
-     * @param[in] heapName is the name of the heap where the memory has to be
+     * @param[in] name is the name of the heap where the memory has to be
      * allocated.
      */
     void SetHeapName(const char8 * const name);

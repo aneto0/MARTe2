@@ -104,7 +104,7 @@ ReferenceContainer    ();
      * @brief Inserts a new reference in the specified path.
      * @details Creates all the nodes in the \a path if needed before adding \a ref as a leaf.
      * @param[in] path is the path where \a ref must be inserted to.
-     * @param[in] red is the Reference to be inserted in the container.
+     * @param[in] ref is the Reference to be inserted in the container.
      * @return false if \a ref is not valid or in case of errors, true otherwise.
      */
     bool Insert(const char8 * const path, Reference ref);
@@ -138,6 +138,7 @@ ReferenceContainer    ();
     /**
      * @brief Finds the first element identified by \a path in RECURSIVE mode.
      * @param[in] path is the name of the element to be found or its full path.
+     * @param[in] recursive is the flag for recursive search
      * @return the element if it is found or an invalid reference if not.
      */
     Reference Find(const char8 * const path, const bool recursive=false);
@@ -196,7 +197,7 @@ ReferenceContainer    ();
     bool Lock();
 
     /**
-     * @Unlocks the internal spin-lock mutex.
+     * @brief Unlocks the internal spin-lock mutex.
      */
     void UnLock();
 

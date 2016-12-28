@@ -96,7 +96,7 @@ public:
 
     /**
      * @brief Sets the maximum time to execute a state change.
-     * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
+     * @param[in] msecTimeoutIn the maximum time in milliseconds to execute a state change.
      */
     virtual void SetTimeout(const TimeoutType &msecTimeoutIn);
 

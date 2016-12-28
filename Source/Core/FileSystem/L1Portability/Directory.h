@@ -138,7 +138,6 @@ namespace MARTe {
 
         /**
          * @brief Creates a new file/directory.
-         * @param[in] path the absolute path of the new file/directory to be created.
          * @param[in] isFile specifies if a file or a folder should be created.
          * @return true if the file/directory is created correctly. Note that if a file is being
          * created and it already exists, this will not affect the creation of the file.
@@ -151,14 +150,12 @@ namespace MARTe {
 
         /**
          * @brief Deletes an existent file/directory.
-         * @param[in] path the path of the file/directory to be deleted.
          * @return true if the file/directory is deleted correctly, false otherwise.
          */
         bool Delete();
 
         /**
          * @brief Check if a file/directory exists.
-         * @param[in] path the path of the file/directory to check.
          * @return true if the file/directory exists, false otherwise.
          */
         bool Exists();

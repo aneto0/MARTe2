@@ -36,7 +36,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
+
 /**
  * @brief EmbeddedThreadI implementation that calls Execute while GetCommands == KeepRunningCommand.
  * @details The ThreadLoop only terminates when the GetCommands != KeepRunningCommand.

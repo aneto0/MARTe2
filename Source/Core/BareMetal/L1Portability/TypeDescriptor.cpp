@@ -37,9 +37,18 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+/**
+ * @brief Type cast information
+ */
 /*lint -e9150 [MISRA C++ Rule 11-0-1]. Justification: a structure with no functions is used to describe this type. */
 struct TypeCastInfo {
+    /**
+     * Type description
+     */
     TypeDescriptor typeDes;
+    /**
+     * Name of the cast
+     */
     const char8 *castName;
 };
 

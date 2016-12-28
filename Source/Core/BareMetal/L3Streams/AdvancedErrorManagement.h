@@ -40,8 +40,16 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+/**
+ * Maximum size for error messages.
+ */
 static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
 
+/**
+ * @brief Report an error based on code, message, and a open list of extra
+ * parameters.
+ */
 #define REPORT_ERROR_PARAMETERS(code, message,...)                                           \
 {                                                                                           \
     char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
