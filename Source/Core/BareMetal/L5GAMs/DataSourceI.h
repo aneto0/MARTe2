@@ -317,7 +317,7 @@ public:
      * @return the type of the default value for the signal with index \a signalIdx or VoidType if the Default was not specified.
      * @pre
      *   SetConfiguredDatabase
-     * @warning Note that this does not return the value of the default. It only returns the type meta-data.! (see GetSignalDefaultValue)
+     * @remark Note that this does not return the value of the default. It only returns the type meta-data.! (see GetSignalDefaultValue)
      */
     AnyType GetSignalDefaultValueType(const uint32 signalIdx);
 

@@ -87,7 +87,7 @@ namespace MARTe {
  *
  * (*) The class supplies a standard implementation for these operations.
  *
- * @warning The generic capabilities for reading, writing, and seeking can not
+ * @remark The generic capabilities for reading, writing, and seeking can not
  * assured to be available on all kind of mapped streams, so an additional set
  * of "CanXXX" methods is provided to verify the capabilities of the stream itself.
  *

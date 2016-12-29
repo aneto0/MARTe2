@@ -128,7 +128,7 @@ StateMachine    ();
     };
 
     /**
-     * @brief Initialises the StateMachine (@see ReferenceContainer::Initialise)
+     * @brief Initialises the StateMachine (see ReferenceContainer::Initialise)
      * @details Verifies that at least one state shall exist.
      * For every state at least one event shall be defined.
      * For every event in every state the NextState shall be defined and shall exists.
@@ -183,7 +183,7 @@ StateMachine    ();
 
     /**
      * @brief Calls ReferenceContainer::Purge after removing all the StateMachineEvents from the queue
-     * @param[in] purgeList @see Object::Purge
+     * @param[in] purgeList (see Object::Purge)
      */
     virtual void Purge(ReferenceContainer &purgeList);
 

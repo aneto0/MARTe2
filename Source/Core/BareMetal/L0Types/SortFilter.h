@@ -48,7 +48,7 @@ namespace MARTe {
  * @details The classes that realise this interface will implement the checking
  * of the order direction into the Compare method, assuming that the parameters
  * will be objects of type LinkedListable.
- * @note In order to sort all the items of a list, the user will have to call
+ * @remark In order to sort all the items of a list, the user will have to call
  * the Compare for pairs of list's elements from a sorting algorithm.
  */
 class SortFilter {

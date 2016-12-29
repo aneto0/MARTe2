@@ -88,11 +88,11 @@ public:
 
     /**
      * @brief Performs a buffered read operation with a specific timeout.
-     * @warning The specified timeout will be used only for this operation.
-     * To change the timeout used in all read-write operations permanently use SetTimeout(*).
      * @param[out] output the buffer in output which will contain the read data.
      * @param[in,out] size the number of bytes to read.
      * @param[in] msecTimeout The timeout used in this operation.
+     * @remark The specified timeout will be used only for this operation.
+     * To change the timeout used in all read-write operations permanently use SetTimeout(*).
      * @see BufferedStreamI::Read(*).
      */
     virtual bool Read(char8 * const output,
@@ -108,11 +108,11 @@ public:
 
     /**
      * @brief Performs a buffered write operation with a specific timeout.
-     * @warning The specified timeout will be used only for this operation.
-     * To change the timeout used in all read-write operations permanently use SetTimeout(*).
      * @param[in] input the buffer in input which contains the data to be written.
      * @param[in,out] size the number of bytes to write.
      * @param[in] msecTimeout The timeout used in this operation.
+     * @remark The specified timeout will be used only for this operation.
+     * To change the timeout used in all read-write operations permanently use SetTimeout(*).
      * @see BufferedStreamI::Write(*).
      */
     virtual bool Write(const char8 * const input,

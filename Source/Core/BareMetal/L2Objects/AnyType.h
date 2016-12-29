@@ -66,7 +66,7 @@ namespace MARTe {
  *
  * AnyType works with basic types as well as classes, as long as they are
  * registered in the ClassRegistryDatabase.
- * @note A constructor for each basic type has been defined and implemented in
+ * @remark A constructor for each basic type has been defined and implemented in
  * order to automatically build the relative AnyType object. Some of these
  * constructors are templates.
  */
@@ -83,7 +83,7 @@ public:
     /**
      * @brief Default constructor.
      * @details TypeDescriptor is initialized to VoidType, dataPointer to null and the bit-shift to 0.
-     * @note The empty AnyType is used as the terminator element in a Printf list.
+     * @remark The empty AnyType is used as the terminator element in a Printf list.
      */
     inline AnyType(void);
 
@@ -709,8 +709,8 @@ public:
 
     /**
      * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
-     * @tparam baseType the type of the source object
      * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegisteredDatabase).
+     * @tparam baseType the type of the source object
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.
      */
@@ -720,8 +720,8 @@ public:
 
     /**
      * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
-     * @tparam baseType the type of the source object
      * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegistryDatabase).
+     * @tparam baseType the type of the source object
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.
      */
@@ -739,8 +739,8 @@ public:
 
     /**
      * @brief Sets the number of dimensions associated to this AnyType.
-     * @param[in] nOfDimensions the new number of dimensions represented by this AnyType.
      * @details nOfDimensions == 0 => scalar, nOfDimensions == 1 => vector
+     * @param[in] nOfDimensions the new number of dimensions represented by this AnyType.
      * nOfDimensions == 2 => matrix
      */
     inline void SetNumberOfDimensions(const uint8 nOfDimensions);

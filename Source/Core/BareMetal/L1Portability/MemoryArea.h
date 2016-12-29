@@ -65,13 +65,13 @@ public:
      * @brief Initialises the memory area with a specific pre-allocated memory in input.
      * @param[in] initialMemory is the pointer a pre-allocated memory to be set
      * @param[in] initialSize is the size of \a initialMemory
-     * @warning The memory pointed by \a initialMemory is not copied but only wrapped. Functions like
-     * MemoryArea::Add(*) and MemoryArea::Free(*) can deallocate \a initialMemory. As a consequence
-     * make sure that \a initialMemory is not used outside the scope of MemoryArea.
      * @return true if the memory area is empty, false if it is already initialised.
      * @pre
      *   GetMemoryStart() == NULL &&
      *   GetMemorySize() == 0
+     * @warning The memory pointed by \a initialMemory is not copied but only wrapped. Functions like
+     * MemoryArea::Add(*) and MemoryArea::Free(*) can deallocate \a initialMemory. As a consequence
+     * make sure that \a initialMemory is not used outside the scope of MemoryArea.
      */
     bool InitMemory(void * const initialMemory, const uint32 initialSize);
 

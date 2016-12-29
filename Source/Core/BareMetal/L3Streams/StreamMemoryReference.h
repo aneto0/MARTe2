@@ -70,9 +70,6 @@ public:
      * and therefore the stream's size is 0.
      * @param[in] bufferIn is the char8 pointer of the preallocated read/write memory.
      * @param[in] bufferSize is the usable size of the buffer.
-     * @warning The buffer pointer is an input parameter to the constructor,
-     * but the pointee will be accessed for reading and writing by the other
-     * methods of the class.
      * @pre
      *   bufferIn != NULL
      *   bufferSize > 0
@@ -82,6 +79,9 @@ public:
      *   CanSeek() &&
      *   Position() == 0 &&
      *   Size() == 0
+     * @warning The buffer pointer is an input parameter to the constructor,
+     * but the pointee will be accessed for reading and writing by the other
+     * methods of the class.
      */
     StreamMemoryReference(char8 * const bufferIn,
                           const uint32 bufferSize);
@@ -93,9 +93,6 @@ public:
      * and therefore the stream's size is bufferSize.
      * @param[in] bufferIn is the const char8 pointer to a preallocated read only memory.
      * @param[in] bufferSize is the usable size of the buffer.
-     * @warning The buffer pointer is an input parameter to the constructor,
-     * but the pointee will be accessed (read only) by the other methods of
-     * the class.
      * @pre
      *   bufferIn != NULL
      *   bufferSize > 0
@@ -105,6 +102,9 @@ public:
      *   CanSeek() &&
      *   Position() == 0 &&
      *   Size() == bufferSize
+     * @warning The buffer pointer is an input parameter to the constructor,
+     * but the pointee will be accessed (read only) by the other methods of
+     * the class.
      */
     StreamMemoryReference(const char8 * const bufferIn,
                           const uint32 bufferSize);

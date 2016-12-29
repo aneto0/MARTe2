@@ -63,8 +63,8 @@ public:
      * @brief Constructor.
      * @param[in] memberNameIn is the member name.
      * @param[in] typeNameIn is the member type name.
-     * @param[in] modifiersIn specifies the member modifiers (@see GetMemberModifiers).
-     * @param[in] attributesIn specifies the member attributes (@see GetMemberAttributes).
+     * @param[in] modifiersIn specifies the member modifiers (see GetMemberModifiers).
+     * @param[in] attributesIn specifies the member attributes (see GetMemberAttributes).
      * @param[in] sizeIn is the size of the member.
      * @param[in] byteOffsetIn is the relative address of the member with respect to the class beginning pointer.
      * @post

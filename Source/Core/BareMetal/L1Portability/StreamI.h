@@ -66,7 +66,7 @@ namespace MARTe {
  *
  * (*) The class supplies a standard implementation for these operations.
  *
- * @warning The generic capabilities for reading, writing, and seeking can not
+ * @remark The generic capabilities for reading, writing, and seeking can not
  * assured to be available on all kind of mapped streams, so an additional set
  * of "CanXXX" methods will advise the user what can be done with the stream.
  *
@@ -227,7 +227,7 @@ public:
      *   pos + deltaPos <= Size() =>
      *   Position() == this'old->Position() + deltaPos &&
      *   pos + deltaPos > Size() => Position() == Size()
-     * @warning The deltaPos is a signed integer, so it will always have a
+     * @remark The deltaPos is a signed integer, so it will always have a
      * half addressable space with respect to its unsigned counterpart, i.e.
      * the Seek() method.
      */

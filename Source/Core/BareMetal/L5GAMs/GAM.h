@@ -368,7 +368,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set &&
      *   GetInputSignalsMemory() == NULL
-     * @warning From the precondition is inferred that this function cannot be called twice.
+     * @remark From the precondition is inferred that this function cannot be called twice.
      */
     bool AllocateInputSignalsMemory();
 
@@ -378,7 +378,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set &&
      *   GetOutputSignalsMemory() == NULL
-     * @warning From the precondition is inferred that this function cannot be called twice.
+     * @remark From the precondition is inferred that this function cannot be called twice.
      */
     bool AllocateOutputSignalsMemory();
 

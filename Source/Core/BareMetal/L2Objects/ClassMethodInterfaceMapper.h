@@ -322,11 +322,11 @@ public:
 
     /**
      * @brief Constructor with three parameters where the third is a constant reference input parameter.
+     * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
      * @tparam className is the class owning the target method.
      * @tparam argType1 is the type of the input parameter to be passed to the target method.
      * @tparam argType2 is the type of the input parameter to be passed to the target method.
      * @tparam argType3 is the type of the input parameter to be passed to the target method.
-     * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer function with three parameters where the third is a constant reference input parameter.
      * @post
      *   GetMethodCaller() != NULL.
@@ -336,11 +336,11 @@ public:
 
     /**
      * @brief Constructor with three parameters where the third parameter is an output parameter.
+     * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
      * @tparam className is the class owning the target method.
      * @tparam argType1 is the type of the input parameter to be passed to the target method.
      * @tparam argType2 is the type of the input parameter to be passed to the target method.
      * @tparam argType3 is the type of the input parameter to be passed to the target method.
-     * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer function with three parameters where the third parameter is an output parameter.
      * @post
      *   GetMethodCaller() != NULL.
@@ -350,11 +350,11 @@ public:
 
     /**
      * @brief Constructor with three parameters where the third is a parameter passed by copy.
+     * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
      * @tparam className is the class owning the target method.
      * @tparam argType1 is the type of the input parameter to be passed to the target method.
      * @tparam argType2 is the type of the input parameter to be passed to the target method.
      * @tparam argType3 is the type of the input parameter to be passed to the target method.
-     * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer function with three parameters where the third is a parameter passed by copy.
      * @post
      *   GetMethodCaller() != NULL.
@@ -473,12 +473,12 @@ public:
 
     /**
      * @brief Constructor with four parameters where the forth is a constant reference input parameter.
+     * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
      * @tparam className is the class owning the target method.
      * @tparam argType1 is the type of the input parameter to be passed to the target method.
      * @tparam argType2 is the type of the input parameter to be passed to the target method.
      * @tparam argType3 is the type of the input parameter to be passed to the target method.
      * @tparam argType4 is the type of the input parameter to be passed to the target method.
-     * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer function with four parameters where the forth is a constant reference input parameter.
      * @post
      *   GetMethodCaller() != NULL.
@@ -488,12 +488,12 @@ public:
 
     /**
      * @brief Constructor with four parameters where the forth is an output parameter.
+     * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
      * @tparam className is the class owning the target method.
      * @tparam argType1 is the type of the input parameter to be passed to the target method.
      * @tparam argType2 is the type of the input parameter to be passed to the target method.
      * @tparam argType3 is the type of the input parameter to be passed to the target method.
      * @tparam argType4 is the type of the input parameter to be passed to the target method.
-     * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer function with four parameters where the forth is an output parameter.
      * @post
      *   GetMethodCaller() != NULL.
@@ -503,12 +503,12 @@ public:
 
     /**
      * @brief Constructor with four parameters where the forth is a parameter passed by copy.
+     * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
      * @tparam className is the class owning the target method.
      * @tparam argType1 is the type of the input parameter to be passed to the target method.
      * @tparam argType2 is the type of the input parameter to be passed to the target method.
      * @tparam argType3 is the type of the input parameter to be passed to the target method.
      * @tparam argType4 is the type of the input parameter to be passed to the target method.
-     * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer function with four parameters where the forth is a parameter passed by copy.
      * @post
      *   GetMethodCaller() != NULL.

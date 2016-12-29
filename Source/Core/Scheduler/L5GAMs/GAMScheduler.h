@@ -93,7 +93,8 @@ public:
     /**
      * @brief Verifies if there is an ErrorMessage defined.
      * @param[in] data the StructuredDataI with the TimingDataSource name and with an optional ErrorMessage defined.
-     * @return @see GAMSchedulerI::Initialise. At most one message shall be defined and this will be considered as the ErrorMessage.
+     * @return At most one message shall be defined and this will be considered as the ErrorMessage.
+     * @see GAMSchedulerI::Initialise.
      */
     virtual bool Initialise(StructuredDataI & data);
 
@@ -116,14 +117,14 @@ public:
     /**
      * @brief Callback function for the MultiThreadService.
      * @details Loops on all the real-time threads and executes its ExecutableI
-     * @param[in] information @see EmbeddedThread
+     * @param[in] information (see EmbeddedThread)
      * @return ErrorManagement::NoError iff every ExecutableI did not return any error.
      */
     ErrorManagement::ErrorType Execute(const ExecutionInfo &information);
 
     /**
      * @brief Stops the active MultiThreadService running services and calls ReferenceContainer::Purge
-     * @details @see ReferenceContainer::Purge
+     * @see ReferenceContainer::Purge
      */
     virtual void Purge(ReferenceContainer &purgeList);
 
